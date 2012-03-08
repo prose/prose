@@ -1,0 +1,5 @@
+auto: true
+server: true
+exclude:
+- .gitignore
+- README.md

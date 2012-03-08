@@ -1,0 +1,19 @@
+<% if (posts.length > 0) { %>
+  <% _.each(posts, function(post) { %> 
+  <div class="post">
+    <a class="link load-post toggle-view" href="#">
+      <div class="image">
+      </div>
+
+      <div class="title">
+        <%= post.title || 'Untitled' %>
+      </div>
+    </a>
+
+    <div class="author"><a href="#">an author</a></div>
+    <div class="updated-at"><span>updated </span><%= "adsf" %></div>
+  </div>
+  <% }); %>
+<% } else { %>
+  <h2>No Posts yet ...</h2>
+<% } %>

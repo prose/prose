@@ -1,0 +1,14 @@
+<div class='start dialog'>
+  <div id='hint'></div>
+  <form><ul class='form'>
+    <li>
+      <label>GitHub user</label>
+      <input type='text' name='user' placeholder='username' size='24' />
+    </li>
+    <li>
+      <label>Password</label>
+      <input type='password' name='password' placeholder='password' size='24' />
+      <input type='submit' value='Log in' />
+    </li>
+  </ul></form>
+</div>
