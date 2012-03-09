@@ -33,10 +33,16 @@ function loadPosts(repo, cb) {
   });
 }
 
-function loadPost(repo, path, cb) {
-  var repo = github.getRepo('github-api-test');
-  console.log(path);
+function savePost(reponame, path, content, cb) {
+  var repo = github.getRepo(reponame);
+  repo.write(path, content, cb);
+}
+
+function loadPost(reponame, path, cb) {
+  var repo = github.getRepo(reponame);
+
   repo.read(path, function(err, data) {
-    console.log('DOONE');
+    cb(err, {"content": data, "repo": reponame, "path": path});
   });
 }
+

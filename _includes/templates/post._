@@ -1,3 +1,6 @@
-<div>
-  This is a post. Incredible. Isn't it?! :)
+<div class="content">
+  <a class="save-post" href="#">Save</a>
+  <textarea id="code" name="code">
+    <%= content %>
+  </textarea>
 </div>
