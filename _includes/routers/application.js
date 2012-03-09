@@ -9,6 +9,7 @@ routers.Application = Backbone.Router.extend({
     // Using this.route, because order matters
     this.route(/(.*\/.*)/, 'post', this.post);
     this.route(":repo/posts", "posts", app.posts);
+    this.route(":repo/new", "new", app.newPost);
   },
   post: function(url) {
     url = url.split('/');

@@ -68,8 +68,8 @@ views.Application = Backbone.View.extend({
     }, this));
   },
 
-  newPost: function () {
-    this.replaceMainView("new_post", new views.NewPost({id: "new_post"}).render());
+  newPost: function (repo) {
+    this.replaceMainView("new_post", new views.NewPost({id: "new_post", model: {repo: repo}}).render());
   }
 
 });
