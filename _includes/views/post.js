@@ -19,6 +19,7 @@ views.Post = Backbone.View.extend({
   },
 
   initEditor: function() {
+    var that = this;
     setTimeout(function() {
       that.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
           mode: 'markdown',
