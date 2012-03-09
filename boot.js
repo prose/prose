@@ -9,6 +9,9 @@
 {% include vendor/textile.js %}
 {% include vendor/base64.js %}
 {% include vendor/github.js %}
+{% include vendor/codemirror/codemirror.js %}
+{% include vendor/codemirror/xml.js %}
+{% include vendor/codemirror/markdown.js %}
 {% include vendor/jquery.cookie.js %}
 
 window.app = {
@@ -36,6 +39,7 @@ window.app.utils.serial = function () {
 {% include views/application.js %}
 {% include views/header.js %}
 {% include views/posts.js %}
+{% include views/post.js %}
 
 // Keep session here?
 window.session = {};
