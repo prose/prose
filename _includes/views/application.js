@@ -30,7 +30,6 @@ views.Application = Backbone.View.extend({
   initialize: function () {
     _.bindAll(this);
     
-    // Initialize document
     this.header = new views.Header({model: this.model});
   },
 
