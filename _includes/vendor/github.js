@@ -49,14 +49,15 @@
     // -------
 
     Github.Repository = function(options) {
-
+      var repo = options.name;
+      var branch = options.branch;
+      
       var that = this;
-      console.log(options.name);
-      var repoPath = "/repos/" + username + "/" + options.name;
+      var repoPath = "/repos/" + username + "/" + repo;
 
       // Get latest commit from master
       function getLatestCommit(cb) {
-        _request("GET", repoPath + "/git/refs/heads/master", null, function(err, res) {
+        _request("GET", repoPath + "/git/refs/heads/" + branch, null, function(err, res) {
           if (err) return cb(err);
           cb(null, res.object.sha);
         });
@@ -136,7 +137,7 @@
       // Update the reference of your head to point to the new commit SHA
 
       function updateHead(commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/master", { "sha": commit }, function(err, res) {
+        _request("PATCH", repoPath + "/git/refs/heads" + branch, { "sha": commit }, function(err, res) {
           cb(err);
         });
       }
@@ -156,7 +157,7 @@
       // -------
 
       this.list = function(cb) {
-        _request("GET", repoPath + "/git/trees/master?recursive=1", null, function(err, res) {
+        _request("GET", repoPath + "/git/trees/" + branch + "?recursive=1", null, function(err, res) {
           cb(err, res.tree);
         });
       };
@@ -222,8 +223,8 @@
     // Top Level API
     // -------
 
-    this.getRepo = function(repo) {
-      return new Github.Repository({name: repo});
+    this.getRepo = function(repo, branch) {
+      return new Github.Repository({name: repo, branch: branch || "master"});
     };
 
     this.getUser = function(user) {
