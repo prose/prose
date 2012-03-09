@@ -28,19 +28,16 @@ window.app = {
 
 window.args = _(window.app).toArray();
 
-// Utils: run an array of functions in serial.
-window.app.utils.serial = function () {
-    (_(arguments).reduceRight(_.wrap, function() {}))();
-};
 
+{% include util.js %}
 {% include model.js %}
 {% include routers/application.js %}
-
 {% include views/application.js %}
 {% include views/header.js %}
 {% include views/posts.js %}
 {% include views/post.js %}
 {% include views/new_post.js %}
+
 
 // Keep session here?
 window.session = {};
@@ -48,7 +45,7 @@ window.session = {};
 (function(config, models, views, routers, utils, templates) {
   $(function() {
 
-  loadApplication("github-api-test", "api-test-12", function(err, data) {
+  loadApplication("{{site.github.username}}", "{{site.github.password}}", function(err, data) {
     // Start the engines
     window.app = new views.Application({ el: '#container', model: data }).render();
 
