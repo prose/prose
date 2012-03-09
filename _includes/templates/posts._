@@ -1,7 +1,7 @@
 <% if (posts.length > 0) { %>
-  <% _.each(posts, function(post) { %> 
+  <% _.each(posts, function(post) { %>
   <div class="post">
-    <a class="link load-post toggle-view" href="#">
+    <a class="link load-post toggle-view" href="#developmentseed.org/<%= post.path %>">
       <div class="image">
       </div>
 
@@ -11,7 +11,7 @@
     </a>
 
     <div class="author"><a href="#">an author</a></div>
-    <div class="updated-at"><span>updated </span><%= "adsf" %></div>
+    <div class="updated-at"><span>updated </span><%= "234234123" %></div>
   </div>
   <% }); %>
 <% } else { %>

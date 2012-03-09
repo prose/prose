@@ -1,19 +1,19 @@
 
 window.github = new Github({
-  username: "github-api-test",
-  password: "api-test-12"
+  username: "{{ site.github.username }}",
+  password: "{{ site.github.password }}"
 });
 
 // Load everything that's needed for the app + header
 
 function loadApplication(username, password, cb) {
-  var user = github.getUser('github-api-test');
+  var user = github.getUser('{{ site.github.username }}');
   user.repos(function(err, repos) {
     // TODO: filter and just show Jekyll repositories
     cb(null, {
-      "username": "github-api-test",
-      "password": "api-test-12",
-      "site": "github-api-test.github.com",
+      "username": "{{ site.github.username }}",
+      "password": "{{ site.github.password }}",
+      "site": "{{ site.github.default-repo }}",
       "available_sites": repos
     });
   });
@@ -22,24 +22,24 @@ function loadApplication(username, password, cb) {
 // List all postings for a given repository
 // Looks into _posts/blog
 
-function loadPosts(repo, cb) {
-  var repo = github.getRepo('github-api-test');
+function loadPosts(reponame, cb) {
+  var repo = github.getRepo(reponame, "{{ site.github.branch }}");
   repo.list(function(err, tree) {
     var posts = _.map(tree, function(file) {
-      // TODO: change to -> _posts/blog
-      return file.path.match(/^path\/to\/\w*.md/) ? {name: file.path, title: file.path} : null;
+      var regex = new RegExp("^" + "{{ site.github.posts-dir }}" + "/(\\w|-)*.md$");
+      return regex.test(file.path) ? {path: file.path, title: file.path} : null;
     });
     cb(null, {"posts": _.compact(posts)});
   });
 }
 
 function savePost(reponame, path, content, cb) {
-  var repo = github.getRepo(reponame);
+  var repo = github.getRepo(reponame, "{{ site.github.branch }}");
   repo.write(path, content, cb);
 }
 
 function loadPost(reponame, path, cb) {
-  var repo = github.getRepo(reponame);
+  var repo = github.getRepo(reponame, "{{ site.github.branch }}");
 
   repo.read(path, function(err, data) {
     cb(err, {"content": data, "repo": reponame, "path": path});
