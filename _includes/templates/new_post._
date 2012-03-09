@@ -1,0 +1,7 @@
+<form id="new_post_form">
+  <label>Filename</label>
+  <input type="text" name="filename" class="filename"/>
+
+  <input type="submit" value="New Document"/>
+
+</form>

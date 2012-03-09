@@ -40,6 +40,7 @@ window.app.utils.serial = function () {
 {% include views/header.js %}
 {% include views/posts.js %}
 {% include views/post.js %}
+{% include views/new_post.js %}
 
 // Keep session here?
 window.session = {};
