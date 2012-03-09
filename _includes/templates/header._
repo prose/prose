@@ -2,8 +2,8 @@
   <div class="title">Columnist</div>
   <div class="sites">
     <select name="site">
-    <% _.each(available_sites, function(site, index) { %>
-      <option value="<%= site.name %>"><%= site.name %></option>
+    <% _.each(available_repos, function(r, index) { %>
+      <option value="<%= repo.name %>"><%= r.name %></option>
     <% }) %>
 
     </select>
@@ -15,5 +15,5 @@
 <div class="user-status">
   <div class="user">michael</div>
   <div class="logout"><a href="#">Logout</div>
-  <div class="new-post"><a href="#">New Post</a></div>
+  <div class="new-post"><a href="#<%= repo %>/new">New Post</a></div>
 </div>

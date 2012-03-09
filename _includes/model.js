@@ -1,9 +1,11 @@
-
 window.github = new Github({
   username: "{{ site.github.username }}",
   password: "{{ site.github.password }}"
 });
 
+// Load Application
+// -------
+// 
 // Load everything that's needed for the app + header
 
 function loadApplication(username, password, cb) {
@@ -13,12 +15,16 @@ function loadApplication(username, password, cb) {
     cb(null, {
       "username": "{{ site.github.username }}",
       "password": "{{ site.github.password }}",
-      "site": "{{ site.github.default-repo }}",
-      "available_sites": repos
+      "repo": "{{ site.github.default-repo }}",
+      "available_repos": repos
     });
   });
 }
 
+
+// Load Posts
+// -------
+// 
 // List all postings for a given repository
 // Looks into _posts/blog
 
@@ -33,16 +39,50 @@ function loadPosts(reponame, cb) {
   });
 }
 
-function savePost(reponame, path, content, cb) {
+
+// Save Post
+// -------
+// 
+// List all postings for a given repository
+// Looks into _posts/blog
+
+function savePost(reponame, path, metadata, content, cb) {
   var repo = github.getRepo(reponame, "{{ site.github.branch }}");
-  repo.write(path, content, cb);
+  function serialize(data) {
+    return "---\n" + _.toYAML(data) + "\n---\n\n";
+  }
+  repo.write(path, serialize(metadata)+content, cb);
 }
+
+
+// Save Post
+// -------
+// 
+// List all postings for a given repository
+// Looks into _posts/blog
 
 function loadPost(reponame, path, cb) {
   var repo = github.getRepo(reponame, "{{ site.github.branch }}");
 
   repo.read(path, function(err, data) {
-    cb(err, {"content": data, "repo": reponame, "path": path});
+
+    function parse(content) {
+      var res = {};
+      var chunked = (content+'\n').split('---\n');
+      if (chunked[0] === '' && chunked.length > 2) {
+        res.metadata = jsyaml.load(chunked[1]);
+        res.content = chunked.slice(2).join('---\n');
+      } else {
+        res.metadata = {};
+        res.content = content;
+      }
+      return res;
+    }
+
+    // Extract metadata
+    var post = parse(data);
+
+    // We're done. Can you hear me?!
+    cb(err, _.extend(post, {"repo": reponame, "path": path}));
   });
 }
-

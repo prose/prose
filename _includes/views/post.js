@@ -8,7 +8,17 @@ views.Post = Backbone.View.extend({
   },
 
   save: function() {
-    savePost(this.model.repo, this.model.path, this.editor.getValue(), function(err) {
+    var metadata = {
+      title: this.$('#post_title').val(),
+      subtitle: this.$('#post_subtitle').val(),
+      layout: this.$('#post_layout').val(),
+      category: this.$('#post_category').val(),
+      permalink: this.$('#post_permalink').val(),
+      image: this.$('#post_image').val(),
+      hidden: !this.$('#post_published').val()
+    }
+
+    savePost(this.model.repo, this.model.path, metadata, this.editor.getValue(), function(err) {
       console.log('Saved');
     });
     return false;

@@ -137,7 +137,7 @@
       // Update the reference of your head to point to the new commit SHA
 
       function updateHead(commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads" + branch, { "sha": commit }, function(err, res) {
+        _request("PATCH", repoPath + "/git/refs/heads/" + branch, { "sha": commit }, function(err, res) {
           cb(err);
         });
       }
@@ -181,15 +181,8 @@
                 var data = blob.encoding == 'base64' ?
                     atob(blob.content.replace(/\s/g, '')) :
                     blob.content;
-
-                var chunked = (data+'\n').split('---\n');
-                if (chunked[0] === '' && chunked.length > 2) {
-                  // attr.metadata = jsyaml.load(chunked[1]);
-                  return chunked.slice(2).join('---\n');
-                } else {
-                  // attr.metadata = {};
-                  return data;
-                }
+                    
+                return data;
               } else {
                 return "";
               }
