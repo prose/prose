@@ -15,12 +15,10 @@ function loadApplication(username, password, cb) {
     cb(null, {
       "username": "{{ site.github.username }}",
       "password": "{{ site.github.password }}",
-      "repo": "{{ site.github.default-repo }}",
       "available_repos": repos
     });
   });
 }
-
 
 // Load Posts
 // -------
@@ -28,14 +26,30 @@ function loadApplication(username, password, cb) {
 // List all postings for a given repository
 // Looks into _posts/blog
 
-function loadPosts(reponame, cb) {
-  var repo = github.getRepo(reponame, "{{ site.github.branch }}");
+function loadPosts(reponame, branch, cb) {
+
+  var repo = github.getRepo(reponame, branch);
+
+  function loadConfig(cb) {
+    repo.read("_config.yml", function(err, data) {
+      if (err) return cb(err);
+      cb(null, jsyaml.load(data));
+    });
+  }
+
   repo.list(function(err, tree) {
+    if (err && branch !== "master") return loadPosts(reponame, "master", cb);
+    if (err) cb("Not a Jekyll repository.");
     var posts = _.map(tree, function(file) {
       var regex = new RegExp("^" + "{{ site.github.posts-dir }}" + "/(\\w|-)*.md$");
       return regex.test(file.path) ? {path: file.path, title: file.path} : null;
     });
-    cb(null, {"posts": _.compact(posts)});
+
+    // Load Jekyll config file (_config.yml)
+    loadConfig(function(err, config) {
+      if (err) return cb(err);
+      cb(null, {"posts": _.compact(posts)});
+    });
   });
 }
 

@@ -3,12 +3,21 @@
 views.Header = Backbone.View.extend({
   id: 'header',
 
+  events: {
+    "change #repository_name": "_switchRepository"
+  },
+
+  _switchRepository: function(e) {
+    router.navigate($(e.currentTarget).val() + "/posts", true);
+    return false;
+  },
+
   initialize: function(options) {
     
   },
 
   render: function() {
-    $(this.el).html(templates.header(this.model));
+    $(this.el).html(templates.header(_.extend(this.model, { repo: app.state.repo })));
     return this;
   }
 });
