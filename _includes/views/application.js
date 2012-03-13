@@ -57,7 +57,10 @@ views.Application = Backbone.View.extend({
   // ----------
 
   posts: function (repo) {
-    loadPosts(repo, _.bind(function (err, data) {
+    app.state.repo = repo;
+    this.header.render();
+    loadPosts(repo, "{{site.github.default-branch}}", _.bind(function (err, data) {
+      if (err) return alert('Seems like the chosen repository is not a valid Jekyll site.');
       this.replaceMainView("posts", new views.Posts({ model: data, id: 'posts' }).render());
     }, this));
   },
@@ -70,6 +73,10 @@ views.Application = Backbone.View.extend({
 
   newPost: function (repo) {
     this.replaceMainView("new_post", new views.NewPost({id: "new_post", model: {repo: repo}}).render());
+  },
+
+  start: function() {
+    this.replaceMainView("start", new views.Start({id: "start", model: {authenticated: true}}).render());
   }
 
 });
