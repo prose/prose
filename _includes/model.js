@@ -20,13 +20,12 @@ function loadApplication(username, password, cb) {
   });
 }
 
-// Load Posts
+// Load Site
 // -------
 // 
-// List all postings for a given repository
-// Looks into _posts/blog
+// List all postings for a given site plus load _config.yml
 
-function loadPosts(reponame, branch, cb) {
+function loadSite(reponame, branch, path, cb) {
 
   var repo = github.getRepo(reponame, branch);
 
@@ -38,16 +37,20 @@ function loadPosts(reponame, branch, cb) {
   }
 
   repo.list(function(err, tree) {
-    if (err && branch !== "master") return loadPosts(reponame, "master", cb);
+    if (err && branch !== "master") return loadSite(reponame, "master", path, cb);
     if (err) cb("Not a Jekyll repository.");
-    var posts = _.map(tree, function(file) {
-      var regex = new RegExp("^" + "{{ site.github.posts-dir }}" + "/(\\w|-)*.md$");
-      return regex.test(file.path) ? {path: file.path, title: file.path} : null;
-    });
 
     // Load Jekyll config file (_config.yml)
     loadConfig(function(err, config) {
       if (err) return cb(err);
+      app.state.config = config;
+      app.state.path = path ? path : config.columnist.paths[0];
+
+      var posts = _.map(tree, function(file) {
+        var regex = new RegExp("^" + app.state.path + "/(\\w|-)*.md$");
+        return regex.test(file.path) ? {path: file.path, title: file.path} : null;
+      });
+
       cb(null, {"posts": _.compact(posts)});
     });
   });
