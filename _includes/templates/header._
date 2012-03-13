@@ -8,14 +8,15 @@
     <% }) %>
     </select>
   </div>
-  <div class="paths">
-    <select name="paths" id="repository_paths">
-      <option value="">- - - choose path - - -</option>
-      <% _.each(available_repos, function(r, index) { %>
-        <option value="<%= r.name %>"<%= repo === r.name ? 'selected="selected"' : '' %>><%= r.name %></option>
-      <% }) %>
-    </select>
-  </div>
+  <% if (repo) { %>
+    <div class="paths">
+      <select name="paths" id="repository_paths">
+        <% _.each(paths, function(p, index) { %>
+          <option value="<%= p %>"<%= path === p ? 'selected="selected"' : '' %>><%= p %></option>
+        <% }) %>
+      </select>
+    </div>
+  <% } %>
   <div class="post"><a href="#">Posts</a></div>
   <div class="post"></div>
 </div>
