@@ -1,0 +1,11 @@
+auto: true
+title: Columnist
+server: true
+github:
+  username: "github-user"
+  password: "github-password"
+  default-branch: "gh-pages"
+  posts-dir: "_posts"
+exclude:
+- .gitignore
+- README.md
