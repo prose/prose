@@ -15,6 +15,7 @@
 {% include vendor/jquery.cookie.js %}
 
 window.app = {
+    
     config: {},
     models: {},
     views: {},
@@ -23,7 +24,9 @@ window.app = {
     templates: _($('script[name]')).reduce(function(memo, el) {
         memo[el.getAttribute('name')] = _(el.innerHTML).template();
         return memo;
-    }, {})
+    }, {}),
+    state: {"repo": ""},
+    instance: {},
 };
 
 window.args = _(window.app).toArray();
@@ -33,6 +36,7 @@ window.args = _(window.app).toArray();
 {% include model.js %}
 {% include routers/application.js %}
 {% include views/application.js %}
+{% include views/start.js %}
 {% include views/header.js %}
 {% include views/posts.js %}
 {% include views/post.js %}
@@ -47,7 +51,7 @@ window.session = {};
 
   loadApplication("{{site.github.username}}", "{{site.github.password}}", function(err, data) {
     // Start the engines
-    window.app = new views.Application({ el: '#container', model: data }).render();
+    window.app.instance = new views.Application({ el: '#container', model: data }).render();
 
     // Initialize router
     window.router = new routers.Application({});
