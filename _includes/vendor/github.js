@@ -38,7 +38,7 @@
       this.username = options.username;
       var userPath = "/users/" + options.username;
       this.repos = function(cb) {
-        _request("GET", userPath + "/repos", null, function(err, res) {
+        _request("GET", userPath + "/repos?type=all", null, function(err, res) {
           cb(err, res);
         });
       }
@@ -158,7 +158,7 @@
 
       this.list = function(cb) {
         _request("GET", repoPath + "/git/trees/" + branch + "?recursive=1", null, function(err, res) {
-          cb(err, res.tree);
+          cb(err, res ? res.tree : null);
         });
       };
 
@@ -170,12 +170,14 @@
         // TODO: implement properly
 
         that.list(function(err, tree) {
-          var sha = _.select(tree, function(file) {
+          var file = _.select(tree, function(file) {
             return file.path === path;
-          })[0].sha;
+          })[0];
+
+          if (!file) return cb("not found", null);
 
           // TODO: move metadata stuff outa here.
-          getBlob(sha, function(err, blob) {
+          getBlob(file.sha, function(err, blob) {
             function decode(blob) {
               if (blob.content) {
                 var data = blob.encoding == 'base64' ?
