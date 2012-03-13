@@ -7,9 +7,7 @@ views.Posts = Backbone.View.extend({
   },
 
   render: function() {
-    $(this.el).html(templates.posts(_.extend(this.model, {
-      repo: app.state.repo
-    })));
+    $(this.el).html(templates.posts(_.extend(this.model, app.state)));
     return this;
   }
 });

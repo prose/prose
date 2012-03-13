@@ -9,12 +9,12 @@ views.Header = Backbone.View.extend({
   },
 
   _switchRepository: function(e) {
-    router.navigate($(e.currentTarget).val() + "/posts", true);
+    router.navigate(app.state.user + "/" + $(e.currentTarget).val() + "/master", true);
     return false;
   },
 
   _switchPath: function(e) {
-    router.navigate(app.state.repo + "/" + $(e.currentTarget).val(), true);
+    router.navigate(app.state.user + "/" + app.state.repo + "/" + app.state.branch + "/" + $(e.currentTarget).val(), true);
     return false;
   },
 

@@ -1,7 +1,7 @@
 <% if (posts.length > 0) { %>
   <% _.each(posts, function(post) { %>
   <div class="post">
-    <a class="link load-post toggle-view" href="#<%= repo %>/<%= post.path %>">
+    <a class="link load-post toggle-view" href="#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>">
       <div class="image">
       </div>
 

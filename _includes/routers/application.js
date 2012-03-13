@@ -9,33 +9,37 @@ routers.Application = Backbone.Router.extend({
     // Using this.route, because order matters
     this.route(":repo", 'posts', this.posts);
     this.route(/(.*\/.*)/, 'posts', this.posts);
-    this.route(/(.*\/.*)\/.*\.md/, 'post', this.post);
+    this.route(/(.*\/.*)\/(.*\.md)/, 'post', this.post);
     this.route(/(.*\/.*)\/new$/, 'new_post', this.newPost);
     this.route("", "start", app.instance.start);
   },
 
   extractURL: function(url) {
     url = url.split('/');
-    return [
-      url.slice(0, 1).join('/'), // repo
-      (url.slice(1) || []).join('/') // path
-    ];
+
+    app.state = {
+      user: url[0],
+      repo: url[1],
+      branch: url[2],
+      path: (url.slice(3) || []).join('/')
+    };
+    return [app.state.user, app.state.repo, app.state.branch, app.state.path]
   },
 
-  // #example-repo/path/to/new
+  // #example-user/example-repo/gh-pages/path/to/new
   newPost: function(url) {
     app.instance.newPost.apply(this, this.extractURL(url));
   },
 
-  // #example-repo/path/to
-  // #example-repo
+  // #example-user/example-repo/gh-pages/path/to
+  // #example-user/example-repo/gh-pages
   posts: function(url) {
     app.instance.posts.apply(this, this.extractURL(url));
   },
 
-  // #example-repo/path/to/2012-01-01.md
-  post: function(url) {
-    app.instance.post.apply(this, this.extractURL(url));
+  // #example-user/example-repo/gh-pages/path/to/2012-01-01.md
+  post: function(url, file) {
+    app.instance.post.apply(this, this.extractURL(url).concat(file));
   }
 });
 

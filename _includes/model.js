@@ -25,7 +25,7 @@ function loadApplication(username, password, cb) {
 // 
 // List all postings for a given site plus load _config.yml
 
-function loadSite(reponame, branch, path, cb) {
+function loadSite(username, reponame, branch, path, cb) {
 
   var repo = github.getRepo(reponame, branch);
 
@@ -37,7 +37,7 @@ function loadSite(reponame, branch, path, cb) {
   }
 
   repo.list(function(err, tree) {
-    if (err && branch !== "master") return loadSite(reponame, "master", path, cb);
+    // if (err && branch !== "master") return loadSite(reponame, "master", path, cb);
     if (err) cb("Not a Jekyll repository.");
 
     // Load Jekyll config file (_config.yml)
@@ -47,6 +47,7 @@ function loadSite(reponame, branch, path, cb) {
       app.state.config = config;
 
       app.state.path = path ? path : config.columnist.paths[0];
+      // app.state.branch = branch;
 
       var posts = _.map(tree, function(file) {
         var regex = new RegExp("^" + app.state.path + "/(\\w|-)*.md$");
@@ -65,8 +66,9 @@ function loadSite(reponame, branch, path, cb) {
 // List all postings for a given repository
 // Looks into _posts/blog
 
-function savePost(reponame, path, metadata, content, cb) {
-  var repo = github.getRepo(reponame, "{{ site.github.branch }}");
+function savePost(username, reponame, branch, path, metadata, content, cb) {
+
+  var repo = github.getRepo(reponame, branch);
   function serialize(data) {
     return "---\n" + _.toYAML(data) + "\n---\n\n";
   }
@@ -80,10 +82,10 @@ function savePost(reponame, path, metadata, content, cb) {
 // List all postings for a given repository
 // Looks into _posts/blog
 
-function loadPost(reponame, path, cb) {
-  var repo = github.getRepo(reponame, "{{ site.github.branch }}");
+function loadPost(username, reponame, branch, path, file, cb) {
+  var repo = github.getRepo(reponame, branch);
 
-  repo.read(path, function(err, data) {
+  repo.read(path + "/" + file, function(err, data) {
 
     function parse(content) {
       var res = {};
