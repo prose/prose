@@ -2,12 +2,6 @@
 ---
 {% include vendor/reset.css %}
 
-/* ### Icons ### */
-@font-face {
-  font-family:'Iconic';
-  src:url('iconic.ttf');
-  }
-
 .i:before {
   margin-right:5px;
   font-size:18px;
@@ -27,7 +21,7 @@
 
 body,
 textarea,
-input { font:14px/20px Helvetica,Arial,sans-serif; }
+input { font:14px/20px 'Open Sans',Arial,sans-serif; }
 
 html {
   background:#e6e5e1;
