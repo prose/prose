@@ -1,15 +1,23 @@
 <div class="navigation">
   <div class="title">Columnist</div>
   <div class="sites">
-    <select name="site">
+    <select name="site" id="repository_name">
+      <option value="">- - - choose site - - -</option>
     <% _.each(available_repos, function(r, index) { %>
-      <option value="<%= repo.name %>"><%= r.name %></option>
+      <option value="<%= r.name %>"<%= repo === r.name ? 'selected="selected"' : '' %>><%= r.name %></option>
     <% }) %>
-
+    </select>
+  </div>
+  <div class="paths">
+    <select name="paths" id="repository_paths">
+      <option value="">- - - choose path - - -</option>
+      <% _.each(available_repos, function(r, index) { %>
+        <option value="<%= r.name %>"<%= repo === r.name ? 'selected="selected"' : '' %>><%= r.name %></option>
+      <% }) %>
     </select>
   </div>
   <div class="post"><a href="#">Posts</a></div>
-  <div class="post">Bar</div>
+  <div class="post"></div>
 </div>
 
 <div class="user-status">
