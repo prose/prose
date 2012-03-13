@@ -43,7 +43,9 @@ function loadSite(reponame, branch, path, cb) {
     // Load Jekyll config file (_config.yml)
     loadConfig(function(err, config) {
       if (err) return cb(err);
+      if (!config.columnist || !config.columnist.paths) return cb("not a valid jekyll repository");
       app.state.config = config;
+
       app.state.path = path ? path : config.columnist.paths[0];
 
       var posts = _.map(tree, function(file) {
