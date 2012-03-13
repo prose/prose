@@ -1,7 +1,10 @@
 <form id="new_post_form">
   <label>Filename</label>
-  <input type="text" name="filename" class="filename"/>
+  <input type="text" name="filename" class="filename" value="<%= new Date().format("Y-m-d") %>-your-post.md"/>
+  <label>Title</label>
+  <input type="text" name="title" class="title" value=""/>
+  <label>Subtitle</label>
+  <input type="text" name="subtitle" class="filename" value=""/>
 
   <input type="submit" value="New Document"/>
-
 </form>
