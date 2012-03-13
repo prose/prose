@@ -167,8 +167,6 @@
       // -------
 
       this.read = function(path, cb) {
-        // TODO: implement properly
-
         that.list(function(err, tree) {
           var file = _.select(tree, function(file) {
             return file.path === path;
@@ -176,7 +174,6 @@
 
           if (!file) return cb("not found", null);
 
-          // TODO: move metadata stuff outa here.
           getBlob(file.sha, function(err, blob) {
             function decode(blob) {
               if (blob.content) {
