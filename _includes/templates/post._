@@ -1,33 +1,40 @@
-<div class="metadata">
-  <form id="metadata_form">
-    <div>
-      <label>Title</label> <input type="text" name="title" id="post_title" value="<%= metadata.title %>"/>
+<div class='inner clearfix'>
+  <div class='publish'>
+    <div class='button-padding state'>
+      <a href='#' class='unpublished button'>unpublished</a>
     </div>
-    <div>
-      <label>Subtitle</label> <input type="text" name="subtitle" id="post_subtitle" value="<%= metadata.subtitle %>"/>
-    </div>
-    <div>
-      <label>Layout</label> <input type="text" name="layout" id="post_layout" value="<%= metadata.layout %>"/>
-    </div>
-    <div>
-      <label>Category</label> <input type="text" name="category" id="post_category" value="<%= metadata.category %>"/>
-    </div>
-    <div>
-      <label>Permalink</label> <input type="text" name="permalink" id="post_permalink" value="<%= metadata.permalink %>"/>
-    </div>
-    <div>
-      <label>Image</label> <input type="text" name="image" id="post_image" value="<%= metadata.image %>"/>
-    </div>
-    <div>
-      <label>Published</label> <input type="checkbox" name="published" id="post_published"<% if (!metadata.hidden) { %> checked="checked" <% } %>/>
-    </div>
-    <div>
-      <label>Remark</label> <input type="text" name="commit_message" id="commit_message" value="Update <%= file %>"/>
-    </div>
-  </form>
-</div>
+    <label>Published</label>
+    <input type='checkbox' name='published' id='post_published'<% if (!metadata.hidden) { %> checked='checked' <% } %>/>
+    <a class='save-post' href='#'>Save</a>
+  </div>
 
-<div class="content">
-  <a class="save-post" href="#">Save</a>
-  <textarea id="code" name="code"><%= content %></textarea>
+  <div class='document'>
+    <div class='metadata'>
+      <a href='#' class='icon meta'>Toggle Metadata</a>
+      <form id='metadata_form'>
+        <h3><small>Post options</small></h3>
+        <label>Image</label>
+        <input type='text' name='image' id='post_image' value='<%= metadata.image %>'/>
+        <label>Category</label>
+        <input type='text' name='category' id='post_category' value='<%= metadata.category %>'/>
+        <label>Permalink</label>
+        <input type='text' name='permalink' id='post_permalink' value='<%= metadata.permalink %>'/>
+      </form>
+    </div>
+
+    <div class='content'>
+      <div class='history'>
+        <a href='#' class='icon clock'>clock</a>
+      </div>
+      <div>
+        <label>Remark</label> <input type="text" name="commit_message" id="commit_message" value="Update <%= file %>"/>
+      </div>
+      <div>
+        <input type='text' name='title' id='post_title' value='<%= metadata.title %>'/>
+        <input type='text' name='subtitle' id='post_subtitle' value='<%= metadata.subtitle %>'/>
+      </div>
+      <textarea id='code' name='code'><%= content %></textarea>
+    </div>
+
+  </div>
 </div>
