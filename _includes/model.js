@@ -106,13 +106,12 @@ function loadSite(username, reponame, branch, path, cb) {
 // List all postings for a given repository
 // Looks into _posts/blog
 
-function savePost(username, reponame, branch, path, metadata, content, cb) {
-
+function savePost(username, reponame, branch, path, file, metadata, content, cb) {
   var repo = github().getRepo(reponame, branch);
   function serialize(data) {
     return "---\n" + _.toYAML(data) + "\n---\n\n";
   }
-  repo.write(path, serialize(metadata)+content, cb);
+  repo.write(path + "/" + file, serialize(metadata)+content, cb);
 }
 
 
@@ -144,6 +143,6 @@ function loadPost(username, reponame, branch, path, file, cb) {
     var post = parse(data);
 
     // We're done. Can you hear me?!
-    cb(err, _.extend(post, {"repo": reponame, "path": path}));
+    cb(err, _.extend(post, {"repo": reponame, "path": path, "file": file}));
   });
 }
