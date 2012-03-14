@@ -18,7 +18,7 @@ views.Post = Backbone.View.extend({
       hidden: !this.$('#post_published').val()
     }
 
-    savePost(this.model.repo, this.model.path, metadata, this.editor.getValue(), function(err) {
+    savePost(app.state.username, app.state.repo, app.state.branch, this.model.path, this.model.file, metadata, this.editor.getValue(), function(err) {
       console.log('Saved');
     });
     return false;
@@ -46,7 +46,6 @@ views.Post = Backbone.View.extend({
     $(this.el).html(templates.post(this.model));
 
     this.initEditor();
-
     return this;
   }
 });
