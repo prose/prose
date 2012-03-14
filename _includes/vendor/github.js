@@ -116,11 +116,11 @@
       // Create a new commit object with the current commit SHA as the parent
       // and the new tree SHA, getting a commit SHA back
 
-      function createCommit(parent, tree, cb) {
+      function createCommit(parent, tree, message, cb) {
         var data = {
-          "message": "Spooky. Isn't it?",
+          "message": message,
           "author": {
-            "name": "Ghost"
+            "name": username
           },
           "parents": [
             parent
@@ -195,12 +195,12 @@
       // Write file contents on a given path
       // -------
 
-      this.write = function(path, content, cb) {
+      this.write = function(path, content, message, cb) {
         getLatestCommit(function(err, latestCommit) {
           getTree(latestCommit, function(err, tree) {
             postBlob(content, function(err, blob) {
               postTree(tree, path, blob, function(err, tree) {
-                createCommit(latestCommit, tree, function(err, commit) {
+                createCommit(latestCommit, tree, message, function(err, commit) {
                   updateHead(commit, function(err) {
                     cb(err);
                   });

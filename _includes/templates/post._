@@ -21,6 +21,9 @@
     <div>
       <label>Published</label> <input type="checkbox" name="published" id="post_published"<% if (!metadata.hidden) { %> checked="checked" <% } %>/>
     </div>
+    <div>
+      <label>Remark</label> <input type="text" name="commit_message" id="commit_message" value="Update <%= file %>"/>
+    </div>
   </form>
 </div>
 
