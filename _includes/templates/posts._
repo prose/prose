@@ -1,17 +1,17 @@
 <% if (posts.length > 0) { %>
   <% _.each(posts, function(post) { %>
-  <div class="post">
-    <a class="link load-post toggle-view" href="#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>">
-      <div class="image">
+  <div class='post'>
+    <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
+      <div class='image'>
       </div>
 
-      <div class="title">
+      <div class='title'>
         <%= post.title || 'Untitled' %>
       </div>
     </a>
 
-    <div class="author"><a href="#">an author</a></div>
-    <div class="updated-at"><span>updated </span><%= "234234123" %></div>
+    <div class='author'><a href='#'>an author</a></div>
+    <div class='updated-at'><span>updated </span><%= '234234123' %></div>
   </div>
   <% }); %>
 <% } else { %>
