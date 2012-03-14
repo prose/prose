@@ -15,7 +15,6 @@
 {% include vendor/jquery.cookie.js %}
 
 window.app = {
-    
     config: {},
     models: {},
     views: {},
@@ -25,8 +24,8 @@ window.app = {
         memo[el.getAttribute('name')] = _(el.innerHTML).template();
         return memo;
     }, {}),
-    state: {"repo": ""},
-    instance: {},
+    state: {'repo': ''},
+    instance: {}
 };
 
 window.args = _(window.app).toArray();
@@ -47,17 +46,17 @@ window.args = _(window.app).toArray();
 window.session = {};
 
 (function(config, models, views, routers, utils, templates) {
-  $(function() {
+    $(function() {
 
-  loadApplication("{{site.github.username}}", "{{site.github.password}}", function(err, data) {
-    // Start the engines
-    window.app.instance = new views.Application({ el: '#container', model: data }).render();
+        loadApplication('{{site.github.username}}', '{{site.github.password}}', function(err, data) {
+            // Start the engines
+            window.app.instance = new views.Application({ el: '#container', model: data }).render();
 
-    // Initialize router
-    window.router = new routers.Application({});
-    
-    // Start responding to routes
-    Backbone.history.start();
-  });
-  });
+            // Initialize router
+            window.router = new routers.Application({});
+
+            // Start responding to routes
+            Backbone.history.start();
+        });
+    });
 }).apply(this, window.args);

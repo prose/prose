@@ -15,6 +15,36 @@
   </ul></form>
 </div>
 <% } else { %>
-  <h2>Welcome, choose a repository</h2>
+
+
+<!--Profile and Link-->
+<div class='user-status'>
+  <div class='user'>michael</div>
+  <div class='logout'><a href='#'>Logout</div>
+  <div class='new-post'><a href='#<%= repo %>/<%= path %>/new'>New Post</a></div>
+</div>
+
+<!--Github account and links-->
+<div class='sites'>
+  <select name='site' id='repository_name'>
+    <option value=''>- - - choose site - - -</option>
+    <% _.each(available_repos, function(r, index) { %>
+      <option value='<%= r.name %>'<%= repo === r.name ? 'selected="selected"' : '' %>><%= r.name %></option>
+    <% }) %>
+  </select>
+</div>
+
+<% if (repo) { %>
+<div class='paths'>
+  <select name='paths' id='repository_paths'>
+    <% _.each(paths, function(p, index) { %>
+      <option value='<%= p %>'<%= path === p ? 'selected="selected"' : '' %>><%= p %></option>
+    <% }) %>
+  </select>
+</div>
+<% } %>
+<div class='post'><a href='#'>Posts</a></div>
+<div class='post'></div>
+
 <% } %>
 

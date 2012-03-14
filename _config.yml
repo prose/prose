@@ -1,5 +1,15 @@
 auto: true
+title: Columnist
 server: true
+github:
+  username: "tristen"
+  password: "Fallsem0"
+  default-branch: "master"
+  posts-dir: "_posts"
+columnist:
+  track-directories:
+  - _posts/articles
+  - _posts/projects
 exclude:
 - .gitignore
 - README.md
