@@ -5,16 +5,22 @@ views.Header = Backbone.View.extend({
 
   events: {
     "change #repository_name": "_switchRepository",
-    "change #repository_paths": "_switchPath"
+    "change #repository_paths": "_switchPath",
+    "click a.logout": "_logout"
+  },
+
+  _logout: function() {
+    logout();
+    window.location.href = '';
   },
 
   _switchRepository: function(e) {
-    router.navigate(app.state.user + "/" + $(e.currentTarget).val() + "/master", true);
+    router.navigate(app.username + "/" + $(e.currentTarget).val() + "/master", true);
     return false;
   },
 
   _switchPath: function(e) {
-    router.navigate(app.state.user + "/" + app.state.repo + "/" + app.state.branch + "/" + $(e.currentTarget).val(), true);
+    router.navigate(app.username + "/" + app.state.repo + "/" + app.state.branch + "/" + $(e.currentTarget).val(), true);
     return false;
   },
 

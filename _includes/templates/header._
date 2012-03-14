@@ -1,2 +1,13 @@
 <a href='{{site.baseurl}}' class='title icon'>Columnist</a>
-<a href='{{site.baseurl}}' class='user'>michael</a>
+<div class='user-status'>
+  <% if (app.username) { %>
+    <a class='user'><%= app.username %></a>
+    <div class='logout'><a href='#' class='logout'>Logout</div>
+
+    <% if (repo && path) { %>
+      <div class='new-post'><a href='#<%= repo %>/<%= path %>/new'>New Post</a></div>
+    <% } %>
+  <% } else { %>
+
+  <% } %>
+</div>

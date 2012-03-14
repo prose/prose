@@ -1,15 +1,14 @@
-<!-- if not logged in -->
 <% if (!authenticated) { %>
 <div class='start dialog'>
   <div id='hint'></div>
-  <form><ul class='form'>
+  <form id="login_form"><ul class='form'>
     <li>
       <label>GitHub user</label>
-      <input type='text' name='user' placeholder='username' size='24' />
+      <input type='text' name='user' id="github_user" placeholder='username' size='24' />
     </li>
     <li>
       <label>Password</label>
-      <input type='password' name='password' placeholder='password' size='24' />
+      <input type='password' id="github_password" name='password' placeholder='password' size='24' />
       <input type='submit' value='Log in' />
     </li>
   </ul></form>

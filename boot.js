@@ -30,6 +30,9 @@ window.app = {
 
 window.args = _(window.app).toArray();
 
+// Authenticate
+var credentials = getCredentials();
+if (credentials) _.extend(app, credentials);
 
 {% include util.js %}
 {% include model.js %}
@@ -41,9 +44,6 @@ window.args = _(window.app).toArray();
 {% include views/post.js %}
 {% include views/new_post.js %}
 
-
-// Keep session here?
-window.session = {};
 
 (function(config, models, views, routers, utils, templates) {
     $(function() {
