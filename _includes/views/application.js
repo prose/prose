@@ -77,7 +77,7 @@ views.Application = Backbone.View.extend({
 
   start: function() {
     this.header.render();
-    this.replaceMainView("start", new views.Start({id: "start", model: {authenticated: true}}).render());
+    this.replaceMainView("start", new views.Start({id: "start", model: {authenticated: authenticated()}}).render());
   }
 
 });

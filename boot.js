@@ -15,7 +15,6 @@
 {% include vendor/jquery.cookie.js %}
 
 window.app = {
-    
     config: {},
     models: {},
     views: {},
@@ -31,6 +30,9 @@ window.app = {
 
 window.args = _(window.app).toArray();
 
+// Authenticate
+var credentials = getCredentials();
+if (credentials) _.extend(app, credentials);
 
 {% include util.js %}
 {% include model.js %}
@@ -43,21 +45,18 @@ window.args = _(window.app).toArray();
 {% include views/new_post.js %}
 
 
-// Keep session here?
-window.session = {};
-
 (function(config, models, views, routers, utils, templates) {
   $(function() {
 
-  loadApplication("{{site.github.username}}", "{{site.github.password}}", function(err, data) {
-    // Start the engines
-    window.app.instance = new views.Application({ el: '#container', model: data }).render();
+    loadApplication(function(err, data) {
+      // Start the engines
+      window.app.instance = new views.Application({ el: '#container', model: data }).render();
 
-    // Initialize router
-    window.router = new routers.Application({});
-    
-    // Start responding to routes
-    Backbone.history.start();
-  });
+      // Initialize router
+      window.router = new routers.Application({});
+      
+      // Start responding to routes
+      Backbone.history.start();
+    });
   });
 }).apply(this, window.args);

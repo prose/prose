@@ -1,4 +1,5 @@
 auto: true
+title: Columnist
 server: true
 exclude:
 - .gitignore
