@@ -1,38 +1,34 @@
-<div class="navigation">
-  <div class="title">Columnist</div>
+<a href='{{site.baseurl}}' class='title icon'>Columnist</a>
   <% if (app.username) { %>
-    <div class="sites">
-      <select name="site" id="repository_name">
-        <option value="">- - - choose site - - -</option>
-      <% _.each(available_repos, function(r, index) { %>
-        <option value="<%= r.name %>"<%= repo === r.name ? 'selected="selected"' : '' %>><%= r.name %></option>
-      <% }) %>
+    <div class='user-status'>
+      <a class='user'><%= app.username %></a>
+      <div class='logout'><a href='#' class='logout'>Logout</div>
+      <% if (repo && path) { %>
+        <div class='new-post'><a href='#<%= repo %>/<%= path %>/new'>New Post</a></div>
+      <% } %>
+    </div>
+
+    <!--Github account and links-->
+    <div class='sites'>
+      <select name='site' id='repository_name'>
+        <option value=''>- - - choose site - - -</option>
+        <% _.each(available_repos, function(r, index) { %>
+          <option value='<%= r.name %>'<%= repo === r.name ? 'selected="selected"' : '' %>><%= r.name %></option>
+        <% }) %>
       </select>
     </div>
+
     <% if (repo) { %>
-      <div class="paths">
-        <select name="paths" id="repository_paths">
-          <% _.each(paths, function(p, index) { %>
-            <option value="<%= p %>"<%= path === p ? 'selected="selected"' : '' %>><%= p %></option>
-          <% }) %>
-        </select>
-      </div>
-    <% } %>
-  <% } %>
-  <div class="post"></div>
-</div>
+    <div class='paths'>
+      <select name='paths' id='repository_paths'>
+        <% _.each(paths, function(p, index) { %>
+          <option value='<%= p %>'<%= path === p ? 'selected="selected"' : '' %>><%= p %></option>
+        <% }) %>
+      </select>
+    </div>
 
-<div class="user-status">
-  <% if (app.username) { %>
-    <div class="user"><%= app.username %></div>
-    <div class="logout"><a href="#" class="logout">Logout</div>
-
-    <% if (repo && path) { %>
-      <div class="new-post"><a href="#<%= repo %>/<%= path %>/new">New Post</a></div>
     <% } %>
   <% } else { %>
-
+    <div>not logged in</div>
   <% } %>
-  
-  
-</div>
+

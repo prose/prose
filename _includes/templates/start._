@@ -14,6 +14,10 @@
   </ul></form>
 </div>
 <% } else { %>
-  <h2>Welcome, choose a repository</h2>
+
+<!--Profile and Link-->
+
+<div><br/><br/><br/>insert repository selection here</div>
+
 <% } %>
 
