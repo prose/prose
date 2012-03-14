@@ -1,23 +1,66 @@
-window.github = new Github({
-  username: "{{ site.github.username }}",
-  password: "{{ site.github.password }}"
-});
+
+// Gimme a Github object! Please.
+function github() {
+  return new Github({
+    username: app.username,
+    password: app.password,
+    auth: "basic"
+  });
+}
+
+
+// Authentication
+// -------
+// 
+// Load everything that's needed for the app + header
+
+function login(credentials, cb) {
+  $.ajax({
+      type: "GET",
+      url: 'https://api.github.com/users/michael',
+      dataType: 'json',
+      contentType: 'application/x-www-form-urlencoded',
+      success: function(res) { 
+        // app.username = credentials.username;
+        $.cookie("auth", Base64.encode(JSON.stringify(credentials)));
+        cb(null);
+      },
+      error: function(err) { cb("Bad credentials"); },
+      headers : { Authorization : 'Basic ' + Base64.encode(credentials.username + ':' + credentials.password) }
+  });
+}
+
+function logout() {
+  $.cookie("auth", null);
+}
+
+function getCredentials() {
+  var auth = $.cookie('auth'),
+      credentials = auth ? JSON.parse(Base64.decode(auth)) : null;
+  if (credentials) app.username = credentials.username;
+  return credentials;
+}
+
+function authenticated() {
+  return !!getCredentials();
+}
+
 
 // Load Application
 // -------
 // 
 // Load everything that's needed for the app + header
 
-function loadApplication(username, password, cb) {
-  var user = github.getUser('{{ site.github.username }}');
-  user.repos(function(err, repos) {
-    // TODO: filter and just show Jekyll repositories
-    cb(null, {
-      "username": "{{ site.github.username }}",
-      "password": "{{ site.github.password }}",
-      "available_repos": repos
+function loadApplication(cb) {
+  if (app.username) {
+    var user = github().getUser(app.username);
+    user.repos(function(err, repos) {
+      // TODO: filter and just show Jekyll repositories
+      cb(null, { "available_repos": repos });
     });
-  });
+  } else {
+    cb(null, { "available_repos": [] });
+  }
 }
 
 // Load Site
@@ -27,7 +70,7 @@ function loadApplication(username, password, cb) {
 
 function loadSite(username, reponame, branch, path, cb) {
 
-  var repo = github.getRepo(reponame, branch);
+  var repo = github().getRepo(reponame, branch);
 
   function loadConfig(cb) {
     repo.read("_config.yml", function(err, data) {
@@ -37,17 +80,14 @@ function loadSite(username, reponame, branch, path, cb) {
   }
 
   repo.list(function(err, tree) {
-    // if (err && branch !== "master") return loadSite(reponame, "master", path, cb);
-    if (err) cb("Not a Jekyll repository.");
+    if (err) cb("Not a valid Jekyll repository.");
 
     // Load Jekyll config file (_config.yml)
     loadConfig(function(err, config) {
       if (err) return cb(err);
-      if (!config.columnist || !config.columnist.paths) return cb("not a valid jekyll repository");
+      if (!config.columnist || !config.columnist.paths) return cb("Not a valid Jekyll repository");
       app.state.config = config;
-
       app.state.path = path ? path : config.columnist.paths[0];
-      // app.state.branch = branch;
 
       var posts = _.map(tree, function(file) {
         var regex = new RegExp("^" + app.state.path + "/(\\w|-)*.md$");
@@ -68,7 +108,7 @@ function loadSite(username, reponame, branch, path, cb) {
 
 function savePost(username, reponame, branch, path, metadata, content, cb) {
 
-  var repo = github.getRepo(reponame, branch);
+  var repo = github().getRepo(reponame, branch);
   function serialize(data) {
     return "---\n" + _.toYAML(data) + "\n---\n\n";
   }
@@ -83,7 +123,7 @@ function savePost(username, reponame, branch, path, metadata, content, cb) {
 // Looks into _posts/blog
 
 function loadPost(username, reponame, branch, path, file, cb) {
-  var repo = github.getRepo(reponame, branch);
+  var repo = github().getRepo(reponame, branch);
 
   repo.read(path + "/" + file, function(err, data) {
 
