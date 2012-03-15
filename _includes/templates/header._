@@ -15,8 +15,5 @@
         </select>
       </div>
     <% } %>
-
-  <% } else { %>
-    <div>not logged in</div>
   <% } %>
 
