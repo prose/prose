@@ -1,30 +1,43 @@
-<!-- Path selection -->
-<div class='paths'>
-  <h1>Category</h1>
-  <select name='paths' id='repository_paths'>
-    <% _.each(paths, function(p, index) { %>
-      <option value='<%= p.path %>'<%= path === p.path ? 'selected="selected"' : '' %>><%= p.name %></option>
-    <% }) %>
-  </select>
+<div class='inner'>
+  <!-- Path selection -->
+  <div class='paths'>
+    <h1><small>Category</small></h1>
+      <ul>
+        <li class='dropdown'>
+          <% if (path) { %>
+          <a class='dropdown-toggle' data-toggle='dropdown' href='#'><%= path %></a>
+          <% } else { %>
+          <a class='dropdown-toggle' data-toggle='dropdown' href='#'>Choose a content type</a>
+          <% } %>
+          <ul class='dropdown-menu'>
+            <% _.each(paths, function(p, index) { %>
+            <li><a href='<%= p.path %>'><%= p.path %></a></li>
+            <% }) %>
+          </ul>
+        </li>
+      </ul>
+  </div>
+
+  <% if (posts.length > 0) { %>
+    <% _.each(posts, function(post) { %>
+      <div class='post'>
+        <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
+          <div class='image'>
+          </div>
+
+          <div class='title'>
+            <%= post.title || 'Untitled' %>
+          </div>
+        </a>
+
+        <div class='published-on'><span>Published on </span><%= post.date.toDateString() %></div>
+      </div>
+    <% }); %>
+  <% } else { %>
+    <h2>No Posts yet</h2>
+  <% } %>
+
+  <div class='button-padding'>
+    <a class='button' href='#<%= user %>/<%= repo %>/<%= path %>/new'>New Post</a>
+  </div>
 </div>
-
-<div class='new-post'><a href='#<%= user %>/<%= repo %>/<%= path %>/new'>New Post</a></div>
-
-<% if (posts.length > 0) { %>
-  <% _.each(posts, function(post) { %>
-    <div class='post'>
-      <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
-        <div class='image'>
-        </div>
-
-        <div class='title'>
-          <%= post.title || 'Untitled' %>
-        </div>
-      </a>
-
-      <div class='published-on'><span>Published on </span><%= post.date.toDateString() %></div>
-    </div>
-  <% }); %>
-<% } else { %>
-  <h2>No Posts yet ...</h2>
-<% } %>
