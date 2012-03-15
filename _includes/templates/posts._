@@ -1,9 +1,9 @@
 <!-- Path selection -->
 <div class='paths'>
-  <h1>Article Type</h1>
+  <h1>Category</h1>
   <select name='paths' id='repository_paths'>
     <% _.each(paths, function(p, index) { %>
-      <option value='<%= p %>'<%= path === p ? 'selected="selected"' : '' %>><%= p %></option>
+      <option value='<%= p.path %>'<%= path === p.path ? 'selected="selected"' : '' %>><%= p.name %></option>
     <% }) %>
   </select>
 </div>
