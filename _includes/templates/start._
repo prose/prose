@@ -17,13 +17,13 @@
     </ul></form>
   </div>
   <% } else { %>
-    <h1>Welcome, please choose a site:</h1>
-    <div class='sites'>
+  <div class='sites'>
+    <h1><small>Choose a site</small></h1>
+    <ul class='site'>
       <% _.each(available_repos, function(r, index) { %>
-        <div class='site'>
-          <a href='#<%= app.username %>/<%= r.name %>/master'><%= r.name %></a>
-        </div>
+      <li><a href='#<%= app.username %>/<%= r.name %>/master'><%= r.name %></a></li>
       <% }) %>
-    </div>
+    </ul>
+  </div>
   <% } %>
 </div>

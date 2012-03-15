@@ -1,19 +1,38 @@
-<a href='{{site.baseurl}}' class='title icon'>Columnist</a>
-  <% if (app.username) { %>
-    <div class='user-status'>
-      <a class='user'><%= app.username %></a>
-      <div class='logout'><a href='#' class='logout'>Logout</div>
-    </div>
+<a href='{{site.baseurl}}' class='title icon logo'>Columnist</a>
 
     <!--Github account and links-->
     <% if (repo) { %>
       <div class='sites'>
-        <select name='site' id='repository_name'>
-          <% _.each(available_repos, function(r, index) { %>
-            <option value='<%= r.name %>'<%= repo === r.name ? 'selected="selected"' : '' %>><%= r.name %></option>
-          <% }) %>
-        </select>
+        <ul>
+          <li class='dropdown'>
+            <% if (repo) { %>
+            <a class='dropdown-toggle' data-toggle='dropdown' href='#'><%= repo %></a>
+            <% } else { %>
+            <a class='dropdown-toggle' data-toggle='dropdown' href='#'>Choose a Site</a>
+            <% } %>
+            <ul class='dropdown-menu'>
+              <% _.each(available_repos, function(r, index) { %>
+              <li><a href='<%= r.name %>'><%= r.name %></a></li>
+              <% }) %>
+            </ul>
+          </li>
+        </ul>
       </div>
     <% } %>
+
+  <% if (app.username) { %>
+    <div class='user-status'>
+      <ul>
+        <li class='dropdown'>
+          <a class='dropdown-toggle user' data-toggle='dropdown' href='#'>
+            <%= app.username %>
+            <b class='caret'></b>
+          </a>
+          <ul class='dropdown-menu'>
+            <li><a href='#' class='logout'>Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
   <% } %>
 
