@@ -194,6 +194,7 @@ input[type=button]:hover,
 input[type=submit]:hover {
   background-color:#f28745;
   border-color:#F07225;
+  color: #fff;
   }
 
 .button:active,
@@ -224,7 +225,7 @@ input[type=submit]:active {
 .button.inactive:hover,
 .button.inactive:active,
 .button.inactive.active {
-  text-shadow:none;
+  text-shadow: none;
   background:#eee;
   color:#bbb;
   border-color:#dfdfdf;
