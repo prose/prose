@@ -102,10 +102,15 @@ function loadSite(username, reponame, branch, path, cb) {
           // TODO: put regexp to _config.yml
           var regexp = new RegExp("^(.*)/(\\d{4}-\\d{2}-\\d{2})-(.*).md$");
           var groups = path.match(regexp);
+
+          function prettifyTitle(str) { 
+            return str.replace(/-/g, " ").replace(/^./, str[0].toUpperCase());
+          }
+
           return {
             path: path,
             date: new Date(groups[2]),
-            title: groups[3]
+            title: prettifyTitle(groups[3])
           }
         }
         return regex.test(file.path) ? semantify(file.path) : null;
