@@ -29,6 +29,7 @@
             <b class='caret'></b>
           </a>
           <ul class='dropdown-menu'>
+            <li><a href='/' >Sites</a></li>
             <li><a href='#' class='logout'>Logout</a></li>
           </ul>
         </li>
