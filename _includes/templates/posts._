@@ -1,18 +1,30 @@
+<!-- Path selection -->
+<div class='paths'>
+  <h1>Article Type</h1>
+  <select name='paths' id='repository_paths'>
+    <% _.each(paths, function(p, index) { %>
+      <option value='<%= p %>'<%= path === p ? 'selected="selected"' : '' %>><%= p %></option>
+    <% }) %>
+  </select>
+</div>
+
+<div class='new-post'><a href='#<%= user %>/<%= repo %>/<%= path %>/new'>New Post</a></div>
+
 <% if (posts.length > 0) { %>
   <% _.each(posts, function(post) { %>
-  <div class='post'>
-    <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
-      <div class='image'>
-      </div>
+    <div class='post'>
+      <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
+        <div class='image'>
+        </div>
 
-      <div class='title'>
-        <%= post.title || 'Untitled' %>
-      </div>
-    </a>
+        <div class='title'>
+          <%= post.title || 'Untitled' %>
+        </div>
+      </a>
 
-    <div class='author'><a href='#'>an author</a></div>
-    <div class='updated-at'><span>updated </span><%= '234234123' %></div>
-  </div>
+      <div class='author'><a href='#'>an author</a></div>
+      <div class='updated-at'><span>updated </span><%= '234234123' %></div>
+    </div>
   <% }); %>
 <% } else { %>
   <h2>No Posts yet ...</h2>

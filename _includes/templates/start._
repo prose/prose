@@ -14,10 +14,14 @@
   </ul></form>
 </div>
 <% } else { %>
-
-<!--Profile and Link-->
-
-<div><br/><br/><br/>insert repository selection here</div>
-
+  <div><br/><br/><br/>
+    <h1>Welcome, please choose a site:</h1>
+    <div class="sites">
+      <% _.each(available_repos, function(r, index) { %>
+        <div class="site">
+          <a href="#<%= app.username %>/<%= r.name %>/master"><%= r.name %></a>
+        </div>
+      <% }) %>
+    </div>
+  </div>
 <% } %>
-
