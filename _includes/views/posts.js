@@ -2,15 +2,15 @@
 
 views.Posts = Backbone.View.extend({
   events: {
-    "change #repository_paths": "_switchPath",
+    'change #repository_paths': '_switchPath',
   },
 
   initialize: function(options) {
-    
+
   },
 
   _switchPath: function(e) {
-    router.navigate(app.username + "/" + app.state.repo + "/" + app.state.branch + "/" + $(e.currentTarget).val(), true);
+    router.navigate(app.username + '/' + app.state.repo + '/' + app.state.branch + '/' + $(e.currentTarget).val(), true);
     return false;
   },
 

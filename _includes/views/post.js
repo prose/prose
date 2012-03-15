@@ -47,7 +47,6 @@ views.Post = Backbone.View.extend({
     setTimeout(function() {
       that.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
           mode: 'markdown',
-          lineNumbers: true,
           lineWrapping: true,
           matchBrackets: true,
           theme: "default"

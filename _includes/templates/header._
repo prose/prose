@@ -10,13 +10,10 @@
       <div class='sites'>
         <select name='site' id='repository_name'>
           <% _.each(available_repos, function(r, index) { %>
-            <option value='<%= r.name %>'<%= repo === r.name ? 'selected="selected"' : '' %>><%= r.name %></option>
+            <option value='<%= r.name %>'<%= repo === r.name ? 'selected='selected'' : '' %>><%= r.name %></option>
           <% }) %>
         </select>
       </div>
     <% } %>
-
-  <% } else { %>
-    <div>not logged in</div>
   <% } %>
 
