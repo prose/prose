@@ -405,7 +405,7 @@ body.start #header {
   }
 
 .start .sites,
-#login_form {
+.dialog form {
   width: 240px;
   position: absolute;
   left: 50%;
@@ -471,6 +471,11 @@ ul.site li a {
     padding:20px;
     }
 .form li { line-height:30px; }
+
+
+/* ------------------------------------------
+  New post
+---------------------------------------------*/
 
 
 /* ------------------------------------------
