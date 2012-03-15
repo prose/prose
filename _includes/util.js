@@ -15,7 +15,7 @@ _.toYAML = function(data) {
     }
 
     if (_.isArray(val)) return "\n"+serializeArray(val);
-    return _.isNumber(val) ? val : "\""+val+"\"";
+    return _.isNumber(val) || _.isBoolean(val) ? val : "\""+val+"\"";
   }
   return Object.keys(data).map(function(key) {
     return key +": "+ serializeValue(data[key]);
