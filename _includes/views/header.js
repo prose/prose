@@ -25,7 +25,6 @@ views.Header = Backbone.View.extend({
   render: function() {
     $(this.el).html(templates.header(_.extend(this.model, { 
       repo: app.state.repo,
-      paths: app.state.config ? app.state.config.columnist.paths : null,
       path: app.state.path ? app.state.path : null
     })));
     return this;

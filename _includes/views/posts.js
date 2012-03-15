@@ -16,7 +16,7 @@ views.Posts = Backbone.View.extend({
 
   render: function() {
     $(this.el).html(templates.posts(_.extend(this.model, app.state, {
-      paths: app.state.config ? app.state.config.columnist.paths : null
+      paths: app.state.paths
     })));
     return this;
   }
