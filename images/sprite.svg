@@ -27,16 +27,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.92616448"
-     inkscape:cx="78.265177"
-     inkscape:cy="-55.678125"
+     inkscape:zoom="3.7046579"
+     inkscape:cx="87.050965"
+     inkscape:cy="144.07041"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="true"
+     showgrid="false"
      inkscape:window-width="1280"
      inkscape:window-height="756"
-     inkscape:window-x="64"
-     inkscape:window-y="17"
+     inkscape:window-x="59"
+     inkscape:window-y="23"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -87,7 +87,7 @@
        y="1007.3622" />
     <text
        xml:space="preserve"
-       style="font-size:32.89473724px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#666666;fill-opacity:1;stroke:none;display:inline;enable-background:new;font-family:Sans;-inkscape-font-specification:Helvetica"
+       style="font-size:32.89473724px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#404040;fill-opacity:1;stroke:none;display:inline;enable-background:new;font-family:Sans;-inkscape-font-specification:Helvetica"
        x="-1.3486843"
        y="977.0332"
        id="text15821"
@@ -96,6 +96,21 @@
          id="tspan15823"
          x="-1.3486843"
          y="977.0332"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#666666;fill-opacity:1;font-family:Abril Fatface;-inkscape-font-specification:Abril Fatface">Columnist</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#404040;fill-opacity:1;font-family:Abril Fatface;-inkscape-font-specification:Abril Fatface">Columnist</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5633"
+       y="872.37732"
+       x="-91.785667"
+       style="font-size:50.65678787px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#404040;fill-opacity:1;stroke:none;display:inline;enable-background:new;font-family:Sans;-inkscape-font-specification:Helvetica"
+       xml:space="preserve"
+       inkscape:export-filename="/Users/tristen/devseed/columnist/images/front-logo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#404040;fill-opacity:1;font-family:Abril Fatface;-inkscape-font-specification:Abril Fatface"
+         y="872.37732"
+         x="-91.785667"
+         id="tspan5635"
+         sodipodi:role="line">Columnist</tspan></text>
   </g>
 </svg>
