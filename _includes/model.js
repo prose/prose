@@ -96,7 +96,19 @@ function loadSite(username, reponame, branch, path, cb) {
 
       var posts = _.map(tree, function(file) {
         var regex = new RegExp("^" + app.state.path + "/(\\w|-)*.md$");
-        return regex.test(file.path) ? {path: file.path, title: file.path} : null;
+
+        // Make sense of the file path
+        function semantify(path) {
+          // TODO: put regexp to _config.yml
+          var regexp = new RegExp("^(.*)/(\\d{4}-\\d{2}-\\d{2})-(.*).md$");
+          var groups = path.match(regexp);
+          return {
+            path: path,
+            date: new Date(groups[2]),
+            title: groups[3]
+          }
+        }
+        return regex.test(file.path) ? semantify(file.path) : null;
       });
 
       cb(null, {"posts": _.compact(posts)});

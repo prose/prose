@@ -7,9 +7,7 @@ github:
   default-branch: "master"
   posts-dir: "_posts"
 columnist:
-  track-directories:
-  - _posts/articles
-  - _posts/projects
+  semantify-post-path: "^(.*)/(\\d{4}-\\d{2}-\\d{2})(.*)"
 exclude:
 - .gitignore
 - README.md

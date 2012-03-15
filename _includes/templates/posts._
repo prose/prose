@@ -22,8 +22,7 @@
         </div>
       </a>
 
-      <div class='author'><a href='#'>an author</a></div>
-      <div class='updated-at'><span>updated </span><%= '234234123' %></div>
+      <div class='published-on'><span>Published on </span><%= post.date.toDateString() %></div>
     </div>
   <% }); %>
 <% } else { %>
