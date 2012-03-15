@@ -5,19 +5,19 @@ views.Post = Backbone.View.extend({
   id: 'post',
 
   events: {
-      'click .save-post' : 'save',
-      'click .state a': 'publish',
-      'click .meta': 'toggleMeta'
+    'click .save-post' : 'save',
+    'click .state a': 'publish',
+    'click .meta': 'toggleMeta'
   },
 
   publish: function(e) {
-      e.preventDefault();
-      // TODO replace save with publish and pass in commit message options
+    e.preventDefault();
+    // TODO replace save with publish and pass in commit message options
   },
 
   toggleMeta: function(e) {
-      e.preventDefault();
-      $('.metadata').toggleClass('open');
+    e.preventDefault();
+    $('.metadata').toggleClass('open');
   },
 
   save: function() {
@@ -37,10 +37,6 @@ views.Post = Backbone.View.extend({
     });
     return false;
   },
-
-    initialize: function(options) {
-
-    },
 
   initEditor: function() {
     var that = this;
