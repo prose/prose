@@ -17,19 +17,19 @@ views.NewPost = Backbone.View.extend({
     // No assumptions on the repository layout should be made
     var metadata = {
       title: title,
-      category: "blog",
+      category: 'blog',
       subtitle: subtitle,
       hidden: true
     };
 
-    savePost(this.model.repo, app.state.path + "/" + filename, metadata, "", function(err) {
-      router.navigate(that.model.repo + "/" + app.state.path + "/" + filename, true);
+    savePost(this.model.repo, app.state.path + '/' + filename, metadata, '', function(err) {
+      router.navigate(that.model.repo + '/' + app.state.path + '/' + filename, true);
     });
     return false;
   },
 
   initialize: function(options) {
-    
+
   },
 
   render: function() {
