@@ -21,7 +21,6 @@ function login(credentials, cb) {
       dataType: 'json',
       contentType: 'application/x-www-form-urlencoded',
       success: function(res) { 
-        // app.username = credentials.username;
         $.cookie("auth", Base64.encode(JSON.stringify(credentials)));
         cb(null);
       },
@@ -83,12 +82,17 @@ function loadSite(username, reponame, branch, path, cb) {
   repo.list(function(err, tree) {
     if (err) cb("Not a valid Jekyll repository.");
 
+    var paths = _.compact(_.map(tree, function(file) {
+      var regex = new RegExp("^_posts");
+      return file.type === "tree" && regex.test(file.path) ? file.path : null
+    }));
+
     // Load Jekyll config file (_config.yml)
     loadConfig(function(err, config) {
       if (err) return cb(err);
-      if (!config.columnist || !config.columnist.paths) return cb("Not a valid Jekyll repository");
       app.state.config = config;
-      app.state.path = path ? path : config.columnist.paths[0];
+      app.state.paths = paths;
+      app.state.path = path ? path : paths[0];
 
       var posts = _.map(tree, function(file) {
         var regex = new RegExp("^" + app.state.path + "/(\\w|-)*.md$");
