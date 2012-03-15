@@ -24,7 +24,10 @@ views.Start = Backbone.View.extend({
   },
 
   render: function() {
-    $(this.el).html(templates.start(this.model));
+    $(this.el).html(templates.start(_.extend(this.model, {
+      repo: app.state.repo,
+      available_repos: app.instance.model.available_repos
+    })));
     return this;
   }
 });
