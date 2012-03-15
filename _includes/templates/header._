@@ -12,7 +12,7 @@
             <% } %>
             <ul class='dropdown-menu'>
               <% _.each(available_repos, function(r, index) { %>
-              <li><a href='<%= r.name %>'><%= r.name %></a></li>
+              <li><a href='#<%= app.username %>/<%= r.name %>/master'><%= r.name %></a></li>
               <% }) %>
             </ul>
           </li>
