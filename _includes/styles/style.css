@@ -186,7 +186,7 @@ input[type=submit] {
   text-shadow: 0 -1px rgba(0,0,0,0.2);
   box-sizing:border-box;
   text-align: center;
-  font-weight: bold;
+  font-weight: 500;
   }
 
 .button:hover,
@@ -300,7 +300,7 @@ a.dropdown-toggle {
   line-height: 20px;
   padding: 5px 25px 5px 10px;
   margin-top: 15px;
-  font-weight: bold;
+  font-weight: 500;
   color: #666;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
