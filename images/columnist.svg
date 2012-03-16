@@ -250,15 +250,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4360588"
-     inkscape:cx="626.14528"
-     inkscape:cy="718.952"
+     inkscape:zoom="1.5622749"
+     inkscape:cx="1031.9169"
+     inkscape:cy="974.98888"
      inkscape:document-units="px"
-     inkscape:current-layer="layer6"
+     inkscape:current-layer="layer9"
      showgrid="false"
-     inkscape:window-width="1283"
-     inkscape:window-height="764"
-     inkscape:window-x="3"
+     inkscape:window-width="1280"
+     inkscape:window-height="756"
+     inkscape:window-x="81"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      showguides="false"
@@ -309,7 +309,7 @@
      inkscape:groupmode="layer"
      id="layer6"
      inkscape:label="Frontpage"
-     style="display:inline">
+     style="display:none">
     <g
        id="g16270"
        transform="translate(1526.1409,-365.08249)"
@@ -342,14 +342,14 @@
        transform="matrix(0.99295963,-0.12181859,0.12192011,0.99213285,0,0)"
        xml:space="preserve"
        style="font-size:48.75069046px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#808080;fill-opacity:1;stroke:none;display:inline;enable-background:new;font-family:Sans;-inkscape-font-specification:Helvetica"
-       x="343.02771"
-       y="251.4828"
+       x="43.647915"
+       y="-42.574661"
        id="text12672"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan12674"
-         x="343.02771"
-         y="251.4828"
+         x="43.647915"
+         y="-42.574661"
          style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#808080;fill-opacity:1;font-family:BodoniClassicHD;-inkscape-font-specification:BodoniClassicHD Bold Italic">Columnist</tspan></text>
     <rect
        style="color:#000000;fill:#f5f5f5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -514,7 +514,7 @@
          sodipodi:role="line">Columnist</tspan></text>
     <path
        style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;opacity:0.1;color:#000000;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
-       d="m 621.03233,166.14072 c -4.42717,-0.34237 -9.4448,0.30596 -14.80883,1.5194 -10.72812,2.42688 -23.04048,7.29003 -35.29183,12.14327 -12.25135,4.85323 -24.44169,9.69659 -34.96588,12.07735 -6.83557,1.54634 -12.90383,2.02239 -17.80396,0.88675 3.04205,-0.96356 5.421,-3.59126 5.83531,-6.96551 0.56628,-4.61203 -2.71345,-8.80986 -7.32544,-9.37615 -4.61204,-0.56632 -8.80988,2.7134 -9.37615,7.32543 -0.90803,14.29892 20.87079,11.54579 28.99991,9.75935 10.72809,-2.42691 23.0405,-7.29006 35.29185,-12.14328 12.25135,-4.85328 24.4417,-9.69662 34.96583,-12.07741 6.83561,-1.54628 12.90196,-2.00691 17.80398,-0.88672 -3.04206,0.96359 -5.42099,3.59126 -5.8353,6.96554 -0.5663,4.612 2.71344,8.80986 7.32545,9.37615 4.612,0.56626 8.80987,-2.71345 9.37613,-7.32545 0.2928,-9.28845 -7.81003,-10.74344 -14.19107,-11.27872 z"
+       d="m 287.90877,-89.133317 c -4.42717,-0.34237 -9.4448,0.30596 -14.80883,1.5194 -10.72812,2.42688 -23.04048,7.29003 -35.29183,12.14327 -12.25135,4.85323 -24.44169,9.69659 -34.96588,12.07735 -6.83557,1.54634 -12.90383,2.02239 -17.80396,0.88675 3.04205,-0.96356 5.421,-3.59126 5.83531,-6.96551 0.56628,-4.61203 -2.71345,-8.80986 -7.32544,-9.37615 -4.61204,-0.56632 -8.80988,2.7134 -9.37615,7.32543 -0.90803,14.29892 20.87079,11.54579 28.99991,9.75935 10.72809,-2.42691 23.0405,-7.29006 35.29185,-12.14328 12.25135,-4.85328 24.4417,-9.69662 34.96583,-12.07741 6.83561,-1.54628 12.90196,-2.00691 17.80398,-0.88672 -3.04206,0.96359 -5.42099,3.59126 -5.8353,6.96554 -0.5663,4.612 2.71344,8.80986 7.32545,9.37615 4.612,0.56626 8.80987,-2.71345 9.37613,-7.32545 0.2928,-9.28845 -7.81003,-10.74344 -14.19107,-11.27872 z"
        id="path8551"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cssscssccsscsscc" />
@@ -534,28 +534,13 @@
          d="m 691.61922,360.2702 3,3 3,-3"
          style="fill:none;stroke:#404040;stroke-width:1.60000002;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline;enable-background:new" />
     </g>
-    <text
-       xml:space="preserve"
-       style="font-size:22.41677094px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Helvetica"
-       x="508.47311"
-       y="423.46429"
-       id="text16518"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan16520"
-         x="508.47311"
-         y="423.46429">Add the repository</tspan><tspan
-         sodipodi:role="line"
-         x="508.47311"
-         y="451.48526"
-         id="tspan16522">listings here</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="post-page"
      transform="translate(0,47.63782)"
-     style="display:none">
+     style="display:inline">
     <rect
        style="color:#000000;fill:#bde2e2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect8545"
@@ -738,7 +723,7 @@
      inkscape:groupmode="layer"
      id="layer9"
      inkscape:label="Globals"
-     style="display:none">
+     style="display:inline">
     <text
        transform="translate(0,47.63782)"
        xml:space="preserve"
@@ -766,9 +751,8 @@
          y="-8.8081932"
          style="font-size:13px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#666666;fill-opacity:1;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue Bold">tristen</tspan></text>
     <path
-       transform="translate(0,47.63782)"
        style="fill:#666666;fill-opacity:1;stroke:none;display:inline;enable-background:new"
-       d="m 1058.3084,-10.364693 0,3.0000003 7,-5.0000003 -7,-5 0,3 3,2 z"
+       d="m 1060.5762,32.505339 3,1.4e-5 -5.0001,7.000014 -5,-6.999991 3.0001,-5.6e-5 2,2.999995 z"
        id="path7521"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccc" />
@@ -784,12 +768,6 @@
          x="229.17186"
          id="tspan16160"
          sodipodi:role="line">mapbox.github.com</tspan></text>
-    <path
-       sodipodi:nodetypes="ccccccc"
-       inkscape:connector-curvature="0"
-       id="path16162"
-       d="m 360.70935,40.298101 -2.48712,1.677579 8.05954,3.007295 0.23085,-8.599218 -2.48712,1.677572 0.0195,3.605496 z"
-       style="fill:#666666;fill-opacity:1;stroke:none;display:inline;enable-background:new" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -1448,7 +1426,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="post-options-slider"
-     style="display:none"
+     style="display:inline"
      transform="translate(0,100)">
     <rect
        y="265.74768"
@@ -1699,7 +1677,7 @@
      inkscape:groupmode="layer"
      id="layer5"
      inkscape:label="publish"
-     style="display:none">
+     style="display:inline">
     <rect
        style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#666666;stroke-width:1.0708946;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect10427"

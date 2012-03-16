@@ -27,7 +27,7 @@
         <a href='#' class='icon clock'>clock</a>
       </div>
       <div>
-        <label>Remark</label> <input type="text" name="commit_message" id="commit_message" value="Update <%= file %>"/>
+        <label>Commit message</label> <input type="text" name="commit_message" id="commit_message" value="Update <%= file %>"/>
       </div>
       <div>
         <input type='text' name='title' id='post_title' value='<%= metadata.title %>'/>
