@@ -29,8 +29,10 @@ views.Posts = Backbone.View.extend({
   },
 
   render: function() {
+    var paths = this.semantifyPaths(app.state.paths);
     $(this.el).html(templates.posts(_.extend(this.model, app.state, {
-      paths: this.semantifyPaths(app.state.paths)
+      current_path: _.select(paths, function(p) {return p.path === app.state.path })[0],
+      paths: paths
     })));
     return this;
   }

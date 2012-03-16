@@ -9,13 +9,13 @@
       <ul>
         <li class='dropdown'>
           <% if (path) { %>
-          <a class='dropdown-toggle' data-toggle='dropdown' href='#'><%= path %></a>
+            <a class='dropdown-toggle' data-toggle='dropdown' href='#'><%= current_path.name %></a>
           <% } else { %>
-          <a class='dropdown-toggle' data-toggle='dropdown' href='#'>Choose a content type</a>
+            <a class='dropdown-toggle' data-toggle='dropdown' href='#'>Choose a category</a>
           <% } %>
           <ul class='dropdown-menu flank-left'>
             <% _.each(paths, function(p, index) { %>
-            <li><a href='#<%= app.username %>/<%= repo %>/<%= branch %>/<%= p.path %>'><%= p.path %></a></li>
+            <li><a href='#<%= app.username %>/<%= repo %>/<%= branch %>/<%= p.path %>'><%= p.name %></a></li>
             <% }) %>
           </ul>
         </li>
