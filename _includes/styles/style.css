@@ -568,8 +568,7 @@ ul.site li a {
     color: #404040;
     }
   .post-listing a.link:active {
-    position: relative;
-    top: 1px;
+    border-color: #666;
     }
 
 .published-on {
@@ -660,15 +659,15 @@ ul.site li a {
     span.clock,
     a.clock {
       -webkit-transform-style: preserve-3d;
-		  -webkit-transition: all 250ms linear;
+		  -webkit-transition: all 500ms linear;
 		  -moz-transform-style: preserve-3d;
-		  -moz-transition: all 250ms linear;
+		  -moz-transition: all 500ms linear;
 		  -o-transform-style: preserve-3d;
-		  -o-transition: all 250ms linear;
+		  -o-transition: all 500ms linear;
 		  -ms-transform-style: preserve-3d;
-		  -ms-transition: all 250ms linear;	
+		  -ms-transition: all 500ms linear;	
 		  transform-style: preserve-3d;
-		  transition: all 250ms linear;
+		  transition: all 500ms linear;
       }
       span.clock,
       a.clock:hover {
