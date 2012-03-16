@@ -61,18 +61,10 @@ em      { font-style: italic; }
 small   { font-size: 100%; }
 cite    { font-style: normal; }
 
-.CodeMirror,
 pre, pre code {
-  font-family: 'Menlo Regular',Consolas,monospace!important;
+  font-family: 'Menlo Regular',Consolas,monospace;
   font-size: 14px;
   line-height: 20px;
-  }
-
-.CodeMirror-scroll {
-  height: auto!important;
-  overflow: visible!important;
-  overflow-y: hidden;
-  width: 100%
   }
 
 /* ------------------------------------------
