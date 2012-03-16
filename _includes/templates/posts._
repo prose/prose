@@ -1,6 +1,6 @@
 <div class='inner'>
   <div class='button-padding fr'>
-    <a class='button' href='#<%= user %>/<%= repo %>/<%= path %>/new'>New Post</a>
+    <a class='button' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= path %>/new'>New Post</a>
   </div>
 
   <!-- Path selection -->

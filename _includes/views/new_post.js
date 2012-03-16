@@ -22,8 +22,8 @@ views.NewPost = Backbone.View.extend({
       hidden: true
     };
 
-    savePost(this.model.repo, app.state.path + '/' + filename, metadata, '', function(err) {
-      router.navigate(that.model.repo + '/' + app.state.path + '/' + filename, true);
+    savePost(app.state.user, app.state.repo, app.state.branch, app.state.path, filename, metadata, '', 'Created ' +filename, function(err) {
+      router.navigate(app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + app.state.path + '/' + filename, true);
     });
     return false;
   },
