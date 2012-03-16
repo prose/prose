@@ -10,7 +10,7 @@
             <% } else { %>
             <a class='dropdown-toggle' data-toggle='dropdown' href='#'>Choose a Site</a>
             <% } %>
-            <ul class='dropdown-menu'>
+            <ul class='dropdown-menu flank-left'>
               <% _.each(available_repos, function(r, index) { %>
                 <li><a href='#<%= app.username %>/<%= r.name %>/master'><%= r.name %></a></li>
               <% }) %>
@@ -28,7 +28,7 @@
             <%= app.username %>
             <b class='caret'></b>
           </a>
-          <ul class='dropdown-menu'>
+          <ul class='dropdown-menu flank-right'>
             <li><a href='/' >Sites</a></li>
             <li><a href='#' class='logout'>Logout</a></li>
           </ul>
