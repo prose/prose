@@ -15,7 +15,7 @@ views.Start = Backbone.View.extend({
     var password = this.$('#github_password').val();
 
     login({username: user, password: password}, function(err) {
-      if (err) return alert(err);
+      if (err) return app.instance.notify("error", err);
       window.location.reload();
     });
 

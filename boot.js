@@ -38,6 +38,7 @@ if (credentials) _.extend(app, credentials);
 {% include model.js %}
 {% include routers/application.js %}
 {% include views/application.js %}
+{% include views/notification.js %}
 {% include views/start.js %}
 {% include views/header.js %}
 {% include views/posts.js %}
