@@ -7,7 +7,8 @@ views.Post = Backbone.View.extend({
   events: {
     'click .save-post' : 'save',
     'click .state a': 'publish',
-    'click .meta': 'toggleMeta'
+    'click .meta': 'toggleMeta',
+    'click a.toggle-mode': 'toggleMode'
   },
 
   publish: function(e) {
@@ -15,6 +16,21 @@ views.Post = Backbone.View.extend({
     // TODO replace save with publish and pass in commit message options
   },
 
+  toggleMode: function(e) {
+    e.preventDefault();
+    var m = $(e.currentTarget)
+    if (m.hasClass('preview')) {
+        m
+        .removeClass('preview')
+        .addClass('edit')
+        .html('edit');
+    } else {
+        m
+        .removeClass('edit')
+        .addClass('preview')
+        .html('preview');
+    }
+  },
   toggleMeta: function(e) {
     e.preventDefault();
     $('.metadata').toggleClass('open');

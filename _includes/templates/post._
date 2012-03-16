@@ -24,9 +24,8 @@
     </div>
 
     <div class='content'>
-      <div class='history'>
-        <a href='#' class='icon clock'>clock</a>
-      </div>
+      <a class='toggle-mode preview' href='#'>Preview</a>
+      <div class='history'><a href='#' class='icon clock'>clock</a></div>
       <div>
         <label>Commit message</label> <input type="text" name="commit_message" id="commit_message" value="Update <%= file %>"/>
       </div>
