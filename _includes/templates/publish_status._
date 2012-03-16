@@ -1,0 +1,15 @@
+<div class='state'>
+
+  <p class='status'><%= metadata.hidden ? "Unpublished" : "Published" %></p>
+  <div class='message hidden'>
+    <input type="text" name="commit_message" id="commit_message" value="Update <%= file %>"/>
+  </div>
+  <div class='button-padding'>
+    <% if (metadata.hidden) { %>
+      <a class='publish button' href='#'>Publish</a>
+    <% } else { %>
+      <a class='publish button hidden' href='#'>Save</a>
+      <a class='unpublish button' href='#'>Unpublish</a>
+    <% } %>
+  </div>
+</div>
