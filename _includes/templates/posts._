@@ -15,7 +15,7 @@
           <% } %>
           <ul class='dropdown-menu flank-left'>
             <% _.each(paths, function(p, index) { %>
-            <li><a href='#<%= app.username %>/<%= repo %>/<%= branch %>/<%= p.path %>'><%= p.path %></a></li>
+            <li><a href='#<%= app.username %>/<%= repo %>/<%= branch %>/<%= p.path %>'><%= p.name %></a></li>
             <% }) %>
           </ul>
         </li>
