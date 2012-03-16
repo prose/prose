@@ -1,11 +1,12 @@
 <div class='inner clearfix'>
   <div class='publish'>
-    <div class='button-padding state'>
-      <a href='#' class='unpublished button'>unpublished</a>
+    <div class='state'>
+      <p class='status'>Published</p>
+      <div class='button-padding'>
+        <a class='post button' href='#'>Publish</a>
+      </div>
+      <!--<input type='checkbox' name='published' id='post_published'<% if (!metadata.hidden) { %> checked='checked' <% } %> />-->
     </div>
-    <label>Published</label>
-    <input type='checkbox' name='published' id='post_published'<% if (!metadata.hidden) { %> checked='checked' <% } %>/>
-    <a class='save-post' href='#'>Save</a>
   </div>
 
   <div class='document prose'>
