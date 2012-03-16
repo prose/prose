@@ -165,8 +165,6 @@ table {
 .fill-w { right:auto; }
 .fill-e { left:auto; }
 
-p { margin:0px 0px 20px; }
-
 .button,
 input[type=button],
 input[type=submit] {
@@ -546,6 +544,21 @@ ul.site li a {
     .paths ul ul {
       margin: 0;
       }
+
+.paths h1,
+.paths ul {
+  float: left;
+  }
+.publish {
+  position: relative;
+  padding: 20px;
+  margin-bottom: -1px;
+  }
+  .publish.active {
+    background: #fff;
+    border: 1px solid #a0a0a0;
+    }
+
 .post-listing a.link {
   background: white;
   border: 1px solid #CCC;
@@ -583,19 +596,16 @@ ul.site li a {
   font-size: 11px;
   }
 
-.paths h1,
-.paths ul {
+/* ------------------------------------------
+  Post
+---------------------------------------------*/
+
+/*Publish/Unpublish State*/
+.state p,
+.state .button-padding {
   float: left;
   }
-.publish {
-  position: relative;
-  padding: 20px;
-  margin-bottom: -1px;
-  }
-  .publish.active {
-    background: #fff;
-    border: 1px solid #a0a0a0;
-    }
+
 .document {
   background: #fff;
   border: 1px solid #a0a0a0;
@@ -683,6 +693,7 @@ a.meta {
 
 /* Form elements */
 .document .content input[type=text] {
+  background: transparent;
   border: 1px solid #fff;
   height: 45px;
   display: block;
