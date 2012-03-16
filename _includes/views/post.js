@@ -12,7 +12,7 @@ views.Post = Backbone.View.extend({
     'change input': '_makeDirty'
   },
 
-  _makeDirty: function() {
+  _makeDirty: function(e) {
     this.$('.button.publish').removeClass('hidden');
   },
 
@@ -25,7 +25,7 @@ views.Post = Backbone.View.extend({
     return false;
   },
 
-  _unpublish: function() {
+  _unpublish: function(e) {
     e.preventDefault();
     this.updatePost(true, "Unpublish "+ this.model.file);
   },
@@ -104,9 +104,8 @@ views.Post = Backbone.View.extend({
 
   preview: function() {
     // Show preview and hide code
-    this.$('.content-preview')
-      .show()
-      .html(this.converter.makeHtml(this.editor.getValue()));
+    this.$('.content-preview').show();
+    this.$('.post-content').html(this.converter.makeHtml(this.editor.getValue()));
 
     this.$('.content').hide();
   },
