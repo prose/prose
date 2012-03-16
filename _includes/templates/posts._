@@ -26,10 +26,7 @@
     <div class='post-listing prose clearfix'>
     <% _.each(posts, function(post) { %>
     <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
-        <div class='published-on'>
-          <span class='datestamp'><%= post.date.toDateString() %></span>
-          <span class='clock'>&nbsp;</span>
-        </div>
+        <div class='published-on'><%= post.date.toDateString() %></div>
         <div class='image'></div>
         <h2><small><%= post.title || 'Untitled' %></small></h2>
       </a>
