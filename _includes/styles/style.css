@@ -61,9 +61,8 @@ em      { font-style: italic; }
 small   { font-size: 100%; }
 cite    { font-style: normal; }
 
-.CodeMirror,
 pre, pre code {
-  font-family: 'Menlo Regular',Consolas,monospace!important;
+  font-family: 'Menlo Regular',Consolas,monospace;
   font-size: 14px;
   line-height: 20px;
   }
@@ -551,7 +550,7 @@ ul.site li a {
   }
 .publish {
   position: relative;
-  padding: 20px;
+  height: 60px;
   margin-bottom: -1px;
   }
   .publish.active {
