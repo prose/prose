@@ -48,7 +48,7 @@ views.Post = Backbone.View.extend({
     };
 
     var message = this.$('#commit_message').val();
-    savePost(app.state.username, app.state.repo, app.state.branch, this.model.path, this.model.file, metadata, this.editor.getValue(), message, function(err) {
+    savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, metadata, this.editor.getValue(), message, function(err) {
       console.log('Saved');
     });
     return false;

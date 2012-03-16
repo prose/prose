@@ -7,7 +7,7 @@
       <label>Title</label>
       <input type='text' name='title' class='title' value=''/>
       <label>Subtitle</label>
-      <input type='text' name='subtitle' class='filename' value=''/>
+      <input type='text' name='subtitle' class='subtitle' value=''/>
       <div class='button-padding'>
         <input type='submit' value='Create' />
       </div>
