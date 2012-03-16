@@ -291,8 +291,9 @@ input[type=submit]:active {
     float: left;
     }
   #header .user-status {
-    margin-top: 15px;
-    float: right;
+    position: absolute;
+    top: 15px;
+    right: 20px;
     }
 #main {
   margin-top: 60px;
@@ -306,7 +307,7 @@ li.dropdown {
   }
 
 a.dropdown-toggle {
-  background: transparent url(images/icons.png) no-repeat 95% 6px;
+  background: #fff url(images/icons.png) no-repeat 95% 6px;
   line-height: 20px;
   padding: 4px 25px 4px 10px;
   font-weight: 500;
@@ -324,10 +325,6 @@ a.dropdown-toggle {
 #header .open a.dropdown-toggle,
 #header a.dropdown-toggle:hover {
   background-color: #f4f4f4;
-  }
-.open a.dropdown-toggle,
-a.dropdown-toggle:hover {
-  background-color: #fff;
   }
 
 #header .dropdown-menu {
@@ -550,8 +547,8 @@ ul.site li a {
       margin: 0;
       }
 .post-listing a.link {
-  background: #fff;
-  border: 1px solid #ccc;
+  background: white;
+  border: 1px solid #CCC;
   -moz-box-shadow: 0 0 3px rgba(0,0,0,0.25);
   -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.25);
   box-shadow: 0 0 3px rgba(0,0,0,0.25);
@@ -559,7 +556,7 @@ ul.site li a {
   float: left;
   height: 120px;
   width: 218px;
-  margin-right: 5px;
+  margin: 0 5px 5px 0;
   position: relative;
   color: #404040;
   }
@@ -572,9 +569,9 @@ ul.site li a {
     }
 
 .published-on {
-  background: #fff;
+  background: #fff url(images/icons.png) no-repeat right -50px;
   width: 95px;
-  padding-right: 20px;
+  padding-right: 25px;
   display: block;
   height: 20px;
   position: absolute;
@@ -585,26 +582,6 @@ ul.site li a {
   color: #666;
   font-size: 11px;
   }
-  span.clock {
-    background: url(images/icons.png) no-repeat right -50px;
-    width: 20px;
-    display: inline-block;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    }
-  span.datestamp {
-     position: relative;
-    -moz-transition: bottom 250ms ease-out;
-    -o-transition: bottom 250ms ease-out;
-    -webkit-transition: bottom 250ms ease-out;
-    transition: bottom 250ms ease-out;
-    right: 5px;
-    bottom: -20px;
-    }
-  .published-on:hover span.datestamp {
-    bottom: 0;
-    }
 
 .paths h1,
 .paths ul {
