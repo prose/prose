@@ -44,18 +44,38 @@ function authenticated() {
   return !!getCredentials();
 }
 
-
 // Load Application
 // -------
 // 
 // Load everything that's needed for the app + header
 
+
 function loadApplication(cb) {
+  // Filter out Jekyll-sites
+  function filter(repos, cb) {
+    var remaining = repos.length;
+    var filteredRepos = [];
+
+    _.each(repos, function(r) {
+      if (r.name.match(/.github.com/)) {
+        filteredRepos.push(r);
+        if ((remaining -= 1) === 0) cb(null, filteredRepos);
+      } else {
+        var repo = github().getRepo(r.name, "gh-pages");
+        repo.getRef("gh-pages", function(err, sha) {
+          if (!err) filteredRepos.push(r);
+          if ((remaining -= 1) === 0) cb(null, filteredRepos);        
+        });
+      }
+    });
+  }
+
   if (app.username) {
     var user = github().getUser(app.username);
     user.repos(function(err, repos) {
-      // TODO: filter and just show Jekyll repositories
-      cb(null, { "available_repos": repos });
+      filter(repos, function(err, repos) {
+        cb(null, { "available_repos": repos });
+      });
     });
   } else {
     cb(null, { "available_repos": [] });
