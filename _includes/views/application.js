@@ -57,7 +57,7 @@ views.Application = Backbone.View.extend({
 
   posts: function (username, repo, branch, path) {
     loadSite(username, repo, branch, path, _.bind(function (err, data) {
-      if (err) return alert('Seems like the chosen repository is not a valid Jekyll site.');
+      if (err) return this.notify('error', 'Seems like the chosen repository is not a valid Jekyll site.');
       this.header.render();
       this.replaceMainView("posts", new views.Posts({ model: data, id: 'posts' }).render());
     }, this));
@@ -65,7 +65,7 @@ views.Application = Backbone.View.extend({
 
   post: function (username, repo, branch, path, file) {
     loadSite(username, repo, branch, path, _.bind(function (err, data) {
-      if (err) return alert('Seems like the chosen repository is not a valid Jekyll site.');
+      if (err) return this.notify('error', 'Seems like the chosen repository is not a valid Jekyll site.');
       loadPost(username, repo, branch, path, file, _.bind(function (err, data) {
         this.header.render();
         this.replaceMainView("posts", new views.Post({ model: data, id: 'post' }).render());
@@ -80,9 +80,13 @@ views.Application = Backbone.View.extend({
   },
 
   start: function() {
-    
     this.header.render();
     this.replaceMainView("start", new views.Start({id: "start", model: {authenticated: authenticated()}}).render());
+  },
+
+  notify: function(type, message) {
+    this.header.render();
+    this.replaceMainView("notification", new views.Notification(type, message).render());
   }
 
 });

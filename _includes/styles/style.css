@@ -519,15 +519,6 @@ ul.site li a {
   }
 
 /* Error */
-.error {
-  top: 50%;
-  bottom: auto;
-  height: 120px;
-  margin-top: -60px;
-  }
-  .error .message {
-    padding:20px;
-    }
 .form li { line-height:30px; }
 
 
@@ -819,6 +810,26 @@ label,
     #6ac 0 0px 5px,
     inset #ddd 0 2px 3px;
   }
+
+
+/* ------------------------------------------
+  Notifications
+---------------------------------------------*/
+
+
+#notification .notification{
+  text-align: center;
+  width: 300px;
+  margin: 200px auto;
+  padding: 30px;
+  font-size: 30px;
+  color: white;
+}
+
+#notification .error {
+  background: red;
+  border: 1px solid red;
+}
 
 /* ------------------------------------------
   Class Helpers
