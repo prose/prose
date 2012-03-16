@@ -68,6 +68,13 @@ pre, pre code {
   line-height: 20px;
   }
 
+.CodeMirror-scroll {
+  height: auto!important;
+  overflow: visible!important;
+  overflow-y: hidden;
+  width: 100%
+  }
+
 /* ------------------------------------------
   Lists
 ---------------------------------------------*/
@@ -551,7 +558,7 @@ ul.site li a {
   }
 .publish {
   position: relative;
-  padding: 20px;
+  height: 60px;
   margin-bottom: -1px;
   }
   .publish.active {
