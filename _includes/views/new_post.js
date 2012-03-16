@@ -21,7 +21,7 @@ views.NewPost = Backbone.View.extend({
       subtitle: subtitle,
       hidden: true
     };
-
+    
     savePost(app.state.user, app.state.repo, app.state.branch, app.state.path, filename, metadata, '', 'Created ' +filename, function(err) {
       router.navigate(app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + app.state.path + '/' + filename, true);
     });

@@ -164,6 +164,11 @@ table {
 .fill-w { right:auto; }
 .fill-e { left:auto; }
 
+
+.button.unpublish {
+  background: darkred;
+}
+
 .button,
 input[type=button],
 input[type=submit] {
@@ -233,11 +238,27 @@ input[type=submit]:active {
   box-shadow: none;
   }
 
-.publish .state {
+#publish_status .state {
   position: absolute;
+  padding-top: 10px;
+  padding-right: 10px;
+  margin-bottom: 10px;
   right: 10px;
-  top: 10px;
+  top: 0px;
+  background: #ccc;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
   }
+
+#publish_status .status {
+  line-height: 33px;
+  padding: 0 20px;
+  text-transform: uppercase;
+}
+#publish_status .message {
+  float: left;
+}
 .state .button {
   width: 120px;
   }
@@ -548,12 +569,12 @@ ul.site li a {
 .paths ul {
   float: left;
   }
-.publish {
+#publish_status {
   position: relative;
   height: 60px;
   margin-bottom: -1px;
   }
-  .publish.active {
+  #publish_status.active {
     background: #fff;
     border: 1px solid #a0a0a0;
     }
@@ -609,6 +630,7 @@ ul.site li a {
   background: #fff;
   border: 1px solid #a0a0a0;
   position: relative;
+  margin-top: 30px;
   -moz-box-shadow: 0 0 6px rgba(0,0,0,0.25);
   -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.25);
   box-shadow: 0 0 6px rgba(0,0,0,0.25);
