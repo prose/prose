@@ -3,29 +3,34 @@
 
   </div>
 
+  <div class="actions">
+    <a class='toggle-mode preview' href='#'>Preview</a>
+  </div>
   <div class='document prose'>
-    <div class='metadata'>
-      <a href='#' class='icon meta'>Toggle Metadata</a>
-      <form id='metadata_form'>
-        <h3><small>Post options</small></h3>
-        <label>Image</label>
-        <input type='text' name='image' id='post_image' value='<%= metadata.image %>'/>
-        <label>Category</label>
-        <input type='text' name='category' id='post_category' value='<%= metadata.category %>'/>
-        <label>Permalink</label>
-        <input type='text' name='permalink' id='post_permalink' value='<%= metadata.permalink %>'/>
-      </form>
-    </div>
-
     <div class='content'>
-      <a class='toggle-mode preview' href='#'>Preview</a>
-      <div class='history'><a href='#' class='icon clock'>clock</a></div>
+
+      <div class='metadata'>
+        <a href='#' class='icon meta'>Toggle Metadata</a>
+        <form id='metadata_form'>
+          <h3><small>Post options</small></h3>
+          <label>Image</label>
+          <input type='text' name='image' id='post_image' value='<%= metadata.image %>'/>
+          <label>Category</label>
+          <input type='text' name='category' id='post_category' value='<%= metadata.category %>'/>
+          <label>Permalink</label>
+          <input type='text' name='permalink' id='post_permalink' value='<%= metadata.permalink %>'/>
+        </form>
+      </div>
+
       <div>
         <input type='text' name='title' id='post_title' value='<%= metadata.title %>'/>
         <input type='text' name='subtitle' id='post_subtitle' value='<%= metadata.subtitle %>'/>
       </div>
       <textarea id='code' name='code'><%= content %></textarea>
     </div>
-
+    <div class='content-preview hidden'>
+      <h1><%= metadata.title %></h1>
+      <p class="subtitle"><%= metadata.subtitle %></p>
+    </div>
   </div>
 </div>

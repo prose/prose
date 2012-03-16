@@ -26,8 +26,36 @@ views.Post = Backbone.View.extend({
   },
 
   _unpublish: function() {
+    e.preventDefault();
     this.updatePost(true, "Unpublish "+ this.model.file);
-    return false;
+  },
+
+  _toggleMode: function(e) {
+    e.preventDefault();
+    var m = $(e.currentTarget)
+    if (m.hasClass('preview')) {
+      m
+      .removeClass('preview')
+      .addClass('edit')
+      .html('edit');
+      this.preview();
+    } else {
+      m
+      .removeClass('edit')
+      .addClass('preview')
+      .html('preview');
+      this.edit();
+    }
+  },
+
+  _toggleMeta: function(e) {
+    e.preventDefault();
+    $('.metadata').toggleClass('open');
+  },
+
+  initialize: function() {
+    this.mode = "edit";
+    this.converter = new Showdown.converter();
   },
 
   updatePost: function(hidden, message) {
@@ -46,27 +74,6 @@ views.Post = Backbone.View.extend({
       this.updatePublishStatus();
       console.log('saaved');
     }, this));
-  },
-
-  _toggleMode: function(e) {
-    e.preventDefault();
-    var m = $(e.currentTarget)
-    if (m.hasClass('preview')) {
-        m
-        .removeClass('preview')
-        .addClass('edit')
-        .html('edit');
-    } else {
-        m
-        .removeClass('edit')
-        .addClass('preview')
-        .html('preview');
-    }
-  },
-
-  _toggleMeta: function(e) {
-    e.preventDefault();
-    $('.metadata').toggleClass('open');
   },
 
 
@@ -89,9 +96,24 @@ views.Post = Backbone.View.extend({
     }, 200);
   },
 
+  edit: function() {
+    // Hide preview & show code
+    this.$('.content-preview').hide();
+    this.$('.content').show();
+  },
+
+  preview: function() {
+    // Show preview and hide code
+    this.$('.content-preview')
+      .show()
+      .html(this.converter.makeHtml(this.editor.getValue()));
+
+    this.$('.content').hide();
+  },
+
   render: function() {
     var that = this;
-    $(this.el).html(templates.post(this.model));
+    $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
 
     this.updatePublishStatus();
     this.initEditor();
