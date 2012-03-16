@@ -1,13 +1,6 @@
 auto: true
 title: Columnist
 server: true
-github:
-  username: "tristen"
-  password: "Fallsem0"
-  default-branch: "master"
-  posts-dir: "_posts"
-columnist:
-  semantify-post-path: "^(.*)/(\\d{4}-\\d{2}-\\d{2})(.*)"
 exclude:
 - .gitignore
 - README.md
