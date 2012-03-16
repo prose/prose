@@ -718,6 +718,7 @@ a.meta {
 input#post_subtitle,
 input#post_title {
   color: #292929;
+  width: 100%;
   font: 32px/30px 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
   }
 input#post_subtitle {
