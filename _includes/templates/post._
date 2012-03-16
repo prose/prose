@@ -8,7 +8,7 @@
     <a class='save-post' href='#'>Save</a>
   </div>
 
-  <div class='document'>
+  <div class='document prose'>
     <div class='metadata'>
       <a href='#' class='icon meta'>Toggle Metadata</a>
       <form id='metadata_form'>
