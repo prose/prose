@@ -845,7 +845,7 @@ label,
 .fr { float: right; }
 
 .inner      { padding: 20px 20px 40px; }
-.hidden     { display: none!important; }
+.hidden     { display: none; }
 .centered   { text-align: center; }
 .scrolling  { overflow: auto; }
 .clipping   { overflow: hidden; }

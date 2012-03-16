@@ -6,7 +6,6 @@
 {% include vendor/js-yaml.min.js %}
 {% include vendor/chrono.js %}
 {% include vendor/showdown.js %}
-{% include vendor/textile.js %}
 {% include vendor/base64.js %}
 {% include vendor/github.js %}
 {% include vendor/codemirror/codemirror.js %}
