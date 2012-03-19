@@ -405,7 +405,7 @@ body.start #header {
   margin-left: -120px;
   position: absolute;
   left: 50%;
-  top: 25%;
+  top: 30%;
   margin-top: -60px;
   }
 
@@ -414,7 +414,7 @@ body.start #header {
   width: 600px;
   left: 50%;
   margin-left: -300px;
-  top: 25%;
+  top: 30%;
   color: #a0a0a0;
   }
 .dialog form {
@@ -433,7 +433,7 @@ body.start #header {
   }
 form .button-padding {
   margin-left: -4px;
-  margin-top: 10px;
+  margin-top: 5px;
   }
 
 .start .sites,
@@ -537,7 +537,6 @@ ul.site li a {
 #publish_status {
   position: relative;
   height: 50px;
-  margin-bottom: -1px;
   }
   #publish_status.active {
     background: #fff;
@@ -587,19 +586,22 @@ ul.site li a {
 
 #publish_status .state {
   position: absolute;
-  padding: 5px 5px 5px 10px;
+  padding: 5px 10px;
   right: 10px;
   top: 0;
-  background: #fff;
-  background: rgba(255,255,255,0.75);
+  background: white;
+  background: rgba(255, 255, 255, 0.75);
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  height: 35px;
   }
 #publish_status .message {
   float: left;
+  margin: 4px 0 0 10px;
   }
+  #publish_status .message input {
+    width: 360px;
+    }
 .state .button-padding {
   margin-left: 10px;
   background-color: #fff;
@@ -771,14 +773,13 @@ input#post_subtitle {
   -webkit-box-shadow: none;
   box-shadow: none;
   color: #a0a0a0;
-  height: 30px;
   }
 
 select,
 input[type=text],
 input[type=password] {
-  line-height: 30px;
-  height: 32px;
+  line-height: 28px;
+  height: 28px;
   background: white;
   border: 1px solid #CCC;
   outline: 0;
@@ -817,7 +818,7 @@ label,
   display: block;
   font-size: 11px;
   line-height: 16px;
-  margin: 5px 0 2px;
+  margin: 2px 0;
   color: #A0A0A0;
   }
 
