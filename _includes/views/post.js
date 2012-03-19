@@ -27,7 +27,7 @@ views.Post = Backbone.View.extend({
 
   _unpublish: function(e) {
     e.preventDefault();
-    this.updatePost(true, "Unpublish "+ this.model.file);
+    this.updatePost(true, 'Unpublish '+ this.model.file);
   },
 
   _toggleMode: function(e) {
@@ -84,11 +84,11 @@ views.Post = Backbone.View.extend({
   initEditor: function() {
     var that = this;
     setTimeout(function() {
-      that.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+      that.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
         mode: 'markdown',
         lineWrapping: true,
         matchBrackets: true,
-        theme: "default",
+        theme: 'default',
         onChange: function() {
           that._makeDirty();
         }

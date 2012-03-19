@@ -1,11 +1,10 @@
 <div class='inner clearfix'>
-  <div id="publish_status">
-
+  <div id='publish_status'>
+    <small>Status</small>
   </div>
 
-  <div class="actions">
-    <a class='toggle-mode preview' href='#'>Preview</a>
-  </div>
+  <a class='toggle-mode preview' href='#'>Preview</a>
+
   <div class='document prose'>
     <div class='content'>
 
@@ -22,7 +21,7 @@
         </form>
       </div>
 
-      <div>
+      <div class='content-header'>
         <input type='text' name='title' id='post_title' value='<%= metadata.title %>'/>
         <input type='text' name='subtitle' id='post_subtitle' value='<%= metadata.subtitle %>'/>
       </div>
@@ -30,8 +29,9 @@
     </div>
     <div class='content-preview hidden'>
       <h1><%= metadata.title %></h1>
-      <p class="subtitle"><%= metadata.subtitle %></p>
-      <div class="post-content"></div>
+      <p class='subtitle'><%= metadata.subtitle %></p>
+      <div class='post-content'></div>
     </div>
+
   </div>
 </div>
