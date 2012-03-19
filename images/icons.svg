@@ -27,16 +27,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="34.082547"
-     inkscape:cx="10.334794"
-     inkscape:cy="100.84041"
+     inkscape:zoom="4.2603184"
+     inkscape:cx="-54.214372"
+     inkscape:cy="93.574258"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1131"
      inkscape:window-height="701"
-     inkscape:window-x="82"
-     inkscape:window-y="0"
+     inkscape:window-x="119"
+     inkscape:window-y="50"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -157,5 +157,33 @@
        d="m 10.0165,967.36218 c -5.5132,0 -10.0165,4.49588 -10.0165,10 0,5.50411 4.5033,10 10.0165,10 5.5131,0 9.9835,-4.49589 9.9835,-10 0,-5.50412 -4.4704,-10 -9.9835,-10 z m 0,2.09836 c 4.3772,0 7.8817,3.53156 7.8817,7.90164 0,4.37007 -3.5045,7.90164 -7.8817,7.90164 -4.3773,0 -7.9147,-3.53157 -7.9147,-7.90164 0,-4.37008 3.5374,-7.90164 7.9147,-7.90164 z"
        id="path5766"
        inkscape:connector-curvature="0" />
+    <rect
+       y="945.36218"
+       x="55"
+       height="32"
+       width="32"
+       id="rect82852"
+       style="color:#000000;fill:#f2f2f2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:new" />
+    <rect
+       style="color:#000000;fill:#ee6432;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:new"
+       id="rect82854"
+       width="32"
+       height="32"
+       x="-70"
+       y="920.36218" />
+    <path
+       sodipodi:nodetypes="cccccccccccc"
+       inkscape:connector-curvature="0"
+       id="path82858"
+       d="m -49,928.36218 -3,3 3,3 3,-3 z m -4,4 -7,7 -2,4 1,1 4,-2 7,-7 z"
+       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <path
+       style="color:#000000;fill:#404040;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:new"
+       d="m -76,967.36218 0,32 32,0 0,-32 -32,0 z m 21,8 3,3 -3,3 -3,-3 3,-3 z m -4,4 3,3 -7,7 -4,2 -1,-1 2,-4 7,-7 z"
+       id="rect83131"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/Users/tristen/Desktop/favicon.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
   </g>
 </svg>

@@ -2,7 +2,8 @@
   Typography
 ---------------------------------------------*/
 body {
-  background: #f4f4f4;
+  background: #f4f4f4 url(images/bg.png) repeat;
+  color: #404040;
   }
 
 body,
@@ -41,14 +42,10 @@ h1 small { font-size: 13px; font-weight: 500; }
 h2 { font-size: 24px; line-height: 28px; }
 h2 small { font-size: 16px; }
 h3 { line-height: 22px; font-size: 16px; font-weight: 500; }
-h3 small { font-size: 13px; font-weight: normal; }
+h3 small { font-size: 14px; font-weight: normal; }
 h4 { font-size: 14px; }
-h5 { font-size: 12px;}
-h6 {
-  font-size: 11px;
-  color: #999;
-  text-transform: uppercase;
-  }
+h5 { font-size: 13px; }
+h6 { font-size: 11px; font-weight: 500; }
 
 .prose h1,
 .prose h2,
@@ -62,9 +59,12 @@ small   { font-size: 100%; }
 cite    { font-style: normal; }
 
 pre, pre code {
+  background: #f5f5f5;
+  color: #666;
   font-family: 'Menlo Regular',Consolas,monospace;
-  font-size: 14px;
-  line-height: 20px;
+  margin-bottom: 15px;
+  overflow: auto;
+  padding: 10px;
   }
 
 /* ------------------------------------------
@@ -164,20 +164,15 @@ table {
 .fill-w { right:auto; }
 .fill-e { left:auto; }
 
-
-.button.unpublish {
-  background: darkred;
-}
-
 .button,
 input[type=button],
 input[type=submit] {
-  border: 1px solid #D3590F;
+  border: 1px solid #204859;
   line-height: 26px;
   height: 28px;
   cursor: pointer;
   padding: 0 15px;
-  background: #F07225;
+  background: #377a97;
   box-shadow:
     inset rgba(255,255,255,0.1) 0px 0px 0px 1px,
     inset rgba(255,255,255,0.2) 0px 10px 20px -5px,
@@ -207,8 +202,8 @@ input[type=submit]:hover {
 .button.active,
 input[type=button]:active,
 input[type=submit]:active {
-  background-color:#D3590F;
-  border-color:#b44c0c;
+  background-color:#204859;
+  border-color:#173440;
   box-shadow:
     inset rgba(0,0,0,0.5) 0px 1px 3px,
     inset rgba(255,255,255,0.2) 0px 10px 20px -5px;
@@ -238,46 +233,24 @@ input[type=submit]:active {
   box-shadow: none;
   }
 
-#publish_status .state {
-  position: absolute;
-  padding-top: 10px;
-  padding-right: 10px;
-  margin-bottom: 10px;
-  right: 10px;
-  top: 0px;
-  background: #ccc;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+.button.unpublish {
+  background-color: #f4f4f4;
+  border-color: #ccc;
+  color: #ccc;
+  text-shadow: 0 1px 0 #fff;
   }
 
-#publish_status .status {
-  line-height: 33px;
-  padding: 0 20px;
-  text-transform: uppercase;
-}
-#publish_status .message {
-  float: left;
-}
-.state .button {
-  width: 120px;
-  }
-.button.unpublished {
-  background-color: #fff;
-  border-color: #a0a0a0;
-  color: #ccc;
-  text-shadow: none;
-  font-weight: bold;
-  }
 .button-padding {
   background: #EEE;
-  padding: 3px 2px 2px;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 3px 3px 2px;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   display: inline-block;
-  background: rgba(0, 0, 0, 0.10);
   }
+
+
 
 /* ------------------------------------------
   Globals
@@ -348,6 +321,7 @@ a.dropdown-toggle {
 #header .dropdown-menu {
   background-color: #404040;
   border: 1px solid #202020;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.45);
   -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
@@ -431,7 +405,7 @@ body.start #header {
   margin-left: -120px;
   position: absolute;
   left: 50%;
-  top: 25%;
+  top: 30%;
   margin-top: -60px;
   }
 
@@ -440,7 +414,7 @@ body.start #header {
   width: 600px;
   left: 50%;
   margin-left: -300px;
-  top: 25%;
+  top: 30%;
   color: #a0a0a0;
   }
 .dialog form {
@@ -459,7 +433,7 @@ body.start #header {
   }
 form .button-padding {
   margin-left: -4px;
-  margin-top: 10px;
+  margin-top: 5px;
   }
 
 .start .sites,
@@ -562,8 +536,7 @@ ul.site li a {
   }
 #publish_status {
   position: relative;
-  height: 60px;
-  margin-bottom: -1px;
+  height: 50px;
   }
   #publish_status.active {
     background: #fff;
@@ -611,17 +584,73 @@ ul.site li a {
   Post
 ---------------------------------------------*/
 
+#publish_status .state {
+  position: absolute;
+  padding: 5px 10px;
+  right: 10px;
+  top: 0;
+  background: white;
+  background: rgba(255, 255, 255, 0.75);
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  }
+#publish_status .message {
+  float: left;
+  margin: 4px 0 0 10px;
+  }
+  #publish_status .message input {
+    width: 360px;
+    }
+.state .button-padding {
+  margin-left: 10px;
+  background-color: #fff;
+  }
+.state .button {
+  width: 80px;
+  padding: 0;
+  }
+
+.toggle-mode {
+  display: block;
+  background: #377a97;
+  border: 1px solid #204859;
+  color: #fff;
+  font-weight: 500;
+  position: absolute;
+  right: 40px;
+  top: 155px;
+  text-align: center;
+  width: 60px;
+  font-size: 11px;
+  z-index: 1000;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  }
+  .toggle-mode:hover {
+    color: #fff;
+    }
+  .toggle-mode:active {
+    background-color: #204859;
+    }
+
 /*Publish/Unpublish State*/
 .state p,
 .state .button-padding {
   float: left;
   }
-
+  .state p {
+    color: #666;
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 35px;
+    margin: 0;
+    }
 .document {
   background: #fff;
   border: 1px solid #a0a0a0;
   position: relative;
-  margin-top: 30px;
+  margin-top: 10px;
   -moz-box-shadow: 0 0 6px rgba(0,0,0,0.25);
   -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.25);
   box-shadow: 0 0 6px rgba(0,0,0,0.25);
@@ -644,6 +673,7 @@ ul.site li a {
     #post .metadata.open {
       width: 220px;
       }
+  .document .content-preview,
   .document .content {
     padding: 40px 60px;
     }
@@ -685,6 +715,11 @@ form#metadata_form {
     visibility: visible;
     }
 
+.metadata.open h3 {
+  display: block;
+  margin: 10px 0;
+  }
+
 a.meta {
   background-position: 10px -95px;
   position: absolute;
@@ -704,7 +739,11 @@ a.meta {
     }
 
 /* Form elements */
-.document .content input[type=text] {
+input#post_subtitle,
+input#post_title {
+  color: #202020;
+  width: 100%;
+  font: 32px/30px 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
   background: transparent;
   border: 1px solid #fff;
   height: 45px;
@@ -715,17 +754,13 @@ a.meta {
   -webkit-border-radius: 0;
   border-radius: 0;
   }
-  .document .content input[type=text]:focus,
-  .document .content input[type=text]:hover {
+  input#post_subtitle:focus,
+  input#post_subtitle:hover,
+  input#post_title:focus,
+  input#post_title:hover {
     border-color: #ccc;
     box-shadow:inset #ddd 0 2px 3px;
     }
-input#post_subtitle,
-input#post_title {
-  color: #292929;
-  width: 100%;
-  font: 32px/30px 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
-  }
 input#post_subtitle {
   color: #a0a0a0;
   }
@@ -743,8 +778,8 @@ input#post_subtitle {
 select,
 input[type=text],
 input[type=password] {
-  line-height: 30px;
-  height: 33px;
+  line-height: 28px;
+  height: 28px;
   background: white;
   border: 1px solid #CCC;
   outline: 0;
@@ -783,7 +818,7 @@ label,
   display: block;
   font-size: 11px;
   line-height: 16px;
-  margin: 5px 0 2px;
+  margin: 2px 0;
   color: #A0A0A0;
   }
 
@@ -815,21 +850,24 @@ label,
 /* ------------------------------------------
   Notifications
 ---------------------------------------------*/
-
-
 #notification .notification{
   text-align: center;
   width: 300px;
   margin: 200px auto;
   padding: 30px;
   font-size: 30px;
-  color: white;
-}
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 34px;
+  font-weight: 500;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.45);
+  }
 
 #notification .error {
-  background: red;
-  border: 1px solid red;
-}
+  background: #E73C58;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  }
 
 /* ------------------------------------------
   Class Helpers

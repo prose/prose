@@ -1,8 +1,8 @@
 <div class='state'>
 
-  <p class='status'><%= metadata.hidden ? "Unpublished" : "Published" %></p>
+  <p class='status'><%= metadata.hidden ? 'Unpublished' : 'Published' %></p>
   <div class='message hidden'>
-    <input type="text" name="commit_message" id="commit_message" value="Update <%= file %>"/>
+    <input type='text' name='commit_message' id='commit_message' value='Update <%= file %>' />
   </div>
   <div class='button-padding'>
     <% if (metadata.hidden) { %>
