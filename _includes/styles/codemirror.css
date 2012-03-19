@@ -1,6 +1,5 @@
 .CodeMirror {
   line-height: 1em;
-  font-family: 'Menlo Regular',Consolas,monospace!important;
   }
 .CodeMirror-scroll {
   height: auto;
@@ -21,11 +20,11 @@
   text-align: right;
   padding: .4em .2em .4em .4em;
   white-space: pre !important;
-}
+  }
 .CodeMirror-lines {
   padding: .4em;
   white-space: pre;
-}
+  }
 
 .CodeMirror pre {
   -moz-border-radius: 0;
@@ -33,24 +32,26 @@
   -o-border-radius: 0;
   border-radius: 0;
   border-width: 0; margin: 0; padding: 0; background: transparent;
-  font-family: inherit;
-  font-size: inherit;
   padding: 0; margin: 0;
   white-space: pre;
   word-wrap: normal;
-}
+  font-family: 'Menlo Regular',Consolas,monospace;
+  font-size: 14px;
+  line-height: 20px;
+  color: #404040;
+  }
 
 .CodeMirror-wrap pre {
   word-wrap: break-word;
   white-space: pre-wrap;
-}
+  }
 .CodeMirror-wrap .CodeMirror-scroll {
   overflow-x: hidden;
-}
+  }
 
 .CodeMirror textarea {
   outline: none !important;
-}
+  }
 
 .CodeMirror pre.CodeMirror-cursor {
   z-index: 10;
@@ -59,11 +60,11 @@
   border-left: 1px solid black;
   border-right:none;
   width:0;
-}
+  }
 .CodeMirror pre.CodeMirror-cursor.CodeMirror-overwrite {}
 .CodeMirror-focused pre.CodeMirror-cursor {
   visibility: visible;
-}
+  }
 
 div.CodeMirror-selected { background: #d9d9d9; }
 .CodeMirror-focused div.CodeMirror-selected { background: #d7d4f0; }
@@ -71,7 +72,7 @@ div.CodeMirror-selected { background: #d9d9d9; }
 .CodeMirror-searching {
   background: #ffa;
   background: rgba(255, 255, 0, .4);
-}
+  }
 
 /* Default theme */
 
