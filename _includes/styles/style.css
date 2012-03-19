@@ -290,6 +290,18 @@ input[type=submit]:active {
   margin-top: 60px;
   }
 
+#post .inner  {
+  width: 960px;
+  margin: 0 auto;
+  position: relative;
+  }
+ @media all and (max-width: 480px) {
+  #post .inner {
+    width: 100%;
+    margin: 0;
+    padding: 20px 0 40px;
+    }
+  }
 
 /*Dropdowns*/
 li.dropdown {
@@ -334,7 +346,7 @@ a.dropdown-toggle {
   display: none;
   position: absolute;
   top: 30px;
-  z-index: 900;
+  z-index: 2000;
   min-width: 150px;
   max-width: 220px;
   _width: 150px;
@@ -392,6 +404,7 @@ body.start #header {
   -webkit-box-shadow: none;
   box-shadow: none;
   }
+  body.start #header .sites,
   body.start #header a.title {
     display: none;
     }
@@ -587,7 +600,7 @@ ul.site li a {
 #publish_status .state {
   position: absolute;
   padding: 5px 10px;
-  right: 10px;
+  right: 0;
   top: 0;
   background: white;
   background: rgba(255, 255, 255, 0.75);
@@ -614,24 +627,37 @@ ul.site li a {
 .toggle-mode {
   display: block;
   background: #377a97;
-  border: 1px solid #204859;
   color: #fff;
   font-weight: 500;
   position: absolute;
-  right: 40px;
-  top: 155px;
+  right: 20px;
+  top: 100px;
   text-align: center;
   width: 60px;
   font-size: 11px;
   z-index: 1000;
   -moz-border-radius: 2px;
   border-radius: 2px;
+  height: 24px;
+  line-height: 24px;
+  padding-left: 12px;
   }
   .toggle-mode:hover {
     color: #fff;
     }
   .toggle-mode:active {
     background-color: #204859;
+    }
+  .toggle-mode:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-top: 12px solid transparent;
+    border-left: 12px solid #fff;
+    border-bottom: 12px solid transparent;
     }
 
 /*Publish/Unpublish State*/
@@ -743,26 +769,25 @@ input#post_subtitle,
 input#post_title {
   color: #202020;
   width: 100%;
-  font: 32px/30px 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+  font: 42px/52px 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
   background: transparent;
   border: 1px solid #fff;
-  height: 45px;
+  height: 52px;
   display: block;
   margin-bottom: 5px;
   box-shadow: none;
   -moz-border-radius: 0;
   -webkit-border-radius: 0;
   border-radius: 0;
+  text-align: center;
   }
-  input#post_subtitle:focus,
-  input#post_subtitle:hover,
-  input#post_title:focus,
-  input#post_title:hover {
-    border-color: #ccc;
-    box-shadow:inset #ddd 0 2px 3px;
-    }
+
 input#post_subtitle {
-  color: #a0a0a0;
+  font-size: 28px;
+  line-height: 40px;
+  height: 40px;
+  color: #A0A0A0;
+  margin-bottom: 20px;
   }
 
 .metadata #metadata_form input {
