@@ -1,34 +1,39 @@
 (function(config, models, views, routers, utils, templates) {
 
 views.Start = Backbone.View.extend({
-  id: 'start',
+    id: 'start',
 
-  events: {
-    'submit #login_form': '_login'
-  },
+    events: {
+        'submit #login_form': '_login'
+    },
 
-  initialize: function(options) {
-  },
+    initialize: function(options) {},
 
-  _login: function() {
-    var user = this.$('#github_user').val();
-    var password = this.$('#github_password').val();
+    _login: function() {
+        var self = this;
+        $('#login_form').validate({
+            submitHandler: function(form) {
+                console.log(form);
+                var user = self.$('#github_user').val();
+                var password = self.$('#github_password').val();
 
-    login({username: user, password: password}, function(err) {
-      if (err) return app.instance.notify("error", err);
-      window.location.reload();
-    });
+                login({username: user, password: password}, function(err) {
+                    if (err) return app.instance.notify('error', err);
+                    window.location.reload();
+                });
+            }
+        });
 
-    return false;
-  },
+        return false;
+    },
 
-  render: function() {
-    $(this.el).html(templates.start(_.extend(this.model, {
-      repo: app.state.repo,
-      available_repos: app.instance.model.available_repos
-    })));
-    return this;
-  }
+    render: function() {
+        $(this.el).html(templates.start(_.extend(this.model, {
+            repo: app.state.repo,
+            available_repos: app.instance.model.available_repos
+        })));
+        return this;
+    }
 });
 
 }).apply(this, window.args);

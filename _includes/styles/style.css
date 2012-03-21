@@ -249,6 +249,9 @@ input[type=submit]:active {
   border-radius: 5px;
   display: inline-block;
   }
+  form .button-padding {
+    padding: 3px 2px 1px;
+    }
 
 
 
@@ -294,13 +297,6 @@ input[type=submit]:active {
   width: 960px;
   margin: 0 auto;
   position: relative;
-  }
- @media all and (max-width: 480px) {
-  #post .inner {
-    width: 100%;
-    margin: 0;
-    padding: 20px 0 40px;
-    }
   }
 
 /*Dropdowns*/
@@ -844,7 +840,7 @@ label,
   font-size: 11px;
   line-height: 16px;
   margin: 2px 0;
-  color: #A0A0A0;
+  color: #808080;
   }
 
 .fields li,
@@ -893,6 +889,16 @@ label,
   -webkit-border-radius: 2px;
   border-radius: 2px;
   }
+ul.form li {
+  position: relative;
+  }
+label.error {
+  color: #E73C58;
+  position: absolute;
+  right: 5px;
+  top: 23px;
+  font-size: 12px;
+  }
 
 /* ------------------------------------------
   Class Helpers
@@ -923,3 +929,18 @@ label,
 .centered   { text-align: center; }
 .scrolling  { overflow: auto; }
 .clipping   { overflow: hidden; }
+
+
+/* ------------------------------------------
+  ios and small screen alterations
+---------------------------------------------*/
+ @media all and (max-width: 480px) {
+  #post .inner {
+    width: 100%;
+    margin: 0;
+    padding: 20px 0 40px;
+    }
+  .toggle-mode {
+    right: 0;
+    }
+  }
