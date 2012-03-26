@@ -249,6 +249,9 @@ input[type=submit]:active {
   border-radius: 5px;
   display: inline-block;
   }
+  form .button-padding {
+    padding: 3px 2px 1px;
+    }
 
 
 
@@ -295,13 +298,6 @@ input[type=submit]:active {
   margin: 0 auto;
   position: relative;
   }
- @media all and (max-width: 480px) {
-  #post .inner {
-    width: 100%;
-    margin: 0;
-    padding: 20px 0 40px;
-    }
-  }
 
 /*Dropdowns*/
 li.dropdown {
@@ -337,10 +333,12 @@ a.dropdown-toggle {
   -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
-  min-width: 180px;
-  max-width: 220px;
-  _width: 180px;
   }
+  #header .sites .dropdown-menu {
+    min-width: 180px;
+    max-width: 220px;
+    _width: 180px;
+    }
 .dropdown-menu {
   background-color: #fff;
   display: none;
@@ -356,6 +354,8 @@ a.dropdown-toggle {
   -moz-background-clip: padding-box;
   background-clip: padding-box;
   border: 1px solid #ccc;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
   }
   .dropdown-menu.flank-left   { left: 0; }
   .dropdown-menu.flank-right  { right: 0; }
@@ -599,7 +599,7 @@ ul.site li a {
 
 #publish_status .state {
   position: absolute;
-  padding: 5px 10px;
+  padding: 5px 10px 5px 15px;
   right: 0;
   top: 0;
   background: white;
@@ -626,11 +626,10 @@ ul.site li a {
 
 .toggle-mode {
   display: block;
-  background: #377a97;
-  color: #fff;
+  background: #e7f2f6;
   font-weight: 500;
   position: absolute;
-  right: 20px;
+  right: 21px;
   top: 100px;
   text-align: center;
   width: 60px;
@@ -638,26 +637,15 @@ ul.site li a {
   z-index: 1000;
   -moz-border-radius: 2px;
   border-radius: 2px;
-  height: 24px;
-  line-height: 24px;
-  padding-left: 12px;
+  height: 30px;
+  line-height: 30px;
+  padding-left: 5px;
   }
   .toggle-mode:hover {
-    color: #fff;
+    color: #377A97;
     }
   .toggle-mode:active {
-    background-color: #204859;
-    }
-  .toggle-mode:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 0;
-    height: 0;
-    border-top: 12px solid transparent;
-    border-left: 12px solid #fff;
-    border-bottom: 12px solid transparent;
+    color: #204859;
     }
 
 /*Publish/Unpublish State*/
@@ -844,7 +832,7 @@ label,
   font-size: 11px;
   line-height: 16px;
   margin: 2px 0;
-  color: #A0A0A0;
+  color: #808080;
   }
 
 .fields li,
@@ -893,6 +881,16 @@ label,
   -webkit-border-radius: 2px;
   border-radius: 2px;
   }
+ul.form li {
+  position: relative;
+  }
+label.error {
+  color: #E73C58;
+  position: absolute;
+  right: 5px;
+  top: 23px;
+  font-size: 12px;
+  }
 
 /* ------------------------------------------
   Class Helpers
@@ -923,3 +921,18 @@ label,
 .centered   { text-align: center; }
 .scrolling  { overflow: auto; }
 .clipping   { overflow: hidden; }
+
+
+/* ------------------------------------------
+  ios and small screen alterations
+---------------------------------------------*/
+ @media all and (max-width: 480px) {
+  #post .inner {
+    width: 100%;
+    margin: 0;
+    padding: 20px 0 40px;
+    }
+  .toggle-mode {
+    right: 0;
+    }
+  }
