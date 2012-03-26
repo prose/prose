@@ -12,7 +12,6 @@
 {% include vendor/codemirror/xml.js %}
 {% include vendor/codemirror/markdown.js %}
 {% include vendor/jquery.cookie.js %}
-{% include vendor/jquery.validate.min.js %}
 {% include vendor/bootstrap-dropdown.js %}
 
 window.app = {

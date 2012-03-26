@@ -11,17 +11,12 @@ views.Start = Backbone.View.extend({
 
     _login: function() {
         var self = this;
-        $('#login_form').validate({
-            submitHandler: function(form) {
-                console.log(form);
-                var user = self.$('#github_user').val();
-                var password = self.$('#github_password').val();
+        var user = self.$('#github_user').val();
+        var password = self.$('#github_password').val();
 
-                login({username: user, password: password}, function(err) {
-                    if (err) return app.instance.notify('error', err);
-                    window.location.reload();
-                });
-            }
+        login({username: user, password: password}, function(err) {
+            if (err) return app.instance.notify('error', err);
+            window.location.reload();
         });
 
         return false;
