@@ -22,8 +22,8 @@
       </div>
 
       <div class='content-header'>
-        <input type='text' name='title' id='post_title' placeholder='Untitled' value='<%= metadata.title %>'/>
-        <input type='text' name='subtitle' id='post_subtitle' placeholder='Subtitle' value='<%= metadata.subtitle %>'/>
+        <input type='text' name='title' id='post_title' placeholder='Untitled' autocomplete='off' value='<%= metadata.title %>'/>
+        <input type='text' name='subtitle' id='post_subtitle' placeholder='Subtitle' autocomplete='off' value='<%= metadata.subtitle %>'/>
       </div>
       <textarea id='code' name='code'><%= content %></textarea>
     </div>
