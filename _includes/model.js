@@ -73,9 +73,10 @@ function loadApplication(cb) {
   if (app.username) {
     var user = github().getUser(app.username);
     user.repos(function(err, repos) {
-      filter(repos, function(err, repos) {
-        cb(null, { "available_repos": repos });
-      });
+      cb(null, { "available_repos": repos });
+      // filter(repos, function(err, repos) {
+      //   cb(null, { "available_repos": repos });
+      // });
     });
   } else {
     cb(null, { "available_repos": [] });
