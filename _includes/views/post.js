@@ -72,7 +72,6 @@ views.Post = Backbone.View.extend({
     savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, metadata, this.editor.getValue(), message, _.bind(function(err) {
       this.model.metadata = metadata;
       this.updatePublishStatus();
-      console.log('saaved');
     }, this));
   },
 
