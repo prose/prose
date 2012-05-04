@@ -10,14 +10,10 @@
 
       <div class='metadata'>
         <a href='#' class='icon meta'>Toggle Metadata</a>
+
         <form id='metadata_form'>
-          <h3><small>Post options</small></h3>
-          <label>Image</label>
-          <input type='text' name='image' id='post_image' value='<%= metadata.image %>'/>
-          <label>Category</label>
-          <input type='text' name='category' id='post_category' value='<%= metadata.category %>'/>
-          <label>Permalink</label>
-          <input type='text' name='permalink' id='post_permalink' value='<%= metadata.permalink %>'/>
+          <h3><small>Metadata</small></h3>
+          <textarea id="raw_metadata" name="raw_metadata"><%= raw_metadata %></textarea>
         </form>
       </div>
 

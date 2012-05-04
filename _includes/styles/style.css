@@ -234,11 +234,9 @@ input[type=submit]:active {
   }
 
 .button.unpublish {
-  background-color: #f4f4f4;
-  border-color: #ccc;
-  color: #ccc;
-  text-shadow: 0 1px 0 #fff;
-  }
+  background-color: #444;
+  margin-top: 3px;
+}
 
 .button-padding {
   background: #EEE;
@@ -252,7 +250,6 @@ input[type=submit]:active {
   form .button-padding {
     padding: 3px 2px 1px;
     }
-
 
 
 /* ------------------------------------------
@@ -601,13 +598,52 @@ ul.site li a {
   position: absolute;
   padding: 5px 10px 5px 15px;
   right: 0;
+  left: 0;
   top: 0;
-  background: white;
-  background: rgba(255, 255, 255, 0.75);
+  overflow: auto;
+  }
+
+
+#publish_status .state .save-state {
+  float: left;
+  margin-right: 20px;
+  padding: 5px;
+  margin-left: 23px;
+}
+
+#publish_status .state .publish-state {
+  float: right;
+  background: #ddd;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
+  width: 200px;
   border-radius: 5px;
-  }
+  padding: 2px 5px;
+  border: 1px solid #ccc;
+}
+
+#publish_status .state .publish-state.published {
+  background-color: #73a736;
+}
+
+#publish_status .state .publish-state .status {
+  color: #666;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding-left: 20px;
+  font-weight: normal;
+}
+
+#publish_status .state .publish-state.published .status {
+  color: #fff;  
+}
+
+#publish_status .button { float: right; }
+.button.publish {
+  background-color: #73a736;
+  margin-top: 3px;
+}
+
 #publish_status .message {
   float: left;
   margin: 4px 0 0 10px;
@@ -617,7 +653,7 @@ ul.site li a {
     }
 .state .button-padding {
   margin-left: 10px;
-  background-color: #fff;
+  /*background-color: #fff;*/
   }
 .state .button {
   width: 80px;
@@ -663,6 +699,7 @@ ul.site li a {
 .document {
   background: #fff;
   border: 1px solid #a0a0a0;
+  min-height: 400px;
   position: relative;
   margin-top: 10px;
   -moz-box-shadow: 0 0 6px rgba(0,0,0,0.25);
@@ -684,8 +721,15 @@ ul.site li a {
     transition: width 100ms linear;
     padding: 0 10px;
     }
+  .document .metadata #raw_metadata {
+    width: 100%;
+    height: 300px;
+    font-family: 'Menlo Regular',Consolas,monospace;
+    background: #444;
+    color: #eee;
+    }
     #post .metadata.open {
-      width: 220px;
+      width: 700px;
       }
   .document .content-preview,
   .document .content {

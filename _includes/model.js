@@ -152,7 +152,7 @@ function loadSite(username, reponame, branch, path, cb) {
 function savePost(username, reponame, branch, path, file, metadata, content, message, cb) {
   var repo = github().getRepo(reponame, branch);
   function serialize(data) {
-    return "---\n" + _.toYAML(data) + "\n---\n\n";
+    return ["---", data, "---"].join('\n')+'\n\n';
   }
   repo.write(path + "/" + file, serialize(metadata)+content, message, cb);
 }
@@ -168,12 +168,12 @@ function loadPost(username, reponame, branch, path, file, cb) {
   var repo = github().getRepo(reponame, branch);
 
   repo.read(path + "/" + file, function(err, data) {
-
     function parse(content) {
       var res = {};
       var chunked = (content+'\n').split('---\n');
       if (chunked[0] === '' && chunked.length > 2) {
         res.metadata = jsyaml.load(chunked[1]);
+        res.raw_metadata = chunked[1].trim();
         res.content = chunked.slice(2).join('---\n');
       } else {
         res.metadata = {};

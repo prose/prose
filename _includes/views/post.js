@@ -6,6 +6,7 @@ views.Post = Backbone.View.extend({
 
   events: {
     'click .publish': '_publish',
+    'click .save': '_save',
     'click .unpublish': '_unpublish',
     'click .meta': '_toggleMeta',
     'click a.toggle-mode': '_toggleMode',
@@ -13,21 +14,24 @@ views.Post = Backbone.View.extend({
   },
 
   _makeDirty: function(e) {
-    this.$('.button.publish').removeClass('hidden');
+    this.dirty = true;
+    this.$('.button.save').removeClass('inactive');
+  },
+
+  _save: function(e) {
+    if (!this.dirty) return;
+    e.preventDefault();
+    this.updatePost(this.model.metadata.published, 'Unpublish '+ this.model.file);
   },
 
   _publish: function(e) {
-    if (this.$('.message').hasClass('hidden')) {
-      this.$('.message').removeClass('hidden'); 
-    } else {
-      this.updatePost(false, this.$('#commit_message').val());
-    }
-    return false;
+    e.preventDefault();
+    this.updatePost(true, this.$('#commit_message').val());
   },
 
   _unpublish: function(e) {
     e.preventDefault();
-    this.updatePost(true, 'Unpublish '+ this.model.file);
+    this.updatePost(false, 'Unpublish '+ this.model.file);
   },
 
   _toggleMode: function(e) {
@@ -58,23 +62,22 @@ views.Post = Backbone.View.extend({
     this.converter = new Showdown.converter();
   },
 
-  updatePost: function(hidden, message) {
-    var metadata = {
-      title: this.$('#post_title').val(),
-      subtitle: this.$('#post_subtitle').val(),
-      layout: this.$('#post_layout').val(),
-      category: this.$('#post_category').val(),
-      permalink: this.$('#post_permalink').val(),
-      image: this.$('#post_image').val(),
-      hidden: hidden
-    };
+  updatePost: function(published, message) {
+    var metadata = jsyaml.load($('#raw_metadata').val());
+    metadata.published = published;
+    metadata.title = this.$('#post_title').val();
+    metadata.subtitle = this.$('#post_subtitle').val();
 
-    savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, metadata, this.editor.getValue(), message, _.bind(function(err) {
+    // Update metadata accordingly.
+    var rawMetadata = _.toYAML(metadata);
+    $('#raw_metadata').val(rawMetadata);
+
+    savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, rawMetadata, this.editor.getValue(), message, _.bind(function(err) {
       this.model.metadata = metadata;
+      this.dirty = false;
       this.updatePublishStatus();
     }, this));
   },
-
 
   updatePublishStatus: function() {
     this.$('#publish_status').html(templates.publish_status(this.model));
@@ -88,11 +91,9 @@ views.Post = Backbone.View.extend({
         lineWrapping: true,
         matchBrackets: true,
         theme: 'default',
-        onChange: function() {
-          that._makeDirty();
-        }
+        onChange: _.bind(that._makeDirty, that)
       });
-    }, 200);
+    }, 100);
   },
 
   edit: function() {
