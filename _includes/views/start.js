@@ -23,7 +23,7 @@ views.Start = Backbone.View.extend({
       } else if (branches.length > 1) {
         $branches.append('<div class="label">Choose a branch:</div>')
         _.each(branches, function(branch) {
-          $branches.append($('<div class="branch"><a href="#'+[user, repo].join('/')+'">'+branch+'</a></div>'));
+          $branches.append($('<div class="branch"><a href="#'+[user, repo, branch].join('/')+'">'+branch+'</a></div>'));
         });
       } else if (branches.length === 0) {
         $branches.append('<div class="not-jekyll">Not a valid Jekyll site.</div>')
