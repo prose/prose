@@ -7,16 +7,13 @@
 (function() {
   var Github;
   var API_URL = 'https://api.github.com';
-  
-  // Github API
-  // -------
 
   Github = window.Github = function(options) {
     var username = options.username;
     var password = options.password;
 
     // Util
-    // -------
+    // =======
 
     function _request(method, path, data, cb) {
       $.ajax({
@@ -32,10 +29,9 @@
     }
 
     // USER API
-    // -------
+    // =======
 
-    Github.User = function(options) {
-      this.username = options.username;
+    Github.User = function() {
       this.repos = function(cb) {
         _request("GET", "/user/repos?type=all", null, function(err, res) {
           cb(err, res);
@@ -45,40 +41,57 @@
 
 
     // Repository API
-    // -------
+    // =======
 
     Github.Repository = function(options) {
       var repo = options.name;
       var branch = options.branch;
+      var user = options.user;
       
       var that = this;
-      var repoPath = "/repos/" + username + "/" + repo;
+      var repoPath = "/repos/" + user + "/" + repo;
 
       // Get a particular reference
+      // -------
+
       this.getRef = function(ref, cb) {
         _request("GET", repoPath + "/git/refs/heads/" + ref, null, function(err, res) {
           if (err) return cb(err);
           cb(null, res.object.sha);
         });
-      }
+      };
+
+      // List all branches of a repository
+      // -------
+
+      this.listBranches = function(cb) {
+        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
+          if (err) return cb(err);
+          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
+        });
+      };
 
       // Retrieve the contents of a blob
+      // -------
+
       this.getBlob = function(sha, cb) {
         _request("GET", repoPath + "/git/blobs/" + sha, null, function(err, res) {
           cb(err, res);
         });
-      }
+      };
 
       // Retrieve the tree a commit points to
+      // -------
 
       this.getTree = function(commit, cb) {
         _request("GET", repoPath + "/git/trees/"+commit, null, function(err, res) {
           if (err) return cb(err);
           cb(null, res.sha);
         });
-      }
+      };
 
       // Post a new blob object, getting a blob SHA back
+      // -------
 
       this.postBlob = function(content, cb) {
         var data = {
@@ -89,10 +102,11 @@
           if (err) return cb(err);
           cb(null, res.sha);
         });
-      }
+      };
 
       // Post a new tree object having a file path pointer replaced
       // with a new blob SHA getting a tree SHA back
+      // -------
 
       this.postTree = function(baseTree, path, blob, cb) {
         var data = {
@@ -114,6 +128,7 @@
 
       // Create a new commit object with the current commit SHA as the parent
       // and the new tree SHA, getting a commit SHA back
+      // -------
 
       this.commit = function(parent, tree, message, cb) {
         var data = {
@@ -131,15 +146,14 @@
           if (err) return cb(err);
           cb(null, res.sha);
         });
-      }
+      };
 
       // Update the reference of your head to point to the new commit SHA
-
       this.updateHead = function(commit, cb) {
         _request("PATCH", repoPath + "/git/refs/heads/" + branch, { "sha": commit }, function(err, res) {
           cb(err);
         });
-      }
+      };
 
       // Show repository information
       // -------
@@ -212,12 +226,12 @@
     // Top Level API
     // -------
 
-    this.getRepo = function(repo, branch) {
-      return new Github.Repository({name: repo, branch: branch || "master"});
+    this.getRepo = function(user, repo, branch) {
+      return new Github.Repository({user: user, name: repo, branch: branch || "master"});
     };
 
-    this.getUser = function(user) {
-      return new Github.User({username: user});
+    this.getUser = function() {
+      return new Github.User();
     };
   };
 }).call(this);
