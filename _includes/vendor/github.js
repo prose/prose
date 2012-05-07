@@ -1,4 +1,4 @@
-// Github.js 0.1.1
+// Github.js 0.2.0
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -149,8 +149,10 @@
       };
 
       // Update the reference of your head to point to the new commit SHA
-      this.updateHead = function(commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/" + branch, { "sha": commit }, function(err, res) {
+      // -------
+
+      this.updateHead = function(head, commit, cb) {
+        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
           cb(err);
         });
       };
@@ -164,10 +166,10 @@
         });
       };
 
-      // List all files
+      // List all files of a branch
       // -------
 
-      this.list = function(cb) {
+      this.list = function(branch, cb) {
         _request("GET", repoPath + "/git/trees/" + branch + "?recursive=1", null, function(err, res) {
           cb(err, res ? res.tree : null);
         });
@@ -177,8 +179,8 @@
       // Read file at given path
       // -------
 
-      this.read = function(path, cb) {
-        that.list(function(err, tree) {
+      this.read = function(branch, path, cb) {
+        that.list(branch, function(err, tree) {
           var file = _.select(tree, function(file) {
             return file.path === path;
           })[0];
@@ -203,16 +205,16 @@
         });
       };
 
-      // Write file contents on a given path
+      // Write file contents to a given branch and path
       // -------
 
-      this.write = function(path, content, message, cb) {
+      this.write = function(branch, path, content, message, cb) {
         that.getRef(branch, function(err, latestCommit) {
           that.getTree(latestCommit, function(err, tree) {
             that.postBlob(content, function(err, blob) {
               that.postTree(tree, path, blob, function(err, tree) {
                 that.commit(latestCommit, tree, message, function(err, commit) {
-                  that.updateHead(commit, function(err) {
+                  that.updateHead(branch, commit, function(err) {
                     cb(err);
                   });
                 });
