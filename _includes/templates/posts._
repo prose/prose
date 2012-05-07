@@ -9,17 +9,17 @@
       <ul>
         <li class='dropdown'>
           <% if (path) { %>
-
-          <% console.log(current_path); %>
             <a class='dropdown-toggle' data-toggle='dropdown' href='#'><%= current_path.name %></a>
           <% } else { %>
             <a class='dropdown-toggle' data-toggle='dropdown' href='#'>Choose a category</a>
           <% } %>
-          <ul class='dropdown-menu flank-left'>
-            <% _.each(paths, function(p, index) { %>
-              <li><a href='#<%= app.username %>/<%= repo %>/<%= branch %>/<%= p.path %>'><%= p.name %></a></li>
-            <% }); %>
-          </ul>
+          <% if (paths.length > 1) { %>
+            <ul class='dropdown-menu flank-left'>
+              <% _.each(paths, function(p, index) { %>
+                <li><a href='#<%= app.username %>/<%= repo %>/<%= branch %>/<%= p.path %>'><%= p.name %></a></li>
+              <% }); %>
+            </ul>
+          <% } %>
         </li>
       </ul>
   </div>
@@ -27,7 +27,7 @@
   <% if (posts.length > 0) { %>
     <div class='post-listing prose clearfix'>
     <% _.each(posts, function(post) { %>
-    <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
+      <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
         <div class='published-on'><%= post.date.toDateString() %></div>
         <div class='image'></div>
         <h2><small><%= post.title || 'Untitled' %></small></h2>

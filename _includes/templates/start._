@@ -21,7 +21,10 @@
     <h1><small>Choose a site:</small></h1>
     <ul class='site'>
       <% _.each(available_repos, function(r, index) { %>
-      <li><a title='edit' href='#<%= r.owner.login %>/<%= r.name %>/master'><%= r.name %></a></li>
+      <li class="repo">
+        <a title='edit' class="select-repo" data-user="<%= r.owner.login %>" data-repo="<%= r.name %>" href='#'><%= r.name %></a>
+        <div class="branches hidden"></div>
+      </li>
       <% }) %>
     </ul>
   </div>

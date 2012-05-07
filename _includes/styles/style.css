@@ -454,6 +454,42 @@ form .button-padding {
   margin-left: -120px;
   }
 
+ul.site li {
+  position: relative;
+  }
+
+ul.site li .branches {
+  position: absolute;
+  left: 240px;
+  width: 200px;
+  top: 0px;
+  }
+
+  ul.site li .branches .label {
+    line-height: 27px;
+    background: #222;
+    color: #eee;
+    padding: 0 5px;
+    }
+  ul.site li .branches .not-jekyll {
+    line-height: 27px;
+    background: #731a0b;
+    color: white;
+    padding: 0 5px;
+    }
+
+    
+  ul.site li .branches .branch {
+    background: #444;
+    
+    color: #fff;
+    padding: 0 5px;
+    }
+    ul.site li .branches .branch a {
+      color: #eee;
+      border: none;
+    }
+
 ul.site li a {
   display: block;
   border-bottom: 1px solid #eee;

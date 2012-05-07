@@ -23,7 +23,7 @@ routers.Application = Backbone.Router.extend({
       branch: url[2],
       path: (url.slice(3) || []).join('/')
     };
-    return [app.state.user, app.state.repo, app.state.branch, app.state.path]
+    return [url[0], app.state.repo, app.state.branch, app.state.path]
   },
 
   // #example-user/example-repo/gh-pages/path/to/new

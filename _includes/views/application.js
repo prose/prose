@@ -55,18 +55,18 @@ views.Application = Backbone.View.extend({
   // Main Views
   // ----------
 
-  posts: function (username, repo, branch, path) {
-    loadSite(username, repo, branch, path, _.bind(function (err, data) {
+  posts: function (user, repo, branch, path) {
+    loadSite(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return this.notify('error', 'Seems like the chosen repository is not a valid Jekyll site.');
       this.header.render();
       this.replaceMainView("posts", new views.Posts({ model: data, id: 'posts' }).render());
     }, this));
   },
 
-  post: function (username, repo, branch, path, file) {
-    loadSite(username, repo, branch, path, _.bind(function (err, data) {
+  post: function (user, repo, branch, path, file) {
+    loadSite(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return this.notify('error', 'Seems like the chosen repository is not a valid Jekyll site.');
-      loadPost(username, repo, branch, path, file, _.bind(function (err, data) {
+      loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         this.header.render();
         this.replaceMainView("posts", new views.Post({ model: data, id: 'post' }).render());
       }, this));
@@ -74,7 +74,7 @@ views.Application = Backbone.View.extend({
     }, this));
   },
 
-  newPost: function (username, repo, branch, path) {
+  newPost: function (user, repo, branch, path) {
     this.header.render();
     this.replaceMainView("new_post", new views.NewPost({id: "new_post", model: {repo: repo, path: path}}).render());
   },
