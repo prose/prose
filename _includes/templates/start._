@@ -1,4 +1,4 @@
-<a href='/' class='branding title'>Columnist</a>
+<a href='/' class='branding title'>Poole</a>
 <div class='start dialog clearfix'>
   <% if (!authenticated) { %>
     <div id='hint'></div>

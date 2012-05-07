@@ -1,4 +1,4 @@
-<a href='{{site.baseurl}}' class='title icon logo'>Columnist</a>
+<a href='{{site.baseurl}}' class='title'>Poole</a>
 
     <!--Github account and links-->
     <% if (repo) { %>

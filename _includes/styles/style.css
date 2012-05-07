@@ -270,8 +270,11 @@ input[type=submit]:active {
   padding: 0 20px;
   height: 60px;
   }
-  #header a.logo {
-    background: transparent url(images/sprite.png) no-repeat 0 5px;
+  #header a.title, #start a.title {
+    font-size: 30px;
+    line-height: 40px;
+    font-family: 'Palatino Linotype';
+    color: #000;
     width: 160px;
     height: 40px;
     float: left;
@@ -407,16 +410,13 @@ body.start #header {
     }
 
 .branding {
-  background: transparent url(images/front-logo.png) no-repeat 0 0;
   width: 240px;
   height: 40px;
   display: block;
-  text-indent: -999em;
   margin-left: -120px;
   position: absolute;
   left: 50%;
-  top: 30%;
-  margin-top: -60px;
+  top: 20%;
   }
 
 .dialog {
