@@ -51,56 +51,54 @@ function authenticated() {
 
 
 function loadApplication(cb) {
-  // Filter out Jekyll-sites
-  function filter(repos, cb) {
-    var remaining = repos.length;
-    var filteredRepos = [];
-
-    _.each(repos, function(r) {
-      if (r.name.match(/.github.com/)) {
-        filteredRepos.push(r);
-        if ((remaining -= 1) === 0) cb(null, filteredRepos);
-      } else {
-        var repo = github().getRepo(r.name, "gh-pages");
-        repo.getRef("gh-pages", function(err, sha) {
-          if (!err) filteredRepos.push(r);
-          if ((remaining -= 1) === 0) cb(null, filteredRepos);        
-        });
-      }
-    });
-  }
-
   if (app.username) {
     var user = github().getUser(app.username);
     user.repos(function(err, repos) {
       cb(null, { "available_repos": repos });
-      // filter(repos, function(err, repos) {
-      //   cb(null, { "available_repos": repos });
-      // });
     });
   } else {
     cb(null, { "available_repos": [] });
   }
 }
 
+// Load Branches
+// -------
+// 
+// List all available Jekyll branches
+
+function loadBranches(user, repo, cb) {
+  var repo = github().getRepo(user, repo);
+
+  repo.listBranches(function(err, branches) {
+    var jekyllBranches = [],
+        processed = 0;
+
+    _.each(branches, function(branch) {
+      repo.read(branch, "_config.yml", function(err, data) {
+        if (!err) jekyllBranches.push(branch);
+        processed += 1;
+        if (processed === branches.length) cb(null, jekyllBranches);
+      });
+    });
+  });
+}
 
 // Load Site
 // -------
 // 
 // List all postings for a given site plus load _config.yml
 
-function loadSite(username, reponame, branch, path, cb) {
+function loadSite(user, repo, branch, path, cb) {
 
-  var repo = github().getRepo(reponame, branch);
-
+  var repo = github().getRepo(user, repo, branch);
   function loadConfig(cb) {
-    repo.read("_config.yml", function(err, data) {
+    repo.read(branch, "_config.yml", function(err, data) {
       if (err) return cb(err);
       cb(null, jsyaml.load(data));
     });
   }
 
-  repo.list(function(err, tree) {
+  repo.list(branch, function(err, tree) {
     if (err) cb("Not a valid Jekyll repository.");
 
     var paths = _.compact(_.map(tree, function(file) {
@@ -149,12 +147,12 @@ function loadSite(username, reponame, branch, path, cb) {
 // List all postings for a given repository
 // Looks into _posts/blog
 
-function savePost(username, reponame, branch, path, file, metadata, content, message, cb) {
-  var repo = github().getRepo(reponame, branch);
+function savePost(user, repo, branch, path, file, metadata, content, message, cb) {
+  var repo = github().getRepo(user, repo, branch);
   function serialize(data) {
     return ["---", data, "---"].join('\n')+'\n\n';
   }
-  repo.write(path + "/" + file, serialize(metadata)+content, message, cb);
+  repo.write(branch, path + "/" + file, serialize(metadata)+content, message, cb);
 }
 
 
@@ -164,10 +162,10 @@ function savePost(username, reponame, branch, path, file, metadata, content, mes
 // List all postings for a given repository
 // Looks into _posts/blog
 
-function loadPost(username, reponame, branch, path, file, cb) {
-  var repo = github().getRepo(reponame, branch);
+function loadPost(user, repo, branch, path, file, cb) {
+  var repo = github().getRepo(user, repo);
 
-  repo.read(path + "/" + file, function(err, data) {
+  repo.read(branch, path + "/" + file, function(err, data) {
     function parse(content) {
       var res = {};
       var chunked = (content+'\n').split('---\n');
@@ -186,6 +184,6 @@ function loadPost(username, reponame, branch, path, file, cb) {
     var post = parse(data);
 
     // We're done. Can you hear me?!
-    cb(err, _.extend(post, {"repo": reponame, "path": path, "file": file}));
+    cb(err, _.extend(post, {"repo": repo, "path": path, "file": file}));
   });
 }
