@@ -24,7 +24,7 @@ views.Posts = Backbone.View.extend({
     }
 
     return _.map(paths, function(path) {
-      return { path: path, name: prettify(path) }
+      return { path: path, name: path }
     });
   },
 
