@@ -10,7 +10,8 @@ views.Post = Backbone.View.extend({
     'click .unpublish': '_unpublish',
     'click .meta': '_toggleMeta',
     'click a.toggle-mode': '_toggleMode',
-    'change input': '_makeDirty'
+    'focus input': '_makeDirty',
+    'focus textarea': '_makeDirty'
   },
 
   _makeDirty: function(e) {
@@ -19,7 +20,7 @@ views.Post = Backbone.View.extend({
   },
 
   _save: function(e) {
-    if (!this.dirty) return;
+    if (!this.dirty) return false;
     e.preventDefault();
     this.updatePost(this.model.metadata.published, 'Unpublish '+ this.model.file);
   },
@@ -54,6 +55,7 @@ views.Post = Backbone.View.extend({
 
   _toggleMeta: function(e) {
     e.preventDefault();
+    this.updateMetaData();
     $('.metadata').toggleClass('open');
   },
 
@@ -62,18 +64,21 @@ views.Post = Backbone.View.extend({
     this.converter = new Showdown.converter();
   },
 
-  updatePost: function(published, message) {
+  updateMetaData: function(published) {
     var metadata = jsyaml.load($('#raw_metadata').val());
-    metadata.published = published;
+    if (published !== undefined) metadata.published = published;
     metadata.title = this.$('#post_title').val();
     metadata.subtitle = this.$('#post_subtitle').val();
 
     // Update metadata accordingly.
     var rawMetadata = _.toYAML(metadata);
     $('#raw_metadata').val(rawMetadata);
+    return rawMetadata;
+  },
 
-    savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, rawMetadata, this.editor.getValue(), message, _.bind(function(err) {
-      this.model.metadata = metadata;
+  updatePost: function(published, message) {
+    savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, this.updateMetaData(published), this.editor.getValue(), message, _.bind(function(err) {
+      // this.model.metadata = metadata;
       this.dirty = false;
       this.updatePublishStatus();
     }, this));
