@@ -35,11 +35,12 @@ views.Start = Backbone.View.extend({
 
   _login: function() {
     var self = this;
+
     var user = self.$('#github_user').val();
     var password = self.$('#github_password').val();
 
     login({username: user, password: password}, function(err) {
-      if (err) return app.instance.notify('error', err);
+      if (err) return self.$('.bad-credentials').show();
       window.location.reload();
     });
 
