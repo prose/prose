@@ -280,8 +280,13 @@ input[type=submit]:active {
     float: left;
     margin-top: 10px;
     }
-  #header .sites {
-    margin-top: 15px;
+  #header .navigation {
+    overflow: auto;
+    font-size: 18px;
+    line-height: 61px;
+    }
+  #header .navigation div {
+    /*margin-top: 15px;*/
     float: left;
     }
   #header .user-status {
@@ -430,6 +435,11 @@ body.start #header {
 .dialog form {
   background: #fff;
   }
+
+.dialog .bad-credentials {
+  display: none;
+  color: #5B0707;
+}
 
 .dialog select,
 .dialog input[type=text],

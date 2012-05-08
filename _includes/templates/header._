@@ -1,16 +1,25 @@
 <a href='{{site.baseurl}}' class='title'>Poole</a>
-
-    <!--Github account and links-->
-    <% if (repo) { %>
-      <div class='sites'>
-        <ul>
-          <li class='dropdown'>
-            <%= repo %>
-          </li>
-        </ul>
-      </div>
-    <% } %>
-
+    
+    <div class="navigation">
+      <!--Github account and links-->
+      <% if (state.repo) { %>
+      <div class="root"><a href="#">Sites</a></div>
+        <div class="repo">
+          <% if (state.repo) { %>
+            &nbsp;&gt; <a href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></a></div>
+          <% } %>
+        <div class="path">
+          <% if (state.path) { %>
+            &nbsp;&gt; <a href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= state.path %></a>
+          <% } %>
+        </div>
+        <div class="file">
+          <% if (state.file) { %>
+            &nbsp;&gt; <%= state.file %>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
   <% if (app.username) { %>
     <div class='user-status'>
       <ul>
