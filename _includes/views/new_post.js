@@ -13,18 +13,16 @@ views.NewPost = Backbone.View.extend({
     var title =  this.$('.title').val();
     var subtitle = this.$('.subtitle').val();
 
-    // TODO: make this smart
-    // No assumptions on the repository layout should be made
     var metadata = {
       title: title,
-      category: 'blog',
       subtitle: subtitle,
-      hidden: true
+      published: false
     };
     
-    savePost(app.state.user, app.state.repo, app.state.branch, app.state.path, filename, metadata, '', 'Created ' +filename, function(err) {
+    savePost(app.state.user, app.state.repo, app.state.branch, app.state.path, filename, _.toYAML(metadata), '', 'Created ' +filename, function(err) {
       router.navigate(app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + app.state.path + '/' + filename, true);
     });
+
     return false;
   },
 
