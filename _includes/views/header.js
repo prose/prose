@@ -4,7 +4,6 @@ views.Header = Backbone.View.extend({
   id: 'header',
 
   events: {
-    "change #repository_name": "_switchRepository",
     "click a.logout": "_logout"
   },
 
@@ -13,20 +12,13 @@ views.Header = Backbone.View.extend({
     window.location.href = '';
   },
 
-  _switchRepository: function(e) {
-    router.navigate(app.username + "/" + $(e.currentTarget).val() + "/master", true);
-    return false;
-  },
-
   initialize: function(options) {
     
   },
 
   render: function() {
-    $(this.el).html(templates.header(_.extend(this.model, { 
-      repo: app.state.repo,
-      path: app.state.path ? app.state.path : null
-    })));
+
+    $(this.el).html(templates.header(_.extend(this.model, {state: app.state})));
     return this;
   }
 });

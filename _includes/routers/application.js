@@ -39,7 +39,9 @@ routers.Application = Backbone.Router.extend({
 
   // #example-user/example-repo/gh-pages/path/to/2012-01-01.md
   post: function(url, file) {
-    app.instance.post.apply(this, this.extractURL(url).concat(file));
+    var path = this.extractURL(url);
+    app.state.file = file;
+    app.instance.post.apply(this, path.concat(file));
   }
 });
 
