@@ -10,10 +10,14 @@
       <li>
         <label>Password</label>
         <input type='password' id='github_password' class='required' name='password' placeholder='password' size='24' />
+        <li class="bad-credentials">
+          Bad credentials
+        </li>
         <div class='button-padding state'>
           <input type='submit' value='Log in' />
         </div>
       </li>
+
     </ul></form>
   </div>
   <% } else { %>

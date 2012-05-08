@@ -35,6 +35,6 @@
     <% }); %>
     </div>
   <% } else { %>
-    <h2>No Posts yet</h2>
+    <h2>No posts in this category.</h2>
   <% } %>
 </div>
