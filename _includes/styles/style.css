@@ -714,7 +714,7 @@ ul.site li a {
   right: 21px;
   top: 100px;
   text-align: center;
-  width: 60px;
+  width: 120px;
   font-size: 11px;
   z-index: 1000;
   -moz-border-radius: 2px;
@@ -723,12 +723,16 @@ ul.site li a {
   line-height: 30px;
   padding-left: 5px;
   }
-  .toggle-mode:hover {
+  .toggle-mode.preview:hover {
     color: #377A97;
     }
-  .toggle-mode:active {
+  .toggle-mode.preview:active {
     color: #204859;
     }
+
+.toggle-mode.published {
+  top: 150px;
+}
 
 /*Publish/Unpublish State*/
 .state p,

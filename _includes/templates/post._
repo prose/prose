@@ -5,6 +5,8 @@
 
   <a class='toggle-mode preview' href='#'>Preview</a>
 
+  <div class='toggle-mode published'><input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/>Published</div>
+
   <div class='document prose'>
     <div class='content'>
 

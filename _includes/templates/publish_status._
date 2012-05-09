@@ -1,17 +1,3 @@
 <div class='state'>
-  <div class="publish-state<%= metadata.published ?  ' published' : '' %>">
-    <p class='status'><%= metadata.published ?  'Published' : 'Draft' %></p>
-    <div class='message hidden'>
-      <input type='text' name='commit_message' id='commit_message' value='Update <%= file %>' />
-    </div>
-    
-      <% if (metadata.published) { %>
-        <a class='unpublish button' href='#'>Unpublish</a>
-      <% } else { %>
-        <a class='publish button' href='#'>Publish</a>
-      <% } %>
-  </div>
-
   <div class="save-state"><a class='save button inactive' href='#'>Save</a></div>
-
 </div>
