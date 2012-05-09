@@ -63,8 +63,6 @@ views.Post = Backbone.View.extend({
     this.model.metadata.subtitle = this.$('#post_subtitle').val();
     this.model.metadata.published = this.$('#post_published').prop('checked');
 
-    console.log(this.model.metadata.published);
-
     // Update metadata accordingly.
     var rawMetadata = _.toYAML(this.model.metadata);
     $('#raw_metadata').val(rawMetadata);
