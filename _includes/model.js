@@ -98,7 +98,7 @@ function loadSite(user, repo, branch, path, cb) {
     });
   }
 
-  repo.list(branch, function(err, tree) {
+  repo.getTree(branch+"?recursive=1", function(err, tree) {
     if (err) cb("Not a valid Jekyll repository.");
 
     var paths = _.compact(_.map(tree, function(file) {

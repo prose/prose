@@ -15,13 +15,12 @@ views.Start = Backbone.View.extend({
         repo = $(e.currentTarget).attr('data-repo');
 
     $('.branches').hide();
-    var $branches = $(e.currentTarget).next().empty().show();
+    var $branches = $(e.currentTarget).find('.branches').empty().show();
     
     loadBranches(user, repo, function(err, branches) {
       if (branches.length === 1) {
         router.navigate('#' + [user, repo, branches[0]].join('/'), true);
       } else if (branches.length > 1) {
-        $branches.append('<div class="label">Choose a branch:</div>')
         _.each(branches, function(branch) {
           $branches.append($('<div class="branch"><a href="#'+[user, repo, branch].join('/')+'">'+branch+'</a></div>'));
         });

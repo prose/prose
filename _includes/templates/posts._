@@ -3,29 +3,18 @@
     <a class='button' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= path %>/new'>New Post</a>
   </div>
 
-  <!-- Path selection -->
-  <div class='paths clearfix'>
-    <h1><small>Category:</small></h1>
-      <ul>
-        <li class='dropdown'>
-          <% if (path) { %>
-            <a class='dropdown-toggle' data-toggle='dropdown' href='#'><%= current_path.name %></a>
-          <% } else { %>
-            <a class='dropdown-toggle' data-toggle='dropdown' href='#'>Choose a category</a>
-          <% } %>
-          <% if (paths.length > 1) { %>
-            <ul class='dropdown-menu flank-left'>
-              <% _.each(paths, function(p, index) { %>
-                <li><a href='#<%= app.username %>/<%= repo %>/<%= branch %>/<%= p.path %>'><%= p.name %></a></li>
-              <% }); %>
-            </ul>
-          <% } %>
-        </li>
-      </ul>
-  </div>
+  <div class='post-listing prose clearfix'>
+
+  <% _.each(paths, function(p, index) { %>
+    <% if (p.path !== current_path.path) { %>
+      <a class='link folder' href='#<%= app.username %>/<%= repo %>/<%= branch %>/<%= p.path %>'>
+        <div class='image'></div>
+        <h2><small><%= p.name %></small></h2>
+      </a>
+    <% } %>
+  <% }); %>
 
   <% if (posts.length > 0) { %>
-    <div class='post-listing prose clearfix'>
     <% _.each(posts, function(post) { %>
       <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
         <div class='published-on'><%= post.date.toDateString() %></div>

@@ -398,32 +398,6 @@ a.dropdown-toggle {
   Startpage
 ---------------------------------------------*/
 
-/* Startpage specific overrides */
-body.start {
-  background: #fff;
-  }
-body.start #header {
-  position: fixed;
-  border-bottom: 0;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-  }
-  body.start #header .sites,
-  body.start #header a.title {
-    display: none;
-    }
-
-.branding {
-  width: 240px;
-  height: 40px;
-  display: block;
-  margin-left: -120px;
-  position: absolute;
-  left: 50%;
-  top: 20%;
-  }
-
 .dialog {
   position: absolute;
   width: 600px;
@@ -456,6 +430,85 @@ form .button-padding {
   margin-top: 5px;
   }
 
+
+
+/* Repos */
+
+
+body.start {
+  background: #222;
+}
+.repos {
+  
+  overflow: auto;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.repos > a {
+  overflow: hidden;
+  background: #D8D8D8;
+
+  -moz-box-shadow:    0px 2px 4px rgba(0,0,0,0.50);
+  -webkit-box-shadow: 0px 2px 4px rgba(0,0,0,0.50);
+  box-shadow:         0px 2px 4px rgba(0,0,0,0.50);
+
+  background: #333;
+  text-align: center;
+  padding: 10px;
+  font-size: 16px;
+  position: relative;
+  margin-left: 15px;
+  margin-top: 15px;
+  width: 150px;
+  height: 150px;
+  color: #eee;
+  display: block;
+  float: left;
+}
+
+.repos > a:hover {
+  background: #262626;
+}
+
+.repos > a .name {
+  margin-top: 30px;
+}
+.repos a .branches {
+  position: absolute;
+  background: #262626;
+  font-size: 14px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: 0px;
+  overflow: auto;
+}
+
+.repos a .branches .label {
+  line-height: 27px;
+  background: #222;
+  color: #eee;
+  padding: 0 5px;
+  }
+.repos a .branches .not-jekyll {
+  background: #C52528;
+  color: white;
+  padding: 75px 5px;
+  overflow: hidden;
+  }
+
+  
+.repos a .branches .branch {
+  color: #fff;
+  padding: 2px 5px;
+  border-bottom: 1px solid #000;
+  }
+  .repos a .branches .branch a {
+    color: #eee;
+    border: none;
+  }
+
 .start .sites,
 .dialog form {
   width: 240px;
@@ -468,7 +521,7 @@ ul.site li {
   position: relative;
   }
 
-ul.site li .branches {
+/*ul.site li .branches {
   position: absolute;
   left: 240px;
   width: 200px;
@@ -498,7 +551,7 @@ ul.site li .branches {
     ul.site li .branches .branch a {
       color: #eee;
       border: none;
-    }
+    }*/
 
 ul.site li a {
   display: block;
@@ -621,6 +674,10 @@ ul.site li a {
     border-color: #666;
     }
 
+.post-listing a.link.folder {
+  background: #ccc;
+}
+
 .published-on {
   background: #fff url(images/icons.png) no-repeat right -50px;
   width: 95px;
@@ -699,7 +756,6 @@ ul.site li a {
     }
 .state .button-padding {
   margin-left: 10px;
-  /*background-color: #fff;*/
   }
 .state .button {
   width: 80px;
