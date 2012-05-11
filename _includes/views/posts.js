@@ -16,15 +16,8 @@ views.Posts = Backbone.View.extend({
 
   // Creates human readable versions of _posts/paths
   semantifyPaths: function(paths) {
-
-    function prettify(str) {
-      if (str === "_posts") return "Uncategorized";
-      var name = _.last(str.split("/"));
-      return name.replace(/^./, name[0].toUpperCase());
-    }
-
     return _.map(paths, function(path) {
-      return { path: path, name: path }
+      return { path: path, name: path.replace('_posts/','').replace('_posts','') }
     });
   },
 

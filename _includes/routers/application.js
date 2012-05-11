@@ -5,13 +5,23 @@
 
 routers.Application = Backbone.Router.extend({
   initialize: function() {
-    
     // Using this.route, because order matters
     this.route(":repo", 'posts', this.posts);
     this.route(/(.*\/.*)/, 'posts', this.posts);
     this.route(/(.*\/.*)\/(.*\.md)/, 'post', this.post);
     this.route(/(.*\/.*)\/new$/, 'new_post', this.newPost);
-    this.route("", "start", app.instance.start);
+    this.route("", "start", this.start);
+  },
+
+  start: function() {
+     app.state = {
+      user: "",
+      repo: "",
+      branch: "",
+      path: ""
+    };
+
+    app.instance.start();
   },
 
   extractURL: function(url) {

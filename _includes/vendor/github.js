@@ -33,7 +33,7 @@
 
     Github.User = function() {
       this.repos = function(cb) {
-        _request("GET", "/user/repos?type=all", null, function(err, res) {
+        _request("GET", "/user/repos?type=all&per_page=100", null, function(err, res) {
           cb(err, res);
         });
       }
@@ -83,10 +83,10 @@
       // Retrieve the tree a commit points to
       // -------
 
-      this.getTree = function(commit, cb) {
-        _request("GET", repoPath + "/git/trees/"+commit, null, function(err, res) {
+      this.getTree = function(tree, cb) {
+        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
           if (err) return cb(err);
-          cb(null, res.sha);
+          cb(null, res.tree);
         });
       };
 
@@ -166,21 +166,13 @@
         });
       };
 
-      // List all files of a branch
-      // -------
-
-      this.list = function(branch, cb) {
-        _request("GET", repoPath + "/git/trees/" + branch + "?recursive=1", null, function(err, res) {
-          cb(err, res ? res.tree : null);
-        });
-      };
-
 
       // Read file at given path
+      // TODO: So inefficient, it sucks hairy monkey balls.
       // -------
 
       this.read = function(branch, path, cb) {
-        that.list(branch, function(err, tree) {
+        that.getTree(branch+"?recursive=true", function(err, tree) {
           var file = _.select(tree, function(file) {
             return file.path === path;
           })[0];
@@ -210,13 +202,11 @@
 
       this.write = function(branch, path, content, message, cb) {
         that.getRef(branch, function(err, latestCommit) {
-          that.getTree(latestCommit, function(err, tree) {
-            that.postBlob(content, function(err, blob) {
-              that.postTree(tree, path, blob, function(err, tree) {
-                that.commit(latestCommit, tree, message, function(err, commit) {
-                  that.updateHead(branch, commit, function(err) {
-                    cb(err);
-                  });
+          that.postBlob(content, function(err, blob) {
+            that.postTree(latestCommit, path, blob, function(err, tree) {
+              that.commit(latestCommit, tree, message, function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
                 });
               });
             });

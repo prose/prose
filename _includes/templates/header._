@@ -2,8 +2,8 @@
     
     <div class="navigation">
       <!--Github account and links-->
+      <div class="root"><a href="#">Repos</a></div>
       <% if (state.repo) { %>
-      <div class="root"><a href="#">Sites</a></div>
         <div class="repo">
           <% if (state.repo) { %>
             &nbsp;&gt; <a href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></a></div>
@@ -30,7 +30,6 @@
             <b class='caret'></b>
           </a>
           <ul class='dropdown-menu flank-right'>
-            <li><a href='/' >Sites</a></li>
             <li><a href='#' class='logout'>Logout</a></li>
           </ul>
         </li>

@@ -80,8 +80,8 @@ views.Application = Backbone.View.extend({
   },
 
   start: function() {
-    this.replaceMainView("start", new views.Start({id: "start", model: {authenticated: authenticated()}}).render());
     this.header.render();
+    this.replaceMainView("start", new views.Start({id: "start", model: {authenticated: authenticated()}}).render());
   },
 
   notify: function(type, message) {
