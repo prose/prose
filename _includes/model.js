@@ -16,16 +16,16 @@ function github() {
 
 function login(credentials, cb) {
   $.ajax({
-      type: "GET",
-      url: 'https://api.github.com/users/michael',
-      dataType: 'json',
-      contentType: 'application/x-www-form-urlencoded',
-      success: function(res) { 
-        $.cookie("auth", Base64.encode(JSON.stringify(credentials)));
-        cb(null);
-      },
-      error: function(err) { cb("Bad credentials"); },
-      headers : { Authorization : 'Basic ' + Base64.encode(credentials.username + ':' + credentials.password) }
+    type: "GET",
+    url: 'https://api.github.com/users/michael',
+    dataType: 'json',
+    contentType: 'application/x-www-form-urlencoded',
+    success: function(res) { 
+      $.cookie("auth", Base64.encode(JSON.stringify(credentials)));
+      cb(null);
+    },
+    error: function(err) { cb("Bad credentials"); },
+    headers : { Authorization : 'Basic ' + Base64.encode(credentials.username + ':' + credentials.password) }
   });
 }
 
@@ -98,44 +98,41 @@ function loadSite(user, repo, branch, path, cb) {
     });
   }
 
-  repo.getTree(branch+"?recursive=1", function(err, tree) {
-    if (err) cb("Not a valid Jekyll repository.");
+  if (!path) path = "_posts";
+  repo.getSha(branch, path, function(err, sha) {
 
-    var paths = _.compact(_.map(tree, function(file) {
-      var regex = new RegExp("^_posts");
-      return file.type === "tree" && regex.test(file.path) ? file.path : null
-    }));
+    repo.getTree(sha, function(err, tree) {
+      if (err) cb("Not a valid Jekyll repository.");
 
-    // Load Jekyll config file (_config.yml)
-    loadConfig(function(err, config) {
-      if (err) return cb(err);
-      app.state.config = config;
-      app.state.paths = paths;
-      app.state.path = path ? path : paths[0];
+      var paths = _.compact(_.map(tree, function(file) {
+        return file.type === "tree" ? path + "/"+ file.path : null
+      }));
 
-      var posts = _.map(tree, function(file) {
-        var regex = new RegExp("^" + app.state.path + "/(\\w|-)*.md$");
+      paths = [path].concat(paths);
 
-        // Make sense of the file path
-        function semantify(path) {
-          // TODO: put regexp to _config.yml
-          var regexp = new RegExp("^(.*)/(\\d{4}-\\d{2}-\\d{2})-(.*).md$");
-          var groups = path.match(regexp);
+      // Load Jekyll config file (_config.yml)
+      loadConfig(function(err, config) {
+        if (err) return cb(err);
+        app.state.config = config;
+        app.state.paths = paths;
+        app.state.path = path ? path : paths[0];
 
-          function prettifyTitle(str) { 
-            return str.replace(/-/g, " ").replace(/^./, str[0].toUpperCase());
+        var posts = _.map(tree, function(file) {
+          var regex = new RegExp("^(\\w|-)*.md$");
+
+          // Make sense of the file path
+          function semantify(p) {
+            return {
+              path: path + "/"+p,
+              date: "",
+              title: p
+            };
           }
+          return regex.test(file.path) ? semantify(file.path) : null;
+        });
 
-          return {
-            path: path,
-            date: new Date(groups[2]),
-            title: prettifyTitle(groups[3])
-          }
-        }
-        return regex.test(file.path) ? semantify(file.path) : null;
+        cb(null, {"posts": _.compact(posts)});
       });
-
-      cb(null, {"posts": _.compact(posts)});
     });
   });
 }
