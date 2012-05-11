@@ -1,4 +1,4 @@
-// Github.js 0.2.0
+// Github.js 0.3.0
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -17,14 +17,14 @@
 
     function _request(method, path, data, cb) {
       $.ajax({
-          type: method,
-          url: API_URL + path,
-          data: JSON.stringify(data),
-          dataType: 'json',
-          contentType: 'application/x-www-form-urlencoded',
-          success: function(res) { cb(null, res); },
-          error: function(err) { cb(err); },
-          headers : { Authorization : 'Basic ' + Base64.encode(username + ':' + password) }
+        type: method,
+        url: API_URL + path,
+        data: JSON.stringify(data),
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded',
+        success: function(res) { cb(null, res); },
+        error: function(err) { cb(err); },
+        headers : { Authorization : 'Basic ' + Base64.encode(username + ':' + password) }
       });
     }
 
@@ -36,7 +36,7 @@
         _request("GET", "/user/repos?type=all&per_page=100", null, function(err, res) {
           cb(err, res);
         });
-      }
+      };
     };
 
 
@@ -77,6 +77,20 @@
       this.getBlob = function(sha, cb) {
         _request("GET", repoPath + "/git/blobs/" + sha, null, function(err, res) {
           cb(err, res);
+        });
+      };
+
+
+      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
+      // TODO: So inefficient, it sucks hairy donkey balls.
+      // -------
+
+      this.getSha = function(branch, path, cb) {
+        that.getTree(branch+"?recursive=true", function(err, tree) {
+          var file = _.select(tree, function(file) {
+            return file.path === path;
+          })[0];
+          cb(null, file ? file.sha : null);
         });
       };
 
@@ -161,31 +175,24 @@
       // -------
 
       this.show = function(cb) {
-        _request("GET", repoPath, null, function(err, res) {
-          cb();
+        _request("GET", repoPath, null, function(err, info) {
+          cb(null, info);
         });
       };
 
-
       // Read file at given path
-      // TODO: So inefficient, it sucks hairy monkey balls.
       // -------
 
       this.read = function(branch, path, cb) {
-        that.getTree(branch+"?recursive=true", function(err, tree) {
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
+        that.getSha(branch, path, function(err, sha) {
+          if (!sha) return cb("not found", null);
 
-          if (!file) return cb("not found", null);
-
-          that.getBlob(file.sha, function(err, blob) {
+          that.getBlob(sha, function(err, blob) {
             function decode(blob) {
               if (blob.content) {
                 var data = blob.encoding == 'base64' ?
                     atob(blob.content.replace(/\s/g, '')) :
                     blob.content;
-                    
                 return data;
               } else {
                 return "";

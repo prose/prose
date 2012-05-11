@@ -19,15 +19,9 @@
         </form>
       </div>
 
-      <div class='content-header'>
-        <input type='text' name='title' id='post_title' placeholder='Untitled' autocomplete='off' value='<%= metadata.title %>'/>
-        <input type='text' name='subtitle' id='post_subtitle' placeholder='Subtitle' autocomplete='off' value='<%= metadata.subtitle %>'/>
-      </div>
       <textarea id='code' name='code'><%= content %></textarea>
     </div>
     <div class='content-preview hidden'>
-      <h1><%= metadata.title %></h1>
-      <p class='subtitle'><%= metadata.subtitle %></p>
       <div class='post-content'></div>
     </div>
 
