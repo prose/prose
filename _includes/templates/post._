@@ -1,29 +1,28 @@
-<div class='inner clearfix'>
-  <div id='publish_status'>
-    <small>Status</small>
+<div class="document-menu">
+  <div class="document-menu-content">
+    <a class="toggle meta" href="#">Meta</a>
+    <a class='save button inactive' href='#'>Save</a>
+    <a class='toggle preview' href='#'>Preview</a>
+
+    <div class='publish-state published'>
+      <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/>
+      Published
+    </div>
   </div>
+</div>
 
-  <a class='toggle-mode preview' href='#'>Preview</a>
-
-  <div class='toggle-mode published'><input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/>Published</div>
-
+<div class='inner clearfix'>  
   <div class='document prose'>
-    <div class='content'>
-
-      <div class='metadata'>
-        <a href='#' class='icon meta'>Toggle Metadata</a>
-
-        <form id='metadata_form'>
-          <h3><small>Metadata</small></h3>
-          <textarea id="raw_metadata" name="raw_metadata"><%= raw_metadata %></textarea>
-        </form>
+    <div class="metadata">
+      <div class="metadata-content">
+        <textarea id='raw_metadata' name='raw_metadata'><%= raw_metadata %></textarea>
       </div>
-
+    </div>
+    <div class='content'>
       <textarea id='code' name='code'><%= content %></textarea>
     </div>
     <div class='content-preview hidden'>
       <div class='post-content'></div>
     </div>
-
   </div>
 </div>

@@ -6,8 +6,8 @@ views.Post = Backbone.View.extend({
 
   events: {
     'click .save': '_save',
-    'click .meta': '_toggleMeta',
-    'click a.toggle-mode.preview': '_togglePreview',
+    'click .toggle.meta': '_toggleMeta',
+    'click a.toggle.preview': '_togglePreview',
     'focus input': '_makeDirty',
     'focus textarea': '_makeDirty',
     'change #post_published': '_makeDirty'
@@ -17,7 +17,7 @@ views.Post = Backbone.View.extend({
     this.dirty = true;
     this.$('.button.save').removeClass('inactive');
   },
-
+  
   _save: function(e) {
     if (!this.dirty) return false;
     e.preventDefault();
@@ -43,7 +43,15 @@ views.Post = Backbone.View.extend({
   _toggleMeta: function(e) {
     e.preventDefault();
     this.updateMetaData();
+    
+    if (!$('.metadata').hasClass('open')) {
+      $('.metadata').css({height: $('.metadata-content').height()});
+    } else {
+      $('.metadata').css({height: 0});
+    }
     $('.metadata').toggleClass('open');
+    
+    return false;
   },
 
   initialize: function() {
@@ -70,19 +78,24 @@ views.Post = Backbone.View.extend({
   updatePost: function(published, message) {
     savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, this.updateMetaData(published), this.editor.getValue(), message, _.bind(function(err) {
       this.dirty = false;
-      this.updatePublishStatus();
+      $('.button.save').addClass('inactive');
     }, this));
-  },
-
-  updatePublishStatus: function() {
-    this.$('#publish_status').html(templates.publish_status(this.model));
   },
 
   initEditor: function() {
     var that = this;
     setTimeout(function() {
+
+      that.metadataEditor = CodeMirror.fromTextArea(document.getElementById('raw_metadata'), {
+        // mode: 'markdown',
+        lineWrapping: true,
+        matchBrackets: true,
+        theme: 'default',
+        onChange: _.bind(that._makeDirty, that)
+      });
+
       that.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
-        mode: 'markdown',
+        // mode: 'markdown',
         lineWrapping: true,
         matchBrackets: true,
         theme: 'default',
@@ -108,8 +121,6 @@ views.Post = Backbone.View.extend({
     var that = this;
 
     $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
-
-    this.updatePublishStatus();
     this.initEditor();
     return this;
   }
