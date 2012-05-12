@@ -45,7 +45,6 @@
 
     Github.Repository = function(options) {
       var repo = options.name;
-      var branch = options.branch;
       var user = options.user;
       
       var that = this;
@@ -225,8 +224,8 @@
     // Top Level API
     // -------
 
-    this.getRepo = function(user, repo, branch) {
-      return new Github.Repository({user: user, name: repo, branch: branch || "master"});
+    this.getRepo = function(user, repo) {
+      return new Github.Repository({user: user, name: repo});
     };
 
     this.getUser = function() {
