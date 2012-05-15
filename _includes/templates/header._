@@ -23,17 +23,7 @@
     </div>
   <% if (app.username) { %>
     <div class='user-status'>
-      <ul>
-        <li class='dropdown'>
-          <a class='dropdown-toggle user' data-toggle='dropdown' href='#'>
-            <%= app.username %>
-            <b class='caret'></b>
-          </a>
-          <ul class='dropdown-menu flank-right'>
-            <li><a href='#' class='logout'>Logout</a></li>
-          </ul>
-        </li>
-      </ul>
+      <%= app.username %>
     </div>
   <% } %>
 
