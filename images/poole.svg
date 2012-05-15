@@ -380,15 +380,6 @@
        y1="155"
        x2="80"
        y2="185" />
-    <filter
-       color-interpolation-filters="sRGB"
-       inkscape:collect="always"
-       id="filter6400-7-5">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.3375"
-         id="feGaussianBlur6402-1-9" />
-    </filter>
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient5373"
@@ -824,15 +815,6 @@
     <filter
        color-interpolation-filters="sRGB"
        inkscape:collect="always"
-       id="filter6400-3-2-9-2-5-6-2-6-9">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.3375"
-         id="feGaussianBlur6402-5-4-5-0-5-5-0-6-4" />
-    </filter>
-    <filter
-       color-interpolation-filters="sRGB"
-       inkscape:collect="always"
        id="filter6400-3-2-9-2-8">
       <feGaussianBlur
          inkscape:collect="always"
@@ -1046,17 +1028,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="187.41076"
-     inkscape:cy="721.14871"
+     inkscape:cx="352.40161"
+     inkscape:cy="734.52096"
      inkscape:document-units="px"
-     inkscape:current-layer="layer7"
+     inkscape:current-layer="layer4"
      showgrid="false"
      showguides="false"
      inkscape:guide-bbox="true"
      inkscape:window-width="1902"
      inkscape:window-height="972"
-     inkscape:window-x="0"
-     inkscape:window-y="1"
+     inkscape:window-x="376"
+     inkscape:window-y="48"
      inkscape:window-maximized="0"
      inkscape:snap-bbox="true"
      inkscape:snap-nodes="true"
@@ -2542,7 +2524,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="posts"
-     style="display:none">
+     style="display:inline">
     <g
        id="g6559"
        style="fill:#729bf0;fill-opacity:1;display:inline"
@@ -3037,6 +3019,18 @@
       </g>
     </g>
     <flowRoot
+       xml:space="preserve"
+       id="flowRoot14253"
+       style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Menlo;-inkscape-font-specification:Menlo"
+       transform="translate(-113,-68.723524)"><flowRegion
+         id="flowRegion14255"><rect
+           id="rect14257"
+           width="620"
+           height="715"
+           x="183"
+           y="145"
+           style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;text-anchor:start;fill:#ffffff;fill-opacity:1;font-family:Menlo;-inkscape-font-specification:Menlo" /></flowRegion><flowPara
+         id="flowPara14259">map-site</flowPara></flowRoot>    <flowRoot
        transform="translate(-113,-69.723524)"
        style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#4d4d4d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Menlo;-inkscape-font-specification:Menlo"
        id="flowRoot8236-98"
@@ -3544,7 +3538,7 @@
      inkscape:groupmode="layer"
      id="layer7"
      inkscape:label="compose-metadata"
-     style="display:inline">
+     style="display:none">
     <rect
        style="color:#000000;fill:#4d4d4d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect5169-7-3-6"
@@ -4001,11 +3995,10 @@
          d="m 816.84375,85 c -0.26083,0.0416 -0.50271,0.191334 -0.65625,0.40625 L 815,87 l 0,-2 -10,0 0,10 10,0 0,-4.65625 2.8125,-3.75 C 818.30031,85.958633 817.63214,84.859391 816.84375,85 z"
          style="opacity:0.2;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <path
-         sodipodi:nodetypes="ccc"
-         inkscape:connector-curvature="0"
+         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+         d="m 816.84375,83 a 1.0001,1.0001 0 0 0 -0.65625,0.40625 l -5.28125,7.0625 -2.1875,-2.1875 a 1.016466,1.016466 0 1 0 -1.4375,1.4375 l 3,3 a 1.0001,1.0001 0 0 0 1.53125,-0.125 l 6,-8 A 1.0001,1.0001 0 0 0 816.84375,83 z"
          id="path7297"
-         d="m 808,89 3,3 6,-8"
-         style="color:#000000;fill:none;stroke:#ffffff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+         inkscape:connector-curvature="0" />
       <rect
          transform="scale(1,-1)"
          style="opacity:0.2;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate"
