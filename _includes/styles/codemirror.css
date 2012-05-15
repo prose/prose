@@ -1,7 +1,8 @@
 .CodeMirror {
-  font-size: 1.5em;
-  line-height: 1.1em; /* does not work too well */
-  font-family: Menlo, monospace;
+  font-size: 1.4em;
+  line-height: 1.1em;
+  font-family: 'Anonymous Pro', "Menlo", "Courier New";
+  color: #6b6b6b;
 }
 
 .CodeMirror-scroll {
@@ -25,7 +26,6 @@
   white-space: pre !important;
 }
 .CodeMirror-lines {
-  /*padding: .4em;*/
   white-space: pre;
 }
 
@@ -36,7 +36,7 @@
   border-radius: 0;
   border-width: 0; margin: 0; padding: 0; background: transparent;
   
-  color: #404040;
+  color: #6b6b6b;
 
   padding: 0; margin: 0;
   white-space: pre;
@@ -80,7 +80,7 @@
 }
 
 div.CodeMirror-selected { background: #d9d9d9; }
-.CodeMirror-focused div.CodeMirror-selected { background: #d7d4f0; }
+.CodeMirror-focused div.CodeMirror-selected { background: #d9d9d9; }
 
 .CodeMirror-searching {
   background: #ffa;

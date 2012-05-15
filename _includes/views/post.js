@@ -89,7 +89,7 @@ views.Post = Backbone.View.extend({
       that.metadataEditor = CodeMirror.fromTextArea(document.getElementById('raw_metadata'), {
         // mode: 'markdown',
         lineWrapping: true,
-        matchBrackets: true,
+        // matchBrackets: true,
         theme: 'default',
         onChange: _.bind(that._makeDirty, that)
       });
@@ -97,7 +97,7 @@ views.Post = Backbone.View.extend({
       that.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
         // mode: 'markdown',
         lineWrapping: true,
-        matchBrackets: true,
+        // matchBrackets: true,
         theme: 'default',
         onChange: _.bind(that._makeDirty, that)
       });

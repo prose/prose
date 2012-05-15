@@ -1,12 +1,20 @@
 <div class="document-menu">
   <div class="document-menu-content">
-    <a class="toggle meta" href="#">Meta</a>
-    <a class='save button inactive' href='#'>Save</a>
-    <a class='toggle preview' href='#'>Preview</a>
+    
+    <div class="fl menu-item"> 
+      <a class='toggle preview' href='#'>Preview</a>
+    </div>
+    <div class="fl filename">
+      <input type="text" class="filename" value="this-is-a-filename.md"/>
+    </div>
 
-    <div class='publish-state published'>
-      <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/>
-      Published
+    <div class="fr menu-item">
+      <a class="toggle meta fl" href="#">Meta</a>
+      <div class="state fl">
+        <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/>
+        Published
+        <a class='save button inactive' href='#'>Save</a>
+      </div>
     </div>
   </div>
 </div>
