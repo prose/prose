@@ -8,15 +8,17 @@
       <input type="text" class="filename" value="this-is-a-filename.md"/>
     </div>
 
-    <div class="fr menu-item">
-      <a class="toggle meta fl" href="#">Meta</a>
+    
+    <div class="fr menu-item save-state">
       <div class="state fl">
         <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/>
         Published
         <a class='save button inactive' href='#'>Save</a>
       </div>
     </div>
+    <a class="toggle meta fr menu-item" href="#">Metadata</a>
   </div>
+
 </div>
 
 <div class='inner clearfix'>  
@@ -26,11 +28,13 @@
         <textarea id='raw_metadata' name='raw_metadata'><%= raw_metadata %></textarea>
       </div>
     </div>
-    <div class='content'>
-      <textarea id='code' name='code'><%= content %></textarea>
+
+    <div class="personalities-wrapper">
+      <div class="personalities">
+        <div class="content"><textarea id='code' name='code'><%= content %></textarea></div>
+        <div class="content-preview"><div class='post-content'></div></div>
+      </div>
     </div>
-    <div class='content-preview hidden'>
-      <div class='post-content'></div>
-    </div>
+
   </div>
 </div>

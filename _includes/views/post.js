@@ -30,12 +30,12 @@ views.Post = Backbone.View.extend({
     if (m.hasClass('active')) {
       m
       .removeClass('active')
-      .html('Preview');
+      // .html('Preview');
       this.edit();
     } else {
       m
       .addClass('active')
-      .html('Edit');
+      // .html('Edit');
       this.preview();
     }
   },
@@ -104,22 +104,31 @@ views.Post = Backbone.View.extend({
     }, 100);
   },
 
+  // UpdateHeight
+  updateHeight: function() {
+    $('.personalities-wrapper').height(this.$('.content .CodeMirror').height());
+  },
+
   edit: function() {
     // Hide preview & show code
-    this.$('.content-preview').hide();
-    this.$('.content').show();
+    this.updateHeight();
+    $('.personalities').removeClass('flipped');    
+    // this.$('.content-preview').hide();
+    // this.$('.content').show();
   },
 
   preview: function() {
     // Show preview and hide code
-    this.$('.content-preview').show();
+    this.updateHeight();
     this.$('.post-content').html(this.converter.makeHtml(this.editor.getValue()));
-    this.$('.content').hide();
+
+    $('.personalities').addClass('flipped');
+    // this.$('.content-preview').show();
+    // this.$('.content').hide();
   },
 
   render: function() {
     var that = this;
-
     $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
     this.initEditor();
     return this;
