@@ -1,8 +1,4 @@
 <div class='inner'>
-  <div class='button-padding fr'>
-    <a class='button' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= path %>/new'>New Post</a>
-  </div>
-
   <div class='post-listing prose clearfix'>
 
   <% _.each(paths, function(p, index) { %>
@@ -12,6 +8,10 @@
       </a>
     <% } %>
   <% }); %>
+
+  <a class='link new new-post' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= path %>/new'>
+    <div class="new-post button">New Post</div>
+  </a>
 
   <% if (posts.length > 0) { %>
     <% _.each(posts, function(post) { %>
