@@ -14,15 +14,18 @@ views.Start = Backbone.View.extend({
     var user = $(e.currentTarget).attr('data-user'),
         repo = $(e.currentTarget).attr('data-repo');
 
-    $('.branches').hide();
-    var $branches = $(e.currentTarget).find('.branches').empty().show();
+    if ($(e.target).hasClass('branch')) return;
+    $('.branches').html('<div class="loading">Loading...</div>');
+    
+    var $branches = $(e.currentTarget).find('.branches').show();
     
     loadBranches(user, repo, function(err, branches) {
+      $branches.empty();
       if (branches.length === 1) {
         router.navigate('#' + [user, repo, branches[0]].join('/'), true);
       } else if (branches.length > 1) {
         _.each(branches, function(branch) {
-          $branches.append($('<div class="branch"><a href="#'+[user, repo, branch].join('/')+'">'+branch+'</a></div>'));
+          $branches.append($('<a class="branch" href="#'+[user, repo, branch].join('/')+'">'+branch+'</a>'));
         });
       } else if (branches.length === 0) {
         $branches.append('<div class="not-jekyll">Not a valid Jekyll site.</div>')

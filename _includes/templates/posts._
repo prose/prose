@@ -8,8 +8,7 @@
   <% _.each(paths, function(p, index) { %>
     <% if (p.path !== current_path.path) { %>
       <a class='link folder' href='#<%= app.username %>/<%= repo %>/<%= branch %>/<%= p.path %>'>
-        <div class='image'></div>
-        <h2><small><%= p.name %></small></h2>
+        <div class="filename"><%= p.name %></div>
       </a>
     <% } %>
   <% }); %>
@@ -17,12 +16,9 @@
   <% if (posts.length > 0) { %>
     <% _.each(posts, function(post) { %>
       <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
-        <div class='image'></div>
-        <h2><small><%= post.title || 'Untitled' %></small></h2>
+        <div class="filename"><%= post.title || 'Untitled' %></div>
       </a>
     <% }); %>
     </div>
-  <% } else { %>
-    <h2>No posts in this category.</h2>
   <% } %>
 </div>
