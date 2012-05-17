@@ -1,14 +1,10 @@
 <div class="document-menu">
   <div class="document-menu-content">
     
-    <div class="fl menu-item"> 
-      <a class='toggle preview' href='#'>Preview</a>
-    </div>
     <div class="fl filename">
       <input type="text" class="filename" value="this-is-a-filename.md"/>
     </div>
 
-    
     <div class="fr menu-item save-state">
       <div class="state fl">
         <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/>
@@ -18,7 +14,6 @@
     </div>
     <a class="toggle meta fr menu-item" href="#">Metadata</a>
   </div>
-
 </div>
 
 <div class='inner clearfix'>  
@@ -29,12 +24,15 @@
       </div>
     </div>
 
-    <div class="personalities-wrapper">
-      <div class="personalities">
+    <div class="surface">
+      <div class="content-wrapper">
+        <a class='toggle preview' href='#'>Preview</a>
         <div class="content"><textarea id='code' name='code'><%= content %></textarea></div>
+      </div>
+      <div class="content-preview-wrapper">
+        <a class='toggle preview' href='#'>Editor</a>
         <div class="content-preview"><div class='post-content'></div></div>
       </div>
     </div>
-
   </div>
 </div>
