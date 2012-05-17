@@ -15,9 +15,9 @@ views.Start = Backbone.View.extend({
         repo = $(e.currentTarget).attr('data-repo');
 
     if ($(e.target).hasClass('branch')) return;
-    $('.branches').html('<div class="loading">Loading...</div>');
     
     var $branches = $(e.currentTarget).find('.branches').show();
+    $branches.html('<div class="loading-branches">One second ...</div>');
     
     loadBranches(user, repo, function(err, branches) {
       $branches.empty();
@@ -28,7 +28,10 @@ views.Start = Backbone.View.extend({
           $branches.append($('<a class="branch" href="#'+[user, repo, branch].join('/')+'">'+branch+'</a>'));
         });
       } else if (branches.length === 0) {
-        $branches.append('<div class="not-jekyll">Not a valid Jekyll site.</div>')
+        $branches.append('<div class="not-jekyll">Not a valid Jekyll site.</div>');
+        _.delay(function() {
+          $branches.hide();
+        }, 2000);
       }
     });
 
