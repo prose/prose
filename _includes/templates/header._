@@ -1,29 +1,28 @@
-<a href='{{site.baseurl}}' class='title'>Poole</a>
+<a href='{{site.baseurl}}' class='title'><span>Poole.</span></a>
     
-    <div class="navigation">
-      <!--Github account and links-->
-      <div class="root"><a href="#">Repos</a></div>
+<div class="navigation">
+  <!--Github account and links-->
+  <div class="root"><a href="#">Repos</a></div>
+  <% if (state.repo) { %>
+    <div class="repo">
       <% if (state.repo) { %>
-        <div class="repo">
-          <% if (state.repo) { %>
-            &nbsp;&gt; <a href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></a></div>
-          <% } %>
-        <div class="path">
-          <% var path = state.path.replace('_posts/','').replace('_posts',''); %>
-          <% if (path) { %>
-            &nbsp;&gt; <a href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= path %></a>
-          <% } %>
-        </div>
-        <div class="file">
-          <% if (state.file) { %>
-            &nbsp;&gt; <%= state.file %>
-          <% } %>
-        </div>
+        <a href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></a></div>
+      <% } %>
+    <div class="path">
+      <% var path = state.path.replace('_posts/','').replace('_posts',''); %>
+      <% if (path) { %>
+        <a href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= path %></a>
       <% } %>
     </div>
-  <% if (app.username) { %>
-    <div class='user-status'>
-      <%= app.username %>
+    <div class="file">
+      <% if (state.file) { %>
+        <%= state.file %>
+      <% } %>
     </div>
-  <% } %>
-
+  <% } %>
+</div>
+<% if (app.username) { %>
+  <div class='user-status'>
+    <%= app.username %>
+  </div>  
+<% } %>
