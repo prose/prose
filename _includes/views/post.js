@@ -25,13 +25,13 @@ views.Post = Backbone.View.extend({
   },
 
   _togglePreview: function(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     this.$('.post-content').html(this.converter.makeHtml(this.editor.getValue()));
     $('.document .surface').toggleClass('preview');
   },
 
   _toggleMeta: function(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     this.updateMetaData();
     $('.metadata').toggle();
     return false;
@@ -41,6 +41,8 @@ views.Post = Backbone.View.extend({
     this.mode = "edit";
     if (!window.shortcutsRegistered) {
       key('⌘+s, ctrl+s', _.bind(function() { this.updatePost(undefined, "Updated " + this.model.file); return false; }, this));
+      key('ctrl+shift+p', _.bind(function() { this._togglePreview(); return false; }, this));
+      key('ctrl+shift+m', _.bind(function() { this._toggleMeta(); return false; }, this));
       window.shortcutsRegistered = true;
     }
     this.converter = new Showdown.converter();
@@ -64,6 +66,23 @@ views.Post = Backbone.View.extend({
     }, this));
   },
 
+  keyMap: function() {
+    var that = this;
+    return {
+      // This doesn't work. Why?
+      "Shift-Ctrl-P": function(codemirror) {
+        that._togglePreview();
+      },
+      "Shift-Ctrl-M": function(codemirror) {
+        that._toggleMeta();
+      },
+      "Ctrl-S": function(codemirror) {
+        that.updatePost(undefined, "Updated " + that.model.file);
+      }
+      
+    };
+  },
+
   initEditor: function() {
     var that = this;
     setTimeout(function() {
@@ -71,6 +90,7 @@ views.Post = Backbone.View.extend({
       that.metadataEditor = CodeMirror.fromTextArea(document.getElementById('raw_metadata'), {
         // mode: 'markdown',
         lineWrapping: true,
+        extraKeys: that.keyMap(),
         matchBrackets: true,
         theme: 'default',
         onChange: _.bind(that._makeDirty, that)
@@ -81,9 +101,10 @@ views.Post = Backbone.View.extend({
       that.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
         // mode: 'markdown',
         lineWrapping: true,
+        extraKeys: that.keyMap(),
         matchBrackets: true,
         theme: 'default',
-        onChange: _.bind(that._makeDirty, that)
+        onChange: _.bind(that._makeDirty, that),
       });
     }, 100);
   },
