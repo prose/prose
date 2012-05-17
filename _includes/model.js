@@ -17,11 +17,12 @@ function github() {
 function login(credentials, cb) {
   $.ajax({
     type: "GET",
-    url: 'https://api.github.com/users/michael',
+    url: 'https://api.github.com/user',
     dataType: 'json',
     contentType: 'application/x-www-form-urlencoded',
     success: function(res) { 
       $.cookie("auth", Base64.encode(JSON.stringify(credentials)));
+      $.cookie("avatar", res.avatar_url);
       cb(null);
     },
     error: function(err) { cb("Bad credentials"); },
@@ -39,6 +40,7 @@ function getCredentials() {
   if (credentials) app.username = credentials.username;
   return credentials;
 }
+
 
 function authenticated() {
   return !!getCredentials();

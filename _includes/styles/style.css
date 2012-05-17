@@ -106,10 +106,20 @@ h6 { font-size: 11px; font-weight: 500; }
 
 #header .user-status {
   position: absolute;
-  top: 15px;
-  right: 20px;
+  top: 0px;
+  right: 50px;
+  height: 60px;
+  line-height: 60px;
+  font-family: "Menlo", "Courier New";
+  font-size: 14px;
 }
 
+#header .user-status img {
+  float: left;
+  margin-right: 10px;
+  margin-top: 10px;
+
+}
 #main {
   margin-top: 60px;
 }
