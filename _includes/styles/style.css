@@ -448,13 +448,13 @@ ul.site li a {
 }
 
 .document-menu-content .menu-item {
-  background: #444;
+  background: #eee;
   line-height: 40px;
   padding: 0 5px;
   margin: 10px 0;
 }
 .document-menu-content a {
-  color: #eee;
+  color: #444;
 }
 
 .menu-item {
@@ -464,7 +464,7 @@ ul.site li a {
 }
 
 .menu-item:hover {
-  background: #222;
+  background: #ddd;
 }
 
 .document-menu-content .menu-item.meta {
@@ -477,26 +477,27 @@ ul.site li a {
   border: none;
   height: 40px;
   font-size: 14px;
-  color: #eee;
+  color: #555;
   width: 400px;
   padding: 0 5px;
   margin: 10px 0;
 }
 
 .document-menu-content .filename input:hover, .document-menu-content .filename input:focus {
-  background: #444;
+  background: #eee;
 }
 
 .document-menu-content .state {
-  color: white;
+  color: #444;
 }
 
 .document-menu-content .save-state:hover {
-  background: #444;
+  background: #ddd;
 }
 
 .document-menu-content .state .save {
   background: #1798cf;
+  color: #fff;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
