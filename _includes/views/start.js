@@ -34,7 +34,7 @@ views.Start = Backbone.View.extend({
         }, 2000);
       }
     });
-
+    
     return false;
   },
 

@@ -9,10 +9,10 @@
       <div class="state fl">
         <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/>
         Published
-        <a class='save button inactive' href='#'>Save</a>
+        <a class='save button inactive' href='#' title="CTRL+S">Save</a>
       </div>
     </div>
-    <a class="toggle meta fr menu-item" href="#">Metadata</a>
+    <a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a>
   </div>
 </div>
 
@@ -26,11 +26,11 @@
 
     <div class="surface">
       <div class="content-wrapper">
-        <a class='toggle preview' href='#'>Preview</a>
+        <a class='toggle preview' href='#' title="CTRL+SHIFT+P">Preview</a>
         <div class="content"><textarea id='code' name='code'><%= content %></textarea></div>
       </div>
       <div class="content-preview-wrapper">
-        <a class='toggle preview' href='#'>Editor</a>
+        <a class='toggle preview' href='#' title="CTRL+SHIFT+P">Editor</a>
         <div class="content-preview"><div class='post-content'></div></div>
       </div>
     </div>
