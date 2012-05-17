@@ -436,7 +436,7 @@ ul.site li a {
 .document-menu {
   padding: 0 20px;
   height: 60px;
-  background: #4d4d4d;
+  background: white;
   overflow: auto;
   line-height: 40px;
 }
@@ -481,7 +481,6 @@ ul.site li a {
   width: 400px;
   padding: 0 5px;
   margin: 10px 0;
-  margin-left: 20px;
 }
 
 .document-menu-content .filename input:hover, .document-menu-content .filename input:focus {
@@ -505,9 +504,6 @@ ul.site li a {
   padding: 8px;
 }
 
-a.preview.active {
-  background: #000;
-}
 
 .document-menu-content .state .save.inactive {
   text-shadow: none;
@@ -519,29 +515,27 @@ a.preview.active {
 
 .document .metadata {
   overflow: hidden;
-  background: #292929;
+  background: white;
+  border-top: 1px solid;
   color: white;
   z-index: 1000;
   -moz-transition: height 100ms linear;
   -o-transition: height 100ms linear;
   -webkit-transition: height 100ms linear;
   transition: height 100ms linear;
-  }
-
-.document .metadata.open {
 }
+
 
 .document .metadata-content {
   padding: 20px 0px;
   width: 900px;
   margin: 0 auto;
 }
+
 .document .metadata #raw_metadata {
-  /*height: 300px;*/
   background: #444;
   color: #eee;
-  }
-
+}
 
 .state p,
 .state .button-padding {
@@ -558,84 +552,71 @@ a.preview.active {
 .document {
   min-height: 400px;
   position: relative;
-  }
-  .document .content-preview,
-  .document .content {
-    padding: 20px 0px;
-    width: 900px;
-    margin: 0 auto;
-    }
+  overflow:hidden;
+}
+
+.document .surface {
+  border-top: 1px solid #ccc;
+  width: 200%;
+
+  -moz-transition: margin-left 300ms linear;
+  -o-transition: margin-left 300ms linear;
+  -webkit-transition: margin-left 300ms linear;
+  transition: margin-left 300ms linear;
+  margin-left: 0%;
+  overflow: hidden;
+}
+
+.document .surface.preview {
+  margin-left: -100%;
+  overflow:hidden;
+}
+
+.document .content-wrapper {
+  width: 50%;
+  float: left;
+  position: relative;
+}
+
+.document .content-preview-wrapper {
+  position: relative;
+  width: 50%;
+  float: left;
+}
+
+.toggle.preview {
+  position: absolute;
+  display: block;
+  padding: 20px;
+  text-transform: uppercase;
+  background: #ccc;
+  border: 1px solid #fff;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #555;
+}
+
+.content-wrapper .toggle.preview {
+  top: 20px;
+  right: 20px;
+}
+
+.content-preview-wrapper .toggle.preview {
+  top: 20px;
+  left: 20px;
+}
+
+.document .content-preview, .document .content {
+  padding: 20px 0px;
+  width: 900px;
+  margin: 0 auto;
+}
 
 .content-preview {
   font-size: 17px;
-}
-
-/* ------------------------------------------
-  Personalities
----------------------------------------------*/
-
-
-.personalities-wrapper {
-
-  width: 900px;
-  height: 260px;
-  margin: 0 auto;
-  -webkit-perspective: 800px;
-     -moz-perspective: 800px;
-      -ms-perspective: 800px;
-       -o-perspective: 800px;
-          perspective: 800px;
-}
-
-.personalities {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  -webkit-transition: -webkit-transform 1s;
-     -moz-transition: -moz-transform 1s;
-      -ms-transition: -ms-transform 1s;
-       -o-transition: -o-transform 1s;
-          transition: transform 1s;
-  -webkit-transform-style: preserve-3d;
-     -moz-transform-style: preserve-3d;
-      -ms-transform-style: preserve-3d;
-       -o-transform-style: preserve-3d;
-          transform-style: preserve-3d;
-}
-
-.personalities.flipped {
-  -webkit-transform: rotateY( 180deg );
-     -moz-transform: rotateY( 180deg );
-      -ms-transform: rotateY( 180deg );
-       -o-transform: rotateY( 180deg );
-          transform: rotateY( 180deg );
-}
-
-.personalities > div {
-  display: block;
-  height: 100%;
-  width: 100%;
-  
-  position: absolute;
-  -webkit-backface-visibility: hidden;
-     -moz-backface-visibility: hidden;
-      -ms-backface-visibility: hidden;
-       -o-backface-visibility: hidden;
-          backface-visibility: hidden;
-}
-
-.personalities .content {
-  background: #F0F0F0;
-}
-
-.personalities .content-preview {
-  background: #F0F0F0;
-  z-index: 2000;
-  -webkit-transform: rotateY( 180deg );
-     -moz-transform: rotateY( 180deg );
-      -ms-transform: rotateY( 180deg );
-       -o-transform: rotateY( 180deg );
-          transform: rotateY( 180deg );
 }
 
 /* ------------------------------------------
@@ -651,24 +632,26 @@ a.preview.active {
   line-height: 34px;
   font-weight: 500;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.45);
-  }
+}
 
 #notification .error {
   background: #E73C58;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
-  }
+}
+
 ul.form li {
   position: relative;
-  }
+}
+
 label.error {
   color: #E73C58;
   position: absolute;
   right: 5px;
   top: 23px;
   font-size: 12px;
-  }
+}
 
 /* ------------------------------------------
   Class Helpers
@@ -690,7 +673,7 @@ label.error {
   height: 20px;
   display: block;
   text-indent: -999em;
-  }
+}
 .fl { float: left; }
 .fr { float: right; }
 

@@ -26,37 +26,19 @@ views.Post = Backbone.View.extend({
 
   _togglePreview: function(e) {
     e.preventDefault();
-    var m = $(e.currentTarget)
-    if (m.hasClass('active')) {
-      m
-      .removeClass('active')
-      // .html('Preview');
-      this.edit();
-    } else {
-      m
-      .addClass('active')
-      // .html('Edit');
-      this.preview();
-    }
+    this.$('.post-content').html(this.converter.makeHtml(this.editor.getValue()));
+    $('.document .surface').toggleClass('preview');
   },
 
   _toggleMeta: function(e) {
     e.preventDefault();
     this.updateMetaData();
-    
-    if (!$('.metadata').hasClass('open')) {
-      $('.metadata').css({height: $('.metadata-content').height()});
-    } else {
-      $('.metadata').css({height: 0});
-    }
-    $('.metadata').toggleClass('open');
-    
+    $('.metadata').toggle();
     return false;
   },
 
   initialize: function() {
     this.mode = "edit";
-
     if (!window.shortcutsRegistered) {
       key('⌘+s, ctrl+s', _.bind(function() { this.updatePost(undefined, "Updated " + this.model.file); return false; }, this));
       window.shortcutsRegistered = true;
@@ -89,15 +71,17 @@ views.Post = Backbone.View.extend({
       that.metadataEditor = CodeMirror.fromTextArea(document.getElementById('raw_metadata'), {
         // mode: 'markdown',
         lineWrapping: true,
-        // matchBrackets: true,
+        matchBrackets: true,
         theme: 'default',
         onChange: _.bind(that._makeDirty, that)
       });
 
+      $('#post .metadata').hide();
+
       that.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
         // mode: 'markdown',
         lineWrapping: true,
-        // matchBrackets: true,
+        matchBrackets: true,
         theme: 'default',
         onChange: _.bind(that._makeDirty, that)
       });
@@ -107,24 +91,6 @@ views.Post = Backbone.View.extend({
   // UpdateHeight
   updateHeight: function() {
     $('.personalities-wrapper').height(this.$('.content .CodeMirror').height());
-  },
-
-  edit: function() {
-    // Hide preview & show code
-    this.updateHeight();
-    $('.personalities').removeClass('flipped');    
-    // this.$('.content-preview').hide();
-    // this.$('.content').show();
-  },
-
-  preview: function() {
-    // Show preview and hide code
-    this.updateHeight();
-    this.$('.post-content').html(this.converter.makeHtml(this.editor.getValue()));
-
-    $('.personalities').addClass('flipped');
-    // this.$('.content-preview').show();
-    // this.$('.content').hide();
   },
 
   render: function() {
