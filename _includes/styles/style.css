@@ -616,8 +616,21 @@ ul.site li a {
   margin: 0 auto;
 }
 
+/*.document .document-preview {
+
+}*/
+
+.document .post-content{
+  background: #fff;
+  padding: 100px;
+
+  -moz-box-shadow: 0 0 3px rgba(0,0,0,0.25);
+  -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.25);
+  box-shadow: 0 0 3px rgba(0,0,0,0.25);*/
+}
+
 .content-preview {
-  font-size: 17px;
+  font-size: 18px;
 }
 
 /* ------------------------------------------
