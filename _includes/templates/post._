@@ -13,6 +13,7 @@
       </div>
     </div>
     <a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a>
+    <a class="toggle delete fr menu-item" href="#">Delete Post</a>
   </div>
 </div>
 

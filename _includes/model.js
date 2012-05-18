@@ -153,6 +153,24 @@ function savePost(user, repo, branch, path, file, metadata, content, message, cb
   repo.write(branch, path + "/" + file, serialize(metadata)+content, message, cb);
 }
 
+
+// Delete Post
+// -------
+
+function deletePost(user, repo, branch, path, file, cb) {
+  var repo = github().getRepo(user, repo);
+  repo.remove(branch, path+ "/" + file, cb);
+}
+
+
+// Move Post
+// -------
+
+function movePost(user, repo, branch, path, newPath, cb) {
+  var repo = github().getRepo(user, repo);
+  repo.move(branch, path, newPath, cb);
+}
+
 // New Post
 // -------
 // 
@@ -169,9 +187,11 @@ function emptyPost(user, repo, branch, path, cb) {
     "content": "How does it work?\n=================\n\nEnter Text in Markdown format.",
     "repo": repo,
     "path": "_posts",
+    "persisted": false,
     "file": new Date().format("Y-m-d")+"-your-filename.md"
   });
 }
+
 
 // Save Post
 // -------
@@ -201,6 +221,6 @@ function loadPost(user, repo, branch, path, file, cb) {
     var post = parse(data);
 
     // We're done. Can you hear me?!
-    cb(err, _.extend(post, {"repo": repo, "path": path, "file": file}));
+    cb(err, _.extend(post, {"repo": repo, "path": path, "file": file, "persisted": true}));
   });
 }

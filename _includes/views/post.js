@@ -11,10 +11,28 @@ views.Post = Backbone.View.extend({
     'focus input': '_makeDirty',
     'focus textarea': '_makeDirty',
     'change #post_published': '_makeDirty',
-    'change input.filename': '_updateFilename'
+    'change input.filename': '_updateFilename',
+    'click .delete': '_delete'
+  },
+
+  _delete: function() {
+    deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
+      router.navigate([app.state.user, app.state.repo, app.state.branch, this.model.path].join('/'), true);
+    }, this));
+    return false;
+  },
+
+  updateURL: function() {
+    router.navigate([app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file].join('/'), false);
   },
 
   _updateFilename: function(e) {
+    var file = $(e.currentTarget).val();
+    if (this.model.persisted) {
+      movePost(app.state.user, app.state.repo, app.state.branch, this.model.path+"/"+this.model.file, this.model.path+"/"+file, _.bind(function(err) {
+        this.updateURL();
+      }, this));
+    }
     this.model.file = $(e.currentTarget).val();
   },
 
@@ -67,6 +85,8 @@ views.Post = Backbone.View.extend({
   updatePost: function(published, message) {
     savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, this.updateMetaData(published), this.editor.getValue(), message, _.bind(function(err) {
       this.dirty = false;
+      this.model.persisted = true;
+      this.updateURL();
       $('.button.save').addClass('inactive');
     }, this));
   },
