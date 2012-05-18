@@ -10,7 +10,12 @@ views.Post = Backbone.View.extend({
     'click a.toggle.preview': '_togglePreview',
     'focus input': '_makeDirty',
     'focus textarea': '_makeDirty',
-    'change #post_published': '_makeDirty'
+    'change #post_published': '_makeDirty',
+    'change input.filename': '_updateFilename'
+  },
+
+  _updateFilename: function(e) {
+    this.model.file = $(e.currentTarget).val();
   },
 
   _makeDirty: function(e) {
@@ -79,7 +84,6 @@ views.Post = Backbone.View.extend({
       "Ctrl-S": function(codemirror) {
         that.updatePost(undefined, "Updated " + that.model.file);
       }
-      
     };
   },
 

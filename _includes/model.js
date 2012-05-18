@@ -1,4 +1,3 @@
-
 // Gimme a Github object! Please.
 function github() {
   return new Github({
@@ -147,13 +146,32 @@ function loadSite(user, repo, branch, path, cb) {
 // Looks into _posts/blog
 
 function savePost(user, repo, branch, path, file, metadata, content, message, cb) {
-  var repo = github().getRepo(user, repo, branch);
+  var repo = github().getRepo(user, repo);
   function serialize(data) {
-    return ["---", data, "---"].join('\n')+'\n\n';
+    return ["---", data, "---"].join('\n')+'\n\n'+content;
   }
   repo.write(branch, path + "/" + file, serialize(metadata)+content, message, cb);
 }
 
+// New Post
+// -------
+// 
+// Prepare new empty post
+
+function emptyPost(user, repo, branch, path, cb) {
+  var repo = github().getRepo(user, repo);
+  cb(null, {
+    "metadata": {
+      "layout": "default",
+      "published": false,
+    },
+    "raw_metadata": "title: \"About Microsite\"\npublished: false",
+    "content": "How does it work?\n=================\n\nEnter Text in Markdown format.",
+    "repo": repo,
+    "path": "_posts",
+    "file": new Date().format("Y-m-d")+"-your-filename.md"
+  });
+}
 
 // Save Post
 // -------

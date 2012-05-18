@@ -2,7 +2,7 @@
   <div class="document-menu-content">
     
     <div class="fl filename">
-      <input type="text" class="filename" value="this-is-a-filename.md"/>
+      <input type="text" class="filename" value="<%= file %>"/>
     </div>
 
     <div class="fr menu-item save-state">
