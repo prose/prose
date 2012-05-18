@@ -1,4 +1,4 @@
-// Github.js 0.3.0
+// Github.js 0.4.0
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -79,7 +79,6 @@
         });
       };
 
-
       // For a given file path, get the corresponding sha (blob for files, tree for dirs)
       // TODO: So inefficient, it sucks hairy donkey balls.
       // -------
@@ -117,11 +116,10 @@
         });
       };
 
-      // Post a new tree object having a file path pointer replaced
-      // with a new blob SHA getting a tree SHA back
+      // Update an existing tree adding a new blob object getting a tree SHA back
       // -------
 
-      this.postTree = function(baseTree, path, blob, cb) {
+      this.updateTree = function(baseTree, path, blob, cb) {
         var data = {
           "base_tree": baseTree,
           "tree": [
@@ -134,6 +132,17 @@
           ]
         };
         _request("POST", repoPath + "/git/trees", data, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Post a new tree object having a file path pointer replaced
+      // with a new blob SHA getting a tree SHA back
+      // -------
+
+      this.postTree = function(tree, cb) {
+        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
           if (err) return cb(err);
           cb(null, res.sha);
         });
@@ -197,8 +206,53 @@
                 return "";
               }
             }
-
             cb(null, decode(blob));
+          });
+        });
+      };
+
+      // Remove a file from the tree
+      // -------
+
+      this.remove = function(branch, path, cb) {
+        that.getRef(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            var newTree = _.reject(tree, function(ref) { return ref.path === path });
+            _.each(newTree, function(ref) {
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(newTree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Move a file to a new location
+      // -------
+
+      this.move = function(branch, path, newPath, cb) {
+        that.getRef(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            _.each(tree, function(ref) {
+              if (ref.path === path) ref.path = newPath;
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(tree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
           });
         });
       };
@@ -209,7 +263,7 @@
       this.write = function(branch, path, content, message, cb) {
         that.getRef(branch, function(err, latestCommit) {
           that.postBlob(content, function(err, blob) {
-            that.postTree(latestCommit, path, blob, function(err, tree) {
+            that.updateTree(latestCommit, path, blob, function(err, tree) {
               that.commit(latestCommit, tree, message, function(err, commit) {
                 that.updateHead(branch, commit, function(err) {
                   cb(err);
