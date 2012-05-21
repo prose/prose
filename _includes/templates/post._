@@ -4,20 +4,33 @@
     <div class="fl filename">
       <input type="text" class="filename" value="<%= file %>"/>
     </div>
-    
+
     <div class="fr menu-item save-state">
       <div class="state fl">
-        <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/>
-        Published
+        
+        
+        <a class='toggle-options button' href='#' title="CTRL+O">Options</a>
         <a class='save button inactive' href='#' title="CTRL+S">Save</a>
+
       </div>
     </div>
 
-    <a class='toggle preview fr menu-item' href='#' title="CTRL+SHIFT+P">Preview</a>
-
     <a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a>
-    <a class="toggle delete fr menu-item" href="#">Delete Post</a>
+    <a class='toggle preview fr menu-item' href='#' title="CTRL+SHIFT+P">Preview</a>
+    
+
+    <div class="options">
+      <div class="publish-state">
+        <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/> Published
+      </div>  
+
+      <div class="actions">
+        <a class="toggle delete button" href="#">Delete Post</a>
+      </div>
+    </div>
+
   </div>
+
 </div>
 
 <div class='inner clearfix'>  

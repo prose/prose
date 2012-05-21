@@ -12,13 +12,21 @@ views.Post = Backbone.View.extend({
     'focus textarea': '_makeDirty',
     'change #post_published': '_makeDirty',
     'change input.filename': '_updateFilename',
-    'click .delete': '_delete'
+    'click .delete': '_delete',
+    'click .toggle-options': '_toggleOptions'
+  },
+
+  _toggleOptions: function() {
+    $('.options').toggle();
+    return false;
   },
 
   _delete: function() {
-    deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
-      router.navigate([app.state.user, app.state.repo, app.state.branch, this.model.path].join('/'), true);
-    }, this));
+    if (confirm("Are you sure you want to delete that document?")) {
+      deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
+        router.navigate([app.state.user, app.state.repo, app.state.branch, this.model.path].join('/'), true);
+      }, this));      
+    }
     return false;
   },
 
@@ -39,6 +47,7 @@ views.Post = Backbone.View.extend({
   _makeDirty: function(e) {
     this.dirty = true;
     this.$('.button.save').removeClass('inactive');
+    this.updateMetaData();
   },
   
   _save: function(e) {
@@ -79,6 +88,12 @@ views.Post = Backbone.View.extend({
     // Update metadata accordingly.
     var rawMetadata = _.toYAML(this.model.metadata);
     $('#raw_metadata').val(rawMetadata);
+
+    if (this.model.metadata.published) {
+      $('#post').addClass('published');
+    } else {
+      $('#post').removeClass('published');
+    }
     return rawMetadata;
   },
 
