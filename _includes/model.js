@@ -54,11 +54,17 @@ function authenticated() {
 function loadApplication(cb) {
   if (app.username) {
     var user = github().getUser(app.username);
+    var owners = {};
+
     user.repos(function(err, repos) {
-      cb(null, { "available_repos": repos });
+      _.each(repos, function(r) {
+        owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r])
+                                                      : [r];
+      });
+      cb(null, { "available_repos": repos, "owners": owners });
     });
   } else {
-    cb(null, { "available_repos": [] });
+    cb(null, { "available_repos": [], "owners": {} });
   }
 }
 
@@ -183,7 +189,7 @@ function emptyPost(user, repo, branch, path, cb) {
       "layout": "default",
       "published": false,
     },
-    "raw_metadata": "title: \"About Microsite\"\npublished: false",
+    "raw_metadata": "published: false",
     "content": "How does it work?\n=================\n\nEnter Text in Markdown format.",
     "repo": repo,
     "path": "_posts",

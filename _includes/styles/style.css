@@ -187,10 +187,25 @@ body.start {
   
 }
 
+#start .owner {
+  font-family: "Menlo", "Courier New", monospace;
+  font-size: 17px;
+  margin-left: 30px;
+  padding-top: 30px;
+  padding-bottom: 0px;
+  padding-left: 30px;
+  color: #666;
+  width: 200px;
+  background:url('images/sprite.png') 0px -522px no-repeat;
+}
+
+#start {
+  padding-bottom: 20px;
+}
+
 .repos {
   overflow: auto;
   padding: 10px;
-  margin-bottom: 20px;
 }
 
 .repos > a {
