@@ -2,18 +2,28 @@
     
 <div class="navigation">
   <!--Github account and links-->
-  <div class="root"><a href="#">Repos</a></div>
+  <a class="root" href="#">Repos</a>
+
   <% if (state.repo) { %>
-    <div class="repo">
-      <% if (state.repo) { %>
-        <a href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></a></div>
-      <% } %>
-    <div class="path">
-      <% var path = state.path.replace('_posts/','').replace('_posts',''); %>
-      <% if (path) { %>
-        <a href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= path %></a>
-      <% } %>
-    </div>
+    
+    <% var path = state.path.replace('_posts/','').replace('_posts',''); %>
+
+    <% if (state.repo && path) { %>
+      <a class="repo" href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></a>
+    <% } %>
+
+    <% if (state.repo && !path) { %>
+      <div class="repo" href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></div>
+    <% } %>
+    
+    <% if (path && state.file) { %>
+      <a class="path" href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= path %></a>
+    <% } %>
+    <% if (path && !state.file) { %>
+      <div class="path" href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= path %></div>
+    <% } %>
+
+
     <div class="file">
       <% if (state.file) { %>
         <%= state.file %>
