@@ -631,6 +631,7 @@ ul.site li a {
 }
 
 .document .content-wrapper {
+  padding-top: 20px;
   width: 50%;
   float: left;
   position: relative;
@@ -638,6 +639,7 @@ ul.site li a {
 
 .document .content-preview-wrapper {
   position: relative;
+  padding-top: 20px;
   width: 50%;
   float: left;
 }
@@ -683,7 +685,7 @@ ul.site li a {
 
   font-family: 'Palatino Linotype', 'Adobe Garamond Pro', "Times New Roman", serif;
   font-weight: 400;
-  font-size: 26px;
+  font-size: 18px;
   line-height: 1.3em;
 
   -moz-box-shadow: 0 0 3px rgba(0,0,0,0.25);
