@@ -118,9 +118,9 @@ h6 { font-size: 11px; font-weight: 500; }
 #header .user-status img {
   float: left;
   margin-right: 10px;
-  margin-top: 10px;
-
+  margin-top: 20px;
 }
+
 #main {
   margin-top: 60px;
 }
@@ -194,7 +194,7 @@ body.start {
 }
 
 .repos > a {
-  font-family: "Menlo", "Courier New";
+  font-family: "Menlo", "Courier New", monospace;
   overflow: hidden;
   background: #fff;
 
@@ -447,7 +447,7 @@ ul.site li a {
 .document-menu {
   padding: 0 20px;
   height: 60px;
-  background: white;
+  background: #ccc;
   overflow: auto;
   line-height: 40px;
 }
@@ -527,9 +527,8 @@ ul.site li a {
 
 .document .metadata {
   overflow: hidden;
-  background: white;
-  border-top: 1px solid;
-  color: white;
+  background: #3e3e3e;
+  color: #CCC;
   z-index: 1000;
   -moz-transition: height 100ms linear;
   -o-transition: height 100ms linear;
@@ -537,6 +536,9 @@ ul.site li a {
   transition: height 100ms linear;
 }
 
+.document .metadata-content .CodeMirror {
+  color: #F0F0F0;
+}
 
 .document .metadata-content {
   padding: 20px 0px;
