@@ -8,13 +8,12 @@
     
     <% var path = state.path.replace('_posts/','').replace('_posts',''); %>
 
-    <% if (state.repo && path) { %>
+    <% if (state.repo && (path ||state.file)) { %>
       <a class="repo" href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></a>
-    <% } %>
-
-    <% if (state.repo && !path) { %>
+    <% } else if (state.repo) { %>
       <div class="repo" href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></div>
     <% } %>
+
     
     <% if (path && state.file) { %>
       <a class="path" href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= path %></a>
@@ -33,7 +32,7 @@
 </div>
 <% if (app.username) { %>
   <div class='user-status'>
-    <img width="20" src="<%= $.cookie("avatar") %>"/>
+    <img width="30" src="<%= $.cookie("avatar") %>"/>
     <%= app.username %> <a class="logout" href="#">Logout</a>
   </div>  
 <% } %>
