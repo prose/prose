@@ -542,8 +542,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="467.80842"
-     inkscape:cy="722.68354"
+     inkscape:cx="446.4245"
+     inkscape:cy="696.1735"
      inkscape:document-units="px"
      inkscape:current-layer="layer4"
      showgrid="false"
@@ -551,7 +551,7 @@
      inkscape:guide-bbox="true"
      inkscape:window-width="1280"
      inkscape:window-height="752"
-     inkscape:window-x="52"
+     inkscape:window-x="45"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:snap-bbox="true"
@@ -647,12 +647,16 @@
        id="guide6523" />
     <sodipodi:guide
        orientation="0,1"
-       position="542,852"
+       position="310,880"
        id="guide6589" />
     <sodipodi:guide
        orientation="1,0"
        position="457,849"
        id="guide8725" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="310,790"
+       id="guide15413" />
   </sodipodi:namedview>
   <metadata
      id="metadata5164">
@@ -1916,18 +1920,21 @@
      id="layer4"
      inkscape:label="posts"
      style="display:inline">
-    <path
-       style="color:#000000;fill:#404b4f;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 330,215 0,20 -10,10 0,-15 z"
-       id="path15388"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccc" />
-    <path
-       sodipodi:nodetypes="cccsscsccc"
-       inkscape:connector-curvature="0"
-       id="rect13287"
-       d="m 190,120 130,0 0,45 8,8 c 1,1 2,2 2,4 l 0,41 c 0,2 -0.94591,2.94591 -2,4 l -8,8 0,70 -130,0"
-       style="color:#000000;fill:#667880;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999976;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <g
+       id="g15415">
+      <path
+         sodipodi:nodetypes="ccccccc"
+         inkscape:connector-curvature="0"
+         id="path15388"
+         d="m 330,215 c 0,0 0,17 0,23 0,2 -1,3 -2,4 -1.33334,1.33334 -4,4 -6,6 -1.05409,1.05409 -2,2 -2,4 l 0,-22 z"
+         style="color:#000000;fill:#404b4f;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         style="color:#000000;fill:#667880;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999976;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         d="m 190,120 130,0 c 0,0 0,33.66667 0,48 0,2 1,3 2,4 2.33333,2.33333 6,6 6,6 1,1 2,2 2,4 l 0,41 c 0,2 -1,3 -2,4 l -6,6 c -1,1 -2,2 -2,4 l 0,63 -130,0"
+         id="rect13287"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccccccccccc" />
+    </g>
     <g
        style="opacity:0.6;fill:#ffffff"
        id="g14065"
