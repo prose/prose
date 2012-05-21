@@ -371,11 +371,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.5"
-     inkscape:cx="272.46459"
-     inkscape:cy="255.16126"
+     inkscape:zoom="1"
+     inkscape:cx="305.16978"
+     inkscape:cy="281.18341"
      inkscape:document-units="px"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1270"
      inkscape:window-height="665"
@@ -482,7 +482,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -871,7 +871,7 @@
     <path
        inkscape:connector-curvature="0"
        id="path6835"
-       d="m 450,-249.63782 7,4.5 -7,4.5 2,-4.5 z"
+       d="m 450,147.36218 7,4.5 -7,4.5 2,-4.5 z"
        style="color:#000000;fill:#c9d2d6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate"
        sodipodi:nodetypes="ccccc"
        inkscape:export-filename="/Users/saman/work_repos/poole/images/renders/compose-collapsed-unpublished.png"
