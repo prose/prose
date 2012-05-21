@@ -4,6 +4,7 @@
 body {
   color: #404040;
   background: #f0f0f0;
+  -webkit-font-smoothing: antialiased;
   }
 
 body,
@@ -633,6 +634,11 @@ ul.site li a {
 .document .post-content{
   background: #fff;
   padding: 100px;
+
+  font-family: 'Palatino Linotype', 'Adobe Garamond Pro', "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.3em;
 
   -moz-box-shadow: 0 0 3px rgba(0,0,0,0.25);
   -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.25);
