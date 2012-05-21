@@ -89,19 +89,19 @@ h6 { font-size: 11px; font-weight: 500; }
 }
 
 #header .navigation .root {
-  background:url('images/sprite.png') -100px -25px no-repeat;
+  background:url('images/sprite.png') 0px -275px no-repeat;
 }
 
 #header .navigation .repo {
-  background:url('images/sprite.png') -200px -25px no-repeat;
+  background:url('images/sprite.png') 0px -375px no-repeat;
 }
 
 #header .navigation .path {
-  background:url('images/sprite.png') -200px -25px no-repeat;
+  background:url('images/sprite.png') 0px -375px no-repeat;
 }
 
 #header .navigation .file {
-  background:url('images/sprite.png') -300px 25px no-repeat;
+  background:url('images/sprite.png') 0px -375px no-repeat;
 }
 
 #header .user-status {
@@ -377,7 +377,7 @@ ul.site li a {
     }
 
 .post-listing a.link {
-  background:url('images/sprite.png') -400px -100px no-repeat;
+  background:url('images/sprite.png') -450px -400px no-repeat;
 
 /*  -moz-box-shadow: 0 0 3px rgba(0,0,0,0.25);
   -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.25);
@@ -414,7 +414,7 @@ ul.site li a {
 }
 
 .post-listing a.link.folder {
-  background:url('images/sprite.png') -200px -100px no-repeat;
+  background:url('images/sprite.png') -450px -150px no-repeat;
 }
 
 .post-listing a.link.new {
