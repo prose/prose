@@ -542,16 +542,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="634.84508"
-     inkscape:cy="672.18885"
+     inkscape:cx="446.4245"
+     inkscape:cy="696.1735"
      inkscape:document-units="px"
-     inkscape:current-layer="layer8"
+     inkscape:current-layer="layer4"
      showgrid="false"
      showguides="false"
      inkscape:guide-bbox="true"
      inkscape:window-width="1280"
      inkscape:window-height="752"
-     inkscape:window-x="-115"
+     inkscape:window-x="45"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:snap-bbox="true"
@@ -647,12 +647,16 @@
        id="guide6523" />
     <sodipodi:guide
        orientation="0,1"
-       position="542,852"
+       position="310,880"
        id="guide6589" />
     <sodipodi:guide
        orientation="1,0"
        position="457,849"
        id="guide8725" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="310,790"
+       id="guide15413" />
   </sodipodi:namedview>
   <metadata
      id="metadata5164">
@@ -803,7 +807,7 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="home"
-     style="display:inline">
+     style="display:none">
     <rect
        style="color:#000000;fill:#f0f0f0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate"
        id="rect9443"
@@ -1915,7 +1919,22 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="posts"
-     style="display:none">
+     style="display:inline">
+    <g
+       id="g15415">
+      <path
+         sodipodi:nodetypes="ccccccc"
+         inkscape:connector-curvature="0"
+         id="path15388"
+         d="m 330,215 c 0,0 0,17 0,23 0,2 -1,3 -2,4 -1.33334,1.33334 -4,4 -6,6 -1.05409,1.05409 -2,2 -2,4 l 0,-22 z"
+         style="color:#000000;fill:#404b4f;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         style="color:#000000;fill:#667880;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999976;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         d="m 190,120 130,0 c 0,0 0,33.66667 0,48 0,2 1,3 2,4 2.33333,2.33333 6,6 6,6 1,1 2,2 2,4 l 0,41 c 0,2 -1,3 -2,4 l -6,6 c -1,1 -2,2 -2,4 l 0,63 -130,0"
+         id="rect13287"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccccccccccc" />
+    </g>
     <g
        style="opacity:0.6;fill:#ffffff"
        id="g14065"
@@ -2239,67 +2258,12 @@
            height="715"
            width="620"
            id="rect8240-1" /></flowRegion><flowPara
-         id="flowPara8258-4">map-site</flowPara></flowRoot>    <g
-       id="g13550"
-       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders/posts.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90">
-      <rect
-         ry="3.5"
-         rx="3.5"
-         style="color:#000000;fill:#667880;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999982;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         id="rect13353"
-         width="124.5"
-         height="160"
-         x="188"
-         y="130" />
-      <path
-         sodipodi:nodetypes="ccccc"
-         inkscape:connector-curvature="0"
-         id="rect13267"
-         d="m 200,120 128,0 0,176 -128,0 z"
-         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-      <path
-         sodipodi:nodetypes="ccccc"
-         inkscape:connector-curvature="0"
-         id="rect13265"
-         d="m 200,122 126,0 0,175.5 -126,0 z"
-         style="color:#000000;fill:#e7eef2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-      <path
-         sodipodi:nodetypes="ccccc"
-         inkscape:connector-curvature="0"
-         id="rect5279"
-         d="m 196,124 128,0 0,174 -128,0 z"
-         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-      <g
-         id="g14081"
-         transform="translate(1,0)">
-        <path
-           sodipodi:nodetypes="ccccc"
-           inkscape:connector-curvature="0"
-           id="path14077"
-           d="m 195,126 126,0 0,175.5 -126,0 z"
-           style="color:#000000;fill:#e7eef2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-        <path
-           sodipodi:nodetypes="ccccc"
-           inkscape:connector-curvature="0"
-           id="path14079"
-           d="m 191,128 128,0 0,172 -128,0 z"
-           style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-      </g>
-      <path
-         sodipodi:nodetypes="ccccc"
-         inkscape:connector-curvature="0"
-         id="rect13287"
-         d="M 191,265.42208 191,133 l 122,0 0,157 -121,0"
-         style="color:#000000;fill:#667880;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999976;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-    </g>
-    <text
+         id="flowPara8258-4">map-site</flowPara></flowRoot>    <text
        sodipodi:linespacing="150%"
        id="text5281"
        y="214.66895"
        x="259.79492"
-       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:center;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:middle;baseline-shift:baseline;color:#000000;fill:#f5f8fa;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Menlo;-inkscape-font-specification:Menlo"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:center;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:middle;baseline-shift:baseline;color:#000000;fill:#f5f8fa;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221000000085;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Menlo;-inkscape-font-specification:Menlo"
        xml:space="preserve"
        inkscape:export-filename="/Users/saman/work_repos/poole/images/renders/posts.png"
        inkscape:export-xdpi="90"
@@ -5036,7 +5000,7 @@
      inkscape:groupmode="layer"
      id="layer8"
      inkscape:label="login-screen"
-     style="display:inline">
+     style="display:none">
     <rect
        y="1.1368684e-13"
        x="0"
@@ -5221,7 +5185,7 @@
     <rect
        ry="0"
        rx="0"
-       style="color:#000000;fill:#c3ccd0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412000000037;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:#c3ccd0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect5169-7-6"
        width="340"
        height="340"
