@@ -17,7 +17,7 @@ views.Start = Backbone.View.extend({
     if ($(e.target).hasClass('branch')) return;
     
     var $branches = $(e.currentTarget).find('.branches').show();
-    $branches.html('<div class="loading-branches">One second ...</div>');
+    $branches.html('<div class="loading-branches"> </div>');
     
     loadBranches(user, repo, function(err, branches) {
       $branches.empty();

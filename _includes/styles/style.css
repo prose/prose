@@ -87,6 +87,7 @@ h6 { font-size: 11px; font-weight: 500; }
 
 #header .navigation > * {
   display: block;
+  position: relative;
   padding-right: 15px;
   padding-left: 28px;
   margin-right: 30px;
@@ -109,8 +110,20 @@ h6 { font-size: 11px; font-weight: 500; }
 #header .navigation .repo {
   background-image:url('images/sprite.png');
   background-position: 10px -340px;
-
   background-repeat: no-repeat;
+}
+
+#header .navigation .file::before, #header .navigation .repo::before {
+  content:"";
+  background-image:url('images/sprite.png');
+  background-position: -289px -390px;
+  background-repeat: no-repeat;
+  display: block;
+  position: absolute;
+  left: -30px;
+  top: 0px;
+  width: 30px;
+  height: 30px;
 }
 
 #header .navigation .path {
@@ -328,9 +341,12 @@ body.start {
 }
 
 .loading-branches {
-  text-align: center;
+  background: url('images/ajax-loader.gif') no-repeat;
+  margin-top: 90px;
+  margin-left: 58px;
+  height: 40px;
+  width: 44px;
   color: #444;
-  padding-top: 80px;
 }
 
 .repos a .branches a.branch:hover  {
@@ -630,12 +646,15 @@ ul.site li a {
   background: transparent;
   border: none;
   height: 40px;
-  font-size: 14px;
+  font-size: 16px;
   color: #555;
   color: #e7eef2;
   width: 400px;
   padding: 0 5px;
   margin: 10px 0;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
 
 .document-menu-content .filename input:hover, .document-menu-content .filename input:focus {
