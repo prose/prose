@@ -240,7 +240,7 @@ body.start {
   padding-left: 30px;
   color: #666;
   width: 200px;
-  background:url('images/sprite.png') 0px -522px no-repeat;
+  background:url('images/sprite.png') 0px -523px no-repeat;
 }
 
 #start {
@@ -492,7 +492,7 @@ ul.site li a {
 }
 
 .post-listing a.link.new .button {
-  background: #1798cf;
+  background: #516066;
   padding: 5px;
   margin: 70px 10px;
   -moz-border-radius: 5px;
@@ -503,8 +503,8 @@ ul.site li a {
   font-size: 11px;
   font-weight: bold;
   color: #fff;
-}
-
+  }
+  .post-listing a.link.new .button:hover { background: #475459;}
 /* ------------------------------------------
   Post
 ---------------------------------------------*/
@@ -576,13 +576,13 @@ ul.site li a {
 .document-menu-content .menu-item {
   background: rgba(0,0,0, 0.2);
   line-height: 40px;
-  padding: 0 5px;
   margin: 10px 0;
 }
 
 .document-menu-content .menu-item.preview {
   background-image:url('images/sprite.png');
   background-position: -438px 15px;
+  background-repeat: no-repeat;
   width: 40px;
   padding: 0;
 }
@@ -649,6 +649,7 @@ ul.site li a {
   right: 0px;
   width: 200px;
   z-index: 3000;
+  border-radius: 0 0 5px 5px;
 }
 
 
@@ -662,6 +663,7 @@ ul.site li a {
 .document-menu .options .actions {
   background: rgba(255, 255, 255, 0.1);
   padding: 20px;
+  border-radius: 0 0 5px 5px;
 }
 
 .document-menu .options .actions .button {
@@ -677,6 +679,9 @@ ul.site li a {
   background: rgba(0,0,0, 0.4);
 }
 
+.document-menu-content .save { background: rgba(0,0,0, 0.1); }
+.document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.2); }
+
 .document-menu-content .save-state {
   margin-left: 20px;
 }
@@ -686,16 +691,14 @@ ul.site li a {
 }
 
 
-
 .document-menu-content .state .button {
   display: block;
   float:left;
-  background-color: rgba(0,0,0, 0.2);
   color: #fff;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  margin: 5px 10px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  margin: 5px;
   line-height: 30px;
   height: 30px;
   padding: 0 12px;
@@ -703,13 +706,13 @@ ul.site li a {
 
 .document-menu-content .state .button.toggle-options {
   background-image:url('images/sprite.png');
-  background-position: -292px -442px;
-  width: 30px;
+  background-position: -288px -442px;
+  width: 50px;
   padding: 0;
 }
 
 .document-menu-content .state .button:hover {
-  background-color: rgba(0,0,0, 0.3);
+  background-color: rgba(0,0,0, 0.1);
 }
 
 .document-menu-content .state .button.inactive {
