@@ -30,6 +30,14 @@ views.Application = Backbone.View.extend({
   initialize: function () {
     _.bindAll(this);
     this.header = new views.Header({model: this.model});
+
+    $(window).on('scroll', function() {
+      if ($(window).scrollTop()>60) {
+        $('.document-menu').addClass('sticky');
+      } else {
+        $('.document-menu').removeClass('sticky');
+      }
+    });
   },
 
   // Should be rendered just once
