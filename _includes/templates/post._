@@ -10,7 +10,7 @@
         
         
         <a class='toggle-options button' href='#' title="CTRL+O">&nbsp;</a>
-        <a class='save button inactive' href='#' title="CTRL+S">Save</a>
+        <a class='save button inactive' href='#' title="CTRL+S">SAVE</a>
 
       </div>
     </div>

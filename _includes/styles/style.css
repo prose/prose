@@ -44,6 +44,14 @@ h5 { font-size: 13px; }
 h6 { font-size: 11px; font-weight: 500; }
 
 
+/* Use border-box box model */
+
+* {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
 
 
 /* ------------------------------------------
@@ -172,7 +180,7 @@ and your footer gets pushed down a bit more, creating vertical scroll bars in th
   padding-left: 30px;
   line-height: 60px;
   background: #e0e7eb;
-  /*border-top: 1px solid #ccc;*/
+  border-top: 1px solid #ccc;
   clear:both;
 }
 
