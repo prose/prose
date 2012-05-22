@@ -676,21 +676,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="330.03566"
-     inkscape:cy="788.29311"
+     inkscape:zoom="1"
+     inkscape:cx="411.53566"
+     inkscape:cy="740.29311"
      inkscape:document-units="px"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer8"
      showgrid="false"
      showguides="false"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1280"
-     inkscape:window-height="752"
-     inkscape:window-x="313"
-     inkscape:window-y="142"
+     inkscape:window-width="1476"
+     inkscape:window-height="883"
+     inkscape:window-x="83"
+     inkscape:window-y="266"
      inkscape:window-maximized="0"
      inkscape:snap-bbox="true"
-     inkscape:snap-nodes="true"
+     inkscape:snap-nodes="false"
      inkscape:bbox-paths="false"
      inkscape:object-paths="false">
     <inkscape:grid
@@ -822,7 +822,7 @@
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <rect
-       style="color:#000000;fill:#e0e7eb;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412000000037;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:#e0e7eb;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect7635"
        width="1000"
        height="41"
@@ -927,7 +927,7 @@
          id="text7601"
          y="86.706001"
          x="452.68079"
-         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#7a8387;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221000000085;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue Bold"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#7a8387;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue Bold"
          xml:space="preserve"><tspan
            y="86.706001"
            x="452.68079"
@@ -945,7 +945,7 @@
        d="m 1260,137.36218 c 0,0 0,17 0,23 0,2 -1,3 -2,4 -1.3333,1.33334 -4,4 -6,6 -1.0541,1.05409 -2,2 -2,4 l 0,-22 z"
        style="color:#000000;fill:#7a8387;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     <path
-       style="color:#000000;fill:#c9d1d6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999976000000002;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:#c9d1d6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999976;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 1120,42.362183 130,0 c 0,0 0,33.66667 0,47.999997 0,2 1,3 2,4 2.3333,2.33333 6,6 6,6 1,1 2,2 2,4 l 0,41 c 0,2 -1,3 -2,4 l -6,6 c -1,1 -2,2 -2,4 l 0,63 -130,0"
        id="rect13287-8"
        inkscape:connector-curvature="0"
@@ -2235,7 +2235,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="posts"
-     style="display:inline">
+     style="display:none">
     <g
        id="g15415">
       <path
@@ -2246,8 +2246,9 @@
          style="color:#000000;fill:#7a8387;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <path
          style="color:#000000;fill:#c9d1d6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999976;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         d="M 195 120 C 192.23 120 190 122.23 190 125 L 190 130 L 190 290 L 190 295 C 190 297.77 192.23 300 195 300 L 315 300 C 317.77 300 320 297.77 320 295 L 320 290 L 320 237 C 320 235 321 234 322 233 L 328 227 C 329 226 330 225 330 223 L 330 182 C 330 180 329 179 328 178 L 322 172 C 321 171 320 170 320 168 L 320 130 L 320 125 C 320 122.23 317.77 120 315 120 L 195 120 z "
-         id="rect13287" />
+         d="m 195,120 c -2.77,0 -5,2.23 -5,5 l 0,5 0,160 0,5 c 0,2.77 2.23,5 5,5 l 120,0 c 2.77,0 5,-2.23 5,-5 l 0,-5 0,-53 c 0,-2 1,-3 2,-4 l 6,-6 c 1,-1 2,-2 2,-4 l 0,-41 c 0,-2 -1,-3 -2,-4 l -6,-6 c -1,-1 -2,-2 -2,-4 l 0,-38 0,-5 c 0,-2.77 -2.23,-5 -5,-5 l -120,0 z"
+         id="rect13287"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        style="opacity:0.6;fill:#ffffff"
@@ -3473,7 +3474,7 @@
        id="g9958-9-6">
       <path
          transform="matrix(1.0289855,0,0,1.4444444,-630.69475,-90.207916)"
-         d="m 535,180.5 c 0,2.48528 -15.44618,4.5 -34.5,4.5 -19.05382,0 -34.5,-2.01472 -34.5,-4.5 0,-2.48528 15.44618,-4.5 34.5,-4.5 19.05382,0 34.5,2.01472 34.5,4.5 z"
+         d="m 535,180.5 a 34.5,4.5 0 1 1 -69,0 34.5,4.5 0 1 1 69,0 z"
          sodipodi:ry="4.5"
          sodipodi:rx="34.5"
          sodipodi:cy="180.5"
@@ -3607,7 +3608,7 @@
            sodipodi:cy="107.5"
            sodipodi:rx="1.5"
            sodipodi:ry="1.5"
-           d="m 502,107.5 c 0,0.82843 -0.67157,1.5 -1.5,1.5 -0.82843,0 -1.5,-0.67157 -1.5,-1.5 0,-0.82843 0.67157,-1.5 1.5,-1.5 0.82843,0 1.5,0.67157 1.5,1.5 z"
+           d="m 502,107.5 a 1.5,1.5 0 1 1 -3,0 1.5,1.5 0 1 1 3,0 z"
            transform="matrix(1.3333333,0,0,1.3333333,-167.33333,-36.333333)" />
       </g>
     </g>
@@ -4031,6 +4032,11 @@
          id="rect12144"
          style="color:#000000;fill:#f0f0f0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate" />
     </g>
+    <path
+       style="color:#000000;fill:#c9d1d6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999976;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 261,112 c -2.77,0 -5,2.23 -5,5 l 0,5 0,160 0,5 c 0,2.77 2.23,5 5,5 l 120,0 c 2.77,0 5,-2.23 5,-5 l 0,-5 0,-53 c 0,-2 1,-3 2,-4 l 6,-6 c 1,-1 2,-2 2,-4 l 0,-41 c 0,-2 -1,-3 -2,-4 l -6,-6 c -1,-1 -2,-2 -2,-4 l 0,-38 0,-5 c 0,-2.77 -2.23,-5 -5,-5 l -120,0 z"
+       id="rect13287-9"
+       inkscape:connector-curvature="0" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -5332,7 +5338,7 @@
      inkscape:groupmode="layer"
      id="layer8"
      inkscape:label="login-screen"
-     style="display:none">
+     style="display:inline">
     <rect
        y="1.1368684e-13"
        x="0"
@@ -5343,6 +5349,27 @@
        inkscape:export-filename="/Users/saman/work_repos/poole/images/renders/login.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
+    <rect
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders.png/home-selectbranch.png"
+       y="203"
+       x="330"
+       height="47"
+       width="340"
+       id="rect7567"
+       style="color:#000000;fill:#e0e7eb;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       rx="0"
+       ry="0" />
+    <rect
+       style="color:#000000;fill:#c9d1d6;fill-opacity:1;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5575"
+       width="340"
+       height="149.50002"
+       x="330"
+       y="240.49998"
+       rx="9.5"
+       ry="9.5" />
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#4d4d4d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue Bold"
@@ -5515,60 +5542,29 @@
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <rect
-       ry="0"
-       rx="0"
-       style="color:#000000;fill:#c3ccd0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       ry="10"
+       rx="10"
+       style="color:#000000;fill:#e0e7eb;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412000000037;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect5169-7-6"
        width="340"
-       height="340"
+       height="210"
        x="330"
        y="40"
        inkscape:export-filename="/Users/saman/work_repos/poole/images/renders.png/home-selectbranch.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <rect
-       style="color:#000000;fill:#e0e7eb;fill-opacity:1;stroke:#e0e7eb;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="rect5575"
-       width="339"
-       height="159.5"
-       x="330.5"
-       y="260.5" />
-    <rect
-       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="rect4795"
-       width="299.00003"
-       height="29.000002"
-       x="350.49997"
-       y="280.5" />
-    <text
-       sodipodi:linespacing="150%"
-       id="text4797"
-       y="298.57501"
-       x="390.34"
-       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue Bold"
-       xml:space="preserve"><tspan
-         y="298.57501"
-         x="390.34"
-         id="tspan4799"
-         sodipodi:role="line">GitHub Username</tspan></text>
-    <rect
-       y="320.5"
-       x="350.5"
-       height="29"
-       width="299"
-       id="rect4801"
-       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.99999994;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-    <text
-       xml:space="preserve"
-       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue Bold"
-       x="390.34"
-       y="338.57501"
-       id="text4803"
-       sodipodi:linespacing="150%"><tspan
-         sodipodi:role="line"
-         id="tspan4805"
-         x="390.34"
-         y="338.57501">Password</tspan></text>
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders.png/home-selectbranch.png"
+       y="190"
+       x="330"
+       height="60"
+       width="340"
+       id="rect7177"
+       style="color:#000000;fill:#e0e7eb;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412000000037;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       rx="0"
+       ry="0" />
     <text
        xml:space="preserve"
        style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:center;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:middle;baseline-shift:baseline;color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Palatino;-inkscape-font-specification:Palatino"
@@ -5580,53 +5576,6 @@
          x="500.0625"
          y="229"
          id="tspan8237">Serving Jekyll faithfully</tspan></text>
-    <rect
-       style="color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:#526066;stroke-width:0.99999988;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="rect5739"
-       width="299"
-       height="29"
-       x="350.5"
-       y="370.5"
-       rx="3.9999998"
-       ry="4" />
-    <text
-       xml:space="preserve"
-       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue Bold"
-       x="482.9928"
-       y="388.57501"
-       id="text4154-2-4-4-2-6-9"
-       sodipodi:linespacing="150%"
-       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders.png/compose-collapsed-published.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         sodipodi:role="line"
-         id="tspan4156-1-9-9-3-0-6"
-         x="482.9928"
-         y="388.57501">ENTER</tspan></text>
-    <rect
-       y="280.5"
-       x="350.5"
-       height="29"
-       width="29"
-       id="rect5876"
-       style="color:#000000;fill:#e7eef2;fill-opacity:1;fill-rule:nonzero;stroke:#e7eef2;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-    <rect
-       style="color:#000000;fill:#e7eef2;fill-opacity:1;fill-rule:nonzero;stroke:#e7eef2;stroke-width:0.99999994;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="rect5878"
-       width="29"
-       height="29"
-       x="350.5"
-       y="320.5" />
-    <path
-       inkscape:connector-curvature="0"
-       style="opacity:0.2;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate"
-       d="m 363,329 c -2.20914,0 -4,1.79086 -4,4 0,2.20914 1.79086,4 4,4 0.72993,0 1.41091,-0.22098 2,-0.5625 l 0,1.5625 2,0 0,1 0,1 1,0 1,0 1,0 0,-2 -3.34375,-3.34375 C 366.88308,334.15434 367,333.58658 367,333 c 0,-2.20914 -1.79086,-4 -4,-4 z m -1,2 c 0.55228,0 1,0.44772 1,1 0,0.55228 -0.44772,1 -1,1 -0.55228,0 -1,-0.44772 -1,-1 0,-0.55228 0.44772,-1 1,-1 z"
-       id="path8189" />
-    <path
-       inkscape:connector-curvature="0"
-       style="opacity:0.2;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate"
-       d="m 365,289 c -1.65686,0 -3,1.34314 -3,3 0,1.65686 1.34314,3 3,3 1.65686,0 3,-1.34314 3,-3 0,-1.65686 -1.34314,-3 -3,-3 z m -3,7 c -2,0 -2,2 -2,3 l 0,1 10,0 0,-1 c 0,-1 0,-3 -2,-3 l -6,0 z"
-       id="path5949-7" />
     <text
        xml:space="preserve"
        style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Palatino;-inkscape-font-specification:Palatino"
@@ -5866,5 +5815,86 @@
          d="m 539.375,142.3125 c 0.26467,0.13465 0.48553,0.26889 0.6875,0.40625 0.13406,0.0912 0.23816,0.18876 0.34375,0.28125 0.0374,0.0331 0.0912,0.0605 0.125,0.0937 0.0828,0.0815 0.15803,0.1362 0.21875,0.21875 0.0221,0.0301 0.0433,0.0635 0.0625,0.0937 0.0564,0.0889 0.0947,0.19126 0.125,0.28125 0.0109,0.0314 0.0236,0.0622 0.0312,0.0937 C 540.9853,143.8523 541,143.92831 541,144 l 0,2 c 0,1 -1.19363,1.51147 -2,2 -0.92975,0.56327 -3.02311,0.9805 -3.125,1 -0.002,4.8e-4 -0.0625,0 -0.0625,0 -0.0183,0.0196 -0.0434,0.0429 -0.0625,0.0625 C 526.9124,151.01779 514.56397,152 500,152 c -0.11853,0 -0.22572,1.2e-4 -0.34375,0 L 500,150.1875 c 0,0 5.78481,-0.39777 20,-1.1875 18,-1 21.25595,-4.65755 19.375,-6.6875 z"
          id="path16864" />
     </g>
+    <rect
+       style="color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:#526066;stroke-width:0.99999994;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5739"
+       width="180"
+       height="29"
+       x="410"
+       y="340.5"
+       rx="3.9999998"
+       ry="4" />
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-indent:0;text-align:center;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:middle;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Helvetica Neue;-inkscape-font-specification:Helvetica Neue Bold"
+       x="500.21063"
+       y="358.57501"
+       id="text4154-2-4-4-2-6-9"
+       sodipodi:linespacing="150%"
+       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders.png/compose-collapsed-published.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4156-1-9-9-3-0-6"
+         x="500.21063"
+         y="358.57501">AUTHORIZE WITH GITHUB</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot7191"
+       style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:center;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:middle;baseline-shift:baseline;color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Palatino;-inkscape-font-specification:Palatino"
+       transform="translate(-37.578125,-203.30878)"><flowRegion
+         id="flowRegion7193"><rect
+           id="rect7195"
+           width="300"
+           height="190"
+           x="387.57812"
+           y="473.30878"
+           style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#526066;fill-opacity:1;font-family:Palatino;-inkscape-font-specification:Palatino" /></flowRegion><flowPara
+         id="flowPara7201">Poole is a minimal content publishing and editing interface for GitHub Jekyll sites.</flowPara></flowRoot>    <rect
+       transform="scale(1,-1)"
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders/compose-collapsed-unpublished.png"
+       y="-75"
+       x="-953"
+       height="60"
+       width="1000"
+       id="rect8929-2"
+       style="color:#000000;fill:#667880;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <path
+       style="color:#000000;fill:#c9d1d6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999976;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m -182,99 c -2.77,0 -5,2.23 -5,5 l 0,5 0,160 0,5 c 0,2.77 2.23,5 5,5 l 120,0 c 2.77,0 5,-2.23 5,-5 l 0,-5 0,-53 c 0,-2 1,-3 2,-4 l 6,-6 c 1,-1 2,-2 2,-4 l 0,-41 c 0,-2 -1,-3 -2,-4 l -6,-6 c -1,-1 -2,-2 -2,-4 l 0,-38 0,-5 c 0,-2.77 -2.23,-5 -5,-5 l -120,0 z"
+       id="rect13287-9-8"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="color:#000000;fill:#667880;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate"
+       id="rect7555-0"
+       width="160"
+       height="30"
+       x="169"
+       y="-120"
+       rx="0"
+       ry="0" />
+    <rect
+       ry="10"
+       rx="10"
+       style="color:#000000;fill:#c9d1d6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5169-7-6-4"
+       width="340"
+       height="210"
+       x="783"
+       y="156"
+       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders.png/home-selectbranch.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="color:#000000;fill:#e0e7eb;fill-opacity:1;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5575-7"
+       width="340"
+       height="149.50002"
+       x="781"
+       y="376.25"
+       rx="9.5"
+       ry="9.5" />
   </g>
 </svg>
