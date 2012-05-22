@@ -23,11 +23,12 @@
     <% } %>
 
 
-    <div class="file">
+    
       <% if (state.file) { %>
+      <div class="file">
         <%= state.file %>
+      </div>
       <% } %>
-    </div>
   <% } %>
 </div>
 <% if (app.username) { %>
