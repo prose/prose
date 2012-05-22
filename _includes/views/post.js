@@ -58,13 +58,16 @@ views.Post = Backbone.View.extend({
 
   _togglePreview: function(e) {
     if (e) e.preventDefault();
+    $('.toggle.preview').toggleClass('active');
     this.$('.post-content').html(this.converter.makeHtml(this.editor.getValue()));
     $('.document .surface').toggleClass('preview');
   },
 
   _toggleMeta: function(e) {
     if (e) e.preventDefault();
+    $('.toggle.meta').toggleClass('active');
     this.updateMetaData();
+
     $('.metadata').toggle();
     return false;
   },

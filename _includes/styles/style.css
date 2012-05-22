@@ -103,12 +103,14 @@ h6 { font-size: 11px; font-weight: 500; }
 #header .navigation .root {
   background-image:url('images/sprite.png');
   background-position: 10px -240px;
+  background-position: 10px -340px;
   background-repeat: no-repeat;
 }
 
 #header .navigation .repo {
   background-image:url('images/sprite.png');
   background-position: 10px -340px;
+
   background-repeat: no-repeat;
 }
 
@@ -441,10 +443,6 @@ ul.site li a {
 .post-listing a.link {
   background:url('images/sprite.png') -450px -400px no-repeat;
 
-/*  -moz-box-shadow: 0 0 3px rgba(0,0,0,0.25);
-  -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.25);
-  box-shadow: 0 0 3px rgba(0,0,0,0.25);*/
-  /*padding: 10px;*/
   float: left;
   width: 140px;
   height: 180px;
@@ -460,6 +458,14 @@ ul.site li a {
   text-align: center;
   font-family: "Menlo", "Courier New";
   color: #a7a7a7;
+} 
+
+.post-listing a.link.folder .filename {
+  color: rgba(255,255,255, 0.8);
+}
+
+.post-listing a.link.folder:hover .filename {
+  color: rgba(255,255,255, 1.0);
 }
 
 .post-listing a.link:hover .filename {
@@ -511,22 +517,33 @@ ul.site li a {
   background: #667880;
   overflow: visible;
   line-height: 40px;
+
+  -moz-transition: background 200ms linear;
+  -o-transition: background 200ms linear;
+  -webkit-transition: background 200ms linear;
+  transition: background 200ms linear;
 }
 
 #post.published .document-menu {
   background: #90bb74;
 }
 
+#post.published .metadata {
+  background: #73965d;
+}
+
 .document-menu .options {
   display: none;
   background: #667880;
+  -moz-transition: background 200ms linear;
+  -o-transition: background 200ms linear;
+  -webkit-transition: background 200ms linear;
+  transition: background 200ms linear;
 }
 
 #post.published .document-menu .options {
   background: #90bb74;
 }
-
-
 
 .document-menu-content {
   width: 900px;
@@ -536,12 +553,52 @@ ul.site li a {
   position: relative;
 }
 
+.document-menu-content .status {
+  position: absolute;
+  left: -50px;
+  width: 50px;
+  height: 60px;
+  background-image:url('images/sprite.png');
+  background-position: -290px -185px;
+}
+
+#post.published .document-menu-content .status {
+  background-position: -290px -285px;
+}
+
 .document-menu-content .menu-item {
   background: rgba(0,0,0, 0.2);
   line-height: 40px;
   padding: 0 5px;
   margin: 10px 0;
 }
+
+.document-menu-content .menu-item.preview {
+  background-image:url('images/sprite.png');
+  background-position: -438px 15px;
+  width: 40px;
+  padding: 0;
+}
+
+.document-menu-content .menu-item.preview.active {
+  background-color: rgba(0,0,0, 0.6);
+}
+
+.document-menu-content .menu-item.meta {
+  background-image:url('images/sprite.png');
+  background-position: -288px 14px;
+  padding-left: 35px;
+  padding-right: 10px;
+}
+
+.document-menu-content .menu-item.meta.active {
+  background-color: rgba(0,0,0, 0.6);
+
+
+}
+
+
+
 .document-menu-content a {
   color: #E7EEF2;
 }
@@ -575,10 +632,9 @@ ul.site li a {
 }
 
 .document-menu-content .filename input:hover, .document-menu-content .filename input:focus {
-  background: #526066;
+  background-color: rgba(0,0,0, 0.2);
   color: #e7eef2;
 }
-
 
 .document-menu .options {
   position: absolute;
@@ -587,6 +643,10 @@ ul.site li a {
   width: 200px;
   z-index: 3000;
 }
+
+
+
+
 
 .document-menu .options .publish-state {
   padding: 0 20px;
@@ -619,18 +679,30 @@ ul.site li a {
 }
 
 
+
 .document-menu-content .state .button {
-  background: rgba(0,0,0, 0.2);
+  display: block;
+  float:left;
+  background-color: rgba(0,0,0, 0.2);
   color: #fff;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  margin-left: 10px;
-  padding: 8px;
+  margin: 5px 10px;
+  line-height: 30px;
+  height: 30px;
+  padding: 0 12px;
+}
+
+.document-menu-content .state .button.toggle-options {
+  background-image:url('images/sprite.png');
+  background-position: -292px -442px;
+  width: 30px;
+  padding: 0;
 }
 
 .document-menu-content .state .button:hover {
-  background: rgba(0,0,0, 0.3);
+  background-color: rgba(0,0,0, 0.3);
 }
 
 .document-menu-content .state .button.inactive {
@@ -652,11 +724,9 @@ ul.site li a {
 }
 
 
-
-
 .document .metadata {
   overflow: hidden;
-  background: #3e3e3e;
+  background: #526066;
   color: #CCC;
   z-index: 1000;
   -moz-transition: height 100ms linear;
@@ -748,9 +818,6 @@ ul.site li a {
   font-size: 17px;
   line-height: 1.3em;
 
-  -moz-box-shadow: 0 0 3px rgba(0,0,0,0.25);
-  -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.25);
-  box-shadow: 0 0 3px rgba(0,0,0,0.25);*/
 }
 
 .content-preview {
@@ -814,6 +881,7 @@ label.error {
 }
 .fl { float: left; }
 .fr { float: right; }
+.clear { clear: both; }
 
 .inner      { padding: 0px 0px 40px; }
 .hidden     { display: none; }
