@@ -2,7 +2,7 @@
   Typography
 ---------------------------------------------*/
 html,body {
-  color: #404040;
+  color: #7A8387;
   background: #e7eef2;
   -webkit-font-smoothing: antialiased;
   height: 100%;
@@ -143,7 +143,7 @@ h6 { font-size: 11px; font-weight: 500; }
   top: 0px;
   right: 50px;
   height: 60px;
-  line-height: 60px;
+  line-height: 30px;
   color: #888;
   font-size: 16px;
 }
@@ -154,6 +154,26 @@ h6 { font-size: 11px; font-weight: 500; }
   margin-top: 15px;
 }
 
+#header .user-status .logout {
+  display: inline-block;
+  margin-top: 15px;
+  margin-left: 5px;
+  width: 30px;
+  height: 30px;
+  text-indent: -3000px;
+  overflow: hidden;
+  background-image: url('images/sprite.png');
+  background-position: -441px -41px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+
+#header .user-status .logout:hover {
+  background-color: #c9d1d6; 
+}
+ 
 #main {
   /*margin-top: 60px;*/
   padding-top: 60px;
@@ -181,11 +201,9 @@ and your footer gets pushed down a bit more, creating vertical scroll bars in th
   margin-top: -60px; /* negative value of footer height */
   height: 60px;
   font-size: 16px;
-  color: #888;
   padding-left: 30px;
   line-height: 60px;
   background: #e0e7eb;
-  /*border-top: 1px solid #ccc;*/
   clear:both;
 }
 
@@ -251,7 +269,7 @@ body.start {
   padding-top: 30px;
   padding-bottom: 0px;
   padding-left: 30px;
-  color: #666;
+  color: #526066;
   width: 200px;
   background:url('images/sprite.png') 0px -523px no-repeat;
 }
@@ -299,13 +317,14 @@ body.start {
 }
 
 .repos > a:hover .name {
-  color: #666;
+  color: #526066;
 }
 
 .repos a .branches {
   position: absolute;
-  background: #e9e9e9;
+  background: #667880;
   font-size: 12px;
+  text-align: left;
   left: 0px;
   right: 0px;
   bottom: 0px;
@@ -331,13 +350,12 @@ body.start {
 .repos a .branches .branch {
   padding: 2px 5px;
   border-bottom: 1px solid #ccc;
-  background: #e9e9e9;
 }
 
 .repos a .branches a.branch {
   display: block;
-  color: #666;
-  border: none;
+  color: #eee;
+  border-bottom: 1px solid #526066;
 }
 
 .loading-branches {
@@ -351,8 +369,7 @@ body.start {
 
 .repos a .branches a.branch:hover  {
   color: #eee;
-  background: #444;
-  border: none; 
+  background: rgba(0,0,0,.2);
 }
 
 .start .sites,
@@ -457,11 +474,9 @@ ul.site li a {
 
 .post-listing a.link {
   background:url('images/sprite.png') -450px -400px no-repeat;
-
   float: left;
   width: 140px;
   height: 180px;
-  
   margin: 0 20px 20px 0;
   position: relative;
   color: #404040;
@@ -484,7 +499,7 @@ ul.site li a {
 }
 
 .post-listing a.link:hover .filename {
-  color: #666;
+  color: #526066;
 }
 
 .post-listing a.link:hover {
@@ -493,7 +508,7 @@ ul.site li a {
 }
 
 .post-listing a.link:active {
-  border-color: #666;
+  border-color: #526066;
 }
 
 .post-listing a.link.folder {
@@ -784,7 +799,7 @@ ul.site li a {
   float: left;
   }
   .state p {
-    color: #666;
+    color: #526066;
     font-weight: 500;
     font-size: 11px;
     line-height: 35px;
