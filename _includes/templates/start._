@@ -17,6 +17,8 @@
         </div>
       </li>
 
+      <a href="https://github.com/login/oauth/authorize?client_id=44dca7668a238dc9f099">Authorize</a>
+
     </ul></form>
   <% } %>
 </div>
