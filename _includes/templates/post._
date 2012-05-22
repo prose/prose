@@ -9,14 +9,14 @@
       <div class="state fl">
         
         
-        <a class='toggle-options button' href='#' title="CTRL+O">Options</a>
+        <a class='toggle-options button' href='#' title="CTRL+O">&nbsp;</a>
         <a class='save button inactive' href='#' title="CTRL+S">Save</a>
 
       </div>
     </div>
 
     <a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a>
-    <a class='toggle preview fr menu-item' href='#' title="CTRL+SHIFT+P">Preview</a>
+    <a class='toggle preview fr menu-item' href='#' title="CTRL+SHIFT+P">&nbsp;</a>
     
 
     <div class="options">
@@ -28,7 +28,8 @@
         <a class="toggle delete button" href="#">Delete Post</a>
       </div>
     </div>
-
+    <div class="status" title="Unpublished"></div>
+    <br class="clear"/>
   </div>
 
 </div>
