@@ -434,18 +434,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="319.4791"
-     inkscape:cy="136.76216"
+     inkscape:zoom="1"
+     inkscape:cx="552.6468"
+     inkscape:cy="417.90781"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="true"
+     showgrid="false"
      inkscape:window-width="1270"
      inkscape:window-height="665"
-     inkscape:window-x="366"
-     inkscape:window-y="103"
+     inkscape:window-x="416"
+     inkscape:window-y="183"
      inkscape:window-maximized="0"
-     showguides="true"
+     showguides="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -621,15 +621,6 @@
        id="path13814"
        d="m 151,197.36218 0,11 9,0 0,-8 -3,-3 z"
        style="color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-    <path
-       style="color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 600,-202.63782 0,3 3.5,3 3.5,-3 0,-3 -3.5,3 z"
-       id="path6525"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccccc"
-       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders.png/compose-collapsed.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
     <g
        id="g10733"
        transform="translate(-1,-200)">
@@ -1044,20 +1035,6 @@
          sodipodi:nodetypes="cccccccccccc" />
     </g>
     <g
-       style="fill:#f0f0f0;fill-opacity:1;display:inline"
-       id="g6201-6"
-       transform="matrix(-1,0,0,1,1405,-184.63782)">
-      <g
-         id="g6205-2"
-         style="fill:#f0f0f0;fill-opacity:1">
-        <path
-           inkscape:connector-curvature="0"
-           id="path6197-4"
-           d="m 653,-68 2,2 0,1 -1,1 -0.5,0.5 -3,-3 0.5,-0.5 1,-1 1,0 z m -3,2 3,3 -8.5,8.5 -3,-3 8.5,-8.5 z m -9,9 3,3 -4,1 1,-4 z"
-           style="color:#000000;fill:#f0f0f0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:18.04306412;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-      </g>
-    </g>
-    <g
        transform="translate(-309.00005,-209.63782)"
        style="display:inline"
        id="g16878">
@@ -1286,37 +1263,26 @@
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="ccccccccccccccccccc" />
     </g>
-    <image
-       y="-73.637817"
-       x="821"
-       id="image19512"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFYAAABHCAIAAAASvieeAAAAA3NCSVQICAjb4U/gAAADRklEQVR4
-nO3ZSW8SYRgH8D9TcOxQFgFbugldxLWphQpprda0xnj1oF78EHryM3jSoxc9elDjctBotYmNxq7R
-KEJNtBaGxa1VKMNMhiV4GEOauhyUV0r6/E8vT955Zvhl4H0no4t8+IKNHa7aF1D9EAEREAEAPdPu
-qqpmZaVQyJdKTM/zT2FIIEnZrCyz61+psPohqKpaE98f7AiyssKoc8XDiqBQyDPqXPGwIljP/39r
-QosiERABiACsd4e/y/kLF39ZP3f2zP+5gHw+LyuK2WTS6XTVIfi7xOKJq9evlz8KgjDg39/f17em
-DmDPrp29e3vKRb1e3+J0Hh0dsdtsGUm6NzYWiYoA+E2bhgYGaolAy06Px9Pdncvlpufmxh9PdLrd
-Wr3D5XK7tmljh92+erIkSU8mJ+8+GDt96uS1m7e+pVLDQwesFmswFBqfmKg9gq0O+64dHgCplfTU
-zKyqqlq9rbXF7/OVp8XiidWTozFxMSq+XVhYWl4+fHAo0N8PwNPddenyldojSH78+OLlK1VVQ+H5
-ZqezqbExkfwAYO75i9D8G23OsSOjgA5AKpWOiGImI8UTSYfd/mVpCYCrvV2bxnFce1tr7RHEE8nl
-5a+Koqi5XM+e3Rz3Y1Gz2ba0NjdrY0EQZFkBEAyHg+EwAKvFcuzI6Lv3iz83rD0Cv887GAgUi8Ub
-t+88m57x9vZq9U63ezAQKE+T5QSA/V6vr2+fwWAQ6usBrGQyABajUWdTE4BisSjG4rVHoKWurq6z
-wx0RxfTKilaJJRJTs7Pa2GK2NBiNADZv5i1mc/mo7V1dDrvt6eRUqVSyWq3B1yEpm60OQUXW/y0W
-K4BUOm1qMAGIREVtqQPQ4XIN+P0/H8Jx3Injx+8/fKQp8Dw/MnxIx+g9wqfPf2pb/a1RoaDIstls
-BlAdgnWVDbpBXh26C+hJkQjAjkCnY9S48mFFoNcbGHWueFgRGIV6Rp0rHlYEPM8bBYFR88qG4b6g
-ocFoMOg39GtVADzP8zzP9BT/HloUiYAIQAQgAhABiABEACIAEYAIQAQgAhABAP36f5hlHboLiIAI
-QAQgAhABiABEACIAEYAIQAQgAhABiABEACIAEYAIQAQAvgPcsR6zvqpc2gAAAABJRU5ErkJggg==
-"
-       height="71"
-       width="86" />
     <path
        inkscape:export-ydpi="90"
        inkscape:export-xdpi="90"
        inkscape:export-filename="/Users/saman/work_repos/poole/images/renders/compose-collapsed-unpublished.png"
        sodipodi:nodetypes="ccccc"
-       style="color:#000000;fill:#f0f0f0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate"
+       style="color:#000000;fill:#f0f0f0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221000000085;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;opacity:1"
        d="m 476,201.36219 -4.5,7 -4.5,-7.00001 4.49999,2 z"
        id="path12404-8"
        inkscape:connector-curvature="0" />
+    <rect
+       style="opacity:0.1;color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect20043"
+       width="600"
+       height="20"
+       x="150"
+       y="-282.63782" />
+    <path
+       style="color:#000000;fill:#526066;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate"
+       d="M 456 50 C 455.446 50 455 50.446 455 51 L 455 55 C 455 55.554 455.446 56 456 56 C 456.554 56 457 55.554 457 55 L 457 51 C 457 50.446 456.554 50 456 50 z M 453 50.8125 C 451.20663 51.849937 450 53.779178 450 56 C 450 59.313708 452.68629 62 456 62 C 459.31371 62 462 59.313708 462 56 C 462 53.779178 460.79337 51.849937 459 50.8125 L 459 53.34375 C 459.62353 54.049157 460 54.984493 460 56 C 460 58.209139 458.20914 60 456 60 C 453.79086 60 452 58.209139 452 56 C 452 54.984493 452.37647 54.049157 453 53.34375 L 453 50.8125 z "
+       transform="translate(150,-252.63782)"
+       id="path20072" />
   </g>
 </svg>
