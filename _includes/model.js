@@ -139,7 +139,6 @@ function loadSite(user, repo, branch, path, cb) {
           }
           return regex.test(file.path) ? semantify(file.path) : null;
         });
-
         cb(null, {"posts": _.compact(posts)});
       });
     });
@@ -158,7 +157,7 @@ function savePost(user, repo, branch, path, file, metadata, content, message, cb
   function serialize(data) {
     return ["---", data, "---"].join('\n')+'\n\n'+content;
   }
-  repo.write(branch, path + "/" + file, serialize(metadata)+content, message, cb);
+  repo.write(branch, path + "/" + file, serialize(metadata), message, cb);
 }
 
 
