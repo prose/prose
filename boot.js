@@ -26,14 +26,12 @@ window.app = {
         return memo;
     }, {}),
     state: {'repo': ''},
-    instance: {},
-    client_id: '9566e142d35d5efab367'
+    instance: {}
 };
 
 window.args = _(window.app).toArray();
 
 authenticate();
-
 
 {% include util.js %}
 {% include model.js %}
