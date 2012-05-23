@@ -1,25 +1,13 @@
 <div class='start dialog clearfix'>
   <% if (!authenticated) { %>
-    <div id='hint'></div>
-    <form id='login_form'><ul class='form'>
-      <li>
-        <label>GitHub user</label>
-        <input type='text' name='user' class='required' id='github_user' placeholder='username' size='24' />
-      </li>
-      <li>
-        <label>Password</label>
-        <input type='password' id='github_password' class='required' name='password' placeholder='password' size='24' />
-        <li class="bad-credentials">
-          Bad credentials
-        </li>
-        <div class='button-padding state'>
-          <input type='submit' value='Log in' />
-        </div>
-      </li>
-
-      <a href="https://github.com/login/oauth/authorize?client_id=44dca7668a238dc9f099">Authorize</a>
-
-    </ul></form>
+    <div class="splash">
+      <h2>Poole</h2>
+      <p>Serving Jekyll faithfully</p>
+      <div class="authorize">
+        <p>Poole is a minimal content publishing and editing interface for GitHub Jekyll sites.</p>
+        <a class="button" href="https://github.com/login/oauth/authorize?client_id=44dca7668a238dc9f099">Authorize with GitHub</a>
+      </div>
+    </div>
   <% } %>
 </div>
 
