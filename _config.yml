@@ -1,8 +1,8 @@
 auto: true
 title: Poole
 server: true
-oauth_client_id: 713585e58d7fce92a512 # local: 9566e142d35d5efab367 / 0ad7f09f26135025cc3fec9e88bfb8358da113c4
-gatekeeper_url: http://young-frost-7728.herokuapp.com
+oauth_client_id: 9566e142d35d5efab367 #   713585e58d7fce92a512   local: 9566e142d35d5efab367 / 0ad7f09f26135025cc3fec9e88bfb8358da113c4
+gatekeeper_url: http://localhost:9999 # http://young-frost-7728.herokuapp.com # local http://localhost:9999
 exclude:
 - .gitignore
 - README.md
