@@ -7,7 +7,7 @@
 
       <div class="authorize">
         <p>Poole is a minimal content publishing and editing interface for GitHub Jekyll sites.</p>
-        <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}">Authorize with GitHub</a>
+        <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user">Authorize with GitHub</a>
       </div>
     </div>
   <% } %>
