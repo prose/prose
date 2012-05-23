@@ -16,7 +16,7 @@
     function _request(method, path, data, cb) {
       function headers() {
         return options.auth == 'oauth'
-               ? { Authorization: 'Token '+ options.token }
+               ? { Authorization: 'token '+ options.token }
                : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password) }
       }
 

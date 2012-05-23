@@ -58,8 +58,11 @@ function loadApplication(cb) {
           cb(null, { "available_repos": repos, "owners": owners });
         });
       },
-      error: function(err) { cb("Bad credentials"); },
-      headers : { Authorization : 'Token ' + $.cookie('oauth-token') }
+      error: function(err) { 
+        logout();
+        cb(null, { "available_repos": [], "owners": {} });
+      },
+      headers : { Authorization : 'token ' + $.cookie('oauth-token') }
     });
 
   } else {
