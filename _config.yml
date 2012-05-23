@@ -1,6 +1,7 @@
 auto: true
-title: Columnist
+title: Poole
 server: true
+oauth_client_id: 9566e142d35d5efab367
 exclude:
 - .gitignore
 - README.md
