@@ -19,7 +19,7 @@ function authenticate() {
     $.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1], function(data) {
       $.cookie('oauth-token', data.token);
       window.authenticated = true;
-      window.location.href = '/';
+      window.location.reload();
     });
   }
 }
