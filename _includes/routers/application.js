@@ -20,7 +20,6 @@ routers.Application = Backbone.Router.extend({
       branch: "",
       path: ""
     };
-
     app.instance.start();
   },
 

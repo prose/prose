@@ -26,14 +26,14 @@ window.app = {
         return memo;
     }, {}),
     state: {'repo': ''},
-    instance: {}
+    instance: {},
+    client_id: '9566e142d35d5efab367'
 };
 
 window.args = _(window.app).toArray();
 
-// Authenticate
-var credentials = getCredentials();
-if (credentials) _.extend(app, credentials);
+authenticate();
+
 
 {% include util.js %}
 {% include model.js %}
@@ -45,7 +45,6 @@ if (credentials) _.extend(app, credentials);
 {% include views/posts.js %}
 {% include views/post.js %}
 {% include views/new_post.js %}
-
 
 (function(config, models, views, routers, utils, templates) {
   $(function() {
