@@ -16,7 +16,7 @@ function authenticate() {
   // Handle Code
   if (match) {
     var code = match[1];
-    $.getJSON('http://localhost:9999/authenticate/'+match[1], function(data) {
+    $.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1], function(data) {
       $.cookie('oauth-token', data.token);
       window.authenticated = true;
       window.location.href = '/';
