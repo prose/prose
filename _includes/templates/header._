@@ -30,7 +30,7 @@
     </div>
   <% } %>
 </div>
-<% if (app.username) { %>
+<% if (window.authenticated) { %>
   <div class='user-status'>
     <img width="30" src="<%= $.cookie("avatar") %>"/>
     <%= app.username %> <a class="logout" href="#">Logout</a>

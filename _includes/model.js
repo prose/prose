@@ -1,48 +1,33 @@
 // Gimme a Github object! Please.
 function github() {
   return new Github({
-    username: app.username,
-    password: app.password,
-    auth: "basic"
+    token: $.cookie('oauth-token'),
+    auth: "oauth"
   });
 }
-
 
 // Authentication
 // -------
-// 
-// Load everything that's needed for the app + header
 
-function login(credentials, cb) {
-  $.ajax({
-    type: "GET",
-    url: 'https://api.github.com/user',
-    dataType: 'json',
-    contentType: 'application/x-www-form-urlencoded',
-    success: function(res) { 
-      $.cookie("auth", Base64.encode(JSON.stringify(credentials)));
-      $.cookie("avatar", res.avatar_url);
-      cb(null);
-    },
-    error: function(err) { cb("Bad credentials"); },
-    headers : { Authorization : 'Basic ' + Base64.encode(credentials.username + ':' + credentials.password) }
-  });
+function authenticate() {
+  if ($.cookie("oauth-token")) return window.authenticated = true;
+  var match = window.location.href.match(/\?code=(.*)/);
+
+  // Handle Code
+  if (match) {
+    var code = match[1];
+    $.getJSON('http://localhost:9999/authenticate/'+match[1], function(data) {
+      $.cookie('oauth-token', data.token);
+      window.authenticated = true;
+      window.location.href = '/';
+    });
+  }
 }
+
 
 function logout() {
-  $.cookie("auth", null);
-}
-
-function getCredentials() {
-  var auth = $.cookie('auth'),
-      credentials = auth ? JSON.parse(Base64.decode(auth)) : null;
-  if (credentials) app.username = credentials.username;
-  return credentials;
-}
-
-
-function authenticated() {
-  return !!getCredentials();
+  window.authenticated = false;
+  $.cookie("oauth-token", null);
 }
 
 // Load Application
@@ -52,17 +37,31 @@ function authenticated() {
 
 
 function loadApplication(cb) {
-  if (app.username) {
-    var user = github().getUser(app.username);
-    var owners = {};
 
-    user.repos(function(err, repos) {
-      _.each(repos, function(r) {
-        owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r])
-                                                      : [r];
-      });
-      cb(null, { "available_repos": repos, "owners": owners });
+  if (window.authenticated) {
+    $.ajax({
+      type: "GET",
+      url: 'https://api.github.com/user',
+      dataType: 'json',
+      contentType: 'application/x-www-form-urlencoded',
+      success: function(res) { 
+        $.cookie("avatar", res.avatar_url);
+        app.username = res.login;
+        var user = github().getUser(app.username);
+        var owners = {};
+
+        user.repos(function(err, repos) {
+          _.each(repos, function(r) {
+            owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r])
+                                                          : [r];
+          });
+          cb(null, { "available_repos": repos, "owners": owners });
+        });
+      },
+      error: function(err) { cb("Bad credentials"); },
+      headers : { Authorization : 'Token ' + $.cookie('oauth-token') }
     });
+
   } else {
     cb(null, { "available_repos": [], "owners": {} });
   }
