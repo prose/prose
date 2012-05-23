@@ -72,10 +72,10 @@ h6 { font-size: 11px; font-weight: 500; }
 #header a.title {
   position: absolute;
   width: 100px;
-  background:url('images/sprite.png') 0px 14px no-repeat;
+  background: url('images/sprite.png') 0px -116px no-repeat;
   left: 30px;
-  top: 2px;
-  height: 40px;
+  top: 15px;
+  height: 30px;
 }
 
 #header a.title span {
@@ -231,37 +231,56 @@ body:before {/* thanks to Maleika (Kohoutec)*/
 ---------------------------------------------*/
 
 .dialog {
-  position: absolute;
-  width: 600px;
-  left: 50%;
-  margin-left: -300px;
-  top: 30%;
-  color: #a0a0a0;
+  position: relative;
+  margin: 40px auto 0 auto;
+  color: #7A8387;
+  width: 340px;
 }
 
-.dialog form {
-  background: #fff;
+#start .splash {
+  text-align: center;
+  background: #E0E7EB;
+  font-family: 'Palatino Linotype', 'Adobe Garamond Pro', "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.3em;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
 }
 
-.dialog .bad-credentials {
-  display: none;
-  color: #5B0707;
+#start .splash h2 {
+  background: url('images/sprite.png') 128px 18px no-repeat;
+  text-indent: -3000px;
+  overflow: hidden;
+  display: block;
+  height: 160px;
 }
 
-.dialog select,
-.dialog input[type=text],
-.dialog input[type=password],
+.authorize {
+  background: #c9d1d6;
+  -moz-border-radius: 0 0 5px 5px;
+  -webkit-border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
+  padding: 20px ;
+}
 
-.step select,
-.step input[type=text],
-.step input[type=password] {
-  width: 240px;
-  margin-bottom: 5px;
+.authorize p {margin-top: 0;}
+  
+.authorize a.button {
+  display: block;
+  background: #516066;
+  padding: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; 
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
 }
-form .button-padding {
-  margin-left: -4px;
-  margin-top: 5px;
-}
+  .authorize a.button:hover { background: #475459;}
 
 /* ------------------------------------------
   Repos listing
@@ -865,12 +884,10 @@ ul.site li a {
 .document .post-content{
   background: #fff;
   padding: 100px;
-
   font-family: 'Palatino Linotype', 'Adobe Garamond Pro', "Times New Roman", serif;
   font-weight: 400;
   font-size: 17px;
   line-height: 1.3em;
-
 }
 
 .content-preview {
