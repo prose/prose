@@ -1,7 +1,7 @@
 .CodeMirror {
   font-size: 1.4em;
   line-height: 1.1em;
-  font-family: "Menlo", "Courier New";
+  font-family: "Menlo", monospace;
   color: #6b6b6b;
 }
 
