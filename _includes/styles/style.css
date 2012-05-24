@@ -310,7 +310,7 @@ body.start {
 }
 
 .repos > a {
-  font-family: "Menlo", "Courier New", monospace;
+  font-family: "Menlo", monospace;
   overflow: hidden;
   background: rgba(255,255,255, 0.85);
 
@@ -512,7 +512,7 @@ ul.site li a {
   padding: 15px;
   padding-top: 60px;
   text-align: center;
-  font-family: "Menlo", "Courier New";
+  font-family: "Menlo", monospace;
   color: #a7a7a7;
 } 
 
@@ -683,7 +683,7 @@ ul.site li a {
 }
 
 .document-menu-content .filename input {
-  font-family: "Menlo", "Courier New";
+  font-family: "Menlo", monospace;
   background: transparent;
   border: none;
   height: 40px;
