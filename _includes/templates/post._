@@ -3,6 +3,7 @@
     
     <div class="fl filename">
       <input type="text" class="filename" value="<%= file %>"/>
+      <div class="state"></div>
     </div>
 
     <div class="fr menu-item save-state">

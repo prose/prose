@@ -36,9 +36,25 @@ views.Post = Backbone.View.extend({
 
   _updateFilename: function(e) {
     var file = $(e.currentTarget).val();
+    var that = this;
+    
+    // Indicate error etc.
+    function updateState(state) {
+      that.$('.filename .state').removeClass('success error loading');
+      that.$('.filename .state').addClass(state);
+
+      _.delay(function() {
+        that.$('.filename .state').removeClass('success error loading');
+      }, 3000);
+    }
+
     if (this.model.persisted) {
-      movePost(app.state.user, app.state.repo, app.state.branch, this.model.path+"/"+this.model.file, this.model.path+"/"+file, _.bind(function(err) {
-        this.updateURL();
+      if (!_.validFilename(file)) return updateState('error');
+      console.log('should not be reached');
+      updateState('loading');
+      movePost(app.state.user, app.state.repo, app.state.branch, this.model.path + "/" + this.model.file, this.model.path + "/" + file, _.bind(function(err) {
+        updateState(err ? 'error' : 'success');
+        if (!err) this.updateURL();
       }, this));
     }
     this.model.file = $(e.currentTarget).val();
