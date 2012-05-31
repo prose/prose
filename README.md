@@ -108,6 +108,11 @@ Installation
    - README.md
    ```
 
+5. Run it
+   ```
+   $ jekyll
+   ```
+
 Limitations
 =================
 
