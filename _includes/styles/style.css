@@ -65,6 +65,13 @@ h6 { font-size: 11px; font-weight: 500; }
   padding: 0 20px;
   height: 60px;
   background: #e0e7eb;
+  border-bottom: 1px solid #c3ccd0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+body.post #header {
+  box-shadow: none;
+  border-bottom: none;
 }
 
 #header a.title {
@@ -210,7 +217,8 @@ and your footer gets pushed down a bit more, creating vertical scroll bars in th
   padding-left: 30px;
   line-height: 60px;
   background: #e0e7eb;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #c3ccd0;
+  /*box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);*/
   clear:both;
 }
 
@@ -312,7 +320,19 @@ body.start {
 .repos > a {
   font-family: "Menlo", monospace;
   overflow: hidden;
-  background: rgba(255,255,255, 0.85);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+
+  /*background: rgba(255,255,255, 0.6);*/
+  background: #E0E7EB;
+  
+  -moz-transition: background 200ms linear;
+  -o-transition: background 200ms linear;
+  -webkit-transition: background 200ms linear;
+  transition: background 200ms linear;
+
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
 
   text-align: center;
   padding: 10px;
@@ -320,26 +340,28 @@ body.start {
   position: relative;
   margin-left: 15px;
   margin-top: 15px;
-  width: 140px;
+  width: 180px;
   height: 180px;
-
   color: #444;
   display: block;
   float: left;
+  border: 1px solid #c3ccd0;
 }
 
 .repos > a:hover {
-  background: rgba(255,255,255, 1.0);
+  background: #f0f5f7;
 }
 
 .repos > a .name {
-  padding: 15px;
+  /*padding: 15px;*/
   padding-top: 45px;
   font-size: 12px;
   text-align: center;
+  overflow: hidden;
   
   margin-top: 30px;
-  color: #a7a7a7;
+  /*color: #a7a7a7;*/
+  color: #526066;
 }
 
 .repos > a:hover .name {
@@ -348,27 +370,28 @@ body.start {
 
 .repos a .branches {
   position: absolute;
-  background: #667880;
+  background: #f0f5f7;
   font-size: 12px;
   text-align: left;
   left: 0px;
   right: 0px;
   bottom: 0px;
   top: 0px;
+  padding: 10px;
   overflow: auto;
 }
 
 .repos a .branches .label {
   line-height: 27px;
-  
-  
   padding: 0 5px;
 }
 
 .repos a .branches .not-jekyll {
-  background: #C52528;
-  color: white;
-  padding: 80px 5px;
+  color: #C52528;
+  text-align: center;
+  padding-top: 80px;
+  padding-top: 45px;
+  margin-top: 30px;
   overflow: hidden;
 }
 
@@ -386,7 +409,7 @@ body.start {
 
 .loading-branches {
   background: url('images/ajax-loader.gif') no-repeat;
-  margin-top: 90px;
+  margin-top: 80px;
   margin-left: 58px;
   height: 40px;
   width: 44px;
@@ -657,10 +680,7 @@ ul.site li a {
 
 .document-menu-content .menu-item.meta.active {
   background-color: rgba(0,0,0, 0.6);
-
-
 }
-
 
 
 .document-menu-content a {
@@ -671,7 +691,6 @@ ul.site li a {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-
 }
 
 .menu-item:hover {
@@ -711,9 +730,6 @@ ul.site li a {
   z-index: 3000;
   border-radius: 0 0 5px 5px;
 }
-
-
-
 
 
 .document-menu .options .publish-state {
@@ -839,9 +855,7 @@ ul.site li a {
 }
 
 .document .surface {
-  border-top: 1px solid #ccc;
   width: 200%;
-
   -moz-transition: margin-left 300ms linear;
   -o-transition: margin-left 300ms linear;
   -webkit-transition: margin-left 300ms linear;
@@ -875,9 +889,9 @@ ul.site li a {
   margin: 0 auto;
 }
 
-/*.document .document-preview {
+.document .document-preview {
 
-}*/
+}
 
 .document .post-content{
   background: #fff;

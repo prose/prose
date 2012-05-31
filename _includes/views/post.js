@@ -159,6 +159,7 @@ views.Post = Backbone.View.extend({
   render: function() {
     var that = this;
     $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
+    if (this.model.metadata.published) $(this.el).addClass('published');
     this.initEditor();
     return this;
   }

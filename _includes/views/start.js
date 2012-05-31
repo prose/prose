@@ -28,7 +28,7 @@ views.Start = Backbone.View.extend({
           $branches.append($('<a class="branch" href="#'+[user, repo, branch].join('/')+'">'+branch+'</a>'));
         });
       } else if (branches.length === 0) {
-        $branches.append('<div class="not-jekyll">Not a valid Jekyll site.</div>');
+        $branches.append('<div class="not-jekyll">Not a Jekyll site.</div>');
         _.delay(function() {
           $branches.hide();
         }, 2000);
