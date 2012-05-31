@@ -1,15 +1,14 @@
 Poole
 =================
 
-**Poole** is a web-interface dedicated for managing dynamic content of Jekyll-based websites. Users of Jekyll can create, edit and delete files that live within the _posts directory. Poole itself is also just a static webpage, and doesn't require any server-side bits. Instead it interacts directly with the Github API for managing your repo's contents. Once we are ready, Poole will feature a quickstart page, that can maintained in Poole itself. Crazy, isn't it?
+**Poole** is a web-interface dedicated for managing dynamic content of Jekyll-based websites. Users of Jekyll can create, edit and delete files that live within the `_posts` directory. Poole is a smart way of publishing for hackers AND [humans](http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans), solving the issue that Jekyll is has not yet been suitable for non-technical people who maintain content.
 
-
-Okay, here's how it works:
+While developers can still enjoy all freedom the Jekyll framework provides, editors can easily access, edit and publish content using a visual interface. Here is how it works:
 
 Login with your Github User
 -----------------
 
-It was challenging, but Poole now supports OAuth. I think it's very important to use OAuth over Basic Auth, since Github data can be very sensible and no one wants to risk getting his password sniffed.
+It was challenging, but Poole supports OAuth. I think it's very important to use OAuth over Basic Authentication, since Github data can be very sensible and no one wants to risk getting his password sniffed.
 
 ![Start](http://f.cl.ly/items/0t0A170b2Y093F2u1w45/Screen%20Shot%202012-05-23%20at%205.48.45%20PM.png)
 
@@ -65,7 +64,9 @@ Take full control about your post, and edit Metadata aka the YAML frontmatter. N
 Architecture
 =================
 
-The Github API is somewhat funky from time to time, and very hard to debug. A hell of CORS issues and headers-foo. The thing that is challenging here, is that Github just offers a low level API (around trees and blobs), which is problematic in many cases, as it requires a lot of subsequent requests to do simple things, which slows down site performance. That's why creating a good architecture was crucial to manage the complexity. I ended up in abstracting the data layer into a separate module, Github.js
+Poole itself is just a static webpage, and doesn't require any server-side bits. Instead it interacts directly with the Github API for managing your repo's contents. 
+
+The Github API is somewhat funky from time to time, and hard to debug. We had to be aware of CORS issues and properly setting up headers for authorization. What's challenging here, is that Github just offers a low level API (around trees and blobs), which is problematic in many cases, as it requires a lot of subsequent requests to do simple things, which slows down site performance. That's why creating a good architecture was crucial to manage the complexity. I ended up in abstracting the data layer into a separate module, Github.js.
 
 
 Github.js
@@ -80,3 +81,51 @@ Gatekeeper
 Because of some [security-related limitations](http://blog.vjeux.com/2012/javascript/github-oauth-login-browser-side.html), Github prevents you from implementing the OAuth Web Application Flow on a client-side only application.
 
 This is a real bummer. So I built [Gatekeeper](http://github.com/developmentseed/gatekeeper), which is the missing piece you need in order to make it work.
+
+
+Installation
+=================
+
+1. Fork and clone the repo in order to run your own instance of Poole.
+
+2. Setup a Github application, so CORS requests are possible as well as OAuth authentication.
+
+   ![Setup Github Application](http://f.cl.ly/items/011W1c0D2N1I0B3m0731/Screen%20Shot%202012-05-31%20at%203.33.15%20PM.png)
+
+3. Setup Gatekeeper
+
+   Follow the instructions here and fill in the information that is provided after registering a new Github Application.
+
+4. Adjust `_config.yml`
+
+   ```
+   auto: true
+   server: true
+   oauth_client_id: your_oauth_client_id
+   gatekeeper_url: http://gatekeeper.example.com
+   exclude:
+   - .gitignore
+   - README.md
+   ```
+
+5. Run it
+   ```
+   server:poole poole$ jekyll
+   ```
+
+Limitations
+=================
+
+The Github API comes with a number of limitations because of its low-level nature. Here is a the list of known issues related to that. I hope the folks at Github can help us (with some minor additions to their API) so we can eliminate them.
+
+- Listing Repositories
+  
+  When listing the repositories, we can't determine which of them are actual Jekyll sites. Theoretically we could, by issuing a separate request that fetches repository information (such as branches) and looks for a `_config.yml` file. However this is way to slow, so we have to do it on-demand as you click on a repository.
+
+- Organizations
+  
+  Repositories that live within your organizations can only be accessed by entering the url (`/:organization/:repo/:branch`) manually.
+
+- Deleting and renaming files
+  
+  This requires a full tree to be written involving a new commit that points to that tree. In fact this is not a big problem with small repositories, but once they get bigger it's not only a performance issue, you'll get errors. Be aware that you may not (yet) be able to rename or delete files when working with bigger repositories.
