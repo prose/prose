@@ -717,6 +717,30 @@ ul.site li a {
   border-radius: 5px;
 }
 
+
+.document-menu-content .filename .state {
+  position: absolute;
+  left: 420px;
+  top: 15px;
+  width: 50px;
+  height: 30px;
+}
+
+.document-menu-content .filename .state.loading {
+  background: url('images/ajax-loader.gif') center center no-repeat;
+}
+
+.document-menu-content .filename .state.error {
+  background-image:url('images/sprite.png');
+  background-position: -300px -200px;
+}
+
+.document-menu-content .filename .state.success {
+  background-image:url('images/sprite.png');
+  background-position: -300px -300px;
+}
+
+
 .document-menu-content .filename input:hover, .document-menu-content .filename input:focus {
   background-color: rgba(0,0,0, 0.2);
   color: #e7eef2;

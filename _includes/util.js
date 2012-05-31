@@ -21,3 +21,8 @@ _.toYAML = function(data) {
     return key +": "+ serializeValue(data[key]);
   }).join("\n");
 };
+
+// Check for a valid post file name
+_.validFilename = function(filename) {
+  return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
+};
