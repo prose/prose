@@ -869,6 +869,10 @@ ul.site li a {
   overflow:hidden;
 }
 
+.document .surface.preview img {
+  max-width: 100%;
+}
+
 .document .content-wrapper {
   padding-top: 20px;
   width: 50%;
