@@ -3,7 +3,7 @@ Poole
 
 **Poole** is a web-interface dedicated for managing dynamic content of Jekyll-based websites. Users of Jekyll can create, edit and delete files that live within the _posts directory. Poole is a smart way of publishing for hackers AND [humans](http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans), solving the issue that Jekyll is has not yet been suitable for non-technical people who maintain content.
 
-While developers can still enjoy the freedom Jekyll framework provides, editors can easily access, edit and publish content using a visual interface. Here is how it works:
+While developers can still enjoy all freedom the Jekyll framework provides, editors can easily access, edit and publish content using a visual interface. Here is how it works:
 
 Login with your Github User
 -----------------
@@ -86,13 +86,17 @@ This is a real bummer. So I built [Gatekeeper](http://github.com/developmentseed
 Installation
 =================
 
-1. Clone the repo
+1. Fork and clone the repo in order to run your own instance of Poole.
 
 2. Setup a Github application, so CORS requests are possible as well as OAuth authentication.
 
    ![Setup Github Application](http://f.cl.ly/items/011W1c0D2N1I0B3m0731/Screen%20Shot%202012-05-31%20at%203.33.15%20PM.png)
 
-3. Adjust `_config.yml`
+3. Setup Gatekeeper
+
+   Follow the instructions here and fill in the information that is provided after registering a new Github Application.
+
+4. Adjust `_config.yml`
 
    ```
    auto: true
