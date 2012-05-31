@@ -92,11 +92,11 @@ Installation
 
    ![Setup Github Application](http://f.cl.ly/items/011W1c0D2N1I0B3m0731/Screen%20Shot%202012-05-31%20at%203.33.15%20PM.png)
 
-3. Setup Gatekeeper
+3. Setup Gatekeeper.
 
    Follow the instructions here and fill in the information that is provided after registering a new Github Application.
 
-4. Adjust `_config.yml`
+4. Adjust `_config.yml`.
 
    ```
    auto: true
@@ -108,7 +108,7 @@ Installation
    - README.md
    ```
 
-5. Run it
+5. Run it.
    ```
    server:poole poole$ jekyll
    ```
