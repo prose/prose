@@ -755,7 +755,7 @@ ul.site li a {
   background: rgba(0,0,0, 0.4);
 }
 
-.document-menu-content .save { background: rgba(0,0,0, 0.1); }
+.document-menu-content .save { background: rgba(0,0,0, 0.1); width: 100px; text-align: center; }
 .document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.2); }
 
 .document-menu-content .save-state {
@@ -791,7 +791,7 @@ ul.site li a {
   background-color: rgba(0,0,0, 0.1);
 }
 
-.document-menu-content .state .button.inactive {
+.document-menu-content .state .button.inactive, .document-menu-content .state .button.inactive:hover {
   text-shadow: none;
   background:#eee;
   color:#bbb;

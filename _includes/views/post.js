@@ -46,6 +46,7 @@ views.Post = Backbone.View.extend({
 
   _makeDirty: function(e) {
     this.dirty = true;
+    this.$('.button.save').html('SAVE');
     this.$('.button.save').removeClass('inactive');
     this.updateMetaData();
   },
@@ -101,10 +102,14 @@ views.Post = Backbone.View.extend({
   },
 
   updatePost: function(published, message) {
+    this.$('.button.save').addClass('inactive');
+    this.$('.button.save').html('SAVING ...');
+    this.$('.document-menu-content .options').hide();
     savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, this.updateMetaData(published), this.editor.getValue(), message, _.bind(function(err) {
       this.dirty = false;
       this.model.persisted = true;
       this.updateURL();
+      $('.button.save').html('SAVED');
       $('.button.save').addClass('inactive');
     }, this));
   },
