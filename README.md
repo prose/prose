@@ -110,7 +110,7 @@ Installation
 
 5. Run it
    ```
-   $ jekyll
+   server:poole poole$ jekyll
    ```
 
 Limitations
