@@ -1,7 +1,7 @@
 Poole
 =================
 
-**Poole** is a web-interface dedicated for managing dynamic content of Jekyll-based websites. Users of Jekyll can create, edit and delete files that live within the `_posts` directory. Poole is a smart way of publishing for hackers AND [humans](http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans), solving the issue that Jekyll is has not yet been suitable for non-technical people who maintain content.
+**Poole** is a web-interface dedicated for managing dynamic content of Jekyll-based websites. Users of Jekyll can create, edit and delete files that live within the `_posts` directory. Poole can be considered a smart way of publishing for hackers and [humans](http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans), solving the issue that Jekyll is has not yet been suitable for less-technical content editors.
 
 While developers can still enjoy all freedom the Jekyll framework provides, editors can easily access, edit and publish content using a visual interface. Here is how it works:
 
@@ -72,7 +72,7 @@ The Github API is somewhat funky from time to time, and hard to debug. We had to
 Github.js
 -----------------
 
-[Github.js](https://github.com/michael/github) is a higher-level wrapper around the Github API. It's intended for exactly our use case, namely interacting with Github from the browser. It supports reading, writing, renaming and deleting files. Goal was to have a simple data abstraction layer, nothing to fancy, but providing exactly the operations we need.
+[Github.js](https://github.com/poole/github) is a higher-level wrapper around the Github API. It's intended for exactly our use case, namely interacting with Github from the browser. It supports reading, writing, renaming and deleting files. Goal was to have a simple data abstraction layer, nothing to fancy, but providing exactly the operations we need.
 
 
 Gatekeeper
@@ -80,7 +80,7 @@ Gatekeeper
 
 Because of some [security-related limitations](http://blog.vjeux.com/2012/javascript/github-oauth-login-browser-side.html), Github prevents you from implementing the OAuth Web Application Flow on a client-side only application.
 
-This is a real bummer. So I built [Gatekeeper](http://github.com/developmentseed/gatekeeper), which is the missing piece you need in order to make it work.
+This is a real bummer. So we built [Gatekeeper](http://github.com/developmentseed/gatekeeper), which is the missing piece you need in order to make OAuth work.
 
 
 Installation
