@@ -80,7 +80,7 @@ Gatekeeper
 
 Because of some [security-related limitations](http://blog.vjeux.com/2012/javascript/github-oauth-login-browser-side.html), Github prevents you from implementing the OAuth Web Application Flow on a client-side only application.
 
-This is a real bummer. So I built [Gatekeeper](http://github.com/developmentseed/gatekeeper), which is the missing piece you need in order to make it work.
+This is a real bummer. So we built [Gatekeeper](http://github.com/developmentseed/gatekeeper), which is the missing piece you need in order to make OAuth work.
 
 
 Installation
