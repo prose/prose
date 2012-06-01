@@ -1,7 +1,7 @@
 Poole
 =================
 
-**Poole** is a web-interface dedicated for managing dynamic content of Jekyll-based websites. Users of Jekyll can create, edit and delete files that live within the `_posts` directory. Poole is a smart way of publishing for hackers AND [humans](http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans), solving the issue that Jekyll is has not yet been suitable for non-technical people who maintain content.
+**Poole** is a web-interface dedicated for managing dynamic content of Jekyll-based websites. Users of Jekyll can create, edit and delete files that live within the `_posts` directory. Poole can be considered a smart way of publishing for hackers and [humans](http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans), solving the issue that Jekyll is has not yet been suitable for less-technical content editors.
 
 While developers can still enjoy all freedom the Jekyll framework provides, editors can easily access, edit and publish content using a visual interface. Here is how it works:
 
