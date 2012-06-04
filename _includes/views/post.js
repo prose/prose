@@ -101,33 +101,44 @@ views.Post = Backbone.View.extend({
   },
 
   updateMetaData: function(published) {
-    this.model.metadata = jsyaml.load($('#raw_metadata').val());
     if (published !== undefined) this.model.metadata.published = published;
     this.model.metadata.published = this.$('#post_published').prop('checked');
+    var rawMetadata = this.metadataEditor.getValue();
 
-    // Update metadata accordingly.
-    var rawMetadata = _.toYAML(this.model.metadata);
-    $('#raw_metadata').val(rawMetadata);
+    try {
+      this.model.metadata = jsyaml.load(rawMetadata);
+      rawMetadata = _.toYAML(this.model.metadata);
 
-    if (this.model.metadata.published) {
-      $('#post').addClass('published');
-    } else {
-      $('#post').removeClass('published');
+      $('#raw_metadata').val(rawMetadata);
+
+      if (this.model.metadata.published) {
+        $('#post').addClass('published');
+      } else {
+        $('#post').removeClass('published');
+      }
+      return true;
+    } catch(err) {
+      return false;
     }
-    return rawMetadata;
   },
 
   updatePost: function(published, message) {
-    this.$('.button.save').addClass('inactive');
-    this.$('.button.save').html('SAVING ...');
-    this.$('.document-menu-content .options').hide();
-    savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, this.updateMetaData(published), this.editor.getValue(), message, _.bind(function(err) {
-      this.dirty = false;
-      this.model.persisted = true;
-      this.updateURL();
-      $('.button.save').html('SAVED');
-      $('.button.save').addClass('inactive');
-    }, this));
+    if (this.updateMetaData(published)) {
+      this.$('.button.save').addClass('inactive');
+      this.$('.button.save').html('SAVING ...');
+      this.$('.document-menu-content .options').hide();
+      savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.toYAML(this.model.metadata), this.editor.getValue(), message, _.bind(function(err) {
+        this.dirty = false;
+        this.model.persisted = true;
+        this.updateURL();
+        $('.button.save').html('SAVED');
+        $('.button.save').addClass('inactive');
+      }, this));
+    } else {
+      // TODO: do pretty messaging
+      alert('Cannot save. Metadata is invalid');
+    }
+
   },
 
   keyMap: function() {
@@ -167,7 +178,7 @@ views.Post = Backbone.View.extend({
         extraKeys: that.keyMap(),
         matchBrackets: true,
         theme: 'default',
-        onChange: _.bind(that._makeDirty, that),
+        onChange: _.bind(that._makeDirty, that)
       });
     }, 100);
   },
