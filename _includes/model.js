@@ -127,7 +127,7 @@ function loadSite(user, repo, branch, path, cb) {
         app.state.path = path ? path : paths[0];
 
         var posts = _.map(tree, function(file) {
-          var regex = new RegExp("^(\\w|-)*(\.md|\.markdown)$");
+          var regex = new RegExp("^(\\w|-)*\.(md|mkdn?|mdown|markdown)$");
 
           // Make sense of the file path
           function semantify(p) {
