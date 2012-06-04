@@ -373,10 +373,10 @@ body.start {
   background: #f0f5f7;
   font-size: 12px;
   text-align: left;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-  top: 0px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  top: -10px;
   padding: 10px;
   overflow: auto;
 }
@@ -398,13 +398,12 @@ body.start {
   
 .repos a .branches .branch {
   padding: 2px 5px;
-  border-bottom: 1px solid #ccc;
+  text-align: center;
 }
 
 .repos a .branches a.branch {
   display: block;
-  color: #eee;
-  border-bottom: 1px solid #526066;
+  color: #555;
 }
 
 .loading-branches {
@@ -417,8 +416,8 @@ body.start {
 }
 
 .repos a .branches a.branch:hover  {
-  color: #eee;
-  background: rgba(0,0,0,.2);
+  /*color: #eee;*/
+  background: #E0E7EB;
 }
 
 .start .sites,
@@ -536,8 +535,10 @@ ul.site li a {
   padding-top: 60px;
   text-align: center;
   font-family: "Menlo", monospace;
+  max-height: 160px;
+  overflow: hidden;
   color: #a7a7a7;
-} 
+}
 
 .post-listing a.link.folder .filename {
   color: rgba(255,255,255, 0.8);
