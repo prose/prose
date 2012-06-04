@@ -26,3 +26,10 @@ _.toYAML = function(data) {
 _.validFilename = function(filename) {
   return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
 };
+
+// Check for a valid post file name
+_.clip = function(str, length) {
+  var res = str.substr(0, length);
+  if (length < str.length) res += " ...";
+  return res;
+};
