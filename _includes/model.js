@@ -127,7 +127,7 @@ function loadSite(user, repo, branch, path, cb) {
         app.state.path = path ? path : paths[0];
 
         var posts = _.map(tree, function(file) {
-          var regex = new RegExp("^(\\w|-)*.md$");
+          var regex = new RegExp("^(\\w|-)*(\.md|\.markdown)$");
 
           // Make sense of the file path
           function semantify(p) {
@@ -209,7 +209,6 @@ function emptyPost(user, repo, branch, path, cb) {
 function loadPost(user, repo, branch, path, file, cb) {
   var repo = github().getRepo(user, repo);
   repo.read(branch, path + "/" + file, function(err, data) {
-
     function parse(content) {
       var res = {};
       var chunked = (content+'\n').replace(/\r\n/g, "\n").split('---\n');
@@ -227,7 +226,6 @@ function loadPost(user, repo, branch, path, file, cb) {
     // Extract metadata
     var post = parse(data);
 
-    // We're done. Can you hear me?!
     cb(err, _.extend(post, {"repo": repo, "path": path, "file": file, "persisted": true}));
   });
 }
