@@ -33,9 +33,9 @@ views.Application = Backbone.View.extend({
 
     $(window).on('scroll', function() {
       if ($(window).scrollTop()>60) {
-        $('.document-menu').addClass('sticky');
+        $('#post').addClass('sticky-menu');
       } else {
-        $('.document-menu').removeClass('sticky');
+        $('#post').removeClass('sticky-menu');
       }
     });
   },

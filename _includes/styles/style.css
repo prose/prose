@@ -605,11 +605,15 @@ ul.site li a {
   z-index: 2000;
 }
 
-.document-menu.sticky {
+#post.sticky-menu .document-menu {
   position: fixed;
   top: 0px;
   left: 0px;
   right: 0px;
+}
+
+#post.sticky-menu .document {
+  margin-top: 60px;
 }
 
 #post.published .document-menu {
