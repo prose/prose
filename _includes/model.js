@@ -208,22 +208,22 @@ function emptyPost(user, repo, branch, path, cb) {
 
 function loadPost(user, repo, branch, path, file, cb) {
   var repo = github().getRepo(user, repo);
-
   repo.read(branch, path + "/" + file, function(err, data) {
+
     function parse(content) {
       var res = {};
-      var chunked = (content+'\n').split('---\n');
+      var chunked = (content+'\n').replace(/\r\n/g, "\n").split('---\n');
       if (chunked[0] === '' && chunked.length > 2) {
         res.metadata = jsyaml.load(chunked[1]);
         res.raw_metadata = chunked[1].trim();
         res.content = chunked.slice(2).join('---\n');
       } else {
         res.metadata = {};
+        res.raw_metadata = "";
         res.content = content;
       }
       return res;
     }
-
     // Extract metadata
     var post = parse(data);
 
