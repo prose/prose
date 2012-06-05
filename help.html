@@ -1,0 +1,24 @@
+---
+layout: default
+---
+
+<div class="help">
+  <h1>Help</h1>
+
+  <div class='articles'>
+    {% for item in site.categories.help limit:40 offset:0 %}
+      <a class="article" href="{{base}}{{item.url}}">
+        {% if item.image %}
+          <img src="{{item.image}}">
+        {% endif %}
+        <div class="title">
+          {{item.title}}
+        </div>
+        <div class="descr">
+          {{item.subtitle}}
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+

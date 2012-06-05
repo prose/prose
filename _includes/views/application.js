@@ -59,8 +59,15 @@ views.Application = Backbone.View.extend({
     $(view.el).appendTo(this.$('#main'));
   },
 
+
+
   // Main Views
   // ----------
+
+  static: function() {
+    this.header.render();
+    // No-op ;-)
+  },
 
   posts: function (user, repo, branch, path) {
     loadSite(user, repo, branch, path, _.bind(function (err, data) {
