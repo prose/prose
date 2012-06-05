@@ -350,12 +350,11 @@ body.start {
 
   text-align: center;
   padding: 10px;
-  font-size: 16px;
   position: relative;
-  margin-right: 15px;
-  margin-top: 15px;
-  width: 177px;
-  height: 177px;
+  margin-right: 20px;
+  margin-top: 20px;
+  width: 140px;
+  height: 180px;
   color: #444;
   display: block;
   float: left;
@@ -367,14 +366,14 @@ body.start {
 }
 
 .repos > a .name {
-  /*padding: 15px;*/
-  padding-top: 45px;
+  display: block;
+  position: relative;
+  top: 40%;
+  margin: auto;
   font-size: 12px;
   text-align: center;
   overflow: hidden;
-  
-  margin-top: 30px;
-  /*color: #a7a7a7;*/
+  word-wrap: break-word;
   color: #526066;
 }
 
@@ -543,18 +542,22 @@ ul.site li a {
   width: 140px;
   height: 180px;
   margin: 0 20px 20px 0;
+  padding: 10px;
   position: relative;
   color: #404040;
 }
 
 .post-listing a.link .filename {
-  padding: 15px;
-  padding-top: 60px;
+  display: block;
+  position: relative;
+  top: 40%;
+  margin: auto;
+  font-size: 12px;
   text-align: center;
   font-family: "Menlo", monospace;
-  max-height: 160px;
   overflow: hidden;
-  color: #a7a7a7;
+  word-wrap: break-word;
+  color: #526066;
 }
 
 .post-listing a.link.folder .filename {

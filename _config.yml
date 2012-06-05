@@ -2,7 +2,7 @@ auto: true
 server: true
 pygments: true
 permalink: none
-root_dir: "/poole/"
+root_dir: ""
 oauth_client_id: caf55c20366465a1332d
 gatekeeper_url: http://poole-oauth-staging.herokuapp.com
 exclude:
