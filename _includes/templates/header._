@@ -2,10 +2,9 @@
     
 <div class="navigation">
   <!--Github account and links-->
-  <a class="root" href="#">Repos</a>
+  <a class="root" href="/#">Repos</a>
 
   <% if (state.repo) { %>
-    
     <% var path = state.path.replace('_posts/','').replace('_posts',''); %>
 
     <% if (state.repo && (path ||state.file)) { %>
@@ -13,7 +12,6 @@
     <% } else if (state.repo) { %>
       <div class="repo" href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></div>
     <% } %>
-
     
     <% if (path && state.file) { %>
       <a class="path" href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= path %></a>
@@ -21,9 +19,6 @@
     <% if (path && !state.file) { %>
       <div class="path" href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= path %></div>
     <% } %>
-
-
-    
       <% if (state.file) { %>
       <div class="file">
         <%= _.clip(state.file, 30) %>

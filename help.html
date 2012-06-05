@@ -7,15 +7,16 @@ layout: default
 
   <div class='articles'>
     {% for item in site.categories.help limit:40 offset:0 %}
-      <a class="article" href="{{site.root_dir}}{{item.url}}">
+      <a class="article" href="{{base}}{{item.url}}">
         {% if item.image %}
-          <img src="{{item.image}}">
+          <img src="{{item.image}}" width="200" height="100"/>
         {% endif %}
+
         <div class="title">
           {{item.title}}
         </div>
         <div class="descr">
-          {{item.subtitle}}
+          {{item.descr}}
         </div>
       </a>
     {% endfor %}
