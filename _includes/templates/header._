@@ -2,7 +2,7 @@
     
 <div class="navigation">
   <!--Github account and links-->
-  <a class="root" href="/#">Repos</a>
+  <a class="root" href="{{site.root_dir}}#">Repos</a>
 
   <% if (state.repo) { %>
     <% var path = state.path.replace('_posts/','').replace('_posts',''); %>
