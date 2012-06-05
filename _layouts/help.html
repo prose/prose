@@ -4,7 +4,7 @@ layout: default
 
 <div class="help post-content">
   <div class="title">{{page.title}}</div>
-  <p class="meta"> {{ page.date | date: "%B %d, %Y" }} </p>
-
+  
   {{ content }}
+  <div class="meta"> Posted by Michael on {{ page.date | date: "%B %d, %Y" }} </div>
 </div>

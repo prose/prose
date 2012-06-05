@@ -915,9 +915,6 @@ ul.site li a {
   overflow:hidden;
 }
 
-.post-content img {
-  max-width: 100%;
-}
 
 .document .content-wrapper {
   padding-top: 20px;
@@ -943,6 +940,11 @@ ul.site li a {
 
 }
 
+
+/* ------------------------------------------
+  Rendered Markdown
+---------------------------------------------*/
+
 .post-content {
   background: #fff;
   padding: 100px;
@@ -954,6 +956,22 @@ ul.site li a {
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.post-content img {
+  max-width: 100%;
+}
+
+.post-content .meta {
+  margin-top: 30px;
+  font-size: 12px;
+  text-transform: uppercase;
+  border-top: 1px solid #eee;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.post-content a {
+  font-weight: bold;
+}
+
 .post-content .title {
   font-size: 50px;
   font-weight: bold;
@@ -963,6 +981,25 @@ ul.site li a {
 
 .content-preview {
   font-size: 18px;
+}
+
+.post-content code {
+  font-family: Monaco, Consolas, "Lucida Console", monospace;
+  font-size: 12px;
+  padding: 0px 3px;
+  background: white;
+  border: 1px solid #DDD;
+  zoom: 1;
+}
+
+.post-content pre {
+  padding: 2px 10px 2px 15px;
+  border-left: 4px solid #BBB;
+  margin: 15px;
+}
+
+.post-content pre code {
+  border: none;
 }
 
 /* ------------------------------------------
@@ -986,42 +1023,46 @@ ul.site li a {
 
 .help .articles {
   overflow: auto;
+
 }
 
 .help .articles .article {
   
-  font-family: "Menlo", monospace;
   overflow: hidden;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
 
   /*background: rgba(255,255,255, 0.6);*/
-  background: #E0E7EB;
-  
-  -moz-transition: background 200ms linear;
-  -o-transition: background 200ms linear;
-  -webkit-transition: background 200ms linear;
-  transition: background 200ms linear;
+  /*background: #E0E7EB;*/
 
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
 
-  text-align: center;
-  padding: 10px;
+  -moz-transition: opacity 200ms linear;
+  -o-transition: opacity 200ms linear;
+  -webkit-transition: opacity 200ms linear;
+  transition: opacity 200ms linear;
+
   font-size: 16px;
   position: relative;
-  margin-right: 15px;
-  margin-top: 15px;
-  width: 177px;
-  height: 177px;
+  margin-right: 40px;
+  margin-top: 20px;
+  width: 200px;
+  height: 200px;
   color: #444;
   display: block;
   float: left;
-  border: 1px solid #c3ccd0;
+  opacity: 0.8;
+
+}
+
+.help .articles .article .title {
+  padding: 5px 0;
+}
+
+.help .articles .article .descr {
+  color: #888;
+  font-size: 12px;
 }
 
 .help .articles .article:hover {
-  background: #f0f5f7;
+  opacity: 1.0;
 }
 
 
