@@ -1,4 +1,4 @@
-<a href='{{site.baseurl}}' class='title'><span>Poole.</span></a>
+<!-- <a href='{{site.baseurl}}' class='title'><span>Poole.</span></a> -->
     
 <div class="navigation">
   <!--Github account and links-->
@@ -30,10 +30,12 @@
       </div>
       <% } %>
   <% } %>
+
+  <% if (window.authenticated) { %>
+    <div class='user-status'>
+      <img width="30" src="<%= $.cookie("avatar") %>"/>
+      <%= app.username %> <a class="logout" href="#">Logout</a>
+    </div>  
+  <% } %>
 </div>
-<% if (window.authenticated) { %>
-  <div class='user-status'>
-    <img width="30" src="<%= $.cookie("avatar") %>"/>
-    <%= app.username %> <a class="logout" href="#">Logout</a>
-  </div>  
-<% } %>
+

@@ -88,10 +88,11 @@ body.post #header {
 }
 
 #header .navigation {
-  width: 900px;
+  width: 960px;
   margin: 0 auto;
   overflow: auto;
   font-size: 11px;
+  position: relative;
   text-transform: uppercase;
   font-weight: bold;
   line-height: 30px;
@@ -154,11 +155,15 @@ body.post #header {
 #header .user-status {
   position: absolute;
   top: 0px;
-  right: 50px;
+  right: 0px;
   height: 60px;
   line-height: 30px;
   color: #888;
   font-size: 16px;
+  padding: 0;
+  margin: 0;
+  text-transform: none;
+  font-weight: normal;
 }
 
 #header .user-status img {
@@ -188,7 +193,6 @@ body.post #header {
 }
  
 #main {
-  /*margin-top: 60px;*/
   padding-top: 60px;
   overflow:auto;
   padding-bottom: 60px; /* must be same height as the footer */
@@ -207,19 +211,28 @@ body.post #header {
 vertical margins (top and bottom) to add spacing, else those margins get added to total height 
 and your footer gets pushed down a bit more, creating vertical scroll bars in the browser */
 
-#container { min-height: 100%; }
+#container { 
+  min-height: 100%;
+  margin: 0 auto;
+}
 
 #footer {
   position: relative;
   margin-top: -60px; /* negative value of footer height */
   height: 60px;
   font-size: 16px;
-  padding-left: 30px;
+  
+
   line-height: 60px;
   background: #e0e7eb;
   border-top: 1px solid #c3ccd0;
   /*box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);*/
   clear:both;
+}
+
+#footer .footer-content {
+  width: 960px;
+  margin: 0 auto;
 }
 
 /*Opera Fix*/
@@ -299,7 +312,6 @@ body.start {
 #start .owner {
   font-family: "Menlo", monospace;
   font-size: 17px;
-  margin-left: 30px;
   padding-top: 30px;
   padding-bottom: 0px;
   padding-left: 30px;
@@ -310,11 +322,13 @@ body.start {
 
 #start {
   padding-bottom: 20px;
+  width: 960px;
+  margin: 0 auto;
 }
 
 .repos {
   overflow: auto;
-  padding: 10px;
+  padding: 10px 0;
 }
 
 .repos > a {
@@ -338,10 +352,10 @@ body.start {
   padding: 10px;
   font-size: 16px;
   position: relative;
-  margin-left: 15px;
+  margin-right: 15px;
   margin-top: 15px;
-  width: 180px;
-  height: 180px;
+  width: 177px;
+  height: 177px;
   color: #444;
   display: block;
   float: left;
@@ -508,8 +522,11 @@ ul.site li a {
 ---------------------------------------------*/
 
 #posts {
-  padding: 30px;
+  padding: 30px 0;
+  width: 960px;
+  margin: 0 auto;
 }
+
 
 #publish_status {
   position: relative;
@@ -638,7 +655,7 @@ ul.site li a {
 }
 
 .document-menu-content {
-  width: 900px;
+  width: 960px;
   margin: 0 auto;
   color: #E7EEF2;
   font-weight: bold;
@@ -856,7 +873,7 @@ ul.site li a {
 
 .document .metadata-content {
   padding: 20px 0px;
-  width: 900px;
+  width: 960px;
   margin: 0 auto;
 }
 
@@ -898,7 +915,7 @@ ul.site li a {
   overflow:hidden;
 }
 
-.document .surface.preview img {
+.post-content img {
   max-width: 100%;
 }
 
@@ -918,7 +935,7 @@ ul.site li a {
 
 .document .content-preview, .document .content {
   padding: 20px 0px;
-  width: 900px;
+  width: 960px;
   margin: 0 auto;
 }
 
@@ -926,13 +943,22 @@ ul.site li a {
 
 }
 
-.document .post-content{
+.post-content {
   background: #fff;
   padding: 100px;
   font-family: 'Palatino Linotype', 'Adobe Garamond Pro', "Times New Roman", serif;
   font-weight: 400;
   font-size: 17px;
   line-height: 1.3em;
+  border: 1px solid #C3CCD0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-content .title {
+  font-size: 50px;
+  font-weight: bold;
+  text-align: center;
+  padding-bottom: 60px;
 }
 
 .content-preview {
@@ -940,8 +966,74 @@ ul.site li a {
 }
 
 /* ------------------------------------------
+  About
+---------------------------------------------*/
+
+.about {
+  width: 960px;
+  margin: 30px auto;
+  background: white;
+}
+
+/* ------------------------------------------
+  Logbook
+---------------------------------------------*/
+
+.help {
+  width: 960px;
+  margin: 30px auto;
+}
+
+.help .articles {
+  overflow: auto;
+}
+
+.help .articles .article {
+  
+  font-family: "Menlo", monospace;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+
+  /*background: rgba(255,255,255, 0.6);*/
+  background: #E0E7EB;
+  
+  -moz-transition: background 200ms linear;
+  -o-transition: background 200ms linear;
+  -webkit-transition: background 200ms linear;
+  transition: background 200ms linear;
+
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+
+  text-align: center;
+  padding: 10px;
+  font-size: 16px;
+  position: relative;
+  margin-right: 15px;
+  margin-top: 15px;
+  width: 177px;
+  height: 177px;
+  color: #444;
+  display: block;
+  float: left;
+  border: 1px solid #c3ccd0;
+}
+
+.help .articles .article:hover {
+  background: #f0f5f7;
+}
+
+
+.help-article {
+  width: 960px;
+  margin: 30px auto;
+}
+
+/* ------------------------------------------
   Notifications
 ---------------------------------------------*/
+
 #notification .notification{
   text-align: center;
   width: 300px;

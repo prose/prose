@@ -9,7 +9,7 @@ views.Header = Backbone.View.extend({
 
   _logout: function() {
     logout();
-    window.location.href = '';
+    window.location.href = '{{site.root_dir}}';
   },
 
   initialize: function(options) {

@@ -57,18 +57,22 @@ function confirmExit() {
   return true;
 }
 
+
+
 (function(config, models, views, routers, utils, templates) {
   $(function() {
+
     loadApplication(function(err, data) {
       // Start the engines
       window.app.instance = new views.Application({ el: '#container', model: data }).render();
 
-      // Initialize router
-      window.router = new routers.Application({});
+      if (!window.location.href.match(/\.html/)) {
+        // Initialize router
+        window.router = new routers.Application({});
 
-      // Start responding to routes
-      Backbone.history.start();
-
+        // Start responding to routes
+        Backbone.history.start();        
+      }
     });
   });
 }).apply(this, window.args);
