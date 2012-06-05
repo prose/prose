@@ -538,6 +538,7 @@ ul.site li a {
 
 .post-listing a.link {
   background:url('images/sprite.png') -450px -400px no-repeat;
+  background-color: #E0E7EB; 
   float: left;
   width: 140px;
   height: 180px;
@@ -545,7 +546,15 @@ ul.site li a {
   padding: 10px;
   position: relative;
   color: #404040;
-}
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 3px 40px 3px 3px;
+   -moz-transition: background-color 200ms linear;
+  -o-transition: background-color 200ms linear;
+  -webkit-transition: background-color 200ms linear;
+  }
+  .post-listing a.link:hover { 
+  background-color: #f0f5f7; 
+  }
 
 .post-listing a.link .filename {
   display: block;
@@ -562,10 +571,11 @@ ul.site li a {
 
 .post-listing a.link.folder .filename {
   color: rgba(255,255,255, 0.8);
+  word-wrap: break-word;
+  color: #526066;
 }
 
 .post-listing a.link.folder:hover .filename {
-  color: rgba(255,255,255, 1.0);
 }
 
 .post-listing a.link:hover .filename {
@@ -583,7 +593,16 @@ ul.site li a {
 
 .post-listing a.link.folder {
   background:url('images/sprite.png') -450px -150px no-repeat;
-}
+  background-color: #E0E7EB;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  -moz-transition: background-color 200ms linear;
+  -o-transition: background-color 200ms linear;
+  -webkit-transition: background-color 200ms linear;
+  }
+  .post-listing a.link.folder:hover { 
+    background-color: #f0f5f7; 
+    }
 
 .post-listing a.link.new {
   background: none;
