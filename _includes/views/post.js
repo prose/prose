@@ -76,7 +76,7 @@ views.Post = Backbone.View.extend({
   _togglePreview: function(e) {
     if (e) e.preventDefault();
     $('.toggle.preview').toggleClass('active');
-    this.$('.post-content').html(this.converter.makeHtml(this.editor.getValue()));
+    this.$('.post-content').html(marked(this.editor.getValue()));
     $('.document .surface').toggleClass('preview');
   },
 
@@ -97,7 +97,6 @@ views.Post = Backbone.View.extend({
       key('ctrl+shift+m', _.bind(function() { this._toggleMeta(); return false; }, this));
       window.shortcutsRegistered = true;
     }
-    this.converter = new Showdown.converter();
   },
 
   // TODO: remove comments and simplify after we are sure that we don't want to parse metadata
