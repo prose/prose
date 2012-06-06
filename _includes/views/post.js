@@ -171,22 +171,21 @@ views.Post = Backbone.View.extend({
     setTimeout(function() {
 
       that.metadataEditor = CodeMirror.fromTextArea(document.getElementById('raw_metadata'), {
-        // mode: 'markdown',
+        mode: 'yaml',
+        theme: 'poole-dark',
         lineWrapping: true,
         extraKeys: that.keyMap(),
-        matchBrackets: true,
-        theme: 'default',
         onChange: _.bind(that._makeDirty, that)
       });
 
       $('#post .metadata').hide();
 
       that.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
-        // mode: 'markdown',
+        mode: 'markdown',
         lineWrapping: true,
         extraKeys: that.keyMap(),
         matchBrackets: true,
-        theme: 'default',
+        theme: 'poole-bright',
         onChange: _.bind(that._makeDirty, that)
       });
     }, 100);

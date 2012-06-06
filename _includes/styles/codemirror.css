@@ -1,14 +1,15 @@
 .CodeMirror {
-  font-size: 1.4em;
-  line-height: 1.1em;
-  font-family: "Menlo", monospace;
-  color: #6b6b6b;
+  line-height: 1em;
+  font-family: monospace;
 }
 
 .CodeMirror-scroll {
-  height: auto;
-  overflow: visible;
-  overflow-y: hidden;
+  overflow: auto;
+  /*height: 300px;*/
+  /* This is needed to prevent an IE[67] bug where the scrolled content
+     is visible outside of the scrolling box. */
+  position: relative;
+  outline: none;
 }
 
 .CodeMirror-gutter {
@@ -26,6 +27,7 @@
   white-space: pre !important;
 }
 .CodeMirror-lines {
+  padding: .4em;
   white-space: pre;
 }
 
@@ -35,24 +37,22 @@
   -o-border-radius: 0;
   border-radius: 0;
   border-width: 0; margin: 0; padding: 0; background: transparent;
-  
-  color: #6b6b6b;
-
+  font-family: inherit;
+  font-size: inherit;
   padding: 0; margin: 0;
   white-space: pre;
   word-wrap: normal;
   line-height: inherit;
-}
-
-.metadata .CodeMirror pre {
-  color: rgba(255,255,255, 0.7);
+  color: inherit;
 }
 
 .CodeMirror-wrap pre {
   word-wrap: break-word;
   white-space: pre-wrap;
   word-break: normal;
+
 }
+
 .CodeMirror-wrap .CodeMirror-scroll {
   overflow-x: hidden;
 }
@@ -65,22 +65,37 @@
   z-index: 10;
   position: absolute;
   visibility: hidden;
-  border-left: 2px solid #00BAFF;
-  border-right:none;
-  width:0;
+  border-left: 1px solid black;
+  border-right: none;
+  width: 0;
 }
-
-.metadata .CodeMirror pre.CodeMirror-cursor {
-  border-left: 2px solid #777;
+.cm-keymap-fat-cursor pre.CodeMirror-cursor {
+  width: auto;
+  border: 0;
+  background: transparent;
+  background: rgba(0, 200, 0, .4);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#6600c800, endColorstr=#4c00c800);
 }
-
+/* Kludge to turn off filter in ie9+, which also accepts rgba */
+.cm-keymap-fat-cursor pre.CodeMirror-cursor:not(#nonsense_id) {
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
 .CodeMirror pre.CodeMirror-cursor.CodeMirror-overwrite {}
 .CodeMirror-focused pre.CodeMirror-cursor {
   visibility: visible;
 }
 
+/*.CodeMirror {
+  border: 1px solid transparent;
+}
+
+.CodeMirror.CodeMirror-focused, .CodeMirror:hover {
+  background: #F7FBFD;
+  border: 1px solid #ccc;
+}*/
+
 div.CodeMirror-selected { background: #d9d9d9; }
-.CodeMirror-focused div.CodeMirror-selected { background: #d9d9d9; }
+.CodeMirror-focused div.CodeMirror-selected { background: #d7d4f0; }
 
 .CodeMirror-searching {
   background: #ffa;
@@ -108,7 +123,7 @@ div.CodeMirror-selected { background: #d9d9d9; }
 .cm-s-default span.cm-bracket {color: #cc7;}
 .cm-s-default span.cm-tag {color: #170;}
 .cm-s-default span.cm-attribute {color: #00c;}
-.cm-s-default span.cm-header {color: #a0a;}
+.cm-s-default span.cm-header {color: blue;}
 .cm-s-default span.cm-quote {color: #090;}
 .cm-s-default span.cm-hr {color: #999;}
 .cm-s-default span.cm-link {color: #00c;}
@@ -116,7 +131,105 @@ div.CodeMirror-selected { background: #d9d9d9; }
 span.cm-header, span.cm-strong {font-weight: bold;}
 span.cm-em {font-style: italic;}
 span.cm-emstrong {font-style: italic; font-weight: bold;}
-span.cm-link {text-decoration: underline;}
+span.cm-link { /* text-decoration: underline; */}
 
-div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}
-div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
+/*div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}*/
+/*div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}*/
+
+/* Common adjustments */
+
+.activeline {background: #e8f2ff !important;}
+
+
+/*
+Poole Dark Theme
+Saman Bemel-Benrud, Michael Aufreiter
+*/
+
+.cm-s-poole-dark {
+  line-height: 1.3em;
+}
+.cm-s-poole-dark {
+  font-size: 17px;
+  font-family: Monaco, Menlo,"Andale Mono","lucida console","Courier New",monospace !important;
+}
+
+.cm-s-poole-dark { color: #EBEFE7; }
+.cm-s-poole-dark div.CodeMirror-selected { background: #45443B !important; }
+.cm-s-poole-dark .CodeMirror-cursor { border-left: 2px solid white !important; }
+.cm-s-poole-dark .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
+
+.cm-s-poole-dark .CodeMirror-gutter { background: #262626; border-right:1px solid #aaa; padding-right:3px; min-width:2.5em; }
+.cm-s-poole-dark .CodeMirror-gutter-text { color: #777; }
+
+.cm-s-poole-dark span.cm-keyword { color: #EBEFE7; }
+.cm-s-poole-dark span.cm-atom { color: #fff; opacity: 0.4; }
+.cm-s-poole-dark span.cm-number { color: #B35E4D; }
+.cm-s-poole-dark span.cm-def {color: white;}
+.cm-s-poole-dark span.cm-variable { color:#D9BF8C; }
+.cm-s-poole-dark span.cm-variable-2 { color: #669199; }
+.cm-s-poole-dark span.cm-variable-3 { color: white; }
+.cm-s-poole-dark span.cm-property {color: #92A75C;}
+.cm-s-poole-dark span.cm-operator {color: #92A75C;}
+.cm-s-poole-dark span.cm-comment { color: #666; }
+.cm-s-poole-dark span.cm-string { color: #BCD279; }
+.cm-s-poole-dark span.cm-string-2 {color: #f50;}
+.cm-s-poole-dark span.cm-meta { color: #fff; opacity: 0.4; }
+.cm-s-poole-dark span.cm-error { color: #9d1e15; }
+.cm-s-poole-dark span.cm-qualifier {color: #555;}
+.cm-s-poole-dark span.cm-builtin { color: #ff9e59; }
+.cm-s-poole-dark span.cm-bracket { color: #EBEFE7; }
+.cm-s-poole-dark span.cm-tag { color: #669199; }
+.cm-s-poole-dark span.cm-attribute {color: #00c;}
+.cm-s-poole-dark span.cm-header {color: #a0a;}
+.cm-s-poole-dark span.cm-quote {color: #090;}
+.cm-s-poole-dark span.cm-hr {color: #999;}
+.cm-s-poole-dark span.cm-link {color: #00c;}
+
+
+/*
+Poole Dark Theme
+Saman Bemel-Benrud, Michael Aufreiter
+*/
+
+.cm-s-poole-bright {
+  line-height: 1.3em;
+}
+.cm-s-poole-bright {
+  font-family: Monaco, Menlo,"Andale Mono","lucida console","Courier New",monospace !important;
+  font-size: 17px;
+}
+
+.cm-s-poole-bright {  color: #667880; }
+.cm-s-poole-bright div.CodeMirror-selected {background: #AFC3CF !important;} /* 33322B*/
+.cm-s-poole-bright .CodeMirror-cursor { border-left: 2px solid #667880 !important; }
+.cm-s-poole-bright .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
+
+div.CodeMirror span.CodeMirror-matchingbracket { background: #fff; }
+
+.cm-s-poole-bright .CodeMirror-gutter { background: #262626; border-right:1px solid #aaa; padding-right:3px; min-width:2.5em; }
+.cm-s-poole-bright .CodeMirror-gutter-text { color: #777; }
+
+.cm-s-poole-bright span.cm-keyword { color: #599eff; }
+.cm-s-poole-bright span.cm-atom { color: #C2B470; }
+.cm-s-poole-bright span.cm-number { color: #B35E4D; }
+.cm-s-poole-bright span.cm-def {color: white;}
+.cm-s-poole-bright span.cm-variable { color:#D9BF8C; }
+.cm-s-poole-bright span.cm-variable-2 { color: #669199; }
+.cm-s-poole-bright span.cm-variable-3 { color: white; }
+.cm-s-poole-bright span.cm-property {color: #92A75C;}
+.cm-s-poole-bright span.cm-operator {color: #92A75C;}
+.cm-s-poole-bright span.cm-comment { color: #666; }
+.cm-s-poole-bright span.cm-string { color: #9B8F58; }
+.cm-s-poole-bright span.cm-string-2 {color: #f50;}
+.cm-s-poole-bright span.cm-meta { color: #738C73; }
+.cm-s-poole-bright span.cm-error { color: #9d1e15; }
+.cm-s-poole-bright span.cm-qualifier {color: #555;}
+.cm-s-poole-bright span.cm-builtin { color: #ff9e59; }
+.cm-s-poole-bright span.cm-bracket { color: #EBEFE7; }
+.cm-s-poole-bright span.cm-tag { color: #669199; }
+.cm-s-poole-bright span.cm-attribute {color: #00c;}
+.cm-s-poole-bright span.cm-header {color: #9B8F58; font-weight: bold;}
+.cm-s-poole-bright span.cm-quote {color: #090;}
+.cm-s-poole-bright span.cm-hr {color: #999;}
+.cm-s-poole-bright span.cm-link {color: #9B8F58;}
