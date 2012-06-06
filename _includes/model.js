@@ -2,6 +2,7 @@
 function github() {
   return new Github({
     token: $.cookie('oauth-token'),
+    username: $.cookie('username'),
     auth: "oauth"
   });
 }
@@ -46,7 +47,9 @@ function loadApplication(cb) {
       contentType: 'application/x-www-form-urlencoded',
       success: function(res) { 
         $.cookie("avatar", res.avatar_url);
+        $.cookie("username", res.login);
         app.username = res.login;
+
         var user = github().getUser(app.username);
         var owners = {};
 
