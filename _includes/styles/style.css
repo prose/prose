@@ -883,10 +883,10 @@ ul.site li a {
   background: #526066;
   color: #CCC;
   z-index: 1000;
-  -moz-transition: height 100ms linear;
-  -o-transition: height 100ms linear;
-  -webkit-transition: height 100ms linear;
-  transition: height 100ms linear;
+  -moz-transition: background 100ms linear;
+  -o-transition: background 100ms linear;
+  -webkit-transition: background 100ms linear;
+  transition: background 100ms linear;
 }
 
 .document .metadata-content .CodeMirror {

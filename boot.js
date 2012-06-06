@@ -12,6 +12,7 @@
 {% include vendor/codemirror/codemirror.js %}
 {% include vendor/codemirror/xml.js %}
 {% include vendor/codemirror/markdown.js %}
+{% include vendor/codemirror/yaml.js %}
 {% include vendor/jquery.cookie.js %}
 {% include vendor/bootstrap-dropdown.js %}
 
