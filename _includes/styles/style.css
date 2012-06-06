@@ -127,7 +127,7 @@ body.post #header {
   background-repeat: no-repeat;
 }
 
-#header .navigation .file::before, #header .navigation .repo::before {
+#header .navigation .file::before, #header .navigation .repo::before, #header .navigation .path::before {
   content:"";
   background-image:url('images/sprite.png');
   background-position: -289px -390px;
