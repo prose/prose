@@ -148,7 +148,7 @@ views.Post = Backbone.View.extend({
 
     if (file === this.model.file) return save();    
     this.updateFilename(file, function(err) {
-      err ? $('.button.save').html('! Filename'); : save();
+      err ? $('.button.save').html('! Filename') : save();
     });
   },
 
