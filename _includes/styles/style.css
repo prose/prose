@@ -227,21 +227,30 @@ and your footer gets pushed down a bit more, creating vertical scroll bars in th
   position: relative;
   margin-top: -60px; /* negative value of footer height */
   height: 60px;
-  font-size: 16px;
   
-
   line-height: 60px;
   background: #e0e7eb;
   border-top: 1px solid #c3ccd0;
-  /*box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);*/
   clear:both;
 }
 
 #footer .footer-content {
   width: 960px;
   margin: 0 auto;
+  font-size: 16px;
 }
 
+
+#footer a.help, #footer a.about{ 
+  margin-right: 20px;
+  padding-left: 20px;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: bold;
+  background-image: url('images/sprite.png');
+  }
+  a.about { background-position: 0 -959px;}
+  a.help { background-position: 0 -1049px;}
 /*Opera Fix*/
 body:before {/* thanks to Maleika (Kohoutec)*/
   content:"";
@@ -268,7 +277,7 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   background: #E0E7EB;
   font-family: 'OpenSans', sans-serif;
   font-weight: normal;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.3em;
   -moz-border-radius: 5px 5px 0 0;
   -webkit-border-radius: 5px 5px 0 0;
@@ -318,13 +327,12 @@ body.start {
 
 #start .owner {
   font-family: 'OpenSans', sans-serif;
-  font-size: 17px;
-  padding-top: 30px;
-  padding-bottom: 0px;
+  font-size: 16px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   padding-left: 30px;
-  color: #526066;
   width: 200px;
-  background:url('images/sprite.png') 0px -523px no-repeat;
+  background: url('images/sprite.png') 0px -545px no-repeat;
 }
 
 #start {
@@ -343,7 +351,6 @@ body.start {
   overflow: hidden;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
 
-  /*background: rgba(255,255,255, 0.6);*/
   background:url('images/sprite.png') -450px -640px no-repeat;
   background-color: #E0E7EB;
   
@@ -755,7 +762,7 @@ ul.site li a {
 }
 
 .document-menu-content .filename input {
-  font-family: 'OpenSans', sans-serif;
+  font-family: Menlo, monospace;
   background: transparent;
   border: none;
   height: 40px;
@@ -981,7 +988,7 @@ ul.site li a {
   padding: 100px;
   font-family: 'OpenSans', sans-serif;
   font-weight: normal;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.3em;
   border: 1px solid #C3CCD0;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
@@ -1015,7 +1022,7 @@ ul.site li a {
 }
 
 .post-content code {
-  font-family: Monaco, Consolas, "Lucida Console", monospace;
+  font-family: Menlo, monospace;
   font-size: 12px;
   padding: 0px 3px;
   background: white;
@@ -1037,7 +1044,7 @@ ul.site li a {
   About
 ---------------------------------------------*/
 
-.about {
+#container .about {
   width: 960px;
   margin: 30px auto;
   background: white;
