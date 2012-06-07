@@ -1,4 +1,4 @@
-// Github.js 0.4.0
+// Github.js 0.5.1
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -13,18 +13,30 @@
     // Util
     // =======
 
-    function _request(method, path, data, cb) {
-      function headers() {
-        return options.auth == 'oauth'
-               ? { Authorization: 'token '+ options.token }
-               : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password) }
-      }
+    function headers() {
+      return options.auth == 'oauth'
+             ? { Authorization: 'token '+ options.token, Accept: 'application/vnd.github.raw' }
+             : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password) }
+    }
 
+    function _request(method, path, data, cb) {
       $.ajax({
         type: method,
         url: API_URL + path,
         data: JSON.stringify(data),
         dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded',
+        success: function(res) { cb(null, res); },
+        error: function(err) { cb(err); },
+        headers : headers()
+      });
+    }
+
+    function _raw_request(method, path, data, cb) {
+      $.ajax({
+        type: method,
+        url: API_URL + path,
+        data: JSON.stringify(data),
         contentType: 'application/x-www-form-urlencoded',
         success: function(res) { cb(null, res); },
         error: function(err) { cb(err); },
@@ -78,7 +90,7 @@
       // -------
 
       this.getBlob = function(sha, cb) {
-        _request("GET", repoPath + "/git/blobs/" + sha, null, function(err, res) {
+        _raw_request("GET", repoPath + "/git/blobs/" + sha, null, function(err, res) {
           cb(err, res);
         });
       };
@@ -199,19 +211,7 @@
         that.getSha(branch, path, function(err, sha) {
           if (!sha) return cb("not found", null);
 
-          that.getBlob(sha, function(err, blob) {
-            function decode(blob) {
-              if (blob.content) {
-                var data = blob.encoding == 'base64' ?
-                    atob(blob.content.replace(/\s/g, '')) :
-                    blob.content;
-                return data;
-              } else {
-                return "";
-              }
-            }
-            cb(null, decode(blob));
-          });
+          that.getBlob(sha, cb);
         });
       };
 
