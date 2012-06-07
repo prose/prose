@@ -848,7 +848,7 @@ ul.site li a {
   }
 
 .document-menu-content .state .button.save { 
-  background: rgba(0,0,0, 0.1); 
+  background: rgba(0,0,0, 0.2); 
   width: 100px; 
   text-align: center;
   line-height: 40px;
@@ -859,7 +859,7 @@ ul.site li a {
   margin-left: 1px;
   }
 
-.document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.2); }
+.document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.4); }
 
 .document-menu-content .save-state {
   margin-left: 20px;
@@ -895,7 +895,7 @@ ul.site li a {
 }
 
 .document-menu-content .state .button:hover {
-  background-color: rgba(0,0,0, 0.1);
+  background-color: rgba(0,0,0, 0.4);
 }
 
 .document-menu-content .state .button.inactive, .document-menu-content .state .button.inactive:hover {
