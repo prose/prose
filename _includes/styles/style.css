@@ -879,6 +879,10 @@ ul.site li a {
   box-shadow: none;
 }
 
+.document-menu-content .state .button.error, .document-menu-content .state .button.error:hover {
+  color: red;
+}
+
 .document-menu-content .state .options {
   background: rgba(0,0,0, 0.3);
   color: #fff;

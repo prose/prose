@@ -8,8 +8,7 @@ views.Post = Backbone.View.extend({
     'click .save': '_save',
     'click .toggle.meta': '_toggleMeta',
     'click a.toggle.preview': '_togglePreview',
-    'focus input': '_makeDirty',
-    'focus textarea': '_makeDirty',
+    'change input': '_makeDirty',
     'change #post_published': 'updateMetaData',
     'click .delete': '_delete',
     'click .toggle-options': '_toggleOptions'
@@ -49,7 +48,7 @@ views.Post = Backbone.View.extend({
   _makeDirty: function(e) {
     this.dirty = true;
     this.$('.button.save').html('SAVE');
-    this.$('.button.save').removeClass('inactive');
+    this.$('.button.save').removeClass('inactive error');
     // this.updateMetaData();
   },
   
@@ -130,25 +129,26 @@ views.Post = Backbone.View.extend({
 
     function save() {
       if (that.updateMetaData()) {
+        that.$('.button.save').addClass('inactive');
+        that.$('.button.save').html('SAVING ...');
+        that.$('.document-menu-content .options').hide();
+
         savePost(app.state.user, app.state.repo, app.state.branch, that.model.path, that.model.file, that.rawMetadata, that.editor.getValue(), message, function(err) {
           that.dirty = false;
           that.model.persisted = true;
           that.updateURL();
           $('.button.save').html('SAVED');
           $('.button.save').addClass('inactive');
+          $('.button.save').removeClass('error');
         });
       } else {
-        $('.button.save').html('! Metadata');
+        $('.button.save').addClass('error').html('! Metadata');
       }
     }
 
-    this.$('.button.save').addClass('inactive');
-    this.$('.button.save').html('SAVING ...');
-    this.$('.document-menu-content .options').hide();
-
     if (file === this.model.file) return save();    
     this.updateFilename(file, function(err) {
-      err ? $('.button.save').html('! Filename') : save();
+      err ? $('.button.save').addClass('error').html('! Filename') : save();
     });
   },
 
