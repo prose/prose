@@ -317,7 +317,7 @@ body.start {
 }
 
 #start .owner {
-  font-family: "Menlo", monospace;
+  font-family: 'OpenSans', sans-serif;
   font-size: 17px;
   padding-top: 30px;
   padding-bottom: 0px;
@@ -339,7 +339,7 @@ body.start {
 }
 
 .repos > a {
-  font-family: "Menlo", monospace;
+  font-family: 'OpenSans', sans-serif;
   overflow: hidden;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
 
@@ -579,7 +579,7 @@ ul.site li a {
   margin: auto;
   font-size: 12px;
   text-align: center;
-  font-family: "Menlo", monospace;
+  font-family: 'OpenSans', sans-serif;
   overflow: hidden;
   word-wrap: break-word;
   color: #526066;
@@ -755,7 +755,7 @@ ul.site li a {
 }
 
 .document-menu-content .filename input {
-  font-family: "Menlo", monospace;
+  font-family: 'OpenSans', sans-serif;
   background: transparent;
   border: none;
   height: 40px;
