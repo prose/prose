@@ -929,10 +929,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="328.17599"
-     inkscape:cy="759.2428"
+     inkscape:cx="200.53355"
+     inkscape:cy="683.83658"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer4"
      showgrid="false"
      showguides="false"
      inkscape:guide-bbox="true"
@@ -2827,22 +2827,7 @@
            height="715"
            width="620"
            id="rect8240-1" /></flowRegion><flowPara
-         id="flowPara8258-4">map-site</flowPara></flowRoot>    <text
-       sodipodi:linespacing="150%"
-       id="text5281"
-       y="214.66895"
-       x="259.79492"
-       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:center;text-decoration:none;line-height:150%;letter-spacing:0px;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:middle;baseline-shift:baseline;color:#000000;fill:#f5f8fa;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.34959221;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Menlo;-inkscape-font-specification:Menlo"
-       xml:space="preserve"
-       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders/posts.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         style="fill:#f5f8fa;fill-opacity:1"
-         id="tspan5283"
-         y="214.66895"
-         x="259.79492"
-         sodipodi:role="line">sheets/</tspan></text>
-    <rect
+         id="flowPara8258-4">map-site</flowPara></flowRoot>    <rect
        style="color:#000000;fill:#f0f0f0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate"
        id="rect9443-9"
        width="126.21856"
