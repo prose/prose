@@ -102,14 +102,13 @@ body.post #header {
 #header .navigation > * {
   display: block;
   position: relative;
-  padding-right: 15px;
-  padding-left: 28px;
+  padding-right: 0px;
+  padding-left: 20px;
   margin-right: 30px;
   float: left;
 }
 
 #header .navigation a {
-  background-color: #c9d1d6;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
@@ -117,15 +116,40 @@ body.post #header {
 
 #header .navigation .root {
   background-image:url('images/sprite.png');
-  background-position: 10px -240px;
+  background-position: 0px -240px;
   background-repeat: no-repeat;
-}
-
+  }
+  #header .navigation div.root {
+	  background-position-y: -650px;
+    }
+    
 #header .navigation .repo {
   background-image:url('images/sprite.png');
-  background-position: 10px -340px;
+  background-position: 0px -340px;
   background-repeat: no-repeat;
-}
+  }
+  #header .navigation div.repo {
+	  background-position-y: -750px;
+    }
+
+#header .navigation .path {
+  background-image:url('images/sprite.png');
+  background-position: 0px -340px;
+  background-repeat: no-repeat;
+  }
+  #header .navigation div.path {
+	  background-position-y: -750px;
+    }
+
+
+#header .navigation .file {
+  background-image:url('images/sprite.png');
+  background-position: 0px -440px;
+  background-repeat: no-repeat;
+  }
+  #header .navigation div.file {
+	  background-position-y: -850px;
+    }
 
 #header .navigation .file::before, #header .navigation .repo::before, #header .navigation .path::before {
   content:"";
@@ -138,18 +162,6 @@ body.post #header {
   top: 0px;
   width: 30px;
   height: 30px;
-}
-
-#header .navigation .path {
-  background-image:url('images/sprite.png');
-  background-position: 10px -340px;
-  background-repeat: no-repeat;
-}
-
-#header .navigation .file {
-  background-image:url('images/sprite.png');
-  background-position: 10px -440px;
-  background-repeat: no-repeat;
 }
 
 #header .user-status {
@@ -174,6 +186,7 @@ body.post #header {
 
 #header .user-status .logout {
   display: inline-block;
+  background-color: #c9d1d6;
   margin-top: 15px;
   margin-left: 5px;
   width: 30px;
@@ -337,16 +350,17 @@ body.start {
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
 
   /*background: rgba(255,255,255, 0.6);*/
-  background: #E0E7EB;
+  background:url('images/sprite.png') -450px -640px no-repeat;
+  background-color: #E0E7EB;
   
-  -moz-transition: background 200ms linear;
-  -o-transition: background 200ms linear;
-  -webkit-transition: background 200ms linear;
-  transition: background 200ms linear;
+  -moz-transition: background-color 200ms linear;
+  -o-transition: background-color 200ms linear;
+  -webkit-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
 
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -moz-border-radius: 3px 3px 0px 3px;
+  -webkit-border-radius: 3px 3px 0px 3px;
+  border-radius: 3px 3px 0px 3px;
 
   text-align: center;
   padding: 10px;
@@ -358,11 +372,10 @@ body.start {
   color: #444;
   display: block;
   float: left;
-  border: 1px solid #c3ccd0;
 }
 
 .repos > a:hover {
-  background: #f0f5f7;
+  background-color: #f0f5f7;
 }
 
 .repos > a .name {
@@ -383,13 +396,17 @@ body.start {
 
 .repos a .branches {
   position: absolute;
-  background: #f0f5f7;
+  background:url('images/sprite.png') -450px -640px no-repeat;
+  background-color: #f0f5f7;
+  -moz-border-radius: 3px 3px 0px 3px;
+  -webkit-border-radius: 3px 3px 0px 3px;
+  border-radius: 3px 3px 0px 3px;
   font-size: 12px;
   text-align: left;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  top: -10px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: 0px;
   padding: 10px;
   overflow: auto;
 }
@@ -420,9 +437,10 @@ body.start {
 }
 
 .loading-branches {
+  position: absolute;
+  margin: auto;
+  left: 0; right: 0; top: 0; bottom: 0;
   background: url('images/ajax-loader.gif') no-repeat;
-  margin-top: 80px;
-  margin-left: 58px;
   height: 40px;
   width: 44px;
   color: #444;
@@ -604,15 +622,9 @@ ul.site li a {
     background-color: #f0f5f7; 
     }
 
-.post-listing a.link.new {
-  background: none;
-  width: 138px;
-  height: 178px;
-  border: 1px dashed #ccc;
-}
-
 .post-listing a.link.new .button {
-  background: #516066;
+  background: #516066 url('images/sprite.png') -440px -90px no-repeat;
+  text-indent: 10px;
   padding: 5px;
   margin: 70px 10px;
   -moz-border-radius: 5px;
@@ -624,7 +636,7 @@ ul.site li a {
   font-weight: bold;
   color: #fff;
   }
-  .post-listing a.link.new .button:hover { background: #475459;}
+  .post-listing a.link.new .button:hover { background: #475459 url('images/sprite.png') -440px -90px no-repeat; }
 /* ------------------------------------------
   Post
 ---------------------------------------------*/

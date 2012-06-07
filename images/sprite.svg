@@ -22,6 +22,18 @@
   <defs
      id="defs13671">
     <linearGradient
+       inkscape:collect="always"
+       id="linearGradient8028">
+      <stop
+         style="stop-color:#c3ccd0;stop-opacity:1"
+         offset="0"
+         id="stop8030" />
+      <stop
+         style="stop-color:#f0f5f7;stop-opacity:0;"
+         offset="1"
+         id="stop8032" />
+    </linearGradient>
+    <linearGradient
        id="linearGradient6852"
        inkscape:collect="always">
       <stop
@@ -1170,6 +1182,15 @@
        y1="345"
        x2="160"
        y2="355" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient8028"
+       id="linearGradient8034"
+       x1="125.5"
+       y1="277.51022"
+       x2="125.5"
+       y2="299.05472"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -1179,15 +1200,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="404.60692"
-     inkscape:cy="681.64897"
+     inkscape:cx="138.06324"
+     inkscape:cy="404.33357"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1372"
      inkscape:window-height="861"
-     inkscape:window-x="258"
-     inkscape:window-y="78"
+     inkscape:window-x="587"
+     inkscape:window-y="18"
      inkscape:window-maximized="0"
      showguides="false"
      fit-margin-top="0"
@@ -2178,6 +2199,68 @@
          clip-path="none"
          d="m 823,-112.13782 c -1.385,0 -2.5,1.115 -2.5,2.5 l 0,174 c 0,1.385 1.115,2.5 2.5,2.5 l 12.5,0 21.5,0 87.5,0 c 2.77,0 4.72437,-2.24375 5,-5 l 0,-5 0,-52.5 c 0,-2 1,-3 2,-4 l 6,-6 c 1,-1 2,-2 2,-4 l 0,-41 c 0,-2 -1,-3 -2,-4 l -6,-6 c -1,-1 -2.02666,-2.00018 -2,-4 l 0,-37.5 0,-5 c 0,-2.77 -2.23,-5 -5,-5 l -87.5,0 -21.5,0 -12.5,0 z"
          id="path6278" />
+    </g>
+    <g
+       style="display:inline"
+       id="g6432"
+       transform="translate(570,255)"
+       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders/home.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <g
+         id="g5608">
+        <path
+           style="color:#000000;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#c3ccd0;stroke-width:1;stroke-opacity:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+           d="M 455.5 640.5 C 452.73 640.5 450.5 642.73 450.5 645.5 L 450.5 814.5 C 450.5 817.27 452.73 819.5 455.5 819.5 L 503.1875 819.5 L 584.5 819.5 L 589.5 819.5 L 589.5 814.5 L 589.5 748.6875 L 589.5 645.5 C 589.5 642.73 587.27 640.5 584.5 640.5 L 455.5 640.5 z "
+           transform="translate(-420,-507.63782)"
+           id="rect5600" />
+        <path
+           style="color:#000000;fill:url(#linearGradient8034);fill-opacity:1;fill-rule:nonzero;stroke:#c3ccd0;stroke-width:1;stroke-opacity:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+           d="m 35.5,283.5 c -2.77,0 -5,2.23 -5,5 l 0,6 c 0,2.77 2.23,5 5,5 l 35,0 94,0 5,0 0,-5 0,-4 0,-7 -5,0 -94,0 z"
+           transform="translate(0,12.362183)"
+           id="rect5378"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ssssccccccccs" />
+        <path
+           id="path5383"
+           d="m 35.5,299.86218 c -2.77,0 -5,0.605 -5,3 l 0,2 c 0.0625,2.3325 2.23,3 5,3 l 35,0 94,0 5,0 0,-6 0,1 0,-3 -5,0 -94,0 z"
+           style="color:#000000;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#c3ccd0;stroke-width:1;stroke-opacity:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccccccccc" />
+      </g>
+    </g>
+    <rect
+       style="color:#000000;fill:#c3ccd0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.28068599;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5385"
+       width="140"
+       height="1"
+       x="600"
+       y="558.36218" />
+    <path
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#c9d1d6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+       d="m 152.75,507.36218 c -0.97539,0 -2.75,1 -2.75,1 l 0,9 5,0 0,1 1,0 0,-1 5,0 0,-9 c 0,0 -1.77461,-1 -2.75,-1 -0.97539,0 -2.75,1 -2.75,1 0,0 -1.77461,-1 -2.75,-1 z"
+       id="path8807"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="sccccccccscs" />
+    <path
+       style="color:#000000;fill:#c9d1d6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 151,607.36218 0,11 9,0 0,-8 -3,-3 z"
+       id="path8809"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc" />
+    <g
+       transform="translate(-41,383.36218)"
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/Users/saman/work_repos/poole/images/renders/home.png"
+       style="fill:#c9d1d6;fill-opacity:1;display:inline"
+       id="g8811">
+      <path
+         sodipodi:nodetypes="ccccccccccccccccccc"
+         inkscape:connector-curvature="0"
+         id="path8813"
+         d="m 191,24 0,8 8,0 0,-8 z m 7,9 0,0 -7,0 0,1 8,0 0,-1 z m 0,2 0,0 -7,0 0,1 8,0 0,-1 z"
+         style="color:#000000;fill:#c9d1d6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     </g>
   </g>
 </svg>
