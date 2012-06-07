@@ -746,7 +746,6 @@ ul.site li a {
   background-color: rgba(0,0,0, 0.6);
 }
 
-
 .document-menu-content a {
   color: #E7EEF2;
 }
@@ -781,7 +780,6 @@ ul.site li a {
   border-radius: 5px;
 }
 
-
 .document-menu-content .filename .state {
   position: absolute;
   left: 420px;
@@ -803,7 +801,6 @@ ul.site li a {
   background-image:url('images/sprite.png');
   background-position: -300px -300px;
 }
-
 
 .document-menu-content .filename input:hover, .document-menu-content .filename input:focus {
   background-color: rgba(0,0,0, 0.2);
@@ -843,10 +840,10 @@ ul.site li a {
   background: rgba(0,0,0, 0.4);
 }
 
-.document-menu-content .save-state {
+.document-menu-content .menu-item.save-state {
 	background: none;
   }
-  .document-menu-content .save-state:hover {
+  .document-menu-content .menu-item.save-state:hover {
   background: none;
   }
 
@@ -859,6 +856,7 @@ ul.site li a {
   margin: 0px;
   height: 40px;
   border-radius: 0px 4px 4px 0px;
+  margin-left: 1px;
   }
 
 .document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.2); }
@@ -886,10 +884,14 @@ ul.site li a {
 }
 
 .document-menu-content .state .button.toggle-options {
-  background-image:url('images/sprite.png');
-  background-position: -288px -442px;
+  background-image: url('images/sprite.png');
+  background-position: -288px -437px;
   width: 50px;
   padding: 0;
+  height: 40px;
+  margin: 0;
+  border-radius: 3px 0 0 3px;
+  background-color: rgba(0, 0, 0, .2);
 }
 
 .document-menu-content .state .button:hover {
