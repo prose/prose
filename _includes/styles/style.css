@@ -424,9 +424,10 @@ body.start {
 }
 
 .loading-branches {
+  position: absolute;
+  margin: auto;
+  left: 0; right: 0; top: 0; bottom: 0;
   background: url('images/ajax-loader.gif') no-repeat;
-  margin-top: 80px;
-  margin-left: 58px;
   height: 40px;
   width: 44px;
   color: #444;
