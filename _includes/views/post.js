@@ -11,7 +11,6 @@ views.Post = Backbone.View.extend({
     'focus input': '_makeDirty',
     'focus textarea': '_makeDirty',
     'change #post_published': 'updateMetaData',
-    'change input.filename': '_updateFilename',
     'click .delete': '_delete',
     'click .toggle-options': '_toggleOptions'
   },
@@ -34,30 +33,17 @@ views.Post = Backbone.View.extend({
     router.navigate([app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file].join('/'), false);
   },
 
-  _updateFilename: function(e) {
-    var file = $(e.currentTarget).val();
+  updateFilename: function(file, cb) {
     var that = this;
     
-    // Indicate error etc.
-    function updateState(state) {
-      that.$('.filename .state').removeClass('success error loading');
-      that.$('.filename .state').addClass(state);
-
-      _.delay(function() {
-        that.$('.filename .state').removeClass('success error loading');
-      }, 3000);
-    }
-
     if (this.model.persisted) {
-      if (!_.validFilename(file)) return updateState('error');
-      console.log('should not be reached');
-      updateState('loading');
+      if (!_.validFilename(file)) return cb('error');
       movePost(app.state.user, app.state.repo, app.state.branch, this.model.path + "/" + this.model.file, this.model.path + "/" + file, _.bind(function(err) {
-        updateState(err ? 'error' : 'success');
         if (!err) this.updateURL();
+        err ? cb('error') : cb(null)
       }, this));
     }
-    this.model.file = $(e.currentTarget).val();
+    this.model.file = file;
   },
 
   _makeDirty: function(e) {
@@ -83,8 +69,6 @@ views.Post = Backbone.View.extend({
   _toggleMeta: function(e) {
     if (e) e.preventDefault();
     $('.toggle.meta').toggleClass('active');
-    // this.updateMetaData();
-
     $('.metadata').toggle();
     return false;
   },
@@ -96,6 +80,14 @@ views.Post = Backbone.View.extend({
       key('ctrl+shift+p', _.bind(function() { this._togglePreview(); return false; }, this));
       key('ctrl+shift+m', _.bind(function() { this._toggleMeta(); return false; }, this));
       window.shortcutsRegistered = true;
+    }
+  },
+
+  parseMetadata: function(metadata) {
+    try {
+      return jsyaml.load(this.rawMetadata);
+    } catch(err) {
+      return null;
     }
   },
 
@@ -111,12 +103,14 @@ views.Post = Backbone.View.extend({
         return yamlStr + "\npublished: " + !!published;
       }
     }
-    this.rawMetadata = this.metadataEditor.getValue();
-    published = this.$('#post_published').prop('checked');
 
-    this.rawMetadata = updatePublished(this.rawMetadata, published);
-    try {
-      this.model.metadata = jsyaml.load(this.rawMetadata);
+    this.rawMetadata = this.metadataEditor.getValue();
+    var published = this.$('#post_published').prop('checked');
+    var metadata = this.parseMetadata(this.rawMetadata);
+
+    if (metadata) {
+      this.model.metadata = metadata;
+      this.rawMetadata = updatePublished(this.rawMetadata, published);
       this.metadataEditor.setValue(this.rawMetadata);
       if (this.model.metadata.published) {
         $('#post').addClass('published');
@@ -124,29 +118,38 @@ views.Post = Backbone.View.extend({
         $('#post').removeClass('published');
       }
       return true;
-    } catch(err) {
+    } else {
       return false;
     }
   },
+  
 
   updatePost: function(published, message) {
-    if (this.updateMetaData(published)) {
-      this.$('.button.save').addClass('inactive');
-      this.$('.button.save').html('SAVING ...');
-      this.$('.document-menu-content .options').hide();
+    var file = $('input.filename').val();
+    var that = this;
 
-      savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, this.rawMetadata, this.editor.getValue(), message, _.bind(function(err) {
-        this.dirty = false;
-        this.model.persisted = true;
-        this.updateURL();
-        $('.button.save').html('SAVED');
-        $('.button.save').addClass('inactive');
-      }, this));
-    } else {
-      // TODO: do pretty messaging
-      alert('Invalid Metadata. Cannot save.');
+    function save() {
+      if (that.updateMetaData()) {
+        savePost(app.state.user, app.state.repo, app.state.branch, that.model.path, that.model.file, that.rawMetadata, that.editor.getValue(), message, function(err) {
+          that.dirty = false;
+          that.model.persisted = true;
+          that.updateURL();
+          $('.button.save').html('SAVED');
+          $('.button.save').addClass('inactive');
+        });
+      } else {
+        $('.button.save').html('! Metadata');
+      }
     }
 
+    this.$('.button.save').addClass('inactive');
+    this.$('.button.save').html('SAVING ...');
+    this.$('.document-menu-content .options').hide();
+
+    if (file === this.model.file) return save();    
+    this.updateFilename(file, function(err) {
+      err ? $('.button.save').html('! Filename'); : save();
+    });
   },
 
   keyMap: function() {
