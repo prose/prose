@@ -101,7 +101,7 @@ body.post #header {
 #header .navigation > * {
   display: block;
   position: relative;
-  padding-right: 0px;
+  padding-right: 5px;
   padding-left: 20px;
   margin-right: 30px;
   float: left;
@@ -115,7 +115,7 @@ body.post #header {
 
 #header .navigation .root {
   background-image:url('images/sprite.png');
-  background-position: 0px -240px;
+  background-position: 6px -240px;
   background-repeat: no-repeat;
   }
   #header .navigation div.root {
@@ -124,7 +124,7 @@ body.post #header {
     
 #header .navigation .repo {
   background-image:url('images/sprite.png');
-  background-position: 0px -340px;
+  background-position: 4px -340px;
   background-repeat: no-repeat;
   }
   #header .navigation div.repo {
@@ -133,7 +133,7 @@ body.post #header {
 
 #header .navigation .path {
   background-image:url('images/sprite.png');
-  background-position: 0px -340px;
+  background-position: 4px -340px;
   background-repeat: no-repeat;
   }
   #header .navigation div.path {
@@ -143,7 +143,7 @@ body.post #header {
 
 #header .navigation .file {
   background-image:url('images/sprite.png');
-  background-position: 0px -440px;
+  background-position: 3px -440px;
   background-repeat: no-repeat;
   }
   #header .navigation div.file {
@@ -169,23 +169,19 @@ body.post #header {
   right: 0px;
   height: 60px;
   line-height: 30px;
-  color: #888;
-  font-size: 16px;
   padding: 0;
   margin: 0;
-  text-transform: none;
-  font-weight: normal;
-}
+ }
 
 #header .user-status img {
   float: left;
   margin-right: 10px;
   margin-top: 15px;
+  border: 1px solid #C3CCD0;
 }
 
 #header .user-status .logout {
   display: inline-block;
-  background-color: #c9d1d6;
   margin-top: 15px;
   margin-left: 5px;
   width: 30px;
@@ -194,15 +190,14 @@ body.post #header {
   overflow: hidden;
   background-image: url('images/sprite.png');
   background-position: -441px -41px;
+  background-repeat: no-repeat;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-}
-
-
-#header .user-status .logout:hover {
-  background-color: #c9d1d6; 
-}
+  }
+  #header .user-status .logout:hover {
+    background-color: #c9d1d6; 
+    }
  
 #main {
   padding-top: 60px;
@@ -417,12 +412,15 @@ body.start {
 }
 
 .repos a .branches .not-jekyll {
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
   color: #C52528;
   text-align: center;
   padding-top: 80px;
   padding-top: 45px;
-  margin-top: 30px;
+  margin: auto;
   overflow: hidden;
+  word-wrap: break-word;
 }
 
   
@@ -592,7 +590,6 @@ ul.site li a {
   word-wrap: break-word;
   color: #526066;
 }
-
 .post-listing a.link.folder:hover .filename {
 }
 
@@ -1091,7 +1088,7 @@ ul.site li a {
 }
 
 .help .articles .article .descr {
-  color: #888;
+  color: #7A8387;
   font-size: 12px;
 }
 
@@ -1111,21 +1108,12 @@ ul.site li a {
 
 #notification .notification{
   text-align: center;
-  width: 300px;
-  margin: 200px auto;
-  padding: 30px;
+  width: 600px;
+  margin: 60px auto;
+  padding: 20px;
   font-size: 30px;
-  color: rgba(255, 255, 255, 0.95);
   line-height: 34px;
-  font-weight: normal;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.45);
-}
-
-#notification .error {
-  background: #E73C58;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  font-weight: bold;
 }
 
 ul.form li {
