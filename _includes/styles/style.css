@@ -10,7 +10,7 @@ html,body {
 
 body,
 textarea,
-input { font: 13px/20px 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+input { font: 13px/20px 'OpenSans', sans-serif; }
 
 a {
   color: #526066;
@@ -27,21 +27,20 @@ a:focus {
 
 h1,h2,h3,h4,h5,h6 {
   margin: 0;
-  text-rendering: optimizelegibility;
   }
 h4, h5, h6 {
   line-height: 18px;
   }
 
 h1 { font-size: 24px; line-height: 32px; }
-h1 small { font-size: 13px; font-weight: 500; }
+h1 small { font-size: 13px; font-weight: normal; }
 h2 { font-size: 24px; line-height: 28px; }
 h2 small { font-size: 16px; }
-h3 { line-height: 22px; font-size: 16px; font-weight: 500; }
+h3 { line-height: 22px; font-size: 16px; font-weight: normal; }
 h3 small { font-size: 14px; font-weight: normal; }
 h4 { font-size: 14px; }
 h5 { font-size: 13px; }
-h6 { font-size: 11px; font-weight: 500; }
+h6 { font-size: 11px; font-weight: normal; }
 
 
 /* Use border-box box model */
@@ -259,8 +258,8 @@ body:before {/* thanks to Maleika (Kohoutec)*/
 #start .splash {
   text-align: center;
   background: #E0E7EB;
-  font-family: 'Palatino Linotype', 'Adobe Garamond Pro', "Times New Roman", serif;
-  font-weight: 400;
+  font-family: 'OpenSans', sans-serif;
+  font-weight: normal;
   font-size: 17px;
   line-height: 1.3em;
   -moz-border-radius: 5px 5px 0 0;
@@ -293,7 +292,7 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; 
+  font-family:'OpenSans', sans-serif; 
   text-transform: uppercase;
   font-size: 11px;
   font-weight: bold;
@@ -392,6 +391,7 @@ body.start {
   top: -10px;
   padding: 10px;
   overflow: auto;
+  border-radius: 3px;
 }
 
 .repos a .branches .label {
@@ -910,7 +910,7 @@ ul.site li a {
   }
   .state p {
     color: #526066;
-    font-weight: 500;
+    font-weight: normal;
     font-size: 11px;
     line-height: 35px;
     margin: 0;
@@ -970,8 +970,8 @@ ul.site li a {
 .post-content {
   background: #fff;
   padding: 100px;
-  font-family: 'Palatino Linotype', 'Adobe Garamond Pro', "Times New Roman", serif;
-  font-weight: 400;
+  font-family: 'OpenSans', sans-serif;
+  font-weight: normal;
   font-size: 17px;
   line-height: 1.3em;
   border: 1px solid #C3CCD0;
@@ -987,7 +987,7 @@ ul.site li a {
   font-size: 12px;
   text-transform: uppercase;
   border-top: 1px solid #eee;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'OpenSans', sans-serif;
 }
 
 .post-content a {
@@ -1105,7 +1105,7 @@ ul.site li a {
   font-size: 30px;
   color: rgba(255, 255, 255, 0.95);
   line-height: 34px;
-  font-weight: 500;
+  font-weight: normal;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.45);
 }
 
