@@ -622,15 +622,9 @@ ul.site li a {
     background-color: #f0f5f7; 
     }
 
-.post-listing a.link.new {
-  background: none;
-  width: 138px;
-  height: 178px;
-  border: 1px dashed #ccc;
-}
-
 .post-listing a.link.new .button {
-  background: #516066;
+  background: #516066 url('images/sprite.png') -440px -90px no-repeat;
+  text-indent: 10px;
   padding: 5px;
   margin: 70px 10px;
   -moz-border-radius: 5px;
@@ -642,7 +636,7 @@ ul.site li a {
   font-weight: bold;
   color: #fff;
   }
-  .post-listing a.link.new .button:hover { background: #475459;}
+  .post-listing a.link.new .button:hover { background: #475459 url('images/sprite.png') -440px -90px no-repeat; }
 /* ------------------------------------------
   Post
 ---------------------------------------------*/
