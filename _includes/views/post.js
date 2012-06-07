@@ -49,7 +49,6 @@ views.Post = Backbone.View.extend({
     this.dirty = true;
     this.$('.button.save').html('SAVE');
     this.$('.button.save').removeClass('inactive error');
-    // this.updateMetaData();
   },
   
   _save: function(e) {
@@ -106,6 +105,7 @@ views.Post = Backbone.View.extend({
     this.rawMetadata = this.metadataEditor.getValue();
     var published = this.$('#post_published').prop('checked');
     var metadata = this.parseMetadata(this.rawMetadata);
+    metadata.published = published;
 
     if (metadata) {
       this.model.metadata = metadata;
@@ -134,6 +134,7 @@ views.Post = Backbone.View.extend({
         that.$('.document-menu-content .options').hide();
 
         savePost(app.state.user, app.state.repo, app.state.branch, that.model.path, that.model.file, that.rawMetadata, that.editor.getValue(), message, function(err) {
+          if (err) return $('.button.save').addClass('error').html('! Error');
           that.dirty = false;
           that.model.persisted = true;
           that.updateURL();
