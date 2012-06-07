@@ -719,6 +719,10 @@ ul.site li a {
   margin: 10px 0;
 }
 
+.document-menu-content .menu-item state {
+  background: none;
+}
+
 .document-menu-content .menu-item.preview {
   background-image:url('images/sprite.png');
   background-position: -438px 15px;
@@ -839,7 +843,24 @@ ul.site li a {
   background: rgba(0,0,0, 0.4);
 }
 
-.document-menu-content .save { background: rgba(0,0,0, 0.1); width: 100px; text-align: center; }
+.document-menu-content .save-state {
+	background: none;
+  }
+  .document-menu-content .save-state:hover {
+  background: none;
+  }
+
+.document-menu-content .state .button.save { 
+  background: rgba(0,0,0, 0.1); 
+  width: 100px; 
+  text-align: center;
+  line-height: 40px;
+  margin-left: 1px;
+  margin: 0px;
+  height: 40px;
+  border-radius: 0px 4px 4px 0px;
+  }
+
 .document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.2); }
 
 .document-menu-content .save-state {
@@ -896,7 +917,6 @@ ul.site li a {
   margin-left: 10px;
   padding: 8px;
 }
-
 
 .document .metadata {
   overflow: hidden;
@@ -996,7 +1016,16 @@ ul.site li a {
   line-height: 1.5em;
   border: 1px solid #C3CCD0;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
-}
+  }
+
+.post-content .title { 
+  font-size: 36px; 
+  line-height: 1.5em;
+  margin-bottom: 20px; 
+  font-weight: bold;
+  border-bottom: 1px solid #C3CCD0;
+  padding-bottom: 20px;
+  }
 
 .post-content h1 { font-size: 36px; margin-bottom: 20px;}
 .post-content h2 { font-size: 24px; margin-bottom: 20px;}
@@ -1066,6 +1095,7 @@ ul.site li a {
   margin: 5px 0 4px 0;
   border-top: 1px solid #C3CCD0;
   border-bottom: 0;
+  border-radius: 5px;
 }
 
 /* ------------------------------------------
