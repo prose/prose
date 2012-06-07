@@ -10,7 +10,7 @@ views.Post = Backbone.View.extend({
     'click a.toggle.preview': '_togglePreview',
     'focus input': '_makeDirty',
     'focus textarea': '_makeDirty',
-    'change #post_published': '_makeDirty',
+    'change #post_published': 'updateMetaData',
     'change input.filename': '_updateFilename',
     'click .delete': '_delete',
     'click .toggle-options': '_toggleOptions'
@@ -64,7 +64,7 @@ views.Post = Backbone.View.extend({
     this.dirty = true;
     this.$('.button.save').html('SAVE');
     this.$('.button.save').removeClass('inactive');
-    this.updateMetaData();
+    // this.updateMetaData();
   },
   
   _save: function(e) {
@@ -76,14 +76,14 @@ views.Post = Backbone.View.extend({
   _togglePreview: function(e) {
     if (e) e.preventDefault();
     $('.toggle.preview').toggleClass('active');
-    this.$('.post-content').html(this.converter.makeHtml(this.editor.getValue()));
+    this.$('.post-content').html(marked(this.editor.getValue()));
     $('.document .surface').toggleClass('preview');
   },
 
   _toggleMeta: function(e) {
     if (e) e.preventDefault();
     $('.toggle.meta').toggleClass('active');
-    this.updateMetaData();
+    // this.updateMetaData();
 
     $('.metadata').toggle();
     return false;
@@ -97,20 +97,27 @@ views.Post = Backbone.View.extend({
       key('ctrl+shift+m', _.bind(function() { this._toggleMeta(); return false; }, this));
       window.shortcutsRegistered = true;
     }
-    this.converter = new Showdown.converter();
   },
 
-  updateMetaData: function(published) {
-    if (published !== undefined) this.model.metadata.published = published;
-    this.model.metadata.published = this.$('#post_published').prop('checked');
-    var rawMetadata = this.metadataEditor.getValue();
+  // TODO: remove comments and simplify after we are sure that we don't want to parse metadata
+  updateMetaData: function() {
 
+    // Update published
+    function updatePublished(yamlStr, published) {
+      var regex = /published: (false|true)/;
+      if (yamlStr.match(regex)) {
+        return yamlStr.replace(regex, "published: " + !!published);
+      } else {
+        return yamlStr + "\npublished: " + !!published;
+      }
+    }
+    this.rawMetadata = this.metadataEditor.getValue();
+    published = this.$('#post_published').prop('checked');
+
+    this.rawMetadata = updatePublished(this.rawMetadata, published);
     try {
-      this.model.metadata = jsyaml.load(rawMetadata);
-      rawMetadata = _.toYAML(this.model.metadata);
-
-      $('#raw_metadata').val(rawMetadata);
-
+      this.model.metadata = jsyaml.load(this.rawMetadata);
+      this.metadataEditor.setValue(this.rawMetadata);
       if (this.model.metadata.published) {
         $('#post').addClass('published');
       } else {
@@ -127,7 +134,8 @@ views.Post = Backbone.View.extend({
       this.$('.button.save').addClass('inactive');
       this.$('.button.save').html('SAVING ...');
       this.$('.document-menu-content .options').hide();
-      savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.toYAML(this.model.metadata), this.editor.getValue(), message, _.bind(function(err) {
+
+      savePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, this.rawMetadata, this.editor.getValue(), message, _.bind(function(err) {
         this.dirty = false;
         this.model.persisted = true;
         this.updateURL();
@@ -136,7 +144,7 @@ views.Post = Backbone.View.extend({
       }, this));
     } else {
       // TODO: do pretty messaging
-      alert('Cannot save. Metadata is invalid');
+      alert('Invalid Metadata. Cannot save.');
     }
 
   },
@@ -162,22 +170,21 @@ views.Post = Backbone.View.extend({
     setTimeout(function() {
 
       that.metadataEditor = CodeMirror.fromTextArea(document.getElementById('raw_metadata'), {
-        // mode: 'markdown',
+        mode: 'yaml',
+        theme: 'poole-dark',
         lineWrapping: true,
         extraKeys: that.keyMap(),
-        matchBrackets: true,
-        theme: 'default',
         onChange: _.bind(that._makeDirty, that)
       });
 
       $('#post .metadata').hide();
 
       that.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
-        // mode: 'markdown',
+        mode: 'markdown',
         lineWrapping: true,
         extraKeys: that.keyMap(),
         matchBrackets: true,
-        theme: 'default',
+        theme: 'poole-bright',
         onChange: _.bind(that._makeDirty, that)
       });
     }, 100);

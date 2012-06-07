@@ -5,13 +5,14 @@
 {% include vendor/backbone-min.js %}
 {% include vendor/js-yaml.min.js %}
 {% include vendor/chrono.js %}
-{% include vendor/showdown.js %}
+{% include vendor/marked.js %}
 {% include vendor/base64.js %}
 {% include vendor/github.js %}
 {% include vendor/keymaster.js %}
 {% include vendor/codemirror/codemirror.js %}
 {% include vendor/codemirror/xml.js %}
 {% include vendor/codemirror/markdown.js %}
+{% include vendor/codemirror/yaml.js %}
 {% include vendor/jquery.cookie.js %}
 {% include vendor/bootstrap-dropdown.js %}
 
@@ -56,7 +57,6 @@ function confirmExit() {
     return confirm("You have unsaved changes. Are you sure you want to leave?");
   return true;
 }
-
 
 
 (function(config, models, views, routers, utils, templates) {
