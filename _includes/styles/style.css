@@ -337,16 +337,17 @@ body.start {
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
 
   /*background: rgba(255,255,255, 0.6);*/
-  background: #E0E7EB;
+  background:url('images/sprite.png') -450px -640px no-repeat;
+  background-color: #E0E7EB;
   
-  -moz-transition: background 200ms linear;
-  -o-transition: background 200ms linear;
-  -webkit-transition: background 200ms linear;
-  transition: background 200ms linear;
+  -moz-transition: background-color 200ms linear;
+  -o-transition: background-color 200ms linear;
+  -webkit-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
 
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -moz-border-radius: 3px 3px 0px 3px;
+  -webkit-border-radius: 3px 3px 0px 3px;
+  border-radius: 3px 3px 0px 3px;
 
   text-align: center;
   padding: 10px;
@@ -358,11 +359,10 @@ body.start {
   color: #444;
   display: block;
   float: left;
-  border: 1px solid #c3ccd0;
 }
 
 .repos > a:hover {
-  background: #f0f5f7;
+  background-color: #f0f5f7;
 }
 
 .repos > a .name {
@@ -383,13 +383,17 @@ body.start {
 
 .repos a .branches {
   position: absolute;
-  background: #f0f5f7;
+  background:url('images/sprite.png') -450px -640px no-repeat;
+  background-color: #f0f5f7;
+  -moz-border-radius: 3px 3px 0px 3px;
+  -webkit-border-radius: 3px 3px 0px 3px;
+  border-radius: 3px 3px 0px 3px;
   font-size: 12px;
   text-align: left;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  top: -10px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: 0px;
   padding: 10px;
   overflow: auto;
 }
