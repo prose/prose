@@ -6,6 +6,7 @@ html,body {
   background: #e7eef2;
   -webkit-font-smoothing: antialiased;
   height: 100%;
+  line-height: 1.5em;
   }
 
 body,
@@ -29,14 +30,13 @@ h1,h2,h3,h4,h5,h6 {
   margin: 0;
   }
 h4, h5, h6 {
-  line-height: 18px;
   }
 
-h1 { font-size: 24px; line-height: 32px; }
+h1 { font-size: 24px; }
 h1 small { font-size: 13px; font-weight: normal; }
-h2 { font-size: 24px; line-height: 28px; }
+h2 { font-size: 24px; }
 h2 small { font-size: 16px; }
-h3 { line-height: 22px; font-size: 16px; font-weight: normal; }
+h3 { font-size: 16px; font-weight: normal; }
 h3 small { font-size: 14px; font-weight: normal; }
 h4 { font-size: 14px; }
 h5 { font-size: 13px; }
@@ -989,9 +989,35 @@ ul.site li a {
   font-family: 'OpenSans', sans-serif;
   font-weight: normal;
   font-size: 16px;
-  line-height: 1.3em;
+  line-height: 1.5em;
   border: 1px solid #C3CCD0;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-content h1 { font-size: 36px; margin-bottom: 20px;}
+.post-content h2 { font-size: 24px; margin-bottom: 20px;}
+.post-content h3, .post-content h4, .post-content h5, .post-content h6 { 
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  }
+
+.post-content blockquote {
+	padding-left: 19px;
+  border-left: 1px solid #C3CCD0;
+  font-style: italic;
+}
+
+.post-content ul {
+  margin-left: 0px;
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.post-content ol {
+  margin-left: 0px;
+  padding-left: 20px;
+  list-style: decimal;
 }
 
 .post-content img {
@@ -1002,42 +1028,40 @@ ul.site li a {
   margin-top: 30px;
   font-size: 12px;
   text-transform: uppercase;
-  border-top: 1px solid #eee;
-  font-family: 'OpenSans', sans-serif;
+  border-top: 1px solid #C3CCD0;
 }
 
 .post-content a {
-  font-weight: bold;
-}
+  border-bottom: 1px dashed #C3CCD0;}
 
-.post-content .title {
-  font-size: 50px;
-  font-weight: bold;
-  text-align: center;
-  padding-bottom: 60px;
-}
+.post-content p {
+  margin-bottom: 20px;
+  }
 
-.content-preview {
-  font-size: 18px;
-}
-
+.post-content p:last-child {
+  margin-bottom: 20px;
+  }
+  
 .post-content code {
   font-family: Menlo, monospace;
   font-size: 12px;
-  padding: 0px 3px;
-  background: white;
-  border: 1px solid #DDD;
   zoom: 1;
+  color: #E7EEF2;
 }
 
 .post-content pre {
-  padding: 2px 10px 2px 15px;
-  border-left: 4px solid #BBB;
-  margin: 15px;
+  background: #526066;
+  padding: 10px;
 }
 
 .post-content pre code {
   border: none;
+}
+
+.post-content hr {
+  margin: 5px 0 4px 0;
+  border-top: 1px solid #C3CCD0;
+  border-bottom: 0;
 }
 
 /* ------------------------------------------
