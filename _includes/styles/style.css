@@ -1078,19 +1078,20 @@ ul.site li a {
   padding-bottom: 10px;
   }
 
-.post-content h1 { font-size: 36px; margin: 10px 0; }
-.post-content h2 { font-size: 24px; margin: 10px 0; font-weight: bold; padding: 0; }
+.post-content h1 { font-size: 36px; margin: 10px 0 20px 0; }
+.post-content h2 { font-size: 24px; margin: 10px 0 20px 0; font-weight: bold; padding: 0; }
 .post-content h3, .post-content h4, .post-content h5, .post-content h6 { 
   text-transform: none;
   font-size: 18px;
   font-weight: bold;
-  margin: 10px 0;
+  margin: 10px 0 5px 0;
   }
   
 .post-content blockquote {
 	padding-left: 19px;
   border-left: 1px solid #C3CCD0;
   font-style: italic;
+  margin-bottom: 20px;
   }
 
 .post-content ul {
@@ -1117,7 +1118,9 @@ ul.site li a {
   }
 
 .post-content a {
-  border-bottom: 1px dashed #C3CCD0; }
+  border-bottom: 1px dashed #C3CCD0;
+  font-weight: normal;
+  }
 
 .post-content p {
   margin-bottom: 20px;
