@@ -3,7 +3,7 @@ layout: default
 ---
 
 <div class="help">
-  <h1>Help</h1>
+  <h2>Help</h2>
 
   <div class='articles'>
     {% for item in site.categories.help limit:40 offset:0 %}
@@ -12,12 +12,12 @@ layout: default
           <img src="{{item.image}}" width="200" height="100"/>
         {% endif %}
 
-        <div class="title">
+        <h3>
           {{item.title}}
-        </div>
-        <div class="descr">
+        </h3>
+        <p>
           {{item.descr}}
-        </div>
+        </p>
       </a>
     {% endfor %}
   </div>
