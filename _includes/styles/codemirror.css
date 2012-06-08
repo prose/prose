@@ -128,11 +128,6 @@ div.CodeMirror-selected { background: #d9d9d9; }
 .cm-s-default span.cm-hr {color: #999;}
 .cm-s-default span.cm-link {color: #00c;}
 
-span.cm-header, span.cm-strong {font-weight: bold;}
-span.cm-em {font-style: italic;}
-span.cm-emstrong {font-style: italic; font-weight: bold;}
-span.cm-link { /* text-decoration: underline; */}
-
 /*div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}*/
 /*div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}*/
 
@@ -160,31 +155,30 @@ Saman Bemel-Benrud, Michael Aufreiter
 .cm-s-poole-dark .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
 
 .cm-s-poole-dark .CodeMirror-gutter { background: #262626; border-right:1px solid #aaa; padding-right:3px; min-width:2.5em; }
-.cm-s-poole-dark .CodeMirror-gutter-text { color: #777; }
-
-.cm-s-poole-dark span.cm-keyword { color: #EBEFE7; }
+.cm-s-poole-dark .CodeMirror-gutter-text { color: inherit; }
+.cm-s-poole-dark span.cm-keyword { color: inherit; }
 .cm-s-poole-dark span.cm-atom { color: #fff; opacity: 0.4; }
-.cm-s-poole-dark span.cm-number { color: #B35E4D; }
+.cm-s-poole-dark span.cm-number { color: inherit; }
 .cm-s-poole-dark span.cm-def {color: white;}
-.cm-s-poole-dark span.cm-variable { color:#D9BF8C; }
-.cm-s-poole-dark span.cm-variable-2 { color: #669199; }
-.cm-s-poole-dark span.cm-variable-3 { color: white; }
-.cm-s-poole-dark span.cm-property {color: #92A75C;}
-.cm-s-poole-dark span.cm-operator {color: #92A75C;}
-.cm-s-poole-dark span.cm-comment { color: #666; }
-.cm-s-poole-dark span.cm-string { color: #BCD279; }
-.cm-s-poole-dark span.cm-string-2 {color: #f50;}
+.cm-s-poole-dark span.cm-variable { color:inherit; }
+.cm-s-poole-dark span.cm-variable-2 { color: inherit; }
+.cm-s-poole-dark span.cm-variable-3 { color: inherit; }
+.cm-s-poole-dark span.cm-property {color: inherit;}
+.cm-s-poole-dark span.cm-operator {color: inherit;}
+.cm-s-poole-dark span.cm-comment { color: inherit; }
+.cm-s-poole-dark span.cm-string { color: inherit; }
+.cm-s-poole-dark span.cm-string-2 {color: inherit;}
 .cm-s-poole-dark span.cm-meta { color: #fff; opacity: 0.4; }
-.cm-s-poole-dark span.cm-error { color: #9d1e15; }
-.cm-s-poole-dark span.cm-qualifier {color: #555;}
-.cm-s-poole-dark span.cm-builtin { color: #ff9e59; }
-.cm-s-poole-dark span.cm-bracket { color: #EBEFE7; }
-.cm-s-poole-dark span.cm-tag { color: #669199; }
-.cm-s-poole-dark span.cm-attribute {color: #00c;}
-.cm-s-poole-dark span.cm-header {color: #a0a;}
-.cm-s-poole-dark span.cm-quote {color: #090;}
-.cm-s-poole-dark span.cm-hr {color: #999;}
-.cm-s-poole-dark span.cm-link {color: #00c;}
+.cm-s-poole-dark span.cm-error { color: inherit; }
+.cm-s-poole-dark span.cm-qualifier {color: inherit;}
+.cm-s-poole-dark span.cm-builtin { color: inherit; }
+.cm-s-poole-dark span.cm-bracket { color: inherit; }
+.cm-s-poole-dark span.cm-tag { color: inherit; }
+.cm-s-poole-dark span.cm-attribute {color: inherit;}
+.cm-s-poole-dark span.cm-header {color: inherit;}
+.cm-s-poole-dark span.cm-quote {color: inherit;}
+.cm-s-poole-dark span.cm-hr {color: inherit;}
+.cm-s-poole-dark span.cm-link {color: inherit;}
 
 
 /*
@@ -196,7 +190,7 @@ Saman Bemel-Benrud, Michael Aufreiter
   line-height: 1.3em;
 }
 .cm-s-poole-bright {
-  font-family: Monaco, Menlo,"Andale Mono","lucida console","Courier New",monospace !important;
+  font-family: Menlo, monospace !important;
   font-size: 17px;
 }
 
@@ -210,26 +204,26 @@ div.CodeMirror span.CodeMirror-matchingbracket { background: #fff; }
 .cm-s-poole-bright .CodeMirror-gutter { background: #262626; border-right:1px solid #aaa; padding-right:3px; min-width:2.5em; }
 .cm-s-poole-bright .CodeMirror-gutter-text { color: #777; }
 
-.cm-s-poole-bright span.cm-keyword { color: #599eff; }
-.cm-s-poole-bright span.cm-atom { color: #C2B470; }
-.cm-s-poole-bright span.cm-number { color: #B35E4D; }
+.cm-s-poole-bright span.cm-keyword { color: inherit; }
+.cm-s-poole-bright span.cm-atom { color: inherit; }
+.cm-s-poole-bright span.cm-number { color: inherit; }
 .cm-s-poole-bright span.cm-def {color: white;}
-.cm-s-poole-bright span.cm-variable { color:#D9BF8C; }
-.cm-s-poole-bright span.cm-variable-2 { color: #669199; }
-.cm-s-poole-bright span.cm-variable-3 { color: white; }
+.cm-s-poole-bright span.cm-variable { color:inherit; }
+.cm-s-poole-bright span.cm-variable-2 { color: inherit; }
+.cm-s-poole-bright span.cm-variable-3 { color: inherit; }
 .cm-s-poole-bright span.cm-property {color: #92A75C;}
 .cm-s-poole-bright span.cm-operator {color: #92A75C;}
-.cm-s-poole-bright span.cm-comment { color: #666; }
-.cm-s-poole-bright span.cm-string { color: #9B8F58; }
-.cm-s-poole-bright span.cm-string-2 {color: #f50;}
-.cm-s-poole-bright span.cm-meta { color: #738C73; }
-.cm-s-poole-bright span.cm-error { color: #9d1e15; }
-.cm-s-poole-bright span.cm-qualifier {color: #555;}
-.cm-s-poole-bright span.cm-builtin { color: #ff9e59; }
-.cm-s-poole-bright span.cm-bracket { color: #EBEFE7; }
-.cm-s-poole-bright span.cm-tag { color: #669199; }
-.cm-s-poole-bright span.cm-attribute {color: #00c;}
-.cm-s-poole-bright span.cm-header {color: #9B8F58; font-weight: bold;}
-.cm-s-poole-bright span.cm-quote {color: #090;}
-.cm-s-poole-bright span.cm-hr {color: #999;}
-.cm-s-poole-bright span.cm-link {color: #9B8F58;}
+.cm-s-poole-bright span.cm-comment { color: #DB6F6F; }
+.cm-s-poole-bright span.cm-string { color: #078FA2;; }
+.cm-s-poole-bright span.cm-string-2 {color: #078FA2;;}
+.cm-s-poole-bright span.cm-meta { color: #728c72; }
+.cm-s-poole-bright span.cm-error { color: #DB6F6F; }
+.cm-s-poole-bright span.cm-qualifier {color: inherit;}
+.cm-s-poole-bright span.cm-builtin { color: inherit; }
+.cm-s-poole-bright span.cm-bracket { color: #DB6F6F; }
+.cm-s-poole-bright span.cm-tag { color: #DB6F6F; }
+.cm-s-poole-bright span.cm-attribute {color: inherit;}
+.cm-s-poole-bright span.cm-header {color: #515F66;}
+.cm-s-poole-bright span.cm-quote {color: #078FA2;}
+.cm-s-poole-bright span.cm-hr {color: #515F66;}
+.cm-s-poole-bright span.cm-link {color: #DB6F6F;}
