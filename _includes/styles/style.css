@@ -563,7 +563,7 @@ ul.site li a {
 
 .post-listing a.link {
   background:url('images/sprite.png') -450px -400px no-repeat;
-  background-color: #E0E7EB; 
+  background-color: #F2F6F8;
   float: left;
   width: 140px;
   height: 180px;
@@ -578,7 +578,7 @@ ul.site li a {
   -webkit-transition: background-color 200ms linear;
   }
   .post-listing a.link:hover { 
-  background-color: #f0f5f7; 
+  background-color: white; 
   }
 
 .post-listing a.link .filename {
