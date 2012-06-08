@@ -229,7 +229,7 @@ and your footer gets pushed down a bit more, creating vertical scroll bars in th
   position: relative;
   margin-top: -60px; /* negative value of footer height */
   height: 60px;
-  
+  overflow: hidden;
   line-height: 60px;
   background: #e0e7eb;
   border-top: 1px solid #c3ccd0;
