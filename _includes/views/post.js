@@ -35,20 +35,30 @@ views.Post = Backbone.View.extend({
   updateFilename: function(file, cb) {
     var that = this;
     
+    if (!_.validFilename(file)) return cb('error');
+    app.state.path = this.model.path + "/" + file;
+    app.instance.header.render(); // rerender header to reflect the filename change
+    this.model.file = file;
+
     if (this.model.persisted) {
-      if (!_.validFilename(file)) return cb('error');
       movePost(app.state.user, app.state.repo, app.state.branch, this.model.path + "/" + this.model.file, this.model.path + "/" + file, _.bind(function(err) {
-        if (!err) this.updateURL();
+        if (!err) { 
+          this.updateURL();
+          app.state.path = this.model.path + "/" + file;
+        }
         err ? cb('error') : cb(null)
       }, this));
+    } else {
+      cb(null);
     }
-    this.model.file = file;
   },
 
   _makeDirty: function(e) {
     this.dirty = true;
-    this.$('.button.save').html('SAVE');
-    this.$('.button.save').removeClass('inactive error');
+    if (!this.$('.button.save').hasClass('saving')) {
+      this.$('.button.save').html('SAVE');
+      this.$('.button.save').removeClass('inactive error');      
+    }
   },
   
   _save: function(e) {
@@ -135,8 +145,6 @@ views.Post = Backbone.View.extend({
 
     function save() {
       if (that.updateMetaData()) {
-        updateState('SAVING ...', 'inactive');
-        that.$('.document-menu-content .options').hide();
 
         savePost(app.state.user, app.state.repo, app.state.branch, that.model.path, that.model.file, that.rawMetadata, that.editor.getValue(), message, function(err) {
           if (err) return updateState('! Error', 'error');
@@ -149,6 +157,9 @@ views.Post = Backbone.View.extend({
         updateState('! Metadata', 'error');
       }
     }
+
+    updateState('SAVING ...', 'inactive saving');
+    that.$('.document-menu-content .options').hide();
 
     if (file === this.model.file) return save();    
     this.updateFilename(file, function(err) {
