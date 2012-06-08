@@ -15,7 +15,7 @@
 
   <% if (posts.length > 0) { %>
     <% _.each(posts, function(post) { %>
-      <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>'>
+      <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>/edit'>
         <div class="filename"><%= post.title || 'Untitled' %></div>
       </a>
     <% }); %>
