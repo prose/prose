@@ -89,9 +89,10 @@ views.Application = Backbone.View.extend({
   },
 
   newPost: function (user, repo, branch, path) {
-    this.header.render();
     emptyPost(user, repo, branch, path, _.bind(function(err, data) {
       this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
+      app.state.path += "/" + this.mainView.model.file;
+      this.header.render();
     }, this));
   },
 
