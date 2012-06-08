@@ -17,7 +17,7 @@
     </div>
 
     <a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a>
-    <a class='toggle preview fr menu-item' href='#' title="CTRL+SHIFT+P">&nbsp;</a>
+    <a class='toggle preview fr menu-item<%= preview ? " active" : "" %>' href='#' title="CTRL+SHIFT+P">&nbsp;</a>
     
 
     <div class="options">
@@ -43,12 +43,14 @@
       </div>
     </div>
 
-    <div class="surface">
+    <div class="surface<%= preview ? " preview" : "" %>">
       <div class="content-wrapper">
         <div class="content"><textarea id='code' name='code'><%= content %></textarea></div>
       </div>
       <div class="content-preview-wrapper">
-        <div class="content-preview"><div class='post-content'></div></div>
+        <div class="content-preview"><div class='post-content'>
+          <%= marked(content) %>
+        </div></div>
       </div>
     </div>
   </div>

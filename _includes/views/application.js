@@ -77,12 +77,16 @@ views.Application = Backbone.View.extend({
     }, this));
   },
 
-  post: function (user, repo, branch, path, file) {
+  post: function (user, repo, branch, path, file, preview) {
     loadSite(user, repo, branch, path, _.bind(function (err, data) {
+      
       if (err) return this.notify('error', 'Seems like the chosen repository is not a valid Jekyll site.');
       loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        data.preview = preview;
         this.header.render();
+
         this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
+        var that = this;
       }, this));
       this.header.render();
     }, this));

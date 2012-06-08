@@ -8,7 +8,8 @@ routers.Application = Backbone.Router.extend({
     // Using this.route, because order matters
     this.route(":repo", 'posts', this.posts);
     this.route(/(.*\/.*)/, 'posts', this.posts);
-    this.route(/(.*\/.*)\/(.*\..*)/, 'post', this.post);
+    this.route(/(.*\/.*)\/(.*\..*)$/, 'post', this.post);
+    this.route(/(.*\/.*)\/(.*\..*)(\/edit)$/, 'post', this.post);
     this.route(/(.*\/.*)\/new$/, 'new_post', this.newPost);
     this.route("", "start", this.start);
   },
@@ -52,11 +53,11 @@ routers.Application = Backbone.Router.extend({
   },
 
   // #example-user/example-repo/gh-pages/path/to/2012-01-01.md
-  post: function(url, file) {
+  post: function(url, file, edit) {
     if (confirmExit()) {
       var path = this.extractURL(url);
       app.state.file = file;
-      app.instance.post.apply(this, path.concat(file));
+      app.instance.post.apply(this, path.concat(file).concat(!edit));
     }
   }
 });
