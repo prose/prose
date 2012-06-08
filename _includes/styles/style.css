@@ -947,7 +947,7 @@ ul.site li a {
   }
 
 .document-menu-content .state .button.error, .document-menu-content .state .button.error:hover {
-  color: red;
+  background: #DB6F6F;
   }
   .document-menu-content .state .button.saving {
 	  text-indent: -9999px;
