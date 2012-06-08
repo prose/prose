@@ -142,7 +142,8 @@ function loadSite(user, repo, branch, path, cb) {
           }
           return regex.test(file.path) ? semantify(file.path) : null;
         });
-        cb(null, {"posts": _.compact(posts)});
+        
+        cb(null, {"posts": _.compact(posts.reverse())});
       });
     });
   });

@@ -10,7 +10,7 @@ views.Posts = Backbone.View.extend({
   },
 
   _loading: function(e) {
-    $(e.currentTarget).addClass('loading'));
+    $(e.currentTarget).addClass('loading');
   },
 
   // Creates human readable versions of _posts/paths
