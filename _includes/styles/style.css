@@ -1066,7 +1066,7 @@ ul.site li a {
 	line-height: 1.2em;
   }
 
-.post-content p, .post-content ul, .post-content ol {
+.post-content p, .post-content ul, .post-content ol,  .post-content li {
 	line-height: 1.5em;
   }
 
