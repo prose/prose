@@ -29,7 +29,9 @@ views.Post = Backbone.View.extend({
   },
 
   updateURL: function() {
-    router.navigate([app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file].join('/'), false);
+    var url = [app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file];
+    if (!this.model.preview) url.push('edit');
+    router.navigate(url.join('/'), false);
   },
 
   updateFilename: function(file, cb) {
@@ -55,6 +57,7 @@ views.Post = Backbone.View.extend({
 
   _makeDirty: function(e) {
     this.dirty = true;
+    this.model.content = this.editor.getValue();
     if (!this.$('.button.save').hasClass('saving')) {
       this.$('.button.save').html('SAVE');
       this.$('.button.save').removeClass('inactive error');      
@@ -69,9 +72,13 @@ views.Post = Backbone.View.extend({
 
   _togglePreview: function(e) {
     if (e) e.preventDefault();
+    // Flip preview state
+    this.model.preview = this.model.preview ? false : true;
+    this.updateURL();
     $('.toggle.preview').toggleClass('active');
-    this.$('.post-content').html(marked(this.editor.getValue()));
     $('.document .surface').toggleClass('preview');
+    this.$('.post-content').html(marked(this.model.content));
+    
   },
 
   _toggleMeta: function(e) {
