@@ -5,7 +5,7 @@
       <p>Serving Jekyll faithfully</p>
 
       <div class="authorize">
-        <p>Poole is a smart way of publishing for hackers and <a href="http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans"><strong>humans</strong></a>, enabling non-technical people to maintain content in a visual environment.</p>
+        <p>Poole is a smart way of publishing for hackers and <a href="http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans">humans</a>, enabling non-technical people to maintain content in a visual environment.</p>
         <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user">Authorize with GitHub</a>
       </div>
     </div>
