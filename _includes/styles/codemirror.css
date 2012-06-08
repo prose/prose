@@ -180,7 +180,6 @@ Saman Bemel-Benrud, Michael Aufreiter
 .cm-s-poole-dark span.cm-hr {color: inherit;}
 .cm-s-poole-dark span.cm-link {color: inherit;}
 
-
 /*
 Poole Dark Theme
 Saman Bemel-Benrud, Michael Aufreiter
@@ -223,7 +222,9 @@ div.CodeMirror span.CodeMirror-matchingbracket { background: #fff; }
 .cm-s-poole-bright span.cm-bracket { color: #DB6F6F; }
 .cm-s-poole-bright span.cm-tag { color: #DB6F6F; }
 .cm-s-poole-bright span.cm-attribute {color: inherit;}
-.cm-s-poole-bright span.cm-header {color: #515F66; font-style: bold;}
+.cm-s-poole-bright span.cm-header {color:inherit; font-weight: bold;}
 .cm-s-poole-bright span.cm-quote {color: #078FA2;}
 .cm-s-poole-bright span.cm-hr {color: #515F66;}
 .cm-s-poole-bright span.cm-link {color: #DB6F6F;}
+.cm-s-poole-bright span.cm-em {color: inherit; font-style: italic;}
+.cm-s-poole-bright span.cm-strong {color: inherit; font-weight: bold;}

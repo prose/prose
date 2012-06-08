@@ -11,12 +11,13 @@ html,body {
 
 body,
 textarea,
-input { font: 13px/20px 'OpenSans', sans-serif;   }
+input { font: 13px/20px 'OpenSans', sans-serif; }
 
 a {
   color: #526066;
   text-decoration: none;
   }
+a
 a:hover {
   color: #204859;
   }
@@ -26,6 +27,8 @@ a:focus {
   outline-offset: -2px;
   }
 
+p > a {font-weight: bold;}
+
 h1,h2,h3,h4,h5,h6 {
   margin: 0;
   line-height: 1.5em;
@@ -33,17 +36,14 @@ h1,h2,h3,h4,h5,h6 {
 h4, h5, h6 {
   }
 
-h1 { font-size: 24px;   }
-h1 small { font-size: 13px; font-weight: normal;   }
+h1 { font-size: 24px; }
+h1 small { font-size: 13px; font-weight: normal; }
 h2 { 
   font-weight: normal;
   font-size: 16px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 30px;
-  width: 200px;
-   }
-h2 small { font-size: 16px; font-weight: normal;   }
+  padding: 5px 0 5px 30px;
+  }
+h2 small { font-size: 16px; font-weight: normal; }
 h3 { 
   font-size: 11px;
   text-transform: uppercase;
@@ -51,12 +51,14 @@ h3 {
   margin-top: 10px;
   }
 
-h3 small { font-size: 14px; font-weight: normal;   }
-h4 { font-size: 14px;   }
-h5 { font-size: 13px;   }
-h6 { font-size: 11px; font-weight: normal;   }
+h3 small { font-size: 14px; font-weight: normal; }
+h4 { font-size: 14px; }
+h5 { font-size: 13px; }
+h6 { font-size: 11px; font-weight: normal; }
 
 p {
+  font-size: 16px;
+  line-height: 1.5em;
 	margin-bottom: 0px; 
 	margin-top: 10px;
   }
@@ -268,8 +270,13 @@ and your footer gets pushed down a bit more, creating vertical scroll bars in th
   font-weight: bold;
   background-image: url('images/sprite.png');
   }
-  a.about { background-position: 0 -959px;  }
-  a.help { background-position: 0 -1049px;  }
+  a.about { background-position: 0 -959px; }
+  a.help { background-position: 0 -1049px; }
+
+#footer .footer-content p {
+  margin: 16px 0;
+  }
+  
 /*Opera Fix*/
 body:before {/* thanks to Maleika (Kohoutec)*/
   content:"";
@@ -284,11 +291,8 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   Startpage
 ---------------------------------------------*/
 
-.dialog {
+#start .dialog {
   position: relative;
-  margin: 40px auto 0 auto;
-  color: #7A8387;
-  width: 340px;
   }
 
 #start .splash {
@@ -300,7 +304,13 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   line-height: 1.3em;
   -moz-border-radius: 5px 5px 0 0;
   -webkit-border-radius: 5px 5px 0 0;
-  border-radius: 5px 5px 0 0;
+  position: relative;
+  margin: 40px auto 0 auto;
+  color: #7A8387;
+  width: 340px;
+  border: 1px solid #C3CCD0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
   }
 
 #start .splash h2 {
@@ -311,15 +321,22 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   height: 160px;
   }
 
+#start .splash p {
+  margin-bottom: 20px;	
+  }
+
 .authorize {
-  background: #c9d1d6;
+  background: white;
   -moz-border-radius: 0 0 5px 5px;
   -webkit-border-radius: 0 0 5px 5px;
   border-radius: 0 0 5px 5px;
   padding: 20px ;
   }
 
-.authorize p {margin-top: 0;  }
+.authorize p {
+  margin-top: 0; 
+  margin-bottom: 20px;
+  }
   
 .authorize a.button {
   display: block;
@@ -334,7 +351,7 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   font-weight: bold;
   color: #fff;
   }
-  .authorize a.button:hover { background: #475459;  }
+  .authorize a.button:hover { background: #475459; }
 
 /* ------------------------------------------
   Repos listing
@@ -355,7 +372,7 @@ body.start {
 #start {
   padding-bottom: 20px;
   width: 960px;
-  margin: 0 auto;
+  margin: 20px auto 0 auto;
   }
 
 .repos {
@@ -525,8 +542,8 @@ ul.site li a {
     display:inline;
     padding:0 5px;
     }
-  #user a { color:#222;   }
-  #user .logout a { color:#999;   }
+  #user a { color:#222; }
+  #user .logout a { color:#999; }
 
 /* Form hint */
 #hint {
@@ -614,7 +631,7 @@ ul.site li a {
   left: 0;
   right: 0;
   }
-  .post-listing a.link.loading { background-color: white;  }
+  .post-listing a.link.loading { background-color: white; }
   .post-listing a.link.loading .filename {
     text-indent: -9999px;
     overflow: hidden;
@@ -668,11 +685,11 @@ ul.site li a {
   font-size: 11px;
   font-weight: bold;
   }
-  .post-listing a.link.new .button:hover { background: #475459 url('images/sprite.png') -440px -90px no-repeat;   }
+  .post-listing a.link.new .button:hover { background: #475459 url('images/sprite.png') -440px -90px no-repeat; }
+
 /* ------------------------------------------
   Post
 ---------------------------------------------*/
-
 
 .document-menu {
   padding: 0 20px;
@@ -886,7 +903,7 @@ ul.site li a {
   border-radius: 0px 4px 4px 0px;
   margin-left: 1px;
   }
-  .document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.4);   }
+  .document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.4); }
 
 .document-menu-content .save-state {
   margin-left: 20px;
@@ -1049,7 +1066,7 @@ ul.site li a {
 	line-height: 1.2em;
   }
 
-.post-content p, .post-content ul, .post-content ol, {
+.post-content p, .post-content ul, .post-content ol {
 	line-height: 1.5em;
   }
 
@@ -1061,9 +1078,10 @@ ul.site li a {
   padding-bottom: 10px;
   }
 
-.post-content h1 { font-size: 36px; margin: 10px 0;  }
-.post-content h2 { font-size: 24px; margin: 10px 0;  }
+.post-content h1 { font-size: 36px; margin: 10px 0; }
+.post-content h2 { font-size: 24px; margin: 10px 0; font-weight: bold; padding: 0; }
 .post-content h3, .post-content h4, .post-content h5, .post-content h6 { 
+  text-transform: none;
   font-size: 18px;
   font-weight: bold;
   margin: 10px 0;
@@ -1099,7 +1117,7 @@ ul.site li a {
   }
 
 .post-content a {
-  border-bottom: 1px dashed #C3CCD0;  }
+  border-bottom: 1px dashed #C3CCD0; }
 
 .post-content p {
   margin-bottom: 20px;
@@ -1150,13 +1168,14 @@ ul.site li a {
 
 .help {
   width: 960px;
-  margin: 40px auto;
+  margin: 20px auto;
   }
 
 .help h2 {
   background: url('images/sprite.png') -110px -1042px no-repeat;
   }
-
+  .help.post-content h2 { background: none;}
+  
 .help .articles {
   overflow: auto;
   }
@@ -1193,6 +1212,7 @@ ul.site li a {
 
 .help .articles .article p {
   font-size: 12px;
+  font-weight: normal;
   }
 
 .help .articles .article img {
@@ -1241,8 +1261,8 @@ label.error {
   visibility: hidden;
   }
 
-* html .clearfix { height: 1%;   } /* IE6 */
-*:first-child + html .clearfix { min-height: 1%;   } /* IE7 */
+* html .clearfix { height: 1%; } /* IE6 */
+*:first-child + html .clearfix { min-height: 1%; } /* IE7 */
 
 .icon {
   background: transparent url(images/icons.png) no-repeat 0 0;
@@ -1251,15 +1271,15 @@ label.error {
   display: block;
   text-indent: -999em;
   }
-.fl { float: left;   }
-.fr { float: right;   }
-.clear { clear: both;   }
+.fl { float: left; }
+.fr { float: right; }
+.clear { clear: both; }
 
-.inner      { padding: 0px 0px 40px;   }
-.hidden     { display: none;   }
-.centered   { text-align: center;   }
-.scrolling  { overflow: auto;   }
-.clipping   { overflow: hidden;   }
+.inner      { padding: 0px 0px 40px; }
+.hidden     { display: none; }
+.centered   { text-align: center; }
+.scrolling  { overflow: auto; }
+.clipping   { overflow: hidden; }
 
 
 /* ------------------------------------------
