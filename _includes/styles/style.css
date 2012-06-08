@@ -1079,14 +1079,16 @@ ul.site li a {
   
 .post-content code {
   font-family: Menlo, monospace;
+  padding: 4px;
+  border-radius: 3px;
   font-size: 12px;
-  zoom: 1;
-  color: #E7EEF2;
+  border: 1px solid #C3CCD0;
 }
 
 .post-content pre {
-  background: #526066;
   padding: 10px;
+  border-radius: 3px;
+  border: 1px solid #C3CCD0;
 }
 
 .post-content pre code {
