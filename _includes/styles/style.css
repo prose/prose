@@ -18,7 +18,7 @@ a {
   text-decoration: none;
   }
 a:hover {
-  color: #204859;
+  color: #3d4548;
   }
 a:focus {
   outline: thin dotted;
@@ -350,7 +350,7 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   font-weight: bold;
   color: #fff;
   }
-  .authorize a.button:hover { background: #475459; }
+  .authorize a.button:hover { background: #3d4548; }
 
 /* ------------------------------------------
   Repos listing
@@ -684,7 +684,7 @@ ul.site li a {
   font-size: 11px;
   font-weight: bold;
   }
-  .post-listing a.link.new .button:hover { background: #475459 url('images/sprite.png') -440px -90px no-repeat; }
+  .post-listing a.link.new .button:hover { background: #3d4548 url('images/sprite.png') -440px -90px no-repeat; }
 
 /* ------------------------------------------
   Post
@@ -1257,7 +1257,7 @@ ul.site li a {
   font-size: 11px;
   font-weight: bold;
   }
-  #notification a:hover { background: #475459; }
+  #notification a:hover { background: #3d4548; }
 
 ul.form li {
   position: relative;
