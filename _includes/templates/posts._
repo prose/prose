@@ -3,7 +3,7 @@
 
   <% _.each(paths, function(p, index) { %>
     <% if (p.path !== current_path.path) { %>
-      <a class='link folder' href='#<%= app.username %>/<%= repo %>/<%= branch %>/<%= p.path %>'>
+      <a class='link folder' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= p.path %>'>
         <div class="filename"><%= p.name %></div>
       </a>
     <% } %>
