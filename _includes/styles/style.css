@@ -611,6 +611,8 @@ ul.site li a {
   overflow: hidden;
   word-wrap: break-word;
   color: #526066;
+  left: 0;
+  right: 0;
   }
   .post-listing a.link.loading { background-color: white;  }
   .post-listing a.link.loading .filename {
@@ -624,11 +626,6 @@ ul.site li a {
     width: 44px;
     color: #444;
     }
-  
-.post-listing a.link.folder .filename {
-  word-wrap: break-word;
-  color: #526066;
-  }
 
 .post-listing a.link:hover .filename {
   color: #526066;
@@ -646,11 +643,7 @@ ul.site li a {
 .post-listing a.link.folder {
   background:url('images/sprite.png') -450px -150px no-repeat;
   background-color: #E0E7EB;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 3px;
-  -moz-transition: background-color 200ms linear;
-  -o-transition: background-color 200ms linear;
-  -webkit-transition: background-color 200ms linear;
   }
   .post-listing a.link.folder:hover { 
     background-color: #f0f5f7; 
