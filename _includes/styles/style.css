@@ -66,6 +66,7 @@ h6 { font-size: 11px; font-weight: normal; }
   background: #e0e7eb;
   border-bottom: 1px solid #c3ccd0;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: visible;
 }
 
 body.post #header {
@@ -77,7 +78,7 @@ body.post #header {
   position: absolute;
   width: 100px;
   background: url('images/sprite.png') 0px -116px no-repeat;
-  left: 30px;
+  left: 0px;
   top: 15px;
   height: 30px;
 }
@@ -89,13 +90,13 @@ body.post #header {
 #header .navigation {
   width: 960px;
   margin: 0 auto;
-  overflow: auto;
   font-size: 11px;
   position: relative;
   text-transform: uppercase;
   font-weight: bold;
   line-height: 30px;
   padding: 15px 0;
+  overflow: visible;
 }
 
 #header .navigation > * {
@@ -114,6 +115,7 @@ body.post #header {
 }
 
 #header .navigation .root {
+  margin-left: 100px;
   background-image:url('images/sprite.png');
   background-position: 6px -240px;
   background-repeat: no-repeat;
@@ -895,15 +897,13 @@ ul.site li a {
 }
 
 .document-menu-content .state .button:hover {
-  background-color: rgba(0,0,0, 0.4);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .document-menu-content .state .button.inactive, .document-menu-content .state .button.inactive:hover {
   text-shadow: none;
-  background:#eee;
-  color:#bbb;
-  border-color:#dfdfdf;
-  box-shadow: none;
+  background: rgba(0, 0, 0, 0.1);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .document-menu-content .state .button.error, .document-menu-content .state .button.error:hover {
@@ -1014,29 +1014,35 @@ ul.site li a {
   padding: 100px;
   font-family: 'OpenSans', sans-serif;
   font-weight: normal;
-  font-size: 16px;
-  line-height: 1.5em;
   border: 1px solid #C3CCD0;
+  font-size: 16px;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
   }
 
+.post-content * {
+	line-height: 1.2em;
+}
+
+.post-content p, .post-content ul, .post-content ol, .post-content ul {
+	line-height: 1.5em;
+}
+
 .post-content .title { 
   font-size: 36px; 
-  line-height: 1.5em;
-  margin-bottom: 20px; 
+  margin-bottom: 10px; 
   font-weight: bold;
   border-bottom: 1px solid #C3CCD0;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
   }
 
-.post-content h1 { font-size: 36px; margin-bottom: 20px;}
-.post-content h2 { font-size: 24px; margin-bottom: 20px;}
+.post-content h1 { font-size: 36px; margin: 10px 0;}
+.post-content h2 { font-size: 24px; margin: 10px 0;}
 .post-content h3, .post-content h4, .post-content h5, .post-content h6 { 
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin: 10px 0;
   }
-
+  
 .post-content blockquote {
 	padding-left: 19px;
   border-left: 1px solid #C3CCD0;
