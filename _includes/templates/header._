@@ -1,5 +1,5 @@
 <div class="navigation">
-  <a href='{{site.baseurl}}' class='title'><span>Poole.</span></a>
+  <a href='/' class='title'><span>Poole.</span></a>
   <!--Github account and links-->
   <a class="root" href="{{site.root_dir}}#">Repos</a>
 
