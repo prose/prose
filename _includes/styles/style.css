@@ -17,7 +17,6 @@ a {
   color: #526066;
   text-decoration: none;
   }
-a
 a:hover {
   color: #204859;
   }
@@ -1233,13 +1232,32 @@ ul.site li a {
 
 #notification .notification{
   text-align: center;
-  width: 600px;
-  margin: 60px auto;
+  width: 440px;
+  margin: 60px auto 0 auto;
   padding: 20px;
-  font-size: 30px;
-  line-height: 34px;
+  font-size: 24px;
+  line-height: 1.5em;
   font-weight: bold;
   }
+
+#notification a {
+	background: #516066;
+  padding: 5px;
+  color: white;
+  position: relative;
+  display: block;
+  width: 100px;
+  height: 30px;
+  margin: 0px auto;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 11px;
+  font-weight: bold;
+  }
+  #notification a:hover { background: #475459; }
 
 ul.form li {
   position: relative;
@@ -1283,7 +1301,6 @@ label.error {
 .centered   { text-align: center; }
 .scrolling  { overflow: auto; }
 .clipping   { overflow: hidden; }
-
 
 /* ------------------------------------------
   ios and small screen alterations

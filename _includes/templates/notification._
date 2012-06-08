@@ -1,3 +1,4 @@
 <div class="notification <%= type %>">
-  <%= message%>
+  <%= message%> 
 </div>
+<a class="button" href="../">Go back </a>
