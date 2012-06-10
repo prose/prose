@@ -1186,7 +1186,7 @@ ul.site li a {
   border-radius: 4px;
   border: #c3ccd0 1px solid;
   overflow: hidden;
-  background-color: #E0E7EB;
+  background-color: #F2F6F8;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
 
   -moz-transition: background-color 200ms linear;
@@ -1205,7 +1205,7 @@ ul.site li a {
   padding: 10px;
   }
   .help .articles .article:hover {
-    background-color: #f0f5f7;
+    background-color: #white;
     }
 
 .help .articles .article .title {
