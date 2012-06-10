@@ -684,7 +684,7 @@ ul.site li a {
   font-size: 11px;
   font-weight: bold;
   }
-  .post-listing a.link.new .button:hover { background: #3d4548 url('images/sprite.png') -440px -90px no-repeat; }
+  .post-listing a.link.new:hover .button { background: #3d4548 url('images/sprite.png') -440px -90px no-repeat; }
 
 /* ------------------------------------------
   Post
@@ -1205,7 +1205,7 @@ ul.site li a {
   padding: 10px;
   }
   .help .articles .article:hover {
-    background-color: #white;
+    background-color: white;
     }
 
 .help .articles .article .title {
