@@ -770,15 +770,25 @@ ul.site li a {
   background: none;
   }
 
-.document-menu-content .menu-item.preview {
+.document-menu-content .menu-item.preview, .document-menu-content .menu-item.markdown-cheatsheet {
+  text-indent: -9999px;
+  overflow: hidden;
   background-image:url('images/sprite.png');
-  background-position: -438px 15px;
   background-repeat: no-repeat;
   width: 40px;
   padding: 0;
+  margin-left: 20px;
   }
 
-.document-menu-content .menu-item.preview.active {
+.document-menu-content .menu-item.preview {
+  background-position: -438px 15px;
+  }
+
+.document-menu-content .menu-item.markdown-cheatsheet {
+  background-position: -290px -486px;
+  }
+  
+.document-menu-content .menu-item.preview.active, document-menu-content .menu-item.markdown-cheatsheet.active {
   background-color: rgba(0,0,0, 0.6);
   }
 
