@@ -16,9 +16,10 @@
       </div>
     </div>
 
-    <a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a>
-    <a class='toggle preview fr menu-item<%= preview ? " active" : "" %>' href='#' title="CTRL+SHIFT+P">&nbsp;</a>
     
+    <a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a>
+    <a class='toggle preview fr menu-item<%= preview ? " active" : "" %>' href='#' title="CTRL+SHIFT+P">Preview document</a>
+    <a class="toggle markdown-cheatsheet fr menu-item" href="#" title="CTRL+SHIFT+M">Markdown reference sheet</a>
 
     <div class="options">
       <div class="publish-state">
