@@ -755,7 +755,7 @@ ul.site li a {
   background: none;
   }
 
-.document-menu-content .menu-item.preview, .document-menu-content .menu-item.markdown-cheatsheet {
+.document-menu-content .menu-item.preview, .document-menu-content .menu-item.cheatsheet {
   text-indent: -9999px;
   overflow: hidden;
   background-image:url('images/sprite.png');
@@ -769,11 +769,11 @@ ul.site li a {
   background-position: -438px 15px;
   }
 
-.document-menu-content .menu-item.markdown-cheatsheet {
+.document-menu-content .menu-item.cheatsheet {
   background-position: -290px -486px;
   }
   
-.document-menu-content .menu-item.preview.active, document-menu-content .menu-item.markdown-cheatsheet.active {
+.document-menu-content .menu-item.preview.active, .document-menu-content .menu-item.cheatsheet.active {
   background-color: rgba(0,0,0, 0.6);
   }
 
@@ -1021,24 +1021,33 @@ ul.site li a {
   }
 
 .document .surface {
-  width: 200%;
+  width: 300%;
   -moz-transition: margin-left 300ms linear;
   -o-transition: margin-left 300ms linear;
   -webkit-transition: margin-left 300ms linear;
   transition: margin-left 300ms linear;
-  margin-left: 0%;
+  margin-left: -100%;
   overflow: hidden;
   }
 
 .document .surface.preview {
-  margin-left: -100%;
-  overflow:hidden;
+  margin-left: -200%;
   }
 
+.document .surface.cheatsheet {
+  margin-left: 0%;
+  }
+
+.document .cheatsheet-wrapper {
+  padding-top: 20px;
+  width: 33.33%;
+  float: left;
+  position: relative;
+  }
 
 .document .content-wrapper {
   padding-top: 20px;
-  width: 50%;
+  width: 33.33%;
   float: left;
   position: relative;
   }
@@ -1046,8 +1055,9 @@ ul.site li a {
 .document .content-preview-wrapper {
   position: relative;
   padding-top: 20px;
-  width: 50%;
+  width: 33.33%;
   float: left;
+  word-wrap: break-word;
   }
 
 .document .content-preview, .document .content {
@@ -1055,6 +1065,40 @@ ul.site li a {
   width: 960px;
   margin: 0 auto;
   }
+
+.document .cheatsheet-wrapper .content {
+  width: 960px;
+
+  margin: 0 auto;
+  overflow: auto;
+  }
+
+.document .cheatsheet-wrapper .content .left {
+  float: left;
+  width: 450px;
+  }
+
+.document .cheatsheet-wrapper .content .right {
+  float: right;
+  width: 450px;
+  }
+
+.document .cheatsheet-wrapper .content h2 {
+  font-weight: bold;
+  padding: 5px 0;
+  margin: 0;
+}
+
+.document .cheatsheet-wrapper .content pre {
+  border: 1px solid #C3CCD0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  line-height: 1.5em;
+  font-size: 17px;
+  padding: 10px;
+  font-family: Menlo, monospace !important;
+}
+
 
 /* ------------------------------------------
   Rendered Markdown

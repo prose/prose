@@ -4,8 +4,10 @@
 }
 
 .CodeMirror-scroll {
-  overflow: auto;
+  height: auto; 
+  overflow: visible;
   /*height: 300px;*/
+
   /* This is needed to prevent an IE[67] bug where the scrolled content
      is visible outside of the scrolling box. */
   position: relative;
@@ -142,10 +144,10 @@ Saman Bemel-Benrud, Michael Aufreiter
 */
 
 .cm-s-poole-dark {
-  line-height: 1.5em;
+  line-height: 1.3em;
 }
 .cm-s-poole-dark {
-  font-size: 16px;
+  font-size: 17px;
   font-family: Menlo, monospace !important;
 }
 
