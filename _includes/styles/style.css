@@ -693,6 +693,11 @@ ul.site li a {
   overflow: visible;
   line-height: 40px;
 
+  -moz-transition: background 100ms linear;
+  -o-transition: background 100ms linear;
+  -webkit-transition: background 100ms linear;
+  transition: background 100ms linear;
+
   z-index: 2000;
   }
 
@@ -718,6 +723,10 @@ ul.site li a {
 .document-menu .options {
   display: none;
   background: #667880;
+  -moz-transition: background 100ms linear;
+  -o-transition: background 100ms linear;
+  -webkit-transition: background 100ms linear;
+  transition: background 100ms linear;
   }
 
 #post.published .document-menu .options {
@@ -953,10 +962,6 @@ ul.site li a {
 	  background-image: url('images/ajax-loader-unpublished.gif');
 	  background-repeat: no-repeat;
 	  background-position: 25px 13px;
-	  -moz-transition: background 0, color 100ms linear;
-    -o-transition: background 0, color 100ms linear;
-    -webkit-transition: background 0, color 100ms linear;
-    transition: background 0, color 100ms linear;
 	  }
 	  .published .document-menu-content .state .button.saving {
   	  text-indent: -9999px;
