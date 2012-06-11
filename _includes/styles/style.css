@@ -950,10 +950,21 @@ ul.site li a {
   .document-menu-content .state .button.saving {
 	  text-indent: -9999px;
 	  overflow: hidden;
-	  background-image: url('images/ajax-loader-dark.gif');
+	  background-image: url('images/ajax-loader-unpublished.gif');
 	  background-repeat: no-repeat;
 	  background-position: 25px 13px;
+	  -moz-transition: background 0, color 100ms linear;
+    -o-transition: background 0, color 100ms linear;
+    -webkit-transition: background 0, color 100ms linear;
+    transition: background 0, color 100ms linear;
 	  }
+	  .published .document-menu-content .state .button.saving {
+  	  text-indent: -9999px;
+	    overflow: hidden;
+	    background-image: url('images/ajax-loader-published.gif');
+	    background-repeat: no-repeat;
+	    background-position: 25px 13px;
+	    }
 
 .document-menu-content .state .options {
   background: rgba(0,0,0, 0.3);
