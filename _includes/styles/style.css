@@ -16,6 +16,10 @@ input { font: 13px/20px 'OpenSans', sans-serif; }
 a {
   color: #526066;
   text-decoration: none;
+  -moz-transition: background 100ms linear, color 100ms linear;
+  -o-transition: background 100ms linear, color 100ms linear;
+  -webkit-transition: background 100ms linear, color 100ms linear;
+  transition: background 100ms linear, color 100ms linear;
   }
 a:hover {
   color: #3d4548;
@@ -387,11 +391,6 @@ body.start {
   background:url('images/sprite.png') -450px -640px no-repeat;
   background-color: #E0E7EB;
   
-  -moz-transition: background-color 200ms linear;
-  -o-transition: background-color 200ms linear;
-  -webkit-transition: background-color 200ms linear;
-  transition: background-color 200ms linear;
-
   -moz-border-radius: 3px 3px 0px 3px;
   -webkit-border-radius: 3px 3px 0px 3px;
   border-radius: 3px 3px 0px 3px;
@@ -608,9 +607,6 @@ ul.site li a {
   color: #404040;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 3px 40px 3px 3px;
-   -moz-transition: background-color 200ms linear;
-  -o-transition: background-color 200ms linear;
-  -webkit-transition: background-color 200ms linear;
   }
   .post-listing a.link:hover { 
   background-color: white; 
@@ -683,9 +679,6 @@ ul.site li a {
   text-align: center;
   font-size: 11px;
   font-weight: bold;
-  -moz-transition: background-color 200ms linear;
-  -o-transition: background-color 200ms linear;
-  -webkit-transition: background-color 200ms linear;
   }
   .post-listing a.link.new:hover .button { background: #3d4548 url('images/sprite.png') -440px -90px no-repeat; }
 
@@ -700,10 +693,6 @@ ul.site li a {
   overflow: visible;
   line-height: 40px;
 
-  -moz-transition: background 200ms linear;
-  -o-transition: background 200ms linear;
-  -webkit-transition: background 200ms linear;
-  transition: background 200ms linear;
   z-index: 2000;
   }
 
@@ -729,10 +718,6 @@ ul.site li a {
 .document-menu .options {
   display: none;
   background: #667880;
-  -moz-transition: background 200ms linear;
-  -o-transition: background 200ms linear;
-  -webkit-transition: background 200ms linear;
-  transition: background 200ms linear;
   }
 
 #post.published .document-menu .options {
@@ -1201,11 +1186,6 @@ ul.site li a {
   overflow: hidden;
   background-color: #F2F6F8;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
-
-  -moz-transition: background-color 200ms linear;
-  -o-transition: background-color 200ms linear;
-  -webkit-transition: background-color 200ms linear;
-  transition: background-color 200ms linear;
 
   font-size: 16px;
   position: relative;
