@@ -19,7 +19,7 @@
     
     <a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a>
     <a class='toggle preview fr menu-item<%= preview ? " active" : "" %>' href='#' title="CTRL+SHIFT+P">Preview document</a>
-    <a class="toggle markdown-cheatsheet fr menu-item" href="#" title="CTRL+SHIFT+M">Markdown reference sheet</a>
+    <a class="toggle cheatsheet fr menu-item" href="#" title="CTRL+SHIFT+R">Markdown reference sheet</a>
 
     <div class="options">
       <div class="publish-state">
@@ -45,6 +45,79 @@
     </div>
 
     <div class="surface<%= preview ? " preview" : "" %>">
+      <div class="cheatsheet-wrapper">
+        <div class="content">
+
+<div class="left">
+<h2>Headers</h2>
+<pre>
+# Header 1
+## Header 2
+### Header 3
+</pre>
+
+<h2>Text Annotations</h2>
+
+<pre>
+*This text will be emphasized.*
+**This text will be strong.**
+Inline `code` in typewriter style
+</pre>
+
+<h2>Links</h2>
+
+<pre>
+[GitHub](http://github.com)
+</pre>
+
+<h2>Images</h2>
+
+<pre>
+![Alt text](/images/logo.png)
+</pre>
+
+<h2>Blockquotes</h2>
+
+<pre>
+William Zinser:
+
+> Writing is thinking on paper. (no-more)
+</pre>
+</div>
+
+<div class="right">
+
+<h2>Unordered Lists</h2>
+
+<pre>
+* Item 1
+* Item 2
+  * Item 2a
+  * Item 2b
+</pre>
+
+<h2>Ordered Lists</h2>
+
+<pre>
+1. Item 1
+2. Item 2
+   * Item 2a
+   * Item 2b
+</pre>
+
+
+<h2>Code Blocks</h2>
+<pre>
+Use 4 spaces indentation:
+
+    function identity(x) {
+      return x;
+    }
+</pre>
+</div>
+
+        </div>
+      </div>
       <div class="content-wrapper">
         <div class="content"><textarea id='code' name='code'><%= content %></textarea></div>
       </div>

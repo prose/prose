@@ -8,6 +8,7 @@ views.Post = Backbone.View.extend({
     'click .save': '_save',
     'click .toggle.meta': '_toggleMeta',
     'click a.toggle.preview': '_togglePreview',
+    'click a.toggle.cheatsheet': '_toggleCheatsheet',
     'change input': '_makeDirty',
     'change #post_published': 'updateMetaData',
     'click .delete': '_delete',
@@ -58,6 +59,7 @@ views.Post = Backbone.View.extend({
   _makeDirty: function(e) {
     this.dirty = true;
     this.model.content = this.editor.getValue();
+    // $('.document')[0].scrollLeft = '-100%';
     if (!this.$('.button.save').hasClass('saving')) {
       this.$('.button.save').html('SAVE');
       this.$('.button.save').removeClass('inactive error');      
@@ -75,10 +77,22 @@ views.Post = Backbone.View.extend({
     // Flip preview state
     this.model.preview = this.model.preview ? false : true;
     this.updateURL();
+
+    $('.toggle.cheatsheet').removeClass('active');
+    $('.document .surface').removeClass('cheatsheet');
+
     $('.toggle.preview').toggleClass('active');
     $('.document .surface').toggleClass('preview');
     this.$('.post-content').html(marked(this.model.content));
-    
+  },
+
+  _toggleCheatsheet: function(e) {
+    if (e) e.preventDefault();
+    $('.toggle.preview').removeClass('active');
+    $('.document .surface').removeClass('preview');
+
+    $('.toggle.cheatsheet').toggleClass('active');
+    $('.document .surface').toggleClass('cheatsheet');
   },
 
   _toggleMeta: function(e) {
@@ -138,7 +152,6 @@ views.Post = Backbone.View.extend({
       return false;
     }
   },
-  
 
   updatePost: function(published, message) {
     var file = $('input.filename').val();
