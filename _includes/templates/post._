@@ -8,26 +8,26 @@
 
     <div class="fr menu-item save-state">
       <div class="state fl">
-        
-        
         <a class='toggle-options button' href='#' title="CTRL+O">&nbsp;</a>
         <a class='save button inactive' href='#' title="CTRL+S">SAVE</a>
-
       </div>
     </div>
 
+    <% if (jekyll) { %><a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a> <% } %>
     
-    <a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a>
-    <a class='toggle preview fr menu-item<%= preview ? " active" : "" %>' href='#' title="CTRL+SHIFT+P">Preview document</a>
-    <a class="toggle cheatsheet fr menu-item" href="#" title="CTRL+SHIFT+R">Markdown reference sheet</a>
+    <% if (markdown) { %>
+      <a class='toggle preview fr menu-item<%= preview ? " active" : "" %>' href='#' title="CTRL+SHIFT+P">Preview document</a>
+      <a class="toggle cheatsheet fr menu-item" href="#" title="CTRL+SHIFT+R">Markdown reference sheet</a>
+    <% } %>
 
     <div class="options">
-      <div class="publish-state">
-        <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/> Published
-      </div>  
-
+      <% if (jekyll && markdown) { %>
+        <div class="publish-state">
+          <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/> Published
+        </div>
+      <% } %>
       <div class="actions">
-        <a class="toggle delete button" href="#">Delete Post</a>
+        <a class="toggle delete button" href="#">Delete File</a>
       </div>
     </div>
     <div class="status" title="Unpublished"></div>
@@ -38,11 +38,13 @@
 
 <div class='inner clearfix'>  
   <div class='document prose'>
-    <div class="metadata">
-      <div class="metadata-content">
-        <textarea id='raw_metadata' name='raw_metadata'><%= raw_metadata %></textarea>
+    <% if (jekyll) { %>
+      <div class="metadata">
+        <div class="metadata-content">
+          <textarea id='raw_metadata' name='raw_metadata'><%= raw_metadata %></textarea>
+        </div>
       </div>
-    </div>
+    <% } %>
 
     <div class="surface<%= preview ? " preview" : "" %>">
       <div class="cheatsheet-wrapper">
@@ -123,7 +125,7 @@ Use 4 spaces indentation:
       </div>
       <div class="content-preview-wrapper">
         <div class="content-preview"><div class='post-content'>
-          <%= marked(content) %>
+          <%= markdown ? marked(content) : '' %>
         </div></div>
       </div>
     </div>

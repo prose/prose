@@ -69,7 +69,7 @@ views.Post = Backbone.View.extend({
   _save: function(e) {
     if (!this.dirty) return false;
     e.preventDefault();
-    this.updatePost(this.model.metadata.published, 'Updated '+ this.model.file);
+    this.updatePost('Updated '+ this.model.file);
   },
 
   _togglePreview: function(e) {
@@ -105,7 +105,7 @@ views.Post = Backbone.View.extend({
   initialize: function() {
     this.mode = "edit";
     if (!window.shortcutsRegistered) {
-      key('⌘+s, ctrl+s', _.bind(function() { this.updatePost(undefined, "Updated " + this.model.file); return false; }, this));
+      key('⌘+s, ctrl+s', _.bind(function() { this.updatePost("Updated " + this.model.file); return false; }, this));
       key('ctrl+shift+p', _.bind(function() { this._togglePreview(); return false; }, this));
       key('ctrl+shift+m', _.bind(function() { this._toggleMeta(); return false; }, this));
       window.shortcutsRegistered = true;
@@ -153,7 +153,7 @@ views.Post = Backbone.View.extend({
     }
   },
 
-  updatePost: function(published, message) {
+  updatePost: function(message) {
     var file = $('input.filename').val();
     var that = this;
 
@@ -164,9 +164,8 @@ views.Post = Backbone.View.extend({
     }
 
     function save() {
-      if (that.updateMetaData()) {
-
-        savePost(app.state.user, app.state.repo, app.state.branch, that.model.path, that.model.file, that.rawMetadata, that.editor.getValue(), message, function(err) {
+      if (!app.state.jekyll || that.updateMetaData()) {
+        saveFile(app.state.user, app.state.repo, app.state.branch, that.model.path, that.model.file, that.rawMetadata, that.editor.getValue(), message, function(err) {
           if (err) return updateState('! Error', 'error');
           that.dirty = false;
           that.model.persisted = true;
@@ -198,7 +197,7 @@ views.Post = Backbone.View.extend({
         that._toggleMeta();
       },
       "Ctrl-S": function(codemirror) {
-        that.updatePost(undefined, "Updated " + that.model.file);
+        that.updatePost("Updated " + that.model.file);
       }
     };
   },
@@ -207,18 +206,19 @@ views.Post = Backbone.View.extend({
     var that = this;
     setTimeout(function() {
 
-      that.metadataEditor = CodeMirror.fromTextArea(document.getElementById('raw_metadata'), {
-        mode: 'yaml',
-        theme: 'poole-dark',
-        lineWrapping: true,
-        extraKeys: that.keyMap(),
-        onChange: _.bind(that._makeDirty, that)
-      });
-
-      $('#post .metadata').hide();
+      if (app.state.jekyll) {
+        that.metadataEditor = CodeMirror.fromTextArea(document.getElementById('raw_metadata'), {
+          mode: 'yaml',
+          theme: 'poole-dark',
+          lineWrapping: true,
+          extraKeys: that.keyMap(),
+          onChange: _.bind(that._makeDirty, that)
+        });
+        $('#post .metadata').hide();
+      }
 
       that.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
-        mode: 'markdown',
+        mode: that.model.markdown ? "markdown" : null,
         lineWrapping: true,
         extraKeys: that.keyMap(),
         matchBrackets: true,
