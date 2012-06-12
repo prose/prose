@@ -5,7 +5,7 @@
       <p>Serving Jekyll faithfully</p>
 
       <div class="authorize">
-        <p>Poole is a content management tool for hackers and <a href="http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans">humans</a>.</p>
+        <p>Poole is a content management tool for hackers and humans.</p>
         <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user">Authorize with GitHub</a>
       </div>
     </div>
