@@ -58,7 +58,7 @@ views.Post = Backbone.View.extend({
 
   _makeDirty: function(e) {
     this.dirty = true;
-    this.model.content = this.editor.getValue();
+    if (this.editor) this.model.content = this.editor.getValue();
     // $('.document')[0].scrollLeft = '-100%';
     if (!this.$('.button.save').hasClass('saving')) {
       this.$('.button.save').html('SAVE');
@@ -235,7 +235,7 @@ views.Post = Backbone.View.extend({
 
   render: function() {
     var that = this;
-    $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
+    $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode, jekyll: app.state.jekyll })));
     if (this.model.metadata.published) $(this.el).addClass('published');
     this.initEditor();
     return this;

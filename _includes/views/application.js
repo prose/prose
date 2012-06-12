@@ -23,7 +23,6 @@ views.Application = Backbone.View.extend({
     router.navigate(route, true);
   },
 
-
   // Initialize
   // ----------
 
@@ -93,9 +92,13 @@ views.Application = Backbone.View.extend({
   },
 
   newPost: function (user, repo, branch, path) {
+    app.state.jekyll = true;
     emptyPost(user, repo, branch, path, _.bind(function(err, data) {
       data.preview = false;
+      data.jekyll = true;
+      data.markdown = true;
       this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
+      this.mainView._makeDirty();
       app.state.path += "/" + this.mainView.model.file;
       this.header.render();
     }, this));
