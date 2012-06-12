@@ -7,6 +7,15 @@ function github() {
   });
 }
 
+// Helpers
+// -------
+
+function isMarkdown(filename) {
+  var regex = new RegExp("^(\\w|-)*\.(md|mkdn?|mdown|markdown)$");
+  return regex.test(filename);
+}
+
+
 // Authentication
 // -------
 
@@ -82,16 +91,18 @@ function loadBranches(user, repo, cb) {
   var repo = github().getRepo(user, repo);
 
   repo.listBranches(function(err, branches) {
-    var jekyllBranches = [],
-        processed = 0;
+    cb(null, branches);
+    // FOR REFERENCE: Jekyll deterimination
+    // var jekyllBranches = [],
+    //     processed = 0;
 
-    _.each(branches, function(branch) {
-      repo.read(branch, "_config.yml", function(err, data) {
-        if (!err) jekyllBranches.push(branch);
-        processed += 1;
-        if (processed === branches.length) cb(null, jekyllBranches);
-      });
-    });
+    // _.each(branches, function(branch) {
+    //   repo.read(branch, "_config.yml", function(err, data) {
+    //     if (!err) jekyllBranches.push(branch);
+    //     processed += 1;
+    //     if (processed === branches.length) cb(null, jekyllBranches);
+    //   });
+    // });
   });
 }
 
@@ -110,37 +121,39 @@ function loadSite(user, repo, branch, path, cb) {
     });
   }
 
-  if (!path) path = "_posts";
-  repo.getSha(branch, path, function(err, sha) {
 
-    repo.getTree(sha, function(err, tree) {
-      if (err) cb("Not a valid Jekyll repository.");
+  loadConfig(function(err, config) {
+    app.state.jekyll = !err;
 
-      var paths = _.compact(_.map(tree, function(file) {
-        return file.type === "tree" ? path + "/"+ file.path : null
-      }));
+    if (!path) path = app.state.jekyll ? "_posts" : "";
 
-      paths = [path].concat(paths);
+    repo.getSha(branch, path, function(err, sha) {
+      repo.getTree(sha, function(err, tree) {
+        if (err) cb("Not a valid Jekyll repository.");
 
-      // Load Jekyll config file (_config.yml)
-      loadConfig(function(err, config) {
-        if (err) return cb(err);
+        var paths = _.compact(_.map(tree, function(file) {
+          return file.type === "tree" ? (path ? path + "/" : "")+ file.path : null;
+        }));
+
+        paths = [path].concat(paths);
         app.state.config = config;
         app.state.paths = paths;
         app.state.path = path ? path : paths[0];
 
         var posts = _.map(tree, function(file) {
-          var regex = new RegExp("^(\\w|-)*\.(md|mkdn?|mdown|markdown)$");
-
           // Make sense of the file path
-          function semantify(p) {
+          function semantify(p, filetype) {
             return {
-              path: path + "/"+p,
+              path: path == "" ? p : path + "/"+p,
               date: "",
+              filetype: filetype,
               title: p
             };
           }
-          return regex.test(file.path) ? semantify(file.path) : null;
+
+          if (isMarkdown(file.path)) return semantify(file.path, "markdown");
+          if (!app.state.jekyll) return semantify(file.path, "file");
+          return null;
         });
         
         cb(null, {"posts": _.compact(posts.reverse())});
@@ -150,18 +163,23 @@ function loadSite(user, repo, branch, path, cb) {
 }
 
 
-// Save Post
+// Save File
 // -------
 // 
 // List all postings for a given repository
 // Looks into _posts/blog
 
-function savePost(user, repo, branch, path, file, metadata, content, message, cb) {
+function saveFile(user, repo, branch, path, file, metadata, content, message, cb) {
   var repo = github().getRepo(user, repo);
-  function serialize(data) {
-    return ["---", data, "---"].join('\n')+'\n\n'+content;
+  function serialize() {
+    if (app.state.jekyll && isMarkdown(file)) {
+      return ["---", metadata, "---"].join('\n')+'\n\n'+content;
+    } else {
+      return content;
+    }
   }
-  repo.write(branch, path + "/" + file, serialize(metadata), message, cb);
+  var path = path ? path+ "/"+ file : file;
+  repo.write(branch, path, serialize(), message, cb);
 }
 
 
@@ -212,8 +230,16 @@ function emptyPost(user, repo, branch, path, cb) {
 
 function loadPost(user, repo, branch, path, file, cb) {
   var repo = github().getRepo(user, repo);
-  repo.read(branch, path + "/" + file, function(err, data) {
+
+  repo.read(branch, path ? path + "/" + file : file, function(err, data) {
+
     function parse(content) {
+      if (!app.state.jekyll) return {
+        metadata: {},
+        raw_metadata: "",
+        content: content
+      };
+
       var res = {};
       var chunked = (content+'\n').replace(/\r\n/g, "\n").split('---\n');
       if (chunked[0] === '' && chunked.length > 2) {
@@ -227,9 +253,9 @@ function loadPost(user, repo, branch, path, file, cb) {
       }
       return res;
     }
+
     // Extract metadata
     var post = parse(data);
-
-    cb(err, _.extend(post, {"repo": repo, "path": path, "file": file, "persisted": true}));
+    cb(err, _.extend(post, {"markdown": isMarkdown(file), "jekyll": app.state.jekyll, "repo": repo, "path": path, "file": file, "persisted": true}));
   });
 }
