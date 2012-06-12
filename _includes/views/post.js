@@ -39,7 +39,8 @@ views.Post = Backbone.View.extend({
     var that = this;
     
     if (!_.validFilename(file)) return cb('error');
-    app.state.path = this.model.path + "/" + file;
+    app.state.path = this.model.path;
+    app.state.file = file;
     app.instance.header.render(); // rerender header to reflect the filename change
     this.model.file = file;
 
