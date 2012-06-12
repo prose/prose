@@ -17,6 +17,7 @@
     
     <% if (markdown) { %>
       <a class='toggle preview fr menu-item<%= preview ? " active" : "" %>' href='#' title="CTRL+SHIFT+P">Preview document</a>
+      <a class='toggle compose fr menu-item' href='#'>Compose document</a>
       <a class="toggle cheatsheet fr menu-item" href="#" title="CTRL+SHIFT+R">Markdown reference sheet</a>
     <% } %>
 

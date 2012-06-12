@@ -764,23 +764,31 @@ ul.site li a {
   background: none;
   }
 
-.document-menu-content .menu-item.preview, .document-menu-content .menu-item.cheatsheet {
+.document-menu-content .menu-item.preview, .document-menu-content .menu-item.cheatsheet, .document-menu-content .menu-item.compose {
   text-indent: -9999px;
   overflow: hidden;
   background-image:url('images/sprite.png');
   background-repeat: no-repeat;
   width: 40px;
   padding: 0;
-  margin-left: 20px;
+  margin-left: 1px;
+  border-radius: 0;
   }
-
-.document-menu-content .menu-item.preview {
-  background-position: -438px 15px;
-  }
-
-.document-menu-content .menu-item.cheatsheet {
-  background-position: -290px -486px;
-  }
+  .document-menu-content .menu-item.cheatsheet { 
+    background-position: -290px -486px;
+    -moz-border-radius: 5px 0px 0px 5px;
+    -webkit-border-radius: 5px 0px 0px 5px;
+    border-radius: 5px 0px 0px 5px;
+    }
+  .document-menu-content .menu-item.preview { 
+    background-position: -438px 15px;
+    -moz-border-radius: 0px 5px 5px 0px;
+    -webkit-border-radius: 0px 5px 5px 0px;
+    border-radius: 0px 5px 5px 0px;
+    }
+  .document-menu-content .menu-item.compose { 
+    background-position: -288px -538px;
+    }
   
 .document-menu-content .menu-item.preview.active, .document-menu-content .menu-item.cheatsheet.active {
   background-color: rgba(0,0,0, 0.6);
