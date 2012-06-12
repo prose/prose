@@ -6,5 +6,5 @@ layout: default
   <div class="title">{{page.title}}</div>
   
   {{ content }}
-  <div class="meta"> Posted by Michael on {{ page.date | date: "%B %d, %Y" }} </div>
+  <div class="meta"> Posted by <a href="http://twitter.com/{{page.author_twitter}}" target="_blank">{{page.author}}</a> on {{ page.date | date: "%B %d, %Y" }} </div>
 </div>
