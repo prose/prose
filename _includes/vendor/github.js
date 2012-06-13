@@ -14,9 +14,12 @@
     // =======
 
     function headers() {
+      var headers = {}
+      if (options.auth === 'oauth' && !options.token) return {Accept: 'application/vnd.github.raw'};
+      if (options.auth === 'basic' && (!options.username || !options.password)) return {Accept: 'application/vnd.github.raw'};
       return options.auth == 'oauth'
              ? { Authorization: 'token '+ options.token, Accept: 'application/vnd.github.raw' }
-             : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password) }
+             : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password), Accept: 'application/vnd.github.raw' }
     }
 
     function _request(method, path, data, cb) {
@@ -90,9 +93,7 @@
       // -------
 
       this.getBlob = function(sha, cb) {
-        _raw_request("GET", repoPath + "/git/blobs/" + sha, null, function(err, res) {
-          cb(err, res);
-        });
+        _raw_request("GET", repoPath + "/git/blobs/" + sha, null, cb);
       };
 
       // For a given file path, get the corresponding sha (blob for files, tree for dirs)
@@ -212,7 +213,6 @@
       this.read = function(branch, path, cb) {
         that.getSha(branch, path, function(err, sha) {
           if (!sha) return cb("not found", null);
-
           that.getBlob(sha, cb);
         });
       };

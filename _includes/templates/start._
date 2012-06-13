@@ -1,11 +1,11 @@
 <div class='start dialog clearfix'>
   <% if (!authenticated) { %>
     <div class="splash">
-      <h2>Poole</h2>
+      <h2>Prose</h2>
       <p>Serving Jekyll faithfully</p>
 
       <div class="authorize">
-        <p>Poole is a content management tool for hackers and humans.</p>
+        <p>Prose is a visual interface for managing website-content.</p>
         <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user">Authorize with GitHub</a>
       </div>
     </div>

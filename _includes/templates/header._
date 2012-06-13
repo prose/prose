@@ -25,11 +25,13 @@
       <% } %>
   <% } %>
 
+  <div class='user-status<%= !window.authenticated ? " logged-out" : "" %>'>
   <% if (window.authenticated) { %>
-    <div class='user-status'>
-      <img width="30" src="<%= $.cookie("avatar") %>"/>
-      <%= app.username %> <a class="logout" href="#">Logout</a>
-    </div>  
-  <% } %>
+    <img width="30" src="<%= $.cookie("avatar") %>"/>
+    <%= app.username %> <a class="logout" href="#">Logout</a>
+  <% } else { %>
+      <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user&redirect_uri=<%= window.location.href %>">Sign in using Github</a>
+  <% } %>
+  </div>
 </div>
 

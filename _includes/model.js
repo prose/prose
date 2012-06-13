@@ -15,22 +15,25 @@ function isMarkdown(filename) {
   return regex.test(filename);
 }
 
-
 // Authentication
 // -------
 
 function authenticate() {
   if ($.cookie("oauth-token")) return window.authenticated = true;
-  var match = window.location.href.match(/\?code=(.*)/);
+  var match = window.location.href.match(/\?code=([a-z0-9]*)/);
 
   // Handle Code
   if (match) {
-    var code = match[1];
     $.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1], function(data) {
       $.cookie('oauth-token', data.token);
       window.authenticated = true;
-      window.location.href = window.location.href.replace(/\?code=(.*)/, '');
+      // Adjust URL
+      var regex = new RegExp("\\?code="+match[1]);
+      window.location.href = window.location.href.replace(regex, '');
     });
+    return false;
+  } else {
+    return true;  
   }
 }
 
