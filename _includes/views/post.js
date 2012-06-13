@@ -112,7 +112,7 @@ views.Post = Backbone.View.extend({
       key('⌘+s, ctrl+s', _.bind(function() { this.updatePost("Updated " + this.model.file); return false; }, this));
       key('ctrl+shift+right', _.bind(function() { this.right(); return false; }, this));
       key('ctrl+shift+left', _.bind(function() { this.left(); return false; }, this));
-      key('esc', _.bind(function() { console.log('Escape'); return false; }, this));
+      key('esc', _.bind(function() { this.toggleView('compose'); return false; }, this));
       window.shortcutsRegistered = true;
     }
   },
