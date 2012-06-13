@@ -6,7 +6,8 @@ views.Post = Backbone.View.extend({
 
   events: {
     'click .save': '_save',
-    'click a.toggle': '_toggleView',
+    'click a.toggle.view': '_toggleView',
+    'click a.toggle.meta': '_toggleMeta',
     'change input': '_makeDirty',
     'change #post_published': 'updateMetaData',
     'click .delete': '_delete',
@@ -75,6 +76,13 @@ views.Post = Backbone.View.extend({
   _toggleView: function(e) {
     this.toggleView($(e.currentTarget).attr('data-view'))
 
+    return false;
+  },
+
+  _toggleMeta: function(e) {
+    if (e) e.preventDefault();
+    $('.toggle.meta').toggleClass('active');
+    $('.metadata').toggle();  
     return false;
   },
 
