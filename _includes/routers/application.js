@@ -10,6 +10,7 @@ routers.Application = Backbone.Router.extend({
     this.route(/(.*\/.*)/, 'posts', this.posts);
     this.route(/(.*\/.*)\/(.*\..*)$/, 'post', this.post);
     this.route(/(.*\/.*)\/(.*\..*)(\/edit)$/, 'post', this.post);
+    this.route(/(.*\/.*)\/(.*)(\/edit)$/, 'post', this.post);
     this.route(/(.*\/.*)\/new$/, 'new_post', this.newPost);
     this.route("", "start", this.start);
   },

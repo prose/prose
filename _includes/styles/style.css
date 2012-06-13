@@ -790,7 +790,7 @@ ul.site li a {
     background-position: -288px -538px;
     }
   
-.document-menu-content .menu-item.preview.active, .document-menu-content .menu-item.cheatsheet.active {
+.document-menu-content .menu-item.preview.active, .document-menu-content .menu-item.cheatsheet.active, .document-menu-content .menu-item.compose.active {
   background-color: rgba(0,0,0, 0.6);
   }
 

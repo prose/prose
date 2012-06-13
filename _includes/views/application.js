@@ -113,7 +113,6 @@ views.Application = Backbone.View.extend({
     this.header.render();
     this.replaceMainView("notification", new views.Notification(type, message).render());
   }
-
 });
 
 }).apply(this, window.args);

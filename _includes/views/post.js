@@ -6,9 +6,7 @@ views.Post = Backbone.View.extend({
 
   events: {
     'click .save': '_save',
-    'click .toggle.meta': '_toggleMeta',
-    'click a.toggle.preview': '_togglePreview',
-    'click a.toggle.cheatsheet': '_toggleCheatsheet',
+    'click a.toggle': '_toggleView',
     'change input': '_makeDirty',
     'change #post_published': 'updateMetaData',
     'click .delete': '_delete',
@@ -41,7 +39,8 @@ views.Post = Backbone.View.extend({
     if (!_.validFilename(file)) return cb('error');
     app.state.path = this.model.path;
     app.state.file = file;
-    app.instance.header.render(); // rerender header to reflect the filename change
+    // rerender header to reflect the filename change
+    app.instance.header.render();
     this.model.file = file;
 
     if (this.model.persisted) {
@@ -73,42 +72,47 @@ views.Post = Backbone.View.extend({
     this.updatePost('Updated '+ this.model.file);
   },
 
-  _togglePreview: function(e) {
-    if (e) e.preventDefault();
-    // Flip preview state
-    this.model.preview = this.model.preview ? false : true;
-    this.updateURL();
+  _toggleView: function(e) {
+    this.toggleView($(e.currentTarget).attr('data-view'))
 
-    $('.toggle.cheatsheet').removeClass('active');
-    $('.document .surface').removeClass('cheatsheet');
-
-    $('.toggle.preview').toggleClass('active');
-    $('.document .surface').toggleClass('preview');
-    this.$('.post-content').html(marked(this.model.content));
-  },
-
-  _toggleCheatsheet: function(e) {
-    if (e) e.preventDefault();
-    $('.toggle.preview').removeClass('active');
-    $('.document .surface').removeClass('preview');
-
-    $('.toggle.cheatsheet').toggleClass('active');
-    $('.document .surface').toggleClass('cheatsheet');
-  },
-
-  _toggleMeta: function(e) {
-    if (e) e.preventDefault();
-    $('.toggle.meta').toggleClass('active');
-    $('.metadata').toggle();
     return false;
+  },
+
+  toggleView: function(view) {
+    this.view = view;
+    if (view === 'preview') {
+      this.model.preview = this.model.preview ? false : true;
+      this.$('.post-content').html(marked(this.model.content));
+      this.updateURL();
+    }
+    $('.toggle').removeClass('active');
+    $('.toggle.'+view).addClass('active');
+
+    $('.document .surface').removeClass('preview cheatsheet compose');
+    $('.document .surface').addClass(view);
+  },
+
+  right: function() {
+    var view = $('.toggle.active').attr('data-view');
+    if (view === 'preview') return;
+    if (view === 'compose') return this.toggleView('preview');
+    return this.toggleView('compose');
+  },
+
+  left: function() {
+    var view = $('.toggle.active').attr('data-view');
+    if (view === 'cheatsheet') return;
+    if (view === 'compose') return this.toggleView('cheatsheet');
+    return this.toggleView('compose');
   },
 
   initialize: function() {
     this.mode = "edit";
     if (!window.shortcutsRegistered) {
       key('⌘+s, ctrl+s', _.bind(function() { this.updatePost("Updated " + this.model.file); return false; }, this));
-      key('ctrl+shift+p', _.bind(function() { this._togglePreview(); return false; }, this));
-      key('ctrl+shift+m', _.bind(function() { this._toggleMeta(); return false; }, this));
+      key('ctrl+shift+right', _.bind(function() { this.right(); return false; }, this));
+      key('ctrl+shift+left', _.bind(function() { this.left(); return false; }, this));
+      key('esc', _.bind(function() { console.log('Escape'); return false; }, this));
       window.shortcutsRegistered = true;
     }
   },
@@ -190,9 +194,11 @@ views.Post = Backbone.View.extend({
   keyMap: function() {
     var that = this;
     return {
-      // This doesn't work. Why?
-      "Shift-Ctrl-P": function(codemirror) {
-        that._togglePreview();
+      "Shift-Ctrl-Left": function(codemirror) {
+        that.left();
+      },
+      "Shift-Ctrl-Right": function(codemirror) {
+        that.right();
       },
       "Shift-Ctrl-M": function(codemirror) {
         that._toggleMeta();
