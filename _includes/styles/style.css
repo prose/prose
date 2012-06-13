@@ -112,7 +112,7 @@ body.post #header {
 #header .navigation {
   width: 960px;
   margin: 0 auto;
-  font-size: 11px;
+  font-size: 12px;
   position: relative;
   text-transform: uppercase;
   font-weight: bold;
@@ -189,13 +189,27 @@ body.post #header {
 
 #header .user-status {
   position: absolute;
+
   top: 0px;
   right: 0px;
-  height: 60px;
+  height: 30px;
   line-height: 30px;
   padding: 0;
   margin: 0;
    }
+
+#header .user-status.logged-out {
+  line-height: 60px;
+}
+
+#header .user-status.logged-out a {
+  padding: 10px;
+}
+
+#header .user-status.logged-out a:hover {
+  background: #ccc;
+}
+
 
 #header .user-status img {
   float: left;
@@ -261,14 +275,13 @@ and your footer gets pushed down a bit more, creating vertical scroll bars in th
 #footer .footer-content {
   width: 960px;
   margin: 0 auto;
-  font-size: 16px;
+  font-size: 15px;
   }
-
 
 #footer a.help, #footer a.about{ 
   margin-right: 20px;
   padding-left: 20px;
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   font-weight: bold;
   background-image: url('images/sprite.png');
