@@ -89,10 +89,12 @@ views.Post = Backbone.View.extend({
   toggleView: function(view) {
     this.view = view;
     if (view === 'preview') {
-      this.model.preview = this.model.preview ? false : true;
+      this.model.preview = true;
       this.$('.post-content').html(marked(this.model.content));
-      this.updateURL();
+    } else {
+      this.model.preview = false;
     }
+    this.updateURL();
     $('.toggle').removeClass('active');
     $('.toggle.'+view).addClass('active');
 

@@ -53,11 +53,13 @@ views.Start = Backbone.View.extend({
   },
 
   render: function() {
+
     $(this.el).html(templates.start(_.extend(this.model, {
       repo: app.state.repo,
       available_repos: app.instance.model.available_repos,
       owners: app.instance.model.owners,
     })));
+    if (!window.authenticated) $('#header').hide();
     return this;
   }
 });
