@@ -9,11 +9,9 @@
     <% } %>
   <% }); %>
 
-  <% if (app.state.jekyll) { %>
-    <a class='link new new-post' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= path %>/new'>
-      <div class="new-post button">New Post</div>
-    </a>
-  <% } %>
+  <a class='link new new-post' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= path ? path+"/" : "" %>new'>
+    <div class="new-post button">New Post</div>
+  </a>
 
   <% if (posts.length > 0) { %>
     <% _.each(posts, function(post) { %>

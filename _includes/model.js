@@ -128,7 +128,8 @@ function loadSite(user, repo, branch, path, cb) {
   loadConfig(function(err, config) {
     app.state.jekyll = !err;
 
-    if (!path) path = app.state.jekyll ? "_posts" : "";
+    // if (!path) path = app.state.jekyll ? "_posts" : "";
+    if (!path) path == "";
 
     repo.getSha(branch, path, function(err, sha) {
       repo.getTree(sha, function(err, tree) {
@@ -145,17 +146,18 @@ function loadSite(user, repo, branch, path, cb) {
 
         var posts = _.map(tree, function(file) {
           // Make sense of the file path
-          function semantify(p, filetype) {
+          function semantify(file, filetype) {
             return {
-              path: path == "" ? p : path + "/"+p,
+              path: path == "" ? file.path : path + "/"+file.path,
               date: "",
               filetype: filetype,
-              title: p
+              title: file.path
             };
           }
 
-          if (isMarkdown(file.path)) return semantify(file.path, "markdown");
-          if (!app.state.jekyll) return semantify(file.path, "file");
+          if (file.type === "tree") return null; // Skip directories
+          if (isMarkdown(file.path)) return semantify(file, "markdown");
+          if (!app.state.jekyll) return semantify(file, "file");
           return null;
         });
         
@@ -218,7 +220,7 @@ function emptyPost(user, repo, branch, path, cb) {
     "raw_metadata": "published: false",
     "content": "How does it work?\n=================\n\nEnter Text in Markdown format.",
     "repo": repo,
-    "path": "_posts",
+    "path": path,
     "persisted": false,
     "file": new Date().format("Y-m-d")+"-your-filename.md"
   });
