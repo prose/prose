@@ -27,6 +27,7 @@ function authenticate() {
   // Handle Code
   if (match) {
     console.log('match found..', match[1]);
+    console.log('debug', '{{site.gatekeeper_url}}/authenticate/'+match[1]);
     $.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1], function(data) {
       $.cookie('oauth-token', data.token);
       window.authenticated = true;
