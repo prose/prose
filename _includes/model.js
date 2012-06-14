@@ -22,8 +22,11 @@ function authenticate() {
   if ($.cookie("oauth-token")) return window.authenticated = true;
   var match = window.location.href.match(/\?code=([a-z0-9]*)/);
 
+  console.log('match', match);
+
   // Handle Code
   if (match) {
+    console.log('match found..', match[1]);
     $.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1], function(data) {
       $.cookie('oauth-token', data.token);
       window.authenticated = true;
