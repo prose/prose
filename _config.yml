@@ -2,9 +2,9 @@ auto: true
 server: true
 pygments: true
 permalink: none
-baseurl: "/poole/"
+baseurl: "/prose/"
 oauth_client_id: caf55c20366465a1332d
-gatekeeper_url: http://poole-oauth-staging.herokuapp.com
+gatekeeper_url: http://prose-oauth.heroku.com
 exclude:
 - .gitignore
 - README.md
