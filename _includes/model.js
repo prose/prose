@@ -22,25 +22,15 @@ function authenticate() {
   if ($.cookie("oauth-token")) return window.authenticated = true;
   var match = window.location.href.match(/\?code=([a-z0-9]*)/);
 
-  console.log('match', match);
-
   // Handle Code
   if (match) {
-    console.log('match found..', match[1]);
-    console.log('debug', '{{site.gatekeeper_url}}/authenticate/'+match[1]);
-
-    $.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1])
-      .success(function(data) { 
-        console.log('token received...', data);
-        $.cookie('oauth-token', data.token);
-        window.authenticated = true;
-        // Adjust URL
-        var regex = new RegExp("\\?code="+match[1]);
-        window.location.href = window.location.href.replace(regex, '');
-      })
-      .error(function(err) {
-        console.log('error', err);
-      });
+    $.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1], function(data) {
+      $.cookie('oauth-token', data.token);
+      window.authenticated = true;
+      // Adjust URL
+      var regex = new RegExp("\\?code="+match[1]);
+      window.location.href = window.location.href.replace(regex, '');      
+    });
     return false;
   } else {
     return true;  
