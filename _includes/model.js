@@ -30,7 +30,7 @@ function authenticate() {
     console.log('debug', '{{site.gatekeeper_url}}/authenticate/'+match[1]);
 
 
-    $.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1], function(data) {
+    $.getJSON('http://prose-gatekeeper.heroku.com/authenticate/0f1797fcfd91655276b8', function(data) {
       $.cookie('oauth-token', data.token);
       window.authenticated = true;
       // Adjust URL
