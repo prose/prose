@@ -46,8 +46,8 @@ views.Post = Backbone.View.extend({
     this.model.file = file;
 
     function finish() {
-      this.updateURL();
-      app.state.path = this.model.path + "/" + file;
+      that.updateURL();
+      app.state.path = that.model.path + "/" + file;
     }
 
     if (this.model.persisted) {
