@@ -1,14 +1,14 @@
-Poole
+Prose
 =================
 
-**Poole** is a web-interface dedicated for managing dynamic content of Jekyll-based websites. Users of Jekyll can create, edit and delete files that live within the `_posts` directory. Poole can be considered a smart way of publishing for hackers and [humans](http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans), solving the issue that Jekyll is has not yet been suitable for less-technical content editors.
+**Prose** is a web-interface dedicated for managing dynamic content of Jekyll-based websites. Users of Jekyll can create, edit and delete files that live within the `_posts` directory. Prose can be considered a smart way of publishing for hackers and [humans](http://www.fyears.org/2012/05/jekyll-for-hackers-not-for-humans), solving the issue that Jekyll is has not yet been suitable for less-technical content editors.
 
 While developers can still enjoy all freedom the Jekyll framework provides, editors can easily access, edit and publish content using a visual interface. Here is how it works:
 
 Login with your Github User
 -----------------
 
-It was challenging, but Poole supports OAuth. I think it's very important to use OAuth over Basic Authentication, since Github data can be very sensible and no one wants to risk getting his password sniffed.
+It was challenging, but Prose supports OAuth. I think it's very important to use OAuth over Basic Authentication, since Github data can be very sensible and no one wants to risk getting his password sniffed.
 
 ![Start](http://f.cl.ly/items/0t0A170b2Y093F2u1w45/Screen%20Shot%202012-05-23%20at%205.48.45%20PM.png)
 
@@ -64,7 +64,7 @@ Take full control about your post, and edit Metadata aka the YAML frontmatter. N
 Architecture
 =================
 
-Poole itself is just a static webpage, and doesn't require any server-side bits. Instead it interacts directly with the Github API for managing your repo's contents. 
+Prose itself is just a static webpage, and doesn't require any server-side bits. Instead it interacts directly with the Github API for managing your repo's contents. 
 
 The Github API is somewhat funky from time to time, and hard to debug. We had to be aware of CORS issues and properly setting up headers for authorization. What's challenging here, is that Github just offers a low level API (around trees and blobs), which is problematic in many cases, as it requires a lot of subsequent requests to do simple things, which slows down site performance. That's why creating a good architecture was crucial to manage the complexity. I ended up in abstracting the data layer into a separate module, Github.js.
 
@@ -72,7 +72,7 @@ The Github API is somewhat funky from time to time, and hard to debug. We had to
 Github.js
 -----------------
 
-[Github.js](https://github.com/poole/github) is a higher-level wrapper around the Github API. It's intended for exactly our use case, namely interacting with Github from the browser. It supports reading, writing, renaming and deleting files. Goal was to have a simple data abstraction layer, nothing to fancy, but providing exactly the operations we need.
+[Github.js](https://github.com/michael/github) is a higher-level wrapper around the Github API. It's intended for exactly our use case, namely interacting with Github from the browser. It supports reading, writing, renaming and deleting files. Goal was to have a simple data abstraction layer, nothing to fancy, but providing exactly the operations we need.
 
 
 Gatekeeper
@@ -86,7 +86,7 @@ This is a real bummer. So we built [Gatekeeper](http://github.com/developmentsee
 Installation
 =================
 
-1. Fork and clone the repo in order to run your own instance of Poole.
+1. Fork and clone the repo in order to run your own instance of Prose.
 
 2. Setup a Github application, so CORS requests are possible as well as OAuth authentication.
 
@@ -110,7 +110,7 @@ Installation
 
 5. Run it.
    ```
-   server:poole poole$ jekyll
+   server:prose prose$ jekyll
    ```
 
 Limitations

@@ -226,7 +226,7 @@ views.Post = Backbone.View.extend({
       if (app.state.jekyll) {
         that.metadataEditor = CodeMirror.fromTextArea(document.getElementById('raw_metadata'), {
           mode: 'yaml',
-          theme: 'poole-dark',
+          theme: 'prose-dark',
           lineWrapping: true,
           extraKeys: that.keyMap(),
           onChange: _.bind(that._makeDirty, that)
@@ -239,7 +239,7 @@ views.Post = Backbone.View.extend({
         lineWrapping: true,
         extraKeys: that.keyMap(),
         matchBrackets: true,
-        theme: 'poole-bright',
+        theme: 'prose-bright',
         onChange: _.bind(that._makeDirty, that)
       });
     }, 100);
