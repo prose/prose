@@ -29,7 +29,11 @@ function authenticate() {
     console.log('match found..', match[1]);
     console.log('debug', '{{site.gatekeeper_url}}/authenticate/'+match[1]);
 
-    $.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1])
+
+    $.getJSON('http://prose-gatekeeper.herokuapp.com/authenticate/foo', function(data) {
+      console.log(data);
+    });
+    /*$.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1])
       .success(function(data) { 
         console.log('token received...', data);
         $.cookie('oauth-token', data.token);
@@ -40,7 +44,7 @@ function authenticate() {
       })
       .error(function(err) {
         console.log('error', err);
-      });
+      });*/
     return false;
   } else {
     return true;  
