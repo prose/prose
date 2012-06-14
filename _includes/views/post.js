@@ -29,7 +29,8 @@ views.Post = Backbone.View.extend({
   },
 
   updateURL: function() {
-    var url = [app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file];
+    var url = _.compact([app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file]);
+
     if (!this.model.preview) url.push('edit');
     router.navigate(url.join('/'), false);
   },
@@ -44,15 +45,18 @@ views.Post = Backbone.View.extend({
     app.instance.header.render();
     this.model.file = file;
 
+    function finish() {
+      this.updateURL();
+      app.state.path = this.model.path + "/" + file;
+    }
+
     if (this.model.persisted) {
       movePost(app.state.user, app.state.repo, app.state.branch, this.model.path + "/" + this.model.file, this.model.path + "/" + file, _.bind(function(err) {
-        if (!err) { 
-          this.updateURL();
-          app.state.path = this.model.path + "/" + file;
-        }
+        if (!err) finish()
         err ? cb('error') : cb(null)
       }, this));
     } else {
+      finish();
       cb(null);
     }
   },

@@ -16,7 +16,7 @@ views.Posts = Backbone.View.extend({
   // Creates human readable versions of _posts/paths
   semantifyPaths: function(paths) {
     return _.map(paths, function(path) {
-      return { path: path, name: path.replace('_posts/','').replace('_posts','') }
+      return { path: path, name: path }
     });
   },
 

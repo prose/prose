@@ -28,8 +28,7 @@ This is a real bummer. So we built [Gatekeeper](http://github.com/developmentsee
 
 
 
-Installation
-=================
+# Installation
 
 1. Fork and clone the repo in order to run your own instance of Prose.
 
@@ -56,8 +55,8 @@ Installation
        server:prose prose$ jekyll
 
 
-Limitations
-=================
+# Limitations
+
 
 The Github API comes with a number of limitations because of its low-level nature. Here is a the list of known issues related to that. I hope the folks at Github can help us (with some minor additions to their API) so we can eliminate them.
 
