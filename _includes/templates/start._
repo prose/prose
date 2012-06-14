@@ -5,7 +5,7 @@
       <p>Serving Jekyll faithfully</p>
 
       <div class="authorize">
-        <p>Prose is a visual interface for managing website-content.</p>
+        <p>Prose is a visual interface for managing website-content. And more.</p>
         <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user">Authorize with GitHub</a>
       </div>
     </div>

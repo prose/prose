@@ -139,94 +139,94 @@ div.CodeMirror-selected { background: #d9d9d9; }
 
 
 /*
-Poole Dark Theme
+Prose Dark Theme
 Saman Bemel-Benrud, Michael Aufreiter
 */
 
-.cm-s-poole-dark {
+.cm-s-prose-dark {
   line-height: 1.3em;
 }
-.cm-s-poole-dark {
+.cm-s-prose-dark {
   font-size: 17px;
   font-family: Menlo, monospace !important;
 }
 
-.cm-s-poole-dark { color: #EBEFE7; }
-.cm-s-poole-dark div.CodeMirror-selected { background: #45443B !important; }
-.cm-s-poole-dark .CodeMirror-cursor { border-left: 2px solid white !important; }
-.cm-s-poole-dark .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
+.cm-s-prose-dark { color: #EBEFE7; }
+.cm-s-prose-dark div.CodeMirror-selected { background: #45443B !important; }
+.cm-s-prose-dark .CodeMirror-cursor { border-left: 2px solid white !important; }
+.cm-s-prose-dark .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
 
-.cm-s-poole-dark .CodeMirror-gutter { background: #262626; border-right:1px solid #aaa; padding-right:3px; min-width:2.5em; }
-.cm-s-poole-dark .CodeMirror-gutter-text { color: inherit; }
-.cm-s-poole-dark span.cm-keyword { color: inherit; }
-.cm-s-poole-dark span.cm-atom { color: #fff; opacity: 0.4; }
-.cm-s-poole-dark span.cm-number { color: inherit; }
-.cm-s-poole-dark span.cm-def {color: white;}
-.cm-s-poole-dark span.cm-variable { color:inherit; }
-.cm-s-poole-dark span.cm-variable-2 { color: inherit; }
-.cm-s-poole-dark span.cm-variable-3 { color: inherit; }
-.cm-s-poole-dark span.cm-property {color: inherit;}
-.cm-s-poole-dark span.cm-operator {color: inherit;}
-.cm-s-poole-dark span.cm-comment { color: inherit; }
-.cm-s-poole-dark span.cm-string { color: inherit; }
-.cm-s-poole-dark span.cm-string-2 {color: inherit;}
-.cm-s-poole-dark span.cm-meta { color: #fff; opacity: 0.4; }
-.cm-s-poole-dark span.cm-error { color: inherit; }
-.cm-s-poole-dark span.cm-qualifier {color: inherit;}
-.cm-s-poole-dark span.cm-builtin { color: inherit; }
-.cm-s-poole-dark span.cm-bracket { color: inherit; }
-.cm-s-poole-dark span.cm-tag { color: inherit; }
-.cm-s-poole-dark span.cm-attribute {color: inherit;}
-.cm-s-poole-dark span.cm-header {color: inherit;}
-.cm-s-poole-dark span.cm-quote {color: inherit;}
-.cm-s-poole-dark span.cm-hr {color: inherit;}
-.cm-s-poole-dark span.cm-link {color: inherit;}
+.cm-s-prose-dark .CodeMirror-gutter { background: #262626; border-right:1px solid #aaa; padding-right:3px; min-width:2.5em; }
+.cm-s-prose-dark .CodeMirror-gutter-text { color: inherit; }
+.cm-s-prose-dark span.cm-keyword { color: inherit; }
+.cm-s-prose-dark span.cm-atom { color: #fff; opacity: 0.4; }
+.cm-s-prose-dark span.cm-number { color: inherit; }
+.cm-s-prose-dark span.cm-def {color: white;}
+.cm-s-prose-dark span.cm-variable { color:inherit; }
+.cm-s-prose-dark span.cm-variable-2 { color: inherit; }
+.cm-s-prose-dark span.cm-variable-3 { color: inherit; }
+.cm-s-prose-dark span.cm-property {color: inherit;}
+.cm-s-prose-dark span.cm-operator {color: inherit;}
+.cm-s-prose-dark span.cm-comment { color: inherit; }
+.cm-s-prose-dark span.cm-string { color: inherit; }
+.cm-s-prose-dark span.cm-string-2 {color: inherit;}
+.cm-s-prose-dark span.cm-meta { color: #fff; opacity: 0.4; }
+.cm-s-prose-dark span.cm-error { color: inherit; }
+.cm-s-prose-dark span.cm-qualifier {color: inherit;}
+.cm-s-prose-dark span.cm-builtin { color: inherit; }
+.cm-s-prose-dark span.cm-bracket { color: inherit; }
+.cm-s-prose-dark span.cm-tag { color: inherit; }
+.cm-s-prose-dark span.cm-attribute {color: inherit;}
+.cm-s-prose-dark span.cm-header {color: inherit;}
+.cm-s-prose-dark span.cm-quote {color: inherit;}
+.cm-s-prose-dark span.cm-hr {color: inherit;}
+.cm-s-prose-dark span.cm-link {color: inherit;}
 
 /*
-Poole Dark Theme
+Prose Dark Theme
 Saman Bemel-Benrud, Michael Aufreiter
 */
 
-.cm-s-poole-bright {
+.cm-s-prose-bright {
   line-height: 1.3em;
 }
-.cm-s-poole-bright {
+.cm-s-prose-bright {
   font-family: Menlo, monospace !important;
   font-size: 17px;
 }
 
-.cm-s-poole-bright {  color: #667880; }
-.cm-s-poole-bright div.CodeMirror-selected {background: #AFC3CF !important;} /* 33322B*/
-.cm-s-poole-bright .CodeMirror-cursor { border-left: 2px solid #667880 !important; }
-.cm-s-poole-bright .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
+.cm-s-prose-bright {  color: #667880; }
+.cm-s-prose-bright div.CodeMirror-selected {background: #AFC3CF !important;} /* 33322B*/
+.cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880 !important; }
+.cm-s-prose-bright .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
 
 div.CodeMirror span.CodeMirror-matchingbracket { background: #fff; }
 
-.cm-s-poole-bright .CodeMirror-gutter { background: #262626; border-right:1px solid #aaa; padding-right:3px; min-width:2.5em; }
-.cm-s-poole-bright .CodeMirror-gutter-text { color: #777; }
+.cm-s-prose-bright .CodeMirror-gutter { background: #262626; border-right:1px solid #aaa; padding-right:3px; min-width:2.5em; }
+.cm-s-prose-bright .CodeMirror-gutter-text { color: #777; }
 
-.cm-s-poole-bright span.cm-keyword { color: inherit; }
-.cm-s-poole-bright span.cm-atom { color: inherit; }
-.cm-s-poole-bright span.cm-number { color: inherit; }
-.cm-s-poole-bright span.cm-def {color: white;}
-.cm-s-poole-bright span.cm-variable { color:inherit; }
-.cm-s-poole-bright span.cm-variable-2 { color: inherit; }
-.cm-s-poole-bright span.cm-variable-3 { color: inherit; }
-.cm-s-poole-bright span.cm-property {color: #92A75C;}
-.cm-s-poole-bright span.cm-operator {color: #92A75C;}
-.cm-s-poole-bright span.cm-comment { color: #DB6F6F; }
-.cm-s-poole-bright span.cm-string { color: #078FA2;; }
-.cm-s-poole-bright span.cm-string-2 {color: #078FA2;;}
-.cm-s-poole-bright span.cm-meta { color: #728c72; }
-.cm-s-poole-bright span.cm-error { color: #DB6F6F; }
-.cm-s-poole-bright span.cm-qualifier {color: inherit;}
-.cm-s-poole-bright span.cm-builtin { color: inherit; }
-.cm-s-poole-bright span.cm-bracket { color: #DB6F6F; }
-.cm-s-poole-bright span.cm-tag { color: #DB6F6F; }
-.cm-s-poole-bright span.cm-attribute {color: inherit;}
-.cm-s-poole-bright span.cm-header {color:inherit; font-weight: bold;}
-.cm-s-poole-bright span.cm-quote {color: #078FA2;}
-.cm-s-poole-bright span.cm-hr {color: #515F66;}
-.cm-s-poole-bright span.cm-link {color: #DB6F6F;}
-.cm-s-poole-bright span.cm-em {color: inherit; font-style: italic;}
-.cm-s-poole-bright span.cm-strong {color: inherit; font-weight: bold;}
+.cm-s-prose-bright span.cm-keyword { color: inherit; }
+.cm-s-prose-bright span.cm-atom { color: inherit; }
+.cm-s-prose-bright span.cm-number { color: inherit; }
+.cm-s-prose-bright span.cm-def {color: white;}
+.cm-s-prose-bright span.cm-variable { color:inherit; }
+.cm-s-prose-bright span.cm-variable-2 { color: inherit; }
+.cm-s-prose-bright span.cm-variable-3 { color: inherit; }
+.cm-s-prose-bright span.cm-property {color: #92A75C;}
+.cm-s-prose-bright span.cm-operator {color: #92A75C;}
+.cm-s-prose-bright span.cm-comment { color: #DB6F6F; }
+.cm-s-prose-bright span.cm-string { color: #078FA2;; }
+.cm-s-prose-bright span.cm-string-2 {color: #078FA2;;}
+.cm-s-prose-bright span.cm-meta { color: #728c72; }
+.cm-s-prose-bright span.cm-error { color: #DB6F6F; }
+.cm-s-prose-bright span.cm-qualifier {color: inherit;}
+.cm-s-prose-bright span.cm-builtin { color: inherit; }
+.cm-s-prose-bright span.cm-bracket { color: #DB6F6F; }
+.cm-s-prose-bright span.cm-tag { color: #DB6F6F; }
+.cm-s-prose-bright span.cm-attribute {color: inherit;}
+.cm-s-prose-bright span.cm-header {color:inherit; font-weight: bold;}
+.cm-s-prose-bright span.cm-quote {color: #078FA2;}
+.cm-s-prose-bright span.cm-hr {color: #515F66;}
+.cm-s-prose-bright span.cm-link {color: #DB6F6F;}
+.cm-s-prose-bright span.cm-em {color: inherit; font-style: italic;}
+.cm-s-prose-bright span.cm-strong {color: inherit; font-weight: bold;}
