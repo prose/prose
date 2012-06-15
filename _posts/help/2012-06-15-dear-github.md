@@ -9,7 +9,13 @@ we're working on [Prose](http://prose.io), a visual interface to manage the cont
 ![Prose](http://f.cl.ly/items/2b1x3N2j2v1T0M3M291H/Screen%20Shot%202012-06-12%20at%203.10.19%20PM.png)
 
 
-Here's a list of issues we're experiencing in conjunction with our app:
+
+# Github.js
+
+We created our own client-side abstraction, Github.js for reading and manipulating files in a Github Repo using the Github API. It’s intended for exactly our use case, namely interacting with Github from the browser. It supports reading, writing, renaming and deleting files.
+
+
+However, here's a list of issues we're experiencing in conjunction with our app using the Github API (v3).
 
 - Listing Repositories
   
@@ -86,7 +92,7 @@ Ideally, this allows you to write multiple files.
 
 ## Update file
 
-    PUT  /repos/:user/:repo/files/:ref/:path
+    PUT  /repos/:user/:repo/files/:head/:path
 
 
 **Parameters**
@@ -110,11 +116,8 @@ Ideally, this allows you to write multiple files.
         "email": "schacon@gmail.com",
         "date": "2008-07-09T16:13:30+12:00"
       },
-      "head": "master",
-      "files": {
-        "_posts/2012-06-17-hello-world.md": "File contents as UTF8 string",
-        "README.md": "Here comes Kurt."
-      }
+      "contents": "New contents",
+      "path": "path/to/new-file-location.md"
     }
 
 
