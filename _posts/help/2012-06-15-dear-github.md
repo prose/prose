@@ -1,4 +1,12 @@
 ---
+layout: help
+title: Dear Github
+descr: An Open Letter to Github, propsing the introduction of a File API.
+image: http://farm7.staticflickr.com/6119/6884293596_b44a31bf0a_m.jpg
+author_twitter: _mql
+author: Michael Aufreiter
+categories:
+- help
 published: true
 ---
 
@@ -128,3 +136,4 @@ Ideally, this allows you to write multiple files.
 **Parameters**
 
 - `message` - String of the commit message
+
