@@ -127,9 +127,10 @@ function loadSite(user, repo, branch, path, cb) {
 
   loadConfig(function(err, config) {
     app.state.jekyll = !err;
+    
+    app.state.config = config;
 
-    // if (!path) path = app.state.jekyll ? "_posts" : "";
-    if (!path) path == "";
+    if (!path) path = config && config.prose && config.prose.rooturl ? config.prose.rooturl : "";
 
     repo.getSha(branch, path, function(err, sha) {
       repo.getTree(sha, function(err, tree) {
@@ -175,6 +176,7 @@ function loadSite(user, repo, branch, path, cb) {
 // Looks into _posts/blog
 
 function saveFile(user, repo, branch, path, file, metadata, content, message, cb) {
+
   var repo = github().getRepo(user, repo);
   function serialize() {
     if (app.state.jekyll && isMarkdown(file)) {
@@ -185,6 +187,7 @@ function saveFile(user, repo, branch, path, file, metadata, content, message, cb
   }
   var path = path ? path+ "/"+ file : file;
   repo.write(branch, path, serialize(), message, cb);
+
 }
 
 
@@ -205,19 +208,28 @@ function movePost(user, repo, branch, path, newPath, cb) {
   repo.move(branch, path, newPath, cb);
 }
 
+
 // New Post
 // -------
 // 
 // Prepare new empty post
 
 function emptyPost(user, repo, branch, path, cb) {
+  var rawMetadata = "";
+  var metadata;
+  var cfg = app.state.config
+  if (cfg.prose && cfg.prose && cfg.prose.metadata) {
+    metadata = cfg.prose.metadata[path];
+    if (metadata) rawMetadata = _.toYAML(metadata);
+  }
+
   var repo = github().getRepo(user, repo);
   cb(null, {
     "metadata": {
       "layout": "default",
       "published": false,
     },
-    "raw_metadata": "published: false",
+    "raw_metadata": rawMetadata,
     "content": "How does it work?\n=================\n\nEnter Text in Markdown format.",
     "repo": repo,
     "path": path,
