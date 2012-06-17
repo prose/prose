@@ -216,19 +216,20 @@ function movePost(user, repo, branch, path, newPath, cb) {
 
 function emptyPost(user, repo, branch, path, cb) {
   var rawMetadata = "";
-  var metadata;
+  var metadata = {
+    "layout": "default",
+    "published": false,
+  };
+
   var cfg = app.state.config
   if (cfg.prose && cfg.prose && cfg.prose.metadata) {
     metadata = cfg.prose.metadata[path];
-    if (metadata) rawMetadata = _.toYAML(metadata);
   }
+  rawMetadata = _.toYAML(metadata);
 
   var repo = github().getRepo(user, repo);
   cb(null, {
-    "metadata": {
-      "layout": "default",
-      "published": false,
-    },
+    "metadata": metadata,
     "raw_metadata": rawMetadata,
     "content": "How does it work?\n=================\n\nEnter Text in Markdown format.",
     "repo": repo,
