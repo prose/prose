@@ -2,10 +2,9 @@
   <% if (!authenticated) { %>
     <div class="splash">
       <h2>Prose</h2>
-      <p>Serving Jekyll and Github. Faithfully</p>
 
       <div class="authorize">
-        <p>Prose is a visual interface for managing website content. And more.</p>
+        <p><strong>Prose</strong> is a visual interface for managing website content and more.</p>
         <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user">Authorize with GitHub</a>
       </div>
     </div>
