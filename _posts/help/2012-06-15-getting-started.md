@@ -7,18 +7,18 @@ author_twitter: _mql
 author: Michael Aufreiter
 categories:
 - help
+published: false
 ---
 
 This little guide walks you through the process of using Prose to manage your website.
 
-
 # Create your first Jekyll webpage if you haven't already
 
-We've created a simple Jekyll-based website that you can use as a starting point, Prose Bootrap. All you have to do is creating a fork and give it a proper name. If you already maintaining a Jekyll page you can skip this step.
+We've created a simple Jekyll-based website that you can use as a starting point, [Prose Bootrap](http://bootstrap.prose.io). All you have to do is creating a fork of the repository and give it a suitable new name. Please follow the steps described on the Bootstrap homepage. If you already maintaining a Jekyll page you can skip this step.
 
 # Open Prose
 
-You can sign in to Github by using OAuth.
+Navigate to [Prose.io](http://prose.io). Now you can sign in to Github by using OAuth.
 
 ![Start](http://f.cl.ly/items/0t0A170b2Y093F2u1w45/Screen%20Shot%202012-05-23%20at%205.48.45%20PM.png)
 
@@ -80,7 +80,7 @@ The editor not only supports Jekyll websites but can be used to edit any github 
 
 However, if navigate to a Jekyll repository, the editor is smart enough to expose everything below `_posts` and provide a the metadata editor along with the markdown preview panel.
 
-# A writer's paradise
+# Suitable for writers
 
 Prose is also suitable as a full-featured writing environment, covering authoring and sharing articles. That's how you can do it:
 
@@ -89,5 +89,7 @@ Prose is also suitable as a full-featured writing environment, covering authorin
 3. Save it.
 4. Share it (we support deep linking to the rendered version)
 
-Prose is pretty similiar to [iAWriter](http://www.iawriter.com/) but it's web-based and uses Github for storage your text so your writings are more than save and Github keeps a history of every saved version. This could become a whole new way of sharing documents, software documentation etc. using just the usual suspects Markdown and Github. Oh and it's free and open source.
+Prose is similiar to [iAWriter](http://www.iawriter.com/) as it is also using a minimal interface for editing Markdown, but it's web-based and uses [Github](http://github.com) for storing your text so your writings are more than save and Github keeps a history of every saved version. So Prose can potentially be seen as a whole new way of sharing documents online, while utilizing the usual suspects Markdown and Github. Oh and it's free and open source.
+
+
 

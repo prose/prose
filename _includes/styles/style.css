@@ -99,13 +99,18 @@ body.post #header {
 
 #header a.title {
   position: absolute;
-  width: 100px;
-  background: url('images/sprite.png') 0px -116px no-repeat;
+  width: 40px;
+  background: url('images/sprite.png') 9px -169px no-repeat;
   left: 0px;
-  top: 15px;
-  height: 30px;
+  top: 11px;
+  height: 40px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
   }
-
+  #header a.title:hover {
+	background-color: #c9d1d6; 
+  }
 #header a.title span {
   display: none;
   }
@@ -314,11 +319,8 @@ body:before {/* thanks to Maleika (Kohoutec)*/
 
 #start .splash {
   text-align: center;
-  background: #E0E7EB;
-  font-family: 'OpenSans', sans-serif;
+  background: white;
   font-weight: normal;
-  font-size: 16px;
-  line-height: 1.3em;
   -moz-border-radius: 5px 5px 0 0;
   -webkit-border-radius: 5px 5px 0 0;
   position: relative;
@@ -331,11 +333,11 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   }
 
 #start .splash h2 {
-  background: url('images/sprite.png') 128px 18px no-repeat;
+  background: url('images/sprite.png') 111px 47px no-repeat;
   text-indent: -3000px;
   overflow: hidden;
   display: block;
-  height: 160px;
+  height: 200px;
   }
 
 #start .splash p {
@@ -343,7 +345,7 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   }
 
 .authorize {
-  background: white;
+  border-top: 1px solid #C3CCD0;
   -moz-border-radius: 0 0 5px 5px;
   -webkit-border-radius: 0 0 5px 5px;
   border-radius: 0 0 5px 5px;

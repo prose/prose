@@ -1,9 +1,6 @@
 ---
-layout: about
-title: About
-author_twitter: _mql
-author: Michael Aufreiter
-published: true
+layout: "default"
+published: false
 ---
 
 One of the biggest unsolved problems of our society is most definitely `Content Management`. There've been millions of attempts to solve it. All of them failed. So here's another ambitious attempt of failing less.
