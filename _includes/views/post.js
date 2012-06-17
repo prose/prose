@@ -185,7 +185,11 @@ views.Post = Backbone.View.extend({
     function save() {
       if (!app.state.jekyll || that.updateMetaData()) {
         saveFile(app.state.user, app.state.repo, app.state.branch, that.model.path, that.model.file, that.rawMetadata, that.editor.getValue(), message, function(err) {
-          if (err) return updateState('! Error', 'error');
+          if (err) {
+            _.delay(function() { that._makeDirty() }, 3000);
+            updateState('! Try again in 30 seconds', 'error');
+            return;
+          }
           that.dirty = false;
           that.model.persisted = true;
           that.updateURL();
