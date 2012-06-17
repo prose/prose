@@ -888,7 +888,7 @@ ul.site li a {
   position: absolute;
   top: 60px;
   right: 0px;
-  width: 200px;
+  width: 300px;
   z-index: 3000;
   border-radius: 0 0 5px 5px;
   }
@@ -914,7 +914,7 @@ ul.site li a {
   }
 
 .document-menu .options .actions .button:hover {
-  background: rgba(0,0,0, 0.4);
+  background: #DB6F6F;
   }
 
 .document-menu-content .menu-item.save-state {
@@ -926,7 +926,7 @@ ul.site li a {
 
 .document-menu-content .state .button.save { 
   background: rgba(0,0,0, 0.2); 
-  width: 100px; 
+  width: 180px; 
   text-align: center;
   line-height: 40px;
   margin-left: 1px;
@@ -934,6 +934,7 @@ ul.site li a {
   height: 40px;
   border-radius: 0px 4px 4px 0px;
   margin-left: 1px;
+  padding: 0;
   }
   .document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.4); }
 
@@ -987,14 +988,14 @@ ul.site li a {
 	  overflow: hidden;
 	  background-image: url('images/ajax-loader-unpublished.gif');
 	  background-repeat: no-repeat;
-	  background-position: 25px 13px;
+	  background-position: 60px 13px;
 	  }
 	  .published .document-menu-content .state .button.saving {
   	  text-indent: -9999px;
 	    overflow: hidden;
 	    background-image: url('images/ajax-loader-published.gif');
 	    background-repeat: no-repeat;
-	    background-position: 25px 13px;
+	    background-position: 60px 13px;
 	    }
 
 .document-menu-content .state .options {
