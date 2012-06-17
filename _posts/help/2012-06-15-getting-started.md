@@ -18,7 +18,7 @@ We've created a simple Jekyll-based website that you can use as a starting point
 
 # Open Prose
 
-You can sign in to Github by using OAuth.
+Navigate to [Prose.io](http://prose.io). Now you can sign in to Github by using OAuth.
 
 ![Start](http://f.cl.ly/items/0t0A170b2Y093F2u1w45/Screen%20Shot%202012-05-23%20at%205.48.45%20PM.png)
 
@@ -90,5 +90,6 @@ Prose is also suitable as a full-featured writing environment, covering authorin
 4. Share it (we support deep linking to the rendered version)
 
 Prose is similiar to [iAWriter](http://www.iawriter.com/) as it is also using a minimal interface for editing Markdown, but it's web-based and uses [Github](http://github.com) for storing your text so your writings are more than save and Github keeps a history of every saved version. So Prose can potentially be seen as a whole new way of sharing documents online, while utilizing the usual suspects Markdown and Github. Oh and it's free and open source.
+
 
 
