@@ -1,4 +1,11 @@
-<div class="notification <%= type %>">
-  <%= message%> 
-</div>
-<a class="button" href="../">Go back </a>
+<% if (!window.authenticated) { %>
+  <div class="notification <%= type %>">
+    Please login with your Github Account to access that project.
+  </div>
+  <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user&redirect_uri=<%= window.location.href %>">Sign in</a>
+<% } else { %>
+  <div class="notification <%= type %>">
+    <%= message%> 
+  </div>
+  <a class="button" href="../">Go back </a>
+<% } %>
