@@ -64,6 +64,7 @@ views.Post = Backbone.View.extend({
   _makeDirty: function(e) {
     this.dirty = true;
     if (this.editor) this.model.content = this.editor.getValue();
+    if (this.metadataEditor) this.rawMetadata = this.metadataEditor.getValue();
     // $('.document')[0].scrollLeft = '-100%';
     if (!this.$('.button.save').hasClass('saving')) {
       this.$('.button.save').html('SAVE');
@@ -86,7 +87,10 @@ views.Post = Backbone.View.extend({
   _toggleMeta: function(e) {
     if (e) e.preventDefault();
     $('.toggle.meta').toggleClass('active');
-    $('.metadata').toggle();  
+    $('.metadata').toggle();
+
+    // Refresh metadata editor (cause it's tipsy)
+    this.metadataEditor.setValue(this.metadataEditor.getValue());
     return false;
   },
 
@@ -132,8 +136,10 @@ views.Post = Backbone.View.extend({
   },
 
   parseMetadata: function(metadata) {
+    var metadata = this.metadataEditor.getValue();
+    if (!metadata) return {};
     try {
-      return jsyaml.load(this.rawMetadata);
+      return jsyaml.load(metadata);
     } catch(err) {
       return null;
     }
@@ -155,12 +161,12 @@ views.Post = Backbone.View.extend({
     this.rawMetadata = this.metadataEditor.getValue();
     var published = this.$('#post_published').prop('checked');
     var metadata = this.parseMetadata(this.rawMetadata);
-    metadata.published = published;
-
     if (metadata) {
+      metadata.published = published;
       this.model.metadata = metadata;
       this.rawMetadata = updatePublished(this.rawMetadata, published);
       this.metadataEditor.setValue(this.rawMetadata);
+
       if (this.model.metadata.published) {
         $('#post').addClass('published');
       } else {
@@ -229,11 +235,12 @@ views.Post = Backbone.View.extend({
 
   initEditor: function() {
     var that = this;
-    setTimeout(function() {
 
+    setTimeout(function() {
       if (app.state.jekyll) {
-        that.metadataEditor = CodeMirror.fromTextArea(document.getElementById('raw_metadata'), {
+        that.metadataEditor = CodeMirror($('#raw_metadata')[0], {
           mode: 'yaml',
+          value: this.rawMetadata,
           theme: 'prose-dark',
           lineWrapping: true,
           extraKeys: that.keyMap(),

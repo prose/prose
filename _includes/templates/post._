@@ -42,7 +42,7 @@
     <% if (jekyll) { %>
       <div class="metadata">
         <div class="metadata-content">
-          <textarea id='raw_metadata' name='raw_metadata'><%= raw_metadata %></textarea>
+          <div id="raw_metadata"></div>
         </div>
       </div>
     <% } %>
