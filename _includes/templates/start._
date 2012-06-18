@@ -4,7 +4,7 @@
       <h2>Prose</h2>
 
       <div class="authorize">
-        <p><strong>Prose</strong> is a visual interface for managing website content. And more.</p>
+        <p><strong>Prose</strong> is a visual interface for managing website content. <a href="/about.html">And more.</a></p>
         <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user">Authorize with GitHub</a>
       </div>
     </div>
