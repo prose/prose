@@ -141,6 +141,10 @@ function loadSite(user, repo, branch, path, cb) {
         }));
 
         paths = [path].concat(paths);
+
+        // Include a parent folder path
+        if (path !== "") paths = [_.parentPath(path)].concat(paths);
+
         app.state.config = config;
         app.state.paths = paths;
         app.state.path = path ? path : paths[0];

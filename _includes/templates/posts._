@@ -3,8 +3,8 @@
 
   <% _.each(paths, function(p, index) { %>
     <% if (p.path !== current_path.path) { %>
-      <a class='link folder' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= p.path %>'>
-        <div class="filename"><%= p.name %></div>
+      <a class='link folder' href='#<%= user %>/<%= repo %>/<%= branch %><%= p.path ? "/" +p.path : "" %>'>
+        <div class="filename"><%= p.path === _.parentPath(current_path.path) ? ".." : _.topPath(p.path) %></div>
       </a>
     <% } %>
   <% }); %>

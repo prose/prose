@@ -20,6 +20,15 @@ _.toYAML = function(data) {
   }).join("\n");
 };
 
+_.parentPath = function(path) {
+  return path.replace(/\/?[a-zA-Z0-9_-]*$/, "");
+}
+
+_.topPath = function(path) {
+  var match = path.match(/\/?([a-zA-Z0-9_-]*)$/);
+  return match[1];
+}
+
 // Check for a valid post file name
 _.validFilename = function(filename) {
   return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
