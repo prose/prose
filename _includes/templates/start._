@@ -5,7 +5,7 @@
 
       <div class="authorize">
         <p><strong>Prose</strong> is a visual interface for managing website content and more.</p>
-        <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user">Authorize with GitHub</a>
+        <a class="button" id="authorize" href="#">Authorize with GitHub</a>
       </div>
     </div>
   <% } %>

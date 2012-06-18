@@ -5,7 +5,8 @@ views.Start = Backbone.View.extend({
 
   events: {
     'submit #login_form': '_login',
-    'click .select-repo': '_selectRepo'
+    'click .select-repo': '_selectRepo',
+    'click #authorize': '_authorize'
   },
 
   initialize: function(options) {},
@@ -50,6 +51,10 @@ views.Start = Backbone.View.extend({
     });
 
     return false;
+  },
+  
+  _authorize: function() {
+    window.location.href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user)';
   },
 
   render: function() {
