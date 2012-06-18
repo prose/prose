@@ -37,6 +37,14 @@ views.Application = Backbone.View.extend({
         $('#post').removeClass('sticky-menu');
       }
     });
+
+    if (window.navigator.standalone) {
+      $('body').on('click', 'a[href^="/"]', function (e) {
+        e.preventDefault();
+        console.log('js');
+        window.location.href = $(this).attr('href');
+      });
+    }
   },
 
   // Should be rendered just once

@@ -4,7 +4,15 @@ views.Header = Backbone.View.extend({
   id: 'header',
 
   events: {
+    "click #mobile-menu a.title": "_mobileMenu",
     "click a.logout": "_logout"
+  },
+
+  _mobileMenu: function(e) {
+    e.preventDefault();
+    $(e.currentTarget).parent().toggleClass('active');
+
+    return false;
   },
 
   _logout: function() {

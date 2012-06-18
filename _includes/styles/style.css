@@ -1388,3 +1388,209 @@ label.error {
     right: 0;
     }
   }
+
+/* ------------------------------------------
+  responsive styles
+---------------------------------------------*/
+  /* Scale page layout with viewport */
+  @media all and (max-width: 959px) {
+    #header .navigation,
+    #container,
+    #posts,
+    #footer .footer-content,
+    #start,
+    .document-menu-content,
+    .document .metadata-content,
+    .document .content-preview, .document .content,
+    .document .cheatsheet-wrapper .content,
+    #container .about,
+    .help,
+    .help-article {
+      width: 100%;
+      min-width: 100%;
+      padding-left: 5px;
+      padding-right: 5px;
+      }
+  }
+  
+  /* iPhone-specific styles */
+  #header .navigation #mobile-menu {
+    display: none;
+    }
+  
+  @media all and (max-width: 480px) {
+    #footer {
+      display: none;
+      }
+    #start,
+    #start .dialog,
+    #start .splash {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      padding: 0;
+      margin: 0;
+      border: none;
+      width: 100%;
+      background: none;
+      box-shadow: none;
+      }
+    #start {
+      padding: 10px;
+      }
+    #start .splash h2 {
+      position: absolute;
+      margin-left: -100px;
+      bottom: 50%;
+      left: 50%;
+      width: 200px;
+      padding: 0;
+      background-position: 45px 67px;
+      }
+    #start .splash .authorize {
+      border-top: none;
+      position: absolute;
+      top: 50%;
+      }
+    #main {
+      position: absolute;
+      padding-top: 15px;
+      top: 50px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      -webkit-overflow-scrolling: touch;
+      }
+    .repos > a,
+    .post-listing a.link {
+      margin: 5px;
+      }
+    #start .owner {
+      margin-left: 5px;
+      }
+    #header {
+      height: 50px;
+      padding: 0;
+      }
+    #header .navigation .title,
+    #header .user-status {
+      display: none;
+      }
+    #header .navigation {
+      position: absolute;
+      right: 15px;
+      left: 15px;
+      min-width: 0;
+      width: auto;
+      height: 40px;
+      padding: 0;
+      top: 5px;
+      line-height: 38px;
+      }
+    #header .navigation div.repo,
+    #header .navigation a.repo {
+      border: 1px solid transparent;
+      margin: 0;
+      padding: 0 10px 0 30px;
+      background-position: 10px -747px;
+      float: right;
+      height: 38px;
+      max-width: 245px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      }
+    #header .navigation a.repo,
+    #header .navigation #mobile-menu .title {
+      border-color: #c3ccd0;
+      border-radius: 5px;
+      background-color: #e7eef2;      
+      }
+    #header .navigation .path,
+    #header .navigation .file { display: none; }
+    
+    #header .navigation #mobile-menu {
+      padding: 0;
+      margin: 0;
+      top: 0;
+      left: 0;
+      height: 40px;
+      position: absolute;
+      width: 40px;
+      overflow: hidden;
+      display: block;
+      }
+    #header .navigation #mobile-menu .title {
+      display: block;
+      border: 1px solid #c3ccd0;
+      background-position: 7px -171px;
+      height: 38px;
+      width: 38px;
+      top: 0;
+      left: 0;
+      position: relative;
+      z-index: 2;
+      }
+    #header .navigation #mobile-menu.active {
+      overflow: visible;
+      }
+    #header .navigation #mobile-menu.active .title {
+      border-radius: 5px 5px 0 0;
+      border-bottom: 0px;
+      }  
+    #header .navigation #mobile-menu.active .menu-links {
+      position: relative;
+      top: -1px;
+      background: #e7eef2;
+      border: 1px solid #c3ccd0;
+      z-index: 1;
+      width: 260px;
+      padding: 0 5px;
+      border-radius: 0 5px 5px 5px;
+      }
+    #container .menu-links a {
+      background: none;
+      margin-right: 10px;
+      }
+
+    #container .about,
+    .post-content {
+      background: no-repeat;
+      margin: 0;
+      padding: 0 10px;
+      border: none;
+      box-shadow: none;
+      }
+  }
+  
+  /* retina! */
+  @media
+  only screen and (-webkit-min-device-pixel-ratio : 2),
+  only screen and (min-device-pixel-ratio : 2) {
+    #header a.title,
+    #header .navigation .repo,
+    #header .navigation .path,
+    #header .navigation .file,
+    #header .navigation .file::before, #header .navigation .path::before,
+    #header .user-status .logout,
+    #footer a.help, #footer a.about,
+    #start .splash h2,
+    #start .owner,
+    .repos > a,
+    .repos a .branches,
+    .post-listing a.link,
+    .post-listing a.link.folder,
+    .post-listing a.link.new .button,
+    .post-listing a.link.new:hover .button,
+    .document-menu-content .status,
+    .document-menu-content .menu-item.preview, .document-menu-content .menu-item.cheatsheet, .document-menu-content .menu-item.compose,
+    .document-menu-content .menu-item.meta,
+    .document-menu-content .filename .state.error,
+    .document-menu-content .state .button.toggle-options,
+    .help h2 {
+      background-image: url('images/sprite@2x.png');
+      background-size: 620px 1100px;
+      }
+  }

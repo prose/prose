@@ -54,7 +54,8 @@ views.Start = Backbone.View.extend({
   },
   
   _authorize: function() {
-    window.location.href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user)';
+    var url = encodeURI('https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user');
+    window.location.href = url;
   },
 
   render: function() {

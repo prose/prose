@@ -1,4 +1,14 @@
 <div class="navigation">
+  <div id="mobile-menu">
+    <a href='#' class='title'><span>Prose</span></a>
+    <div class="menu-links">
+      <a class='home' href="/{{site.baseurl}}#">Home</a>
+      <a class='help' href="/{{site.baseurl}}help.html">Help</a>
+      <a class='about' href="/{{site.baseurl}}about.html">About</a>
+      <a class="logout" href="#">Logout</a>
+    </div>
+  </div>
+
   <a href='/{{site.baseurl}}' class='title'><span>Prose</span></a>
 
   <% if (state.repo) { %>
