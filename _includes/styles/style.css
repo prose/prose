@@ -16,10 +16,10 @@ input { font: 13px/20px 'OpenSans', sans-serif; }
 a {
   color: #526066;
   text-decoration: none;
-  -moz-transition: background 100ms linear, color 100ms linear;
-  -o-transition: background 100ms linear, color 100ms linear;
-  -webkit-transition: background 100ms linear, color 100ms linear;
-  transition: background 100ms linear, color 100ms linear;
+  -moz-transition: background-color 100ms linear, color 100ms linear;
+  -o-transition: background-color 100ms linear, color 100ms linear;
+  -webkit-transition: background-color 100ms linear, color 100ms linear;
+  transition: background-color 100ms linear, color 100ms linear;
   }
 a:hover {
   color: #3d4548;
@@ -100,8 +100,8 @@ body.post #header {
 #header a.title {
   position: absolute;
   width: 40px;
-  background: url('images/sprite.png') 9px -169px no-repeat;
-  left: -10px;
+  background: url('images/sprite.png') 4px -164px no-repeat;
+  left: 0px;
   top: 11px;
   height: 40px;
   -moz-border-radius: 5px;
@@ -699,12 +699,6 @@ ul.site li a {
   background: #667880;
   overflow: visible;
   line-height: 40px;
-
-  -moz-transition: background 100ms linear;
-  -o-transition: background 100ms linear;
-  -webkit-transition: background 100ms linear;
-  transition: background 100ms linear;
-
   z-index: 2000;
   }
 
@@ -1380,7 +1374,7 @@ label.error {
   #post .inner {
     width: 100%;
     margin: 0;
-    padding: 20px 0 40px;
+    padding: 20px 0px 40px 0px;
     }
   .toggle-mode {
     right: 0;
