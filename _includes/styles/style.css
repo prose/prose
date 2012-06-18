@@ -101,7 +101,7 @@ body.post #header {
   position: absolute;
   width: 40px;
   background: url('images/sprite.png') 9px -169px no-repeat;
-  left: 0px;
+  left: -10px;
   top: 11px;
   height: 40px;
   -moz-border-radius: 5px;
@@ -141,18 +141,9 @@ body.post #header {
   -webkit-border-radius: 5px;
   border-radius: 5px;
   }
-
-#header .navigation .root {
-  margin-left: 100px;
-  background-image:url('images/sprite.png');
-  background-position: 6px -240px;
-  background-repeat: no-repeat;
-  }
-  #header .navigation div.root {
-	  background-position-y: -650px;
-    }
     
 #header .navigation .repo {
+  margin-left: 50px;
   background-image:url('images/sprite.png');
   background-position: 4px -340px;
   background-repeat: no-repeat;
@@ -180,7 +171,7 @@ body.post #header {
 	  background-position-y: -850px;
     }
 
-#header .navigation .file::before, #header .navigation .repo::before, #header .navigation .path::before {
+#header .navigation .file::before, #header .navigation .path::before {
   content:"";
   background-image:url('images/sprite.png');
   background-position: -289px -390px;

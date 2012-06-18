@@ -1,10 +1,8 @@
 <div class="navigation">
   <a href='/{{site.baseurl}}' class='title'><span>Prose</span></a>
-  <!--Github account and links-->
-  <a class="root" href="/{{site.baseurl}}">Repos</a>
 
   <% if (state.repo) { %>
-    <% var path = state.path /*.replace('_posts/','').replace('_posts','');*/ %>
+    <% var path = state.path %>
 
     <% if (state.repo && (path ||state.file)) { %>
       <a class="repo" href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></a>
