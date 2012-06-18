@@ -1,5 +1,6 @@
 ---
 layout: help
+published: true
 title: Internals
 descr: You want to run your own instance of Prose? Here's what you need to know.
 image: http://farm7.staticflickr.com/6119/6884293596_b44a31bf0a_m.jpg
