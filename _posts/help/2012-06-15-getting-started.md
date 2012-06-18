@@ -7,7 +7,7 @@ author_twitter: _mql
 author: Michael Aufreiter
 categories:
 - help
-published: false
+published: true
 ---
 
 This little guide walks you through the process of using Prose to manage your website.
@@ -90,6 +90,7 @@ Prose is also suitable as a full-featured writing environment, covering authorin
 4. Share it (we support deep linking to the rendered version)
 
 Prose is similiar to [iAWriter](http://www.iawriter.com/) as it is also using a minimal interface for editing Markdown, but it's web-based and uses [Github](http://github.com) for storing your text so your writings are more than save and Github keeps a history of every saved version. So Prose can potentially be seen as a whole new way of sharing documents online, while utilizing the usual suspects Markdown and Github. Oh and it's free and open source.
+
 
 
 
