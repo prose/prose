@@ -145,13 +145,13 @@ body.post #header {
   }
 
 #header .user-status.logged-out a.button {
-  height: 100%;
   padding: 0 10px;
-  display: inline-block;
+  display: block;
   }
 
 #header .user-status .logout {
-  display: inline-block;
+  display: block;
+  float: right;
   width: 30px;
   text-indent: -3000px;
   margin-left: 10px;
