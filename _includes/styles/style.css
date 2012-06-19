@@ -1,5 +1,5 @@
 /* ------------------------------------------
-  Typography
+  Typography / Basics
 ---------------------------------------------*/
 html,body {
   color: #57676e;
@@ -26,12 +26,14 @@ a:hover {
   }
 
 a:focus {
-  outline: thin dotted;
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
+  outline: none;
   }
 
-p > a {font-weight: bold;}
+a:active {
+  outline: none;
+  }
+
+p > a {font-weight: 700;}
 
 h1,h2,h3,h4,h5,h6 {
   margin: 0;
@@ -41,24 +43,24 @@ h4, h5, h6 {
   }
 
 h1 { font-size: 24px; }
-h1 small { font-size: 13px; font-weight: normal; }
+h1 small { font-size: 13px; font-weight: 400; }
 h2 { 
-  font-weight: normal;
+  font-weight: 400;
   font-size: 16px;
   padding: 5px 0 5px 30px;
   }
-h2 small { font-size: 16px; font-weight: normal; }
+h2 small { font-size: 16px; font-weight: 400; }
 h3 { 
   font-size: 11px;
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: 700;
   margin-top: 10px;
   }
 
-h3 small { font-size: 14px; font-weight: normal; }
+h3 small { font-size: 14px; font-weight: 400; }
 h4 { font-size: 14px; }
 h5 { font-size: 13px; }
-h6 { font-size: 11px; font-weight: normal; }
+h6 { font-size: 11px; font-weight: 400; }
 
 p {
   font-size: 16px;
@@ -119,7 +121,7 @@ body.post #header {
   line-height: 60px;
   overflow: visible;
   font-size: 12px;
-  font-weight: bold;
+  font-weight: 700;
   height: 100%;
   text-indent: 20px;
   }
@@ -142,20 +144,14 @@ body.post #header {
   padding: 0;
   }
 
-#header .user-status.logged-out {
-  line-height: 60px;
-  }
-
-#header .user-status.logged-out a {
-  padding: 10px;
-  }
-
-#header .user-status.logged-out a:hover {
-  background: #ccc;
+#header .user-status.logged-out a.button {
+  padding: 0 10px;
+  display: block;
   }
 
 #header .user-status .logout {
-  display: inline-block;
+  display: block;
+  float: right;
   width: 30px;
   text-indent: -3000px;
   margin-left: 10px;
@@ -211,6 +207,7 @@ and your footer gets pushed down a bit more, creating vertical scroll bars in th
   padding-left: 20px;
   font-size: 12px;
   font-weight: bold;
+  font-weight: 700;
   background-image: url('images/sprite.png');
   }
   a.about { background-position: 0 -959px; }
@@ -241,7 +238,7 @@ body:before {/* thanks to Maleika (Kohoutec)*/
 #start .splash {
   text-align: center;
   background: white;
-  font-weight: normal;
+  font-weight: 400;
   -moz-border-radius: 5px 5px 0 0;
   -webkit-border-radius: 5px 5px 0 0;
   border-radius: 5px 5px 0 0;
@@ -288,7 +285,7 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   font-family:'OpenSans', sans-serif; 
   text-transform: uppercase;
   font-size: 11px;
-  font-weight: bold;
+  font-weight: 700;
   color: #fff;
   }
   .authorize a.button:hover { background: #3d4548; }
@@ -347,7 +344,6 @@ body.start {
   border-radius: 3px 3px 0px 3px;
 
   text-align: center;
-  padding: 10px;
   position: relative;
   margin-right: 20px;
   margin-top: 20px;
@@ -548,7 +544,6 @@ ul.site li a {
   width: 140px;
   min-height: 180px;
   margin: 0 20px 20px 0;
-  padding: 10px;
   position: relative;
   color: #404040;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
@@ -571,6 +566,7 @@ ul.site li a {
   color: #526066;
   left: 0;
   right: 0;
+  padding: 0px 10px;
   }
   .post-listing a.link.loading { background-color: white; }
   .post-listing a.link.loading .filename {
@@ -624,7 +620,7 @@ ul.site li a {
   text-transform: uppercase;
   text-align: center;
   font-size: 11px;
-  font-weight: bold;
+  font-weight: 700;
   }
   .post-listing a.link.new:hover .button { background: #3d4548 url('images/sprite.png') -440px -90px no-repeat; }
 
@@ -677,7 +673,7 @@ ul.site li a {
   width: 960px;
   margin: 0 auto;
   color: #E7EEF2;
-  font-weight: bold;
+  font-weight: 700;
   position: relative;
   }
 
@@ -964,7 +960,7 @@ ul.site li a {
   }
   .state p {
     color: #526066;
-    font-weight: normal;
+    font-weight: 400;
     font-size: 11px;
     line-height: 35px;
     margin: 0;
@@ -1027,7 +1023,7 @@ ul.site li a {
   }
 
 .document .cheatsheet-wrapper .content h2 {
-  font-weight: bold;
+  font-weight: 700;
   padding: 5px 0;
   margin: 0;
 }
@@ -1051,7 +1047,7 @@ ul.site li a {
   background: #fff;
   padding: 100px;
   font-family: 'OpenSans', sans-serif;
-  font-weight: normal;
+  font-weight: 400;
   border: 1px solid #C3CCD0;
   font-size: 16px;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
@@ -1068,17 +1064,17 @@ ul.site li a {
 .post-content .title {
   font-size: 18px; 
   margin-bottom: 20px; 
-  font-weight: bold;
+  font-weight: 700;
   border-bottom: 1px solid #d5e0e4;
   padding-bottom: 20px;
   }
 
 .post-content h1 { font-size: 36px; margin: 10px 0 20px 0; }
-.post-content h2 { font-size: 24px; margin: 10px 0 20px 0; font-weight: bold; padding: 0; }
+.post-content h2 { font-size: 24px; margin: 10px 0 20px 0; font-weight: 700; padding: 0; }
 .post-content h3, .post-content h4, .post-content h5, .post-content h6 { 
   text-transform: none;
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 700;
   margin: 10px 0 5px 0;
   }
   
@@ -1215,7 +1211,7 @@ ul.site li a {
 
 .help .articles .article p {
   font-size: 12px;
-  font-weight: normal;
+  font-weight: 400;
   }
 
 .help .articles .article img {
@@ -1238,7 +1234,7 @@ ul.site li a {
   padding: 20px;
   font-size: 24px;
   line-height: 1.5em;
-  font-weight: bold;
+  font-weight: 700;
   }
 
 #notification a {
@@ -1256,7 +1252,7 @@ ul.site li a {
   text-transform: uppercase;
   text-align: center;
   font-size: 11px;
-  font-weight: bold;
+  font-weight: 700;
   }
   #notification a:hover { background: #3d4548; }
 
