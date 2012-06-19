@@ -21,6 +21,8 @@
         <%= _.clip(state.file, 30) %>
       </div>
       <% } %>
+  <% } else { %>
+    <%= app.state.title %>
   <% } %>
 
   <div class='user-status<%= !window.authenticated ? " logged-out" : "" %>'>
