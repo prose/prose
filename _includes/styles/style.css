@@ -117,10 +117,7 @@ body.post #header {
 #header .navigation {
   width: 960px;
   margin: 0 auto;
-  font-size: 12px;
   position: relative;
-  text-transform: uppercase;
-  font-weight: bold;
   line-height: 60px;
   overflow: visible;
   height: 100%;
@@ -129,66 +126,26 @@ body.post #header {
 #header .navigation > * {
   display: block;
   position: relative;
-  padding-right: 0px;
-  padding-left: 25px;
-  margin: 15px 20px 0 10px;
+  padding: 0 20px 0 30px;
+  margin: 0px;
   float: left;
   }
 
-#header .navigation a {
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+#header .navigation a:hover {
+  background-color: #c9d1d6; 
   }
     
-#header .navigation .repo {
+#header .navigation .repo, #header .navigation .file, #header .navigation .path {
   background-image:url('images/sprite.png');
-  background-position: 4px -340px;
+  background-position: 10px -325px;
   background-repeat: no-repeat;
   }
-  #header .navigation div.repo {
-	  background-position-y: -750px;
-    }
-
-#header .navigation .path {
-  background-image:url('images/sprite.png');
-  background-position: 4px -340px;
-  background-repeat: no-repeat;
-  }
-  #header .navigation div.path {
-	  background-position-y: -750px;
-    }
-
-
-#header .navigation .file {
-  background-image:url('images/sprite.png');
-  background-position: 3px -440px;
-  background-repeat: no-repeat;
-  }
-  #header .navigation div.file {
-	  background-position-y: -850px;
-    }
-
-#header .navigation .file::before, #header .navigation .path::before {
-  content:"";
-  background-image:url('images/sprite.png');
-  background-position: -289px -390px;
-  background-repeat: no-repeat;
-  display: block;
-  position: absolute;
-  left: -30px;
-  top: 0px;
-  width: 30px;
-  height: 30px;
-  }
+  #header .navigation div.repo {background-position-y: -735px;}
+  #header .navigation div.path {background-position-y: -735px;}
+  #header .navigation div.file {background-position-y: -835px;}
 
 #header .user-status {
-  position: relative;
-  height: 30px;
-  line-height: 30px;
-  padding: 0;
   float: right;
-  margin: 15px 0 0 0;
   }
 
 #header .user-status.logged-out {
@@ -203,27 +160,16 @@ body.post #header {
   background: #ccc;
 }
 
-
-#header .user-status img {
-  float: left;
-  border: 1px solid #C3CCD0;
-  margin-right: 10px;
-  }
-
 #header .user-status .logout {
   display: inline-block;
   width: 30px;
-  height: 30px;
   text-indent: -3000px;
   margin-left: 10px;
   overflow: hidden;
   background-image: url('images/sprite.png');
-  background-position: -441px -41px;
+  background-position: -441px -25px;
   background-repeat: no-repeat;
   }
-  #header .user-status .logout:hover {
-    background-color: #c9d1d6; 
-    }
  
 #main {
   padding-top: 60px;
