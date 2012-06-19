@@ -2,7 +2,7 @@
   Typography
 ---------------------------------------------*/
 html,body {
-  color: #7A8387;
+  color: #57676e;
   background: #e7eef2;
   -webkit-font-smoothing: antialiased;
   height: 100%;
@@ -14,7 +14,7 @@ textarea,
 input { font: 13px/20px 'OpenSans', sans-serif; }
 
 a {
-  color: #526066;
+  color: #434c50;
   text-decoration: none;
   -moz-transition: background-color 100ms linear, color 100ms linear;
   -o-transition: background-color 100ms linear, color 100ms linear;
@@ -22,7 +22,7 @@ a {
   transition: background-color 100ms linear, color 100ms linear;
   }
 a:hover {
-  color: #3d4548;
+  color: #2e3335;
   }
 
 a:focus {
@@ -247,7 +247,6 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   border-radius: 5px 5px 0 0;
   position: relative;
   margin: 40px auto 0 auto;
-  color: #7A8387;
   width: 340px;
   border: 1px solid #C3CCD0;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
@@ -1071,11 +1070,11 @@ ul.site li a {
   }
 
 .post-content .title {
-  font-size: 36px; 
-  margin-bottom: 10px; 
+  font-size: 18px; 
+  margin-bottom: 20px; 
   font-weight: bold;
-  border-bottom: 1px solid #C3CCD0;
-  padding-bottom: 10px;
+  border-bottom: 1px solid #d5e0e4;
+  padding-bottom: 20px;
   }
 
 .post-content h1 { font-size: 36px; margin: 10px 0 20px 0; }
@@ -1089,7 +1088,7 @@ ul.site li a {
   
 .post-content blockquote {
 	padding-left: 19px;
-  border-left: 1px solid #C3CCD0;
+  border-left: 1px solid #d5e0e4;
   font-style: italic;
   margin-bottom: 20px;
   }
@@ -1112,16 +1111,19 @@ ul.site li a {
 
 .post-content .meta {
   margin-top: 30px;
+  padding-top: 5px;
   font-size: 12px;
   text-transform: uppercase;
-  border-top: 1px solid #C3CCD0;
+  border-top: 1px solid #d5e0e4;
   }
 
 .post-content a {
-  border-bottom: 1px dashed #C3CCD0;
-  font-weight: normal;
+  color: #2c92be;
   }
-
+.post-content a:hover {
+  color: #387791;
+  }
+  
 .post-content p {
   margin-bottom: 20px;
   }
@@ -1133,15 +1135,16 @@ ul.site li a {
 .post-content code {
   font-family: Menlo, monospace;
   padding: 4px;
+  margin: 0 2px;
   border-radius: 3px;
   font-size: 12px;
-  border: 1px solid #C3CCD0;
+  border: 1px solid #d5e0e4;
   }
 
 .post-content pre {
   padding: 10px;
   border-radius: 3px;
-  border: 1px solid #C3CCD0;
+  border: 1px solid #d5e0e4;
   }
 
 .post-content pre code {
@@ -1149,9 +1152,9 @@ ul.site li a {
   }
 
 .post-content hr {
-  margin: 5px 0 4px 0;
-  border-top: 1px solid #C3CCD0;
-  border-bottom: 0;
+  margin: 5px 0 19px 0;
+  border: 0;
+  border-top: 1px solid #d5e0e4;
   border-radius: 5px;
   }
 
