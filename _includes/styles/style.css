@@ -142,6 +142,9 @@ body.post #header {
 #header .user-status {
   float: right;
   padding: 0;
+  min-width: 120px;
+  text-align: right;
+  text-indent: -40px;
   }
 
 #header .user-status.logged-out a.button {
@@ -153,7 +156,7 @@ body.post #header {
   display: block;
   float: right;
   width: 30px;
-  text-indent: -3000px;
+  text-indent: 3000px;
   margin-left: 10px;
   overflow: hidden;
   background-image: url('images/sprite.png');
