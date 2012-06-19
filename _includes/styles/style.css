@@ -148,6 +148,7 @@ body.post #header {
   }
 
 #header .user-status.logged-out a.button {
+  text-indent: 0;
   padding: 0 10px;
   display: block;
   }
