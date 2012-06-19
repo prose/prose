@@ -148,6 +148,7 @@ body.post #header {
   }
 
 #header .user-status.logged-out a.button {
+  text-indent: 0;
   padding: 0 10px;
   display: block;
   }
@@ -1029,7 +1030,7 @@ ul.site li a {
   font-weight: 700;
   padding: 5px 0;
   margin: 0;
-}
+  }
 
 .document .cheatsheet-wrapper .content pre {
   border: 1px solid #C3CCD0;
@@ -1039,8 +1040,7 @@ ul.site li a {
   font-size: 17px;
   padding: 10px;
   font-family: Menlo, monospace !important;
-}
-
+  }
 
 /* ------------------------------------------
   Rendered Markdown
@@ -1143,10 +1143,11 @@ ul.site li a {
   border-radius: 3px;
   border: 1px solid #d5e0e4;
   }
-
-.post-content pre code {
-  border: none;
-  }
+  .post-content pre code {
+    border: none;
+    margin: 0;
+    padding: 0;
+    }
 
 .post-content hr {
   margin: 5px 0 19px 0;
