@@ -191,7 +191,6 @@ function saveFile(user, repo, branch, path, file, metadata, content, message, cb
   }
   var path = path ? path+ "/"+ file : file;
   repo.write(branch, path, serialize(), message, cb);
-
 }
 
 
@@ -244,7 +243,7 @@ function emptyPost(user, repo, branch, path, cb) {
 }
 
 
-// Save Post
+// Load Post
 // -------
 // 
 // List all postings for a given repository
