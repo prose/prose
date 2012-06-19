@@ -48,16 +48,14 @@ views.Start = Backbone.View.extend({
       if (err) return self.$('.bad-credentials').show();
       window.location.reload();
     });
-
     return false;
   },
 
   render: function() {
-
     $(this.el).html(templates.start(_.extend(this.model, {
       repo: app.state.repo,
       available_repos: app.instance.model.available_repos,
-      owners: app.instance.model.owners,
+      owners: app.instance.model.owners
     })));
     if (!window.authenticated) $('#header').hide();
     return this;
