@@ -64,7 +64,7 @@ views.Post = Backbone.View.extend({
   _makeDirty: function(e) {
     this.dirty = true;
     if (this.editor) this.model.content = this.editor.getValue();
-    if (this.metadataEditor) this.rawMetadata = this.metadataEditor.getValue();
+    if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
     // $('.document')[0].scrollLeft = '-100%';
     if (!this.$('.button.save').hasClass('saving')) {
       this.$('.button.save').html('SAVE');
@@ -80,7 +80,6 @@ views.Post = Backbone.View.extend({
 
   _toggleView: function(e) {
     this.toggleView($(e.currentTarget).attr('data-view'))
-
     return false;
   },
 
@@ -158,14 +157,14 @@ views.Post = Backbone.View.extend({
       }
     }
 
-    this.rawMetadata = this.metadataEditor.getValue();
+    this.model.raw_metadata = this.metadataEditor.getValue();
     var published = this.$('#post_published').prop('checked');
-    var metadata = this.parseMetadata(this.rawMetadata);
+    var metadata = this.parseMetadata(this.model.raw_metadata);
     if (metadata) {
       metadata.published = published;
       this.model.metadata = metadata;
-      this.rawMetadata = updatePublished(this.rawMetadata, published);
-      this.metadataEditor.setValue(this.rawMetadata);
+      this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
+      this.metadataEditor.setValue(this.model.raw_metadata);
 
       if (this.model.metadata.published) {
         $('#post').addClass('published');
@@ -190,7 +189,7 @@ views.Post = Backbone.View.extend({
 
     function save() {
       if (!app.state.jekyll || that.updateMetaData()) {
-        saveFile(app.state.user, app.state.repo, app.state.branch, that.model.path, that.model.file, that.rawMetadata, that.editor.getValue(), message, function(err) {
+        saveFile(app.state.user, app.state.repo, app.state.branch, that.model.path, that.model.file, that.model.raw_metadata, that.editor.getValue(), message, function(err) {
           if (err) {
             _.delay(function() { that._makeDirty() }, 3000);
             updateState('! Try again in 30 seconds', 'error');
@@ -235,12 +234,11 @@ views.Post = Backbone.View.extend({
 
   initEditor: function() {
     var that = this;
-
     setTimeout(function() {
       if (app.state.jekyll) {
         that.metadataEditor = CodeMirror($('#raw_metadata')[0], {
           mode: 'yaml',
-          value: this.rawMetadata,
+          value: that.model.raw_metadata,
           theme: 'prose-dark',
           lineWrapping: true,
           extraKeys: that.keyMap(),
