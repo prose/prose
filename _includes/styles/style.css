@@ -121,15 +121,16 @@ body.post #header {
   font-size: 12px;
   font-weight: bold;
   height: 100%;
-  text-indent: 10px;
+  text-indent: 20px;
   }
 
 #header .navigation > * {
   display: block;
   position: relative;
-  padding: 0 20px 0 10px;
+  padding: 0 20px 0 20px;
   margin: 0px;
   float: left;
+  text-indent: 0px;
   }
 
 #header .navigation a:hover {
@@ -300,19 +301,33 @@ body:before {/* thanks to Maleika (Kohoutec)*/
 body.start {
   }
 
-#start .owner {
-  font-size: 16px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 30px;
-  width: 200px;
-  background: url('images/sprite.png') 0px -545px no-repeat;
-  }
-
 #start {
   padding-bottom: 20px;
   width: 960px;
   margin: 20px auto 0 auto;
+  }
+
+#start .owner {
+  font-size: 16px;
+  padding: 10px;
+  background: #E0E7EB; 
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px
+  }
+
+#start .owner::before {
+  content: "";
+  background: url('images/sprite.png') 0px -550px no-repeat;
+  height: 30px;
+  width: 30px;
+  float: left;
+  display: block;
+  position: relative;
+  }
+#start .owner .repo-count {
+	display: block;
+	float: right;
   }
 
 .repos {
@@ -425,7 +440,6 @@ body.start {
   }
 
 .repos a .branches a.branch:hover  {
-  /*color: #eee;*/
   background: #E0E7EB;
   }
 
@@ -459,19 +473,15 @@ ul.site li a {
   z-index:2;
   padding:5px;
   background:#eee;
-  border-radius:0 0 0 5px;
+  border-radius:0 0 0 4px;
+  -moz-border-radius: 0 0 0 4px;
+  -webkit-border-radius: 0 0 0 4px;
   box-shadow:
   inset #ccc 0px 1px,
   inset #ddd 0px 0px 5px,
   #fff 0px 1px,
   #f8f8f8 0px 3px 3px;
   }
-  #user img {
-    border-radius:2px;
-    width:30px;
-    height:30px;
-    vertical-align:middle;
-    }
   #user .name,
   #user .logout {
     display:inline;
@@ -1118,10 +1128,10 @@ ul.site li a {
   }
 
 .post-content a {
-  color: #2c92be;
+  color: #90BB74;
   }
 .post-content a:hover {
-  color: #387791;
+  color: #73955C;
   }
   
 .post-content p {
@@ -1136,6 +1146,8 @@ ul.site li a {
   font-family: Menlo, monospace;
   padding: 4px;
   margin: 0 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
   border-radius: 3px;
   font-size: 12px;
   border: 1px solid #d5e0e4;
@@ -1155,6 +1167,8 @@ ul.site li a {
   margin: 5px 0 19px 0;
   border: 0;
   border-top: 1px solid #d5e0e4;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
   }
 
@@ -1187,7 +1201,9 @@ ul.site li a {
   }
 
 .help .articles .article {
-  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px
   border: #c3ccd0 1px solid;
   overflow: hidden;
   background-color: #F2F6F8;
