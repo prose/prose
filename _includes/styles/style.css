@@ -121,7 +121,7 @@ body.post #header {
   position: relative;
   text-transform: uppercase;
   font-weight: bold;
-  line-height: 30px;
+  line-height: 60px;
   overflow: visible;
   height: 100%;
   }
@@ -185,6 +185,7 @@ body.post #header {
 #header .user-status {
   position: relative;
   height: 30px;
+  line-height: 30px;
   padding: 0;
   float: right;
   margin: 15px 0 0 0;
