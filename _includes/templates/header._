@@ -1,4 +1,4 @@
-<div class="navigation">
+<div class="navigation clearfix">
   <a href='/{{site.baseurl}}' class='title'><span>Prose</span></a>
 
   <% if (state.repo) { %>

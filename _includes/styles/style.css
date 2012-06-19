@@ -97,16 +97,15 @@ body.post #header {
   border-bottom: none;
   }
 
-#header a.title {
-  position: absolute;
-  width: 40px;
-  background: url('images/sprite.png') 4px -164px no-repeat;
-  left: 0px;
-  top: 11px;
-  height: 40px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+#header .navigation a.title {
+  position: relative;
+  width: 60px;
+  background: url('images/sprite.png') 13px -154px no-repeat;
+  height: 100%;
+  margin: 0;
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
   }
   #header a.title:hover {
 	background-color: #c9d1d6; 
@@ -123,16 +122,16 @@ body.post #header {
   text-transform: uppercase;
   font-weight: bold;
   line-height: 30px;
-  padding: 15px 0;
   overflow: visible;
+  height: 100%;
   }
 
 #header .navigation > * {
   display: block;
   position: relative;
-  padding-right: 5px;
-  padding-left: 20px;
-  margin-right: 30px;
+  padding-right: 0px;
+  padding-left: 25px;
+  margin: 15px 20px 0 10px;
   float: left;
   }
 
@@ -143,7 +142,6 @@ body.post #header {
   }
     
 #header .navigation .repo {
-  margin-left: 50px;
   background-image:url('images/sprite.png');
   background-position: 4px -340px;
   background-repeat: no-repeat;
@@ -185,15 +183,12 @@ body.post #header {
   }
 
 #header .user-status {
-  position: absolute;
-
-  top: 0px;
-  right: 0px;
+  position: relative;
   height: 30px;
-  line-height: 30px;
   padding: 0;
-  margin: 0;
-   }
+  float: right;
+  margin: 15px 0 0 0;
+  }
 
 #header .user-status.logged-out {
   line-height: 60px;
@@ -210,25 +205,20 @@ body.post #header {
 
 #header .user-status img {
   float: left;
-  margin-right: 10px;
-  margin-top: 15px;
   border: 1px solid #C3CCD0;
+  margin-right: 10px;
   }
 
 #header .user-status .logout {
   display: inline-block;
-  margin-top: 15px;
-  margin-left: 5px;
   width: 30px;
   height: 30px;
   text-indent: -3000px;
+  margin-left: 10px;
   overflow: hidden;
   background-image: url('images/sprite.png');
   background-position: -441px -41px;
   background-repeat: no-repeat;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
   }
   #header .user-status .logout:hover {
     background-color: #c9d1d6; 
@@ -314,6 +304,7 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   font-weight: normal;
   -moz-border-radius: 5px 5px 0 0;
   -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
   position: relative;
   margin: 40px auto 0 auto;
   color: #7A8387;
