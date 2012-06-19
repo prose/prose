@@ -47,7 +47,7 @@
       </div>
     <% } %>
 
-    <div class="surface<%= preview ? " preview" : "" %>">
+    <div class="surface<%= preview ? " preview" : " compose" %>">
       <div class="cheatsheet-wrapper">
         <div class="content">
 
