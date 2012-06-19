@@ -1,7 +1,7 @@
 ---
 layout: help
 title: Internals
-descr: A little background on how we implemented Prose.io
+descr: A little background on how we implemented Prose.
 image: http://farm7.staticflickr.com/6119/6884293596_b44a31bf0a_m.jpg
 author_twitter: _mql
 author: Michael Aufreiter
