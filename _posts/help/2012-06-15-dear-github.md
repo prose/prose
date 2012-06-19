@@ -1,12 +1,5 @@
 ---
-layout: help
-title: Dear Github
-descr: An Open Letter to Github, propsing the introduction of a File API.
-image: http://farm7.staticflickr.com/6119/6884293596_b44a31bf0a_m.jpg
-author_twitter: _mql
-author: Michael Aufreiter
-categories:
-- help
+
 published: false
 ---
 
@@ -44,7 +37,7 @@ However, here's a list of issues we're experiencing in conjunction with our app 
   
 # Github File API
 
-Well we'd like to ask, if it would be possible to introduce a higher level API for reading and writing files to Github, without messing with blobs and trees.
+Well we'd like to ask, if it would be possible to introduce a higher level API for reading and writing files to Github, without messing with blobs and trees directly. Also we could reduce the amount of requests necessary to do things like storing or deleting a file.
 
 We'd be glad to help with designing that API, and I'm sure we're not the only one who would appreciate such a higher level interface. Here's an early draft of the API.
 
