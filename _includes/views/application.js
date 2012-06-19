@@ -106,10 +106,10 @@ views.Application = Backbone.View.extend({
         this.header.render();
       }, this));
     }, this));
-
   },
 
   start: function() {
+    app.state.title = "Repositories";
     this.header.render();
     this.replaceMainView("start", new views.Start({id: "start", model: {authenticated: window.authenticated}}).render());
   },
