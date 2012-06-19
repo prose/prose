@@ -226,7 +226,7 @@ function emptyPost(user, repo, branch, path, cb) {
   };
 
   var cfg = app.state.config
-  if (cfg.prose && cfg.prose && cfg.prose.metadata) {
+  if (cfg && cfg.prose && cfg.prose.metadata) {
     metadata = cfg.prose.metadata[path];
   }
   rawMetadata = _.toYAML(metadata);
