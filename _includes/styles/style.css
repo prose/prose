@@ -418,7 +418,7 @@ body.start {
   margin: auto;
   left: 0; right: 0; top: 0; bottom: 0;
   background: url('images/ajax-loader.gif') no-repeat;
-  height: 40px;
+  height: 10px;
   width: 44px;
   }
   .loading-branches, .post-listing a.link.folder.loading {
@@ -572,7 +572,7 @@ ul.site li a {
     margin: auto;
     left: 0; right: 0; top: 0; bottom: 0;
     background: url('images/ajax-loader-white.gif') no-repeat;
-    height: 40px;
+    height: 10px;
     width: 44px;
     color: #444;
     }
