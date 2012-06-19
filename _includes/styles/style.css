@@ -99,17 +99,15 @@ body.post #header {
 
 #header .navigation a.title {
   position: relative;
-  width: 60px;
-  background: url('images/sprite.png') 13px -154px no-repeat;
+  width: 80px;
+  background: url('images/sprite.png') 22px -154px no-repeat;
   height: 100%;
   margin: 0;
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
   }
-  #header a.title:hover {
-	background-color: #c9d1d6; 
-  }
+
 #header a.title span {
   display: none;
   }
@@ -120,13 +118,16 @@ body.post #header {
   position: relative;
   line-height: 60px;
   overflow: visible;
+  font-size: 12px;
+  font-weight: bold;
   height: 100%;
+  text-indent: 10px;
   }
 
 #header .navigation > * {
   display: block;
   position: relative;
-  padding: 0 20px 0 30px;
+  padding: 0 20px 0 10px;
   margin: 0px;
   float: left;
   }
@@ -134,31 +135,23 @@ body.post #header {
 #header .navigation a:hover {
   background-color: #c9d1d6; 
   }
-    
-#header .navigation .repo, #header .navigation .file, #header .navigation .path {
-  background-image:url('images/sprite.png');
-  background-position: 10px -325px;
-  background-repeat: no-repeat;
-  }
-  #header .navigation div.repo {background-position-y: -735px;}
-  #header .navigation div.path {background-position-y: -735px;}
-  #header .navigation div.file {background-position-y: -835px;}
 
 #header .user-status {
   float: right;
+  padding: 0;
   }
 
 #header .user-status.logged-out {
   line-height: 60px;
-}
+  }
 
 #header .user-status.logged-out a {
   padding: 10px;
-}
+  }
 
 #header .user-status.logged-out a:hover {
   background: #ccc;
-}
+  }
 
 #header .user-status .logout {
   display: inline-block;
