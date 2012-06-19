@@ -13,8 +13,8 @@
 
 <% if (authenticated) { %>
   <% _.each(owners, function(repos, owner) { %>
-    <h2 class="owner"><%= owner %></h2>
-    <div class='repos'>
+    <div class="owner"><%= owner %><div class="repo-count"><%= repos.length %> Repositories</div></div>
+    <div class="repos">
         <% _.each(repos, function(r, index) { %>
           <a title='edit' class="select-repo repo" data-user="<%= r.owner.login %>" data-repo="<%= r.name %>" href='#'>
             <div class="name"><%= r.name %></div>
