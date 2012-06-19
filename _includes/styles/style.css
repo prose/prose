@@ -209,7 +209,7 @@ and your footer gets pushed down a bit more, creating vertical scroll bars in th
   margin-right: 20px;
   padding-left: 20px;
   font-size: 12px;
-  text-transform: uppercase;
+  font-weight: bold;
   font-weight: 700;
   background-image: url('images/sprite.png');
   }
@@ -976,42 +976,29 @@ ul.site li a {
   }
 
 .document .surface {
-  width: 300%;
-  -moz-transition: margin-left 300ms linear;
-  -o-transition: margin-left 300ms linear;
-  -webkit-transition: margin-left 300ms linear;
-  transition: margin-left 300ms linear;
-  margin-left: -100%;
   overflow: hidden;
   }
 
-.document .surface.preview {
-  margin-left: -200%;
-  }
+.document .surface .cheatsheet-wrapper         { display: none; }
+.document .surface .content-wrapper            { display: none; }
+.document .surface .content-preview-wrapper    { display: none; }
 
-.document .surface.cheatsheet {
-  margin-left: 0%;
-  }
-
-.document .cheatsheet-wrapper {
+.document .surface.cheatsheet .cheatsheet-wrapper {
   padding-top: 20px;
-  width: 33.33%;
-  float: left;
+  display: block;
   position: relative;
   }
 
-.document .content-wrapper {
+.document .surface.compose .content-wrapper {
   padding-top: 20px;
-  width: 33.33%;
-  float: left;
+  display: block;
   position: relative;
   }
 
-.document .content-preview-wrapper {
+.document .surface.preview .content-preview-wrapper {
   position: relative;
+  display: block;
   padding-top: 20px;
-  width: 33.33%;
-  float: left;
   word-wrap: break-word;
   }
 
