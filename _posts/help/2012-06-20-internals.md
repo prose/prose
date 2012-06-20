@@ -10,7 +10,7 @@ categories:
 published: true
 ---
 
-Internally, Prose is just a static webpage and doesn't require any server-side bits. Instead it interacts directly with the Github API for managing your repo's contents. This means there's nothing to setup, no database no fileserver etc. This is imporant because we want to make it easy for you to get involved in the development.
+Prose is just a static webpage and doesn't require any server-side bits. Instead it interacts directly with the Github API for managing your repo's contents. This means there's nothing to setup, no database no fileserver etc. This is imporant because we want to make it easy for you to get involved in the development.
 
 Using just the Github API for powering our editor was not easy. Github just offers a low level API (around trees and blobs), which is challening in many cases, as it requires a lot of subsequent requests to do simple things, which slows down site performance. That's why creating a good architecture was crucial to manage the complexity. We ended up in abstracting the data layer into a separate module, Github.js.
 
@@ -24,7 +24,7 @@ Using just the Github API for powering our editor was not easy. Github just offe
 
 Because of some [security-related limitations](http://blog.vjeux.com/2012/javascript/github-oauth-login-browser-side.html), Github prevents you from implementing the OAuth Web Application Flow on a client-side only application.
 
-This is a real bummer. So we built [Gatekeeper](http://github.com/developmentseed/gatekeeper), which is the missing piece you need in order to make OAuth work.
+This is a real bummer. So we built [Gatekeeper](http://github.com/prose/gatekeeper), which is the missing piece you need in order to make OAuth work.
 
 
 
@@ -34,7 +34,7 @@ This is a real bummer. So we built [Gatekeeper](http://github.com/developmentsee
 
 2. Setup a Github application, so CORS requests are possible as well as OAuth authentication.
 
-   ![Setup Github Application](http://f.cl.ly/items/011W1c0D2N1I0B3m0731/Screen%20Shot%202012-05-31%20at%203.33.15%20PM.png)
+   ![Setup Github Application](http://prose.io/images/screenshots/github-app-settings.png)
 
 3. Setup Gatekeeper.
 
@@ -56,7 +56,6 @@ This is a real bummer. So we built [Gatekeeper](http://github.com/developmentsee
 
 
 # Limitations
-
 
 The Github API comes with a number of limitations because of its low-level nature. Here is a the list of known issues related to that. I hope the folks at Github can help us (with some minor additions to their API) so we can eliminate them.
 
