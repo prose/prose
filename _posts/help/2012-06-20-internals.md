@@ -24,7 +24,7 @@ Using just the Github API for powering our editor was not easy. Github just offe
 
 Because of some [security-related limitations](http://blog.vjeux.com/2012/javascript/github-oauth-login-browser-side.html), Github prevents you from implementing the OAuth Web Application Flow on a client-side only application.
 
-This is a real bummer. So we built [Gatekeeper](http://github.com/developmentseed/gatekeeper), which is the missing piece you need in order to make OAuth work.
+This is a real bummer. So we built [Gatekeeper](http://github.com/prose/gatekeeper), which is the missing piece you need in order to make OAuth work.
 
 
 
