@@ -218,7 +218,7 @@ function movePost(user, repo, branch, path, newPath, cb) {
 // Prepare new empty post
 
 function emptyPost(user, repo, branch, path, cb) {
-  var rawMetadata = "";
+  var rawMetadata = "layout: default\npublished: false";
   var metadata = {
     "layout": "default",
     "published": false,
@@ -226,22 +226,29 @@ function emptyPost(user, repo, branch, path, cb) {
 
   var cfg = app.state.config
   if (cfg && cfg.prose && cfg.prose.metadata) {
-    metadata = cfg.prose.metadata[path];
+    if (cfg.prose.metadata[path]) {
+      metadata = cfg.prose.metadata[path];
+      try {
+        rawMetadata = YAML.encode(metadata);
+      } catch(err) {
+        console.log('ERROR encoding YAML');
+        // No-op
+      }      
+    }
   }
-  rawMetadata = _.toYAML(metadata);
+  
 
   var repo = github().getRepo(user, repo);
   cb(null, {
     "metadata": metadata,
     "raw_metadata": rawMetadata,
-    "content": "How does it work?\n=================\n\nEnter Text in Markdown format.",
+    "content": "# How does it work?\n\nEnter Text in Markdown format.",
     "repo": repo,
     "path": path,
     "persisted": false,
     "file": new Date().format("Y-m-d")+"-your-filename.md"
   });
 }
-
 
 // Load Post
 // -------

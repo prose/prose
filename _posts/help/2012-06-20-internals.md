@@ -2,7 +2,7 @@
 layout: help
 title: Internals
 descr: A little background on how we implemented Prose.
-image: http://farm7.staticflickr.com/6119/6884293596_b44a31bf0a_m.jpg
+image: http://prose.io/images/help/internals.png
 author_twitter: _mql
 author: Michael Aufreiter
 categories:
@@ -72,3 +72,4 @@ The Github API comes with a number of limitations because of its low-level natur
 - Deleting and renaming files
   
   This requires a full tree to be written involving a new commit that points to that tree. In fact this is not a big problem with small repositories, but once they get bigger it's not only a performance issue, you'll get errors. Be aware that you may not (yet) be able to rename or delete files when working with bigger repositories.
+
