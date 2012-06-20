@@ -1204,6 +1204,7 @@ ul.site li a {
   display: block;
   float: left;
   padding: 10px;
+  border: 1px solid #C3CCD0;
   }
   .help .articles .article:hover {
     background-color: white;
