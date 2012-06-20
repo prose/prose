@@ -10,10 +10,9 @@ categories:
 published: true
 ---
 
+Internally, Prose is just a static webpage and doesn't require any server-side bits. Instead it interacts directly with the Github API for managing your repo's contents. This means there's nothing to setup, no database no fileserver etc. This is imporant because we want to make it easy for you to get involved in the development.
 
-Prose itself is just static webpage and doesn't require any server-side bits. Instead it interacts directly with the Github API for managing your repo's contents. This means there's nothing to setup, no database no fileserver no nothing.
-
-Using just the Github API for powering our editor was not easy. We had to be aware of CORS issues and properly setting up headers for authorization. What's challenging here, is that Github just offers a low level API (around trees and blobs), which is problematic in many cases, as it requires a lot of subsequent requests to do simple things, which slows down site performance. That's why creating a good architecture was crucial to manage the complexity. I ended up in abstracting the data layer into a separate module, Github.js.
+Using just the Github API for powering our editor was not easy. Github just offers a low level API (around trees and blobs), which is challening in many cases, as it requires a lot of subsequent requests to do simple things, which slows down site performance. That's why creating a good architecture was crucial to manage the complexity. We ended up in abstracting the data layer into a separate module, Github.js.
 
 
 ## Github.js
@@ -72,4 +71,5 @@ The Github API comes with a number of limitations because of its low-level natur
 - Deleting and renaming files
   
   This requires a full tree to be written involving a new commit that points to that tree. In fact this is not a big problem with small repositories, but once they get bigger it's not only a performance issue, you'll get errors. Be aware that you may not (yet) be able to rename or delete files when working with bigger repositories.
+
 
