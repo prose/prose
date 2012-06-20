@@ -18,14 +18,14 @@ We've created a simple template that you can use as a starting point, [Prose Boo
 
 # Open Prose
 
-Navigate to [Prose.io](http://prose.io). Now you can sign in to Github by using OAuth.
+Navigate to [Prose.io](http://prose.io). Now you can sign in to [Github](http://github.com) by using OAuth.
 
 ![Start](https://github.com/prose/prose/raw/gh-pages/images/screenshots/start.png)
 
 
 # Browse Repositories
 
-Here's the landing page, it gives you all the repositories you have access to. If a Jekyll site has multiple branches, you are prompted to select your desired branch, otherwise you jump into the repo directly. We're going to pick our fresh bootstraped site here.
+The landing page gives you all the repositories you have access to. If a Jekyll site has multiple branches, you are prompted to select your desired branch, otherwise you jump into the repo directly. We're going to pick our fresh bootstraped site here.
 
 ![Repositories](https://github.com/prose/prose/raw/gh-pages/images/screenshots/browse-repos.png)
 
@@ -88,9 +88,4 @@ Prose is also suitable as a full-featured writing environment, covering authorin
 4. Share it (we support deep linking to the rendered version)
 
 Prose is similiar to [iAWriter](http://www.iawriter.com/) as it is also using a minimal interface for editing Markdown, but it's web-based and uses [Github](http://github.com) for storing your text so your writings are more than save and Github keeps a history of every saved version. So Prose can potentially be seen as a whole new way of sharing documents online, while utilizing the usual suspects Markdown and Github. Oh and it's free and open source.
-
-
-
-
-
 
