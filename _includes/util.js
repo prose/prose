@@ -16,7 +16,9 @@ _.topPath = function(path) {
 
 // Check for a valid post file name
 _.validFilename = function(filename) {
-  return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
+  return !!filename.match(/^([a-zA-Z0-9_-]|\.)+$/);
+  // Disabled for now: the Jekyll post format layout
+  // return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
 };
 
 // Check for a valid post file name
