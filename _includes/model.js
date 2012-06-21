@@ -7,6 +7,29 @@ function github() {
   });
 }
 
+var currentRepo = {
+  user: null,
+  repo: null,
+  instance: null
+};
+
+// Smart caching (needed for managing subsequent updates)
+// -------
+
+function getRepo(user, repo) {
+  if (currentRepo.user === user && currentRepo.repo === repo) {
+    return currentRepo.instance; // Cached
+  }
+
+  currentRepo = {
+    user: user,
+    repo: repo,
+    instance: github().getRepo(user, repo)
+  };
+
+  return currentRepo.instance;
+}
+
 // Helpers
 // -------
 
@@ -29,7 +52,7 @@ function authenticate() {
       window.authenticated = true;
       // Adjust URL
       var regex = new RegExp("\\?code="+match[1]);
-      window.location.href = window.location.href.replace(regex, '');      
+      window.location.href = window.location.href.replace(regex, '');
     });
     return false;
   } else {
@@ -91,7 +114,7 @@ function loadApplication(cb) {
 // List all available Jekyll branches
 
 function loadBranches(user, repo, cb) {
-  var repo = github().getRepo(user, repo);
+  var repo = getRepo(user, repo);
 
   repo.listBranches(function(err, branches) {
     cb(null, branches);
@@ -115,8 +138,7 @@ function loadBranches(user, repo, cb) {
 // List all postings for a given site plus load _config.yml
 
 function loadSite(user, repo, branch, path, cb) {
-
-  var repo = github().getRepo(user, repo, branch);
+  var repo = getRepo(user, repo);
   function loadConfig(cb) {
     repo.read(branch, "_config.yml", function(err, data) {
       if (err) return cb(err);
@@ -181,7 +203,7 @@ function loadSite(user, repo, branch, path, cb) {
 
 function saveFile(user, repo, branch, path, file, metadata, content, message, cb) {
 
-  var repo = github().getRepo(user, repo);
+  var repo = getRepo(user, repo);
   function serialize() {
     if (app.state.jekyll && isMarkdown(file)) {
       return ["---", metadata, "---"].join('\n')+'\n\n'+content;
@@ -198,7 +220,7 @@ function saveFile(user, repo, branch, path, file, metadata, content, message, cb
 // -------
 
 function deletePost(user, repo, branch, path, file, cb) {
-  var repo = github().getRepo(user, repo);
+  var repo = getRepo(user, repo);
   repo.remove(branch, path+ "/" + file, cb);
 }
 
@@ -207,7 +229,7 @@ function deletePost(user, repo, branch, path, file, cb) {
 // -------
 
 function movePost(user, repo, branch, path, newPath, cb) {
-  var repo = github().getRepo(user, repo);
+  var repo = getRepo(user, repo);
   repo.move(branch, path, newPath, cb);
 }
 
@@ -236,9 +258,7 @@ function emptyPost(user, repo, branch, path, cb) {
       }      
     }
   }
-  
 
-  var repo = github().getRepo(user, repo);
   cb(null, {
     "metadata": metadata,
     "raw_metadata": rawMetadata,
@@ -257,7 +277,7 @@ function emptyPost(user, repo, branch, path, cb) {
 // Looks into _posts/blog
 
 function loadPost(user, repo, branch, path, file, cb) {
-  var repo = github().getRepo(user, repo);
+  var repo = getRepo(user, repo);
 
   repo.read(branch, path ? path + "/" + file : file, function(err, data) {
 
