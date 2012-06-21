@@ -125,7 +125,9 @@ Use 4 spaces indentation:
         </div>
       </div>
       <div class="content-wrapper">
-        <div class="content"><textarea id='code' name='code'><%= content %></textarea></div>
+        <div class="content">
+          <div id="code"></div>
+        </div>
       </div>
       <div class="content-preview-wrapper">
         <div class="content-preview"><div class='post-content'>
