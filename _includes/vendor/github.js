@@ -1,4 +1,4 @@
-// Github.js 0.5.1
+// Github.js 0.5.2
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -68,6 +68,23 @@
       
       var that = this;
       var repoPath = "/repos/" + user + "/" + repo;
+
+      var currentTree = {
+        "branch": null,
+        "sha": null
+      };
+
+      // Uses the cache if branch has not been changed
+      // -------
+
+      function updateTree(branch, cb) {
+        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
+        that.getRef(branch, function(err, sha) {
+          currentTree.branch = branch;
+          currentTree.sha = sha;
+          cb(err, sha);
+        });
+      }
 
       // Get a particular reference
       // -------
@@ -184,6 +201,7 @@
         };
 
         _request("POST", repoPath + "/git/commits", data, function(err, res) {
+          currentTree.sha = res.sha; // update latest commit
           if (err) return cb(err);
           cb(null, res.sha);
         });
@@ -221,7 +239,7 @@
       // -------
 
       this.remove = function(branch, path, cb) {
-        that.getRef(branch, function(err, latestCommit) {
+        updateTree(branch, function(err, latestCommit) {
           that.getTree(latestCommit+"?recursive=true", function(err, tree) {
             // Update Tree
             var newTree = _.reject(tree, function(ref) { return ref.path === path });
@@ -244,7 +262,7 @@
       // -------
 
       this.move = function(branch, path, newPath, cb) {
-        that.getRef(branch, function(err, latestCommit) {
+        updateTree(branch, function(err, latestCommit) {
           that.getTree(latestCommit+"?recursive=true", function(err, tree) {
             // Update Tree
             _.each(tree, function(ref) {
@@ -267,7 +285,7 @@
       // -------
 
       this.write = function(branch, path, content, message, cb) {
-        that.getRef(branch, function(err, latestCommit) {
+        updateTree(branch, function(err, latestCommit) {
           that.postBlob(content, function(err, blob) {
             that.updateTree(latestCommit, path, blob, function(err, tree) {
               that.commit(latestCommit, tree, message, function(err, commit) {
