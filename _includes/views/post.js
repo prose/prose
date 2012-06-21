@@ -79,7 +79,10 @@ views.Post = Backbone.View.extend({
   },
 
   _toggleView: function(e) {
-    this.toggleView($(e.currentTarget).attr('data-view'))
+    this.toggleView($(e.currentTarget).attr('data-view'));
+    // Refresh editors to overcome CodeMirror tipsiness
+    this.metadataEditor.setValue(this.metadataEditor.getValue());
+    this.editor.setValue(this.editor.getValue());
     return false;
   },
 
@@ -88,8 +91,6 @@ views.Post = Backbone.View.extend({
     $('.toggle.meta').toggleClass('active');
     $('.metadata').toggle();
 
-    // Refresh metadata editor (cause it's tipsy)
-    this.metadataEditor.setValue(this.metadataEditor.getValue());
     return false;
   },
 
@@ -143,6 +144,8 @@ views.Post = Backbone.View.extend({
       return null;
     }
   },
+
+
 
   // TODO: remove comments and simplify after we are sure that we don't want to parse metadata
   updateMetaData: function() {
@@ -247,14 +250,17 @@ views.Post = Backbone.View.extend({
         $('#post .metadata').hide();
       }
 
-      that.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+      that.editor = CodeMirror($('#code')[0], {
         mode: that.model.markdown ? "markdown" : null,
+        value: that.model.content,
         lineWrapping: true,
         extraKeys: that.keyMap(),
         matchBrackets: true,
         theme: 'prose-bright',
         onChange: _.bind(that._makeDirty, that)
       });
+
+
     }, 100);
   },
 
