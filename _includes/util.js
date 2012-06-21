@@ -7,14 +7,14 @@ _.serial = function () {
 
 _.parentPath = function(path) {
   return path.replace(/\/?[a-zA-Z0-9_-]*$/, "");
-}
+};
 
 _.topPath = function(path) {
   var match = path.match(/\/?([a-zA-Z0-9_-]*)$/);
   return match[1];
-}
+};
 
-// Check for a valid post file name
+// Check for a valid file name
 _.validFilename = function(filename) {
   return !!filename.match(/^([a-zA-Z0-9_-]|\.)+$/);
   // Disabled for now: the Jekyll post format layout
