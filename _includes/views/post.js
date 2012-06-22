@@ -81,9 +81,10 @@ views.Post = Backbone.View.extend({
 
   _toggleView: function(e) {
     this.toggleView($(e.currentTarget).attr('data-view'));
+
     // Refresh editors to overcome CodeMirror tipsiness
-    this.metadataEditor.setValue(this.metadataEditor.getValue());
-    this.editor.setValue(this.editor.getValue());
+    this.editor.refresh();
+    if (this.metadataEditor) this.metadataEditor.refresh();
     return false;
   },
 
