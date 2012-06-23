@@ -43,7 +43,6 @@ window.args = _(window.app).toArray();
 {% include views/header.js %}
 {% include views/posts.js %}
 {% include views/post.js %}
-{% include views/new_post.js %}
 
 
 // Prevent exit when there are unsaved changes
