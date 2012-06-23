@@ -221,7 +221,7 @@ function saveFile(user, repo, branch, path, file, metadata, content, message, cb
 
 function deletePost(user, repo, branch, path, file, cb) {
   var repo = getRepo(user, repo);
-  repo.remove(branch, path+ "/" + file, cb);
+  repo.remove(branch, path ? path+ "/" : "" + file, cb);
 }
 
 
