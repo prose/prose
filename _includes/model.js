@@ -156,7 +156,7 @@ function loadSite(user, repo, branch, path, cb) {
 
     repo.getSha(branch, path, function(err, sha) {
       repo.getTree(sha, function(err, tree) {
-        if (err) cb("Not a valid Jekyll repository.");
+        if (err) return cb("Not found");
 
         var paths = _.compact(_.map(tree, function(file) {
           return file.type === "tree" ? (path ? path + "/" : "")+ file.path : null;

@@ -48,6 +48,7 @@ routers.Application = Backbone.Router.extend({
   // #example-user/example-repo/gh-pages/path/to
   // #example-user/example-repo/gh-pages
   posts: function(url) {
+    if (url.split('/').length < 3) return app.instance.notify('error', 'Not Found');
     if (confirmExit()) {
       app.instance.posts.apply(this, this.extractURL(url));
     }
