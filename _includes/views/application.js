@@ -101,8 +101,7 @@ views.Application = Backbone.View.extend({
         data.markdown = true;
         this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
         this.mainView._makeDirty();
-        // TODO: suspicious line
-        app.state.path += "/" + this.mainView.model.file;
+        app.state.file = this.mainView.model.file;
         this.header.render();
       }, this));
     }, this));
