@@ -66,7 +66,6 @@ views.Post = Backbone.View.extend({
     this.dirty = true;
     if (this.editor) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
-    // $('.document')[0].scrollLeft = '-100%';
     if (!this.$('.button.save').hasClass('saving')) {
       this.$('.button.save').html('SAVE');
       this.$('.button.save').removeClass('inactive error');      
@@ -76,13 +75,13 @@ views.Post = Backbone.View.extend({
   _save: function(e) {
     if (!this.dirty) return false;
     e.preventDefault();
-    this.updatePost('Updated '+ this.model.file);
+    this.updatePost();
   },
 
   _toggleView: function(e) {
     this.toggleView($(e.currentTarget).attr('data-view'));
 
-    // Refresh editors to overcome CodeMirror tipsiness
+    // Refresh CodeMirror instances
     this.editor.refresh();
     if (this.metadataEditor) this.metadataEditor.refresh();
     return false;
@@ -129,7 +128,7 @@ views.Post = Backbone.View.extend({
   initialize: function() {
     this.mode = "edit";
     if (!window.shortcutsRegistered) {
-      key('⌘+s, ctrl+s', _.bind(function() { this.updatePost("Updated " + this.model.file); return false; }, this));
+      key('⌘+s, ctrl+s', _.bind(function() { this.updatePost(); return false; }, this));
       key('ctrl+shift+right', _.bind(function() { this.right(); return false; }, this));
       key('ctrl+shift+left', _.bind(function() { this.left(); return false; }, this));
       key('esc', _.bind(function() { this.toggleView('compose'); return false; }, this));
@@ -181,9 +180,10 @@ views.Post = Backbone.View.extend({
     }
   },
 
-  updatePost: function(message) {
+  updatePost: function() {
     var file = $('input.filename').val();
     var that = this;
+    var message = this.model.persisted ? "Updated " + file : "Created " + file;
 
     function updateState(label, classes) {
       $('.button.save').html(label)
@@ -193,7 +193,8 @@ views.Post = Backbone.View.extend({
 
     function save() {
       if (!app.state.jekyll || that.updateMetaData()) {
-        saveFile(app.state.user, app.state.repo, app.state.branch, that.model.path, that.model.file, that.model.raw_metadata, that.editor.getValue(), message, function(err) {
+
+        saveFile(app.state.user, app.state.repo, app.state.branch, that.model.path, file, that.model.raw_metadata, that.editor.getValue(), message, function(err) {
           if (err) {
             _.delay(function() { that._makeDirty() }, 3000);
             updateState('! Try again in 30 seconds', 'error');
@@ -201,6 +202,7 @@ views.Post = Backbone.View.extend({
           }
           that.dirty = false;
           that.model.persisted = true;
+          that.model.file = file;
           that.updateURL();
           updateState('SAVED', 'inactive');
         });
@@ -231,7 +233,7 @@ views.Post = Backbone.View.extend({
         that._toggleMeta();
       },
       "Ctrl-S": function(codemirror) {
-        that.updatePost("Updated " + that.model.file);
+        that.updatePost();
       }
     };
   },
