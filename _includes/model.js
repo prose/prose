@@ -255,7 +255,7 @@ function emptyPost(user, repo, branch, path, cb) {
       } catch(err) {
         console.log('ERROR encoding YAML');
         // No-op
-      }      
+      }
     }
   }
 
