@@ -148,7 +148,6 @@ views.Post = Backbone.View.extend({
   },
 
 
-
   // TODO: remove comments and simplify after we are sure that we don't want to parse metadata
   updateMetaData: function() {
 
