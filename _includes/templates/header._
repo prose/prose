@@ -10,11 +10,10 @@
       <div class="repo" href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></div>
     <% } %>
     
-    <% if (path && state.file) { %>
-      <a class="path" href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= path %></a>
-    <% } %>
-    <% if (path && !state.file) { %>
-      <div class="path" href="#<%= [state.user, state.repo, state.branch, state.path].join('/') %>"><%= path %></div>
+    <% if (path) { %>
+      <% _.each(_.chunkedPath(path), function(p) { %>
+        <a class="path" href="#<%= [state.user, state.repo, state.branch, p.url].join('/') %>"><%= p.name %></a>
+      <% }); %>
     <% } %>
       <% if (state.file) { %>
       <div class="file">
