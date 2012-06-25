@@ -15,8 +15,8 @@
 
     function headers() {
       var headers = {}
-      if (options.auth === 'oauth' && !options.token) return {Accept: 'application/vnd.github.raw'};
-      if (options.auth === 'basic' && (!options.username || !options.password)) return {Accept: 'application/vnd.github.raw'};
+      if (options.auth === 'oauth' && !options.token) return { Accept: 'application/vnd.github.raw' };
+      if (options.auth === 'basic' && (!options.username || !options.password)) return { Accept: 'application/vnd.github.raw' };
       return options.auth == 'oauth'
              ? { Authorization: 'token '+ options.token, Accept: 'application/vnd.github.raw' }
              : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password), Accept: 'application/vnd.github.raw' }
