@@ -18,7 +18,7 @@ We've created a simple template that you can use as a starting point, [Prose Boo
 
 # Open Prose
 
-Navigate to [Prose.io](http://prose.io). Now you can sign in to [Github](http://github.com) by using OAuth.
+Navigate to [Prose.io](http://prose.io). Now you can sign in to [GitHub](http://github.com) by using OAuth.
 
 ![Start](https://github.com/prose/prose/raw/gh-pages/images/screenshots/start.png)
 
@@ -76,16 +76,16 @@ Take full control about your post, and edit Metadata aka the YAML frontmatter. N
 
 The editor not only supports Jekyll websites but can be used to edit any github repository (respectively any contained text file). You can use it to edit `server.js` of your Node.js application for instance. 
 
-However, if you navigate to a Jekyll repository, the editor is smart enough to expose everything below `_posts` and provide a the metadata editor along with the markdown preview panel.
+However, if you navigate to a Jekyll repository, the editor is smart enough to expose everything below `_posts` and provide the metadata editor along with the markdown preview panel.
 
 # Suitable for writers
 
 Prose is also suitable as a full-featured writing environment, covering authoring and sharing articles. That's how you can do it:
 
-1. Create a new github repository. And call it... `documents`.
+1. Create a new GitHub repository. And call it... `documents`.
 2. Open the editor and create `hello-world.md`.
 3. Save it.
 4. Share it (we support deep linking to the rendered version)
 
-Prose is similiar to [iAWriter](http://www.iawriter.com/) as it is also using a minimal interface for editing Markdown, but it's web-based and uses [Github](http://github.com) for storing your text so your writings are more than save and Github keeps a history of every saved version. So Prose can potentially be seen as a whole new way of sharing documents online, while utilizing the usual suspects Markdown and Github. Oh and it's free and open source.
+Prose is similiar to [iAWriter](http://www.iawriter.com/) as it is also using a minimal interface for editing Markdown, but it's web-based and uses [GitHub](http://github.com) for storing your text so your writings are more than save and GitHub keeps a history of every saved version. So Prose can potentially be seen as a whole new way of sharing documents online, while utilizing the usual suspects Markdown and GitHub. Oh and it's free and open source.
 
