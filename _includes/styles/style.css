@@ -208,18 +208,20 @@ and your footer gets pushed down a bit more, creating vertical scroll bars in th
 
 
 
-#footer a { 
-  margin-right: 20px;
-  padding-left: 20px;
+#footer a, #footer .brand { 
   font-size: 12px;
   font-weight: bold;
   font-weight: 700;
-  
   }
+
+#footer a {
+  margin-right: 20px;
+  padding-left: 20px;
+}
+
   a.about, a.help { background-image: url('images/sprite.png'); }
   a.about { background-position: 0 -959px; }
   a.help { background-position: 0 -1049px; }
-  #footer a.twitter {margin-right: 0;}
 
 #footer .footer-content p {
   margin: 16px 0;
