@@ -38,7 +38,7 @@ This is a real bummer. So we built [Gatekeeper](http://github.com/prose/gatekeep
 
 3. Setup Gatekeeper.
 
-   Follow the instructions here and fill in the information that is provided after registering a new GitHub Application.
+   Follow the instructions [here](http://github.com/prose/gatekeeper) and fill in the information that is provided after registering a new GitHub Application.
 
 4. Adjust `_config.yml`.
 
@@ -70,5 +70,3 @@ The GitHub API comes with a number of limitations because of its low-level natur
 - Deleting and renaming files
   
   This requires a full tree to be written involving a new commit that points to that tree. In fact this is not a big problem with small repositories, but once they get bigger it's not only a performance issue, you'll get errors. Be aware that you may not (yet) be able to rename or delete files when working with bigger repositories.
-
-
