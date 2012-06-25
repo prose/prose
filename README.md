@@ -17,3 +17,8 @@ This is a first release dedicated to developers at this early stage. It will be 
 ## Get involved
 
 You already discovered the source code. And now that you're here, why not start contributing? :)
+
+## Contributors
+
+- [Saman Bemel Benrud](http:/github.com/samanpwbb) - Design
+- [Michael Aufreiter](http:/github.com/michael) - Code
