@@ -81,9 +81,10 @@ views.Application = Backbone.View.extend({
 
       if (err) return this.notify('error', 'The requested resource could not be found.');
       loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        data.preview = preview;
         this.header.render();
-
+        if (err) return this.notify('error', 'The requested resource could not be found.');
+        data.preview = preview;
+        
         this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
         var that = this;
       }, this));

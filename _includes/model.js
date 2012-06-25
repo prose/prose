@@ -118,17 +118,6 @@ function loadBranches(user, repo, cb) {
 
   repo.listBranches(function(err, branches) {
     cb(null, branches);
-    // FOR REFERENCE: Jekyll deterimination
-    // var jekyllBranches = [],
-    //     processed = 0;
-
-    // _.each(branches, function(branch) {
-    //   repo.read(branch, "_config.yml", function(err, data) {
-    //     if (!err) jekyllBranches.push(branch);
-    //     processed += 1;
-    //     if (processed === branches.length) cb(null, jekyllBranches);
-    //   });
-    // });
   });
 }
 
@@ -280,7 +269,7 @@ function loadPost(user, repo, branch, path, file, cb) {
   var repo = getRepo(user, repo);
 
   repo.read(branch, path ? path + "/" + file : file, function(err, data) {
-
+    if (err) return cb(err);
     function parse(content) {
       if (!app.state.jekyll) return {
         metadata: {},
