@@ -192,7 +192,7 @@ views.Post = Backbone.View.extend({
     }
 
     function save() {
-      if (!app.state.jekyll || that.updateMetaData()) {
+      if (!that.model.jekyll || that.updateMetaData()) {
 
         saveFile(app.state.user, app.state.repo, app.state.branch, that.model.path, file, that.model.raw_metadata, that.editor.getValue(), message, function(err) {
           if (err) {
@@ -241,7 +241,7 @@ views.Post = Backbone.View.extend({
   initEditor: function() {
     var that = this;
     setTimeout(function() {
-      if (app.state.jekyll) {
+      if (that.model.jekyll) {
         that.metadataEditor = CodeMirror($('#raw_metadata')[0], {
           mode: 'yaml',
           value: that.model.raw_metadata,
@@ -263,7 +263,6 @@ views.Post = Backbone.View.extend({
         onChange: _.bind(that._makeDirty, that)
       });
 
-
     }, 100);
   },
 
@@ -274,7 +273,7 @@ views.Post = Backbone.View.extend({
 
   render: function() {
     var that = this;
-    $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode, jekyll: app.state.jekyll })));
+    $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
     if (this.model.metadata.published) $(this.el).addClass('published');
     this.initEditor();
     return this;
