@@ -188,7 +188,7 @@ function saveFile(user, repo, branch, path, file, metadata, content, message, cb
   var repo = getRepo(user, repo);
   function serialize() {
     if (app.state.jekyll && _.markdown(file)) {
-      return ["---", metadata, "---"].join('\n')+'\n\n'+content;
+      return ["---", metadata, "---"].join('\n')+'\n'+content;
     } else {
       return content;
     }
