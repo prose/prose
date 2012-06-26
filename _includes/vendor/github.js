@@ -289,10 +289,7 @@
           that.postBlob(content, function(err, blob) {
             that.updateTree(latestCommit, path, blob, function(err, tree) {
               that.commit(latestCommit, tree, message, function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  if (err) console.log('error while writing new head', err);
-                  cb(err);
-                });
+                that.updateHead(branch, commit, cb);
               });
             });
           });
