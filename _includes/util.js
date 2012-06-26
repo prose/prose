@@ -44,7 +44,7 @@ _.jekyll = function(path, file) {
 // -------
 
 _.markdown = function(file) {
-  var regex = new RegExp("^(\\w|-)*\.(md|mkdn?|mdown|markdown)$");
+  var regex = new RegExp("\.(md|mkdn?|mdown|markdown)$");
   return !!(regex.test(file));
 };
 
