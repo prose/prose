@@ -33,6 +33,21 @@ _.validFilename = function(filename) {
 };
 
 
+// Check if a given file is a Jekyll post
+// -------
+
+_.jekyll = function(path, file) {
+  return !!(path.match('_posts') && _.markdown(file));
+};
+
+// Determines whether a given file is a markdown file or not
+// -------
+
+_.markdown = function(file) {
+  var regex = new RegExp("^(\\w|-)*\.(md|mkdn?|mdown|markdown)$");
+  return !!(regex.test(file));
+};
+
 // Check for a valid post file name
 // -------
 

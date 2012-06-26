@@ -84,7 +84,7 @@ views.Application = Backbone.View.extend({
         this.header.render();
         if (err) return this.notify('error', 'The requested resource could not be found.');
         data.preview = preview;
-        
+
         this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
         var that = this;
       }, this));
@@ -93,16 +93,14 @@ views.Application = Backbone.View.extend({
   },
 
   newPost: function (user, repo, branch, path) {
-    app.state.jekyll = true;
-
     loadSite(user, repo, branch, path, _.bind(function (err, data) {
       emptyPost(user, repo, branch, path, _.bind(function(err, data) {
+        data.jekyll = _.jekyll(path, data.file);
         data.preview = false;
-        data.jekyll = true;
-        data.markdown = true;
+        data.markdown = _.markdown(data.file);
         this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
         this.mainView._makeDirty();
-        app.state.file = this.mainView.model.file;
+        app.state.file = data.file;
         this.header.render();
       }, this));
     }, this));

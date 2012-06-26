@@ -30,13 +30,6 @@ function getRepo(user, repo) {
   return currentRepo.instance;
 }
 
-// Helpers
-// -------
-
-function isMarkdown(filename) {
-  var regex = new RegExp("^(\\w|-)*\.(md|mkdn?|mdown|markdown)$");
-  return regex.test(filename);
-}
 
 // Authentication
 // -------
@@ -172,7 +165,7 @@ function loadSite(user, repo, branch, path, cb) {
           }
 
           if (file.type === "tree") return null; // Skip directories
-          if (isMarkdown(file.path)) return semantify(file, "markdown");
+          if (_.markdown(file.path)) return semantify(file, "markdown");
           if (!app.state.jekyll) return semantify(file, "file");
           return null;
         });
@@ -194,7 +187,7 @@ function saveFile(user, repo, branch, path, file, metadata, content, message, cb
 
   var repo = getRepo(user, repo);
   function serialize() {
-    if (app.state.jekyll && isMarkdown(file)) {
+    if (app.state.jekyll && _.markdown(file)) {
       return ["---", metadata, "---"].join('\n')+'\n\n'+content;
     } else {
       return content;
@@ -293,6 +286,13 @@ function loadPost(user, repo, branch, path, file, cb) {
 
     // Extract metadata
     var post = parse(data);
-    cb(err, _.extend(post, {"markdown": isMarkdown(file), "jekyll": app.state.jekyll, "repo": repo, "path": path, "file": file, "persisted": true}));
+    cb(err, _.extend(post, {
+      "markdown": _.markdown(file),
+      "jekyll": _.jekyll(path, file),
+      "repo": repo,
+      "path": path,
+      "file": file,
+      "persisted": true
+    }));
   });
 }
