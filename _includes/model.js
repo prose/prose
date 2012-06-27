@@ -73,7 +73,8 @@ function loadApplication(cb) {
       url: 'https://api.github.com/user',
       dataType: 'json',
       contentType: 'application/x-www-form-urlencoded',
-      success: function(res) { 
+      headers : { Authorization : 'token ' + $.cookie('oauth-token') },
+      success: function(res) {
         $.cookie("avatar", res.avatar_url);
         $.cookie("username", res.login);
         app.username = res.login;
@@ -83,21 +84,18 @@ function loadApplication(cb) {
 
         user.repos(function(err, repos) {
           _.each(repos, function(r) {
-            owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r])
-                                                          : [r];
+            owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r]) : [r];
           });
           cb(null, { "available_repos": repos, "owners": owners });
         });
       },
       error: function(err) { 
-        logout();
-        cb(null, { "available_repos": [], "owners": {} });
-      },
-      headers : { Authorization : 'token ' + $.cookie('oauth-token') }
+        cb('error', { "available_repos": [], "owners": {} });
+      }
     });
 
   } else {
-    cb(null, { "available_repos": [], "owners": {} });
+    cb('error', { "available_repos": [], "owners": {} });
   }
 }
 
