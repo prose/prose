@@ -66,6 +66,8 @@ function confirmExit() {
         // Start the engines
         window.app.instance = new views.Application({ el: '#container', model: data }).render();
 
+        if (err) return app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
+
         if (!window.location.href.match(/\.html/)) {
           // Initialize router
           window.router = new routers.Application({});
