@@ -14,7 +14,6 @@
 {% include vendor/codemirror/markdown.js %}
 {% include vendor/codemirror/yaml.js %}
 {% include vendor/jquery.cookie.js %}
-{% include vendor/bootstrap-dropdown.js %}
 
 
 window.app = {
@@ -63,9 +62,9 @@ function confirmExit() {
 
     if (authenticate()) {
       loadApplication(function(err, data) {
+
         // Start the engines
         window.app.instance = new views.Application({ el: '#container', model: data }).render();
-
         if (err) return app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
 
         if (!window.location.href.match(/\.html/)) {
