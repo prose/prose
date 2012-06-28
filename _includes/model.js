@@ -164,8 +164,7 @@ function loadSite(user, repo, branch, path, cb) {
 
           if (file.type === "tree") return null; // Skip directories
           if (_.markdown(file.path)) return semantify(file, "markdown");
-          if (!app.state.jekyll) return semantify(file, "file");
-          return null;
+          return semantify(file, "file");
         });
         
         cb(null, {"posts": _.compact(posts.reverse())});

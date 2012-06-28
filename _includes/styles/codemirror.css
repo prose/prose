@@ -1,17 +1,52 @@
 .CodeMirror {
   line-height: 1em;
   font-family: monospace;
+
+  /* Necessary so the scrollbar can be absolutely positioned within the wrapper on Lion. */
+  position: relative;
+  /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
+  overflow: hidden;
 }
 
 .CodeMirror-scroll {
-  height: auto; 
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: hidden;
   /*height: 300px;*/
-
   /* This is needed to prevent an IE[67] bug where the scrolled content
      is visible outside of the scrolling box. */
   position: relative;
   outline: none;
+}
+
+/* Vertical scrollbar */
+.CodeMirror-scrollbar {
+  float: right;
+  overflow-x: hidden;
+  overflow-y: hidden;
+
+  /* This corrects for the 1px gap introduced to the left of the scrollbar
+     by the rule for .CodeMirror-scrollbar-inner. */
+  margin-left: -1px;
+}
+.CodeMirror-scrollbar-inner {
+  /* This needs to have a nonzero width in order for the scrollbar to appear
+     in Firefox and IE9. */
+  width: 1px;
+}
+.CodeMirror-scrollbar.cm-sb-overlap {
+  /* Ensure that the scrollbar appears in Lion, and that it overlaps the content
+     rather than sitting to the right of it. */
+  position: absolute;
+  z-index: 1;
+  float: none;
+  right: 0;
+  min-width: 12px;
+}
+.CodeMirror-scrollbar.cm-sb-nonoverlap {
+  min-width: 12px;
+}
+.CodeMirror-scrollbar.cm-sb-ie7 {
+  min-width: 18px;
 }
 
 .CodeMirror-gutter {
@@ -31,6 +66,11 @@
 .CodeMirror-lines {
   padding: .4em;
   white-space: pre;
+  cursor: text;
+}
+.CodeMirror-lines * {
+  /* Necessary for throw-scrolling to decelerate properly on Safari. */
+  pointer-events: none;
 }
 
 .CodeMirror pre {
@@ -52,9 +92,7 @@
   word-wrap: break-word;
   white-space: pre-wrap;
   word-break: normal;
-
 }
-
 .CodeMirror-wrap .CodeMirror-scroll {
   overflow-x: hidden;
 }
@@ -87,15 +125,6 @@
   visibility: visible;
 }
 
-/*.CodeMirror {
-  border: 1px solid transparent;
-}
-
-.CodeMirror.CodeMirror-focused, .CodeMirror:hover {
-  background: #F7FBFD;
-  border: 1px solid #ccc;
-}*/
-
 div.CodeMirror-selected { background: #d9d9d9; }
 .CodeMirror-focused div.CodeMirror-selected { background: #d7d4f0; }
 
@@ -104,38 +133,11 @@ div.CodeMirror-selected { background: #d9d9d9; }
   background: rgba(255, 255, 0, .4);
 }
 
-/* Default theme */
 
-.cm-s-default span.cm-keyword {color: #708;}
-.cm-s-default span.cm-atom {color: #219;}
-.cm-s-default span.cm-number {color: #164;}
-.cm-s-default span.cm-def {color: #00f;}
-.cm-s-default span.cm-variable {color: black;}
-.cm-s-default span.cm-variable-2 {color: #05a;}
-.cm-s-default span.cm-variable-3 {color: #085;}
-.cm-s-default span.cm-property {color: black;}
-.cm-s-default span.cm-operator {color: black;}
-.cm-s-default span.cm-comment {color: #a50;}
-.cm-s-default span.cm-string {color: #a11;}
-.cm-s-default span.cm-string-2 {color: #f50;}
-.cm-s-default span.cm-meta {color: #555;}
-.cm-s-default span.cm-error {color: #f00;}
-.cm-s-default span.cm-qualifier {color: #555;}
-.cm-s-default span.cm-builtin {color: #30a;}
-.cm-s-default span.cm-bracket {color: #cc7;}
-.cm-s-default span.cm-tag {color: #170;}
-.cm-s-default span.cm-attribute {color: #00c;}
-.cm-s-default span.cm-header {color: blue;}
-.cm-s-default span.cm-quote {color: #090;}
-.cm-s-default span.cm-hr {color: #999;}
-.cm-s-default span.cm-link {color: #00c;}
 
-/*div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}*/
-/*div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}*/
 
-/* Common adjustments */
 
-.activeline {background: #e8f2ff !important;}
+
 
 
 /*

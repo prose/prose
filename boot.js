@@ -14,6 +14,14 @@
 {% include vendor/codemirror/markdown.js %}
 {% include vendor/codemirror/gfm.js %}
 {% include vendor/codemirror/javascript.js %}
+{% include vendor/codemirror/css.js %}
+{% include vendor/codemirror/clojure.js %}
+{% include vendor/codemirror/coffeescript.js %}
+{% include vendor/codemirror/less.js %}
+{% include vendor/codemirror/htmlmixed.js %}
+{% include vendor/codemirror/rst.js %}
+{% include vendor/codemirror/clike.js %}
+{% include vendor/codemirror/ruby.js %}
 {% include vendor/codemirror/yaml.js %}
 {% include vendor/jquery.cookie.js %}
 
@@ -69,13 +77,14 @@ function confirmExit() {
         window.app.instance = new views.Application({ el: '#container', model: data }).render();
         if (err) return app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
 
-        if (!window.location.href.match(/\.html/)) {
-          // Initialize router
-          window.router = new routers.Application({});
+        // TODO: this is silly.
+        if (window.location.href.match(/\.html$/)) return;
 
-          // Start responding to routes
-          Backbone.history.start();        
-        }
+        // Initialize router
+        window.router = new routers.Application({});
+
+        // Start responding to routes
+        Backbone.history.start();
       });
     }
   });
