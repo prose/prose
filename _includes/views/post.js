@@ -252,9 +252,8 @@ views.Post = Backbone.View.extend({
         });
         $('#post .metadata').hide();
       }
-
       that.editor = CodeMirror($('#code')[0], {
-        mode: that.model.markdown ? "gfm" : null,
+        mode: that.model.lang,
         value: that.model.content,
         lineWrapping: true,
         extraKeys: that.keyMap(),

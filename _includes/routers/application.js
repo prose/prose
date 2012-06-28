@@ -9,7 +9,7 @@ routers.Application = Backbone.Router.extend({
     this.route(":repo", 'posts', this.posts);
     this.route(/(.*\/.*)/, 'posts', this.posts);
     this.route(/(.*\/.*)\/(.*\.\w+)$/, 'post', this.post);
-    this.route(/(.*\/.*)\/(.*)(\/edit)$/, 'post', this.post);
+    this.route(/(.*\/.*)\/(.*\.\w+)(\/edit)$/, 'post', this.post);
     this.route(/(.*\/.*)\/new$/, 'new_post', this.newPost);
     this.route("", "start", this.start);
   },

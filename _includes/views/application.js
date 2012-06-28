@@ -84,7 +84,7 @@ views.Application = Backbone.View.extend({
         this.header.render();
         if (err) return this.notify('error', 'The requested resource could not be found.');
         data.preview = preview;
-
+        data.lang = _.mode(file);
         this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
         var that = this;
       }, this));

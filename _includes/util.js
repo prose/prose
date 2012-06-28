@@ -33,12 +33,42 @@ _.validFilename = function(filename) {
 };
 
 
+// Determine mode for CodeMirror
+// -------
+
+_.mode = function(file) {
+  if (_.markdown(file)) return "gfm";
+
+  var extension = _.extension(file);
+
+  if (_.include(["js", "json"], extension)) return "javascript";
+  if (extension === "html") return "htmlmixed";
+  if (extension === "rb") return "ruby";
+  if (extension === "yml") return "yaml";
+  if (extension === "clj") return "clojure";
+  if (_.include(["coffee", "cake"], extension)) return "coffeescript";
+  if (_.include(["java", "c", "cpp", "cs", "php"], extension)) return "clike";
+  
+  return extension;
+}
+
+
 // Check if a given file is a Jekyll post
 // -------
 
 _.jekyll = function(path, file) {
   return !!(path.match('_posts') && _.markdown(file));
 };
+
+
+// Extract file extension
+// -------
+
+_.extension = function(file) {
+  var match = file.match(/\.(\w+)$/);
+  return match ? match[1] : null;
+};
+
 
 // Determines whether a given file is a markdown file or not
 // -------
@@ -48,7 +78,8 @@ _.markdown = function(file) {
   return !!(regex.test(file));
 };
 
-// Check for a valid post file name
+
+// Clip a string
 // -------
 
 _.clip = function(str, length) {
