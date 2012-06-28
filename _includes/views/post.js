@@ -254,7 +254,7 @@ views.Post = Backbone.View.extend({
       }
 
       that.editor = CodeMirror($('#code')[0], {
-        mode: that.model.markdown ? "markdown" : null,
+        mode: that.model.markdown ? "gfm" : null,
         value: that.model.content,
         lineWrapping: true,
         extraKeys: that.keyMap(),
