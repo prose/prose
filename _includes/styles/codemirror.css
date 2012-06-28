@@ -208,7 +208,7 @@ div.CodeMirror span.CodeMirror-matchingbracket { background: #fff; }
 .cm-s-prose-bright span.cm-keyword { color: inherit; }
 .cm-s-prose-bright span.cm-atom { color: inherit; }
 .cm-s-prose-bright span.cm-number { color: inherit; }
-.cm-s-prose-bright span.cm-def {color: white;}
+.cm-s-prose-bright span.cm-def {color: #7AC548;}
 .cm-s-prose-bright span.cm-variable { color:inherit; }
 .cm-s-prose-bright span.cm-variable-2 { color: inherit; }
 .cm-s-prose-bright span.cm-variable-3 { color: inherit; }
