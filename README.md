@@ -1,3 +1,6 @@
+---
+
+---
 # Prose
 
 [Prose](http://prose.io) is a web-based interface for managing text-based content in your GitHub repositories. Use it to create, edit, and delete files, and save your changes directly to GitHub.
@@ -14,11 +17,20 @@ Prose is great for making quick updates to your code or managing your blog. Pros
 This is a first release dedicated to developers at this early stage. It will be buggy as we work out the kinks, but we plan to make this rock solid and extend the feature set (while keeping the UI as minimal as possible). We hope Prose + Jekyll will provide a simple, efficient alternative to traditional CMSs that require web and database servers to host content.
 
 
-## Get involved
-
-You already discovered the source code. And now that you're here, why not start contributing? :)
-
 ## Contributors
 
 - [Saman Bemel Benrud](http:/github.com/samanpwbb) - Design
 - [Michael Aufreiter](http:/github.com/michael) - Code
+
+Now that you're here, why not start contributing as well? :)
+
+## Changelog
+
+**0.1.1** -  *June 27 2012*
+
+Improved error handling. Upgraded CodeMirror to version 2.3 and added basic support for [Github Flavored Markdown](http://github.github.com/github-flavored-markdown/).
+
+
+**0.1.0** - *June 25 2012*
+
+Initial release.
