@@ -95,7 +95,7 @@ function loadApplication(cb) {
     });
 
   } else {
-    cb('error', { "available_repos": [], "owners": {} });
+    cb(null, { "available_repos": [], "owners": {} });
   }
 }
 
