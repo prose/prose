@@ -106,10 +106,28 @@ views.Application = Backbone.View.extend({
     }, this));
   },
 
-  start: function() {
-    app.state.title = "Repositories";
-    this.header.render();
-    this.replaceMainView("start", new views.Start({id: "start", model: {authenticated: window.authenticated}}).render());
+  start: function(username) {
+    var that = this;
+    if (username) {
+      app.state.title = username;
+      this.header.render();
+      loadRepos(username, function(err, data) {
+        data.authenticated = window.authenticated;
+        that.replaceMainView("start", new views.Start({id: "start", model: data}).render());      
+      })
+    } else {
+      app.state.title = "Repositories";
+      this.header.render();
+
+      var data = {
+        repo: app.state.repo,
+        available_repos: app.instance.model.available_repos,
+        owners: app.instance.model.owners,
+        authenticated: window.authenticated
+      };
+
+      this.replaceMainView("start", new views.Start({id: "start", model: data}).render());      
+    }
   },
 
   notify: function(type, message) {

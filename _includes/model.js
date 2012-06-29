@@ -79,15 +79,23 @@ function loadApplication(cb) {
         $.cookie("username", res.login);
         app.username = res.login;
 
-        var user = github().getUser(app.username);
+        var user = github().getUser();
         var owners = {};
 
         user.repos(function(err, repos) {
-          _.each(repos, function(r) {
-            owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r]) : [r];
+          user.orgs(function(err, orgs) {
+            _.each(repos, function(r) {
+              owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r]) : [r];
+            });
+            
+            cb(null, {
+              "available_repos": repos,
+              "organizations": orgs,
+              "owners": owners
+            });
           });
-          cb(null, { "available_repos": repos, "owners": owners });
         });
+
       },
       error: function(err) { 
         cb('error', { "available_repos": [], "owners": {} });
@@ -98,6 +106,32 @@ function loadApplication(cb) {
     cb(null, { "available_repos": [], "owners": {} });
   }
 }
+
+
+// Load Repos
+// -------
+// 
+// List all available repositories for a certain user
+
+function loadRepos(username, cb) {
+  var user = github().getUser();
+
+  user.show(username, function(err, u) {
+    var owners = {};
+    if (u.type.toLowerCase() === "user") {
+      user.userRepos(username, function(err, repos) {
+        owners[username] = repos;
+        cb(null, { "available_repos": repos, "owners": owners });
+      });
+    } else {
+      user.orgRepos(username, function(err, repos) {
+        owners[username] = repos;
+        cb(null, { "available_repos": repos, "owners": owners });
+      });
+    }
+  });
+}
+
 
 // Load Branches
 // -------

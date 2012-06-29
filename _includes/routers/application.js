@@ -6,7 +6,7 @@
 routers.Application = Backbone.Router.extend({
   initialize: function() {
     // Using this.route, because order matters
-    this.route(":repo", 'posts', this.posts);
+    this.route(":user", 'user', this.start);
     this.route(/(.*\/.*)/, 'posts', this.posts);
     this.route(/(.*\/.*)\/(.*\.\w+)$/, 'post', this.post);
     this.route(/(.*\/.*)\/(.*\.\w+)(\/edit)$/, 'post', this.post);
@@ -14,7 +14,7 @@ routers.Application = Backbone.Router.extend({
     this.route("", "start", this.start);
   },
 
-  start: function() {
+  start: function(username) {
     if (confirmExit()) {
       app.state = {
         user: "",
@@ -22,7 +22,7 @@ routers.Application = Backbone.Router.extend({
         branch: "",
         path: ""
       };
-      app.instance.start();
+      app.instance.start(username);
     }
   },
 
