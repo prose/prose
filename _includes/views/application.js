@@ -69,7 +69,7 @@ views.Application = Backbone.View.extend({
   },
 
   posts: function (user, repo, branch, path) {
-    loadSite(user, repo, branch, path, _.bind(function (err, data) {
+    loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return this.notify('error', 'The requested resource could not be found.');
       this.header.render();
       this.replaceMainView("posts", new views.Posts({ model: data, id: 'posts' }).render());

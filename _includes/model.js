@@ -151,8 +151,15 @@ function loadBranches(user, repo, cb) {
 // 
 // List all postings for a given site plus load _config.yml
 
-function loadSite(user, repo, branch, path, cb) {
+function loadPosts(user, repo, branch, path, cb) {
   var repo = getRepo(user, repo);
+
+  function getDefaultBranch(cb) {
+    repo.show(function(err, repo) {
+      cb(null, repo.master_branch);
+    });
+  }
+
   function loadConfig(cb) {
     repo.read(branch, "_config.yml", function(err, data) {
       if (err) return cb(err);
@@ -160,50 +167,59 @@ function loadSite(user, repo, branch, path, cb) {
     });
   }
 
+  function load() {
+    loadConfig(function(err, config) {
+      app.state.jekyll = !err;
+      app.state.config = config;
 
-  loadConfig(function(err, config) {
-    app.state.jekyll = !err;
-    
-    app.state.config = config;
+      if (!path) path = config && config.prose && config.prose.rooturl ? config.prose.rooturl : "";
 
-    if (!path) path = config && config.prose && config.prose.rooturl ? config.prose.rooturl : "";
 
-    repo.getSha(branch, path, function(err, sha) {
-      repo.getTree(sha, function(err, tree) {
-        if (err) return cb("Not found");
+      repo.getSha(branch, path, function(err, sha) {
+        repo.getTree(sha, function(err, tree) {
+          if (err) return cb("Not found");
 
-        var paths = _.compact(_.map(tree, function(file) {
-          return file.type === "tree" ? (path ? path + "/" : "")+ file.path : null;
-        }));
+          var paths = _.compact(_.map(tree, function(file) {
+            return file.type === "tree" ? (path ? path + "/" : "")+ file.path : null;
+          }));
 
-        paths = [path].concat(paths);
+          paths = [path].concat(paths);
 
-        // Include a parent folder path
-        if (path !== "") paths = [_.parentPath(path)].concat(paths);
+          // Include a parent folder path
+          if (path !== "") paths = [_.parentPath(path)].concat(paths);
 
-        app.state.config = config;
-        app.state.paths = paths;
-        app.state.path = path ? path : paths[0];
+          app.state.config = config;
+          app.state.paths = paths;
+          app.state.path = path ? path : paths[0];
 
-        var posts = _.map(tree, function(file) {
-          // Make sense of the file path
-          function semantify(file, filetype) {
-            return {
-              path: path == "" ? file.path : path + "/"+file.path,
-              date: "",
-              filetype: filetype,
-              title: file.path
-            };
-          }
+          var posts = _.map(tree, function(file) {
+            // Make sense of the file path
+            function semantify(file, filetype) {
+              return {
+                path: path == "" ? file.path : path + "/"+file.path,
+                date: "",
+                filetype: filetype,
+                title: file.path
+              };
+            }
 
-          if (file.type === "tree") return null; // Skip directories
-          if (_.markdown(file.path)) return semantify(file, "markdown");
-          return semantify(file, "file");
+            if (file.type === "tree") return null; // Skip directories
+            if (_.markdown(file.path)) return semantify(file, "markdown");
+            return semantify(file, "file");
+          });
+          cb(null, {"posts": _.compact(posts.reverse())});
         });
-        
-        cb(null, {"posts": _.compact(posts.reverse())});
       });
     });
+  }
+
+  // Load ahead
+  if (branch) return load();
+
+  // Fallback to default branch
+  getDefaultBranch(function(err, defaultBranch) {
+    app.state.branch = branch = defaultBranch;
+    load();
   });
 }
 
