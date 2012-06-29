@@ -16,6 +16,7 @@
 {% include vendor/codemirror/javascript.js %}
 {% include vendor/codemirror/css.js %}
 {% include vendor/codemirror/clojure.js %}
+{% include vendor/codemirror/textile.js %}
 {% include vendor/codemirror/coffeescript.js %}
 {% include vendor/codemirror/less.js %}
 {% include vendor/codemirror/htmlmixed.js %}
