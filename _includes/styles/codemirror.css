@@ -197,7 +197,7 @@ Saman Bemel-Benrud, Michael Aufreiter
   font-size: 17px;
 }
 
-.cm-s-prose-bright {  color: #667880; }
+.cm-s-prose-bright {  color: #3D494E; }
 .cm-s-prose-bright div.CodeMirror-selected {background: #AFC3CF !important;} /* 33322B*/
 .cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880 !important; }
 .cm-s-prose-bright .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
