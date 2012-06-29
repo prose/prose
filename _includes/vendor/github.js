@@ -1,4 +1,4 @@
-// Github.js 0.5.2
+// Github.js 0.6.0
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -47,7 +47,7 @@
       });
     }
 
-    // USER API
+    // User API
     // =======
 
     Github.User = function() {
@@ -56,7 +56,45 @@
           cb(err, res);
         });
       };
+
+      // List user organizations
+      // -------
+
+      this.orgs = function(cb) {
+        _request("GET", "/user/orgs", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // Show user information
+      // -------
+
+      this.show = function(username, cb) {
+        _request("GET", "/users/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      }
+
+      // List user repositories
+      // -------
+
+      this.userRepos = function(username, cb) {
+        _request("GET", "/users/"+username+"/repos?type=all&per_page=100", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List organization repositories
+      // -------
+
+      this.orgRepos = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=100", null, function(err, res) {
+          cb(err, res);
+        });
+      };
     };
+
+
 
 
     // Repository API
@@ -114,7 +152,6 @@
       };
 
       // For a given file path, get the corresponding sha (blob for files, tree for dirs)
-      // TODO: So inefficient, it sucks hairy donkey balls.
       // -------
 
       this.getSha = function(branch, path, cb) {
