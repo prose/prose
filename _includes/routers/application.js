@@ -6,7 +6,7 @@
 routers.Application = Backbone.Router.extend({
   initialize: function() {
     // Using this.route, because order matters
-    this.route(":user", 'user', this.start);
+    this.route(":user", 'user', this.profile);
     this.route(/(.*\/.*)/, 'posts', this.posts);
     this.route(/(.*\/.*)\/(.*\.\w+)$/, 'post', this.post);
     this.route(/(.*\/.*)\/(.*\.\w+)(\/edit)$/, 'post', this.post);
@@ -35,6 +35,14 @@ routers.Application = Backbone.Router.extend({
       path: (url.slice(3) || []).join('/')
     };
     return [url[0], app.state.repo, app.state.branch, app.state.path]
+  },
+
+  // #example-user
+  // #example-organization
+  profile: function(username) {
+    if (confirmExit()) {
+      app.instance.profile(username);
+    }
   },
 
   // #example-user/example-repo/gh-pages/path/to/new
