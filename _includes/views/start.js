@@ -1,6 +1,6 @@
 (function(config, models, views, routers, utils, templates) {
 
-views.Start = Backbone.View.extend({
+views.Start = views.Profile.extend({
   id: 'start',
 
   events: {
@@ -9,34 +9,6 @@ views.Start = Backbone.View.extend({
   },
 
   initialize: function(options) {},
-
-  _selectRepo: function(e) {
-    var user = $(e.currentTarget).attr('data-user'),
-        repo = $(e.currentTarget).attr('data-repo');
-
-    if ($(e.target).hasClass('branch')) return;
-    
-    var $branches = $(e.currentTarget).find('.branches').show();
-    $branches.html('<div class="loading-branches"> </div>');
-    
-    loadBranches(user, repo, function(err, branches) {
-      $branches.empty();
-      if (branches.length === 1) {
-        router.navigate('#' + [user, repo, branches[0]].join('/'), true);
-      } else if (branches.length > 1) {
-        _.each(branches, function(branch) {
-          $branches.append($('<a class="branch" href="#'+[user, repo, branch].join('/')+'">'+branch+'</a>'));
-        });
-      } else if (branches.length === 0) {
-        $branches.append('<div class="not-jekyll">Not a Jekyll site.</div>');
-        _.delay(function() {
-          $branches.hide();
-        }, 2000);
-      }
-    });
-    
-    return false;
-  },
 
   _login: function() {
     var self = this;

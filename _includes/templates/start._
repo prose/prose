@@ -13,8 +13,24 @@
 </div>
 
 <% if (authenticated) { %>
+  <% if (organizations.length) { %>
+    <h1>Organizations</h2>
+    <div class="organizations">
+    <% _.each(organizations, function(org) { %>
+      <a class="organization" href="#<%= org.login %>" title="<%= org.login %>"><img src="<%= org.avatar_url %>" width="80" height="80"/></a>
+    <% }); %>
+    </div>
+  <% } %>
+
+  <h1>Repositories</h2>
   <% _.each(owners, function(repos, owner) { %>
-    <div class="owner"><%= owner %><div class="repo-count"><%= repos.length %> <%= repos.length > 1 ? "Repositories" : "Repository"%> </div></div>
+    <% if (Object.keys(owners).length > 1) { %>
+      <div class="owner"><a href="#<%= owner %>"><%= owner %></a>
+        <div class="repo-count">
+          <%= repos.length %> <%= repos.length > 1 ? "Repositories" : "Repository"%>
+        </div>
+      </div>
+    <% } %>
     <div class="repos">
         <% _.each(repos, function(r, index) { %>
           <a title='edit' class="select-repo repo" data-user="<%= r.owner.login %>" data-repo="<%= r.name %>" href='#'>
