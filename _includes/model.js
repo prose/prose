@@ -134,13 +134,13 @@ function loadRepos(username, cb) {
 // Load Branches
 // -------
 // 
-// List all available Jekyll branches
+// List all available branches of a repository
 
 function loadBranches(user, repo, cb) {
   var repo = getRepo(user, repo);
 
   repo.listBranches(function(err, branches) {
-    cb(null, branches);
+    cb(err, branches);
   });
 }
 

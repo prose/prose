@@ -20,17 +20,20 @@ views.Profile = Backbone.View.extend({
     
     loadBranches(user, repo, function(err, branches) {
       $branches.empty();
+      if (err) {
+        $branches.append('<div class="repo-error">No branches found.</div>');
+        _.delay(function() {
+          $branches.hide();
+        }, 2000);
+        return;
+      }
+
       if (branches.length === 1) {
         router.navigate('#' + [user, repo, branches[0]].join('/'), true);
       } else if (branches.length > 1) {
         _.each(branches, function(branch) {
           $branches.append($('<a class="branch" href="#'+[user, repo, branch].join('/')+'">'+branch+'</a>'));
         });
-      } else if (branches.length === 0) {
-        $branches.append('<div class="not-jekyll">Not a Jekyll site.</div>');
-        _.delay(function() {
-          $branches.hide();
-        }, 2000);
       }
     });
     
