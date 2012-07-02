@@ -503,7 +503,7 @@ body.start {
   padding: 0 5px;
   }
 
-.repos a .branches .not-jekyll {
+.repos a .branches .repo-error {
   position: absolute;
   top: 0; bottom: 0; left: 0; right: 0;
   color: #C52528;
