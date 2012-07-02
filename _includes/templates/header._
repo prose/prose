@@ -4,6 +4,8 @@
   <% if (state.repo) { %>
     <% var path = state.path %>
 
+    <a class="user" href="#<%= [state.user].join('/') %>"><%= state.user %></a>
+
     <% if (state.repo && (path ||state.file)) { %>
       <a class="repo" href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></a>
     <% } else if (state.repo) { %>
