@@ -120,13 +120,11 @@ function loadRepos(username, cb) {
     var owners = {};
     if (u.type.toLowerCase() === "user") {
       user.userRepos(username, function(err, repos) {
-        owners[username] = repos;
-        cb(null, { "available_repos": repos, "owners": owners });
+        cb(null, { "repos": repos, user: u });
       });
     } else {
       user.orgRepos(username, function(err, repos) {
-        owners[username] = repos;
-        cb(null, { "available_repos": repos, "owners": owners });
+        cb(null, { "repos": repos, user: u });
       });
     }
   });
@@ -146,10 +144,10 @@ function loadBranches(user, repo, cb) {
   });
 }
 
-// Load Site
+// Load Posts
 // -------
 // 
-// List all postings for a given site plus load _config.yml
+// List all postings for a given repo+branch+path plus load _config.yml
 
 function loadPosts(user, repo, branch, path, cb) {
   var repo = getRepo(user, repo);

@@ -59,7 +59,6 @@ views.Application = Backbone.View.extend({
   },
 
 
-
   // Main Views
   // ----------
 
@@ -77,8 +76,7 @@ views.Application = Backbone.View.extend({
   },
 
   post: function (user, repo, branch, path, file, preview) {
-    loadSite(user, repo, branch, path, _.bind(function (err, data) {
-
+    loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return this.notify('error', 'The requested resource could not be found.');
       loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         this.header.render();
@@ -93,7 +91,7 @@ views.Application = Backbone.View.extend({
   },
 
   newPost: function (user, repo, branch, path) {
-    loadSite(user, repo, branch, path, _.bind(function (err, data) {
+    loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       emptyPost(user, repo, branch, path, _.bind(function(err, data) {
         data.jekyll = _.jekyll(path, data.file);
         data.preview = false;
@@ -106,28 +104,25 @@ views.Application = Backbone.View.extend({
     }, this));
   },
 
+  profile: function(username) {
+    var that = this;
+    app.state.title = username;
+    this.header.render();
+    loadRepos(username, function(err, data) {
+      data.authenticated = window.authenticated;
+      that.replaceMainView("start", new views.Profile({id: "start", model: data}).render());
+    });
+  },
+
   start: function(username) {
     var that = this;
-    if (username) {
-      app.state.title = username;
-      this.header.render();
-      loadRepos(username, function(err, data) {
-        data.authenticated = window.authenticated;
-        that.replaceMainView("start", new views.Start({id: "start", model: data}).render());      
-      })
-    } else {
-      app.state.title = "Repositories";
-      this.header.render();
+    app.state.title = "";
+    this.header.render();
 
-      var data = {
-        repo: app.state.repo,
-        available_repos: app.instance.model.available_repos,
-        owners: app.instance.model.owners,
-        authenticated: window.authenticated
-      };
-
-      this.replaceMainView("start", new views.Start({id: "start", model: data}).render());      
-    }
+    this.replaceMainView("start", new views.Start({
+      id: "start",
+      model: _.extend(this.model, { authenticated: window.authenticated} )
+    }).render());
   },
 
   notify: function(type, message) {

@@ -26,10 +26,15 @@ Now that you're here, why not start contributing as well? :)
 
 ## Changelog
 
+**0.2.0** -  *June 27 2012*
+
+Added support for organizations and user profiles. Fixes ~ 40 reported issues. Also, syntax highlighting for some popular programming languages.
+
+## Changelog
+
 **0.1.1** -  *June 27 2012*
 
 Improved error handling. Upgraded CodeMirror to version 2.3 and added basic support for [Github Flavored Markdown](http://github.github.com/github-flavored-markdown/).
-
 
 **0.1.0** - *June 25 2012*
 

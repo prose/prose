@@ -245,6 +245,37 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   position: relative;
   }
 
+#start h1 {
+  padding: 20px 0;
+}
+
+#start .organizations {
+  overflow: auto;
+  margin-bottom: 30px;
+}
+
+#start .organizations .organization {
+  display: block;
+  float: left;
+  height: 90px;
+  padding: 4px;
+  width: 90px;
+  margin-right: 20px;
+  border: 1px solid #C3CCD0;
+  background: #fff;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+#start .organizations .organization img {
+  padding: 0;
+  margin: 0;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
 #start .splash {
   text-align: center;
   background: white;
@@ -299,6 +330,71 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   color: #fff;
   }
   .authorize a.button:hover { background: #3d4548; }
+
+/* ------------------------------------------
+  Profile
+---------------------------------------------*/
+
+#start .profile-header {
+  margin-top: 40px;
+  overflow: auto;
+}
+
+#start .profile-header .avatar {
+  height: 90px;
+  width: 90px;
+  padding: 4px;
+  border: 1px solid #C3CCD0;
+  background: #fff;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  float: left;
+}
+
+#start .profile-header .user {
+  margin-top: 25px;
+  margin-left: 30px;
+  float: left;
+}
+
+#start .profile-header .user .username {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#start .profile-header, #start .profile-details {
+  font-size: 14px;
+}
+
+#start .profile-details {
+  margin-top: 20px;
+  overflow: auto;
+}
+
+#start .profile-details .info {
+  float: left;
+}
+
+#start .profile-details .info span {
+  color: #93A8B1;
+}
+
+#start .profile-details .stats {
+  float: right;
+}
+
+#start .profile-details .stats .count {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+#start .profile-details .stats .label {
+  text-align: center;
+  color: #777;
+}
 
 /* ------------------------------------------
   Repos listing

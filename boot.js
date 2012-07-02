@@ -49,6 +49,7 @@ window.args = _(window.app).toArray();
 {% include routers/application.js %}
 {% include views/application.js %}
 {% include views/notification.js %}
+{% include views/profile.js %}
 {% include views/start.js %}
 {% include views/header.js %}
 {% include views/posts.js %}
