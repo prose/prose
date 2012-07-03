@@ -170,8 +170,8 @@ function loadPosts(user, repo, branch, path, cb) {
       app.state.jekyll = !err;
       app.state.config = config;
 
-      if (!path) path = config && config.prose && config.prose.rooturl ? config.prose.rooturl : "";
-
+      var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : "";
+      if (!path) path = root;
 
       repo.getSha(branch, path, function(err, sha) {
         repo.getTree(sha, function(err, tree) {
@@ -184,7 +184,7 @@ function loadPosts(user, repo, branch, path, cb) {
           paths = [path].concat(paths);
 
           // Include a parent folder path
-          if (path !== "") paths = [_.parentPath(path)].concat(paths);
+          if (!_.include([root, ""], path)) paths = [_.parentPath(path)].concat(paths);
 
           app.state.config = config;
           app.state.paths = paths;
