@@ -171,7 +171,15 @@ body.post #header {
   padding-bottom: 60px; /* must be same height as the footer */
   }
 
-#post .inner  {
+#main .loading {
+  margin: 0 auto;
+  width: 960px;
+  padding: 100px 0;
+  font-size: 20px;
+  text-align: center;
+  }
+
+#post .inner {
   position: relative;
   }
 
