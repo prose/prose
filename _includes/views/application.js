@@ -68,7 +68,9 @@ views.Application = Backbone.View.extend({
   },
 
   posts: function (user, repo, branch, path) {
+    this.loading('Loading posts ...');
     loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      this.loaded();
       if (err) return this.notify('error', 'The requested resource could not be found.');
       this.header.render();
       this.replaceMainView("posts", new views.Posts({ model: data, id: 'posts' }).render());
@@ -76,9 +78,11 @@ views.Application = Backbone.View.extend({
   },
 
   post: function (user, repo, branch, path, file, preview) {
+    this.loading('Loading post ...');
     loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return this.notify('error', 'The requested resource could not be found.');
       loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        this.loaded();
         this.header.render();
         if (err) return this.notify('error', 'The requested resource could not be found.');
         data.preview = preview;
@@ -91,8 +95,10 @@ views.Application = Backbone.View.extend({
   },
 
   newPost: function (user, repo, branch, path) {
+    this.loading('Creating post ...');
     loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       emptyPost(user, repo, branch, path, _.bind(function(err, data) {
+        this.loaded();
         data.jekyll = _.jekyll(path, data.file);
         data.preview = false;
         data.markdown = _.markdown(data.file);
@@ -108,7 +114,9 @@ views.Application = Backbone.View.extend({
     var that = this;
     app.state.title = username;
     this.header.render();
+    this.loading('Loading profile ...');
     loadRepos(username, function(err, data) {
+      that.loaded();
       data.authenticated = window.authenticated;
       that.replaceMainView("start", new views.Profile({id: "start", model: data}).render());
     });
@@ -128,7 +136,16 @@ views.Application = Backbone.View.extend({
   notify: function(type, message) {
     this.header.render();
     this.replaceMainView("notification", new views.Notification(type, message).render());
+  },
+
+  loading: function(msg) {
+    $('#main').html('<div class="loading">'+ msg || 'Loading ...' +'</div>');
+  },
+
+  loaded: function() {
+    $('#main .loading').remove();
   }
+
 });
 
 }).apply(this, window.args);
