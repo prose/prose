@@ -33,10 +33,20 @@ _.validFilename = function(filename) {
 };
 
 
+// Valid pathname check
+// -------
+
+_.validPathname = function(path) {  
+  return _.all(path.split('/'), function(filename) {
+    return _.validFilename(filename);
+  });
+};
+
+
 // Extract filename from a given path
 // -------
 // 
-// _.chunkedPath('path/to/foo.md')
+// _.extractFilename('path/to/foo.md')
 // => ['path/to', 'foo.md']
 
 _.extractFilename = function(path) {
@@ -100,6 +110,15 @@ _.clip = function(str, length) {
   if (length < str.length) res += " ...";
   return res;
 };
+
+
+// Concatenate path + file to full filepath
+// -------
+
+_.filepath = function(path, file) {
+  return (path ? path +"/" : "") + file;
+};
+
 
 
 // Chunked Path

@@ -228,17 +228,16 @@ function loadPosts(user, repo, branch, path, cb) {
 // List all postings for a given repository
 // Looks into _posts/blog
 
-function saveFile(user, repo, branch, path, file, metadata, content, message, cb) {
+function saveFile(user, repo, branch, path, metadata, content, message, cb) {
 
   var repo = getRepo(user, repo);
   function serialize() {
-    if (app.state.jekyll && _.markdown(file)) {
+    if (app.state.jekyll && _.markdown(path)) {
       return ["---", metadata, "---"].join('\n')+'\n'+content;
     } else {
       return content;
     }
   }
-  var path = path ? path+ "/"+ file : file;
   repo.write(branch, path, serialize(), message, cb);
 }
 
@@ -248,7 +247,7 @@ function saveFile(user, repo, branch, path, file, metadata, content, message, cb
 
 function deletePost(user, repo, branch, path, file, cb) {
   var repo = getRepo(user, repo);
-  repo.remove(branch, path ? path+ "/" : "" + file, cb);
+  repo.remove(branch, _.filepath(path, file), cb);
 }
 
 
