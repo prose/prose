@@ -25,15 +25,17 @@
     <div class="stats">
       <% if (user.type == "User") { %>
         <div class="item">
-          <a href="http://github.com/<%= user.login %>/followers">
+          <a href="http://github.com/<%= user.login %>/followers" target="_blank">
             <div class="count"><%= user.followers %></div>
             <div class="label">Followers</div>
           </a>
         </div>
       <% } else { %>
         <div class="item">
-          <div class="count"><%= user.followers %></div>
-          <div class="label">Followers</div>
+          <a href="http://github.com/<%= user.login %>/followers" target="_blank">
+           <div class="count"><%= user.followers %></div>
+           <div class="label">Followers</div>
+          </a>
         </div>
       <% } %>
     </div>
