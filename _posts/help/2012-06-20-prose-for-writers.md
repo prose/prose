@@ -15,14 +15,16 @@ Here's what you need to get started.
 
 ### Create a new GitHub Repository
 
-This will be the home of your documents. Make sure there is at least one branch available. The easiest way to do it, is by initializing a new GitHub Repository. Keep in mind, this is a plain old GitHub repository, there's no need for setting up Jekyll.
+This will be the home of your documents. Make sure there is at least one branch available. The easiest way to do it, is by initializing a new GitHub Repository and initialize it with an empty README. 
 
 ![Create a repository on GitHub](http://prose.io/images/screenshots/prose-for-writers/create-repository.png)
+
+Keep in mind, this is a plain old GitHub repository, there's no need for setting up Jekyll.
 
 
 ### Start writing
 
-Open your fresh repository in prose and start writing your first document. To do so, click on "New File" enter some text in markdown. And hit save.
+Open your fresh repository in prose and start writing your first document. To do so, click on "New File" enter some text in markdown and finally hit save.
 
 ![Start writing](http://prose.io/images/screenshots/prose-for-writers/start-writing.png)
 
@@ -32,19 +34,18 @@ Open your fresh repository in prose and start writing your first document. To do
 Only changes are stored on every save. Thanks to git you can access older versions of your document using [GitHub](https://github.com/prose/documents/commits/master). In future we'll allow you to access them right within Prose. Just give us some more time please. :)
 
 ![Revisions](http://prose.io/images/screenshots/prose-for-writers/revisions.png)
-
 ![Changesets](http://prose.io/images/screenshots/prose-for-writers/changesets.png)
 
 
 ### Invite collaborators
 
-If your co-workers or friends haven't created a Github Account yet, this might be a good occasion to get started. Write Permissions are totally transparent, and managed on GitHub. To invite collaborators you need to give them permission to your repository and send them the link to the document on Prose.
+If your co-workers or friends haven't created a Github Account yet, this might be a good occasion to get started. Write permissions are totally transparent, and managed on GitHub. To invite collaborators you need to give them permission to your repository and send them the link to the document on Prose.
 
 ![Invite collaborators](http://prose.io/images/screenshots/prose-for-writers/add-collaborators.png)
 
 ### Share your work
 
-Make sure your repository is public and just share the URL of the post. Readers will always see the most up to date version. 
+Make sure your repository is public and just share the URL of the [post](http://prose.io/#prose/documents/blob/master/articles/hello-world.md). Readers will always see the most up to date version.
 
 ![Invite collaborators](http://prose.io/images/screenshots/prose-for-writers/share.png)
 
@@ -72,4 +73,4 @@ Prose is closely tied to Git and GitHub. We intentionally made the process trans
 ## Future outlook
 
 - Accessing revision history through the interface
-- allow assigning permissions to repos (aka invite new writer)
+- Invite collaborators right from the interface, and see who has access to the documents.
