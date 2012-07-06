@@ -51,8 +51,11 @@ views.Application = Backbone.View.extend({
 
   replaceMainView: function (name, view) {
     $('body').removeClass().addClass('current-view '+name);
+
     if (this.mainView) {
       this.mainView.remove();
+    } else {
+      $('#main').empty();
     }
     this.mainView = view;
     $(view.el).appendTo(this.$('#main'));
