@@ -446,7 +446,15 @@ body.start {
   }
 
 .repos > a {
+  display: block;
+  float: left;
+  position: relative;
   overflow: hidden;
+  text-align: center;
+  width: 140px;
+  height: 180px;
+  margin: 0 20px 20px 0;
+  
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
 
   background:url('images/sprite.png') -450px -640px no-repeat;
@@ -455,16 +463,6 @@ body.start {
   -moz-border-radius: 3px 3px 0px 3px;
   -webkit-border-radius: 3px 3px 0px 3px;
   border-radius: 3px 3px 0px 3px;
-
-  text-align: center;
-  position: relative;
-  margin-right: 20px;
-  margin-top: 20px;
-  width: 140px;
-  height: 180px;
-  color: #444;
-  display: block;
-  float: left;
   }
 
 .repos > a:before {
@@ -659,22 +657,25 @@ ul.site li a {
     }
 
 .post-listing a.link {
-  background:url('images/sprite.png') -450px -400px no-repeat;
-  background-color: #F2F6F8;
+  display: block;
   float: left;
-  width: 140px;
-  min-height: 180px;
-  margin: 0 20px 20px 0;
   position: relative;
-  color: #404040;
+  overflow: hidden;
+  width: 140px;
+  height: 180px;
+  margin: 0 20px 20px 0;
+  
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 3px 40px 3px 3px;
+  
+  background:url('images/sprite.png') -450px -400px no-repeat;
+  background-color: #F2F6F8;
   }
   .post-listing a.link:hover { 
   background-color: white; 
   }
 
-.post-listing a.link > a:before {
+.post-listing a.link:before {
   content: '';
   display: inline-block;
   height: 100%;
