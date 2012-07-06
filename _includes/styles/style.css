@@ -446,7 +446,6 @@ body.start {
   }
 
 .repos > a {
-  font-family: 'OpenSans', sans-serif;
   overflow: hidden;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
 
@@ -468,20 +467,28 @@ body.start {
   float: left;
   }
 
+.repos > a:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em;
+  }
+
 .repos > a:hover {
   background-color: #f0f5f7;
   }
 
 .repos > a .name {
-  display: block;
-  position: relative;
-  top: 40%;
-  margin: auto;
+  display: inline-block;
+  vertical-align: middle;
+  width: 120px;
   font-size: 12px;
   text-align: center;
   overflow: hidden;
   word-wrap: break-word;
   color: #526066;
+  margin: 0 10px;
   }
 
 .repos > a:hover .name {
@@ -667,20 +674,24 @@ ul.site li a {
   background-color: white; 
   }
 
+.post-listing a.link > a:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em;
+  }
+  
 .post-listing a.link .filename {
-  display: block;
-  position: absolute;
-  top: 40%;
-  margin: auto;
+  display: inline-block;
+  vertical-align: middle;
+  width: 120px;
   font-size: 12px;
   text-align: center;
-  font-family: 'OpenSans', sans-serif;
   overflow: hidden;
   word-wrap: break-word;
   color: #526066;
-  left: 0;
-  right: 0;
-  padding: 0px 10px;
+  margin: 0 10px;
   }
   .post-listing a.link.loading { background-color: white; }
   .post-listing a.link.loading .filename {
