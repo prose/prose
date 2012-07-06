@@ -1,8 +1,3 @@
-
-
-<!-- Michael Aufreiter
-as michael since Tue Feb 22 2011 -->
-
 <div id="profile_wrapper">
   <div class="profile-header">
     <div class="avatar"><img src="<%= user.avatar_url %>" width="80" height="80"/></div>
@@ -42,7 +37,6 @@ as michael since Tue Feb 22 2011 -->
     </div>
   </div>
 </div>
-
 
 <h1><%= repos.length %> Repositories</h2>
 

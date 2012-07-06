@@ -29,10 +29,10 @@ views.Profile = Backbone.View.extend({
       }
 
       if (branches.length === 1) {
-        router.navigate('#' + [user, repo, branches[0]].join('/'), true);
+        router.navigate('#' + [user, repo, "tree", branches[0]].join('/'), true);
       } else if (branches.length > 1) {
         _.each(branches, function(branch) {
-          $branches.append($('<a class="branch" href="#'+[user, repo, branch].join('/')+'">'+branch+'</a>'));
+          $branches.append($('<a class="branch" href="#'+[user, repo, "tree", branch].join('/')+'">'+branch+'</a>'));
         });
       }
     });
