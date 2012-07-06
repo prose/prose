@@ -345,6 +345,12 @@ body:before {/* thanks to Maleika (Kohoutec)*/
   Profile
 ---------------------------------------------*/
 
+#profile_wrapper {
+  overflow: auto;
+  padding: 20px 0;
+  border-bottom: 1px solid #C3CCD0;
+}
+
 #start .profile-header {
   margin-top: 40px;
   overflow: auto;
@@ -375,11 +381,18 @@ body:before {/* thanks to Maleika (Kohoutec)*/
 }
 
 #start .profile-header, #start .profile-details {
+
   font-size: 14px;
 }
 
+#start .profile-header {
+  float: left;
+}
+
 #start .profile-details {
-  margin-top: 20px;
+  float: right;
+  margin-top: 50px;
+  margin-left: 100px;
   overflow: auto;
 }
 
@@ -393,6 +406,8 @@ body:before {/* thanks to Maleika (Kohoutec)*/
 
 #start .profile-details .stats {
   float: right;
+  margin-top: 5px;
+  margin-left: 70px;
 }
 
 #start .profile-details .stats .count {

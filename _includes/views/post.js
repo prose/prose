@@ -23,7 +23,7 @@ views.Post = Backbone.View.extend({
     if (confirm("Are you sure you want to delete that file?")) {
       deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
         if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
-        router.navigate([app.state.user, app.state.repo, app.state.branch, this.model.path].join('/'), true);
+        router.navigate([app.state.user, app.state.repo, "tree", app.state.branch].join('/'), true);
       }, this));      
     }
     return false;

@@ -3,7 +3,7 @@
     <div class="avatar"><img src="<%= user.avatar_url %>" width="80" height="80"/></div>
     <div class="user">
       <div class="username"><%= user.name || user.login %></div>
-      <div class="subtitle">as <a href="http://github.com/<%= user.login %>" target="_blank"><strong><%= user.login %></strong></a> since Jul 2 2012.</div>
+      <div class="subtitle">as <a href="http://github.com/<%= user.login %>" target="_blank"><strong><%= user.login %></strong></a> since <%= new Date(user.created_at).toDateString() %></div>
     </div>
   </div>
   <div class="profile-details">
@@ -25,8 +25,10 @@
     <div class="stats">
       <% if (user.type == "User") { %>
         <div class="item">
-          <div class="count"><%= user.followers %></div>
-          <div class="label">Followers</div>
+          <a href="http://github.com/<%= user.login %>/followers">
+            <div class="count"><%= user.followers %></div>
+            <div class="label">Followers</div>
+          </a>
         </div>
       <% } else { %>
         <div class="item">
