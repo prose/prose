@@ -2,10 +2,10 @@
 layout: help
 title: Prose for writers
 descr: How to use Prose as a writing workspace 
-image: http://farm7.staticflickr.com/6119/6884293596_b44a31bf0a_m.jpg
+image: http://prose.io/images/help/prose-for-writers.png
 author_twitter: _mql
 author: Michael Aufreiter
-published: false
+published: true
 categories:
 - help
 ---
