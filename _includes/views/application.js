@@ -77,7 +77,7 @@ views.Application = Backbone.View.extend({
     }, this));
   },
 
-  post: function (user, repo, branch, path, file, preview) {
+  post: function (user, repo, branch, path, file, mode) {
     this.loading('Loading post ...');
     loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return this.notify('error', 'The requested resource could not be found.');
@@ -85,7 +85,7 @@ views.Application = Backbone.View.extend({
         this.loaded();
         this.header.render();
         if (err) return this.notify('error', 'The requested resource could not be found.');
-        data.preview = preview;
+        data.preview = !(mode === "edit");
         data.lang = _.mode(file);
         this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
         var that = this;
@@ -95,7 +95,7 @@ views.Application = Backbone.View.extend({
   },
 
   newPost: function (user, repo, branch, path) {
-    this.loading('Creating post ...');
+    this.loading('Creating file ...');
     loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       emptyPost(user, repo, branch, path, _.bind(function(err, data) {
         this.loaded();
@@ -113,9 +113,9 @@ views.Application = Backbone.View.extend({
   profile: function(username) {
     var that = this;
     app.state.title = username;
-    this.header.render();
     this.loading('Loading profile ...');
     loadRepos(username, function(err, data) {
+      that.header.render();
       that.loaded();
       data.authenticated = window.authenticated;
       that.replaceMainView("start", new views.Profile({id: "start", model: data}).render());
