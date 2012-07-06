@@ -48,7 +48,7 @@ Make sure your repository is public and just share the URL of the post. Readers 
 
 ![Invite collaborators](http://prose.io/images/screenshots/prose-for-writers/share.png)
 
-So if you or some of your collaborators makes a change, it will immediately be visible. Just point them to the appropriate URL for either editing, or viewing the document.
+So if you or some of your collaborators make a change, it will immediately be visible. Just point them to the appropriate URL for either editing, or viewing the document.
 
 - `http://prose.io/#prose/documents/blob/master/articles/hello-world.md`
 - `http://prose.io/#prose/documents/edit/master/articles/hello-world.md`
@@ -56,19 +56,17 @@ So if you or some of your collaborators makes a change, it will immediately be v
 
 ### Turn it into a website
 
-Remember that you always have the option to turn your document repository in a Jekyll website. However before creating a website, you should write some content. :)
-
-(screenshot for copy and pasting the URL)
+Remember that you always have the option to turn your document repository in a Jekyll website, featuring your own design. However before creating a website, you should have some content ready and with Prose it's easy to savely create and share that content.
 
 ### Organize your posts in folders
 
-Add a new folder directly within Prose. 
+You might want to structure your document repository, once you get more and more files. All you have to do is prefixing an arbitary folder strcuture to the filename.
 
-{screenshot}
+![Start writing](http://prose.io/images/screenshots/prose-for-writers/start-writing.png)
 
-## Properties
+## Background
 
-- Prose is closely tied to GitHub. We intentionally made the process transparent, and expose git concepts such as branches, folders and files. You can access every file either with Prose or the Github User interface. So you can mix your workflow by editing in your local text editor and use the regular git commit/push workflow along with Prose.
+Prose is closely tied to Git and GitHub. We intentionally made the process transparent, and expose git concepts such as branches, folders and files. You can access every file either with Prose or the Github User interface. You can also switch to editing in your local text editor and use the regular git commit/push workflow, if you prefer that. E.g. when you're on the road, and offline.
 
 
 ## Future outlook
