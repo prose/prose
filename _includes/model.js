@@ -45,7 +45,7 @@ function authenticate() {
       window.authenticated = true;
       // Adjust URL
       var regex = new RegExp("\\?code="+match[1]);
-      window.location.href = window.location.href.replace(regex, '');
+      window.location.href = window.location.href.replace(regex, '').replace('&state=', '');
     });
     return false;
   } else {
