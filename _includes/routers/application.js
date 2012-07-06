@@ -6,11 +6,9 @@
 routers.Application = Backbone.Router.extend({
   initialize: function() {
     // Using this.route, because order matters
+    this.route(/(.*\/.*)/, 'path', this.path);
     this.route(":user", 'user', this.profile);
-    this.route(/(.*\/.*)/, 'posts', this.posts);
-    this.route(/(.*\/.*)\/(.*\.\w+)$/, 'post', this.post);
-    this.route(/(.*\/.*)\/(.*\.\w+)(\/edit)$/, 'post', this.post);
-    this.route(/(.*\/.*)\/new$/, 'new_post', this.newPost);
+    this.route(":user/:repo", 'repo', this.repo);    
     this.route("", "start", this.start);
   },
 
@@ -19,6 +17,7 @@ routers.Application = Backbone.Router.extend({
       app.state = {
         user: "",
         repo: "",
+        mode: "",
         branch: "",
         path: ""
       };
@@ -31,41 +30,59 @@ routers.Application = Backbone.Router.extend({
     app.state = {
       user: url[0],
       repo: url[1],
-      branch: url[2],
-      path: (url.slice(3) || []).join('/')
+      mode: url[2],
+      branch: url[3],
+      path: (url.slice(4) || []).join('/')
     };
-    return [url[0], app.state.repo, app.state.branch, app.state.path]
+    return app.state;
+  },
+
+  path: function(url) {
+    var url = this.extractURL(url);
+    if (url.mode === "tree") {
+      app.instance.posts(url.user, url.repo, url.branch, url.path);
+    } else if (url.mode === "new") {
+      app.instance.newPost(url.user, url.repo, url.branch, url.path);
+    } else if (url.mode === "mkdir") {
+      // TODO: Create a new directory
+    } else {
+      var parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      app.instance.post(url.user, url.repo, url.branch, parts[0], parts[1], url.mode);
+    }
+  },
+
+  // #example-user/example-repo
+  repo: function(username, reponame) {
+    app.state = {
+      user: username,
+      repo: reponame,
+      mode: "tree",
+      branch: "",
+      path: ""
+    };
+    app.instance.posts(username, reponame);
   },
 
   // #example-user
   // #example-organization
   profile: function(username) {
     if (confirmExit()) {
+      app.state = {
+        user: username,
+        repo: "",
+        mode: "",
+        branch: "",
+        path: ""
+      };
       app.instance.profile(username);
     }
   },
 
   // #example-user/example-repo/gh-pages/path/to/new
-  newPost: function(url) {
+  newPost: function(args) {
     if (confirmExit()) {
       app.instance.newPost.apply(this, this.extractURL(url));
-    }
-  },
-
-  // #example-user/example-repo/gh-pages/path/to
-  // #example-user/example-repo/gh-pages
-  posts: function(url) {
-    if (confirmExit()) {
-      app.instance.posts.apply(this, this.extractURL(url));
-    }
-  },
-
-  // #example-user/example-repo/gh-pages/path/to/2012-01-01.md
-  post: function(url, file, edit) {
-    if (confirmExit()) {
-      var path = this.extractURL(url);
-      app.state.file = file;
-      app.instance.post.apply(this, path.concat(file).concat(!edit));
     }
   }
 });

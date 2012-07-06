@@ -3,21 +3,22 @@
 
   <% _.each(paths, function(p, index) { %>
     <% if (p.path !== current_path.path) { %>
-      <a class='link folder' href='#<%= user %>/<%= repo %>/<%= branch %><%= p.path ? "/" +p.path : "" %>'>
+      <a class='link folder' href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= p.path ? "/" +p.path : "" %>'>
         <div class="filename"><%= p.path === _.parentPath(current_path.path) ? ".." : _.topPath(p.path) %></div>
       </a>
     <% } %>
   <% }); %>
 
   <% if (window.authenticated) { %>
-    <a class='link new new-post' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= path ? path+"/" : "" %>new'>
+    <a class='link new new-post' href='#<%= user %>/<%= repo %>/tree/<%= branch %>/<%= path ? path+"/" : "" %>new'>
       <div class="new-post button">New File</div>
     </a>
   <% } %>
 
   <% if (posts.length > 0) { %>
     <% _.each(posts, function(post) { %>
-      <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/<%= branch %>/<%= post.path %>/edit'>
+      <!-- TODO: don't edit binary files -->
+      <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= post.path %>'>
         <div class="filename"><%= post.title || 'Untitled' %></div>
       </a>
     <% }); %>

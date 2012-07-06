@@ -33,6 +33,19 @@ _.validFilename = function(filename) {
 };
 
 
+// Extract filename from a given path
+// -------
+// 
+// _.chunkedPath('path/to/foo.md')
+// => ['path/to', 'foo.md']
+
+_.extractFilename = function(path) {
+  if (!path.match(/\//)) return ["", path];
+  var matches = path.match(/(.*)\/(.*)$/);
+  return [ matches[1], matches[2] ];
+};
+
+
 // Determine mode for CodeMirror
 // -------
 

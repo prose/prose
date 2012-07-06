@@ -5,16 +5,14 @@
     <% var path = state.path %>
 
     <a class="user" href="#<%= [state.user].join('/') %>"><%= state.user %></a>
-
-    <% if (state.repo && (path ||state.file)) { %>
-      <a class="repo" href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></a>
-    <% } else if (state.repo) { %>
-      <div class="repo" href="#<%= [state.user, state.repo, state.branch].join('/') %>"><%= state.repo %></div>
+      
+    <% if (state.repo) { %>
+      <a class="repo" href="#<%= [state.user, state.repo, 'tree', state.branch].join('/') %>"><%= state.repo %></a>
     <% } %>
     
     <% if (path) { %>
       <% _.each(_.chunkedPath(path), function(p) { %>
-        <a class="path" href="#<%= [state.user, state.repo, state.branch, p.url].join('/') %>"><%= p.name %></a>
+        <a class="path" href="#<%= [state.user, state.repo, 'tree', state.branch, p.url].join('/') %>"><%= p.name %></a>
       <% }); %>
     <% } %>
       <% if (state.file) { %>
