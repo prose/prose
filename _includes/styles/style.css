@@ -437,6 +437,7 @@ body.start {
 #start .owner {
   font-size: 16px;
   padding: 10px;
+  margin-bottom: 20px;
   background: #E0E7EB; 
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
