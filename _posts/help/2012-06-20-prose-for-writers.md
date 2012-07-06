@@ -1,7 +1,7 @@
 ---
 layout: help
 title: Prose for writers
-descr: How to use Prose as a writing workspace 
+descr: How to use Prose as a writing workspace.
 image: http://prose.io/images/help/prose-for-writers.png
 author_twitter: _mql
 author: Michael Aufreiter
@@ -83,3 +83,4 @@ Prose is closely tied to Git and GitHub. We intentionally made the process trans
 
 - Accessing revision history through the interface
 - Invite collaborators right from the interface, and see who has access to the documents.
+
