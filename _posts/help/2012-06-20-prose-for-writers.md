@@ -62,14 +62,16 @@ So if you or some of your collaborators make a change, it will immediately be vi
 
 ## Organize your posts in folders
 
-You might want to structure your document repository, once you get more and more files. All you have to do is prefixing an arbitary folder strcuture to the filename.
+You might want to structure your document repository, once you get more and more files. All you have to do is prefixing an arbitary folder structure to the filename. Make sure you don't have a slash in front.
 
 ![Subfolders](http://prose.io/images/screenshots/prose-for-writers/subfolders.png)
 
 
 ## Turn it into a website
 
-Remember that you always have the option to turn your document repository in a Jekyll website, featuring your own design. However before creating a website, you should have some content ready and with Prose it's easy to savely create and share that content.
+Remember that you always have the option to turn your document repository in a Jekyll website, featuring your own design. You can use our [template](http://github.com/) to get started with Jekyll.
+
+However, before creating a website, you should have some content ready and with Prose it is easy to savely create and share that potential website content.
 
 
 ## Background
