@@ -16,9 +16,9 @@
     function headers() {
       var headers = {}
       if (options.auth === 'oauth' && !options.token) return { Accept: 'application/vnd.github.raw' };
-      if (options.auth === 'basic' && (!options.username || !options.password)) return { Accept: 'application/vnd.github.raw' };
+      if (options.auth === 'basic' && (!options.username || !options.password)) return { Accept: 'application/vnd.github.raw' };
       return options.auth == 'oauth'
-             ? { Authorization: 'token '+ options.token, Accept: 'application/vnd.github.raw' }
+             ? { Authorization: 'token '+ options.token, Accept: 'application/vnd.github.raw' }
              : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password), Accept: 'application/vnd.github.raw' }
     }
 
@@ -28,7 +28,7 @@
         url: API_URL + path,
         data: JSON.stringify(data),
         dataType: 'json',
-        contentType: 'application/x-www-form-urlencoded',
+        contentType: 'application/json',
         success: function(res) { cb(null, res); },
         error: function(err) { cb(err); },
         headers : headers()
@@ -40,7 +40,7 @@
         type: method,
         url: API_URL + path,
         data: JSON.stringify(data),
-        contentType: 'application/x-www-form-urlencoded',
+        contentType: 'application/json',
         success: function(res) { cb(null, res); },
         error: function(err) { cb(err); },
         headers : headers()
@@ -92,10 +92,50 @@
           cb(err, res);
         });
       };
+
+      // List user organizations
+      // -------
+
+      this.orgs = function(cb) {
+        _request("GET", "/user/orgs", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // Show user information
+      // -------
+
+      this.show = function(username, cb) {
+        _request("GET", "/users/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      }
+
+      // List user repositories
+      // -------
+
+      this.userRepos = function(username, cb) {
+        _request("GET", "/users/"+username+"/repos?type=all&per_page=100", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List organization repositories
+      // -------
+
+      this.orgRepos = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=100", null, function(err, res) {
+          cb(err, res);
+        });
+      };
     };
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> caed9d60758924df63ee9c14bdfd4fbaaac9b3ea
     // Repository API
     // =======
 
