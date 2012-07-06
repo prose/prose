@@ -265,9 +265,9 @@ body:before {/* thanks to Maleika (Kohoutec)*/
 #start .organizations .organization {
   display: block;
   float: left;
-  height: 90px;
+  height: 60px;
   padding: 4px;
-  width: 90px;
+  width: 60px;
   margin-right: 20px;
   border: 1px solid #C3CCD0;
   background: #fff;
@@ -279,9 +279,11 @@ body:before {/* thanks to Maleika (Kohoutec)*/
 #start .organizations .organization img {
   padding: 0;
   margin: 0;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  height: 50px;
+  width: 50px;
 }
 
 #start .splash {
