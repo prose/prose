@@ -31,10 +31,15 @@ Open your fresh repository in prose and start writing your first document. To do
 
 ## Remember every change
 
-Only changes are stored on every save. Thanks to git you can access older versions of your document using [GitHub](https://github.com/prose/documents/commits/master). In future we'll allow you to access them right within Prose. Just give us some more time please. :)
+Only changes are stored on every save. Thanks to git you can access older versions of your document using [GitHub](https://github.com/prose/documents/commits/master). You can access the full commit history ...
 
 ![Revisions](http://prose.io/images/screenshots/prose-for-writers/revisions.png)
-![Changesets](http://prose.io/images/screenshots/prose-for-writers/changesets.png)
+
+or look at particular changesets.
+
+![Changeset](http://prose.io/images/screenshots/prose-for-writers/changeset.png)
+
+In future we'll allow you to access revisions and changesets right from Prose. Just give us some more time please. :)
 
 
 ### Invite collaborators
@@ -63,7 +68,7 @@ Remember that you always have the option to turn your document repository in a J
 
 You might want to structure your document repository, once you get more and more files. All you have to do is prefixing an arbitary folder strcuture to the filename.
 
-![Start writing](http://prose.io/images/screenshots/prose-for-writers/start-writing.png)
+![Subfolders](http://prose.io/images/screenshots/prose-for-writers/subfolders.png)
 
 ## Background
 
