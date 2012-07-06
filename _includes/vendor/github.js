@@ -131,11 +131,6 @@
     };
 
 
-
-<<<<<<< HEAD
-=======
-
->>>>>>> caed9d60758924df63ee9c14bdfd4fbaaac9b3ea
     // Repository API
     // =======
 
