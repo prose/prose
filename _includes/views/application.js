@@ -111,13 +111,15 @@ views.Application = Backbone.View.extend({
   },
 
   profile: function(username) {
+
     var that = this;
     app.state.title = username;
     this.loading('Loading profile ...');
     loadRepos(username, function(err, data) {
       that.header.render();
       that.loaded();
-      data.authenticated = window.authenticated;
+      console.log(window.authenticated);
+      data.authenticated = !!window.authenticated;
       that.replaceMainView("start", new views.Profile({id: "start", model: data}).render());
     });
   },
@@ -129,7 +131,7 @@ views.Application = Backbone.View.extend({
 
     this.replaceMainView("start", new views.Start({
       id: "start",
-      model: _.extend(this.model, { authenticated: window.authenticated} )
+      model: _.extend(this.model, { authenticated: !!window.authenticated} )
     }).render());
   },
 

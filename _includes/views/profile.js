@@ -42,7 +42,6 @@ views.Profile = Backbone.View.extend({
 
   render: function() {
     $(this.el).html(templates.profile(this.model));
-    if (!window.authenticated) $('#header').hide();
     return this;
   }
 });

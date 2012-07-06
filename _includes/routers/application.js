@@ -12,7 +12,7 @@ routers.Application = Backbone.Router.extend({
     this.route("", "start", this.start);
   },
 
-  start: function(username) {
+  start: function() {
     if (confirmExit()) {
       app.state = {
         user: "",
@@ -21,7 +21,7 @@ routers.Application = Backbone.Router.extend({
         branch: "",
         path: ""
       };
-      app.instance.start(username);
+      app.instance.start();
     }
   },
 
