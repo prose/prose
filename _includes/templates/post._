@@ -2,7 +2,7 @@
   <div class="document-menu-content">
     
     <div class="fl filename">
-      <input type="text" class="filepath" value="<%= path %>/<%= file %>"/>
+      <input type="text" class="filepath" value="<%= _.filepath(path, file) %>"/>
       <div class="state"></div>
     </div>
 
