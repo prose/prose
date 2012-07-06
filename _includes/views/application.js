@@ -109,7 +109,7 @@ views.Application = Backbone.View.extend({
       }, this));
     }, this));
   },
-
+  
   profile: function(username) {
     var that = this;
     app.state.title = username;

@@ -20,7 +20,7 @@ views.Post = Backbone.View.extend({
   },
 
   _delete: function() {
-    if (confirm("Are you sure you want to delete that document?")) {
+    if (confirm("Are you sure you want to delete that file?")) {
       deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
         if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
         router.navigate([app.state.user, app.state.repo, app.state.branch, this.model.path].join('/'), true);
@@ -32,32 +32,6 @@ views.Post = Backbone.View.extend({
   updateURL: function() {
     var url = _.compact([app.state.user, app.state.repo, this.model.preview ? "blob" : "edit", app.state.branch, this.model.path, this.model.file]);
     router.navigate(url.join('/'), false);
-  },
-
-  updateFilename: function(file, cb) {
-    var that = this;
-    
-    if (!_.validFilename(file)) return cb('error');
-    app.state.path = this.model.path;
-    app.state.file = file;
-    // rerender header to reflect the filename change
-    app.instance.header.render();
-    this.model.file = file;
-
-    function finish() {
-      that.updateURL();
-      app.state.path = that.model.path + "/" + file;
-    }
-
-    if (this.model.persisted) {
-      movePost(app.state.user, app.state.repo, app.state.branch, this.model.path + "/" + this.model.file, this.model.path + "/" + file, _.bind(function(err) {
-        if (!err) finish()
-        err ? cb('error') : cb(null)
-      }, this));
-    } else {
-      finish();
-      cb(null);
-    }
   },
 
   _makeDirty: function(e) {
@@ -178,10 +152,39 @@ views.Post = Backbone.View.extend({
     }
   },
 
-  updatePost: function() {
-    var file = $('input.filename').val();
+  updateFilename: function(filepath, cb) {
     var that = this;
-    var message = this.model.persisted ? "Updated " + file : "Created " + file;
+    
+    if (!_.validPathname(filepath)) return cb('error');
+    app.state.path = this.model.path; // ?
+    app.state.file = _.extractFilename(filepath)[1];
+    app.state.path = _.extractFilename(filepath)[0];
+
+    function finish() {
+      that.model.path = app.state.path;
+      that.model.file = app.state.file;
+      // rerender header to reflect the filename change
+      app.instance.header.render();
+      that.updateURL();
+    }
+
+    if (this.model.persisted) {
+      movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
+        if (!err) finish()
+        err ? cb('error') : cb(null)
+      }, this));
+    } else {
+      finish();
+      cb(null);
+    }
+  },
+
+  updatePost: function() {
+    var filepath = $('input.filepath').val();
+
+    var file = _.extractFilename(filepath)[1];
+    var that = this;
+    var message = this.model.persisted ? "Updated " + filepath : "Created " + filepath;
 
     function updateState(label, classes) {
       $('.button.save').html(label)
@@ -192,7 +195,7 @@ views.Post = Backbone.View.extend({
     function save() {
       if (!that.model.jekyll || that.updateMetaData()) {
 
-        saveFile(app.state.user, app.state.repo, app.state.branch, that.model.path, file, that.model.raw_metadata, that.editor.getValue(), message, function(err) {
+        saveFile(app.state.user, app.state.repo, app.state.branch, filepath, that.model.raw_metadata, that.editor.getValue(), message, function(err) {
           if (err) {
             _.delay(function() { that._makeDirty() }, 3000);
             updateState('! Try again in 30 seconds', 'error');
@@ -212,8 +215,9 @@ views.Post = Backbone.View.extend({
     updateState('SAVING ...', 'inactive saving');
     that.$('.document-menu-content .options').hide();
 
-    if (file === this.model.file) return save();    
-    this.updateFilename(file, function(err) {
+    if (filepath === _.filepath(this.model.path, this.model.file)) return save();
+    // Move or create file
+    this.updateFilename(filepath, function(err) {
       err ? updateState('! Filename', 'error') : save();
     });
   },
@@ -261,11 +265,6 @@ views.Post = Backbone.View.extend({
       });
 
     }, 100);
-  },
-
-  // UpdateHeight
-  updateHeight: function() {
-    $('.personalities-wrapper').height(this.$('.content .CodeMirror').height());
   },
 
   render: function() {

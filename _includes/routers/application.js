@@ -8,7 +8,7 @@ routers.Application = Backbone.Router.extend({
     // Using this.route, because order matters
     this.route(/(.*\/.*)/, 'path', this.path);
     this.route(":user", 'user', this.profile);
-    this.route(":user/:repo", 'repo', this.repo);    
+    this.route(":user/:repo", 'repo', this.repo);
     this.route("", "start", this.start);
   },
 
@@ -41,10 +41,8 @@ routers.Application = Backbone.Router.extend({
     var url = this.extractURL(url);
     if (url.mode === "tree") {
       app.instance.posts(url.user, url.repo, url.branch, url.path);
-    } else if (url.mode === "new") {
+    } else if (url.mode === "new") { // New file
       app.instance.newPost(url.user, url.repo, url.branch, url.path);
-    } else if (url.mode === "mkdir") {
-      // TODO: Create a new directory
     } else {
       var parts = _.extractFilename(url.path);
       app.state.file = parts[1];
@@ -76,13 +74,6 @@ routers.Application = Backbone.Router.extend({
         path: ""
       };
       app.instance.profile(username);
-    }
-  },
-
-  // #example-user/example-repo/gh-pages/path/to/new
-  newPost: function(args) {
-    if (confirmExit()) {
-      app.instance.newPost.apply(this, this.extractURL(url));
     }
   }
 });
