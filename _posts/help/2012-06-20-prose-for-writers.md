@@ -13,7 +13,7 @@ categories:
 
 Here's what you need to get started.
 
-### Create a new GitHub Repository
+## Create a new GitHub Repository
 
 This will be the home of your documents. Make sure there is at least one branch available. The easiest way to do it, is by initializing a new GitHub Repository and initialize it with an empty README. 
 
@@ -22,7 +22,7 @@ This will be the home of your documents. Make sure there is at least one branch 
 Keep in mind, this is a plain old GitHub repository, there's no need for setting up Jekyll.
 
 
-### Start writing
+## Start writing
 
 Open your fresh repository in prose and start writing your first document. To do so, click on "New File" enter some text in markdown and finally hit save.
 
@@ -31,19 +31,24 @@ Open your fresh repository in prose and start writing your first document. To do
 
 ## Remember every change
 
-Only changes are stored on every save. Thanks to git you can access older versions of your document using [GitHub](https://github.com/prose/documents/commits/master). In future we'll allow you to access them right within Prose. Just give us some more time please. :)
+Only changes are stored on every save. Thanks to git you can access older versions of your document using [GitHub](https://github.com/prose/documents/commits/master). You can access the full commit history ...
 
 ![Revisions](http://prose.io/images/screenshots/prose-for-writers/revisions.png)
-![Changesets](http://prose.io/images/screenshots/prose-for-writers/changesets.png)
+
+or look at particular changesets.
+
+![Changeset](http://prose.io/images/screenshots/prose-for-writers/changeset.png)
+
+In future we'll allow you to access revisions and changesets right from Prose. Just give us some more time please. :)
 
 
-### Invite collaborators
+## Invite collaborators
 
 If your co-workers or friends haven't created a Github Account yet, this might be a good occasion to get started. Write permissions are totally transparent, and managed on GitHub. To invite collaborators you need to give them permission to your repository and send them the link to the document on Prose.
 
 ![Invite collaborators](http://prose.io/images/screenshots/prose-for-writers/add-collaborators.png)
 
-### Share your work
+## Share your work
 
 Make sure your repository is public and just share the URL of the [post](http://prose.io/#prose/documents/blob/master/articles/hello-world.md). Readers will always see the most up to date version.
 
@@ -55,15 +60,19 @@ So if you or some of your collaborators make a change, it will immediately be vi
 - `http://prose.io/#prose/documents/edit/master/articles/hello-world.md`
 
 
-### Turn it into a website
+## Organize your posts in folders
 
-Remember that you always have the option to turn your document repository in a Jekyll website, featuring your own design. However before creating a website, you should have some content ready and with Prose it's easy to savely create and share that content.
+You might want to structure your document repository, once you get more and more files. All you have to do is prefixing an arbitary folder structure to the filename. Make sure you don't have a slash in front.
 
-### Organize your posts in folders
+![Subfolders](http://prose.io/images/screenshots/prose-for-writers/subfolders.png)
 
-You might want to structure your document repository, once you get more and more files. All you have to do is prefixing an arbitary folder strcuture to the filename.
 
-![Start writing](http://prose.io/images/screenshots/prose-for-writers/start-writing.png)
+## Turn it into a website
+
+Remember that you always have the option to turn your document repository in a Jekyll website, featuring your own design. You can use our [template](http://github.com/) to get started with Jekyll.
+
+However, before creating a website, you should have some content ready and with Prose it is easy to savely create and share that potential website content.
+
 
 ## Background
 
