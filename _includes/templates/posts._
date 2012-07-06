@@ -10,7 +10,7 @@
   <% }); %>
 
   <% if (window.authenticated) { %>
-    <a class='link new new-post' href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? path+"/" : ""%>'>
+    <a class='link new new-post' href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>'>
       <div class="new-post button">New File</div>
     </a>
   <% } %>

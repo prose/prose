@@ -41,7 +41,7 @@ routers.Application = Backbone.Router.extend({
     var url = this.extractURL(url);
     if (url.mode === "tree") {
       app.instance.posts(url.user, url.repo, url.branch, url.path);
-    } else if (url.mode === "new") { // New file
+    } else if (url.mode === "new") {
       app.instance.newPost(url.user, url.repo, url.branch, url.path);
     } else {
       var parts = _.extractFilename(url.path);
