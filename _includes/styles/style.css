@@ -172,12 +172,17 @@ body.post #header {
   }
 
 #main .loading {
-  margin: 0 auto;
-  width: 960px;
-  padding: 100px 0;
+  margin: 150px auto;
+  width: 50px;
   font-size: 20px;
   text-align: center;
+  height: 11px;
+  background: url('images/ajax-loader.gif') no-repeat;
   }
+
+#main .loading span {
+  display: none;
+}
 
 #post .inner {
   position: relative;
@@ -352,7 +357,6 @@ body:before {/* thanks to Maleika (Kohoutec)*/
 }
 
 #start .profile-header {
-  margin-top: 40px;
   overflow: auto;
 }
 

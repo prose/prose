@@ -109,7 +109,7 @@ views.Application = Backbone.View.extend({
       }, this));
     }, this));
   },
-  
+
   profile: function(username) {
     var that = this;
     app.state.title = username;
@@ -139,7 +139,7 @@ views.Application = Backbone.View.extend({
   },
 
   loading: function(msg) {
-    $('#main').html('<div class="loading">'+ msg || 'Loading ...' +'</div>');
+    $('#main').html('<div class="loading"><span>'+ msg || 'Loading ...' +'</span></div>');
   },
 
   loaded: function() {
