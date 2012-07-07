@@ -1,6 +1,3 @@
----
-
----
 # Prose
 
 [Prose](http://prose.io) is a web-based interface for managing text-based content in your GitHub repositories. Use it to create, edit, and delete files, and save your changes directly to GitHub.
