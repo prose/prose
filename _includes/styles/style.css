@@ -723,7 +723,7 @@ ul.site li a {
     position: absolute;
     margin: auto;
     left: 0; right: 0; top: 0; bottom: 0;
-    background: url('images/ajax-loader-white.gif') no-repeat;
+    background: url('images/ajax-loader.gif') no-repeat;
     height: 11px;
     width: 44px;
     color: #444;
