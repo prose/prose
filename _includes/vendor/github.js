@@ -357,9 +357,13 @@
 
       this.write = function(branch, path, content, message, cb) {
         updateTree(branch, function(err, latestCommit) {
+          if (err) return cb(err);
           that.postBlob(content, function(err, blob) {
+            if (err) return cb(err);
             that.updateTree(latestCommit, path, blob, function(err, tree) {
+              if (err) return cb(err);
               that.commit(latestCommit, tree, message, function(err, commit) {
+                if (err) return cb(err);
                 that.updateHead(branch, commit, cb);
               });
             });

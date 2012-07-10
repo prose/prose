@@ -114,14 +114,12 @@ views.Application = Backbone.View.extend({
   },
 
   profile: function(username) {
-
     var that = this;
     app.state.title = username;
     this.loading('Loading profile ...');
     loadRepos(username, function(err, data) {
       that.header.render();
       that.loaded();
-      console.log(window.authenticated);
       data.authenticated = !!window.authenticated;
       that.replaceMainView("start", new views.Profile({id: "start", model: data}).render());
     });
