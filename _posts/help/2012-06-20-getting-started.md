@@ -87,5 +87,5 @@ Prose is also suitable as a full-featured writing environment, covering authorin
 3. Save it.
 4. Share it (we support deep linking to the rendered version)
 
-Prose is similiar to [iAWriter](http://www.iawriter.com/) as it is also using a minimal interface for editing Markdown, but it's web-based and uses [GitHub](http://github.com) for storing your text so your writings are more than save and GitHub keeps a history of every saved version. So Prose can potentially be seen as a whole new way of sharing documents online, while utilizing the usual suspects Markdown and GitHub. Oh and it's free and open source.
+Prose is similiar to [iAWriter](http://www.iawriter.com/) as it is also using a minimal interface for editing Markdown, but it's web-based and uses [GitHub](http://github.com) for storing your text so your writings are more than safe and GitHub keeps a history of every saved version. So Prose can potentially be seen as a whole new way of sharing documents online, while utilizing the usual suspects Markdown and GitHub. Oh and it's free and open source.
 
