@@ -8,6 +8,7 @@
 {% include vendor/marked.js %}
 {% include vendor/base64.js %}
 {% include vendor/github.js %}
+{% include vendor/diff-match-patch.js %}
 {% include vendor/keymaster.js %}
 {% include vendor/codemirror/codemirror.js %}
 {% include vendor/codemirror/xml.js %}

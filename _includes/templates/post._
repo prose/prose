@@ -8,9 +8,12 @@
 
     <% if (window.authenticated) { %>
       <div class="fr menu-item save-state">
+
+        <input type="text" class="commit-message" value="Updated."/>
         <div class="state fl">
           <a class='toggle-options button' href='#'>&nbsp;</a>
           <a class='save button inactive' href='#' title="CTRL+S">SAVE</a>
+          <a class='cancel-save button' href='#' title="ESC">CANCEL</a>
         </div>
       </div>
     <% } %>
@@ -124,11 +127,17 @@ Use 4 spaces indentation:
 
         </div>
       </div>
+      <div class="diff-wrapper">
+        <div class="diff">
+          
+        </div>
+      </div>
       <div class="content-wrapper">
         <div class="content">
           <div id="code"></div>
         </div>
       </div>
+
       <div class="content-preview-wrapper">
         <div class="content-preview"><div class='post-content'>
           <%= markdown ? marked(content) : '' %>
