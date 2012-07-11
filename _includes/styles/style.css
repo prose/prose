@@ -818,6 +818,48 @@ ul.site li a {
   background: #90bb74;
   }
 
+/* commit message switch */
+
+.document-menu-content.commit .toggle.view, .document-menu-content.commit .state .button.toggle-options {
+  display: none;
+}
+
+.state a.button.cancel-save {
+  display: none;
+}
+
+.commit-message {
+  display: block;
+  float: left;
+  width: 200px;
+  height: 40px;
+  font-family: Menlo, monospace;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: #555;
+  color: #e7eef2;
+  padding: 0 5px;
+  background-color: rgba(0,0,0, 0.2);
+  color: #e7eef2;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  display: block;
+  float: left;
+  display: none;
+}
+
+.document-menu-content.commit .commit-message {
+  display: block;
+}
+
+.document-menu-content.commit .cancel-save {
+  display: block;
+}
+
+/* commit message end */ 
+
 .document-menu-content {
   width: 960px;
   margin: 0 auto;
@@ -825,6 +867,7 @@ ul.site li a {
   font-weight: 700;
   position: relative;
   }
+
 
 .document-menu-content .status {
   position: absolute;
@@ -1128,6 +1171,15 @@ ul.site li a {
 .document .surface .cheatsheet-wrapper         { display: none; }
 .document .surface .content-wrapper            { display: none; }
 .document .surface .content-preview-wrapper    { display: none; }
+.document .surface .diff-wrapper               { display: none; }
+
+.document .surface .diff {
+  padding: 30px 10px;
+  font-family: Menlo, monospace !important;
+  font-size: 17px;
+  width: 960px;
+  margin: 0 auto;
+}
 
 .document .surface.cheatsheet .cheatsheet-wrapper {
   padding-top: 20px;

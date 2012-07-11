@@ -6,6 +6,8 @@ views.Post = Backbone.View.extend({
 
   events: {
     'click .save': '_save',
+    'click .cancel-save': '_toggleCommit',
+    'click .save.confirm': 'updatePost',
     'click a.toggle.view': '_toggleView',
     'click a.toggle.meta': '_toggleMeta',
     'change input': '_makeDirty',
@@ -43,11 +45,34 @@ views.Post = Backbone.View.extend({
       this.$('.button.save').removeClass('inactive error');      
     }
   },
-  
+
+  showDiff: function() {
+    var text1 = this.prevContent;
+    var text2 = this.editor.getValue();
+    
+    var d = this.dmp.diff_main(text1, text2);
+    this.dmp.diff_cleanupSemantic(d);
+
+    console.log(d);
+    $('.diff-wrapper .diff').html(this.dmp.diff_prettyHtml(d));
+  },
+
+  _toggleCommit: function() {
+    this.$('.document-menu-content').toggleClass('commit');
+    this.$('.button.save').toggleClass('confirm');
+    this.$('.button.cancel-save').toggle();
+    this.showDiff();
+    this.$('.surface .content-wrapper').toggle();
+    this.$('.surface .diff-wrapper').toggle();
+    this.$('.commit-message').val("Updated "+$('input.filepath').val());
+    return false;
+  },
+
   _save: function(e) {
     if (!this.dirty) return false;
+    this._toggleCommit();
     e.preventDefault();
-    this.updatePost();
+    return false;
   },
 
   _toggleView: function(e) {
@@ -98,7 +123,9 @@ views.Post = Backbone.View.extend({
   },
 
   initialize: function() {
+    this.dmp = new diff_match_patch();
     this.mode = "edit";
+    this.prevContent = this.model.content;
     if (!window.shortcutsRegistered) {
       key('⌘+s, ctrl+s', _.bind(function() { this.updatePost(); return false; }, this));
       key('ctrl+shift+right', _.bind(function() { this.right(); return false; }, this));
@@ -205,6 +232,7 @@ views.Post = Backbone.View.extend({
           that.model.persisted = true;
           that.model.file = file;
           that.updateURL();
+          that.prevContent = that.model.content;
           updateState('SAVED', 'inactive');
         });
       } else {
