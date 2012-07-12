@@ -51,6 +51,8 @@ views.Application = Backbone.View.extend({
 
   replaceMainView: function (name, view) {
     $('body').removeClass().addClass('current-view '+name);
+    // Make sure the header gets shown
+    if (name !== "start") $('#header').show();
 
     if (this.mainView) {
       this.mainView.remove();
@@ -88,9 +90,9 @@ views.Application = Backbone.View.extend({
         this.loaded();
         this.header.render();
         if (err) return this.notify('error', 'The requested resource could not be found.');
-        data.preview = !(mode === "edit");
+        data.preview = !(mode === "edit") || !window.authenticated;
         data.lang = _.mode(file);
-        this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
+        this.replaceMainView(window.authenticated ? "post" : "read-post", new views.Post({ model: data, id: 'post' }).render());
         var that = this;
       }, this));
       this.header.render();

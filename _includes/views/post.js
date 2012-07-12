@@ -263,7 +263,6 @@ views.Post = Backbone.View.extend({
         theme: 'prose-bright',
         onChange: _.bind(that._makeDirty, that)
       });
-
     }, 100);
   },
 
@@ -271,7 +270,7 @@ views.Post = Backbone.View.extend({
     var that = this;
     $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
     if (this.model.metadata && this.model.metadata.published) $(this.el).addClass('published');
-    this.initEditor();
+    if (window.authenticated) this.initEditor();
     return this;
   }
 });
