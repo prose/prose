@@ -1283,11 +1283,14 @@ ul.site li a {
   }
 
 .post-content pre {
+  overflow: auto;
   padding: 10px;
   border-radius: 3px;
   border: 1px solid #d5e0e4;
+  word-wrap: normal
   }
   .post-content pre code {
+
     border: none;
     margin: 0;
     padding: 0;
