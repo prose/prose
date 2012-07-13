@@ -260,6 +260,7 @@ function movePost(user, repo, branch, path, newPath, cb) {
 }
 
 
+
 // New Post
 // -------
 // 
@@ -275,9 +276,9 @@ function emptyPost(user, repo, branch, path, cb) {
   var cfg = app.state.config
   if (cfg && cfg.prose && cfg.prose.metadata) {
     if (cfg.prose.metadata[path]) {
-      metadata = cfg.prose.metadata[path];
+      rawMetadata = cfg.prose.metadata[path];
       try {
-        rawMetadata = YAML.encode(metadata);
+        metadata = jsyaml.load(rawMetadata);
       } catch(err) {
         console.log('ERROR encoding YAML');
         // No-op
@@ -308,23 +309,19 @@ function loadPost(user, repo, branch, path, file, cb) {
   repo.read(branch, path ? path + "/" + file : file, function(err, data) {
     if (err) return cb(err);
     function parse(content) {
-      if (!app.state.jekyll) return {
+      var content = content.replace(/\r\n/g, "\n"); // normalize a little bit
+      if (!_.jekyll(path, file)) return {
         metadata: {},
         raw_metadata: "",
         content: content
       };
 
       var res = {};
-      var chunked = (content+'\n').replace(/\r\n/g, "\n").split('---\n');
-      if (chunked[0] === '' && chunked.length > 2) {
-        res.metadata = jsyaml.load(chunked[1]);
-        res.raw_metadata = chunked[1].trim();
-        res.content = chunked.slice(2).join('---\n');
-      } else {
-        res.metadata = {};
-        res.raw_metadata = "";
-        res.content = content;
-      }
+      res.content = content.replace(/(---\n)((.|\n)*)\n---\n/, function(match, dashes, frontmatter) {
+        res.raw_metadata = frontmatter;
+        res.metadata = jsyaml.load(frontmatter);
+        return "";
+      });
       return res;
     }
 

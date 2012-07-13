@@ -13,7 +13,7 @@ views.Header = Backbone.View.extend({
     if ($('#start').length > 0) {
       app.instance.start();
     } else {
-      app.instance.mainView.render();
+      window.location.reload();
     }
     
     return false;
