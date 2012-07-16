@@ -153,7 +153,7 @@ function loadPosts(user, repo, branch, path, cb) {
   var repo = getRepo(user, repo);
 
   function getDefaultBranch(cb) {
-    repo.show(function(err, repo) {
+    repo.show(function(err, repo) {
       cb(null, repo.master_branch);
     });
   }
@@ -228,7 +228,7 @@ function loadPosts(user, repo, branch, path, cb) {
 // List all postings for a given repository
 // Looks into _posts/blog
 
-function saveFile(user, repo, branch, path, metadata, content, message, cb) {
+function saveFile(user, repo, branch, path, metadata, content, message, cb) {
 
   var repo = getRepo(user, repo);
   function serialize() {
@@ -245,7 +245,7 @@ function saveFile(user, repo, branch, path, metadata, content, message, cb) {
 // Delete Post
 // -------
 
-function deletePost(user, repo, branch, path, file, cb) {
+function deletePost(user, repo, branch, path, file, cb) {
   var repo = getRepo(user, repo);
   repo.remove(branch, _.filepath(path, file), cb);
 }
@@ -254,7 +254,7 @@ function deletePost(user, repo, branch, path, file, cb) {
 // Move Post
 // -------
 
-function movePost(user, repo, branch, path, newPath, cb) {
+function movePost(user, repo, branch, path, newPath, cb) {
   var repo = getRepo(user, repo);
   repo.move(branch, path, newPath, cb);
 }
