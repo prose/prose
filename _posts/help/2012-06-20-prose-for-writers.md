@@ -15,11 +15,11 @@ Here's what you need to get started.
 
 ## Create a new GitHub Repository
 
-This will be the home of your documents. Make sure there is at least one branch available. The easiest way to do it, is by initializing a new GitHub Repository and initialize it with an empty README. 
+This will be the home of your documents. Make sure there is at least one branch available. The easiest way to do it, is by creating a new GitHub Repository and initializing it with an empty README. 
 
 ![Create a repository on GitHub](http://prose.io/images/screenshots/prose-for-writers/create-repository.png)
 
-Keep in mind, this is a plain old GitHub repository, there's no need for setting up Jekyll.
+Keep in mind, this is a plain old GitHub repository, no Jekyll involved here.
 
 
 ## Start writing
@@ -31,7 +31,7 @@ Open your fresh repository in prose and start writing your first document. To do
 
 ## Remember every change
 
-Only changes are stored on every save. Thanks to git you can access older versions of your document using [GitHub](https://github.com/prose/documents/commits/master). You can access the full commit history ...
+A full changeset is stored on every save. Thanks to git you can access older versions of your document using [GitHub](https://github.com/prose/documents/commits/master). You can access the full commit history ...
 
 ![Revisions](http://prose.io/images/screenshots/prose-for-writers/revisions.png)
 
