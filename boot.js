@@ -43,7 +43,6 @@ window.app = {
 
 window.args = _(window.app).toArray();
 
-
 {% include util.js %}
 {% include model.js %}
 {% include routers/application.js %}
@@ -54,7 +53,6 @@ window.args = _(window.app).toArray();
 {% include views/header.js %}
 {% include views/posts.js %}
 {% include views/post.js %}
-
 
 // Prevent exit when there are unsaved changes
 window.onbeforeunload = function() {
@@ -69,25 +67,3 @@ function confirmExit() {
 }
 
 
-(function(config, models, views, routers, utils, templates) {
-  $(function() {
-
-    if (authenticate()) {
-      loadApplication(function(err, data) {
-
-        // Start the engines
-        window.app.instance = new views.Application({ el: '#container', model: data }).render();
-        if (err) return app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
-
-        // TODO: this is silly.
-        if (window.location.href.match(/\.html$/)) return;
-
-        // Initialize router
-        window.router = new routers.Application({});
-
-        // Start responding to routes
-        Backbone.history.start();
-      });
-    }
-  });
-}).apply(this, window.args);
