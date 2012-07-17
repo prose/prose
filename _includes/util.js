@@ -208,8 +208,6 @@ _.fromYAML = function(rawYAML) {
   return data;
 }
 
-
-
 // Chunked Path
 // -------
 // 
@@ -234,3 +232,4 @@ _.chunkedPath = function(path) {
     }
   });
 }
+

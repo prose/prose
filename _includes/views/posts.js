@@ -2,11 +2,21 @@
 
 views.Posts = Backbone.View.extend({
   events: {
-    'click a.link': '_loading'
+    'click a.link': '_loading',
+    'keypress #search_str': '_search',
+    'change #search_str': '_search'
   },
 
   initialize: function(options) {
 
+  },
+
+  _search: function() {
+    _.delay(_.bind(function() {
+      var searchstr = this.$('#search_str').val();
+      this.model = getFiles(this.model.tree, app.state.path, searchstr);
+      this.renderResults();      
+    }, this), 10);
   },
 
   _loading: function(e) {
@@ -20,13 +30,31 @@ views.Posts = Backbone.View.extend({
     });
   },
 
-  render: function() {
-    var paths = this.semantifyPaths(app.state.paths);
-
-    $(this.el).html(templates.posts(_.extend(this.model, app.state, {
-      current_path: _.select(paths, function(p) {return p.path === app.state.path })[0],
-      paths: paths
+  renderResults: function() {
+    this.$('#files').html(templates.files(_.extend(this.model, app.state, {
+      current_path: app.state.path
     })));
+
+    var caption = this.model.files.length+'';
+    var searchstr = this.$('#search_str').val();
+    if (searchstr) {
+      caption += ' matches for "'+searchstr+'" within "'+app.state.path+'/*"';
+    } else {
+      caption += ' files within "'+ (app.state.path ? app.state.path : '/') +'"';
+    }
+    this.$('.results').html(caption);
+  },
+
+  render: function() {
+    var that = this;
+    $(this.el).html(templates.posts(_.extend(this.model, app.state, {
+      current_path: app.state.path
+    })));
+
+    _.delay(function() {
+      that.renderResults();
+      $('#search_str').focus();
+    }, 1);
     return this;
   }
 });

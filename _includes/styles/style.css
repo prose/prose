@@ -561,6 +561,32 @@ body.start {
   color: #555;
   }
 
+/* Post listing search bar */
+
+.search-menu {
+  overflow: auto;
+  height: 60px;
+  background: #ccc;
+  font-size: 16px;
+  line-height: 60px;
+  padding-left: 20px;
+  padding-right: 20px;
+
+  background: #E0E7EB;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.search-menu .results {
+  float: left;
+}
+
+.search-menu .search {
+  float: right;
+}
+
 .loading-branches, .post-listing a.link.folder.loading .filename  {
   text-indent: -9999px;
   overflow: hidden;
