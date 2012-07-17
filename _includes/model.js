@@ -144,6 +144,50 @@ function loadBranches(user, repo, cb) {
   });
 }
 
+
+// Get files from a tree based on a given path and searchstr
+// -------
+
+function getFiles(tree, path, searchstr) {
+  var pathMatches = 0;
+  function matchesPath(file) {
+    if (file.path === path) return false; // skip current path
+    var match = file.path.match(new RegExp("^"+path+"(.*)$"));
+    if (match) {
+      return !!searchstr || match[1].split('/').length <= 2;
+      return true;
+    }
+    return false;
+  }
+
+  function matchesSearch(file) {
+    if (!searchstr) return true;
+    // Insert crazy search pattern match algorithm
+    return file.path.search(searchstr) >= 0;
+  }
+
+  // Filter
+  var files = _.filter(tree, function(file) {
+    file.name = file.path;
+
+    if (!matchesPath(file)) return false;
+    pathMatches += 1;
+    return matchesSearch(file);
+  });
+
+  // Sort by name
+  files = _.sortBy(files, function(entry){ 
+    return (entry.type === "tree" ? "A" : "B") + entry.path;
+  });
+
+  return {
+    tree: tree,
+    files: files,
+    total: pathMatches
+  }
+}
+
+
 // Load Posts
 // -------
 // 
@@ -173,40 +217,10 @@ function loadPosts(user, repo, branch, path, cb) {
       var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : "";
       if (!path) path = root;
 
-      repo.getSha(branch, path, function(err, sha) {
-        repo.getTree(sha, function(err, tree) {
-          if (err) return cb("Not found");
-
-          var paths = _.compact(_.map(tree, function(file) {
-            return file.type === "tree" ? (path ? path + "/" : "")+ file.path : null;
-          }));
-
-          paths = [path].concat(paths);
-
-          // Include a parent folder path
-          if (!_.include([root, ""], path)) paths = [_.parentPath(path)].concat(paths);
-
-          app.state.config = config;
-          app.state.paths = paths;
-          app.state.path = path ? path : paths[0];
-
-          var posts = _.map(tree, function(file) {
-            // Make sense of the file path
-            function semantify(file, filetype) {
-              return {
-                path: path == "" ? file.path : path + "/"+file.path,
-                date: "",
-                filetype: filetype,
-                title: file.path
-              };
-            }
-
-            if (file.type === "tree") return null; // Skip directories
-            if (_.markdown(file.path)) return semantify(file, "markdown");
-            return semantify(file, "file");
-          });
-          cb(null, {"posts": _.compact(posts.reverse())});
-        });
+      repo.getTree(branch+"?recursive=true", function(err, tree) {
+        if (err) return cb("Not found");
+        app.state.path = path ? path : "";
+        cb(null, getFiles(tree, path, ""));
       });
     });
   }

@@ -1,13 +1,9 @@
 <div class='inner'>
+  <div class="search-menu">
+    <div class="results"><%= files.length %> Files</div>
+    <div class="search"><input type="text" id="search_str"/></div>
+  </div>
   <div class='post-listing prose clearfix'>
-
-  <% _.each(paths, function(p, index) { %>
-    <% if (p.path !== current_path.path) { %>
-      <a class='link folder' href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= p.path ? "/" +p.path : "" %>'>
-        <div class="filename"><%= p.path === _.parentPath(current_path.path) ? ".." : _.topPath(p.path) %></div>
-      </a>
-    <% } %>
-  <% }); %>
 
   <% if (window.authenticated) { %>
     <a class='link new new-post' href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>'>
@@ -15,13 +11,10 @@
     </a>
   <% } %>
 
-  <% if (posts.length > 0) { %>
-    <% _.each(posts, function(post) { %>
-      <!-- TODO: don't edit binary files -->
-      <a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= post.path %>'>
-        <div class="filename"><%= post.title || 'Untitled' %></div>
-      </a>
-    <% }); %>
-    </div>
-  <% } %>
+
+  <div id="files">
+
+  </div>
+
+  </div>
 </div>
