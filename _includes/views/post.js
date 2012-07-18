@@ -49,12 +49,10 @@ views.Post = Backbone.View.extend({
   showDiff: function() {
     var text1 = this.prevContent;
     var text2 = this.editor.getValue();
-    
     var d = this.dmp.diff_main(text1, text2);
     this.dmp.diff_cleanupSemantic(d);
-
-    console.log(d);
-    $('.diff-wrapper .diff').html(this.dmp.diff_prettyHtml(d));
+    var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, "");
+    $('.diff-wrapper .diff').html(diff);
   },
 
   _toggleCommit: function() {
