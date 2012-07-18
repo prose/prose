@@ -274,7 +274,6 @@ function movePost(user, repo, branch, path, newPath, cb) {
 }
 
 
-
 // New Post
 // -------
 // 
