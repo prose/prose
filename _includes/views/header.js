@@ -7,6 +7,10 @@ views.Header = Backbone.View.extend({
     "click a.logout": "_logout"
   },
 
+  _switchBranch: function() {
+    
+  },
+
   _logout: function() {
     logout();
     app.instance.render();
@@ -15,7 +19,6 @@ views.Header = Backbone.View.extend({
     } else {
       window.location.reload();
     }
-    
     return false;
   },
 
@@ -25,7 +28,6 @@ views.Header = Backbone.View.extend({
 
   render: function() {
     $(this.el).html(templates.header(_.extend(this.model, {state: app.state})));
-    
     return this;
   }
 });

@@ -24,6 +24,12 @@ Now that you're here, why not start contributing as well? :)
 
 ## Change Log
 
+**0.2.0** -  *July 23 2012*
+
+- Implemented commit messages + review changes workflow.
+- Search for files within a repository as you type.
+- After selecting a repo default branch is loaded and you can switch using the breadcrumbs.
+
 **0.2.0** -  *July 6 2012*
 
 Added support for organizations and user profiles. Users can manipulate the full filepath now, allowing them to organize their files in subfolders. Fixes ~ 40 reported issues. Also, updated CodeMirror and added syntax highlighting for some popular programming languages.

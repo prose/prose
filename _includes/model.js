@@ -187,14 +187,13 @@ function getFiles(tree, path, searchstr) {
   }
 }
 
-
 // Load Posts
 // -------
 // 
 // List all postings for a given repo+branch+path plus load _config.yml
 
-function loadPosts(user, repo, branch, path, cb) {
-  var repo = getRepo(user, repo);
+function loadPosts(user, reponame, branch, path, cb) {
+  var repo = getRepo(user, reponame);
 
   function getDefaultBranch(cb) {
     repo.show(function(err, repo) {
@@ -219,8 +218,12 @@ function loadPosts(user, repo, branch, path, cb) {
 
       repo.getTree(branch+"?recursive=true", function(err, tree) {
         if (err) return cb("Not found");
-        app.state.path = path ? path : "";
-        cb(null, getFiles(tree, path, ""));
+        loadBranches(user, reponame, function(err, branches) {
+          if (err) return cb("Branches couldn't be fetched");
+          app.state.path = path ? path : "";
+          app.state.branches = _.filter(branches, function(b) { return b !== branch });
+          cb(null, getFiles(tree, path, ""));
+        });
       });
     });
   }

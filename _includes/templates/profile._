@@ -46,7 +46,7 @@
 
 <div class="repos">
     <% _.each(repos, function(r, index) { %>
-      <a title='edit' class="select-repo repo" data-user="<%= r.owner.login %>" data-repo="<%= r.name %>" href='#'>
+      <a title='edit' class="select-repo repo" data-user="<%= r.owner.login %>" data-repo="<%= r.name %>" href='#<%= r.owner.login %>/<%= r.name %>'>
         <div class="name"><%= r.name %></div>
         <div class="branches hidden"></div>
       </a>
