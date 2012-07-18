@@ -4,8 +4,7 @@ views.Start = views.Profile.extend({
   id: 'start',
 
   events: {
-    'submit #login_form': '_login',
-    'click .select-repo': '_selectRepo'
+    'submit #login_form': '_login'
   },
 
   initialize: function(options) {},

@@ -126,7 +126,40 @@ body.post #header {
   text-indent: 20px;
   }
 
-#header .navigation > * {
+#header .navigation .repo-wrapper {
+  position: relative;
+}
+
+#header .navigation .repo-wrapper .branches {
+  display: none;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 60px;
+  
+  overflow: auto;
+  background: #3D4548;
+  z-index: 5000;
+}
+
+#header .navigation .repo-wrapper:hover .branches {
+  display: block;
+  max-height: 300px;
+}
+
+#header .navigation .repo-wrapper .branches .branch {
+  text-align: center;
+  display: block;
+  color: #fff;
+  opacity: 0.9;
+}
+
+#header .navigation .repo-wrapper .branches .branch:hover {
+  opacity: 1.0;
+  background: rgba(0,0,0, 0.5);
+}
+
+#header .navigation > *, #header .navigation a.repo {
   display: block;
   position: relative;
   padding: 0 20px 0 20px;
@@ -135,8 +168,13 @@ body.post #header {
   text-indent: 0px;
   }
 
+#header .navigation .repo-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
 #header .navigation a:hover {
-  background-color: #c9d1d6; 
+  background-color: #c9d1d6;
   }
 
 #header .user-status {
@@ -515,7 +553,7 @@ body.start {
   color: #526066;
   }
 
-.repos a .branches {
+/*.repos a .branches {
   position: absolute;
   background:url('images/sprite.png') -450px -640px no-repeat;
   background-color: #f0f5f7;
@@ -531,9 +569,9 @@ body.start {
   padding: 10px;
   overflow: auto;
   border-radius: 3px;
-  }
+  }*/
 
-.repos a .branches .label {
+/*.repos a .branches .label {
   line-height: 27px;
   padding: 0 5px;
   }
@@ -548,10 +586,10 @@ body.start {
   margin: auto;
   overflow: hidden;
   word-wrap: break-word;
-  }
+  }*/
 
   
-.repos a .branches .branch {
+/*.repos a .branches .branch {
   padding: 2px 5px;
   text-align: center;
   }
@@ -559,7 +597,7 @@ body.start {
 .repos a .branches a.branch {
   display: block;
   color: #555;
-  }
+  }*/
 
 /* Post listing search bar */
 
@@ -1199,6 +1237,7 @@ ul.site li a {
 .document .surface .diff-wrapper               { display: none; }
 
 .document .surface .diff {
+  white-space: pre;
   padding: 30px 10px;
   font-family: Menlo, monospace !important;
   font-size: 17px;
