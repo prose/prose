@@ -3,8 +3,7 @@
 views.Posts = Backbone.View.extend({
   events: {
     'click a.link': '_loading',
-    'keypress #search_str': '_search',
-    'change #search_str': '_search'
+    'keyup #search_str': '_search'
   },
 
   initialize: function(options) {
