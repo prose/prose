@@ -1,20 +1,22 @@
 <div class='inner'>
   <div class="search-menu">
     <div class="results"><%= files.length %> Files</div>
+
     <div class="search"><input type="text" id="search_str"/></div>
+
+    <div class="actions">
+      <% if (window.authenticated) { %>
+        <a class='link new new-file' href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>'>
+          New File
+        </a>
+      <% } %>
+    </div>
   </div>
   <div class='post-listing prose clearfix'>
 
-  <% if (window.authenticated) { %>
-    <a class='link new new-post' href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>'>
-      <div class="new-post button">New File</div>
-    </a>
-  <% } %>
+    <div id="files">
 
-
-  <div id="files">
-
-  </div>
+    </div>
 
   </div>
 </div>

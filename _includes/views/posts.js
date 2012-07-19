@@ -37,9 +37,9 @@ views.Posts = Backbone.View.extend({
     var caption = this.model.files.length+'';
     var searchstr = this.$('#search_str').val();
     if (searchstr) {
-      caption += ' matches for "'+searchstr+'" within "'+app.state.path+'/*"';
+      caption += ' matches for "'+searchstr+'"'; // within "'+app.state.path+'/*"';
     } else {
-      caption += ' files within "'+ (app.state.path ? app.state.path : '/') +'"';
+      caption += ' files'; // within "'+ (app.state.path ? app.state.path : '/') +'"';
     }
     this.$('.results').html(caption);
   },

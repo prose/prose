@@ -617,6 +617,39 @@ body.start {
   margin-bottom: 20px;
 }
 
+.search-menu .actions {
+  margin-right: 60px;
+  float: right;
+  height: 60px;
+}
+
+.search-menu .actions a.new-file {
+  padding: 6px 30px;
+  line-height: 60px;
+  font-weight: bold;
+  background: #434C50;
+  color: #fff;
+  font-size: 12px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  opacity: 0.8;
+}
+
+.search-menu input {
+  border: none;
+  border-radius: 4px;
+  background: rgba(0,0,0, 0.1);
+  color: #666;
+  padding: 8px 10px;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: 'OpenSans', sans-serif;
+}
+
+.search-menu .actions a.new-file:hover {
+  opacity: 1.0;
+}
+
 .search-menu .results {
   float: left;
 }
