@@ -41,7 +41,7 @@ views.Post = Backbone.View.extend({
     if (this.editor) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
     if (!this.$('.button.save').hasClass('saving')) {
-      this.$('.button.save').html('SAVE');
+      this.$('.button.save').html('COMMIT');
       this.$('.button.save').removeClass('inactive error');      
     }
   },
@@ -56,8 +56,9 @@ views.Post = Backbone.View.extend({
   },
 
   _toggleCommit: function() {
-    this.$('.document-menu-content').toggleClass('commit');
+    this.$('.button.save').html(this.$('.document-menu-content').hasClass('commit') ? "COMMIT" : "CONFIRM");
     this.$('.button.save').toggleClass('confirm');
+    this.$('.document-menu-content').toggleClass('commit');    
     this.$('.button.cancel-save').toggle();
     this.showDiff();
     this.$('.surface .content-wrapper').toggle();
