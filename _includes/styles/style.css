@@ -888,14 +888,12 @@ ul.site li a {
   display: none;
 }
 
-.state a.button.cancel-save {
-  display: none;
-}
+
 
 .commit-message {
   display: block;
   float: left;
-  width: 200px;
+  width: 400px;
   height: 40px;
   font-family: Menlo, monospace;
   background: transparent;
@@ -910,8 +908,8 @@ ul.site li a {
   -webkit-border-radius: 5px;
   border-radius: 5px;
   display: block;
-  float: left;
   display: none;
+  margin-right: 20px;
 }
 
 .document-menu-content.commit .commit-message {
@@ -1019,6 +1017,10 @@ ul.site li a {
   margin-left: 20px;
   }
 
+.document-menu-content.commit .menu-item.meta {
+  display: none;
+}
+
 .document-menu-content .filename input {
   font-family: Menlo, monospace;
   background: transparent;
@@ -1034,6 +1036,23 @@ ul.site li a {
   -webkit-border-radius: 5px;
   border-radius: 5px;
   }
+
+.document-menu-content.commit .filename {
+  display: none;
+}
+
+.document-menu-content .confirm-label {
+  display: none;
+  height: 60px;
+  line-height: 60px;
+  font-size: 14px;
+  padding-left: 6px;
+  text-transform: uppercase;
+}
+
+.document-menu-content.commit .confirm-label {
+  display: block;
+}
 
 .document-menu-content .filename .state {
   position: absolute;
@@ -1115,6 +1134,30 @@ ul.site li a {
   padding: 0;
   }
   .document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.4); }
+
+
+.state a.button.cancel-save {
+  display: none;
+
+  background: rgba(0,0,0, 0.05);
+  width: 50px; 
+  text-align: center;
+  line-height: 40px;
+  margin-left: 1px;
+  margin: 0px;
+  height: 40px;
+  border-radius: 4px 0px 0px 4px;
+  margin-left: 1px;
+  padding: 0;
+
+}
+
+.document-menu-content.commit .state .button.save {
+  /*border-radius: 4px 0px 0px 4px;*/
+  /*width: 120px;*/
+  /*background: rgba(0,0,0, 0.4); */
+  /*background: #75CA00;*/
+}
 
 .document-menu-content .save-state {
   margin-left: 20px;
@@ -1237,7 +1280,8 @@ ul.site li a {
 .document .surface .diff-wrapper               { display: none; }
 
 .document .surface .diff {
-  white-space: pre;
+  background: white;
+  white-space: pre-line;
   padding: 30px 10px;
   font-family: Menlo, monospace !important;
   font-size: 17px;
