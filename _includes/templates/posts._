@@ -1,8 +1,7 @@
 <div class='inner'>
   <div class="search-menu">
+    <div class="search"><input placeholder="Type to search ..." type="text" id="search_str"/></div>
     <div class="results"><%= files.length %> Files</div>
-
-    <div class="search"><input type="text" id="search_str"/></div>
 
     <div class="actions">
       <% if (window.authenticated) { %>
