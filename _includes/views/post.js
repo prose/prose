@@ -56,13 +56,14 @@ views.Post = Backbone.View.extend({
   },
 
   _toggleCommit: function() {
-    this.$('.button.save').html(this.$('.document-menu-content').hasClass('commit') ? "COMMIT" : "CONFIRM");
+    this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? "SAVE" : "COMMIT");
     this.$('.button.save').toggleClass('confirm');
-    this.$('.document-menu-content').toggleClass('commit');    
+    this.$('.document-menu').toggleClass('commit');    
     this.$('.button.cancel-save').toggle();
+    this.$('.document-menu-content .options').hide();
     this.showDiff();
-    this.$('.surface .content-wrapper').toggle();
-    this.$('.surface .diff-wrapper').toggle();
+    this.$('.surface').toggle();
+    this.$('.diff-wrapper').toggle();
     this.$('.commit-message').val("Updated "+$('input.filepath').val());
     return false;
   },
@@ -240,7 +241,6 @@ views.Post = Backbone.View.extend({
     }
 
     updateState('SAVING ...', 'inactive saving');
-    that.$('.document-menu-content .options').hide();
 
     if (filepath === _.filepath(this.model.path, this.model.file)) return save();
     // Move or create file
