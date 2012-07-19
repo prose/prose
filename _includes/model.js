@@ -167,7 +167,17 @@ function getFiles(tree, path, searchstr) {
 
   // Filter
   var files = _.filter(tree, function(file) {
-    file.name = file.path;
+    var matchSearch = new RegExp("("+searchstr+")", "i");
+
+    // Depending on search use full path or filename
+    file.name = searchstr ? file.path : _.extractFilename(file.path)[1];
+
+    // Scope name to current path
+    file.name = file.name.replace(new RegExp("^"+path+"/?"), "");
+
+    // Mark match
+    file.name = file.name.replace(matchSearch, "<b>$1</b>");
+
     if (!matchesPath(file)) return false;
     pathMatches += 1;
     return matchesSearch(file);

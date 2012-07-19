@@ -640,7 +640,6 @@ body.start {
   background: rgba(0,0,0, 0.1);
   color: #666;
   padding: 8px 10px;
-  font-weight: bold;
   font-size: 14px;
   font-family: 'OpenSans', sans-serif;
 }
