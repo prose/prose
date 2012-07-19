@@ -618,7 +618,6 @@ body.start {
 }
 
 .search-menu .actions {
-  margin-right: 60px;
   float: right;
   height: 60px;
 }
@@ -651,11 +650,12 @@ body.start {
 }
 
 .search-menu .results {
+  margin-left: 30px;
   float: left;
 }
 
 .search-menu .search {
-  float: right;
+  float: left;
 }
 
 .loading-branches, .post-listing a.link.folder.loading .filename  {
