@@ -553,51 +553,6 @@ body.start {
   color: #526066;
   }
 
-/*.repos a .branches {
-  position: absolute;
-  background:url('images/sprite.png') -450px -640px no-repeat;
-  background-color: #f0f5f7;
-  -moz-border-radius: 3px 3px 0px 3px;
-  -webkit-border-radius: 3px 3px 0px 3px;
-  border-radius: 3px 3px 0px 3px;
-  font-size: 12px;
-  text-align: left;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-  top: 0px;
-  padding: 10px;
-  overflow: auto;
-  border-radius: 3px;
-  }*/
-
-/*.repos a .branches .label {
-  line-height: 27px;
-  padding: 0 5px;
-  }
-
-.repos a .branches .repo-error {
-  position: absolute;
-  top: 0; bottom: 0; left: 0; right: 0;
-  color: #C52528;
-  text-align: center;
-  padding-top: 80px;
-  padding-top: 45px;
-  margin: auto;
-  overflow: hidden;
-  word-wrap: break-word;
-  }*/
-
-  
-/*.repos a .branches .branch {
-  padding: 2px 5px;
-  text-align: center;
-  }
-
-.repos a .branches a.branch {
-  display: block;
-  color: #555;
-  }*/
 
 /* Post listing search bar */
 
@@ -607,7 +562,6 @@ body.start {
   background: #ccc;
   font-size: 16px;
   line-height: 60px;
-  padding-left: 20px;
   padding-right: 20px;
 
   background: #E0E7EB;
@@ -617,12 +571,24 @@ body.start {
   margin-bottom: 20px;
 }
 
+.search-menu .parent-folder {
+  display: block;
+  float: left;
+  background-image: url('images/sprite.png');
+  background-position: -430px -25px;
+  width: 50px;
+}
+
+.search-menu .parent-folder:hover {
+  background-color: #C9D1D6;
+}
+
 .search-menu .actions {
   float: right;
   height: 60px;
 }
 
-.search-menu .actions a.new-file {
+.search-menu .actions a {
   padding: 6px 30px;
   line-height: 60px;
   font-weight: bold;
@@ -632,20 +598,22 @@ body.start {
   text-transform: uppercase;
   border-radius: 4px;
   opacity: 0.8;
+  margin-left: 20px;
+}
+
+.search-menu .actions a:hover {
+  opacity: 1.0;
 }
 
 .search-menu input {
   border: none;
+  margin-left: 20px;
   border-radius: 4px;
   background: rgba(0,0,0, 0.1);
   color: #666;
   padding: 8px 10px;
   font-size: 14px;
   font-family: 'OpenSans', sans-serif;
-}
-
-.search-menu .actions a.new-file:hover {
-  opacity: 1.0;
 }
 
 .search-menu .results {
@@ -880,6 +848,11 @@ ul.site li a {
   overflow: visible;
   line-height: 40px;
   z-index: 2000;
+
+  -moz-transition: background 100ms linear;
+  -o-transition: background 100ms linear;
+  -webkit-transition: background 100ms linear;
+  transition: background 100ms linear;
   }
 
 #post.sticky-menu .document-menu {
@@ -896,6 +869,10 @@ ul.site li a {
 #post.published .document-menu {
   background: #90bb74;
   }
+
+#post .document-menu.commit {
+  background: #575c5f;
+}
 
 #post.published .metadata {
   background: #73965d;
@@ -916,7 +893,7 @@ ul.site li a {
 
 /* commit message switch */
 
-.document-menu-content.commit .toggle.view, .document-menu-content.commit .state .button.toggle-options {
+.document-menu.commit .toggle.view, .document-menu.commit .state .button.toggle-options {
   display: none;
 }
 
@@ -944,11 +921,11 @@ ul.site li a {
   margin-right: 20px;
 }
 
-.document-menu-content.commit .commit-message {
+.document-menu.commit .commit-message {
   display: block;
 }
 
-.document-menu-content.commit .cancel-save {
+.document-menu.commit .cancel-save {
   display: block;
 }
 
@@ -1049,7 +1026,7 @@ ul.site li a {
   margin-left: 20px;
   }
 
-.document-menu-content.commit .menu-item.meta {
+.document-menu.commit .menu-item.meta {
   display: none;
 }
 
@@ -1069,7 +1046,7 @@ ul.site li a {
   border-radius: 5px;
   }
 
-.document-menu-content.commit .filename {
+.document-menu.commit .filename {
   display: none;
 }
 
@@ -1082,7 +1059,7 @@ ul.site li a {
   text-transform: uppercase;
 }
 
-.document-menu-content.commit .confirm-label {
+.document-menu.commit .confirm-label {
   display: block;
 }
 
@@ -1171,7 +1148,7 @@ ul.site li a {
 .state a.button.cancel-save {
   display: none;
 
-  background: rgba(0,0,0, 0.05);
+  background: rgba(0,0,0, 0.10);
   width: 50px; 
   text-align: center;
   line-height: 40px;
@@ -1181,14 +1158,6 @@ ul.site li a {
   border-radius: 4px 0px 0px 4px;
   margin-left: 1px;
   padding: 0;
-
-}
-
-.document-menu-content.commit .state .button.save {
-  /*border-radius: 4px 0px 0px 4px;*/
-  /*width: 120px;*/
-  /*background: rgba(0,0,0, 0.4); */
-  /*background: #75CA00;*/
 }
 
 .document-menu-content .save-state {
@@ -1309,9 +1278,11 @@ ul.site li a {
 .document .surface .cheatsheet-wrapper         { display: none; }
 .document .surface .content-wrapper            { display: none; }
 .document .surface .content-preview-wrapper    { display: none; }
-.document .surface .diff-wrapper               { display: none; }
 
-.document .surface .diff {
+
+.document .diff-wrapper               { display: none; }
+
+.document .diff-wrapper .diff {
   background: white;
   white-space: pre-line;
   padding: 30px 10px;
