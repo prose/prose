@@ -154,8 +154,7 @@ function getFiles(tree, path, searchstr) {
     if (file.path === path) return false; // skip current path
     var match = file.path.match(new RegExp("^"+path+"(.*)$"));
     if (match) {
-      return !!searchstr || match[1].split('/').length <= 2;
-      return true;
+      return !!searchstr || match[1].split('/').length <= (path ? 2 : 1);
     }
     return false;
   }
@@ -163,13 +162,12 @@ function getFiles(tree, path, searchstr) {
   function matchesSearch(file) {
     if (!searchstr) return true;
     // Insert crazy search pattern match algorithm
-    return file.path.search(searchstr) >= 0;
+    return file.path.toLowerCase().search(searchstr.toLowerCase()) >= 0;
   }
 
   // Filter
   var files = _.filter(tree, function(file) {
     file.name = file.path;
-
     if (!matchesPath(file)) return false;
     pathMatches += 1;
     return matchesSearch(file);
