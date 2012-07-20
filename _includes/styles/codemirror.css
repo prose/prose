@@ -9,8 +9,9 @@
 }
 
 .CodeMirror-scroll {
-  height: auto; overflow: visible;
-  /*height: 300px;*/
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 300px;
   /* This is needed to prevent an IE[67] bug where the scrolled content
      is visible outside of the scrolling box. */
   position: relative;
@@ -21,7 +22,7 @@
 .CodeMirror-scrollbar {
   float: right;
   overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-y: scroll;
 
   /* This corrects for the 1px gap introduced to the left of the scrollbar
      by the rule for .CodeMirror-scrollbar-inner. */
@@ -61,6 +62,7 @@
   text-align: right;
   padding: .4em .2em .4em .4em;
   white-space: pre !important;
+  cursor: default;
 }
 .CodeMirror-lines {
   padding: .4em;
@@ -131,6 +133,41 @@ div.CodeMirror-selected { background: #d9d9d9; }
   background: #ffa;
   background: rgba(255, 255, 0, .4);
 }
+
+/* Default theme */
+
+.cm-s-default span.cm-keyword {color: #708;}
+.cm-s-default span.cm-atom {color: #219;}
+.cm-s-default span.cm-number {color: #164;}
+.cm-s-default span.cm-def {color: #00f;}
+.cm-s-default span.cm-variable {color: black;}
+.cm-s-default span.cm-variable-2 {color: #05a;}
+.cm-s-default span.cm-variable-3 {color: #085;}
+.cm-s-default span.cm-property {color: black;}
+.cm-s-default span.cm-operator {color: black;}
+.cm-s-default span.cm-comment {color: #a50;}
+.cm-s-default span.cm-string {color: #a11;}
+.cm-s-default span.cm-string-2 {color: #f50;}
+.cm-s-default span.cm-meta {color: #555;}
+.cm-s-default span.cm-error {color: #f00;}
+.cm-s-default span.cm-qualifier {color: #555;}
+.cm-s-default span.cm-builtin {color: #30a;}
+.cm-s-default span.cm-bracket {color: #cc7;}
+.cm-s-default span.cm-tag {color: #170;}
+.cm-s-default span.cm-attribute {color: #00c;}
+.cm-s-default span.cm-header {color: blue;}
+.cm-s-default span.cm-quote {color: #090;}
+.cm-s-default span.cm-hr {color: #999;}
+.cm-s-default span.cm-link {color: #00c;}
+
+span.cm-header, span.cm-strong {font-weight: bold;}
+span.cm-em {font-style: italic;}
+span.cm-emstrong {font-style: italic; font-weight: bold;}
+span.cm-link {text-decoration: underline;}
+
+div.CodeMirror span.CodeMirror-matchingbracket { /* color: #0f0; */ color: black; background-color: #ccc; }
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
+
 
 
 
@@ -210,7 +247,7 @@ Saman Bemel-Benrud, Michael Aufreiter
 .cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880 !important; }
 .cm-s-prose-bright .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
 
-div.CodeMirror span.CodeMirror-matchingbracket { background: #fff; }
+div.CodeMirror span.CodeMirror-matchingbracket { /* background: #fff; */ }
 
 .cm-s-prose-bright .CodeMirror-gutter { background: #E0E7EB; border-right:1px solid #C3CCD0;; padding-right:3px; min-width:2.5em; }
 .cm-s-prose-bright .CodeMirror-gutter-text { color: #777; }

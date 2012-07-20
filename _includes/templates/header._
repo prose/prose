@@ -7,14 +7,16 @@
     <a class="user" href="#<%= [state.user].join('/') %>"><%= state.user %></a>
       
     <% if (state.repo) { %>
-      <div class="repo-wrapper">
-        <a class="repo" href="#<%= [state.user, state.repo, 'tree', state.branch].join('/') %>">
-          <%= state.repo %> / <%= state.branch %>
+      <a class="repo" href="#<%= [state.user, state.repo, 'tree', state.branch].join('/') %>">
+        <%= state.repo %> / <%= state.branch %>
+      </a>
+      <div class="branch-wrapper">
+        <a class="branch" href="#<%= [state.user, state.repo, 'tree', state.branch].join('/') %>">
+          
         </a>
-
         <div class="branches">
           <% _.each(app.state.branches, function(branch) { %>
-            <a class="branch" href="#<%= [state.user, state.repo, 'tree', branch].join('/') %>"><%= branch %></a>
+            <a class="select-branch" href="#<%= [state.user, state.repo, 'tree', branch].join('/') %>"><%= branch %></a>
           <% }); %>
         </div>
       </div>

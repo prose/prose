@@ -93,6 +93,11 @@ views.Post = Backbone.View.extend({
   },
 
   refreshCodeMirror: function() {
+    if ($('.toggle.meta').hasClass('active')) {
+      $('.CodeMirror-scroll').height($('.document').height() / 2);
+    } else {
+      $('.CodeMirror-scroll').height($('.document').height());
+    }
     this.editor.refresh();
     if (this.metadataEditor) this.metadataEditor.refresh();
   },
@@ -304,7 +309,7 @@ views.Post = Backbone.View.extend({
         theme: 'prose-bright',
         onChange: _.bind(that._makeDirty, that)
       });
-
+      that.refreshCodeMirror();
     }, 100);
   },
 
