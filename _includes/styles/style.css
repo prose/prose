@@ -1246,6 +1246,7 @@ ul.site li a {
   }
 
 .document .metadata-content {
+  background: rgba(0,0,0, 0.2);
   width: 960px;
   margin: 0 auto;
   }
@@ -1280,9 +1281,10 @@ ul.site li a {
 .document .surface .content-preview-wrapper    { display: none; }
 
 
-.document .diff-wrapper               { display: none; }
+.document .diff-wrapper               { margin-top: 40px; display: none; }
 
 .document .diff-wrapper .diff {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
   background: white;
   white-space: pre-line;
   padding: 30px 10px;

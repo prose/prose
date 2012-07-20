@@ -148,12 +148,18 @@ Saman Bemel-Benrud, Michael Aufreiter
   font-family: Menlo, monospace !important;
 }
 
+.metadata .CodeMirror {
+  /*box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);*/
+
+  /*border: 1px solid #C3CCD0;*/
+}
+
 .cm-s-prose-dark { color: #EBEFE7; }
 .cm-s-prose-dark div.CodeMirror-selected { background: #45443B !important; }
 .cm-s-prose-dark .CodeMirror-cursor { border-left: 2px solid white !important; }
 .cm-s-prose-dark .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
 
-.cm-s-prose-dark .CodeMirror-gutter { background: #262626; border-right:1px solid #aaa; padding-right:3px; min-width:2.5em; }
+.cm-s-prose-dark .CodeMirror-gutter { background: rgba(0,0,0, 0.1); border-right:1px solid rgba(255,255,255, 0.4); padding-right:3px; min-width:2.5em; }
 .cm-s-prose-dark .CodeMirror-gutter-text { color: inherit; }
 .cm-s-prose-dark span.cm-keyword { color: inherit; }
 .cm-s-prose-dark span.cm-atom { color: #fff; opacity: 0.4; }
@@ -187,7 +193,15 @@ Saman Bemel-Benrud, Michael Aufreiter
 .cm-s-prose-bright {
   line-height: 1.3em;
 }
+
+.content-wrapper .CodeMirror {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #C3CCD0;
+}
+
 .cm-s-prose-bright {
+  background: #F0F8FC;
+  
   font-family: Menlo, monospace !important;
   font-size: 17px;
 }
@@ -199,7 +213,7 @@ Saman Bemel-Benrud, Michael Aufreiter
 
 div.CodeMirror span.CodeMirror-matchingbracket { background: #fff; }
 
-.cm-s-prose-bright .CodeMirror-gutter { background: #262626; border-right:1px solid #aaa; padding-right:3px; min-width:2.5em; }
+.cm-s-prose-bright .CodeMirror-gutter { background: #E0E7EB; border-right:1px solid #C3CCD0;; padding-right:3px; min-width:2.5em; }
 .cm-s-prose-bright .CodeMirror-gutter-text { color: #777; }
 
 .cm-s-prose-bright span.cm-keyword { color: inherit; }
