@@ -126,40 +126,42 @@ body.post #header {
   text-indent: 20px;
   }
 
-#header .navigation .repo-wrapper {
+#header .navigation .branch-wrapper {
   position: relative;
 }
 
-#header .navigation .repo-wrapper .branches {
+#header .navigation .branch-wrapper .branches {
   display: none;
   position: absolute;
-  left: 0px;
   right: 0px;
   top: 60px;
+  width: 200px;
   
   overflow: auto;
   background: #3D4548;
   z-index: 5000;
-}
-
-#header .navigation .repo-wrapper:hover .branches {
-  display: block;
   max-height: 300px;
 }
 
-#header .navigation .repo-wrapper .branches .branch {
+/*#header .navigation .branch-wrapper:hover .branches {
+  display: block;
+  
+}*/
+
+#header .navigation .branch-wrapper .branches .select-branch {
   text-align: center;
   display: block;
   color: #fff;
   opacity: 0.9;
 }
 
-#header .navigation .repo-wrapper .branches .branch:hover {
+#header .navigation .branch-wrapper .branches .select-branch:hover {
   opacity: 1.0;
   background: rgba(0,0,0, 0.5);
 }
 
-#header .navigation > *, #header .navigation a.repo {
+
+#header .navigation > *, #header .navigation a.branch {
   display: block;
   position: relative;
   padding: 0 20px 0 20px;
@@ -168,7 +170,14 @@ body.post #header {
   text-indent: 0px;
   }
 
-#header .navigation .repo-wrapper {
+#header .navigation a.branch {
+  width: 40px;
+  height: 60px;
+  background-image: url('images/sprite.png');
+  background-position: -441px -25px;
+}
+
+#header .navigation .branch-wrapper {
   margin: 0;
   padding: 0;
 }
@@ -1267,9 +1276,19 @@ ul.site li a {
     }
 
 .document {
+  position: fixed;
+  z-index: 5000;
+  top: 120px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+
   min-height: 400px;
-  position: relative;
-  overflow:hidden;
+  background: #e7eef2;
+  /*position: relative;*/
+  /*overflow:hidden;*/
+  overflow: auto;
+
   }
 
 .document .surface {
@@ -1306,6 +1325,10 @@ ul.site li a {
   position: relative;
   }
 
+.document .surface .content-wrapper .content {
+  background: rgba(0,0,0, 0.05);
+}
+
 .document .surface.preview .content-preview-wrapper {
   position: relative;
   display: block;
@@ -1321,7 +1344,6 @@ ul.site li a {
 
 .document .cheatsheet-wrapper .content {
   width: 960px;
-
   margin: 0 auto;
   overflow: auto;
   }
@@ -1608,7 +1630,7 @@ label.error {
 .fr { float: right; }
 .clear { clear: both; }
 
-.inner      { padding: 0px 0px 40px; }
+.inner      { padding: 0px 0px 0px; }
 .hidden     { display: none; }
 .centered   { text-align: center; }
 .scrolling  { overflow: auto; }
