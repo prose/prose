@@ -48,7 +48,7 @@ views.Post = Backbone.View.extend({
 
   showDiff: function() {
     var text1 = this.prevContent;
-    var text2 = this.editor.getValue();
+    var text2 = this.serialize();
     var d = this.dmp.diff_main(text1, text2);
     this.dmp.diff_cleanupSemantic(d);
     var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, "");
@@ -56,6 +56,7 @@ views.Post = Backbone.View.extend({
   },
 
   _toggleCommit: function() {
+    this.hideMeta();
     this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? "SAVE" : "COMMIT");
     this.$('.button.save').toggleClass('confirm');
     this.$('.document-menu').toggleClass('commit');    
@@ -76,20 +77,24 @@ views.Post = Backbone.View.extend({
   },
 
   _toggleView: function(e) {
+    var that = this;
     this.toggleView($(e.currentTarget).attr('data-view'));
-
-    // Refresh CodeMirror instances
-    this.editor.refresh();
-    if (this.metadataEditor) this.metadataEditor.refresh();
+    _.delay(function() { that.refreshCodeMirror(); }, 1);
     return false;
   },
 
   _toggleMeta: function(e) {
+    var that = this;
     if (e) e.preventDefault();
     $('.toggle.meta').toggleClass('active');
     $('.metadata').toggle();
-
+    _.delay(function() { that.refreshCodeMirror(); }, 1);
     return false;
+  },
+
+  refreshCodeMirror: function() {
+    this.editor.refresh();
+    if (this.metadataEditor) this.metadataEditor.refresh();
   },
 
   toggleView: function(view) {
@@ -100,12 +105,18 @@ views.Post = Backbone.View.extend({
     } else {
       this.model.preview = false;
     }
+    this.hideMeta();
     this.updateURL();
     $('.toggle').removeClass('active');
     $('.toggle.'+view).addClass('active');
 
     $('.document .surface').removeClass('preview cheatsheet compose');
     $('.document .surface').addClass(view);
+  },
+
+  hideMeta: function() {
+    $('.toggle.meta').removeClass('active');
+    $('.metadata').hide();
   },
 
   right: function() {
@@ -125,7 +136,7 @@ views.Post = Backbone.View.extend({
   initialize: function() {
     this.dmp = new diff_match_patch();
     this.mode = "edit";
-    this.prevContent = this.model.content;
+    this.prevContent = this.serialize();
     if (!window.shortcutsRegistered) {
       key('⌘+s, ctrl+s', _.bind(function() { this.updatePost(); return false; }, this));
       key('ctrl+shift+right', _.bind(function() { this.right(); return false; }, this));
@@ -135,6 +146,7 @@ views.Post = Backbone.View.extend({
     }
   },
 
+  // TODO: We might not wanna use this
   parseMetadata: function(metadata) {
     var metadata = this.metadataEditor.getValue();
     if (!metadata) return {};
@@ -145,9 +157,8 @@ views.Post = Backbone.View.extend({
     }
   },
 
-
-  // TODO: remove comments and simplify after we are sure that we don't want to parse metadata
   updateMetaData: function() {
+    if (!this.model.jekyll) return true; // metadata -> skip
 
     // Update published
     function updatePublished(yamlStr, published) {
@@ -161,22 +172,13 @@ views.Post = Backbone.View.extend({
 
     this.model.raw_metadata = this.metadataEditor.getValue();
     var published = this.$('#post_published').prop('checked');
-    var metadata = this.parseMetadata(this.model.raw_metadata);
-    if (metadata) {
-      metadata.published = published;
-      this.model.metadata = metadata;
-      this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
-      this.metadataEditor.setValue(this.model.raw_metadata);
 
-      if (this.model.metadata.published) {
-        $('#post').addClass('published');
-      } else {
-        $('#post').removeClass('published');
-      }
-      return true;
-    } else {
-      return false;
-    }
+    this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
+    this.metadataEditor.setValue(this.model.raw_metadata);
+
+    published ? $('#post').addClass('published') : $('#post').removeClass('published');
+
+    return true;
   },
 
   updateFilename: function(filepath, cb) {
@@ -206,12 +208,22 @@ views.Post = Backbone.View.extend({
     }
   },
 
+  serialize: function() {
+    return serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null)
+  },
+
   updatePost: function() {
     var filepath = $('input.filepath').val();
 
     var file = _.extractFilename(filepath)[1];
     var that = this;
     var message = this.model.persisted ? "Updated " + filepath : "Created " + filepath;
+
+    // Update content
+    this.model.content = this.editor.getValue();
+
+    // File contents
+    var filedata = this.serialize();;
 
     function updateState(label, classes) {
       $('.button.save').html(label)
@@ -220,9 +232,8 @@ views.Post = Backbone.View.extend({
     }
 
     function save() {
-      if (!that.model.jekyll || that.updateMetaData()) {
-
-        saveFile(app.state.user, app.state.repo, app.state.branch, filepath, that.model.raw_metadata, that.editor.getValue(), message, function(err) {
+      if (that.updateMetaData()) {
+        saveFile(app.state.user, app.state.repo, app.state.branch, filepath, content, message, function(err) {
           if (err) {
             _.delay(function() { that._makeDirty() }, 3000);
             updateState('! Try again in 30 seconds', 'error');
@@ -232,7 +243,7 @@ views.Post = Backbone.View.extend({
           that.model.persisted = true;
           that.model.file = file;
           that.updateURL();
-          that.prevContent = that.model.content;
+          that.prevContent = content;
           updateState('SAVED', 'inactive');
         });
       } else {
@@ -243,6 +254,7 @@ views.Post = Backbone.View.extend({
     updateState('SAVING ...', 'inactive saving');
 
     if (filepath === _.filepath(this.model.path, this.model.file)) return save();
+
     // Move or create file
     this.updateFilename(filepath, function(err) {
       err ? updateState('! Filename', 'error') : save();
@@ -297,7 +309,7 @@ views.Post = Backbone.View.extend({
   render: function() {
     var that = this;
     $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
-    if (this.model.metadata && this.model.metadata.published) $(this.el).addClass('published');
+    if (this.model.published) $(this.el).addClass('published');
     this.initEditor();
     return this;
   }

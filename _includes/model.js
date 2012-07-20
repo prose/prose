@@ -246,24 +246,26 @@ function loadPosts(user, reponame, branch, path, cb) {
   });
 }
 
+// Serialize
+// -------
+
+function serialize(content, metadata) {
+  if (metadata) {
+    return ["---", metadata, "---"].join('\n')+'\n\n'+content;
+  } else {
+    return content;
+  }
+}
+
 
 // Save File
 // -------
 // 
-// List all postings for a given repository
-// Looks into _posts/blog
+// Store a file to GitHub
 
-function saveFile(user, repo, branch, path, metadata, content, message, cb) {
-
+function saveFile(user, repo, branch, path, content, message, cb) {
   var repo = getRepo(user, repo);
-  function serialize() {
-    if (app.state.jekyll && _.markdown(path)) {
-      return ["---", metadata, "---"].join('\n')+'\n'+content;
-    } else {
-      return content;
-    }
-  }
-  repo.write(branch, path, serialize(), message, cb);
+  repo.write(branch, path, content, message, cb);
 }
 
 
@@ -327,11 +329,19 @@ function emptyPost(user, repo, branch, path, cb) {
 // List all postings for a given repository
 // Looks into _posts/blog
 
+
 function loadPost(user, repo, branch, path, file, cb) {
   var repo = getRepo(user, repo);
 
   repo.read(branch, path ? path + "/" + file : file, function(err, data) {
     if (err) return cb(err);
+
+    // Given a YAML front matter, determines published or not
+    function published(metadata) {
+      return metadata.match(/published: true/);
+    }
+
+    // Extract YAML from a post, trims whitespace
     function parse(content) {
       var content = content.replace(/\r\n/g, "\n"); // normalize a little bit
       if (!_.jekyll(path, file)) return {
@@ -343,13 +353,12 @@ function loadPost(user, repo, branch, path, file, cb) {
       var res = {};
       res.content = content.replace(/(---\n)((.|\n)*)\n---\n/, function(match, dashes, frontmatter) {
         res.raw_metadata = frontmatter;
-        res.metadata = jsyaml.load(frontmatter);
+        res.published = published(frontmatter);
         return "";
-      });
+      }).trim();
       return res;
     }
 
-    // Extract metadata
     var post = parse(data);
     cb(err, _.extend(post, {
       "markdown": _.markdown(file),
