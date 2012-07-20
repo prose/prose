@@ -32,7 +32,7 @@
     <div class="options">
       <% if (jekyll && markdown) { %>
         <div class="publish-state">
-          <input type="checkbox" id="post_published"<%= metadata.published ? ' checked="checked"' : ''%>/> Published
+          <input type="checkbox" id="post_published"<%= published ? ' checked="checked"' : ''%>/> Published
         </div>
       <% } %>
       <div class="actions">
