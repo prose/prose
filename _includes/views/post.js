@@ -7,7 +7,7 @@ views.Post = Backbone.View.extend({
   events: {
     'click .save': '_save',
     'click .cancel-save': '_toggleCommit',
-    'click .save.confirm': 'updatePost',
+    'click .save.confirm': 'updateFile',
     'click a.toggle.view': '_toggleView',
     'click a.toggle.meta': '_toggleMeta',
     'change input': '_makeDirty',
@@ -138,7 +138,7 @@ views.Post = Backbone.View.extend({
     this.mode = "edit";
     this.prevContent = this.serialize();
     if (!window.shortcutsRegistered) {
-      key('⌘+s, ctrl+s', _.bind(function() { this.updatePost(); return false; }, this));
+      key('⌘+s, ctrl+s', _.bind(function() { this.updateFile(); return false; }, this));
       key('ctrl+shift+right', _.bind(function() { this.right(); return false; }, this));
       key('ctrl+shift+left', _.bind(function() { this.left(); return false; }, this));
       key('esc', _.bind(function() { this.toggleView('compose'); return false; }, this));
@@ -212,7 +212,7 @@ views.Post = Backbone.View.extend({
     return serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null)
   },
 
-  updatePost: function() {
+  updateFile: function() {
     var filepath = $('input.filepath').val();
 
     var file = _.extractFilename(filepath)[1];
@@ -223,7 +223,7 @@ views.Post = Backbone.View.extend({
     this.model.content = this.editor.getValue();
 
     // File contents
-    var filedata = this.serialize();;
+    var filecontent = this.serialize();;
 
     function updateState(label, classes) {
       $('.button.save').html(label)
@@ -233,7 +233,7 @@ views.Post = Backbone.View.extend({
 
     function save() {
       if (that.updateMetaData()) {
-        saveFile(app.state.user, app.state.repo, app.state.branch, filepath, content, message, function(err) {
+        saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
           if (err) {
             _.delay(function() { that._makeDirty() }, 3000);
             updateState('! Try again in 30 seconds', 'error');
@@ -274,7 +274,7 @@ views.Post = Backbone.View.extend({
         that._toggleMeta();
       },
       "Ctrl-S": function(codemirror) {
-        that.updatePost();
+        that.updateFile();
       }
     };
   },
@@ -288,6 +288,7 @@ views.Post = Backbone.View.extend({
           value: that.model.raw_metadata,
           theme: 'prose-dark',
           lineWrapping: true,
+          lineNumbers: true,
           extraKeys: that.keyMap(),
           onChange: _.bind(that._makeDirty, that)
         });
@@ -297,6 +298,7 @@ views.Post = Backbone.View.extend({
         mode: that.model.lang,
         value: that.model.content,
         lineWrapping: true,
+        lineNumbers: true,
         extraKeys: that.keyMap(),
         matchBrackets: true,
         theme: 'prose-bright',
