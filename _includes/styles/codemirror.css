@@ -149,8 +149,6 @@ Saman Bemel-Benrud, Michael Aufreiter
 }
 
 .metadata .CodeMirror {
-  /*box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);*/
-
   /*border: 1px solid #C3CCD0;*/
 }
 
@@ -195,12 +193,13 @@ Saman Bemel-Benrud, Michael Aufreiter
 }
 
 .content-wrapper .CodeMirror {
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #C3CCD0;
+  /*box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);*/
+  /*border: 1px solid #C3CCD0;*/
+  background: rgba(0,0,0, 0.05);
 }
 
 .cm-s-prose-bright {
-  background: #F0F8FC;
+  background: #fff;
   
   font-family: Menlo, monospace !important;
   font-size: 17px;

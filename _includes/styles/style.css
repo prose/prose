@@ -1301,7 +1301,7 @@ ul.site li a {
   }
 
 .document .surface.compose .content-wrapper {
-  padding-top: 20px;
+  /*padding-top: 20px;*/
   display: block;
   position: relative;
   }
@@ -1314,7 +1314,7 @@ ul.site li a {
   }
 
 .document .content-preview, .document .content {
-  padding: 20px 0px;
+  padding: 0px 0px;
   width: 960px;
   margin: 0 auto;
   }
