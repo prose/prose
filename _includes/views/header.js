@@ -4,13 +4,7 @@ views.Header = Backbone.View.extend({
   id: 'header',
 
   events: {
-    "click a.logout": "_logout",
-    "click a.branch": "_toggleBranchSelection"
-  },
-
-  _toggleBranchSelection: function() {
-    this.$('.branch-wrapper .branches').toggle();
-    return false;
+    "click a.logout": "_logout"
   },
 
   _logout: function() {

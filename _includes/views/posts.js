@@ -3,7 +3,13 @@
 views.Posts = Backbone.View.extend({
   events: {
     'click a.link': '_loading',
-    'keyup #search_str': '_search'
+    'keyup #search_str': '_search',
+    'click a.branch': '_toggleBranchSelection'
+  },
+
+  _toggleBranchSelection: function() {
+    this.$('.branch-wrapper .branches').toggle();
+    return false;
   },
 
   initialize: function(options) {
