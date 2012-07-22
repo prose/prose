@@ -123,11 +123,14 @@ body.post #header {
   font-size: 12px;
   font-weight: 700;
   height: 60px;
-  overflow-x: auto;
   text-indent: 20px;
   }
 
 
+#header .navigation .browse-files {
+  float: right;
+  margin-left: 100px;
+}
 
 
 #header .navigation > * {
@@ -139,23 +142,12 @@ body.post #header {
   text-indent: 0px;
   }
 
-/*#header .navigation a.branch {
-  width: 40px;
-  height: 60px;
-  background-image: url('images/sprite.png');
-  background-position: -441px -25px;
-}
-
-#header .navigation .branch-wrapper {
-  margin: 0;
-  padding: 0;
-}*/
-
 #header .navigation a:hover {
   background-color: #c9d1d6;
   }
 
 #header .user-status {
+  overflow: auto;
   float: right;
   padding: 0;
   min-width: 120px;
