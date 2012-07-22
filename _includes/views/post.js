@@ -248,7 +248,7 @@ views.Post = Backbone.View.extend({
           that.model.persisted = true;
           that.model.file = file;
           that.updateURL();
-          that.prevContent = content;
+          that.prevContent = filecontent;
           updateState('SAVED', 'inactive');
         });
       } else {
