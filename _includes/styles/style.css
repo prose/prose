@@ -1319,8 +1319,9 @@ ul.site li a {
 .document .diff-wrapper .diff {
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
   background: white;
-  white-space: pre-line;
-  padding: 30px 10px;
+  white-space: pre;
+  overflow: auto;
+  padding: 30px 30px;
   font-family: Menlo, monospace !important;
   font-size: 17px;
   width: 960px;
