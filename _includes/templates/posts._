@@ -19,12 +19,6 @@
     <br class="clear"/>
   </div>
   <div class="search-menu">
-    <% parent = _.parentPath(path); %>
-    <% if (parent !== path) { %>
-      <a class='link parent-folder' href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= parent ? "/"+parent : ""%>'>
-        &nbsp;
-      </a>
-    <% } %>
     <div class="search"><input placeholder="Type to search" type="text" id="search_str"/></div>
     <div class="results"><%= files.length %> Files</div>
 
