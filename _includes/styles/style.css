@@ -772,7 +772,7 @@ ul.site li a {
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 3px 40px 3px 3px;
   
-  background:url('images/sprite.png') -450px -400px no-repeat;
+  background: url('images/sprite.png') -450px -400px no-repeat;
   background-color: #F2F6F8;
   }
   .post-listing a.link:hover { 
@@ -1165,17 +1165,17 @@ ul.site li a {
 
 .state a.button.cancel-save {
   display: none;
-
-  background: rgba(0,0,0, 0.10);
+  background: rgba(0, 0, 0, 0.10) url('images/sprite.png') -283px -588px no-repeat;
   width: 50px; 
   text-align: center;
   line-height: 40px;
-  margin-left: 1px;
-  margin: 0px;
+  margin: 0 1px 0 0;
   height: 40px;
   border-radius: 4px 0px 0px 4px;
-  margin-left: 1px;
   padding: 0;
+  text-indent: -9999px;
+  overflow: hidden;
+
 }
 
 .document-menu-content .save-state {
