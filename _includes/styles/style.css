@@ -534,7 +534,6 @@ body.start {
 /* Post listing search bar */
 
 .search-menu-wrapper {
-  /*background: #667880;*/
   background: #e0e7eb;
   border-bottom: 1px solid #c3ccd0;
 }
@@ -589,8 +588,6 @@ body.start {
   border: none;
   border-radius: 4px;
   background: transparent;
-  /*background: rgba(0,0,0, 0.1);*/
-  /*background: white;*/
 
   font-family: 'OpenSans', sans-serif;
   color: #666;
@@ -599,7 +596,6 @@ body.start {
   padding: 0 5px;
   font-size: 16px;
   }
-  /*.search-menu input:focus { background: rgba(0,0,0, 0.14);}*/
 
 .search-menu .results {
   display: none;
@@ -777,10 +773,6 @@ ul.site li a {
   border-bottom: 5px solid #3D4548;
 }
 
-/*#header .navigation .branch-wrapper:hover .branches {
-  display: block;
-  
-}*/
 
 #posts .breadcrumbs .branch-wrapper .branches .select-branch {
   padding: 10px 0;
@@ -967,8 +959,6 @@ ul.site li a {
 .document-menu.commit .toggle.view, .document-menu.commit .state .button.toggle-options {
   display: none;
 }
-
-
 
 .commit-message {
   display: block;
@@ -1361,9 +1351,20 @@ ul.site li a {
 .document .surface .content-preview-wrapper    { display: none; }
 
 
-.document .diff-wrapper               { margin-top: 40px; display: none; }
+.document .diff-wrapper               { 
+  position: fixed;
+  display: none;
+  z-index: 2000;
+  top: 120px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  overflow: auto;
+}
 
 .document .diff-wrapper .diff {
+  height: 100%;
+  overflow: auto;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
   background: white;
   white-space: pre;
