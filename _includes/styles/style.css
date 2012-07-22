@@ -130,6 +130,9 @@ body.post #header {
 #header .navigation .browse-files {
   float: right;
   margin-left: 100px;
+  background-image:url('images/sprite.png');
+  padding-left: 35px;
+  background-position: -295px -627px
 }
 
 
@@ -139,12 +142,11 @@ body.post #header {
   padding: 0 20px 0 20px;
   margin: 0px;
   float: left;
-  /*font-weight: normal;*/
   text-indent: 0px;
   }
 
 #header .navigation a.user, #header .navigation a.repo {
-  font-size: 16px;
+  /*font-size: 16px;*/
 }
 
 #header .navigation a:hover {
@@ -529,15 +531,21 @@ body.start {
   color: #526066;
   }
 
-
 /* Post listing search bar */
 
+.search-menu-wrapper {
+  /*background: #667880;*/
+  background: #e0e7eb;
+  border-bottom: 1px solid #c3ccd0;
+}
+
 .search-menu {
+  width: 960px;
+  margin: 0 auto;
+
   height: 60px;
+  line-height: 60px;
   font-size: 16px;
-  line-height: 40px;
-  margin: 20px 0;
-  border-bottom: 1px solid #C3CCD0;
 }
 
 .search-menu .parent-folder {
@@ -564,6 +572,7 @@ body.start {
   width: 140px;
   text-align: center;
   padding-left: 10px;
+  margin: 10px 0;
   font-size: 12px;
   text-transform: uppercase;
   border-radius: 4px;
@@ -579,20 +588,28 @@ body.start {
   display: block;
   border: none;
   border-radius: 4px;
-  background: rgba(0,0,0, 0.1);
+  background: transparent;
+  /*background: rgba(0,0,0, 0.1);*/
+  /*background: white;*/
+
+  font-family: 'OpenSans', sans-serif;
   color: #666;
   height: 39px;
+  margin: 10px 0;
   padding: 0 5px;
   font-size: 16px;
   }
-  .search-menu input:focus { background: rgba(0,0,0, 0.14);}
+  /*.search-menu input:focus { background: rgba(0,0,0, 0.14);}*/
 
 .search-menu .results {
+  display: none;
   margin-left: 20px;
+  font-weight: 400;
   float: left;
 }
 
 .search-menu .search {
+  height: 60px;
   float: left;
 }
 
@@ -723,7 +740,10 @@ ul.site li a {
 }
 
 #posts .breadcrumbs .switch-branch {
-  margin-left: 5px;
+  margin-left: 10px;
+  background-image:url('images/sprite.png');
+  background-position: -300px -143px;
+  width: 20px;
 }
 
 #posts .breadcrumbs .branch-wrapper {
@@ -736,21 +756,20 @@ ul.site li a {
   right: -100px;
   top: 30px;
   width: 200px;
-  
   overflow-y: visible;
   background: #3D4548;
   z-index: 5000;
   max-height: 300px;
 }
 
-#posts .breadcrumbs .branch-wrapper .branches .inner {
+#posts .breadcrumbs .branch-wrapper .branches .inner-branches {
   overflow: auto;
 }
 
 #posts .breadcrumbs .branch-wrapper .branches .arrow-up {
   position: absolute;
   top: -5px;
-  left: 90px;
+  left: 50px;
   width: 0;
   height: 0;
   border-left: 5px solid transparent;
@@ -778,7 +797,7 @@ ul.site li a {
 
 
 
-#posts {
+#posts .inner {
   padding: 30px 0;
   width: 960px;
   margin: 0 auto;
