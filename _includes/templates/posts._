@@ -1,5 +1,23 @@
 <div class='inner'>
 
+  <div class="breadcrumbs">
+
+    <div class="branch-wrapper">
+      <a class="branch" href="#<%= [user, repo, 'tree', branch].join('/') %>">
+        <%= branch %>
+      </a>
+      <div class="branches">
+        <% _.each(app.state.branches, function(branch) { %>
+          <a class="select-branch" href="#<%= [user, repo, 'tree', branch].join('/') %>"><%= branch %></a>
+        <% }); %>
+      </div>
+    </div>
+
+    <% _.each(_.chunkedPath(path), function(p) { %>
+      <a class="path" href="#<%= [user, repo, 'tree', branch, p.url].join('/') %>"><%= p.name %></a>
+    <% }); %>
+    <br class="clear"/>
+  </div>
   <div class="search-menu">
     <% parent = _.parentPath(path); %>
     <% if (parent !== path) { %>
@@ -16,7 +34,6 @@
           New File
         </a>
       <% } %>
-
     </div>
   </div>
   <div class='post-listing prose clearfix'>
