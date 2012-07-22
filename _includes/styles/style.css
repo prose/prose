@@ -568,16 +568,19 @@ body.start {
 }
 
 .search-menu .actions a {
-  padding: 6px 30px;
-  line-height: 60px;
+  display: block;
   font-weight: bold;
-  background: #434C50;
+  background: #434C50 url('images/sprite.png') -415px -85px no-repeat;
   color: #fff;
+  width: 140px;
+  text-align: center;
+  padding-left: 10px;
   font-size: 12px;
   text-transform: uppercase;
   border-radius: 4px;
   opacity: 0.8;
-  margin-left: 20px;
+  line-height: 40px;
+  margin: 10px 0px;
 }
 
 .search-menu .actions a:hover {
@@ -585,15 +588,19 @@ body.start {
 }
 
 .search-menu input {
+  font-family: Menlo, monospace;
   border: none;
   margin-left: 20px;
   border-radius: 4px;
   background: rgba(0,0,0, 0.1);
   color: #666;
-  padding: 8px 10px;
-  font-size: 14px;
+  height: 39px;
+  padding: 0 5px;
+  margin: 10px 0 10px 20px;
+  font-size: 16px;
   font-family: 'OpenSans', sans-serif;
-}
+  }
+  .search-menu input:focus { background: rgba(0,0,0, 0.14);}
 
 .search-menu .results {
   margin-left: 30px;
@@ -902,7 +909,7 @@ ul.site li a {
   }
 
 #post .document-menu.commit {
-  background: #575c5f;
+  background: #434C50;
 }
 
 #post.published .metadata {
@@ -1072,9 +1079,9 @@ ul.site li a {
   width: 400px;
   padding: 0 5px;
   margin: 10px 0;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
   }
 
 .document-menu.commit .filename {

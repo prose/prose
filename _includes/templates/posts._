@@ -25,7 +25,7 @@
         &nbsp;
       </a>
     <% } %>
-    <div class="search"><input placeholder="Type to search ..." type="text" id="search_str"/></div>
+    <div class="search"><input placeholder="Type to search" type="text" id="search_str"/></div>
     <div class="results"><%= files.length %> Files</div>
 
     <div class="actions">
