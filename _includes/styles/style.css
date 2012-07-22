@@ -1264,7 +1264,6 @@ ul.site li a {
   }
 
 .document .metadata-content {
-  background: rgba(0,0,0, 0.2);
   width: 960px;
   margin: 0 auto;
   }
@@ -1334,10 +1333,6 @@ ul.site li a {
   display: block;
   position: relative;
   }
-
-.document .surface .content-wrapper .content {
-  background: rgba(0,0,0, 0.05);
-}
 
 .document .surface.preview .content-preview-wrapper {
   position: relative;
