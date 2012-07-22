@@ -533,18 +533,11 @@ body.start {
 /* Post listing search bar */
 
 .search-menu {
-  overflow: auto;
   height: 60px;
-  background: #ccc;
   font-size: 16px;
-  line-height: 60px;
-  padding-right: 20px;
-
-  background: #E0E7EB;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  margin-bottom: 20px;
+  line-height: 40px;
+  margin: 20px 0;
+  border-bottom: 1px solid #C3CCD0;
 }
 
 .search-menu .parent-folder {
@@ -561,20 +554,21 @@ body.start {
 
 .search-menu .actions {
   float: right;
-  height: 60px;
 }
 
 .search-menu .actions a {
-  padding: 6px 30px;
-  line-height: 60px;
+  display: block;
   font-weight: bold;
-  background: #434C50;
+  background: #434C50 url('images/sprite.png') -415px -85px no-repeat;
   color: #fff;
+  width: 140px;
+  text-align: center;
+  padding-left: 10px;
   font-size: 12px;
   text-transform: uppercase;
   border-radius: 4px;
   opacity: 0.8;
-  margin-left: 20px;
+  line-height: 40px;
 }
 
 .search-menu .actions a:hover {
@@ -582,18 +576,19 @@ body.start {
 }
 
 .search-menu input {
+  display: block;
   border: none;
-  margin-left: 20px;
   border-radius: 4px;
   background: rgba(0,0,0, 0.1);
   color: #666;
-  padding: 8px 10px;
-  font-size: 14px;
-  font-family: 'OpenSans', sans-serif;
-}
+  height: 39px;
+  padding: 0 5px;
+  font-size: 16px;
+  }
+  .search-menu input:focus { background: rgba(0,0,0, 0.14);}
 
 .search-menu .results {
-  margin-left: 30px;
+  margin-left: 20px;
   float: left;
 }
 
@@ -811,7 +806,7 @@ ul.site li a {
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 3px 40px 3px 3px;
   
-  background:url('images/sprite.png') -450px -400px no-repeat;
+  background: url('images/sprite.png') -450px -400px no-repeat;
   background-color: #F2F6F8;
   }
   .post-listing a.link:hover { 
@@ -928,7 +923,7 @@ ul.site li a {
   }
 
 #post .document-menu.commit {
-  background: #575c5f;
+  background: #434C50;
 }
 
 #post.published .metadata {
@@ -1098,9 +1093,9 @@ ul.site li a {
   width: 400px;
   padding: 0 5px;
   margin: 10px 0;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
   }
 
 .document-menu.commit .filename {
@@ -1204,17 +1199,17 @@ ul.site li a {
 
 .state a.button.cancel-save {
   display: none;
-
-  background: rgba(0,0,0, 0.10);
+  background: rgba(0, 0, 0, 0.10) url('images/sprite.png') -283px -588px no-repeat;
   width: 50px; 
   text-align: center;
   line-height: 40px;
-  margin-left: 1px;
-  margin: 0px;
+  margin: 0;
   height: 40px;
   border-radius: 4px 0px 0px 4px;
-  margin-left: 1px;
   padding: 0;
+  text-indent: -9999px;
+  overflow: hidden;
+
 }
 
 .document-menu-content .save-state {
