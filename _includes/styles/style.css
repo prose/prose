@@ -122,7 +122,8 @@ body.post #header {
   overflow: visible;
   font-size: 12px;
   font-weight: 700;
-  height: 100%;
+  height: 60px;
+  overflow-x: auto;
   text-indent: 20px;
   }
 
@@ -215,6 +216,7 @@ body.post #header {
 #main {
   padding-top: 60px;
   overflow:auto;
+  min-height: 400px;
   padding-bottom: 60px; /* must be same height as the footer */
   }
 
@@ -1277,7 +1279,7 @@ ul.site li a {
 
 .document {
   position: fixed;
-  z-index: 5000;
+  z-index: 2000;
   top: 120px;
   left: 0px;
   right: 0px;
