@@ -133,14 +133,19 @@ body.post #header {
 }
 
 
-#header .navigation > * {
+#header .navigation > a {
   display: block;
   position: relative;
   padding: 0 20px 0 20px;
   margin: 0px;
   float: left;
+  /*font-weight: normal;*/
   text-indent: 0px;
   }
+
+#header .navigation a.user, #header .navigation a.repo {
+  font-size: 16px;
+}
 
 #header .navigation a:hover {
   background-color: #c9d1d6;
@@ -701,16 +706,29 @@ ul.site li a {
 
 #posts .breadcrumbs {
   overflow: visible;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+}
+
+#posts .breadcrumbs a {
+  font-weight: bold;
+}
+
+#posts .breadcrumbs .slash {
+  color: #ccc;
+  font-size: 20px;
 }
 
 #posts .breadcrumbs > * {
   display: block;
   position: relative;
-  padding: 0 20px 0 0px;
-  margin: 0px;
+  margin: 0 20px 0 0px;
+  padding: 0px;
   float: left;
   text-indent: 0px;
+}
+
+#posts .breadcrumbs .switch-branch {
+  margin-left: 5px;
 }
 
 #posts .breadcrumbs .branch-wrapper {
@@ -720,14 +738,29 @@ ul.site li a {
 #posts .breadcrumbs .branch-wrapper .branches {
   display: none;
   position: absolute;
-  right: 0px;
-  top: 60px;
+  right: -100px;
+  top: 30px;
   width: 200px;
   
-  overflow: auto;
+  overflow-y: visible;
   background: #3D4548;
   z-index: 5000;
   max-height: 300px;
+}
+
+#posts .breadcrumbs .branch-wrapper .branches .inner {
+  overflow: auto;
+}
+
+#posts .breadcrumbs .branch-wrapper .branches .arrow-up {
+  position: absolute;
+  top: -5px;
+  left: 90px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #3D4548;
 }
 
 /*#header .navigation .branch-wrapper:hover .branches {
@@ -736,6 +769,7 @@ ul.site li a {
 }*/
 
 #posts .breadcrumbs .branch-wrapper .branches .select-branch {
+  padding: 10px 0;
   text-align: center;
   display: block;
   color: #fff;

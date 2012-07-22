@@ -4,7 +4,7 @@ views.Posts = Backbone.View.extend({
   events: {
     'click a.link': '_loading',
     'keyup #search_str': '_search',
-    'click a.branch': '_toggleBranchSelection'
+    'click a.switch-branch': '_toggleBranchSelection'
   },
 
   _toggleBranchSelection: function() {
