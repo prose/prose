@@ -528,18 +528,11 @@ body.start {
 /* Post listing search bar */
 
 .search-menu {
-  overflow: auto;
   height: 60px;
-  background: #ccc;
   font-size: 16px;
-  line-height: 60px;
-  padding-right: 20px;
-
-  background: #E0E7EB;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  margin-bottom: 20px;
+  line-height: 40px;
+  margin: 20px 0;
+  border-bottom: 1px solid #C3CCD0;
 }
 
 .search-menu .parent-folder {
@@ -556,7 +549,6 @@ body.start {
 
 .search-menu .actions {
   float: right;
-  height: 60px;
 }
 
 .search-menu .actions a {
@@ -572,7 +564,6 @@ body.start {
   border-radius: 4px;
   opacity: 0.8;
   line-height: 40px;
-  margin: 10px 0px;
 }
 
 .search-menu .actions a:hover {
@@ -580,22 +571,19 @@ body.start {
 }
 
 .search-menu input {
-  font-family: Menlo, monospace;
+  display: block;
   border: none;
-  margin-left: 20px;
   border-radius: 4px;
   background: rgba(0,0,0, 0.1);
   color: #666;
   height: 39px;
   padding: 0 5px;
-  margin: 10px 0 10px 20px;
   font-size: 16px;
-  font-family: 'OpenSans', sans-serif;
   }
   .search-menu input:focus { background: rgba(0,0,0, 0.14);}
 
 .search-menu .results {
-  margin-left: 30px;
+  margin-left: 20px;
   float: left;
 }
 
