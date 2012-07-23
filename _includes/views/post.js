@@ -41,7 +41,7 @@ views.Post = Backbone.View.extend({
     if (this.editor) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
     if (!this.$('.button.save').hasClass('saving')) {
-      this.$('.button.save').html('COMMIT');
+      this.$('.button.save').html('SAVE');
       this.$('.button.save').removeClass('inactive error');      
     }
   },

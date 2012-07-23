@@ -24,11 +24,13 @@ Now that you're here, why not start contributing as well? :)
 
 ## Change Log
 
-**0.2.0** -  *July 23 2012*
+**0.3.0** -  *July 23 2012*
 
 - Implemented commit messages + review changes workflow.
 - Search for files within a repository as you type.
 - After selecting a repo default branch is loaded and you can switch using the breadcrumbs.
+- Better editing expierence
+- Fixes dozens of issues
 
 **0.2.0** -  *July 6 2012*
 
