@@ -13,7 +13,7 @@
   }
   
 .metadata .CodeMirror.CodeMirror-wrap {
-  border-right: 1px solid #667880;
+  border-right: 1px solid rgba(0,0,0, 0.2);
 }
 
 .CodeMirror-scroll {
@@ -201,7 +201,7 @@ Saman Bemel-Benrud, Michael Aufreiter
 .cm-s-prose-dark .CodeMirror-cursor { border-left: 2px solid white !important; }
 .cm-s-prose-dark .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
 
-.cm-s-prose-dark .CodeMirror-gutter { background: #526066; border-right:1px solid #667880;); padding-right:3px; min-width:2.5em; }
+.cm-s-prose-dark .CodeMirror-gutter { background: transparent; border-right:1px solid rgba(0,0,0, 0.2); padding-right:3px; min-width:2.5em; }
 .cm-s-prose-dark .CodeMirror-gutter-text { color: inherit; }
 .cm-s-prose-dark span.cm-keyword { color: inherit; }
 .cm-s-prose-dark span.cm-atom { color: #fff; opacity: 0.4; }
