@@ -56,6 +56,10 @@ views.Post = Backbone.View.extend({
   },
 
   _toggleCommit: function() {
+    if (!this.$('.document-menu').hasClass('commit')) {
+      this.$('.commit-message').val("Updated "+$('input.filepath').val());  
+    }
+
     this.hideMeta();
     this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? "SAVE" : "COMMIT");
     this.$('.button.save').toggleClass('confirm');
@@ -65,7 +69,8 @@ views.Post = Backbone.View.extend({
     this.showDiff();
     this.$('.surface').toggle();
     this.$('.diff-wrapper').toggle();
-    this.$('.commit-message').val("Updated "+$('input.filepath').val());
+
+
     return false;
   },
 
@@ -222,7 +227,8 @@ views.Post = Backbone.View.extend({
 
     var file = _.extractFilename(filepath)[1];
     var that = this;
-    var message = this.model.persisted ? "Updated " + filepath : "Created " + filepath;
+
+    var message = this.$('.commit-message').val();
 
     // Update content
     this.model.content = this.editor.getValue();
