@@ -752,7 +752,7 @@ ul.site li a {
   right: -100px;
   top: 30px;
   width: 200px;
-  overflow-y: visible;
+  overflow-y: auto;
   background: #3D4548;
   z-index: 5000;
   max-height: 300px;
