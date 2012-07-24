@@ -41,7 +41,7 @@ views.Application = Backbone.View.extend({
     // });
 
     function calculateLayout() {
-      if (that.mainView.refreshCodeMirror) {
+      if (that.mainView && that.mainView.refreshCodeMirror) {
         that.mainView.refreshCodeMirror();
       }
     }
