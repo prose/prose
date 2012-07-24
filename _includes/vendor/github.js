@@ -20,14 +20,14 @@
       xhr.onreadystatechange = function () {
         if (this.readyState == 4) {
           if (this.status >= 200 && this.status < 300 || this.status === 304) {
-            cb(null, raw ? this.responseText : JSON.parse(this.responseText));
+            cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true);
           } else {
-            cb(this.status);
+            cb({request: this, error: this.status});
           }
         }
       }
       xhr.setRequestHeader('Accept','application/vnd.github.raw');
-      xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+      xhr.setRequestHeader('Content-Type','application/json');
       if (
          (options.auth == 'oauth' && options.token) ||
          (options.auth == 'basic' && options.username && options.password)
@@ -59,6 +59,15 @@
         });
       };
 
+      // List authenticated user's gists
+      // -------
+
+      this.gists = function(cb) {
+        _request("GET", "/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
       // Show user information
       // -------
 
@@ -77,22 +86,21 @@
         });
       };
 
+      // List a user's gists
+      // -------
+
+      this.userGists = function(username, cb) {
+        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
       // List organization repositories
       // -------
 
       this.orgRepos = function(orgname, cb) {
         _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res) {
           cb(err, res);
-        });
-      };
-
-      // List all user gists
-      // This will return all public gists if user is not authenticated
-      // -------
-
-      this.userGists = function(username,cb) {
-        _request("GET", "/gists", null, function(err, res) {
-          cb(err,res);
         });
       };
     };
@@ -180,11 +188,14 @@
       // -------
 
       this.postBlob = function(content, cb) {
-        var data = {
-          "content": content,
-          "encoding": "utf-8"
-        };
-        _request("POST", repoPath + "/git/blobs", data, function(err, res) {
+        if (typeof(content) === "string") {
+          content = {
+            "content": content,
+            "encoding": "utf-8"
+          };
+        }
+
+        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
           if (err) return cb(err);
           cb(null, res.sha);
         });
@@ -324,9 +335,13 @@
 
       this.write = function(branch, path, content, message, cb) {
         updateTree(branch, function(err, latestCommit) {
+          if (err) return cb(err);
           that.postBlob(content, function(err, blob) {
+            if (err) return cb(err);
             that.updateTree(latestCommit, path, blob, function(err, tree) {
+              if (err) return cb(err);
               that.commit(latestCommit, tree, message, function(err, commit) {
+                if (err) return cb(err);
                 that.updateHead(branch, commit, cb);
               });
             });
@@ -346,38 +361,12 @@
       // Read the gist
       // --------
 
-      this.show = function(cb) {
-        _request("GET", gistPath, null, function(err,info) {
-          cb(err,info);
+      this.read = function(cb) {
+        _request("GET", gistPath, null, function(err, gist) {
+          cb(err, gist);
         });
       };
 
-      // Star the gist
-      // --------
-
-      this.star = function(cb) {
-        _request("PUT", gistPath+"/star", null, function(err,res) {
-          cb(err,res);
-        });
-      }
-
-      // Check if the Gist is starred
-      // --------
-
-      this.isStarred = function(cb) {
-        _request("GET", gistPath+"/star", null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Unstar the gist
-      // --------
-
-      this.unstar = function(cb) {
-        _request("DELETE", gistPath+"/star", null, function(err,res) {
-          cb(err,res);
-        });
-      };
 
       // Delete the gist
       // --------
@@ -400,43 +389,11 @@
       // Update a gist with the new stuff
       // --------
 
-      this.edit = function(cb,options) {
+      this.update = function(options, cb) {
         _request("PATCH", gistPath, options, function(err,res) {
           cb(err,res);
         });
       };
-
-      // Update Gist Description
-      // --------
-
-      this.updateDescription = function(cb,description) {
-        that.edit(cb,{description: description});
-      };
-
-      // Rename a file in the gist
-      // --------
-
-      this.renameFile = function(oldName, newName, cb) {
-        var options = {files:{}};
-        options.files[oldName] = newName;
-        that.edit(cb, options);
-      };
-
-      // Delete a file in the gist
-      // --------
-
-      this.deleteFile = function(fileName, cb) {
-        var options = {files:{}};
-        options.files[fileName] = null;
-        that.edit(cb,options);
-      };
-
-      // Update a particular file in the gist
-      this.updateFile = function(filename, contents, cb) {
-        var options = {files:{}};
-        options.files[filename] = {content: contents};
-        that.edit(cb,options);
-      }
     };
 
     // Top Level API
