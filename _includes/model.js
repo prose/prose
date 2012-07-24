@@ -338,11 +338,13 @@ function loadPost(user, repo, branch, path, file, cb) {
 
     // Given a YAML front matter, determines published or not
     function published(metadata) {
-      return metadata.match(/published: true/);
+      return !!metadata.match(/published: true/);
     }
+
 
     // Extract YAML from a post, trims whitespace
     function parse(content) {
+
       var content = content.replace(/\r\n/g, "\n"); // normalize a little bit
       if (!_.jekyll(path, file)) return {
         metadata: {},
@@ -350,8 +352,8 @@ function loadPost(user, repo, branch, path, file, cb) {
         content: content
       };
 
-      var res = {};
-      res.content = content.replace(/(---\n)((.|\n)*)\n---\n/, function(match, dashes, frontmatter) {
+      var res = { raw_metadata: "", published: false };
+      res.content = content.replace(/(---\n)((.|\n)*)\n---\n?/, function(match, dashes, frontmatter) {
         res.raw_metadata = frontmatter;
         res.published = published(frontmatter);
         return "";
