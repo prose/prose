@@ -318,6 +318,7 @@ function emptyPost(user, repo, branch, path, cb) {
     "content": "# How does it work?\n\nEnter Text in Markdown format.",
     "repo": repo,
     "path": path,
+    "published": false,
     "persisted": false,
     "file": new Date().format("Y-m-d")+"-your-filename.md"
   });
