@@ -26,7 +26,7 @@ views.Post = Backbone.View.extend({
       deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
         if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
         router.navigate([app.state.user, app.state.repo, "tree", app.state.branch].join('/'), true);
-      }, this));      
+      }, this));
     }
     return false;
   },
@@ -41,7 +41,7 @@ views.Post = Backbone.View.extend({
     if (this.editor) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
     if (!this.$('.button.save').hasClass('saving')) {
-      this.$('.button.save').html('SAVE');
+      this.$('.button.save').html(this.model.writeable ? "SAVE" : "SEND PATCH");
       this.$('.button.save').removeClass('inactive error');      
     }
   },
@@ -61,7 +61,7 @@ views.Post = Backbone.View.extend({
     }
 
     this.hideMeta();
-    this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? "SAVE" : "COMMIT");
+    this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? "SAVE" : "SEND PATCH") : "COMMIT");
     this.$('.button.save').toggleClass('confirm');
     this.$('.document-menu').toggleClass('commit');    
     this.$('.button.cancel-save').toggle();
@@ -222,11 +222,62 @@ views.Post = Backbone.View.extend({
     return serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null)
   },
 
-  updateFile: function() {
+  // Submits a patch (fork + pull request workflow)
+
+  sendPatch: function() {
+    var that = this;
     var filepath = $('input.filepath').val();
 
+    // 2. save (to fork)
     var file = _.extractFilename(filepath)[1];
+    var message = that.$('.commit-message').val();
+
+    // Update content
+    that.model.content = that.editor.getValue();
+
+    // File contents
+    var filecontent = that.serialize();
+
+    function updateState(label, classes) {
+      $('.button.save').html(label)
+                       .removeClass('inactive error saving')
+                       .addClass(classes);
+    }
+
+    function patch() {
+      if (that.updateMetaData()) {
+        patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+          
+          if (err) {
+            _.delay(function() { that._makeDirty() }, 3000);
+            updateState('! Try again in 30 seconds', 'error');
+            return;
+          }
+
+          that.dirty = false;
+          that.model.persisted = true;
+          that.model.file = file;
+          that.updateURL();
+          that.prevContent = filecontent;
+          updateState('PATCH SENT', 'inactive');
+        });
+      } else {
+        updateState('! Metadata', 'error');
+      }
+    }
+
+    updateState('SEND PATCH ...', 'inactive saving');
+    patch();
+
+    return false;
+  },
+
+  updateFile: function() {
     var that = this;
+    if (!this.model.writeable) return this.sendPatch();
+    
+    var filepath = $('input.filepath').val();
+    var file = _.extractFilename(filepath)[1];
 
     var message = this.$('.commit-message').val();
 
