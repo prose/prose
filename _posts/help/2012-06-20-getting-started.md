@@ -14,7 +14,7 @@ This little guide walks you through the process of using Prose to manage your we
 
 # Create your first Jekyll webpage
 
-We've created a simple template that you can use as a starting point, [Prose Bootrap](http://bootstrap.prose.io). All you have to do is creating a fork of the [repository](http://github.com/prose/bootstrap) and give it a suitable new name. Please follow the steps described on the Bootstrap homepage. If you are already maintaining a Jekyll page you can skip this step.
+We've created a simple template that you can use as a starting point, [Prose Bootstrap](http://bootstrap.prose.io). All you have to do is creating a fork of the [repository](http://github.com/prose/bootstrap) and give it a suitable new name. Please follow the steps described on the Bootstrap homepage. If you are already maintaining a Jekyll page you can skip this step.
 
 # Open Prose
 
@@ -88,4 +88,3 @@ Prose is also suitable as a full-featured writing environment, covering authorin
 4. Share it (we support deep linking to the rendered version)
 
 Prose is similiar to [iAWriter](http://www.iawriter.com/) as it is also using a minimal interface for editing Markdown, but it's web-based and uses [GitHub](http://github.com) for storing your text so your writings are more than safe and GitHub keeps a history of every saved version. So Prose can potentially be seen as a whole new way of sharing documents online, while utilizing the usual suspects Markdown and GitHub. Oh and it's free and open source.
-
