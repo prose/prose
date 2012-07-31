@@ -24,6 +24,10 @@ Now that you're here, why not start contributing as well? :)
 
 ## Change Log
 
+**0.4.0** -  *July 30 2012*
+
+- Submit patches with suggestions for repositories you don't have write access to.
+
 **0.3.0** -  *July 23 2012*
 
 - Implemented commit messages + review changes workflow.
