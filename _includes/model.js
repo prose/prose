@@ -393,6 +393,7 @@ function emptyPost(user, repo, branch, path, cb) {
     "path": path,
     "published": false,
     "persisted": false,
+    "writeable": true,
     "file": new Date().format("Y-m-d")+"-your-filename.md"
   });
 }
