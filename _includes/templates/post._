@@ -32,7 +32,7 @@
     <% } %>
 
     <% if (!window.authenticated) { %>
-      <div class="patch-hint">Sign in with GitHub to make changes to this file.</div>
+      <div class="patch-hint">Sign in with GitHub to contribute to this file.</div>
     <% } %>
 
     <div class="options">
