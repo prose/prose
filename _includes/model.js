@@ -77,7 +77,6 @@ function logout() {
 // 
 // Load everything that's needed for the app + header
 
-
 function loadApplication(cb) {
 
   if (window.authenticated) {
@@ -419,14 +418,18 @@ function loadPost(user, repo, branch, path, file, cb) {
     function parse(content) {
       var content = content.replace(/\r\n/g, "\n"); // normalize a little bit
 
+      function writeable() {
+        return !!(app.state.permissions && app.state.permissions.push);
+      }
+
       if (!_.jekyll(path, file)) return {
         raw_metadata: "",
         content: content,
         published: false,
-        writeable: app.state.permissions.push
+        writeable: writeable()
       };
 
-      var res = { raw_metadata: "", published: false, writeable: app.state.permissions.push };
+      var res = { raw_metadata: "", published: false, writeable: writeable() };
       res.content = content.replace(/(---\n)((.|\n)*)\n---\n?/, function(match, dashes, frontmatter) {
         res.raw_metadata = frontmatter;
         res.published = published(frontmatter);
