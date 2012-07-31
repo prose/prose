@@ -23,9 +23,8 @@
       </div>
     </div>
     
-    <% if (jekyll) { %><a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a> <% } %>
-    
     <% if (markdown && window.authenticated) { %>
+      <% if (jekyll) { %><a class="toggle meta fr menu-item" href="#" title="CTRL+SHIFT+M">Metadata</a> <% } %>
       <a data-view="preview" class='toggle view preview fr menu-item<%= preview ? " active" : "" %>' href='#' title="Use CTRL+SHIFT+Left/Right to navigate">Preview document</a>
       <a data-view="compose" class='toggle view compose fr menu-item<%= !preview ? " active" : "" %>' title="Use CTRL+SHIFT+Left/Right to navigate" href='#'>Compose document</a>
       <a data-view="cheatsheet" class="toggle view cheatsheet fr menu-item" href="#" title="Use CTRL+SHIFT+Left/Right to navigate">Markdown reference sheet</a>
