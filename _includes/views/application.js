@@ -101,7 +101,7 @@ views.Application = Backbone.View.extend({
         this.loaded();
         this.header.render();
         if (err) return this.notify('error', 'The requested resource could not be found.');
-        data.preview = !(mode === "edit") || !window.authenticated;
+        data.preview = !(mode === "edit");
         data.lang = _.mode(file);
         this.replaceMainView(window.authenticated ? "post" : "read-post", new views.Post({ model: data, id: 'post' }).render());
         var that = this;
