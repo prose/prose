@@ -1206,6 +1206,13 @@ ul.site li a {
   .document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.4); }
 
 
+.document-menu-content .patch-hint {
+  position: absolute;
+  right: 0px;
+  height: 60px;
+  line-height: 60px;
+}
+
 .state a.button.cancel-save {
   display: none;
   background: rgba(0, 0, 0, 0.10) url('images/sprite.png') -283px -588px no-repeat;
