@@ -19,7 +19,7 @@
   <% if (window.authenticated) { %>
     <%= app.username %> <a class="logout" href="#">Logout</a>
   <% } else { %>
-      <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist&redirect_uri=<%= window.location.href %>">Sign in using Github</a>
+      <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>">Sign in using Github</a>
   <% } %>
   </div>
   <% if (state.file) { %>
