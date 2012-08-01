@@ -1575,7 +1575,8 @@ ul.site li a {
 
 .help {
   width: 960px;
-  margin: 20px auto;
+  margin: 0px auto;
+  margin-top: 20px;
   }
 
 .help h2 {
@@ -1625,6 +1626,54 @@ ul.site li a {
   width: 960px;
   margin: 30px auto;
   }
+
+
+.improve-article-wrapper a.button {
+  width: 100px;
+  float: left;
+  color: rgba(255,255,255, 0.8);
+  display: block;
+  line-height: 1.5em;
+
+  /*margin: 30px 250px;*/
+  padding: 20px 0;
+  background: rgba(0,0,0, 0.7);
+  border: 1px solid #CCC;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.improve-article-wrapper a.button:hover {
+  background: rgba(0,0,0, 0.8);
+  color: rgba(255,255,255, 1);
+}
+
+.improve-article-wrapper {
+  font-size: 20px;
+  padding: 20px 0;
+  /*border-top: 1px solid #CCC;*/
+  background: rgba(255,255, 255, 0.6);
+
+  width: 960px;
+  margin: 0px auto;
+  margin-bottom: 20px;
+  border: 1px solid #C3CCD0;
+  border-top: none;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.improve-article {
+  overflow: auto;
+  width: 800px;
+  margin: 20px auto;
+}
+
+.improve-article p {
+  padding-top: 13px;
+  margin-left: 130px;
+}
+
 
 /* ------------------------------------------
   Notifications

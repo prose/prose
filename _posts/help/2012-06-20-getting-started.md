@@ -5,6 +5,7 @@ descr: A brief introduction on how to use Prose, what it can do for you and what
 image: http://prose.io/images/help/getting-started.png
 author_twitter: _mql
 author: Michael Aufreiter
+prose_link: http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-06-20-getting-started.md
 categories:
 - help
 published: true
