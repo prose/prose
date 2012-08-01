@@ -5,6 +5,7 @@ descr: A little background on how we implemented Prose.
 image: http://prose.io/images/help/internals.png
 author_twitter: _mql
 author: Michael Aufreiter
+prose_link: http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-06-20-internals.md
 categories:
 - help
 published: true

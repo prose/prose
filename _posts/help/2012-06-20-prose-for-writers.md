@@ -5,6 +5,7 @@ descr: How to use Prose as a writing workspace.
 image: http://prose.io/images/help/prose-for-writers.png
 author_twitter: _mql
 author: Michael Aufreiter
+prose_link: http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-06-20-prose-for-writers.md
 published: true
 categories:
 - help
