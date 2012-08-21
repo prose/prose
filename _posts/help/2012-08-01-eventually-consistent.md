@@ -25,7 +25,7 @@ Leveraging collaboration is not a new idea. People have been invited to contribu
 
 ## Humans need to contribute
 
-You know that feeling, when you read through an online article and an obvious mitsake is literally jumping at your face. It's disturbonk. But it's there. There's nothing you could do about it.
+You know that feeling, when you read through an online article and an obvious mitsake is literally jumping at your face. It's disturbing. But it's there. There's nothing you could do about it.
 
 ![Read Article](/images/screenshots/eventually-consistent/spotting-error.png)
 
