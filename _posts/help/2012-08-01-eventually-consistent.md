@@ -39,7 +39,7 @@ The most essential problem is that it's pretty hard to get involved. What if you
 
 ## Suggest a change
 
-Once the user clicked on this link he is able to edit the contents of the article he was just reading.
+Once the user clicked on this link they are able to edit the contents of the article they was just reading.
 
 ![Content shown in Prose](/images/screenshots/eventually-consistent/prose-document.png)
 
@@ -50,7 +50,7 @@ Prose requires you to be authenticated with GitHub first, once that is done you 
 
 ## Applying a change
 
-Once a suggestion, a patch has been submitted, the original author gets notified via GitHub. In order to apply that change he has to review the Pull Request that has been created automatically.
+Once a suggestion, a patch has been submitted, the original author gets notified via GitHub. In order to apply that change the author has to review the Pull Request that has been created automatically.
 
 ![Apply changes](/images/screenshots/eventually-consistent/apply-patch.png)
 
