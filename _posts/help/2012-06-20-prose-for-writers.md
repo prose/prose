@@ -10,6 +10,7 @@ published: true
 categories:
 - help
 ---
+
 [Prose](http://prose.io) is not only suitable for managing website content. You can use it as a full-featured writing environment too. It provides you a distraction-free writing experience, with a focus on content and structure. Also, you can share your work at any time or invite other people to collaborate on your document. 
 
 Here's what you need to get started.
@@ -70,7 +71,7 @@ You might want to structure your document repository, once you get more and more
 
 ## Turn it into a website
 
-Remember that you always have the option to turn your document repository in a Jekyll website, featuring your own design. You can use our [template](http://github.com/) to get started with Jekyll.
+Remember that you always have the option to turn your document repository in a Jekyll website, featuring your own design. You can use our [template](http://github.com/) to get started with Jekyll. *TODO: link to template.*
 
 However, before creating a website, you should have some content ready and with Prose it is easy to savely create and share that potential website content.
 
@@ -84,4 +85,3 @@ Prose is closely tied to Git and GitHub. We intentionally made the process trans
 
 - Accessing revision history through the interface
 - Invite collaborators right from the interface, and see who has access to the documents.
-
