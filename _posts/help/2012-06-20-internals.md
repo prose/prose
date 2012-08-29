@@ -13,7 +13,7 @@ published: true
 
 Prose is just a static webpage and doesn't require any server-side bits. Instead it interacts directly with the GitHub API for managing your repo's contents. This means there's nothing to setup, no database no fileserver etc. This is imporant because we want to make it easy for you to get involved in the development.
 
-Using just the GitHub API for powering our editor was not easy. GitHub just offers a low level API (around trees and blobs), which is challening in many cases, as it requires a lot of subsequent requests to do simple things, which slows down site performance. That's why creating a good architecture was crucial to manage the complexity. We ended up in abstracting the data layer into a separate module, Github.js.
+Using just the GitHub API for powering our editor was not easy. GitHub just offers a low level API (around trees and blobs), which is challenging in many cases, as it requires a lot of subsequent requests to do simple things, which slows down site performance. That's why creating a good architecture was crucial to manage the complexity. We ended up in abstracting the data layer into a separate module, Github.js.
 
 
 ## Github.js
