@@ -64,10 +64,6 @@ The GitHub API comes with a number of limitations because of its low-level natur
   
   When listing the repositories, we can't determine which of them are actual Jekyll sites. Theoretically we could, by issuing a separate request that fetches repository information (such as branches) and looks for a `_config.yml` file. However this is way too slow, so we have to do it on-demand as you click on a repository.
 
-- Organizations
-  
-  Repositories that live within your organizations can only be accessed by entering the url (`/:organization/:repo/:branch`) manually.
-
 - Deleting and renaming files
   
   This requires a full tree to be written involving a new commit that points to that tree. In fact this is not a big problem with small repositories, but once they get bigger it's not only a performance issue, you'll get errors. Be aware that you may not (yet) be able to rename or delete files when working with bigger repositories.
