@@ -40,7 +40,7 @@ Once you have selected a repository, you can browse your posts and sub-folders i
 
 # Edit Posts
 
-Once the file has been loaded, all you have to do is pointing your cursor to the text and start typing. We're providing basic syntax highlighting for Markdown to assist you during the writing process.
+Once the file has been loaded, all you have to do is point your cursor to the text and start typing. We're providing basic syntax highlighting for Markdown to assist you during the writing process.
 
 ![Edit](https://github.com/prose/prose/raw/gh-pages/images/screenshots/edit.png)
 
