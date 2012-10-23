@@ -565,6 +565,7 @@ body.start {
 
 .search-menu .actions a {
   display: block;
+  float: left;
   font-weight: bold;
   background: #434C50 url('images/sprite.png') -415px -85px no-repeat;
   color: #fff;
@@ -577,6 +578,16 @@ body.start {
   border-radius: 4px;
   opacity: 0.8;
   line-height: 40px;
+}
+.search-menu .actions a.new-file {
+  border-radius: 4px 0 0 4px;
+}
+.search-menu .actions a.upload {
+  border-radius: 0 4px 4px 0;
+  margin-left: 1px;
+}
+.search-menu #upload-input {
+  display: none;
 }
 
 .search-menu .actions a:hover {

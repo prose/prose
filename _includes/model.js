@@ -450,3 +450,30 @@ function loadPost(user, repo, branch, path, file, cb) {
     }));
   });
 }
+
+// Insert uploaded data
+// -------
+// 
+// Populate a post with uploaded file data
+
+function insertUpload(post, cb) {
+  if (app.upload) {
+    // upload -> .name .type .size .lastModifiedDate
+
+    var reader = new FileReader();
+    var that = this;
+    reader.onload = function(e) {
+      if (post.persisted) {
+        post.prevContent = post.content;
+      }
+      post.content = e.target.result;
+      post.file = app.upload.name;
+      app.upload = null;
+      cb(post);
+    };
+    reader.readAsText(app.upload);//reader.readAsBinaryString(upload);
+  }
+  else {
+    cb(post);
+  }
+}
