@@ -47,11 +47,22 @@ views.Post = Backbone.View.extend({
   },
 
   showDiff: function() {
-    var text1 = this.prevContent;
-    var text2 = this.serialize();
-    var d = this.dmp.diff_main(text1, text2);
-    this.dmp.diff_cleanupSemantic(d);
-    var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, "");
+    var diff;
+
+    if (this.model.binary) {
+      var newName = $('input.filepath').val()
+      var oldContent = "prevContent" in this.model ? this.model.prevContent : this.model.content;
+      var oldFile = templates.binary_file(_.extend(this.model, { size: _.filesize(oldContent.length) }));
+      var newFile = templates.binary_file(_.extend(this.model, { file: newName, size: _.filesize(this.model.content.length) }));
+      diff = '<div class="binary-diff">' + oldFile + newFile + '</div>';
+    }
+    else {
+      var text1 = this.prevContent;
+      var text2 = this.serialize();
+      var d = this.dmp.diff_main(text1, text2);
+      this.dmp.diff_cleanupSemantic(d);
+      diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, "");
+    }
     $('.diff-wrapper .diff').html(diff);
   },
 
@@ -102,7 +113,7 @@ views.Post = Backbone.View.extend({
     } else {
       $('.CodeMirror-scroll').height($('.document').height());
     }
-    this.editor.refresh();
+    if (this.editor) this.editor.refresh();
     if (this.metadataEditor) this.metadataEditor.refresh();
   },
 
@@ -304,13 +315,18 @@ views.Post = Backbone.View.extend({
   updateFile: function() {
     var that = this,
         filepath = $('input.filepath').val(),
-        filename = _.extractFilename(filepath)[1],
+        filename = this.model.file = _.extractFilename(filepath)[1],
         filecontent = this.serialize(),
         message = this.$('.commit-message').val(),
         method = this.model.writeable ? this.saveFile : this.sendPatch;
 
     // Update content
-    this.model.content = this.editor.getValue();
+    if (this.model.binary) {
+      this.showBinaryFile();
+    }
+    else {
+      this.model.content = this.editor.getValue();
+    }
 
     // Delegate
     method.call(this, filepath, filename, filecontent, message);
@@ -363,11 +379,23 @@ views.Post = Backbone.View.extend({
     }, 100);
   },
 
+  showBinaryFile: function() {
+    var that = this;
+    setTimeout(function() {
+      that.$("#code").html(templates.binary_file(_.extend(that.model, { size: _.filesize(that.model.content.length) })));
+    }, 100);
+  },
+
   render: function() {
     var that = this;
     $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
     if (this.model.published) $(this.el).addClass('published');
-    this.initEditor();
+    if (this.model.binary) {
+      this.showBinaryFile();
+    }
+    else {
+      this.initEditor();
+    }
     return this;
   }
 });

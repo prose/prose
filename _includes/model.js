@@ -385,6 +385,7 @@ function emptyPost(user, repo, branch, path, cb) {
   }
 
   cb(null, {
+    "binary": false,
     "metadata": metadata,
     "raw_metadata": rawMetadata,
     "content": "# How does it work?\n\nEnter Text in Markdown format.",
@@ -438,15 +439,33 @@ function loadPost(user, repo, branch, path, file, cb) {
       return res;
     }
 
-    var post = parse(data);
-    cb(err, _.extend(post, {
-      "sha": commit,
-      "markdown": _.markdown(file),
-      "jekyll": _.jekyll(path, file),
-      "repo": repo,
-      "path": path,
-      "file": file,
-      "persisted": true
-    }));
+    if (_.binary(data)) {
+      cb(null, {
+        "binary": true,
+        "jekyll": false,
+        "markdown": false,
+        "metadata": {},
+        "raw_metadata": "",
+        "content": data,
+        "repo": repo,
+        "path": path,
+        "persisted": true,
+        "writeable": true,
+        "file": file
+      });
+    }
+    else {
+      var post = parse(data);
+      cb(err, _.extend(post, {
+        "binary": false,
+        "sha": commit,
+        "markdown": _.markdown(file),
+        "jekyll": _.jekyll(path, file),
+        "repo": repo,
+        "path": path,
+        "file": file,
+        "persisted": true
+      }));
+    }
   });
 }

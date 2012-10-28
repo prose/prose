@@ -1440,6 +1440,66 @@ ul.site li a {
   font-family: Menlo, monospace !important;
   }
 
+.document .binary-file {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  width: 140px;
+  height: 180px;
+  margin: 100px auto 0 auto;
+  
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 3px 40px 3px 3px;
+  
+  background: url('images/sprite.png') -450px -400px no-repeat;
+  background-color: #F2F6F8;
+  }
+
+.document .binary-file:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em;
+  }
+  
+.document .binary-file .filename {
+  display: inline-block;
+  vertical-align: middle;
+  width: 116px;
+  font-size: 12px;
+  text-align: center;
+  overflow: hidden;
+  word-wrap: break-word;
+  color: #526066;
+  margin: 0 10px;
+  }
+
+.document .binary-file .filesize {
+  font-size: 10px;
+  }
+
+.document .binary-diff {
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  }
+
+.document .binary-diff:after {
+  color: #E7EEF2;
+  content: "→";
+  font-size: 100px;
+  left: 50%;
+  text-indent: -0.3em;
+  position: absolute;
+  top: 180px;
+  }
+
+.document .binary-diff .binary-file {
+  display: inline-block;
+  margin: 100px;
+  }
+
 /* ------------------------------------------
   Rendered Markdown
 ---------------------------------------------*/
