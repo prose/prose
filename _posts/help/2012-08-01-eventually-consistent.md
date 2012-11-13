@@ -39,28 +39,28 @@ The most essential problem is that it's pretty hard to get involved. What if you
 
 ## Suggest a change
 
-Once the user clicked on this link they are able to edit the contents of the article they was just reading.
+Once the user clicks on this link, they are able to edit the contents of the article they were just reading.
 
 ![Content shown in Prose](/images/screenshots/eventually-consistent/prose-document.png)
 
-Prose requires you to be authenticated with GitHub first, once that is done you will be able to edit that content and send a patch, which looks like this:
+Prose requires you to be authenticated with GitHub first; once that is done you will be able to edit that content and send a patch, which looks like this:
 
 ![Send patch](/images/screenshots/eventually-consistent/send-patch.png)
 
 
 ## Applying a change
 
-Once a suggestion, a patch has been submitted, the original author gets notified via GitHub. In order to apply that change the author has to review the Pull Request that has been created automatically.
+When a patch is submitted, Prose automatically generates a Pull Request.  The original author is notified via GitHub and must then review and accept the Pull Request to apply the change.
 
 ![Apply changes](/images/screenshots/eventually-consistent/apply-patch.png)
 
 ## The Result
 
-Seconds later the applied fix will be visible on the actual website.
+Seconds later, the applied fix will be visible on the actual website.
 
 ![Voilá](/images/screenshots/eventually-consistent/updated-website.png)
 
 
 ## Finally
 
-This article isn't perfect either, help make it better by submitting a [patch](http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-08-01-eventually-consistent.md).
+This article isn't perfect either; help make it better by submitting a [patch](http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-08-01-eventually-consistent.md).
