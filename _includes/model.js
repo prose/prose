@@ -332,10 +332,7 @@ function patchFile(user, repo, branch, path, content, message, cb) {
         base: app.state.branch,
         head: app.username + ":" + "prose-patch",
       };
-      createPullRequest(app.state.user, app.state.repo, pull, function(err) {
-        window.forkedRepo = github().getRepo(app.username, repo);
-        forkedRepo.deleteRef('heads/prose-patch', cb);
-      });
+      createPullRequest(app.state.user, app.state.repo, pull, cb);
     });
   });
 }
