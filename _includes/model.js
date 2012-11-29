@@ -54,7 +54,7 @@ function authenticate() {
   // Handle Code
   if (match) {
     $.getJSON('{{site.gatekeeper_url}}/authenticate/'+match[1], function(data) {
-      $.cookie('oauth-token', data.token);
+      $.cookie('oauth-token', data.token, { secure: true });
       window.authenticated = true;
       // Adjust URL
       var regex = new RegExp("\\?code="+match[1]);
