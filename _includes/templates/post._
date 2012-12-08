@@ -12,7 +12,7 @@
     </div>
 
     <div class="fr menu-item save-state">
-      <input type="text" class="commit-message" value="Updated."/>
+      <input type="text" class="commit-message" value=""/>
       <div class="state fl">
         <% if (writeable) { %><a class='toggle-options button' href='#'>&nbsp;</a><% } %>
         
