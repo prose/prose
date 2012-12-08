@@ -2,9 +2,9 @@ auto: true
 server: true
 pygments: true
 permalink: none
-baseurl: "prose/"
-oauth_client_id: b0b021a756dfce6d31bc
-gatekeeper_url: http://project-open-data.herokuapp.com
+baseurl: ""
+oauth_client_id: 8c0597999e07af860296
+gatekeeper_url: http://localhost:9999
 exclude:
 - .gitignore
 - README.md
