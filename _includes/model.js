@@ -353,7 +353,7 @@ function loadPost(user, repo, branch, path, file, cb) {
       };
 
       var res = { raw_metadata: "", published: false };
-      res.content = content.replace(/(---\n)((.|\n)*?)\n---\n?/, function(match, dashes, frontmatter) {
+      res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function(match, dashes, frontmatter) {
         res.raw_metadata = frontmatter;
         res.published = published(frontmatter);
         return "";
