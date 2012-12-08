@@ -41,7 +41,7 @@ views.Post = Backbone.View.extend({
     if (this.editor) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
     if (!this.$('.button.save').hasClass('saving')) {
-      this.$('.button.save').html(this.model.writeable ? "SAVE" : "SEND PATCH");
+      this.$('.button.save').html(this.model.writeable ? "SAVE" : "SUBMIT CHANGE");
       this.$('.button.save').removeClass('inactive error');      
     }
   },
@@ -61,7 +61,7 @@ views.Post = Backbone.View.extend({
     }
 
     this.hideMeta();
-    this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? "SAVE" : "SEND PATCH") : "COMMIT");
+    this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? "SAVE" : "SUBMIT CHANGE") : "COMMIT");
     this.$('.button.save').toggleClass('confirm');
     this.$('.document-menu').toggleClass('commit');    
     this.$('.button.cancel-save').toggle();
@@ -242,7 +242,7 @@ views.Post = Backbone.View.extend({
         patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
           if (err) {
             _.delay(function() { 
-              that.$('.button.save').html("SEND PATCH");
+              that.$('.button.save').html("SUBMIT CHANGE");
               that.$('.button.save').removeClass('error');
               that.$('.button.save').addClass('inactive');
             }, 3000);
@@ -255,14 +255,14 @@ views.Post = Backbone.View.extend({
           that.model.file = filename;
           that.updateURL();
           that.prevContent = filecontent;
-          that.updateSaveState('PATCH SENT', 'inactive');
+          that.updateSaveState('CHANGE SUBMITTED', 'inactive');
         });
       } else {
         that.updateSaveState('! Metadata', 'error');
       }
     }
 
-    that.updateSaveState('SEND PATCH ...', 'inactive saving');
+    that.updateSaveState('SUBMITTING CHANGE ...', 'inactive saving');
     patch();
 
     return false;
