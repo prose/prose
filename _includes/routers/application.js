@@ -3,7 +3,7 @@
 // The Router
 // ---------------
 
-routers.Application = Backbone.Router.extend({
+routers.Application = Backbone.Router.extend({ 
   initialize: function() {
     // Using this.route, because order matters
     this.route(/(.*\/.*)/, 'path', this.path);
@@ -13,6 +13,7 @@ routers.Application = Backbone.Router.extend({
   },
 
   start: function() {
+    return this.navigate( 'benbalter/benbalter.github.com/tree/master/_posts', true );
     if (confirmExit()) {
       app.state = {
         user: "",
