@@ -16,8 +16,8 @@ This is a first release dedicated to developers at this early stage. It will be 
 
 ## Contributors
 
-- [Saman Bemel Benrud](http:/github.com/samanpwbb) - Design
-- [Michael Aufreiter](http:/github.com/michael) - Code
+- [Saman Bemel Benrud](https://github.com/samanpwbb) - Design
+- [Michael Aufreiter](https://github.com/michael) - Code
 
 Now that you're here, why not start contributing as well? :)
 
