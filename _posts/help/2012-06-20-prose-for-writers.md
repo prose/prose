@@ -73,7 +73,7 @@ You might want to structure your document repository, once you get more and more
 
 Remember that you always have the option to turn your document repository in a Jekyll website, featuring your own design. You can use our [template](http://bootstrap.prose.io/) to get started with Jekyll.
 
-However, before creating a website, you should have some content ready and with Prose it is easy to savely create and share that potential website content.
+However, before creating a website, you should have some content ready and with Prose it is easy to safely create and share that potential website content.
 
 
 ## Background
