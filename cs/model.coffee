@@ -23,7 +23,7 @@ randomString = ->
 # Smart caching (needed for managing subsequent updates)
 # -------
 getRepo = (user, repo) ->
-  return currentRepo.instance  if currentRepo.user is user and currentRepo.repo is repo # Cached
+  return app.currentRepo.instance if app.currentRepo.user is user and app.currentRepo.repo is repo # Cached
   currentRepo =
     user: user
     repo: repo
@@ -198,7 +198,6 @@ loadPosts = (user, reponame, branch, path, cb) ->
             b isnt branch
           )
           cb null, getFiles(tree, path, "")
-
 
 
   repo = getRepo(user, reponame)
@@ -381,7 +380,7 @@ loadPost = (user, repo, branch, path, file, cb) ->
       persisted: true
     )
 
-currentRepo =
+app.currentRepo =
   user: null
   repo: null
   instance: null

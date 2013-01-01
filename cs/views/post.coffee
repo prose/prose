@@ -300,7 +300,7 @@ class app.views.Post extends Backbone.View
 
   render: ->
     that = this
-    $(@el).html templates.post(_.extend(@model,
+    $(@el).html app.templates.post(_.extend(@model,
       mode: @mode
     ))
     $(@el).addClass "published"  if @model.published
