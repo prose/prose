@@ -18,16 +18,21 @@ class app.routers.Application extends Backbone.Router
     @route "", "start", @start
 
   start: ->
-    if confirmExit()
-      app.state =
-        user: ""
-        repo: ""
-        mode: ""
-        branch: ""
-        path: ""
 
+    return unless  confirmExit()
+    
+    app.state =
+      user: ""
+      repo: ""
+      mode: ""
+      branch: ""
+      path: ""
+      
+    if app.config.rootUrl?
+      @navigate app.config.rootUrl, true
+    else 
       app.instance.start()
-
+    
   extractURL: (url) ->
     url = url.split("/")
     app.state =

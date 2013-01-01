@@ -29,7 +29,7 @@
 
 
 window.app = {
-    config: {},
+    config: {rootUrl: '{{ site.rootUrl }}'},
     models: {},
     views: {},
     routers: {},

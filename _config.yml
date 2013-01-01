@@ -8,3 +8,4 @@ gatekeeper_url: http://gatekeeper.benbalter.com
 exclude:
 - .gitignore
 - README.md
+rootUrl: benbalter/benbalter.github.com/tree/master/_posts
