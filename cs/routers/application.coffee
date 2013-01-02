@@ -19,7 +19,7 @@ class app.routers.Application extends Backbone.Router
 
   start: ->
 
-    return unless  confirmExit()
+    return unless confirmExit()
     
     app.state =
       user: ""
@@ -66,12 +66,14 @@ class app.routers.Application extends Backbone.Router
     app.instance.posts username, reponame
 
   profile: (username) ->
-    if confirmExit()
-      app.state =
-        user: username
-        repo: ""
-        mode: ""
-        branch: ""
-        path: ""
+  
+    return unless confirmExit()
+    
+    app.state =
+      user: username
+      repo: ""
+      mode: ""
+      branch: ""
+      path: ""
 
-      app.instance.profile username
+    app.instance.profile username
