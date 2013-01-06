@@ -20,19 +20,19 @@ class app.routers.Application extends Backbone.Router
   start: ->
 
     return unless confirmExit()
-    
+
     app.state =
       user: ""
       repo: ""
       mode: ""
       branch: ""
       path: ""
-      
+
     if app.config.rootUrl?
       @navigate app.config.rootUrl, true
-    else 
+    else
       app.instance.start()
-    
+
   extractURL: (url) ->
     url = url.split("/")
     app.state =
@@ -66,9 +66,9 @@ class app.routers.Application extends Backbone.Router
     app.instance.posts username, reponame
 
   profile: (username) ->
-  
+
     return unless confirmExit()
-    
+
     app.state =
       user: username
       repo: ""

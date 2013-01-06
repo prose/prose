@@ -36,13 +36,13 @@ getRepo = (user, repo) ->
 authenticate = ->
   return window.authenticated = true  if $.cookie("oauth-token")
   match = window.location.href.match(/\?code=([a-z0-9]*)/)
-  
+
   # Handle Code
   if match
     $.getJSON "{{site.gatekeeper_url}}/authenticate/" + match[1], (data) ->
       $.cookie "oauth-token", data.token
       window.authenticated = true
-      
+
       # Adjust URL
       regex = new RegExp("\\?code=" + match[1])
       window.location.href = window.location.href.replace(regex, "").replace("&state=", "")
@@ -56,7 +56,7 @@ logout = ->
 
 # Load Application
 # -------
-# 
+#
 # Load everything that's needed for the app + header
 loadApplication = (cb) ->
   if window.authenticated
@@ -101,7 +101,7 @@ loadApplication = (cb) ->
 
 # Load Repos
 # -------
-# 
+#
 # List all available repositories for a certain user
 loadRepos = (username, cb) ->
   user = github().getUser()
@@ -125,7 +125,7 @@ loadRepos = (username, cb) ->
 
 # Load Branches
 # -------
-# 
+#
 # List all available branches of a repository
 loadBranches = (user, repo, cb) ->
   repo = getRepo(user, repo)
@@ -143,28 +143,28 @@ getFiles = (tree, path, searchstr) ->
     false
   matchesSearch = (file) ->
     return true  unless searchstr
-    
+
     # Insert crazy search pattern match algorithm
     file.path.toLowerCase().search(searchstr.toLowerCase()) >= 0
   pathMatches = 0
-  
+
   # Filter
   files = _.filter(tree, (file) ->
     matchSearch = new RegExp("(" + searchstr + ")", "i")
-    
+
     # Depending on search use full path or filename
     file.name = (if searchstr then file.path else _.extractFilename(file.path)[1])
-    
+
     # Scope name to current path
     file.name = file.name.replace(new RegExp("^" + path + "/?"), "")
-    
+
     # Mark match
     file.name = file.name.replace(matchSearch, "<b>$1</b>")
     return false  unless matchesPath(file)
     pathMatches += 1
     matchesSearch file
   )
-  
+
   # Sort by name
   files = _.sortBy(files, (entry) ->
     ((if entry.type is "tree" then "A" else "B")) + entry.path
@@ -175,7 +175,7 @@ getFiles = (tree, path, searchstr) ->
 
 # Load Posts
 # -------
-# 
+#
 # List all postings for a given repo+branch+path plus load _config.yml
 loadPosts = (user, reponame, branch, path, cb) ->
   loadConfig = (cb) ->
@@ -217,7 +217,7 @@ serialize = (content, metadata) ->
 
 # Save File
 # -------
-# 
+#
 # Store a file to GitHub
 saveFile = (user, repo, branch, path, content, message, cb) ->
   repo = getRepo(user, repo)
@@ -225,10 +225,10 @@ saveFile = (user, repo, branch, path, content, message, cb) ->
 
 # Fork repository
 # -------
-# 
+#
 # Creates a fork for the current user
 forkRepo = (user, reponame, branch, cb) ->
-  
+
   # Wait until contents are ready.
   onceReady = (cb) ->
     _.delay (->
@@ -241,10 +241,10 @@ forkRepo = (user, reponame, branch, cb) ->
   repo.fork (err) ->
     onceReady ->
       repo.getRef "heads/" + branch, (err, commitSha) ->
-        
+
         # Create temp branch
         forkedRepo.listBranches (unused, branches) ->
-          
+
           #find the lowest patch number
           i = 1
           i++  until $.inArray("prose-patch-" + i, branches) is -1
@@ -260,7 +260,7 @@ forkRepo = (user, reponame, branch, cb) ->
 
 # New pull request
 # -------
-# 
+#
 # Creates a new pull request
 createPullRequest = (user, repo, pull, cb) ->
   repo = getRepo(user, repo)
@@ -270,7 +270,7 @@ createPullRequest = (user, repo, pull, cb) ->
 
 # Patch File
 # -------
-# 
+#
 # Send a pull request on GitHub
 patchFile = (user, repo, branch, path, content, message, cb) ->
   forkRepo user, repo, branch, (err, info) ->
@@ -301,7 +301,7 @@ movePost = (user, repo, branch, path, newPath, cb) ->
 
 # New Post
 # -------
-# 
+#
 # Prepare new empty post
 emptyPost = (user, repo, branch, path, cb) ->
   rawMetadata = "layout: default\npublished: false"
@@ -317,7 +317,7 @@ emptyPost = (user, repo, branch, path, cb) ->
         metadata = jsyaml.load(rawMetadata)
       catch err
         console.log "ERROR encoding YAML"
-  
+
   # No-op
   cb null,
     metadata: metadata
@@ -333,17 +333,17 @@ emptyPost = (user, repo, branch, path, cb) ->
 
 # Load Post
 # -------
-# 
+#
 # List all postings for a given repository
 # Looks into _posts/blog
 loadPost = (user, repo, branch, path, file, cb) ->
   repo = getRepo(user, repo)
   repo.read branch, (if path then path + "/" + file else file), (err, data, commit) ->
-    
+
     # Given a YAML front matter, determines published or not
     published = (metadata) ->
       !!metadata.match(/published: true/)
-    
+
     # Extract YAML from a post, trims whitespace
     parse = (content) ->
       # normalize a little bit

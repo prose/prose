@@ -37,7 +37,7 @@ _.validPathname = (path) ->
 
 # Extract filename from a given path
 # -------
-# 
+#
 # _.extractFilename('path/to/foo.md')
 # => ['path/to', 'foo.md']
 _.extractFilename = (path) ->
@@ -121,7 +121,7 @@ _.toYAML = (metadata) ->
 
 # Only parses first level of YAML file
 # Considers the whole thing as a key-value pair party
-# 
+#
 # name: "michael"
 # age: 25
 # friends:
@@ -130,8 +130,8 @@ _.toYAML = (metadata) ->
 # block: |
 #   Hello World
 #   Another line
-#   24123 
-# 
+#   24123
+#
 # =>
 # {
 #   name: 'michael',
@@ -139,7 +139,7 @@ _.toYAML = (metadata) ->
 #   friends: "- Michael\n- John",
 #   block: "Hello World\nAnother line\n24123"
 # }
-# 
+#
 # var yaml = 'name:     "michael"\nage: 25\nfriends:\n- Michael\n- John\nblock: |\n  hey ho\n  some text\n  yay';
 # console.log(_.fromYAML(yaml));
 _.fromYAML = (rawYAML) ->
@@ -161,7 +161,7 @@ _.fromYAML = (rawYAML) ->
       if value.match(/\|$/)
         blockValue = true
         value = ""
-    
+
     # console.log(key, value);
     else
       value = []  unless _.isArray(value)
@@ -176,7 +176,7 @@ _.fromYAML = (rawYAML) ->
 
 # Chunked Path
 # -------
-# 
+#
 # _.chunkedPath('path/to/foo')
 # =>
 # [
