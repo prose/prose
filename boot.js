@@ -34,13 +34,11 @@ window.app = {
     views: {},
     routers: {},
     utils: {},
-    templates: _($('script[name]')).reduce(function(memo, el) {
-        memo[el.getAttribute('name')] = _(el.innerHTML).template();
-        return memo;
-    }, {}),
+    templates: {},
     state: {'repo': ''},
     instance: {}
 };
 
+{% include templates.js %}
 {% include app.js %}
 

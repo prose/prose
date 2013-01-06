@@ -17,6 +17,7 @@ module.exports = (grunt) ->
       app:
         files:
           "_includes/app.js": "_includes/app.js"
+          "_includes/templates.js": "_includes/templates.js"
           
     clean:
       app: "_app.coffee"
@@ -28,6 +29,15 @@ module.exports = (grunt) ->
     coffeelintOptions:
       max_line_length:
         level: "ignore"
+        
+    jst:
+      app:
+        options:
+          processName: (filename) ->
+            filename.replace('_templates/', '').replace('._', '')
+          namespace: "app.templates"
+        files:
+          "_includes/templates.js": "_templates/*._"
       
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
@@ -42,4 +52,4 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-less'
   grunt.loadNpmTasks 'grunt-contrib-jst'
           
-  grunt.registerTask 'default', ["concat", "coffeelint", "coffee", "uglify", "clean"]
+  grunt.registerTask 'default', ["concat", "coffeelint", "coffee", "jst", "uglify", "clean"]

@@ -8,4 +8,7 @@ gatekeeper_url: http://gatekeeper.benbalter.com
 exclude:
 - .gitignore
 - README.md
+- node_modules
+- package.json
+- Gruntfile.coffee
 rootUrl: benbalter/benbalter.github.com/tree/master/_posts
