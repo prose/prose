@@ -2,7 +2,27 @@ module.exports = (grunt) ->
   
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
-
+    
+    watch:
+      cs:
+        files: ["_cs/*", "_cs/*/*"]
+        tasks: [ 'coffeelint', 'concat', 'coffee']
+        options:
+          interrupt: true
+          forceWatchMethod: 'old'
+      jst:
+        files: ["_templates/*"]
+        tasks: 'jst'
+        options:
+          interrupt: true
+          forceWatchMethod: 'old' 
+      css:
+        files: ["_styles/*"]
+        tasks: 'mincss'
+        options:
+          interrupt: true
+          forceWatchMethod: 'old'
+          
     concat:
       app:
         src:  [ "_cs/views/*", "_cs/routers/*", "_cs/util.coffee", "_cs/model.coffee", "_cs/init.coffee"]
@@ -38,6 +58,17 @@ module.exports = (grunt) ->
           namespace: "app.templates"
         files:
           "_includes/templates.js": "_templates/*._"
+          
+    mincss:
+      app:
+        files:
+          "_includes/styles/style.css": "_styles/style.css" 
+      reset:
+        files:  
+          "_includes/styles/reset.css": "_styles/reset.css" 
+      codemiror:
+        files:
+          "_includes/styles/codemirror.css": "_styles/codemirror.css" 
       
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
@@ -52,4 +83,4 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-less'
   grunt.loadNpmTasks 'grunt-contrib-jst'
           
-  grunt.registerTask 'default', ["concat", "coffeelint", "coffee", "jst", "uglify", "clean"]
+  grunt.registerTask 'default', ["concat", "coffeelint", "coffee", "jst", "uglify", "mincss", "clean"]
