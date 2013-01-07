@@ -48,8 +48,7 @@ class app.views.Posts extends Backbone.View
       current_path: app.state.path
     ))
     _.delay (->
-      console.log 'here'
-      #that.renderResults()
-      #$("#search_str").focus()
+      that.renderResults()
+      $("#search_str").focus()
     ), 1
     this
