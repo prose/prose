@@ -377,6 +377,11 @@ function emptyPost(user, repo, branch, path, cb) {
       rawMetadata = cfg.prose.metadata[path];
       try {
         metadata = jsyaml.load(rawMetadata);
+        if (metadata.date=="CURRENT_DATETIME") {
+            var current = (new Date()).format('Y-m-d H:i');
+            metadata.date = current;
+            rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+        }
       } catch(err) {
         console.log('ERROR encoding YAML');
         // No-op
