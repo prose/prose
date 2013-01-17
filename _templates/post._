@@ -8,17 +8,17 @@
     </div>
 
     <div class="fl confirm-label">
-      Commit your changes:
+       Describe your changes:
     </div>
 
     <div class="fr menu-item save-state">
-      <input type="text" class="commit-message" value="Updated."/>
+      <input type="text" class="commit-message" value=""/>
       <div class="state fl">
         <% if (writeable) { %><a class='toggle-options button' href='#'>&nbsp;</a><% } %>
         
         <% if (window.authenticated) { %>
           <a class='cancel-save button' href='#' title="ESC">X</a>
-          <a class='save button inactive' href='#' title="CTRL+S"><%= writeable ? "SAVE" : "SEND PATCH" %></a>
+          <a class='save button inactive' href='#' title="CTRL+S"><%= writeable ? "SAVE" : "SUBMIT CHANGE" %></a>
         <% } %>
       </div>
     </div>

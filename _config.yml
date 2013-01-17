@@ -3,8 +3,12 @@ server: true
 pygments: true
 permalink: none
 baseurl: ""
-oauth_client_id: c602a8bd54b1e774f864
-gatekeeper_url: http://prose-gatekeeper.herokuapp.com
+oauth_client_id: 8c0597999e07af860296
+gatekeeper_url: http://gatekeeper.benbalter.com
 exclude:
 - .gitignore
 - README.md
+- node_modules
+- package.json
+- Gruntfile.coffee
+rootUrl: benbalter/benbalter.github.com/tree/master/_posts

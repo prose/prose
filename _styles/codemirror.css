@@ -1,0 +1,278 @@
+.CodeMirror {
+  line-height: 1em;
+  font-family: monospace;
+
+  /* Necessary so the scrollbar can be absolutely positioned within the wrapper on Lion. */
+  position: relative;
+  /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
+  overflow: hidden;
+}
+
+.CodeMirror.CodeMirror-wrap {
+  border-right: 1px solid #C3CCD0;
+  }
+  
+.metadata .CodeMirror.CodeMirror-wrap {
+  border-right: 1px solid rgba(0,0,0, 0.2);
+}
+
+.CodeMirror-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 300px;
+  /* This is needed to prevent an IE[67] bug where the scrolled content
+     is visible outside of the scrolling box. */
+  position: relative;
+  outline: none;
+}
+
+/* Vertical scrollbar */
+.CodeMirror-scrollbar {
+  float: right;
+  overflow-x: hidden;
+  overflow-y: scroll;
+
+  /* This corrects for the 1px gap introduced to the left of the scrollbar
+     by the rule for .CodeMirror-scrollbar-inner. */
+  margin-left: -1px;
+}
+.CodeMirror-scrollbar-inner {
+  /* This needs to have a nonzero width in order for the scrollbar to appear
+     in Firefox and IE9. */
+  width: 1px;
+}
+.CodeMirror-scrollbar.cm-sb-overlap {
+  /* Ensure that the scrollbar appears in Lion, and that it overlaps the content
+     rather than sitting to the right of it. */
+  position: absolute;
+  z-index: 1;
+  float: none;
+  right: 0;
+  min-width: 12px;
+}
+.CodeMirror-scrollbar.cm-sb-nonoverlap {
+  min-width: 12px;
+}
+.CodeMirror-scrollbar.cm-sb-ie7 {
+  min-width: 18px;
+}
+
+.CodeMirror-gutter {
+  position: absolute; left: 0; top: 0;
+  z-index: 10;
+  background-color: #f7f7f7;
+  border-right: 1px solid #eee;
+  min-width: 2em;
+  height: 100%;
+}
+.CodeMirror-gutter-text {
+  text-align: right;
+  padding: .4em .2em .4em .4em;
+  white-space: pre !important;
+  cursor: default;
+}
+.CodeMirror-lines {
+  padding: .4em;
+  white-space: pre;
+  cursor: text;
+}
+.CodeMirror-lines * {
+  /* Necessary for throw-scrolling to decelerate properly on Safari. */
+  pointer-events: none;
+}
+
+.CodeMirror pre {
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+  border-width: 0; margin: 0; padding: 0; background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0; margin: 0;
+  white-space: pre;
+  word-wrap: normal;
+  line-height: inherit;
+  color: inherit;
+}
+
+.CodeMirror-wrap pre {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: normal;
+}
+.CodeMirror-wrap .CodeMirror-scroll {
+  overflow-x: hidden;
+}
+
+.CodeMirror textarea {
+  outline: none !important;
+}
+
+.CodeMirror pre.CodeMirror-cursor {
+  z-index: 10;
+  position: absolute;
+  visibility: hidden;
+  border-left: 1px solid black;
+  border-right: none;
+  width: 0;
+}
+.cm-keymap-fat-cursor pre.CodeMirror-cursor {
+  width: auto;
+  border: 0;
+  background: transparent;
+  background: rgba(0, 200, 0, .4);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#6600c800, endColorstr=#4c00c800);
+}
+/* Kludge to turn off filter in ie9+, which also accepts rgba */
+.cm-keymap-fat-cursor pre.CodeMirror-cursor:not(#nonsense_id) {
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.CodeMirror pre.CodeMirror-cursor.CodeMirror-overwrite {}
+.CodeMirror-focused pre.CodeMirror-cursor {
+  visibility: visible;
+}
+
+div.CodeMirror-selected { background: #d9d9d9; }
+.CodeMirror-focused div.CodeMirror-selected { background: #d7d4f0; }
+
+.CodeMirror-searching {
+  background: #ffa;
+  background: rgba(255, 255, 0, .4);
+}
+
+/* Default theme */
+
+.cm-s-default span.cm-keyword {color: #708;}
+.cm-s-default span.cm-atom {color: #219;}
+.cm-s-default span.cm-number {color: #164;}
+.cm-s-default span.cm-def {color: #00f;}
+.cm-s-default span.cm-variable {color: black;}
+.cm-s-default span.cm-variable-2 {color: #05a;}
+.cm-s-default span.cm-variable-3 {color: #085;}
+.cm-s-default span.cm-property {color: black;}
+.cm-s-default span.cm-operator {color: black;}
+.cm-s-default span.cm-comment {color: #a50;}
+.cm-s-default span.cm-string {color: #a11;}
+.cm-s-default span.cm-string-2 {color: #f50;}
+.cm-s-default span.cm-meta {color: #555;}
+.cm-s-default span.cm-error {color: #f00;}
+.cm-s-default span.cm-qualifier {color: #555;}
+.cm-s-default span.cm-builtin {color: #30a;}
+.cm-s-default span.cm-bracket {color: #cc7;}
+.cm-s-default span.cm-tag {color: #170;}
+.cm-s-default span.cm-attribute {color: #00c;}
+.cm-s-default span.cm-header {color: blue;}
+.cm-s-default span.cm-quote {color: #090;}
+.cm-s-default span.cm-hr {color: #999;}
+.cm-s-default span.cm-link {color: #00c;}
+
+span.cm-header, span.cm-strong {font-weight: bold;}
+span.cm-em {font-style: italic;}
+span.cm-emstrong {font-style: italic; font-weight: bold;}
+span.cm-link {text-decoration: underline;}
+
+div.CodeMirror span.CodeMirror-matchingbracket { /* color: #0f0; */ color: black; background-color: #ccc; }
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
+
+
+
+
+
+/*
+Prose Dark Theme
+Saman Bemel-Benrud, Michael Aufreiter
+*/
+
+.cm-s-prose-dark {
+  line-height: 1.3em;
+}
+.cm-s-prose-dark {
+  font-size: 17px;
+  font-family: Menlo, monospace !important;
+}
+
+.metadata .CodeMirror {
+  /*border: 1px solid #C3CCD0;*/
+}
+
+.cm-s-prose-dark { color: #EBEFE7; }
+.cm-s-prose-dark div.CodeMirror-selected { background: #45443B !important; }
+.cm-s-prose-dark .CodeMirror-cursor { border-left: 2px solid white !important; }
+.cm-s-prose-dark .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
+
+.cm-s-prose-dark .CodeMirror-gutter { background: transparent; border-right:1px solid rgba(0,0,0, 0.2); padding-right:3px; min-width:2.5em; }
+.cm-s-prose-dark .CodeMirror-gutter-text { color: inherit; }
+.cm-s-prose-dark span.cm-keyword { color: inherit; }
+.cm-s-prose-dark span.cm-atom { color: #fff; opacity: 0.4; }
+.cm-s-prose-dark span.cm-number { color: inherit; }
+.cm-s-prose-dark span.cm-def {color: white;}
+.cm-s-prose-dark span.cm-variable { color:inherit; }
+.cm-s-prose-dark span.cm-variable-2 { color: inherit; }
+.cm-s-prose-dark span.cm-variable-3 { color: inherit; }
+.cm-s-prose-dark span.cm-property {color: inherit;}
+.cm-s-prose-dark span.cm-operator {color: inherit;}
+.cm-s-prose-dark span.cm-comment { color: inherit; }
+.cm-s-prose-dark span.cm-string { color: inherit; }
+.cm-s-prose-dark span.cm-string-2 {color: inherit;}
+.cm-s-prose-dark span.cm-meta { color: #fff; opacity: 0.4; }
+.cm-s-prose-dark span.cm-error { color: inherit; }
+.cm-s-prose-dark span.cm-qualifier {color: inherit;}
+.cm-s-prose-dark span.cm-builtin { color: inherit; }
+.cm-s-prose-dark span.cm-bracket { color: inherit; }
+.cm-s-prose-dark span.cm-tag { color: inherit; }
+.cm-s-prose-dark span.cm-attribute {color: inherit;}
+.cm-s-prose-dark span.cm-header {color: inherit;}
+.cm-s-prose-dark span.cm-quote {color: inherit;}
+.cm-s-prose-dark span.cm-hr {color: inherit;}
+.cm-s-prose-dark span.cm-link {color: inherit;}
+
+/*
+Prose Dark Theme
+Saman Bemel-Benrud, Michael Aufreiter
+*/
+
+.cm-s-prose-bright {
+  line-height: 1.3em;
+}
+
+.cm-s-prose-bright {
+  font-family: Menlo, monospace !important;
+  font-size: 17px;
+}
+
+.cm-s-prose-bright {  color: #3D494E; }
+.cm-s-prose-bright div.CodeMirror-selected {background: #AFC3CF !important;} /* 33322B*/
+.cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880 !important; }
+.cm-s-prose-bright .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
+
+div.CodeMirror span.CodeMirror-matchingbracket { /* background: #fff; */ }
+
+.cm-s-prose-bright .CodeMirror-gutter { background: #E7EEF2; border-right:1px solid #C3CCD0;; padding-right:3px; min-width:2.5em; }
+.cm-s-prose-bright .CodeMirror-gutter-text { color: #C3CCD0; }
+
+.cm-s-prose-bright span.cm-keyword { color: inherit; }
+.cm-s-prose-bright span.cm-atom { color: inherit; }
+.cm-s-prose-bright span.cm-number { color: inherit; }
+.cm-s-prose-bright span.cm-def {color: #7AC548;}
+.cm-s-prose-bright span.cm-variable { color:inherit; }
+.cm-s-prose-bright span.cm-variable-2 { color: inherit; }
+.cm-s-prose-bright span.cm-variable-3 { color: inherit; }
+.cm-s-prose-bright span.cm-property {color: #92A75C;}
+.cm-s-prose-bright span.cm-operator {color: #92A75C;}
+.cm-s-prose-bright span.cm-comment { color: #DB6F6F; }
+.cm-s-prose-bright span.cm-string { color: #078FA2;; }
+.cm-s-prose-bright span.cm-string-2 {color: #078FA2;;}
+.cm-s-prose-bright span.cm-meta { color: #728c72; }
+.cm-s-prose-bright span.cm-error { color: #DB6F6F; }
+.cm-s-prose-bright span.cm-qualifier {color: inherit;}
+.cm-s-prose-bright span.cm-builtin { color: inherit; }
+.cm-s-prose-bright span.cm-bracket { color: #DB6F6F; }
+.cm-s-prose-bright span.cm-tag { color: #DB6F6F; }
+.cm-s-prose-bright span.cm-attribute {color: inherit;}
+.cm-s-prose-bright span.cm-header {color:inherit; font-weight: bold;}
+.cm-s-prose-bright span.cm-quote {color: #078FA2;}
+.cm-s-prose-bright span.cm-hr {color: #515F66;}
+.cm-s-prose-bright span.cm-link {color: #DB6F6F;}
+.cm-s-prose-bright span.cm-em {color: inherit; font-style: italic;}
+.cm-s-prose-bright span.cm-strong {color: inherit; font-weight: bold;}
