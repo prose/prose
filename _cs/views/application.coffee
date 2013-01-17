@@ -33,7 +33,7 @@ class app.views.Application extends Backbone.View
     else
       $("#main").empty()
     @mainView = view
-    $(view.el).appendTo @$("#main")
+    $(view.el).appendTo jQuery("#main")
 
   static: ->
     @header.render()

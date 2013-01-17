@@ -31,9 +31,7 @@ class app.views.Posts extends Backbone.View
       name: path
 
   renderResults: ->
-    @$("#files").html app.templates.files(_.extend(@model, app.state,
-      current_path: app.state.path
-    ))
+    @$("#files").html app.templates.files _.extend @model, app.state, current_path: app.state.path
     caption = @model.files.length + ""
     searchstr = @$("#search_str").val()
     if searchstr
@@ -43,12 +41,9 @@ class app.views.Posts extends Backbone.View
     @$(".results").html caption
 
   render: ->
-    that = this
-    @$el.html app.templates.posts(_.extend(@model, app.state,
-      current_path: app.state.path
-    ))
-    _.delay (->
-      that.renderResults()
+    @$el.html app.templates.posts _.extend @model, app.state, current_path: app.state.path
+    _.delay =>
+      @.renderResults()
       $("#search_str").focus()
-    ), 1
+    , 1
     this
