@@ -19,7 +19,7 @@ class app.routers.Application extends Backbone.Router
 
   start: ->
 
-    return unless confirmExit()
+    return unless app.instance.confirmExit()
 
     app.state =
       user: ""
@@ -67,7 +67,7 @@ class app.routers.Application extends Backbone.Router
 
   profile: (username) ->
 
-    return unless confirmExit()
+    return unless app.instance.confirmExit()
 
     app.state =
       user: username

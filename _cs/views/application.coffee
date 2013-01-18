@@ -22,7 +22,7 @@ class app.views.Application extends Backbone.View
     @header = new app.views.Header(model: @model)
     lazyLayout = _.debounce(calculateLayout, 300)
     $(window).resize lazyLayout
-
+    
   render: ->
     $(@header.render().el).prependTo @el
     @
@@ -123,3 +123,9 @@ class app.views.Application extends Backbone.View
 
   loaded: ->
     $("#main .loading").remove()
+    
+  confirmExit: =>
+    return null unless @mainView?
+    return null unless @mainView.dirty
+    
+    "You have unsaved changes. Are you sure you want to leave?"
