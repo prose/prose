@@ -123,9 +123,11 @@ class app.views.Application extends Backbone.View
 
   loaded: ->
     $("#main .loading").remove()
-    
-  confirmExit: =>
+  
+  #should return null if no need to confirm, otherwise the message to confirm with
+  confirmExit: (e) =>
     return null unless @mainView?
     return null unless @mainView.dirty
-    
-    "You have unsaved changes. Are you sure you want to leave?"
+
+    msg = "You have unsaved changes. Are you sure you want to leave?"
+    return if e? then msg else return !confirm msg
