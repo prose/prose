@@ -1,5 +1,3 @@
-authenticate()
-
 window.confirmExit = (e) ->
   return true unless window.app.instance.mainView?
   return true unless window.app.instance.mainView.dirty
@@ -12,17 +10,17 @@ window.confirmExit = (e) ->
 # Prevent exit when there are unsaved changes
 window.onbeforeunload = (event) ->
   conf = confirmExit event
-  return null if c is true
+  return null if conf is true
 
   event = event || window.event
   event.returnValue = conf if event
 
   conf
-
+  
 loadApplication (err, data) ->
 
-  window.app.instance = new app.views.Application({ el: '#container', model: data }).render()
-
+  window.app.instance = new app.views.Application( model: data ).render()
+  
   if (err)
     return app.instance.notify 'error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
 

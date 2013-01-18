@@ -1,4 +1,6 @@
 class app.views.Application extends Backbone.View
+  
+  el: "#container"
 
   events:
     "click .toggle-view": "toggleView"
@@ -23,7 +25,7 @@ class app.views.Application extends Backbone.View
 
   render: ->
     $(@header.render().el).prependTo @el
-    this
+    @
 
   replaceMainView: (name, view) ->
     $("body").removeClass().addClass "current-view " + name

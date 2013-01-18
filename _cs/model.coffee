@@ -34,22 +34,22 @@ getRepo = (user, repo) ->
 # Authentication
 # -------
 authenticate = ->
-  return window.authenticated = true  if $.cookie("oauth-token")
+  return window.authenticated = true if $.cookie("oauth-token")
   match = window.location.href.match(/\?code=([a-z0-9]*)/)
 
   # Handle Code
   if match
     $.getJSON "{{site.gatekeeper_url}}/authenticate/" + match[1], (data) ->
       $.cookie "oauth-token", data.token
-      window.authenticated = true
-
+      
       # Adjust URL
       regex = new RegExp("\\?code=" + match[1])
       window.location.href = window.location.href.replace(regex, "").replace("&state=", "")
 
-    false
+    return window.authenticated = true
   else
-    true
+    return window.authenticated = false
+      
 logout = ->
   window.authenticated = false
   $.cookie "oauth-token", null
@@ -59,7 +59,7 @@ logout = ->
 #
 # Load everything that's needed for the app + header
 loadApplication = (cb) ->
-  if window.authenticated
+  if authenticate()
     $.ajax
       type: "GET"
       url: "https://api.github.com/user"
