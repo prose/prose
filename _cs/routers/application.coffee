@@ -77,3 +77,12 @@ class app.routers.Application extends Backbone.Router
       path: ""
 
     app.instance.profile username
+
+  confirmExit: (e) ->
+    return true unless window.app.instance.mainView?
+    return true unless window.app.instance.mainView.dirty
+    
+    msg = "You have unsaved changes. Are you sure you want to leave?"
+    
+    return msg if e? and e.type? and e.type is "beforeunload"
+    confirm msg

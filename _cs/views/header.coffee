@@ -3,7 +3,8 @@ class app.views.Header extends Backbone.View
   id: "header"
   events:
     "click a.logout": "_logout"
-  
+    "click .sync-toggle": "toggleSync"
+
   _logout: ->
     logout()
     app.instance.render()
@@ -19,3 +20,7 @@ class app.views.Header extends Backbone.View
     ))
     this
   
+  toggleSync: (e) =>
+    e.preventDefault() if e?
+    app.instance.mainView.toggleShare()
+    false

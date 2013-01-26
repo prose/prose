@@ -1,8 +1,10 @@
-auto: true
+wauto: true
 server: true
 pygments: true
 permalink: none
 baseurl: ""
+sync_url: http://sharejs.jit.su/channel
+share: true
 oauth_client_id: 8c0597999e07af860296
 gatekeeper_url: http://gatekeeper.benbalter.com
 exclude:

@@ -82,5 +82,6 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-css'
   grunt.loadNpmTasks 'grunt-contrib-less'
   grunt.loadNpmTasks 'grunt-contrib-jst'
-          
+  
+  grunt.registerTask 'cs', [ 'coffeelint', 'concat', 'coffee']
   grunt.registerTask 'default', ["concat", "coffeelint", "coffee", "jst", "uglify", "mincss", "clean"]

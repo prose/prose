@@ -1,6 +1,6 @@
 ---
 ---
-{% include vendor/jquery-1.7.1.min.js %}
+{% include vendor/jquery.min.js %}
 {% include vendor/underscore-min.js %}
 {% include vendor/backbone-min.js %}
 {% include vendor/js-yaml.min.js %}
@@ -26,10 +26,12 @@
 {% include vendor/codemirror/ruby.js %}
 {% include vendor/codemirror/yaml.js %}
 {% include vendor/jquery.cookie.js %}
-
+{% include vendor/bsocket.js %}
+{% include vendor/share.js %}
+{% include vendor/cm.js %}
 
 window.app = {
-    config: {rootUrl: '{{ site.rootUrl }}'},
+    config: {rootUrl: '{{ site.rootUrl }}', syncUrl: '{{ site.sync_url }}'},
     models: {},
     views: {},
     routers: {},

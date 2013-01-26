@@ -28,6 +28,10 @@
       <a data-view="preview" class='toggle view preview fr menu-item<%= preview ? " active" : "" %>' href='#' title="Use CTRL+SHIFT+Left/Right to navigate">Preview document</a>
       <a data-view="compose" class='toggle view compose fr menu-item<%= !preview ? " active" : "" %>' title="Use CTRL+SHIFT+Left/Right to navigate" href='#'>Compose document</a>
       <a data-view="cheatsheet" class="toggle view cheatsheet fr menu-item" href="#" title="Use CTRL+SHIFT+Left/Right to navigate">Markdown reference sheet</a>
+      {% if site.share_url %}
+        <a class="toggle view sync fr menu-item active" href="#" title="" id="sync" >Sync</a>
+      {% endif %}
+      
     <% } %>
 
     <% if (!window.authenticated) { %>

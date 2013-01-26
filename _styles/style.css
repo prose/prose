@@ -129,10 +129,28 @@ body.post #header {
 
 #header .navigation .browse-files {
   float: right;
-  margin-left: 100px;
   background-image:url('images/sprite.png');
   padding-left: 35px;
   background-position: -295px -627px
+}
+
+#header .navigation .sync-toggle {
+  float: right; 
+}
+
+#header .navigation .sync-toggle:before {
+  content: url("images/sync.png");
+  margin-right: 5px;
+  margin-top: 1px;
+}
+
+#header .navigation .sync-toggle:after {
+  content: "off";
+  margin-left: 5px;
+}
+
+#header .navigation .sync-toggle.active:after {
+  content: "on";
 }
 
 
@@ -1024,7 +1042,7 @@ ul.site li a {
   background: none;
   }
 
-.document-menu-content .menu-item.preview, .document-menu-content .menu-item.cheatsheet, .document-menu-content .menu-item.compose {
+.document-menu-content .menu-item.preview, .document-menu-content .menu-item.cheatsheet, .document-menu-content .menu-item.compose, .document-menu-content .menu-item.sync {
   text-indent: -9999px;
   overflow: hidden;
   background-image:url('images/sprite.png');

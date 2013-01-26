@@ -1,5 +1,7 @@
 # Prose
 
+**Fork of the [Prose content editor](http://prose.io). See [what we changed](#change-log)**
+
 [Prose](http://prose.io) is a web-based interface for managing text-based content in your GitHub repositories. Use it to create, edit, and delete files, and save your changes directly to GitHub.
 
 Prose is great for making quick updates to your code or managing your blog. Prose pays special attention to [Jekyll sites](https://github.com/mojombo/jekyll) [hosted on GitHub Pages](http://pages.github.com) with Markdown text preview and syntax reference. It's [configurable](http://prose.io/help/handbook.html) to restrict users to files that live within the `_posts` directory so you can use it to manage the content on your blog without fear of changing other critical files. Using Jekyll in conjunction with Prose is a smart way of maintaining websites for developers and editors alike by allowing them to use a visual, web-based tool to manage the content.
@@ -36,6 +38,7 @@ Now that you're here, why not start contributing as well? :)
 - Better templating (JST)
 - Grunt-bassed build tools
 - Ability to redirect root URL
+- Realtime collaboration using sharejs
 
 **0.4.0** -  *July 30 2012*
 
@@ -60,3 +63,5 @@ Improved error handling. Upgraded CodeMirror to version 2.3 and added basic supp
 **0.1.0** - *June 25 2012*
 
 Initial release.
+
+<a href="http://thenounproject.com/noun/loop/#icon-No2840" target="_blank">Loop</a> designed by <a href="http://thenounproject.com/somerandomdude" target="_blank">P.J. Onori</a> from The Noun Project

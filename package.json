@@ -20,5 +20,16 @@
     "grunt-css": "~0.5.1",
     "grunt-contrib-less": "~0.3.2",
     "grunt-contrib-jst": "~0.3.2"
+  },
+  "subdomain": "sharejs",
+  "scripts": {
+    "start": "share.js"
+  },
+  "engines": {
+    "node": "0.8.x"
+  },
+  "dependencies": {
+    "share": "0.5.x",
+    "connect": "2.7.x"
   }
 }

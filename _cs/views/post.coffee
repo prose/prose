@@ -89,8 +89,9 @@ class app.views.Post extends Backbone.View
     else
       $(".CodeMirror-scroll").height $(".document").height()
     @editor.refresh()
-    @metadataEditor.refresh()  if @metadataEditor
-
+    @metadataEditor.refresh() if @metadataEditor
+    @initShare() if app.config.syncUrl.length
+    
   toggleView: (view) ->
     @view = view
     if view is "preview"
@@ -306,3 +307,40 @@ class app.views.Post extends Backbone.View
     $(@el).addClass "published"  if @model.published
     @initEditor()
     this
+
+  toggleShare: ->
+    if $('.sync-toggle').hasClass 'active'
+      @endShare()
+    else
+      @initShare()
+    
+  initShare: ->
+    return if !app.config.syncUrl.length
+    
+    connection = sharejs.open @slug(), "text", app.config.syncUrl, (error, newDoc) =>
+     
+      if app.doc?
+        @endShare()
+
+      app.doc = newDoc
+      
+      app.doc.attach_cm @editor, true
+      app.doc
+
+    connection.on "error", (e) ->
+      $('.sync-toggle').removeClass 'active'
+
+    connection.on "ok", ->
+      $('.sync-toggle').addClass 'active'
+
+  endShare: ->
+    
+    if app.doc?
+      app.doc.close()
+      app.doc.detach_cm()
+      app.doc = null
+
+    $('.sync-toggle').removeClass 'active'
+
+  slug: ->
+    Backbone.history.fragment.replace /\//g,'-'

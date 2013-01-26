@@ -26,5 +26,8 @@
     <a class="browse-files" href="#<%= [state.user, state.repo, 'tree', state.branch, state.path].join('/') %>">
       Browse Files
     </a>
+    <% if (app.config.syncUrl) { %>
+      <a class="sync-toggle" href="#" title="Automatically sync changes with other users editing the same document.">Sync</a>
+    <% } %>
   <% } %>
 </div>
