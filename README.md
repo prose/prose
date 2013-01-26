@@ -23,6 +23,16 @@ This is a first release dedicated to developers at this early stage. It will be 
 
 Now that you're here, why not start contributing as well? :)
 
+## Requirements
+
+* Jekyll (Ruby)
+* NodeJS (for development, authentication, and real-time colloboration)
+
+## Hosting
+
+* Prose itself renders to static HTML, and can be run from any host that supports HTML including GitHub Pages and Amazon S3
+* To authenticate with the GitHub API, Prose requires a [gatekeeper](https://github.com/prose/gatekeeper) URL be defined in `config.yml`. Any host which supports Node (e.g., heroku, aws) can run gatekeeper.
+* To enable real-time collaboration, Prose requires a [sharejs](https://github.com/josephg/ShareJS) url be defined in `config.yml`. While ShareJS can run on standard Node hosts like heroku, hosts which support WebSockets (e.g., Nodejitsu) will provide a better collaboration experience.
 
 ## Change Log
 
@@ -63,5 +73,7 @@ Improved error handling. Upgraded CodeMirror to version 2.3 and added basic supp
 **0.1.0** - *June 25 2012*
 
 Initial release.
+
+## Credits
 
 <a href="http://thenounproject.com/noun/loop/#icon-No2840" target="_blank">Loop</a> designed by <a href="http://thenounproject.com/somerandomdude" target="_blank">P.J. Onori</a> from The Noun Project
