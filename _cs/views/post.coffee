@@ -315,7 +315,7 @@ class app.views.Post extends Backbone.View
       @initShare()
     
   initShare: ->
-    return if !app.config.syncUrl.length
+    return if !app.config.syncUrl.length or !window.authenticated
     
     connection = sharejs.open @slug(), "text", app.config.syncUrl, (error, newDoc) =>
      
