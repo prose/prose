@@ -8,6 +8,10 @@
         <a class='link new new-file' href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>'>
           New File
         </a>
+        <a class='link new upload' href='#'>
+          Upload
+        </a>
+        <input type='file' id='upload-input' />
       <% } %>
     </div>
   </div>

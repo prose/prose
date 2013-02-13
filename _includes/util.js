@@ -102,6 +102,15 @@ _.markdown = function(file) {
 };
 
 
+// Check if some data is binary
+// See http://stackoverflow.com/questions/1677644/detect-non-printable-characters-in-javascript
+// -------
+
+_.binary = function(data) {
+  return /[\x00-\x08\x0E-\x1F]/.test(data);
+};
+
+
 // Clip a string
 // -------
 
@@ -117,6 +126,22 @@ _.clip = function(str, length) {
 
 _.filepath = function(path, file) {
   return (path ? path +"/" : "") + file;
+};
+
+
+// Format a number of bytes into human readble text
+// See http://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable
+// -------
+
+_.filesize = function(bytes) {
+    var i = -1;
+    var units = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+    do {
+        bytes = bytes / 1024;
+        i++;
+    } while (bytes > 1024);
+
+    return Math.max(bytes, 0.1).toFixed(1) + units[i];
 };
 
 

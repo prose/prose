@@ -98,13 +98,19 @@ views.Application = Backbone.View.extend({
     loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return this.notify('error', 'The requested resource could not be found.');
       loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        this.loaded();
-        this.header.render();
-        if (err) return this.notify('error', 'The requested resource could not be found.');
-        data.preview = !(mode === "edit");
-        data.lang = _.mode(file);
-        this.replaceMainView(window.authenticated ? "post" : "read-post", new views.Post({ model: data, id: 'post' }).render());
         var that = this;
+        insertUpload(data, function(data) {
+          that.loaded();
+          that.header.render();
+          if (err) return that.notify('error', 'The requested resource could not be found.');
+          data.preview = !(mode === "edit");
+          data.lang = _.mode(file);
+          that.replaceMainView(window.authenticated ? "post" : "read-post", new views.Post({ model: data, id: 'post' }).render());
+          if (data.prevContent) {
+            that.mainView.prevContent = data.prevContent;
+            that.mainView._makeDirty();
+          }
+        });
       }, this));
       this.header.render();
     }, this));
@@ -114,14 +120,17 @@ views.Application = Backbone.View.extend({
     this.loading('Creating file ...');
     loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       emptyPost(user, repo, branch, path, _.bind(function(err, data) {
-        this.loaded();
-        data.jekyll = _.jekyll(path, data.file);
-        data.preview = false;
-        data.markdown = _.markdown(data.file);
-        this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
-        this.mainView._makeDirty();
-        app.state.file = data.file;
-        this.header.render();
+        var that = this;
+        insertUpload(data, function(data) {
+          that.loaded();
+          data.jekyll = _.jekyll(path, data.file);
+          data.preview = false;
+          data.markdown = _.markdown(data.file);
+          that.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
+          that.mainView._makeDirty();
+          app.state.file = data.file;
+          that.header.render();
+        });
       }, this));
     }, this));
   },

@@ -4,7 +4,9 @@ views.Posts = Backbone.View.extend({
   events: {
     'click a.link': '_loading',
     'keyup #search_str': '_search',
-    'click a.switch-branch': '_toggleBranchSelection'
+    'click a.switch-branch': '_toggleBranchSelection',
+    'click a.upload': '_uploadClick',
+    'change #upload-input': '_upload'
   },
 
   _toggleBranchSelection: function() {
@@ -22,6 +24,30 @@ views.Posts = Backbone.View.extend({
       this.model = getFiles(this.model.tree, app.state.path, searchstr);
       this.renderResults();      
     }, this), 10);
+  },
+
+  _uploadClick: function(e) {
+    document.getElementById("upload-input").click();
+    e.preventDefault();
+  },
+
+  _upload: function(e) {
+    var fileList = document.getElementById("upload-input").files;
+    var existing = '';
+    var route = [app.state.user, app.state.repo, 'new', app.state.branch].join('/');
+
+    if (fileList && fileList.length > 0) {
+      app.upload = fileList[0];
+      _.each(this.model.files, function(file) {
+        if (file.type == 'blob' && app.upload.name == file.path.split('/').pop()) {
+          existing = file.path;
+        }
+      })
+      if (existing) {
+        route = [app.state.user, app.state.repo, 'edit', app.state.branch, existing].join('/');
+      }
+      router.navigate(route, {trigger: true});
+    }
   },
 
   _loading: function(e) {

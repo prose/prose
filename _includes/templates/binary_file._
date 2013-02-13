@@ -1,0 +1,4 @@
+<div class="binary-file">
+  <span class="filename"><%= file %><br />
+  <span class="filesize"><%= size %></span>
+</div>
