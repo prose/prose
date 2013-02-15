@@ -39,7 +39,7 @@ The most essential problem is that it's pretty hard to get involved. What if you
 
 ## Suggest a change
 
-Once the user clicked on this link they are able to edit the contents of the article they was just reading.
+Once the user clicked on this link they are able to edit the contents of the article they were just reading.
 
 ![Content shown in Prose](/images/screenshots/eventually-consistent/prose-document.png)
 
