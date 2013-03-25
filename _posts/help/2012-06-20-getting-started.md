@@ -13,7 +13,7 @@ published: true
 
 This little guide walks you through the process of using Prose to manage your website.
 
-# Create your first Jekyll webpage
+# Create your first Jekyll Test webpage
 
 We've created a simple template that you can use as a starting point, [Prose Bootstrap](http://bootstrap.prose.io). All you have to do is create a fork of the [repository](http://github.com/prose/bootstrap) and give it a suitable new name. Please follow the steps described on the Bootstrap homepage. If you are already maintaining a Jekyll page you can skip this step.
 
