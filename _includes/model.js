@@ -62,7 +62,7 @@ function authenticate() {
     });
     return false;
   } else {
-    return true;  
+    return true;
   }
 }
 
@@ -74,7 +74,7 @@ function logout() {
 
 // Load Application
 // -------
-// 
+//
 // Load everything that's needed for the app + header
 
 function loadApplication(cb) {
@@ -99,7 +99,7 @@ function loadApplication(cb) {
             _.each(repos, function(r) {
               owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r]) : [r];
             });
-            
+
             cb(null, {
               "available_repos": repos,
               "organizations": orgs,
@@ -109,7 +109,7 @@ function loadApplication(cb) {
         });
 
       },
-      error: function(err) { 
+      error: function(err) {
         cb('error', { "available_repos": [], "owners": {} });
       }
     });
@@ -122,7 +122,7 @@ function loadApplication(cb) {
 
 // Load Repos
 // -------
-// 
+//
 // List all available repositories for a certain user
 
 function loadRepos(username, cb) {
@@ -145,7 +145,7 @@ function loadRepos(username, cb) {
 
 // Load Branches
 // -------
-// 
+//
 // List all available branches of a repository
 
 function loadBranches(user, repo, cb) {
@@ -196,7 +196,7 @@ function getFiles(tree, path, searchstr) {
   });
 
   // Sort by name
-  files = _.sortBy(files, function(entry){ 
+  files = _.sortBy(files, function(entry){
     return (entry.type === "tree" ? "A" : "B") + entry.path;
   });
 
@@ -209,7 +209,7 @@ function getFiles(tree, path, searchstr) {
 
 // Load Posts
 // -------
-// 
+//
 // List all postings for a given repo+branch+path plus load _config.yml
 
 function loadPosts(user, reponame, branch, path, cb) {
@@ -263,7 +263,7 @@ function serialize(content, metadata) {
 
 // Save File
 // -------
-// 
+//
 // Store a file to GitHub
 
 function saveFile(user, repo, branch, path, content, message, cb) {
@@ -274,7 +274,7 @@ function saveFile(user, repo, branch, path, content, message, cb) {
 
 // Fork repository
 // -------
-// 
+//
 // Creates a fork for the current user
 
 function forkRepo(user, reponame, branch, cb) {
@@ -305,7 +305,7 @@ function forkRepo(user, reponame, branch, cb) {
 
 // New pull request
 // -------
-// 
+//
 // Creates a new pull request
 
 function createPullRequest(user, repo, pull, cb) {
@@ -319,7 +319,7 @@ function createPullRequest(user, repo, pull, cb) {
 
 // Patch File
 // -------
-// 
+//
 // Send a pull request on GitHub
 
 function patchFile(user, repo, branch, path, content, message, cb) {
@@ -361,7 +361,7 @@ function movePost(user, repo, branch, path, newPath, cb) {
 
 // New Post
 // -------
-// 
+//
 // Prepare new empty post
 
 function emptyPost(user, repo, branch, path, cb) {
@@ -377,6 +377,11 @@ function emptyPost(user, repo, branch, path, cb) {
       rawMetadata = cfg.prose.metadata[path];
       try {
         metadata = jsyaml.load(rawMetadata);
+        if (metadata.date=="CURRENT_DATETIME") {
+            var current = (new Date()).format('Y-m-d H:i');
+            metadata.date = current;
+            rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+        }
       } catch(err) {
         console.log('ERROR encoding YAML');
         // No-op
@@ -399,7 +404,7 @@ function emptyPost(user, repo, branch, path, cb) {
 
 // Load Post
 // -------
-// 
+//
 // List all postings for a given repository
 // Looks into _posts/blog
 
