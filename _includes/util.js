@@ -83,6 +83,11 @@ _.jekyll = function(path, file) {
   return !!(path.match('_posts') && _.markdown(file));
 };
 
+// check if a given file has YAML frontmater
+// -------
+_.hasMetadata = function(content) {
+  return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
+}
 
 // Extract file extension
 // -------
