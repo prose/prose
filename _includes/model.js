@@ -161,10 +161,12 @@ function loadBranches(user, repo, cb) {
 // -------
 
 function getFiles(tree, path, searchstr) {
+  debugger;
+
   var pathMatches = 0;
   function matchesPath(file) {
     if (file.path === path) return false; // skip current path
-    var match = file.path.match(new RegExp("^"+path+"(.*)$"));
+    var match = file.path.match(new RegExp("^"+path+"/(.*)$"));
     if (match) {
       return !!searchstr || match[1].split('/').length <= (path ? 2 : 1);
     }
@@ -187,8 +189,10 @@ function getFiles(tree, path, searchstr) {
     // Scope name to current path
     file.name = file.name.replace(new RegExp("^"+path+"/?"), "");
 
-    // Mark match
-    file.name = file.name.replace(matchSearch, "<b>$1</b>");
+    // Mark match if searchstr not empty
+    if (searchstr.length) {
+      file.name = file.name.replace(matchSearch, "<b>$1</b>");
+    }
 
     if (!matchesPath(file)) return false;
     pathMatches += 1;
