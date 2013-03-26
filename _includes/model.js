@@ -161,8 +161,6 @@ function loadBranches(user, repo, cb) {
 // -------
 
 function getFiles(tree, path, searchstr) {
-  debugger;
-
   var pathMatches = 0;
   function matchesPath(file) {
     if (file.path === path) return false; // skip current path
