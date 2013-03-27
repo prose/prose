@@ -1,6 +1,7 @@
 ---
 ---
 {% include vendor/jquery-1.7.1.min.js %}
+{% include vendor/chosen.jquery.min.js %}
 {% include vendor/underscore-min.js %}
 {% include vendor/backbone-min.js %}
 {% include vendor/js-yaml.min.js %}
