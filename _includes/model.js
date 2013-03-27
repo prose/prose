@@ -164,7 +164,12 @@ function getFiles(tree, path, searchstr) {
   var pathMatches = 0;
   function matchesPath(file) {
     if (file.path === path) return false; // skip current path
-    var match = file.path.match(new RegExp("^"+path+"/(.*)$"));
+    var length = path.length;
+    // Append trailing slash if path exists and not already present
+    if (length && path[length - 1] !== '/') {
+      path += '/';
+    }
+    var match = file.path.match(new RegExp("^"+path+"(.*)$"));
     if (match) {
       return !!searchstr || match[1].split('/').length <= (path ? 2 : 1);
     }
@@ -189,7 +194,7 @@ function getFiles(tree, path, searchstr) {
 
     // Mark match if searchstr not empty
     if (searchstr.length) {
-      file.name = file.name.replace(matchSearch, "<b>$1</b>");
+      file.name = file.name.replace(matchSearch, "<strong>$1</strong>");
     }
 
     if (!matchesPath(file)) return false;
