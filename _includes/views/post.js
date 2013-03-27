@@ -149,13 +149,15 @@ views.Post = Backbone.View.extend({
     this.prevContent = this.serialize();
     if (!window.shortcutsRegistered) {
       key('⌘+s, ctrl+s', _.bind(function() { this.updateFile(); return false; }, this));
-      key('ctrl+t', _.bind(function() { this.stashFile(); return false; }, this));
       key('ctrl+r', _.bind(function() { this.stashApply(); return false; }, this));
       key('ctrl+shift+right', _.bind(function() { this.right(); return false; }, this));
       key('ctrl+shift+left', _.bind(function() { this.left(); return false; }, this));
       key('esc', _.bind(function() { this.toggleView('compose'); return false; }, this));
       window.shortcutsRegistered = true;
     }
+
+    // Stash editor and metadataEditor content to localStorage on pagehide event
+    window.addEventListener('pagehide', this.stashFile, false);
   },
 
   // TODO: We might not wanna use this
@@ -306,7 +308,12 @@ views.Post = Backbone.View.extend({
     });
   },
 
-  stashFile: function() {
+  stashFile: function(event) {
+    event.preventDefault();
+
+    console.log(event, window.localStorage);
+    alert(event);
+
     if (!window.localStorage) return false;
 
     var storage = window.localStorage,
@@ -331,6 +338,8 @@ views.Post = Backbone.View.extend({
     if (stash && stash.sha === app.state.sha) {
       if (this.editor) this.editor.setValue(stash.content);
       if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
+    } else {
+      storage.delItem(filepath);
     }
   },
 
