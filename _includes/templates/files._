@@ -2,7 +2,7 @@
   <% if (f.type === "tree") { %>
     <!-- folders -->
     <a class='link folder' href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= f.path ? "/" +f.path : "" %>'>
-      <div class="filename"><%= f.path === _.parentPath(current_path) ? ".." : f.name %></div>
+      <div class='filename'><%= f.path === _.parentPath(current_path) ? ".." : f.name %></div>
     </a>
   <% } else { %> 
     <!-- files -->

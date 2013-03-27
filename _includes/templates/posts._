@@ -1,54 +1,31 @@
-<div class="search-menu-wrapper">
-  <div class="search-menu">
-    <div class="search"><input placeholder="Type to search" type="text" id="search_str"/></div>
-    <div class="results"><%= files.length %> Files</div>
-
-    <div class="actions">
-      <% if (window.authenticated) { %>
-        <a class='link new new-file' href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>'>
-          New File
-        </a>
-      <% } %>
+<div class='application clearfix'>
+  <div class='content fl'>
+    <div class='inner'>
+      <div class='breadcrumb'>
+        <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></a>
+        <% _.each(_.chunkedPath(path), function(p) { %>
+          <div class='slash'>/</div>
+          <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
+        <% }); %>
+      </div>
+      <input placeholder='Type to search' type='text' id='search_str' />
     </div>
+    <div class='results'><%= files.length %> Files</div>
+    <ul id='files' class='listings'></ul>
   </div>
-</div>
 
-<div class='inner'>
-
-  <div class="breadcrumbs">
-    <div class="branch-wrapper">
-      <a class="branch" href="#<%= [user, repo, 'tree', branch].join('/') %>">
-        <%= branch %>
-      </a>
-
-      <% if (app.state.branches.length > 0) { %>
-        <a class="switch-branch" href="#<%= [user, repo, 'tree', branch].join('/') %>">
-          &nbsp;&nbsp;&nbsp;
-        </a>
-        <div class="branches">
-          <div class="inner-branches">
-            <div class="arrow-up"></div>
+  <div class='sidebar fl'>
+    <div class='drawer'>
+      <div class='inner'>
+        <% if (app.state.branches.length > 0) { %>
+          <h2 class='label'>Switch Branch</h2>
+          <select data-placeholder='Current Branch Name' class='chzn-select'>
             <% _.each(app.state.branches, function(branch) { %>
-              <a class="select-branch" href="#<%= [user, repo, 'tree', branch].join('/') %>"><%= branch %></a>
+              <option value='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></option>
             <% }); %>
-          </div>
-        </div>
-      <% } %>
-
+          </select>
+        <% } %>
+      </div>
     </div>
-
-    <% _.each(_.chunkedPath(path), function(p) { %>
-      <div class="slash">/</div>
-      <a class="path" href="#<%= [user, repo, 'tree', branch, p.url].join('/') %>"><%= p.name %></a>
-    <% }); %>
-    <br class="clear"/>
-  </div>
-
-  <div class='post-listing prose clearfix'>
-
-    <div id="files">
-
-    </div>
-
   </div>
 </div>

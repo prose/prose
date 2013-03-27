@@ -90,6 +90,7 @@ function loadApplication(cb) {
         $.cookie("avatar", res.avatar_url);
         $.cookie("username", res.login);
         app.username = res.login;
+        app.avatar = res.avatar_url;
 
         var user = github().getUser();
         var owners = {};
@@ -290,7 +291,7 @@ function forkRepo(user, reponame, branch, cb) {
       });
     }, 500);
   }
-  
+
   repo.fork(function(err) {
     onceReady(function() {
       repo.getRef("heads/"+branch, function(err, commitSha) {

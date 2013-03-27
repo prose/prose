@@ -1,42 +1,48 @@
-<div class='start dialog clearfix'>
-  <% if (!authenticated) { %>
-    <div class="splash">
+<% if (!authenticated) { %>
+  <div class='start dialog clearfix'>
+    <div class='splash'>
       <h2>Prose</h2>
-
-      <div class="authorize">
+      <div class='authorize'>
         <p>Prose is a content editor for GitHub, optimized for managing websites.</p>
-        <p><a href="/about.html">Learn more.</a></p>
-        <a class="button" href="https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist">Authorize with GitHub</a>
+        <p><a href='/about.html'>Learn more.</a></p>
+        <a class='button' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist'>Authorize with GitHub</a>
       </div>
     </div>
-  <% } %>
-</div>
+  </div>
+<% } %>
 
 <% if (authenticated) { %>
-  <% if (organizations.length) { %>
-    <h1>Organizations</h2>
-    <div class="organizations">
-    <% _.each(organizations, function(org) { %>
-      <a class="organization" href="#<%= org.login %>" title="<%= org.login %>"><img src="<%= org.avatar_url %>" width="80" height="80"/></a>
-    <% }); %>
-    </div>
-  <% } %>
-
-  <h1>Repositories</h2>
-  <% _.each(owners, function(repos, owner) { %>
-    <% if (Object.keys(owners).length > 1) { %>
-      <div class="owner"><a href="#<%= owner %>"><%= owner %></a>
-        <div class="repo-count">
-          <%= repos.length %> <%= repos.length > 1 ? "Repositories" : "Repository"%>
-        </div>
+  <div class='application clearfix'>
+    <div class='content fl'>
+      <div class='inner'>
+        <h2 class='label'>Projects</h2>
+        <input type='text' placeholder='Filter Projects' />
       </div>
-    <% } %>
-    <div class="repos">
-        <% _.each(repos, function(r, index) { %>
-          <a title='edit' class="select-repo repo<%= r.private ? " private" : "" %>" data-user="<%= r.owner.login %>" data-repo="<%= r.name %>" href='#<%= r.owner.login %>/<%= r.name %>'>
-            <div class="name"><%= r.name %></div>
-          </a>
-        <% }); %>
+      <% _.each(owners, function(repos, owner) { %>
+        <ul class='listing'>
+          <% _.each(repos, function(r) { %>
+          <li><a class='repo<%= r.private ? " private" : "" %>' data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
+              <%= r.name %>
+              <span class='deemphasize'><%= r.description %></span>
+            </a></li>
+          <% }); %>
+        </ul>
+      <% }); %>
     </div>
-  <% }); %>
+
+    <div class='sidebar fl'>
+      <div class='drawer'>
+        <div class='inner'>
+          <h2 class='label'>Groups</h2>
+        </div>
+        <% if (organizations.length) { %>
+          <ul class='listing'>
+          <% _.each(organizations, function(org) { %>
+          <li><a class='organization' href='#<%= org.login %>' title='<%= org.login %>'><%= org.login %></a></li>
+          <% }); %>
+          </ul>
+        <% } %>
+      </div>
+    </div>
+  </div>
 <% } %>

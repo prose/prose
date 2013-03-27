@@ -27,7 +27,6 @@
 {% include vendor/codemirror/yaml.js %}
 {% include vendor/jquery.cookie.js %}
 
-
 window.app = {
     config: {},
     models: {},
