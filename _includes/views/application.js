@@ -14,10 +14,10 @@ views.Application = Backbone.View.extend({
   toggleView: function (e) {
     e.preventDefault();
     e.stopPropagation();
-    
+
     var link  = $(e.currentTarget),
         route = link.attr('href').replace(/^\//, '');
-    
+
     $('.toggle-view.active').removeClass('active');
     link.addClass('active');
     router.navigate(route, true);
@@ -131,6 +131,7 @@ views.Application = Backbone.View.extend({
         data.jekyll = _.jekyll(path, data.file);
         data.preview = false;
         data.markdown = _.markdown(data.file);
+        data.lang = _.mode(data.file);
         this.replaceMainView("post", new views.Post({ model: data, id: 'post' }).render());
         this.mainView._makeDirty();
         app.state.file = data.file;

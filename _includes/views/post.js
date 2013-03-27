@@ -41,13 +41,13 @@ views.Post = Backbone.View.extend({
     if (this.editor) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
     if (!this.$('.button.save').hasClass('saving')) {
-      this.$('.button.save').html(this.model.writeable ? "SAVE" : "SEND PATCH");
-      this.$('.button.save').removeClass('inactive error');      
+      this.$('.button.save').html(this.model.writeable ? "SAVE" : "SUBMIT CHANGE");
+      this.$('.button.save').removeClass('inactive error');
     }
   },
 
   showDiff: function() {
-    var text1 = this.prevContent;
+    var text1 = this.model.persisted ? this.prevContent : '';
     var text2 = this.serialize();
     var d = this.dmp.diff_main(text1, text2);
     this.dmp.diff_cleanupSemantic(d);
@@ -57,18 +57,19 @@ views.Post = Backbone.View.extend({
 
   _toggleCommit: function() {
     if (!this.$('.document-menu').hasClass('commit')) {
-      this.$('.commit-message').val("Updated "+$('input.filepath').val());  
+      this.$('.commit-message').attr( 'placeholder', "Updated "+$('input.filepath').val());
     }
 
     this.hideMeta();
-    this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? "SAVE" : "SEND PATCH") : "COMMIT");
+    this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? "SAVE" : "SUBMIT CHANGE") : "COMMIT");
     this.$('.button.save').toggleClass('confirm');
-    this.$('.document-menu').toggleClass('commit');    
+    this.$('.document-menu').toggleClass('commit');
     this.$('.button.cancel-save').toggle();
     this.$('.document-menu-content .options').hide();
     this.showDiff();
     this.$('.surface').toggle();
     this.$('.diff-wrapper').toggle();
+    this.$('.commit-message').focus();  
 
     return false;
   },
@@ -201,7 +202,7 @@ views.Post = Backbone.View.extend({
 
   updateFilename: function(filepath, cb) {
     var that = this;
-    
+
     if (!_.validPathname(filepath)) return cb('error');
     app.state.path = this.model.path; // ?
     app.state.file = _.extractFilename(filepath)[1];
@@ -250,8 +251,8 @@ views.Post = Backbone.View.extend({
 
         patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
           if (err) {
-            _.delay(function() { 
-              that.$('.button.save').html("SEND PATCH");
+            _.delay(function() {
+              that.$('.button.save').html("SUBMIT CHANGE");
               that.$('.button.save').removeClass('error');
               that.$('.button.save').addClass('inactive');
             }, 3000);
@@ -264,14 +265,14 @@ views.Post = Backbone.View.extend({
           that.model.file = filename;
           that.updateURL();
           that.prevContent = filecontent;
-          that.updateSaveState('PATCH SENT', 'inactive');
+          that.updateSaveState('CHANGE SUBMITTED', 'inactive');
         });
       } else {
         that.updateSaveState('! Metadata', 'error');
       }
     }
 
-    that.updateSaveState('SEND PATCH ...', 'inactive saving');
+    that.updateSaveState('SUBMITTING CHANGE ...', 'inactive saving');
     patch();
 
     return false;
@@ -315,7 +316,7 @@ views.Post = Backbone.View.extend({
         filepath = $('input.filepath').val(),
         filename = _.extractFilename(filepath)[1],
         filecontent = this.serialize(),
-        message = this.$('.commit-message').val(),
+        message = this.$('.commit-message').val() || this.$('.commit-message').attr('placeholder'),
         method = this.model.writeable ? this.saveFile : this.sendPatch;
 
     // Update content
