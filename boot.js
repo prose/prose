@@ -26,6 +26,9 @@
 {% include vendor/codemirror/ruby.js %}
 {% include vendor/codemirror/yaml.js %}
 {% include vendor/jquery.cookie.js %}
+{% include vendor/liquid.min.js %}
+{% include vendor/liquid.patch.js %}
+{% include vendor/queue.min.js %}
 
 
 window.app = {
