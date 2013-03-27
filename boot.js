@@ -54,6 +54,7 @@ window.args = _(window.app).toArray();
 {% include views/header.js %}
 {% include views/posts.js %}
 {% include views/post.js %}
+{% include views/preview.js %}
 
 // Prevent exit when there are unsaved changes
 window.onbeforeunload = function() {
