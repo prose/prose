@@ -95,6 +95,8 @@ data.tzToOffset = {
   'NPT': -345,
   'NST': +210,
   'NT': +210,
+  'NZST': -720,
+  'NZDT': -780,
   'OMST': -360,
   'PDT': +420,
   'PETT': -720,
@@ -162,9 +164,9 @@ data.offsetToTz = {
   '-630': ['ACDT', 'LHST'],
   '-660': ['AEDT', 'MAGT', 'SBT'],
   '-690': ['NFT'],
-  '-720': ['FJT', 'GILT', 'PETT'],
+  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
   '-765': ['CHAST'],
-  '-780': ['PHOT'],
+  '-780': ['PHOT', 'NZDT'],
   '-840': ['LINT']
 };
 
@@ -366,6 +368,7 @@ Date.prototype.getUTCISOFullYear = function() {
 
 Date.prototype.getUTCDaysOfMonth = function() {
   var d = new Date(this);
+  d.setUTCDate(1);
   d.setUTCMonth(d.getUTCMonth() + 1);
   d.setUTCDate(0);
   return d.getUTCDate();
