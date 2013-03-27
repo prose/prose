@@ -15,24 +15,26 @@
     // 
     // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
-    function _request(method, path, data, cb, raw) {
+    function _request(method, path, data, cb, raw, sync) {
       function getURL() {
         var url = API_URL + path;
         return url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime();
       }
 
       var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json"}
+      if (!raw) {xhr.dataType = "json";}
 
-      xhr.open(method, getURL());
-      xhr.onreadystatechange = function () {
-        if (this.readyState == 4) {
-          if (this.status >= 200 && this.status < 300 || this.status === 304) {
-            cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true);
-          } else {
-            cb({request: this, error: this.status});
+      xhr.open(method, getURL(), !sync);
+      if (!sync) {
+        xhr.onreadystatechange = function () {
+          if (this.readyState == 4) {
+            if (this.status >= 200 && this.status < 300 || this.status === 304) {
+              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true);
+            } else {
+              cb({request: this, error: this.status});
+            }
           }
-        }
+        };
       }
       xhr.setRequestHeader('Accept','application/vnd.github.raw');
       xhr.setRequestHeader('Content-Type','application/json');
@@ -46,6 +48,7 @@
            );
          }
       data ? xhr.send(JSON.stringify(data)) : xhr.send();
+      if (sync) return xhr.response;
     }
 
     // User API
@@ -80,10 +83,12 @@
       // -------
 
       this.show = function(username, cb) {
-        _request("GET", "/users/"+username, null, function(err, res) {
+        var command = username ? "/users/"+username : "/user";
+
+        _request("GET", command, null, function(err, res) {
           cb(err, res);
         });
-      }
+      };
 
       // List user repositories
       // -------
@@ -108,6 +113,24 @@
 
       this.orgRepos = function(orgname, cb) {
         _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // Follow user
+      // -------
+
+      this.follow = function(username, cb) {
+        _request("PUT", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // Unfollow user
+      // -------
+
+      this.unfollow = function(username, cb) {
+        _request("DELETE", "/user/following/"+username, null, function(err, res) {
           cb(err, res);
         });
       };
@@ -305,8 +328,12 @@
       // Get contents
       // --------
 
-      this.contents = function(path, cb) {
-        _request("GET", repoPath + "/contents", { path: path }, cb);
+      this.contents = function(branch, path, cb) {
+        _request("GET", repoPath + "/contents?ref=" + branch, { path: path }, cb);
+      };
+
+      this.contentsSync = function(branch, path) {
+        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
       };
 
       // Fork repository
@@ -342,7 +369,7 @@
         updateTree(branch, function(err, latestCommit) {
           that.getTree(latestCommit+"?recursive=true", function(err, tree) {
             // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path });
+            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
             _.each(newTree, function(ref) {
               if (ref.type === "tree") delete ref.sha;
             });
@@ -406,7 +433,6 @@
 
     Github.Gist = function(options) {
       var id = options.id;
-      var that = this;
       var gistPath = "/gists/"+id;
 
       // Read the gist
@@ -418,6 +444,21 @@
         });
       };
 
+      // Create the gist
+      // --------
+      // {
+      //  "description": "the description for this gist",
+      //    "public": true,
+      //    "files": {
+      //      "file1.txt": {
+      //        "content": "String file contents"
+      //      }
+      //    }
+      // }
+      
+      this.create = function(options, cb){
+        _request("POST","/gists", options, cb);
+      };
 
       // Delete the gist
       // --------
