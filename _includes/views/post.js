@@ -89,6 +89,7 @@ views.Post = Backbone.View.extend({
     ) {
       var hash = window.location.hash.split('/');
       hash[2] = 'preview';
+      this.stashFile();
       $(e.currentTarget).attr({ target: '_blank', href: hash.join('/') });
     } else {
       this.toggleView($(e.currentTarget).attr('data-view'));
@@ -318,10 +319,9 @@ views.Post = Backbone.View.extend({
   },
 
   stashFile: function(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
 
     console.log(event, window.localStorage);
-    alert(event);
 
     if (!window.localStorage) return false;
 

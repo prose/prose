@@ -262,6 +262,7 @@ _.preview = function(view) {
     content = content.replace(/(<head(?:.*)>)/, function() {
       return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
     });
+
     document.write(content);
     document.close();
   });
