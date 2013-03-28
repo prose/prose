@@ -172,7 +172,7 @@ function getFiles(tree, path, searchstr) {
     }
     var match = file.path.match(new RegExp("^"+path+"(.*)$"));
     if (match) {
-      return !!searchstr || match[1].split('/').length <= (path ? 2 : 1);
+      return !!searchstr || match[1].split('/').length <= 1;
     }
     return false;
   }
