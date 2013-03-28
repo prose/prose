@@ -24,6 +24,8 @@ views.Start = views.Profile.extend({
 
   render: function() {
     $(this.el).html(templates.start(this.model));
+    $('#drawer').empty().html(templates.sidebarStart(this.model));
+
     if (!window.authenticated) $('#header').hide();
     return this;
   }

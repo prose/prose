@@ -159,7 +159,6 @@ input[type=text] {
   line-height:18px;
   display:inline-block;
   width:95%;
-  max-width:240px;
   padding:6px 8px;
   -webkit-border-radius:1px;
           border-radius:1px;
@@ -319,6 +318,7 @@ input[type=text] {
 .icon.about   { background-position:-80px -80px; }
 .icon.folder  { background-position:-100px -80px; }
 .icon.file    { background-position:-120px -80px; }
+.icon.private { background-position:-140px -80px; }
 
 .icon.assets                 { background-position:-40px 0; }
 .icon.assets.active:active,
@@ -514,6 +514,9 @@ input[type=text] {
   padding:10px 20px;
   border-top:1px solid #C3CCD0;
   }
+  .listing li a.private {
+    padding-left:0;
+    }
   .listing li a:hover {
     background:#f8f8f8;
     }

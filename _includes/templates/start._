@@ -20,6 +20,9 @@
       <ul class='listing'>
         <% _.each(repos, function(r) { %>
         <li><a class='repo<%= r.private ? " private" : "" %>' data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
+            <% if (r.private) { %>
+              <span class='icon inline small private'></span>
+            <% } %>
             <%= r.name %>
             <span class='deemphasize'><%= r.description %></span>
           </a></li>
