@@ -154,6 +154,10 @@ views.Post = Backbone.View.extend({
       key('esc', _.bind(function() { this.toggleView('compose'); return false; }, this));
       window.shortcutsRegistered = true;
     }
+
+    // Stash editor and metadataEditor content to localStorage on pagehide event
+    // Always run stashFile in context of view
+    $(window).on('pagehide', _.bind(this.stashFile, this));
   },
 
   // TODO: We might not wanna use this
@@ -302,6 +306,42 @@ views.Post = Backbone.View.extend({
     });
   },
 
+  stashFile: function(event) {
+    // Only stash dirty files
+    if (!window.localStorage || !this.dirty) return false;
+
+    var storage = window.localStorage,
+        filepath = $('input.filepath').val();
+
+    // Don't stash if filepath is undefined
+    if (filepath) {
+      storage.setItem(filepath, JSON.stringify({
+        sha: app.state.sha,
+        content: this.editor ? this.editor.getValue() : null,
+        raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+      }));
+    }
+  },
+
+  stashApply: function() {
+    if (!window.localStorage) return false;
+
+    var storage = window.localStorage,
+        filepath = $('input.filepath').val();
+
+    var item = storage.getItem(filepath);
+    var stash = JSON.parse(item);
+
+    if (stash && stash.sha === window.app.state.sha) {
+      // Restore from stash if file sha hasn't changed
+      if (this.editor) this.editor.setValue(stash.content);
+      if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
+    } else if (item) {
+      // Remove expired content
+      storage.removeItem(filepath);
+    }
+  },
+
   updateFile: function() {
     var that = this,
         filepath = $('input.filepath').val(),
@@ -361,6 +401,10 @@ views.Post = Backbone.View.extend({
         onChange: _.bind(that._makeDirty, that)
       });
       that.refreshCodeMirror();
+
+      // Check localStorage for existing stash
+      // Apply if stash exists and is current, remove if expired
+      that.stashApply();
     }, 100);
   },
 
@@ -370,6 +414,12 @@ views.Post = Backbone.View.extend({
     if (this.model.published) $(this.el).addClass('published');
     this.initEditor();
     return this;
+  },
+
+  remove: function() {
+    // Unbind pagehide event handler when View is removed
+    $(window).unbind('pagehide');
+    Backbone.View.prototype.remove.call(this);
   }
 });
 
