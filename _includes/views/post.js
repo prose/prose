@@ -158,11 +158,15 @@ views.Post = Backbone.View.extend({
     this.prevContent = this.serialize();
     if (!window.shortcutsRegistered) {
       key('⌘+s, ctrl+s', _.bind(function() { this.updateFile(); return false; }, this));
+      key('ctrl+r', _.bind(function() { this.stashApply(); return false; }, this));
       key('ctrl+shift+right', _.bind(function() { this.right(); return false; }, this));
       key('ctrl+shift+left', _.bind(function() { this.left(); return false; }, this));
       key('esc', _.bind(function() { this.toggleView('compose'); return false; }, this));
       window.shortcutsRegistered = true;
     }
+
+    // Stash editor and metadataEditor content to localStorage on pagehide event
+    window.addEventListener('pagehide', this.stashFile, false);
   },
 
   // TODO: We might not wanna use this
@@ -193,6 +197,7 @@ views.Post = Backbone.View.extend({
     var published = this.$('#post_published').prop('checked');
 
     this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
+    console.log(this.model.raw_metadata);
     this.metadataEditor.setValue(this.model.raw_metadata);
 
     published ? $('#post').addClass('published') : $('#post').removeClass('published');
@@ -247,6 +252,7 @@ views.Post = Backbone.View.extend({
     function patch() {
       if (that.updateMetaData()) {
         that.model.content = that.prevContent;
+        console.log(that.prevContent);
         that.editor.setValue(that.prevContent);
 
         patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
@@ -309,6 +315,41 @@ views.Post = Backbone.View.extend({
     this.updateFilename(filepath, function(err) {
       err ? that.updateSaveState('! Filename', 'error') : save();
     });
+  },
+
+  stashFile: function(event) {
+    event.preventDefault();
+
+    console.log(event, window.localStorage);
+    alert(event);
+
+    if (!window.localStorage) return false;
+
+    var storage = window.localStorage,
+        filepath = $('input.filepath').val(),
+        filecontent = this.serialize();
+
+    storage.setItem(filepath, JSON.stringify({
+      sha: app.state.sha,
+      content: this.editor ? this.editor.getValue() : null,
+      raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+    }));
+  },
+
+  stashApply: function() {
+    if (!window.localStorage) return false;
+
+    var storage = window.localStorage,
+        filepath = $('input.filepath').val();
+
+    var stash = JSON.parse(storage.getItem(filepath));
+
+    if (stash && stash.sha === app.state.sha) {
+      if (this.editor) this.editor.setValue(stash.content);
+      if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
+    } else {
+      storage.delItem(filepath);
+    }
   },
 
   updateFile: function() {

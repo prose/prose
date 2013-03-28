@@ -252,6 +252,9 @@ function loadPosts(user, reponame, branch, path, cb) {
           if (err) return cb("Branches couldn't be fetched");
           app.state.path = path ? path : "";
           app.state.branches = _.filter(branches, function(b) { return b !== branch });
+          repo.getSha(branch, app.state.path, function(err, sha) {
+            app.state.sha = sha;
+          });
           cb(null, getFiles(tree, path, ""));
         });
       });
