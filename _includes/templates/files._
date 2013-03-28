@@ -1,12 +1,14 @@
 <% _.each(files, function(f) { %>
   <% if (f.type === 'tree') { %>
     <!-- folders -->
-    <li><a class='link folder' href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= f.path ? "/" +f.path : "" %>'>
+    <li><a href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= f.path ? "/" +f.path : "" %>'>
+      <span class='icon inline small folder'></span>
       <%= f.path === _.parentPath(current_path) ? ".." : f.name %>
     </a></li>
   <% } else { %> 
     <!-- files -->
-    <li><a class='link load-post toggle-view' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>
+    <li><a class='light load-post toggle-view' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>
+      <span class='icon inline small file'></span>
       <%= f.name || 'Untitled' %>
     </a></li>
   <% } %>

@@ -98,6 +98,9 @@ a {
        -o-transition:background-color 100ms linear, color 100ms linear;
           transition:background-color 100ms linear, color 100ms linear;
   }
+  a.light {
+    font-weight:normal;
+    }
   a:hover {
     color:#2e3335;
     }
@@ -247,6 +250,7 @@ input[type=text] {
   text-indent:-999em;
   }
   .icon.small {
+    background-position:0 -80px;
     width:20px;
     height:20px;
     }
@@ -255,10 +259,11 @@ input[type=text] {
     position:relative;
     top:5px;
     }
-
-.icon.title { background-position:0 -100px; }
-.icon.help  { background-position:-60px -80px; }
-.icon.about { background-position:-80px -80px; }
+.icon.title   { background-position:0 -100px; }
+.icon.help    { background-position:-60px -80px; }
+.icon.about   { background-position:-80px -80px; }
+.icon.folder  { background-position:-100px -80px; }
+.icon.file    { background-position:-120px -80px; }
 
 .avatar {
   background:#fff;
@@ -337,6 +342,10 @@ input[type=text] {
   font-size:12px;
   font-weight:700;
   padding:10px 0;
+  }
+
+.breadcrumb {
+  margin:0 0 10px;
   }
 
 /* ------------------------------------------

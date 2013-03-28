@@ -9,7 +9,6 @@
         <% }); %>
       </div>
       <input placeholder='Filter Files' type='text' id='search_str' />
-      <div class='results'><%= files.length %> Files</div>
     </div>
     <ul id='files' class='listing'></ul>
   </div>
