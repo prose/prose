@@ -149,7 +149,6 @@ views.Post = Backbone.View.extend({
     this.prevContent = this.serialize();
     if (!window.shortcutsRegistered) {
       key('⌘+s, ctrl+s', _.bind(function() { this.updateFile(); return false; }, this));
-      key('ctrl+r', _.bind(function() { this.stashApply(); return false; }, this));
       key('ctrl+shift+right', _.bind(function() { this.right(); return false; }, this));
       key('ctrl+shift+left', _.bind(function() { this.left(); return false; }, this));
       key('esc', _.bind(function() { this.toggleView('compose'); return false; }, this));
@@ -157,7 +156,8 @@ views.Post = Backbone.View.extend({
     }
 
     // Stash editor and metadataEditor content to localStorage on pagehide event
-    window.addEventListener('pagehide', this.stashFile, false);
+    // Always run stashFile in context of view
+    $(window).on('pagehide', _.bind(this.stashFile, this));
   },
 
   // TODO: We might not wanna use this
@@ -188,7 +188,6 @@ views.Post = Backbone.View.extend({
     var published = this.$('#post_published').prop('checked');
 
     this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
-    console.log(this.model.raw_metadata);
     this.metadataEditor.setValue(this.model.raw_metadata);
 
     published ? $('#post').addClass('published') : $('#post').removeClass('published');
@@ -243,7 +242,6 @@ views.Post = Backbone.View.extend({
     function patch() {
       if (that.updateMetaData()) {
         that.model.content = that.prevContent;
-        console.log(that.prevContent);
         that.editor.setValue(that.prevContent);
 
         patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
@@ -309,22 +307,20 @@ views.Post = Backbone.View.extend({
   },
 
   stashFile: function(event) {
-    event.preventDefault();
-
-    console.log(event, window.localStorage);
-    alert(event);
-
-    if (!window.localStorage) return false;
+    // Only stash dirty files
+    if (!window.localStorage || !this.dirty) return false;
 
     var storage = window.localStorage,
-        filepath = $('input.filepath').val(),
-        filecontent = this.serialize();
+        filepath = $('input.filepath').val();
 
-    storage.setItem(filepath, JSON.stringify({
-      sha: app.state.sha,
-      content: this.editor ? this.editor.getValue() : null,
-      raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
-    }));
+    // Don't stash if filepath is undefined
+    if (filepath) {
+      storage.setItem(filepath, JSON.stringify({
+        sha: app.state.sha,
+        content: this.editor ? this.editor.getValue() : null,
+        raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+      }));
+    }
   },
 
   stashApply: function() {
@@ -333,13 +329,16 @@ views.Post = Backbone.View.extend({
     var storage = window.localStorage,
         filepath = $('input.filepath').val();
 
-    var stash = JSON.parse(storage.getItem(filepath));
+    var item = storage.getItem(filepath);
+    var stash = JSON.parse(item);
 
-    if (stash && stash.sha === app.state.sha) {
+    if (stash && stash.sha === window.app.state.sha) {
+      // Restore from stash if file sha hasn't changed
       if (this.editor) this.editor.setValue(stash.content);
       if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
-    } else {
-      storage.delItem(filepath);
+    } else if (item) {
+      // Remove expired content
+      storage.removeItem(filepath);
     }
   },
 
@@ -402,6 +401,10 @@ views.Post = Backbone.View.extend({
         onChange: _.bind(that._makeDirty, that)
       });
       that.refreshCodeMirror();
+
+      // Check localStorage for existing stash
+      // Apply if stash exists and is current, remove if expired
+      that.stashApply();
     }, 100);
   },
 
@@ -411,6 +414,12 @@ views.Post = Backbone.View.extend({
     if (this.model.published) $(this.el).addClass('published');
     this.initEditor();
     return this;
+  },
+
+  remove: function() {
+    // Unbind pagehide event handler when View is removed
+    $(window).unbind('pagehide');
+    Backbone.View.prototype.remove.call(this);
   }
 });
 
