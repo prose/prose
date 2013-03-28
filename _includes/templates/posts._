@@ -1,31 +1,14 @@
-<div class='application clearfix'>
-  <div class='content fl'>
-    <div class='inner'>
-      <div class='breadcrumb'>
-        <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></a>
-        <% _.each(_.chunkedPath(path), function(p) { %>
-          <span class='slash'>/</span>
-          <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
-        <% }); %>
-      </div>
-      <input placeholder='Filter Files' type='text' id='search_str' />
+<div class='content fl'>
+  <div class='inner'>
+    <div class='breadcrumb'>
+      <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></a>
+      <% _.each(_.chunkedPath(path), function(p) { %>
+        <span class='slash'>/</span>
+        <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
+      <% }); %>
     </div>
-    <ul id='files' class='listing'></ul>
+    <input placeholder='Filter Files' type='text' id='search_str' />
   </div>
-
-  <div class='sidebar fl'>
-    <div class='drawer'>
-      <div class='inner'>
-        <% if (app.state.branches.length > 0) { %>
-          <h2 class='label'>Switch Branch</h2>
-          <select data-placeholder='Current Branch Name' class='chzn-select'>
-              <option value='#<%= [user, repo, "tree", app.state.branch].join("/") %>' selected><%= app.state.branch %></option>
-            <% _.each(app.state.branches, function(branch) { %>
-              <option value='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></option>
-            <% }); %>
-          </select>
-        <% } %>
-      </div>
-    </div>
-  </div>
+  <ul id='files' class='listing'></ul>
 </div>
+

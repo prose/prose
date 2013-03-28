@@ -35,7 +35,54 @@
 </head>
 <body>
   <div id='container'>
-    <div id='main' class='main limiter'>{{content}}</div>
+    <div id='main' class='application clearfix limiter'>
+      <div id='content' class='content fl'></div>
+      <div class='sidebar fl'>
+        <div id='drawer'></div>
+
+        <div class='vert navigation'>
+          <ul class='project nav'>
+            <li>
+              <a href='#settings' class='icon round projects'>
+                <span class='popup round arrow-right'>Projects &amp; Oranizations</span>
+              </a>
+            </li>
+            <li>
+              <a href='#settings' class='icon round project'>
+                <span class='popup round arrow-right'>Project Contents</span>
+              </a>
+            </li>
+            <li>
+              <a href='#settings' class='icon round new'>
+                <span class='popup round arrow-right'>New File</span>
+              </a>
+            </li>
+          </ul>
+          <ul class='file nav'>
+            <li>
+              <a href='#settings' class='icon round edit'>
+                <span class='popup round arrow-right'>Edit this page</span>
+              </a>
+            </li>
+            <li>
+              <a href='#settings' class='icon round preview' data-drawer=true>
+                <span class='popup round arrow-right'>Preview this page on the site</span>
+              </a>
+            </li>
+            <li>
+              <a href='#metadata' class='icon round assets' data-drawer=true>
+                <span class='popup round arrow-right'>Add Media to this post</span>
+              </a>
+            </li>
+            <li>
+              <a href='#settings' class='icon round settings' data-drawer=true>
+                <span class='popup round arrow-right'>Configure Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class='footer'>

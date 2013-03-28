@@ -12,37 +12,18 @@
 <% } %>
 
 <% if (authenticated) { %>
-  <div class='application clearfix'>
-    <div class='content fl'>
-      <div class='inner'>
-        <h2 class='label'>Projects</h2>
-        <input type='text' placeholder='Filter Projects' />
-      </div>
-      <% _.each(owners, function(repos, owner) { %>
-        <ul class='listing'>
-          <% _.each(repos, function(r) { %>
-          <li><a class='repo<%= r.private ? " private" : "" %>' data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
-              <%= r.name %>
-              <span class='deemphasize'><%= r.description %></span>
-            </a></li>
-          <% }); %>
-        </ul>
-      <% }); %>
+    <div class='inner'>
+      <h2 class='label'>Projects</h2>
+      <input type='text' placeholder='Filter Projects' />
     </div>
-
-    <div class='sidebar fl'>
-      <div class='drawer'>
-        <div class='inner'>
-          <h2 class='label'>Groups</h2>
-        </div>
-        <% if (organizations.length) { %>
-          <ul class='listing'>
-          <% _.each(organizations, function(org) { %>
-          <li><a class='organization' href='#<%= org.login %>' title='<%= org.login %>'><%= org.login %></a></li>
-          <% }); %>
-          </ul>
-        <% } %>
-      </div>
-    </div>
-  </div>
+    <% _.each(owners, function(repos, owner) { %>
+      <ul class='listing'>
+        <% _.each(repos, function(r) { %>
+        <li><a class='repo<%= r.private ? " private" : "" %>' data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
+            <%= r.name %>
+            <span class='deemphasize'><%= r.description %></span>
+          </a></li>
+        <% }); %>
+      </ul>
+    <% }); %>
 <% } %>

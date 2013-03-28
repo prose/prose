@@ -1,0 +1,11 @@
+<div class='inner'>
+  <% if (app.state.branches.length > 0) { %>
+    <h2 class='label'>Switch Branch</h2>
+    <select data-placeholder='Current Branch Name' class='chzn-select'>
+        <option value='#<%= [user, repo, "tree", app.state.branch].join("/") %>' selected><%= app.state.branch %></option>
+      <% _.each(app.state.branches, function(branch) { %>
+        <option value='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></option>
+      <% }); %>
+    </select>
+  <% } %>
+</div>
