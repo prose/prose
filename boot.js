@@ -47,13 +47,14 @@ window.args = _(window.app).toArray();
 {% include util.js %}
 {% include model.js %}
 {% include routers/application.js %}
+
 {% include views/application.js %}
+{% include views/app.js %}
 {% include views/notification.js %}
+{% include views/post.js %}
+{% include views/posts.js %}
 {% include views/profile.js %}
 {% include views/start.js %}
-{% include views/header.js %}
-{% include views/posts.js %}
-{% include views/post.js %}
 
 // Prevent exit when there are unsaved changes
 window.onbeforeunload = function() {
@@ -66,5 +67,3 @@ function confirmExit() {
     return confirm('You have unsaved changes. Are you sure you want to leave?');
   return true;
 }
-
-

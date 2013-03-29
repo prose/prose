@@ -6,6 +6,11 @@
       <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
     <% }); %>
   </div>
-  <input placeholder='Filter Files' type='text' id='search_str' />
 </div>
+
+<div class='content-search'>
+  <span class='icon search inline fr'></span>
+  <input type='text' id='search_str' placeholder='Filter Files' />
+</div>
+
 <ul id='files' class='listing'></ul>

@@ -191,7 +191,6 @@ input[type=text] {
     border-width:1px;
     }
 
-
 /* ------------------------------------------
   Styled Content
 ---------------------------------------------*/
@@ -335,10 +334,9 @@ input[type=text] {
   }
 .sidebar {
   position:relative;
+  z-index:100;
   width:298px;
   height:600px;
-  overflow:auto;
-  z-index:100;
   right:1px;
   -webkit-transition:right 300ms;
      -moz-transition:right 300ms;
@@ -347,9 +345,9 @@ input[type=text] {
   }
   .sidebar .navigation {
     position:absolute;
-    width:60px;
     top:0;
-    right:0;
+    width:60px;
+    right:-60px;
     height:100%;
     }
 
@@ -575,9 +573,11 @@ input[type=text] {
   border-top:1px solid #c3ccd0;
   position:relative;
   font-size:12px;
-  font-weight:700;
   padding:10px 0;
   }
+  .footer .brand {
+    margin-top:5px;
+    }
 
 /* ------------------------------------------
   Unauthenticated Landing
@@ -595,6 +595,22 @@ input[type=text] {
 /* ------------------------------------------
   Page Components
 ---------------------------------------------*/
+.content-search {
+  border-top:1px solid #C3CCD0;
+  }
+  .content-search input {
+    border:none;
+    padding:10px 15px;
+    font-size:18px;
+    line-height:26px;
+    width:90%;
+    }
+
+.menu li a {
+  float:left;
+  margin-right:10px;
+  }
+
 .listing li a {
   display:block;
   padding:10px 15px;
@@ -808,7 +824,7 @@ input[type=text] {
 }
 
 /* ------------------------------------------
-  Logbook
+  Pages: Help
 ---------------------------------------------*/
 .improve-article {
   font-size:20px;
@@ -1205,20 +1221,6 @@ label.error {
     }
 
 /* ------------------------------------------
-  ios and small screen alterations
----------------------------------------------*/
- @media all and (max-width: 480px) {
-  #post .inner {
-    width: 100%;
-    margin: 0;
-    padding: 20px 0 40px 0;
-    }
-  .toggle-mode {
-    right: 0;
-    }
-  }
-
-/* ------------------------------------------
   CodeMirror
 ---------------------------------------------*/
 .CodeMirror {
@@ -1399,3 +1401,17 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 .cm-s-prose-bright span.cm-link {color:#DB6F6F; text-decoration:underline;}
 .cm-s-prose-bright span.cm-em {font-style:italic;}
 .cm-s-prose-bright span.cm-strong {font-weight:bold;}
+
+/* ------------------------------------------
+  ios and small screen alterations
+---------------------------------------------*/
+ @media all and (max-width: 480px) {
+  #post .inner {
+    width: 100%;
+    margin: 0;
+    padding: 20px 0 40px 0;
+    }
+  .toggle-mode {
+    right: 0;
+    }
+  }

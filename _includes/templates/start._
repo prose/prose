@@ -12,8 +12,13 @@
 <% if (authenticated) { %>
   <div class='inner'>
     <h2 class='label'>Projects</h2>
+  </div>
+
+  <div class='content-search'>
+      <span class='icon search inline fr'></span>
     <input type='text' placeholder='Filter Projects' />
   </div>
+
   <% _.each(owners, function(repos, owner) { %>
     <ul class='listing'>
       <% _.each(repos, function(r) { %>

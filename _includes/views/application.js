@@ -28,7 +28,7 @@ views.Application = Backbone.View.extend({
   initialize: function () {
     _.bindAll(this);
     var that = this;
-    this.header = new views.Header({model: this.model});
+    this.app = new views.App({model: this.model});
 
     function calculateLayout() {
       if (that.mainView && that.mainView.refreshCodeMirror) {
@@ -42,7 +42,7 @@ views.Application = Backbone.View.extend({
 
   // Should be rendered just once
   render: function () {
-    $(this.header.render().el).prependTo(this.el);
+    $(this.app.render().el).prependTo(this.el);
     return this;
   },
 
@@ -52,8 +52,8 @@ views.Application = Backbone.View.extend({
 
   replaceMainView: function (name, view) {
     $('body').removeClass().addClass('current-view ' + name);
-    // Make sure the header gets shown
-    if (name !== 'start') $('#header').show();
+    // Make sure the app gets shown
+    if (name !== 'start') $('#app').show();
 
     if (this.mainView) {
       this.mainView.remove();
@@ -69,7 +69,7 @@ views.Application = Backbone.View.extend({
   // ----------
 
   staticView: function() {
-    this.header.render();
+    this.app.render();
   },
 
   posts: function (user, repo, branch, path) {
@@ -77,7 +77,7 @@ views.Application = Backbone.View.extend({
     loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       this.loaded();
       if (err) return this.notify('error', 'The requested resource could not be found.');
-      this.header.render();
+      this.app.render();
       this.replaceMainView('posts', new views.Posts({ model: data, id: 'posts' }).render());
     }, this));
   },
@@ -88,14 +88,14 @@ views.Application = Backbone.View.extend({
       if (err) return this.notify('error', 'The requested resource could not be found.');
       loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         this.loaded();
-        this.header.render();
+        this.app.render();
         if (err) return this.notify('error', 'The requested resource could not be found.');
         data.preview = (mode !== 'edit');
         data.lang = _.mode(file);
         this.replaceMainView(window.authenticated ? 'post' : 'read-post', new views.Post({ model: data, id: 'post' }).render());
         var that = this;
       }, this));
-      this.header.render();
+      this.app.render();
     }, this));
   },
 
@@ -111,7 +111,7 @@ views.Application = Backbone.View.extend({
         this.replaceMainView('post', new views.Post({ model: data, id: 'post' }).render());
         this.mainView._makeDirty();
         app.state.file = data.file;
-        this.header.render();
+        this.app.render();
       }, this));
     }, this));
   },
@@ -121,7 +121,7 @@ views.Application = Backbone.View.extend({
     app.state.title = username;
     this.loading('Loading profile ...');
     loadRepos(username, function(err, data) {
-      that.header.render();
+      that.app.render();
       that.loaded();
       data.authenticated = !!window.authenticated;
       that.replaceMainView('start', new views.Profile({id: 'start', model: data}).render());
@@ -131,7 +131,7 @@ views.Application = Backbone.View.extend({
   start: function(username) {
     var that = this;
     app.state.title = "";
-    this.header.render();
+    this.app.render();
 
     this.replaceMainView('start', new views.Start({
       id: "start",
@@ -140,16 +140,16 @@ views.Application = Backbone.View.extend({
   },
 
   notify: function(type, message) {
-    this.header.render();
+    this.app.render();
     this.replaceMainView('notification', new views.Notification(type, message).render());
   },
 
   loading: function(msg) {
-    // $('#main').html('<div class="loading"><span>'+ msg || 'Loading ...' + '</span></div>');
+    // $('body').html('<div class="loading"><span>' + msg || 'Loading ...' + '</span></div>');
   },
 
   loaded: function() {
-    // $('#main .loading').remove();
+    // $('.loading').remove();
   }
 
 });
