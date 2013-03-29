@@ -51,8 +51,9 @@ views.Application = Backbone.View.extend({
   // -------
 
   replaceMainView: function (name, view) {
-    $('body').removeClass().addClass('current-view ' + name);
-    // Make sure the app gets shown
+    $('body').removeClass().addClass(name);
+
+    // Make sure the header get's shown
     if (name !== 'start') $('#app').show();
 
     if (this.mainView) {
@@ -130,11 +131,11 @@ views.Application = Backbone.View.extend({
 
   start: function(username) {
     var that = this;
-    app.state.title = "";
+    app.state.title = '';
     this.app.render();
 
     this.replaceMainView('start', new views.Start({
-      id: "start",
+      id: 'start',
       model: _.extend(this.model, { authenticated: !!window.authenticated} )
     }).render());
   },

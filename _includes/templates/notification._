@@ -7,5 +7,5 @@
   <div class='notification <%= type %>'>
     <%= message %>
   </div>
-  <a class='button' href='../'>Go back </a>
+  <a class='button round' href='../'>Go back </a>
 <% } %>

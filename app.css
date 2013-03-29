@@ -443,12 +443,12 @@ input[type=text] {
     top:5px;
     }
 
-.icon.title   { background-position:0 -100px; }
-.icon.help    { background-position:-60px -80px; }
-.icon.about   { background-position:-80px -80px; }
-.icon.folder  { background-position:-100px -80px; }
-.icon.file    { background-position:-120px -80px; }
-.icon.private { background-position:-140px -80px; }
+.icon.branding  { background-position:0 -100px; }
+.icon.help      { background-position:-60px -80px; }
+.icon.about     { background-position:-80px -80px; }
+.icon.folder    { background-position:-100px -80px; }
+.icon.file      { background-position:-120px -80px; }
+.icon.private   { background-position:-140px -80px; }
 
 .icon.assets                 { background-position:-40px 0; }
 .icon.assets.active:active,
@@ -493,7 +493,7 @@ input[type=text] {
   font-size:12px;
   font-weight:700;
   height:60px;
-  padding:10px 20px 0;
+  padding:0 20px;
   position:relative;
   z-index:100;
   box-shadow:0 1px 0 rgba(255, 255, 255, 0),
@@ -505,11 +505,19 @@ input[type=text] {
     }
   .header .title {
     float:left;
+    border-right:1px solid #c3ccd0;
+    border-left:1px solid #c3ccd0;
+    height:60px;
+    padding:0 15px;
     }
+    .header .title .branding {
+      margin-top:10px;
+      }
 
 .header .user-status {
   float:right;
   height:60px;
+  margin-top:10px;
   }
   .header .user-status .dropdown-hover {
     display:block;
@@ -571,9 +579,14 @@ input[type=text] {
 .footer {
   background:#e0e7eb;
   border-top:1px solid #c3ccd0;
+  border-bottom:1px solid #c3ccd0;
   position:relative;
   font-size:12px;
-  padding:10px 0;
+  padding:15px 0;
+  -webkit-box-shadow:0 -1px 0 rgba(255, 255, 255, 0),
+                     0 0 10px rgba(0, 0, 0, 0.1);
+          box-shadow:0 -1px 0 rgba(255, 255, 255, 0),
+                     0 0 10px rgba(0, 0, 0, 0.1);
   }
   .footer .brand {
     margin-top:5px;
@@ -606,9 +619,9 @@ input[type=text] {
     width:90%;
     }
 
-.menu li a {
+.menu li {
   float:left;
-  margin-right:10px;
+  margin-right:15px;
   }
 
 .listing li a {
@@ -617,7 +630,7 @@ input[type=text] {
   border-top:1px solid #C3CCD0;
   }
   .listing li a.private {
-    padding-left:10px;
+    padding-left:5px;
     }
   .listing li a:hover {
     background:#f8f8f8;
@@ -834,7 +847,7 @@ input[type=text] {
 /* ------------------------------------------
   Notifications
 ---------------------------------------------*/
-#notification .notification{
+.notification {
   text-align:center;
   width:440px;
   margin:60px auto 0 auto;
@@ -843,24 +856,6 @@ input[type=text] {
   line-height:1.5em;
   font-weight:700;
   }
-
-#notification a {
-	background:#516066;
-  padding:5px;
-  color:white;
-  position:relative;
-  display:block;
-  width:100px;
-  height:30px;
-  margin:0px auto;
-  text-transform:uppercase;
-  text-align:center;
-  font-size:11px;
-  font-weight:700;
-  -webkit-border-radius:5px;
-          border-radius:5px;
-  }
-  #notification a:hover { background: #3d4548; }
 
 label.error {
   color:#E73C58;
