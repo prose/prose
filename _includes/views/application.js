@@ -115,7 +115,6 @@ views.Application = Backbone.View.extend({
   
     loadConfig(user, repo, branch, _.bind(function() {
       loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        this.loaded();
         if (err) return this.notify('error', 'The requested resource could not be found.');
         new views.Preview({ model: data }).render();
       }, this));
