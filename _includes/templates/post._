@@ -1,42 +1,14 @@
-<div class='document-menu'>
-  <div class='document-menu-content'>
-    <% if (markdown && window.authenticated) { %>
-    <% if (!window.authenticated) { %>
-    <div class='patch-hint'>Sign in with GitHub to contribute to this file.</div>
-    <% } %>
-    <div class='options'>
-      <% if (jekyll && markdown) { %>
-      <div class='publish-state'>
-        <input type='checkbox' id='post_published'<%= published ? " checked='checked'" : ""%>/> Published
-      </div>
-      <% } %>
-      <div class='actions'>
-        <a class='toggle delete button' href='#'>Delete File</a>
-      </div>
-    </div>
-    <div class='status' title='Unpublished'></div>
-    <br class='clear'/>
-  </div>
-</div>
-<div class='inner clearfix'>
-  <div class='document prose'>
-    <div class='diff-wrapper'>
-      <div class='diff'>
-      </div>
-    </div>
-    <div class='surface<%= preview ? ' preview' : ' compose' %>'>
-      <div class='content-wrapper'>
-        <div class='content'>
-          <div id='code'></div>
+<!-- Publish Status -->
+<div class='status'></div>
+
+<div class='document prose'>
+  <div class='diff'></div>
+  <div class='surface<%= preview ? " preview" : " compose" %>'>
+      <div id='code'></div>
+      <div class='content-preview'>
+        <div class='post-content'>
+          <%= markdown ? marked(content) : '' %>
         </div>
-      </div>
-      <div class='content-preview-wrapper'>
-        <div class='content-preview'>
-          <div class='post-content'>
-            <%= markdown ? marked(content) : "" %>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>

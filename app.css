@@ -663,62 +663,11 @@ input[type=text] {
 /* ------------------------------------------
   Post
 ---------------------------------------------*/
-.document-menu {
-  padding: 0 20px;
-  height: 60px;
-  background: #667880;
-  overflow: visible;
-  line-height: 40px;
-  z-index: 2000;
-
-  -moz-transition: background 100ms linear;
-  -o-transition: background 100ms linear;
-  -webkit-transition: background 100ms linear;
-  transition: background 100ms linear;
-  }
-
-#post.sticky-menu .document-menu {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  }
-
-#post.sticky-menu .document {
-  margin-top: 60px;
-  }
-
-#post.published .document-menu {
-  background: #90bb74;
-  }
-
-#post .document-menu.commit {
-  background: #434C50;
-}
-
 #post.published .metadata {
   background: #73965d;
   }
 
-.document-menu .options {
-  display: none;
-  background: #667880;
-  -moz-transition: background 100ms linear;
-  -o-transition: background 100ms linear;
-  -webkit-transition: background 100ms linear;
-  transition: background 100ms linear;
-  }
-
-#post.published .document-menu .options {
-  background: #90bb74;
-  }
-
 /* commit message switch */
-
-.document-menu.commit .toggle.view, .document-menu.commit .state .button.toggle-options {
-  display: none;
-}
-
 .commit-message {
   display: block;
   float: left;
@@ -741,206 +690,6 @@ input[type=text] {
   margin-right: 20px;
 }
 
-.document-menu.commit .commit-message {
-  display: block;
-}
-
-.document-menu.commit .cancel-save {
-  display: block;
-}
-
-.document-menu-content .status {
-  position: absolute;
-  left: -50px;
-  width: 50px;
-  height: 60px;
-  background-image:url('images/sprite.png');
-  background-position: -290px -185px;
-  }
-
-#post.published .document-menu-content .status {
-  background-position: -290px -285px;
-  }
-
-.document-menu-content .menu-item {
-  background: rgba(0,0,0, 0.2);
-  line-height: 40px;
-  margin: 10px 0;
-  }
-
-.document-menu-content .menu-item state {
-  background: none;
-  }
-
-.document-menu-content .menu-item.preview, .document-menu-content .menu-item.cheatsheet, .document-menu-content .menu-item.compose {
-  text-indent: -9999px;
-  overflow: hidden;
-  background-image:url('images/sprite.png');
-  background-repeat: no-repeat;
-  width: 40px;
-  padding: 0;
-  margin-left: 1px;
-  border-radius: 0;
-  }
-.document-menu-content .menu-item.meta {
-  background-image:url('images/sprite.png');
-  background-position: -288px 14px;
-  padding-left: 35px;
-  padding-right: 10px;
-  }
-
-.document-menu-content .menu-item.meta.active {
-  background-color: rgba(0,0,0, 0.6);
-  }
-
-.document-menu-content a {
-  color: #E7EEF2;
-  }
-  .document-menu-content a:active {
-	  -webkit-box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, .2);
-    box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, .2);
-    }
-
-.menu-item {
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  }
-
-.menu-item:hover {
-  background: rgba(0,0,0, 0.3);
-  }
-
-.document-menu-content .menu-item.meta {
-  margin-left: 20px;
-  }
-
-.document-menu.commit .menu-item.meta {
-  display: none;
-}
-
-.document-menu-content .filename input {
-  font-family: Menlo, monospace;
-  background: transparent;
-  border: none;
-  height: 40px;
-  font-size: 16px;
-  color: #555;
-  color: #e7eef2;
-  width: 400px;
-  padding: 0 5px;
-  margin: 10px 0;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  }
-
-.document-menu.commit .filename {
-  display: none;
-}
-
-.document-menu-content .confirm-label {
-  display: none;
-  height: 60px;
-  line-height: 60px;
-  font-size: 14px;
-  padding-left: 6px;
-  text-transform: uppercase;
-}
-
-.document-menu.commit .confirm-label {
-  display: block;
-}
-
-.document-menu-content .filename .state {
-  position: absolute;
-  left: 420px;
-  top: 15px;
-  width: 50px;
-  height: 30px;
-  }
-
-.document-menu-content .filename .state.loading {
-  background: url('images/ajax-loader.gif') center center no-repeat;
-  }
-
-.document-menu-content .filename .state.error {
-  background-image:url('images/sprite.png');
-  background-position: -300px -200px;
-  }
-
-.document-menu-content .filename .state.success {
-  background-image:url('images/sprite.png');
-  background-position: -300px -300px;
-  }
-
-.document-menu-content .filename input:hover, .document-menu-content .filename input:focus {
-  background-color: rgba(0,0,0, 0.2);
-  color: #e7eef2;
-  }
-
-.document-menu .options {
-  position: absolute;
-  top: 60px;
-  right: 0px;
-  width: 300px;
-  z-index: 3000;
-  border-radius: 0 0 5px 5px;
-  }
-
-
-.document-menu .options .publish-state {
-  padding: 0 20px;
-  }
-
-.document-menu .options .actions {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 0 0 5px 5px;
-  }
-
-.document-menu .options .actions .button {
-  display: block;
-  text-align: center;
-  background: rgba(0,0,0, 0.2);
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  }
-
-.document-menu .options .actions .button:hover {
-  background: #DB6F6F;
-  }
-
-.document-menu-content .menu-item.save-state {
-	background: none;
-  }
-  .document-menu-content .menu-item.save-state:hover {
-  background: none;
-  }
-
-.document-menu-content .state .button.save {
-  background: rgba(0,0,0, 0.2);
-  width: 180px;
-  text-align: center;
-  line-height: 40px;
-  margin-left: 1px;
-  margin: 0px;
-  height: 40px;
-  border-radius: 0px 4px 4px 0px;
-  margin-left: 1px;
-  padding: 0;
-  }
-  .document-menu-content .state .button.save:hover { background: rgba(0,0,0, 0.4); }
-
-
-.document-menu-content .patch-hint {
-  position: absolute;
-  right: 0px;
-  height: 60px;
-  line-height: 60px;
-}
-
 .state a.button.cancel-save {
   display: none;
   background: rgba(0, 0, 0, 0.10) url('images/sprite.png') -283px -588px no-repeat;
@@ -955,76 +704,6 @@ input[type=text] {
   overflow: hidden;
 
 }
-
-.document-menu-content .save-state {
-  margin-left: 20px;
-  }
-  .document-menu-content .save-state:hover {
-    background: rgba(0,0,0, 0.2);
-    }
-
-.document-menu-content .state .button {
-  display: block;
-  float:left;
-  color: #fff;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  margin: 5px;
-  line-height: 30px;
-  height: 30px;
-  padding: 0 12px;
-  }
-
-.document-menu-content .state .button.toggle-options {
-  background-image: url('images/sprite.png');
-  background-position: -288px -437px;
-  width: 50px;
-  padding: 0;
-  height: 40px;
-  margin: 0;
-  border-radius: 3px 0 0 3px;
-  background-color: rgba(0, 0, 0, .2);
-  }
-
-.document-menu-content .state .button:hover {
-  background-color: rgba(0, 0, 0, 0.4);
-  }
-
-.document-menu-content .state .button.inactive, .document-menu-content .state .button.inactive:hover {
-  text-shadow: none;
-  background: rgba(0, 0, 0, 0.1);
-  color: rgba(255, 255, 255, 0.5);
-  cursor: default;
-  }
-
-.document-menu-content .state .button.error, .document-menu-content .state .button.error:hover {
-  background: #DB6F6F;
-  }
-  .document-menu-content .state .button.saving {
-	  text-indent: -9999px;
-	  overflow: hidden;
-	  background-image: url('images/ajax-loader-unpublished.gif');
-	  background-repeat: no-repeat;
-	  background-position: 60px 13px;
-	  }
-	  .published .document-menu-content .state .button.saving {
-  	  text-indent: -9999px;
-	    overflow: hidden;
-	    background-image: url('images/ajax-loader-published.gif');
-	    background-repeat: no-repeat;
-	    background-position: 60px 13px;
-	    }
-
-.document-menu-content .state .options {
-  background: rgba(0,0,0, 0.3);
-  color: #fff;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  margin-left: 10px;
-  padding: 8px;
-  }
 
 .document .metadata {
   overflow: hidden;
@@ -1046,6 +725,9 @@ input[type=text] {
   margin: 0 auto;
   }
 
+.document .metadata #raw_metadata {
+  }
+
 .state p,
 .state .button-padding {
   float: left;
@@ -1058,34 +740,23 @@ input[type=text] {
     margin: 0;
     }
 
-.document .surface .content-wrapper            { display: none; }
-.document .surface .content-preview-wrapper    { display: none; }
-
-
-.document .diff-wrapper               {
-  position: fixed;
-  display: none;
-  z-index: 2000;
-  top: 120px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-  overflow: auto;
-}
-
 .document .diff-wrapper .diff {
   height: 100%;
   overflow: auto;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
   background: white;
   white-space: pre;
   overflow: auto;
-  padding: 30px 30px;
   font-family: Menlo, monospace !important;
   font-size: 17px;
-  width: 960px;
+  width:100%;
   margin: 0 auto;
 }
+
+.document .content-preview, .document .content {
+  width:100%;
+  margin:0 auto;
+  overflow:auto;
+  }
 
 /* ------------------------------------------
   Rendered Markdown
@@ -1662,7 +1333,6 @@ label.error {
 
 .fl    { float:left; }
 .fr    { float:right; }
-.clear { clear:both; }
 
 .hidden       { display:none; }
 .centered     { text-align:center; }
