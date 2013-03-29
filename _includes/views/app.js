@@ -19,7 +19,9 @@ views.App = Backbone.View.extend({
   },
 
   render: function() {
-    $(this.el).html(templates.app(_.extend(this.model, {state: app.state})));
+    $(this.el).html(templates.app(_.extend(this.model, app.state, {
+        state: app.state
+    })));
 
     dropdown();
     return this;

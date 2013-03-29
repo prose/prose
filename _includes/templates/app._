@@ -18,8 +18,7 @@
         </ul>
       </div>
     <% } else { %>
-
-        <a class='button round' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>
+      <a class='button round' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>
     <% } %>
     </div>
   </div>
@@ -27,14 +26,8 @@
 
 <div class='heading limiter'>
   <% if (state.repo) { %>
-    <a class='user' href="#<%= [state.user].join('/') %>"><%= state.user %></a>
-    <% if (state.repo) { %>
-      <a class='repo' href="#<%= [state.user, state.repo, 'tree', state.branch].join('/') %>">
-        <%= state.repo %>
-      </a>
-    <% } %>
-
-  <% } else { %>
+    <a class='user' href='#<%= [state.user].join("/") %>'><%= state.user %></a>
+    <a class='repo' href='#<%= [state.user, state.repo, "tree", state.branch].join("/") %>'><%= state.repo %></a>
     <%= app.state.title %>
   <% } %>
 </div>
@@ -51,17 +44,22 @@
             <span class='popup round arrow-right'>Projects &amp; Oranizations</span>
           </a>
         </li>
-        <li>
-          <a href='#settings' class='icon round project'>
-            <span class='popup round arrow-right'>Project Contents</span>
-          </a>
-        </li>
-        <li>
-          <a href='#settings' class='icon round new'>
-            <span class='popup round arrow-right'>New File</span>
-          </a>
-        </li>
+        <% if (state.repo) { %>
+          <li>
+            <a href='#settings' class='icon round project'>
+              <span class='popup round arrow-right'>Project Contents</span>
+            </a>
+          </li>
+          <% if (window.authenticated) { %>
+            <li>
+              <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='icon round new new-file'>
+                <span class='popup round arrow-right'>New File</span>
+              </a>
+            </li>
+          <% } %>
+        <% } %>
       </ul>
+      <% if (window.authenticated && state.mode === 'edit') { %>
       <ul class='file nav'>
         <li>
           <a href='#settings' class='icon round edit'>
@@ -84,6 +82,7 @@
           </a>
         </li>
       </ul>
+      <% } %>
     </div>
   </div>
 </div>

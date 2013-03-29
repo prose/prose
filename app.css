@@ -847,11 +847,10 @@ input[type=text] {
 /* ------------------------------------------
   Notifications
 ---------------------------------------------*/
-.notification {
+.notify {
   text-align:center;
   width:440px;
   margin:60px auto 0 auto;
-  padding:20px;
   font-size:24px;
   line-height:1.5em;
   font-weight:700;

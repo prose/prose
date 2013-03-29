@@ -1,11 +1,15 @@
 <% if (!window.authenticated) { %>
-  <div class='notification <%= type %>'>
+<div class='notify <%= type %>'>
+  <div class='inner'>
     Please login with your GitHub account to access that project.
+    <a class='button' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a>
   </div>
-  <a class='button' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a>
+</div>
 <% } else { %>
-  <div class='notification <%= type %>'>
-    <%= message %>
+  <div class='notify <%= type %>'>
+    <div class='inner'>
+      <%= message %>
+      <a class='button round' href='../'>Go back </a>
+    </div>
   </div>
-  <a class='button round' href='../'>Go back </a>
 <% } %>
