@@ -84,9 +84,19 @@ views.Post = Backbone.View.extend({
 
   _toggleView: function(e) {
     var that = this;
-    this.toggleView($(e.currentTarget).attr('data-view'));
-    _.delay(function() { that.refreshCodeMirror(); }, 1);
-    return false;
+    if ($(e.currentTarget).attr('data-view') === 'preview' &&
+      this.model.metadata &&
+      this.model.metadata.layout
+    ) {
+      var hash = window.location.hash.split('/');
+      hash[2] = 'preview';
+      this.stashFile();
+      $(e.currentTarget).attr({ target: '_blank', href: hash.join('/') });
+    } else {
+      this.toggleView($(e.currentTarget).attr('data-view'));
+      _.delay(function() { that.refreshCodeMirror(); }, 1);
+      return false;
+    }
   },
 
   _toggleMeta: function(e) {
@@ -308,7 +318,7 @@ views.Post = Backbone.View.extend({
   },
 
   stashFile: function(event) {
-    // Only stash dirty files
+    if (event) event.preventDefault();
     if (!window.localStorage || !this.dirty) return false;
 
     var storage = window.localStorage,

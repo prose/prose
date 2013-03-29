@@ -215,6 +215,22 @@ function getFiles(tree, path, searchstr) {
   }
 }
 
+// Load Config
+// -------
+// 
+// Load _config.yml
+
+function loadConfig(user, reponame, branch, cb) {
+  var repo = getRepo(user, reponame);
+  repo.read(branch, "_config.yml", function(err, data) {
+    if (err) return cb(err);
+    app.state.jekyll = !err;
+    app.state.config = jsyaml.load(data);
+    cb();
+  });
+}
+
+
 // Load Posts
 // -------
 //
@@ -223,15 +239,8 @@ function getFiles(tree, path, searchstr) {
 function loadPosts(user, reponame, branch, path, cb) {
   var repo = getRepo(user, reponame);
 
-  function loadConfig(cb) {
-    repo.read(branch, "_config.yml", function(err, data) {
-      if (err) return cb(err);
-      cb(null, jsyaml.load(data));
-    });
-  }
-
   function load(repodata) {
-    loadConfig(function(err, config) {
+    loadConfig(user, reponame, branch, function(err, config) {
       app.state.jekyll = !err;
       app.state.config = config;
 
@@ -450,6 +459,7 @@ function loadPost(user, repo, branch, path, file, cb) {
       var res = { raw_metadata: "", published: false, writeable: writeable() };
       res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function(match, dashes, frontmatter) {
         res.raw_metadata = frontmatter;
+        res.metadata = jsyaml.load(frontmatter);
         res.published = published(frontmatter);
         return "";
       }).trim();
