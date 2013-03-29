@@ -2,24 +2,20 @@
 layout: static
 ---
 
-<div class='help'>
-  <h2>Help</h2>
+<h1 class='title'>Help</h1>
 
-  <div class='articles'>
-    {% for item in site.categories.help limit:40 offset:0 %}
-      <a class='article' href='{{site.baseurl}}{{item.url}}'>
-        {% if item.image %}
-          <img src='{{item.image}}' width='200' height='100'/>
-        {% endif %}
-
-        <h3>
-          {{item.title}}
-        </h3>
-        <p>
-          {{item.descr}}
-        </p>
-      </a>
-    {% endfor %}
-  </div>
-</div>
-
+<ul class='blocks clearfix'>
+  {% for item in site.categories.help limit:40 offset:0 %}
+  <li><a class='round' href='{{site.baseurl}}{{item.url}}'>
+      {% if item.image %}
+      <div class='img'>
+        <img src='{{item.image}}' width='100%' height='100%' alt='Thumbnail' />
+      </div>
+      {% endif %}
+      <div class='inner'>
+        <h4>{{item.title}}</h4>
+        <p>{{item.descr}}</p>
+      </div>
+  </a></li>
+  {% endfor %}
+</ul>

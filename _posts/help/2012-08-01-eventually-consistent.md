@@ -22,7 +22,6 @@ With the latest release of [Prose.io](http://prose.io) we'd like to propose a wo
 
 Leveraging collaboration is not a new idea. People have been invited to contribute to published information for a long while. Letters to the editor are as old as newspapers and in the digital world people can respond to articles by leaving a comment.
 
-
 ## Humans need to contribute
 
 You know that feeling, when you read through an online article and an obvious mistake is in your face. It's disturbing. But it's there. There's nothing you can do about it.

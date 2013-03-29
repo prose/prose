@@ -5,7 +5,8 @@ views.Profile = Backbone.View.extend({
 
   render: function() {
     $(this.el).html(templates.profile(this.model));
-    $('#sidebar').empty().html(templates.sidebarOrganizations(this.model));
+    $('#sidebar').empty();
+    // $('#sidebar').empty().html(templates.sidebarOrganizations(this.model));
     return this;
   }
 });

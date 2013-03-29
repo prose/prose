@@ -9,7 +9,13 @@ views.Start = views.Profile.extend({
     'submit #login_form': '_login'
   },
 
-  initialize: function(options) {},
+  render: function() {
+    $(this.el).html(templates.start(this.model));
+    $('#drawer').empty().html(templates.sidebarOrganizations(this.model));
+
+    if (!window.authenticated) $('#header').hide();
+    return this;
+  },
 
   _login: function() {
     var self = this;
@@ -22,15 +28,8 @@ views.Start = views.Profile.extend({
       window.location.reload();
     });
     return false;
-  },
-
-  render: function() {
-    $(this.el).html(templates.start(this.model));
-    $('#drawer').empty().html(templates.sidebarOrganizations(this.model));
-
-    if (!window.authenticated) $('#header').hide();
-    return this;
   }
+
 });
 
 }).apply(this, window.args);

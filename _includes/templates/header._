@@ -27,7 +27,8 @@
       </ul>
     </div>
   <% } else { %>
-      <a class='button' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>
+
+      <a class='button round' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>
   <% } %>
   </div>
 </div>

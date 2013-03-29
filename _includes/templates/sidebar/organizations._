@@ -1,10 +1,12 @@
-<div class='inner'>
-  <h2 class='label'>Groups</h2>
-</div>
-<% if (organizations.length) { %>
-  <ul class='listing'>
-  <% _.each(organizations, function(org) { %>
-  <li><a class='organization' href='#<%= org.login %>' title='<%= org.login %>'><%= org.login %></a></li>
-  <% }); %>
-  </ul>
+<% if (authenticated) { %>
+  <div class='inner'>
+    <h2 class='label'>Groups</h2>
+  </div>
+  <% if (organizations.length) { %>
+    <ul class='listing'>
+    <% _.each(organizations, function(org) { %>
+    <li><a class='organization' href='#<%= org.login %>' title='<%= org.login %>'><%= org.login %></a></li>
+    <% }); %>
+    </ul>
+  <% } %>
 <% } %>
