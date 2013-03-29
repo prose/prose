@@ -145,11 +145,11 @@ views.Application = Backbone.View.extend({
   },
 
   loading: function(msg) {
-    $('#main').html('<div class="loading"><span>'+ msg || 'Loading ...' + '</span></div>');
+    // $('#main').html('<div class="loading"><span>'+ msg || 'Loading ...' + '</span></div>');
   },
 
   loaded: function() {
-    $('#main .loading').remove();
+    // $('#main .loading').remove();
   }
 
 });

@@ -238,7 +238,7 @@ input[type=text] {
   }
 
 .sidebar {
-  background:#fff;
+  background:#f8f8f8;
   border:1px solid #C3CCD0;
   -webkit-border-radius:0 4px 4px 0;
           border-radius:0 4px 4px 0;
@@ -350,6 +350,7 @@ input[type=text] {
 
 .avatar {
   background:#fff;
+  display:inline-block;
   border:1px solid #C3CCD0;
   -webkit-border-radius:6px;
           border-radius:6px;
@@ -397,14 +398,6 @@ input[type=text] {
     position:relative;
     top:-15px;
     }
-
-.header .browse-files {
-  float: right;
-  margin-left: 100px;
-  background-image:url('images/sprite.png');
-  padding-left: 35px;
-  background-position: -295px -627px
-  }
 
 .loading {
   background:transparent url('images/ajax-loader.gif') no-repeat;
@@ -455,11 +448,11 @@ input[type=text] {
 /* ------------------------------------------
   Unauthenticated Landing
 ---------------------------------------------*/
-#start .dialog {
+.start .dialog {
   position:relative;
   }
 
-#start .splash {
+.start .splash {
   background:#fff;
   text-align:center;
   font-weight:400;
@@ -472,13 +465,13 @@ input[type=text] {
   -webkit-border-radius:5px 5px 0 0;
           border-radius:5px 5px 0 0;
   }
-  #start .splash h2 {
+  .start .splash h2 {
     background:url('images/sprite.png') 111px 47px no-repeat;
     text-indent:-999em;
     display:block;
     height:200px;
     }
-  #start .splash p {
+  .start .splash p {
     margin-bottom:20px;	
     }
 
@@ -515,88 +508,11 @@ input[type=text] {
   border-top:1px solid #C3CCD0;
   }
   .listing li a.private {
-    padding-left:0;
+    padding-left:10px;
     }
   .listing li a:hover {
     background:#f8f8f8;
     }
-
-/* ------------------------------------------
-  Profile
----------------------------------------------*/
-#profile_wrapper {
-  overflow: auto;
-  padding: 20px 0;
-  border-bottom: 1px solid #C3CCD0;
-}
-
-#start .profile-header {
-  overflow: auto;
-}
-
-#start .profile-header .avatar {
-  height: 90px;
-  width: 90px;
-  padding: 4px;
-  border: 1px solid #C3CCD0;
-  background: #fff;
-  float: left;
-  -webkit-border-radius:5px;
-          border-radius:5px;
-}
-
-#start .profile-header .user {
-  margin-top: 25px;
-  margin-left: 30px;
-  float: left;
-}
-
-#start .profile-header .user .username {
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-#start .profile-header, #start .profile-details {
-
-  font-size: 14px;
-}
-
-#start .profile-header {
-  float: left;
-}
-
-#start .profile-details {
-  float: right;
-  margin-top: 50px;
-  margin-left: 100px;
-  overflow: auto;
-}
-
-#start .profile-details .info {
-  float: left;
-}
-
-#start .profile-details .info span {
-  color: #93A8B1;
-}
-
-#start .profile-details .stats {
-  float: right;
-  margin-top: 5px;
-  margin-left: 70px;
-}
-
-#start .profile-details .stats .count {
-  text-align: center;
-  font-size: 30px;
-  font-weight: bold;
-}
-
-#start .profile-details .stats .label {
-  text-align: center;
-  color: #777;
-}
 
 /* ------------------------------------------
   Dropdown
@@ -691,160 +607,6 @@ input[type=text] {
 @keyframes fadeInTop {
 	0%    { opacity:0; transform:translateY(-20px); }
 	100%  { opacity:1; transform:translateY(0); }
-  }
-
-/* ------------------------------------------
-  Repos listing
----------------------------------------------*/
-/* Post listing search bar */
-.search-menu-wrapper {
-  background: #e0e7eb;
-  border-bottom: 1px solid #c3ccd0;
-}
-
-.search-menu {
-  width: 960px;
-  margin: 0 auto;
-
-  height: 60px;
-  line-height: 60px;
-  font-size: 16px;
-}
-
-.search-menu .parent-folder {
-  display: block;
-  float: left;
-  background-image: url('images/sprite.png');
-  background-position: -430px -25px;
-  width: 50px;
-}
-
-.search-menu .parent-folder:hover {
-  background-color: #C9D1D6;
-}
-
-.search-menu .actions {
-  float: right;
-}
-
-.search-menu .actions a {
-  display: block;
-  font-weight: bold;
-  background: #434C50 url('images/sprite.png') -415px -85px no-repeat;
-  color: #fff;
-  width: 140px;
-  text-align: center;
-  padding-left: 10px;
-  margin: 10px 0;
-  font-size: 12px;
-  text-transform: uppercase;
-  border-radius: 4px;
-  opacity: 0.8;
-  line-height: 40px;
-}
-
-.search-menu .actions a:hover {
-  opacity: 1.0;
-}
-
-.search-menu input {
-  display: block;
-  border: none;
-  border-radius: 4px;
-  background: transparent;
-
-  font-family: 'OpenSans', sans-serif;
-  color: #666;
-  height: 39px;
-  margin: 10px 0;
-  padding: 0 5px;
-  font-size: 16px;
-  }
-
-.search-menu .results {
-  display: none;
-  margin-left: 20px;
-  font-weight: 400;
-  float: left;
-}
-
-.search-menu .search {
-  height: 60px;
-  float: left;
-}
-
-.loading-branches, .post-listing a.link.folder.loading .filename  {
-  text-indent: -9999px;
-  overflow: hidden;
-  position: absolute;
-  margin: auto;
-  left: 0; right: 0; top: 0; bottom: 0;
-  background: url('images/ajax-loader.gif') no-repeat;
-  height: 11px;
-  width: 44px;
-  }
-  .loading-branches, .post-listing a.link.folder.loading {
-	  background-color: #F0F5F7;
-  }
-
-.repos a .branches a.branch:hover  {
-  background: #E0E7EB;
-  }
-
-.start .sites,
-.dialog form {
-  width: 240px;
-  position: absolute;
-  left: 50%;
-  margin-left: -120px;
-  }
-
-ul.site li {
-  position: relative;
-  }
-
-ul.site li a {
-  display: block;
-  border-bottom: 1px solid #eee;
-  padding: 4px 0;
-  }
-  ul.site li a:hover {
-    background: url(images/icons.png) no-repeat 220px -20px;
-    }
-
-/* User box */
-#user {
-  font-size:12px;
-  position:absolute;
-  top:0;
-  right:0;
-  z-index:2;
-  padding:5px;
-  background:#eee;
-  border-radius:0 0 0 4px;
-  -moz-border-radius: 0 0 0 4px;
-  -webkit-border-radius: 0 0 0 4px;
-  box-shadow:
-  inset #ccc 0px 1px,
-  inset #ddd 0px 0px 5px,
-  #fff 0px 1px,
-  #f8f8f8 0px 3px 3px;
-  }
-  #user .name,
-  #user .logout {
-    display:inline;
-    padding:0 5px;
-    }
-  #user a { color:#222; }
-  #user .logout a { color:#999; }
-
-/* Form hint */
-#hint {
-  position: absolute;
-  top: -30px;
-  font-size: 20px;
-  width: 100%;
-  text-align: center;
   }
 
 /* ------------------------------------------
@@ -987,17 +749,6 @@ ul.site li a {
   display: block;
 }
 
-/* commit message end */
-
-.document-menu-content {
-  width: 960px;
-  margin: 0 auto;
-  color: #E7EEF2;
-  font-weight: 700;
-  position: relative;
-  }
-
-
 .document-menu-content .status {
   position: absolute;
   left: -50px;
@@ -1031,26 +782,6 @@ ul.site li a {
   margin-left: 1px;
   border-radius: 0;
   }
-  .document-menu-content .menu-item.cheatsheet {
-    background-position: -290px -486px;
-    -moz-border-radius: 5px 0px 0px 5px;
-    -webkit-border-radius: 5px 0px 0px 5px;
-    border-radius: 5px 0px 0px 5px;
-    }
-  .document-menu-content .menu-item.preview {
-    background-position: -438px 15px;
-    -moz-border-radius: 0px 5px 5px 0px;
-    -webkit-border-radius: 0px 5px 5px 0px;
-    border-radius: 0px 5px 5px 0px;
-    }
-  .document-menu-content .menu-item.compose {
-    background-position: -288px -538px;
-    }
-
-.document-menu-content .menu-item.preview.active, .document-menu-content .menu-item.cheatsheet.active, .document-menu-content .menu-item.compose.active {
-  background-color: rgba(0,0,0, 0.6);
-  }
-
 .document-menu-content .menu-item.meta {
   background-image:url('images/sprite.png');
   background-position: -288px 14px;
@@ -1315,9 +1046,6 @@ ul.site li a {
   margin: 0 auto;
   }
 
-.document .metadata #raw_metadata {
-  }
-
 .state p,
 .state .button-padding {
   float: left;
@@ -1330,27 +1058,6 @@ ul.site li a {
     margin: 0;
     }
 
-.document {
-  position: fixed;
-  z-index: 2000;
-  top: 120px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-
-  min-height: 400px;
-  background: #e7eef2;
-  /*position: relative;*/
-  /*overflow:hidden;*/
-  overflow: auto;
-
-  }
-
-.document .surface {
-  overflow: hidden;
-  }
-
-.document .surface .cheatsheet-wrapper         { display: none; }
 .document .surface .content-wrapper            { display: none; }
 .document .surface .content-preview-wrapper    { display: none; }
 
@@ -1379,63 +1086,6 @@ ul.site li a {
   width: 960px;
   margin: 0 auto;
 }
-
-.document .surface.cheatsheet .cheatsheet-wrapper {
-  padding-top: 20px;
-  display: block;
-  position: relative;
-  }
-
-.document .surface.compose .content-wrapper {
-  /*padding-top: 20px;*/
-  display: block;
-  position: relative;
-  }
-
-.document .surface.preview .content-preview-wrapper {
-  position: relative;
-  display: block;
-  padding-top: 20px;
-  word-wrap: break-word;
-  }
-
-.document .content-preview, .document .content {
-  padding: 0px 0px;
-  width: 960px;
-  margin: 0 auto;
-  }
-
-.document .cheatsheet-wrapper .content {
-  width: 960px;
-  margin: 0 auto;
-  overflow: auto;
-  }
-
-.document .cheatsheet-wrapper .content .left {
-  float: left;
-  width: 450px;
-  }
-
-.document .cheatsheet-wrapper .content .right {
-  float: right;
-  width: 450px;
-  }
-
-.document .cheatsheet-wrapper .content h2 {
-  font-weight: 700;
-  padding: 5px 0;
-  margin: 0;
-  }
-
-.document .cheatsheet-wrapper .content pre {
-  border: 1px solid #C3CCD0;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
-  background: #fff;
-  line-height: 1.5em;
-  font-size: 17px;
-  padding: 10px;
-  font-family: Menlo, monospace !important;
-  }
 
 /* ------------------------------------------
   Rendered Markdown
@@ -2245,53 +1895,8 @@ div.CodeMirror span.CodeMirror-matchingbracket { /* color: #0f0; */ color: black
 div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
 /*
-Prose Dark Theme
-Saman Bemel-Benrud, Michael Aufreiter
-*/
-.cm-s-prose-dark {
-  line-height:1.3em;
-  }
-.cm-s-prose-dark {
-  font-size:17px;
-  font-family:Menlo, monospace !important;
-  }
-
-.cm-s-prose-dark { color: #EBEFE7; }
-.cm-s-prose-dark div.CodeMirror-selected { background: #45443B !important; }
-.cm-s-prose-dark .CodeMirror-cursor { border-left: 2px solid white !important; }
-.cm-s-prose-dark .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
-
-.cm-s-prose-dark .CodeMirror-gutter { background: transparent; border-right:1px solid rgba(0,0,0, 0.2); padding-right:3px; min-width:2.5em; }
-.cm-s-prose-dark .CodeMirror-gutter-text { color: inherit; }
-.cm-s-prose-dark span.cm-keyword { color: inherit; }
-.cm-s-prose-dark span.cm-atom { color: #fff; opacity: 0.4; }
-.cm-s-prose-dark span.cm-number { color: inherit; }
-.cm-s-prose-dark span.cm-def {color: white;}
-.cm-s-prose-dark span.cm-variable { color:inherit; }
-.cm-s-prose-dark span.cm-variable-2 { color: inherit; }
-.cm-s-prose-dark span.cm-variable-3 { color: inherit; }
-.cm-s-prose-dark span.cm-property {color: inherit;}
-.cm-s-prose-dark span.cm-operator {color: inherit;}
-.cm-s-prose-dark span.cm-comment { color: inherit; }
-.cm-s-prose-dark span.cm-string { color: inherit; }
-.cm-s-prose-dark span.cm-string-2 {color: inherit;}
-.cm-s-prose-dark span.cm-meta { color: #fff; opacity: 0.4; }
-.cm-s-prose-dark span.cm-error { color: inherit; }
-.cm-s-prose-dark span.cm-qualifier {color: inherit;}
-.cm-s-prose-dark span.cm-builtin { color: inherit; }
-.cm-s-prose-dark span.cm-bracket { color: inherit; }
-.cm-s-prose-dark span.cm-tag { color: inherit; }
-.cm-s-prose-dark span.cm-attribute {color: inherit;}
-.cm-s-prose-dark span.cm-header {color: inherit;}
-.cm-s-prose-dark span.cm-quote {color: inherit;}
-.cm-s-prose-dark span.cm-hr {color: inherit;}
-.cm-s-prose-dark span.cm-link {color: inherit;}
-
-/*
 Prose Bright Theme
-Saman Bemel-Benrud, Michael Aufreiter
 */
-
 .cm-s-prose-bright {
   line-height:1.3em;
   }
@@ -2301,11 +1906,9 @@ Saman Bemel-Benrud, Michael Aufreiter
   }
 
 .cm-s-prose-bright {  color: #3D494E; }
-.cm-s-prose-bright div.CodeMirror-selected {background: #AFC3CF !important;} /* 33322B*/
-.cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880 !important; }
-.cm-s-prose-bright .CodeMirror-lines { margin-left:3px; margin-right:3px; }/*editable code holder*/
-
-div.CodeMirror span.CodeMirror-matchingbracket { /* background: #fff; */ }
+.cm-s-prose-bright .CodeMirror-selected {background: #AFC3CF!important; }
+.cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880!important; }
+.cm-s-prose-bright .CodeMirror-lines { margin-left:3px; margin-right:3px; }
 
 .cm-s-prose-bright .CodeMirror-gutter { background: #E7EEF2; border-right:1px solid #C3CCD0;; padding-right:3px; min-width:2.5em; }
 .cm-s-prose-bright .CodeMirror-gutter-text { color: #C3CCD0; }

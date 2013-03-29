@@ -3,6 +3,7 @@
 views.Post = Backbone.View.extend({
 
   id: 'post',
+  className: 'post',
 
   events: {
     'click .save': '_save',

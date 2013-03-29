@@ -3,6 +3,8 @@
 views.Start = views.Profile.extend({
   id: 'start',
 
+  className: 'start',
+
   events: {
     'submit #login_form': '_login'
   },
@@ -24,7 +26,7 @@ views.Start = views.Profile.extend({
 
   render: function() {
     $(this.el).html(templates.start(this.model));
-    $('#drawer').empty().html(templates.sidebarStart(this.model));
+    $('#drawer').empty().html(templates.sidebarOrganizations(this.model));
 
     if (!window.authenticated) $('#header').hide();
     return this;

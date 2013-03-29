@@ -12,6 +12,10 @@
                 current_path: app.state.path
             })));
 
+            $('#drawer').empty().html(templates.sidebarProject(_.extend(this.model, app.state, {
+                current_path: app.state.path
+            })));
+
             _.delay(function () {
                 that.renderResults();
                 $('#search_str').focus();
