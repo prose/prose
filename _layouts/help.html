@@ -2,18 +2,18 @@
 layout: static
 ---
 
-<div class="help post-content">
-  <div class="title">{{page.title}}</div>
+<div class='help post-content'>
+  <div class='title'>{{page.title}}</div>
   
   {{ content }}
-  <div class="meta"> Posted by <a href="http://twitter.com/{{page.author_twitter}}" target="_blank">{{page.author}}</a> on {{ page.date | date: "%B %d, %Y" }} </div>
+  <div class='meta'> Posted by <a href='http://twitter.com/{{page.author_twitter}}' target='_blank'>{{page.author}}</a> on {{ page.date | date: '%B %d, %Y' }} </div>
 </div>
 
-<div class="improve-article-wrapper">
-  <div class="improve-article">
-    <a class="button" href="{{ page.prose_link }}">Edit in Prose</a>
+<div class='improve-article-wrapper'>
+  <div class='improve-article'>
+    <a class='button' href='{{ page.prose_link }}'>Edit in Prose</a>
     <p>
-      This article has been written and published using <a href="http://prose.io" target="_blank">Prose</a>. Please help us improve this documentation by contributing to the text.
+      This article has been written and published using <a href='http://prose.io' target='_blank'>Prose</a>. Please help us improve this documentation by contributing to the text.
     </p>
   </div>
 </div>

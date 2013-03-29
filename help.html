@@ -2,14 +2,14 @@
 layout: static
 ---
 
-<div class="help">
+<div class='help'>
   <h2>Help</h2>
 
   <div class='articles'>
     {% for item in site.categories.help limit:40 offset:0 %}
-      <a class="article" href="{{site.baseurl}}{{item.url}}">
+      <a class='article' href='{{site.baseurl}}{{item.url}}'>
         {% if item.image %}
-          <img src="{{item.image}}" width="200" height="100"/>
+          <img src='{{item.image}}' width='200' height='100'/>
         {% endif %}
 
         <h3>

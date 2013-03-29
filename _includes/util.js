@@ -36,7 +36,7 @@ _.validFilename = function(filename) {
 // Valid pathname check
 // -------
 
-_.validPathname = function(path) {  
+_.validPathname = function(path) {
   return _.all(path.split('/'), function(filename) {
     return _.validFilename(filename);
   });
@@ -45,7 +45,7 @@ _.validPathname = function(path) {
 
 // Extract filename from a given path
 // -------
-// 
+//
 // _.extractFilename('path/to/foo.md')
 // => ['path/to', 'foo.md']
 
@@ -71,7 +71,7 @@ _.mode = function(file) {
   if (extension === "clj") return "clojure";
   if (_.include(["coffee", "cake"], extension)) return "coffeescript";
   if (_.include(["java", "c", "cpp", "cs", "php"], extension)) return "clike";
-  
+
   return extension;
 }
 
@@ -151,7 +151,7 @@ _.toYAML = function(metadata) {
 
 // Only parses first level of YAML file
 // Considers the whole thing as a key-value pair party
-// 
+//
 // name: "michael"
 // age: 25
 // friends:
@@ -160,8 +160,8 @@ _.toYAML = function(metadata) {
 // block: |
 //   Hello World
 //   Another line
-//   24123 
-// 
+//   24123
+//
 // =>
 // {
 //   name: 'michael',
@@ -169,7 +169,7 @@ _.toYAML = function(metadata) {
 //   friends: "- Michael\n- John",
 //   block: "Hello World\nAnother line\n24123"
 // }
-// 
+//
 // var yaml = 'name:     "michael"\nage: 25\nfriends:\n- Michael\n- John\nblock: |\n  hey ho\n  some text\n  yay';
 // console.log(_.fromYAML(yaml));
 
@@ -184,7 +184,7 @@ _.fromYAML = function(rawYAML) {
   function add() {
     data[key] = _.isArray(value) ? value.join('\n') : value;
     key = null;
-    value = "";    
+    value = "";
   }
 
   _.each(lines, function(line) {
@@ -213,9 +213,9 @@ _.fromYAML = function(rawYAML) {
   return data;
 }
 
-// Chunked Path
+// chunked path
 // -------
-// 
+//
 // _.chunkedPath('path/to/foo')
 // =>
 // [
@@ -238,3 +238,22 @@ _.chunkedPath = function(path) {
   });
 }
 
+
+// UI Stuff
+// -------
+
+function dropdown() {
+
+    var $dropdown = $('.dropdown-menu');
+    $dropdown.each(function(i, el) {
+        $(this).hover(function() {
+            $(this).addClass('open');
+        }, function(e) {
+            $(this).removeClass('open');
+        });
+    });
+
+    $('.dropdown-hover').click(function() {
+        return false;
+    });
+}

@@ -2,9 +2,10 @@
 
 views.Header = Backbone.View.extend({
   id: 'header',
+  className: 'header',
 
   events: {
-    "click a.logout": "_logout"
+    'click a.logout': '_logout'
   },
 
   _logout: function() {
@@ -18,12 +19,10 @@ views.Header = Backbone.View.extend({
     return false;
   },
 
-  initialize: function(options) {
-    
-  },
-
   render: function() {
     $(this.el).html(templates.header(_.extend(this.model, {state: app.state})));
+
+    dropdown();
     return this;
   }
 });

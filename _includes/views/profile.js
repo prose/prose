@@ -3,13 +3,9 @@
 views.Profile = Backbone.View.extend({
   id: 'start',
 
-  events: {
-  },
-
-  initialize: function(options) {},
-
   render: function() {
     $(this.el).html(templates.profile(this.model));
+    $('#sidebar').empty().html(templates.sidebarOrganizations(this.model));
     return this;
   }
 });
