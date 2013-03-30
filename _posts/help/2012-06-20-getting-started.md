@@ -17,6 +17,8 @@ This little guide walks you through the process of using Prose to manage your we
 
 We've created a simple template that you can use as a starting point, [Prose Bootstrap](http://bootstrap.prose.io). All you have to do is create a fork of the [repository](http://github.com/prose/bootstrap) and give it a suitable new name. Please follow the steps described on the Bootstrap homepage. If you are already maintaining a Jekyll page you can skip this step.
 
+gest
+
 # Open Prose
 
 Navigate to [Prose.io](http://prose.io). Now you can sign in to [GitHub](http://github.com) by using OAuth.
