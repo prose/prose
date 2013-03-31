@@ -2,7 +2,7 @@
   <div class='round splash'>
     <h2 class='icon landing'>Prose</h2>
     <div class='inner'>
-      <p>Prose is a content editor for GitHub &amp; designed for managing websites.</p>
+      <p>Prose is a content editor for GitHub designed for managing websites.</p>
       <p><a href='/about.html'>Learn more</a></p>
       <a class='round button' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist'>Authorize with GitHub</a>
     </div>
@@ -10,10 +10,6 @@
 <% } %>
 
 <% if (authenticated) { %>
-  <div class='inner'>
-    <h2 class='label'>Projects</h2>
-  </div>
-
   <div class='content-search'>
       <span class='icon search inline fr'></span>
     <input type='text' placeholder='Filter Projects' />
@@ -26,7 +22,7 @@
           <% if (r.private) { %>
             <span class='icon inline small private'></span>
           <% } %>
-          <%= r.name %>
+          <%= r.name %>&nbsp;
           <span class='deemphasize'><%= r.description %></span>
         </a></li>
       <% }); %>

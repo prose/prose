@@ -72,6 +72,12 @@ table { border-collapse: collapse; border-spacing:0; }
 /* ------------------------------------------
   Typography / Basics
 ---------------------------------------------*/
+* {
+  -webkit-box-sizing:border-box;
+     -moz-box-sizing:border-box;
+          box-sizing:border-box;
+  }
+
 body,
 textarea,
 input { font:13px/20px 'OpenSans', sans-serif; }
@@ -81,12 +87,6 @@ html, body {
   color:#57676e;
   height:100%;
   -webkit-font-smoothing:antialiased;
-  }
-
-* {
-  -webkit-box-sizing:border-box;
-     -moz-box-sizing:border-box;
-          box-sizing:border-box;
   }
 
 a {
@@ -127,7 +127,7 @@ h1 {
   }
 
 h2 {
-  font-size:16px;
+  font-size:18px;
   font-weight:400;
   padding:0 0 5px;
   }
@@ -318,10 +318,19 @@ input[type=text] {
 
 .application {
   position:relative;
-  margin:40px auto;
+  margin:20px auto 40px;
   }
+  /*
+    Remove the presentation of the application
+    when viewing static pages.
+  */
+  .static .heading,
+  .static .application {
+    display:none;
+    }
+
 .content {
-  width:600px;
+  width:640px;
   position:relative;
   height:600px;
   height:auto!important;
@@ -335,7 +344,7 @@ input[type=text] {
 .sidebar {
   position:relative;
   z-index:100;
-  width:298px;
+  width:260px;
   height:600px;
   right:1px;
   -webkit-transition:right 300ms;
@@ -499,10 +508,6 @@ input[type=text] {
   box-shadow:0 1px 0 rgba(255, 255, 255, 0),
              0 0 10px rgba(0, 0, 0, 0.1);
   }
-  .post .header {
-    box-shadow:none;
-    border-bottom:none;
-    }
   .header .title {
     float:left;
     border-right:1px solid #c3ccd0;
@@ -539,6 +544,11 @@ input[type=text] {
     top:-15px;
     }
 
+.heading {
+  margin:30px auto 0;
+  height:60px;
+  }
+
 .loading {
   background:transparent url('images/ajax-loader.gif') no-repeat;
   margin:150px auto;
@@ -552,7 +562,7 @@ input[type=text] {
     }
 
 .breadcrumb {
-  margin:0 0 10px;
+  background:#f8f8f8;
   }
 
 .popup {
@@ -592,6 +602,7 @@ input[type=text] {
     margin-top:5px;
     }
 
+
 /* ------------------------------------------
   Unauthenticated Landing
 ---------------------------------------------*/
@@ -609,14 +620,21 @@ input[type=text] {
   Page Components
 ---------------------------------------------*/
 .content-search {
-  border-top:1px solid #C3CCD0;
+  border-bottom:1px solid #C3CCD0;
+  margin-bottom:-1px;
+  position:relative;
+  -webkit-box-shadow:inset 0 -1px 3px rgba(0,0,0,0.10);
+          box-shadow:inset 0 -1px 3px rgba(0,0,0,0.10);
   }
   .content-search input {
     border:none;
-    padding:10px 15px;
+    padding:15px;
     font-size:18px;
     line-height:26px;
     width:90%;
+    }
+  .content-search .icon {
+    top:10px;
     }
 
 .menu li {
@@ -961,7 +979,7 @@ label.error {
   z-index:1010;
   }
   .chzn-container-single .chzn-search input {
-    background:#fff url('img/sprite.png') no-repeat 180px -75px;
+    background:#fff url('img/sprite.png') no-repeat 190px -75px;
     margin:0 4px;
     padding:4px 20px 4px 4px;
     border:1px solid #aaa;
@@ -1218,26 +1236,16 @@ label.error {
   CodeMirror
 ---------------------------------------------*/
 .CodeMirror {
-  line-height:1em;
+  line-height:1.4em;
   font-family:monospace;
   /* Necessary so the scrollbar can be absolutely positioned within the wrapper on Lion. */
   position:relative;
   /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
   overflow:hidden;
   }
-
-.CodeMirror.CodeMirror-wrap {
-  border-right:1px solid #C3CCD0;
-  }
-
-.metadata .CodeMirror.CodeMirror-wrap {
-  border-right:1px solid rgba(0,0,0, 0.2);
-  }
-
 .CodeMirror-scroll {
   overflow-x:auto;
   overflow-y:hidden;
-  height:300px;
   /* This is needed to prevent an IE[67] bug where the scrolled content
      is visible outside of the scrolling box. */
   position:relative;
@@ -1321,7 +1329,7 @@ label.error {
   overflow-x:hidden;
   }
 .CodeMirror textarea {
-  outline:none!important;
+  outline:none;
   }
 .CodeMirror pre.CodeMirror-cursor {
   z-index:10;
@@ -1355,11 +1363,10 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
 /* Prose Bright Theme */
 .cm-s-prose-bright {
-  line-height:1.3em;
+  line-height:1.5em;
   }
 .cm-s-prose-bright {
   font-family:Menlo, monospace !important;
-  font-size:17px;
   }
 
 .cm-s-prose-bright {  color: #3D494E; }
@@ -1399,13 +1406,4 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 /* ------------------------------------------
   ios and small screen alterations
 ---------------------------------------------*/
- @media all and (max-width: 480px) {
-  #post .inner {
-    width: 100%;
-    margin: 0;
-    padding: 20px 0 40px 0;
-    }
-  .toggle-mode {
-    right: 0;
-    }
-  }
+ @media all and (max-width: 480px) {}

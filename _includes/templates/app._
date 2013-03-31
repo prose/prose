@@ -26,8 +26,8 @@
 
 <div class='heading limiter'>
   <% if (state.repo) { %>
-    <a class='user' href='#<%= [state.user].join("/") %>'><%= state.user %></a>
-    <a class='repo' href='#<%= [state.user, state.repo, "tree", state.branch].join("/") %>'><%= state.repo %></a>
+    <h4><a class='user' href='#<%= [state.user].join("/") %>'><%= state.user %></a></h4>
+    <h2><a class='repo' href='#<%= [state.user, state.repo, "tree", state.branch].join("/") %>'><%= state.repo %></a></h2>
     <%= app.state.title %>
   <% } %>
 </div>
@@ -40,7 +40,7 @@
     <div class='vert navigation'>
       <ul class='project nav'>
         <li>
-          <a href='#settings' class='icon round projects'>
+          <a href='/' class='icon round projects'>
             <span class='popup round arrow-right'>Projects &amp; Oranizations</span>
           </a>
         </li>

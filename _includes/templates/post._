@@ -1,7 +1,10 @@
 <!-- Publish Status -->
 <div class='status'></div>
 
-<div class='document'>
+<div class='inner'>
+
+  <div id='meta'></div>
+
   <div class='diff'></div>
   <div class='surface<%= preview ? " preview" : " compose" %>'>
       <div id='code'></div>

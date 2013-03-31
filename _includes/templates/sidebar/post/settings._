@@ -1,27 +1,18 @@
-    <% if (markdown && window.authenticated) { %>
-    <div class='options'>
-      <% if (jekyll && markdown) { %>
-      <div class='publish-state'>
-        <input type='checkbox' id='post_published'<%= published ? " checked='checked'" : ""%> /> Published
-      </div>
-      <% } %>
-      <div class='actions'>
-        <a class='toggle delete button' href='#'>Delete File</a>
-      </div>
-    </div>
-    <% } %>
+<input type='text' class='commit-message' placeholder='Describe your changes' />
 
-    <div class='confirm-label'>
-      Describe your changes:
-    </div>
-    <div class='menu-item save-state'>
-      <input type='text' class='commit-message' value=''/>
-      <div class='state fl'>
-        <% if (writeable) { %><a class='toggle-options button' href="#">&nbsp;</a><% } %>
-        <% if (window.authenticated) { %>
-        <a class='cancel-save button' href='#' title='ESC'>X</a>
-        <a class='save button inactive' href='#' title='CTRL+S'><%= writeable ? 'SAVE' : 'SUBMIT CHANGE' %></a>
-        <% } %>
-      </div>
-    </div>
+<% if (window.authenticated) { %>
+  <a class='cancel-save' href='#' title='ESC'>X</a>
+  <a class='save' href='#' title='CTRL+S'>
+    <%= writeable ? 'Save' : 'Submit Change' %>
+    <span class='icon inline save'></span>
+  </a>
+<% } %>
 
+<% if (markdown && window.authenticated) { %>
+<div class='options'>
+  <% if (jekyll && markdown) { %>
+  <input type='checkbox' id='post_published'<%= published ? " checked='checked'" : ""%> /> Published
+  <% } %>
+  <a class='toggle delete button round' href='#'>Delete File</a>
+</div>
+<% } %>

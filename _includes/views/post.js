@@ -17,6 +17,19 @@ views.Post = Backbone.View.extend({
     'click .toggle-options': '_toggleOptions'
   },
 
+  render: function() {
+    var that = this;
+    $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
+    if (this.model.published) $(this.el).addClass('published');
+
+    $('#drawer').empty().html(templates.settings(_.extend(this.model, app.state, {
+        mode: this.mode
+    })));
+
+    this.initEditor();
+    return this;
+  },
+
   _toggleOptions: function() {
     $('.options').toggle();
     return false;
@@ -390,12 +403,11 @@ views.Post = Backbone.View.extend({
     var that = this;
     setTimeout(function() {
       if (that.model.jekyll) {
-        that.metadataEditor = CodeMirror($('#raw_metadata')[0], {
+        that.metadataEditor = CodeMirror($('#meta')[0], {
           mode: 'yaml',
           value: that.model.raw_metadata,
           theme: 'prose-dark',
           lineWrapping: true,
-          lineNumbers: true,
           extraKeys: that.keyMap(),
           onChange: _.bind(that._makeDirty, that)
         });
@@ -405,7 +417,6 @@ views.Post = Backbone.View.extend({
         mode: that.model.lang,
         value: that.model.content,
         lineWrapping: true,
-        lineNumbers: true,
         extraKeys: that.keyMap(),
         matchBrackets: true,
         theme: 'prose-bright',
@@ -417,14 +428,6 @@ views.Post = Backbone.View.extend({
       // Apply if stash exists and is current, remove if expired
       that.stashApply();
     }, 100);
-  },
-
-  render: function() {
-    var that = this;
-    $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
-    if (this.model.published) $(this.el).addClass('published');
-    this.initEditor();
-    return this;
   },
 
   remove: function() {
