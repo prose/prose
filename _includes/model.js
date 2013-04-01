@@ -78,7 +78,6 @@ function logout() {
 // Load everything that's needed for the app + header
 
 function loadApplication(cb) {
-
   if (window.authenticated) {
     $.ajax({
       type: "GET",
@@ -131,6 +130,7 @@ function loadRepos(username, cb) {
 
   user.show(username, function(err, u) {
     var owners = {};
+
     if (u.type.toLowerCase() === "user") {
       user.userRepos(username, function(err, repos) {
         cb(null, { "repos": repos, user: u });

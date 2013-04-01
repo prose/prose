@@ -10,7 +10,7 @@
     <% if (window.authenticated) { %>
       <div class='dropdown-menu'>
         <a href='#' class='dropdown-hover'>
-          <img class='avatar' src='<%= app.avatar %>' width='40' height='40' alt='User Avatar' />
+          <img class='avatar round' src='<%= app.avatar %>' width='40' height='40' alt='User Avatar' />
           <span class='username'><%= app.username %></span>
         </a>
         <ul class='dropdown arrow-top'>
@@ -23,6 +23,8 @@
     </div>
   </div>
 </div>
+
+<% console.log('bye: ' + state.title) %>
 
 <div class='heading limiter'>
   <% if (state.repo) { %>

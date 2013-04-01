@@ -1,11 +1,5 @@
-<div class='profile-header'>
-
-
-  
-
-  <img class='avatar' src='<%= user.avatar_url %>' width='80' height='80'/>
-  <h2><a href='http://github.com/<%= user.login %>' target='_blank'><%= user.name || user.login %></a></h2>
-</div>
+<img class='avatar round' src='<%= user.avatar_url %>' width='80' height='80'/>
+<h2><a href='http://github.com/<%= user.login %>' target='_blank'><%= user.name || user.login %></a></h2>
 
 <div class='content-search'>
   <span class='icon search inline fr'></span>

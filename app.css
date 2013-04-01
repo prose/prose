@@ -491,8 +491,6 @@ input[type=text] {
   background:#fff;
   display:inline-block;
   border:1px solid #C3CCD0;
-  -webkit-border-radius:6px;
-          border-radius:6px;
   }
 
 /* Top Branding/Navigation */

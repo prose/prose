@@ -198,7 +198,6 @@ _.fromYAML = function(rawYAML) {
         blockValue = true;
         value = "";
       }
-      // console.log(key, value);
     } else {
       if (!_.isArray(value)) value = [];
       if (blockValue) {
