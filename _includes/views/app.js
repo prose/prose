@@ -12,7 +12,10 @@
                 state: app.state
             })));
 
-            dropdown();
+            _.delay(function () {
+                dropdown();
+            }, 1);
+
             return this;
         },
 
