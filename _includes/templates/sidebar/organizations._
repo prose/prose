@@ -1,3 +1,6 @@
+
+<% console.log('hihihi'); %>
+
 <% if (authenticated) { %>
   <div class='inner'>
     <h2 class='label'>Groups</h2>

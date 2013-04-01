@@ -8,7 +8,7 @@
         },
 
         render: function () {
-            $(this.el).empty().append(templates.app(_.extend(this.model, {
+            $(this.el).empty().append(templates.app(_.extend(this.model, app.state, {
                 state: app.state
             })));
 

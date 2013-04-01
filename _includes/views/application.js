@@ -11,7 +11,7 @@
             'click .toggle-view': 'toggleView'
         },
 
-        toggleView: function (e) {
+        toggleView: function(e) {
             var link = $(e.currentTarget),
                 route = link.attr('href').replace(/^\//, '');
 
@@ -69,12 +69,44 @@
         // Main Views
         // ----------
 
-        staticView: function () {
+        start: function(username) {
+            var that = this;
+            app.state.title = '';
+
+            // Render out the application view
+            $(that.app.render().el).prependTo(that.el);
+
+            this.replaceMainView('start', new views.Start({
+                model: _.extend(this.model, {
+                    authenticated: !! window.authenticated
+                })
+            }).render());
+        },
+
+        profile: function(username) {
+            var that = this;
+            app.state.title = username;
+            this.loading('Loading profile ...');
+
+            loadRepos(username, function (err, data) {
+
+                // Render out the application view
+                $(that.app.render().el).prependTo(that.el);
+
+                that.loaded();
+                data.authenticated = !! window.authenticated;
+                that.replaceMainView('profile', new views.Profile({
+                    model: _.extend(that.model, data)
+                }).render());
+            });
+        },
+
+        staticView: function() {
             // Render out the application view
             $(this.app.render().el).prependTo(this.el);
         },
 
-        posts: function (user, repo, branch, path) {
+        posts: function(user, repo, branch, path) {
             var that = this;
             this.loading('Loading posts ...');
             loadPosts(user, repo, branch, path, _.bind(function (err, data) {
@@ -89,7 +121,7 @@
             }, this));
         },
 
-        post: function (user, repo, branch, path, file, mode) {
+        post: function(user, repo, branch, path, file, mode) {
             var that = this;
             this.loading('Loading post ...');
             loadPosts(user, repo, branch, path, _.bind(function (err, data) {
@@ -107,7 +139,6 @@
                         model: data,
                         id: 'post'
                     }).render());
-                    var that = this;
                 }, this));
 
                 // Render out the application view
@@ -116,7 +147,7 @@
             }, this));
         },
 
-        preview: function (user, repo, branch, path, file, mode) {
+        preview: function(user, repo, branch, path, file, mode) {
             this.loading('Preview post ...');
 
             loadConfig(user, repo, branch, _.bind(function () {
@@ -130,7 +161,7 @@
         },
 
 
-        newPost: function (user, repo, branch, path) {
+        newPost: function(user, repo, branch, path) {
             var that = this;
             this.loading('Creating file ...');
             loadPosts(user, repo, branch, path, _.bind(function (err, data) {
@@ -154,50 +185,19 @@
             }, this));
         },
 
-        profile: function (username) {
-            var that = this;
-            app.state.title = username;
-            this.loading('Loading profile ...');
-            loadRepos(username, function (err, data) {
-
-                // Render out the application view
-                $(that.app.render().el).prependTo(that.el);
-
-                that.loaded();
-                data.authenticated = !! window.authenticated;
-                that.replaceMainView('profile', new views.Profile({
-                    model: data
-                }).render());
-            });
-        },
-
-        start: function (username) {
-            var that = this;
-            app.state.title = '';
-
-            // Render out the application view
-            $(that.app.render().el).prependTo(that.el);
-
-            this.replaceMainView('start', new views.Start({
-                model: _.extend(this.model, {
-                    authenticated: !! window.authenticated
-                })
-            }).render());
-        },
-
-        notify: function (type, message) {
+        notify: function(type, message) {
             // Render out the application view
             $(this.app.render().el).prependTo(this.el);
 
             this.replaceMainView('notification', new views.Notification(type, message).render());
         },
 
-        loading: function (msg) {
-            // $('body').html('<div class="loading"><span>' + msg || 'Loading ...' + '</span></div>');
+        loading: function(msg) {
+            $('body').append('<div class="loading"><span>' + msg || 'Loading ...' + '</span></div>');
         },
 
-        loaded: function ()  {
-            // $('.loading').remove();
+        loaded: function()  {
+            $('.loading').remove();
         }
 
     });

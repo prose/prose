@@ -24,8 +24,6 @@
   </div>
 </div>
 
-<% console.log('bye: ' + state.title) %>
-
 <div class='heading limiter'>
   <% if (state.repo) { %>
     <h4><a class='user' href='#<%= [state.user].join("/") %>'><%= state.user %></a></h4>
