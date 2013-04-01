@@ -11,19 +11,19 @@ describe('Array', function() {
 
     // sync
     it('should return -1 when the value is not present', function() {
-      array.indexOf(5).should.equal(-1);
+      expect(array.indexOf(5)).to.equal(-1);
     });
 
     // async
     it('should return -1 when the value is not present (async)', function(done) {
-      array.indexOf(5).should.equal(-1);
+      expect(array.indexOf(5)).to.equal(-1);
       done();
     })
   });
 
   describe('.length', function() {
     it('should return 3', function() {
-      array.length.should.equal(3);
+      expect(array.length).to.equal(3);
     });
   });
 });

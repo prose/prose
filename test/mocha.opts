@@ -1,2 +1,3 @@
 --ui bdd
+--recursive
 test/spec

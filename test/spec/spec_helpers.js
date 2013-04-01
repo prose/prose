@@ -1,14 +1,20 @@
 if (typeof mocha !== 'undefined') {
   // mocha.setup for browser options
-  // cli options defined in spec_helpers
+  // cli options defined in /test/mocha.opts
   mocha.setup({
     ui: 'bdd'
   });
 }
 
-var chai = chai || require('chai');
-var expect = chai.expect;
-chai.should();
+if (typeof chai !== 'undefined') {
+  // browser init
+  var expect = chai.expect;
+} else {
+  var chai = require('chai');
+
+  // bad practice, but allows simple, portable test specs
+  GLOBAL.expect = chai.expect;
+}
 
 chai.use(function (chai, utils) {
   var flag = utils.flag;
