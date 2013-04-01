@@ -10,13 +10,8 @@ views.Start = views.Profile.extend({
   },
 
   render: function() {
-    if (window.authenticated) {
-        $(this.el).empty().html(templates.start(this.model));
-        $('#drawer').empty().html(templates.sidebarOrganizations(this.model));
-    } else {
-        $('.header').hide();
-        $('#main').empty().html(templates.start(this.model));
-    }
+    $('.header').hide();
+    $('#main').empty().html(templates.start(this.model));
 
     return this;
   },
