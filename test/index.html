@@ -10,16 +10,44 @@
   <body>
     <div id="mocha"></div>
 
-    <!-- include source files here... -->
+    <!-- include test library files here... -->
     <script src="lib/mocha.js"></script>
     <script src="lib/chai.js"></script>
-    <script>mocha.setup('bdd')</script>
+
+    <!-- configure mocha here... -->
+    <script>
+      mocha.setup({
+        ui: 'bdd'
+      });
+
+      var expect = chai.expect;
+
+      chai.use(function (chai, utils) {
+        var flag = utils.flag;
+
+        chai.Assertion.addMethod('classed', function (className) {
+          this.assert(
+            flag(this, 'object').classed(className),
+            'expected #{this} to be classed #{exp}',
+            'expected #{this} not to be classed #{exp}',
+            className
+          );
+        });
+      });
+    </script>
+
+    <!-- include source files here... -->
+    <script src="../_includes/model.js"></script>
 
     <!-- include spec files here... -->
-    <script src="spec/test.js"></script>
+    <script src="spec/model/model.js"></script>
 
     <script>
-      mocha.run();
+      if (window.mochaPhantomJS) { 
+        mochaPhantomJS.run();
+      } else {
+        mocha.run();
+      }
     </script>
   </body>
 </html>
