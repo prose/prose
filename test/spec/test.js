@@ -1,6 +1,3 @@
-var chai = chai || require('chai');
-chai.should();
-
 describe('Array', function() {
   var array;
 
