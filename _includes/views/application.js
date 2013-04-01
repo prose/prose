@@ -51,8 +51,9 @@ views.Application = Backbone.View.extend({
   // -------
 
   replaceMainView: function (name, view) {
-    $('body').removeClass().addClass('current-view ' + name);
-    // Make sure the app gets shown
+    $('body').removeClass().addClass(name);
+
+    // Make sure the header get's shown
     if (name !== 'start') $('#app').show();
 
     if (this.mainView) {
@@ -99,6 +100,18 @@ views.Application = Backbone.View.extend({
     }, this));
   },
 
+  preview: function (user, repo, branch, path, file, mode) {
+    this.loading('Preview post ...');
+  
+    loadConfig(user, repo, branch, _.bind(function() {
+      loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        if (err) return this.notify('error', 'The requested resource could not be found.');
+        new views.Preview({ model: data }).render();
+      }, this));
+    }, this));
+  },
+
+
   newPost: function (user, repo, branch, path) {
     this.loading('Creating file ...');
     loadPosts(user, repo, branch, path, _.bind(function (err, data) {
@@ -130,11 +143,11 @@ views.Application = Backbone.View.extend({
 
   start: function(username) {
     var that = this;
-    app.state.title = "";
+    app.state.title = '';
     this.app.render();
 
     this.replaceMainView('start', new views.Start({
-      id: "start",
+      id: 'start',
       model: _.extend(this.model, { authenticated: !!window.authenticated} )
     }).render());
   },

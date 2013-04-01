@@ -27,6 +27,9 @@
 {% include vendor/codemirror/ruby.js %}
 {% include vendor/codemirror/yaml.js %}
 {% include vendor/jquery.cookie.js %}
+{% include vendor/liquid.min.js %}
+{% include vendor/liquid.patch.js %}
+{% include vendor/queue.min.js %}
 
 window.app = {
     config: {},
@@ -53,6 +56,7 @@ window.args = _(window.app).toArray();
 {% include views/notification.js %}
 {% include views/post.js %}
 {% include views/posts.js %}
+{% include views/preview.js %}
 {% include views/profile.js %}
 {% include views/start.js %}
 

@@ -72,6 +72,12 @@ table { border-collapse: collapse; border-spacing:0; }
 /* ------------------------------------------
   Typography / Basics
 ---------------------------------------------*/
+* {
+  -webkit-box-sizing:border-box;
+     -moz-box-sizing:border-box;
+          box-sizing:border-box;
+  }
+
 body,
 textarea,
 input { font:13px/20px 'OpenSans', sans-serif; }
@@ -81,12 +87,6 @@ html, body {
   color:#57676e;
   height:100%;
   -webkit-font-smoothing:antialiased;
-  }
-
-* {
-  -webkit-box-sizing:border-box;
-     -moz-box-sizing:border-box;
-          box-sizing:border-box;
   }
 
 a {
@@ -127,7 +127,7 @@ h1 {
   }
 
 h2 {
-  font-size:16px;
+  font-size:18px;
   font-weight:400;
   padding:0 0 5px;
   }
@@ -318,10 +318,19 @@ input[type=text] {
 
 .application {
   position:relative;
-  margin:40px auto;
+  margin:20px auto 40px;
   }
+  /*
+    Remove the presentation of the application
+    when viewing static pages.
+  */
+  .static .heading,
+  .static .application {
+    display:none;
+    }
+
 .content {
-  width:600px;
+  width:640px;
   position:relative;
   height:600px;
   height:auto!important;
@@ -335,7 +344,7 @@ input[type=text] {
 .sidebar {
   position:relative;
   z-index:100;
-  width:298px;
+  width:260px;
   height:600px;
   right:1px;
   -webkit-transition:right 300ms;
@@ -443,12 +452,12 @@ input[type=text] {
     top:5px;
     }
 
-.icon.title   { background-position:0 -100px; }
-.icon.help    { background-position:-60px -80px; }
-.icon.about   { background-position:-80px -80px; }
-.icon.folder  { background-position:-100px -80px; }
-.icon.file    { background-position:-120px -80px; }
-.icon.private { background-position:-140px -80px; }
+.icon.branding  { background-position:0 -100px; }
+.icon.help      { background-position:-60px -80px; }
+.icon.about     { background-position:-80px -80px; }
+.icon.folder    { background-position:-100px -80px; }
+.icon.file      { background-position:-120px -80px; }
+.icon.private   { background-position:-140px -80px; }
 
 .icon.assets                 { background-position:-40px 0; }
 .icon.assets.active:active,
@@ -493,23 +502,27 @@ input[type=text] {
   font-size:12px;
   font-weight:700;
   height:60px;
-  padding:10px 20px 0;
+  padding:0 20px;
   position:relative;
   z-index:100;
   box-shadow:0 1px 0 rgba(255, 255, 255, 0),
              0 0 10px rgba(0, 0, 0, 0.1);
   }
-  .post .header {
-    box-shadow:none;
-    border-bottom:none;
-    }
   .header .title {
     float:left;
+    border-right:1px solid #c3ccd0;
+    border-left:1px solid #c3ccd0;
+    height:60px;
+    padding:0 15px;
     }
+    .header .title .branding {
+      margin-top:10px;
+      }
 
 .header .user-status {
   float:right;
   height:60px;
+  margin-top:10px;
   }
   .header .user-status .dropdown-hover {
     display:block;
@@ -531,6 +544,11 @@ input[type=text] {
     top:-15px;
     }
 
+.heading {
+  margin:30px auto 0;
+  height:60px;
+  }
+
 .loading {
   background:transparent url('images/ajax-loader.gif') no-repeat;
   margin:150px auto;
@@ -544,7 +562,7 @@ input[type=text] {
     }
 
 .breadcrumb {
-  margin:0 0 10px;
+  background:#f8f8f8;
   }
 
 .popup {
@@ -571,13 +589,19 @@ input[type=text] {
 .footer {
   background:#e0e7eb;
   border-top:1px solid #c3ccd0;
+  border-bottom:1px solid #c3ccd0;
   position:relative;
   font-size:12px;
-  padding:10px 0;
+  padding:15px 0;
+  -webkit-box-shadow:0 -1px 0 rgba(255, 255, 255, 0),
+                     0 0 10px rgba(0, 0, 0, 0.1);
+          box-shadow:0 -1px 0 rgba(255, 255, 255, 0),
+                     0 0 10px rgba(0, 0, 0, 0.1);
   }
   .footer .brand {
     margin-top:5px;
     }
+
 
 /* ------------------------------------------
   Unauthenticated Landing
@@ -596,19 +620,26 @@ input[type=text] {
   Page Components
 ---------------------------------------------*/
 .content-search {
-  border-top:1px solid #C3CCD0;
+  border-bottom:1px solid #C3CCD0;
+  margin-bottom:-1px;
+  position:relative;
+  -webkit-box-shadow:inset 0 -1px 3px rgba(0,0,0,0.10);
+          box-shadow:inset 0 -1px 3px rgba(0,0,0,0.10);
   }
   .content-search input {
     border:none;
-    padding:10px 15px;
+    padding:15px;
     font-size:18px;
     line-height:26px;
     width:90%;
     }
+  .content-search .icon {
+    top:10px;
+    }
 
-.menu li a {
+.menu li {
   float:left;
-  margin-right:10px;
+  margin-right:15px;
   }
 
 .listing li a {
@@ -617,7 +648,7 @@ input[type=text] {
   border-top:1px solid #C3CCD0;
   }
   .listing li a.private {
-    padding-left:10px;
+    padding-left:5px;
     }
   .listing li a:hover {
     background:#f8f8f8;
@@ -834,33 +865,14 @@ input[type=text] {
 /* ------------------------------------------
   Notifications
 ---------------------------------------------*/
-#notification .notification{
+.notify {
   text-align:center;
   width:440px;
   margin:60px auto 0 auto;
-  padding:20px;
   font-size:24px;
   line-height:1.5em;
   font-weight:700;
   }
-
-#notification a {
-	background:#516066;
-  padding:5px;
-  color:white;
-  position:relative;
-  display:block;
-  width:100px;
-  height:30px;
-  margin:0px auto;
-  text-transform:uppercase;
-  text-align:center;
-  font-size:11px;
-  font-weight:700;
-  -webkit-border-radius:5px;
-          border-radius:5px;
-  }
-  #notification a:hover { background: #3d4548; }
 
 label.error {
   color:#E73C58;
@@ -967,7 +979,7 @@ label.error {
   z-index:1010;
   }
   .chzn-container-single .chzn-search input {
-    background:#fff url('img/sprite.png') no-repeat 180px -75px;
+    background:#fff url('img/sprite.png') no-repeat 190px -75px;
     margin:0 4px;
     padding:4px 20px 4px 4px;
     border:1px solid #aaa;
@@ -1224,26 +1236,16 @@ label.error {
   CodeMirror
 ---------------------------------------------*/
 .CodeMirror {
-  line-height:1em;
+  line-height:1.4em;
   font-family:monospace;
   /* Necessary so the scrollbar can be absolutely positioned within the wrapper on Lion. */
   position:relative;
   /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
   overflow:hidden;
   }
-
-.CodeMirror.CodeMirror-wrap {
-  border-right:1px solid #C3CCD0;
-  }
-
-.metadata .CodeMirror.CodeMirror-wrap {
-  border-right:1px solid rgba(0,0,0, 0.2);
-  }
-
 .CodeMirror-scroll {
   overflow-x:auto;
   overflow-y:hidden;
-  height:300px;
   /* This is needed to prevent an IE[67] bug where the scrolled content
      is visible outside of the scrolling box. */
   position:relative;
@@ -1327,7 +1329,7 @@ label.error {
   overflow-x:hidden;
   }
 .CodeMirror textarea {
-  outline:none!important;
+  outline:none;
   }
 .CodeMirror pre.CodeMirror-cursor {
   z-index:10;
@@ -1361,11 +1363,10 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
 /* Prose Bright Theme */
 .cm-s-prose-bright {
-  line-height:1.3em;
+  line-height:1.5em;
   }
 .cm-s-prose-bright {
   font-family:Menlo, monospace !important;
-  font-size:17px;
   }
 
 .cm-s-prose-bright {  color: #3D494E; }
@@ -1405,13 +1406,4 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 /* ------------------------------------------
   ios and small screen alterations
 ---------------------------------------------*/
- @media all and (max-width: 480px) {
-  #post .inner {
-    width: 100%;
-    margin: 0;
-    padding: 20px 0 40px 0;
-    }
-  .toggle-mode {
-    right: 0;
-    }
-  }
+ @media all and (max-width: 480px) {}
