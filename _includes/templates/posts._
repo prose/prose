@@ -1,6 +1,6 @@
 <div class='content-search'>
   <span class='icon search inline fr'></span>
-  <input type='text' id='search_str' placeholder='Filter Files' />
+  <input type='text' id='filter' placeholder='Filter Files' />
 </div>
 
 <div class='breadcrumb'>

@@ -3,7 +3,7 @@
     <!-- folders -->
     <li><a href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= f.path ? "/" +f.path : "" %>'>
       <span class='icon inline small folder'></span>
-      <%= f.path === _.parentPath(current_path) ? ".." : f.name %>
+      <%= f.path === _.parentPath(currentPath) ? ".." : f.name %>
     </a></li>
   <% } else { %> 
     <!-- files -->

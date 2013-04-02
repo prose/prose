@@ -127,7 +127,7 @@ h1 {
   }
 
 h2 {
-  font-size:18px;
+  font-size:22px;
   font-weight:400;
   padding:0 0 5px;
   }
@@ -334,13 +334,14 @@ input[type=text] {
   position:relative;
   height:600px;
   height:auto!important;
-  min-height:660px;
+  min-height:600px;
   z-index:500;
   -webkit-transition:right 300ms;
      -moz-transition:right 300ms;
        -o-transition:right 300ms;
           transition:right 300ms;
   }
+
 .sidebar {
   position:relative;
   z-index:100;
@@ -423,6 +424,7 @@ input[type=text] {
                            inset 0 2px 2px #202020;
         }
     .vert .nav li a.active {
+      pointer-events:none;
       background-color:#fff;
       -webkit-box-shadow:inset 0 1px 0 #202020;
               box-shadow:inset 0 1px 0 #202020;
@@ -491,7 +493,11 @@ input[type=text] {
   background:#fff;
   display:inline-block;
   border:1px solid #C3CCD0;
+  margin-right:10px;
   }
+  .heading .avatar {
+    padding:4px;
+    }
 
 /* Top Branding/Navigation */
 .header {
@@ -510,11 +516,11 @@ input[type=text] {
     float:left;
     border-right:1px solid #c3ccd0;
     border-left:1px solid #c3ccd0;
+    width:60px;
     height:60px;
-    padding:0 15px;
     }
     .header .title .branding {
-      margin-top:10px;
+      margin:10px 0 0 9px;
       }
 
 .header .user-status {
@@ -546,6 +552,10 @@ input[type=text] {
   margin:30px auto 0;
   height:60px;
   }
+  .heading h4 {
+    position:relative;
+    top:5px;
+    }
 
 .loading {
   background:transparent url('images/ajax-loader.gif') no-repeat;
@@ -621,15 +631,20 @@ input[type=text] {
   border-bottom:1px solid #C3CCD0;
   margin-bottom:-1px;
   position:relative;
-  -webkit-box-shadow:inset 0 -1px 3px rgba(0,0,0,0.10);
-          box-shadow:inset 0 -1px 3px rgba(0,0,0,0.10);
+  height:60px;
   }
+  .content-search.scrolling {
+    -webkit-box-shadow:0 2px 6px rgba(0,0,0,0.10);
+            box-shadow:0 2px 6px rgba(0,0,0,0.10);
+    }
   .content-search input {
     border:none;
+    margin-top:5px;
     padding:15px;
     font-size:18px;
     line-height:26px;
     width:90%;
+    height:50px;
     }
   .content-search .icon {
     top:10px;
@@ -640,11 +655,22 @@ input[type=text] {
   margin-right:15px;
   }
 
+.listing {
+  overflow:auto;
+  }
+  .content .listing {
+    height:540px;
+    }
+
 .listing li a {
   display:block;
   padding:10px 15px;
   border-top:1px solid #C3CCD0;
   }
+  .sidebar .listing li a {
+    border-color:#fff;
+    }
+
   .listing li a.private {
     padding-left:5px;
     }

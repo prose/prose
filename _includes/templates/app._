@@ -24,13 +24,7 @@
   </div>
 </div>
 
-<div class='heading limiter'>
-  <% if (state.repo) { %>
-    <h4><a class='user' href='#<%= [state.user].join("/") %>'><%= state.user %></a></h4>
-    <h2><a class='repo' href='#<%= [state.user, state.repo, "tree", state.branch].join("/") %>'><%= state.repo %></a></h2>
-    <%= app.state.title %>
-  <% } %>
-</div>
+<div id='heading' class='heading limiter clearfix'></div>
 
 <div id='main' class='application clearfix limiter'>
   <div id='content' class='content fl'></div>

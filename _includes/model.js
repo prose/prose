@@ -69,7 +69,7 @@ function authenticate() {
 
 function logout() {
   window.authenticated = false;
-  $.cookie("oauth-token", null);
+  $.cookie('oauth-token', null);
 }
 
 // Load Application
@@ -80,14 +80,14 @@ function logout() {
 function loadApplication(cb) {
   if (window.authenticated) {
     $.ajax({
-      type: "GET",
+      type: 'GET',
       url: 'https://api.github.com/user',
       dataType: 'json',
       contentType: 'application/x-www-form-urlencoded',
       headers : { Authorization : 'token ' + $.cookie('oauth-token') },
       success: function(res) {
-        $.cookie("avatar", res.avatar_url);
-        $.cookie("username", res.login);
+        $.cookie('avatar', res.avatar_url);
+        $.cookie('username', res.login);
         app.username = res.login;
         app.avatar = res.avatar_url;
 
@@ -101,21 +101,21 @@ function loadApplication(cb) {
             });
 
             cb(null, {
-              "available_repos": repos,
-              "organizations": orgs,
-              "owners": owners
+              'available_repos': repos,
+              'organizations': orgs,
+              'owners': owners
             });
           });
         });
 
       },
       error: function(err) {
-        cb('error', { "available_repos": [], "owners": {} });
+        cb('error', { 'available_repos': [], 'owners': {} });
       }
     });
 
   } else {
-    cb(null, { "available_repos": [], "owners": {} });
+    cb(null, { 'available_repos': [], 'owners': {} });
   }
 }
 
@@ -131,13 +131,13 @@ function loadRepos(username, cb) {
   user.show(username, function(err, u) {
     var owners = {};
 
-    if (u.type.toLowerCase() === "user") {
+    if (u.type.toLowerCase() === 'user') {
       user.userRepos(username, function(err, repos) {
-        cb(null, { "repos": repos, user: u });
+        cb(null, { 'repos': repos, user: u });
       });
     } else {
       user.orgRepos(username, function(err, repos) {
-        cb(null, { "repos": repos, user: u });
+        cb(null, { 'repos': repos, user: u });
       });
     }
   });
@@ -157,6 +157,42 @@ function loadBranches(user, repo, cb) {
   });
 }
 
+function matchesSearch(file, string) {
+    if (!string) return true;
+    // Insert crazy search pattern match algorithm
+    return file.path.toLowerCase().search(string.toLowerCase()) >= 0;
+}
+
+// Filter on projects based on a searchstr
+// -------
+function filterProjects(repos, searchstr) {
+
+  // Filter
+  var listing = _.filter(repos, function(repo) {
+
+    // Depending on search use full path or filename
+    repo.name = repo.path;
+
+    console.log(repo);
+    var matchSearch = new RegExp('(' + searchstr + ')', 'i');
+
+    // Mark match if searchstr not empty
+    if (searchstr.length) {
+      repo.name = repo.name.replace(matchSearch, '<strong>$1</strong>');
+    }
+
+    return matchesSearch(repo, searchstr);
+  });
+
+  // Sort by name
+  //listing = _.sortBy(repos, function(entry){
+    //return (entry.type === 'tree' ? 'A' : 'B') + entry.path;
+  //});
+
+  return {
+    repos: repos
+  }
+}
 
 // Get files from a tree based on a given path and searchstr
 // -------
@@ -170,42 +206,36 @@ function getFiles(tree, path, searchstr) {
     if (length && path[length - 1] !== '/') {
       path += '/';
     }
-    var match = file.path.match(new RegExp("^"+path+"(.*)$"));
+    var match = file.path.match(new RegExp('^' + path + '(.*)$'));
     if (match) {
       return !!searchstr || match[1].split('/').length <= 1;
     }
     return false;
   }
 
-  function matchesSearch(file) {
-    if (!searchstr) return true;
-    // Insert crazy search pattern match algorithm
-    return file.path.toLowerCase().search(searchstr.toLowerCase()) >= 0;
-  }
-
   // Filter
   var files = _.filter(tree, function(file) {
-    var matchSearch = new RegExp("("+searchstr+")", "i");
+    var matchSearch = new RegExp('('+searchstr+')', 'i');
 
     // Depending on search use full path or filename
     file.name = searchstr ? file.path : _.extractFilename(file.path)[1];
 
     // Scope name to current path
-    file.name = file.name.replace(new RegExp("^"+path+"/?"), "");
+    file.name = file.name.replace(new RegExp('^'+path+'/?'), '');
 
     // Mark match if searchstr not empty
     if (searchstr.length) {
-      file.name = file.name.replace(matchSearch, "<strong>$1</strong>");
+      file.name = file.name.replace(matchSearch, '<strong>$1</strong>');
     }
 
     if (!matchesPath(file)) return false;
     pathMatches += 1;
-    return matchesSearch(file);
+    return matchesSearch(file, searchstr);
   });
 
   // Sort by name
   files = _.sortBy(files, function(entry){
-    return (entry.type === "tree" ? "A" : "B") + entry.path;
+    return (entry.type === 'tree' ? 'A' : 'B') + entry.path;
   });
 
   return {
@@ -215,14 +245,15 @@ function getFiles(tree, path, searchstr) {
   }
 }
 
+
 // Load Config
 // -------
-// 
+//
 // Load _config.yml
 
 function loadConfig(user, reponame, branch, cb) {
   var repo = getRepo(user, reponame);
-  repo.read(branch, "_config.yml", function(err, data) {
+  repo.read(branch, '_config.yml', function(err, data) {
     if (err) return cb(err);
     app.state.jekyll = !err;
     app.state.config = jsyaml.load(data);
@@ -247,16 +278,16 @@ function loadPosts(user, reponame, branch, path, cb) {
       var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : "";
       if (!path) path = root;
 
-      repo.getTree(branch+"?recursive=true", function(err, tree) {
-        if (err) return cb("Not found");
+      repo.getTree(branch+'?recursive=true', function(err, tree) {
+        if (err) return cb('Not found');
         loadBranches(user, reponame, function(err, branches) {
           if (err) return cb("Branches couldn't be fetched");
-          app.state.path = path ? path : "";
+          app.state.path = path ? path : '';
           app.state.branches = _.filter(branches, function(b) { return b !== branch });
           repo.getSha(branch, app.state.path, function(err, sha) {
             app.state.sha = sha;
           });
-          cb(null, getFiles(tree, path, ""));
+          cb(null, getFiles(tree, path, ''));
         });
       });
     });
@@ -274,7 +305,7 @@ function loadPosts(user, reponame, branch, path, cb) {
 
 function serialize(content, metadata) {
   if (metadata) {
-    return ["---", metadata, "---"].join('\n')+'\n\n'+content;
+    return ['---', metadata, '---'].join('\n')+'\n\n'+content;
   } else {
     return content;
   }
