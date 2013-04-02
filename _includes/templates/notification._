@@ -8,7 +8,7 @@
 <% } else { %>
   <div class='notify <%= type %>'>
     <div class='inner'>
-      <%= message %>
+      <p><%= message %></p>
       <p><a class='button round' href='../'>Go back </a></p>
     </div>
   </div>

@@ -311,7 +311,6 @@ _.preview = function(view) {
 // -------
 
 function dropdown() {
-
     var $dropdown = $('.dropdown-menu');
     $dropdown.each(function(i, el) {
         $(this).hover(function() {
@@ -326,3 +325,14 @@ function dropdown() {
     });
 }
 
+function shadowScroll($el, $parent) {
+    $el.scroll(function() {
+        if ($el.scrollTop() !== 0) {
+            if (!$parent.hasClass('shadow')) {
+                $parent.addClass('shadow');
+            }
+        } else {
+            $parent.removeClass('shadow');
+        }
+    });
+}

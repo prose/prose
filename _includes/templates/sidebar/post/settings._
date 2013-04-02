@@ -1,18 +1,22 @@
-<input type='text' class='commit-message' placeholder='Describe your changes' />
-
-<% if (window.authenticated) { %>
-  <a class='cancel-save' href='#' title='ESC'>X</a>
-  <a class='save' href='#' title='CTRL+S'>
-    <%= writeable ? 'Save' : 'Submit Change' %>
-    <span class='icon inline save'></span>
-  </a>
-<% } %>
+<div class='meta inner'>
+</div>
 
 <% if (markdown && window.authenticated) { %>
-<div class='options'>
-  <% if (jekyll && markdown) { %>
-  <input type='checkbox' id='post_published'<%= published ? " checked='checked'" : ""%> /> Published
-  <% } %>
-  <a class='toggle delete button round' href='#'>Delete File</a>
+<div class='actions'>
+  <div class='inner'>
+    <input type='text' class='commit-message' placeholder='Describe your changes' />
+
+    <% if (window.authenticated) { %>
+      <a class='cancel-save' href='#' title='ESC'>X</a>
+      <a class='save' href='#' title='CTRL+S'>
+        <%= writeable ? 'Save' : 'Submit Change' %>
+        <span class='icon inline save'></span>
+      </a>
+    <% } %>
+    <% if (jekyll && markdown) { %>
+    <input type='checkbox' id='post_published'<%= published ? " checked='checked'" : ""%> /> Published
+    <% } %>
+    <a class='toggle delete button round' href='#'>Delete File</a>
+  </div>
 </div>
 <% } %>

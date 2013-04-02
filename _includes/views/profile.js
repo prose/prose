@@ -27,6 +27,7 @@
                 .append(templates.sidebarOrganizations(this.model));
 
             _.delay(function () {
+                shadowScroll($('#projects'), $('.content-search'));
                 $('#filter').focus();
             }, 1);
 

@@ -1,6 +1,9 @@
 (function (config, models, views, routers, utils, templates) {
 
     views.Posts = Backbone.View.extend({
+
+        id: 'posts',
+
         events: {
             'click a.link': 'loading',
             'keyup #filter': 'search'
@@ -8,6 +11,8 @@
 
         render: function () {
             var that = this;
+            var h = this.model;
+
             $(this.el).html(templates.posts(_.extend(this.model, app.state, {
                 current_path: app.state.path
             })));
@@ -16,9 +21,21 @@
                 current_path: app.state.path
             })));
 
+            $('#heading')
+                .empty()
+                .append(templates.heading({
+                    avatar: false,
+                    parent: h.user,
+                    parentUrl: h.user,
+                    title: h.repo,
+                    titleUrl: h.user + '/' + h.repo
+                }));
+
             _.delay(function () {
                 that.renderResults();
                 $('#filter').focus();
+
+                shadowScroll($('#files'), $('.breadcrumb'));
 
                 // Branch Switching
                 $('.chzn-select').chosen().change(function() {

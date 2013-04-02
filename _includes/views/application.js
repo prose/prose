@@ -115,8 +115,7 @@
                 // Render out the application view
                 $(that.app.render().el).prependTo(that.el);
                 this.replaceMainView('posts', new views.Posts({
-                    model: data,
-                    id: 'posts'
+                    model: data
                 }).render());
             }, this));
         },

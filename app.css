@@ -493,7 +493,6 @@ input[type=text] {
   background:#fff;
   display:inline-block;
   border:1px solid #C3CCD0;
-  margin-right:10px;
   }
   .heading .avatar {
     padding:4px;
@@ -552,6 +551,9 @@ input[type=text] {
   margin:30px auto 0;
   height:60px;
   }
+  .heading .details {
+    margin-left:15px;
+    }
   .heading h4 {
     position:relative;
     top:5px;
@@ -570,7 +572,11 @@ input[type=text] {
     }
 
 .breadcrumb {
-  background:#f8f8f8;
+  background:#F8F8F8;
+  position:relative;
+  border-top:1px solid #C3CCD0;
+  border-bottom:1px solid #C3CCD0;
+  margin-bottom:-1px;
   }
 
 .popup {
@@ -610,7 +616,6 @@ input[type=text] {
     margin-top:5px;
     }
 
-
 /* ------------------------------------------
   Unauthenticated Landing
 ---------------------------------------------*/
@@ -633,10 +638,6 @@ input[type=text] {
   position:relative;
   height:60px;
   }
-  .content-search.scrolling {
-    -webkit-box-shadow:0 2px 6px rgba(0,0,0,0.10);
-            box-shadow:0 2px 6px rgba(0,0,0,0.10);
-    }
   .content-search input {
     border:none;
     margin-top:5px;
@@ -836,47 +837,34 @@ input[type=text] {
 /* ------------------------------------------
   Post
 ---------------------------------------------*/
-#post.published .metadata {
-  background: #73965d;
-  }
-
 /* commit message switch */
 .commit-message {
-  display: block;
-  float: left;
-  width: 400px;
-  height: 40px;
-  font-family: Menlo, monospace;
-  background: transparent;
-  border: none;
-  font-size: 16px;
-  color: #555;
-  color: #e7eef2;
-  padding: 0 5px;
-  background-color: rgba(0,0,0, 0.2);
-  color: #e7eef2;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  display: block;
-  display: none;
-  margin-right: 20px;
-}
-
-.state a.button.cancel-save {
-  display: none;
-  background: rgba(0, 0, 0, 0.10) url('images/sprite.png') -283px -588px no-repeat;
-  width: 50px;
-  text-align: center;
-  line-height: 40px;
-  margin: 0;
-  height: 40px;
-  border-radius: 4px 0px 0px 4px;
-  padding: 0;
-  text-indent: -9999px;
-  overflow: hidden;
-
-}
+  background-color:rgba(0,0,0, 0.2);
+  width:400px;
+  height:40px;
+  font-family:Menlo, monospace;
+  color:#e7eef2;
+  padding:0 5px;
+  color:#e7eef2;
+  display:none;
+  margin-right:20px;
+  -webkit-border-radius:5px;
+          border-radius:5px;
+  }
+  .state a.button.cancel-save {
+    background:rgba(0, 0, 0, 0.10);
+    display:none;
+    width:50px;
+    text-align:center;
+    line-height:40px;
+    margin:0;
+    padding:0;
+    height:40px;
+    text-indent:-999em;
+    overflow:hidden;
+    -webkit-border-radius:4px 0 0 4px;
+            border-radius:4px 0 0 4px;
+    }
 
 /* ------------------------------------------
   Pages: Help
@@ -1220,7 +1208,10 @@ label.error {
   font-weight:normal;
   color:#888;
   }
-
+.shadow {
+  -webkit-box-shadow:0 2px 6px rgba(0,0,0,0.10);
+          box-shadow:0 2px 6px rgba(0,0,0,0.10);
+  }
 .round {
   -webkit-border-radius:4px;
           border-radius:4px;
