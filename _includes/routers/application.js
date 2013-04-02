@@ -43,6 +43,10 @@ routers.Application = Backbone.Router.extend({
       app.instance.posts(url.user, url.repo, url.branch, url.path);
     } else if (url.mode === "new") {
       app.instance.newPost(url.user, url.repo, url.branch, url.path);
+    } else if (url.mode === "preview") {
+      var parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      app.instance.preview(url.user, url.repo, url.branch, parts[0], parts[1], url.mode);
     } else {
       var parts = _.extractFilename(url.path);
       app.state.file = parts[1];

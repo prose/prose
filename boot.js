@@ -26,6 +26,9 @@
 {% include vendor/codemirror/ruby.js %}
 {% include vendor/codemirror/yaml.js %}
 {% include vendor/jquery.cookie.js %}
+{% include vendor/liquid.min.js %}
+{% include vendor/liquid.patch.js %}
+{% include vendor/queue.min.js %}
 
 
 window.app = {
@@ -54,6 +57,7 @@ window.args = _(window.app).toArray();
 {% include views/header.js %}
 {% include views/posts.js %}
 {% include views/post.js %}
+{% include views/preview.js %}
 
 // Prevent exit when there are unsaved changes
 window.onbeforeunload = function() {

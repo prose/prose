@@ -110,6 +110,23 @@ views.Application = Backbone.View.extend({
     }, this));
   },
 
+  preview: function (user, repo, branch, path, file, mode) {
+    this.loading('Preview post ...');
+  
+    loadConfig(user, repo, branch, _.bind(function() {
+        loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+          if (!err) {
+            new views.Preview({ model: data }).render();
+          } else {
+            emptyPost(user, repo, branch, path, _.bind(function(err, data) {
+              new views.Preview({ model: data }).render();
+            }, this));
+          }
+        }, this));
+    }, this));
+  },
+
+
   newPost: function (user, repo, branch, path) {
     this.loading('Creating file ...');
     loadPosts(user, repo, branch, path, _.bind(function (err, data) {
