@@ -159,26 +159,27 @@
             }, this));
         },
 
-
         newPost: function(user, repo, branch, path) {
             var that = this;
             this.loading('Creating file ...');
             loadPosts(user, repo, branch, path, _.bind(function (err, data) {
                 emptyPost(user, repo, branch, path, _.bind(function (err, data) {
                     this.loaded();
+
+                    // Render out the application view
+                    $(that.app.render().el).prependTo(that.el);
+
                     data.jekyll = _.jekyll(path, data.file);
                     data.preview = false;
                     data.markdown = _.markdown(data.file);
                     data.lang = _.mode(data.file);
+
                     this.replaceMainView('post', new views.Post({
-                        model: data,
-                        id: 'post'
+                        model: data
                     }).render());
+
                     this.mainView._makeDirty();
                     app.state.file = data.file;
-
-                    // Render out the application view
-                    $(that.app.render().el).prependTo(that.el);
 
                 }, this));
             }, this));

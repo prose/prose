@@ -414,6 +414,8 @@ views.Post = Backbone.View.extend({
 
   initEditor: function() {
     var that = this;
+
+    // TODO Remove setTimeout
     setTimeout(function() {
       if (that.model.jekyll) {
         that.metadataEditor = CodeMirror($('#meta')[0], {

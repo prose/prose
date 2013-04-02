@@ -13,11 +13,11 @@
             var that = this;
             var h = this.model;
 
-            $(this.el).html(templates.posts(_.extend(this.model, app.state, {
+            $(this.el).empty().append(templates.posts(_.extend(this.model, app.state, {
                 current_path: app.state.path
             })));
 
-            $('#drawer').empty().html(templates.sidebarProject(_.extend(this.model, app.state, {
+            $('#drawer').empty().append(templates.sidebarProject(_.extend(this.model, app.state, {
                 current_path: app.state.path
             })));
 
