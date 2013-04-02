@@ -37,69 +37,7 @@
     </script>
 
     <!-- include lib files here... -->
-    <script src="../_includes/vendor/jquery-1.7.1.min.js"></script>
-    <script src="../_includes/vendor/chosen.jquery.min.js"></script>
-    <script src="../_includes/vendor/underscore-min.js"></script>
-    <script src="../_includes/vendor/backbone-min.js"></script>
-    <script src="../_includes/vendor/js-yaml.min.js"></script>
-    <script src="../_includes/vendor/chrono.js"></script>
-    <script src="../_includes/vendor/marked.js"></script>
-    <script src="../_includes/vendor/base64.js"></script>
-    <script src="../_includes/vendor/github.js"></script>
-    <script src="../_includes/vendor/diff-match-patch.js"></script>
-    <script src="../_includes/vendor/keymaster.js"></script>
-    <script src="../_includes/vendor/codemirror/codemirror.js"></script>
-    <script src="../_includes/vendor/codemirror/xml.js"></script>
-    <script src="../_includes/vendor/codemirror/markdown.js"></script>
-    <script src="../_includes/vendor/codemirror/gfm.js"></script>
-    <script src="../_includes/vendor/codemirror/javascript.js"></script>
-    <script src="../_includes/vendor/codemirror/css.js"></script>
-    <script src="../_includes/vendor/codemirror/clojure.js"></script>
-    <script src="../_includes/vendor/codemirror/textile.js"></script>
-    <script src="../_includes/vendor/codemirror/coffeescript.js"></script>
-    <script src="../_includes/vendor/codemirror/less.js"></script>
-    <script src="../_includes/vendor/codemirror/htmlmixed.js"></script>
-    <script src="../_includes/vendor/codemirror/rst.js"></script>
-    <script src="../_includes/vendor/codemirror/clike.js"></script>
-    <script src="../_includes/vendor/codemirror/ruby.js"></script>
-    <script src="../_includes/vendor/codemirror/yaml.js"></script>
-    <script src="../_includes/vendor/jquery.cookie.js"></script>
-    <script src="../_includes/vendor/liquid.min.js"></script>
-    <script src="../_includes/vendor/liquid.patch.js"></script>
-    <script src="../_includes/vendor/queue.min.js"></script>
-
-    <!-- init app here... -->
-    <script>
-      window.app = {
-        config: {},
-        models: {},
-        views: {},
-        routers: {},
-        utils: {},
-        templates: _($('script[data-template]')).reduce(function(memo, el) {
-          memo[el.getAttribute('data-template')] = _(el.innerHTML).template();
-          return memo;
-        }, {}),
-        state: {'repo': ''},
-        instance: {}
-      };
-
-      window.args = _(window.app).toArray();
-    </script>
-
-    <!-- include source files here... -->
-    <script src="../_includes/util.js"></script>
-    <script src="../_includes/model.js"></script>
-    <script src="../_includes/routers/application.js"></script>
-
-    <script src="../_includes/views/application.js"></script>
-    <script src="../_includes/views/app.js"></script>
-    <script src="../_includes/views/notification.js"></script>
-    <script src="../_includes/views/post.js"></script>
-    <script src="../_includes/views/posts.js"></script>
-    <script src="../_includes/views/preview.js"></script>
-    <script src="../_includes/views/profile.js"></script>
-    <script src="../_includes/views/start.js"></script>
+    <script src="../boot.js"></script>
 
     <!-- include spec files here... -->
     <script src="spec/model/model.js"></script>
