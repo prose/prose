@@ -87,8 +87,13 @@ views.Post = Backbone.View.extend({
       this.model.metadata &&
       this.model.metadata.layout
     ) {
-      var hash = window.location.hash.split('/');
-      hash[2] = 'preview';
+      var hash = [
+        '#' + app.state.user,
+        app.state.repo,
+        'preview',
+        app.state.branch,
+        $('input.filepath').val()
+      ];
       this.stashFile();
       $(e.currentTarget).attr({ target: '_blank', href: hash.join('/') });
     } else {

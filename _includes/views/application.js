@@ -114,10 +114,15 @@ views.Application = Backbone.View.extend({
     this.loading('Preview post ...');
   
     loadConfig(user, repo, branch, _.bind(function() {
-      loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) return this.notify('error', 'The requested resource could not be found.');
-        new views.Preview({ model: data }).render();
-      }, this));
+        loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+          if (!err) {
+            new views.Preview({ model: data }).render();
+          } else {
+            emptyPost(user, repo, branch, path, _.bind(function(err, data) {
+              new views.Preview({ model: data }).render();
+            }, this));
+          }
+        }, this));
     }, this));
   },
 
