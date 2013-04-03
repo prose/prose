@@ -17,6 +17,12 @@
 
           <div class='fl actions cleafix'>
             <% if (r.homepage) { %>
+              <a
+                data-user='<%= r.owner.login %>'
+                data-repo='<%= r.name %>'
+                href='#<%= r.owner.login %>/<%= r.name %>'>
+                View Project
+              </a>
               <a href='<%= r.homepage %>'>View Site</a>
             <% } %>
           </div>
@@ -25,12 +31,31 @@
     <% }); %>
   <% } else { %>
   <% _.each(repos, function(r) { %>
-    <li><a title='edit' class='select-repo repo<%= r.private ? " private" : "" %>' data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
-      <% if (r.private) { %>
-        <span class='icon inline small private'></span>
-      <% } %>
-      <%= r.name %>
-      <span class='deemphasize'><%= r.description %></span>
-    </a></li>
+    <li class='clearfix'>
+        <% if (r.private) { %>
+          <div class='fl icon repo private'></div>
+        <% } else { %>
+          <div class='fl icon repo'></div>
+        <% } %>
+
+        <div class='details fl'>
+          <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
+            <h3><%= r.name %></h3>
+          </a>
+          <span class='deemphasize'><%= r.description %></span>
+        </div>
+
+        <div class='fl actions cleafix'>
+          <% if (r.homepage) { %>
+            <a
+              data-user='<%= r.owner.login %>'
+              data-repo='<%= r.name %>'
+              href='#<%= r.owner.login %>/<%= r.name %>'>
+              View Project
+            </a>
+            <a href='<%= r.homepage %>'>View Site</a>
+          <% } %>
+        </div>
+    </li>
   <% }); %>
 <% } %>

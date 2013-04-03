@@ -460,6 +460,9 @@ input[type=text] {
 .icon.private       { background-position:-140px -80px; }
 .icon.folder-group  { background-position:-200px -80px; }
 
+.content .icon.repo          { background-position:-40px -100px; }
+.content .icon.repo.private  { background-position:-80px -100px; }
+
 .icon.assets                 { background-position:-40px 0; }
 .icon.assets.active:active,
 .icon.assetsactive           { background-position:-40px -40px; }
@@ -558,8 +561,11 @@ input[type=text] {
 .details {
   width:400px;
   padding-right:15px;
-  margin-left:15px;
+  margin:0 15px;
   }
+  .content .details {
+    width:340px;
+    }
 
 .loading {
   background:transparent url('images/ajax-loader.gif') no-repeat;
@@ -664,12 +670,17 @@ input[type=text] {
   background:#f8f8f8;
   display:block;
   border:1px solid #e0e0e0;
-  padding:5px 15px;
+  padding:4px 10px;
   font-weight:400;
-  margin:5px 0 0;
+  margin:5px -1px 0;
+  float:left;
   }
   .actions a:hover {
+    position:relative;
     border-color:#C3CCD0;
+    }
+  .actions a:active {
+    border-color:#526066;
     }
 
 .listing {
@@ -844,13 +855,10 @@ input[type=text] {
 /* ------------------------------------------
   Repos /:name /:organization
 ---------------------------------------------*/
-.listing .repo {
-  background-color:#e0e0e0;
-  }
 
 
 /* ------------------------------------------
-  Post
+  Repo /:repo
 ---------------------------------------------*/
 
 /* ------------------------------------------
