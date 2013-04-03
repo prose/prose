@@ -198,7 +198,6 @@ _.fromYAML = function(rawYAML) {
         blockValue = true;
         value = "";
       }
-      // console.log(key, value);
     } else {
       if (!_.isArray(value)) value = [];
       if (blockValue) {
@@ -238,31 +237,12 @@ _.chunkedPath = function(path) {
   });
 }
 
-// UI Stuff
-// -------
-
-function dropdown() {
-
-    var $dropdown = $('.dropdown-menu');
-    $dropdown.each(function(i, el) {
-        $(this).hover(function() {
-            $(this).addClass('open');
-        }, function(e) {
-            $(this).removeClass('open');
-        });
-    });
-
-    $('.dropdown-hover').click(function() {
-        return false;
-    });
-}
-
 // Full Layout Preview
 // -------
 
 _.preview = function(view) {
   var model = view.model,
-      q = queue(1),      
+      q = queue(1),
       p = {
         site: app.state.config,
         post: model.metadata,
@@ -325,4 +305,34 @@ _.preview = function(view) {
     });
 
   }
+}
+
+// UI Stuff
+// -------
+
+function dropdown() {
+    var $dropdown = $('.dropdown-menu');
+    $dropdown.each(function(i, el) {
+        $(this).hover(function() {
+            $(this).addClass('open');
+        }, function(e) {
+            $(this).removeClass('open');
+        });
+    });
+
+    $('.dropdown-hover').click(function() {
+        return false;
+    });
+}
+
+function shadowScroll($el, $parent) {
+    $el.scroll(function() {
+        if ($el.scrollTop() !== 0) {
+            if (!$parent.hasClass('shadow')) {
+                $parent.addClass('shadow');
+            }
+        } else {
+            $parent.removeClass('shadow');
+        }
+    });
 }

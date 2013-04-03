@@ -19,12 +19,25 @@ views.Post = Backbone.View.extend({
 
   render: function() {
     var that = this;
-    $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
+    $(this.el)
+        .empty()
+        .append(templates.post(_.extend(this.model, { mode: this.mode })));
+
     if (this.model.published) $(this.el).addClass('published');
 
     $('#drawer').empty().html(templates.settings(_.extend(this.model, app.state, {
         mode: this.mode
     })));
+
+    $('#heading')
+        .empty()
+        .append(templates.heading({
+            avatar: false,
+            parent: this.model.user + ': ' + this.model.repo,
+            parentUrl: this.model.user + '/' + this.model.repo,
+            title: this.model.file,
+            titleUrl: '#'
+        }));
 
     this.initEditor();
     return this;
@@ -83,7 +96,7 @@ views.Post = Backbone.View.extend({
     this.showDiff();
     this.$('.surface').toggle();
     this.$('.diff-wrapper').toggle();
-    this.$('.commit-message').focus();  
+    this.$('.commit-message').focus();
 
     return false;
   },
@@ -401,6 +414,8 @@ views.Post = Backbone.View.extend({
 
   initEditor: function() {
     var that = this;
+
+    // TODO Remove setTimeout
     setTimeout(function() {
       if (that.model.jekyll) {
         that.metadataEditor = CodeMirror($('#meta')[0], {

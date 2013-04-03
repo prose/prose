@@ -8,24 +8,3 @@
     </div>
   </div>
 <% } %>
-
-<% if (authenticated) { %>
-  <div class='content-search'>
-      <span class='icon search inline fr'></span>
-    <input type='text' placeholder='Filter Projects' />
-  </div>
-
-  <% _.each(owners, function(repos, owner) { %>
-    <ul class='listing'>
-      <% _.each(repos, function(r) { %>
-      <li><a class='repo<%= r.private ? " private" : "" %>' data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
-          <% if (r.private) { %>
-            <span class='icon inline small private'></span>
-          <% } %>
-          <%= r.name %>&nbsp;
-          <span class='deemphasize'><%= r.description %></span>
-        </a></li>
-      <% }); %>
-    </ul>
-  <% }); %>
-<% } %>

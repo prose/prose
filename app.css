@@ -127,16 +127,14 @@ h1 {
   }
 
 h2 {
-  font-size:18px;
+  font-size:22px;
   font-weight:400;
   padding:0 0 5px;
   }
 
 h3 {
-  font-size:11px;
-  text-transform:uppercase;
+  font-size:16px;
   font-weight:700;
-  margin-top:10px;
   }
 
 h4 { font-size:14px; }
@@ -334,13 +332,14 @@ input[type=text] {
   position:relative;
   height:600px;
   height:auto!important;
-  min-height:660px;
+  min-height:600px;
   z-index:500;
   -webkit-transition:right 300ms;
      -moz-transition:right 300ms;
        -o-transition:right 300ms;
           transition:right 300ms;
   }
+
 .sidebar {
   position:relative;
   z-index:100;
@@ -423,6 +422,7 @@ input[type=text] {
                            inset 0 2px 2px #202020;
         }
     .vert .nav li a.active {
+      pointer-events:none;
       background-color:#fff;
       -webkit-box-shadow:inset 0 1px 0 #202020;
               box-shadow:inset 0 1px 0 #202020;
@@ -452,12 +452,16 @@ input[type=text] {
     top:5px;
     }
 
-.icon.branding  { background-position:0 -100px; }
-.icon.help      { background-position:-60px -80px; }
-.icon.about     { background-position:-80px -80px; }
-.icon.folder    { background-position:-100px -80px; }
-.icon.file      { background-position:-120px -80px; }
-.icon.private   { background-position:-140px -80px; }
+.icon.branding      { background-position:0 -100px; }
+.icon.help          { background-position:-60px -80px; }
+.icon.about         { background-position:-80px -80px; }
+.icon.folder        { background-position:-100px -80px; }
+.icon.file          { background-position:-120px -80px; }
+.icon.private       { background-position:-140px -80px; }
+.icon.folder-group  { background-position:-200px -80px; }
+
+.content .icon.repo          { background-position:-40px -100px; }
+.content .icon.repo.private  { background-position:-80px -100px; }
 
 .icon.assets                 { background-position:-40px 0; }
 .icon.assets.active:active,
@@ -475,25 +479,26 @@ input[type=text] {
 .icon.preview.active:active   { background-position:-160px 0; }
 .icon.preview.active          { background-position:-160px -40px; }
 
-.icon.projects,
-.icon.projects.active:active  { background-position:-200px 0; }
-.icon.projects.active         { background-position:-200px -40px; }
+.icon.repos,
+.icon.repos.active:active     { background-position:-200px 0; }
+.icon.repos.active            { background-position:-200px -40px; }
 
 .icon.new,
 .icon.new.active:active       { background-position:-240px 0; }
 .icon.new.active              { background-position:-240px -40px; }
 
-.icon.project,
-.icon.project.active:active   { background-position:-280px 0; }
-.icon.project.active          { background-position:-280px -40px; }
+.icon.repo,
+.icon.repo.active:active      { background-position:-280px 0; }
+.icon.repo.active             { background-position:-280px -40px; }
 
 .avatar {
   background:#fff;
   display:inline-block;
   border:1px solid #C3CCD0;
-  -webkit-border-radius:6px;
-          border-radius:6px;
   }
+  .heading .avatar {
+    padding:4px;
+    }
 
 /* Top Branding/Navigation */
 .header {
@@ -512,11 +517,11 @@ input[type=text] {
     float:left;
     border-right:1px solid #c3ccd0;
     border-left:1px solid #c3ccd0;
+    width:60px;
     height:60px;
-    padding:0 15px;
     }
     .header .title .branding {
-      margin-top:10px;
+      margin:10px 0 0 9px;
       }
 
 .header .user-status {
@@ -548,6 +553,19 @@ input[type=text] {
   margin:30px auto 0;
   height:60px;
   }
+  .heading h4 {
+    position:relative;
+    top:5px;
+    }
+
+.details {
+  width:400px;
+  padding-right:15px;
+  margin:0 15px;
+  }
+  .content .details {
+    width:340px;
+    }
 
 .loading {
   background:transparent url('images/ajax-loader.gif') no-repeat;
@@ -562,7 +580,12 @@ input[type=text] {
     }
 
 .breadcrumb {
-  background:#f8f8f8;
+  background:#F8F8F8;
+  position:relative;
+  z-index:20;
+  border-top:1px solid #C3CCD0;
+  border-bottom:1px solid #C3CCD0;
+  margin-bottom:-1px;
   }
 
 .popup {
@@ -602,7 +625,6 @@ input[type=text] {
     margin-top:5px;
     }
 
-
 /* ------------------------------------------
   Unauthenticated Landing
 ---------------------------------------------*/
@@ -623,15 +645,17 @@ input[type=text] {
   border-bottom:1px solid #C3CCD0;
   margin-bottom:-1px;
   position:relative;
-  -webkit-box-shadow:inset 0 -1px 3px rgba(0,0,0,0.10);
-          box-shadow:inset 0 -1px 3px rgba(0,0,0,0.10);
+  z-index:10;
+  height:60px;
   }
   .content-search input {
     border:none;
+    margin-top:5px;
     padding:15px;
     font-size:18px;
     line-height:26px;
     width:90%;
+    height:50px;
     }
   .content-search .icon {
     top:10px;
@@ -642,15 +666,46 @@ input[type=text] {
   margin-right:15px;
   }
 
-.listing li a {
+.actions a {
+  background:#f8f8f8;
+  display:block;
+  border:1px solid #e0e0e0;
+  padding:4px 10px;
+  font-weight:400;
+  margin:5px -1px 0;
+  float:left;
+  }
+  .actions a:hover {
+    position:relative;
+    border-color:#C3CCD0;
+    }
+  .actions a:active {
+    border-color:#526066;
+    }
+
+.listing {
+  overflow:auto;
+  }
+
+.content .listing {
+  height:540px;
+  }
+  .content .listing li {
+    position:relative;
+    display:block;
+    padding:10px 15px;
+    border-top:1px solid #C3CCD0;
+    }
+
+.sidebar .listing li a {
   display:block;
   padding:10px 15px;
   border-top:1px solid #C3CCD0;
   }
-  .listing li a.private {
-    padding-left:5px;
+  .sidebar .listing li a {
+    border-color:#fff;
     }
-  .listing li a:hover {
+  .sidebar .listing li a:hover {
     background:#f8f8f8;
     }
 
@@ -798,61 +853,13 @@ input[type=text] {
     }
 
 /* ------------------------------------------
-  Posts
+  Repos /:name /:organization
 ---------------------------------------------*/
-#publish_status {
-  position:relative;
-  height:50px;
-  }
-  #publish_status.active {
-    background:#fff;
-    border:1px solid #a0a0a0;
-    }
+
 
 /* ------------------------------------------
-  Post
+  Repo /:repo
 ---------------------------------------------*/
-#post.published .metadata {
-  background: #73965d;
-  }
-
-/* commit message switch */
-.commit-message {
-  display: block;
-  float: left;
-  width: 400px;
-  height: 40px;
-  font-family: Menlo, monospace;
-  background: transparent;
-  border: none;
-  font-size: 16px;
-  color: #555;
-  color: #e7eef2;
-  padding: 0 5px;
-  background-color: rgba(0,0,0, 0.2);
-  color: #e7eef2;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  display: block;
-  display: none;
-  margin-right: 20px;
-}
-
-.state a.button.cancel-save {
-  display: none;
-  background: rgba(0, 0, 0, 0.10) url('images/sprite.png') -283px -588px no-repeat;
-  width: 50px;
-  text-align: center;
-  line-height: 40px;
-  margin: 0;
-  height: 40px;
-  border-radius: 4px 0px 0px 4px;
-  padding: 0;
-  text-indent: -9999px;
-  overflow: hidden;
-
-}
 
 /* ------------------------------------------
   Pages: Help
@@ -1196,7 +1203,10 @@ label.error {
   font-weight:normal;
   color:#888;
   }
-
+.shadow {
+  -webkit-box-shadow:0 2px 6px rgba(0,0,0,0.10);
+          box-shadow:0 2px 6px rgba(0,0,0,0.10);
+  }
 .round {
   -webkit-border-radius:4px;
           border-radius:4px;

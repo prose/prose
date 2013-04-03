@@ -1,13 +1,7 @@
-<div class='profile-header'>
-  <img class='avatar' src='<%= user.avatar_url %>' width='80' height='80'/>
-  <h2><a href='http://github.com/<%= user.login %>' target='_blank'><%= user.name || user.login %></a></h2>
+<div class='content-search'>
+  <span class='icon search inline fr'></span>
+  <input type='text' id='filter' placeholder='Filter projects' />
 </div>
 
-<div class='repos'>
-  <% _.each(repos, function(r, index) { %>
-    <a title="edit" class='select-repo repo' data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href="#<%= r.owner.login %>/<%= r.name %>">
-      <div class='name'><%= r.name %></div>
-      <div class='branches hidden'></div>
-    </a>
-  <% }); %>
-</div>
+<ul id='projects' class='listing'></ul>
+
