@@ -19,6 +19,8 @@ views.Post = Backbone.View.extend({
 
   render: function() {
     var that = this;
+    var isPrivate = app.state.isPrivate ? 'private' : '';
+
     $(this.el)
         .empty()
         .append(templates.post(_.extend(this.model, { mode: this.mode })));
@@ -32,7 +34,7 @@ views.Post = Backbone.View.extend({
     $('#heading')
         .empty()
         .append(templates.heading({
-            avatar: false,
+            avatar: '<span class="icon repo ' + isPrivate + '"></span>',
             parent: this.model.user + ': ' + this.model.repo,
             parentUrl: this.model.user + '/' + this.model.repo,
             title: this.model.file,

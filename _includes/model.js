@@ -40,6 +40,7 @@ function getRepo(user, repo) {
     repo: repo,
     instance: github().getRepo(user, repo)
   };
+
   return currentRepo.instance;
 }
 
@@ -286,6 +287,7 @@ function loadPosts(user, reponame, branch, path, cb) {
         loadBranches(user, reponame, function(err, branches) {
           if (err) return cb("Branches couldn't be fetched");
           app.state.path = path ? path : '';
+
           app.state.branches = _.filter(branches, function(b) { return b !== branch });
           repo.getSha(branch, app.state.path, function(err, sha) {
             app.state.sha = sha;
@@ -298,6 +300,8 @@ function loadPosts(user, reponame, branch, path, cb) {
 
   repo.show(function(err, repodata) {
     if (!branch) app.state.branch = branch = repodata.master_branch;
+
+    app.state.isPrivate = repodata.private;
     app.state.permissions = repodata.permissions;
     load();
   });

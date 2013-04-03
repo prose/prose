@@ -111,6 +111,7 @@
             this.loading('Loading posts ...');
             loadPosts(user, repo, branch, path, _.bind(function (err, data) {
                 this.loaded();
+
                 if (err) return this.notify('error', 'The requested resource could not be found.');
                 // Render out the application view
                 $(that.app.render().el).prependTo(that.el);

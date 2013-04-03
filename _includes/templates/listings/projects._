@@ -16,13 +16,13 @@
           </div>
 
           <div class='fl actions cleafix'>
+            <a
+              data-user='<%= r.owner.login %>'
+              data-repo='<%= r.name %>'
+              href='#<%= r.owner.login %>/<%= r.name %>'>
+              View Project
+            </a>
             <% if (r.homepage) { %>
-              <a
-                data-user='<%= r.owner.login %>'
-                data-repo='<%= r.name %>'
-                href='#<%= r.owner.login %>/<%= r.name %>'>
-                View Project
-              </a>
               <a href='<%= r.homepage %>'>View Site</a>
             <% } %>
           </div>
@@ -46,13 +46,13 @@
         </div>
 
         <div class='fl actions cleafix'>
+          <a
+            data-user='<%= r.owner.login %>'
+            data-repo='<%= r.name %>'
+            href='#<%= r.owner.login %>/<%= r.name %>'>
+            View Project
+          </a>
           <% if (r.homepage) { %>
-            <a
-              data-user='<%= r.owner.login %>'
-              data-repo='<%= r.name %>'
-              href='#<%= r.owner.login %>/<%= r.name %>'>
-              View Project
-            </a>
             <a href='<%= r.homepage %>'>View Site</a>
           <% } %>
         </div>

@@ -127,7 +127,7 @@ h1 {
   }
 
 h2 {
-  font-size:22px;
+  font-size:20px;
   font-weight:400;
   padding:0 0 5px;
   }
@@ -460,8 +460,11 @@ input[type=text] {
 .icon.private       { background-position:-140px -80px; }
 .icon.folder-group  { background-position:-200px -80px; }
 
+
 .content .icon.repo          { background-position:-40px -100px; }
 .content .icon.repo.private  { background-position:-80px -100px; }
+.heading .icon.repo          { background-position:-120px -100px; }
+.heading .icon.repo.private  { background-position:-160px -100px; }
 
 .icon.assets                 { background-position:-40px 0; }
 .icon.assets.active:active,
@@ -553,6 +556,10 @@ input[type=text] {
   margin:30px auto 0;
   height:60px;
   }
+  .heading .icon {
+    position:relative;
+    top:10px;
+    }
   .heading h4 {
     position:relative;
     top:5px;
@@ -586,6 +593,7 @@ input[type=text] {
   border-top:1px solid #C3CCD0;
   border-bottom:1px solid #C3CCD0;
   margin-bottom:-1px;
+  padding:8px 15px;
   }
 
 .popup {
@@ -669,45 +677,46 @@ input[type=text] {
 .actions a {
   background:#f8f8f8;
   display:block;
-  border:1px solid #e0e0e0;
+  border:1px solid #c3ccd0;
   padding:4px 10px;
   font-weight:400;
   margin:5px -1px 0;
   float:left;
   }
-  .actions a:hover {
-    position:relative;
-    border-color:#C3CCD0;
-    }
   .actions a:active {
+    position:relative;
     border-color:#526066;
     }
 
 .listing {
   overflow:auto;
   }
+  .listing li > a {
+    display:block;
+    padding:8px 15px;
+    border-top:1px solid #C3CCD0;
+    }
+    .sidebar .listing li a {
+      border-color:#fff;
+      }
+    .listing li a:hover {
+      background:#f8f8f8;
+      }
 
-.content .listing {
+.profile .listing {
   height:540px;
   }
-  .content .listing li {
+  .profile .listing li {
     position:relative;
     display:block;
     padding:10px 15px;
     border-top:1px solid #C3CCD0;
     }
-
-.sidebar .listing li a {
-  display:block;
-  padding:10px 15px;
-  border-top:1px solid #C3CCD0;
-  }
-  .sidebar .listing li a {
-    border-color:#fff;
-    }
-  .sidebar .listing li a:hover {
-    background:#f8f8f8;
-    }
+    .profile .listing li > a {
+      padding:0;
+      display:inline;
+      border:none;
+      }
 
 .prose .blocks {
   margin:0;

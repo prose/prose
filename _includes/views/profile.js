@@ -12,11 +12,10 @@
             $(this.el).empty().append(templates.profile(this.model));
             this.renderResults();
 
-            console.log(this.model);
             $('#heading')
                 .empty()
                 .append(templates.heading({
-                    avatar: u.avatar_url,
+                    avatar: '<img class="avatar round fl" src="' + u.avatar_url + '" width="60" height="60" alt="Avatar" />',
                     parent: u.name || u.login,
                     parentUrl: u.login,
                     title: 'Projects',

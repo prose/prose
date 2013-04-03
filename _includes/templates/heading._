@@ -1,7 +1,4 @@
-<% if (avatar) { %>
-  <img class='avatar round fl' src='<%= avatar %>' width='60' height='60' alt='Avatar' />
-<% } %>
-
+<% if (avatar) { %><div class='fl'><%= avatar %></div><% } %>
 <div class='fl details'>
   <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>
   <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>

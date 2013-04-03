@@ -13,18 +13,20 @@
             var that = this;
             var h = this.model;
 
+            var isPrivate = app.state.isPrivate ? 'private' : '';
+
             $(this.el).empty().append(templates.posts(_.extend(this.model, app.state, {
-                current_path: app.state.path
+                currentPath: app.state.path
             })));
 
             $('#drawer').empty().append(templates.sidebarProject(_.extend(this.model, app.state, {
-                current_path: app.state.path
+                currentPath: app.state.path
             })));
 
             $('#heading')
                 .empty()
                 .append(templates.heading({
-                    avatar: false,
+                    avatar: '<span class="icon repo ' + isPrivate + '"></span>',
                     parent: h.user,
                     parentUrl: h.user,
                     title: h.repo,
