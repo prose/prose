@@ -1,7 +1,7 @@
 <div class='meta inner'>
 </div>
 
-<% if (markdown && window.authenticated) { %>
+<% if (window.authenticated) { %>
 <div class='actions'>
   <div class='inner'>
     <input type='text' class='commit-message' placeholder='Describe your changes' />
@@ -13,10 +13,13 @@
         <span class='icon inline save'></span>
       </a>
     <% } %>
+
+
     <% if (jekyll && markdown) { %>
-    <input type='checkbox' id='post_published'<%= published ? " checked='checked'" : ""%> /> Published
+      <a href='#' class='toggle publish button round'>Publish</a>
     <% } %>
-    <a class='toggle delete button round' href='#'>Delete File</a>
+
+    <a class='toggle delete button round' href='#'>Delete this File</a>
   </div>
 </div>
 <% } %>

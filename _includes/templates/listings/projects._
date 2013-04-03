@@ -1,13 +1,26 @@
 <% if (state && (app.username === state.user)) { %>
   <% _.each(owners, function(repos, owner) { %>
       <% _.each(repos, function(r) { %>
-      <li><a class='repo<%= r.private ? " private" : "" %>' data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
+      <li class='clearfix'>
           <% if (r.private) { %>
-            <span class='icon inline small private'></span>
+            <div class='fl icon repo private'></div>
+          <% } else { %>
+            <div class='fl icon repo'></div>
           <% } %>
-          <%= r.name %>&nbsp;
-          <span class='deemphasize'><%= r.description %></span>
-        </a></li>
+
+          <div class='details fl'>
+            <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
+              <h3><%= r.name %></h3>
+            </a>
+            <span class='deemphasize'><%= r.description %></span>
+          </div>
+
+          <div class='fl actions cleafix'>
+            <% if (r.homepage) { %>
+              <a href='<%= r.homepage %>'>View Site</a>
+            <% } %>
+          </div>
+      </li>
       <% }); %>
     <% }); %>
   <% } else { %>

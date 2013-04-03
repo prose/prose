@@ -3,10 +3,20 @@
     <h2 class='label'>Your Groups</h2>
   </div>
   <ul class='listing'>
-  <% if (organizations.length) { %>
-    <li><a href='#<%= app.username %>' title='<%= app.username %>'><%= app.username %></a></li>
+  <% if (organizations && organizations.length) { %>
+    <li>
+      <a href='#<%= app.username %>' title='<%= app.username %>'>
+        <span class='icon folder-group inline small'></span>
+        <%= app.username %>
+      </a>
+    </li>
     <% _.each(organizations, function(org) { %>
-    <li><a href='#<%= org.login %>' title='<%= org.login %>'><%= org.login %></a></li>
+    <li>
+      <a href='#<%= org.login %>' title='<%= org.login %>'>
+        <span class='icon folder-group inline small'></span>
+        <%= org.login %>
+      </a>
+    </li>
     <% }); %>
   <% } %>
   </ul>

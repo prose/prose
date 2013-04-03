@@ -12,6 +12,7 @@
             $(this.el).empty().append(templates.profile(this.model));
             this.renderResults();
 
+            console.log(this.model);
             $('#heading')
                 .empty()
                 .append(templates.heading({
@@ -39,8 +40,8 @@
                 var searchstr = this.$('#filter').val();
 
                 // console.log(this.model);
-                this.model = filterProjects(this.model.repos, searchstr);
-                this.renderResults();
+                // this.model = filterProjects(this.model.repos, searchstr);
+                // this.renderResults();
             }, this), 10);
         },
 

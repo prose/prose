@@ -133,10 +133,8 @@ h2 {
   }
 
 h3 {
-  font-size:11px;
-  text-transform:uppercase;
+  font-size:16px;
   font-weight:700;
-  margin-top:10px;
   }
 
 h4 { font-size:14px; }
@@ -454,12 +452,13 @@ input[type=text] {
     top:5px;
     }
 
-.icon.branding  { background-position:0 -100px; }
-.icon.help      { background-position:-60px -80px; }
-.icon.about     { background-position:-80px -80px; }
-.icon.folder    { background-position:-100px -80px; }
-.icon.file      { background-position:-120px -80px; }
-.icon.private   { background-position:-140px -80px; }
+.icon.branding      { background-position:0 -100px; }
+.icon.help          { background-position:-60px -80px; }
+.icon.about         { background-position:-80px -80px; }
+.icon.folder        { background-position:-100px -80px; }
+.icon.file          { background-position:-120px -80px; }
+.icon.private       { background-position:-140px -80px; }
+.icon.folder-group  { background-position:-200px -80px; }
 
 .icon.assets                 { background-position:-40px 0; }
 .icon.assets.active:active,
@@ -477,17 +476,17 @@ input[type=text] {
 .icon.preview.active:active   { background-position:-160px 0; }
 .icon.preview.active          { background-position:-160px -40px; }
 
-.icon.projects,
-.icon.projects.active:active  { background-position:-200px 0; }
-.icon.projects.active         { background-position:-200px -40px; }
+.icon.repos,
+.icon.repos.active:active     { background-position:-200px 0; }
+.icon.repos.active            { background-position:-200px -40px; }
 
 .icon.new,
 .icon.new.active:active       { background-position:-240px 0; }
 .icon.new.active              { background-position:-240px -40px; }
 
-.icon.project,
-.icon.project.active:active   { background-position:-280px 0; }
-.icon.project.active          { background-position:-280px -40px; }
+.icon.repo,
+.icon.repo.active:active      { background-position:-280px 0; }
+.icon.repo.active             { background-position:-280px -40px; }
 
 .avatar {
   background:#fff;
@@ -551,13 +550,16 @@ input[type=text] {
   margin:30px auto 0;
   height:60px;
   }
-  .heading .details {
-    margin-left:15px;
-    }
   .heading h4 {
     position:relative;
     top:5px;
     }
+
+.details {
+  width:400px;
+  padding-right:15px;
+  margin-left:15px;
+  }
 
 .loading {
   background:transparent url('images/ajax-loader.gif') no-repeat;
@@ -574,6 +576,7 @@ input[type=text] {
 .breadcrumb {
   background:#F8F8F8;
   position:relative;
+  z-index:20;
   border-top:1px solid #C3CCD0;
   border-bottom:1px solid #C3CCD0;
   margin-bottom:-1px;
@@ -636,6 +639,7 @@ input[type=text] {
   border-bottom:1px solid #C3CCD0;
   margin-bottom:-1px;
   position:relative;
+  z-index:10;
   height:60px;
   }
   .content-search input {
@@ -656,14 +660,33 @@ input[type=text] {
   margin-right:15px;
   }
 
+.actions a {
+  background:#f8f8f8;
+  display:block;
+  border:1px solid #e0e0e0;
+  padding:5px 15px;
+  font-weight:400;
+  margin:5px 0 0;
+  }
+  .actions a:hover {
+    border-color:#C3CCD0;
+    }
+
 .listing {
   overflow:auto;
   }
-  .content .listing {
-    height:540px;
+
+.content .listing {
+  height:540px;
+  }
+  .content .listing li {
+    position:relative;
+    display:block;
+    padding:10px 15px;
+    border-top:1px solid #C3CCD0;
     }
 
-.listing li a {
+.sidebar .listing li a {
   display:block;
   padding:10px 15px;
   border-top:1px solid #C3CCD0;
@@ -671,11 +694,7 @@ input[type=text] {
   .sidebar .listing li a {
     border-color:#fff;
     }
-
-  .listing li a.private {
-    padding-left:5px;
-    }
-  .listing li a:hover {
+  .sidebar .listing li a:hover {
     background:#f8f8f8;
     }
 
@@ -823,48 +842,16 @@ input[type=text] {
     }
 
 /* ------------------------------------------
-  Posts
+  Repos /:name /:organization
 ---------------------------------------------*/
-#publish_status {
-  position:relative;
-  height:50px;
+.listing .repo {
+  background-color:#e0e0e0;
   }
-  #publish_status.active {
-    background:#fff;
-    border:1px solid #a0a0a0;
-    }
+
 
 /* ------------------------------------------
   Post
 ---------------------------------------------*/
-/* commit message switch */
-.commit-message {
-  background-color:rgba(0,0,0, 0.2);
-  width:400px;
-  height:40px;
-  font-family:Menlo, monospace;
-  color:#e7eef2;
-  padding:0 5px;
-  color:#e7eef2;
-  display:none;
-  margin-right:20px;
-  -webkit-border-radius:5px;
-          border-radius:5px;
-  }
-  .state a.button.cancel-save {
-    background:rgba(0, 0, 0, 0.10);
-    display:none;
-    width:50px;
-    text-align:center;
-    line-height:40px;
-    margin:0;
-    padding:0;
-    height:40px;
-    text-indent:-999em;
-    overflow:hidden;
-    -webkit-border-radius:4px 0 0 4px;
-            border-radius:4px 0 0 4px;
-    }
 
 /* ------------------------------------------
   Pages: Help

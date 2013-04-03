@@ -34,13 +34,13 @@
     <div class='vert navigation'>
       <ul class='project nav'>
         <li>
-          <a href='/' class='icon round projects'>
+          <a href='/' class='icon round repos'>
             <span class='popup round arrow-right'>Projects &amp; Oranizations</span>
           </a>
         </li>
         <% if (state.repo) { %>
           <li>
-            <a href='#settings' class='icon round project'>
+            <a href='#settings' class='icon round repo'>
               <span class='popup round arrow-right'>Project Contents</span>
             </a>
           </li>
