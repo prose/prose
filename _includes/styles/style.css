@@ -1155,7 +1155,7 @@ ul.site li a {
   position: absolute;
   top: 60px;
   right: 0px;
-  width: 300px;
+  width: 231px;
   z-index: 3000;
   border-radius: 0 0 5px 5px;
   }
@@ -1167,7 +1167,7 @@ ul.site li a {
 
 .document-menu .options .actions {
   background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
+  padding: 10px 20px;
   border-radius: 0 0 5px 5px;
   }
 
@@ -1178,6 +1178,7 @@ ul.site li a {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
+  margin: 10px 0;
   }
 
 .document-menu .options .actions .button:hover {
@@ -1689,15 +1690,20 @@ ul.site li a {
   font-weight: 700;
   }
 
+#notification .buttons {
+  margin: 0px auto;
+  text-align: center;
+  }
+
 #notification a {
 	background: #516066;
   padding: 5px;
   color: white;
   position: relative;
-  display: block;
+  display: inline-block;
   width: 100px;
   height: 30px;
-  margin: 0px auto;
+  margin: 0 5px;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
@@ -1706,7 +1712,9 @@ ul.site li a {
   font-size: 11px;
   font-weight: 700;
   }
+  #notification a.muted { background: #738890; }
   #notification a:hover { background: #3d4548; }
+
 
 ul.form li {
   position: relative;

@@ -374,6 +374,7 @@ function movePost(user, repo, branch, path, newPath, cb) {
 // Prepare new empty post
 
 function emptyPost(user, repo, branch, path, cb) {
+  var file = new Date().format("Y-m-d")+"-your-filename.md";
   var rawMetadata = "layout: default\npublished: false";
   var metadata = {
     "layout": "default",
@@ -398,6 +399,13 @@ function emptyPost(user, repo, branch, path, cb) {
     }
   }
 
+
+  // If ?file= in path, use it as file name
+  if (path.indexOf('?file=') !== -1) {
+    file = path.split('?file=')[1];
+    path = path.split('?file=')[0].replace(/\/$/, '');
+  }
+
   cb(null, {
     "metadata": metadata,
     "raw_metadata": rawMetadata,
@@ -407,7 +415,7 @@ function emptyPost(user, repo, branch, path, cb) {
     "published": false,
     "persisted": false,
     "writeable": true,
-    "file": new Date().format("Y-m-d")+"-your-filename.md"
+    "file": file
   });
 }
 

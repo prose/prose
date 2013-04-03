@@ -41,6 +41,13 @@
         </div>
       <% } %>
       <div class="actions">
+        <% if (app.state.config && app.state.config.languages) { %>
+        <% _(app.state.config.languages).each(function(lang) { %>
+        <% if (metadata.lang && metadata.lang !== lang.key) { %>
+        <a class="toggle translate button" href="#<%= lang.key %>">Translate to <%= lang.name %></a>
+        <% } %>
+        <% }); %>
+        <% } %>
         <a class="toggle delete button" href="#">Delete File</a>
       </div>
     </div>
