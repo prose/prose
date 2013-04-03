@@ -465,6 +465,7 @@ input[type=text] {
 .content .icon.repo.private  { background-position:-80px -100px; }
 .heading .icon.repo          { background-position:-120px -100px; }
 .heading .icon.repo.private  { background-position:-160px -100px; }
+.icon.md                     { background-position:-200px -100px; }
 
 .icon.assets                 { background-position:-40px 0; }
 .icon.assets.active:active,
@@ -699,6 +700,11 @@ input[type=text] {
     .sidebar .listing li a {
       border-color:#fff;
       }
+    .listing .markdown a {
+      padding:15px;
+      overflow:hidden; /* todo: why? */
+      }
+
     .listing li a:hover {
       background:#f8f8f8;
       }
