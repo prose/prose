@@ -274,11 +274,11 @@ function loadPosts(user, reponame, branch, path, cb) {
   var repo = getRepo(user, reponame);
 
   function load(repodata) {
-    loadConfig(user, reponame, branch, function(err, config) {
+    loadConfig(user, reponame, branch, function(err) {
       app.state.jekyll = !err;
-      app.state.config = config;
-
+      var config = app.state.config;
       var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
+
       if (!path) path = root;
 
       repo.getTree(branch+'?recursive=true', function(err, tree) {
