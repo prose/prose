@@ -599,16 +599,16 @@ input[type=text] {
   background:#202020;
   color:#fff;
   position:absolute;
-  width:95px;
-  padding:5px 10px;
-  left:-95px;
+  width:60px;
+  padding:5px;
+  left:40px;
   display:none;
   top:0;
   text-indent:0;
   font-size:11px;
   line-height:18px;
   }
-  .popup.arrow-right:after {
+  .popup.arrow-left:after {
     border-color:transparent #202020;
     top:10px;
     }

@@ -27,7 +27,8 @@
         mode: this.mode
       })));
 
-      if (this.model.published) $(this.el).addClass('published');
+      // TODO Add an unpublished class to .application
+      //if (!this.model.published) $(this.el).addClass('unpublished');
 
       $('#drawer')
         .empty()

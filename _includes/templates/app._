@@ -26,19 +26,19 @@
       <ul class='project nav'>
         <li>
           <a href='/' class='icon round repos'>
-            <span class='popup round arrow-right'>Your Projects</span>
+            <span class='popup round arrow-left'>Your Projects</span>
           </a>
         </li>
         <% if (state.repo) { %>
           <li>
             <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo'>
-              <span class='popup round arrow-right'>Project Contents</span>
+              <span class='popup round arrow-left'>Project Contents</span>
             </a>
           </li>
           <% if (window.authenticated) { %>
             <li>
               <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='icon round new new-file'>
-                <span class='popup round arrow-right'>New File</span>
+                <span class='popup round arrow-left'>New File</span>
               </a>
             </li>
           <% } %>
@@ -48,22 +48,17 @@
       <ul class='file nav'>
         <li>
           <a href='#settings' class='icon round edit'>
-            <span class='popup round arrow-right'>Edit</span>
+            <span class='popup round arrow-left'>Edit</span>
           </a>
         </li>
         <li>
           <a href='#settings' class='icon round preview' data-drawer=true>
-            <span class='popup round arrow-right'>Preview</span>
-          </a>
-        </li>
-        <li>
-          <a href='#metadata' class='icon round assets' data-drawer=true>
-            <span class='popup round arrow-right'>Add Media</span>
+            <span class='popup round arrow-left'>Preview</span>
           </a>
         </li>
         <li>
           <a href='#settings' class='icon round settings' data-drawer=true>
-            <span class='popup round arrow-right'>Post Settings</span>
+            <span class='popup round arrow-left'>Post Settings</span>
           </a>
         </li>
       </ul>
