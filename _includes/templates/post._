@@ -1,14 +1,7 @@
-<!-- Publish Status -->
-<div class='status'></div>
-
 <div class='inner'>
-  <div class='diff'></div>
-  <div class='surface<%= preview ? " preview" : " compose" %>'>
-      <div id='code'></div>
-      <div class='content-preview prose'>
-        <div class='post-content'>
-          <%= markdown ? marked(content) : '' %>
-        </div>
-    </div>
+  <div class='inner'>
+    <div id='diff' class='diff'></div>
+    <div id='code' class='code'></div>
+    <div class='preview prose'><%= markdown ? marked(content) : '' %></div>
   </div>
 </div>

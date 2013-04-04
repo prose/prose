@@ -11,8 +11,7 @@
       'click .save.confirm': 'updateFile',
       'click a.toggle.view': '_toggleView',
       'change input': '_makeDirty',
-      'change #post_published': 'updateMetaData',
-      'click .delete': '_delete'
+      'change #post_published': 'updateMetaData'
     },
 
     render: function() {
@@ -38,10 +37,18 @@
         mode: this.mode
       })));
 
+      // TODO Fix this! Elements that are added to the 
+      // sidebar drawer dont get there in time to register
+      // events, we need to bind them here.
+      $('.delete').on('click', this.deleteFile);
+      $('.publish').on('click', this.deleteFile);
+
+
+
       $('#heading')
         .empty()
         .append(templates.heading({
-        avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
+        avatar: '<span class="icon round file ' + isPrivate + '"></span>',
         parent: this.model.repo,
         parentUrl: this.model.user + '/' + this.model.repo,
         title: this.model.file,
@@ -72,7 +79,7 @@
       }
     },
 
-    _delete: function() {
+    deleteFile: function() {
       if (confirm('Are you sure you want to delete that file?')) {
         deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
           if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
