@@ -223,7 +223,7 @@ function loadPosts(user, reponame, branch, path, cb) {
   var repo = getRepo(user, reponame);
 
   function loadConfig(cb) {
-    repo.read(branch, "_config.yml", function(err, data) {
+    repo.contents(branch, "_config.yml", function(err, data) {
       if (err) return cb(err);
       cb(null, jsyaml.load(data));
     });
@@ -420,7 +420,7 @@ function emptyPost(user, repo, branch, path, cb) {
 function loadPost(user, repo, branch, path, file, cb) {
   var repo = getRepo(user, repo);
 
-  repo.read(branch, path ? path + "/" + file : file, function(err, data, commit) {
+  repo.contents(branch, path ? path + "/" + file : file, function(err, data, commit) {
     if (err) return cb(err);
 
     // Given a YAML front matter, determines published or not
