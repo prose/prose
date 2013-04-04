@@ -258,8 +258,6 @@ function loadConfig(user, reponame, branch, cb) {
   var repo = getRepo(user, reponame);
   repo.read(branch, '_config.yml', function(err, data) {
     if (err) return cb(err);
-    app.state.jekyll = !err;
-    app.state.config = jsyaml.load(data);
     cb(err, app.state.config);
   });
 }
@@ -281,7 +279,10 @@ function loadPosts(user, reponame, branch, path, cb) {
   }
 
   function load(repodata) {
-    loadConfig(user, reponame, branch, function(err, config) {
+    loadConfig(function(err, config) {
+      app.state.jekyll = !err;
+      app.state.config = config;
+
       var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
       if (!path) path = root;
 
