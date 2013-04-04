@@ -13,11 +13,14 @@
       'click a.toggle.meta': '_toggleMeta',
       'change input': '_makeDirty',
       'change #post_published': 'updateMetaData',
-      'click .delete': '_delete',
-      'click .toggle-options': '_toggleOptions'
+      'click .delete': '_delete'
     },
 
-    render: function () {
+    render: function() {
+
+       _.bindAll(this, 'postViews');
+      this.options.eventRegister.bind('postViews', this.postViews);
+
       var that = this;
       var isPrivate = app.state.isPrivate ? 'private' : '';
 
@@ -50,12 +53,11 @@
       return this;
     },
 
-    _toggleOptions: function () {
-      $('.options').toggle();
-      return false;
+    postViews: function(e) {
+
     },
 
-    _delete: function () {
+    _delete: function() {
       if (confirm('Are you sure you want to delete that file?')) {
         deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
           if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
@@ -108,10 +110,9 @@
       return false;
     },
 
-    _save: function (e) {
+    _save: function() {
       if (!this.dirty) return false;
       this._toggleCommit();
-      e.preventDefault();
       return false;
     },
 

@@ -1,5 +1,6 @@
-<div class='meta inner'>
-</div>
+<% if (jekyll) { %>
+  <div id='meta' class='meta inner'></div>
+<% } %>
 
 <% if (window.authenticated) { %>
 <div class='inner'>
@@ -12,7 +13,6 @@
       <span class='icon inline save'></span>
     </a>
   <% } %>
-
 
   <% if (jekyll && markdown) { %>
     <a href='#' class='toggle publish button round'>Publish</a>

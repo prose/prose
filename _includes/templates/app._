@@ -45,19 +45,19 @@
         <% } %>
       </ul>
       <% if (window.authenticated && state.mode === 'edit') { %>
-      <ul class='file nav'>
+      <ul class='post-views nav'>
         <li>
-          <a href='#settings' class='icon round edit'>
+          <a href='#' class='icon round edit' data-state='edit'>
             <span class='popup round arrow-left'>Edit</span>
           </a>
         </li>
         <li>
-          <a href='#settings' class='icon round preview' data-drawer=true>
+          <a href='#' class='icon round preview' data-state='preview'>
             <span class='popup round arrow-left'>Preview</span>
           </a>
         </li>
         <li>
-          <a href='#settings' class='icon round settings' data-drawer=true>
+          <a href='#' class='icon round settings' data-state='settings' data-drawer=true>
             <span class='popup round arrow-left'>Post Settings</span>
           </a>
         </li>

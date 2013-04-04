@@ -1,42 +1,51 @@
 (function (config, models, views, routers, utils, templates) {
 
-    views.App = Backbone.View.extend({
-        id: 'app',
+  views.App = Backbone.View.extend({
+    id: 'app',
 
-        events: {
-            'click a.logout': '_logout'
-        },
+    events: {
+      'click .post-views a': 'postViews',
+      'click a.logout': 'logout'
+    },
 
-        render: function () {
-            $(this.el).empty().append(templates.app(_.extend(this.model, app.state, {
-                state: app.state
-            })));
+    initialize: function(options) {
+      this.eventRegister = options.eventRegister;
+    },
 
-            // When the sidebar should be open.
-            if (this.model.mode === 'edit') {
-              $('#prose').toggleClass('open', false);
-            } else {
-              $('#prose').toggleClass('open', true);
-            }
+    render: function () {
+      $(this.el).empty().append(templates.app(_.extend(this.model, app.state, {
+        state: app.state
+      })));
 
-            _.delay(function () {
-                dropdown();
-            }, 1);
+      // When the sidebar should be open.
+      if (this.model.mode === 'edit') {
+        $('#prose').toggleClass('open', false);
+      } else {
+        $('#prose').toggleClass('open', true);
+      }
 
-            return this;
-        },
+      _.delay(function () {
+        dropdown();
+      }, 1);
 
-        _logout: function () {
-            logout();
-            app.instance.render();
-            if ($('#start').length > 0) {
-                app.instance.start();
-            } else {
-                window.location.reload();
-            }
-            return false;
-        }
+      return this;
+    },
 
-    });
+    postViews: function() {
+      this.eventRegister.trigger('postViews', this.model);
+      return false; 
+    },
+
+    logout: function () {
+      logout();
+      app.instance.render();
+      if ($('#start').length > 0) {
+        app.instance.start();
+      } else {
+        window.location.reload();
+      }
+      return false;
+    }
+  });
 
 }).apply(this, window.args);

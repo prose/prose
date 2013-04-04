@@ -412,7 +412,7 @@ input[type=text] {
     padding-bottom:5px;
     border-bottom:1px solid #202020;
     }
-  .vert .nav.file {
+  .vert .nav.post-views {
     padding-top:5px;
     border-top:1px solid #555;
     }
@@ -1409,7 +1409,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
 /* Prose Bright Theme */
 .cm-s-prose-bright {
-  line-height:1.5em;
+  line-height:1.75em;
   }
 .cm-s-prose-bright {
   font-family:Menlo, monospace !important;
