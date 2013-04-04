@@ -270,7 +270,7 @@ function getFiles(tree, path, searchstr) {
 
 function loadConfig(user, reponame, branch, cb) {
   var repo = getRepo(user, reponame);
-  repo.read(branch, '_config.yml', function (err, data) {
+  repo.contents(branch, '_config.yml', function(err, data) {
     if (err) return cb(err);
     app.state.jekyll = !err;
     app.state.config = jsyaml.load(data);
@@ -492,7 +492,7 @@ function emptyPost(user, repo, branch, path, cb) {
 function loadPost(user, repo, branch, path, file, cb) {
   var repo = getRepo(user, repo);
 
-  repo.read(branch, path ? path + '/' + file : file, function (err, data, commit) {
+  repo.contents(branch, path ? path + "/" + file : file, function(err, data, commit) {
     if (err) return cb(err);
 
     // Given a YAML front matter, determines published or not
