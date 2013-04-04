@@ -17,8 +17,7 @@
 
     function _request(method, path, data, cb, raw, sync) {
       function getURL() {
-        var url = API_URL + path;
-        return url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime();
+        return url = API_URL + path;
       }
 
       var xhr = new XMLHttpRequest();
@@ -329,7 +328,7 @@
       // --------
 
       this.contents = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents?ref=" + branch, { path: path }, cb);
+        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
       };
 
       this.contentsSync = function(branch, path) {
