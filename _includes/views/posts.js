@@ -9,6 +9,11 @@
             'keyup #filter': 'search'
         },
 
+        initialize: function() {
+          // Sidebar should be open.
+          $('#prose').toggleClass('open', true);
+        },
+
         render: function () {
             var that = this;
             var h = this.model;
@@ -26,7 +31,7 @@
             $('#heading')
                 .empty()
                 .append(templates.heading({
-                    avatar: '<span class="icon repo ' + isPrivate + '"></span>',
+                    avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
                     parent: h.user,
                     parentUrl: h.user,
                     title: h.repo,
@@ -44,6 +49,7 @@
                     router.navigate($(this).val(), false);
                 });
             }, 1);
+
             return this;
         },
 
@@ -54,7 +60,10 @@
         search: function () {
             _.delay(_.bind(function() {
                 var searchstr = this.$('#filter').val();
+
                 this.model = getFiles(this.model.tree, app.state.path, searchstr);
+
+
                 this.renderResults();
             }, this), 10);
         },

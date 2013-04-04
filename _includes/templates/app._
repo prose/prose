@@ -1,19 +1,10 @@
 <div class='header'>
   <div class='limiter clearfix'>
-    <a class='title' href='/{{site.baseurl}}'>
-      <span class='icon branding'>
-        Prose
-      </span>
-    </a>
-
     <div class='user-status<%= !window.authenticated ? " logged-out" : "" %>'>
     <% if (window.authenticated) { %>
       <div class='dropdown-menu'>
-        <a href='#' class='dropdown-hover'>
-          <img class='avatar round' src='<%= app.avatar %>' width='40' height='40' alt='User Avatar' />
-          <span class='username'><%= app.username %></span>
-        </a>
-        <ul class='dropdown arrow-top'>
+        <a href='#' class='round dropdown-hover'><%= app.username %></a>
+        <ul class='dropdown round arrow-top'>
           <li><a class='logout' href='#'>Logout</a></li>
         </ul>
       </div>
@@ -26,7 +17,7 @@
 
 <div id='heading' class='heading limiter clearfix'></div>
 
-<div id='main' class='application clearfix limiter'>
+<div class='application clearfix limiter'>
   <div id='content' class='content fl'></div>
   <div class='sidebar fl'>
     <div id='drawer'></div>
@@ -35,7 +26,7 @@
       <ul class='project nav'>
         <li>
           <a href='/' class='icon round repos'>
-            <span class='popup round arrow-right'>Projects &amp; Oranizations</span>
+            <span class='popup round arrow-right'>Your Projects</span>
           </a>
         </li>
         <% if (state.repo) { %>
@@ -57,22 +48,22 @@
       <ul class='file nav'>
         <li>
           <a href='#settings' class='icon round edit'>
-            <span class='popup round arrow-right'>Edit this page</span>
+            <span class='popup round arrow-right'>Edit</span>
           </a>
         </li>
         <li>
           <a href='#settings' class='icon round preview' data-drawer=true>
-            <span class='popup round arrow-right'>Preview this page on the site</span>
+            <span class='popup round arrow-right'>Preview</span>
           </a>
         </li>
         <li>
           <a href='#metadata' class='icon round assets' data-drawer=true>
-            <span class='popup round arrow-right'>Add Media to this post</span>
+            <span class='popup round arrow-right'>Add Media</span>
           </a>
         </li>
         <li>
           <a href='#settings' class='icon round settings' data-drawer=true>
-            <span class='popup round arrow-right'>Configure Settings</span>
+            <span class='popup round arrow-right'>Post Settings</span>
           </a>
         </li>
       </ul>

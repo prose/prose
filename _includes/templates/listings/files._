@@ -16,7 +16,7 @@
     <% if (app.state.jekyll && extension === 'md') { %>
       <li class='markdown'>
         <a class='clearfix load-post toggle-view' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>
-        <span class='fl icon md'></span>
+        <span class='fl icon round md'></span>
         <span class='fl details'>
           <h3><%= filename || 'Untitled' %></h3>
           <span class='deemphasize'><%= f.name %></span>

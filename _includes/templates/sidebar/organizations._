@@ -1,6 +1,6 @@
 <% if (authenticated) { %>
   <div class='inner'>
-    <h2 class='label'>Your Groups</h2>
+    <h2 class='label'>Groups</h2>
   </div>
   <ul class='listing'>
   <% if (organizations && organizations.length) { %>

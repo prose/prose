@@ -3,9 +3,9 @@
       <% _.each(repos, function(r) { %>
       <li class='clearfix'>
           <% if (r.private) { %>
-            <div class='fl icon repo private'></div>
+            <div class='fl icon round repo private'></div>
           <% } else { %>
-            <div class='fl icon repo'></div>
+            <div class='fl icon round repo'></div>
           <% } %>
 
           <div class='details fl'>
@@ -33,9 +33,9 @@
   <% _.each(repos, function(r) { %>
     <li class='clearfix'>
         <% if (r.private) { %>
-          <div class='fl icon repo private'></div>
+          <div class='fl icon round repo private'></div>
         <% } else { %>
-          <div class='fl icon repo'></div>
+          <div class='fl icon round repo'></div>
         <% } %>
 
         <div class='details fl'>

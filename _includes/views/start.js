@@ -11,7 +11,7 @@ views.Start = views.Profile.extend({
 
   render: function() {
     $('.header').hide();
-    $('#main').empty().html(templates.start(this.model));
+    $('#prose').empty().html(templates.start(this.model));
 
     return this;
   },
