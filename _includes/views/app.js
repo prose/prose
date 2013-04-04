@@ -109,6 +109,5 @@
       return false;
     }
   });
->>>>>>> c4a47b584c9c4a06ec3db903c363e00f22f05a49
 
 }).apply(this, window.args);
