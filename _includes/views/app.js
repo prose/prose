@@ -31,8 +31,8 @@
       return this;
     },
 
-    postViews: function() {
-      this.eventRegister.trigger('postViews', this.model);
+    postViews: function(e) {
+      this.eventRegister.trigger('postViews', e);
       return false; 
     },
 

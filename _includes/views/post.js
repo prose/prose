@@ -10,7 +10,6 @@
       'click .cancel-save': '_toggleCommit',
       'click .save.confirm': 'updateFile',
       'click a.toggle.view': '_toggleView',
-      'click a.toggle.meta': '_toggleMeta',
       'change input': '_makeDirty',
       'change #post_published': 'updateMetaData',
       'click .delete': '_delete'
@@ -54,7 +53,23 @@
     },
 
     postViews: function(e) {
+      var that = this;
 
+      // Which context of the editing interface
+      // should we show?
+      var context = $(e.target).data('state');
+
+      $('.navigation a').removeClass('active');
+      $(e.target).addClass('active');
+
+      if (context === 'settings') {
+        $('#prose').toggleClass('open');
+        _.delay(function () {
+          that.refreshCodeMirror();
+        }, 1);
+      } else {
+        $('#prose').toggleClass('open', false);
+      }
     },
 
     _delete: function() {
@@ -137,17 +152,6 @@
       }
     },
 
-    _toggleMeta: function (e) {
-      var that = this;
-      if (e) e.preventDefault();
-      $('.toggle.meta').toggleClass('active');
-      $('.metadata').toggle();
-      _.delay(function () {
-        that.refreshCodeMirror();
-      }, 1);
-      return false;
-    },
-
     refreshCodeMirror: function () {
       if ($('.toggle.meta').hasClass('active')) {
         $('.CodeMirror-scroll').height($('.document').height() / 2);
@@ -180,35 +184,13 @@
       $('.metadata').hide();
     },
 
-    right: function () {
-      var view = $('.toggle.active').attr('data-view');
-      if (view === 'preview') return;
-      if (view === 'compose') return this.toggleView('preview');
-      return this.toggleView('compose');
-    },
-
-    left: function () {
-      var view = $('.toggle.active').attr('data-view');
-      if (view === 'cheatsheet') return;
-      if (view === 'compose') return this.toggleView('cheatsheet');
-      return this.toggleView('compose');
-    },
-
     initialize: function () {
       this.dmp = new diff_match_patch();
-      this.mode = "edit";
+      this.mode = 'edit';
       this.prevContent = this.serialize();
       if (!window.shortcutsRegistered) {
         key('⌘+s, ctrl+s', _.bind(function () {
           this.updateFile();
-          return false;
-        }, this));
-        key('ctrl+shift+right', _.bind(function () {
-          this.right();
-          return false;
-        }, this));
-        key('ctrl+shift+left', _.bind(function () {
-          this.left();
           return false;
         }, this));
         key('esc', _.bind(function () {
@@ -223,17 +205,6 @@
       $(window).on('pagehide', _.bind(this.stashFile, this));
     },
 
-    // TODO: We might not wanna use this
-    parseMetadata: function (metadata) {
-      var metadata = this.metadataEditor.getValue();
-      if (!metadata) return {};
-      try {
-        return jsyaml.load(metadata);
-      } catch (err) {
-        return null;
-      }
-    },
-
     updateMetaData: function () {
       if (!this.model.jekyll) return true; // metadata -> skip
 
@@ -242,9 +213,9 @@
       function updatePublished(yamlStr, published) {
         var regex = /published: (false|true)/;
         if (yamlStr.match(regex)) {
-          return yamlStr.replace(regex, "published: " + !! published);
+          return yamlStr.replace(regex, 'published: ' + !! published);
         } else {
-          return yamlStr + "\npublished: " + !! published;
+          return yamlStr + '\npublished: ' + !! published;
         }
       }
 
@@ -254,7 +225,11 @@
       this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
       this.metadataEditor.setValue(this.model.raw_metadata);
 
-      published ? $('#post').addClass('published') : $('#post').removeClass('published');
+      if (published) {
+        $('#post').addClass('published');
+      } else {
+        $('#post').removeClass('published');
+      }
 
       return true;
     },
@@ -277,8 +252,12 @@
 
       if (this.model.persisted) {
         movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function (err) {
-          if (!err) finish()
-          err ? cb('error') : cb(null)
+          if (!err) finish();
+          if (err) {
+            cb('error');
+          } else {
+            cb(null);
+          }
         }, this));
       } else {
         finish();
@@ -287,7 +266,7 @@
     },
 
     serialize: function () {
-      return serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null)
+      return serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
     },
 
     // Update save state (saving ..., sending patch ..., etc.)
@@ -311,7 +290,7 @@
           patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
-                that.$('.button.save').html("SUBMIT CHANGE");
+                that.$('.button.save').html('SUBMIT CHANGE');
                 that.$('.button.save').removeClass('error');
                 that.$('.button.save').addClass('inactive');
               }, 3000);
@@ -345,7 +324,7 @@
           saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
-                that._makeDirty()
+                that._makeDirty();
               }, 3000);
               that.updateSaveState('! Try again in 30 seconds', 'error');
               return;
@@ -368,7 +347,11 @@
 
       // Move or create file
       this.updateFilename(filepath, function (err) {
-        err ? that.updateSaveState('! Filename', 'error') : save();
+        if (err) {
+          that.updateSaveState('! Filename', 'error');
+        } else {
+          save();
+        }
       });
     },
 
@@ -376,8 +359,8 @@
       if (event) event.preventDefault();
       if (!window.localStorage || !this.dirty) return false;
 
-      var storage = window.localStorage,
-        filepath = $('input.filepath').val();
+      var storage = window.localStorage;
+      var filepath = $('input.filepath').val();
 
       // Don't stash if filepath is undefined
       if (filepath) {
@@ -392,9 +375,8 @@
     stashApply: function () {
       if (!window.localStorage) return false;
 
-      var storage = window.localStorage,
-        filepath = $('input.filepath').val();
-
+      var storage = window.localStorage;
+      var filepath = $('input.filepath').val();
       var item = storage.getItem(filepath);
       var stash = JSON.parse(item);
 
@@ -426,16 +408,7 @@
     keyMap: function () {
       var that = this;
       return {
-        "Shift-Ctrl-Left": function (codemirror) {
-          that.left();
-        },
-        "Shift-Ctrl-Right": function (codemirror) {
-          that.right();
-        },
-        "Shift-Ctrl-M": function (codemirror) {
-          that._toggleMeta();
-        },
-        "Ctrl-S": function (codemirror) {
+        'Ctrl-S': function (codemirror) {
           that.updateFile();
         }
       };
