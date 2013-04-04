@@ -17,11 +17,6 @@
       'click .toggle-options': '_toggleOptions'
     },
 
-    initialize: function() {
-      // Sidebar should be open.
-      $('#prose').toggleClass('open', false);
-    },
-
     render: function () {
       var that = this;
       var isPrivate = app.state.isPrivate ? 'private' : '';

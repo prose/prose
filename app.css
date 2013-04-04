@@ -525,7 +525,7 @@ input[type=text] {
   }
   .heading .avatar {
     padding:5px;
-    margin:0 10px 0 15px;
+    margin:0 10px 0 0;
     height:50px;
     width:50px;
     }

@@ -12,6 +12,13 @@
                 state: app.state
             })));
 
+            // When the sidebar should be open.
+            if (this.model.mode === 'edit') {
+              $('#prose').toggleClass('open', false);
+            } else {
+              $('#prose').toggleClass('open', true);
+            }
+
             _.delay(function () {
                 dropdown();
             }, 1);

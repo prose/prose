@@ -141,7 +141,7 @@ function loadRepos(username, cb) {
   user.show(username, function (err, u) {
     var owners = {};
 
-    if (u.type.toLowerCase() === 'user') {
+    if (u.type && u.type.toLowerCase() === 'user') {
       user.userRepos(username, function (err, repos) {
         cb(null, {
           'repos': repos,

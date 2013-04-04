@@ -31,7 +31,7 @@
         </li>
         <% if (state.repo) { %>
           <li>
-            <a href='#settings' class='icon round repo'>
+            <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo'>
               <span class='popup round arrow-right'>Project Contents</span>
             </a>
           </li>

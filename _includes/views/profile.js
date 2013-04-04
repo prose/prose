@@ -7,11 +7,6 @@
             'keyup #filter': 'filterFiles'
         },
 
-        initialize: function() {
-          // Sidebar should be open.
-          $('#prose').toggleClass('open', true);
-        },
-
         render: function() {
             var u = this.model.user;
             $(this.el).empty().append(templates.profile(this.model));

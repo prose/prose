@@ -9,11 +9,6 @@
             'keyup #filter': 'search'
         },
 
-        initialize: function() {
-          // Sidebar should be open.
-          $('#prose').toggleClass('open', true);
-        },
-
         render: function () {
             var that = this;
             var h = this.model;
