@@ -7,9 +7,28 @@
     </a></li>
   <% } else { %> 
     <!-- files -->
-    <li><a class='light load-post toggle-view' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>
-      <span class='icon inline small file'></span>
-      <%= f.name || 'Untitled' %>
-    </a></li>
+    <%
+      var parts = f.name.split('.');
+      var extension = parts.pop().toLowerCase();
+      var filename = parts.slice(0, parts.length).join('');
+    %>
+
+    <% if (app.state.jekyll && extension === 'md') { %>
+      <li class='markdown'>
+        <a class='clearfix load-post toggle-view' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>
+        <span class='fl icon round md'></span>
+        <span class='fl details'>
+          <h3><%= filename || 'Untitled' %></h3>
+          <span class='deemphasize'><%= f.name %></span>
+        </span>
+        </a>
+      </li>
+
+    <% } else { %>
+      <li><a class='light load-post toggle-view' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>
+        <span class='icon inline small file <%= extension %>'></span>
+        <%= f.name || 'Untitled' %>
+      </a></li>
+    <% } %>
   <% } %>
 <% }); %>

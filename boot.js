@@ -42,7 +42,8 @@ window.app = {
         return memo;
     }, {}),
     state: {'repo': ''},
-    instance: {}
+    instance: {},
+    eventRegister: _.extend({}, Backbone.Events)
 };
 
 window.args = _(window.app).toArray();

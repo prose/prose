@@ -12,14 +12,13 @@
             $(this.el).empty().append(templates.profile(this.model));
             this.renderResults();
 
-            console.log(this.model);
             $('#heading')
                 .empty()
                 .append(templates.heading({
-                    avatar: u.avatar_url,
+                    avatar: '<img src="' + u.avatar_url + '" width="40" height="40" alt="Avatar" />',
                     parent: u.name || u.login,
                     parentUrl: u.login,
-                    title: 'Projects',
+                    title: 'Your Projects',
                     titleUrl: u.login
                 }));
 
@@ -38,15 +37,15 @@
         filterFiles: function() {
             _.delay(_.bind(function() {
                 var searchstr = this.$('#filter').val();
+                this.model = filterProjects(this.model, searchstr);
+                this.renderResults();
 
                 // console.log(this.model);
-                // this.model = filterProjects(this.model.repos, searchstr);
-                // this.renderResults();
             }, this), 10);
         },
 
         renderResults: function () {
-            this.$('#projects').empty().append(templates.projects(this.model));
+            $('#projects', this.el).empty().append(templates.projects(this.model));
         }
 
     });

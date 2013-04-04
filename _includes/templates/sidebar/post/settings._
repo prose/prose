@@ -1,25 +1,23 @@
-<div class='meta inner'>
-</div>
+<% if (jekyll) { %>
+  <div id='meta' class='meta inner'></div>
+<% } %>
 
 <% if (window.authenticated) { %>
-<div class='actions'>
-  <div class='inner'>
-    <input type='text' class='commit-message' placeholder='Describe your changes' />
+<div class='inner'>
+  <input type='text' class='commit-message' placeholder='Describe your changes' />
 
-    <% if (window.authenticated) { %>
-      <a class='cancel-save' href='#' title='ESC'>X</a>
-      <a class='save' href='#' title='CTRL+S'>
-        <%= writeable ? 'Save' : 'Submit Change' %>
-        <span class='icon inline save'></span>
-      </a>
-    <% } %>
+  <% if (window.authenticated) { %>
+    <a class='cancel-save' href='#' title='ESC'>X</a>
+    <a class='save' href='#' title='CTRL+S'>
+      <%= writeable ? 'Save' : 'Submit Change' %>
+      <span class='icon inline save'></span>
+    </a>
+  <% } %>
 
+  <% if (jekyll && markdown) { %>
+    <a href='#' class='toggle publish button round'>Publish</a>
+  <% } %>
 
-    <% if (jekyll && markdown) { %>
-      <a href='#' class='toggle publish button round'>Publish</a>
-    <% } %>
-
-    <a class='toggle delete button round' href='#'>Delete this File</a>
-  </div>
+  <a class='toggle delete button round' href='#'>Delete this File</a>
 </div>
 <% } %>

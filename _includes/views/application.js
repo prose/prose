@@ -29,7 +29,8 @@
             _.bindAll(this);
             var that = this;
             this.app = new views.App({
-                model: this.model
+                model: this.model,
+                eventRegister: app.eventRegister
             });
 
             function calculateLayout() {
@@ -111,6 +112,7 @@
             this.loading('Loading posts ...');
             loadPosts(user, repo, branch, path, _.bind(function (err, data) {
                 this.loaded();
+
                 if (err) return this.notify('error', 'The requested resource could not be found.');
                 // Render out the application view
                 $(that.app.render().el).prependTo(that.el);
@@ -136,7 +138,7 @@
                     data.lang = _.mode(file);
                     this.replaceMainView(window.authenticated ? 'post' : 'read-post', new views.Post({
                         model: data,
-                        id: 'post'
+                        eventRegister: app.eventRegister
                     }).render());
                 }, this));
 
@@ -175,7 +177,8 @@
                     data.lang = _.mode(data.file);
 
                     this.replaceMainView('post', new views.Post({
-                        model: data
+                        model: data,
+                        eventRegister: app.eventRegister
                     }).render());
 
                     this.mainView._makeDirty();

@@ -1,98 +1,114 @@
 (function (config, models, views, routers, utils, templates) {
 
-    views.App = Backbone.View.extend({
-        id: 'app',
+  views.App = Backbone.View.extend({
+    id: 'app',
 
-        events: {
-            'click a.logout': '_logout',
-            'click .navigation a': 'navigate'
-        },
+    events: {
+      'click .post-views a': 'postViews',
+      'click a.logout': 'logout'
+    },
 
-        buildMeta: function() {
-          var $metadata = $('#metadata');
-              $metadata.empty();
+    initialize: function(options) {
+      this.eventRegister = options.eventRegister;
+    },
 
-          /*
-          _(schema.metadata).each(function(data) {
-              switch(data.field.element) {
-                  case 'input':
-                      $metadata.append(templates.text({
-                          label: data.field.label,
-                          placeholder: data.field.placeholder
-                      }));
-                  break;
-                  case 'select':
-                      $metadata.append(templates.select({
-                          label: data.field.label,
-                          placeholder: data.field.placeholder,
-                          options: data.field.options
-                      }));
-                  break;
-                  case 'multiselect':
-                      $metadata.append(templates.multiselect({
-                          label: data.field.label,
-                          placeholder: data.field.placeholder,
-                          options: data.field.options
-                      }));
-                  break;
-              }
-          });
-          */
+    buildMeta: function() {
+      var $metadata = $('#metadata');
+      $metadata.empty();
 
-          $('.chzn-select').chosen();
-        },
+      /*
+      _(schema.metadata).each(function(data) {
+        switch(data.field.element) {
+          case 'input':
+            $metadata.append(templates.text({
+              label: data.field.label,
+              placeholder: data.field.placeholder
+            }));
+            break;
+          case 'select':
+            $metadata.append(templates.select({
+              label: data.field.label,
+              placeholder: data.field.placeholder,
+              options: data.field.options
+            }));
+            break;
+          case 'multiselect':
+            $metadata.append(templates.multiselect({
+              label: data.field.label,
+              placeholder: data.field.placeholder,
+              options: data.field.options
+            }));
+            break;
+        }
+      });
+      */
 
-        navigate: function() {
-            event.preventDefault();
+      $('.chzn-select').chosen();
+    },
 
-            var $icon = $(event.target);
-            var target = $icon.attr('href').split('#')[1];
-            var drawer = $icon.data('drawer');
+    navigate: function() {
+      event.preventDefault();
 
-            if (!$icon.hasClass('active')) {
-                $('#navigation a').removeClass('active');
+      var $icon = $(event.target);
+      var target = $icon.attr('href').split('#')[1];
+      var drawer = $icon.data('drawer');
 
-                if (drawer) {
-                    $('#drawer').empty().append(templates[target](
-                      _.extend(this.model, app.state)
-                    ));
+      if (!$icon.hasClass('active')) {
+        $('#navigation a').removeClass('active');
 
-                    $('body').addClass('open-drawer');
+        if (drawer) {
+          $('#drawer').empty().append(templates[target](
+            _.extend(this.model, app.state)
+          ));
 
-                    // TODO $defer until the meta data block is populated?
-                    if (target === 'metadata') this.buildMeta();
-                }
+          $('body').addClass('open-drawer');
 
-                // $(this, target).addClass('active');
-            } else {
-                // $(this, target).removeClass('active');
-                $('body').removeClass('open-drawer');
-            }
-        },
-
-        render: function () {
-            $(this.el).empty().append(templates.app(_.extend(this.model, app.state, {
-                state: app.state
-            })));
-
-            _.delay(function () {
-                dropdown();
-            }, 1);
-
-            return this;
-        },
-
-        _logout: function () {
-            logout();
-            app.instance.render();
-            if ($('#start').length > 0) {
-                app.instance.start();
-            } else {
-                window.location.reload();
-            }
-            return false;
+          // TODO $defer until the meta data block is populated?
+          if (target === 'metadata') this.buildMeta();
         }
 
-    });
+        // $(this, target).addClass('active');
+      } else {
+        // $(this, target).removeClass('active');
+        $('body').removeClass('open-drawer');
+      }
+    },
+
+    render: function () {
+      $(this.el).empty().append(templates.app(_.extend(this.model, app.state, {
+        state: app.state
+      })));
+
+      // When the sidebar should be open.
+      if (this.model.mode === 'edit') {
+        $('#prose').toggleClass('open', false);
+      } else {
+        $('#prose').toggleClass('open', true);
+      }
+
+      _.delay(function () {
+        dropdown();
+      }, 1);
+
+      return this;
+    },
+
+    postViews: function(e) {
+      this.eventRegister.trigger('postViews', e);
+      return false; 
+    },
+
+    logout: function () {
+      logout();
+      app.instance.render();
+      if ($('#start').length > 0) {
+        app.instance.start();
+      } else {
+        window.location.reload();
+      }
+      return false;
+    }
+  });
+>>>>>>> c4a47b584c9c4a06ec3db903c363e00f22f05a49
 
 }).apply(this, window.args);

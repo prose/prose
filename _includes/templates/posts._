@@ -4,13 +4,11 @@
 </div>
 
 <div class='breadcrumb'>
-  <div class='inner'>
-    <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></a>
-    <% _.each(_.chunkedPath(path), function(p) { %>
-      <span class='slash'>/</span>
-      <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
-    <% }); %>
-  </div>
+  <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></a>
+  <% _.each(_.chunkedPath(path), function(p) { %>
+    <span class='slash'>/</span>
+    <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
+  <% }); %>
 </div>
 
 <ul id='files' class='listing'></ul>

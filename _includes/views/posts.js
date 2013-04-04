@@ -13,18 +13,20 @@
             var that = this;
             var h = this.model;
 
+            var isPrivate = app.state.isPrivate ? 'private' : '';
+
             $(this.el).empty().append(templates.posts(_.extend(this.model, app.state, {
-                current_path: app.state.path
+                currentPath: app.state.path
             })));
 
             $('#drawer').empty().append(templates.sidebarProject(_.extend(this.model, app.state, {
-                current_path: app.state.path
+                currentPath: app.state.path
             })));
 
             $('#heading')
                 .empty()
                 .append(templates.heading({
-                    avatar: false,
+                    avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
                     parent: h.user,
                     parentUrl: h.user,
                     title: h.repo,
@@ -42,6 +44,7 @@
                     router.navigate($(this).val(), false);
                 });
             }, 1);
+
             return this;
         },
 
@@ -52,7 +55,10 @@
         search: function () {
             _.delay(_.bind(function() {
                 var searchstr = this.$('#filter').val();
+
                 this.model = getFiles(this.model.tree, app.state.path, searchstr);
+
+
                 this.renderResults();
             }, this), 10);
         },
