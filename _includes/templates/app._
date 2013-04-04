@@ -66,12 +66,12 @@
           </a>
         </li>
         <li>
-          <a href='#metadata' class='icon round assets' data-drawer=true>
+          <a href='#settings' class='icon round assets' data-drawer=true>
             <span class='popup round arrow-right'>Add Media to this post</span>
           </a>
         </li>
         <li>
-          <a href='#settings' class='icon round settings' data-drawer=true>
+          <a href='#metadata' class='icon round settings' data-drawer=true>
             <span class='popup round arrow-right'>Configure Settings</span>
           </a>
         </li>

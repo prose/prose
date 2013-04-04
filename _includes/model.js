@@ -260,7 +260,7 @@ function loadConfig(user, reponame, branch, cb) {
     if (err) return cb(err);
     app.state.jekyll = !err;
     app.state.config = jsyaml.load(data);
-    cb();
+    cb(err, app.state.config);
   });
 }
 
@@ -275,9 +275,6 @@ function loadPosts(user, reponame, branch, path, cb) {
 
   function load(repodata) {
     loadConfig(user, reponame, branch, function(err, config) {
-      app.state.jekyll = !err;
-      app.state.config = config;
-
       var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
       if (!path) path = root;
 
@@ -431,22 +428,29 @@ function emptyPost(user, repo, branch, path, cb) {
   if (cfg && cfg.prose && cfg.prose.metadata) {
     if (cfg.prose.metadata[path]) {
       rawMetadata = cfg.prose.metadata[path];
-      try {
-        metadata = jsyaml.load(rawMetadata);
-        if (metadata.date=="CURRENT_DATETIME") {
-            var current = (new Date()).format('Y-m-d H:i');
-            metadata.date = current;
-            rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+      if (typeof rawMetadata === 'object') {
+        metadata = rawMetadata;
+      } else {
+        try {
+          metadata = jsyaml.load(rawMetadata);
+          if (metadata.date=="CURRENT_DATETIME") {
+              var current = (new Date()).format('Y-m-d H:i');
+              metadata.date = current;
+              rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+          }
+        } catch(err) {
+          console.log('ERROR encoding YAML');
+          // No-op
         }
-      } catch(err) {
-        console.log('ERROR encoding YAML');
-        // No-op
       }
     }
   }
 
+  // TODO: parse prepopulated metadata from default metadata
+
   cb(null, {
     "metadata": metadata,
+    "default_metadata": metadata,
     "raw_metadata": rawMetadata,
     "content": "# How does it work?\n\nEnter Text in Markdown format.",
     "repo": repo,
@@ -501,6 +505,15 @@ function loadPost(user, repo, branch, path, file, cb) {
     }
 
     var post = parse(data);
+
+    // load default metadata
+    var cfg = app.state.config;
+    if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
+      post.default_metadata = cfg.prose.metadata[app.state.path];
+    }
+
+    console.log(post);
+
     cb(err, _.extend(post, {
       "sha": commit,
       "markdown": _.markdown(file),
