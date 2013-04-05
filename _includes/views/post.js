@@ -420,12 +420,15 @@
         switch(data.field.element) {
           case 'input':
             $metadataEditor.append(templates.text({
+              name: data.name,
               label: data.field.label,
               placeholder: data.field.placeholder
             }));
             break;
           case 'select':
+            debugger;
             $metadataEditor.append(templates.select({
+              name: data.name,
               label: data.field.label,
               placeholder: data.field.placeholder,
               options: data.field.options
@@ -433,11 +436,32 @@
             break;
           case 'multiselect':
             $metadataEditor.append(templates.multiselect({
+              name: data.name,
               label: data.field.label,
               placeholder: data.field.placeholder,
               options: data.field.options
             }));
             break;
+        }
+      });
+
+      _(this.model.metadata).each(function(value, key) {
+        var input = $metadataEditor.find('[name="'+ key +'"]');
+        var options = $metadataEditor.find('[name="'+ key +'"] option');
+
+        if (input.length) {
+          input.val(value);
+        } else if (options.length) {
+          _.each(options, function(option) {
+            if (option.val() === value) {
+              option.selected = 'selected';
+            }
+          });
+        } else {
+          $metadataEditor.append(templates.text({
+            label: key,
+            placeholder: value
+          }));
         }
       });
 
