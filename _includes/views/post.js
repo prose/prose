@@ -80,6 +80,7 @@
       // Vertical Navigation: Preview
       if (context === 'preview') {
         if (this.model.metadata && this.model.metadata.layout) {
+
           var hash = window.location.hash.split('/');
           hash[2] = 'preview';
           this.stashFile();
@@ -93,10 +94,11 @@
           this.model.preview = true;
           this.$('.preview').html(marked(this.model.content));
           this.updateURL();
-
-          $('.views .view').removeClass('active');
-          $('.views.' + context).addClass('active');
         }
+
+        // Do this to both preview conditions for now.
+        $('.views .view').removeClass('active');
+        $('.views.' + context).addClass('active');
       }
 
       if (context === 'edit') {

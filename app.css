@@ -482,6 +482,7 @@ input[type=text] {
 .icon.file          { background-position:-120px -80px; }
 .icon.private       { background-position:-140px -80px; }
 .icon.folder-group  { background-position:-200px -80px; }
+.icon.cancel        { background-position:-220px -80px; }
 
 .content .icon.repo          { background-position:-40px -100px; }
 .heading .icon.repo          { background-position:-40px -100px; }
@@ -887,6 +888,13 @@ input[type=text] {
   display:none;
   }
   .post .view.active {
+    display:block;
+    }
+
+.drawer .commit {
+  display:none;
+  }
+  .drawer .commit.action {
     display:block;
     }
 
