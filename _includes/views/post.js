@@ -14,16 +14,10 @@
     render: function() {
 
       // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'postViews');
+       _.bindAll(this, 'postViews', 'deleteFile', 'updateMetaData', 'save');
       this.options.eventRegister.bind('postViews', this.postViews);
-
-      _.bindAll(this, 'deleteFile');
       this.options.eventRegister.bind('deleteFile', this.deleteFile);
-
-      _.bindAll(this, 'updateMetaData');
       this.options.eventRegister.bind('updateMetaData', this.updateMetaData);
-
-      _.bindAll(this, 'save');
       this.options.eventRegister.bind('save', this.updateMetaData);
 
       // Ping the `views/post.js` to let it know
@@ -430,6 +424,11 @@
 
     remove: function () {
       // Unbind pagehide event handler when View is removed
+      this.options.eventRegister.unbind('postViews', this.postViews);
+      this.options.eventRegister.unbind('deleteFile', this.deleteFile);
+      this.options.eventRegister.unbind('updateMetaData', this.updateMetaData);
+      this.options.eventRegister.unbind('save', this.updateMetaData);
+
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);
     },

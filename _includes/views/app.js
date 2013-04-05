@@ -88,6 +88,11 @@
         window.location.reload();
       }
       return false;
+    },
+
+    remove: function () {
+      // Unbind pagehide event handler when View is removed
+      this.options.eventRegister.unbind('sidebarContext', this.sidebarContext);
     }
   });
 
