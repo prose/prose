@@ -177,15 +177,14 @@ function loadBranches(user, repo, cb) {
 // -------
 function filterProjects(repos, searchstr) {
   var matchSearch = new RegExp('(' + searchstr + ')', 'i');
-  var listing;
+  var listings;
 
-  //console.log(repos);
-  // Dive into repos.owners and pull each match into
-  // a new owners array.
+  // Dive into repos.owners and pull each match into a new owners array.
   if (repos.state.user === app.username) {
 
-    var owners = _(repos.owners).filter(function(repos, owner) {
-      listings = _(repos).filter(function(r) {
+    var owners = {};
+    var owner = _(repos.owners).filter(function(ownerRepos, owns) {
+      listings = _(ownerRepos).filter(function(r) {
 
         if (searchstr && searchstr.length) {
           r.name = r.name.replace(matchSearch, '$1');
@@ -195,14 +194,8 @@ function filterProjects(repos, searchstr) {
         return r.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
       });
 
-      return {
-        owner: listings
-      };
+      return owners[owns] = listings;
     });
-
-    //console.log(owners);
-    // todo sort by name
-    // listigs = _(listings).sortby( ...
 
     return {
       owners: owners,
@@ -220,12 +213,10 @@ function filterProjects(repos, searchstr) {
       return repo.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
     });
 
-    // todo sort by name
-    // listigs = _(listings).sortby( ...
-
+    // TODO sort by name eg: listigs = _(listings).sortby( ...
     return {
-      state: repos.state,
-      repos: listings
+      repos: listings,
+      state: repos.state
     };
   }
 }

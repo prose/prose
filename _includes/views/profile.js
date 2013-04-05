@@ -42,8 +42,6 @@
                 var searchstr = this.$('#filter').val();
                 this.model = filterProjects(this.cache, searchstr);
                 this.renderResults();
-
-                // console.log(this.model);
             }, this), 10);
         },
 

@@ -790,7 +790,6 @@ em      { font-style:italic; }
     }
   .dropdown {
     background-color:#fff;
-    background-color:rgba(255,255,255,0.75);
     position:absolute;
     top:100%;
     right:0;
@@ -1273,7 +1272,7 @@ label.error {
   border-width:0 5px 5px;
   border-style:solid;
   position:absolute;
-  border-color:rgba(255,255,255,0.75) transparent;
+  border-color:#fff transparent;
   }
   .arrow-top:after {
     top:-5px;
@@ -1284,7 +1283,7 @@ label.error {
     }
   .arrow-left:after,
   .arrow-right:after {
-    border-color:transparent rgba(255,255,255,0.75);
+    border-color:transparent #fff;
     }
   .arrow-left:after {
     border-width:5px 5px 5px 0;
