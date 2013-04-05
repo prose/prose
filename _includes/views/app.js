@@ -6,6 +6,7 @@
     events: {
       'click .post-views a': 'postViews',
       'click a.logout': 'logout',
+      'click a.save': 'save',
       'click a.delete': 'deleteFile',
       'click a.publish': 'updateMetaData'
     },
@@ -38,9 +39,9 @@
 
     sidebarContext: function(data) {
 
-      // Right now this is just triggered on the 
-      // post view. TODO possibly set this up with 
-      // a parameter to pass in view context to handle 
+      // Right now this is just triggered on the
+      // post view. TODO possibly set this up with
+      // a parameter to pass in view context to handle
       // other scenarios.
       $('#drawer')
         .empty()
@@ -62,6 +63,19 @@
 
     postViews: function(e) {
       this.eventRegister.trigger('postViews', e);
+      return false;
+    },
+
+    save: function(e) {
+      this.eventRegister.trigger('save', e);
+
+      // Trigger commit message stuff
+      this.$('.commit-message').attr('placeholder', "Updated " + $('input.filepath').val());
+
+      this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? 'SAVE' : 'SUBMIT CHANGE') : 'COMMIT');
+      this.$('.button.save').toggleClass('confirm');
+      this.$('.commit-message').focus();
+
       return false;
     },
 

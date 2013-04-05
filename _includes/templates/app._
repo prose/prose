@@ -57,12 +57,12 @@
               <span class='popup round arrow-left'>Preview</span>
             </a>
           </li>
-          <li>
-            <a href='#' class='icon round settings' data-state='settings' data-drawer=true>
-              <span class='popup round arrow-left'>Post Settings</span>
-            </a>
-          </li>
         <% } %>
+        <li>
+          <a href='#' class='icon round settings' data-state='settings' data-drawer=true>
+            <span class='popup round arrow-left'>Post Settings</span>
+          </a>
+        </li>
       </ul>
       <% } %>
     </div>

@@ -6,8 +6,6 @@
     className: 'post',
 
     events: {
-      'click .save': '_save',
-      'click .cancel-save': '_toggleCommit',
       'click .save.confirm': 'updateFile',
       'click .markdown-snippets a': 'markdownSnippet',
       'change input': '_makeDirty'
@@ -24,6 +22,9 @@
 
       _.bindAll(this, 'updateMetaData');
       this.options.eventRegister.bind('updateMetaData', this.updateMetaData);
+
+      _.bindAll(this, 'save');
+      this.options.eventRegister.bind('save', this.updateMetaData);
 
       // Ping the `views/post.js` to let it know
       // we should swap out the existing sidebar
@@ -151,26 +152,9 @@
       $('.diff-wrapper .diff').html(diff);
     },
 
-    _toggleCommit: function () {
-      if (!this.$('.document-menu').hasClass('commit')) {
-        this.$('.commit-message').attr('placeholder', "Updated " + $('input.filepath').val());
-      }
-
-      this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? "SAVE" : "SUBMIT CHANGE") : "COMMIT");
-      this.$('.button.save').toggleClass('confirm');
-      this.$('.document-menu').toggleClass('commit');
-      this.$('.button.cancel-save').toggle();
-      this.$('.document-menu-content .options').hide();
-      this.showDiff();
-      this.$('.surface').toggle();
-      this.$('.diff-wrapper').toggle();
-      this.$('.commit-message').focus();
-
-      return false;
-    },
-
-    _save: function() {
+    save: function() {
       if (!this.dirty) return false;
+      this.showDiff();
       this._toggleCommit();
       return false;
     },
