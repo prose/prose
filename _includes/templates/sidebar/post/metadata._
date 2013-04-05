@@ -1,9 +1,0 @@
-<div class='meta inner'>
-</div>
-
-<% if (window.authenticated) { %>
-<div class='actions'>
-  <div class='inner'>
-  </div>
-</div>
-<% } %>

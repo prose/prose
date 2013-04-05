@@ -1,0 +1,10 @@
+<label><%= label %></label>
+<select data-placeholder='<%= placeholder %>' class='chzn-select'>
+  <% _(options).each(function(o) { %>
+    <% if (o.name) { %>
+     <option value='<%= o.value %>'><%= o.name %></option>
+    <% } else { %>
+     <option value='<%= o.value %>'><%= o.value %></option>
+    <% } %>
+  <% }); %>
+</select>

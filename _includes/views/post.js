@@ -176,7 +176,7 @@
     refreshCodeMirror: function () {
       $('.CodeMirror-scroll').height($('.document').height());
       this.editor.refresh();
-      if (this.metadataEditor) this.metadataEditor.refresh();
+      // if (this.metadataEditor) this.metadataEditor.refresh();
     },
 
     initialize: function () {
@@ -409,12 +409,48 @@
       };
     },
 
+    buildMeta: function() {
+      var $metadataEditor = $('#meta');
+      $metadataEditor.empty();
+
+      _(this.model.default_metadata).each(function(data) {
+        switch(data.field.element) {
+          case 'input':
+            $metadataEditor.append(templates.text({
+              label: data.field.label,
+              placeholder: data.field.placeholder
+            }));
+            break;
+          case 'select':
+            $metadataEditor.append(templates.select({
+              label: data.field.label,
+              placeholder: data.field.placeholder,
+              options: data.field.options
+            }));
+            break;
+          case 'multiselect':
+            $metadataEditor.append(templates.multiselect({
+              label: data.field.label,
+              placeholder: data.field.placeholder,
+              options: data.field.options
+            }));
+            break;
+        }
+      });
+
+      $('.chzn-select').chosen();
+
+      return $metadataEditor;
+    },
+
     initEditor: function () {
       var that = this;
 
       // TODO Remove setTimeout
       setTimeout(function () {
         if (that.model.jekyll) {
+          that.metadataEditor = that.buildMeta();
+          /*
           that.metadataEditor = CodeMirror($('#meta')[0], {
             mode: 'yaml',
             value: that.model.raw_metadata,
@@ -423,6 +459,7 @@
             extraKeys: that.keyMap(),
             onChange: _.bind(that._makeDirty, that)
           });
+          */
           $('#post .metadata').hide();
         }
         that.editor = CodeMirror($('#code')[0], {

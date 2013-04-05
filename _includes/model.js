@@ -552,8 +552,6 @@ function loadPost(user, repo, branch, path, file, cb) {
       post.default_metadata = cfg.prose.metadata[app.state.path];
     }
 
-    console.log(post);
-
     cb(err, _.extend(post, {
       "sha": commit,
       "markdown": _.markdown(file),
