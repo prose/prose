@@ -422,11 +422,10 @@
             $metadataEditor.append(templates.text({
               name: data.name,
               label: data.field.label,
-              placeholder: data.field.placeholder
+              value: data.field.value
             }));
             break;
           case 'select':
-            debugger;
             $metadataEditor.append(templates.select({
               name: data.name,
               label: data.field.label,
@@ -460,7 +459,7 @@
         } else {
           $metadataEditor.append(templates.text({
             label: key,
-            placeholder: value
+            value: value
           }));
         }
       });

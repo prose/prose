@@ -452,10 +452,11 @@ function movePost(user, repo, branch, path, newPath, cb) {
 // Prepare new empty post
 
 function emptyPost(user, repo, branch, path, cb) {
+  var defaultMetadata;
   var rawMetadata = "layout: default\npublished: false";
   var metadata = {
     "layout": "default",
-    "published": false,
+    "published": false
   };
 
   var cfg = app.state.config
@@ -463,11 +464,25 @@ function emptyPost(user, repo, branch, path, cb) {
     if (cfg.prose.metadata[path]) {
       rawMetadata = cfg.prose.metadata[path];
       if (typeof rawMetadata === 'object') {
-        metadata = rawMetadata;
-      } else {
+        defaultMetadata = rawMetadata;
+
+        _.each(defaultMetadata, function(data) {
+          var selected = data.field.selected;
+
+          switch(data.field.element) {
+            case 'text':
+              metadata[data.name] = data.field.value;
+              break;
+            case 'select':
+            case 'multiselect':
+              metadata[data.name] = selected ? selected : null;
+              break;
+          }
+        });
+      } else if (typeof rawMetadata === 'string') {
         try {
           metadata = jsyaml.load(rawMetadata);
-          if (metadata.date=="CURRENT_DATETIME") {
+          if (metadata.date === "CURRENT_DATETIME") {
             var current = (new Date()).format('Y-m-d H:i');
             metadata.date = current;
             rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
@@ -480,11 +495,9 @@ function emptyPost(user, repo, branch, path, cb) {
     }
   }
 
-  // TODO: parse prepopulated metadata from default metadata
-
   cb(null, {
     "metadata": metadata,
-    "default_metadata": metadata,
+    "default_metadata": defaultMetadata,
     "raw_metadata": rawMetadata,
     "content": "# How does it work?\n\nEnter Text in Markdown format.",
     "repo": repo,
