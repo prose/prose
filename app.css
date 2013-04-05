@@ -804,10 +804,10 @@ em      { font-style:italic; }
        -moz-animation-fill-mode:both;
          -o-animation-fill-mode:both;
             animation-fill-mode:both;
-    -webkit-animation-duration:200ms;
-       -moz-animation-duration:200ms;
-         -o-animation-duration:200ms;
-            animation-duration:200ms;
+    -webkit-animation-duration:100ms;
+       -moz-animation-duration:100ms;
+         -o-animation-duration:100ms;
+            animation-duration:100ms;
     -webkit-box-shadow:0 4px 10px rgba(0,0,0,0.15);
             box-shadow:0 4px 10px rgba(0,0,0,0.15);
     -webkit-background-clip:padding-box;
@@ -854,10 +854,10 @@ em      { font-style:italic; }
   .open > .dropdown {
     display:block;
     opacity:1;
-    -webkit-animation-delay:200ms;
-       -moz-animation-delay:200ms;
-         -o-animation-delay:200ms;
-            animation-delay:200ms;
+    -webkit-animation-delay:100ms;
+       -moz-animation-delay:100ms;
+         -o-animation-delay:100ms;
+            animation-delay:100ms;
     -webkit-animation-name:fadeInTop;
        -moz-animation-name:fadeInTop;
          -o-animation-name:fadeInTop;

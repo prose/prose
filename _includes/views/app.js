@@ -5,11 +5,16 @@
 
     events: {
       'click .post-views a': 'postViews',
-      'click a.logout': 'logout'
+      'click a.logout': 'logout',
+      'click a.delete': 'deleteFile',
+      'click a.publish': 'updateMetaData'
     },
 
     initialize: function(options) {
       this.eventRegister = options.eventRegister;
+
+      _.bindAll(this, 'sidebarContext');
+      options.eventRegister.bind('sidebarContext', this.sidebarContext);
     },
 
     render: function () {
@@ -31,9 +36,33 @@
       return this;
     },
 
+    sidebarContext: function(data) {
+
+      // Right now this is just triggered on the 
+      // post view. TODO possibly set this up with 
+      // a parameter to pass in view context to handle 
+      // other scenarios.
+      $('#drawer')
+        .empty()
+        .html(templates.settings(_.extend(data, app.state, {
+          mode: this.mode
+      })));
+    },
+
+    // Event Triggering to other files
+    deleteFile: function(e) {
+      this.eventRegister.trigger('deleteFile', e);
+      return false;
+    },
+
+    updateMetaData: function(e) {
+      this.eventRegister.trigger('updateMetaData', e);
+      return false;
+    },
+
     postViews: function(e) {
       this.eventRegister.trigger('postViews', e);
-      return false; 
+      return false;
     },
 
     logout: function () {
