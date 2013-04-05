@@ -5,7 +5,7 @@
       <div class='dropdown-menu'>
         <a href='#' class='round dropdown-hover'><%= app.username %></a>
         <ul class='dropdown round arrow-top'>
-          <li><a class='logout' href='#'>Logout</a></li>
+          <li><a class='logout' href='#'><strong>Logout</strong></a></li>
         </ul>
       </div>
     <% } else { %>

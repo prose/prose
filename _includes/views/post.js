@@ -19,14 +19,19 @@
        _.bindAll(this, 'postViews');
       this.options.eventRegister.bind('postViews', this.postViews);
 
+      _.bindAll(this, 'deleteFile');
+      this.options.eventRegister.bind('deleteFile', this.deleteFile);
+
+      _.bindAll(this, 'updateMetaData');
+      this.options.eventRegister.bind('updateMetaData', this.updateMetaData);
+
+      // Ping the `views/post.js` to let it know
+      // we should swap out the existing sidebar
+      this.eventRegister = this.options.eventRegister;
+      this.eventRegister.trigger('sidebarContext', this.model);
+
       var that = this;
       var isPrivate = app.state.isPrivate ? 'private' : '';
-
-      $('#drawer')
-        .empty()
-        .html(templates.settings(_.extend(this.model, app.state, {
-        mode: this.mode
-      })));
 
       $(this.el)
         .empty()
@@ -36,12 +41,6 @@
 
       // TODO Add an unpublished class to .application
       //if (!this.model.published) $(this.el).addClass('unpublished');
-
-      // TODO Fix this! Elements that are added to the 
-      // sidebar drawer dont get there in time to register
-      // events, we need to bind them here.
-      $('a.delete').on('click', this.deleteFile);
-      $('a.publish').on('click', this.updateMetaData);
 
       $('#heading')
         .empty()
@@ -562,7 +561,7 @@
     markdownSnippet: function(e) {
       var snippet = $(e.target, this.el).data('snippet');
       if (!snippet) return;
-      this.editor.replaceSelection(snippet, 'end');
+      this.editor.replaceSelection(snippet);
       return false;
     }
   });
