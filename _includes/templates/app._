@@ -20,7 +20,7 @@
 <div class='application clearfix limiter'>
   <div id='content' class='content fl'></div>
   <div class='sidebar fl'>
-    <div id='drawer'></div>
+    <div id='drawer' class='drawer'></div>
 
     <div class='vert navigation'>
       <ul class='project nav'>
