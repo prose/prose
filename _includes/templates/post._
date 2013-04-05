@@ -1,7 +1,7 @@
 <div class='inner'>
-  <div class='inner'>
-    <div id='diff' class='diff'></div>
-    <div id='code' class='code'></div>
-    <div class='preview prose'><%= markdown ? marked(content) : '' %></div>
+  <div class='inner views'>
+    <div id='diff' class='view diff'></div>
+    <div id='code' class='view active edit <% if (markdown) { %> markdown<% } %>'></div>
+    <div id='preview' class='view preview prose'><%= markdown ? marked(content) : '' %></div>
   </div>
 </div>

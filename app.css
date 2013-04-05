@@ -314,7 +314,7 @@ input[type=text] {
   margin:0 auto;
   }
   .heading.limiter {
-    width:690px;
+    width:700px;
     -webkit-transition:width 300ms;
        -moz-transition:width 300ms;
          -o-transition:width 300ms;
@@ -389,14 +389,12 @@ input[type=text] {
 ---------------------------------------------*/
 .content {
   background:#fff;
-  border:1px solid #C3CCD0;
   -webkit-border-radius:4px 0 0 4px;
           border-radius:4px 0 0 4px;
   }
 
 .sidebar {
   background:#f8f8f8;
-  border:1px solid #C3CCD0;
   -webkit-border-radius:0 4px 4px 0;
           border-radius:0 4px 4px 0;
   -webkit-box-shadow:inset 0 0 0 1px #fff,
@@ -492,7 +490,7 @@ input[type=text] {
 
 .markdown .icon.md           { background-position:-120px -100px; }
 .heading .icon.file          { background-position:-160px -100px; }
-.heading .icon.file.private  { background-position:-160px -100px; }
+.heading .icon.file.private  { background-position:-200px -100px; }
 
 .icon.assets                 { background-position:-40px 0; }
 .icon.assets.active:active,
@@ -548,7 +546,7 @@ input[type=text] {
 .header {
   font-size:12px;
   font-weight:700;
-  padding:10px 20px 0;
+  padding:15px 20px 0;
   position:relative;
   z-index:100;
   }
@@ -572,6 +570,10 @@ input[type=text] {
   width:400px;
   padding-right:15px;
   }
+  .details h4 {
+    position:relative;
+    top:3px;
+    }
   .content .details {
     width:340px;
     margin:0 15px;
@@ -881,9 +883,13 @@ input[type=text] {
 /* ------------------------------------------
   File /:filename
 ---------------------------------------------*/
-.drawer .meta {
-  background:#f0f0f0;
+.post .view {
+  display:none;
   }
+  .post .view.active {
+    display:block;
+    }
+
 .drawer .button {
   margin-bottom:10px;
   }
@@ -1273,13 +1279,17 @@ label.error {
   CodeMirror
 ---------------------------------------------*/
 .CodeMirror {
-  font:14px/1.7em Menlo, monospace !important;
+  font:13px/1.4em Menlo, monospace !important;
   -webkit-font-smoothing:subpixel-antialiased;
   /* Necessary so the scrollbar can be absolutely positioned within the wrapper on Lion. */
   position:relative;
   /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
   overflow:hidden;
   }
+  .markdown .CodeMirror {
+    font:14px/1.7em Menlo, monospace !important;
+    }
+
 .CodeMirror-scroll {
   overflow-x:auto;
   overflow-y:hidden;
@@ -1335,7 +1345,6 @@ label.error {
   cursor:default;
   }
 .CodeMirror-lines {
-  padding:.4em;
   white-space:pre;
   cursor:text;
   }
@@ -1351,9 +1360,9 @@ label.error {
   font-size:inherit;
   padding:0; margin:0;
   white-space:pre;
-  word-wrap:normal;
   line-height:inherit;
   color:inherit;
+  word-wrap:normal;
   border-radius:0;
   }
 
@@ -1408,28 +1417,31 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 .cm-s-prose-bright .CodeMirror-gutter-text { color: #C3CCD0; }
 
 .cm-s-prose-bright span.cm-keyword { color:#EB550F; }
-.cm-s-prose-bright span.cm-atom { color:#219; }
-.cm-s-prose-bright span.cm-number { color:#164; }
+.cm-s-prose-bright span.cm-atom { color:#2f8aa9; }
+.cm-s-prose-bright span.cm-number { color:#24B6B9; }
 .cm-s-prose-bright span.cm-def {color:#7AC548;}
-.cm-s-prose-bright span.cm-variable { color:#000; }
+.cm-s-prose-bright span.cm-variable { color:#1D7799; }
 .cm-s-prose-bright span.cm-variable-2 { color:#05a; }
 .cm-s-prose-bright span.cm-variable-3 { color:#085; }
 .cm-s-prose-bright span.cm-property {color:#92A75C;}
 .cm-s-prose-bright span.cm-operator {color:#92A75C;}
 .cm-s-prose-bright span.cm-comment { color:#888; }
-.cm-s-prose-bright span.cm-string { color:#078FA2;; }
-.cm-s-prose-bright span.cm-string-2 {color:#078FA2;;}
-.cm-s-prose-bright span.cm-meta { color:#728c72; }
+.cm-s-prose-bright span.cm-string { color:#0098AD; }
+.cm-s-prose-bright span.cm-string-2 {color:#0098AD;}
+.cm-s-prose-bright span.cm-meta { color:#4f696f; }
 .cm-s-prose-bright span.cm-error { color:#DB6F6F; }
 .cm-s-prose-bright span.cm-qualifier {color:#555;}
 .cm-s-prose-bright span.cm-builtin { color:#30a; }
-.cm-s-prose-bright span.cm-bracket { color:#DB6F6F; }
-.cm-s-prose-bright span.cm-tag { color:#DB6F6F; }
-.cm-s-prose-bright span.cm-attribute {color:#00c;}
+
+/* Brick */
+.cm-s-prose-bright span.cm-bracket { color:#ec6c45; }
+.cm-s-prose-bright span.cm-link {color:#ec6c45; text-decoration:underline;}
+.cm-s-prose-bright span.cm-tag { color:#ec6c45; }
+
+.cm-s-prose-bright span.cm-attribute {color:#8db75a;}
 .cm-s-prose-bright span.cm-header {color:#303030; font-weight:bold;}
 .cm-s-prose-bright span.cm-quote {color:#078FA2;}
 .cm-s-prose-bright span.cm-hr {color:#515F66;}
-.cm-s-prose-bright span.cm-link {color:#DB6F6F; text-decoration:underline;}
 .cm-s-prose-bright span.cm-em {font-style:italic;}
 .cm-s-prose-bright span.cm-strong {font-weight:bold;}
 

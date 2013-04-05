@@ -9,13 +9,12 @@
       'click .save': '_save',
       'click .cancel-save': '_toggleCommit',
       'click .save.confirm': 'updateFile',
-      'click a.toggle.view': '_toggleView',
-      'change input': '_makeDirty',
-      'change #post_published': 'updateMetaData'
+      'change input': '_makeDirty'
     },
 
     render: function() {
 
+      // Listen for button clicks from the vertical nav
        _.bindAll(this, 'postViews');
       this.options.eventRegister.bind('postViews', this.postViews);
 
@@ -40,10 +39,8 @@
       // TODO Fix this! Elements that are added to the 
       // sidebar drawer dont get there in time to register
       // events, we need to bind them here.
-      $('.delete').on('click', this.deleteFile);
-      $('.publish').on('click', this.deleteFile);
-
-
+      $('a.delete').on('click', this.deleteFile);
+      $('a.publish').on('click', this.updateMetaData);
 
       $('#heading')
         .empty()
@@ -56,6 +53,10 @@
       }));
 
       this.initEditor();
+
+      // Editor is first up so trigger an active class for it
+      $('.post-views .edit').toggleClass('active', true);
+
       return this;
     },
 
@@ -66,24 +67,59 @@
       // should we show?
       var context = $(e.target).data('state');
 
-      $('.navigation a').removeClass('active');
-      $(e.target).addClass('active');
+      $('.post-views a').removeClass('active');
+      $('.post-views .' + context).addClass('active');
 
+      // Vertical Navigation: Settings
       if (context === 'settings') {
         $('#prose').toggleClass('open');
-        _.delay(function () {
-          that.refreshCodeMirror();
-        }, 1);
       } else {
         $('#prose').toggleClass('open', false);
       }
+
+      // Vertical Navigation: Preview
+      if (context === 'preview') {
+        if (this.model.metadata && this.model.metadata.layout) {
+          var hash = window.location.hash.split('/');
+          hash[2] = 'preview';
+          this.stashFile();
+          $(e.currentTarget).attr({
+            target: '_blank',
+            href: hash.join('/')
+          });
+
+          return false;
+        } else {
+          this.model.preview = true;
+          this.$('.preview').html(marked(this.model.content));
+          this.updateURL();
+
+          $('.views .view').removeClass('active');
+          $('.views.' + context).addClass('active');
+        }
+      }
+
+      if (context === 'edit') {
+        $('.views .view').removeClass('active');
+        $('.views .' + context).addClass('active');
+        this.model.preview = false;
+        this.updateURL();
+      }
+
+      // Refresh CodeMirror each time
+      // to reflect new changes
+      _.delay(function () {
+        that.refreshCodeMirror();
+      }, 1);
+
+      return false;
     },
 
     deleteFile: function() {
       if (confirm('Are you sure you want to delete that file?')) {
         deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
           if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
-          router.navigate([app.state.user, app.state.repo, "tree", app.state.branch].join('/'), true);
+          router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
         }, this));
       }
       return false;
@@ -118,7 +154,6 @@
         this.$('.commit-message').attr('placeholder', "Updated " + $('input.filepath').val());
       }
 
-      this.hideMeta();
       this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? "SAVE" : "SUBMIT CHANGE") : "COMMIT");
       this.$('.button.save').toggleClass('confirm');
       this.$('.document-menu').toggleClass('commit');
@@ -138,57 +173,10 @@
       return false;
     },
 
-    _toggleView: function (e) {
-      var that = this;
-      if ($(e.currentTarget).attr('data-view') === 'preview' &&
-        this.model.metadata &&
-        this.model.metadata.layout) {
-        var hash = window.location.hash.split('/');
-        hash[2] = 'preview';
-        this.stashFile();
-        $(e.currentTarget).attr({
-          target: '_blank',
-          href: hash.join('/')
-        });
-      } else {
-        this.toggleView($(e.currentTarget).attr('data-view'));
-        _.delay(function () {
-          that.refreshCodeMirror();
-        }, 1);
-        return false;
-      }
-    },
-
     refreshCodeMirror: function () {
-      if ($('.toggle.meta').hasClass('active')) {
-        $('.CodeMirror-scroll').height($('.document').height() / 2);
-      } else {
-        $('.CodeMirror-scroll').height($('.document').height());
-      }
+      $('.CodeMirror-scroll').height($('.document').height());
       this.editor.refresh();
       if (this.metadataEditor) this.metadataEditor.refresh();
-    },
-
-    toggleView: function (view) {
-      this.view = view;
-      if (view === 'preview') {
-        this.model.preview = true;
-        this.$('.post-content').html(marked(this.model.content));
-      } else {
-        this.model.preview = false;
-      }
-      this.hideMeta();
-      this.updateURL();
-      $('.toggle').removeClass('active');
-      $('.toggle.' + view).addClass('active');
-
-      $('.document .surface').removeClass('preview cheatsheet compose');
-      $('.document .surface').addClass(view);
-    },
-
-    hideMeta: function () {
-      $('.toggle.meta').removeClass('active');
-      $('.metadata').hide();
     },
 
     initialize: function () {
