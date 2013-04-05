@@ -175,30 +175,59 @@ function loadBranches(user, repo, cb) {
 
 // Filter on projects based on a searchstr
 // -------
-
 function filterProjects(repos, searchstr) {
+  var matchSearch = new RegExp('(' + searchstr + ')', 'i');
+  var listing;
 
-  var listings = _.filter(repos.name, function (repo) {
+  //console.log(repos);
+  // Dive into repos.owners and pull each match into
+  // a new owners array.
+  if (repos.state.user === app.username) {
 
-    console.log(repo);
-    var matchSearch = new RegExp('(' + searchstr + ')', 'i');
+    var owners = _(repos.owners).filter(function(repos, owner) {
+      listings = _(repos).filter(function(r) {
 
-    // Mark match if searchstr not empty
-    if (!searchstr) return true;
-    if (searchstr.length) {
-      return repo = repo.name.replace(matchSearch, '<strong>$1</strong>');
-    }
+        if (searchstr && searchstr.length) {
+          r.name = r.name.replace(matchSearch, '$1');
+        }
 
-  });
+        if (!searchstr) return true;
+        return r.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
+      });
 
-  // TODO Sort by name
-  // listigs = _(listings).sortBy( ...
+      return {
+        owner: listings
+      };
+    });
 
-  return {
-    owners: repos.owners,
-    state: repos.state,
-    repos: listings
-  };
+    //console.log(owners);
+    // todo sort by name
+    // listigs = _(listings).sortby( ...
+
+    return {
+      owners: owners,
+      state: repos.state
+    };
+
+  } else {
+    listings = _(repos.repos).filter(function (repo) {
+
+      if (searchstr && searchstr.length) {
+        repo.name = repo.name.replace(matchSearch, '$1');
+      }
+
+      if (!searchstr) return true;
+      return repo.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
+    });
+
+    // todo sort by name
+    // listigs = _(listings).sortby( ...
+
+    return {
+      state: repos.state,
+      repos: listings
+    };
+  }
 }
 
 // Get files from a tree based on a given path and searchstr

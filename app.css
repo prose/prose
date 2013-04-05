@@ -107,6 +107,7 @@ a {
 .button {
   background:#516066;
   display:block;
+  position:relative;
   padding:10px 15px;
   text-transform:uppercase;
   font-size:11px;
@@ -194,6 +195,10 @@ input[type=text] {
     border-color:#808080;
     border-width:1px;
     }
+
+
+strong  { font-weight:700; }
+em      { font-style:italic; }
 
 /* ------------------------------------------
   Styled Content
@@ -382,6 +387,7 @@ input[type=text] {
     width:60px;
     right:-60px;
     height:100%;
+    z-index:-1;
     }
 
 /* ------------------------------------------
@@ -597,7 +603,7 @@ input[type=text] {
   position:absolute;
   width:60px;
   padding:5px;
-  left:36px;
+  left:100%;
   display:none;
   top:0;
   text-indent:0;
@@ -793,6 +799,7 @@ input[type=text] {
     min-width:120px;
     padding:4px 0;
     text-align:left;
+    display:none;
     opacity:0;
     -webkit-animation-fill-mode:both;
        -moz-animation-fill-mode:both;
@@ -810,6 +817,10 @@ input[type=text] {
     }
     .dropdown li {
       display:block;
+      }
+    .dropdown li.divider {
+      border-bottom:1px solid #e0e0e0;
+      margin:10px 0 5px;
       }
     .dropdown > li > a {
       background:transparent;
@@ -831,7 +842,7 @@ input[type=text] {
     .dropdown a.active,
     .dropdown > li > a:hover,
     .dropdown > li > a:focus {
-      background-color:#f2f6f8;
+      background-color:#e7eef2;
       text-decoration:none;
       }
     .dropdown:after {
@@ -1288,7 +1299,7 @@ label.error {
   CodeMirror
 ---------------------------------------------*/
 .CodeMirror {
-  font:13px/1.4em Menlo, monospace !important;
+  font:13px/1.4em Menlo, monospace;
   -webkit-font-smoothing:subpixel-antialiased;
   /* Necessary so the scrollbar can be absolutely positioned within the wrapper on Lion. */
   position:relative;
@@ -1296,7 +1307,7 @@ label.error {
   overflow:hidden;
   }
   .markdown .CodeMirror {
-    font:14px/1.7em Menlo, monospace !important;
+    font:14px/1.7em Menlo, monospace;
     }
 
 .CodeMirror-scroll {
@@ -1418,8 +1429,8 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
 /* Prose Bright Theme */
 .cm-s-prose-bright {  color: #3D494E; }
-.cm-s-prose-bright .CodeMirror-selected {background: #AFC3CF!important; }
-.cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880!important; }
+.cm-s-prose-bright .CodeMirror-selected {background: #AFC3CF; }
+.cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880; }
 .cm-s-prose-bright .CodeMirror-lines { margin-left:3px; margin-right:3px; }
 
 .cm-s-prose-bright .CodeMirror-gutter { background: #E7EEF2; border-right:1px solid #C3CCD0;; padding-right:3px; min-width:2.5em; }

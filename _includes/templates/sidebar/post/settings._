@@ -11,8 +11,9 @@
       </a>
     </div>
 
-    <a class='save button round' href='#' title='CTRL+S'>
+    <a class='save button round' href='#'>
       <%= writeable ? 'Save' : 'Submit Change' %>
+      <span class='popup round arrow-left'>⌘ + s</span>
     </a>
 
     <% if (jekyll && markdown) { %>

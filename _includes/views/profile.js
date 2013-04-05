@@ -31,13 +31,16 @@
                 $('#filter').focus();
             }, 1);
 
+            // Cache to perform autocompletion on it
+            this.cache = this.model;
+
             return this;
         },
 
         filterFiles: function() {
             _.delay(_.bind(function() {
                 var searchstr = this.$('#filter').val();
-                this.model = filterProjects(this.model, searchstr);
+                this.model = filterProjects(this.cache, searchstr);
                 this.renderResults();
 
                 // console.log(this.model);
