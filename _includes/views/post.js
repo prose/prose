@@ -9,6 +9,7 @@
       'click .save': '_save',
       'click .cancel-save': '_toggleCommit',
       'click .save.confirm': 'updateFile',
+      'click .markdown-snippets a': 'markdownSnippet',
       'change input': '_makeDirty'
     },
 
@@ -21,6 +22,12 @@
       var that = this;
       var isPrivate = app.state.isPrivate ? 'private' : '';
 
+      $('#drawer')
+        .empty()
+        .html(templates.settings(_.extend(this.model, app.state, {
+        mode: this.mode
+      })));
+
       $(this.el)
         .empty()
         .append(templates.post(_.extend(this.model, {
@@ -29,12 +36,6 @@
 
       // TODO Add an unpublished class to .application
       //if (!this.model.published) $(this.el).addClass('unpublished');
-
-      $('#drawer')
-        .empty()
-        .html(templates.settings(_.extend(this.model, app.state, {
-        mode: this.mode
-      })));
 
       // TODO Fix this! Elements that are added to the 
       // sidebar drawer dont get there in time to register
@@ -448,6 +449,13 @@
       // Unbind pagehide event handler when View is removed
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);
+    },
+
+    markdownSnippet: function(e) {
+      var snippet = $(e.target, this.el).data('snippet');
+      if (!snippet) return;
+      this.editor.replaceSelection(snippet, 'end');
+      return false;
     }
   });
 

@@ -552,17 +552,6 @@ input[type=text] {
   z-index:100;
   }
 
-.header .user-status {
-  float:right;
-  }
-  .header .user-status .dropdown-hover {
-    display:block;
-    height:35px;
-    padding:0 15px;
-    border:1px solid #c4ced1;
-    line-height:34px;
-    }
-
 .heading {
   height:60px;
   }
@@ -786,6 +775,13 @@ input[type=text] {
 .dropdown-menu {
   position:relative;
   }
+  .dropdown-hover {
+    display:block;
+    height:35px;
+    padding:0 15px;
+    border:1px solid #c4ced1;
+    line-height:34px;
+    }
   .dropdown {
     background-color:#fff;
     background-color:rgba(255,255,255,0.75);
@@ -826,6 +822,11 @@ input[type=text] {
       clear:both;
       line-height:20px;
       white-space:nowrap;
+      font-weight:400;
+      -webkit-transition:none;
+         -moz-transition:none;
+           -o-transition:none;
+              transition:none;
       }
     .dropdown a.active,
     .dropdown > li > a:hover,

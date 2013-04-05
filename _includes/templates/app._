@@ -1,6 +1,6 @@
 <div class='header'>
   <div class='limiter clearfix'>
-    <div class='user-status<%= !window.authenticated ? " logged-out" : "" %>'>
+    <div class='fr user-status<%= !window.authenticated ? " logged-out" : "" %>'>
     <% if (window.authenticated) { %>
       <div class='dropdown-menu'>
         <a href='#' class='round dropdown-hover'><%= app.username %></a>

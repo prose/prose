@@ -1,3 +1,24 @@
+<% if (markdown) { %>
+  <div class='toolbar'>
+    <div class='inner'>
+      <div class='dropdown-menu fr'>
+        <a href='#' class='round dropdown-hover'>Markdown</a>
+        <ul class='dropdown markdown-snippets round'>
+          <li><a href='#' data-snippet='# Heading'>Main Header</a></li>
+          <li><a href='#' data-snippet='## Sub Heading'>Sub Header</a></li>
+          <li><a href='#' data-snippet='``\nalert('Hello World!');\n``'>Code</a></li>
+          <li><a href='#' data-snippet='[Google](http://google.com)'>Link</a></li>
+          <li><a href='#' data-snippet='![picture alt](http://placekitten.com/200/300 "Cats Are Awesome (title)")'>Image</a></li>
+          <li><a href='#' data-snippet='> We loved with a love that was more than love'>Blockquote</a></li>
+          <li><a href='#' data-snippet='- item\n -item\b -item\n'>List</a></li>
+          <li class='seperator'></li>
+          <li><a href='http://daringfireball.net/projects/markdown/syntax' target='_blank' target='_blank'>More Markdown</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+<% } %>
+
 <div class='inner'>
   <div class='inner views'>
     <div id='diff' class='view diff'></div>
