@@ -416,57 +416,105 @@
       var $metadataEditor = $('#meta');
       $metadataEditor.empty();
 
-      _(this.model.default_metadata).each(function(data) {
-        switch(data.field.element) {
-          case 'input':
+      function initialize(model) {
+        _(model.default_metadata).each(function(data) {
+          switch(data.field.element) {
+            case 'input':
+              $metadataEditor.append(templates.text({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value
+              }));
+              break;
+            case 'select':
+              $metadataEditor.append(templates.select({
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options
+              }));
+              break;
+            case 'multiselect':
+              $metadataEditor.append(templates.multiselect({
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options
+              }));
+              break;
+          }
+        });
+
+        setValue(model.metadata);
+
+        $('.chzn-select').chosen();
+      }
+
+      function getValue() {
+        var metadata = {};
+
+        _.each($metadataEditor.find('[name]'), function(item) {
+          console.log(item);
+          switch(item.prop('tagName')) {
+            case 'input':
+              switch (item.attr('type')) {
+                case 'text':
+                  metadata[item.attr('name')] = item.val();
+                  break;
+              }
+              break;
+            case 'select':
+            case 'multiselect':
+              metadata[item.attr('name')] = item.val();
+              break;
+          }
+        });
+
+        return metadata;
+      }
+
+      function getRaw() {
+        return jsyaml.dump(getValue);
+      }
+
+      function setValue(metadata) {
+        _(metadata).each(function(value, key) {
+          var input = $metadataEditor.find('[name="'+ key +'"]');
+          var options = $metadataEditor.find('[name="'+ key +'"] option');
+
+          if (input.length) {
+            input.val(value);
+          } else if (options.length) {
+            _.each(options, function(option) {
+              if (option.val() === value) {
+                option.selected = 'selected';
+              }
+            });
+          } else {
             $metadataEditor.append(templates.text({
-              name: data.name,
-              label: data.field.label,
-              value: data.field.value
+              label: key,
+              value: value
             }));
-            break;
-          case 'select':
-            $metadataEditor.append(templates.select({
-              name: data.name,
-              label: data.field.label,
-              placeholder: data.field.placeholder,
-              options: data.field.options
-            }));
-            break;
-          case 'multiselect':
-            $metadataEditor.append(templates.multiselect({
-              name: data.name,
-              label: data.field.label,
-              placeholder: data.field.placeholder,
-              options: data.field.options
-            }));
-            break;
+          }
+        });
+      }
+
+      function setRaw(rawMetadata) {
+        try {
+          setValue(jsyaml.load(rawMetadata));
+        } catch(err) {
+          console.log('ERROR encoding YAML');
+          // No-op
         }
-      });
+      }
 
-      _(this.model.metadata).each(function(value, key) {
-        var input = $metadataEditor.find('[name="'+ key +'"]');
-        var options = $metadataEditor.find('[name="'+ key +'"] option');
+      initialize(this.model);
 
-        if (input.length) {
-          input.val(value);
-        } else if (options.length) {
-          _.each(options, function(option) {
-            if (option.val() === value) {
-              option.selected = 'selected';
-            }
-          });
-        } else {
-          $metadataEditor.append(templates.text({
-            label: key,
-            value: value
-          }));
-        }
-      });
-
-      $('.chzn-select').chosen();
-
-      return $metadataEditor;
+      return {
+        el: $metadataEditor,
+        getValue: getRaw,
+        setValue: setRaw
+      };
     },
 
     initEditor: function () {
