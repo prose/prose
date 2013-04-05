@@ -1,6 +1,6 @@
 <div class='header'>
   <div class='limiter clearfix'>
-    <div class='user-status<%= !window.authenticated ? " logged-out" : "" %>'>
+    <div class='fr user-status<%= !window.authenticated ? " logged-out" : "" %>'>
     <% if (window.authenticated) { %>
       <div class='dropdown-menu'>
         <a href='#' class='round dropdown-hover'><%= app.username %></a>
@@ -51,16 +51,18 @@
             <span class='popup round arrow-left'>Edit</span>
           </a>
         </li>
-        <li>
-          <a href='#' class='icon round preview' data-state='preview'>
-            <span class='popup round arrow-left'>Preview</span>
-          </a>
-        </li>
-        <li>
-          <a href='#' class='icon round settings' data-state='settings' data-drawer=true>
-            <span class='popup round arrow-left'>Post Settings</span>
-          </a>
-        </li>
+        <% if (state.markdown) { %>
+          <li>
+            <a href='#' class='icon round preview' data-state='preview'>
+              <span class='popup round arrow-left'>Preview</span>
+            </a>
+          </li>
+          <li>
+            <a href='#' class='icon round settings' data-state='settings' data-drawer=true>
+              <span class='popup round arrow-left'>Post Settings</span>
+            </a>
+          </li>
+        <% } %>
       </ul>
       <% } %>
     </div>

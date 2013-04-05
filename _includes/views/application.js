@@ -130,6 +130,7 @@
                 loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
                     this.loaded();
 
+                    app.state.markdown = data.markdown;
                     // Render out the application view
                     $(that.app.render().el).prependTo(that.el);
 

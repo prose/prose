@@ -482,6 +482,7 @@ input[type=text] {
 .icon.file          { background-position:-120px -80px; }
 .icon.private       { background-position:-140px -80px; }
 .icon.folder-group  { background-position:-200px -80px; }
+.icon.cancel        { background-position:-220px -80px; }
 
 .content .icon.repo          { background-position:-40px -100px; }
 .heading .icon.repo          { background-position:-40px -100px; }
@@ -550,17 +551,6 @@ input[type=text] {
   position:relative;
   z-index:100;
   }
-
-.header .user-status {
-  float:right;
-  }
-  .header .user-status .dropdown-hover {
-    display:block;
-    height:35px;
-    padding:0 15px;
-    border:1px solid #c4ced1;
-    line-height:34px;
-    }
 
 .heading {
   height:60px;
@@ -785,6 +775,13 @@ input[type=text] {
 .dropdown-menu {
   position:relative;
   }
+  .dropdown-hover {
+    display:block;
+    height:35px;
+    padding:0 15px;
+    border:1px solid #c4ced1;
+    line-height:34px;
+    }
   .dropdown {
     background-color:#fff;
     background-color:rgba(255,255,255,0.75);
@@ -825,6 +822,11 @@ input[type=text] {
       clear:both;
       line-height:20px;
       white-space:nowrap;
+      font-weight:400;
+      -webkit-transition:none;
+         -moz-transition:none;
+           -o-transition:none;
+              transition:none;
       }
     .dropdown a.active,
     .dropdown > li > a:hover,
@@ -887,6 +889,13 @@ input[type=text] {
   display:none;
   }
   .post .view.active {
+    display:block;
+    }
+
+.drawer .commit {
+  display:none;
+  }
+  .drawer .commit.action {
     display:block;
     }
 
