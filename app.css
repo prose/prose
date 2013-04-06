@@ -372,6 +372,8 @@ em      { font-style:italic; }
   z-index:100;
   width:260px;
   height:600px;
+  height:auto!important;
+  min-height:600px;
   right:130px;
   -webkit-transition:right 300ms;
      -moz-transition:right 300ms;
@@ -622,16 +624,10 @@ em      { font-style:italic; }
 
 .footer {
   background:#e0e7eb;
-  border-top:1px solid #c3ccd0;
-  border-bottom:1px solid #c3ccd0;
   position:relative;
   font-size:12px;
   padding:15px 0;
   height:60px;
-  -webkit-box-shadow:0 -1px 0 rgba(255, 255, 255, 0),
-                     0 0 10px rgba(0, 0, 0, 0.1);
-          box-shadow:0 -1px 0 rgba(255, 255, 255, 0),
-                     0 0 10px rgba(0, 0, 0, 0.1);
   }
   .start .footer {
     position:fixed;
@@ -789,6 +785,8 @@ em      { font-style:italic; }
     padding:0 15px;
     border:1px solid #c4ced1;
     line-height:34px;
+    -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.5);
+            box-shadow:0 1px 1px rgba(255,255,255,0.5);
     }
   .dropdown {
     background-color:#fff;
