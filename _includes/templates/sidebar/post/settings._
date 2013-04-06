@@ -20,6 +20,14 @@
       <a href='#' class='toggle publish button round'>Publish</a>
     <% } %>
 
-    <a class='toggle delete button round' href='#'>Delete this File</a>
+    <% if (app.state.config && app.state.config.languages) { %>
+      <% _(app.state.config.languages).each(function(lang) { %>
+        <% if (metadata.lang && metadata.lang !== lang.key) { %>
+          <a class='translate round button' href='#<%= lang.key %>'>Translate to <%= lang.name %></a>
+        <% } %>
+      <% }); %>
+    <% } %>
+
+    <a class='delete button round' href='#'>Delete this File</a>
   </div>
 <% } %>

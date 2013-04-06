@@ -14,11 +14,12 @@
     render: function() {
 
       // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'postViews', 'deleteFile', 'updateMetaData', 'save');
+       _.bindAll(this, 'postViews', 'deleteFile', 'updateMetaData', 'save', 'translate');
       this.options.eventRegister.bind('postViews', this.postViews);
       this.options.eventRegister.bind('deleteFile', this.deleteFile);
       this.options.eventRegister.bind('updateMetaData', this.updateMetaData);
       this.options.eventRegister.bind('save', this.updateMetaData);
+      this.options.eventRegister.bind('translate', this.translate);
 
       // Ping the `views/post.js` to let it know
       // we should swap out the existing sidebar
@@ -31,11 +32,12 @@
       $(this.el)
         .empty()
         .append(templates.post(_.extend(this.model, {
-        mode: this.mode
+          mode: this.mode,
+          metadata: jsyaml.load(this.model.raw_metadata)
       })));
 
       // TODO Add an unpublished class to .application
-      //if (!this.model.published) $(this.el).addClass('unpublished');
+      if (!this.model.published) $(this.el).addClass('published');
 
       $('#heading')
         .empty()
@@ -387,6 +389,26 @@
           that.updateFile();
         }
       };
+    },
+
+    translate: function() {
+
+      // TODO Drop the 'EN' requirement.
+      var hash = window.location.hash.split('/'),
+          href = $(e.currentTarget).attr('href').substr(1);
+
+      // If current page is not english and target page is english
+      if (href === 'en') {
+        hash.splice(-2, 2, hash[hash.length - 1]);
+      // If current page is english and target page is not english
+      } else if (this.model.metadata.lang === 'en') {
+        hash.splice(-1, 1, href, hash[hash.length - 1]);
+      // If current page is not english and target page is not english
+      } else {
+        hash.splice(-2, 2, href, hash[hash.length - 1]);
+      }
+      router.navigate(_(hash).compact().join('/'), true);
+      return false;
     },
 
     buildMeta: function() {

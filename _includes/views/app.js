@@ -8,7 +8,8 @@
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.delete': 'deleteFile',
-      'click a.publish': 'updateMetaData'
+      'click a.publish': 'updateMetaData',
+      'click a.translate': 'translate'
     },
 
     initialize: function(options) {
@@ -63,6 +64,11 @@
 
     postViews: function(e) {
       this.eventRegister.trigger('postViews', e);
+      return false;
+    },
+
+    translate: function(e) {
+      this.eventRegister.trigger('translate', e);
       return false;
     },
 
