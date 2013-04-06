@@ -563,9 +563,11 @@ em      { font-style:italic; }
   }
 
 .details {
-  width:400px;
   padding-right:15px;
   }
+  .content .details {
+    width:400px;
+    }
   .details h4 {
     position:relative;
     top:3px;
