@@ -4,7 +4,7 @@
 </div>
 
 <div class='breadcrumb'>
-  <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></a>
+  <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'>..</a>
   <% _.each(_.chunkedPath(path), function(p) { %>
     <span class='slash'>/</span>
     <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
