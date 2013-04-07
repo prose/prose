@@ -13,6 +13,7 @@ views.Post = Backbone.View.extend({
     'change input': '_makeDirty',
     'change #post_published': 'updateMetaData',
     'click .delete': '_delete',
+    'click .translate': '_translate',
     'click .toggle-options': '_toggleOptions'
   },
 
@@ -28,6 +29,24 @@ views.Post = Backbone.View.extend({
         router.navigate([app.state.user, app.state.repo, "tree", app.state.branch].join('/'), true);
       }, this));
     }
+    return false;
+  },
+
+  _translate: function(e) {
+    var hash = window.location.hash.split('/'),
+        href = $(e.currentTarget).attr('href').substr(1);
+
+    // If current page is not english and target page is english
+    if (href === 'en') {
+      hash.splice(-2, 2, hash[hash.length - 1]);
+    // If current page is english and target page is not english
+    } else if (this.model.metadata.lang === 'en') {
+      hash.splice(-1, 1, href, hash[hash.length - 1]);      
+    // If current page is not english and target page is not english
+    } else {
+      hash.splice(-2, 2, href, hash[hash.length - 1]);
+    }
+    router.navigate(_(hash).compact().join('/'), true);
     return false;
   },
 
@@ -366,7 +385,7 @@ views.Post = Backbone.View.extend({
 
   render: function() {
     var that = this;
-    $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode })));
+    $(this.el).html(templates.post(_.extend(this.model, { mode: this.mode, metadata: jsyaml.load(this.model.raw_metadata) })));
     if (this.model.published) $(this.el).addClass('published');
     this.initEditor();
     return this;
