@@ -55,7 +55,7 @@ function authenticate() {
 
   // Handle Code
   if (match) {
-    $.getJSON('{{site.gatekeeper_url}}/authenticate/' + match[1], function (data) {
+    $.getJSON('http://prose-gatekeeper.herokuapp.com/authenticate/' + match[1], function (data) {
       $.cookie('oauth-token', data.token);
       window.authenticated = true;
       // Adjust URL

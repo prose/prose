@@ -9,8 +9,6 @@ window.app = {
         return memo;
     }, {}),
     state: {'repo': ''},
-    oauthClientId: 'c602a8bd54b1e774f864',
-    gatekeeperUrl: 'http://prose-gatekeeper.herokuapp.com',
     instance: {},
     eventRegister: _.extend({}, Backbone.Events)
 };

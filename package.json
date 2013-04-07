@@ -7,12 +7,12 @@
     "backbone": "0.5.3",
     "underscore": "1.2.4",
     "chrono": "1.0.4",
-    "js-base64": "0.9",
+    "js-base64": "2.0.7",
     "keymaster": "1.0.2",
     "marked": "0.2.8",
     "queue-async": "1.0.3",
     "jquery-browserify": "1.8.1",
-    "chosen-jquery-browserify": "0.9.15",
+    "chosen-jquery-browserify": "0.9.15"
   },
   "devDependencies": {
     "mocha": "~1.8.2",

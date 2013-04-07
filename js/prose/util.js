@@ -60,17 +60,13 @@ _.extractFilename = function(path) {
 // -------
 
 _.mode = function(file) {
-  if (_.markdown(file)) return "gfm";
+  if (_.markdown(file)) return 'gfm';
 
   var extension = _.extension(file);
 
-  if (_.include(["js", "json"], extension)) return "javascript";
-  if (extension === "html") return "htmlmixed";
-  if (extension === "rb") return "ruby";
-  if (extension === "yml") return "yaml";
-  if (extension === "clj") return "clojure";
-  if (_.include(["coffee", "cake"], extension)) return "coffeescript";
-  if (_.include(["java", "c", "cpp", "cs", "php"], extension)) return "clike";
+  if (_.include(['js', 'json'], extension)) return 'javascript';
+  if (extension === 'html') return 'htmlmixed';
+  if (extension === "yml") return 'yaml';
 
   return extension;
 }

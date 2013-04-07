@@ -1,5 +1,3 @@
-{% raw %}
-
 var Liquid = {
 
   author: 'M@ McCray <darthapo@gmail.com>',
@@ -1422,5 +1420,3 @@ cbSplit._nativeSplit = String.prototype.split;
 String.prototype.split = function (separator, limit) {
     return cbSplit(this, separator, limit);
 };
-
-{% endraw %}
