@@ -1,3 +1,5 @@
+var jQuery = require('jquery-browserify');
+
 /*jslint browser: true */ /*global jQuery: true */
 
 /**

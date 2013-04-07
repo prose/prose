@@ -27,7 +27,8 @@ APPLICATION = \
 	js/prose/views/profile.js \
 	js/prose/views/start.js \
 	js/prose/views/posts.js \
-	js/prose/views/post.js
+	js/prose/views/post.js \
+	js/prose/init.js
 	
 prose.js: $(APPLICATION)
 	browserify \

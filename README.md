@@ -19,3 +19,6 @@ To run the current development version, fork this project and serve it locally.
 If you have Python handy, just `cd` into the project root directory and run
 
      python -m SimpleHTTPServer
+
+For guidance on building a packaged version, running tests, and contributing to
+development, see [CONTRIBUTING.md](CONTRIBUTING.md).

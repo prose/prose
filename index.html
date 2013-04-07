@@ -3,10 +3,8 @@
 <head>
   <meta charset='UTF-8'/>
   <title>Prose &middot; A Content Editor for GitHub</title>
-  <link rel='shortcut icon' href='.//img/favicon.ico' type='image/x-icon' />
+  <link rel='shortcut icon' href='./img/favicon.ico' type='image/x-icon' />
   <link rel='stylesheet' href='./app.css'>
-</head>
-<body>
   <script data-template='app' type='text/html'>
     <div class='header'>
       <div class='limiter clearfix'>
@@ -392,6 +390,8 @@
       <% }); %>
     <% } %>
   </script>
+</head>
+<body>
 
   <div id='prose'></div>
 
@@ -400,21 +400,18 @@
       <div class='fr brand'>
         <a href='https://github.com/prose/prose#readme'>Prose v1.0.0</a>
       </div>
-      <a class='prose-logo' href='/{{site.baseurl}}'>
+      <a class='prose-logo' href='./'>
         <span class='icon branding'>
           Prose
         </span>
       </a>
       <ul class='menu clearfix fl'>
-        <li><a class='help' href='/{{site.baseurl}}help.html'><span class='icon inline small help'></span>Help</a></li>
-        <li><a class='about' href='/{{site.baseurl}}about.html'><span class='icon inline small about'></span>About</a></li>
+        <li><a class='help' href='./help.html'><span class='icon inline small help'></span>Help</a></li>
+        <li><a class='about' href='./about.html'><span class='icon inline small about'></span>About</a></li>
       </ul>
     </div>
   </div>
 
-  <div class='loading'>
-    <span>Loading info ...</span>
-  </div>
   <script src='prose.js'></script>
 </body>
 </html>
