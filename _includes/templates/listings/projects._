@@ -23,7 +23,7 @@
               View Project
             </a>
             <% if (r.homepage) { %>
-              <a href='/<%= r.homepage %>'>View Site</a>
+              <a href='<%= r.homepage %>'>View Site</a>
             <% } %>
           </div>
       </li>
