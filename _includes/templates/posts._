@@ -3,12 +3,15 @@
   <input type='text' id='filter' placeholder='Filter Files' />
 </div>
 
-<div class='breadcrumb'>
-  <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'>..</a>
-  <% _.each(_.chunkedPath(path), function(p) { %>
-    <span class='slash'>/</span>
-    <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
-  <% }); %>
-</div>
+<% if (path.length) { %>
+  <div class='breadcrumb'>
+
+    <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'>..</a>
+    <% _.each(_.chunkedPath(path), function(p) { %>
+      <span class='slash'>/</span>
+      <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
+    <% }); %>
+  </div>
+<% } %>
 
 <ul id='files' class='listing'></ul>

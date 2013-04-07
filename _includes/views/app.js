@@ -24,7 +24,6 @@
         state: app.state
       })));
 
-      console.log(app.state);
       // When the sidebar should be open.
       if (this.model.mode === 'edit') {
         $('#prose').toggleClass('open', false);
