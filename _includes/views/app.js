@@ -24,9 +24,15 @@
         state: app.state
       })));
 
+      console.log(app.state);
       // When the sidebar should be open.
       if (this.model.mode === 'edit') {
         $('#prose').toggleClass('open', false);
+
+      // Project contents when there aren't branches
+      } else if (app.state.mode === 'tree' && !app.state.branches.length) {
+        $('#prose').toggleClass('open', false);
+
       } else {
         $('#prose').toggleClass('open', true);
       }
