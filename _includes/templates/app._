@@ -25,14 +25,14 @@
     <div class='vert navigation'>
       <ul class='project nav'>
         <li>
-          <a href='/' class='icon round repos'>
+          <a href='/' class='icon round repos <% if (!app.state.mode) { %>active<% } %>'>
             <span class='popup round arrow-left'>Your Projects</span>
           </a>
         </li>
         <% if (state.repo) { %>
           <li>
-            <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo'>
-              <span class='popup round arrow-left'>Project Contents</span>
+          <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo <% if (app.state.mode === "tree") { %>active<% } %>'>
+              <span class='popup round arrow-left'><%= repo %></span>
             </a>
           </li>
           <% if (window.authenticated) { %>

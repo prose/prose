@@ -605,8 +605,8 @@ em      { font-style:italic; }
   background:#202020;
   color:#fff;
   position:absolute;
-  width:60px;
-  padding:5px;
+  width:auto;
+  padding:5px 10px;
   left:100%;
   display:none;
   top:0;
