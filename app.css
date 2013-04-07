@@ -580,7 +580,7 @@ em      { font-style:italic; }
     }
 
 .loading {
-  background:transparent url('images/ajax-loader.gif') no-repeat;
+  background:transparent url('img/ajax-loader.gif') no-repeat;
   margin:150px auto;
   width:50px;
   font-size:20px;
@@ -883,14 +883,6 @@ em      { font-style:italic; }
 	0%    { opacity:0; transform:translateY(-20px); }
 	100%  { opacity:1; transform:translateY(0); }
   }
-
-/* ------------------------------------------
-  Repos /:name /:organization
----------------------------------------------*/
-
-/* ------------------------------------------
-  Repo /:repo
----------------------------------------------*/
 
 /* ------------------------------------------
   File /:filename

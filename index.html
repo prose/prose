@@ -1,7 +1,420 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'/>
+  <title>Prose &middot; A Content Editor for GitHub</title>
+  <link rel='shortcut icon' href='.//img/favicon.ico' type='image/x-icon' />
+  <link rel='stylesheet' href='./app.css'>
+</head>
+<body>
+  <script data-template='app' type='text/html'>
+    <div class='header'>
+      <div class='limiter clearfix'>
+        <div class='fr user-status<%= !window.authenticated ? " logged-out" : "" %>'>
+        <% if (window.authenticated) { %>
+          <div class='dropdown-menu'>
+            <a href='#' class='round dropdown-hover'><%= app.username %></a>
+            <ul class='dropdown round arrow-top'>
+              <li><a class='logout' href='#'><strong>Logout</strong></a></li>
+            </ul>
+          </div>
+        <% } else { %>
+          <a class='button round' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>
+        <% } %>
+        </div>
+      </div>
+    </div>
 
-<div class='loading'>
-  <span>Loading info ...</span>
-</div>
+    <div id='heading' class='heading limiter clearfix'></div>
+
+    <div class='application clearfix limiter'>
+      <div id='content' class='content fl'></div>
+      <div class='sidebar fl'>
+        <div id='drawer' class='drawer'></div>
+
+        <div class='vert navigation'>
+          <ul class='project nav'>
+            <li>
+              <a href='/' class='icon round repos <% if (!app.state.mode) { %>active<% } %>'>
+                <span class='popup round arrow-left'>Your Projects</span>
+              </a>
+            </li>
+            <% if (state.repo) { %>
+              <li>
+              <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo <% if (app.state.mode === "tree") { %>active<% } %>'>
+                  <span class='popup round arrow-left'><%= repo %></span>
+                </a>
+              </li>
+              <% if (window.authenticated) { %>
+                <li>
+                  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='icon round new new-file'>
+                    <span class='popup round arrow-left'>New File</span>
+                  </a>
+                </li>
+              <% } %>
+            <% } %>
+          </ul>
+          <% if (window.authenticated && state.mode === 'edit') { %>
+          <ul class='post-views nav'>
+            <li>
+              <a href='#' class='icon round edit' data-state='edit'>
+                <span class='popup round arrow-left'>Edit</span>
+              </a>
+            </li>
+            <% if (state.markdown) { %>
+              <li>
+                <a href='#' class='icon round preview' data-state='preview'>
+                  <span class='popup round arrow-left'>Preview</span>
+                </a>
+              </li>
+            <% } %>
+            <li>
+              <a href='#' class='icon round settings' data-state='settings' data-drawer=true>
+                <span class='popup round arrow-left'>Post Settings</span>
+              </a>
+            </li>
+          </ul>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script data-template='heading' type='text/html'>
+    <% if (avatar) { %><div class='avatar round fl'><%= avatar %></div><% } %>
+
+    <div class='fl details'>
+      <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>
+      <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>
+    </div>
+  </script>
+
+  <script data-template='notification' type='text/html'>
+    <% if (!window.authenticated) { %>
+    <div class='notify <%= type %>'>
+      <div class='inner'>
+        Please login with your GitHub account to access that project.
+        <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>
+      </div>
+    </div>
+    <% } else { %>
+      <div class='notify <%= type %>'>
+        <div class='inner'>
+          <p><%= message %></p>
+          <p><a class='button round' href='../'>Go back </a></p>
+        </div>
+      </div>
+    <% } %>
+  </script>
+
+  <script data-template='post' type='text/html'>
+    <% if (markdown) { %>
+      <div class='toolbar'>
+        <div class='inner'>
+          <div class='dropdown-menu fr'>
+            <a href='#' class='round dropdown-hover'>Markdown</a>
+            <ul class='dropdown markdown-snippets round'>
+              <li><a href='#' data-snippet='# Heading'>Main Header</a></li>
+              <li><a href='#' data-snippet='## Sub Heading'>Sub Header</a></li>
+              <li><a href='#' data-snippet='<% print("```\nvar foo;\n```"); %>'>Code</a></li>
+              <li><a href='#' data-snippet='[Google](http://google.com)'>Link</a></li>
+              <li><a href='#' data-snippet='![picture alt](http://placekitten.com/200/300 "Cats Are Awesome (title)")'>Image</a></li>
+              <li><a href='#' data-snippet='<% print("> We loved with a love that was more than love"); %>'>Blockquote</a></li>
+              <li><a href='#' data-snippet='<% print("- item\n- item\n- item\n"); %>'>List</a></li>
+              <li class='divider'></li>
+              <li><a href='http://daringfireball.net/projects/markdown/syntax' target='_blank' target='_blank'><strong>Learn More</strong></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <div class='inner'>
+      <div class='inner views'>
+        <div id='diff' class='view diff'></div>
+        <div id='code' class='view active edit <% if (markdown) { %> markdown<% } %>'></div>
+        <div id='preview' class='view preview prose'><%= markdown ? marked(content) : '' %></div>
+      </div>
+    </div>
+  </script>
+
+  <script data-template='posts' type='text/html'>
+    <div class='content-search'>
+      <span class='icon search inline fr'></span>
+      <input type='text' id='filter' placeholder='Filter Files' />
+    </div>
+
+    <% if (path.length) { %>
+      <div class='breadcrumb'>
+
+        <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'>..</a>
+        <% _.each(_.chunkedPath(path), function(p) { %>
+          <span class='slash'>/</span>
+          <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <ul id='files' class='listing'></ul>
+  </script>
+
+  <script data-template='profile' type='text/html'>
+    <div class='content-search'>
+      <span class='icon search inline fr'></span>
+      <input type='text' id='filter' placeholder='Filter projects' />
+    </div>
+
+    <ul id='projects' class='listing'></ul>
+  </script>
+
+  <script data-template='start' type='text/html'>
+    <% if (!authenticated) { %>
+      <div class='round splash'>
+        <h2 class='icon landing'>Prose</h2>
+        <div class='inner'>
+          <p>Prose is a content editor for GitHub designed for managing websites.</p>
+          <p><a href='/about.html'>Learn more</a></p>
+          <a class='round button' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo,user,gist'>Authorize with GitHub</a>
+        </div>
+      </div>
+    <% } %>
+  </script>
+
+  <!-- Sidebar Views -->
+  <script data-template='sidebarOrganizations' type='text/html'>
+    <% if (authenticated) { %>
+      <div class='inner'>
+        <h2 class='label'>Groups</h2>
+      </div>
+      <ul class='listing'>
+      <% if (organizations && organizations.length) { %>
+        <li>
+          <a href='#<%= app.username %>' title='<%= app.username %>'>
+            <span class='icon folder-group inline small'></span>
+            <%= app.username %>
+          </a>
+        </li>
+        <% _.each(organizations, function(org) { %>
+        <li>
+          <a href='#<%= org.login %>' title='<%= org.login %>'>
+            <span class='icon folder-group inline small'></span>
+            <%= org.login %>
+          </a>
+        </li>
+        <% }); %>
+      <% } %>
+      </ul>
+    <% } %>
+  </script>
+
+  <script data-template='sidebarProject' type='text/html'>
+    <% if (authenticated) { %>
+      <div class='inner'>
+        <% if (app.state.branches.length > 0) { %>
+          <h2 class='label'>Switch Branch</h2>
+          <select data-placeholder='Current Branch Name' class='chzn-select'>
+              <option value='#<%= [user, repo, "tree", app.state.branch].join("/") %>' selected><%= app.state.branch %></option>
+            <% _.each(app.state.branches, function(branch) { %>
+              <option value='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></option>
+            <% }); %>
+          </select>
+        <% } %>
+      </div>
+    <% } %>
+  </script>
+
+  <script data-template='settings' type='text/html'>
+    <% if (jekyll) { %>
+      <div id='meta' class='meta inner'></div>
+    <% } %>
+
+    <% if (window.authenticated) { %>
+      <div class='inner'>
+        <div class='commit'>
+          <input type='text' class='commit-message' placeholder='Describe your changes' />
+          <a class='icon inline small cancel' href='#' title='ESC'>
+            &times;<span class='popup round arrow-left'>Cancel</span>
+          </a>
+        </div>
+
+        <a class='save button round' href='#'>
+          <%= writeable ? 'Save' : 'Submit Change' %>
+          <span class='popup round arrow-left'>⌘ + s</span>
+        </a>
+
+        <% if (jekyll && markdown) { %>
+          <a href='#' class='toggle publish button round'>Publish</a>
+        <% } %>
+
+        <% if (app.state.config && app.state.config.languages) { %>
+          <% _(app.state.config.languages).each(function(lang) { %>
+            <% if (metadata.lang && metadata.lang !== lang.key) { %>
+              <a class='translate round button' href='#<%= lang.key %>'>Translate to <%= lang.name %></a>
+            <% } %>
+          <% }); %>
+        <% } %>
+
+        <a class='delete button round' href='#'>Delete this File</a>
+      </div>
+    <% } %>
+  </script>
+
+  <!-- Metadata Views -->
+  <script data-template='text' type='text/html'>
+    <label for='<%= name %>'><%= label %></label>
+    <input type='text' name='<%= name %>' value='<%= value %>' />
+  </script>
+
+  <script data-template='multiselect' type='text/html'>
+    <label for='<%= name %>'><%= label %></label>
+    <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>
+      <% _(options).each(function(o) { %>
+        <% if (o.name) { %>
+         <option value='<%= o.value %>'><%= o.name %></option>
+        <% } else { %>
+         <option value='<%= o.value %>'><%= o.value %></option>
+        <% } %>
+      <% }); %>
+    </select>
+  </script>
+
+  <script data-template='select' type='text/html'>
+    <label for='<%= name %>'><%= label %></label>
+    <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>
+      <% _(options).each(function(o) { %>
+        <% if (o.name) { %>
+         <option value='<%= o.value %>'><%= o.name %></option>
+        <% } else { %>
+         <option value='<%= o.value %>'><%= o.value %></option>
+        <% } %>
+      <% }); %>
+    </select>
+  </script>
+
+  <!-- Directory Listings -->
+  <script data-template='files' type='text/html'>
+    <% _.each(files, function(f) { %>
+      <% if (f.type === 'tree') { %>
+        <!-- folders -->
+        <li><a href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= f.path ? "/" +f.path : "" %>'>
+          <span class='icon inline small folder'></span>
+          <%= f.path === _.parentPath(currentPath) ? ".." : f.name %>
+        </a></li>
+      <% } else { %>
+        <!-- files -->
+        <%
+          var parts = f.name.split('.');
+          var extension = parts.pop().toLowerCase();
+          var filename = parts.slice(0, parts.length).join('');
+        %>
+
+        <% if (app.state.jekyll && extension === 'md') { %>
+          <li class='markdown'>
+            <a class='clearfix load-post toggle-view' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>
+            <span class='fl icon round md'></span>
+            <span class='fl details'>
+              <h3><%= filename || 'Untitled' %></h3>
+              <span class='deemphasize'><%= f.name %></span>
+            </span>
+            </a>
+          </li>
+
+        <% } else { %>
+          <li><a class='light load-post toggle-view' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>
+            <span class='icon inline small file <%= extension %>'></span>
+            <%= f.name || 'Untitled' %>
+          </a></li>
+        <% } %>
+      <% } %>
+    <% }); %>
+  </script>
+
+  <script data-template='projects' type='text/html'>
+    <% if (state && (app.username === state.user)) { %>
+      <% _.each(owners, function(repos, owner) { %>
+          <% _.each(repos, function(r) { %>
+          <li class='clearfix'>
+              <% if (r.private) { %>
+                <div class='fl icon round repo private'></div>
+              <% } else { %>
+                <div class='fl icon round repo'></div>
+              <% } %>
+
+              <div class='details fl'>
+                <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
+                  <h3><%= r.name %></h3>
+                </a>
+                <span class='deemphasize'><%= r.description %></span>
+              </div>
+
+              <div class='fl actions cleafix'>
+                <a
+                  data-user='<%= r.owner.login %>'
+                  data-repo='<%= r.name %>'
+                  href='#<%= r.owner.login %>/<%= r.name %>'>
+                  View Project
+                </a>
+                <% if (r.homepage) { %>
+                  <a href='<%= r.homepage %>'>View Site</a>
+                <% } %>
+              </div>
+          </li>
+          <% }); %>
+        <% }); %>
+      <% } else { %>
+      <% _.each(repos, function(r) { %>
+        <li class='clearfix'>
+            <% if (r.private) { %>
+              <div class='fl icon round repo private'></div>
+            <% } else { %>
+              <div class='fl icon round repo'></div>
+            <% } %>
+
+            <div class='details fl'>
+              <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
+                <h3><%= r.name %></h3>
+              </a>
+              <span class='deemphasize'><%= r.description %></span>
+            </div>
+
+            <div class='fl actions cleafix'>
+              <a
+                data-user='<%= r.owner.login %>'
+                data-repo='<%= r.name %>'
+                href='#<%= r.owner.login %>/<%= r.name %>'>
+                View Project
+              </a>
+              <% if (r.homepage) { %>
+                <a href='<%= r.homepage %>'>View Site</a>
+              <% } %>
+            </div>
+        </li>
+      <% }); %>
+    <% } %>
+  </script>
+
+  <div id='prose'></div>
+
+  <div class='footer'>
+    <div class='limiter clearfix'>
+      <div class='fr brand'>
+        <a href='https://github.com/prose/prose#readme'>Prose v1.0.0</a>
+      </div>
+      <a class='prose-logo' href='/{{site.baseurl}}'>
+        <span class='icon branding'>
+          Prose
+        </span>
+      </a>
+      <ul class='menu clearfix fl'>
+        <li><a class='help' href='/{{site.baseurl}}help.html'><span class='icon inline small help'></span>Help</a></li>
+        <li><a class='about' href='/{{site.baseurl}}about.html'><span class='icon inline small about'></span>About</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class='loading'>
+    <span>Loading info ...</span>
+  </div>
+  <script src='prose.js'></script>
+</body>
+</html>

@@ -388,73 +388,87 @@
 <body class='static'>
   <div id='container'>
     <div class='limiter'>
-      <div class='prose'>
-  <div class='inner deep'>
-    <h1 class='title'>Help</h1>
+      <div class='inner deep prose'>
+  <h1 class='title'>Internals</h1>
+  <p>Prose is just a static webpage and doesn&#8217;t require any server-side bits. Instead it interacts directly with the GitHub API for managing your repo&#8217;s contents. This means there&#8217;s nothing to setup, no database no fileserver etc. This is imporant because we want to make it easy for you to get involved in the development.</p>
 
-    <ul class='blocks clearfix'>
-      
-      <li><a class='round' href='/help/eventually-consistent.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/cells.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Eventually consistent</h4>
-            <p>Or how continuously improving content in the open beats the best review process.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/prose-for-writers.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/prose-for-writers.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Prose for writers</h4>
-            <p>How to use Prose as a writing workspace.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/internals.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/internals.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Internals</h4>
-            <p>A little background on how we implemented Prose.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/handbook.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/handbook.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Handbook</h4>
-            <p>A reference guide. In progress.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/getting-started.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/getting-started.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Getting Started</h4>
-            <p>A brief introduction on how to use Prose, what it can do for you and what not.</p>
-          </div>
-      </a></li>
-      
-    </ul>
+<p>Using just the GitHub API for powering our editor was not easy. GitHub just offers a low level API (around trees and blobs), which is challenging in many cases, as it requires a lot of subsequent requests to do simple things, which slows down site performance. That&#8217;s why creating a good architecture was crucial to manage the complexity. We ended up in abstracting the data layer into a separate module, Github.js.</p>
+
+<h2 id='githubjs'>Github.js</h2>
+
+<p><a href='https://github.com/michael/github'>Github.js</a> is a higher-level wrapper around the GitHub API. It&#8217;s intended for exactly our use case, namely interacting with GitHub from the browser. It supports reading, writing, renaming and deleting files. Goal was to have a simple data abstraction layer, nothing too fancy, but providing exactly the operations we need.</p>
+
+<h2 id='gatekeeper'>Gatekeeper</h2>
+
+<p>Because of some <a href='http://blog.vjeux.com/2012/javascript/github-oauth-login-browser-side.html'>security-related limitations</a>, GitHub prevents you from implementing the OAuth Web Application Flow on a client-side only application.</p>
+
+<p>This is a real bummer. So we built <a href='http://github.com/prose/gatekeeper'>Gatekeeper</a>, which is the missing piece you need in order to make OAuth work.</p>
+
+<h1 id='installation'>Installation</h1>
+
+<ol>
+<li>
+<p>Fork and clone the repo in order to run your own instance of Prose.</p>
+</li>
+
+<li>
+<p>Setup a GitHub application, so CORS requests are possible as well as OAuth authentication.</p>
+
+<p><img src='http://prose.io/images/screenshots/github-app-settings.png' alt='Setup GitHub Application' /></p>
+</li>
+
+<li>
+<p>Setup Gatekeeper.</p>
+
+<p>Follow the instructions <a href='http://github.com/prose/gatekeeper'>here</a> and fill in the information that is provided after registering a new GitHub Application.</p>
+</li>
+
+<li>
+<p>Adjust <code>_config.yml</code>.</p>
+
+<pre><code>auto: true
+server: true
+oauth_client_id: your_oauth_client_id
+gatekeeper_url: http://gatekeeper.example.com
+exclude:
+- .gitignore
+- README.md</code></pre>
+</li>
+
+<li>
+<p>Run it.</p>
+
+<pre><code>server:prose prose$ jekyll</code></pre>
+</li>
+</ol>
+
+<h1 id='limitations'>Limitations</h1>
+
+<p>The GitHub API comes with a number of limitations because of its low-level nature. Here is a the list of known issues related to that. I hope the folks at GitHub can help us (with some minor additions to their API) so we can eliminate them.</p>
+
+<ul>
+<li>
+<p>Listing Repositories</p>
+
+<p>When listing the repositories, we can&#8217;t determine which of them are actual Jekyll sites. Theoretically we could, by issuing a separate request that fetches repository information (such as branches) and looks for a <code>_config.yml</code> file. However this is way too slow, so we have to do it on-demand as you click on a repository.</p>
+</li>
+
+<li>
+<p>Deleting and renaming files</p>
+
+<p>This requires a full tree to be written involving a new commit that points to that tree. In fact this is not a big problem with small repositories, but once they get bigger it&#8217;s not only a performance issue, you&#8217;ll get errors. Be aware that you may not (yet) be able to rename or delete files when working with bigger repositories.</p>
+</li>
+</ul>
+</div>
+
+<div class='inner deep bright'>
+  Posted by <a href='http://twitter.com/_mql' target='_blank'>Michael Aufreiter</a> on June 20, 2012
+</div>
+
+<div class='improve-article bright'>
+  <div class='inner deep clearfix centered'>
+    <p>This article has been written and published using <a href='http://prose.io' target='_blank'>Prose</a>. Please help us improve this documentation by contributing to the text.</p>
+    <p><a class='round button' href='http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-06-20-internals.md'>Edit in Prose</a></p>
   </div>
 </div>
 

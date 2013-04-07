@@ -388,73 +388,93 @@
 <body class='static'>
   <div id='container'>
     <div class='limiter'>
-      <div class='prose'>
-  <div class='inner deep'>
-    <h1 class='title'>Help</h1>
+      <div class='inner deep prose'>
+  <h1 class='title'>Getting Started</h1>
+  <p>This little guide walks you through the process of using Prose to manage your website.</p>
 
-    <ul class='blocks clearfix'>
-      
-      <li><a class='round' href='/help/eventually-consistent.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/cells.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Eventually consistent</h4>
-            <p>Or how continuously improving content in the open beats the best review process.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/prose-for-writers.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/prose-for-writers.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Prose for writers</h4>
-            <p>How to use Prose as a writing workspace.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/internals.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/internals.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Internals</h4>
-            <p>A little background on how we implemented Prose.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/handbook.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/handbook.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Handbook</h4>
-            <p>A reference guide. In progress.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/getting-started.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/getting-started.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Getting Started</h4>
-            <p>A brief introduction on how to use Prose, what it can do for you and what not.</p>
-          </div>
-      </a></li>
-      
-    </ul>
+<h1 id='create_your_first_jekyll_webpage'>Create your first Jekyll webpage</h1>
+
+<p>We&#8217;ve created a simple template that you can use as a starting point, <a href='http://bootstrap.prose.io'>Prose Bootstrap</a>. All you have to do is create a fork of the <a href='http://github.com/prose/bootstrap'>repository</a> and give it a suitable new name. Please follow the steps described on the Bootstrap homepage. If you are already maintaining a Jekyll page you can skip this step.</p>
+
+<h1 id='open_prose'>Open Prose</h1>
+
+<p>Navigate to <a href='http://prose.io'>Prose.io</a>. Now you can sign in to <a href='http://github.com'>GitHub</a> by using OAuth.</p>
+
+<p><img src='https://github.com/prose/prose/raw/gh-pages/images/screenshots/start.png' alt='Start' /></p>
+
+<h1 id='browse_repositories'>Browse Repositories</h1>
+
+<p>The landing page gives you all the repositories you have access to. If a Jekyll site has multiple branches, you are prompted to select your desired branch, otherwise you jump into the repo directly. We&#8217;re going to pick our fresh bootstraped site here.</p>
+
+<p><img src='https://github.com/prose/prose/raw/gh-pages/images/screenshots/browse-repos.png' alt='Repositories' /></p>
+
+<h1 id='browsing_posts'>Browsing Posts</h1>
+
+<p>Once you have selected a repository, you can browse your posts and sub-folders in a traditional file-browser-ish manner. You can create new files as well, which immediately opens an empty document for you, which you can save after populating it with some text.</p>
+
+<p><img src='https://github.com/prose/prose/raw/gh-pages/images/screenshots/browse-files.png' alt='Posts' /></p>
+
+<h1 id='edit_posts'>Edit Posts</h1>
+
+<p>Once the file has been loaded, all you have to do is pointing your cursor to the text and start typing. We&#8217;re providing basic syntax highlighting for Markdown to assist you during the writing process.</p>
+
+<p><img src='https://github.com/prose/prose/raw/gh-pages/images/screenshots/edit.png' alt='Edit' /></p>
+
+<h1 id='preview'>Preview</h1>
+
+<p>You can instantly preview your writing by either clicking the preview icon at the document menu bar, or <code>ctrl+shift+right</code> to toggle it.</p>
+
+<p><img src='https://github.com/prose/prose/raw/gh-pages/images/screenshots/preview.png' alt='Preview' /></p>
+
+<h1 id='cheatsheet'>Cheatsheet</h1>
+
+<p>If you don&#8217;t write on a daily basis (like me) you might have difficulties to remember the Markdown syntax so we also included a cheatsheet that you can use for reference. You reach it by pressing <code>ctrl+shift+left</code>.</p>
+
+<p><img src='https://github.com/prose/prose/raw/gh-pages/images/screenshots/cheatsheet.png' alt='Preview' /></p>
+
+<h1 id='publish'>Publish</h1>
+
+<p>Once you are ready, you can easily publish your article, which lets it show up on the actual webpage/blog. Try it.</p>
+
+<p><img src='http://f.cl.ly/items/302m2R2l0x090h0k0s21/Screen%20Shot%202012-05-23%20at%205.03.43%20PM.png' alt='Publish' /></p>
+
+<h1 id='metadata'>Metadata</h1>
+
+<p>Take full control about your post, and edit Metadata aka the YAML frontmatter. No limitations.</p>
+
+<p><img src='https://github.com/prose/prose/raw/gh-pages/images/screenshots/metadata.png' alt='Repositories' /></p>
+
+<h1 id='not_just_for_jekyll'>Not just for Jekyll</h1>
+
+<p>The editor not only supports Jekyll websites but can be used to edit any github repository (respectively any contained text file). You can use it to edit <code>server.js</code> of your Node.js application for instance.</p>
+
+<p>However, if you navigate to a Jekyll repository, the editor is smart enough to expose everything below <code>_posts</code> and provide the metadata editor along with the markdown preview panel.</p>
+
+<h1 id='suitable_for_writers'>Suitable for writers</h1>
+
+<p>Prose is also suitable as a full-featured writing environment, covering authoring and sharing articles. That&#8217;s how you can do it:</p>
+
+<ol>
+<li>Create a new GitHub repository. And call it&#8230; <code>documents</code>.</li>
+
+<li>Open the editor and create <code>hello-world.md</code>.</li>
+
+<li>Save it.</li>
+
+<li>Share it (we support deep linking to the rendered version)</li>
+</ol>
+
+<p>Prose is similiar to <a href='http://www.iawriter.com/'>iAWriter</a> as it is also using a minimal interface for editing Markdown, but it&#8217;s web-based and uses <a href='http://github.com'>GitHub</a> for storing your text so your writings are more than safe and GitHub keeps a history of every saved version. So Prose can potentially be seen as a whole new way of sharing documents online, while utilizing the usual suspects Markdown and GitHub. Oh and it&#8217;s free and open source.</p>
+</div>
+
+<div class='inner deep bright'>
+  Posted by <a href='http://twitter.com/_mql' target='_blank'>Michael Aufreiter</a> on June 20, 2012
+</div>
+
+<div class='improve-article bright'>
+  <div class='inner deep clearfix centered'>
+    <p>This article has been written and published using <a href='http://prose.io' target='_blank'>Prose</a>. Please help us improve this documentation by contributing to the text.</p>
+    <p><a class='round button' href='http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-06-20-getting-started.md'>Edit in Prose</a></p>
   </div>
 </div>
 

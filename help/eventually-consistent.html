@@ -388,73 +388,69 @@
 <body class='static'>
   <div id='container'>
     <div class='limiter'>
-      <div class='prose'>
-  <div class='inner deep'>
-    <h1 class='title'>Help</h1>
+      <div class='inner deep prose'>
+  <h1 class='title'>Eventually consistent</h1>
+  <p>Most things in life are not perfect. That&#8217;s also true for your writings. Every writer, journalist or scientist can tell you about it. There will always be room for improvement.</p>
 
-    <ul class='blocks clearfix'>
-      
-      <li><a class='round' href='/help/eventually-consistent.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/cells.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Eventually consistent</h4>
-            <p>Or how continuously improving content in the open beats the best review process.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/prose-for-writers.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/prose-for-writers.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Prose for writers</h4>
-            <p>How to use Prose as a writing workspace.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/internals.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/internals.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Internals</h4>
-            <p>A little background on how we implemented Prose.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/handbook.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/handbook.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Handbook</h4>
-            <p>A reference guide. In progress.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/getting-started.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/getting-started.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Getting Started</h4>
-            <p>A brief introduction on how to use Prose, what it can do for you and what not.</p>
-          </div>
-      </a></li>
-      
-    </ul>
+<p>Essentially, there are two ways you can approach this problem:</p>
+
+<ol>
+<li>Invest an infinite amount of time into reviewing before getting a supposedly perfect text out of the door.</li>
+
+<li>Publish early and continuously improve your content once it&#8217;s out, ideally with the help of your readers.</li>
+</ol>
+
+<p>With the latest release of <a href='http://prose.io'>Prose.io</a> we&#8217;d like to propose a workflow that assumes content will be <strong>eventually consistent</strong>. Much like in the spirit of Open Source development, we claim that continuously improving content in the open leads to better results than applying the best review process available.</p>
+
+<p>Leveraging collaboration is not a new idea. People have been invited to contribute to published information for a long while. Letters to the editor are as old as newspapers and in the digital world people can respond to articles by leaving a comment.</p>
+
+<h2 id='humans_need_to_contribute'>Humans need to contribute</h2>
+
+<p>You know that feeling, when you read through an online article and an obvious mistake is in your face. It&#8217;s disturbing. But it&#8217;s there. There&#8217;s nothing you can do about it.</p>
+
+<p><img src='/images/screenshots/eventually-consistent/spotting-error.png' alt='Read Article' /></p>
+
+<h2 id='removing_the_hurdles'>Removing the hurdles</h2>
+
+<p>The most essential problem is that it&#8217;s pretty hard to get involved. What if you could just put a link next to your article enabling users to contribute to the text directly? With Prose and Jekyll this is now possible.</p>
+
+<p><img src='/images/screenshots/eventually-consistent/edit-in-prose.png' alt='Edit in Prose' /></p>
+
+<h2 id='suggest_a_change'>Suggest a change</h2>
+
+<p>Once the user clicked on this link they are able to edit the contents of the article they was just reading.</p>
+
+<p><img src='/images/screenshots/eventually-consistent/prose-document.png' alt='Content shown in Prose' /></p>
+
+<p>Prose requires you to be authenticated with GitHub first, once that is done you will be able to edit that content and send a patch, which looks like this:</p>
+
+<p><img src='/images/screenshots/eventually-consistent/send-patch.png' alt='Send patch' /></p>
+
+<h2 id='applying_a_change'>Applying a change</h2>
+
+<p>Once a suggestion, a patch has been submitted, the original author gets notified via GitHub. In order to apply that change the author has to review the Pull Request that has been created automatically.</p>
+
+<p><img src='/images/screenshots/eventually-consistent/apply-patch.png' alt='Apply changes' /></p>
+
+<h2 id='the_result'>The Result</h2>
+
+<p>Seconds later the applied fix will be visible on the actual website.</p>
+
+<p><img src='/images/screenshots/eventually-consistent/updated-website.png' alt='Voilá' /></p>
+
+<h2 id='finally'>Finally</h2>
+
+<p>This article isn&#8217;t perfect either, help make it better by submitting a <a href='http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-08-01-eventually-consistent.md'>patch</a>.</p>
+</div>
+
+<div class='inner deep bright'>
+  Posted by <a href='http://twitter.com/_mql' target='_blank'>Michael Aufreiter</a> on August 01, 2012
+</div>
+
+<div class='improve-article bright'>
+  <div class='inner deep clearfix centered'>
+    <p>This article has been written and published using <a href='http://prose.io' target='_blank'>Prose</a>. Please help us improve this documentation by contributing to the text.</p>
+    <p><a class='round button' href='http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-08-01-eventually-consistent.md'>Edit in Prose</a></p>
   </div>
 </div>
 
