@@ -4,7 +4,9 @@
     id: 'app',
 
     events: {
-      'click .post-views a': 'postViews',
+      'click .post-views .edit': 'edit',
+      'click .post-views .preview': 'preview',
+      'click .post-views .settings': 'settings',
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.delete': 'deleteFile',
@@ -57,6 +59,20 @@
     },
 
     // Event Triggering to other files
+    edit: function(e) {
+      this.eventRegister.trigger('edit', e);
+      return false;
+    },
+
+    preview: function(e) {
+      this.eventRegister.trigger('preview', e);
+    },
+
+    settings: function(e) {
+      this.eventRegister.trigger('settings', e);
+      return false;
+    },
+
     deleteFile: function(e) {
       this.eventRegister.trigger('deleteFile', e);
       return false;
@@ -64,11 +80,6 @@
 
     updateMetaData: function(e) {
       this.eventRegister.trigger('updateMetaData', e);
-      return false;
-    },
-
-    postViews: function(e) {
-      this.eventRegister.trigger('postViews', e);
       return false;
     },
 
