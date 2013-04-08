@@ -21,7 +21,7 @@
     "browserify": "2.4.3"
   },
   "scripts": {
-    "test": "mocha-phantomjs -R min _site/test/index.html"
+    "test": "mocha-phantomjs -R min test/index.html"
   },
   "repository": {
     "type": "git",
