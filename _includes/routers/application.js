@@ -44,7 +44,6 @@
         path: function (url) {
             var parts;
             url = this.extractURL(url);
-
             if (url.mode === 'tree') {
                 app.instance.posts(url.user, url.repo, url.branch, url.path);
             } else if (url.mode === 'new') {

@@ -161,8 +161,7 @@
 
         preview: function(user, repo, branch, path, file, mode) {
             this.loading('Preview post ...');
-
-            loadConfig(user, repo, branch, _.bind(function () {
+            loadConfig(user, repo, branch, _.bind(function() {
                 loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
                     if (err) return this.notify('error', 'The requested resource could not be found.');
                     new views.Preview({
