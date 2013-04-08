@@ -14,7 +14,7 @@
     render: function() {
 
       // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'translate');
+       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'translate', 'updateFile');
       this.options.eventRegister.bind('edit', this.edit);
       this.options.eventRegister.bind('preview', this.preview);
       this.options.eventRegister.bind('settings', this.settings);
@@ -376,8 +376,6 @@
 
     updateFile: function() {
       var that = this;
-      console.log(this);
-
       var filepath = app.state.path + '/' + app.state.file;
       var filename = _.extractFilename(filepath)[1];
       var filecontent = this.serialize();
@@ -564,10 +562,14 @@
 
     remove: function () {
       // Unbind pagehide event handler when View is removed
-      this.options.eventRegister.unbind('postViews', this.postViews);
+      this.options.eventRegister.unbind('edit', this.postViews);
+      this.options.eventRegister.unbind('preview', this.postViews);
+      this.options.eventRegister.unbind('settings', this.postViews);
       this.options.eventRegister.unbind('deleteFile', this.deleteFile);
       this.options.eventRegister.unbind('updateMetaData', this.updateMetaData);
       this.options.eventRegister.unbind('save', this.updateMetaData);
+      this.options.eventRegister.unbind('translate', this.updateMetaData);
+      this.options.eventRegister.unbind('updateFile', this.updateMetaData);
 
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);
