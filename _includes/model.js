@@ -306,7 +306,7 @@ function loadPosts(user, reponame, branch, path, cb) {
   var repo = getRepo(user, reponame);
 
   function loadConfig(cb) {
-    repo.contents(branch, "_config.yml", function(err, data) {
+    repo.contents(branch, '_config.yml', function(err, data) {
       if (err) return cb(err);
       cb(null, jsyaml.load(data));
     });
