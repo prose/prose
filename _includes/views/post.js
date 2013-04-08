@@ -391,7 +391,7 @@
       };
     },
 
-    translate: function() {
+    translate: function(e) {
 
       // TODO Drop the 'EN' requirement.
       var hash = window.location.hash.split('/'),

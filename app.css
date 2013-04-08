@@ -729,6 +729,7 @@ em      { font-style:italic; }
       background:#f8f8f8;
       }
 
+.posts .content .listing,
 .profile .content .listing {
   height:540px;
   }
