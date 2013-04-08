@@ -10,6 +10,7 @@
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
+      'click a.cancel': 'toggleCommit',
       'click a.delete': 'deleteFile',
       'click a.publish': 'updateMetaData',
       'click a.translate': 'translate'
@@ -91,11 +92,16 @@
 
     save: function(e) {
       this.eventRegister.trigger('save', e);
+      this.toggleCommit();
+      return false;
+    },
 
-      // Trigger commit message stuff
-      $('.commit', this.el).addClass('active');
-      $('.button.save', this.el).html($('.document-menu', this.el).hasClass('commit') ? (this.model.writeable ? 'Save' : 'Submit Change') : 'Commit');
+    toggleCommit: function() {
+      $('.commit', this.el).toggleClass('active');
       $('.button.save', this.el).toggleClass('confirm');
+
+      // TODO Fix this this.model.writable should work as a boolean
+      $('.button.save', this.el).html($('.button.save', this.el).hasClass('confirm') ? 'Commit' : (this.model.writeable ? 'Save' : 'Save'));
       $('.commit-message', this.el).focus();
       return false;
     },
