@@ -14,13 +14,14 @@
     render: function() {
 
       // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'translate');
+       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'translate', 'updateFile');
       this.options.eventRegister.bind('edit', this.edit);
       this.options.eventRegister.bind('preview', this.preview);
       this.options.eventRegister.bind('settings', this.settings);
       this.options.eventRegister.bind('deleteFile', this.deleteFile);
       this.options.eventRegister.bind('updateMetaData', this.updateMetaData);
-      this.options.eventRegister.bind('save', this.updateMetaData);
+      this.options.eventRegister.bind('save', this.save);
+      this.options.eventRegister.bind('updateFile', this.updateFile);
       this.options.eventRegister.bind('translate', this.translate);
 
       // Ping the `views/post.js` to let it know
@@ -82,8 +83,8 @@
     preview: function(e) {
       var that = this;
 
-      $('.post-views a').removeClass('active');
-      $('.post-views .preview').addClass('active');
+      //$('.post-views a').removeClass('active');
+      //$('.post-views .preview').addClass('active');
       $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
@@ -91,6 +92,8 @@
         var hash = window.location.hash.split('/');
         hash[2] = 'preview';
         this.stashFile();
+        this.model.preview = true;
+
         $(e.currentTarget).attr({
           target: '_blank',
           href: hash.join('/')
@@ -156,7 +159,6 @@
     save: function() {
       if (!this.dirty) return false;
       this.showDiff();
-      this._toggleCommit();
       return false;
     },
 
@@ -286,14 +288,14 @@
             that.model.file = filename;
             that.updateURL();
             that.prevContent = filecontent;
-            that.updateSaveState('CHANGE SUBMITTED', 'inactive');
+            that.updateSaveState('Change Submitted', 'inactive');
           });
         } else {
           that.updateSaveState('! Metadata', 'error');
         }
       }
 
-      that.updateSaveState('SUBMITTING CHANGE ...', 'inactive saving');
+      that.updateSaveState('Submitting Change ...', 'inactive saving');
       patch();
 
       return false;
@@ -373,13 +375,14 @@
       }
     },
 
-    updateFile: function () {
-      var that = this,
-        filepath = $('input.filepath').val(),
-        filename = _.extractFilename(filepath)[1],
-        filecontent = this.serialize(),
-        message = this.$('.commit-message').val() || this.$('.commit-message').attr('placeholder'),
-        method = this.model.writeable ? this.saveFile : this.sendPatch;
+    updateFile: function() {
+      var that = this;
+      var filepath = app.state.path + '/' + app.state.file;
+      var filename = _.extractFilename(filepath)[1];
+      var filecontent = this.serialize();
+      var message = 'Updated File';
+      // var message = $('.commit-message', this.el).val() || $('.commit-message', this.el).attr('placeholder');
+      var method = this.model.writeable ? this.saveFile : this.sendPatch;
 
       // Update content
       this.model.content = this.editor.getValue();
@@ -560,10 +563,14 @@
 
     remove: function () {
       // Unbind pagehide event handler when View is removed
-      this.options.eventRegister.unbind('postViews', this.postViews);
+      this.options.eventRegister.unbind('edit', this.postViews);
+      this.options.eventRegister.unbind('preview', this.postViews);
+      this.options.eventRegister.unbind('settings', this.postViews);
       this.options.eventRegister.unbind('deleteFile', this.deleteFile);
       this.options.eventRegister.unbind('updateMetaData', this.updateMetaData);
       this.options.eventRegister.unbind('save', this.updateMetaData);
+      this.options.eventRegister.unbind('translate', this.updateMetaData);
+      this.options.eventRegister.unbind('updateFile', this.updateMetaData);
 
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);

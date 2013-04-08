@@ -50,7 +50,7 @@ _.validPathname = function(path) {
 // => ['path/to', 'foo.md']
 
 _.extractFilename = function(path) {
-  if (!path.match(/\//)) return ["", path];
+  if (!path.match(/\//)) return ['', path];
   var matches = path.match(/(.*)\/(.*)$/);
   return [ matches[1], matches[2] ];
 };

@@ -9,6 +9,8 @@
       'click .post-views .settings': 'settings',
       'click a.logout': 'logout',
       'click a.save': 'save',
+      'click a.save.confirm': 'updateFile',
+      'click a.cancel': 'toggleCommit',
       'click a.delete': 'deleteFile',
       'click a.publish': 'updateMetaData',
       'click a.translate': 'translate'
@@ -90,14 +92,22 @@
 
     save: function(e) {
       this.eventRegister.trigger('save', e);
+      this.toggleCommit();
+      return false;
+    },
 
-      // Trigger commit message stuff
-      this.$('.commit-message').attr('placeholder', "Updated " + $('input.filepath').val());
+    toggleCommit: function() {
+      $('.commit', this.el).toggleClass('active');
+      $('.button.save', this.el).toggleClass('confirm');
 
-      this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? 'SAVE' : 'SUBMIT CHANGE') : 'COMMIT');
-      this.$('.button.save').toggleClass('confirm');
-      this.$('.commit-message').focus();
+      // TODO Fix this this.model.writable should work as a boolean
+      $('.button.save', this.el).html($('.button.save', this.el).hasClass('confirm') ? 'Commit' : (this.model.writeable ? 'Save' : 'Save'));
+      $('.commit-message', this.el).focus();
+      return false;
+    },
 
+    updateFile: function(e) {
+      this.eventRegister.trigger('updateFile', e);
       return false;
     },
 

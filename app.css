@@ -904,9 +904,19 @@ em      { font-style:italic; }
     }
 
 .drawer .commit {
+  position:relative;
   display:none;
+  margin-bottom:15px;
   }
-  .drawer .commit.action {
+  .drawer .commit .cancel {
+    position:absolute;
+    top:9px;
+    right:18px;
+    }
+  .drawer .commit input {
+    padding-right:30px;
+    }
+  .drawer .commit.active {
     display:block;
     }
 
