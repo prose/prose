@@ -9,6 +9,7 @@
       'click .post-views .settings': 'settings',
       'click a.logout': 'logout',
       'click a.save': 'save',
+      'click a.save.confirm': 'updateFile',
       'click a.delete': 'deleteFile',
       'click a.publish': 'updateMetaData',
       'click a.translate': 'translate'
@@ -96,6 +97,11 @@
       $('.button.save', this.el).html($('.document-menu', this.el).hasClass('commit') ? (this.model.writeable ? 'Save' : 'Submit Change') : 'Commit');
       $('.button.save', this.el).toggleClass('confirm');
       $('.commit-message', this.el).focus();
+      return false;
+    },
+
+    updateFile: function(e) {
+      this.eventRegister.trigger('updateFile', e);
       return false;
     },
 

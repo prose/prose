@@ -21,6 +21,7 @@
       this.options.eventRegister.bind('deleteFile', this.deleteFile);
       this.options.eventRegister.bind('updateMetaData', this.updateMetaData);
       this.options.eventRegister.bind('save', this.save);
+      this.options.eventRegister.bind('updateFile', this.updateFile);
       this.options.eventRegister.bind('translate', this.translate);
 
       // Ping the `views/post.js` to let it know
@@ -286,14 +287,14 @@
             that.model.file = filename;
             that.updateURL();
             that.prevContent = filecontent;
-            that.updateSaveState('CHANGE SUBMITTED', 'inactive');
+            that.updateSaveState('Change Submitted', 'inactive');
           });
         } else {
           that.updateSaveState('! Metadata', 'error');
         }
       }
 
-      that.updateSaveState('SUBMITTING CHANGE ...', 'inactive saving');
+      that.updateSaveState('Submitting Change ...', 'inactive saving');
       patch();
 
       return false;
