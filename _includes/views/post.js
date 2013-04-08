@@ -374,13 +374,16 @@
       }
     },
 
-    updateFile: function () {
-      var that = this,
-        filepath = $('input.filepath').val(),
-        filename = _.extractFilename(filepath)[1],
-        filecontent = this.serialize(),
-        message = this.$('.commit-message').val() || this.$('.commit-message').attr('placeholder'),
-        method = this.model.writeable ? this.saveFile : this.sendPatch;
+    updateFile: function() {
+      var that = this;
+      console.log(this);
+
+      var filepath = app.state.path + '/' + app.state.file;
+      var filename = _.extractFilename(filepath)[1];
+      var filecontent = this.serialize();
+      var message = 'Updated File';
+      // var message = $('.commit-message', this.el).val() || $('.commit-message', this.el).attr('placeholder');
+      var method = this.model.writeable ? this.saveFile : this.sendPatch;
 
       // Update content
       this.model.content = this.editor.getValue();
