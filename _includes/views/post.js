@@ -14,8 +14,10 @@
     render: function() {
 
       // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'postViews', 'deleteFile', 'updateMetaData', 'save', 'translate');
-      this.options.eventRegister.bind('postViews', this.postViews);
+       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'translate');
+      this.options.eventRegister.bind('edit', this.edit);
+      this.options.eventRegister.bind('preview', this.preview);
+      this.options.eventRegister.bind('settings', this.settings);
       this.options.eventRegister.bind('deleteFile', this.deleteFile);
       this.options.eventRegister.bind('updateMetaData', this.updateMetaData);
       this.options.eventRegister.bind('save', this.updateMetaData);
@@ -57,52 +59,51 @@
       return this;
     },
 
-    postViews: function(e) {
+    edit: function(e) {
       var that = this;
 
-      // Which context of the editing interface
-      // should we show?
-      var context = $(e.target).data('state');
+      $('.post-views a').removeClass('active');
+      $('.post-views .edit').addClass('active');
+      $('#prose').toggleClass('open', false);
+
+      $('.views .view').removeClass('active');
+      $('.views .edit').addClass('active');
+      this.model.preview = false;
+      this.updateURL();
+      return false;
+
+      // Refresh CodeMirror each time
+      // to reflect new changes
+      _.delay(function () {
+        that.refreshCodeMirror();
+      }, 1);
+    },
+
+    preview: function(e) {
+      var that = this;
 
       $('.post-views a').removeClass('active');
-      $('.post-views .' + context).addClass('active');
+      $('.post-views .preview').addClass('active');
+      $('#prose').toggleClass('open', false);
 
-      // Vertical Navigation: Settings
-      if (context === 'settings') {
-        $('#prose').toggleClass('open');
+      if (this.model.metadata && this.model.metadata.layout) {
+
+        var hash = window.location.hash.split('/');
+        hash[2] = 'preview';
+        this.stashFile();
+        $(e.currentTarget).attr({
+          target: '_blank',
+          href: hash.join('/')
+        });
+
       } else {
-        $('#prose').toggleClass('open', false);
-      }
+        $('.views .view', this.el).removeClass('active');
+        $('#preview', this.el).addClass('active');
 
-      // Vertical Navigation: Preview
-      if (context === 'preview') {
-        if (this.model.metadata && this.model.metadata.layout) {
-
-          var hash = window.location.hash.split('/');
-          hash[2] = 'preview';
-          this.stashFile();
-          $(e.currentTarget).attr({
-            target: '_blank',
-            href: hash.join('/')
-          });
-
-          return false;
-        } else {
-          this.model.preview = true;
-          this.$('.preview').html(marked(this.model.content));
-          this.updateURL();
-        }
-
-        // Do this to both preview conditions for now.
-        $('.views .view').removeClass('active');
-        $('.views.' + context).addClass('active');
-      }
-
-      if (context === 'edit') {
-        $('.views .view').removeClass('active');
-        $('.views .' + context).addClass('active');
-        this.model.preview = false;
+        this.model.preview = true;
+        this.$('.preview').html(marked(this.model.content));
         this.updateURL();
+        return false;
       }
 
       // Refresh CodeMirror each time
@@ -110,8 +111,12 @@
       _.delay(function () {
         that.refreshCodeMirror();
       }, 1);
+    },
 
-      return false;
+    settings: function(e) {
+      $('.post-views a').removeClass('active');
+      $('.post-views .settings').addClass('active');
+      $('#prose').toggleClass('open');
     },
 
     deleteFile: function() {
@@ -333,8 +338,8 @@
       });
     },
 
-    stashFile: function (event) {
-      if (event) event.preventDefault();
+    stashFile: function(e) {
+      if (e) e.preventDefault();
       if (!window.localStorage || !this.dirty) return false;
 
       var storage = window.localStorage;

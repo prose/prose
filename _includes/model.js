@@ -292,6 +292,8 @@ function loadConfig(user, reponame, branch, cb) {
   var repo = getRepo(user, reponame);
   repo.contents(branch, '_config.yml', function(err, data) {
     if (err) return cb(err);
+
+    app.state.config = jsyaml.load(data);
     cb(err, jsyaml.load(data));
   });
 }

@@ -6,6 +6,7 @@ views.Preview = Backbone.View.extend({
     _.preview(this);
     return this;
   },
+
   stashApply: function() {
     if (!window.localStorage) return false;
 
