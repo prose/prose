@@ -20,7 +20,7 @@
       this.options.eventRegister.bind('settings', this.settings);
       this.options.eventRegister.bind('deleteFile', this.deleteFile);
       this.options.eventRegister.bind('updateMetaData', this.updateMetaData);
-      this.options.eventRegister.bind('save', this.updateMetaData);
+      this.options.eventRegister.bind('save', this.save);
       this.options.eventRegister.bind('translate', this.translate);
 
       // Ping the `views/post.js` to let it know
@@ -82,8 +82,8 @@
     preview: function(e) {
       var that = this;
 
-      $('.post-views a').removeClass('active');
-      $('.post-views .preview').addClass('active');
+      //$('.post-views a').removeClass('active');
+      //$('.post-views .preview').addClass('active');
       $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
@@ -91,6 +91,8 @@
         var hash = window.location.hash.split('/');
         hash[2] = 'preview';
         this.stashFile();
+        this.model.preview = true;
+
         $(e.currentTarget).attr({
           target: '_blank',
           href: hash.join('/')
@@ -156,7 +158,6 @@
     save: function() {
       if (!this.dirty) return false;
       this.showDiff();
-      this._toggleCommit();
       return false;
     },
 

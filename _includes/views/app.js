@@ -92,12 +92,10 @@
       this.eventRegister.trigger('save', e);
 
       // Trigger commit message stuff
-      this.$('.commit-message').attr('placeholder', "Updated " + $('input.filepath').val());
-
-      this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? 'SAVE' : 'SUBMIT CHANGE') : 'COMMIT');
-      this.$('.button.save').toggleClass('confirm');
-      this.$('.commit-message').focus();
-
+      $('.commit', this.el).addClass('active');
+      $('.button.save', this.el).html($('.document-menu', this.el).hasClass('commit') ? (this.model.writeable ? 'Save' : 'Submit Change') : 'Commit');
+      $('.button.save', this.el).toggleClass('confirm');
+      $('.commit-message', this.el).focus();
       return false;
     },
 

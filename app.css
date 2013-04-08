@@ -906,7 +906,7 @@ em      { font-style:italic; }
 .drawer .commit {
   display:none;
   }
-  .drawer .commit.action {
+  .drawer .commit.active {
     display:block;
     }
 
