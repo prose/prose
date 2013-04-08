@@ -193,6 +193,7 @@
       if (!this.model.jekyll) return true; // metadata -> skip
 
       // Update published
+      // TODO: refactor to use this.model.metadata instead of raw YAML
 
       function updatePublished(yamlStr, published) {
         var regex = /published: (false|true)/;
@@ -461,18 +462,17 @@
         var metadata = {};
 
         _.each($metadataEditor.find('[name]'), function(item) {
-          console.log(item);
-          switch(item.prop('tagName')) {
+          switch(item.tagName.toLowerCase()) {
             case 'input':
-              switch (item.attr('type')) {
+              switch (item.type) {
                 case 'text':
-                  metadata[item.attr('name')] = item.val();
+                  metadata[item.name] = item.value
                   break;
               }
               break;
             case 'select':
             case 'multiselect':
-              metadata[item.attr('name')] = item.val();
+              metadata[item.name] = item.value
               break;
           }
         });
@@ -481,7 +481,7 @@
       }
 
       function getRaw() {
-        return jsyaml.dump(getValue);
+        return jsyaml.dump(getValue());
       }
 
       function setValue(metadata) {
@@ -489,16 +489,17 @@
           var input = $metadataEditor.find('[name="'+ key +'"]');
           var options = $metadataEditor.find('[name="'+ key +'"] option');
 
-          if (input.length) {
-            input.val(value);
-          } else if (options.length) {
+          if (input.length && options.length) {
             _.each(options, function(option) {
-              if (option.val() === value) {
+              if (option.value === value) {
                 option.selected = 'selected';
               }
             });
+          } else if (input.length) {
+            input.val(value);
           } else {
             $metadataEditor.append(templates.text({
+              name: key,
               label: key,
               value: value
             }));
