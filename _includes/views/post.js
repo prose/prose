@@ -76,6 +76,11 @@
 
       // Vertical Navigation: Preview
       if (context === 'preview') {
+
+        // Do this to both preview conditions for now.
+        $('.views .view', this.el).removeClass('active');
+        $('#preview', this.el).addClass('active');
+
         if (this.model.metadata && this.model.metadata.layout) {
 
           var hash = window.location.hash.split('/');
@@ -86,16 +91,11 @@
             href: hash.join('/')
           });
 
-          return false;
         } else {
           this.model.preview = true;
           this.$('.preview').html(marked(this.model.content));
           this.updateURL();
         }
-
-        // Do this to both preview conditions for now.
-        $('.views .view').removeClass('active');
-        $('.views.' + context).addClass('active');
       }
 
       if (context === 'edit') {
