@@ -28,6 +28,7 @@ APPLICATION = \
 	js/prose/views/app.js \
 	js/prose/views/application.js \
 	js/prose/views/notification.js \
+	js/prose/views/preview.js \
 	js/prose/views/profile.js \
 	js/prose/views/start.js \
 	js/prose/views/posts.js \
