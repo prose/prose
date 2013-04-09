@@ -13,13 +13,13 @@
             var that = this;
             var h = this.model;
 
+            // Ping `views/app.js` to let know we should swap out the sidebar
+            this.eventRegister = this.options.eventRegister;
+            this.eventRegister.trigger('sidebarContext', this.model, 'posts');
+
             var isPrivate = app.state.isPrivate ? 'private' : '';
 
             $(this.el).empty().append(templates.posts(_.extend(this.model, app.state, {
-                currentPath: app.state.path
-            })));
-
-            $('#drawer').empty().append(templates.sidebarProject(_.extend(this.model, app.state, {
                 currentPath: app.state.path
             })));
 
@@ -38,11 +38,6 @@
                 $('#filter').focus();
 
                 shadowScroll($('#files'), $('.breadcrumb'));
-
-                // Branch Switching
-                $('.chzn-select').chosen().change(function() {
-                    router.navigate($(this).val(), false);
-                });
             }, 1);
 
             return this;

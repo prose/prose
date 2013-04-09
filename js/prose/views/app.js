@@ -47,17 +47,23 @@
       return this;
     },
 
-    sidebarContext: function(data) {
+    sidebarContext: function(data, context) {
+      if (context === 'post') {
+        $('#drawer')
+          .empty()
+          .html(templates.settings(_.extend(data, app.state, {
+            mode: this.mode
+        })));
+      } else if (context === 'posts') {
+        $('#drawer').empty().append(templates.sidebarProject(_.extend(this.model, app.state, {
+          currentPath: app.state.path
+        })));
 
-      // Right now this is just triggered on the
-      // post view. TODO possibly set this up with
-      // a parameter to pass in view context to handle
-      // other scenarios.
-      $('#drawer')
-        .empty()
-        .html(templates.settings(_.extend(data, app.state, {
-          mode: this.mode
-      })));
+        // Branch Switching
+        $('.chzn-select').chosen().change(function() {
+            router.navigate($(this).val(), false);
+        });
+      }
     },
 
     // Event Triggering to other files

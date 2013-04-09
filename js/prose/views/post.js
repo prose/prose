@@ -24,10 +24,9 @@
       this.options.eventRegister.bind('updateFile', this.updateFile);
       this.options.eventRegister.bind('translate', this.translate);
 
-      // Ping the `views/post.js` to let it know
-      // we should swap out the existing sidebar
+      // Ping `views/app.js` to let know we should swap out the sidebar
       this.eventRegister = this.options.eventRegister;
-      this.eventRegister.trigger('sidebarContext', this.model);
+      this.eventRegister.trigger('sidebarContext', this.model, 'post');
 
       var that = this;
       var isPrivate = app.state.isPrivate ? 'private' : '';
@@ -175,10 +174,6 @@
       if (!window.shortcutsRegistered) {
         key('⌘+s, ctrl+s', _.bind(function () {
           this.updateFile();
-          return false;
-        }, this));
-        key('esc', _.bind(function () {
-          this.toggleView('compose');
           return false;
         }, this));
         window.shortcutsRegistered = true;
