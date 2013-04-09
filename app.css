@@ -664,25 +664,26 @@ em      { font-style:italic; }
 /* ------------------------------------------
   Page Components
 ---------------------------------------------*/
-.content-search {
+.topbar {
   border-bottom:1px solid #C3CCD0;
   margin-bottom:-1px;
   position:relative;
   z-index:10;
   height:60px;
   }
-  .content-search input {
-    border:none;
-    margin-top:5px;
-    padding:15px;
-    font-size:18px;
-    line-height:26px;
-    width:90%;
-    height:50px;
-    }
-  .content-search .icon {
-    top:10px;
-    }
+
+.content-search input {
+  border:none;
+  margin-top:5px;
+  padding:15px;
+  font-size:18px;
+  line-height:26px;
+  width:90%;
+  height:50px;
+  }
+.content-search .icon {
+  top:10px;
+  }
 
 .menu li {
   float:left;

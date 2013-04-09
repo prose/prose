@@ -415,7 +415,10 @@
       } else {
         hash.splice(-2, 2, href, hash[hash.length - 1]);
       }
+
+      console.log(_(hash).compact().join('/'));
       router.navigate(_(hash).compact().join('/'), true);
+
       return false;
     },
 
@@ -563,13 +566,13 @@
     remove: function () {
       // Unbind pagehide event handler when View is removed
       this.options.eventRegister.unbind('edit', this.postViews);
-      this.options.eventRegister.unbind('preview', this.postViews);
-      this.options.eventRegister.unbind('settings', this.postViews);
+      this.options.eventRegister.unbind('preview', this.preview);
+      this.options.eventRegister.unbind('settings', this.settings);
       this.options.eventRegister.unbind('deleteFile', this.deleteFile);
       this.options.eventRegister.unbind('updateMetaData', this.updateMetaData);
-      this.options.eventRegister.unbind('save', this.updateMetaData);
-      this.options.eventRegister.unbind('translate', this.updateMetaData);
-      this.options.eventRegister.unbind('updateFile', this.updateMetaData);
+      this.options.eventRegister.unbind('save', this.save);
+      this.options.eventRegister.unbind('translate', this.translate);
+      this.options.eventRegister.unbind('updateFile', this.updateFile);
 
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);
