@@ -6,5 +6,6 @@ baseurl: ''
 oauth_client_id: c602a8bd54b1e774f864
 gatekeeper_url: http://prose-gatekeeper.herokuapp.com
 exclude:
-- .gitignore
-- README.md
+  - .gitignore
+  - README.md
+  - node_modules
