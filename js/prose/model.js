@@ -292,6 +292,8 @@ function loadConfig(user, reponame, branch, cb) {
   var repo = getRepo(user, reponame);
   repo.contents(branch, '_config.yml', function(err, data) {
     if (err) return cb(err);
+
+    app.state.config = jsyaml.load(data);
     cb(err, jsyaml.load(data));
   });
 }
@@ -306,7 +308,7 @@ function loadPosts(user, reponame, branch, path, cb) {
   var repo = getRepo(user, reponame);
 
   function loadConfig(cb) {
-    repo.contents(branch, "_config.yml", function(err, data) {
+    repo.contents(branch, '_config.yml', function(err, data) {
       if (err) return cb(err);
       cb(null, jsyaml.load(data));
     });

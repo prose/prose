@@ -4,9 +4,13 @@
     id: 'app',
 
     events: {
-      'click .post-views a': 'postViews',
+      'click .post-views .edit': 'edit',
+      'click .post-views .preview': 'preview',
+      'click .post-views .settings': 'settings',
       'click a.logout': 'logout',
       'click a.save': 'save',
+      'click a.save.confirm': 'updateFile',
+      'click a.cancel': 'toggleCommit',
       'click a.delete': 'deleteFile',
       'click a.publish': 'updateMetaData',
       'click a.translate': 'translate'
@@ -57,6 +61,20 @@
     },
 
     // Event Triggering to other files
+    edit: function(e) {
+      this.eventRegister.trigger('edit', e);
+      return false;
+    },
+
+    preview: function(e) {
+      this.eventRegister.trigger('preview', e);
+    },
+
+    settings: function(e) {
+      this.eventRegister.trigger('settings', e);
+      return false;
+    },
+
     deleteFile: function(e) {
       this.eventRegister.trigger('deleteFile', e);
       return false;
@@ -67,11 +85,6 @@
       return false;
     },
 
-    postViews: function(e) {
-      this.eventRegister.trigger('postViews', e);
-      return false;
-    },
-
     translate: function(e) {
       this.eventRegister.trigger('translate', e);
       return false;
@@ -79,14 +92,22 @@
 
     save: function(e) {
       this.eventRegister.trigger('save', e);
+      this.toggleCommit();
+      return false;
+    },
 
-      // Trigger commit message stuff
-      this.$('.commit-message').attr('placeholder', "Updated " + $('input.filepath').val());
+    toggleCommit: function() {
+      $('.commit', this.el).toggleClass('active');
+      $('.button.save', this.el).toggleClass('confirm');
 
-      this.$('.button.save').html(this.$('.document-menu').hasClass('commit') ? (this.model.writeable ? 'SAVE' : 'SUBMIT CHANGE') : 'COMMIT');
-      this.$('.button.save').toggleClass('confirm');
-      this.$('.commit-message').focus();
+      // TODO Fix this this.model.writable should work as a boolean
+      $('.button.save', this.el).html($('.button.save', this.el).hasClass('confirm') ? 'Commit' : (this.model.writeable ? 'Save' : 'Save'));
+      $('.commit-message', this.el).focus();
+      return false;
+    },
 
+    updateFile: function(e) {
+      this.eventRegister.trigger('updateFile', e);
       return false;
     },
 

@@ -1,10 +1,9 @@
-;(function (config, models, views, routers, utils) {
+(function(config, models, views, routers, utils) {
 
   // The Router
   // ---------------
-
   routers.Application = Backbone.Router.extend({
-    initialize: function () {
+    initialize: function() {
       // Using this.route, because order matters
       this.route(/(.*\/.*)/, 'path', this.path);
       this.route(':user', 'user', this.profile);
@@ -12,7 +11,7 @@
       this.route('', 'start', this.start);
     },
 
-    start: function () {
+    start: function() {
       if (window.authenticated) {
         this.profile(app.username);
       } else {
@@ -29,7 +28,7 @@
       }
     },
 
-    extractURL: function (url) {
+    extractURL: function(url) {
       url = url.split('/');
       app.state = {
         user: url[0],
@@ -41,10 +40,9 @@
       return app.state;
     },
 
-    path: function (url) {
+    path: function(url) {
       var parts;
       url = this.extractURL(url);
-
       if (url.mode === 'tree') {
         app.instance.posts(url.user, url.repo, url.branch, url.path);
       } else if (url.mode === 'new') {
@@ -61,7 +59,7 @@
     },
 
     // #example-user/example-repo
-    repo: function (username, reponame) {
+    repo: function(username, reponame) {
       app.state = {
         user: username,
         repo: reponame,
@@ -74,7 +72,7 @@
 
     // #example-user
     // #example-organization
-    profile: function (username) {
+    profile: function(username) {
       if (confirmExit()) {
         app.state = {
           user: username,
@@ -89,4 +87,3 @@
   });
 
 }).apply(this, window.args);
-

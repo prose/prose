@@ -8,7 +8,8 @@
         // ------
 
         events: {
-            'click .toggle-view': 'toggleView'
+            'click .toggle-view': 'toggleView',
+            'click #notification .create': 'createPost'
         },
 
         toggleView: function(e) {
@@ -20,6 +21,15 @@
             router.navigate(route, true);
 
             return false;
+        },
+
+        createPost: function(e) {
+          var hash = window.location.hash.split('/');
+          hash[2] = 'new';
+          hash[hash.length - 1] = '?file=' + hash[hash.length - 1];
+
+          router.navigate(_(hash).compact().join('/'), true);
+          return false;
         },
 
         // Initialize
@@ -151,8 +161,7 @@
 
         preview: function(user, repo, branch, path, file, mode) {
             this.loading('Preview post ...');
-
-            loadConfig(user, repo, branch, _.bind(function () {
+            loadConfig(user, repo, branch, _.bind(function() {
                 loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
                     if (err) return this.notify('error', 'The requested resource could not be found.');
                     new views.Preview({
