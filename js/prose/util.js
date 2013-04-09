@@ -66,7 +66,9 @@ _.mode = function(file) {
 
   if (_.include(['js', 'json'], extension)) return 'javascript';
   if (extension === 'html') return 'htmlmixed';
-  if (extension === "yml") return 'yaml';
+  if (extension === 'rb') return 'ruby';
+  if (extension === 'yml') return 'yaml';
+  if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
 
   return extension;
 }
@@ -81,6 +83,7 @@ _.jekyll = function(path, file) {
 
 // check if a given file has YAML frontmater
 // -------
+
 _.hasMetadata = function(content) {
   return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
 }

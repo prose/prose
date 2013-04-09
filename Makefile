@@ -12,11 +12,15 @@ APPLICATION = \
 	js/lib/liquid.patch.js \
 	js/lib/diff-match-patch.js \
 	js/lib/codemirror/codemirror.js \
+	js/lib/codemirror/gfm.js \
 	js/lib/codemirror/css.js \
-	js/lib/codemirror/htmlmixed.js \
 	js/lib/codemirror/javascript.js \
+	js/lib/codemirror/xml.js \
 	js/lib/codemirror/markdown.js \
+	js/lib/codemirror/htmlmixed.js \
+	js/lib/codemirror/ruby.js \
 	js/lib/codemirror/yaml.js \
+	js/lib/codemirror/clike.js \
 	js/prose/boot.js \
 	js/prose/util.js \
 	js/prose/model.js \
