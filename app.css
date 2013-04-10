@@ -213,12 +213,12 @@ em      { font-style:italic; }
 
 .prose h1 {
   font-size:32px;
-  margin:10px 0 20px;
+  margin:15px 0;
   }
 
 .prose h2 {
-  font-size:24px;
-  margin:10px 0 20px;
+  font-size:20px;
+  margin:15px 0;
   font-weight:700;
   padding:0;
   }
@@ -239,23 +239,28 @@ em      { font-style:italic; }
 
 .prose .title {
   font-size:18px;
-  margin-bottom:20px;
   font-weight:700;
   border-bottom:1px solid #d5e0e4;
-  padding-bottom:20px;
+  margin-bottom:15px;
+  padding-bottom:15px;
   }
 
 .prose p,
 .prose ul,
 .prose ol,
 .prose li {
-	line-height: 1.5em;
+  font-size:16px;
+	line-height:1.5em;
   }
 
 .prose ol,
 .prose ul {
-  margin-left:0;
-  padding-left:20px;
+  margin:0 0 15px 30px;
+  }
+.prose ol {
+  list-style:decimal;
+  }
+.prose ul {
   list-style:disc;
   }
 
@@ -264,6 +269,10 @@ em      { font-style:italic; }
   border-left:1px solid #d5e0e4;
   font-style:italic;
   margin-bottom:20px;
+  }
+
+.prose p {
+  margin-bottom:15px;
   }
 
 .prose img {
@@ -277,39 +286,29 @@ em      { font-style:italic; }
     color:#73955C;
     }
 
-.prose p {
-  margin-bottom:20px;
-  }
-
 .prose code {
-  font-family:Menlo, monospace;
+  background:#f8f8f8;
+  font:13px/1.4em Menlo, monospace;
+  -webkit-font-smoothing:subpixel-antialiased;
   padding:4px;
   margin:0 2px;
   font-size:12px;
-  border:1px solid #d5e0e4;
   -webkit-border-radius:3px;
           border-radius:3px;
   }
 .prose pre {
+  background:#f8f8f8;
+  font:13px/1.4em Menlo, monospace;
+  -webkit-font-smoothing:subpixel-antialiased;
   overflow:auto;
-  padding:10px;
-  border:1px solid #d5e0e4;
-  -webkit-border-radius:3px;
-          border-radius:3px;
+  margin-bottom:15px;
+  padding:15px;
   }
   .prose pre code {
     border:none;
     margin:0;
     padding:0;
     }
-
-.prose hr {
-  margin:5px 0 19px 0;
-  border:0;
-  border-top:1px solid #d5e0e4;
-  -webkit-border-radius:5px;
-          border-radius:5px;
-  }
 
 /* ------------------------------------------
   Global Layout
