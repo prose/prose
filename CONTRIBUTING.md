@@ -24,6 +24,12 @@ prose uses [Browserify](browserify.org) with [Make](http://www.gnu.org/software/
 to manage dependencies and build. Development also requires you
 have [node.js](http://nodejs.org) installed.
 
+To avoid merge conflicts in generated files, add the following lines to `.git/config`:
+```
+[merge "prose"]
+  driver = "sh `git rev-parse --show-toplevel`/prose.sh %O %A %B"
+```
+
 To get started:
 
 - [Install node.js](http://nodejs.org/). 'Install' will download a package for

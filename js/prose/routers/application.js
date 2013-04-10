@@ -7,18 +7,8 @@
         initialize: function () {
             // Using this.route, because order matters
             this.route(/(.*\/.*)/, 'path', this.path);
-
-            // TODO: remove this route, add (/) to user and repo routes
-            // for Backbone >= 0.9.0
-            var re = new RegExp("(\/)+$", "g");
-            this.route(/(.*)\/+$/, "trailFix", function (id) {
-                // remove all trailing slashes if more than one
-                id = id.replace(re, '');
-                this.navigate(id, true);
-            });
-
-            this.route(':user', 'user', this.profile);
-            this.route(':user/:repo', 'repo', this.repo);
+            this.route(':user(/)', 'user', this.profile);
+            this.route(':user/:repo(/)', 'repo', this.repo);
             this.route('', 'start', this.start);
         },
 
