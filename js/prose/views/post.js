@@ -233,8 +233,8 @@
       function finish() {
         that.model.path = app.state.path;
         that.model.file = app.state.file;
-        // rerender header to reflect the filename change
-        app.instance.header.render();
+        // re-render header to reflect the filename change
+        app.instance.app.render();
         that.updateURL();
       }
 

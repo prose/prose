@@ -128,6 +128,7 @@
     },
 
     saveFilePath: function(e) {
+      // Trigger updateFile when a return button has been pressed.
       if (e.which === 13) {
         this.eventRegister.trigger('updateFile', e);
       }
