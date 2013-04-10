@@ -614,7 +614,9 @@ em      { font-style:italic; }
   border-top:1px solid #C3CCD0;
   border-bottom:1px solid #C3CCD0;
   margin-bottom:-1px;
-  padding:8px 15px;
+  padding:0 15px;
+  height:40px;
+  line-height:40px;
   }
 
 .popup {
@@ -746,10 +748,13 @@ em      { font-style:italic; }
       background:#f8f8f8;
       }
 
-.posts .content .listing,
-.profile .content .listing {
+.content .listing {
   height:540px;
   }
+  .content .breadcrumb + .listing {
+    height:500px;
+    }
+
   .profile .content .listing li {
     position:relative;
     display:block;

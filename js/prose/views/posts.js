@@ -35,8 +35,8 @@
             _.delay(function () {
                 that.renderResults();
                 $('#filter').focus();
-
                 shadowScroll($('#files'), $('.breadcrumb'));
+                shadowScroll($('#files'), $('.content-search'));
             }, 1);
 
             return this;

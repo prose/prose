@@ -152,7 +152,6 @@
 
     <% if (path.length) { %>
       <div class='breadcrumb'>
-
         <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'>..</a>
         <% _.each(_.chunkedPath(path), function(p) { %>
           <span class='slash'>/</span>
