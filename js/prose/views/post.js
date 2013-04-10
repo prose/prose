@@ -41,7 +41,7 @@
         avatar: '<span class="icon round file ' + isPrivate + '"></span>',
         parent: app.state.repo,
         parentUrl: app.state.user + '/' + app.state.repo,
-        title: data.file,
+        title: _.filepath(data.path, data.file),
         titleUrl: '#',
         alterable: true
       }
@@ -380,11 +380,10 @@
 
     updateFile: function() {
       var that = this;
-      var filepath = app.state.path + '/' + app.state.file;
+      var filepath = $('input.filepath').val();
       var filename = _.extractFilename(filepath)[1];
       var filecontent = this.serialize();
-      var message = 'Updated File';
-      // var message = $('.commit-message', this.el).val() || $('.commit-message', this.el).attr('placeholder');
+      var message = $('.commit-message').val() || $('.commit-message').attr('placeholder');
       var method = this.model.writeable ? this.saveFile : this.sendPatch;
 
       // Update content

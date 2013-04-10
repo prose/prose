@@ -13,7 +13,8 @@
       'click a.cancel': 'toggleCommit',
       'click a.delete': 'deleteFile',
       'click a.publish': 'updateMetaData',
-      'click a.translate': 'translate'
+      'click a.translate': 'translate',
+      'keypress input.filepath': 'saveFilePath'
     },
 
     initialize: function(options) {
@@ -124,6 +125,12 @@
     updateFile: function(e) {
       this.eventRegister.trigger('updateFile', e);
       return false;
+    },
+
+    saveFilePath: function(e) {
+      if (e.which === 13) {
+        this.eventRegister.trigger('updateFile', e);
+      }
     },
 
     logout: function () {
