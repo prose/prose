@@ -73,7 +73,14 @@
     },
 
     preview: function(e) {
-      this.eventRegister.trigger('preview', e);
+      if ($(e.target).data('jekyll')) {
+        this.eventRegister.trigger('preview', e);
+      } else {
+        this.eventRegister.trigger('preview', e);
+
+        // Cancel propagation
+        return false;
+      }
     },
 
     settings: function(e) {

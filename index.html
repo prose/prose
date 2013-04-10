@@ -61,7 +61,7 @@
             </li>
             <% if (state.markdown) { %>
               <li>
-                <a href='#' class='icon round preview' data-state='preview'>
+                <a href='#' class='icon round preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>
                   <span class='popup round arrow-left'>Preview</span>
                 </a>
               </li>
