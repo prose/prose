@@ -46,12 +46,21 @@
             $(e.currentTarget).addClass('loading');
         },
 
-        search: function () {
-            _.delay(_.bind(function() {
-                var searchstr = this.$('#filter').val();
-                this.model = getFiles(this.model.tree, app.state.path, searchstr);
-                this.renderResults();
+        search: function (e) {
+          // If this is the ESC key
+          if (e.which === 27) {
+            _.delay(_.bind(function () {
+              $('#filter', this.el).val('');
+              this.model = getFiles(this.model.tree, app.state.path, '');
+              this.renderResults();
             }, this), 10);
+          } else {
+            _.delay(_.bind(function () {
+              var searchstr = $('#filter', this.el).val();
+              this.model = getFiles(this.model.tree, app.state.path, searchstr);
+              this.renderResults();
+            }, this), 10);
+          }
         },
 
         renderResults: function () {

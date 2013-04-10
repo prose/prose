@@ -40,12 +40,21 @@
       return this;
     },
 
-    filterFiles: function () {
-      _.delay(_.bind(function () {
-        var searchstr = this.$('#filter').val();
-        this.model = filterProjects(this.cache, searchstr);
-        this.renderResults();
-      }, this), 10);
+    filterFiles: function (e) {
+      // If this is the ESC key
+      if (e.which === 27) {
+        _.delay(_.bind(function () {
+          $('#filter', this.el).val('');
+          this.model = filterProjects(this.cache, '');
+          this.renderResults();
+        }, this), 10);
+      } else {
+        _.delay(_.bind(function () {
+          var searchstr = $('#filter', this.el).val();
+          this.model = filterProjects(this.cache, searchstr);
+          this.renderResults();
+        }, this), 10);
+      }
     },
 
     renderResults: function () {
