@@ -81,9 +81,6 @@
 
     preview: function(e) {
       var that = this;
-
-      //$('.post-views a').removeClass('active');
-      //$('.post-views .preview').addClass('active');
       $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
@@ -99,6 +96,12 @@
         });
 
       } else {
+
+        // Vertical Nav
+        $('.post-views a').removeClass('active');
+        $('.post-views .preview').addClass('active');
+
+        // Content Window
         $('.views .view', this.el).removeClass('active');
         $('#preview', this.el).addClass('active');
 
