@@ -11,27 +11,26 @@
 
         render: function () {
             var that = this;
-            var h = this.model;
+            var data = _.extend(this.model, app.state, {
+              currentPath: app.state.path
+            });
 
             // Ping `views/app.js` to let know we should swap out the sidebar
-            this.eventRegister = this.options.eventRegister;
-            this.eventRegister.trigger('sidebarContext', this.model, 'posts');
-
+            this.eventRegister = app.eventRegister;
+            this.eventRegister.trigger('sidebarContext', data, 'posts');
             var isPrivate = app.state.isPrivate ? 'private' : '';
 
-            $(this.el).empty().append(templates.posts(_.extend(this.model, app.state, {
-                currentPath: app.state.path
-            })));
+            var header = {
+              avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
+              parent: data.user,
+              parentUrl: data.user,
+              title: data.repo,
+              titleUrl: data.user + '/' + data.repo,
+              alterable: false
+            }
 
-            $('#heading')
-                .empty()
-                .append(templates.heading({
-                    avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
-                    parent: h.user,
-                    parentUrl: h.user,
-                    title: h.repo,
-                    titleUrl: h.user + '/' + h.repo
-                }));
+            this.eventRegister.trigger('headerContext', header);
+            $(this.el).empty().append(templates.posts(data));
 
             _.delay(function () {
                 that.renderResults();
@@ -50,10 +49,7 @@
         search: function () {
             _.delay(_.bind(function() {
                 var searchstr = this.$('#filter').val();
-
                 this.model = getFiles(this.model.tree, app.state.path, searchstr);
-
-
                 this.renderResults();
             }, this), 10);
         },

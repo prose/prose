@@ -39,8 +39,7 @@
             _.bindAll(this);
             var that = this;
             this.app = new views.App({
-                model: this.model,
-                eventRegister: app.eventRegister
+                model: this.model
             });
 
             function calculateLayout() {
@@ -127,8 +126,7 @@
                 // Render out the application view
                 $(that.app.render().el).prependTo(that.el);
                 this.replaceMainView('posts', new views.Posts({
-                    model: data,
-                    eventRegister: app.eventRegister
+                    model: data
                 }).render());
             }, this));
         },
@@ -149,8 +147,7 @@
                     data.preview = (mode !== 'edit');
                     data.lang = _.mode(file);
                     this.replaceMainView(window.authenticated ? 'post' : 'read-post', new views.Post({
-                        model: data,
-                        eventRegister: app.eventRegister
+                        model: data
                     }).render());
                 }, this));
 
@@ -188,8 +185,7 @@
                     data.lang = _.mode(data.file);
 
                     this.replaceMainView('post', new views.Post({
-                        model: data,
-                        eventRegister: app.eventRegister
+                        model: data
                     }).render());
 
                     this.mainView._makeDirty();

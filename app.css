@@ -328,6 +328,23 @@ em      { font-style:italic; }
       width:960px;
       }
 
+/* Alterable filename input */
+.heading .filepath {
+  background:transparent;
+  border:none;
+  color:#434c50;
+  margin:0;
+  font-size:20px;
+  line-height:1.5em;
+  font-weight:700;
+  padding:0;
+  width:620px;
+  }
+  .heading .filepath:focus,
+  .heading .filepath:hover {
+    background:#e0e7eb;
+    }
+
 .inner {
   padding:15px;
   }
