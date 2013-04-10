@@ -66,6 +66,11 @@
     edit: function(e) {
       var that = this;
 
+      if (this.toolbar && this.toolbar !== null) {
+        this.toolbar.prependTo($('#post'));
+        this.toolbar = null;
+      }
+
       $('.post-views a').removeClass('active');
       $('.post-views .edit').addClass('active');
       $('#prose').toggleClass('open', false);
@@ -101,6 +106,8 @@
         });
 
       } else {
+
+        this.toolbar = $('.toolbar').detach();
 
         // Vertical Nav
         $('.post-views a').removeClass('active');
