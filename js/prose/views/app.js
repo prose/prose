@@ -17,10 +17,11 @@
     },
 
     initialize: function(options) {
-      this.eventRegister = options.eventRegister;
+      this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'sidebarContext');
-      options.eventRegister.bind('sidebarContext', this.sidebarContext);
+      _.bindAll(this, 'headerContext', 'sidebarContext');
+      this.eventRegister.bind('headerContext', this.headerContext);
+      this.eventRegister.bind('sidebarContext', this.sidebarContext);
     },
 
     render: function () {
@@ -47,17 +48,18 @@
       return this;
     },
 
+    headerContext: function(data) {
+      $('#heading').empty().append(templates.heading(data));
+    },
+
     sidebarContext: function(data, context) {
       if (context === 'post') {
         $('#drawer')
           .empty()
-          .html(templates.settings(_.extend(data, app.state, {
-            mode: this.mode
-        })));
+          .html(templates.settings(data));
+
       } else if (context === 'posts') {
-        $('#drawer').empty().append(templates.sidebarProject(_.extend(this.model, app.state, {
-          currentPath: app.state.path
-        })));
+        $('#drawer').empty().append(templates.sidebarProject(data));
 
         // Branch Switching
         $('.chzn-select').chosen().change(function() {
@@ -137,7 +139,8 @@
 
     remove: function () {
       // Unbind pagehide event handler when View is removed
-      this.options.eventRegister.unbind('sidebarContext', this.sidebarContext);
+      this.eventRegister.unbind('sidebarContext', this.sidebarContext);
+      this.eventRegister.unbind('headerContext', this.headerContext);
     }
   });
 

@@ -13,43 +13,47 @@
 
     render: function() {
 
+      var data = _.extend(this.model, {
+        mode: this.mode,
+        metadata: jsyaml.load(this.model.raw_metadata)
+      });
+
+      this.eventRegister = app.eventRegister;
+
       // Listen for button clicks from the vertical nav
        _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'translate', 'updateFile');
-      this.options.eventRegister.bind('edit', this.edit);
-      this.options.eventRegister.bind('preview', this.preview);
-      this.options.eventRegister.bind('settings', this.settings);
-      this.options.eventRegister.bind('deleteFile', this.deleteFile);
-      this.options.eventRegister.bind('updateMetaData', this.updateMetaData);
-      this.options.eventRegister.bind('save', this.save);
-      this.options.eventRegister.bind('updateFile', this.updateFile);
-      this.options.eventRegister.bind('translate', this.translate);
+      this.eventRegister.bind('edit', this.edit);
+      this.eventRegister.bind('preview', this.preview);
+      this.eventRegister.bind('settings', this.settings);
+      this.eventRegister.bind('deleteFile', this.deleteFile);
+      this.eventRegister.bind('updateMetaData', this.updateMetaData);
+      this.eventRegister.bind('save', this.save);
+      this.eventRegister.bind('updateFile', this.updateFile);
+      this.eventRegister.bind('translate', this.translate);
 
       // Ping `views/app.js` to let know we should swap out the sidebar
-      this.eventRegister = this.options.eventRegister;
-      this.eventRegister.trigger('sidebarContext', this.model, 'post');
+      this.eventRegister.trigger('sidebarContext', data, 'post');
 
-      var that = this;
+      // Render heading
       var isPrivate = app.state.isPrivate ? 'private' : '';
+
+      var header = {
+        avatar: '<span class="icon round file ' + isPrivate + '"></span>',
+        parent: app.state.repo,
+        parentUrl: app.state.user + '/' + app.state.repo,
+        title: data.file,
+        titleUrl: '#',
+        alterable: true
+      }
+
+      this.eventRegister.trigger('headerContext', header);
 
       $(this.el)
         .empty()
-        .append(templates.post(_.extend(this.model, {
-          mode: this.mode,
-          metadata: jsyaml.load(this.model.raw_metadata)
-      })));
+        .append(templates.post(data));
 
       // TODO Add an unpublished class to .application
       if (!this.model.published) $(this.el).addClass('published');
-
-      $('#heading')
-        .empty()
-        .append(templates.heading({
-        avatar: '<span class="icon round file ' + isPrivate + '"></span>',
-        parent: this.model.repo,
-        parentUrl: this.model.user + '/' + this.model.repo,
-        title: this.model.file,
-        titleUrl: '#'
-      }));
 
       this.initEditor();
 
@@ -81,6 +85,7 @@
 
     preview: function(e) {
       var that = this;
+
       $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
@@ -144,7 +149,7 @@
       if (this.editor) this.model.content = this.editor.getValue();
       if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
       if (!this.$('.button.save').hasClass('saving')) {
-        this.$('.button.save').html(this.model.writeable ? "SAVE" : "SUBMIT CHANGE");
+        this.$('.button.save').html(this.model.writeable ? 'Save' : 'Submit Change');
         this.$('.button.save').removeClass('inactive error');
       }
     },
@@ -415,7 +420,7 @@
         hash.splice(-2, 2, href, hash[hash.length - 1]);
       }
 
-      console.log(_(hash).compact().join('/'));
+      // console.log(_(hash).compact().join('/'));
       router.navigate(_(hash).compact().join('/'), true);
 
       return false;
@@ -564,14 +569,14 @@
 
     remove: function () {
       // Unbind pagehide event handler when View is removed
-      this.options.eventRegister.unbind('edit', this.postViews);
-      this.options.eventRegister.unbind('preview', this.preview);
-      this.options.eventRegister.unbind('settings', this.settings);
-      this.options.eventRegister.unbind('deleteFile', this.deleteFile);
-      this.options.eventRegister.unbind('updateMetaData', this.updateMetaData);
-      this.options.eventRegister.unbind('save', this.save);
-      this.options.eventRegister.unbind('translate', this.translate);
-      this.options.eventRegister.unbind('updateFile', this.updateFile);
+      this.eventRegister.unbind('edit', this.postViews);
+      this.eventRegister.unbind('preview', this.preview);
+      this.eventRegister.unbind('settings', this.settings);
+      this.eventRegister.unbind('deleteFile', this.deleteFile);
+      this.eventRegister.unbind('updateMetaData', this.updateMetaData);
+      this.eventRegister.unbind('save', this.save);
+      this.eventRegister.unbind('translate', this.translate);
+      this.eventRegister.unbind('updateFile', this.updateFile);
 
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);
