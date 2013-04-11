@@ -286,7 +286,7 @@ function getFiles(tree, path, searchstr) {
 // Load Config
 // -------
 //
-// Load _config.yml
+// Load _config.yml or _prose.yml
 
 function loadConfig(user, reponame, branch, cb) {
   var repo = getRepo(user, reponame);
@@ -302,11 +302,11 @@ function loadConfig(user, reponame, branch, cb) {
 // Load Posts
 // -------
 //
-// List all postings for a given repo+branch+path plus load _config.yml
+// List all postings for a given repo+branch+path
+// plus load _config.yml or _prose.yml
 
 function loadPosts(user, reponame, branch, path, cb) {
   var repo = getRepo(user, reponame);
-
   function loadConfig(cb) {
     repo.contents(branch, '_config.yml', function(err, data) {
       if (err) return cb(err);
