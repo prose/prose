@@ -52,7 +52,7 @@
               <% } %>
             <% } %>
           </ul>
-          <% if (window.authenticated && state.mode === 'edit') { %>
+          <% if (state.mode === 'edit' || state.mode === 'blob') { %>
           <ul class='post-views nav'>
             <li>
               <a href='#' class='icon round edit' data-state='edit'>
@@ -236,7 +236,7 @@
     <% if (window.authenticated) { %>
       <div class='inner'>
         <div class='commit'>
-          <input type='text' class='commit-message' placeholder='Describe your changes' />
+          <textarea class='commit-message' placeholder='Describe your Changes'></textarea>
           <a class='icon inline small cancel' href='#' title='ESC'>
             &times;<span class='popup round arrow-left'>Cancel</span>
           </a>

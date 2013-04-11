@@ -173,7 +173,7 @@ input[type=text] {
   font-size:13px;
   line-height:18px;
   display:inline-block;
-  width:95%;
+  width:100%;
   padding:6px 8px;
   -webkit-border-radius:1px;
           border-radius:1px;
@@ -212,7 +212,7 @@ em      { font-style:italic; }
   }
 
 .prose h1 {
-  font-size:32px;
+  font-size:28px;
   margin:15px 0;
   }
 
@@ -924,8 +924,9 @@ em      { font-style:italic; }
     top:9px;
     right:18px;
     }
-  .drawer .commit input {
+  .drawer .commit textarea {
     padding-right:30px;
+    resize:none;
     }
   .drawer .commit.active {
     display:block;

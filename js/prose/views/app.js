@@ -31,7 +31,7 @@
       })));
 
       // When the sidebar should be open.
-      if (this.model.mode === 'edit') {
+      if (this.model.mode === 'edit' || this.model.mode === 'blob') {
         $('#prose').toggleClass('open', false);
 
       // Project contents when there aren't branches

@@ -498,8 +498,8 @@
 
       function setValue(metadata) {
         _(metadata).each(function(value, key) {
-          var input = $metadataEditor.find('[name="'+ key +'"]');
-          var options = $metadataEditor.find('[name="'+ key +'"] option');
+          var input = $metadataEditor.find('[name="' + key + '"]');
+          var options = $metadataEditor.find('[name="' + key +'"] option');
 
           if (input.length && options.length) {
             _.each(options, function(option) {
