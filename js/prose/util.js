@@ -10,7 +10,7 @@ _.serial = function () {
 // -------
 
 _.parentPath = function(path) {
-  return path.replace(/\/?[a-zA-Z0-9_-]*$/, "");
+  return path.replace(/\/?[a-zA-Z0-9_-]*$/, '');
 };
 
 
@@ -101,7 +101,7 @@ _.extension = function(file) {
 // -------
 
 _.markdown = function(file) {
-  var regex = new RegExp("\.(md|mkdn?|mdown|markdown)$");
+  var regex = new RegExp('\.(md|mkdn?|mdown|markdown)$');
   return !!(regex.test(file));
 };
 
@@ -111,7 +111,7 @@ _.markdown = function(file) {
 
 _.clip = function(str, length) {
   var res = str.substr(0, length);
-  if (length < str.length) res += " ...";
+  if (length < str.length) res += ' ...';
   return res;
 };
 
@@ -132,10 +132,10 @@ _.toYAML = function(metadata) {
   var res = [];
   _.each(metadata, function(value, property) {
     if (value.match(/\n/)) {
-      var str = property+": |\n";
+      var str = property+': |\n';
 
       _.each(value.split('\n'), function(line) {
-        str += "  "+line;
+        str += '  ' + line;
       });
 
       res.push()

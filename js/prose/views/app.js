@@ -31,7 +31,8 @@
       })));
 
       // When the sidebar should be open.
-      if (this.model.mode === 'edit' || this.model.mode === 'blob') {
+      // Fix this in re-factor, could be much tighter
+      if (this.model.mode === 'edit' || this.model.mode === 'blob' || this.model.mode === 'new') {
         $('#prose').toggleClass('open', false);
 
       // Project contents when there aren't branches

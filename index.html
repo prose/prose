@@ -52,14 +52,15 @@
               <% } %>
             <% } %>
           </ul>
-          <% if (state.mode === 'edit' || state.mode === 'blob') { %>
+
+          <% if (state.mode === 'edit' || state.mode === 'blob' || state.mode === 'new') { %>
           <ul class='post-views nav'>
             <li>
               <a href='#' class='icon round edit' data-state='edit'>
                 <span class='popup round arrow-left'>Edit</span>
               </a>
             </li>
-            <% if (state.markdown) { %>
+            <% if (state.markdown || state.mode === 'new') { %>
               <li>
                 <a href='#' class='icon round preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>
                   <span class='popup round arrow-left'>Preview</span>
