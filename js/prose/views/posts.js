@@ -5,8 +5,22 @@
         id: 'posts',
 
         events: {
-            'click a.link': 'loading',
+            'hover a.item': 'activeListing',
             'keyup #filter': 'search'
+        },
+
+        initialize: function() {
+          if (!window.shortcutsRegistered) {
+            key('enter', _.bind(function(e, handler) {
+              this.goToFile();
+            }, this));
+            key('up, down', _.bind(function(e, handler) {
+              this.pageListing(handler.key);
+              e.preventDefault();
+              e.stopPropagation();
+            }, this));
+            window.shortcutsRegistered = true;
+          }
         },
 
         render: function () {
@@ -42,18 +56,45 @@
             return this;
         },
 
-        loading: function (e) {
-            $(e.currentTarget).addClass('loading');
+        pageListing: function(handler) {
+
+          var item, index;
+
+          if ($('.item').hasClass('active')) {
+            index = parseInt($('.item.active').data('index'), 10);
+            $('.item.active').removeClass('active');
+
+            if (handler === 'up') {
+              item = index - 1;
+              $('.item[data-index=' + item + ']').addClass('active');
+            } else {
+              item = index + 1;
+              $('.item[data-index=' + item + ']').addClass('active');
+            }
+          } else {
+            $('.item[data-index=0]').addClass('active');
+          }
+        },
+
+        goToFile: function() {
+          var path = $('.item.active').attr('href');
+          router.navigate(path, true);
         },
 
         search: function (e) {
-          // If this is the ESC key
-          if (e.which === 27) {
+          if (e.which === 27) { // ESC
             _.delay(_.bind(function () {
               $('#filter', this.el).val('');
               this.model = getFiles(this.model.tree, app.state.path, '');
               this.renderResults();
             }, this), 10);
+
+          } else if (e.which === 40 && $('.item').length > 0) {
+              this.pageListing('down'); // Arrow Down
+              e.preventDefault();
+              e.stopPropagation();
+              $('#filter').blur();
+
           } else {
             _.delay(_.bind(function () {
               var searchstr = $('#filter', this.el).val();
@@ -77,8 +118,15 @@
                     name: path
                 }
             });
-        }
+        },
 
+        activeListing: function(e) {
+          $listings = $('.item', this.el);
+          $listing = $(e.target, this.el);
+
+          $listings.removeClass('active');
+          $listing.addClass('active');
+        }
     });
 
 }).apply(this, window.args);

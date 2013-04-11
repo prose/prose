@@ -64,7 +64,7 @@
 
         // Branch Switching
         $('.chzn-select').chosen().change(function() {
-            router.navigate($(this).val(), false);
+            router.navigate($(this).val(), true);
         });
       }
     },

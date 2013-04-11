@@ -92,10 +92,10 @@ a {
   color:#434c50;
   text-decoration:none;
   font-weight:700;
-  -webkit-transition:background-color 100ms linear, color 100ms linear;
-     -moz-transition:background-color 100ms linear, color 100ms linear;
-       -o-transition:background-color 100ms linear, color 100ms linear;
-          transition:background-color 100ms linear, color 100ms linear;
+  -webkit-transition:color 100ms linear;
+     -moz-transition:color 100ms linear;
+       -o-transition:color 100ms linear;
+          transition:color 100ms linear;
   }
   a.light {
     font-weight:normal;
@@ -744,6 +744,7 @@ em      { font-style:italic; }
         background-color:#fff;
         }
 
+    .listing li a.active,
     .listing li a:hover {
       background:#f8f8f8;
       }
@@ -856,10 +857,6 @@ em      { font-style:italic; }
       line-height:20px;
       white-space:nowrap;
       font-weight:400;
-      -webkit-transition:none;
-         -moz-transition:none;
-           -o-transition:none;
-              transition:none;
       }
     .dropdown a.active,
     .dropdown > li > a:hover,
