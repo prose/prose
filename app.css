@@ -338,11 +338,22 @@ em      { font-style:italic; }
   line-height:1.5em;
   font-weight:700;
   padding:0;
-  width:620px;
+  width:580px;
   }
+  .heading .details {
+    position:relative;
+    }
+  .heading .details .mask {
+    background:transparent url(img/filepath-mask.png) no-repeat top right;
+    position:absolute;
+    width:60px;
+    height:30px;
+    bottom:0;
+    right:0;
+    }
   .heading .filepath:focus,
   .heading .filepath:hover {
-    background:#e0e7eb;
+    background-color:#e0e7eb;
     }
 
 .inner {

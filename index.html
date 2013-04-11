@@ -34,7 +34,7 @@
           <ul class='project nav'>
             <li>
               <a href='/' class='icon round repos <% if (!app.state.mode) { %>active<% } %>'>
-                <span class='popup round arrow-left'>Your Projects</span>
+                <span class='popup round arrow-left'>Explore Projects</span>
               </a>
             </li>
             <% if (state.repo) { %>
@@ -85,6 +85,7 @@
       <div class='fl details'>
         <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>
         <input type='text' class='filepath' value='<%= title %>'>
+        <div class='mask'></div>
       </div>
     <% } else { %>
       <div class='avatar round fl'><%= avatar %></div>

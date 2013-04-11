@@ -15,7 +15,7 @@
           avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
           parent: data.user.name || data.user.login,
           parentUrl: data.user.login,
-          title: 'Your Projects',
+          title: 'Explore Projects',
           titleUrl: data.user.login,
           alterable: false
       };
