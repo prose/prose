@@ -426,41 +426,38 @@
 
       function initialize(model) {
         _(model.default_metadata).each(function(data, key) {
-          switch(typeof data.field) {
-            case 'object':
-              switch(data.field.element) {
-                case 'input':
-                  $metadataEditor.append(templates.text({
-                    name: data.name,
-                    label: data.field.label,
-                    value: data.field.value
-                  }));
-                  break;
-                case 'select':
-                  $metadataEditor.append(templates.select({
-                    name: data.name,
-                    label: data.field.label,
-                    placeholder: data.field.placeholder,
-                    options: data.field.options
-                  }));
-                  break;
-                case 'multiselect':
-                  $metadataEditor.append(templates.multiselect({
-                    name: data.name,
-                    label: data.field.label,
-                    placeholder: data.field.placeholder,
-                    options: data.field.options
-                  }));
-                  break;
-              }
-              break;
-            case 'undefined':
-              $metadataEditor.append(templates.text({
-                name: key,
-                label: key,
-                value: data
-              }));
-              break;
+          if (data && typeof data.field === 'object') {
+            switch(data.field.element) {
+              case 'input':
+                $metadataEditor.append(templates.text({
+                  name: data.name,
+                  label: data.field.label,
+                  value: data.field.value
+                }));
+                break;
+              case 'select':
+                $metadataEditor.append(templates.select({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
+                break;
+              case 'multiselect':
+                $metadataEditor.append(templates.multiselect({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
+                break;
+            }
+          } else {
+            $metadataEditor.append(templates.text({
+              name: key,
+              label: key,
+              value: data
+            }));
           }
         });
 
@@ -502,7 +499,7 @@
 
           if (input.length && options.length) {
             _.each(options, function(option) {
-              if (option.value === value) {
+              if (value !== null && (option.value === value || value.indexOf(option.value) > -1)) {
                 option.selected = 'selected';
               }
             });
