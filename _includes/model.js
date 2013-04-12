@@ -475,54 +475,54 @@ function movePost(user, repo, branch, path, newPath, cb) {
 
 function emptyPost(user, repo, branch, path, cb) {
   var file = new Date().format('Y-m-d') + '-your-filename.md';
-  var defaultMetadata;
   var rawMetadata = 'layout: default\npublished: false';
+  var defaultMetadata;
   var metadata = {
     'layout': 'default',
     'published': false
   };
 
-  var cfg = app.state.config
-  if (cfg && cfg.prose && cfg.prose.metadata) {
-    if (cfg.prose.metadata[path]) {
-      rawMetadata = cfg.prose.metadata[path];
-      if (typeof rawMetadata === 'object') {
-        defaultMetadata = rawMetadata;
+  var cfg = app.state.config;
+  if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
+    rawMetadata = cfg.prose.metadata[path];
+    if (typeof rawMetadata === 'object') {
+      defaultMetadata = rawMetadata;
 
-        _.each(defaultMetadata, function(data, key) {
-          var selected;
+      _.each(rawMetadata, function(data, key) {
+        var selected;
 
-          switch(typeof data.field) {
-            case 'object':
-              selected = data.field.selected;
+        if (data && typeof data.field === 'object') {
+          selected = data.field.selected;
 
-              switch(data.field.element) {
-                case 'text':
-                  metadata[data.name] = data.field.value;
-                  break;
-                case 'select':
-                case 'multiselect':
-                  metadata[data.name] = selected ? selected : null;
-                  break;
-              }
+          switch(data.field.element) {
+            case 'text':
+              metadata[data.name] = data.field.value;
               break;
-            case 'undefined':
-              metadata[key] = data;
+            case 'select':
+            case 'multiselect':
+              metadata[data.name] = selected ? selected : null;
               break;
           }
-        });
-      } else if (typeof rawMetadata === 'string') {
-        try {
-          metadata = jsyaml.load(rawMetadata);
-          if (metadata.date === "CURRENT_DATETIME") {
-            var current = (new Date()).format('Y-m-d H:i');
-            metadata.date = current;
-            rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
-          }
-        } catch(err) {
-          console.log('ERROR encoding YAML');
-          // No-op
+        } else {
+          metadata[key] = data;
         }
+      });
+    } else if (typeof rawMetadata === 'string') {
+      try {
+        defaultMetadata = jsyaml.load(rawMetadata);
+
+        _.each(rawMetadata, function(data, key) {
+          metadata[key] = data;
+        });
+        
+        if (metadata.date === "CURRENT_DATETIME") {
+          var current = (new Date()).format('Y-m-d H:i');
+          metadata.date = current;
+          rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+        }
+      } catch(err) {
+        console.log('ERROR encoding YAML');
+        // No-op
       }
     }
   }
@@ -535,8 +535,8 @@ function emptyPost(user, repo, branch, path, cb) {
 
   cb(null, {
     "metadata": metadata,
-    "default_metadata": defaultMetadata,
     "raw_metadata": rawMetadata,
+    "default_metadata": defaultMetadata,
     "content": "# How does it work?\n\nEnter Text in Markdown format.",
     "repo": repo,
     "path": path,
@@ -597,13 +597,32 @@ function loadPost(user, repo, branch, path, file, cb) {
 
     var post = parse(data);
 
+    var rawMetadata;
+    var defaultMetadata;
+
     // load default metadata
     var cfg = app.state.config;
     if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
-      post.default_metadata = cfg.prose.metadata[app.state.path];
+      rawMetadata = cfg.prose.metadata[path];
+      if (typeof rawMetadata === 'object') {
+        defaultMetadata = rawMetadata;
+      } else if (typeof rawMetadata === 'string') {
+        try {
+          defaultMetadata = jsyaml.load(rawMetadata);
+          if (defaultMetadata.date === "CURRENT_DATETIME") {
+            var current = (new Date()).format('Y-m-d H:i');
+            defaultMetadata.date = current;
+            rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+          }
+        } catch(err) {
+          console.log('ERROR encoding YAML');
+          // No-op
+        }
+      }
     }
 
     cb(err, _.extend(post, {
+      "default_metadata": defaultMetadata,
       "sha": commit,
       "markdown": _.markdown(file),
       "jekyll": _.hasMetadata(data),
