@@ -36,7 +36,7 @@
         .empty()
         .append(templates.post(_.extend(this.model, {
           mode: this.mode,
-          metadata: jsyaml.load(this.model.raw_metadata)
+          metadata: this.model.metadata
       })));
 
       // TODO Add an unpublished class to .application
@@ -193,6 +193,7 @@
       if (!this.model.jekyll) return true; // metadata -> skip
 
       // Update published
+      // TODO: refactor to use this.model.metadata instead of raw YAML
 
       function updatePublished(yamlStr, published) {
         var regex = /published: (false|true)/;
@@ -424,29 +425,40 @@
       $metadataEditor.empty();
 
       function initialize(model) {
-        _(model.default_metadata).each(function(data) {
-          switch(data.field.element) {
-            case 'input':
+        _(model.default_metadata).each(function(data, key) {
+          switch(typeof data.field) {
+            case 'object':
+              switch(data.field.element) {
+                case 'input':
+                  $metadataEditor.append(templates.text({
+                    name: data.name,
+                    label: data.field.label,
+                    value: data.field.value
+                  }));
+                  break;
+                case 'select':
+                  $metadataEditor.append(templates.select({
+                    name: data.name,
+                    label: data.field.label,
+                    placeholder: data.field.placeholder,
+                    options: data.field.options
+                  }));
+                  break;
+                case 'multiselect':
+                  $metadataEditor.append(templates.multiselect({
+                    name: data.name,
+                    label: data.field.label,
+                    placeholder: data.field.placeholder,
+                    options: data.field.options
+                  }));
+                  break;
+              }
+              break;
+            case 'undefined':
               $metadataEditor.append(templates.text({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value
-              }));
-              break;
-            case 'select':
-              $metadataEditor.append(templates.select({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options
-              }));
-              break;
-            case 'multiselect':
-              $metadataEditor.append(templates.multiselect({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options
+                name: key,
+                label: key,
+                value: data
               }));
               break;
           }
@@ -461,18 +473,17 @@
         var metadata = {};
 
         _.each($metadataEditor.find('[name]'), function(item) {
-          console.log(item);
-          switch(item.prop('tagName')) {
+          switch(item.tagName.toLowerCase()) {
             case 'input':
-              switch (item.attr('type')) {
+              switch (item.type) {
                 case 'text':
-                  metadata[item.attr('name')] = item.val();
+                  metadata[item.name] = item.value;
                   break;
               }
               break;
             case 'select':
             case 'multiselect':
-              metadata[item.attr('name')] = item.val();
+              metadata[item.name] = item.value;
               break;
           }
         });
@@ -481,7 +492,7 @@
       }
 
       function getRaw() {
-        return jsyaml.dump(getValue);
+        return jsyaml.dump(getValue());
       }
 
       function setValue(metadata) {
@@ -489,16 +500,17 @@
           var input = $metadataEditor.find('[name="'+ key +'"]');
           var options = $metadataEditor.find('[name="'+ key +'"] option');
 
-          if (input.length) {
-            input.val(value);
-          } else if (options.length) {
+          if (input.length && options.length) {
             _.each(options, function(option) {
-              if (option.val() === value) {
+              if (option.value === value) {
                 option.selected = 'selected';
               }
             });
+          } else if (input.length) {
+            input.val(value);
           } else {
             $metadataEditor.append(templates.text({
+              name: key,
               label: key,
               value: value
             }));
