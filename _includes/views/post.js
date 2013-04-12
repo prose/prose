@@ -477,13 +477,13 @@
             case 'input':
               switch (item.type) {
                 case 'text':
-                  metadata[item.name] = item.value
+                  metadata[item.name] = item.value;
                   break;
               }
               break;
             case 'select':
             case 'multiselect':
-              metadata[item.name] = item.value
+              metadata[item.name] = item.value;
               break;
           }
         });
