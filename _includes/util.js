@@ -277,9 +277,11 @@ _.preview = function(view) {
     var content = p.content;
 
     // Set base URL to public site
-    content = content.replace(/(<head(?:.*)>)/, function() {
-      return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
-    });
+    if (app.state.config.prose && app.state.config.prose.siteurl) {
+      content = content.replace(/(<head(?:.*)>)/, function() {
+        return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
+      });
+    }
 
     document.write(content);
     document.close();
