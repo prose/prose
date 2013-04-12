@@ -36,7 +36,7 @@
         .empty()
         .append(templates.post(_.extend(this.model, {
           mode: this.mode,
-          metadata: jsyaml.load(this.model.raw_metadata)
+          metadata: this.model.metadata
       })));
 
       // TODO Add an unpublished class to .application
@@ -425,29 +425,40 @@
       $metadataEditor.empty();
 
       function initialize(model) {
-        _(model.default_metadata).each(function(data) {
-          switch(data.field.element) {
-            case 'input':
+        _(model.default_metadata).each(function(data, key) {
+          switch(typeof data.field) {
+            case 'object':
+              switch(data.field.element) {
+                case 'input':
+                  $metadataEditor.append(templates.text({
+                    name: data.name,
+                    label: data.field.label,
+                    value: data.field.value
+                  }));
+                  break;
+                case 'select':
+                  $metadataEditor.append(templates.select({
+                    name: data.name,
+                    label: data.field.label,
+                    placeholder: data.field.placeholder,
+                    options: data.field.options
+                  }));
+                  break;
+                case 'multiselect':
+                  $metadataEditor.append(templates.multiselect({
+                    name: data.name,
+                    label: data.field.label,
+                    placeholder: data.field.placeholder,
+                    options: data.field.options
+                  }));
+                  break;
+              }
+              break;
+            case 'undefined':
               $metadataEditor.append(templates.text({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value
-              }));
-              break;
-            case 'select':
-              $metadataEditor.append(templates.select({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options
-              }));
-              break;
-            case 'multiselect':
-              $metadataEditor.append(templates.multiselect({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options
+                name: key,
+                label: key,
+                value: data
               }));
               break;
           }

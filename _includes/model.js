@@ -489,16 +489,25 @@ function emptyPost(user, repo, branch, path, cb) {
       if (typeof rawMetadata === 'object') {
         defaultMetadata = rawMetadata;
 
-        _.each(defaultMetadata, function(data) {
-          var selected = data.field.selected;
+        _.each(defaultMetadata, function(data, key) {
+          var selected;
 
-          switch(data.field.element) {
-            case 'text':
-              metadata[data.name] = data.field.value;
+          switch(typeof data.field) {
+            case 'object':
+              selected = data.field.selected;
+
+              switch(data.field.element) {
+                case 'text':
+                  metadata[data.name] = data.field.value;
+                  break;
+                case 'select':
+                case 'multiselect':
+                  metadata[data.name] = selected ? selected : null;
+                  break;
+              }
               break;
-            case 'select':
-            case 'multiselect':
-              metadata[data.name] = selected ? selected : null;
+            case 'undefined':
+              metadata[key] = data;
               break;
           }
         });
