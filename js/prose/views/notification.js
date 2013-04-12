@@ -1,6 +1,7 @@
-(function(config, models, views, routers, utils, templates) {
+var Backbone = require('backbone');
+var $ = require('jquery-browserify');
 
-views.Notification = Backbone.View.extend({
+module.exports = Backbone.View.extend({
   
   id: 'notification',
 
@@ -15,5 +16,3 @@ views.Notification = Backbone.View.extend({
     return this;
   }
 });
-
-}).apply(this, window.args);

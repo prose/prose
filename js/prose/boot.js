@@ -1,23 +1,28 @@
 var Backbone = require('backbone');
+var $ = require('jquery-browserify');
 var _ = require('underscore');
-var chosen = require('chosen-jquery-browserify');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var marked = require('marked');
-var Base64 = require('js-base64');
-var chrono = require('chrono');
-var queue = require('queue-async');
+var model = require('./model');
+
+console.log(model);
 
 window.app = {
     config: {},
     models: {},
-    views: {},
-    routers: {},
+    views: {
+      Application: require('./views/application'),
+      App: require('./views/app'),
+      Notification: require('./views/notification'),
+      Start: require('./views/start'),
+      Profile: require('./views/profile'),
+      Posts: require('./views/posts'),
+      Post: require('./views/post'),
+      Preview: require('./views/preview')
+    },
+    routers: {
+      Application: require('./routers/application')
+    },
     utils: {},
-    templates: _($('script[data-template]')).reduce(function(memo, el) {
-        memo[el.getAttribute('data-template')] = _(el.innerHTML).template();
-        return memo;
-    }, {}),
+    templates: require('../../templates/templates'),
     state: {'repo': ''},
     instance: {},
     eventRegister: _.extend({}, Backbone.Events)
@@ -36,3 +41,23 @@ function confirmExit() {
     return confirm('You have unsaved changes. Are you sure you want to leave?');
   return true;
 }
+
+$(function() {
+  if (model.authenticate) {
+    model.loadApplication(function(err, data) {
+      // Start the engines
+      window.app.instance = new views.Application({
+        el: '#prose',
+        model: data
+      }).render();
+
+      if (err) return app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
+
+      // Initialize router
+      window.router = new routers.Application({});
+
+      // Start responding to routes
+      Backbone.history.start();
+    });
+  }
+});

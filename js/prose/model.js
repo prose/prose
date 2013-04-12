@@ -1,9 +1,14 @@
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var cookie = require('./cookie');
+
 // Gimme a Github object! Please.
 
 function github() {
   return new Github({
-    token: $.cookie('oauth-token'),
-    username: $.cookie('username'),
+    token: cookie('oauth-token'),
+    username: cookie('username'),
     auth: 'oauth'
   });
 }
@@ -50,13 +55,13 @@ function getRepo(user, repo) {
 // -------
 
 function authenticate() {
-  if ($.cookie('oauth-token')) return window.authenticated = true;
+  if (cookie('oauth-token')) return window.authenticated = true;
   var match = window.location.href.match(/\?code=([a-z0-9]*)/);
 
   // Handle Code
   if (match) {
     $.getJSON('http://prose-gatekeeper.herokuapp.com/authenticate/' + match[1], function (data) {
-      $.cookie('oauth-token', data.token);
+      cookie('oauth-token', data.token);
       window.authenticated = true;
       // Adjust URL
       var regex = new RegExp("\\?code=" + match[1]);
@@ -71,7 +76,7 @@ function authenticate() {
 
 function logout() {
   window.authenticated = false;
-  $.cookie('oauth-token', null);
+  cookie('oauth-token', null);
 }
 
 // Load Application
@@ -87,11 +92,11 @@ function loadApplication(cb) {
       dataType: 'json',
       contentType: 'application/x-www-form-urlencoded',
       headers: {
-        Authorization: 'token ' + $.cookie('oauth-token')
+        Authorization: 'token ' + cookie('oauth-token')
       },
       success: function (res) {
-        $.cookie('avatar', res.avatar_url);
-        $.cookie('username', res.login);
+        cookie('avatar', res.avatar_url);
+        cookie('username', res.login);
         app.username = res.login;
         app.avatar = res.avatar_url;
 
@@ -525,16 +530,16 @@ function emptyPost(user, repo, branch, path, cb) {
   }
 
   cb(null, {
-    "metadata": metadata,
-    "default_metadata": defaultMetadata,
-    "raw_metadata": rawMetadata,
-    "content": "# How does it work?\n\nEnter Text in Markdown format.",
-    "repo": repo,
-    "path": path,
-    "published": false,
-    "persisted": false,
-    "writeable": true,
-    "file": file
+    'metadata': metadata,
+    'default_metadata': defaultMetadata,
+    'raw_metadata': rawMetadata,
+    'content': '# How does it work?\n\nEnter Text in Markdown format.',
+    'repo': repo,
+    'path': path,
+    'published': false,
+    'persisted': false,
+    'writeable': true,
+    'file': file
   });
 }
 
@@ -547,7 +552,7 @@ function emptyPost(user, repo, branch, path, cb) {
 function loadPost(user, repo, branch, path, file, cb) {
   var repo = getRepo(user, repo);
 
-  repo.contents(branch, path ? path + "/" + file : file, function(err, data, commit) {
+  repo.contents(branch, path ? path + '/' + file : file, function(err, data, commit) {
     if (err) return cb(err);
 
     // Given a YAML front matter, determines published or not
@@ -566,14 +571,14 @@ function loadPost(user, repo, branch, path, file, cb) {
       }
 
       if (!_.hasMetadata(content)) return {
-        raw_metadata: "",
+        raw_metadata: '',
         content: content,
         published: false,
         writeable: writeable()
       };
 
       var res = {
-        raw_metadata: "",
+        raw_metadata: '',
         published: false,
         writeable: writeable()
       };
@@ -581,7 +586,7 @@ function loadPost(user, repo, branch, path, file, cb) {
         res.raw_metadata = frontmatter;
         res.metadata = jsyaml.load(frontmatter);
         res.published = published(frontmatter);
-        return "";
+        return '';
       }).trim();
       return res;
     }
@@ -595,13 +600,21 @@ function loadPost(user, repo, branch, path, file, cb) {
     }
 
     cb(err, _.extend(post, {
-      "sha": commit,
-      "markdown": _.markdown(file),
-      "jekyll": _.hasMetadata(data),
-      "repo": repo,
-      "path": path,
-      "file": file,
-      "persisted": true
+      'sha': commit,
+      'markdown': _.markdown(file),
+      'jekyll': _.hasMetadata(data),
+      'repo': repo,
+      'path': path,
+      'file': file,
+      'persisted': true
     }));
   });
+}
+
+module.exports = {
+  authenticate: authenticate(),
+
+  loadApplication: function(cb) {
+    return loadApplication(cb);
+  }
 }

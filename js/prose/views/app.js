@@ -1,6 +1,9 @@
-(function (config, models, views, routers, utils, templates) {
+var Backbone = require('backbone');
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var chosen = require('chosen-jquery-browserify');
 
-  views.App = Backbone.View.extend({
+module.exports = Backbone.View.extend({
     id: 'app',
 
     events: {
@@ -151,6 +154,4 @@
       this.eventRegister.unbind('sidebarContext', this.sidebarContext);
       this.eventRegister.unbind('headerContext', this.headerContext);
     }
-  });
-
-}).apply(this, window.args);
+});

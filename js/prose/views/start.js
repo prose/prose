@@ -1,6 +1,8 @@
-(function(config, models, views, routers, utils, templates) {
+var Backbone = require('backbone');
+var $ = require('jquery-browserify');
+var _ = require('underscore');
 
-views.Start = views.Profile.extend({
+module.exports = Backbone.View.extend({
   id: 'start',
 
   className: 'start',
@@ -30,5 +32,3 @@ views.Start = views.Profile.extend({
   }
 
 });
-
-}).apply(this, window.args);

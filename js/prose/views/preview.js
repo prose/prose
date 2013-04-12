@@ -1,6 +1,8 @@
-(function(config, models, views, routers, utils, templates) {
+var Backbone = require('backbone');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
 
-views.Preview = Backbone.View.extend({
+module.exports = Backbone.View.extend({
   render: function() {
     this.stashApply();
     _.preview(this);
@@ -22,5 +24,3 @@ views.Preview = Backbone.View.extend({
     }
   }
 });
-
-}).apply(this, window.args);

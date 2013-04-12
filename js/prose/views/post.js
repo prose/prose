@@ -1,6 +1,12 @@
-(function (config, models, views, routers, utils, templates) {
+var Backbone = require('backbone');
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var chosen = require('chosen-jquery-browserify');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var marked = require('marked');
 
-  views.Post = Backbone.View.extend({
+module.exports = Backbone.View.extend({
 
     id: 'post',
     className: 'post',
@@ -594,6 +600,4 @@
       this.editor.replaceSelection(snippet);
       return false;
     }
-  });
-
-}).apply(this, window.args);
+});
