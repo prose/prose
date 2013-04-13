@@ -20,7 +20,7 @@ module.exports = Backbone.View.extend({
     render: function() {
       var data = _.extend(this.model, {
         mode: this.mode,
-        content: this.model.markdown ? marked(this.model.content) : '',
+        preview: this.model.markdown ? marked(this.model.content) : '',
         metadata: jsyaml.load(this.model.raw_metadata)
       });
 
