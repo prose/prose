@@ -679,6 +679,10 @@ module.exports = {
     return saveFile(user, repo, branch, path, content, message, cb);
   },
 
+  emptyPost: function(user, repo, branch, path, cb) {
+    return emptyPost(user, repo, branch, path, cb);
+  },
+
   logout: function() {
     return logout();
   }

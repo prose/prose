@@ -158,7 +158,7 @@ module.exports = Backbone.View.extend({
     var that = this;
     this.loading('Creating file ...');
     window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      emptyPost(user, repo, branch, path, _.bind(function (err, data) {
+      window.app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
         this.loaded();
 
         // Render out the application view
