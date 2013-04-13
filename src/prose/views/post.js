@@ -58,7 +58,10 @@ module.exports = Backbone.View.extend({
 
       $(this.el)
         .empty()
-        .append(tmpl(data));
+        .append(tmpl(_.extend(this.model, {
+          mode: this.mode,
+          metadata: this.model.metadata
+        })));
 
       // TODO Add an unpublished class to .application
       if (!this.model.published) $(this.el).addClass('published');
@@ -448,38 +451,46 @@ module.exports = Backbone.View.extend({
         var tmpl;
 
         _(model.default_metadata).each(function(data) {
-          switch(data.field.element) {
-            case 'input':
-              tmpl = _(window.app.templates.text).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value
-              }));
+          if (data && typeof data.field === 'object') {
+            switch(data.field.element) {
+              case 'input':
+                tmpl = _(window.app.templates.text).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  value: data.field.value
+                }));
+                break;
+              case 'select':
+                tmpl = _(window.app.templates.select).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
+                break;
+              case 'multiselect':
+                tmpl = _(window.app.templates.multiselect).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
               break;
-            case 'select':
-              tmpl = _(window.app.templates.select).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options
-              }));
-              break;
-            case 'multiselect':
-              tmpl = _(window.app.templates.multiselect).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options
-              }));
-              break;
+            }
+          } else {
+            tmpl = _(window.app.templates.text).template();
+            $metadataEditor.append(tmpl({
+              name: key,
+              label: key,
+              value: data
+            }));
           }
         });
 
         setValue(model.metadata);
-
         $('.chzn-select').chosen();
       }
 
@@ -514,7 +525,7 @@ module.exports = Backbone.View.extend({
 
           if (input.length && options.length) {
             _.each(options, function(option) {
-              if (option.value === value) {
+              if (value !== null && (option.value === value || value.indexOf(option.value) > -1)) {
                 option.selected = 'selected';
               }
             });

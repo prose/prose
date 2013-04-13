@@ -6837,7 +6837,7 @@ $(function() {
   }
 });
 
-},{"./models":8,"./views/application":9,"./views/app":10,"./views/notification":11,"./views/start":12,"./views/profile":13,"./views/posts":14,"./views/preview":15,"../../templates":1,"./router":3,"./views/post":16,"jquery-browserify":4,"underscore":5,"backbone":6}],8:[function(require,module,exports){
+},{"./models":8,"./views/application":9,"./views/app":10,"./views/notification":11,"./views/start":12,"./views/profile":13,"./views/posts":14,"./views/post":15,"./views/preview":16,"../../templates":1,"./router":3,"jquery-browserify":4,"underscore":5,"backbone":6}],8:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -7324,22 +7324,24 @@ function movePost(user, repo, branch, path, newPath, cb) {
 
 function emptyPost(user, repo, branch, path, cb) {
   var file = new Date().format('Y-m-d') + '-your-filename.md';
-  var defaultMetadata;
   var rawMetadata = 'layout: default\npublished: false';
+  var defaultMetadata;
   var metadata = {
     'layout': 'default',
     'published': false
   };
 
   var cfg = app.state.config;
-  if (cfg && cfg.prose && cfg.prose.metadata) {
-    if (cfg.prose.metadata[path]) {
-      rawMetadata = cfg.prose.metadata[path];
-      if (typeof rawMetadata === 'object') {
-        defaultMetadata = rawMetadata;
+  if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
+    rawMetadata = cfg.prose.metadata[path];
+    if (typeof rawMetadata === 'object') {
+      defaultMetadata = rawMetadata;
 
-        _.each(defaultMetadata, function(data) {
-          var selected = data.field.selected;
+      _.each(rawMetadata, function(data, key) {
+        var selected;
+
+        if (data && typeof data.field === 'object') {
+          selected = data.field.selected;
 
           switch(data.field.element) {
             case 'text':
@@ -7350,19 +7352,26 @@ function emptyPost(user, repo, branch, path, cb) {
               metadata[data.name] = selected ? selected : null;
               break;
           }
-        });
-      } else if (typeof rawMetadata === 'string') {
-        try {
-          metadata = jsyaml.load(rawMetadata);
-          if (metadata.date === "CURRENT_DATETIME") {
-            var current = (new Date()).format('Y-m-d H:i');
-            metadata.date = current;
-            rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
-          }
-        } catch(err) {
-          console.log('ERROR encoding YAML');
-          // No-op
+        } else {
+          metadata[key] = data;
         }
+      });
+    } else if (typeof rawMetadata === 'string') {
+      try {
+        defaultMetadata = jsyaml.load(rawMetadata);
+
+        _.each(rawMetadata, function(data, key) {
+          metadata[key] = data;
+        });
+
+        if (metadata.date === 'CURRENT_DATETIME') {
+          var current = (new Date()).format('Y-m-d H:i');
+          metadata.date = current;
+          rawMetadata = rawMetadata.replace('CURRENT_DATETIME', current);
+        }
+      } catch(err) {
+        console.log('ERROR encoding YAML');
+        // No-op
       }
     }
   }
@@ -7375,8 +7384,8 @@ function emptyPost(user, repo, branch, path, cb) {
 
   cb(null, {
     'metadata': metadata,
-    'default_metadata': defaultMetadata,
     'raw_metadata': rawMetadata,
+    'default_metadata': defaultMetadata,
     'content': '# How does it work?\n\nEnter Text in Markdown format.',
     'repo': repo,
     'path': path,
@@ -7437,13 +7446,32 @@ function loadPost(user, repo, branch, path, file, cb) {
 
     var post = parse(data);
 
+    var rawMetadata;
+    var defaultMetadata;
+
     // load default metadata
     var cfg = app.state.config;
     if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
-      post.default_metadata = cfg.prose.metadata[app.state.path];
+      rawMetadata = cfg.prose.metadata[path];
+      if (typeof rawMetadata === 'object') {
+        defaultMetadata = rawMetadata;
+      } else if (typeof rawMetadata === 'string') {
+        try {
+          defaultMetadata = jsyaml.load(rawMetadata);
+          if (defaultMetadata.date === "CURRENT_DATETIME") {
+            var current = (new Date()).format('Y-m-d H:i');
+            defaultMetadata.date = current;
+            rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+          }
+        } catch(err) {
+          console.log('ERROR encoding YAML');
+          // No-op
+        }
+      }
     }
 
     cb(err, _.extend(post, {
+      'default_metadata': defaultMetadata,
       'sha': commit,
       'markdown': _.markdown(file),
       'jekyll': _.hasMetadata(data),
@@ -7482,7 +7510,7 @@ module.exports = {
   loadPost: function(user, repo, branch, path, file, cb) {
     return loadPost(user, repo, branch, path, file, cb);
   },
-  
+
   serialize: function(content, metadata) {
     return serialize(content, metadata);
   },
@@ -8338,9 +8366,11 @@ _.preview = function(view) {
     var content = p.content;
 
     // Set base URL to public site
-    content = content.replace(/(<head(?:.*)>)/, function() {
-      return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
-    });
+    if (app.state.config.prose && app.state.config.prose.siteurl) {
+      content = content.replace(/(<head(?:.*)>)/, function() {
+        return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
+      });
+    }
 
     document.write(content);
     document.close();
@@ -20155,7 +20185,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":4,"backbone":6}],15:[function(require,module,exports){
+},{"jquery-browserify":4,"backbone":6}],16:[function(require,module,exports){
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
@@ -20183,7 +20213,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"underscore":5,"js-yaml":18,"backbone":6}],16:[function(require,module,exports){
+},{"underscore":5,"js-yaml":18,"backbone":6}],15:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -20244,7 +20274,10 @@ module.exports = Backbone.View.extend({
 
       $(this.el)
         .empty()
-        .append(tmpl(data));
+        .append(tmpl(_.extend(this.model, {
+          mode: this.mode,
+          metadata: this.model.metadata
+        })));
 
       // TODO Add an unpublished class to .application
       if (!this.model.published) $(this.el).addClass('published');
@@ -20634,38 +20667,46 @@ module.exports = Backbone.View.extend({
         var tmpl;
 
         _(model.default_metadata).each(function(data) {
-          switch(data.field.element) {
-            case 'input':
-              tmpl = _(window.app.templates.text).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value
-              }));
+          if (data && typeof data.field === 'object') {
+            switch(data.field.element) {
+              case 'input':
+                tmpl = _(window.app.templates.text).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  value: data.field.value
+                }));
+                break;
+              case 'select':
+                tmpl = _(window.app.templates.select).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
+                break;
+              case 'multiselect':
+                tmpl = _(window.app.templates.multiselect).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
               break;
-            case 'select':
-              tmpl = _(window.app.templates.select).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options
-              }));
-              break;
-            case 'multiselect':
-              tmpl = _(window.app.templates.multiselect).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options
-              }));
-              break;
+            }
+          } else {
+            tmpl = _(window.app.templates.text).template();
+            $metadataEditor.append(tmpl({
+              name: key,
+              label: key,
+              value: data
+            }));
           }
         });
 
         setValue(model.metadata);
-
         $('.chzn-select').chosen();
       }
 
@@ -20700,7 +20741,7 @@ module.exports = Backbone.View.extend({
 
           if (input.length && options.length) {
             _.each(options, function(option) {
-              if (option.value === value) {
+              if (value !== null && (option.value === value || value.indexOf(option.value) > -1)) {
                 option.selected = 'selected';
               }
             });
@@ -21412,10 +21453,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":19,"jquery-browserify":4,"underscore":5,"backbone":6}],18:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
-
-},{"./lib/js-yaml.js":25}],23:[function(require,module,exports){
+},{".././util":19,"jquery-browserify":4,"underscore":5,"backbone":6}],23:[function(require,module,exports){
 (function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -22649,7 +22687,10 @@ module.exports = require('./lib/js-yaml.js');
 })(this);
 
 })()
-},{}],22:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
+
+},{"./lib/js-yaml.js":25}],22:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
 },{"./lib/chrono":26}],26:[function(require,module,exports){
@@ -25136,91 +25177,7 @@ function safeDump(input, options) {
 module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
-},{"./common":37,"./exception":34,"./schema/default":33,"./schema/safe":32}],29:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":34}],27:[function(require,module,exports){
+},{"./common":37,"./exception":34,"./schema/default":33,"./schema/safe":32}],27:[function(require,module,exports){
 'use strict';
 
 
@@ -26771,7 +26728,91 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":37,"./exception":34,"./mark":38,"./schema/safe":32,"./schema/default":33}],30:[function(require,module,exports){
+},{"./common":37,"./exception":34,"./mark":38,"./schema/safe":32,"./schema/default":33}],29:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":34}],30:[function(require,module,exports){
 'use strict';
 
 
@@ -27573,93 +27614,6 @@ module.exports = new Type('tag:yaml.org,2002:bool', {
   }
 });
 
-},{"../common":37,"../type":29}],44:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
 },{"../common":37,"../type":29}],45:[function(require,module,exports){
 'use strict';
 
@@ -27764,6 +27718,113 @@ module.exports = new Type('tag:yaml.org,2002:float', {
   }
 });
 
+},{"../common":37,"../type":29}],44:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":37,"../type":29}],47:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
 },{"../common":37,"../type":29}],46:[function(require,module,exports){
 'use strict';
 
@@ -27854,26 +27915,6 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
     kind: 'object',
     instanceOf: Date,
     representer: representYamlTimestamp
-  }
-});
-
-},{"../common":37,"../type":29}],47:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
   }
 });
 
@@ -30340,5 +30381,5 @@ SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}]},{},[11,15,16,14,13,12,9,10,3,19,7,1,8,2,17])
+},{}]},{},[11,16,15,14,13,12,9,10,3,19,7,1,8,2,17])
 ;
