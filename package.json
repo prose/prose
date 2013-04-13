@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "[Prose](http://prose.io) is a web-based interface for managing text-based content in your GitHub repositories. Use it to create, edit, and delete files, and save your changes directly to GitHub.",
   "dependencies": {
+    "jquery-browserify": "~1.8.1",
+    "chosen-jquery-browserify": "~0.9.15",
     "js-yaml": "~2.0.4",
     "backbone": "~1.0.0",
     "underscore": "~1.4.4",
@@ -10,9 +12,7 @@
     "js-base64": "~2.1.1",
     "keymaster": "~1.0.2",
     "marked": "~0.2.8",
-    "queue-async": "~1.0.3",
-    "jquery-browserify": "~1.8.1",
-    "chosen-jquery-browserify": "~0.9.15"
+    "queue-async": "~1.0.3"
   },
   "devDependencies": {
     "mocha": "~1.9.0",

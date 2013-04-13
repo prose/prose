@@ -1,6 +1,10 @@
 # See the README for installation instructions.
+UGLIFY = node_modules/.bin/uglifyjs
+BROWSERIFY = node_modules/.bin/browserify
 
-all: prose.js prose.min.js
+all: \
+	prose.js \
+	prose.min.js
 
 clean:
 	rm -f prose*.js && rm -f templates.js
@@ -23,7 +27,6 @@ LIBS = \
 	src/libs/diff-match-patch.js \
 	src/libs/liquid.js \
 	src/libs/liquid.patch.js \
-	src/libs/github.js
 
 APPLICATION = \
 	src/prose/views/notification.js \
@@ -34,17 +37,18 @@ APPLICATION = \
 	src/prose/views/start.js \
 	src/prose/views/application.js \
 	src/prose/views/app.js \
-	src/prose/routers/application.js \
+	src/prose/router.js \
 	src/prose/util.js \
 	src/prose/boot.js \
 	templates.js \
-	src/prose/model.js \
-	src/prose/cookie.js
+	src/prose/models.js \
+	src/prose/cookie.js \
+	src/libs/github.js
 
 prose.js: $(APPLICATION)
 	cat $(LIBS) > prose.js
-	browserify $(APPLICATION) -d >> prose.js
+	$(BROWSERIFY) $(APPLICATION) >> prose.js
 
 prose.min.js: $(APPLICATION)
 	cat $(LIBS) > prose.min.js
-	browserify $(APPLICATION) | uglifyjs >> prose.min.js
+	$(BROWSERIFY) $(APPLICATION) | $(UGLIFY) >> prose.min.js

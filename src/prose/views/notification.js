@@ -2,7 +2,7 @@ var $ = require('jquery-browserify');
 var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
-  
+
   id: 'notification',
 
   initialize: function(type, message) {
@@ -12,7 +12,8 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    $(this.el).html(templates.notification(this.model));
+    var tmpl = _(window.app.templates.notification).template();
+    $(this.el).html(tmpl(this.model));
     return this;
   }
 });

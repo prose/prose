@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
     id: 'profile',
@@ -24,15 +25,18 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister.trigger('headerContext', header);
 
-      $(this.el).empty().append(templates.profile(data));
+      var tmpl = _(window.app.templates.profile).template();
+      var sidebar = _(window.app.templates.sidebarOrganizations).template();
+
+      $(this.el).empty().append(tmpl(data));
       this.renderResults();
 
       $('#drawer')
         .empty()
-        .append(templates.sidebarOrganizations(this.model));
+        .append(sidebar(this.model));
 
       _.delay(function () {
-        shadowScroll($('#projects'), $('.content-search'));
+        utils.shadowScroll($('#projects'), $('.content-search'));
         $('#filter').focus();
       }, 1);
 
@@ -47,20 +51,21 @@ module.exports = Backbone.View.extend({
       if (e.which === 27) {
         _.delay(_.bind(function () {
           $('#filter', this.el).val('');
-          this.model = filterProjects(this.cache, '');
+          this.model = window.app.models.filterProjects(this.cache, '');
           this.renderResults();
         }, this), 10);
       } else {
         _.delay(_.bind(function () {
           var searchstr = $('#filter', this.el).val();
-          this.model = filterProjects(this.cache, searchstr);
+          this.model = window.app.models.filterProjects(this.cache, searchstr);
           this.renderResults();
         }, this), 10);
       }
     },
 
     renderResults: function () {
-      $('#projects', this.el).empty().append(templates.projects(this.model));
+      var tmpl = _(window.app.templates.projects).template();
+      $('#projects', this.el).empty().append(tmpl(this.model));
     }
 
 });

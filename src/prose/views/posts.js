@@ -3,6 +3,7 @@ var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var key = require('keymaster');
 var Backbone = require('backbone');
+var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
 
@@ -48,13 +49,15 @@ module.exports = Backbone.View.extend({
     }
 
     this.eventRegister.trigger('headerContext', header);
-    $(this.el).empty().append(templates.posts(data));
+
+    var tmpl = _(window.app.templates.posts).template();
+    $(this.el).empty().append(tmpl(data));
 
     _.delay(function () {
       that.renderResults();
       $('#filter').focus();
-      shadowScroll($('#files'), $('.breadcrumb'));
-      shadowScroll($('#files'), $('.content-search'));
+      utils.shadowScroll($('#files'), $('.breadcrumb'));
+      utils.shadowScroll($('#files'), $('.content-search'));
     }, 1);
 
     return this;
@@ -89,7 +92,7 @@ module.exports = Backbone.View.extend({
     if (e.which === 27) { // ESC
       _.delay(_.bind(function () {
         $('#filter', this.el).val('');
-        this.model = getFiles(this.model.tree, app.state.path, '');
+        this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
         this.renderResults();
       }, this), 10);
 
@@ -102,14 +105,15 @@ module.exports = Backbone.View.extend({
     } else {
       _.delay(_.bind(function () {
         var searchstr = $('#filter', this.el).val();
-        this.model = getFiles(this.model.tree, app.state.path, searchstr);
+        this.model = window.app.models.getFiles(this.model.tree, app.state.path, searchstr);
         this.renderResults();
       }, this), 10);
     }
   },
 
   renderResults: function () {
-    this.$('#files').html(templates.files(_.extend(this.model, app.state, {
+    var tmpl = _(window.app.templates.files).template();
+    this.$('#files').html(tmpl(_.extend(this.model, app.state, {
       currentPath: app.state.path
     })));
   },

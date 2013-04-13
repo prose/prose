@@ -4,6 +4,8 @@
 // For all details and documentation:
 // http://substance.io/michael/github
 
+var _ = require('underscore');
+
 (function() {
   var Github;
   var API_URL = 'https://api.github.com';
@@ -546,4 +548,6 @@
       return new Github.Gist({id: id});
     };
   };
+
+  module.exports = Github;
 }).call(this);

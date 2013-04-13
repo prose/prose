@@ -1,6 +1,6 @@
 var $ = require('jquery-browserify');
-var _ = require('underscore');
 var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var key = require('keymaster');
 var marked = require('marked');
@@ -18,9 +18,9 @@ module.exports = Backbone.View.extend({
     },
 
     render: function() {
-
       var data = _.extend(this.model, {
         mode: this.mode,
+        content: this.model.markdown ? marked(this.model.content) : '',
         metadata: jsyaml.load(this.model.raw_metadata)
       });
 
@@ -50,13 +50,15 @@ module.exports = Backbone.View.extend({
         title: _.filepath(data.path, data.file),
         titleUrl: '#',
         alterable: true
-      }
+      };
 
       this.eventRegister.trigger('headerContext', header);
 
+      var tmpl = _(window.app.templates.post).template();
+
       $(this.el)
         .empty()
-        .append(templates.post(data));
+        .append(tmpl(data));
 
       // TODO Add an unpublished class to .application
       if (!this.model.published) $(this.el).addClass('published');
@@ -85,13 +87,14 @@ module.exports = Backbone.View.extend({
       $('.views .edit').addClass('active');
       this.model.preview = false;
       this.updateURL();
-      return false;
 
       // Refresh CodeMirror each time
       // to reflect new changes
       _.delay(function () {
         that.refreshCodeMirror();
       }, 1);
+
+      return false;
     },
 
     preview: function(e) {
@@ -267,7 +270,7 @@ module.exports = Backbone.View.extend({
     },
 
     serialize: function () {
-      return serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
+      return window.app.models.serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
     },
 
     // Update save state (saving ..., sending patch ..., etc.)
@@ -322,7 +325,7 @@ module.exports = Backbone.View.extend({
 
       function save() {
         if (that.updateMetaData()) {
-          saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
+          window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
                 that._makeDirty();
@@ -432,7 +435,6 @@ module.exports = Backbone.View.extend({
         hash.splice(-2, 2, href, hash[hash.length - 1]);
       }
 
-      // console.log(_(hash).compact().join('/'));
       router.navigate(_(hash).compact().join('/'), true);
 
       return false;
@@ -443,17 +445,21 @@ module.exports = Backbone.View.extend({
       $metadataEditor.empty();
 
       function initialize(model) {
+        var tmpl;
+
         _(model.default_metadata).each(function(data) {
           switch(data.field.element) {
             case 'input':
-              $metadataEditor.append(templates.text({
+              tmpl = _(window.app.templates.text).template();
+              $metadataEditor.append(tmpl({
                 name: data.name,
                 label: data.field.label,
                 value: data.field.value
               }));
               break;
             case 'select':
-              $metadataEditor.append(templates.select({
+              tmpl = _(window.app.templates.select).template();
+              $metadataEditor.append(tmpl({
                 name: data.name,
                 label: data.field.label,
                 placeholder: data.field.placeholder,
@@ -461,7 +467,8 @@ module.exports = Backbone.View.extend({
               }));
               break;
             case 'multiselect':
-              $metadataEditor.append(templates.multiselect({
+              tmpl = _(window.app.templates.multiselect).template();
+              $metadataEditor.append(tmpl({
                 name: data.name,
                 label: data.field.label,
                 placeholder: data.field.placeholder,
@@ -482,15 +489,13 @@ module.exports = Backbone.View.extend({
         _.each($metadataEditor.find('[name]'), function(item) {
           switch(item.tagName.toLowerCase()) {
             case 'input':
-              switch (item.type) {
-                case 'text':
-                  metadata[item.name] = item.value
-                  break;
+              if (item.type === 'text') {
+                metadata[item.name] = item.value;
               }
               break;
             case 'select':
             case 'multiselect':
-              metadata[item.name] = item.value
+              metadata[item.name] = item.value;
               break;
           }
         });
@@ -516,7 +521,8 @@ module.exports = Backbone.View.extend({
           } else if (input.length) {
             input.val(value);
           } else {
-            $metadataEditor.append(templates.text({
+            var tmpl = _(window.app.templates.text).template();
+            $metadataEditor.append(tmpl({
               name: key,
               label: key,
               value: value
@@ -562,6 +568,7 @@ module.exports = Backbone.View.extend({
           */
           $('#post .metadata').hide();
         }
+
         that.editor = CodeMirror($('#code')[0], {
           mode: that.model.lang,
           value: that.model.content,

@@ -5,19 +5,7 @@ var Backbone = require('backbone');
 module.exports = Backbone.View.extend({
 
   events: {
-    'click .toggle-view': 'toggleView',
     'click #notification .create': 'createPost'
-  },
-
-  toggleView: function (e) {
-    var link = $(e.currentTarget),
-      route = link.attr('href').replace(/^\//, '');
-
-    $('.toggle-view.active').removeClass('active');
-    link.addClass('active');
-    router.navigate(route, true);
-
-    return false;
   },
 
   createPost: function (e) {
@@ -35,7 +23,7 @@ module.exports = Backbone.View.extend({
   initialize: function () {
     _.bindAll(this);
     var that = this;
-    this.app = new app.views.App({
+    this.app = new window.app.views.App({
       model: this.model
     });
 
@@ -83,7 +71,7 @@ module.exports = Backbone.View.extend({
     // Render out the application view
     $(that.app.render().el).prependTo(that.el);
 
-    this.replaceMainView('start', new app.views.Start({
+    this.replaceMainView('start', new window.app.views.Start({
       model: _.extend(this.model, {
         authenticated: !! window.authenticated
       })
@@ -95,14 +83,14 @@ module.exports = Backbone.View.extend({
     app.state.title = username;
     this.loading('Loading profile ...');
 
-    loadRepos(username, function (err, data) {
+    window.app.models.loadRepos(username, function (err, data) {
 
       // Render out the application view
       $(that.app.render().el).prependTo(that.el);
 
       that.loaded();
       data.authenticated = !! window.authenticated;
-      that.replaceMainView('profile', new app.views.Profile({
+      that.replaceMainView('profile', new window.app.views.Profile({
         model: _.extend(that.model, data)
       }).render());
     });
@@ -116,13 +104,13 @@ module.exports = Backbone.View.extend({
   posts: function (user, repo, branch, path) {
     var that = this;
     this.loading('Loading posts ...');
-    loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       this.loaded();
 
       if (err) return this.notify('error', 'The requested resource could not be found.');
       // Render out the application view
       $(that.app.render().el).prependTo(that.el);
-      this.replaceMainView('posts', new app.views.Posts({
+      this.replaceMainView('posts', new window.app.views.Posts({
         model: data
       }).render());
     }, this));
@@ -131,9 +119,9 @@ module.exports = Backbone.View.extend({
   post: function (user, repo, branch, path, file, mode) {
     var that = this;
     this.loading('Loading post ...');
-    loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return this.notify('error', 'The requested resource could not be found.');
-      loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+      window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         this.loaded();
 
         app.state.markdown = data.markdown;
@@ -143,7 +131,7 @@ module.exports = Backbone.View.extend({
         if (err) return this.notify('error', 'The requested resource could not be found.');
         data.preview = (mode !== 'edit');
         data.lang = _.mode(file);
-        this.replaceMainView(window.authenticated ? 'post' : 'read-post', new app.views.Post({
+        this.replaceMainView(window.authenticated ? 'post' : 'read-post', new window.app.views.Post({
           model: data
         }).render());
       }, this));
@@ -157,9 +145,9 @@ module.exports = Backbone.View.extend({
   preview: function (user, repo, branch, path, file, mode) {
     this.loading('Preview post ...');
     loadConfig(user, repo, branch, _.bind(function () {
-      loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+      window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         if (err) return this.notify('error', 'The requested resource could not be found.');
-        new app.views.Preview({
+        new window.app.views.Preview({
           model: data
         }).render();
       }, this));
@@ -169,7 +157,7 @@ module.exports = Backbone.View.extend({
   newPost: function (user, repo, branch, path) {
     var that = this;
     this.loading('Creating file ...');
-    loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       emptyPost(user, repo, branch, path, _.bind(function (err, data) {
         this.loaded();
 
@@ -181,7 +169,7 @@ module.exports = Backbone.View.extend({
         data.markdown = _.markdown(data.file);
         data.lang = _.mode(data.file);
 
-        this.replaceMainView('post', new app.views.Post({
+        this.replaceMainView('post', new window.app.views.Post({
           model: data
         }).render());
 
@@ -196,7 +184,7 @@ module.exports = Backbone.View.extend({
     // Render out the application view
     $(this.app.render().el).prependTo(this.el);
 
-    this.replaceMainView('notification', new app.views.Notification(type, message).render());
+    this.replaceMainView('notification', new window.app.views.Notification(type, message).render());
   },
 
   loading: function (msg) {

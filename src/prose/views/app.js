@@ -1,8 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
-var chosen = require('chosen-jquery-browserify');
 var Backbone = require('backbone');
-var templates = require(__dirname, 'templates');
+var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
     id: 'app',
@@ -30,7 +29,7 @@ module.exports = Backbone.View.extend({
     },
 
     render: function () {
-      var tmpl = _(templates.app).template();
+      var tmpl = _(window.app.templates.app).template();
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
         state: app.state
       })));
@@ -49,24 +48,33 @@ module.exports = Backbone.View.extend({
       }
 
       _.delay(function () {
-        dropdown();
+        utils.dropdown();
       }, 1);
 
       return this;
     },
 
     headerContext: function(data) {
-      $('#heading').empty().append(templates.heading(data));
+      var heading = _(window.app.templates.heading).template();
+      $('#heading').empty().append(heading(data));
     },
 
     sidebarContext: function(data, context) {
+      var sidebarTmpl;
+
       if (context === 'post') {
+        sidebarTmpl = _(window.app.templates.settings).template();
+
         $('#drawer')
           .empty()
-          .html(templates.settings(data));
+          .append(sidebarTmpl(data));
 
       } else if (context === 'posts') {
-        $('#drawer').empty().append(templates.sidebarProject(data));
+        sidebarTmpl = _(window.app.templates.sidebarProject).template();
+
+        $('#drawer')
+          .empty()
+          .append(sidebarTmpl(data));
 
         // Branch Switching
         $('.chzn-select').chosen().change(function() {
@@ -141,7 +149,7 @@ module.exports = Backbone.View.extend({
     },
 
     logout: function () {
-      logout();
+      window.app.models.logout();
       app.instance.render();
       if ($('#start').length > 0) {
         app.instance.start();

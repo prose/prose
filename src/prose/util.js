@@ -17,7 +17,7 @@ _.serial = function () {
 // -------
 
 _.parentPath = function(path) {
-  return path.replace(/\/?[a-zA-Z0-9_-]*$/, '');
+  return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
 };
 
 
@@ -25,7 +25,7 @@ _.parentPath = function(path) {
 // -------
 
 _.topPath = function(path) {
-  var match = path.match(/\/?([a-zA-Z0-9_-]*)$/);
+  var match = path.match(/\/?([a-zA-Z0-9_\-]*)$/);
   return match[1];
 };
 
@@ -34,7 +34,7 @@ _.topPath = function(path) {
 // -------
 
 _.validFilename = function(filename) {
-  return !!filename.match(/^([a-zA-Z0-9_-]|\.)+$/);
+  return !!filename.match(/^([a-zA-Z0-9_\-]|\.)+$/);
   // Disabled for now: the Jekyll post format layout
   // return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
 };
@@ -78,7 +78,7 @@ _.mode = function(file) {
   if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
 
   return extension;
-}
+};
 
 
 // Check if a given file is a Jekyll post
@@ -93,7 +93,7 @@ _.jekyll = function(path, file) {
 
 _.hasMetadata = function(content) {
   return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
-}
+};
 
 // Extract file extension
 // -------
@@ -108,7 +108,7 @@ _.extension = function(file) {
 // -------
 
 _.markdown = function(file) {
-  var regex = new RegExp('\.(md|mkdn?|mdown|markdown)$');
+  var regex = new RegExp('.(md|mkdn?|mdown|markdown)$');
   return !!(regex.test(file));
 };
 
@@ -145,7 +145,7 @@ _.toYAML = function(metadata) {
         str += '  ' + line;
       });
 
-      res.push()
+      res.push();
     } else {
       res.push(property+": "+value);
     }
@@ -216,7 +216,7 @@ _.fromYAML = function(rawYAML) {
 
   add();
   return data;
-}
+};
 
 // chunked path
 // -------
@@ -239,9 +239,9 @@ _.chunkedPath = function(path) {
     return {
       url: url.join('/'),
       name: chunk
-    }
+    };
   });
-}
+};
 
 // Full Layout Preview
 // -------
@@ -311,7 +311,7 @@ _.preview = function(view) {
     });
 
   }
-}
+};
 
 // UI Stuff
 // -------
@@ -332,13 +332,23 @@ function dropdown() {
 }
 
 function shadowScroll($el, $parent) {
-    $el.scroll(function() {
-        if ($el.scrollTop() !== 0) {
-            if (!$parent.hasClass('shadow')) {
-                $parent.addClass('shadow');
-            }
-        } else {
-            $parent.removeClass('shadow');
-        }
-    });
+  $el.scroll(function() {
+    if ($el.scrollTop() !== 0) {
+      if (!$parent.hasClass('shadow')) {
+        $parent.addClass('shadow');
+      }
+    } else {
+      $parent.removeClass('shadow');
+    }
+  });
+}
+
+module.exports = {
+  dropdown: function() {
+    return dropdown();
+  },
+
+  shadowScroll: function($el, $parent) {
+    return shadowScroll($el, $parent);
+  }
 }

@@ -4,7 +4,6 @@ var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
   id: 'start',
-
   className: 'start',
 
   events: {
@@ -12,8 +11,10 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
+    var tmpl = _(window.app.templates.start).template();
+
     $('.header').hide();
-    $('#prose').empty().html(templates.start(this.model));
+    $('#prose').empty().html(tmpl(this.model));
 
     return this;
   },
@@ -30,5 +31,4 @@ module.exports = Backbone.View.extend({
     });
     return false;
   }
-
 });

@@ -1,31 +1,27 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var model = require('./model');
 
 window.app = {
     config: {},
-    models: {},
+    models: require('./models'),
     views: {
-      Application: require(__dirname, 'views/application'),
-      App: require(__dirname, 'views/app'),
-      Notification: require(__dirname, 'views/notification'),
-      Start: require(__dirname, 'views/start'),
-      Profile: require(__dirname, 'views/profile'),
-      Posts: require(__dirname, 'views/posts'),
-      Post: require(__dirname, 'views/post'),
-      Preview: require(__dirname, 'views/preview')
+      Application: require('./views/application'),
+      App: require('./views/app'),
+      Notification: require('./views/notification'),
+      Start: require('./views/start'),
+      Profile: require('./views/profile'),
+      Posts: require('./views/posts'),
+      Post: require('./views/post'),
+      Preview: require('./views/preview')
     },
-    routers: {
-      Application: require(__dirname, 'routers/application')
-    },
+    templates: require('../../templates'),
+    router: require('./router'),
     utils: {},
     state: {'repo': ''},
     instance: {},
     eventRegister: _.extend({}, Backbone.Events)
 };
-
-window.args = _(window.app).toArray();
 
 // Prevent exit when there are unsaved changes
 window.onbeforeunload = function() {
@@ -40,18 +36,18 @@ window.confirmExit = function() {
 };
 
 $(function() {
-  if (model.authenticate) {
-    model.loadApplication(function(err, data) {
+  if (window.app.models.authenticate) {
+    window.app.models.loadApplication(function(err, data) {
       // Start the engines
-      window.app.instance = new app.views.Application({
+      window.app.instance = new window.app.views.Application({
         el: '#prose',
         model: data
       }).render();
 
-      if (err) return app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
+      if (err) return window.app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
 
       // Initialize router
-      window.router = new app.routers.Application();
+      window.router = new window.app.router();
 
       // Start responding to routes
       Backbone.history.start();
