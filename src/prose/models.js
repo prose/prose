@@ -683,6 +683,14 @@ module.exports = {
     return emptyPost(user, repo, branch, path, cb);
   },
 
+  deletePost: function(user, repo, branch, path, file, cb) {
+    return deletePost(user, repo, branch, path, file, cb);
+  },
+
+  movePost: function(user, repo, branch, path, newPath, cb) {
+    return movePost(user, repo, branch, path, newPath, cb);
+  },
+
   logout: function() {
     return logout();
   }
