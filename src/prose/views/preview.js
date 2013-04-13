@@ -1,6 +1,6 @@
-var Backbone = require('backbone');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
   render: function() {

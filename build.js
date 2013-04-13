@@ -11,4 +11,4 @@ var templates = glob.sync('templates/*.html').reduce(function(memo, file) {
   return memo;
 }, {});
 
-fs.writeFileSync('templates/templates.js', 'var templates = ' + JSON.stringify(templates) + '; module.exports = templates;');
+fs.writeFileSync('templates.js', 'var templates = ' + JSON.stringify(templates) + '; module.exports = templates;');

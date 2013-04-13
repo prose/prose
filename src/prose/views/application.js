@@ -1,11 +1,8 @@
-var Backbone = require('backbone');
 var $ = require('jquery-browserify');
 var _ = require('underscore');
+var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
-
-  // Events
-  // ------
 
   events: {
     'click .toggle-view': 'toggleView',
@@ -38,7 +35,7 @@ module.exports = Backbone.View.extend({
   initialize: function () {
     _.bindAll(this);
     var that = this;
-    this.app = new views.App({
+    this.app = new app.views.App({
       model: this.model
     });
 
@@ -86,7 +83,7 @@ module.exports = Backbone.View.extend({
     // Render out the application view
     $(that.app.render().el).prependTo(that.el);
 
-    this.replaceMainView('start', new views.Start({
+    this.replaceMainView('start', new app.views.Start({
       model: _.extend(this.model, {
         authenticated: !! window.authenticated
       })
@@ -105,7 +102,7 @@ module.exports = Backbone.View.extend({
 
       that.loaded();
       data.authenticated = !! window.authenticated;
-      that.replaceMainView('profile', new views.Profile({
+      that.replaceMainView('profile', new app.views.Profile({
         model: _.extend(that.model, data)
       }).render());
     });
@@ -125,7 +122,7 @@ module.exports = Backbone.View.extend({
       if (err) return this.notify('error', 'The requested resource could not be found.');
       // Render out the application view
       $(that.app.render().el).prependTo(that.el);
-      this.replaceMainView('posts', new views.Posts({
+      this.replaceMainView('posts', new app.views.Posts({
         model: data
       }).render());
     }, this));
@@ -146,7 +143,7 @@ module.exports = Backbone.View.extend({
         if (err) return this.notify('error', 'The requested resource could not be found.');
         data.preview = (mode !== 'edit');
         data.lang = _.mode(file);
-        this.replaceMainView(window.authenticated ? 'post' : 'read-post', new views.Post({
+        this.replaceMainView(window.authenticated ? 'post' : 'read-post', new app.views.Post({
           model: data
         }).render());
       }, this));
@@ -162,7 +159,7 @@ module.exports = Backbone.View.extend({
     loadConfig(user, repo, branch, _.bind(function () {
       loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         if (err) return this.notify('error', 'The requested resource could not be found.');
-        new views.Preview({
+        new app.views.Preview({
           model: data
         }).render();
       }, this));
@@ -184,7 +181,7 @@ module.exports = Backbone.View.extend({
         data.markdown = _.markdown(data.file);
         data.lang = _.mode(data.file);
 
-        this.replaceMainView('post', new views.Post({
+        this.replaceMainView('post', new app.views.Post({
           model: data
         }).render());
 
@@ -199,7 +196,7 @@ module.exports = Backbone.View.extend({
     // Render out the application view
     $(this.app.render().el).prependTo(this.el);
 
-    this.replaceMainView('notification', new views.Notification(type, message).render());
+    this.replaceMainView('notification', new app.views.Notification(type, message).render());
   },
 
   loading: function (msg) {
@@ -209,5 +206,4 @@ module.exports = Backbone.View.extend({
   loaded: function ()  {
     $('.loading').remove();
   }
-
 });

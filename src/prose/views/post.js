@@ -1,10 +1,10 @@
-var Backbone = require('backbone');
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var chosen = require('chosen-jquery-browserify');
 var jsyaml = require('js-yaml');
 var key = require('keymaster');
 var marked = require('marked');
+var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
 

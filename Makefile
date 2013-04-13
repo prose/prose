@@ -3,43 +3,43 @@
 all: prose.js prose.min.js
 
 clean:
-	rm -f prose*.js && rm -f templates/templates.js
+	rm -f prose*.js && rm -f templates.js
 
 TEMPLATES = $(shell find templates -type f -name '*.html')
-templates/templates.js: $(TEMPLATES)
+templates.js: $(TEMPLATES)
 	node build.js
 
 LIBS = \
-	js/lib/codemirror/codemirror.js \
-	js/lib/codemirror/htmlmixed.js \
-	js/lib/codemirror/clike.js \
-	js/lib/codemirror/yaml.js \
-	js/lib/codemirror/ruby.js \
-	js/lib/codemirror/markdown.js \
-	js/lib/codemirror/xml.js \
-	js/lib/codemirror/javascript.js \
-	js/lib/codemirror/css.js \
-	js/lib/codemirror/gfm.js \
-	js/lib/diff-match-patch.js \
-	js/lib/liquid.js \
-	js/lib/liquid.patch.js \
-	js/lib/github.js
+	src/libs/codemirror/codemirror.js \
+	src/libs/codemirror/htmlmixed.js \
+	src/libs/codemirror/clike.js \
+	src/libs/codemirror/yaml.js \
+	src/libs/codemirror/ruby.js \
+	src/libs/codemirror/markdown.js \
+	src/libs/codemirror/xml.js \
+	src/libs/codemirror/javascript.js \
+	src/libs/codemirror/css.js \
+	src/libs/codemirror/gfm.js \
+	src/libs/diff-match-patch.js \
+	src/libs/liquid.js \
+	src/libs/liquid.patch.js \
+	src/libs/github.js
 
 APPLICATION = \
-	js/prose/views/notification.js \
-	js/prose/views/preview.js \
-	js/prose/views/post.js \
-	js/prose/views/posts.js \
-	js/prose/views/profile.js \
-	js/prose/views/start.js \
-	js/prose/views/application.js \
-	js/prose/views/app.js \
-	js/prose/routers/application.js \
-	js/prose/util.js \
-	js/prose/boot.js \
-	templates/templates.js \
-	js/prose/model.js \
-	js/prose/cookie.js
+	src/prose/views/notification.js \
+	src/prose/views/preview.js \
+	src/prose/views/post.js \
+	src/prose/views/posts.js \
+	src/prose/views/profile.js \
+	src/prose/views/start.js \
+	src/prose/views/application.js \
+	src/prose/views/app.js \
+	src/prose/routers/application.js \
+	src/prose/util.js \
+	src/prose/boot.js \
+	templates.js \
+	src/prose/model.js \
+	src/prose/cookie.js
 
 prose.js: $(APPLICATION)
 	cat $(LIBS) > prose.js

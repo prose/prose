@@ -1,7 +1,8 @@
-var Backbone = require('backbone');
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var chosen = require('chosen-jquery-browserify');
+var Backbone = require('backbone');
+var templates = require(__dirname, 'templates');
 
 module.exports = Backbone.View.extend({
     id: 'app',
@@ -29,7 +30,8 @@ module.exports = Backbone.View.extend({
     },
 
     render: function () {
-      $(this.el).empty().append(templates.app(_.extend(this.model, app.state, {
+      var tmpl = _(templates.app).template();
+      $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
         state: app.state
       })));
 

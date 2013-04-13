@@ -7,8 +7,8 @@ var cookie = require('./cookie');
 
 function github() {
   return new Github({
-    token: cookie('oauth-token'),
-    username: cookie('username'),
+    token: cookie.get('oauth-token'),
+    username: cookie.get('username'),
     auth: 'oauth'
   });
 }
@@ -55,13 +55,13 @@ function getRepo(user, repo) {
 // -------
 
 function authenticate() {
-  if (cookie('oauth-token')) return window.authenticated = true;
+  if (cookie.get('oauth-token')) return window.authenticated = true;
   var match = window.location.href.match(/\?code=([a-z0-9]*)/);
 
   // Handle Code
   if (match) {
     $.getJSON('http://prose-gatekeeper.herokuapp.com/authenticate/' + match[1], function (data) {
-      cookie('oauth-token', data.token);
+      cookie.set('oauth-token', data.token);
       window.authenticated = true;
       // Adjust URL
       var regex = new RegExp("\\?code=" + match[1]);
@@ -76,7 +76,7 @@ function authenticate() {
 
 function logout() {
   window.authenticated = false;
-  cookie('oauth-token', null);
+  cookie.unset('oauth-token');
 }
 
 // Load Application
@@ -92,11 +92,11 @@ function loadApplication(cb) {
       dataType: 'json',
       contentType: 'application/x-www-form-urlencoded',
       headers: {
-        Authorization: 'token ' + cookie('oauth-token')
+        Authorization: 'token ' + cookie.get('oauth-token')
       },
       success: function (res) {
-        cookie('avatar', res.avatar_url);
-        cookie('username', res.login);
+        cookie.set('avatar', res.avatar_url);
+        cookie.set('username', res.login);
         app.username = res.login;
         app.avatar = res.avatar_url;
 

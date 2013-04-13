@@ -1,5 +1,5 @@
-var Backbone = require('backbone');
 var $ = require('jquery-browserify');
+var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
   
