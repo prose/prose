@@ -36,8 +36,9 @@ window.confirmExit = function() {
 };
 
 $(function() {
-  if (window.app.models.authenticate) {
+  if (window.app.models.authenticate()) {
     window.app.models.loadApplication(function(err, data) {
+
       // Start the engines
       window.app.instance = new window.app.views.Application({
         el: '#prose',

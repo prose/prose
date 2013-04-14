@@ -6818,8 +6818,9 @@ window.confirmExit = function() {
 };
 
 $(function() {
-  if (window.app.models.authenticate) {
+  if (window.app.models.authenticate()) {
     window.app.models.loadApplication(function(err, data) {
+
       // Start the engines
       window.app.instance = new window.app.views.Application({
         el: '#prose',
@@ -6837,14 +6838,15 @@ $(function() {
   }
 });
 
-},{"./models":8,"./views/application":9,"./views/app":10,"./views/notification":11,"./views/start":12,"./views/profile":13,"./views/posts":14,"./views/post":15,"./views/preview":16,"../../templates":1,"./router":3,"jquery-browserify":4,"underscore":5,"backbone":6}],8:[function(require,module,exports){
+},{"./models":8,"./views/application":9,"./views/app":10,"./views/notification":11,"./views/start":12,"./views/profile":13,"./views/posts":14,"./views/post":15,"./views/preview":16,"../../templates":1,"./router":3,"underscore":5,"backbone":6,"jquery-browserify":4}],8:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var cookie = require('./cookie');
 var Github = require('../libs/github');
 
-// Gimme a Github object! Please.
+// Set up a GitHub object
+// -------
 
 function github() {
   return new Github({
@@ -6860,608 +6862,492 @@ var currentRepo = {
   instance: null
 };
 
-// Return a random string
-// -------
+module.exports = {
 
-function randomString() {
-  var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
-  var string_length = 8;
-  var randomstring = '';
-  for (var i = 0; i < string_length; i++) {
-    var rnum = Math.floor(Math.random() * chars.length);
-    randomstring += chars.substring(rnum, rnum + 1);
-  }
-  return randomstring;
-}
+  // Smart caching (needed for managing subsequent updates)
+  // -------
 
-// Smart caching (needed for managing subsequent updates)
-// -------
+  getRepo: function(user, repo) {
+    if (currentRepo.user === user && currentRepo.repo === repo) {
+      return currentRepo.instance; // Cached
+    }
 
-function getRepo(user, repo) {
-  if (currentRepo.user === user && currentRepo.repo === repo) {
-    return currentRepo.instance; // Cached
-  }
+    currentRepo = {
+      user: user,
+      repo: repo,
+      instance: github().getRepo(user, repo)
+    };
 
-  currentRepo = {
-    user: user,
-    repo: repo,
-    instance: github().getRepo(user, repo)
-  };
+    return currentRepo.instance;
+  },
 
-  return currentRepo.instance;
-}
+  // Authentication
+  // -------
 
+  authenticate: function() {
+    if (cookie.get('oauth-token')) return window.authenticated = true;
+    var match = window.location.href.match(/\?code=([a-z0-9]*)/);
 
-// Authentication
-// -------
+    // Handle Code
+    if (match) {
+      $.getJSON('http://prose-gatekeeper.herokuapp.com/authenticate/' + match[1], function (data) {
+        cookie.set('oauth-token', data.token);
+        window.authenticated = true;
+        // Adjust URL
+        var regex = new RegExp("\\?code=" + match[1]);
+        window.location.href = window.location.href.replace(regex, '').replace('&state=', '');
+      });
+      return false;
+    } else {
+      return true;
+    }
+  },
 
-function authenticate() {
-  if (cookie.get('oauth-token')) return window.authenticated = true;
-  var match = window.location.href.match(/\?code=([a-z0-9]*)/);
+  logout: function() {
+    window.authenticated = false;
+    cookie.unset('oauth-token');
+  },
 
-  // Handle Code
-  if (match) {
-    $.getJSON('http://prose-gatekeeper.herokuapp.com/authenticate/' + match[1], function (data) {
-      cookie.set('oauth-token', data.token);
-      window.authenticated = true;
-      // Adjust URL
-      var regex = new RegExp("\\?code=" + match[1]);
-      window.location.href = window.location.href.replace(regex, '').replace('&state=', '');
-    });
-    return false;
-  } else {
-    return true;
-  }
-}
+  // Load Application
+  // -------
+  //
+  // Load everything that's needed for the app + header
 
+  loadApplication: function(cb) {
+    if (window.authenticated) {
+      $.ajax({
+        type: 'GET',
+        url: 'https://api.github.com/user',
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded',
+        headers: {
+          Authorization: 'token ' + cookie.get('oauth-token')
+        },
+        success: function (res) {
+          cookie.set('avatar', res.avatar_url);
+          cookie.set('username', res.login);
+          app.username = res.login;
+          app.avatar = res.avatar_url;
 
-function logout() {
-  window.authenticated = false;
-  cookie.unset('oauth-token');
-}
+          var user = github().getUser();
+          var owners = {};
 
-// Load Application
-// -------
-//
-// Load everything that's needed for the app + header
+          user.repos(function (err, repos) {
+            user.orgs(function (err, orgs) {
+              _.each(repos, function (r) {
+                owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r]) : [r];
+              });
 
-function loadApplication(cb) {
-  if (window.authenticated) {
-    $.ajax({
-      type: 'GET',
-      url: 'https://api.github.com/user',
-      dataType: 'json',
-      contentType: 'application/x-www-form-urlencoded',
-      headers: {
-        Authorization: 'token ' + cookie.get('oauth-token')
-      },
-      success: function (res) {
-        cookie.set('avatar', res.avatar_url);
-        cookie.set('username', res.login);
-        app.username = res.login;
-        app.avatar = res.avatar_url;
-
-        var user = github().getUser();
-        var owners = {};
-
-        user.repos(function (err, repos) {
-          user.orgs(function (err, orgs) {
-            _.each(repos, function (r) {
-              owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r]) : [r];
-            });
-
-            cb(null, {
-              'available_repos': repos,
-              'organizations': orgs,
-              'owners': owners
+              cb(null, {
+                'available_repos': repos,
+                'organizations': orgs,
+                'owners': owners
+              });
             });
           });
-        });
 
-      },
-      error: function (err) {
-        cb('error', {
-          'available_repos': [],
-          'owners': {}
+        },
+        error: function (err) {
+          cb('error', {
+            'available_repos': [],
+            'owners': {}
+          });
+        }
+      });
+
+    } else {
+      cb(null, {
+        'available_repos': [],
+        'owners': {}
+      });
+    }
+  },
+
+  // Load Repos
+  // -------
+  //
+  // List all available repositories for a certain user
+
+  loadRepos: function(username, cb) {
+    var user = github().getUser();
+
+    user.show(username, function (err, u) {
+      var owners = {};
+
+      if (u.type && u.type.toLowerCase() === 'user') {
+        user.userRepos(username, function (err, repos) {
+          cb(null, {
+            'repos': repos,
+            user: u
+          });
+        });
+      } else {
+        user.orgRepos(username, function (err, repos) {
+          cb(null, {
+            'repos': repos,
+            user: u
+          });
         });
       }
     });
+  },
 
-  } else {
-    cb(null, {
-      'available_repos': [],
-      'owners': {}
+  // Load Branches
+  // -------
+  //
+  // List all available branches of a repository
+
+  loadBranches: function(user, repo, cb) {
+    repo = this.getRepo(user, repo);
+
+    repo.listBranches(function (err, branches) {
+      cb(err, branches);
     });
-  }
-}
+  },
 
+  // Filter on projects based on a searchstr
+  // -------
+  filterProjects: function(repos, searchstr) {
+    var matchSearch = new RegExp('(' + searchstr + ')', 'i');
+    var listings;
 
-// Load Repos
-// -------
-//
-// List all available repositories for a certain user
+    // Dive into repos.owners and pull each match into a new owners array.
+    if (repos.state.user === app.username) {
 
-function loadRepos(username, cb) {
-  var user = github().getUser();
+      var owners = {};
+      var owner = _(repos.owners).filter(function(ownerRepos, owns) {
+        listings = _(ownerRepos).filter(function(r) {
 
-  user.show(username, function (err, u) {
-    var owners = {};
+          if (searchstr && searchstr.length) {
+            r.name = r.name.replace(matchSearch, '$1');
+          }
 
-    if (u.type && u.type.toLowerCase() === 'user') {
-      user.userRepos(username, function (err, repos) {
-        cb(null, {
-          'repos': repos,
-          user: u
+          if (!searchstr) return true;
+          return r.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
         });
+
+        return owners[owns] = listings;
       });
+
+      return {
+        owners: owners,
+        state: repos.state
+      };
+
     } else {
-      user.orgRepos(username, function (err, repos) {
-        cb(null, {
-          'repos': repos,
-          user: u
-        });
-      });
-    }
-  });
-}
-
-
-// Load Branches
-// -------
-//
-// List all available branches of a repository
-
-function loadBranches(user, repo, cb) {
-  repo = getRepo(user, repo);
-
-  repo.listBranches(function (err, branches) {
-    cb(err, branches);
-  });
-}
-
-// Filter on projects based on a searchstr
-// -------
-function filterProjects(repos, searchstr) {
-  var matchSearch = new RegExp('(' + searchstr + ')', 'i');
-  var listings;
-
-  // Dive into repos.owners and pull each match into a new owners array.
-  if (repos.state.user === app.username) {
-
-    var owners = {};
-    var owner = _(repos.owners).filter(function(ownerRepos, owns) {
-      listings = _(ownerRepos).filter(function(r) {
+      listings = _(repos.repos).filter(function (repo) {
 
         if (searchstr && searchstr.length) {
-          r.name = r.name.replace(matchSearch, '$1');
+          repo.name = repo.name.replace(matchSearch, '$1');
         }
 
         if (!searchstr) return true;
-        return r.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
+        return repo.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
       });
 
-      return owners[owns] = listings;
-    });
+      // TODO sort by name eg: listigs = _(listings).sortby( ...
+      return {
+        repos: listings,
+        state: repos.state
+      };
+    }
+  },
 
-    return {
-      owners: owners,
-      state: repos.state
-    };
+  // Get files from a tree based on a given path and searchstr
+  // -------
 
-  } else {
-    listings = _(repos.repos).filter(function (repo) {
+  getFiles: function(tree, path, searchstr) {
+    // catch undefined path
+    path = path || '';
 
+    var pathMatches = 0;
+
+    function matchesPath(file) {
+      if (file.path === path) return false; // skip current path
+      var length = path.length;
+      // Append trailing slash if path exists and not already present
+      if (length && path[length - 1] !== '/') {
+        path += '/';
+      }
+      var match = file.path.match(new RegExp('^' + path + '(.*)$'));
+      if (match) {
+        return !!searchstr || match[1].split('/').length <= 1;
+      }
+      return false;
+    }
+
+    // Filter
+    var files = _.filter(tree, function (file) {
+      var matchSearch = new RegExp('(' + searchstr + ')', 'i');
+
+      // Depending on search use full path or filename
+      file.name = searchstr ? file.path : _.extractFilename(file.path)[1];
+
+      // Scope name to current path
+      file.name = file.name.replace(new RegExp('^' + path + '/?'), '');
+
+      // Mark match if searchstr not empty
       if (searchstr && searchstr.length) {
-        repo.name = repo.name.replace(matchSearch, '$1');
+        file.name = file.name.replace(matchSearch, "<strong>$1</strong>");
       }
 
-      if (!searchstr) return true;
-      return repo.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
+      function matchesSearch(file, string) {
+        if (!string) return true;
+        // Insert crazy search pattern match algorithm
+        return file.path.toLowerCase().search(string.toLowerCase()) >= 0;
+      }
+
+      if (!matchesPath(file)) return false;
+      pathMatches += 1;
+      return matchesSearch(file, searchstr);
     });
 
-    // TODO sort by name eg: listigs = _(listings).sortby( ...
+    // Sort by name
+    files = _.sortBy(files, function (entry) {
+      return (entry.type === 'tree' ? 'A' : 'B') + entry.path;
+    });
+
     return {
-      repos: listings,
-      state: repos.state
+      tree: tree,
+      files: files,
+      total: pathMatches
     };
-  }
-}
+  },
 
-// Get files from a tree based on a given path and searchstr
-// -------
+  // Load Config
+  // -------
+  //
+  // Load _config.yml or _prose.yml
 
-function getFiles(tree, path, searchstr) {
-  // catch undefined path
-  path = path || '';
-
-  var pathMatches = 0;
-
-  function matchesPath(file) {
-    if (file.path === path) return false; // skip current path
-    var length = path.length;
-    // Append trailing slash if path exists and not already present
-    if (length && path[length - 1] !== '/') {
-      path += '/';
-    }
-    var match = file.path.match(new RegExp('^' + path + '(.*)$'));
-    if (match) {
-      return !!searchstr || match[1].split('/').length <= 1;
-    }
-    return false;
-  }
-
-  // Filter
-  var files = _.filter(tree, function (file) {
-    var matchSearch = new RegExp('(' + searchstr + ')', 'i');
-
-    // Depending on search use full path or filename
-    file.name = searchstr ? file.path : _.extractFilename(file.path)[1];
-
-    // Scope name to current path
-    file.name = file.name.replace(new RegExp('^' + path + '/?'), '');
-
-    // Mark match if searchstr not empty
-    if (searchstr && searchstr.length) {
-      file.name = file.name.replace(matchSearch, "<strong>$1</strong>");
-    }
-
-    function matchesSearch(file, string) {
-      if (!string) return true;
-      // Insert crazy search pattern match algorithm
-      return file.path.toLowerCase().search(string.toLowerCase()) >= 0;
-    }
-
-    if (!matchesPath(file)) return false;
-    pathMatches += 1;
-    return matchesSearch(file, searchstr);
-  });
-
-  // Sort by name
-  files = _.sortBy(files, function (entry) {
-    return (entry.type === 'tree' ? 'A' : 'B') + entry.path;
-  });
-
-  return {
-    tree: tree,
-    files: files,
-    total: pathMatches
-  };
-}
-
-
-// Load Config
-// -------
-//
-// Load _config.yml or _prose.yml
-
-function loadConfig(user, reponame, branch, cb) {
-  var repo = getRepo(user, reponame);
-  repo.contents(branch, '_config.yml', function(err, data) {
-    if (err) return cb(err);
-
-    app.state.config = jsyaml.load(data);
-    cb(err, jsyaml.load(data));
-  });
-}
-
-
-// Load Posts
-// -------
-//
-// List all postings for a given repo+branch+path
-// plus load _config.yml or _prose.yml
-
-function loadPosts(user, reponame, branch, path, cb) {
-  var repo = getRepo(user, reponame);
-  function loadConfig(cb) {
+  loadConfig: function(user, reponame, branch, cb) {
+    var repo = this.getRepo(user, reponame);
     repo.contents(branch, '_config.yml', function(err, data) {
       if (err) return cb(err);
-      cb(null, jsyaml.load(data));
+
+      app.state.config = jsyaml.load(data);
+      cb(err, jsyaml.load(data));
     });
-  }
+  },
 
-  function load(repodata) {
-    loadConfig(function(err, config) {
-      app.state.jekyll = !err;
-      app.state.config = config;
+  // Load Posts
+  // -------
+  //
+  // List all postings for a given repo+branch+path
+  // plus load _config.yml or _prose.yml
 
-      var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
+  loadPosts: function(user, reponame, branch, path, cb) {
+    var that = this;
+    var repo = this.getRepo(user, reponame);
 
-      if (!path) path = root;
+    function loadConfig(cb) {
+      repo.contents(branch, '_config.yml', function(err, data) {
+        if (err) return cb(err);
+        cb(null, jsyaml.load(data));
+      });
+    }
 
-      repo.getTree(branch + '?recursive=true', function (err, tree) {
-        if (err) return cb('Not found');
-        loadBranches(user, reponame, function (err, branches) {
-          if (err) return cb("Branches couldn't be fetched");
-          app.state.path = path ? path : '';
+    function load(repodata) {
+      loadConfig(function(err, config) {
+        app.state.jekyll = !err;
+        app.state.config = config;
 
-          app.state.branches = _.filter(branches, function (b) {
-            return b !== branch;
+        var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
+
+        if (!path) path = root;
+
+        repo.getTree(branch + '?recursive=true', function (err, tree) {
+          if (err) return cb('Not found');
+          that.loadBranches(user, reponame, function (err, branches) {
+            if (err) return cb("Branches couldn't be fetched");
+            app.state.path = path ? path : '';
+
+            app.state.branches = _.filter(branches, function (b) {
+              return b !== branch;
+            });
+            repo.getSha(branch, app.state.path, function (err, sha) {
+              app.state.sha = sha;
+            });
+            cb(null, that.getFiles(tree, path, ''));
           });
-          repo.getSha(branch, app.state.path, function (err, sha) {
-            app.state.sha = sha;
+        });
+      });
+    }
+
+    repo.show(function (err, repodata) {
+      if (!branch) app.state.branch = branch = repodata.master_branch;
+
+      app.state.isPrivate = repodata.private;
+      app.state.permissions = repodata.permissions;
+      load();
+    });
+  },
+
+  // Serialize
+  // -------
+
+  serialize: function(content, metadata) {
+    if (metadata) {
+      return ['---', metadata, '---'].join('\n') + '\n\n' + content;
+    } else {
+      return content;
+    }
+  },
+
+  // Save File
+  // -------
+  //
+  // Store a file to GitHub
+
+  saveFile: function(user, repo, branch, path, content, message, cb) {
+    repo = this.getRepo(user, repo);
+    repo.write(branch, path, content, message, cb);
+  },
+
+  // Fork repository
+  // -------
+  //
+  // Creates a fork for the current user
+
+  forkRepo: function(user, reponame, branch, cb) {
+    var repo = this.getRepo(user, reponame);
+    var forkedRepo = this.getRepo(app.username, reponame);
+
+    // Wait until contents are ready.
+
+    function onceReady(cb) {
+      _.delay(function () {
+        forkedRepo.contents('', function (err, contents) {
+          if (contents) {
+            cb();
+          } else {
+            onceReady(cb);
+          }
+        });
+      }, 500);
+    }
+
+    repo.fork(function (err) {
+      onceReady(function () {
+        repo.getRef('heads/' + branch, function (err, commitSha) {
+          // Create temp branch
+          forkedRepo.listBranches(function (unused, branches) {
+            //find the lowest patch number
+            i = 1;
+            while ($.inArray('prose-patch-' + i, branches) != -1) {
+              i++;
+            }
+            var refSpec = {
+              'ref': 'refs/heads/prose-patch-' + i,
+              'sha': commitSha
+            };
+            forkedRepo.createRef(refSpec, cb);
           });
-          cb(null, getFiles(tree, path, ''));
         });
       });
     });
-  }
+  },
 
-  repo.show(function (err, repodata) {
-    if (!branch) app.state.branch = branch = repodata.master_branch;
+  // New pull request
+  // -------
+  //
+  // Creates a new pull request
 
-    app.state.isPrivate = repodata.private;
-    app.state.permissions = repodata.permissions;
-    load();
-  });
-}
+  createPullRequest: function(user, repo, pull, cb) {
+    repo = this.getRepo(user, repo);
+    repo.createPullRequest(pull, function (err) {
+      cb();
+    });
+  },
 
-// Serialize
-// -------
+  // Patch File
+  // -------
+  //
+  // Send a pull request on GitHub
 
-function serialize(content, metadata) {
-  if (metadata) {
-    return ['---', metadata, '---'].join('\n') + '\n\n' + content;
-  } else {
-    return content;
-  }
-}
-
-
-// Save File
-// -------
-//
-// Store a file to GitHub
-
-function saveFile(user, repo, branch, path, content, message, cb) {
-  repo = getRepo(user, repo);
-  repo.write(branch, path, content, message, cb);
-}
-
-
-// Fork repository
-// -------
-//
-// Creates a fork for the current user
-
-function forkRepo(user, reponame, branch, cb) {
-  var repo = getRepo(user, reponame);
-  var forkedRepo = getRepo(app.username, reponame);
-
-  // Wait until contents are ready.
-
-  function onceReady(cb) {
-    _.delay(function () {
-      forkedRepo.contents('', function (err, contents) {
-        if (contents) {
-          cb();
-        } else {
-          onceReady(cb);
-        }
-      });
-    }, 500);
-  }
-
-  repo.fork(function (err) {
-    onceReady(function () {
-      repo.getRef('heads/' + branch, function (err, commitSha) {
-        // Create temp branch
-        forkedRepo.listBranches(function (unused, branches) {
-          //find the lowest patch number
-          i = 1;
-          while ($.inArray('prose-patch-' + i, branches) != -1) {
-            i++;
-          }
-          var refSpec = {
-            'ref': 'refs/heads/prose-patch-' + i,
-            'sha': commitSha
-          };
-          forkedRepo.createRef(refSpec, cb);
-        });
+  patchFile: function(user, repo, branch, path, content, message, cb) {
+    var that = this;
+    this.forkRepo(user, repo, branch, function (err, info) {
+      branch = info.ref.substring(info.ref.lastIndexOf('/') + 1);
+      that.saveFile(app.username, repo, branch, path, content, message, function (err) {
+        if (err) return cb(err);
+        var pull = {
+          title: message,
+          body: 'This pull request has been automatically generated by prose.io.',
+          base: app.state.branch,
+          head: app.username + ':' + branch
+        };
+        that.createPullRequest(app.state.user, app.state.repo, pull, cb);
       });
     });
-  });
-}
+  },
 
+  // Delete Post
+  // -------
 
-// New pull request
-// -------
-//
-// Creates a new pull request
+  deletePost: function(user, repo, branch, path, file, cb) {
+    repo = this.getRepo(user, repo);
+    repo.remove(branch, _.filepath(path, file), cb);
+  },
 
-function createPullRequest(user, repo, pull, cb) {
-  repo = getRepo(user, repo);
-  repo.createPullRequest(pull, function (err) {
-    cb();
-  });
-}
+  // Move Post
+  // -------
 
+  movePost: function(user, repo, branch, path, newPath, cb) {
+    repo = this.getRepo(user, repo);
+    repo.move(branch, path, newPath, cb);
+  },
 
-// Patch File
-// -------
-//
-// Send a pull request on GitHub
+  // New Post
+  // -------
+  //
+  // Prepare new empty post
 
-function patchFile(user, repo, branch, path, content, message, cb) {
-  forkRepo(user, repo, branch, function (err, info) {
-    branch = info.ref.substring(info.ref.lastIndexOf('/') + 1);
-    saveFile(app.username, repo, branch, path, content, message, function (err) {
-      if (err) return cb(err);
-      var pull = {
-        title: message,
-        body: 'This pull request has been automatically generated by prose.io.',
-        base: app.state.branch,
-        head: app.username + ':' + branch
-      };
-      createPullRequest(app.state.user, app.state.repo, pull, cb);
-    });
-  });
-}
-
-
-// Delete Post
-// -------
-
-function deletePost(user, repo, branch, path, file, cb) {
-  repo = getRepo(user, repo);
-  repo.remove(branch, _.filepath(path, file), cb);
-}
-
-
-// Move Post
-// -------
-
-function movePost(user, repo, branch, path, newPath, cb) {
-  repo = getRepo(user, repo);
-  repo.move(branch, path, newPath, cb);
-}
-
-
-// New Post
-// -------
-//
-// Prepare new empty post
-
-function emptyPost(user, repo, branch, path, cb) {
-  var file = new Date().format('Y-m-d') + '-your-filename.md';
-  var rawMetadata = 'layout: default\npublished: false';
-  var defaultMetadata;
-  var metadata = {
-    'layout': 'default',
-    'published': false
-  };
-
-  var cfg = app.state.config;
-  if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
-    rawMetadata = cfg.prose.metadata[path];
-    if (typeof rawMetadata === 'object') {
-      defaultMetadata = rawMetadata;
-
-      _.each(rawMetadata, function(data, key) {
-        var selected;
-
-        if (data && typeof data.field === 'object') {
-          selected = data.field.selected;
-
-          switch(data.field.element) {
-            case 'text':
-              metadata[data.name] = data.field.value;
-              break;
-            case 'select':
-            case 'multiselect':
-              metadata[data.name] = selected ? selected : null;
-              break;
-          }
-        } else {
-          metadata[key] = data;
-        }
-      });
-    } else if (typeof rawMetadata === 'string') {
-      try {
-        defaultMetadata = jsyaml.load(rawMetadata);
-
-        _.each(rawMetadata, function(data, key) {
-          metadata[key] = data;
-        });
-
-        if (metadata.date === 'CURRENT_DATETIME') {
-          var current = (new Date()).format('Y-m-d H:i');
-          metadata.date = current;
-          rawMetadata = rawMetadata.replace('CURRENT_DATETIME', current);
-        }
-      } catch(err) {
-        console.log('ERROR encoding YAML');
-        // No-op
-      }
-    }
-  }
-
-  // If ?file= in path, use it as file name
-  if (path.indexOf('?file=') !== -1) {
-    file = path.split('?file=')[1];
-    path = path.split('?file=')[0].replace(/\/$/, '');
-  }
-
-  cb(null, {
-    'metadata': metadata,
-    'raw_metadata': rawMetadata,
-    'default_metadata': defaultMetadata,
-    'content': '# How does it work?\n\nEnter Text in Markdown format.',
-    'repo': repo,
-    'path': path,
-    'published': false,
-    'persisted': false,
-    'writeable': true,
-    'file': file
-  });
-}
-
-// Load Post
-// -------
-//
-// List all postings for a given repository
-// Looks into _posts/blog
-
-function loadPost(user, repo, branch, path, file, cb) {
-  repo = getRepo(user, repo);
-
-  repo.contents(branch, path ? path + '/' + file : file, function(err, data, commit) {
-    if (err) return cb(err);
-
-    // Given a YAML front matter, determines published or not
-
-    function published(metadata) {
-      return !!metadata.match(/published: true/);
-    }
-
-    // Extract YAML from a post, trims whitespace
-
-    function parse(content) {
-      content = content.replace(/\r\n/g, '\n'); // normalize a little bit
-
-      function writeable() {
-        return !!(app.state.permissions && app.state.permissions.push);
-      }
-
-      if (!_.hasMetadata(content)) return {
-        raw_metadata: '',
-        content: content,
-        published: false,
-        writeable: writeable()
-      };
-
-      var res = {
-        raw_metadata: '',
-        published: false,
-        writeable: writeable()
-      };
-      res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
-        res.raw_metadata = frontmatter;
-        res.metadata = jsyaml.load(frontmatter);
-        res.published = published(frontmatter);
-        return '';
-      }).trim();
-      return res;
-    }
-
-    var post = parse(data);
-
-    var rawMetadata;
+  emptyPost: function(user, repo, branch, path, cb) {
+    var file = new Date().format('Y-m-d') + '-your-filename.md';
+    var rawMetadata = 'layout: default\npublished: false';
     var defaultMetadata;
+    var metadata = {
+      'layout': 'default',
+      'published': false
+    };
 
-    // load default metadata
     var cfg = app.state.config;
     if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
       rawMetadata = cfg.prose.metadata[path];
       if (typeof rawMetadata === 'object') {
         defaultMetadata = rawMetadata;
+
+        _.each(rawMetadata, function(data, key) {
+          var selected;
+
+          if (data && typeof data.field === 'object') {
+            selected = data.field.selected;
+
+            switch(data.field.element) {
+              case 'text':
+                metadata[data.name] = data.field.value;
+                break;
+              case 'select':
+              case 'multiselect':
+                metadata[data.name] = selected ? selected : null;
+                break;
+            }
+          } else {
+            metadata[key] = data;
+          }
+        });
       } else if (typeof rawMetadata === 'string') {
         try {
           defaultMetadata = jsyaml.load(rawMetadata);
-          if (defaultMetadata.date === "CURRENT_DATETIME") {
+
+          _.each(rawMetadata, function(data, key) {
+            metadata[key] = data;
+          });
+
+          if (metadata.date === 'CURRENT_DATETIME') {
             var current = (new Date()).format('Y-m-d H:i');
-            defaultMetadata.date = current;
-            rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+            metadata.date = current;
+            rawMetadata = rawMetadata.replace('CURRENT_DATETIME', current);
           }
         } catch(err) {
           console.log('ERROR encoding YAML');
@@ -7470,72 +7356,112 @@ function loadPost(user, repo, branch, path, file, cb) {
       }
     }
 
-    cb(err, _.extend(post, {
+    // If ?file= in path, use it as file name
+    if (path.indexOf('?file=') !== -1) {
+      file = path.split('?file=')[1];
+      path = path.split('?file=')[0].replace(/\/$/, '');
+    }
+
+    cb(null, {
+      'metadata': metadata,
+      'raw_metadata': rawMetadata,
       'default_metadata': defaultMetadata,
-      'sha': commit,
-      'markdown': _.markdown(file),
-      'jekyll': _.hasMetadata(data),
+      'content': '# How does it work?\n\nEnter Text in Markdown format.',
       'repo': repo,
       'path': path,
-      'file': file,
-      'persisted': true
-    }));
-  });
-}
-
-// TODO module.exports = { the functions above instead of this.
-module.exports = {
-  authenticate: authenticate(),
-
-  loadApplication: function(cb) {
-    return loadApplication(cb);
+      'published': false,
+      'persisted': false,
+      'writeable': true,
+      'file': file
+    });
   },
 
-  loadRepos: function(username, cb) {
-    return loadRepos(username, cb);
-  },
-
-  filterProjects: function(repos, searchstr) {
-    return filterProjects(repos, searchstr);
-  },
-
-  loadPosts: function(user, reponame, branch, path, cb) {
-    return loadPosts(user, reponame, branch, path, cb);
-  },
-
-  getFiles: function(tree, path, searchstr) {
-    return getFiles(tree, path, searchstr);
-  },
+  // Load Post
+  // -------
+  //
+  // List all postings for a given repository
+  // Looks into _posts/blog
 
   loadPost: function(user, repo, branch, path, file, cb) {
-    return loadPost(user, repo, branch, path, file, cb);
-  },
+    repo = this.getRepo(user, repo);
 
-  serialize: function(content, metadata) {
-    return serialize(content, metadata);
-  },
+    repo.contents(branch, path ? path + '/' + file : file, function(err, data, commit) {
+      if (err) return cb(err);
 
-  saveFile: function(user, repo, branch, path, content, message, cb) {
-    return saveFile(user, repo, branch, path, content, message, cb);
-  },
+      // Given a YAML front matter, determines published or not
 
-  emptyPost: function(user, repo, branch, path, cb) {
-    return emptyPost(user, repo, branch, path, cb);
-  },
+      function published(metadata) {
+        return !!metadata.match(/published: true/);
+      }
 
-  deletePost: function(user, repo, branch, path, file, cb) {
-    return deletePost(user, repo, branch, path, file, cb);
-  },
+      // Extract YAML from a post, trims whitespace
 
-  movePost: function(user, repo, branch, path, newPath, cb) {
-    return movePost(user, repo, branch, path, newPath, cb);
-  },
+      function parse(content) {
+        content = content.replace(/\r\n/g, '\n'); // normalize a little bit
 
-  logout: function() {
-    return logout();
+        function writeable() {
+          return !!(app.state.permissions && app.state.permissions.push);
+        }
+
+        if (!_.hasMetadata(content)) return {
+          raw_metadata: '',
+          content: content,
+          published: false,
+          writeable: writeable()
+        };
+
+        var res = {
+          raw_metadata: '',
+          published: false,
+          writeable: writeable()
+        };
+        res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
+          res.raw_metadata = frontmatter;
+          res.metadata = jsyaml.load(frontmatter);
+          res.published = published(frontmatter);
+          return '';
+        }).trim();
+        return res;
+      }
+
+      var post = parse(data);
+      var rawMetadata;
+      var defaultMetadata;
+
+      // load default metadata
+      var cfg = app.state.config;
+      if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
+        rawMetadata = cfg.prose.metadata[path];
+        if (typeof rawMetadata === 'object') {
+          defaultMetadata = rawMetadata;
+        } else if (typeof rawMetadata === 'string') {
+          try {
+            defaultMetadata = jsyaml.load(rawMetadata);
+            if (defaultMetadata.date === "CURRENT_DATETIME") {
+              var current = (new Date()).format('Y-m-d H:i');
+              defaultMetadata.date = current;
+              rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+            }
+          } catch(err) {
+            console.log('ERROR encoding YAML');
+            // No-op
+          }
+        }
+      }
+
+      cb(err, _.extend(post, {
+        'default_metadata': defaultMetadata,
+        'sha': commit,
+        'markdown': _.markdown(file),
+        'jekyll': _.hasMetadata(data),
+        'repo': repo,
+        'path': path,
+        'file': file,
+        'persisted': true
+      }));
+    });
   }
 };
-
 
 },{"./cookie":2,"../libs/github":17,"jquery-browserify":4,"underscore":5,"js-yaml":18}],17:[function(require,module,exports){
 // Github.js 0.7.0
@@ -20225,7 +20151,147 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"underscore":5,"js-yaml":18,"backbone":6}],15:[function(require,module,exports){
+},{"underscore":5,"js-yaml":18,"backbone":6}],14:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+
+  id: 'posts',
+
+  events: {
+    'hover a.item': 'activeListing',
+    'keyup #filter': 'search'
+  },
+
+  initialize: function () {
+    if (!window.shortcutsRegistered) {
+      key('enter', _.bind(function (e, handler) {
+        this.goToFile();
+      }, this));
+      key('up, down', _.bind(function (e, handler) {
+        this.pageListing(handler.key);
+        e.preventDefault();
+        e.stopPropagation();
+      }, this));
+      window.shortcutsRegistered = true;
+    }
+  },
+
+  render: function () {
+    var that = this;
+    var data = _.extend(this.model, app.state, {
+      currentPath: app.state.path
+    });
+
+    // Ping `views/app.js` to let know we should swap out the sidebar
+    this.eventRegister = app.eventRegister;
+    this.eventRegister.trigger('sidebarContext', data, 'posts');
+    var isPrivate = app.state.isPrivate ? 'private' : '';
+
+    var header = {
+      avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
+      parent: data.user,
+      parentUrl: data.user,
+      title: data.repo,
+      titleUrl: data.user + '/' + data.repo,
+      alterable: false
+    }
+
+    this.eventRegister.trigger('headerContext', header);
+
+    var tmpl = _(window.app.templates.posts).template();
+    $(this.el).empty().append(tmpl(data));
+
+    _.delay(function () {
+      that.renderResults();
+      $('#filter').focus();
+      utils.shadowScroll($('#files'), $('.breadcrumb'));
+      utils.shadowScroll($('#files'), $('.content-search'));
+    }, 1);
+
+    return this;
+  },
+
+  pageListing: function (handler) {
+
+    var item, index;
+
+    if ($('.item').hasClass('active')) {
+      index = parseInt($('.item.active').data('index'), 10);
+      $('.item.active').removeClass('active');
+
+      if (handler === 'up') {
+        item = index - 1;
+        $('.item[data-index=' + item + ']').addClass('active');
+      } else {
+        item = index + 1;
+        $('.item[data-index=' + item + ']').addClass('active');
+      }
+    } else {
+      $('.item[data-index=0]').addClass('active');
+    }
+  },
+
+  goToFile: function () {
+    var path = $('.item.active').attr('href');
+    router.navigate(path, true);
+  },
+
+  search: function (e) {
+    if (e.which === 27) { // ESC
+      _.delay(_.bind(function () {
+        $('#filter', this.el).val('');
+        this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
+        this.renderResults();
+      }, this), 10);
+
+    } else if (e.which === 40 && $('.item').length > 0) {
+      this.pageListing('down'); // Arrow Down
+      e.preventDefault();
+      e.stopPropagation();
+      $('#filter').blur();
+
+    } else {
+      _.delay(_.bind(function () {
+        var searchstr = $('#filter', this.el).val();
+        this.model = window.app.models.getFiles(this.model.tree, app.state.path, searchstr);
+        this.renderResults();
+      }, this), 10);
+    }
+  },
+
+  renderResults: function () {
+    var tmpl = _(window.app.templates.files).template();
+    this.$('#files').html(tmpl(_.extend(this.model, app.state, {
+      currentPath: app.state.path
+    })));
+  },
+
+  // Creates human readable versions of _posts/paths
+  semantifyPaths: function (paths) {
+    return _.map(paths, function (path) {
+      return {
+        path: path,
+        name: path
+      }
+    });
+  },
+
+  activeListing: function (e) {
+    $listings = $('.item', this.el);
+    $listing = $(e.target, this.el);
+
+    $listings.removeClass('active');
+    $listing.addClass('active');
+  }
+});
+
+},{".././util":19,"jquery-browserify":4,"underscore":5,"js-yaml":18,"keymaster":23,"backbone":6}],15:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -20522,7 +20588,7 @@ module.exports = Backbone.View.extend({
           that.model.content = that.prevContent;
           that.editor.setValue(that.prevContent);
 
-          patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
+          window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
                 that.$('.button.save').html('SUBMIT CHANGE');
@@ -20848,147 +20914,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{"jquery-browserify":4,"chosen-jquery-browserify":23,"underscore":5,"js-yaml":18,"keymaster":24,"marked":20,"backbone":6}],14:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-
-  id: 'posts',
-
-  events: {
-    'hover a.item': 'activeListing',
-    'keyup #filter': 'search'
-  },
-
-  initialize: function () {
-    if (!window.shortcutsRegistered) {
-      key('enter', _.bind(function (e, handler) {
-        this.goToFile();
-      }, this));
-      key('up, down', _.bind(function (e, handler) {
-        this.pageListing(handler.key);
-        e.preventDefault();
-        e.stopPropagation();
-      }, this));
-      window.shortcutsRegistered = true;
-    }
-  },
-
-  render: function () {
-    var that = this;
-    var data = _.extend(this.model, app.state, {
-      currentPath: app.state.path
-    });
-
-    // Ping `views/app.js` to let know we should swap out the sidebar
-    this.eventRegister = app.eventRegister;
-    this.eventRegister.trigger('sidebarContext', data, 'posts');
-    var isPrivate = app.state.isPrivate ? 'private' : '';
-
-    var header = {
-      avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
-      parent: data.user,
-      parentUrl: data.user,
-      title: data.repo,
-      titleUrl: data.user + '/' + data.repo,
-      alterable: false
-    }
-
-    this.eventRegister.trigger('headerContext', header);
-
-    var tmpl = _(window.app.templates.posts).template();
-    $(this.el).empty().append(tmpl(data));
-
-    _.delay(function () {
-      that.renderResults();
-      $('#filter').focus();
-      utils.shadowScroll($('#files'), $('.breadcrumb'));
-      utils.shadowScroll($('#files'), $('.content-search'));
-    }, 1);
-
-    return this;
-  },
-
-  pageListing: function (handler) {
-
-    var item, index;
-
-    if ($('.item').hasClass('active')) {
-      index = parseInt($('.item.active').data('index'), 10);
-      $('.item.active').removeClass('active');
-
-      if (handler === 'up') {
-        item = index - 1;
-        $('.item[data-index=' + item + ']').addClass('active');
-      } else {
-        item = index + 1;
-        $('.item[data-index=' + item + ']').addClass('active');
-      }
-    } else {
-      $('.item[data-index=0]').addClass('active');
-    }
-  },
-
-  goToFile: function () {
-    var path = $('.item.active').attr('href');
-    router.navigate(path, true);
-  },
-
-  search: function (e) {
-    if (e.which === 27) { // ESC
-      _.delay(_.bind(function () {
-        $('#filter', this.el).val('');
-        this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
-        this.renderResults();
-      }, this), 10);
-
-    } else if (e.which === 40 && $('.item').length > 0) {
-      this.pageListing('down'); // Arrow Down
-      e.preventDefault();
-      e.stopPropagation();
-      $('#filter').blur();
-
-    } else {
-      _.delay(_.bind(function () {
-        var searchstr = $('#filter', this.el).val();
-        this.model = window.app.models.getFiles(this.model.tree, app.state.path, searchstr);
-        this.renderResults();
-      }, this), 10);
-    }
-  },
-
-  renderResults: function () {
-    var tmpl = _(window.app.templates.files).template();
-    this.$('#files').html(tmpl(_.extend(this.model, app.state, {
-      currentPath: app.state.path
-    })));
-  },
-
-  // Creates human readable versions of _posts/paths
-  semantifyPaths: function (paths) {
-    return _.map(paths, function (path) {
-      return {
-        path: path,
-        name: path
-      }
-    });
-  },
-
-  activeListing: function (e) {
-    $listings = $('.item', this.el);
-    $listing = $(e.target, this.el);
-
-    $listings.removeClass('active');
-    $listing.addClass('active');
-  }
-});
-
-},{".././util":19,"jquery-browserify":4,"underscore":5,"js-yaml":18,"keymaster":24,"backbone":6}],13:[function(require,module,exports){
+},{"jquery-browserify":4,"chosen-jquery-browserify":24,"underscore":5,"js-yaml":18,"keymaster":23,"marked":20,"backbone":6}],13:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21244,7 +21170,7 @@ module.exports = Backbone.View.extend({
 
   preview: function (user, repo, branch, path, file, mode) {
     this.loading('Preview post ...');
-    loadConfig(user, repo, branch, _.bind(function () {
+    window.app.models.loadConfig(user, repo, branch, _.bind(function () {
       window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         if (err) return this.notify('error', 'The requested resource could not be found.');
         new window.app.views.Preview({
@@ -21469,6 +21395,162 @@ module.exports = Backbone.View.extend({
 module.exports = require('./lib/js-yaml.js');
 
 },{"./lib/js-yaml.js":25}],23:[function(require,module,exports){
+(function(){//     keymaster.js
+//     (c) 2011 Thomas Fuchs
+//     keymaster.js may be freely distributed under the MIT license.
+
+;(function(global){
+  var k,
+    _handlers = {},
+    _mods = { 16: false, 18: false, 17: false, 91: false },
+    _scope = 'all',
+    // modifier keys
+    _MODIFIERS = {
+      '⇧': 16, shift: 16,
+      '⌥': 18, alt: 18, option: 18,
+      '⌃': 17, ctrl: 17, control: 17,
+      '⌘': 91, command: 91
+    },
+    // special keys
+    _MAP = {
+      backspace: 8, tab: 9, clear: 12,
+      enter: 13, 'return': 13,
+      esc: 27, escape: 27, space: 32,
+      left: 37, up: 38,
+      right: 39, down: 40,
+      del: 46, 'delete': 46,
+      home: 36, end: 35,
+      pageup: 33, pagedown: 34,
+      ',': 188, '.': 190, '/': 191,
+      '`': 192, '-': 189, '=': 187,
+      ';': 186, '\'': 222,
+      '[': 219, ']': 221, '\\': 220
+    };
+
+  for(k=1;k<20;k++) _MODIFIERS['f'+k] = 111+k;
+
+  // IE doesn't support Array#indexOf, so have a simple replacement
+  function index(array, item){
+    var i = array.length;
+    while(i--) if(array[i]===item) return i;
+    return -1;
+  }
+
+  // handle keydown event
+  function dispatch(event){
+    var key, tagName, handler, k, i, modifiersMatch;
+    tagName = (event.target || event.srcElement).tagName;
+    key = event.keyCode;
+
+    // if a modifier key, set the key.<modifierkeyname> property to true and return
+    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
+    if(key in _mods) {
+      _mods[key] = true;
+      // 'assignKey' from inside this closure is exported to window.key
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
+      return;
+    }
+
+    // ignore keypressed in any elements that support keyboard data input
+    if (tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA') return;
+
+    // abort if no potentially matching shortcuts found
+    if (!(key in _handlers)) return;
+
+    // for each potential shortcut
+    for (i = 0; i < _handlers[key].length; i++) {
+      handler = _handlers[key][i];
+
+      // see if it's in the current scope
+      if(handler.scope == _scope || handler.scope == 'all'){
+        // check if modifiers match if any
+        modifiersMatch = handler.mods.length > 0;
+        for(k in _mods)
+          if((!_mods[k] && index(handler.mods, +k) > -1) ||
+            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
+        // call the handler and stop the event if neccessary
+        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
+          if(handler.method(event, handler)===false){
+            if(event.preventDefault) event.preventDefault();
+              else event.returnValue = false;
+            if(event.stopPropagation) event.stopPropagation();
+            if(event.cancelBubble) event.cancelBubble = true;
+          }
+        }
+      }
+	}
+  };
+
+  // unset modifier keys on keyup
+  function clearModifier(event){
+    var key = event.keyCode, k;
+    if(key == 93 || key == 224) key = 91;
+    if(key in _mods) {
+      _mods[key] = false;
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
+    }
+  };
+
+  // parse and assign shortcut
+  function assignKey(key, scope, method){
+    var keys, mods, i, mi;
+    if (method === undefined) {
+      method = scope;
+      scope = 'all';
+    }
+    key = key.replace(/\s/g,'');
+    keys = key.split(',');
+
+    if((keys[keys.length-1])=='')
+      keys[keys.length-2] += ',';
+    // for each shortcut
+    for (i = 0; i < keys.length; i++) {
+      // set modifier keys if any
+      mods = [];
+      key = keys[i].split('+');
+      if(key.length > 1){
+        mods = key.slice(0,key.length-1);
+        for (mi = 0; mi < mods.length; mi++)
+          mods[mi] = _MODIFIERS[mods[mi]];
+        key = [key[key.length-1]];
+      }
+      // convert to keycode and...
+      key = key[0]
+      key = _MAP[key] || key.toUpperCase().charCodeAt(0);
+      // ...store handler
+      if (!(key in _handlers)) _handlers[key] = [];
+      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
+    }
+  };
+
+  // initialize key.<modifier> to false
+  for(k in _MODIFIERS) assignKey[k] = false;
+
+  // set current scope (default 'all')
+  function setScope(scope){ _scope = scope || 'all' };
+
+  // cross-browser events
+  function addEvent(object, event, method) {
+    if (object.addEventListener)
+      object.addEventListener(event, method, false);
+    else if(object.attachEvent)
+      object.attachEvent('on'+event, function(){ method(window.event) });
+  };
+
+  // set the handlers globally on document
+  addEvent(document, 'keydown', dispatch);
+  addEvent(document, 'keyup', clearModifier);
+
+  // set window.key and window.key.setScope
+  global.key = assignKey;
+  global.key.setScope = setScope;
+
+  if(typeof module !== 'undefined') module.exports = key;
+
+})(this);
+
+})()
+},{}],24:[function(require,module,exports){
 (function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -22546,162 +22628,6 @@ module.exports = require('./lib/js-yaml.js');
 
 }).call(this);
 
-},{}],24:[function(require,module,exports){
-(function(){//     keymaster.js
-//     (c) 2011 Thomas Fuchs
-//     keymaster.js may be freely distributed under the MIT license.
-
-;(function(global){
-  var k,
-    _handlers = {},
-    _mods = { 16: false, 18: false, 17: false, 91: false },
-    _scope = 'all',
-    // modifier keys
-    _MODIFIERS = {
-      '⇧': 16, shift: 16,
-      '⌥': 18, alt: 18, option: 18,
-      '⌃': 17, ctrl: 17, control: 17,
-      '⌘': 91, command: 91
-    },
-    // special keys
-    _MAP = {
-      backspace: 8, tab: 9, clear: 12,
-      enter: 13, 'return': 13,
-      esc: 27, escape: 27, space: 32,
-      left: 37, up: 38,
-      right: 39, down: 40,
-      del: 46, 'delete': 46,
-      home: 36, end: 35,
-      pageup: 33, pagedown: 34,
-      ',': 188, '.': 190, '/': 191,
-      '`': 192, '-': 189, '=': 187,
-      ';': 186, '\'': 222,
-      '[': 219, ']': 221, '\\': 220
-    };
-
-  for(k=1;k<20;k++) _MODIFIERS['f'+k] = 111+k;
-
-  // IE doesn't support Array#indexOf, so have a simple replacement
-  function index(array, item){
-    var i = array.length;
-    while(i--) if(array[i]===item) return i;
-    return -1;
-  }
-
-  // handle keydown event
-  function dispatch(event){
-    var key, tagName, handler, k, i, modifiersMatch;
-    tagName = (event.target || event.srcElement).tagName;
-    key = event.keyCode;
-
-    // if a modifier key, set the key.<modifierkeyname> property to true and return
-    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
-    if(key in _mods) {
-      _mods[key] = true;
-      // 'assignKey' from inside this closure is exported to window.key
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
-      return;
-    }
-
-    // ignore keypressed in any elements that support keyboard data input
-    if (tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA') return;
-
-    // abort if no potentially matching shortcuts found
-    if (!(key in _handlers)) return;
-
-    // for each potential shortcut
-    for (i = 0; i < _handlers[key].length; i++) {
-      handler = _handlers[key][i];
-
-      // see if it's in the current scope
-      if(handler.scope == _scope || handler.scope == 'all'){
-        // check if modifiers match if any
-        modifiersMatch = handler.mods.length > 0;
-        for(k in _mods)
-          if((!_mods[k] && index(handler.mods, +k) > -1) ||
-            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
-        // call the handler and stop the event if neccessary
-        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
-          if(handler.method(event, handler)===false){
-            if(event.preventDefault) event.preventDefault();
-              else event.returnValue = false;
-            if(event.stopPropagation) event.stopPropagation();
-            if(event.cancelBubble) event.cancelBubble = true;
-          }
-        }
-      }
-	}
-  };
-
-  // unset modifier keys on keyup
-  function clearModifier(event){
-    var key = event.keyCode, k;
-    if(key == 93 || key == 224) key = 91;
-    if(key in _mods) {
-      _mods[key] = false;
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
-    }
-  };
-
-  // parse and assign shortcut
-  function assignKey(key, scope, method){
-    var keys, mods, i, mi;
-    if (method === undefined) {
-      method = scope;
-      scope = 'all';
-    }
-    key = key.replace(/\s/g,'');
-    keys = key.split(',');
-
-    if((keys[keys.length-1])=='')
-      keys[keys.length-2] += ',';
-    // for each shortcut
-    for (i = 0; i < keys.length; i++) {
-      // set modifier keys if any
-      mods = [];
-      key = keys[i].split('+');
-      if(key.length > 1){
-        mods = key.slice(0,key.length-1);
-        for (mi = 0; mi < mods.length; mi++)
-          mods[mi] = _MODIFIERS[mods[mi]];
-        key = [key[key.length-1]];
-      }
-      // convert to keycode and...
-      key = key[0]
-      key = _MAP[key] || key.toUpperCase().charCodeAt(0);
-      // ...store handler
-      if (!(key in _handlers)) _handlers[key] = [];
-      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
-    }
-  };
-
-  // initialize key.<modifier> to false
-  for(k in _MODIFIERS) assignKey[k] = false;
-
-  // set current scope (default 'all')
-  function setScope(scope){ _scope = scope || 'all' };
-
-  // cross-browser events
-  function addEvent(object, event, method) {
-    if (object.addEventListener)
-      object.addEventListener(event, method, false);
-    else if(object.attachEvent)
-      object.attachEvent('on'+event, function(){ method(window.event) });
-  };
-
-  // set the handlers globally on document
-  addEvent(document, 'keydown', dispatch);
-  addEvent(document, 'keyup', clearModifier);
-
-  // set window.key and window.key.setScope
-  global.key = assignKey;
-  global.key.setScope = setScope;
-
-  if(typeof module !== 'undefined') module.exports = key;
-
-})(this);
-
-})()
 },{}],22:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
@@ -24750,7 +24676,91 @@ module.exports = YAMLException;
 },{}],36:[function(require,module,exports){
 // nothing to see here... no file methods for the browser
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":34}],27:[function(require,module,exports){
 'use strict';
 
 
@@ -26740,91 +26750,7 @@ function safeDump(input, options) {
 module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
-},{"./common":37,"./exception":34,"./schema/default":33,"./schema/safe":32}],29:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":34}],30:[function(require,module,exports){
+},{"./common":37,"./exception":34,"./schema/default":33,"./schema/safe":32}],30:[function(require,module,exports){
 'use strict';
 
 
@@ -26969,7 +26895,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../type/str":39,"../schema":30,"../type/seq":40,"../type/map":41}],32:[function(require,module,exports){
+},{"../type/str":39,"../type/seq":40,"../type/map":41,"../schema":30}],32:[function(require,module,exports){
 'use strict';
 
 
@@ -27910,6 +27836,26 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
   }
 });
 
+},{"../common":37,"../type":29}],47:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
 },{"../common":37,"../type":29}],48:[function(require,module,exports){
 (function(){// Modified from:
 // https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
@@ -28031,27 +27977,7 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
 });
 
 })()
-},{"buffer":57,"../common":37,"../type":29}],47:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":37,"../type":29}],49:[function(require,module,exports){
+},{"buffer":57,"../common":37,"../type":29}],49:[function(require,module,exports){
 'use strict';
 
 
@@ -28182,37 +28108,7 @@ module.exports = new Type('tag:yaml.org,2002:set', {
   }
 });
 
-},{"../common":37,"../type":29}],52:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../../type');
-
-
-function resolveJavascriptUndefined(/*object, explicit*/) {
-  var undef;
-
-  return undef;
-}
-
-
-function representJavascriptUndefined(/*object, explicit*/) {
-  return '';
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/undefined', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptUndefined
-  },
-  dumper: {
-    kind: 'undefined',
-    representer: representJavascriptUndefined
-  }
-});
-
-},{"../../type":29}],53:[function(require,module,exports){
+},{"../type":29,"../common":37}],53:[function(require,module,exports){
 (function(){'use strict';
 
 
@@ -28271,7 +28167,37 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
 });
 
 })()
-},{"../../common":37,"../../type":29}],54:[function(require,module,exports){
+},{"../../common":37,"../../type":29}],52:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../../type');
+
+
+function resolveJavascriptUndefined(/*object, explicit*/) {
+  var undef;
+
+  return undef;
+}
+
+
+function representJavascriptUndefined(/*object, explicit*/) {
+  return '';
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/undefined', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptUndefined
+  },
+  dumper: {
+    kind: 'undefined',
+    representer: representJavascriptUndefined
+  }
+});
+
+},{"../../type":29}],54:[function(require,module,exports){
 'use strict';
 
 
@@ -28747,7 +28673,247 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],57:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],58:[function(require,module,exports){
+(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
+
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
+//
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
+};
+
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
+    }
+  }
+
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
+
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
+
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
+
+  } else {
+    return false;
+  }
+};
+
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
+
+  if (!this._events) this._events = {};
+
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
+
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
+
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
+
+  return this;
+};
+
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
+};
+
+})(require("__browserify_process"))
+},{"__browserify_process":60}],57:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -30067,247 +30233,7 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":55,"./buffer_ieee754":59,"base64-js":60}],61:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],58:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
-
-var EventEmitter = exports.EventEmitter = process.EventEmitter;
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
-
-// By default EventEmitters will print a warning if more than
-// 10 listeners are added to it. This is a useful default which
-// helps finding memory leaks.
-//
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-var defaultMaxListeners = 10;
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!this._events) this._events = {};
-  this._events.maxListeners = n;
-};
-
-
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
-      return false;
-    }
-  }
-
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
-
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-    return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
-    return false;
-  }
-};
-
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
-  }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-
-    // Check for listener leak
-    if (!this._events[type].warned) {
-      var m;
-      if (this._events.maxListeners !== undefined) {
-        m = this._events.maxListeners;
-      } else {
-        m = defaultMaxListeners;
-      }
-
-      if (m && m > 0 && this._events[type].length > m) {
-        this._events[type].warned = true;
-        console.error('(node) warning: possible EventEmitter memory ' +
-                      'leak detected. %d listeners added. ' +
-                      'Use emitter.setMaxListeners() to increase limit.',
-                      this._events[type].length);
-        console.trace();
-      }
-    }
-
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
-};
-
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
-
-})(require("__browserify_process"))
-},{"__browserify_process":61}],60:[function(require,module,exports){
+},{"assert":55,"./buffer_ieee754":59,"base64-js":61}],61:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 

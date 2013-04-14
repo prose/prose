@@ -294,7 +294,7 @@ module.exports = Backbone.View.extend({
           that.model.content = that.prevContent;
           that.editor.setValue(that.prevContent);
 
-          patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
+          window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
                 that.$('.button.save').html('SUBMIT CHANGE');

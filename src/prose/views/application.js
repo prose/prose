@@ -144,7 +144,7 @@ module.exports = Backbone.View.extend({
 
   preview: function (user, repo, branch, path, file, mode) {
     this.loading('Preview post ...');
-    loadConfig(user, repo, branch, _.bind(function () {
+    window.app.models.loadConfig(user, repo, branch, _.bind(function () {
       window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         if (err) return this.notify('error', 'The requested resource could not be found.');
         new window.app.views.Preview({
