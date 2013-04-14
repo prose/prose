@@ -280,11 +280,19 @@ module.exports = {
 
   loadConfig: function(user, reponame, branch, cb) {
     var repo = this.getRepo(user, reponame);
-    repo.contents(branch, '_config.yml', function(err, data) {
-      if (err) return cb(err);
 
-      app.state.config = jsyaml.load(data);
-      cb(err, jsyaml.load(data));
+    // Check for a _prose.yml file. If this doesn't exist, check _config.yml
+    repo.contents(branch, '_prose.yml', function(err, data) {
+      if (err) {
+        repo.contents(branch, '_config.yml', function(err, d) {
+          if (err) return cb(err);
+          app.state.config = jsyaml.load(d);
+          cb(err, app.state.config);
+        });
+      } else {
+        app.state.config = jsyaml.load(data);
+        cb(err, app.state.config);
+      }
     });
   },
 
