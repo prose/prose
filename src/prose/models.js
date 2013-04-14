@@ -298,26 +298,17 @@ module.exports = {
     var that = this;
     var repo = this.getRepo(user, reponame);
 
-    function loadConfig(cb) {
-      repo.contents(branch, '_config.yml', function(err, data) {
-        if (err) return cb(err);
-        cb(null, jsyaml.load(data));
-      });
-    }
-
     function load(repodata) {
-      loadConfig(function(err, config) {
+      that.loadConfig(user, reponame, branch, function(err, config) {
         app.state.jekyll = !err;
-        app.state.config = config;
 
         var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
-
         if (!path) path = root;
 
         repo.getTree(branch + '?recursive=true', function (err, tree) {
           if (err) return cb('Not found');
           that.loadBranches(user, reponame, function (err, branches) {
-            if (err) return cb("Branches couldn't be fetched");
+            if (err) return cb('Branches could not be fetched');
             app.state.path = path ? path : '';
 
             app.state.branches = _.filter(branches, function (b) {
