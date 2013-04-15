@@ -45,10 +45,10 @@ APPLICATION = \
 	src/prose/cookie.js \
 	src/libs/github.js
 
-prose.js: $(APPLICATION)
+dist/prose.js: $(APPLICATION)
 	cat $(LIBS) > dist/prose.js
 	$(BROWSERIFY) $(APPLICATION) >> dist/prose.js
 
-prose.min.js: $(APPLICATION)
+dist/prose.min.js: $(APPLICATION)
 	cat $(LIBS) > dist/prose.min.js
 	$(BROWSERIFY) $(APPLICATION) | $(UGLIFY) >> dist/prose.min.js
