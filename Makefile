@@ -3,8 +3,8 @@ UGLIFY = node_modules/.bin/uglifyjs
 BROWSERIFY = node_modules/.bin/browserify
 
 all: \
-	prose.js \
-	prose.min.js
+	dist/prose.js \
+	dist/prose.min.js
 
 clean:
 	rm -f dist/*
@@ -26,7 +26,7 @@ LIBS = \
 	src/libs/codemirror/gfm.js \
 	src/libs/diff-match-patch.js \
 	src/libs/liquid.js \
-	src/libs/liquid.patch.js \
+	src/libs/liquid.patch.js
 
 APPLICATION = \
 	src/prose/views/notification.js \
