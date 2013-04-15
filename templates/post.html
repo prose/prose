@@ -1,25 +1,25 @@
-<% if (markdown) { %>
-  <div class='topbar toolbar'>
-    <div class='inner clearfix'>
-      <div class='dropdown-menu fr'>
-        <a href='#' class='round dropdown-hover'>Markdown</a>
-        <ul class='dropdown markdown-snippets round'>
-          <li><a href='#' data-snippet='# Heading'>Main Header</a></li>
-          <li><a href='#' data-snippet='## Sub Heading'>Sub Header</a></li>
-          <li><a href='#' data-snippet='<% print("```\nvar foo;\n```"); %>'>Code</a></li>
-          <li><a href='#' data-snippet='[Google](http://google.com)'>Link</a></li>
-          <li><a href='#' data-snippet='![picture alt](http://placekitten.com/200/300 "Cats Are Awesome (title)")'>Image</a></li>
-          <li><a href='#' data-snippet='<% print("> We loved with a love that was more than love"); %>'>Blockquote</a></li>
-          <li><a href='#' data-snippet='<% print("- item\n- item\n- item\n"); %>'>List</a></li>
-          <li class='divider'></li>
-          <li><a href='http://daringfireball.net/projects/markdown/syntax' target='_blank' target='_blank'><strong>Learn More</strong></a></li>
-        </ul>
-      </div>
+<div class='topbar toolbar'>
+  <div class='inner clearfix'>
+    <% if (markdown) { %>
+    <div class='dropdown-menu fr'>
+      <a href='#' class='round dropdown-hover'>Markdown</a>
+      <ul class='dropdown markdown-snippets round'>
+        <li><a href='#' data-snippet='<% print("# Heading\n\n") %>'>Main Header</a></li>
+        <li><a href='#' data-snippet='<% print("## Sub Heading\n\n") %>'>Sub Header</a></li>
+        <li><a href='#' data-snippet='<% print("```\nvar foo;\n```\n\n"); %>'>Code</a></li>
+        <li><a href='#' data-snippet='<% print("[Google](http://google.com)\n\n") %>'>Link</a></li>
+        <li><a href='#' data-snippet='<% print("![picture alt](http://placekitten.com/200/300)\n\n") %>'>Image</a></li>
+        <li><a href='#' data-snippet='<% print("> We loved with a love that was more than love\n\n"); %>'>Blockquote</a></li>
+        <li><a href='#' data-snippet='<% print("- item\n- item\n- item\n\n"); %>'>List</a></li>
+        <li class='divider'></li>
+        <li><a href='http://daringfireball.net/projects/markdown/syntax' target='_blank' target='_blank'><strong>Learn More</strong></a></li>
+      </ul>
     </div>
+    <% } %>
   </div>
-<% } %>
+</div>
 
-<div class='inner'>
+<div class='inner editor'>
   <div class='inner views'>
     <div id='diff' class='view prose diff'></div>
     <div id='code' class='view active edit <% if (markdown) { %> markdown<% } %>'></div>
