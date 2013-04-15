@@ -17,6 +17,23 @@ module.exports = Backbone.View.extend({
       'change input': 'makeDirty'
     },
 
+    initialize: function () {
+      this.dmp = new diff_match_patch();
+      this.mode = 'edit';
+      this.prevContent = this.serialize();
+      if (!window.shortcutsRegistered) {
+        key('⌘+s, ctrl+s', _.bind(function () {
+          this.updateFile();
+          return false;
+        }, this));
+        window.shortcutsRegistered = true;
+      }
+
+      // Stash editor and metadataEditor content to localStorage on pagehide event
+      // Always run stashFile in context of view
+      $(window).on('pagehide', _.bind(this.stashFile, this));
+    },
+
     render: function() {
       var data = _.extend(this.model, {
         mode: this.mode,
@@ -27,13 +44,14 @@ module.exports = Backbone.View.extend({
       this.eventRegister = app.eventRegister;
 
       // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'translate', 'updateFile');
+       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'hideDiff', 'translate', 'updateFile');
       this.eventRegister.bind('edit', this.edit);
       this.eventRegister.bind('preview', this.preview);
       this.eventRegister.bind('settings', this.settings);
       this.eventRegister.bind('deleteFile', this.deleteFile);
       this.eventRegister.bind('updateMetaData', this.updateMetaData);
       this.eventRegister.bind('save', this.save);
+      this.eventRegister.bind('hideDiff', this.hideDiff);
       this.eventRegister.bind('updateFile', this.updateFile);
       this.eventRegister.bind('translate', this.translate);
 
@@ -76,6 +94,7 @@ module.exports = Backbone.View.extend({
 
     edit: function(e) {
       var that = this;
+      this.model.preview = false;
 
       if (this.toolbar && this.toolbar !== null) {
         this.toolbar.prependTo($('#post'));
@@ -88,7 +107,6 @@ module.exports = Backbone.View.extend({
 
       $('.views .view').removeClass('active');
       $('.views .edit').addClass('active');
-      this.model.preview = false;
       this.updateURL();
 
       // Refresh CodeMirror each time
@@ -102,6 +120,7 @@ module.exports = Backbone.View.extend({
 
     preview: function(e) {
       var that = this;
+      this.model.preview = true;
 
       $('#prose').toggleClass('open', false);
 
@@ -110,7 +129,6 @@ module.exports = Backbone.View.extend({
         var hash = window.location.hash.split('/');
         hash[2] = 'preview';
         this.stashFile();
-        this.model.preview = true;
 
         $(e.currentTarget).attr({
           target: '_blank',
@@ -129,7 +147,6 @@ module.exports = Backbone.View.extend({
         $('.views .view', this.el).removeClass('active');
         $('#preview', this.el).addClass('active');
 
-        this.model.preview = true;
         this.$('.preview').html(marked(this.model.content));
         this.updateURL();
         return false;
@@ -188,6 +205,16 @@ module.exports = Backbone.View.extend({
       $diff.html(diff);
     },
 
+    hideDiff: function() {
+      $('.views .view', this.el).removeClass('active');
+
+      if (this.model.mode === 'preview') {
+        $('#preview', this.el).addClass('active');
+      } else {
+        $('#code', this.el).addClass('active');
+      }
+    },
+
     save: function() {
       if (!this.dirty) return false;
       this.showDiff();
@@ -198,23 +225,6 @@ module.exports = Backbone.View.extend({
       $('.CodeMirror-scroll').height($('.document').height());
       this.editor.refresh();
       // if (this.metadataEditor) this.metadataEditor.refresh();
-    },
-
-    initialize: function () {
-      this.dmp = new diff_match_patch();
-      this.mode = 'edit';
-      this.prevContent = this.serialize();
-      if (!window.shortcutsRegistered) {
-        key('⌘+s, ctrl+s', _.bind(function () {
-          this.updateFile();
-          return false;
-        }, this));
-        window.shortcutsRegistered = true;
-      }
-
-      // Stash editor and metadataEditor content to localStorage on pagehide event
-      // Always run stashFile in context of view
-      $(window).on('pagehide', _.bind(this.stashFile, this));
     },
 
     updateMetaData: function () {
@@ -611,6 +621,7 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('deleteFile', this.deleteFile);
       this.eventRegister.unbind('updateMetaData', this.updateMetaData);
       this.eventRegister.unbind('save', this.save);
+      this.eventRegister.unbind('hideDiff', this.hideDiff);
       this.eventRegister.unbind('translate', this.translate);
       this.eventRegister.unbind('updateFile', this.updateFile);
 
