@@ -6614,7 +6614,7 @@ Liquid.Block.prototype.renderAll = function(list, context) {
   });
 };
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-var templates = {"app":"<div class='header'>\n  <div class='limiter clearfix'>\n    <div class='fr user-status<%= !window.authenticated ? \" logged-out\" : \"\" %>'>\n    <% if (window.authenticated) { %>\n      <div class='dropdown-menu'>\n        <a href='#' class='round dropdown-hover'><%= app.username %></a>\n        <ul class='dropdown round arrow-top'>\n          <li><a class='logout' href='#'><strong>Logout</strong></a></li>\n        </ul>\n      </div>\n    <% } else { %>\n      <a class='button round' href='https://github.com/login/oauth/authorize?client_id=c602a8bd54b1e774f864&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>\n    <% } %>\n    </div>\n  </div>\n</div>\n\n<div id='heading' class='heading limiter clearfix'></div>\n\n<div class='application clearfix limiter'>\n  <div id='content' class='content fl'></div>\n  <div class='sidebar fl'>\n    <div id='drawer' class='drawer'></div>\n\n    <div class='vert navigation'>\n      <ul class='project nav'>\n        <li>\n          <a href='/' class='icon round repos <% if (!app.state.mode) { %>active<% } %>'>\n            <span class='popup round arrow-left'>Explore Projects</span>\n          </a>\n        </li>\n        <% if (state.repo) { %>\n          <li>\n          <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo <% if (app.state.mode === \"tree\") { %>active<% } %>'>\n              <span class='popup round arrow-left'><%= repo %></span>\n            </a>\n          </li>\n          <% if (window.authenticated) { %>\n            <li>\n              <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='icon round new new-file'>\n                <span class='popup round arrow-left'>New File</span>\n              </a>\n            </li>\n          <% } %>\n        <% } %>\n      </ul>\n\n      <% if (state.mode === 'edit' || state.mode === 'blob' || state.mode === 'new') { %>\n      <ul class='post-views nav'>\n        <li>\n          <a href='#' class='icon round edit' data-state='edit'>\n            <span class='popup round arrow-left'>Edit</span>\n          </a>\n        </li>\n        <% if (state.markdown || state.mode === 'new') { %>\n          <li>\n            <a href='#' class='icon round preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n              <span class='popup round arrow-left'>Preview</span>\n            </a>\n          </li>\n        <% } %>\n        <li>\n          <a href='#' class='icon round settings' data-state='settings' data-drawer=true>\n            <span class='popup round arrow-left'>Post Settings</span>\n          </a>\n        </li>\n      </ul>\n      <% } %>\n    </div>\n  </div>\n</div>\n","files":"<% _.each(files, function(f, i) { %>\n  <% if (f.type === 'tree') { %>\n    <!-- folders -->\n    <li><a class='item' data-index='<%= i %>' href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= f.path ? \"/\" +f.path : \"\" %>'>\n      <span class='icon inline small folder'></span>\n      <%= f.path === _.parentPath(currentPath) ? \"..\" : f.name %>\n    </a></li>\n  <% } else { %>\n    <!-- files -->\n    <%\n      var parts = f.name.split('.');\n      var extension = parts.pop().toLowerCase();\n      var filename = parts.slice(0, parts.length).join('');\n    %>\n\n    <% if (app.state.jekyll && extension === 'md') { %>\n      <li class='markdown'>\n        <a class='clearfix item' data-index='<%= i %>' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>\n        <span class='fl icon round md'></span>\n        <span class='fl details'>\n          <h3><%= filename || 'Untitled' %></h3>\n          <span class='deemphasize'><%= f.name %></span>\n        </span>\n        </a>\n      </li>\n\n    <% } else { %>\n      <li><a class='light item' data-index='<%= i %>' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>\n        <span class='icon inline small file <%= extension %>'></span>\n        <%= f.name || 'Untitled' %>\n      </a></li>\n    <% } %>\n\n  <% } %>\n<% }); %>\n","heading":"<% if (alterable) { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <input type='text' class='filepath' value='<%= title %>'>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","multiselect":"<label for='<%= name %>'><%= label %></label>\n<select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n  <% _(options).each(function(o) { %>\n    <% if (o.name) { %>\n     <option value='<%= o.value %>'><%= o.name %></option>\n    <% } else { %>\n     <option value='<%= o.value %>'><%= o.value %></option>\n    <% } %>\n  <% }); %>\n</select>\n","notification":"<% if (!window.authenticated) { %>\n<div class='notify <%= type %>'>\n  <div class='inner'>\n    Please login with your GitHub account to access that project.\n    <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>\n  </div>\n</div>\n<% } else { %>\n  <div class='notify <%= type %>'>\n    <div class='inner'>\n      <p><%= message %></p>\n      <p><a class='button create' href='#'>Create it </a></p>\n      <p><a class='button round' href='../'>Go back </a></p>\n    </div>\n  </div>\n<% } %>\n","post":"<% if (markdown) { %>\n  <div class='topbar toolbar'>\n    <div class='inner clearfix'>\n      <div class='dropdown-menu fr'>\n        <a href='#' class='round dropdown-hover'>Markdown</a>\n        <ul class='dropdown markdown-snippets round'>\n          <li><a href='#' data-snippet='# Heading'>Main Header</a></li>\n          <li><a href='#' data-snippet='## Sub Heading'>Sub Header</a></li>\n          <li><a href='#' data-snippet='<% print(\"```\\nvar foo;\\n```\"); %>'>Code</a></li>\n          <li><a href='#' data-snippet='[Google](http://google.com)'>Link</a></li>\n          <li><a href='#' data-snippet='![picture alt](http://placekitten.com/200/300 \"Cats Are Awesome (title)\")'>Image</a></li>\n          <li><a href='#' data-snippet='<% print(\"> We loved with a love that was more than love\"); %>'>Blockquote</a></li>\n          <li><a href='#' data-snippet='<% print(\"- item\\n- item\\n- item\\n\"); %>'>List</a></li>\n          <li class='divider'></li>\n          <li><a href='http://daringfireball.net/projects/markdown/syntax' target='_blank' target='_blank'><strong>Learn More</strong></a></li>\n        </ul>\n      </div>\n    </div>\n  </div>\n<% } %>\n\n<div class='inner'>\n  <div class='inner views'>\n    <div id='diff' class='view diff'></div>\n    <div id='code' class='view active edit <% if (markdown) { %> markdown<% } %>'></div>\n    <% if (markdown) { %>\n      <div id='preview' class='view preview prose'><%= preview %></div>\n    <% } %>\n  </div>\n</div>\n","posts":"<div class='topbar content-search'>\n  <span class='icon search inline fr'></span>\n  <input type='text' id='filter' placeholder='Filter Files' />\n</div>\n\n<% if (path.length) { %>\n  <div class='breadcrumb'>\n    <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n    <% _.each(_.chunkedPath(path), function(p) { %>\n      <span class='slash'>/</span>\n      <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n    <% }); %>\n  </div>\n<% } %>\n\n<ul id='files' class='listing'></ul>\n","profile":"<div class='topbar content-search'>\n  <span class='icon search inline fr'></span>\n  <input type='text' id='filter' placeholder='Filter projects' />\n</div>\n\n<ul id='projects' class='listing'></ul>\n","projects":"<% if (state && (app.username === state.user)) { %>\n  <% _.each(owners, function(repos, owner) { %>\n      <% _.each(repos, function(r, i) { %>\n      <li class='clearfix' data-index='<%= i %>'>\n          <% if (r.private) { %>\n            <div class='fl icon round repo private'></div>\n          <% } else { %>\n            <div class='fl icon round repo'></div>\n          <% } %>\n\n          <div class='details fl'>\n            <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>\n              <h3><%= r.name %></h3>\n            </a>\n            <span class='deemphasize'><%= r.description %></span>\n          </div>\n\n          <div class='fl actions cleafix'>\n            <a\n              data-user='<%= r.owner.login %>'\n              data-repo='<%= r.name %>'\n              href='#<%= r.owner.login %>/<%= r.name %>'>\n              View Project\n            </a>\n            <% if (r.homepage) { %>\n              <a href='<%= r.homepage %>'>View Site</a>\n            <% } %>\n          </div>\n      </li>\n      <% }); %>\n    <% }); %>\n  <% } else { %>\n  <% _.each(repos, function(r, i) { %>\n    <li class='clearfix' data-index='<%= i %>'>\n        <% if (r.private) { %>\n          <div class='fl icon round repo private'></div>\n        <% } else { %>\n          <div class='fl icon round repo'></div>\n        <% } %>\n\n        <div class='details fl'>\n          <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>\n            <h3><%= r.name %></h3>\n          </a>\n          <span class='deemphasize'><%= r.description %></span>\n        </div>\n\n        <div class='fl actions cleafix'>\n          <a\n            data-user='<%= r.owner.login %>'\n            data-repo='<%= r.name %>'\n            href='#<%= r.owner.login %>/<%= r.name %>'>\n            View Project\n          </a>\n          <% if (r.homepage) { %>\n            <a href='<%= r.homepage %>'>View Site</a>\n          <% } %>\n        </div>\n    </li>\n  <% }); %>\n<% } %>\n","select":"<label for='<%= name %>'><%= label %></label>\n<select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n  <% _(options).each(function(o) { %>\n    <% if (o.name) { %>\n     <option value='<%= o.value %>'><%= o.name %></option>\n    <% } else { %>\n     <option value='<%= o.value %>'><%= o.value %></option>\n    <% } %>\n  <% }); %>\n</select>\n","settings":"<% if (jekyll) { %>\n  <div id='meta' class='meta inner'></div>\n<% } %>\n\n<% if (window.authenticated) { %>\n  <div class='inner'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder='Describe your Changes'></textarea>\n      <a class='icon inline small cancel' href='#' title='ESC'>\n        &times;<span class='popup round arrow-left'>Cancel</span>\n      </a>\n    </div>\n\n    <a class='save button round' href='#'>\n      <%= writeable ? 'Save' : 'Submit Change' %>\n      <span class='popup round arrow-left'>⌘ + s</span>\n    </a>\n\n    <% if (jekyll && markdown) { %>\n      <a href='#' class='toggle publish button round'>Publish</a>\n    <% } %>\n\n    <% if (app.state.config && app.state.config.languages) { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (metadata.lang && metadata.lang !== lang.key) { %>\n          <a class='translate round button' href='#<%= lang.key %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <a class='delete button round' href='#'>Delete this File</a>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'>\n        <span class='icon folder-group inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n      <a href='#<%= org.login %>' title='<%= org.login %>'>\n        <span class='icon folder-group inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<% if (authenticated) { %>\n  <div class='inner'>\n    <% if (app.state.branches.length > 0) { %>\n      <h2 class='label'>Switch Branch</h2>\n      <select data-placeholder='Current Branch Name' class='chzn-select'>\n          <option value='#<%= [user, repo, \"tree\", app.state.branch].join(\"/\") %>' selected><%= app.state.branch %></option>\n        <% _.each(app.state.branches, function(branch) { %>\n          <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n        <% }); %>\n      </select>\n    <% } %>\n  </div>\n<% } %>\n","start":"<% if (!authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='/about.html'>Learn more</a></p>\n      <a class='round button' href='https://github.com/login/oauth/authorize?client_id=c602a8bd54b1e774f864&scope=repo,user,gist'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<label for='<%= name %>'><%= label %></label>\n<input type='text' name='<%= name %>' value='<%= value %>' />\n"}; module.exports = templates;
+var templates = {"app":"<div class='header'>\n  <div class='limiter clearfix'>\n    <div class='fr user-status<%= !window.authenticated ? \" logged-out\" : \"\" %>'>\n    <% if (window.authenticated) { %>\n      <div class='dropdown-menu'>\n        <a href='#' class='round dropdown-hover'><%= app.username %></a>\n        <ul class='dropdown round arrow-top'>\n          <li><a class='logout' href='#'><strong>Logout</strong></a></li>\n        </ul>\n      </div>\n    <% } else { %>\n      <a class='button round' href='https://github.com/login/oauth/authorize?client_id=c602a8bd54b1e774f864&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>\n    <% } %>\n    </div>\n  </div>\n</div>\n\n<div id='heading' class='heading limiter clearfix'></div>\n\n<div class='application clearfix limiter'>\n  <div id='content' class='content fl'></div>\n  <div class='sidebar fl'>\n    <div id='drawer' class='drawer'></div>\n\n    <div class='vert navigation'>\n      <ul class='project nav'>\n        <li>\n          <a href='/' class='icon round repos <% if (!app.state.mode) { %>active<% } %>'>\n            <span class='popup round arrow-left'>Explore Projects</span>\n          </a>\n        </li>\n        <% if (state.repo) { %>\n          <li>\n          <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo <% if (app.state.mode === \"tree\") { %>active<% } %>'>\n              <span class='popup round arrow-left'><%= repo %></span>\n            </a>\n          </li>\n          <% if (window.authenticated) { %>\n            <li>\n              <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='icon round new new-file'>\n                <span class='popup round arrow-left'>New File</span>\n              </a>\n            </li>\n          <% } %>\n        <% } %>\n      </ul>\n\n      <% if (state.mode === 'edit' || state.mode === 'blob' || state.mode === 'new') { %>\n      <ul class='post-views nav'>\n        <li>\n          <a href='#' class='icon round edit' data-state='edit'>\n            <span class='popup round arrow-left'>Edit</span>\n          </a>\n        </li>\n        <% if (state.markdown || state.mode === 'new') { %>\n          <li>\n            <a href='#' class='icon round preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n              <span class='popup round arrow-left'>Preview</span>\n            </a>\n          </li>\n        <% } %>\n        <li>\n          <a href='#' class='icon round settings' data-state='settings' data-drawer=true>\n            <span class='popup round arrow-left'>Post Settings</span>\n          </a>\n        </li>\n      </ul>\n      <% } %>\n    </div>\n  </div>\n</div>\n","files":"<% _.each(files, function(f, i) { %>\n  <% if (f.type === 'tree') { %>\n    <!-- folders -->\n    <li><a class='item' data-index='<%= i %>' href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= f.path ? \"/\" +f.path : \"\" %>'>\n      <span class='icon inline small folder'></span>\n      <%= f.path === _.parentPath(currentPath) ? \"..\" : f.name %>\n    </a></li>\n  <% } else { %>\n    <!-- files -->\n    <%\n      var parts = f.name.split('.');\n      var extension = parts.pop().toLowerCase();\n      var filename = parts.slice(0, parts.length).join('');\n    %>\n\n    <% if (app.state.jekyll && extension === 'md') { %>\n      <li class='markdown'>\n        <a class='clearfix item' data-index='<%= i %>' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>\n        <span class='fl icon round md'></span>\n        <span class='fl details'>\n          <h3><%= filename || 'Untitled' %></h3>\n          <span class='deemphasize'><%= f.name %></span>\n        </span>\n        </a>\n      </li>\n\n    <% } else { %>\n      <li><a class='light item' data-index='<%= i %>' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>\n        <span class='icon inline small file <%= extension %>'></span>\n        <%= f.name || 'Untitled' %>\n      </a></li>\n    <% } %>\n\n  <% } %>\n<% }); %>\n","heading":"<% if (alterable) { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <input type='text' class='filepath' value='<%= title %>'>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","multiselect":"<label for='<%= name %>'><%= label %></label>\n<select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n  <% _(options).each(function(o) { %>\n    <% if (o.name) { %>\n     <option value='<%= o.value %>'><%= o.name %></option>\n    <% } else { %>\n     <option value='<%= o.value %>'><%= o.value %></option>\n    <% } %>\n  <% }); %>\n</select>\n","notification":"<% if (!window.authenticated) { %>\n<div class='notify <%= type %>'>\n  <div class='inner'>\n    Please login with your GitHub account to access that project.\n    <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id={{site.oauth_client_id}}&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>\n  </div>\n</div>\n<% } else { %>\n  <div class='notify <%= type %>'>\n    <div class='inner'>\n      <p><%= message %></p>\n      <p><a class='button create' href='#'>Create it </a></p>\n      <p><a class='button round' href='../'>Go back </a></p>\n    </div>\n  </div>\n<% } %>\n","post":"<% if (markdown) { %>\n  <div class='topbar toolbar'>\n    <div class='inner clearfix'>\n      <div class='dropdown-menu fr'>\n        <a href='#' class='round dropdown-hover'>Markdown</a>\n        <ul class='dropdown markdown-snippets round'>\n          <li><a href='#' data-snippet='# Heading'>Main Header</a></li>\n          <li><a href='#' data-snippet='## Sub Heading'>Sub Header</a></li>\n          <li><a href='#' data-snippet='<% print(\"```\\nvar foo;\\n```\"); %>'>Code</a></li>\n          <li><a href='#' data-snippet='[Google](http://google.com)'>Link</a></li>\n          <li><a href='#' data-snippet='![picture alt](http://placekitten.com/200/300 \"Cats Are Awesome (title)\")'>Image</a></li>\n          <li><a href='#' data-snippet='<% print(\"> We loved with a love that was more than love\"); %>'>Blockquote</a></li>\n          <li><a href='#' data-snippet='<% print(\"- item\\n- item\\n- item\\n\"); %>'>List</a></li>\n          <li class='divider'></li>\n          <li><a href='http://daringfireball.net/projects/markdown/syntax' target='_blank' target='_blank'><strong>Learn More</strong></a></li>\n        </ul>\n      </div>\n    </div>\n  </div>\n<% } %>\n\n<div class='inner'>\n  <div class='inner views'>\n    <div id='diff' class='view prose diff'></div>\n    <div id='code' class='view active edit <% if (markdown) { %> markdown<% } %>'></div>\n    <% if (markdown) { %>\n      <div id='preview' class='view preview prose'><%= preview %></div>\n    <% } %>\n  </div>\n</div>\n","posts":"<div class='topbar content-search'>\n  <span class='icon search inline fr'></span>\n  <input type='text' id='filter' placeholder='Filter Files' />\n</div>\n\n<% if (path.length) { %>\n  <div class='breadcrumb'>\n    <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n    <% _.each(_.chunkedPath(path), function(p) { %>\n      <span class='slash'>/</span>\n      <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n    <% }); %>\n  </div>\n<% } %>\n\n<ul id='files' class='listing'></ul>\n","profile":"<div class='topbar content-search'>\n  <span class='icon search inline fr'></span>\n  <input type='text' id='filter' placeholder='Filter projects' />\n</div>\n\n<ul id='projects' class='listing'></ul>\n","projects":"<% if (state && (app.username === state.user)) { %>\n  <% _.each(owners, function(repos, owner) { %>\n      <% _.each(repos, function(r, i) { %>\n      <li class='clearfix' data-index='<%= i %>'>\n          <% if (r.private) { %>\n            <div class='fl icon round repo private'></div>\n          <% } else { %>\n            <div class='fl icon round repo'></div>\n          <% } %>\n\n          <div class='details fl'>\n            <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>\n              <h3><%= r.name %></h3>\n            </a>\n            <span class='deemphasize'><%= r.description %></span>\n          </div>\n\n          <div class='fl actions cleafix'>\n            <a\n              data-user='<%= r.owner.login %>'\n              data-repo='<%= r.name %>'\n              href='#<%= r.owner.login %>/<%= r.name %>'>\n              View Project\n            </a>\n            <% if (r.homepage) { %>\n              <a href='<%= r.homepage %>'>View Site</a>\n            <% } %>\n          </div>\n      </li>\n      <% }); %>\n    <% }); %>\n  <% } else { %>\n  <% _.each(repos, function(r, i) { %>\n    <li class='clearfix' data-index='<%= i %>'>\n        <% if (r.private) { %>\n          <div class='fl icon round repo private'></div>\n        <% } else { %>\n          <div class='fl icon round repo'></div>\n        <% } %>\n\n        <div class='details fl'>\n          <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>\n            <h3><%= r.name %></h3>\n          </a>\n          <span class='deemphasize'><%= r.description %></span>\n        </div>\n\n        <div class='fl actions cleafix'>\n          <a\n            data-user='<%= r.owner.login %>'\n            data-repo='<%= r.name %>'\n            href='#<%= r.owner.login %>/<%= r.name %>'>\n            View Project\n          </a>\n          <% if (r.homepage) { %>\n            <a href='<%= r.homepage %>'>View Site</a>\n          <% } %>\n        </div>\n    </li>\n  <% }); %>\n<% } %>\n","select":"<label for='<%= name %>'><%= label %></label>\n<select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n  <% _(options).each(function(o) { %>\n    <% if (o.name) { %>\n     <option value='<%= o.value %>'><%= o.name %></option>\n    <% } else { %>\n     <option value='<%= o.value %>'><%= o.value %></option>\n    <% } %>\n  <% }); %>\n</select>\n","settings":"<% if (jekyll) { %>\n  <div id='meta' class='meta inner'></div>\n<% } %>\n\n<% if (window.authenticated) { %>\n  <div class='inner'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder='Describe your Changes'></textarea>\n      <a class='icon inline small cancel' href='#' title='ESC'>\n        &times;<span class='popup round arrow-left'>Cancel</span>\n      </a>\n    </div>\n\n    <a class='save button round' href='#'>\n      <%= writeable ? 'Save' : 'Submit Change' %>\n      <span class='popup round arrow-left'>⌘ + s</span>\n    </a>\n\n    <% if (jekyll && markdown) { %>\n      <a href='#' class='toggle publish button round'>Publish</a>\n    <% } %>\n\n    <% if (app.state.config && app.state.config.languages) { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (metadata.lang && metadata.lang !== lang.key) { %>\n          <a class='translate round button' href='#<%= lang.key %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <a class='delete button round' href='#'>Delete this File</a>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'>\n        <span class='icon folder-group inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n      <a href='#<%= org.login %>' title='<%= org.login %>'>\n        <span class='icon folder-group inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<% if (authenticated) { %>\n  <div class='inner'>\n    <% if (app.state.branches.length > 0) { %>\n      <h2 class='label'>Switch Branch</h2>\n      <select data-placeholder='Current Branch Name' class='chzn-select'>\n          <option value='#<%= [user, repo, \"tree\", app.state.branch].join(\"/\") %>' selected><%= app.state.branch %></option>\n        <% _.each(app.state.branches, function(branch) { %>\n          <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n        <% }); %>\n      </select>\n    <% } %>\n  </div>\n<% } %>\n","start":"<% if (!authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='/about.html'>Learn more</a></p>\n      <a class='round button' href='https://github.com/login/oauth/authorize?client_id=c602a8bd54b1e774f864&scope=repo,user,gist'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<label for='<%= name %>'><%= label %></label>\n<input type='text' name='<%= name %>' value='<%= value %>' />\n"}; module.exports = templates;
 },{}],2:[function(require,module,exports){
 function tryParse(obj) {
   try {
@@ -6779,7 +6779,7 @@ module.exports = Backbone.Router.extend({
   }
 });
 
-},{"underscore":4,"jquery-browserify":5,"backbone":6}],7:[function(require,module,exports){
+},{"jquery-browserify":4,"underscore":5,"backbone":6}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -6838,7 +6838,7 @@ $(function() {
   }
 });
 
-},{"./models":8,"./views/application":9,"./views/app":10,"./views/notification":11,"./views/start":12,"./views/profile":13,"./views/posts":14,"./views/post":15,"./views/preview":16,"../../dist/templates":1,"./router":3,"jquery-browserify":5,"underscore":4,"backbone":6}],8:[function(require,module,exports){
+},{"./models":8,"./views/application":9,"./views/app":10,"./views/notification":11,"./views/start":12,"./views/profile":13,"./views/posts":14,"./views/post":15,"./views/preview":16,"../../dist/templates":1,"./router":3,"jquery-browserify":4,"underscore":5,"backbone":6}],8:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -7462,7 +7462,7 @@ module.exports = {
   }
 };
 
-},{"./cookie":2,"../libs/github":17,"jquery-browserify":5,"underscore":4,"js-yaml":18}],17:[function(require,module,exports){
+},{"./cookie":2,"../libs/github":17,"jquery-browserify":4,"underscore":5,"js-yaml":18}],17:[function(require,module,exports){
 // Github.js 0.7.0
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
@@ -8017,7 +8017,365 @@ var _ = require('underscore');
   module.exports = Github;
 }).call(this);
 
-},{"underscore":4}],4:[function(require,module,exports){
+},{"underscore":5}],19:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var marked = require('marked');
+var queue = require('queue-async');
+var chrono = require('chrono');
+
+// Run an array of functions in serial
+// -------
+
+_.serial = function () {
+  (_(arguments).reduceRight(_.wrap, function() {}))();
+};
+
+
+// Parent path
+// -------
+
+_.parentPath = function(path) {
+  return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
+};
+
+
+// Topmost path
+// -------
+
+_.topPath = function(path) {
+  var match = path.match(/\/?([a-zA-Z0-9_\-]*)$/);
+  return match[1];
+};
+
+
+// Valid filename check
+// -------
+
+_.validFilename = function(filename) {
+  return !!filename.match(/^([a-zA-Z0-9_\-]|\.)+$/);
+  // Disabled for now: the Jekyll post format layout
+  // return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
+};
+
+
+// Valid pathname check
+// -------
+
+_.validPathname = function(path) {
+  return _.all(path.split('/'), function(filename) {
+    return _.validFilename(filename);
+  });
+};
+
+
+// Extract filename from a given path
+// -------
+//
+// _.extractFilename('path/to/foo.md')
+// => ['path/to', 'foo.md']
+
+_.extractFilename = function(path) {
+  if (!path.match(/\//)) return ['', path];
+  var matches = path.match(/(.*)\/(.*)$/);
+  return [ matches[1], matches[2] ];
+};
+
+
+// Determine mode for CodeMirror
+// -------
+
+_.mode = function(file) {
+  if (_.markdown(file)) return 'gfm';
+
+  var extension = _.extension(file);
+
+  if (_.include(['js', 'json'], extension)) return 'javascript';
+  if (extension === 'html') return 'htmlmixed';
+  if (extension === 'rb') return 'ruby';
+  if (extension === 'yml') return 'yaml';
+  if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
+
+  return extension;
+};
+
+
+// Check if a given file is a Jekyll post
+// -------
+
+_.jekyll = function(path, file) {
+  return !!(path.match('_posts') && _.markdown(file));
+};
+
+// check if a given file has YAML frontmater
+// -------
+
+_.hasMetadata = function(content) {
+  return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
+};
+
+// Extract file extension
+// -------
+
+_.extension = function(file) {
+  var match = file.match(/\.(\w+)$/);
+  return match ? match[1] : null;
+};
+
+
+// Determines whether a given file is a markdown file or not
+// -------
+
+_.markdown = function(file) {
+  var regex = new RegExp('.(md|mkdn?|mdown|markdown)$');
+  return !!(regex.test(file));
+};
+
+
+// Clip a string
+// -------
+
+_.clip = function(str, length) {
+  var res = str.substr(0, length);
+  if (length < str.length) res += ' ...';
+  return res;
+};
+
+
+// Concatenate path + file to full filepath
+// -------
+
+_.filepath = function(path, file) {
+  return (path ? path +"/" : "") + file;
+};
+
+
+// Converts a javascript object to YAML
+// Does not support nested objects
+// Multiline values are serialized as Blocks
+
+_.toYAML = function(metadata) {
+  var res = [];
+  _.each(metadata, function(value, property) {
+    if (value.match(/\n/)) {
+      var str = property+': |\n';
+
+      _.each(value.split('\n'), function(line) {
+        str += '  ' + line;
+      });
+
+      res.push();
+    } else {
+      res.push(property+": "+value);
+    }
+  });
+
+  return res.join('\n');
+};
+
+
+// Only parses first level of YAML file
+// Considers the whole thing as a key-value pair party
+//
+// name: "michael"
+// age: 25
+// friends:
+// - Michael
+// - John
+// block: |
+//   Hello World
+//   Another line
+//   24123
+//
+// =>
+// {
+//   name: 'michael',
+//   age: "25",
+//   friends: "- Michael\n- John",
+//   block: "Hello World\nAnother line\n24123"
+// }
+//
+// var yaml = 'name:     "michael"\nage: 25\nfriends:\n- Michael\n- John\nblock: |\n  hey ho\n  some text\n  yay';
+// console.log(_.fromYAML(yaml));
+
+_.fromYAML = function(rawYAML) {
+  var data = {};
+
+  var lines = rawYAML.split('\n');
+  var key = null;
+  var value = "";
+  var blockValue = false;
+
+  function add() {
+    data[key] = _.isArray(value) ? value.join('\n') : value;
+    key = null;
+    value = "";
+  }
+
+  _.each(lines, function(line) {
+    var match = line.match(/^([A-Za-z_][A-Za-z0-9_]*):\s*(.*)$/);
+
+    if (match && key) add();
+    if (match) { // New Top Level key found
+      key = match[1];
+      value = match[2];
+      if (value.match(/\|$/)) {
+        blockValue = true;
+        value = "";
+      }
+    } else {
+      if (!_.isArray(value)) value = [];
+      if (blockValue) {
+        value.push(line.trim());
+      } else {
+        value.push(line.replace(/^\s\s/, ''));
+      }
+    }
+  });
+
+  add();
+  return data;
+};
+
+// chunked path
+// -------
+//
+// _.chunkedPath('path/to/foo')
+// =>
+// [
+//   { url: 'path',        name: 'path' },
+//   { url: 'path/to',     name: 'to' },
+//   { url: 'path/to/foo', name: 'foo' }
+// ]
+
+_.chunkedPath = function(path) {
+  var chunks = path.split('/');
+  return _.map(chunks, function(chunk, index) {
+    var url = [];
+    for (var i=0; i<=index; i++) {
+      url.push(chunks[i]);
+    }
+    return {
+      url: url.join('/'),
+      name: chunk
+    };
+  });
+};
+
+// Full Layout Preview
+// -------
+
+_.preview = function(view) {
+  var model = view.model,
+      q = queue(1),
+      p = {
+        site: app.state.config,
+        post: model.metadata,
+        page: model.metadata,
+        content: Liquid.parse(marked(model.content)).render({
+          site: app.state.config,
+          post: model.metadata,
+          page: model.metadata
+        }) || ''
+      };
+
+  if (p.site.prose && p.site.prose.site) {
+    _(p.site.prose.site).each(function(file, key) {
+      q.defer(function(cb){
+        $.ajax({
+          cache: true,
+          dataType: 'jsonp',
+          jsonp: false,
+          jsonpCallback: 'callback',
+          url: file,
+          success: function(d) {
+            p.site[key] = d;
+            cb();
+          }
+        });
+      });
+    });
+  }
+
+  q.defer(getLayout);
+  q.await(function() {
+    var content = p.content;
+
+    // Set base URL to public site
+    if (app.state.config.prose && app.state.config.prose.siteurl) {
+      content = content.replace(/(<head(?:.*)>)/, function() {
+        return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
+      });
+    }
+
+    document.write(content);
+    document.close();
+  });
+
+  function getLayout(cb) {
+    var file = p.page.layout;
+
+    model.repo.read(app.state.branch, '_layouts/' + file + '.html', function(err, d) {
+      if (err) return cb(err);
+      var meta = (d.split('---')[1]) ? jsyaml.load(d.split('---')[1]) : {},
+        content = (d.split('---')[2]) ? d.split('---')[2] : d,
+        template = Liquid.parse(content);
+      p.page = _(p.page).extend(meta);
+      p.content = template.render({
+        site: p.site,
+        post: p.post,
+        page: p.page,
+        content: p.content
+      });
+      if (meta.layout) q.defer(getLayout);
+      cb();
+    });
+
+  }
+};
+
+// UI Stuff
+// -------
+
+function dropdown() {
+    var $dropdown = $('.dropdown-menu');
+    $dropdown.each(function(i, el) {
+        $(this).hover(function() {
+            $(this).addClass('open');
+        }, function(e) {
+            $(this).removeClass('open');
+        });
+    });
+
+    $('.dropdown-hover').click(function() {
+        return false;
+    });
+}
+
+function shadowScroll($el, $parent) {
+  $el.scroll(function() {
+    if ($el.scrollTop() !== 0) {
+      if (!$parent.hasClass('shadow')) {
+        $parent.addClass('shadow');
+      }
+    } else {
+      $parent.removeClass('shadow');
+    }
+  });
+}
+
+module.exports = {
+  dropdown: function() {
+    return dropdown();
+  },
+
+  shadowScroll: function($el, $parent) {
+    return shadowScroll($el, $parent);
+  }
+}
+
+},{"jquery-browserify":4,"underscore":5,"js-yaml":18,"marked":20,"queue-async":21,"chrono":22}],5:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -9246,673 +9604,7 @@ var _ = require('underscore');
 }).call(this);
 
 })()
-},{}],11:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-
-  id: 'notification',
-
-  initialize: function(type, message) {
-    this.model = {};
-    this.model.type = type;
-    this.model.message = message;
-  },
-
-  render: function() {
-    var tmpl = _(window.app.templates.notification).template();
-    $(this.el).html(tmpl(this.model));
-    return this;
-  }
-});
-
-},{"jquery-browserify":5,"backbone":6}],16:[function(require,module,exports){
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  render: function() {
-    this.stashApply();
-    _.preview(this);
-    return this;
-  },
-
-  stashApply: function() {
-    if (!window.localStorage) return false;
-
-    var storage = window.localStorage,
-        filepath = window.location.hash.split('/').slice(4).join('/');
-
-    var stash = JSON.parse(storage.getItem(filepath));
-
-    if (stash) {
-      this.model.content = stash.content;
-      this.model.raw_metadata = stash.raw_metadata;
-      this.model.metadata = jsyaml.load(stash.raw_metadata);
-    }
-  }
-});
-
-},{"underscore":4,"js-yaml":18,"backbone":6}],14:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-
-  id: 'posts',
-
-  events: {
-    'hover a.item': 'activeListing',
-    'keyup #filter': 'search'
-  },
-
-  initialize: function () {
-    if (!window.shortcutsRegistered) {
-      key('enter', _.bind(function (e, handler) {
-        this.goToFile();
-      }, this));
-      key('up, down', _.bind(function (e, handler) {
-        this.pageListing(handler.key);
-        e.preventDefault();
-        e.stopPropagation();
-      }, this));
-      window.shortcutsRegistered = true;
-    }
-  },
-
-  render: function () {
-    var that = this;
-    var data = _.extend(this.model, app.state, {
-      currentPath: app.state.path
-    });
-
-    // Ping `views/app.js` to let know we should swap out the sidebar
-    this.eventRegister = app.eventRegister;
-    this.eventRegister.trigger('sidebarContext', data, 'posts');
-    var isPrivate = app.state.isPrivate ? 'private' : '';
-
-    var header = {
-      avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
-      parent: data.user,
-      parentUrl: data.user,
-      title: data.repo,
-      titleUrl: data.user + '/' + data.repo,
-      alterable: false
-    }
-
-    this.eventRegister.trigger('headerContext', header);
-
-    var tmpl = _(window.app.templates.posts).template();
-    $(this.el).empty().append(tmpl(data));
-
-    _.delay(function () {
-      that.renderResults();
-      $('#filter').focus();
-      utils.shadowScroll($('#files'), $('.breadcrumb'));
-      utils.shadowScroll($('#files'), $('.content-search'));
-    }, 1);
-
-    return this;
-  },
-
-  pageListing: function (handler) {
-
-    var item, index;
-
-    if ($('.item').hasClass('active')) {
-      index = parseInt($('.item.active').data('index'), 10);
-      $('.item.active').removeClass('active');
-
-      if (handler === 'up') {
-        item = index - 1;
-        $('.item[data-index=' + item + ']').addClass('active');
-      } else {
-        item = index + 1;
-        $('.item[data-index=' + item + ']').addClass('active');
-      }
-    } else {
-      $('.item[data-index=0]').addClass('active');
-    }
-  },
-
-  goToFile: function () {
-    var path = $('.item.active').attr('href');
-    router.navigate(path, true);
-  },
-
-  search: function (e) {
-    if (e.which === 27) { // ESC
-      _.delay(_.bind(function () {
-        $('#filter', this.el).val('');
-        this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
-        this.renderResults();
-      }, this), 10);
-
-    } else if (e.which === 40 && $('.item').length > 0) {
-      this.pageListing('down'); // Arrow Down
-      e.preventDefault();
-      e.stopPropagation();
-      $('#filter').blur();
-
-    } else {
-      _.delay(_.bind(function () {
-        var searchstr = $('#filter', this.el).val();
-        this.model = window.app.models.getFiles(this.model.tree, app.state.path, searchstr);
-        this.renderResults();
-      }, this), 10);
-    }
-  },
-
-  renderResults: function () {
-    var tmpl = _(window.app.templates.files).template();
-    this.$('#files').html(tmpl(_.extend(this.model, app.state, {
-      currentPath: app.state.path
-    })));
-  },
-
-  // Creates human readable versions of _posts/paths
-  semantifyPaths: function (paths) {
-    return _.map(paths, function (path) {
-      return {
-        path: path,
-        name: path
-      }
-    });
-  },
-
-  activeListing: function (e) {
-    $listings = $('.item', this.el);
-    $listing = $(e.target, this.el);
-
-    $listings.removeClass('active');
-    $listing.addClass('active');
-  }
-});
-
-},{".././util":19,"jquery-browserify":5,"underscore":4,"js-yaml":18,"keymaster":20,"backbone":6}],13:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-    id: 'profile',
-
-    events: {
-      'keyup #filter': 'filterFiles'
-    },
-
-    render: function () {
-      var data = this.model;
-      this.eventRegister = app.eventRegister;
-
-      var header = {
-          avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
-          parent: data.user.name || data.user.login,
-          parentUrl: data.user.login,
-          title: 'Explore Projects',
-          titleUrl: data.user.login,
-          alterable: false
-      };
-
-      this.eventRegister.trigger('headerContext', header);
-
-      var tmpl = _(window.app.templates.profile).template();
-      var sidebar = _(window.app.templates.sidebarOrganizations).template();
-
-      $(this.el).empty().append(tmpl(data));
-      this.renderResults();
-
-      $('#drawer')
-        .empty()
-        .append(sidebar(this.model));
-
-      _.delay(function () {
-        utils.shadowScroll($('#projects'), $('.content-search'));
-        $('#filter').focus();
-      }, 1);
-
-      // Cache to perform autocompletion on it
-      this.cache = this.model;
-
-      return this;
-    },
-
-    filterFiles: function (e) {
-      // If this is the ESC key
-      if (e.which === 27) {
-        _.delay(_.bind(function () {
-          $('#filter', this.el).val('');
-          this.model = window.app.models.filterProjects(this.cache, '');
-          this.renderResults();
-        }, this), 10);
-      } else {
-        _.delay(_.bind(function () {
-          var searchstr = $('#filter', this.el).val();
-          this.model = window.app.models.filterProjects(this.cache, searchstr);
-          this.renderResults();
-        }, this), 10);
-      }
-    },
-
-    renderResults: function () {
-      var tmpl = _(window.app.templates.projects).template();
-      $('#projects', this.el).empty().append(tmpl(this.model));
-    }
-
-});
-
-},{".././util":19,"jquery-browserify":5,"underscore":4,"backbone":6}],12:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  id: 'start',
-  className: 'start',
-
-  events: {
-    'submit #login_form': '_login'
-  },
-
-  render: function() {
-    var tmpl = _(window.app.templates.start).template();
-
-    $('.header').hide();
-    $('#prose').empty().html(tmpl(this.model));
-
-    return this;
-  },
-
-  _login: function() {
-    var self = this;
-
-    var user = self.$('#github_user').val();
-    var password = self.$('#github_password').val();
-
-    login({username: user, password: password}, function(err) {
-      if (err) return self.$('.bad-credentials').show();
-      window.location.reload();
-    });
-    return false;
-  }
-});
-
-},{"jquery-browserify":5,"underscore":4,"backbone":6}],9:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-
-  events: {
-    'click #notification .create': 'createPost'
-  },
-
-  createPost: function (e) {
-    var hash = window.location.hash.split('/');
-    hash[2] = 'new';
-    hash[hash.length - 1] = '?file=' + hash[hash.length - 1];
-
-    router.navigate(_(hash).compact().join('/'), true);
-    return false;
-  },
-
-  // Initialize
-  // ----------
-
-  initialize: function () {
-    _.bindAll(this);
-    var that = this;
-    this.app = new window.app.views.App({
-      model: this.model
-    });
-
-    function calculateLayout() {
-      if (that.mainView && that.mainView.refreshCodeMirror)  {
-        that.mainView.refreshCodeMirror();
-      }
-    }
-
-    var lazyLayout = _.debounce(calculateLayout, 300);
-    $(window).resize(lazyLayout);
-  },
-
-
-  renderApp: function () {
-    $(this.app.render().el).prependTo(this.el);
-  },
-
-  // Helpers
-  // -------
-
-  replaceMainView: function (name, view) {
-    $('body').removeClass().addClass(name);
-
-    // Make sure the header get's shown
-    if (name !== 'start') $('#app').show();
-
-    if (this.mainView) {
-      this.mainView.remove();
-    } else {
-      $('#content').empty();
-    }
-    this.mainView = view;
-    $(view.el).appendTo(this.$('#content'));
-  },
-
-
-  // Main Views
-  // ----------
-
-  start: function (username) {
-    var that = this;
-    app.state.title = '';
-
-    // Render out the application view
-    $(that.app.render().el).prependTo(that.el);
-
-    this.replaceMainView('start', new window.app.views.Start({
-      model: _.extend(this.model, {
-        authenticated: !! window.authenticated
-      })
-    }).render());
-  },
-
-  profile: function (username) {
-    var that = this;
-    app.state.title = username;
-    this.loading('Loading profile ...');
-
-    window.app.models.loadRepos(username, function (err, data) {
-
-      // Render out the application view
-      $(that.app.render().el).prependTo(that.el);
-
-      that.loaded();
-      data.authenticated = !! window.authenticated;
-      that.replaceMainView('profile', new window.app.views.Profile({
-        model: _.extend(that.model, data)
-      }).render());
-    });
-  },
-
-  staticView: function () {
-    // Render out the application view
-    $(this.app.render().el).prependTo(this.el);
-  },
-
-  posts: function (user, repo, branch, path) {
-    var that = this;
-    this.loading('Loading posts ...');
-    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      this.loaded();
-
-      if (err) return this.notify('error', 'The requested resource could not be found.');
-      // Render out the application view
-      $(that.app.render().el).prependTo(that.el);
-      this.replaceMainView('posts', new window.app.views.Posts({
-        model: data
-      }).render());
-    }, this));
-  },
-
-  post: function (user, repo, branch, path, file, mode) {
-    var that = this;
-    this.loading('Loading post ...');
-    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return this.notify('error', 'The requested resource could not be found.');
-      window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        this.loaded();
-
-        app.state.markdown = data.markdown;
-        // Render out the application view
-        $(that.app.render().el).prependTo(that.el);
-
-        if (err) return this.notify('error', 'The requested resource could not be found.');
-        data.preview = (mode !== 'edit');
-        data.lang = _.mode(file);
-        this.replaceMainView(window.authenticated ? 'post' : 'read-post', new window.app.views.Post({
-          model: data
-        }).render());
-      }, this));
-
-      // Render out the application view
-      $(that.app.render().el).prependTo(that.el);
-
-    }, this));
-  },
-
-  preview: function (user, repo, branch, path, file, mode) {
-    this.loading('Preview post ...');
-    window.app.models.loadConfig(user, repo, branch, _.bind(function () {
-      window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) return this.notify('error', 'The requested resource could not be found.');
-        new window.app.views.Preview({
-          model: data
-        }).render();
-      }, this));
-    }, this));
-  },
-
-  newPost: function (user, repo, branch, path) {
-    var that = this;
-    this.loading('Creating file ...');
-    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      window.app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
-        this.loaded();
-
-        // Render out the application view
-        $(that.app.render().el).prependTo(that.el);
-
-        data.jekyll = _.jekyll(path, data.file);
-        data.preview = false;
-        data.markdown = _.markdown(data.file);
-        data.lang = _.mode(data.file);
-
-        this.replaceMainView('post', new window.app.views.Post({
-          model: data
-        }).render());
-
-        this.mainView._makeDirty();
-        app.state.file = data.file;
-
-      }, this));
-    }, this));
-  },
-
-  notify: function (type, message) {
-    // Render out the application view
-    $(this.app.render().el).prependTo(this.el);
-
-    this.replaceMainView('notification', new window.app.views.Notification(type, message).render());
-  },
-
-  loading: function (msg) {
-    $('body').append('<div class="loading"><span>' + msg ||  'Loading ...' + '</span></div>');
-  },
-
-  loaded: function ()  {
-    $('.loading').remove();
-  }
-});
-
-},{"jquery-browserify":5,"underscore":4,"backbone":6}],10:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-    id: 'app',
-
-    events: {
-      'click .post-views .edit': 'edit',
-      'click .post-views .preview': 'preview',
-      'click .post-views .settings': 'settings',
-      'click a.logout': 'logout',
-      'click a.save': 'save',
-      'click a.save.confirm': 'updateFile',
-      'click a.cancel': 'toggleCommit',
-      'click a.delete': 'deleteFile',
-      'click a.publish': 'updateMetaData',
-      'click a.translate': 'translate',
-      'keypress input.filepath': 'saveFilePath'
-    },
-
-    initialize: function(options) {
-      this.eventRegister = app.eventRegister;
-
-      _.bindAll(this, 'headerContext', 'sidebarContext');
-      this.eventRegister.bind('headerContext', this.headerContext);
-      this.eventRegister.bind('sidebarContext', this.sidebarContext);
-    },
-
-    render: function () {
-      var tmpl = _(window.app.templates.app).template();
-      $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
-        state: app.state
-      })));
-
-      // When the sidebar should be open.
-      // Fix this in re-factor, could be much tighter
-      if (this.model.mode === 'edit' || this.model.mode === 'blob' || this.model.mode === 'new') {
-        $('#prose').toggleClass('open', false);
-
-      // Project contents when there aren't branches
-      } else if (app.state.mode === 'tree' && !app.state.branches.length) {
-        $('#prose').toggleClass('open', false);
-
-      } else {
-        $('#prose').toggleClass('open', true);
-      }
-
-      _.delay(function () {
-        utils.dropdown();
-      }, 1);
-
-      return this;
-    },
-
-    headerContext: function(data) {
-      var heading = _(window.app.templates.heading).template();
-      $('#heading').empty().append(heading(data));
-    },
-
-    sidebarContext: function(data, context) {
-      var sidebarTmpl;
-
-      if (context === 'post') {
-        sidebarTmpl = _(window.app.templates.settings).template();
-
-        $('#drawer')
-          .empty()
-          .append(sidebarTmpl(data));
-
-      } else if (context === 'posts') {
-        sidebarTmpl = _(window.app.templates.sidebarProject).template();
-
-        $('#drawer')
-          .empty()
-          .append(sidebarTmpl(data));
-
-        // Branch Switching
-        $('.chzn-select').chosen().change(function() {
-            router.navigate($(this).val(), true);
-        });
-      }
-    },
-
-    // Event Triggering to other files
-    edit: function(e) {
-      this.eventRegister.trigger('edit', e);
-      return false;
-    },
-
-    preview: function(e) {
-      if ($(e.target).data('jekyll')) {
-        this.eventRegister.trigger('preview', e);
-      } else {
-        this.eventRegister.trigger('preview', e);
-
-        // Cancel propagation
-        return false;
-      }
-    },
-
-    settings: function(e) {
-      this.eventRegister.trigger('settings', e);
-      return false;
-    },
-
-    deleteFile: function(e) {
-      this.eventRegister.trigger('deleteFile', e);
-      return false;
-    },
-
-    updateMetaData: function(e) {
-      this.eventRegister.trigger('updateMetaData', e);
-      return false;
-    },
-
-    translate: function(e) {
-      this.eventRegister.trigger('translate', e);
-      return false;
-    },
-
-    save: function(e) {
-      this.eventRegister.trigger('save', e);
-      this.toggleCommit();
-      return false;
-    },
-
-    toggleCommit: function() {
-      $('.commit', this.el).toggleClass('active');
-      $('.button.save', this.el).toggleClass('confirm');
-
-      // TODO Fix this this.model.writable should work as a boolean
-      $('.button.save', this.el).html($('.button.save', this.el).hasClass('confirm') ? 'Commit' : (this.model.writeable ? 'Save' : 'Save'));
-      $('.commit-message', this.el).focus();
-      return false;
-    },
-
-    updateFile: function(e) {
-      this.eventRegister.trigger('updateFile', e);
-      return false;
-    },
-
-    saveFilePath: function(e) {
-      // Trigger updateFile when a return button has been pressed.
-      if (e.which === 13) {
-        this.eventRegister.trigger('updateFile', e);
-      }
-    },
-
-    logout: function () {
-      window.app.models.logout();
-      app.instance.render();
-      if ($('#start').length > 0) {
-        app.instance.start();
-      } else {
-        window.location.reload();
-      }
-      return false;
-    },
-
-    remove: function () {
-      // Unbind pagehide event handler when View is removed
-      this.eventRegister.unbind('sidebarContext', this.sidebarContext);
-      this.eventRegister.unbind('headerContext', this.headerContext);
-    }
-});
-
-},{".././util":19,"jquery-browserify":5,"underscore":4,"backbone":6}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -19247,2152 +18939,7 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],19:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var marked = require('marked');
-var queue = require('queue-async');
-var chrono = require('chrono');
-
-// Run an array of functions in serial
-// -------
-
-_.serial = function () {
-  (_(arguments).reduceRight(_.wrap, function() {}))();
-};
-
-
-// Parent path
-// -------
-
-_.parentPath = function(path) {
-  return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
-};
-
-
-// Topmost path
-// -------
-
-_.topPath = function(path) {
-  var match = path.match(/\/?([a-zA-Z0-9_\-]*)$/);
-  return match[1];
-};
-
-
-// Valid filename check
-// -------
-
-_.validFilename = function(filename) {
-  return !!filename.match(/^([a-zA-Z0-9_\-]|\.)+$/);
-  // Disabled for now: the Jekyll post format layout
-  // return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
-};
-
-
-// Valid pathname check
-// -------
-
-_.validPathname = function(path) {
-  return _.all(path.split('/'), function(filename) {
-    return _.validFilename(filename);
-  });
-};
-
-
-// Extract filename from a given path
-// -------
-//
-// _.extractFilename('path/to/foo.md')
-// => ['path/to', 'foo.md']
-
-_.extractFilename = function(path) {
-  if (!path.match(/\//)) return ['', path];
-  var matches = path.match(/(.*)\/(.*)$/);
-  return [ matches[1], matches[2] ];
-};
-
-
-// Determine mode for CodeMirror
-// -------
-
-_.mode = function(file) {
-  if (_.markdown(file)) return 'gfm';
-
-  var extension = _.extension(file);
-
-  if (_.include(['js', 'json'], extension)) return 'javascript';
-  if (extension === 'html') return 'htmlmixed';
-  if (extension === 'rb') return 'ruby';
-  if (extension === 'yml') return 'yaml';
-  if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
-
-  return extension;
-};
-
-
-// Check if a given file is a Jekyll post
-// -------
-
-_.jekyll = function(path, file) {
-  return !!(path.match('_posts') && _.markdown(file));
-};
-
-// check if a given file has YAML frontmater
-// -------
-
-_.hasMetadata = function(content) {
-  return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
-};
-
-// Extract file extension
-// -------
-
-_.extension = function(file) {
-  var match = file.match(/\.(\w+)$/);
-  return match ? match[1] : null;
-};
-
-
-// Determines whether a given file is a markdown file or not
-// -------
-
-_.markdown = function(file) {
-  var regex = new RegExp('.(md|mkdn?|mdown|markdown)$');
-  return !!(regex.test(file));
-};
-
-
-// Clip a string
-// -------
-
-_.clip = function(str, length) {
-  var res = str.substr(0, length);
-  if (length < str.length) res += ' ...';
-  return res;
-};
-
-
-// Concatenate path + file to full filepath
-// -------
-
-_.filepath = function(path, file) {
-  return (path ? path +"/" : "") + file;
-};
-
-
-// Converts a javascript object to YAML
-// Does not support nested objects
-// Multiline values are serialized as Blocks
-
-_.toYAML = function(metadata) {
-  var res = [];
-  _.each(metadata, function(value, property) {
-    if (value.match(/\n/)) {
-      var str = property+': |\n';
-
-      _.each(value.split('\n'), function(line) {
-        str += '  ' + line;
-      });
-
-      res.push();
-    } else {
-      res.push(property+": "+value);
-    }
-  });
-
-  return res.join('\n');
-};
-
-
-// Only parses first level of YAML file
-// Considers the whole thing as a key-value pair party
-//
-// name: "michael"
-// age: 25
-// friends:
-// - Michael
-// - John
-// block: |
-//   Hello World
-//   Another line
-//   24123
-//
-// =>
-// {
-//   name: 'michael',
-//   age: "25",
-//   friends: "- Michael\n- John",
-//   block: "Hello World\nAnother line\n24123"
-// }
-//
-// var yaml = 'name:     "michael"\nage: 25\nfriends:\n- Michael\n- John\nblock: |\n  hey ho\n  some text\n  yay';
-// console.log(_.fromYAML(yaml));
-
-_.fromYAML = function(rawYAML) {
-  var data = {};
-
-  var lines = rawYAML.split('\n');
-  var key = null;
-  var value = "";
-  var blockValue = false;
-
-  function add() {
-    data[key] = _.isArray(value) ? value.join('\n') : value;
-    key = null;
-    value = "";
-  }
-
-  _.each(lines, function(line) {
-    var match = line.match(/^([A-Za-z_][A-Za-z0-9_]*):\s*(.*)$/);
-
-    if (match && key) add();
-    if (match) { // New Top Level key found
-      key = match[1];
-      value = match[2];
-      if (value.match(/\|$/)) {
-        blockValue = true;
-        value = "";
-      }
-    } else {
-      if (!_.isArray(value)) value = [];
-      if (blockValue) {
-        value.push(line.trim());
-      } else {
-        value.push(line.replace(/^\s\s/, ''));
-      }
-    }
-  });
-
-  add();
-  return data;
-};
-
-// chunked path
-// -------
-//
-// _.chunkedPath('path/to/foo')
-// =>
-// [
-//   { url: 'path',        name: 'path' },
-//   { url: 'path/to',     name: 'to' },
-//   { url: 'path/to/foo', name: 'foo' }
-// ]
-
-_.chunkedPath = function(path) {
-  var chunks = path.split('/');
-  return _.map(chunks, function(chunk, index) {
-    var url = [];
-    for (var i=0; i<=index; i++) {
-      url.push(chunks[i]);
-    }
-    return {
-      url: url.join('/'),
-      name: chunk
-    };
-  });
-};
-
-// Full Layout Preview
-// -------
-
-_.preview = function(view) {
-  var model = view.model,
-      q = queue(1),
-      p = {
-        site: app.state.config,
-        post: model.metadata,
-        page: model.metadata,
-        content: Liquid.parse(marked(model.content)).render({
-          site: app.state.config,
-          post: model.metadata,
-          page: model.metadata
-        }) || ''
-      };
-
-  if (p.site.prose && p.site.prose.site) {
-    _(p.site.prose.site).each(function(file, key) {
-      q.defer(function(cb){
-        $.ajax({
-          cache: true,
-          dataType: 'jsonp',
-          jsonp: false,
-          jsonpCallback: 'callback',
-          url: file,
-          success: function(d) {
-            p.site[key] = d;
-            cb();
-          }
-        });
-      });
-    });
-  }
-
-  q.defer(getLayout);
-  q.await(function() {
-    var content = p.content;
-
-    // Set base URL to public site
-    if (app.state.config.prose && app.state.config.prose.siteurl) {
-      content = content.replace(/(<head(?:.*)>)/, function() {
-        return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
-      });
-    }
-
-    document.write(content);
-    document.close();
-  });
-
-  function getLayout(cb) {
-    var file = p.page.layout;
-
-    model.repo.read(app.state.branch, '_layouts/' + file + '.html', function(err, d) {
-      if (err) return cb(err);
-      var meta = (d.split('---')[1]) ? jsyaml.load(d.split('---')[1]) : {},
-        content = (d.split('---')[2]) ? d.split('---')[2] : d,
-        template = Liquid.parse(content);
-      p.page = _(p.page).extend(meta);
-      p.content = template.render({
-        site: p.site,
-        post: p.post,
-        page: p.page,
-        content: p.content
-      });
-      if (meta.layout) q.defer(getLayout);
-      cb();
-    });
-
-  }
-};
-
-// UI Stuff
-// -------
-
-function dropdown() {
-    var $dropdown = $('.dropdown-menu');
-    $dropdown.each(function(i, el) {
-        $(this).hover(function() {
-            $(this).addClass('open');
-        }, function(e) {
-            $(this).removeClass('open');
-        });
-    });
-
-    $('.dropdown-hover').click(function() {
-        return false;
-    });
-}
-
-function shadowScroll($el, $parent) {
-  $el.scroll(function() {
-    if ($el.scrollTop() !== 0) {
-      if (!$parent.hasClass('shadow')) {
-        $parent.addClass('shadow');
-      }
-    } else {
-      $parent.removeClass('shadow');
-    }
-  });
-}
-
-module.exports = {
-  dropdown: function() {
-    return dropdown();
-  },
-
-  shadowScroll: function($el, $parent) {
-    return shadowScroll($el, $parent);
-  }
-}
-
-},{"underscore":4,"jquery-browserify":5,"js-yaml":18,"queue-async":21,"marked":22,"chrono":23}],15:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var chosen = require('chosen-jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var marked = require('marked');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-
-    id: 'post',
-    className: 'post',
-
-    events: {
-      'click .save.confirm': 'updateFile',
-      'click .markdown-snippets a': 'markdownSnippet',
-      'change input': '_makeDirty'
-    },
-
-    render: function() {
-      var data = _.extend(this.model, {
-        mode: this.mode,
-        preview: this.model.markdown ? marked(this.model.content) : '',
-        metadata: jsyaml.load(this.model.raw_metadata)
-      });
-
-      this.eventRegister = app.eventRegister;
-
-      // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'translate', 'updateFile');
-      this.eventRegister.bind('edit', this.edit);
-      this.eventRegister.bind('preview', this.preview);
-      this.eventRegister.bind('settings', this.settings);
-      this.eventRegister.bind('deleteFile', this.deleteFile);
-      this.eventRegister.bind('updateMetaData', this.updateMetaData);
-      this.eventRegister.bind('save', this.save);
-      this.eventRegister.bind('updateFile', this.updateFile);
-      this.eventRegister.bind('translate', this.translate);
-
-      // Ping `views/app.js` to let know we should swap out the sidebar
-      this.eventRegister.trigger('sidebarContext', data, 'post');
-
-      // Render heading
-      var isPrivate = app.state.isPrivate ? 'private' : '';
-
-      var header = {
-        avatar: '<span class="icon round file ' + isPrivate + '"></span>',
-        parent: app.state.repo,
-        parentUrl: app.state.user + '/' + app.state.repo,
-        title: _.filepath(data.path, data.file),
-        titleUrl: '#',
-        alterable: true
-      };
-
-      this.eventRegister.trigger('headerContext', header);
-
-      var tmpl = _(window.app.templates.post).template();
-
-      $(this.el)
-        .empty()
-        .append(tmpl(_.extend(this.model, {
-          mode: this.mode,
-          metadata: this.model.metadata
-        })));
-
-      // TODO Add an unpublished class to .application
-      if (!this.model.published) $(this.el).addClass('published');
-
-      this.initEditor();
-
-      // Editor is first up so trigger an active class for it
-      $('.post-views .edit').toggleClass('active', true);
-
-      return this;
-    },
-
-    edit: function(e) {
-      var that = this;
-
-      if (this.toolbar && this.toolbar !== null) {
-        this.toolbar.prependTo($('#post'));
-        this.toolbar = null;
-      }
-
-      $('.post-views a').removeClass('active');
-      $('.post-views .edit').addClass('active');
-      $('#prose').toggleClass('open', false);
-
-      $('.views .view').removeClass('active');
-      $('.views .edit').addClass('active');
-      this.model.preview = false;
-      this.updateURL();
-
-      // Refresh CodeMirror each time
-      // to reflect new changes
-      _.delay(function () {
-        that.refreshCodeMirror();
-      }, 1);
-
-      return false;
-    },
-
-    preview: function(e) {
-      var that = this;
-
-      $('#prose').toggleClass('open', false);
-
-      if (this.model.metadata && this.model.metadata.layout) {
-
-        var hash = window.location.hash.split('/');
-        hash[2] = 'preview';
-        this.stashFile();
-        this.model.preview = true;
-
-        $(e.currentTarget).attr({
-          target: '_blank',
-          href: hash.join('/')
-        });
-
-      } else {
-
-        this.toolbar = $('.toolbar').detach();
-
-        // Vertical Nav
-        $('.post-views a').removeClass('active');
-        $('.post-views .preview').addClass('active');
-
-        // Content Window
-        $('.views .view', this.el).removeClass('active');
-        $('#preview', this.el).addClass('active');
-
-        this.model.preview = true;
-        this.$('.preview').html(marked(this.model.content));
-        this.updateURL();
-        return false;
-      }
-
-      // Refresh CodeMirror each time
-      // to reflect new changes
-      _.delay(function () {
-        that.refreshCodeMirror();
-      }, 1);
-    },
-
-    settings: function(e) {
-      $('.post-views a').removeClass('active');
-      $('.post-views .settings').addClass('active');
-      $('#prose').toggleClass('open');
-    },
-
-    deleteFile: function() {
-      if (confirm('Are you sure you want to delete that file?')) {
-        window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
-          if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
-          router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
-        }, this));
-      }
-      return false;
-    },
-
-    updateURL: function () {
-      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? "blob" : "edit", app.state.branch, this.model.path, this.model.file]);
-      router.navigate(url.join('/'), false);
-    },
-
-    _makeDirty: function (e) {
-      this.dirty = true;
-      if (this.editor) this.model.content = this.editor.getValue();
-      if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
-      if (!this.$('.button.save').hasClass('saving')) {
-        this.$('.button.save').html(this.model.writeable ? 'Save' : 'Submit Change');
-        this.$('.button.save').removeClass('inactive error');
-      }
-    },
-
-    showDiff: function () {
-      var text1 = this.model.persisted ? this.prevContent : '';
-      var text2 = this.serialize();
-      var d = this.dmp.diff_main(text1, text2);
-      this.dmp.diff_cleanupSemantic(d);
-      var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, "");
-      $('.diff-wrapper .diff').html(diff);
-    },
-
-    save: function() {
-      if (!this.dirty) return false;
-      this.showDiff();
-      return false;
-    },
-
-    refreshCodeMirror: function () {
-      $('.CodeMirror-scroll').height($('.document').height());
-      this.editor.refresh();
-      // if (this.metadataEditor) this.metadataEditor.refresh();
-    },
-
-    initialize: function () {
-      this.dmp = new diff_match_patch();
-      this.mode = 'edit';
-      this.prevContent = this.serialize();
-      if (!window.shortcutsRegistered) {
-        key('⌘+s, ctrl+s', _.bind(function () {
-          this.updateFile();
-          return false;
-        }, this));
-        window.shortcutsRegistered = true;
-      }
-
-      // Stash editor and metadataEditor content to localStorage on pagehide event
-      // Always run stashFile in context of view
-      $(window).on('pagehide', _.bind(this.stashFile, this));
-    },
-
-    updateMetaData: function () {
-      if (!this.model.jekyll) return true; // metadata -> skip
-
-      // Update published
-      // TODO: refactor to use this.model.metadata instead of raw YAML
-
-      function updatePublished(yamlStr, published) {
-        var regex = /published: (false|true)/;
-        if (yamlStr.match(regex)) {
-          return yamlStr.replace(regex, 'published: ' + !! published);
-        } else {
-          return yamlStr + '\npublished: ' + !! published;
-        }
-      }
-
-      this.model.raw_metadata = this.metadataEditor.getValue();
-      var published = this.$('#post_published').prop('checked');
-
-      this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
-      this.metadataEditor.setValue(this.model.raw_metadata);
-
-      if (published) {
-        $('#post').addClass('published');
-      } else {
-        $('#post').removeClass('published');
-      }
-
-      return true;
-    },
-
-    updateFilename: function (filepath, cb) {
-      var that = this;
-
-      if (!_.validPathname(filepath)) return cb('error');
-      app.state.path = this.model.path; // ?
-      app.state.file = _.extractFilename(filepath)[1];
-      app.state.path = _.extractFilename(filepath)[0];
-
-      function finish() {
-        that.model.path = app.state.path;
-        that.model.file = app.state.file;
-        // re-render header to reflect the filename change
-        app.instance.app.render();
-        that.updateURL();
-      }
-
-      if (this.model.persisted) {
-        window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function (err) {
-          if (!err) finish();
-          if (err) {
-            cb('error');
-          } else {
-            cb(null);
-          }
-        }, this));
-      } else {
-        finish();
-        cb(null);
-      }
-    },
-
-    serialize: function () {
-      return window.app.models.serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
-    },
-
-    // Update save state (saving ..., sending patch ..., etc.)
-
-    updateSaveState: function (label, classes) {
-      $('.button.save').html(label)
-        .removeClass('inactive error saving')
-        .addClass(classes);
-    },
-
-    // Submits a patch (fork + pull request workflow)
-
-    sendPatch: function (filepath, filename, filecontent, message) {
-      var that = this;
-
-      function patch() {
-        if (that.updateMetaData()) {
-          that.model.content = that.prevContent;
-          that.editor.setValue(that.prevContent);
-
-          window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
-            if (err) {
-              _.delay(function () {
-                that.$('.button.save').html('SUBMIT CHANGE');
-                that.$('.button.save').removeClass('error');
-                that.$('.button.save').addClass('inactive');
-              }, 3000);
-              that.updateSaveState('! Try again in 30 seconds', 'error');
-              return;
-            }
-
-            that.dirty = false;
-            that.model.persisted = true;
-            that.model.file = filename;
-            that.updateURL();
-            that.prevContent = filecontent;
-            that.updateSaveState('Change Submitted', 'inactive');
-          });
-        } else {
-          that.updateSaveState('! Metadata', 'error');
-        }
-      }
-
-      that.updateSaveState('Submitting Change ...', 'inactive saving');
-      patch();
-
-      return false;
-    },
-
-    saveFile: function (filepath, filename, filecontent, message) {
-      var that = this;
-
-      function save() {
-        if (that.updateMetaData()) {
-          window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
-            if (err) {
-              _.delay(function () {
-                that._makeDirty();
-              }, 3000);
-              that.updateSaveState('! Try again in 30 seconds', 'error');
-              return;
-            }
-            that.dirty = false;
-            that.model.persisted = true;
-            that.model.file = filename;
-            that.updateURL();
-            that.prevContent = filecontent;
-            that.updateSaveState('SAVED', 'inactive');
-          });
-        } else {
-          that.updateSaveState('! Metadata', 'error');
-        }
-      }
-
-      that.updateSaveState('SAVING ...', 'inactive saving');
-
-      if (filepath === _.filepath(this.model.path, this.model.file)) return save();
-
-      // Move or create file
-      this.updateFilename(filepath, function (err) {
-        if (err) {
-          that.updateSaveState('! Filename', 'error');
-        } else {
-          save();
-        }
-      });
-    },
-
-    stashFile: function(e) {
-      if (e) e.preventDefault();
-      if (!window.localStorage || !this.dirty) return false;
-
-      var storage = window.localStorage;
-      var filepath = $('input.filepath').val();
-
-      // Don't stash if filepath is undefined
-      if (filepath) {
-        storage.setItem(filepath, JSON.stringify({
-          sha: app.state.sha,
-          content: this.editor ? this.editor.getValue() : null,
-          raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
-        }));
-      }
-    },
-
-    stashApply: function () {
-      if (!window.localStorage) return false;
-
-      var storage = window.localStorage;
-      var filepath = $('input.filepath').val();
-      var item = storage.getItem(filepath);
-      var stash = JSON.parse(item);
-
-      if (stash && stash.sha === window.app.state.sha) {
-        // Restore from stash if file sha hasn't changed
-        if (this.editor) this.editor.setValue(stash.content);
-        if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
-      } else if (item) {
-        // Remove expired content
-        storage.removeItem(filepath);
-      }
-    },
-
-    updateFile: function() {
-      var that = this;
-      var filepath = $('input.filepath').val();
-      var filename = _.extractFilename(filepath)[1];
-      var filecontent = this.serialize();
-      var message = $('.commit-message').val() || $('.commit-message').attr('placeholder');
-      var method = this.model.writeable ? this.saveFile : this.sendPatch;
-
-      // Update content
-      this.model.content = this.editor.getValue();
-
-      // Delegate
-      method.call(this, filepath, filename, filecontent, message);
-    },
-
-    keyMap: function () {
-      var that = this;
-      return {
-        'Ctrl-S': function (codemirror) {
-          that.updateFile();
-        }
-      };
-    },
-
-    translate: function(e) {
-
-      // TODO Drop the 'EN' requirement.
-      var hash = window.location.hash.split('/'),
-          href = $(e.currentTarget).attr('href').substr(1);
-
-      // If current page is not english and target page is english
-      if (href === 'en') {
-        hash.splice(-2, 2, hash[hash.length - 1]);
-      // If current page is english and target page is not english
-      } else if (this.model.metadata.lang === 'en') {
-        hash.splice(-1, 1, href, hash[hash.length - 1]);
-      // If current page is not english and target page is not english
-      } else {
-        hash.splice(-2, 2, href, hash[hash.length - 1]);
-      }
-
-      router.navigate(_(hash).compact().join('/'), true);
-
-      return false;
-    },
-
-    buildMeta: function() {
-      var $metadataEditor = $('#meta');
-      $metadataEditor.empty();
-
-      function initialize(model) {
-        var tmpl;
-
-        _(model.default_metadata).each(function(data) {
-          if (data && typeof data.field === 'object') {
-            switch(data.field.element) {
-              case 'input':
-                tmpl = _(window.app.templates.text).template();
-                $metadataEditor.append(tmpl({
-                  name: data.name,
-                  label: data.field.label,
-                  value: data.field.value
-                }));
-                break;
-              case 'select':
-                tmpl = _(window.app.templates.select).template();
-                $metadataEditor.append(tmpl({
-                  name: data.name,
-                  label: data.field.label,
-                  placeholder: data.field.placeholder,
-                  options: data.field.options
-                }));
-                break;
-              case 'multiselect':
-                tmpl = _(window.app.templates.multiselect).template();
-                $metadataEditor.append(tmpl({
-                  name: data.name,
-                  label: data.field.label,
-                  placeholder: data.field.placeholder,
-                  options: data.field.options
-                }));
-              break;
-            }
-          } else {
-            tmpl = _(window.app.templates.text).template();
-            $metadataEditor.append(tmpl({
-              name: key,
-              label: key,
-              value: data
-            }));
-          }
-        });
-
-        setValue(model.metadata);
-        $('.chzn-select').chosen();
-      }
-
-      function getValue() {
-        var metadata = {};
-
-        _.each($metadataEditor.find('[name]'), function(item) {
-          switch(item.tagName.toLowerCase()) {
-            case 'input':
-              if (item.type === 'text') {
-                metadata[item.name] = item.value;
-              }
-              break;
-            case 'select':
-            case 'multiselect':
-              metadata[item.name] = item.value;
-              break;
-          }
-        });
-
-        return metadata;
-      }
-
-      function getRaw() {
-        return jsyaml.dump(getValue());
-      }
-
-      function setValue(metadata) {
-        _(metadata).each(function(value, key) {
-          var input = $metadataEditor.find('[name="' + key + '"]');
-          var options = $metadataEditor.find('[name="' + key +'"] option');
-
-          if (input.length && options.length) {
-            _.each(options, function(option) {
-              if (value !== null && (option.value === value || value.indexOf(option.value) > -1)) {
-                option.selected = 'selected';
-              }
-            });
-          } else if (input.length) {
-            input.val(value);
-          } else {
-            var tmpl = _(window.app.templates.text).template();
-            $metadataEditor.append(tmpl({
-              name: key,
-              label: key,
-              value: value
-            }));
-          }
-        });
-      }
-
-      function setRaw(rawMetadata) {
-        try {
-          setValue(jsyaml.load(rawMetadata));
-        } catch(err) {
-          console.log('ERROR encoding YAML');
-          // No-op
-        }
-      }
-
-      initialize(this.model);
-
-      return {
-        el: $metadataEditor,
-        getValue: getRaw,
-        setValue: setRaw
-      };
-    },
-
-    initEditor: function () {
-      var that = this;
-
-      // TODO Remove setTimeout
-      setTimeout(function () {
-        if (that.model.jekyll) {
-          that.metadataEditor = that.buildMeta();
-          /*
-          that.metadataEditor = CodeMirror($('#meta')[0], {
-            mode: 'yaml',
-            value: that.model.raw_metadata,
-            theme: 'prose-dark',
-            lineWrapping: true,
-            extraKeys: that.keyMap(),
-            onChange: _.bind(that._makeDirty, that)
-          });
-          */
-          $('#post .metadata').hide();
-        }
-
-        that.editor = CodeMirror($('#code')[0], {
-          mode: that.model.lang,
-          value: that.model.content,
-          lineWrapping: true,
-          extraKeys: that.keyMap(),
-          matchBrackets: true,
-          theme: 'prose-bright',
-          onChange: _.bind(that._makeDirty, that)
-        });
-        that.refreshCodeMirror();
-
-        // Check localStorage for existing stash
-        // Apply if stash exists and is current, remove if expired
-        that.stashApply();
-      }, 100);
-    },
-
-    remove: function () {
-      // Unbind pagehide event handler when View is removed
-      this.eventRegister.unbind('edit', this.postViews);
-      this.eventRegister.unbind('preview', this.preview);
-      this.eventRegister.unbind('settings', this.settings);
-      this.eventRegister.unbind('deleteFile', this.deleteFile);
-      this.eventRegister.unbind('updateMetaData', this.updateMetaData);
-      this.eventRegister.unbind('save', this.save);
-      this.eventRegister.unbind('translate', this.translate);
-      this.eventRegister.unbind('updateFile', this.updateFile);
-
-      $(window).unbind('pagehide');
-      Backbone.View.prototype.remove.call(this);
-    },
-
-    markdownSnippet: function(e) {
-      var snippet = $(e.target, this.el).data('snippet');
-      if (!snippet) return;
-      this.editor.replaceSelection(snippet);
-      return false;
-    }
-});
-
-},{"jquery-browserify":5,"underscore":4,"js-yaml":18,"keymaster":20,"marked":22,"backbone":6,"chosen-jquery-browserify":24}],21:[function(require,module,exports){
-(function() {
-  if (typeof module === "undefined") self.queue = queue;
-  else module.exports = queue;
-  queue.version = "1.0.3";
-
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var queue = {},
-        deferrals = [],
-        started = 0, // number of deferrals that have been started (and perhaps finished)
-        active = 0, // number of deferrals currently being executed (started but not finished)
-        remaining = 0, // number of deferrals not yet finished
-        popping, // inside a synchronous deferral callback?
-        error,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    queue.defer = function() {
-      if (!error) {
-        deferrals.push(arguments);
-        ++remaining;
-        pop();
-      }
-      return queue;
-    };
-
-    queue.await = function(f) {
-      await = f;
-      all = false;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    queue.awaitAll = function(f) {
-      await = f;
-      all = true;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    function pop() {
-      while (popping = started < deferrals.length && active < parallelism) {
-        var i = started++,
-            d = deferrals[i],
-            a = slice.call(d, 1);
-        a.push(callback(i));
-        ++active;
-        d[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new deferrals and squelch active callbacks
-          started = remaining = NaN; // stop queued deferrals from starting
-          notify();
-        } else {
-          deferrals[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(null, deferrals);
-      else await.apply(null, [null].concat(deferrals));
-    }
-
-    return queue;
-  }
-
-  function noop() {}
-})();
-
-},{}],24:[function(require,module,exports){
-(function() {
-  var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  AbstractChosen = (function() {
-    function AbstractChosen(form_field, options) {
-      this.form_field = form_field;
-      this.options = options != null ? options : {};
-      this.is_multiple = this.form_field.multiple;
-      this.set_default_text();
-      this.set_default_values();
-      this.setup();
-      this.set_up_html();
-      this.register_observers();
-      this.finish_setup();
-    }
-
-    AbstractChosen.prototype.set_default_values = function() {
-      var _this = this;
-
-      this.click_test_action = function(evt) {
-        return _this.test_active_click(evt);
-      };
-      this.activate_action = function(evt) {
-        return _this.activate_field(evt);
-      };
-      this.active_field = false;
-      this.mouse_on_container = false;
-      this.results_showing = false;
-      this.result_highlighted = null;
-      this.result_single_selected = null;
-      this.allow_single_deselect = (this.options.allow_single_deselect != null) && (this.form_field.options[0] != null) && this.form_field.options[0].text === "" ? this.options.allow_single_deselect : false;
-      this.disable_search_threshold = this.options.disable_search_threshold || 0;
-      this.disable_search = this.options.disable_search || false;
-      this.enable_split_word_search = this.options.enable_split_word_search != null ? this.options.enable_split_word_search : true;
-      this.search_contains = this.options.search_contains || false;
-      this.choices = 0;
-      this.single_backstroke_delete = this.options.single_backstroke_delete || false;
-      this.max_selected_options = this.options.max_selected_options || Infinity;
-      return this.inherit_select_classes = this.options.inherit_select_classes || false;
-    };
-
-    AbstractChosen.prototype.set_default_text = function() {
-      if (this.form_field.getAttribute("data-placeholder")) {
-        this.default_text = this.form_field.getAttribute("data-placeholder");
-      } else if (this.is_multiple) {
-        this.default_text = this.options.placeholder_text_multiple || this.options.placeholder_text || "Select Some Options";
-      } else {
-        this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || "Select an Option";
-      }
-      return this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || "No results match";
-    };
-
-    AbstractChosen.prototype.mouse_enter = function() {
-      return this.mouse_on_container = true;
-    };
-
-    AbstractChosen.prototype.mouse_leave = function() {
-      return this.mouse_on_container = false;
-    };
-
-    AbstractChosen.prototype.input_focus = function(evt) {
-      var _this = this;
-
-      if (this.is_multiple) {
-        if (!this.active_field) {
-          return setTimeout((function() {
-            return _this.container_mousedown();
-          }), 50);
-        }
-      } else {
-        if (!this.active_field) {
-          return this.activate_field();
-        }
-      }
-    };
-
-    AbstractChosen.prototype.input_blur = function(evt) {
-      var _this = this;
-
-      if (!this.mouse_on_container) {
-        this.active_field = false;
-        return setTimeout((function() {
-          return _this.blur_test();
-        }), 100);
-      }
-    };
-
-    AbstractChosen.prototype.result_add_option = function(option) {
-      var classes, style;
-
-      if (!option.disabled) {
-        option.dom_id = this.container_id + "_o_" + option.array_index;
-        classes = option.selected && this.is_multiple ? [] : ["active-result"];
-        if (option.selected) {
-          classes.push("result-selected");
-        }
-        if (option.group_array_index != null) {
-          classes.push("group-option");
-        }
-        if (option.classes !== "") {
-          classes.push(option.classes);
-        }
-        style = option.style.cssText !== "" ? " style=\"" + option.style + "\"" : "";
-        return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
-      } else {
-        return "";
-      }
-    };
-
-    AbstractChosen.prototype.results_update_field = function() {
-      if (!this.is_multiple) {
-        this.results_reset_cleanup();
-      }
-      this.result_clear_highlight();
-      this.result_single_selected = null;
-      return this.results_build();
-    };
-
-    AbstractChosen.prototype.results_toggle = function() {
-      if (this.results_showing) {
-        return this.results_hide();
-      } else {
-        return this.results_show();
-      }
-    };
-
-    AbstractChosen.prototype.results_search = function(evt) {
-      if (this.results_showing) {
-        return this.winnow_results();
-      } else {
-        return this.results_show();
-      }
-    };
-
-    AbstractChosen.prototype.keyup_checker = function(evt) {
-      var stroke, _ref;
-
-      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
-      this.search_field_scale();
-      switch (stroke) {
-        case 8:
-          if (this.is_multiple && this.backstroke_length < 1 && this.choices > 0) {
-            return this.keydown_backstroke();
-          } else if (!this.pending_backstroke) {
-            this.result_clear_highlight();
-            return this.results_search();
-          }
-          break;
-        case 13:
-          evt.preventDefault();
-          if (this.results_showing) {
-            return this.result_select(evt);
-          }
-          break;
-        case 27:
-          if (this.results_showing) {
-            this.results_hide();
-          }
-          return true;
-        case 9:
-        case 38:
-        case 40:
-        case 16:
-        case 91:
-        case 17:
-          break;
-        default:
-          return this.results_search();
-      }
-    };
-
-    AbstractChosen.prototype.generate_field_id = function() {
-      var new_id;
-
-      new_id = this.generate_random_id();
-      this.form_field.id = new_id;
-      return new_id;
-    };
-
-    AbstractChosen.prototype.generate_random_char = function() {
-      var chars, newchar, rand;
-
-      chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      rand = Math.floor(Math.random() * chars.length);
-      return newchar = chars.substring(rand, rand + 1);
-    };
-
-    return AbstractChosen;
-
-  })();
-
-  $ = window.jQuery;
-
-  get_side_border_padding = function(elmt) {
-    var side_border_padding;
-
-    return side_border_padding = elmt.outerWidth() - elmt.width();
-  };
-
-  $.fn.extend({
-    chosen: function(options) {
-      var browser, match, ua;
-
-      ua = window.navigator.userAgent.toLowerCase();
-      match = /(msie) ([\w.]+)/.exec(ua) || [];
-      browser = {
-        name: match[1] || "",
-        version: match[2] || "0"
-      };
-      if (browser.name === "msie" && (browser.version === "6.0" || (browser.version === "7.0" && document.documentMode === 7))) {
-        return this;
-      }
-      return this.each(function(input_field) {
-        var $this;
-
-        $this = $(this);
-        if (!$this.hasClass("chzn-done")) {
-          return $this.data('chosen', new Chosen(this, options));
-        }
-      });
-    }
-  });
-
-  Chosen = (function(_super) {
-    __extends(Chosen, _super);
-
-    function Chosen() {
-      _ref = Chosen.__super__.constructor.apply(this, arguments);
-      return _ref;
-    }
-
-    Chosen.prototype.setup = function() {
-      this.form_field_jq = $(this.form_field);
-      this.current_value = this.form_field_jq.val();
-      return this.is_rtl = this.form_field_jq.hasClass("chzn-rtl");
-    };
-
-    Chosen.prototype.finish_setup = function() {
-      return this.form_field_jq.addClass("chzn-done");
-    };
-
-    Chosen.prototype.set_up_html = function() {
-      var container_classes, container_div, container_props, dd_top, dd_width, sf_width;
-
-      this.container_id = this.form_field.id.length ? this.form_field.id.replace(/[^\w]/g, '_') : this.generate_field_id();
-      this.container_id += "_chzn";
-      container_classes = ["chzn-container"];
-      container_classes.push("chzn-container-" + (this.is_multiple ? "multi" : "single"));
-      if (this.inherit_select_classes && this.form_field.className) {
-        container_classes.push(this.form_field.className);
-      }
-      if (this.is_rtl) {
-        container_classes.push("chzn-rtl");
-      }
-      this.f_width = this.form_field_jq.outerWidth();
-      container_props = {
-        id: this.container_id,
-        "class": container_classes.join(' '),
-        style: 'width: ' + this.f_width + 'px;',
-        title: this.form_field.title
-      };
-      container_div = $("<div />", container_props);
-      if (this.is_multiple) {
-        container_div.html('<ul class="chzn-choices"><li class="search-field"><input type="text" value="' + this.default_text + '" class="default" autocomplete="off" style="width:25px;" /></li></ul><div class="chzn-drop" style="left:-9000px;"><ul class="chzn-results"></ul></div>');
-      } else {
-        container_div.html('<a href="javascript:void(0)" class="chzn-single chzn-default" tabindex="-1"><span>' + this.default_text + '</span><div><b></b></div></a><div class="chzn-drop" style="left:-9000px;"><div class="chzn-search"><input type="text" autocomplete="off" /></div><ul class="chzn-results"></ul></div>');
-      }
-      this.form_field_jq.hide().after(container_div);
-      this.container = $('#' + this.container_id);
-      this.dropdown = this.container.find('div.chzn-drop').first();
-      dd_top = this.container.height();
-      dd_width = this.f_width - get_side_border_padding(this.dropdown);
-      this.dropdown.css({
-        "width": dd_width + "px",
-        "top": dd_top + "px"
-      });
-      this.search_field = this.container.find('input').first();
-      this.search_results = this.container.find('ul.chzn-results').first();
-      this.search_field_scale();
-      this.search_no_results = this.container.find('li.no-results').first();
-      if (this.is_multiple) {
-        this.search_choices = this.container.find('ul.chzn-choices').first();
-        this.search_container = this.container.find('li.search-field').first();
-      } else {
-        this.search_container = this.container.find('div.chzn-search').first();
-        this.selected_item = this.container.find('.chzn-single').first();
-        sf_width = dd_width - get_side_border_padding(this.search_container) - get_side_border_padding(this.search_field);
-        this.search_field.css({
-          "width": sf_width + "px"
-        });
-      }
-      this.results_build();
-      this.set_tab_index();
-      return this.form_field_jq.trigger("liszt:ready", {
-        chosen: this
-      });
-    };
-
-    Chosen.prototype.register_observers = function() {
-      var _this = this;
-
-      this.container.mousedown(function(evt) {
-        return _this.container_mousedown(evt);
-      });
-      this.container.mouseup(function(evt) {
-        return _this.container_mouseup(evt);
-      });
-      this.container.mouseenter(function(evt) {
-        return _this.mouse_enter(evt);
-      });
-      this.container.mouseleave(function(evt) {
-        return _this.mouse_leave(evt);
-      });
-      this.search_results.mouseup(function(evt) {
-        return _this.search_results_mouseup(evt);
-      });
-      this.search_results.mouseover(function(evt) {
-        return _this.search_results_mouseover(evt);
-      });
-      this.search_results.mouseout(function(evt) {
-        return _this.search_results_mouseout(evt);
-      });
-      this.form_field_jq.bind("liszt:updated", function(evt) {
-        return _this.results_update_field(evt);
-      });
-      this.form_field_jq.bind("liszt:activate", function(evt) {
-        return _this.activate_field(evt);
-      });
-      this.form_field_jq.bind("liszt:open", function(evt) {
-        return _this.container_mousedown(evt);
-      });
-      this.search_field.blur(function(evt) {
-        return _this.input_blur(evt);
-      });
-      this.search_field.keyup(function(evt) {
-        return _this.keyup_checker(evt);
-      });
-      this.search_field.keydown(function(evt) {
-        return _this.keydown_checker(evt);
-      });
-      this.search_field.focus(function(evt) {
-        return _this.input_focus(evt);
-      });
-      if (this.is_multiple) {
-        return this.search_choices.click(function(evt) {
-          return _this.choices_click(evt);
-        });
-      } else {
-        return this.container.click(function(evt) {
-          return evt.preventDefault();
-        });
-      }
-    };
-
-    Chosen.prototype.search_field_disabled = function() {
-      this.is_disabled = this.form_field_jq[0].disabled;
-      if (this.is_disabled) {
-        this.container.addClass('chzn-disabled');
-        this.search_field[0].disabled = true;
-        if (!this.is_multiple) {
-          this.selected_item.unbind("focus", this.activate_action);
-        }
-        return this.close_field();
-      } else {
-        this.container.removeClass('chzn-disabled');
-        this.search_field[0].disabled = false;
-        if (!this.is_multiple) {
-          return this.selected_item.bind("focus", this.activate_action);
-        }
-      }
-    };
-
-    Chosen.prototype.container_mousedown = function(evt) {
-      var target_closelink;
-
-      if (!this.is_disabled) {
-        target_closelink = evt != null ? $(evt.target).hasClass("search-choice-close") : false;
-        if ((evt != null ? evt.type : void 0) === "mousedown" && !this.results_showing) {
-          evt.preventDefault();
-        }
-        if (!this.pending_destroy_click && !target_closelink) {
-          if (!this.active_field) {
-            if (this.is_multiple) {
-              this.search_field.val("");
-            }
-            $(document).click(this.click_test_action);
-            this.results_show();
-          } else if (!this.is_multiple && evt && (($(evt.target)[0] === this.selected_item[0]) || $(evt.target).parents("a.chzn-single").length)) {
-            evt.preventDefault();
-            this.results_toggle();
-          }
-          return this.activate_field();
-        } else {
-          return this.pending_destroy_click = false;
-        }
-      }
-    };
-
-    Chosen.prototype.container_mouseup = function(evt) {
-      if (evt.target.nodeName === "ABBR" && !this.is_disabled) {
-        return this.results_reset(evt);
-      }
-    };
-
-    Chosen.prototype.blur_test = function(evt) {
-      if (!this.active_field && this.container.hasClass("chzn-container-active")) {
-        return this.close_field();
-      }
-    };
-
-    Chosen.prototype.close_field = function() {
-      $(document).unbind("click", this.click_test_action);
-      this.active_field = false;
-      this.results_hide();
-      this.container.removeClass("chzn-container-active");
-      this.winnow_results_clear();
-      this.clear_backstroke();
-      this.show_search_field_default();
-      return this.search_field_scale();
-    };
-
-    Chosen.prototype.activate_field = function() {
-      this.container.addClass("chzn-container-active");
-      this.active_field = true;
-      this.search_field.val(this.search_field.val());
-      return this.search_field.focus();
-    };
-
-    Chosen.prototype.test_active_click = function(evt) {
-      if ($(evt.target).parents('#' + this.container_id).length) {
-        return this.active_field = true;
-      } else {
-        return this.close_field();
-      }
-    };
-
-    Chosen.prototype.results_build = function() {
-      var content, data, _i, _len, _ref1;
-
-      this.parsing = true;
-      this.results_data = SelectParser.select_to_array(this.form_field);
-      if (this.is_multiple && this.choices > 0) {
-        this.search_choices.find("li.search-choice").remove();
-        this.choices = 0;
-      } else if (!this.is_multiple) {
-        this.selected_item.addClass("chzn-default").find("span").text(this.default_text);
-        if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
-          this.container.addClass("chzn-container-single-nosearch");
-        } else {
-          this.container.removeClass("chzn-container-single-nosearch");
-        }
-      }
-      content = '';
-      _ref1 = this.results_data;
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        data = _ref1[_i];
-        if (data.group) {
-          content += this.result_add_group(data);
-        } else if (!data.empty) {
-          content += this.result_add_option(data);
-          if (data.selected && this.is_multiple) {
-            this.choice_build(data);
-          } else if (data.selected && !this.is_multiple) {
-            this.selected_item.removeClass("chzn-default").find("span").text(data.text);
-            if (this.allow_single_deselect) {
-              this.single_deselect_control_build();
-            }
-          }
-        }
-      }
-      this.search_field_disabled();
-      this.show_search_field_default();
-      this.search_field_scale();
-      this.search_results.html(content);
-      return this.parsing = false;
-    };
-
-    Chosen.prototype.result_add_group = function(group) {
-      if (!group.disabled) {
-        group.dom_id = this.container_id + "_g_" + group.array_index;
-        return '<li id="' + group.dom_id + '" class="group-result">' + $("<div />").text(group.label).html() + '</li>';
-      } else {
-        return "";
-      }
-    };
-
-    Chosen.prototype.result_do_highlight = function(el) {
-      var high_bottom, high_top, maxHeight, visible_bottom, visible_top;
-
-      if (el.length) {
-        this.result_clear_highlight();
-        this.result_highlight = el;
-        this.result_highlight.addClass("highlighted");
-        maxHeight = parseInt(this.search_results.css("maxHeight"), 10);
-        visible_top = this.search_results.scrollTop();
-        visible_bottom = maxHeight + visible_top;
-        high_top = this.result_highlight.position().top + this.search_results.scrollTop();
-        high_bottom = high_top + this.result_highlight.outerHeight();
-        if (high_bottom >= visible_bottom) {
-          return this.search_results.scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
-        } else if (high_top < visible_top) {
-          return this.search_results.scrollTop(high_top);
-        }
-      }
-    };
-
-    Chosen.prototype.result_clear_highlight = function() {
-      if (this.result_highlight) {
-        this.result_highlight.removeClass("highlighted");
-      }
-      return this.result_highlight = null;
-    };
-
-    Chosen.prototype.results_show = function() {
-      var dd_top;
-
-      if (!this.is_multiple) {
-        this.selected_item.addClass("chzn-single-with-drop");
-        if (this.result_single_selected) {
-          this.result_do_highlight(this.result_single_selected);
-        }
-      } else if (this.max_selected_options <= this.choices) {
-        this.form_field_jq.trigger("liszt:maxselected", {
-          chosen: this
-        });
-        false;
-      }
-      dd_top = this.is_multiple ? this.container.height() : this.container.height() - 1;
-      this.form_field_jq.trigger("liszt:showing_dropdown", {
-        chosen: this
-      });
-      this.dropdown.css({
-        "top": dd_top + "px",
-        "left": 0
-      });
-      this.results_showing = true;
-      this.search_field.focus();
-      this.search_field.val(this.search_field.val());
-      return this.winnow_results();
-    };
-
-    Chosen.prototype.results_hide = function() {
-      if (!this.is_multiple) {
-        this.selected_item.removeClass("chzn-single-with-drop");
-      }
-      this.result_clear_highlight();
-      this.form_field_jq.trigger("liszt:hiding_dropdown", {
-        chosen: this
-      });
-      this.dropdown.css({
-        left: "-9000px"
-      });
-      return this.results_showing = false;
-    };
-
-    Chosen.prototype.set_tab_index = function(el) {
-      var ti;
-
-      if (this.form_field_jq.attr("tabindex")) {
-        ti = this.form_field_jq.attr("tabindex");
-        this.form_field_jq.attr("tabindex", -1);
-        return this.search_field.attr("tabindex", ti);
-      }
-    };
-
-    Chosen.prototype.show_search_field_default = function() {
-      if (this.is_multiple && this.choices < 1 && !this.active_field) {
-        this.search_field.val(this.default_text);
-        return this.search_field.addClass("default");
-      } else {
-        this.search_field.val("");
-        return this.search_field.removeClass("default");
-      }
-    };
-
-    Chosen.prototype.search_results_mouseup = function(evt) {
-      var target;
-
-      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
-      if (target.length) {
-        this.result_highlight = target;
-        this.result_select(evt);
-        return this.search_field.focus();
-      }
-    };
-
-    Chosen.prototype.search_results_mouseover = function(evt) {
-      var target;
-
-      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
-      if (target) {
-        return this.result_do_highlight(target);
-      }
-    };
-
-    Chosen.prototype.search_results_mouseout = function(evt) {
-      if ($(evt.target).hasClass("active-result" || $(evt.target).parents('.active-result').first())) {
-        return this.result_clear_highlight();
-      }
-    };
-
-    Chosen.prototype.choices_click = function(evt) {
-      evt.preventDefault();
-      if (this.active_field && !($(evt.target).hasClass("search-choice" || $(evt.target).parents('.search-choice').first)) && !this.results_showing) {
-        return this.results_show();
-      }
-    };
-
-    Chosen.prototype.choice_build = function(item) {
-      var choice_id, html, link,
-        _this = this;
-
-      if (this.is_multiple && this.max_selected_options <= this.choices) {
-        this.form_field_jq.trigger("liszt:maxselected", {
-          chosen: this
-        });
-        false;
-      }
-      choice_id = this.container_id + "_c_" + item.array_index;
-      this.choices += 1;
-      if (item.disabled) {
-        html = '<li class="search-choice search-choice-disabled" id="' + choice_id + '"><span>' + item.html + '</span></li>';
-      } else {
-        html = '<li class="search-choice" id="' + choice_id + '"><span>' + item.html + '</span><a href="javascript:void(0)" class="search-choice-close" rel="' + item.array_index + '"></a></li>';
-      }
-      this.search_container.before(html);
-      link = $('#' + choice_id).find("a").first();
-      return link.click(function(evt) {
-        return _this.choice_destroy_link_click(evt);
-      });
-    };
-
-    Chosen.prototype.choice_destroy_link_click = function(evt) {
-      evt.preventDefault();
-      if (!this.is_disabled) {
-        this.pending_destroy_click = true;
-        return this.choice_destroy($(evt.target));
-      } else {
-        return evt.stopPropagation;
-      }
-    };
-
-    Chosen.prototype.choice_destroy = function(link) {
-      if (this.result_deselect(link.attr("rel"))) {
-        this.choices -= 1;
-        this.show_search_field_default();
-        if (this.is_multiple && this.choices > 0 && this.search_field.val().length < 1) {
-          this.results_hide();
-        }
-        link.parents('li').first().remove();
-        return this.search_field_scale();
-      }
-    };
-
-    Chosen.prototype.results_reset = function() {
-      this.form_field.options[0].selected = true;
-      this.selected_item.find("span").text(this.default_text);
-      if (!this.is_multiple) {
-        this.selected_item.addClass("chzn-default");
-      }
-      this.show_search_field_default();
-      this.results_reset_cleanup();
-      this.form_field_jq.trigger("change");
-      if (this.active_field) {
-        return this.results_hide();
-      }
-    };
-
-    Chosen.prototype.results_reset_cleanup = function() {
-      this.current_value = this.form_field_jq.val();
-      return this.selected_item.find("abbr").remove();
-    };
-
-    Chosen.prototype.result_select = function(evt) {
-      var high, high_id, item, position;
-
-      if (this.result_highlight) {
-        high = this.result_highlight;
-        high_id = high.attr("id");
-        this.result_clear_highlight();
-        if (this.is_multiple) {
-          this.result_deactivate(high);
-        } else {
-          this.search_results.find(".result-selected").removeClass("result-selected");
-          this.result_single_selected = high;
-          this.selected_item.removeClass("chzn-default");
-        }
-        high.addClass("result-selected");
-        position = high_id.substr(high_id.lastIndexOf("_") + 1);
-        item = this.results_data[position];
-        item.selected = true;
-        this.form_field.options[item.options_index].selected = true;
-        if (this.is_multiple) {
-          this.choice_build(item);
-        } else {
-          this.selected_item.find("span").first().text(item.text);
-          if (this.allow_single_deselect) {
-            this.single_deselect_control_build();
-          }
-        }
-        if (!((evt.metaKey || evt.ctrlKey) && this.is_multiple)) {
-          this.results_hide();
-        }
-        this.search_field.val("");
-        if (this.is_multiple || this.form_field_jq.val() !== this.current_value) {
-          this.form_field_jq.trigger("change", {
-            'selected': this.form_field.options[item.options_index].value
-          });
-        }
-        this.current_value = this.form_field_jq.val();
-        return this.search_field_scale();
-      }
-    };
-
-    Chosen.prototype.result_activate = function(el) {
-      return el.addClass("active-result");
-    };
-
-    Chosen.prototype.result_deactivate = function(el) {
-      return el.removeClass("active-result");
-    };
-
-    Chosen.prototype.result_deselect = function(pos) {
-      var result, result_data;
-
-      result_data = this.results_data[pos];
-      if (!this.form_field.options[result_data.options_index].disabled) {
-        result_data.selected = false;
-        this.form_field.options[result_data.options_index].selected = false;
-        result = $("#" + this.container_id + "_o_" + pos);
-        result.removeClass("result-selected").addClass("active-result").show();
-        this.result_clear_highlight();
-        this.winnow_results();
-        this.form_field_jq.trigger("change", {
-          deselected: this.form_field.options[result_data.options_index].value
-        });
-        this.search_field_scale();
-        return true;
-      } else {
-        return false;
-      }
-    };
-
-    Chosen.prototype.single_deselect_control_build = function() {
-      if (this.allow_single_deselect && this.selected_item.find("abbr").length < 1) {
-        return this.selected_item.find("span").first().after("<abbr class=\"search-choice-close\"></abbr>");
-      }
-    };
-
-    Chosen.prototype.winnow_results = function() {
-      var found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref1;
-
-      this.no_results_clear();
-      results = 0;
-      searchText = this.search_field.val() === this.default_text ? "" : $('<div/>').text($.trim(this.search_field.val())).html();
-      regexAnchor = this.search_contains ? "" : "^";
-      regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
-      zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
-      _ref1 = this.results_data;
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        option = _ref1[_i];
-        if (!option.disabled && !option.empty) {
-          if (option.group) {
-            $('#' + option.dom_id).css('display', 'none');
-          } else if (!(this.is_multiple && option.selected)) {
-            found = false;
-            result_id = option.dom_id;
-            result = $("#" + result_id);
-            if (regex.test(option.html)) {
-              found = true;
-              results += 1;
-            } else if (this.enable_split_word_search && (option.html.indexOf(" ") >= 0 || option.html.indexOf("[") === 0)) {
-              parts = option.html.replace(/\[|\]/g, "").split(" ");
-              if (parts.length) {
-                for (_j = 0, _len1 = parts.length; _j < _len1; _j++) {
-                  part = parts[_j];
-                  if (!(regex.test(part))) {
-                    continue;
-                  }
-                  found = true;
-                  results += 1;
-                }
-              }
-            }
-            if (found) {
-              if (searchText.length) {
-                startpos = option.html.search(zregex);
-                text = option.html.substr(0, startpos + searchText.length) + '</em>' + option.html.substr(startpos + searchText.length);
-                text = text.substr(0, startpos) + '<em>' + text.substr(startpos);
-              } else {
-                text = option.html;
-              }
-              result.html(text);
-              this.result_activate(result);
-              if (option.group_array_index != null) {
-                $("#" + this.results_data[option.group_array_index].dom_id).css('display', 'list-item');
-              }
-            } else {
-              if (this.result_highlight && result_id === this.result_highlight.attr('id')) {
-                this.result_clear_highlight();
-              }
-              this.result_deactivate(result);
-            }
-          }
-        }
-      }
-      if (results < 1 && searchText.length) {
-        return this.no_results(searchText);
-      } else {
-        return this.winnow_results_set_highlight();
-      }
-    };
-
-    Chosen.prototype.winnow_results_clear = function() {
-      var li, lis, _i, _len, _results;
-
-      this.search_field.val("");
-      lis = this.search_results.find("li");
-      _results = [];
-      for (_i = 0, _len = lis.length; _i < _len; _i++) {
-        li = lis[_i];
-        li = $(li);
-        if (li.hasClass("group-result")) {
-          _results.push(li.css('display', 'auto'));
-        } else if (!this.is_multiple || !li.hasClass("result-selected")) {
-          _results.push(this.result_activate(li));
-        } else {
-          _results.push(void 0);
-        }
-      }
-      return _results;
-    };
-
-    Chosen.prototype.winnow_results_set_highlight = function() {
-      var do_high, selected_results;
-
-      if (!this.result_highlight) {
-        selected_results = !this.is_multiple ? this.search_results.find(".result-selected.active-result") : [];
-        do_high = selected_results.length ? selected_results.first() : this.search_results.find(".active-result").first();
-        if (do_high != null) {
-          return this.result_do_highlight(do_high);
-        }
-      }
-    };
-
-    Chosen.prototype.no_results = function(terms) {
-      var no_results_html;
-
-      no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
-      no_results_html.find("span").first().html(terms);
-      return this.search_results.append(no_results_html);
-    };
-
-    Chosen.prototype.no_results_clear = function() {
-      return this.search_results.find(".no-results").remove();
-    };
-
-    Chosen.prototype.keydown_arrow = function() {
-      var first_active, next_sib;
-
-      if (!this.result_highlight) {
-        first_active = this.search_results.find("li.active-result").first();
-        if (first_active) {
-          this.result_do_highlight($(first_active));
-        }
-      } else if (this.results_showing) {
-        next_sib = this.result_highlight.nextAll("li.active-result").first();
-        if (next_sib) {
-          this.result_do_highlight(next_sib);
-        }
-      }
-      if (!this.results_showing) {
-        return this.results_show();
-      }
-    };
-
-    Chosen.prototype.keyup_arrow = function() {
-      var prev_sibs;
-
-      if (!this.results_showing && !this.is_multiple) {
-        return this.results_show();
-      } else if (this.result_highlight) {
-        prev_sibs = this.result_highlight.prevAll("li.active-result");
-        if (prev_sibs.length) {
-          return this.result_do_highlight(prev_sibs.first());
-        } else {
-          if (this.choices > 0) {
-            this.results_hide();
-          }
-          return this.result_clear_highlight();
-        }
-      }
-    };
-
-    Chosen.prototype.keydown_backstroke = function() {
-      var next_available_destroy;
-
-      if (this.pending_backstroke) {
-        this.choice_destroy(this.pending_backstroke.find("a").first());
-        return this.clear_backstroke();
-      } else {
-        next_available_destroy = this.search_container.siblings("li.search-choice").last();
-        if (next_available_destroy.length && !next_available_destroy.hasClass("search-choice-disabled")) {
-          this.pending_backstroke = next_available_destroy;
-          if (this.single_backstroke_delete) {
-            return this.keydown_backstroke();
-          } else {
-            return this.pending_backstroke.addClass("search-choice-focus");
-          }
-        }
-      }
-    };
-
-    Chosen.prototype.clear_backstroke = function() {
-      if (this.pending_backstroke) {
-        this.pending_backstroke.removeClass("search-choice-focus");
-      }
-      return this.pending_backstroke = null;
-    };
-
-    Chosen.prototype.keydown_checker = function(evt) {
-      var stroke, _ref1;
-
-      stroke = (_ref1 = evt.which) != null ? _ref1 : evt.keyCode;
-      this.search_field_scale();
-      if (stroke !== 8 && this.pending_backstroke) {
-        this.clear_backstroke();
-      }
-      switch (stroke) {
-        case 8:
-          return this.backstroke_length = this.search_field.val().length;
-        case 9:
-          if (this.results_showing && !this.is_multiple) {
-            this.result_select(evt);
-          }
-          return this.mouse_on_container = false;
-        case 13:
-          return evt.preventDefault();
-        case 38:
-          evt.preventDefault();
-          return this.keyup_arrow();
-        case 40:
-          return this.keydown_arrow();
-      }
-    };
-
-    Chosen.prototype.search_field_scale = function() {
-      var dd_top, div, h, style, style_block, styles, w, _i, _len;
-
-      if (this.is_multiple) {
-        h = 0;
-        w = 0;
-        style_block = "position:absolute; left: -1000px; top: -1000px; display:none;";
-        styles = ['font-size', 'font-style', 'font-weight', 'font-family', 'line-height', 'text-transform', 'letter-spacing'];
-        for (_i = 0, _len = styles.length; _i < _len; _i++) {
-          style = styles[_i];
-          style_block += style + ":" + this.search_field.css(style) + ";";
-        }
-        div = $('<div />', {
-          'style': style_block
-        });
-        div.text(this.search_field.val());
-        $('body').append(div);
-        w = div.width() + 25;
-        div.remove();
-        if (w > this.f_width - 10) {
-          w = this.f_width - 10;
-        }
-        this.search_field.css({
-          'width': w + 'px'
-        });
-        dd_top = this.container.height();
-        return this.dropdown.css({
-          "top": dd_top + "px"
-        });
-      }
-    };
-
-    Chosen.prototype.generate_random_id = function() {
-      var string;
-
-      string = "sel" + this.generate_random_char() + this.generate_random_char() + this.generate_random_char();
-      while ($("#" + string).length > 0) {
-        string += this.generate_random_char();
-      }
-      return string;
-    };
-
-    return Chosen;
-
-  })(AbstractChosen);
-
-  exports.Chosen = Chosen;
-
-  SelectParser = (function() {
-    function SelectParser() {
-      this.options_index = 0;
-      this.parsed = [];
-    }
-
-    SelectParser.prototype.add_node = function(child) {
-      if (child.nodeName.toUpperCase() === "OPTGROUP") {
-        return this.add_group(child);
-      } else {
-        return this.add_option(child);
-      }
-    };
-
-    SelectParser.prototype.add_group = function(group) {
-      var group_position, option, _i, _len, _ref1, _results;
-
-      group_position = this.parsed.length;
-      this.parsed.push({
-        array_index: group_position,
-        group: true,
-        label: group.label,
-        children: 0,
-        disabled: group.disabled
-      });
-      _ref1 = group.childNodes;
-      _results = [];
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        option = _ref1[_i];
-        _results.push(this.add_option(option, group_position, group.disabled));
-      }
-      return _results;
-    };
-
-    SelectParser.prototype.add_option = function(option, group_position, group_disabled) {
-      if (option.nodeName.toUpperCase() === "OPTION") {
-        if (option.text !== "") {
-          if (group_position != null) {
-            this.parsed[group_position].children += 1;
-          }
-          this.parsed.push({
-            array_index: this.parsed.length,
-            options_index: this.options_index,
-            value: option.value,
-            text: option.text,
-            html: option.innerHTML,
-            selected: option.selected,
-            disabled: group_disabled === true ? group_disabled : option.disabled,
-            group_array_index: group_position,
-            classes: option.className,
-            style: option.style.cssText
-          });
-        } else {
-          this.parsed.push({
-            array_index: this.parsed.length,
-            options_index: this.options_index,
-            empty: true
-          });
-        }
-        return this.options_index += 1;
-      }
-    };
-
-    return SelectParser;
-
-  })();
-
-  SelectParser.select_to_array = function(select) {
-    var child, parser, _i, _len, _ref1;
-
-    parser = new SelectParser();
-    _ref1 = select.childNodes;
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      child = _ref1[_i];
-      parser.add_node(child);
-    }
-    return parser.parsed;
-  };
-
-}).call(this);
-
-},{}],18:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
-
-},{"./lib/js-yaml.js":25}],22:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -22471,7 +20018,2484 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
+(function() {
+  if (typeof module === "undefined") self.queue = queue;
+  else module.exports = queue;
+  queue.version = "1.0.3";
+
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var queue = {},
+        deferrals = [],
+        started = 0, // number of deferrals that have been started (and perhaps finished)
+        active = 0, // number of deferrals currently being executed (started but not finished)
+        remaining = 0, // number of deferrals not yet finished
+        popping, // inside a synchronous deferral callback?
+        error,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    queue.defer = function() {
+      if (!error) {
+        deferrals.push(arguments);
+        ++remaining;
+        pop();
+      }
+      return queue;
+    };
+
+    queue.await = function(f) {
+      await = f;
+      all = false;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    queue.awaitAll = function(f) {
+      await = f;
+      all = true;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    function pop() {
+      while (popping = started < deferrals.length && active < parallelism) {
+        var i = started++,
+            d = deferrals[i],
+            a = slice.call(d, 1);
+        a.push(callback(i));
+        ++active;
+        d[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new deferrals and squelch active callbacks
+          started = remaining = NaN; // stop queued deferrals from starting
+          notify();
+        } else {
+          deferrals[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(null, deferrals);
+      else await.apply(null, [null].concat(deferrals));
+    }
+
+    return queue;
+  }
+
+  function noop() {}
+})();
+
+},{}],11:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+
+  id: 'notification',
+
+  initialize: function(type, message) {
+    this.model = {};
+    this.model.type = type;
+    this.model.message = message;
+  },
+
+  render: function() {
+    var tmpl = _(window.app.templates.notification).template();
+    $(this.el).html(tmpl(this.model));
+    return this;
+  }
+});
+
+},{"jquery-browserify":4,"backbone":6}],16:[function(require,module,exports){
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  render: function() {
+    this.stashApply();
+    _.preview(this);
+    return this;
+  },
+
+  stashApply: function() {
+    if (!window.localStorage) return false;
+
+    var storage = window.localStorage,
+        filepath = window.location.hash.split('/').slice(4).join('/');
+
+    var stash = JSON.parse(storage.getItem(filepath));
+
+    if (stash) {
+      this.model.content = stash.content;
+      this.model.raw_metadata = stash.raw_metadata;
+      this.model.metadata = jsyaml.load(stash.raw_metadata);
+    }
+  }
+});
+
+},{"underscore":5,"js-yaml":18,"backbone":6}],15:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var marked = require('marked');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+
+    id: 'post',
+    className: 'post',
+
+    events: {
+      'click .save.confirm': 'updateFile',
+      'click .markdown-snippets a': 'markdownSnippet',
+      'change input': 'makeDirty'
+    },
+
+    initialize: function () {
+      this.dmp = new diff_match_patch();
+      this.mode = 'edit';
+      this.prevContent = this.serialize();
+      if (!window.shortcutsRegistered) {
+        key('⌘+s, ctrl+s', _.bind(function () {
+          this.updateFile();
+          return false;
+        }, this));
+        window.shortcutsRegistered = true;
+      }
+
+      // Stash editor and metadataEditor content to localStorage on pagehide event
+      // Always run stashFile in context of view
+      $(window).on('pagehide', _.bind(this.stashFile, this));
+    },
+
+    render: function() {
+      var data = _.extend(this.model, {
+        mode: this.mode,
+        preview: this.model.markdown ? marked(this.model.content) : '',
+        metadata: jsyaml.load(this.model.raw_metadata)
+      });
+
+      this.eventRegister = app.eventRegister;
+
+      // Listen for button clicks from the vertical nav
+       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'hideDiff', 'translate', 'updateFile');
+      this.eventRegister.bind('edit', this.edit);
+      this.eventRegister.bind('preview', this.preview);
+      this.eventRegister.bind('settings', this.settings);
+      this.eventRegister.bind('deleteFile', this.deleteFile);
+      this.eventRegister.bind('updateMetaData', this.updateMetaData);
+      this.eventRegister.bind('save', this.save);
+      this.eventRegister.bind('hideDiff', this.hideDiff);
+      this.eventRegister.bind('updateFile', this.updateFile);
+      this.eventRegister.bind('translate', this.translate);
+
+      // Ping `views/app.js` to let know we should swap out the sidebar
+      this.eventRegister.trigger('sidebarContext', data, 'post');
+
+      // Render heading
+      var isPrivate = app.state.isPrivate ? 'private' : '';
+
+      var header = {
+        avatar: '<span class="icon round file ' + isPrivate + '"></span>',
+        parent: app.state.repo,
+        parentUrl: app.state.user + '/' + app.state.repo,
+        title: _.filepath(data.path, data.file),
+        titleUrl: '#',
+        alterable: true
+      };
+
+      this.eventRegister.trigger('headerContext', header);
+
+      var tmpl = _(window.app.templates.post).template();
+
+      $(this.el)
+        .empty()
+        .append(tmpl(_.extend(this.model, {
+          mode: this.mode,
+          metadata: this.model.metadata
+        })));
+
+      // TODO Add an unpublished class to .application
+      if (!this.model.published) $(this.el).addClass('published');
+
+      this.initEditor();
+
+      // Editor is first up so trigger an active class for it
+      $('.post-views .edit').toggleClass('active', true);
+
+      return this;
+    },
+
+    edit: function(e) {
+      var that = this;
+      this.model.preview = false;
+
+      if (this.toolbar && this.toolbar !== null) {
+        this.toolbar.prependTo($('#post'));
+        this.toolbar = null;
+      }
+
+      $('.post-views a').removeClass('active');
+      $('.post-views .edit').addClass('active');
+      $('#prose').toggleClass('open', false);
+
+      $('.views .view').removeClass('active');
+      $('.views .edit').addClass('active');
+      this.updateURL();
+
+      // Refresh CodeMirror each time
+      // to reflect new changes
+      _.delay(function () {
+        that.refreshCodeMirror();
+      }, 1);
+
+      return false;
+    },
+
+    preview: function(e) {
+      var that = this;
+      this.model.preview = true;
+
+      $('#prose').toggleClass('open', false);
+
+      if (this.model.metadata && this.model.metadata.layout) {
+
+        var hash = window.location.hash.split('/');
+        hash[2] = 'preview';
+        this.stashFile();
+
+        $(e.currentTarget).attr({
+          target: '_blank',
+          href: hash.join('/')
+        });
+
+      } else {
+
+        this.toolbar = $('.toolbar').detach();
+
+        // Vertical Nav
+        $('.post-views a').removeClass('active');
+        $('.post-views .preview').addClass('active');
+
+        // Content Window
+        $('.views .view', this.el).removeClass('active');
+        $('#preview', this.el).addClass('active');
+
+        this.$('.preview').html(marked(this.model.content));
+        this.updateURL();
+        return false;
+      }
+
+      // Refresh CodeMirror each time
+      // to reflect new changes
+      _.delay(function () {
+        that.refreshCodeMirror();
+      }, 1);
+    },
+
+    settings: function(e) {
+      $('.post-views a').removeClass('active');
+      $('.post-views .settings').addClass('active');
+      $('#prose').toggleClass('open');
+    },
+
+    deleteFile: function() {
+      if (confirm('Are you sure you want to delete that file?')) {
+        window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
+          if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+          router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
+        }, this));
+      }
+      return false;
+    },
+
+    updateURL: function() {
+      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? "blob" : "edit", app.state.branch, this.model.path, this.model.file]);
+      router.navigate(url.join('/'), false);
+    },
+
+    makeDirty: function(e) {
+      this.dirty = true;
+      if (this.editor) this.model.content = this.editor.getValue();
+      if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
+      if (!this.$('.button.save').hasClass('saving')) {
+        this.$('.button.save').html(this.model.writeable ? 'Save' : 'Submit Change');
+        this.$('.button.save').removeClass('inactive error');
+      }
+    },
+
+    showDiff: function() {
+      var $diff = $('#diff', this.el);
+      var text1 = this.model.persisted ? this.prevContent : '';
+      var text2 = this.serialize();
+      var d = this.dmp.diff_main(text1, text2);
+      this.dmp.diff_cleanupSemantic(d);
+      var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, '');
+
+      // Content Window
+      $('.views .view', this.el).removeClass('active');
+      $diff.addClass('active');
+
+      $diff.html(diff);
+    },
+
+    hideDiff: function() {
+      $('.views .view', this.el).removeClass('active');
+
+      if (this.model.mode === 'preview') {
+        $('#preview', this.el).addClass('active');
+      } else {
+        $('#code', this.el).addClass('active');
+      }
+    },
+
+    save: function() {
+      if (!this.dirty) return false;
+      this.showDiff();
+      return false;
+    },
+
+    refreshCodeMirror: function () {
+      $('.CodeMirror-scroll').height($('.document').height());
+      this.editor.refresh();
+      // if (this.metadataEditor) this.metadataEditor.refresh();
+    },
+
+    updateMetaData: function () {
+      if (!this.model.jekyll) return true; // metadata -> skip
+
+      // Update published
+      // TODO: refactor to use this.model.metadata instead of raw YAML
+
+      function updatePublished(yamlStr, published) {
+        var regex = /published: (false|true)/;
+        if (yamlStr.match(regex)) {
+          return yamlStr.replace(regex, 'published: ' + !! published);
+        } else {
+          return yamlStr + '\npublished: ' + !! published;
+        }
+      }
+
+      this.model.raw_metadata = this.metadataEditor.getValue();
+      var published = this.$('#post_published').prop('checked');
+
+      this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
+      this.metadataEditor.setValue(this.model.raw_metadata);
+
+      if (published) {
+        $('#post').addClass('published');
+      } else {
+        $('#post').removeClass('published');
+      }
+
+      return true;
+    },
+
+    updateFilename: function (filepath, cb) {
+      var that = this;
+
+      if (!_.validPathname(filepath)) return cb('error');
+      app.state.path = this.model.path; // ?
+      app.state.file = _.extractFilename(filepath)[1];
+      app.state.path = _.extractFilename(filepath)[0];
+
+      function finish() {
+        that.model.path = app.state.path;
+        that.model.file = app.state.file;
+        // re-render header to reflect the filename change
+        app.instance.app.render();
+        that.updateURL();
+      }
+
+      if (this.model.persisted) {
+        window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function (err) {
+          if (!err) finish();
+          if (err) {
+            cb('error');
+          } else {
+            cb(null);
+          }
+        }, this));
+      } else {
+        finish();
+        cb(null);
+      }
+    },
+
+    serialize: function () {
+      return window.app.models.serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
+    },
+
+    // Update save state (saving ..., sending patch ..., etc.)
+
+    updateSaveState: function (label, classes) {
+      $('.button.save').html(label)
+        .removeClass('inactive error saving')
+        .addClass(classes);
+    },
+
+    // Submits a patch (fork + pull request workflow)
+
+    sendPatch: function (filepath, filename, filecontent, message) {
+      var that = this;
+
+      function patch() {
+        if (that.updateMetaData()) {
+          that.model.content = that.prevContent;
+          that.editor.setValue(that.prevContent);
+
+          window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
+            if (err) {
+              _.delay(function () {
+                that.$('.button.save').html('Submit Change');
+                that.$('.button.save').removeClass('error');
+                that.$('.button.save').addClass('inactive');
+              }, 3000);
+              that.updateSaveState('! Try again in 30 seconds', 'error');
+              return;
+            }
+
+            that.dirty = false;
+            that.model.persisted = true;
+            that.model.file = filename;
+            that.updateURL();
+            that.prevContent = filecontent;
+            that.updateSaveState('Change Submitted', 'inactive');
+          });
+        } else {
+          that.updateSaveState('! Metadata', 'error');
+        }
+      }
+
+      that.updateSaveState('Submitting Change ...', 'inactive saving');
+      patch();
+
+      return false;
+    },
+
+    saveFile: function (filepath, filename, filecontent, message) {
+      var that = this;
+
+      function save() {
+        if (that.updateMetaData()) {
+          window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
+            if (err) {
+              _.delay(function () {
+                that.makeDirty();
+              }, 3000);
+              that.updateSaveState('! Try again in 30 seconds', 'error');
+              return;
+            }
+            that.dirty = false;
+            that.model.persisted = true;
+            that.model.file = filename;
+            that.updateURL();
+            that.prevContent = filecontent;
+            that.updateSaveState('SAVED', 'inactive');
+          });
+        } else {
+          that.updateSaveState('! Metadata', 'error');
+        }
+      }
+
+      that.updateSaveState('Saving ...', 'inactive saving');
+
+      if (filepath === _.filepath(this.model.path, this.model.file)) return save();
+
+      // Move or create file
+      this.updateFilename(filepath, function (err) {
+        if (err) {
+          that.updateSaveState('! Filename', 'error');
+        } else {
+          save();
+        }
+      });
+    },
+
+    stashFile: function(e) {
+      if (e) e.preventDefault();
+      if (!window.localStorage || !this.dirty) return false;
+
+      var storage = window.localStorage;
+      var filepath = $('input.filepath').val();
+
+      // Don't stash if filepath is undefined
+      if (filepath) {
+        storage.setItem(filepath, JSON.stringify({
+          sha: app.state.sha,
+          content: this.editor ? this.editor.getValue() : null,
+          raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+        }));
+      }
+    },
+
+    stashApply: function () {
+      if (!window.localStorage) return false;
+
+      var storage = window.localStorage;
+      var filepath = $('input.filepath').val();
+      var item = storage.getItem(filepath);
+      var stash = JSON.parse(item);
+
+      if (stash && stash.sha === window.app.state.sha) {
+        // Restore from stash if file sha hasn't changed
+        if (this.editor) this.editor.setValue(stash.content);
+        if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
+      } else if (item) {
+        // Remove expired content
+        storage.removeItem(filepath);
+      }
+    },
+
+    updateFile: function() {
+      var that = this;
+      var filepath = $('input.filepath').val();
+      var filename = _.extractFilename(filepath)[1];
+      var filecontent = this.serialize();
+      var message = $('.commit-message').val() || $('.commit-message').attr('placeholder');
+      var method = this.model.writeable ? this.saveFile : this.sendPatch;
+
+      // Update content
+      this.model.content = this.editor.getValue();
+
+      // Delegate
+      method.call(this, filepath, filename, filecontent, message);
+    },
+
+    keyMap: function () {
+      var that = this;
+      return {
+        'Ctrl-S': function (codemirror) {
+          that.updateFile();
+        }
+      };
+    },
+
+    translate: function(e) {
+
+      // TODO Drop the 'EN' requirement.
+      var hash = window.location.hash.split('/'),
+          href = $(e.currentTarget).attr('href').substr(1);
+
+      // If current page is not english and target page is english
+      if (href === 'en') {
+        hash.splice(-2, 2, hash[hash.length - 1]);
+      // If current page is english and target page is not english
+      } else if (this.model.metadata.lang === 'en') {
+        hash.splice(-1, 1, href, hash[hash.length - 1]);
+      // If current page is not english and target page is not english
+      } else {
+        hash.splice(-2, 2, href, hash[hash.length - 1]);
+      }
+
+      router.navigate(_(hash).compact().join('/'), true);
+
+      return false;
+    },
+
+    buildMeta: function() {
+      var $metadataEditor = $('#meta');
+      $metadataEditor.empty();
+
+      function initialize(model) {
+        var tmpl;
+
+        _(model.default_metadata).each(function(data) {
+          if (data && typeof data.field === 'object') {
+            switch(data.field.element) {
+              case 'input':
+                tmpl = _(window.app.templates.text).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  value: data.field.value
+                }));
+                break;
+              case 'select':
+                tmpl = _(window.app.templates.select).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
+                break;
+              case 'multiselect':
+                tmpl = _(window.app.templates.multiselect).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
+              break;
+            }
+          } else {
+            tmpl = _(window.app.templates.text).template();
+            $metadataEditor.append(tmpl({
+              name: key,
+              label: key,
+              value: data
+            }));
+          }
+        });
+
+        setValue(model.metadata);
+        $('.chzn-select').chosen();
+      }
+
+      function getValue() {
+        var metadata = {};
+
+        _.each($metadataEditor.find('[name]'), function(item) {
+          switch(item.tagName.toLowerCase()) {
+            case 'input':
+              if (item.type === 'text') {
+                metadata[item.name] = item.value;
+              }
+              break;
+            case 'select':
+            case 'multiselect':
+              metadata[item.name] = item.value;
+              break;
+          }
+        });
+
+        return metadata;
+      }
+
+      function getRaw() {
+        return jsyaml.dump(getValue());
+      }
+
+      function setValue(metadata) {
+        _(metadata).each(function(value, key) {
+          var input = $metadataEditor.find('[name="' + key + '"]');
+          var options = $metadataEditor.find('[name="' + key +'"] option');
+
+          if (input.length && options.length) {
+            _.each(options, function(option) {
+              if (value !== null && (option.value === value || value.indexOf(option.value) > -1)) {
+                option.selected = 'selected';
+              }
+            });
+          } else if (input.length) {
+            input.val(value);
+          } else {
+            var tmpl = _(window.app.templates.text).template();
+            $metadataEditor.append(tmpl({
+              name: key,
+              label: key,
+              value: value
+            }));
+          }
+        });
+      }
+
+      function setRaw(rawMetadata) {
+        try {
+          setValue(jsyaml.load(rawMetadata));
+        } catch(err) {
+          console.log('ERROR encoding YAML');
+          // No-op
+        }
+      }
+
+      initialize(this.model);
+
+      return {
+        el: $metadataEditor,
+        getValue: getRaw,
+        setValue: setRaw
+      };
+    },
+
+    initEditor: function () {
+      var that = this;
+
+      // TODO Remove setTimeout
+      setTimeout(function () {
+        if (that.model.jekyll) {
+          that.metadataEditor = that.buildMeta();
+          /*
+          that.metadataEditor = CodeMirror($('#meta')[0], {
+            mode: 'yaml',
+            value: that.model.raw_metadata,
+            theme: 'prose-dark',
+            lineWrapping: true,
+            extraKeys: that.keyMap(),
+            onChange: _.bind(that.makeDirty, that)
+          });
+          */
+          $('#post .metadata').hide();
+        }
+
+        that.editor = CodeMirror($('#code')[0], {
+          mode: that.model.lang,
+          value: that.model.content,
+          lineWrapping: true,
+          extraKeys: that.keyMap(),
+          matchBrackets: true,
+          theme: 'prose-bright',
+          onChange: _.bind(that.makeDirty, that)
+        });
+        that.refreshCodeMirror();
+
+        // Check localStorage for existing stash
+        // Apply if stash exists and is current, remove if expired
+        that.stashApply();
+      }, 100);
+    },
+
+    remove: function () {
+      // Unbind pagehide event handler when View is removed
+      this.eventRegister.unbind('edit', this.postViews);
+      this.eventRegister.unbind('preview', this.preview);
+      this.eventRegister.unbind('settings', this.settings);
+      this.eventRegister.unbind('deleteFile', this.deleteFile);
+      this.eventRegister.unbind('updateMetaData', this.updateMetaData);
+      this.eventRegister.unbind('save', this.save);
+      this.eventRegister.unbind('hideDiff', this.hideDiff);
+      this.eventRegister.unbind('translate', this.translate);
+      this.eventRegister.unbind('updateFile', this.updateFile);
+
+      $(window).unbind('pagehide');
+      Backbone.View.prototype.remove.call(this);
+    },
+
+    markdownSnippet: function(e) {
+      var snippet = $(e.target, this.el).data('snippet');
+      if (!snippet) return;
+      this.editor.replaceSelection(snippet);
+      return false;
+    }
+});
+
+},{"jquery-browserify":4,"chosen-jquery-browserify":23,"underscore":5,"js-yaml":18,"keymaster":24,"marked":20,"backbone":6}],14:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+
+  id: 'posts',
+
+  events: {
+    'hover a.item': 'activeListing',
+    'keyup #filter': 'search'
+  },
+
+  initialize: function () {
+    if (!window.shortcutsRegistered) {
+      key('enter', _.bind(function (e, handler) {
+        this.goToFile();
+      }, this));
+      key('up, down', _.bind(function (e, handler) {
+        this.pageListing(handler.key);
+        e.preventDefault();
+        e.stopPropagation();
+      }, this));
+      window.shortcutsRegistered = true;
+    }
+  },
+
+  render: function () {
+    var that = this;
+    var data = _.extend(this.model, app.state, {
+      currentPath: app.state.path
+    });
+
+    // Ping `views/app.js` to let know we should swap out the sidebar
+    this.eventRegister = app.eventRegister;
+    this.eventRegister.trigger('sidebarContext', data, 'posts');
+    var isPrivate = app.state.isPrivate ? 'private' : '';
+
+    var header = {
+      avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
+      parent: data.user,
+      parentUrl: data.user,
+      title: data.repo,
+      titleUrl: data.user + '/' + data.repo,
+      alterable: false
+    }
+
+    this.eventRegister.trigger('headerContext', header);
+
+    var tmpl = _(window.app.templates.posts).template();
+    $(this.el).empty().append(tmpl(data));
+
+    _.delay(function () {
+      that.renderResults();
+      $('#filter').focus();
+      utils.shadowScroll($('#files'), $('.breadcrumb'));
+      utils.shadowScroll($('#files'), $('.content-search'));
+    }, 1);
+
+    return this;
+  },
+
+  pageListing: function (handler) {
+
+    var item, index;
+
+    if ($('.item').hasClass('active')) {
+      index = parseInt($('.item.active').data('index'), 10);
+      $('.item.active').removeClass('active');
+
+      if (handler === 'up') {
+        item = index - 1;
+        $('.item[data-index=' + item + ']').addClass('active');
+      } else {
+        item = index + 1;
+        $('.item[data-index=' + item + ']').addClass('active');
+      }
+    } else {
+      $('.item[data-index=0]').addClass('active');
+    }
+  },
+
+  goToFile: function () {
+    var path = $('.item.active').attr('href');
+    router.navigate(path, true);
+  },
+
+  search: function (e) {
+    if (e.which === 27) { // ESC
+      _.delay(_.bind(function () {
+        $('#filter', this.el).val('');
+        this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
+        this.renderResults();
+      }, this), 10);
+
+    } else if (e.which === 40 && $('.item').length > 0) {
+      this.pageListing('down'); // Arrow Down
+      e.preventDefault();
+      e.stopPropagation();
+      $('#filter').blur();
+
+    } else {
+      _.delay(_.bind(function () {
+        var searchstr = $('#filter', this.el).val();
+        this.model = window.app.models.getFiles(this.model.tree, app.state.path, searchstr);
+        this.renderResults();
+      }, this), 10);
+    }
+  },
+
+  renderResults: function () {
+    var tmpl = _(window.app.templates.files).template();
+    this.$('#files').html(tmpl(_.extend(this.model, app.state, {
+      currentPath: app.state.path
+    })));
+  },
+
+  // Creates human readable versions of _posts/paths
+  semantifyPaths: function (paths) {
+    return _.map(paths, function (path) {
+      return {
+        path: path,
+        name: path
+      }
+    });
+  },
+
+  activeListing: function (e) {
+    $listings = $('.item', this.el);
+    $listing = $(e.target, this.el);
+
+    $listings.removeClass('active');
+    $listing.addClass('active');
+  }
+});
+
+},{".././util":19,"jquery-browserify":4,"underscore":5,"js-yaml":18,"keymaster":24,"backbone":6}],13:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+    id: 'profile',
+
+    events: {
+      'keyup #filter': 'filterFiles'
+    },
+
+    render: function () {
+      var data = this.model;
+      this.eventRegister = app.eventRegister;
+
+      var header = {
+          avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
+          parent: data.user.name || data.user.login,
+          parentUrl: data.user.login,
+          title: 'Explore Projects',
+          titleUrl: data.user.login,
+          alterable: false
+      };
+
+      this.eventRegister.trigger('headerContext', header);
+
+      var tmpl = _(window.app.templates.profile).template();
+      var sidebar = _(window.app.templates.sidebarOrganizations).template();
+
+      $(this.el).empty().append(tmpl(data));
+      this.renderResults();
+
+      $('#drawer')
+        .empty()
+        .append(sidebar(this.model));
+
+      _.delay(function () {
+        utils.shadowScroll($('#projects'), $('.content-search'));
+        $('#filter').focus();
+      }, 1);
+
+      // Cache to perform autocompletion on it
+      this.cache = this.model;
+
+      return this;
+    },
+
+    filterFiles: function (e) {
+      // If this is the ESC key
+      if (e.which === 27) {
+        _.delay(_.bind(function () {
+          $('#filter', this.el).val('');
+          this.model = window.app.models.filterProjects(this.cache, '');
+          this.renderResults();
+        }, this), 10);
+      } else {
+        _.delay(_.bind(function () {
+          var searchstr = $('#filter', this.el).val();
+          this.model = window.app.models.filterProjects(this.cache, searchstr);
+          this.renderResults();
+        }, this), 10);
+      }
+    },
+
+    renderResults: function () {
+      var tmpl = _(window.app.templates.projects).template();
+      $('#projects', this.el).empty().append(tmpl(this.model));
+    }
+
+});
+
+},{".././util":19,"jquery-browserify":4,"underscore":5,"backbone":6}],12:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  id: 'start',
+  className: 'start',
+
+  events: {
+    'submit #login_form': '_login'
+  },
+
+  render: function() {
+    var tmpl = _(window.app.templates.start).template();
+
+    $('.header').hide();
+    $('#prose').empty().html(tmpl(this.model));
+
+    return this;
+  },
+
+  _login: function() {
+    var self = this;
+
+    var user = self.$('#github_user').val();
+    var password = self.$('#github_password').val();
+
+    login({username: user, password: password}, function(err) {
+      if (err) return self.$('.bad-credentials').show();
+      window.location.reload();
+    });
+    return false;
+  }
+});
+
+},{"jquery-browserify":4,"underscore":5,"backbone":6}],9:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+
+  events: {
+    'click #notification .create': 'createPost'
+  },
+
+  createPost: function (e) {
+    var hash = window.location.hash.split('/');
+    hash[2] = 'new';
+    hash[hash.length - 1] = '?file=' + hash[hash.length - 1];
+
+    router.navigate(_(hash).compact().join('/'), true);
+    return false;
+  },
+
+  // Initialize
+  // ----------
+
+  initialize: function () {
+    _.bindAll(this);
+    var that = this;
+    this.app = new window.app.views.App({
+      model: this.model
+    });
+
+    function calculateLayout() {
+      if (that.mainView && that.mainView.refreshCodeMirror)  {
+        that.mainView.refreshCodeMirror();
+      }
+    }
+
+    var lazyLayout = _.debounce(calculateLayout, 300);
+    $(window).resize(lazyLayout);
+  },
+
+
+  renderApp: function () {
+    $(this.app.render().el).prependTo(this.el);
+  },
+
+  // Helpers
+  // -------
+
+  replaceMainView: function (name, view) {
+    $('body').removeClass().addClass(name);
+
+    // Make sure the header get's shown
+    if (name !== 'start') $('#app').show();
+
+    if (this.mainView) {
+      this.mainView.remove();
+    } else {
+      $('#content').empty();
+    }
+    this.mainView = view;
+    $(view.el).appendTo(this.$('#content'));
+  },
+
+
+  // Main Views
+  // ----------
+
+  start: function (username) {
+    var that = this;
+    app.state.title = '';
+
+    // Render out the application view
+    $(that.app.render().el).prependTo(that.el);
+
+    this.replaceMainView('start', new window.app.views.Start({
+      model: _.extend(this.model, {
+        authenticated: !! window.authenticated
+      })
+    }).render());
+  },
+
+  profile: function (username) {
+    var that = this;
+    app.state.title = username;
+    this.loading('Loading profile ...');
+
+    window.app.models.loadRepos(username, function (err, data) {
+
+      // Render out the application view
+      $(that.app.render().el).prependTo(that.el);
+
+      that.loaded();
+      data.authenticated = !! window.authenticated;
+      that.replaceMainView('profile', new window.app.views.Profile({
+        model: _.extend(that.model, data)
+      }).render());
+    });
+  },
+
+  staticView: function () {
+    // Render out the application view
+    $(this.app.render().el).prependTo(this.el);
+  },
+
+  posts: function (user, repo, branch, path) {
+    var that = this;
+    this.loading('Loading posts ...');
+    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      this.loaded();
+
+      if (err) return this.notify('error', 'The requested resource could not be found.');
+      // Render out the application view
+      $(that.app.render().el).prependTo(that.el);
+      this.replaceMainView('posts', new window.app.views.Posts({
+        model: data
+      }).render());
+    }, this));
+  },
+
+  post: function (user, repo, branch, path, file, mode) {
+    var that = this;
+    this.loading('Loading post ...');
+    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      if (err) return this.notify('error', 'The requested resource could not be found.');
+      window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        this.loaded();
+
+        app.state.markdown = data.markdown;
+        // Render out the application view
+        $(that.app.render().el).prependTo(that.el);
+
+        if (err) return this.notify('error', 'The requested resource could not be found.');
+
+        data.preview = (mode !== 'edit');
+        data.lang = _.mode(file);
+        this.replaceMainView(window.authenticated ? 'post' : 'read-post', new window.app.views.Post({
+          model: data
+        }).render());
+      }, this));
+
+      // Render out the application view
+      $(that.app.render().el).prependTo(that.el);
+
+    }, this));
+  },
+
+  preview: function (user, repo, branch, path, file, mode) {
+    this.loading('Preview post ...');
+    window.app.models.loadConfig(user, repo, branch, _.bind(function () {
+      window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        if (err) return this.notify('error', 'The requested resource could not be found.');
+        new window.app.views.Preview({
+          model: data
+        }).render();
+      }, this));
+    }, this));
+  },
+
+  newPost: function (user, repo, branch, path) {
+    var that = this;
+    this.loading('Creating file ...');
+    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      window.app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
+        this.loaded();
+
+        // Render out the application view
+        $(that.app.render().el).prependTo(that.el);
+
+        data.jekyll = _.jekyll(path, data.file);
+        data.preview = false;
+        data.markdown = _.markdown(data.file);
+        data.lang = _.mode(data.file);
+
+        this.replaceMainView('post', new window.app.views.Post({
+          model: data
+        }).render());
+
+        this.mainView._makeDirty();
+        app.state.file = data.file;
+
+      }, this));
+    }, this));
+  },
+
+  notify: function (type, message) {
+    // Render out the application view
+    $(this.app.render().el).prependTo(this.el);
+
+    this.replaceMainView('notification', new window.app.views.Notification(type, message).render());
+  },
+
+  loading: function (msg) {
+    $('body').append('<div class="loading"><span>' + msg ||  'Loading ...' + '</span></div>');
+  },
+
+  loaded: function ()  {
+    $('.loading').remove();
+  }
+});
+
+},{"jquery-browserify":4,"underscore":5,"backbone":6}],10:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+    id: 'app',
+
+    events: {
+      'click .post-views .edit': 'edit',
+      'click .post-views .preview': 'preview',
+      'click .post-views .settings': 'settings',
+      'click a.logout': 'logout',
+      'click a.save': 'save',
+      'click a.save.confirm': 'updateFile',
+      'click a.cancel': 'cancelSave',
+      'click a.delete': 'deleteFile',
+      'click a.publish': 'updateMetaData',
+      'click a.translate': 'translate',
+      'keypress input.filepath': 'saveFilePath'
+    },
+
+    initialize: function(options) {
+      this.eventRegister = app.eventRegister;
+
+      _.bindAll(this, 'headerContext', 'sidebarContext');
+      this.eventRegister.bind('headerContext', this.headerContext);
+      this.eventRegister.bind('sidebarContext', this.sidebarContext);
+    },
+
+    render: function () {
+      var tmpl = _(window.app.templates.app).template();
+      $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
+        state: app.state
+      })));
+
+      // When the sidebar should be open.
+      // Fix this in re-factor, could be much tighter
+      if (this.model.mode === 'edit' || this.model.mode === 'blob' || this.model.mode === 'new') {
+        $('#prose').toggleClass('open', false);
+
+      // Project contents when there aren't branches
+      } else if (app.state.mode === 'tree' && !app.state.branches.length) {
+        $('#prose').toggleClass('open', false);
+
+      } else {
+        $('#prose').toggleClass('open', true);
+      }
+
+      _.delay(function () {
+        utils.dropdown();
+      }, 1);
+
+      return this;
+    },
+
+    headerContext: function(data) {
+      var heading = _(window.app.templates.heading).template();
+      $('#heading').empty().append(heading(data));
+    },
+
+    sidebarContext: function(data, context) {
+      var sidebarTmpl;
+
+      if (context === 'post') {
+        sidebarTmpl = _(window.app.templates.settings).template();
+
+        $('#drawer')
+          .empty()
+          .append(sidebarTmpl(data));
+
+      } else if (context === 'posts') {
+        sidebarTmpl = _(window.app.templates.sidebarProject).template();
+
+        $('#drawer')
+          .empty()
+          .append(sidebarTmpl(data));
+
+        // Branch Switching
+        $('.chzn-select').chosen().change(function() {
+            router.navigate($(this).val(), true);
+        });
+      }
+    },
+
+    // Event Triggering to other files
+    edit: function(e) {
+      this.eventRegister.trigger('edit', e);
+      return false;
+    },
+
+    preview: function(e) {
+      if ($(e.target).data('jekyll')) {
+        this.eventRegister.trigger('preview', e);
+      } else {
+        this.eventRegister.trigger('preview', e);
+
+        // Cancel propagation
+        return false;
+      }
+    },
+
+    settings: function(e) {
+      this.eventRegister.trigger('settings', e);
+      return false;
+    },
+
+    deleteFile: function(e) {
+      this.eventRegister.trigger('deleteFile', e);
+      return false;
+    },
+
+    updateMetaData: function(e) {
+      this.eventRegister.trigger('updateMetaData', e);
+      return false;
+    },
+
+    translate: function(e) {
+      this.eventRegister.trigger('translate', e);
+      return false;
+    },
+
+    save: function(e) {
+      this.eventRegister.trigger('save', e);
+      this.toggleCommit();
+      return false;
+    },
+
+    cancelSave: function(e) {
+      this.eventRegister.trigger('hideDiff', e);
+      this.toggleCommit();
+      return false;
+    },
+
+    toggleCommit: function() {
+      $('.commit', this.el).toggleClass('active');
+      $('.button.save', this.el).toggleClass('confirm');
+
+      // TODO Fix this this.model.writable should work as a boolean
+      $('.button.save', this.el).html($('.button.save', this.el).hasClass('confirm') ? 'Commit' : (this.model.writeable ? 'Save' : 'Save'));
+      $('.commit-message', this.el).focus();
+      return false;
+    },
+
+    updateFile: function(e) {
+      this.eventRegister.trigger('updateFile', e);
+      return false;
+    },
+
+    saveFilePath: function(e) {
+      // Trigger updateFile when a return button has been pressed.
+      if (e.which === 13) {
+        this.eventRegister.trigger('updateFile', e);
+      }
+    },
+
+    logout: function () {
+      window.app.models.logout();
+      app.instance.render();
+      if ($('#start').length > 0) {
+        app.instance.start();
+      } else {
+        window.location.reload();
+      }
+      return false;
+    },
+
+    remove: function () {
+      // Unbind pagehide event handler when View is removed
+      this.eventRegister.unbind('sidebarContext', this.sidebarContext);
+      this.eventRegister.unbind('headerContext', this.headerContext);
+    }
+});
+
+},{".././util":19,"jquery-browserify":4,"underscore":5,"backbone":6}],18:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
+
+},{"./lib/js-yaml.js":25}],23:[function(require,module,exports){
+(function() {
+  var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  AbstractChosen = (function() {
+    function AbstractChosen(form_field, options) {
+      this.form_field = form_field;
+      this.options = options != null ? options : {};
+      this.is_multiple = this.form_field.multiple;
+      this.set_default_text();
+      this.set_default_values();
+      this.setup();
+      this.set_up_html();
+      this.register_observers();
+      this.finish_setup();
+    }
+
+    AbstractChosen.prototype.set_default_values = function() {
+      var _this = this;
+
+      this.click_test_action = function(evt) {
+        return _this.test_active_click(evt);
+      };
+      this.activate_action = function(evt) {
+        return _this.activate_field(evt);
+      };
+      this.active_field = false;
+      this.mouse_on_container = false;
+      this.results_showing = false;
+      this.result_highlighted = null;
+      this.result_single_selected = null;
+      this.allow_single_deselect = (this.options.allow_single_deselect != null) && (this.form_field.options[0] != null) && this.form_field.options[0].text === "" ? this.options.allow_single_deselect : false;
+      this.disable_search_threshold = this.options.disable_search_threshold || 0;
+      this.disable_search = this.options.disable_search || false;
+      this.enable_split_word_search = this.options.enable_split_word_search != null ? this.options.enable_split_word_search : true;
+      this.search_contains = this.options.search_contains || false;
+      this.choices = 0;
+      this.single_backstroke_delete = this.options.single_backstroke_delete || false;
+      this.max_selected_options = this.options.max_selected_options || Infinity;
+      return this.inherit_select_classes = this.options.inherit_select_classes || false;
+    };
+
+    AbstractChosen.prototype.set_default_text = function() {
+      if (this.form_field.getAttribute("data-placeholder")) {
+        this.default_text = this.form_field.getAttribute("data-placeholder");
+      } else if (this.is_multiple) {
+        this.default_text = this.options.placeholder_text_multiple || this.options.placeholder_text || "Select Some Options";
+      } else {
+        this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || "Select an Option";
+      }
+      return this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || "No results match";
+    };
+
+    AbstractChosen.prototype.mouse_enter = function() {
+      return this.mouse_on_container = true;
+    };
+
+    AbstractChosen.prototype.mouse_leave = function() {
+      return this.mouse_on_container = false;
+    };
+
+    AbstractChosen.prototype.input_focus = function(evt) {
+      var _this = this;
+
+      if (this.is_multiple) {
+        if (!this.active_field) {
+          return setTimeout((function() {
+            return _this.container_mousedown();
+          }), 50);
+        }
+      } else {
+        if (!this.active_field) {
+          return this.activate_field();
+        }
+      }
+    };
+
+    AbstractChosen.prototype.input_blur = function(evt) {
+      var _this = this;
+
+      if (!this.mouse_on_container) {
+        this.active_field = false;
+        return setTimeout((function() {
+          return _this.blur_test();
+        }), 100);
+      }
+    };
+
+    AbstractChosen.prototype.result_add_option = function(option) {
+      var classes, style;
+
+      if (!option.disabled) {
+        option.dom_id = this.container_id + "_o_" + option.array_index;
+        classes = option.selected && this.is_multiple ? [] : ["active-result"];
+        if (option.selected) {
+          classes.push("result-selected");
+        }
+        if (option.group_array_index != null) {
+          classes.push("group-option");
+        }
+        if (option.classes !== "") {
+          classes.push(option.classes);
+        }
+        style = option.style.cssText !== "" ? " style=\"" + option.style + "\"" : "";
+        return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
+      } else {
+        return "";
+      }
+    };
+
+    AbstractChosen.prototype.results_update_field = function() {
+      if (!this.is_multiple) {
+        this.results_reset_cleanup();
+      }
+      this.result_clear_highlight();
+      this.result_single_selected = null;
+      return this.results_build();
+    };
+
+    AbstractChosen.prototype.results_toggle = function() {
+      if (this.results_showing) {
+        return this.results_hide();
+      } else {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.results_search = function(evt) {
+      if (this.results_showing) {
+        return this.winnow_results();
+      } else {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.keyup_checker = function(evt) {
+      var stroke, _ref;
+
+      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
+      this.search_field_scale();
+      switch (stroke) {
+        case 8:
+          if (this.is_multiple && this.backstroke_length < 1 && this.choices > 0) {
+            return this.keydown_backstroke();
+          } else if (!this.pending_backstroke) {
+            this.result_clear_highlight();
+            return this.results_search();
+          }
+          break;
+        case 13:
+          evt.preventDefault();
+          if (this.results_showing) {
+            return this.result_select(evt);
+          }
+          break;
+        case 27:
+          if (this.results_showing) {
+            this.results_hide();
+          }
+          return true;
+        case 9:
+        case 38:
+        case 40:
+        case 16:
+        case 91:
+        case 17:
+          break;
+        default:
+          return this.results_search();
+      }
+    };
+
+    AbstractChosen.prototype.generate_field_id = function() {
+      var new_id;
+
+      new_id = this.generate_random_id();
+      this.form_field.id = new_id;
+      return new_id;
+    };
+
+    AbstractChosen.prototype.generate_random_char = function() {
+      var chars, newchar, rand;
+
+      chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      rand = Math.floor(Math.random() * chars.length);
+      return newchar = chars.substring(rand, rand + 1);
+    };
+
+    return AbstractChosen;
+
+  })();
+
+  $ = window.jQuery;
+
+  get_side_border_padding = function(elmt) {
+    var side_border_padding;
+
+    return side_border_padding = elmt.outerWidth() - elmt.width();
+  };
+
+  $.fn.extend({
+    chosen: function(options) {
+      var browser, match, ua;
+
+      ua = window.navigator.userAgent.toLowerCase();
+      match = /(msie) ([\w.]+)/.exec(ua) || [];
+      browser = {
+        name: match[1] || "",
+        version: match[2] || "0"
+      };
+      if (browser.name === "msie" && (browser.version === "6.0" || (browser.version === "7.0" && document.documentMode === 7))) {
+        return this;
+      }
+      return this.each(function(input_field) {
+        var $this;
+
+        $this = $(this);
+        if (!$this.hasClass("chzn-done")) {
+          return $this.data('chosen', new Chosen(this, options));
+        }
+      });
+    }
+  });
+
+  Chosen = (function(_super) {
+    __extends(Chosen, _super);
+
+    function Chosen() {
+      _ref = Chosen.__super__.constructor.apply(this, arguments);
+      return _ref;
+    }
+
+    Chosen.prototype.setup = function() {
+      this.form_field_jq = $(this.form_field);
+      this.current_value = this.form_field_jq.val();
+      return this.is_rtl = this.form_field_jq.hasClass("chzn-rtl");
+    };
+
+    Chosen.prototype.finish_setup = function() {
+      return this.form_field_jq.addClass("chzn-done");
+    };
+
+    Chosen.prototype.set_up_html = function() {
+      var container_classes, container_div, container_props, dd_top, dd_width, sf_width;
+
+      this.container_id = this.form_field.id.length ? this.form_field.id.replace(/[^\w]/g, '_') : this.generate_field_id();
+      this.container_id += "_chzn";
+      container_classes = ["chzn-container"];
+      container_classes.push("chzn-container-" + (this.is_multiple ? "multi" : "single"));
+      if (this.inherit_select_classes && this.form_field.className) {
+        container_classes.push(this.form_field.className);
+      }
+      if (this.is_rtl) {
+        container_classes.push("chzn-rtl");
+      }
+      this.f_width = this.form_field_jq.outerWidth();
+      container_props = {
+        id: this.container_id,
+        "class": container_classes.join(' '),
+        style: 'width: ' + this.f_width + 'px;',
+        title: this.form_field.title
+      };
+      container_div = $("<div />", container_props);
+      if (this.is_multiple) {
+        container_div.html('<ul class="chzn-choices"><li class="search-field"><input type="text" value="' + this.default_text + '" class="default" autocomplete="off" style="width:25px;" /></li></ul><div class="chzn-drop" style="left:-9000px;"><ul class="chzn-results"></ul></div>');
+      } else {
+        container_div.html('<a href="javascript:void(0)" class="chzn-single chzn-default" tabindex="-1"><span>' + this.default_text + '</span><div><b></b></div></a><div class="chzn-drop" style="left:-9000px;"><div class="chzn-search"><input type="text" autocomplete="off" /></div><ul class="chzn-results"></ul></div>');
+      }
+      this.form_field_jq.hide().after(container_div);
+      this.container = $('#' + this.container_id);
+      this.dropdown = this.container.find('div.chzn-drop').first();
+      dd_top = this.container.height();
+      dd_width = this.f_width - get_side_border_padding(this.dropdown);
+      this.dropdown.css({
+        "width": dd_width + "px",
+        "top": dd_top + "px"
+      });
+      this.search_field = this.container.find('input').first();
+      this.search_results = this.container.find('ul.chzn-results').first();
+      this.search_field_scale();
+      this.search_no_results = this.container.find('li.no-results').first();
+      if (this.is_multiple) {
+        this.search_choices = this.container.find('ul.chzn-choices').first();
+        this.search_container = this.container.find('li.search-field').first();
+      } else {
+        this.search_container = this.container.find('div.chzn-search').first();
+        this.selected_item = this.container.find('.chzn-single').first();
+        sf_width = dd_width - get_side_border_padding(this.search_container) - get_side_border_padding(this.search_field);
+        this.search_field.css({
+          "width": sf_width + "px"
+        });
+      }
+      this.results_build();
+      this.set_tab_index();
+      return this.form_field_jq.trigger("liszt:ready", {
+        chosen: this
+      });
+    };
+
+    Chosen.prototype.register_observers = function() {
+      var _this = this;
+
+      this.container.mousedown(function(evt) {
+        return _this.container_mousedown(evt);
+      });
+      this.container.mouseup(function(evt) {
+        return _this.container_mouseup(evt);
+      });
+      this.container.mouseenter(function(evt) {
+        return _this.mouse_enter(evt);
+      });
+      this.container.mouseleave(function(evt) {
+        return _this.mouse_leave(evt);
+      });
+      this.search_results.mouseup(function(evt) {
+        return _this.search_results_mouseup(evt);
+      });
+      this.search_results.mouseover(function(evt) {
+        return _this.search_results_mouseover(evt);
+      });
+      this.search_results.mouseout(function(evt) {
+        return _this.search_results_mouseout(evt);
+      });
+      this.form_field_jq.bind("liszt:updated", function(evt) {
+        return _this.results_update_field(evt);
+      });
+      this.form_field_jq.bind("liszt:activate", function(evt) {
+        return _this.activate_field(evt);
+      });
+      this.form_field_jq.bind("liszt:open", function(evt) {
+        return _this.container_mousedown(evt);
+      });
+      this.search_field.blur(function(evt) {
+        return _this.input_blur(evt);
+      });
+      this.search_field.keyup(function(evt) {
+        return _this.keyup_checker(evt);
+      });
+      this.search_field.keydown(function(evt) {
+        return _this.keydown_checker(evt);
+      });
+      this.search_field.focus(function(evt) {
+        return _this.input_focus(evt);
+      });
+      if (this.is_multiple) {
+        return this.search_choices.click(function(evt) {
+          return _this.choices_click(evt);
+        });
+      } else {
+        return this.container.click(function(evt) {
+          return evt.preventDefault();
+        });
+      }
+    };
+
+    Chosen.prototype.search_field_disabled = function() {
+      this.is_disabled = this.form_field_jq[0].disabled;
+      if (this.is_disabled) {
+        this.container.addClass('chzn-disabled');
+        this.search_field[0].disabled = true;
+        if (!this.is_multiple) {
+          this.selected_item.unbind("focus", this.activate_action);
+        }
+        return this.close_field();
+      } else {
+        this.container.removeClass('chzn-disabled');
+        this.search_field[0].disabled = false;
+        if (!this.is_multiple) {
+          return this.selected_item.bind("focus", this.activate_action);
+        }
+      }
+    };
+
+    Chosen.prototype.container_mousedown = function(evt) {
+      var target_closelink;
+
+      if (!this.is_disabled) {
+        target_closelink = evt != null ? $(evt.target).hasClass("search-choice-close") : false;
+        if ((evt != null ? evt.type : void 0) === "mousedown" && !this.results_showing) {
+          evt.preventDefault();
+        }
+        if (!this.pending_destroy_click && !target_closelink) {
+          if (!this.active_field) {
+            if (this.is_multiple) {
+              this.search_field.val("");
+            }
+            $(document).click(this.click_test_action);
+            this.results_show();
+          } else if (!this.is_multiple && evt && (($(evt.target)[0] === this.selected_item[0]) || $(evt.target).parents("a.chzn-single").length)) {
+            evt.preventDefault();
+            this.results_toggle();
+          }
+          return this.activate_field();
+        } else {
+          return this.pending_destroy_click = false;
+        }
+      }
+    };
+
+    Chosen.prototype.container_mouseup = function(evt) {
+      if (evt.target.nodeName === "ABBR" && !this.is_disabled) {
+        return this.results_reset(evt);
+      }
+    };
+
+    Chosen.prototype.blur_test = function(evt) {
+      if (!this.active_field && this.container.hasClass("chzn-container-active")) {
+        return this.close_field();
+      }
+    };
+
+    Chosen.prototype.close_field = function() {
+      $(document).unbind("click", this.click_test_action);
+      this.active_field = false;
+      this.results_hide();
+      this.container.removeClass("chzn-container-active");
+      this.winnow_results_clear();
+      this.clear_backstroke();
+      this.show_search_field_default();
+      return this.search_field_scale();
+    };
+
+    Chosen.prototype.activate_field = function() {
+      this.container.addClass("chzn-container-active");
+      this.active_field = true;
+      this.search_field.val(this.search_field.val());
+      return this.search_field.focus();
+    };
+
+    Chosen.prototype.test_active_click = function(evt) {
+      if ($(evt.target).parents('#' + this.container_id).length) {
+        return this.active_field = true;
+      } else {
+        return this.close_field();
+      }
+    };
+
+    Chosen.prototype.results_build = function() {
+      var content, data, _i, _len, _ref1;
+
+      this.parsing = true;
+      this.results_data = SelectParser.select_to_array(this.form_field);
+      if (this.is_multiple && this.choices > 0) {
+        this.search_choices.find("li.search-choice").remove();
+        this.choices = 0;
+      } else if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-default").find("span").text(this.default_text);
+        if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
+          this.container.addClass("chzn-container-single-nosearch");
+        } else {
+          this.container.removeClass("chzn-container-single-nosearch");
+        }
+      }
+      content = '';
+      _ref1 = this.results_data;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        data = _ref1[_i];
+        if (data.group) {
+          content += this.result_add_group(data);
+        } else if (!data.empty) {
+          content += this.result_add_option(data);
+          if (data.selected && this.is_multiple) {
+            this.choice_build(data);
+          } else if (data.selected && !this.is_multiple) {
+            this.selected_item.removeClass("chzn-default").find("span").text(data.text);
+            if (this.allow_single_deselect) {
+              this.single_deselect_control_build();
+            }
+          }
+        }
+      }
+      this.search_field_disabled();
+      this.show_search_field_default();
+      this.search_field_scale();
+      this.search_results.html(content);
+      return this.parsing = false;
+    };
+
+    Chosen.prototype.result_add_group = function(group) {
+      if (!group.disabled) {
+        group.dom_id = this.container_id + "_g_" + group.array_index;
+        return '<li id="' + group.dom_id + '" class="group-result">' + $("<div />").text(group.label).html() + '</li>';
+      } else {
+        return "";
+      }
+    };
+
+    Chosen.prototype.result_do_highlight = function(el) {
+      var high_bottom, high_top, maxHeight, visible_bottom, visible_top;
+
+      if (el.length) {
+        this.result_clear_highlight();
+        this.result_highlight = el;
+        this.result_highlight.addClass("highlighted");
+        maxHeight = parseInt(this.search_results.css("maxHeight"), 10);
+        visible_top = this.search_results.scrollTop();
+        visible_bottom = maxHeight + visible_top;
+        high_top = this.result_highlight.position().top + this.search_results.scrollTop();
+        high_bottom = high_top + this.result_highlight.outerHeight();
+        if (high_bottom >= visible_bottom) {
+          return this.search_results.scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
+        } else if (high_top < visible_top) {
+          return this.search_results.scrollTop(high_top);
+        }
+      }
+    };
+
+    Chosen.prototype.result_clear_highlight = function() {
+      if (this.result_highlight) {
+        this.result_highlight.removeClass("highlighted");
+      }
+      return this.result_highlight = null;
+    };
+
+    Chosen.prototype.results_show = function() {
+      var dd_top;
+
+      if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-single-with-drop");
+        if (this.result_single_selected) {
+          this.result_do_highlight(this.result_single_selected);
+        }
+      } else if (this.max_selected_options <= this.choices) {
+        this.form_field_jq.trigger("liszt:maxselected", {
+          chosen: this
+        });
+        false;
+      }
+      dd_top = this.is_multiple ? this.container.height() : this.container.height() - 1;
+      this.form_field_jq.trigger("liszt:showing_dropdown", {
+        chosen: this
+      });
+      this.dropdown.css({
+        "top": dd_top + "px",
+        "left": 0
+      });
+      this.results_showing = true;
+      this.search_field.focus();
+      this.search_field.val(this.search_field.val());
+      return this.winnow_results();
+    };
+
+    Chosen.prototype.results_hide = function() {
+      if (!this.is_multiple) {
+        this.selected_item.removeClass("chzn-single-with-drop");
+      }
+      this.result_clear_highlight();
+      this.form_field_jq.trigger("liszt:hiding_dropdown", {
+        chosen: this
+      });
+      this.dropdown.css({
+        left: "-9000px"
+      });
+      return this.results_showing = false;
+    };
+
+    Chosen.prototype.set_tab_index = function(el) {
+      var ti;
+
+      if (this.form_field_jq.attr("tabindex")) {
+        ti = this.form_field_jq.attr("tabindex");
+        this.form_field_jq.attr("tabindex", -1);
+        return this.search_field.attr("tabindex", ti);
+      }
+    };
+
+    Chosen.prototype.show_search_field_default = function() {
+      if (this.is_multiple && this.choices < 1 && !this.active_field) {
+        this.search_field.val(this.default_text);
+        return this.search_field.addClass("default");
+      } else {
+        this.search_field.val("");
+        return this.search_field.removeClass("default");
+      }
+    };
+
+    Chosen.prototype.search_results_mouseup = function(evt) {
+      var target;
+
+      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
+      if (target.length) {
+        this.result_highlight = target;
+        this.result_select(evt);
+        return this.search_field.focus();
+      }
+    };
+
+    Chosen.prototype.search_results_mouseover = function(evt) {
+      var target;
+
+      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
+      if (target) {
+        return this.result_do_highlight(target);
+      }
+    };
+
+    Chosen.prototype.search_results_mouseout = function(evt) {
+      if ($(evt.target).hasClass("active-result" || $(evt.target).parents('.active-result').first())) {
+        return this.result_clear_highlight();
+      }
+    };
+
+    Chosen.prototype.choices_click = function(evt) {
+      evt.preventDefault();
+      if (this.active_field && !($(evt.target).hasClass("search-choice" || $(evt.target).parents('.search-choice').first)) && !this.results_showing) {
+        return this.results_show();
+      }
+    };
+
+    Chosen.prototype.choice_build = function(item) {
+      var choice_id, html, link,
+        _this = this;
+
+      if (this.is_multiple && this.max_selected_options <= this.choices) {
+        this.form_field_jq.trigger("liszt:maxselected", {
+          chosen: this
+        });
+        false;
+      }
+      choice_id = this.container_id + "_c_" + item.array_index;
+      this.choices += 1;
+      if (item.disabled) {
+        html = '<li class="search-choice search-choice-disabled" id="' + choice_id + '"><span>' + item.html + '</span></li>';
+      } else {
+        html = '<li class="search-choice" id="' + choice_id + '"><span>' + item.html + '</span><a href="javascript:void(0)" class="search-choice-close" rel="' + item.array_index + '"></a></li>';
+      }
+      this.search_container.before(html);
+      link = $('#' + choice_id).find("a").first();
+      return link.click(function(evt) {
+        return _this.choice_destroy_link_click(evt);
+      });
+    };
+
+    Chosen.prototype.choice_destroy_link_click = function(evt) {
+      evt.preventDefault();
+      if (!this.is_disabled) {
+        this.pending_destroy_click = true;
+        return this.choice_destroy($(evt.target));
+      } else {
+        return evt.stopPropagation;
+      }
+    };
+
+    Chosen.prototype.choice_destroy = function(link) {
+      if (this.result_deselect(link.attr("rel"))) {
+        this.choices -= 1;
+        this.show_search_field_default();
+        if (this.is_multiple && this.choices > 0 && this.search_field.val().length < 1) {
+          this.results_hide();
+        }
+        link.parents('li').first().remove();
+        return this.search_field_scale();
+      }
+    };
+
+    Chosen.prototype.results_reset = function() {
+      this.form_field.options[0].selected = true;
+      this.selected_item.find("span").text(this.default_text);
+      if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-default");
+      }
+      this.show_search_field_default();
+      this.results_reset_cleanup();
+      this.form_field_jq.trigger("change");
+      if (this.active_field) {
+        return this.results_hide();
+      }
+    };
+
+    Chosen.prototype.results_reset_cleanup = function() {
+      this.current_value = this.form_field_jq.val();
+      return this.selected_item.find("abbr").remove();
+    };
+
+    Chosen.prototype.result_select = function(evt) {
+      var high, high_id, item, position;
+
+      if (this.result_highlight) {
+        high = this.result_highlight;
+        high_id = high.attr("id");
+        this.result_clear_highlight();
+        if (this.is_multiple) {
+          this.result_deactivate(high);
+        } else {
+          this.search_results.find(".result-selected").removeClass("result-selected");
+          this.result_single_selected = high;
+          this.selected_item.removeClass("chzn-default");
+        }
+        high.addClass("result-selected");
+        position = high_id.substr(high_id.lastIndexOf("_") + 1);
+        item = this.results_data[position];
+        item.selected = true;
+        this.form_field.options[item.options_index].selected = true;
+        if (this.is_multiple) {
+          this.choice_build(item);
+        } else {
+          this.selected_item.find("span").first().text(item.text);
+          if (this.allow_single_deselect) {
+            this.single_deselect_control_build();
+          }
+        }
+        if (!((evt.metaKey || evt.ctrlKey) && this.is_multiple)) {
+          this.results_hide();
+        }
+        this.search_field.val("");
+        if (this.is_multiple || this.form_field_jq.val() !== this.current_value) {
+          this.form_field_jq.trigger("change", {
+            'selected': this.form_field.options[item.options_index].value
+          });
+        }
+        this.current_value = this.form_field_jq.val();
+        return this.search_field_scale();
+      }
+    };
+
+    Chosen.prototype.result_activate = function(el) {
+      return el.addClass("active-result");
+    };
+
+    Chosen.prototype.result_deactivate = function(el) {
+      return el.removeClass("active-result");
+    };
+
+    Chosen.prototype.result_deselect = function(pos) {
+      var result, result_data;
+
+      result_data = this.results_data[pos];
+      if (!this.form_field.options[result_data.options_index].disabled) {
+        result_data.selected = false;
+        this.form_field.options[result_data.options_index].selected = false;
+        result = $("#" + this.container_id + "_o_" + pos);
+        result.removeClass("result-selected").addClass("active-result").show();
+        this.result_clear_highlight();
+        this.winnow_results();
+        this.form_field_jq.trigger("change", {
+          deselected: this.form_field.options[result_data.options_index].value
+        });
+        this.search_field_scale();
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    Chosen.prototype.single_deselect_control_build = function() {
+      if (this.allow_single_deselect && this.selected_item.find("abbr").length < 1) {
+        return this.selected_item.find("span").first().after("<abbr class=\"search-choice-close\"></abbr>");
+      }
+    };
+
+    Chosen.prototype.winnow_results = function() {
+      var found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref1;
+
+      this.no_results_clear();
+      results = 0;
+      searchText = this.search_field.val() === this.default_text ? "" : $('<div/>').text($.trim(this.search_field.val())).html();
+      regexAnchor = this.search_contains ? "" : "^";
+      regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
+      zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
+      _ref1 = this.results_data;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        option = _ref1[_i];
+        if (!option.disabled && !option.empty) {
+          if (option.group) {
+            $('#' + option.dom_id).css('display', 'none');
+          } else if (!(this.is_multiple && option.selected)) {
+            found = false;
+            result_id = option.dom_id;
+            result = $("#" + result_id);
+            if (regex.test(option.html)) {
+              found = true;
+              results += 1;
+            } else if (this.enable_split_word_search && (option.html.indexOf(" ") >= 0 || option.html.indexOf("[") === 0)) {
+              parts = option.html.replace(/\[|\]/g, "").split(" ");
+              if (parts.length) {
+                for (_j = 0, _len1 = parts.length; _j < _len1; _j++) {
+                  part = parts[_j];
+                  if (!(regex.test(part))) {
+                    continue;
+                  }
+                  found = true;
+                  results += 1;
+                }
+              }
+            }
+            if (found) {
+              if (searchText.length) {
+                startpos = option.html.search(zregex);
+                text = option.html.substr(0, startpos + searchText.length) + '</em>' + option.html.substr(startpos + searchText.length);
+                text = text.substr(0, startpos) + '<em>' + text.substr(startpos);
+              } else {
+                text = option.html;
+              }
+              result.html(text);
+              this.result_activate(result);
+              if (option.group_array_index != null) {
+                $("#" + this.results_data[option.group_array_index].dom_id).css('display', 'list-item');
+              }
+            } else {
+              if (this.result_highlight && result_id === this.result_highlight.attr('id')) {
+                this.result_clear_highlight();
+              }
+              this.result_deactivate(result);
+            }
+          }
+        }
+      }
+      if (results < 1 && searchText.length) {
+        return this.no_results(searchText);
+      } else {
+        return this.winnow_results_set_highlight();
+      }
+    };
+
+    Chosen.prototype.winnow_results_clear = function() {
+      var li, lis, _i, _len, _results;
+
+      this.search_field.val("");
+      lis = this.search_results.find("li");
+      _results = [];
+      for (_i = 0, _len = lis.length; _i < _len; _i++) {
+        li = lis[_i];
+        li = $(li);
+        if (li.hasClass("group-result")) {
+          _results.push(li.css('display', 'auto'));
+        } else if (!this.is_multiple || !li.hasClass("result-selected")) {
+          _results.push(this.result_activate(li));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Chosen.prototype.winnow_results_set_highlight = function() {
+      var do_high, selected_results;
+
+      if (!this.result_highlight) {
+        selected_results = !this.is_multiple ? this.search_results.find(".result-selected.active-result") : [];
+        do_high = selected_results.length ? selected_results.first() : this.search_results.find(".active-result").first();
+        if (do_high != null) {
+          return this.result_do_highlight(do_high);
+        }
+      }
+    };
+
+    Chosen.prototype.no_results = function(terms) {
+      var no_results_html;
+
+      no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
+      no_results_html.find("span").first().html(terms);
+      return this.search_results.append(no_results_html);
+    };
+
+    Chosen.prototype.no_results_clear = function() {
+      return this.search_results.find(".no-results").remove();
+    };
+
+    Chosen.prototype.keydown_arrow = function() {
+      var first_active, next_sib;
+
+      if (!this.result_highlight) {
+        first_active = this.search_results.find("li.active-result").first();
+        if (first_active) {
+          this.result_do_highlight($(first_active));
+        }
+      } else if (this.results_showing) {
+        next_sib = this.result_highlight.nextAll("li.active-result").first();
+        if (next_sib) {
+          this.result_do_highlight(next_sib);
+        }
+      }
+      if (!this.results_showing) {
+        return this.results_show();
+      }
+    };
+
+    Chosen.prototype.keyup_arrow = function() {
+      var prev_sibs;
+
+      if (!this.results_showing && !this.is_multiple) {
+        return this.results_show();
+      } else if (this.result_highlight) {
+        prev_sibs = this.result_highlight.prevAll("li.active-result");
+        if (prev_sibs.length) {
+          return this.result_do_highlight(prev_sibs.first());
+        } else {
+          if (this.choices > 0) {
+            this.results_hide();
+          }
+          return this.result_clear_highlight();
+        }
+      }
+    };
+
+    Chosen.prototype.keydown_backstroke = function() {
+      var next_available_destroy;
+
+      if (this.pending_backstroke) {
+        this.choice_destroy(this.pending_backstroke.find("a").first());
+        return this.clear_backstroke();
+      } else {
+        next_available_destroy = this.search_container.siblings("li.search-choice").last();
+        if (next_available_destroy.length && !next_available_destroy.hasClass("search-choice-disabled")) {
+          this.pending_backstroke = next_available_destroy;
+          if (this.single_backstroke_delete) {
+            return this.keydown_backstroke();
+          } else {
+            return this.pending_backstroke.addClass("search-choice-focus");
+          }
+        }
+      }
+    };
+
+    Chosen.prototype.clear_backstroke = function() {
+      if (this.pending_backstroke) {
+        this.pending_backstroke.removeClass("search-choice-focus");
+      }
+      return this.pending_backstroke = null;
+    };
+
+    Chosen.prototype.keydown_checker = function(evt) {
+      var stroke, _ref1;
+
+      stroke = (_ref1 = evt.which) != null ? _ref1 : evt.keyCode;
+      this.search_field_scale();
+      if (stroke !== 8 && this.pending_backstroke) {
+        this.clear_backstroke();
+      }
+      switch (stroke) {
+        case 8:
+          return this.backstroke_length = this.search_field.val().length;
+        case 9:
+          if (this.results_showing && !this.is_multiple) {
+            this.result_select(evt);
+          }
+          return this.mouse_on_container = false;
+        case 13:
+          return evt.preventDefault();
+        case 38:
+          evt.preventDefault();
+          return this.keyup_arrow();
+        case 40:
+          return this.keydown_arrow();
+      }
+    };
+
+    Chosen.prototype.search_field_scale = function() {
+      var dd_top, div, h, style, style_block, styles, w, _i, _len;
+
+      if (this.is_multiple) {
+        h = 0;
+        w = 0;
+        style_block = "position:absolute; left: -1000px; top: -1000px; display:none;";
+        styles = ['font-size', 'font-style', 'font-weight', 'font-family', 'line-height', 'text-transform', 'letter-spacing'];
+        for (_i = 0, _len = styles.length; _i < _len; _i++) {
+          style = styles[_i];
+          style_block += style + ":" + this.search_field.css(style) + ";";
+        }
+        div = $('<div />', {
+          'style': style_block
+        });
+        div.text(this.search_field.val());
+        $('body').append(div);
+        w = div.width() + 25;
+        div.remove();
+        if (w > this.f_width - 10) {
+          w = this.f_width - 10;
+        }
+        this.search_field.css({
+          'width': w + 'px'
+        });
+        dd_top = this.container.height();
+        return this.dropdown.css({
+          "top": dd_top + "px"
+        });
+      }
+    };
+
+    Chosen.prototype.generate_random_id = function() {
+      var string;
+
+      string = "sel" + this.generate_random_char() + this.generate_random_char() + this.generate_random_char();
+      while ($("#" + string).length > 0) {
+        string += this.generate_random_char();
+      }
+      return string;
+    };
+
+    return Chosen;
+
+  })(AbstractChosen);
+
+  exports.Chosen = Chosen;
+
+  SelectParser = (function() {
+    function SelectParser() {
+      this.options_index = 0;
+      this.parsed = [];
+    }
+
+    SelectParser.prototype.add_node = function(child) {
+      if (child.nodeName.toUpperCase() === "OPTGROUP") {
+        return this.add_group(child);
+      } else {
+        return this.add_option(child);
+      }
+    };
+
+    SelectParser.prototype.add_group = function(group) {
+      var group_position, option, _i, _len, _ref1, _results;
+
+      group_position = this.parsed.length;
+      this.parsed.push({
+        array_index: group_position,
+        group: true,
+        label: group.label,
+        children: 0,
+        disabled: group.disabled
+      });
+      _ref1 = group.childNodes;
+      _results = [];
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        option = _ref1[_i];
+        _results.push(this.add_option(option, group_position, group.disabled));
+      }
+      return _results;
+    };
+
+    SelectParser.prototype.add_option = function(option, group_position, group_disabled) {
+      if (option.nodeName.toUpperCase() === "OPTION") {
+        if (option.text !== "") {
+          if (group_position != null) {
+            this.parsed[group_position].children += 1;
+          }
+          this.parsed.push({
+            array_index: this.parsed.length,
+            options_index: this.options_index,
+            value: option.value,
+            text: option.text,
+            html: option.innerHTML,
+            selected: option.selected,
+            disabled: group_disabled === true ? group_disabled : option.disabled,
+            group_array_index: group_position,
+            classes: option.className,
+            style: option.style.cssText
+          });
+        } else {
+          this.parsed.push({
+            array_index: this.parsed.length,
+            options_index: this.options_index,
+            empty: true
+          });
+        }
+        return this.options_index += 1;
+      }
+    };
+
+    return SelectParser;
+
+  })();
+
+  SelectParser.select_to_array = function(select) {
+    var child, parser, _i, _len, _ref1;
+
+    parser = new SelectParser();
+    _ref1 = select.childNodes;
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      child = _ref1[_i];
+      parser.add_node(child);
+    }
+    return parser.parsed;
+  };
+
+}).call(this);
+
+},{}],24:[function(require,module,exports){
 (function(){//     keymaster.js
 //     (c) 2011 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
@@ -22627,10 +22651,451 @@ if (typeof exports === 'object') {
 })(this);
 
 })()
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
-},{"./lib/chrono":26}],6:[function(require,module,exports){
+},{"./lib/chrono":26}],26:[function(require,module,exports){
+(function(){
+
+// CommonJS exports.
+var data = (typeof exports !== 'undefined') ? exports : {};
+
+data.tzToOffset = {
+  'ACDT': -630,
+  'ACST': -570,
+  'ACT': -480,
+  'ADT': +180,
+  'AEDT': -660,
+  'AEST': -600,
+  'AFT': -270,
+  'AKDT': +480,
+  'AKST': +540,
+  'AMST': -300,
+  'AMT': -240,
+  'ART': +180,
+  'AST': -240, // Arab Standard Time
+  'AWDT': -540,
+  'AWST': -480,
+  'AZOST': +60,
+  'AZT': -240,
+  'BDT': -480,
+  'BIOT': -360,
+  'BIT': +720,
+  'BOT': +240,
+  'BRT': +180,
+  'BST': -60, // British Summer Time
+  'BTT': -360,
+  'CAT': -120,
+  'CCT': -390,
+  'CDT': +300,
+  'CEDT': -120,
+  'CEST': -120,
+  'CET': -60,
+  'CHAST': -765,
+  'ChST': -600,
+  'CIST': +480,
+  'CKT': +600,
+  'CLST': +180,
+  'CLT': +240,
+  'COST': +240,
+  'COT': +300,
+  'CST': -480,
+  'CST': +360,
+  'CVT': +60,
+  'CXT': -420,
+  'DFT': -60,
+  'EAST': +360,
+  'EAT': -180,
+  'ECT': +240,
+  'ECT': +300,
+  'EDT': +240,
+  'EEDT': -180,
+  'EEST': -180,
+  'EET': -120,
+  'EST': +300,
+  'FJT': -720,
+  'FKST': +240,
+  'GALT': +360,
+  'GET': -240,
+  'GFT': +180,
+  'GILT': -720,
+  'GIT': +540,
+  'GMT': 0,
+  'GST': +120,
+  'GYT': +240,
+  'HADT': +540,
+  'HAST': +600,
+  'HKT': -480,
+  'HMT': -300,
+  'HST': +600,
+  'IRKT': -480,
+  'IRST': -210,
+  'IST': -120,
+  'IST': -330,
+  'IST': -60,
+  'JST': -540,
+  'KRAT': -420,
+  'KST': -540,
+  'LHST': -630,
+  'LINT': -840,
+  'MAGT': -660,
+  'MDT': +360,
+  'MIT': +570,
+  'MSD': -240,
+  'MSK': -180,
+  'MST': -390,
+  'MST': -480,
+  'MST': +420,
+  'MUT': -240,
+  'NDT': +150,
+  'NFT': -690,
+  'NPT': -345,
+  'NST': +210,
+  'NT': +210,
+  'NZST': -720,
+  'NZDT': -780,
+  'OMST': -360,
+  'PDT': +420,
+  'PETT': -720,
+  'PHOT': -780,
+  'PKT': -300,
+  'PST': -480,
+  'PST': +480,
+  'RET': -240,
+  'SAMT': -240,
+  'SAST': -120,
+  'SBT': -660,
+  'SCT': -240,
+  'SLT': -330,
+  'SST': -480,
+  'SST': +660,
+  'TAHT': +600,
+  'THA': -420,
+  'UTC': 0,
+  'UYST': +120,
+  'UYT': +180,
+  'VET': +270,
+  'VLAT': -600,
+  'WAT': -60,
+  'WEDT': -60,
+  'WEST': -60,
+  'YAKT': -540,
+  'YEKT': -300
+};
+
+// While indices are strings here, numbers work fine too when retrieving.
+data.offsetToTz = {
+  '720':  ['BIT'],
+  '660':  ['SST'],
+  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
+  '570':  ['MIT'],
+  '540':  ['AKST', 'GIT', 'HADT'],
+  '480':  ['PST', 'AKDT', 'CIST'],
+  '420':  ['MST', 'PDT'],
+  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
+  '300':  ['EST', 'CDT', 'COT', 'ECT'],
+  '270':  ['VET'],
+  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
+  '210':  ['NT', 'NST'],
+  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
+  '150':  ['NDT'],
+  '120':  ['GST', 'UYST'],
+  '60':   ['AZOST', 'CVT'],
+  '0':    ['UTC', 'GMT'],
+  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
+  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
+  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
+  '-210': ['IRST'],
+  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
+  '-270': ['AFT'],
+  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
+  '-330': ['IST', 'SLT'],
+  '-345': ['NPT'],
+  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
+  '-390': ['CCT', 'MST'],
+  '-420': ['CXT', 'KRAT', 'THA'],
+  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
+  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
+  '-570': ['ACST'],
+  '-600': ['AEST', 'ChST', 'VLAT'],
+  '-630': ['ACDT', 'LHST'],
+  '-660': ['AEDT', 'MAGT', 'SBT'],
+  '-690': ['NFT'],
+  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
+  '-765': ['CHAST'],
+  '-780': ['PHOT', 'NZDT'],
+  '-840': ['LINT']
+};
+
+data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
+
+data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
+
+data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+
+data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+
+data.intervals = [
+    function(n) { return n !== 1 ? 'years' : 'year'; },
+    function(n) { return n !== 1 ? 'months' : 'month'; },
+    function(n) { return n !== 1 ? 'weeks' : 'week'; },
+    function(n) { return n !== 1 ? 'days' : 'day'; },
+    function(n) { return n !== 1 ? 'hours' : 'hour'; },
+    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
+    function(n) { return n !== 1 ? 'seconds' : 'second'; }
+];
+
+data.intervalFormats = {
+    'ago': '% ago',
+    'in': 'in %'
+};
+
+data.ordinals = function(number) {
+  switch (number % 10) {
+    case 1: return (number % 100 !== 11) ? 'st' : 'th';
+    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
+    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
+    default: return 'th';
+  }
+};
+
+function pad2(i) {
+  return i < 10 ? '0' + i : i;
+};
+
+function pad2sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '0' + i : i);
+};
+
+function pad3(i) {
+  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
+};
+
+function pad4sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
+}
+
+Date.prototype.interval = function(other) {
+    var self = this, inverse = self > other;
+    if (inverse) {
+        self = other;
+        other = this;
+    }
+
+    var parts = [
+        other.getUTCFullYear() - self.getUTCFullYear(),
+        other.getUTCMonth() - self.getUTCMonth(),
+        0, // weeks
+        other.getUTCDate() - self.getUTCDate(),
+        other.getUTCHours() - self.getUTCHours(),
+        other.getUTCMinutes() - self.getUTCMinutes(),
+        other.getUTCSeconds() - self.getUTCSeconds()
+    ];
+    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
+    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
+    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
+    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
+    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
+    parts[2] = (parts[3] / 7) | 0;
+    parts[3] -= parts[2] * 7;
+
+    var fragments = [];
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i]) {
+            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
+        }
+    }
+    return fragments;
+};
+
+Date.prototype.format = function(format, tz) {
+  var time = this.getTime();
+
+  if (tz === undefined) {
+    tz = this.getTimezone();
+    tzName = this.getTimezoneName();
+  }
+  else {
+    var tzData = parseTimezone(tz);
+    tz = tzData[0];
+    var tzName = tzData[1];
+  }
+
+  // Use correct timezone.
+  this.setTime(time - tz * 60000);
+
+  var result = '';
+  for (var i = 0; i < format.length; i++) {
+    switch (format.charAt(i)) {
+      // Day
+      case 'd': result += pad2(this.getUTCDate()); break;
+      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
+      case 'j': result += this.getUTCDate(); break;
+      case 'l': result += data.weekdays[this.getUTCDay()]; break;
+      case 'N': result += this.getUTCDay() || 7; break;
+      case 'S': result += data.ordinals(this.getUTCDate()); break;
+      case 'w': result += this.getUTCDay(); break;
+      case 'z': result += this.getUTCDayOfYear(); break;
+
+      // Week
+      case 'W': result += pad2(this.getUTCISOWeek()); break;
+
+      // Month
+      case 'F': result += data.months[this.getUTCMonth()]; break;
+      case 'm': result += pad2(this.getUTCMonth() + 1); break;
+      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
+      case 'n': result += this.getUTCMonth() + 1; break;
+      case 't': result += this.getUTCDaysOfMonth(); break;
+
+      // Year
+      case 'L': result += this.isLeapYear() ? 1 : 0; break;
+      case 'o': result += this.getUTCISOFullYear(); break;
+      case 'Y': result += this.getUTCFullYear(); break;
+      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
+
+      // Time
+      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
+      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
+      case 'g': result += this.getUTCHours() % 12 || 12; break;
+      case 'G': result += this.getUTCHours(); break;
+      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
+      case 'H': result += pad2(this.getUTCHours()); break;
+      case 'i': result += pad2(this.getUTCMinutes()); break;
+      case 's': result += pad2(this.getUTCSeconds()); break;
+      case 'u': result += pad3(this.getUTCMilliseconds()); break;
+
+      // Timezone
+      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
+      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
+      case 'T': result += tzName; break;
+      case 'Z': result += -tz * 60; break;
+
+      // Full Date/Time
+      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
+      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
+      case 'U': result += Math.floor(this.getTime() / 1000); break;
+
+      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
+
+      default: result += format.charAt(i); break;
+    }
+  }
+
+  this.setTime(time);
+
+  return result;
+};
+
+function parseTimezone(tz) {
+  if (typeof tz === 'number') {
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+  var number = parseInt(tz, 10);
+  if (isNaN(number)) {
+    return [data.tzToOffset[tz], tz];
+  }
+  else {
+    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+}
+
+Date.prototype.isLeapYear = function() {
+  var y = this.getUTCFullYear();
+  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
+};
+
+Date.prototype.getUTCISOWeek = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
+};
+
+Date.prototype.getUTCISOFullYear = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return d.getUTCFullYear();
+};
+
+Date.prototype.getUTCDaysOfMonth = function() {
+  var d = new Date(this);
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() + 1);
+  d.setUTCDate(0);
+  return d.getUTCDate();
+};
+
+Date.prototype.getUTCDayOfYear = function() {
+  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
+};
+
+Date.prototype.getTimezone = function() {
+  if (!('_tz' in this)) {
+    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
+    if (matches && matches[1]) {
+        this.setTimezone(matches[1]);
+    } else {
+        this.setTimezone(new Date().getTimezoneOffset());
+    }
+  }
+  return this._tz;
+};
+
+Date.prototype.getTimezoneName = function() {
+  this.getTimezone(); // Make sure the tz data is populated.
+  return this._tzName;
+};
+
+Date.prototype.setTimezone = function(val) {
+  var tzData = parseTimezone(val);
+  this._tz = tzData[0];
+  this._tzName = tzData[1];
+};
+
+})();
+
+},{}],25:[function(require,module,exports){
+'use strict';
+
+
+var loader = require('./js-yaml/loader');
+var dumper = require('./js-yaml/dumper');
+
+
+function deprecated(name) {
+  return function () {
+    throw new Error('Function ' + name + ' is deprecated and cannot be used.');
+  };
+}
+
+
+module.exports.Type           = require('./js-yaml/type');
+module.exports.Schema         = require('./js-yaml/schema');
+module.exports.MINIMAL_SCHEMA = require('./js-yaml/schema/minimal');
+module.exports.SAFE_SCHEMA    = require('./js-yaml/schema/safe');
+module.exports.DEFAULT_SCHEMA = require('./js-yaml/schema/default');
+module.exports.load           = loader.load;
+module.exports.loadAll        = loader.loadAll;
+module.exports.safeLoad       = loader.safeLoad;
+module.exports.safeLoadAll    = loader.safeLoadAll;
+module.exports.dump           = dumper.dump;
+module.exports.safeDump       = dumper.safeDump;
+module.exports.YAMLException  = require('./js-yaml/exception');
+module.exports.scan           = deprecated('scan');
+module.exports.parse          = deprecated('parse');
+module.exports.compose        = deprecated('compose');
+module.exports.addConstructor = deprecated('addConstructor');
+
+
+require('./js-yaml/require');
+
+},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/schema/minimal":31,"./js-yaml/schema/safe":32,"./js-yaml/schema/default":33,"./js-yaml/exception":34,"./js-yaml/require":35}],6:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -24204,448 +24669,7 @@ module.exports = require('./lib/chrono');
 }).call(this);
 
 })()
-},{"underscore":4}],26:[function(require,module,exports){
-(function(){
-
-// CommonJS exports.
-var data = (typeof exports !== 'undefined') ? exports : {};
-
-data.tzToOffset = {
-  'ACDT': -630,
-  'ACST': -570,
-  'ACT': -480,
-  'ADT': +180,
-  'AEDT': -660,
-  'AEST': -600,
-  'AFT': -270,
-  'AKDT': +480,
-  'AKST': +540,
-  'AMST': -300,
-  'AMT': -240,
-  'ART': +180,
-  'AST': -240, // Arab Standard Time
-  'AWDT': -540,
-  'AWST': -480,
-  'AZOST': +60,
-  'AZT': -240,
-  'BDT': -480,
-  'BIOT': -360,
-  'BIT': +720,
-  'BOT': +240,
-  'BRT': +180,
-  'BST': -60, // British Summer Time
-  'BTT': -360,
-  'CAT': -120,
-  'CCT': -390,
-  'CDT': +300,
-  'CEDT': -120,
-  'CEST': -120,
-  'CET': -60,
-  'CHAST': -765,
-  'ChST': -600,
-  'CIST': +480,
-  'CKT': +600,
-  'CLST': +180,
-  'CLT': +240,
-  'COST': +240,
-  'COT': +300,
-  'CST': -480,
-  'CST': +360,
-  'CVT': +60,
-  'CXT': -420,
-  'DFT': -60,
-  'EAST': +360,
-  'EAT': -180,
-  'ECT': +240,
-  'ECT': +300,
-  'EDT': +240,
-  'EEDT': -180,
-  'EEST': -180,
-  'EET': -120,
-  'EST': +300,
-  'FJT': -720,
-  'FKST': +240,
-  'GALT': +360,
-  'GET': -240,
-  'GFT': +180,
-  'GILT': -720,
-  'GIT': +540,
-  'GMT': 0,
-  'GST': +120,
-  'GYT': +240,
-  'HADT': +540,
-  'HAST': +600,
-  'HKT': -480,
-  'HMT': -300,
-  'HST': +600,
-  'IRKT': -480,
-  'IRST': -210,
-  'IST': -120,
-  'IST': -330,
-  'IST': -60,
-  'JST': -540,
-  'KRAT': -420,
-  'KST': -540,
-  'LHST': -630,
-  'LINT': -840,
-  'MAGT': -660,
-  'MDT': +360,
-  'MIT': +570,
-  'MSD': -240,
-  'MSK': -180,
-  'MST': -390,
-  'MST': -480,
-  'MST': +420,
-  'MUT': -240,
-  'NDT': +150,
-  'NFT': -690,
-  'NPT': -345,
-  'NST': +210,
-  'NT': +210,
-  'NZST': -720,
-  'NZDT': -780,
-  'OMST': -360,
-  'PDT': +420,
-  'PETT': -720,
-  'PHOT': -780,
-  'PKT': -300,
-  'PST': -480,
-  'PST': +480,
-  'RET': -240,
-  'SAMT': -240,
-  'SAST': -120,
-  'SBT': -660,
-  'SCT': -240,
-  'SLT': -330,
-  'SST': -480,
-  'SST': +660,
-  'TAHT': +600,
-  'THA': -420,
-  'UTC': 0,
-  'UYST': +120,
-  'UYT': +180,
-  'VET': +270,
-  'VLAT': -600,
-  'WAT': -60,
-  'WEDT': -60,
-  'WEST': -60,
-  'YAKT': -540,
-  'YEKT': -300
-};
-
-// While indices are strings here, numbers work fine too when retrieving.
-data.offsetToTz = {
-  '720':  ['BIT'],
-  '660':  ['SST'],
-  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
-  '570':  ['MIT'],
-  '540':  ['AKST', 'GIT', 'HADT'],
-  '480':  ['PST', 'AKDT', 'CIST'],
-  '420':  ['MST', 'PDT'],
-  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
-  '300':  ['EST', 'CDT', 'COT', 'ECT'],
-  '270':  ['VET'],
-  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
-  '210':  ['NT', 'NST'],
-  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
-  '150':  ['NDT'],
-  '120':  ['GST', 'UYST'],
-  '60':   ['AZOST', 'CVT'],
-  '0':    ['UTC', 'GMT'],
-  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
-  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
-  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
-  '-210': ['IRST'],
-  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
-  '-270': ['AFT'],
-  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
-  '-330': ['IST', 'SLT'],
-  '-345': ['NPT'],
-  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
-  '-390': ['CCT', 'MST'],
-  '-420': ['CXT', 'KRAT', 'THA'],
-  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
-  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
-  '-570': ['ACST'],
-  '-600': ['AEST', 'ChST', 'VLAT'],
-  '-630': ['ACDT', 'LHST'],
-  '-660': ['AEDT', 'MAGT', 'SBT'],
-  '-690': ['NFT'],
-  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
-  '-765': ['CHAST'],
-  '-780': ['PHOT', 'NZDT'],
-  '-840': ['LINT']
-};
-
-data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
-
-data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
-
-data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
-
-data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
-
-data.intervals = [
-    function(n) { return n !== 1 ? 'years' : 'year'; },
-    function(n) { return n !== 1 ? 'months' : 'month'; },
-    function(n) { return n !== 1 ? 'weeks' : 'week'; },
-    function(n) { return n !== 1 ? 'days' : 'day'; },
-    function(n) { return n !== 1 ? 'hours' : 'hour'; },
-    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
-    function(n) { return n !== 1 ? 'seconds' : 'second'; }
-];
-
-data.intervalFormats = {
-    'ago': '% ago',
-    'in': 'in %'
-};
-
-data.ordinals = function(number) {
-  switch (number % 10) {
-    case 1: return (number % 100 !== 11) ? 'st' : 'th';
-    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
-    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
-    default: return 'th';
-  }
-};
-
-function pad2(i) {
-  return i < 10 ? '0' + i : i;
-};
-
-function pad2sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '0' + i : i);
-};
-
-function pad3(i) {
-  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
-};
-
-function pad4sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
-}
-
-Date.prototype.interval = function(other) {
-    var self = this, inverse = self > other;
-    if (inverse) {
-        self = other;
-        other = this;
-    }
-
-    var parts = [
-        other.getUTCFullYear() - self.getUTCFullYear(),
-        other.getUTCMonth() - self.getUTCMonth(),
-        0, // weeks
-        other.getUTCDate() - self.getUTCDate(),
-        other.getUTCHours() - self.getUTCHours(),
-        other.getUTCMinutes() - self.getUTCMinutes(),
-        other.getUTCSeconds() - self.getUTCSeconds()
-    ];
-    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
-    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
-    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
-    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
-    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
-    parts[2] = (parts[3] / 7) | 0;
-    parts[3] -= parts[2] * 7;
-
-    var fragments = [];
-    for (var i = 0; i < parts.length; i++) {
-        if (parts[i]) {
-            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
-        }
-    }
-    return fragments;
-};
-
-Date.prototype.format = function(format, tz) {
-  var time = this.getTime();
-
-  if (tz === undefined) {
-    tz = this.getTimezone();
-    tzName = this.getTimezoneName();
-  }
-  else {
-    var tzData = parseTimezone(tz);
-    tz = tzData[0];
-    var tzName = tzData[1];
-  }
-
-  // Use correct timezone.
-  this.setTime(time - tz * 60000);
-
-  var result = '';
-  for (var i = 0; i < format.length; i++) {
-    switch (format.charAt(i)) {
-      // Day
-      case 'd': result += pad2(this.getUTCDate()); break;
-      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
-      case 'j': result += this.getUTCDate(); break;
-      case 'l': result += data.weekdays[this.getUTCDay()]; break;
-      case 'N': result += this.getUTCDay() || 7; break;
-      case 'S': result += data.ordinals(this.getUTCDate()); break;
-      case 'w': result += this.getUTCDay(); break;
-      case 'z': result += this.getUTCDayOfYear(); break;
-
-      // Week
-      case 'W': result += pad2(this.getUTCISOWeek()); break;
-
-      // Month
-      case 'F': result += data.months[this.getUTCMonth()]; break;
-      case 'm': result += pad2(this.getUTCMonth() + 1); break;
-      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
-      case 'n': result += this.getUTCMonth() + 1; break;
-      case 't': result += this.getUTCDaysOfMonth(); break;
-
-      // Year
-      case 'L': result += this.isLeapYear() ? 1 : 0; break;
-      case 'o': result += this.getUTCISOFullYear(); break;
-      case 'Y': result += this.getUTCFullYear(); break;
-      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
-
-      // Time
-      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
-      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
-      case 'g': result += this.getUTCHours() % 12 || 12; break;
-      case 'G': result += this.getUTCHours(); break;
-      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
-      case 'H': result += pad2(this.getUTCHours()); break;
-      case 'i': result += pad2(this.getUTCMinutes()); break;
-      case 's': result += pad2(this.getUTCSeconds()); break;
-      case 'u': result += pad3(this.getUTCMilliseconds()); break;
-
-      // Timezone
-      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
-      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
-      case 'T': result += tzName; break;
-      case 'Z': result += -tz * 60; break;
-
-      // Full Date/Time
-      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
-      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
-      case 'U': result += Math.floor(this.getTime() / 1000); break;
-
-      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
-
-      default: result += format.charAt(i); break;
-    }
-  }
-
-  this.setTime(time);
-
-  return result;
-};
-
-function parseTimezone(tz) {
-  if (typeof tz === 'number') {
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-  var number = parseInt(tz, 10);
-  if (isNaN(number)) {
-    return [data.tzToOffset[tz], tz];
-  }
-  else {
-    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-}
-
-Date.prototype.isLeapYear = function() {
-  var y = this.getUTCFullYear();
-  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
-};
-
-Date.prototype.getUTCISOWeek = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
-};
-
-Date.prototype.getUTCISOFullYear = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return d.getUTCFullYear();
-};
-
-Date.prototype.getUTCDaysOfMonth = function() {
-  var d = new Date(this);
-  d.setUTCDate(1);
-  d.setUTCMonth(d.getUTCMonth() + 1);
-  d.setUTCDate(0);
-  return d.getUTCDate();
-};
-
-Date.prototype.getUTCDayOfYear = function() {
-  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
-};
-
-Date.prototype.getTimezone = function() {
-  if (!('_tz' in this)) {
-    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
-    if (matches && matches[1]) {
-        this.setTimezone(matches[1]);
-    } else {
-        this.setTimezone(new Date().getTimezoneOffset());
-    }
-  }
-  return this._tz;
-};
-
-Date.prototype.getTimezoneName = function() {
-  this.getTimezone(); // Make sure the tz data is populated.
-  return this._tzName;
-};
-
-Date.prototype.setTimezone = function(val) {
-  var tzData = parseTimezone(val);
-  this._tz = tzData[0];
-  this._tzName = tzData[1];
-};
-
-})();
-
-},{}],25:[function(require,module,exports){
-'use strict';
-
-
-var loader = require('./js-yaml/loader');
-var dumper = require('./js-yaml/dumper');
-
-
-function deprecated(name) {
-  return function () {
-    throw new Error('Function ' + name + ' is deprecated and cannot be used.');
-  };
-}
-
-
-module.exports.Type           = require('./js-yaml/type');
-module.exports.Schema         = require('./js-yaml/schema');
-module.exports.MINIMAL_SCHEMA = require('./js-yaml/schema/minimal');
-module.exports.SAFE_SCHEMA    = require('./js-yaml/schema/safe');
-module.exports.DEFAULT_SCHEMA = require('./js-yaml/schema/default');
-module.exports.load           = loader.load;
-module.exports.loadAll        = loader.loadAll;
-module.exports.safeLoad       = loader.safeLoad;
-module.exports.safeLoadAll    = loader.safeLoadAll;
-module.exports.dump           = dumper.dump;
-module.exports.safeDump       = dumper.safeDump;
-module.exports.YAMLException  = require('./js-yaml/exception');
-module.exports.scan           = deprecated('scan');
-module.exports.parse          = deprecated('parse');
-module.exports.compose        = deprecated('compose');
-module.exports.addConstructor = deprecated('addConstructor');
-
-
-require('./js-yaml/require');
-
-},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/schema/minimal":31,"./js-yaml/schema/safe":32,"./js-yaml/schema/default":33,"./js-yaml/exception":34,"./js-yaml/require":35}],34:[function(require,module,exports){
+},{"underscore":5}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -24671,6 +24695,9 @@ YAMLException.prototype.toString = function toString(compact) {
 
 
 module.exports = YAMLException;
+
+},{}],36:[function(require,module,exports){
+// nothing to see here... no file methods for the browser
 
 },{}],27:[function(require,module,exports){
 'use strict';
@@ -26223,196 +26250,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":36,"./exception":34,"./mark":37,"./schema/safe":32,"./schema/default":33}],29:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":34}],30:[function(require,module,exports){
-'use strict';
-
-
-var common        = require('./common');
-var YAMLException = require('./exception');
-var Type          = require('./type');
-
-
-function compileList(schema, name, result) {
-  var exclude = [];
-
-  schema.include.forEach(function (includedSchema) {
-    result = compileList(includedSchema, name, result);
-  });
-
-  schema[name].forEach(function (currentType) {
-    result.forEach(function (previousType, previousIndex) {
-      if (previousType.tag === currentType.tag) {
-        exclude.push(previousIndex);
-      }
-    });
-
-    result.push(currentType);
-  });
-
-  return result.filter(function (type, index) {
-    return -1 === exclude.indexOf(index);
-  });
-}
-
-
-function compileMap(/* lists... */) {
-  var result = {}, index, length;
-
-  function collectType(type) {
-    result[type.tag] = type;
-  }
-
-  for (index = 0, length = arguments.length; index < length; index += 1) {
-    arguments[index].forEach(collectType);
-  }
-
-  return result;
-}
-
-
-function Schema(definition) {
-  this.include  = definition.include  || [];
-  this.implicit = definition.implicit || [];
-  this.explicit = definition.explicit || [];
-
-  this.implicit.forEach(function (type) {
-    if (null !== type.loader && 'string' !== type.loader.kind) {
-      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
-    }
-  });
-
-  this.compiledImplicit = compileList(this, 'implicit', []);
-  this.compiledExplicit = compileList(this, 'explicit', []);
-  this.compiledTypeMap  = compileMap(this.compiledImplicit, this.compiledExplicit);
-}
-
-
-Schema.DEFAULT = null;
-
-
-Schema.create = function createSchema() {
-  var schemas, types;
-
-  switch (arguments.length) {
-  case 1:
-    schemas = Schema.DEFAULT;
-    types = arguments[0];
-    break;
-
-  case 2:
-    schemas = arguments[0];
-    types = arguments[1];
-    break;
-
-  default:
-    throw new YAMLException('Wrong number of arguments for Schema.create function');
-  }
-
-  schemas = common.toArray(schemas);
-  types = common.toArray(types);
-
-  if (!schemas.every(function (schema) { return schema instanceof Schema; })) {
-    throw new YAMLException('Specified list of super schemas (or a single Schema object) contains a non-Schema object.');
-  }
-
-  if (!types.every(function (type) { return type instanceof Type; })) {
-    throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
-  }
-
-  return new Schema({
-    include: schemas,
-    explicit: types
-  });
-};
-
-
-module.exports = Schema;
-
-},{"./common":36,"./exception":34,"./type":29}],28:[function(require,module,exports){
+},{"./common":37,"./exception":34,"./mark":38,"./schema/default":33,"./schema/safe":32}],28:[function(require,module,exports){
 'use strict';
 
 
@@ -26851,7 +26689,221 @@ function safeDump(input, options) {
 module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
-},{"./common":36,"./exception":34,"./schema/default":33,"./schema/safe":32}],31:[function(require,module,exports){
+},{"./common":37,"./exception":34,"./schema/default":33,"./schema/safe":32}],29:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":34}],30:[function(require,module,exports){
+'use strict';
+
+
+var common        = require('./common');
+var YAMLException = require('./exception');
+var Type          = require('./type');
+
+
+function compileList(schema, name, result) {
+  var exclude = [];
+
+  schema.include.forEach(function (includedSchema) {
+    result = compileList(includedSchema, name, result);
+  });
+
+  schema[name].forEach(function (currentType) {
+    result.forEach(function (previousType, previousIndex) {
+      if (previousType.tag === currentType.tag) {
+        exclude.push(previousIndex);
+      }
+    });
+
+    result.push(currentType);
+  });
+
+  return result.filter(function (type, index) {
+    return -1 === exclude.indexOf(index);
+  });
+}
+
+
+function compileMap(/* lists... */) {
+  var result = {}, index, length;
+
+  function collectType(type) {
+    result[type.tag] = type;
+  }
+
+  for (index = 0, length = arguments.length; index < length; index += 1) {
+    arguments[index].forEach(collectType);
+  }
+
+  return result;
+}
+
+
+function Schema(definition) {
+  this.include  = definition.include  || [];
+  this.implicit = definition.implicit || [];
+  this.explicit = definition.explicit || [];
+
+  this.implicit.forEach(function (type) {
+    if (null !== type.loader && 'string' !== type.loader.kind) {
+      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
+    }
+  });
+
+  this.compiledImplicit = compileList(this, 'implicit', []);
+  this.compiledExplicit = compileList(this, 'explicit', []);
+  this.compiledTypeMap  = compileMap(this.compiledImplicit, this.compiledExplicit);
+}
+
+
+Schema.DEFAULT = null;
+
+
+Schema.create = function createSchema() {
+  var schemas, types;
+
+  switch (arguments.length) {
+  case 1:
+    schemas = Schema.DEFAULT;
+    types = arguments[0];
+    break;
+
+  case 2:
+    schemas = arguments[0];
+    types = arguments[1];
+    break;
+
+  default:
+    throw new YAMLException('Wrong number of arguments for Schema.create function');
+  }
+
+  schemas = common.toArray(schemas);
+  types = common.toArray(types);
+
+  if (!schemas.every(function (schema) { return schema instanceof Schema; })) {
+    throw new YAMLException('Specified list of super schemas (or a single Schema object) contains a non-Schema object.');
+  }
+
+  if (!types.every(function (type) { return type instanceof Type; })) {
+    throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
+  }
+
+  return new Schema({
+    include: schemas,
+    explicit: types
+  });
+};
+
+
+module.exports = Schema;
+
+},{"./common":37,"./exception":34,"./type":29}],35:[function(require,module,exports){
+'use strict';
+
+
+var fs     = require('fs');
+var loader = require('./loader');
+
+
+function yamlRequireHandler(module, filename) {
+  var content = fs.readFileSync(filename, 'utf8');
+
+  // fill in documents
+  module.exports = loader.load(content, { filename: filename });
+}
+
+// register require extensions only if we're on node.js
+// hack for browserify
+if (undefined !== require.extensions) {
+  require.extensions['.yml']  = yamlRequireHandler;
+  require.extensions['.yaml'] = yamlRequireHandler;
+}
+
+
+module.exports = require;
+
+},{"fs":36,"./loader":27}],31:[function(require,module,exports){
 'use strict';
 
 
@@ -26866,7 +26918,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":30,"../type/str":38,"../type/seq":39,"../type/map":40}],32:[function(require,module,exports){
+},{"../schema":30,"../type/str":39,"../type/seq":40,"../type/map":41}],32:[function(require,module,exports){
 'use strict';
 
 
@@ -26893,32 +26945,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":30,"./minimal":31,"../type/null":41,"../type/bool":42,"../type/int":43,"../type/float":44,"../type/timestamp":45,"../type/merge":46,"../type/binary":47,"../type/omap":48,"../type/pairs":49,"../type/set":50}],35:[function(require,module,exports){
-'use strict';
-
-
-var fs     = require('fs');
-var loader = require('./loader');
-
-
-function yamlRequireHandler(module, filename) {
-  var content = fs.readFileSync(filename, 'utf8');
-
-  // fill in documents
-  module.exports = loader.load(content, { filename: filename });
-}
-
-// register require extensions only if we're on node.js
-// hack for browserify
-if (undefined !== require.extensions) {
-  require.extensions['.yml']  = yamlRequireHandler;
-  require.extensions['.yaml'] = yamlRequireHandler;
-}
-
-
-module.exports = require;
-
-},{"fs":51,"./loader":27}],33:[function(require,module,exports){
+},{"../schema":30,"./minimal":31,"../type/null":42,"../type/bool":43,"../type/int":44,"../type/float":45,"../type/timestamp":46,"../type/merge":47,"../type/binary":48,"../type/omap":49,"../type/pairs":50,"../type/set":51}],33:[function(require,module,exports){
 'use strict';
 
 
@@ -26936,10 +26963,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":30,"./safe":32,"../type/js/undefined":52,"../type/js/regexp":53,"../type/js/function":54}],51:[function(require,module,exports){
-// nothing to see here... no file methods for the browser
-
-},{}],36:[function(require,module,exports){
+},{"../schema":30,"./safe":32,"../type/js/undefined":52,"../type/js/regexp":53,"../type/js/function":54}],37:[function(require,module,exports){
 'use strict';
 
 
@@ -27001,7 +27025,7 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 
@@ -27081,842 +27105,7 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":36}],38:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:str', {
-  loader: {
-    kind: 'string'
-  }
-});
-
-},{"../type":29}],40:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:map', {
-  loader: {
-    kind: 'object'
-  }
-});
-
-},{"../type":29}],43:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":36,"../type":29}],44:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
-  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
-  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  '|\\.(?:nan|NaN|NAN))$');
-
-
-function resolveYamlFloat(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_FLOAT_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '').toLowerCase();
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('.inf' === value) {
-    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if ('.nan' === value) {
-    return NaN;
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseFloat(v, 10));
-    });
-
-    value = 0.0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += d * base;
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseFloat(value, 10);
-  }
-}
-
-
-function representYamlFloat(object, style) {
-  if (isNaN(object)) {
-    switch (style) {
-    case 'lowercase':
-      return '.nan';
-    case 'uppercase':
-      return '.NAN';
-    case 'camelcase':
-      return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '.inf';
-    case 'uppercase':
-      return '.INF';
-    case 'camelcase':
-      return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '-.inf';
-    case 'uppercase':
-      return '-.INF';
-    case 'camelcase':
-      return '-.Inf';
-    }
-  } else {
-    return object.toString(10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlFloat
-  },
-  dumper: {
-    kind: 'float',
-    defaultStyle: 'lowercase',
-    representer: representYamlFloat
-  }
-});
-
-},{"../common":36,"../type":29}],42:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
-  }
-});
-
-},{"../common":36,"../type":29}],39:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:seq', {
-  loader: {
-    kind: 'array'
-  }
-});
-
-},{"../type":29}],47:[function(require,module,exports){
-(function(){// Modified from:
-// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
-
-'use strict';
-
-
-var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
-var common     = require('../common');
-var NIL        = common.NIL;
-var Type       = require('../type');
-
-
-
-var BASE64_PADDING = '=';
-
-var BASE64_BINTABLE = [
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
-  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
-];
-
-var BASE64_CHARTABLE =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
-
-
-function resolveYamlBinary(object /*, explicit*/) {
-  var value, code, idx = 0, result = [], leftbits, leftdata;
-
-  leftbits = 0; // number of bits decoded, but yet to be appended
-  leftdata = 0; // bits decoded, but yet to be appended
-
-  // Convert one by one.
-  for (idx = 0; idx < object.length; idx += 1) {
-    code = object.charCodeAt(idx);
-    value = BASE64_BINTABLE[code & 0x7F];
-
-    // Skip LF(NL) || CR
-    if (0x0A !== code && 0x0D !== code) {
-      // Fail on illegal characters
-      if (-1 === value) {
-        return NIL;
-      }
-
-      // Collect data into leftdata, update bitcount
-      leftdata = (leftdata << 6) | value;
-      leftbits += 6;
-
-      // If we have 8 or more bits, append 8 bits to the result
-      if (leftbits >= 8) {
-        leftbits -= 8;
-
-        // Append if not padding.
-        if (BASE64_PADDING !== object.charAt(idx)) {
-          result.push((leftdata >> leftbits) & 0xFF);
-        }
-
-        leftdata &= (1 << leftbits) - 1;
-      }
-    }
-  }
-
-  // If there are any bits left, the base64 string was corrupted
-  if (leftbits) {
-    return NIL;
-  } else {
-    return new NodeBuffer(result);
-  }
-}
-
-
-function representYamlBinary(object /*, style*/) {
-  var result = '', index, length, rest;
-
-  // Convert every three bytes to 4 ASCII characters.
-  for (index = 0, length = object.length - 2; index < length; index += 3) {
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
-    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
-  }
-
-  rest = object.length % 3;
-
-  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
-  if (0 !== rest) {
-    index = object.length - rest;
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-
-    if (2 === rest) {
-      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
-      result += BASE64_PADDING;
-    } else {
-      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
-      result += BASE64_PADDING + BASE64_PADDING;
-    }
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:binary', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBinary
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: NodeBuffer,
-    representer: representYamlBinary
-  }
-});
-
-})()
-},{"buffer":55,"../common":36,"../type":29}],46:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":36,"../type":29}],45:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_TIMESTAMP_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9]?)'                   + // [2] month
-  '-([0-9][0-9]?)'                   + // [3] day
-  '(?:(?:[Tt]|[ \\t]+)'              + // ...
-  '([0-9][0-9]?)'                    + // [4] hour
-  ':([0-9][0-9])'                    + // [5] minute
-  ':([0-9][0-9])'                    + // [6] second
-  '(?:\\.([0-9]*))?'                 + // [7] fraction
-  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
-  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
-
-
-function resolveYamlTimestamp(object /*, explicit*/) {
-  var match, year, month, day, hour, minute, second, fraction = 0,
-      delta = null, tz_hour, tz_minute, data;
-
-  match = YAML_TIMESTAMP_REGEXP.exec(object);
-
-  if (null === match) {
-    return NIL;
-  }
-
-  // match: [1] year [2] month [3] day
-
-  year = +(match[1]);
-  month = +(match[2]) - 1; // JS month starts with 0
-  day = +(match[3]);
-
-  if (!match[4]) { // no hour
-    return new Date(Date.UTC(year, month, day));
-  }
-
-  // match: [4] hour [5] minute [6] second [7] fraction
-
-  hour = +(match[4]);
-  minute = +(match[5]);
-  second = +(match[6]);
-
-  if (match[7]) {
-    fraction = match[7].slice(0, 3);
-    while (fraction.length < 3) { // milli-seconds
-      fraction += '0';
-    }
-    fraction = +fraction;
-  }
-
-  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
-
-  if (match[9]) {
-    tz_hour = +(match[10]);
-    tz_minute = +(match[11] || 0);
-    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-    if ('-' === match[9]) {
-      delta = -delta;
-    }
-  }
-
-  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
-
-  if (delta) {
-    data.setTime(data.getTime() - delta);
-  }
-
-  return data;
-}
-
-
-function representYamlTimestamp(object /*, style*/) {
-  return object.toISOString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:timestamp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlTimestamp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: Date,
-    representer: representYamlTimestamp
-  }
-});
-
-},{"../common":36,"../type":29}],41:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
-};
-
-
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
-    }
-  }
-});
-
-},{"../common":36,"../type":29}],48:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-
-function resolveYamlOmap(object /*, explicit*/) {
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) {
-          pairHasKey = true;
-        } else {
-          return NIL;
-        }
-      }
-    }
-
-    if (!pairHasKey) {
-      return NIL;
-    }
-
-    if (-1 === objectKeys.indexOf(pairKey)) {
-      objectKeys.push(pairKey);
-    } else {
-      return NIL;
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlOmap
-  }
-});
-
-},{"../common":36,"../type":29}],49:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
-  }
-});
-
-},{"../common":36,"../type":29}],50:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-function resolveYamlSet(object /*, explicit*/) {
-  var key;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (null !== object[key]) {
-        return NIL;
-      }
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  loader: {
-    kind: 'object',
-    resolver: resolveYamlSet
-  }
-});
-
-},{"../common":36,"../type":29}],52:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../../type');
-
-
-function resolveJavascriptUndefined(/*object, explicit*/) {
-  var undef;
-
-  return undef;
-}
-
-
-function representJavascriptUndefined(/*object, explicit*/) {
-  return '';
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/undefined', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptUndefined
-  },
-  dumper: {
-    kind: 'undefined',
-    representer: representJavascriptUndefined
-  }
-});
-
-},{"../../type":29}],53:[function(require,module,exports){
-(function(){'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptRegExp(object /*, explicit*/) {
-  var regexp = object,
-      tail   = /\/([gim]*)$/.exec(object),
-      modifiers;
-
-  // `/foo/gim` - tail can be maximum 4 chars
-  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
-    regexp = regexp.slice(1, regexp.length - tail[0].length);
-    modifiers = tail[1];
-  }
-
-  try {
-    return new RegExp(regexp, modifiers);
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptRegExp(object /*, style*/) {
-  var result = '/' + object.source + '/';
-
-  if (object.global) {
-    result += 'g';
-  }
-
-  if (object.multiline) {
-    result += 'm';
-  }
-
-  if (object.ignoreCase) {
-    result += 'i';
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/regexp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptRegExp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: RegExp,
-    representer: representJavascriptRegExp
-  }
-});
-
-})()
-},{"../../common":36,"../../type":29}],54:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptFunction(object /*, explicit*/) {
-  /*jslint evil:true*/
-  var func;
-
-  try {
-    func = new Function('return ' + object);
-    return func();
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptFunction(object /*, style*/) {
-  return object.toString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/function', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptFunction
-  },
-  dumper: {
-    kind: 'function',
-    representer: representJavascriptFunction,
-  }
-});
-
-},{"../../common":36,"../../type":29}],56:[function(require,module,exports){
+},{"./common":37}],55:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -28233,7 +27422,1195 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":57,"buffer":55}],58:[function(require,module,exports){
+},{"util":56,"buffer":57}],39:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:str', {
+  loader: {
+    kind: 'string'
+  }
+});
+
+},{"../type":29}],40:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:seq', {
+  loader: {
+    kind: 'array'
+  }
+});
+
+},{"../type":29}],41:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:map', {
+  loader: {
+    kind: 'object'
+  }
+});
+
+},{"../type":29}],42:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
+    }
+  }
+});
+
+},{"../common":37,"../type":29}],43:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
+},{"../common":37,"../type":29}],44:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":37,"../type":29}],45:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_FLOAT_PATTERN = new RegExp(
+  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
+  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
+  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
+  '|[-+]?\\.(?:inf|Inf|INF)' +
+  '|\\.(?:nan|NaN|NAN))$');
+
+
+function resolveYamlFloat(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_FLOAT_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '').toLowerCase();
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('.inf' === value) {
+    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+
+  } else if ('.nan' === value) {
+    return NaN;
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseFloat(v, 10));
+    });
+
+    value = 0.0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += d * base;
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseFloat(value, 10);
+  }
+}
+
+
+function representYamlFloat(object, style) {
+  if (isNaN(object)) {
+    switch (style) {
+    case 'lowercase':
+      return '.nan';
+    case 'uppercase':
+      return '.NAN';
+    case 'camelcase':
+      return '.NaN';
+    }
+  } else if (Number.POSITIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '.inf';
+    case 'uppercase':
+      return '.INF';
+    case 'camelcase':
+      return '.Inf';
+    }
+  } else if (Number.NEGATIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '-.inf';
+    case 'uppercase':
+      return '-.INF';
+    case 'camelcase':
+      return '-.Inf';
+    }
+  } else {
+    return object.toString(10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:float', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlFloat
+  },
+  dumper: {
+    kind: 'float',
+    defaultStyle: 'lowercase',
+    representer: representYamlFloat
+  }
+});
+
+},{"../common":37,"../type":29}],46:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_TIMESTAMP_REGEXP = new RegExp(
+  '^([0-9][0-9][0-9][0-9])'          + // [1] year
+  '-([0-9][0-9]?)'                   + // [2] month
+  '-([0-9][0-9]?)'                   + // [3] day
+  '(?:(?:[Tt]|[ \\t]+)'              + // ...
+  '([0-9][0-9]?)'                    + // [4] hour
+  ':([0-9][0-9])'                    + // [5] minute
+  ':([0-9][0-9])'                    + // [6] second
+  '(?:\\.([0-9]*))?'                 + // [7] fraction
+  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
+  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
+
+
+function resolveYamlTimestamp(object /*, explicit*/) {
+  var match, year, month, day, hour, minute, second, fraction = 0,
+      delta = null, tz_hour, tz_minute, data;
+
+  match = YAML_TIMESTAMP_REGEXP.exec(object);
+
+  if (null === match) {
+    return NIL;
+  }
+
+  // match: [1] year [2] month [3] day
+
+  year = +(match[1]);
+  month = +(match[2]) - 1; // JS month starts with 0
+  day = +(match[3]);
+
+  if (!match[4]) { // no hour
+    return new Date(Date.UTC(year, month, day));
+  }
+
+  // match: [4] hour [5] minute [6] second [7] fraction
+
+  hour = +(match[4]);
+  minute = +(match[5]);
+  second = +(match[6]);
+
+  if (match[7]) {
+    fraction = match[7].slice(0, 3);
+    while (fraction.length < 3) { // milli-seconds
+      fraction += '0';
+    }
+    fraction = +fraction;
+  }
+
+  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
+
+  if (match[9]) {
+    tz_hour = +(match[10]);
+    tz_minute = +(match[11] || 0);
+    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
+    if ('-' === match[9]) {
+      delta = -delta;
+    }
+  }
+
+  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
+
+  if (delta) {
+    data.setTime(data.getTime() - delta);
+  }
+
+  return data;
+}
+
+
+function representYamlTimestamp(object /*, style*/) {
+  return object.toISOString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:timestamp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlTimestamp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: Date,
+    representer: representYamlTimestamp
+  }
+});
+
+},{"../common":37,"../type":29}],47:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
+},{"../common":37,"../type":29}],48:[function(require,module,exports){
+(function(){// Modified from:
+// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
+
+'use strict';
+
+
+var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
+var common     = require('../common');
+var NIL        = common.NIL;
+var Type       = require('../type');
+
+
+
+var BASE64_PADDING = '=';
+
+var BASE64_BINTABLE = [
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
+  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
+];
+
+var BASE64_CHARTABLE =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+
+
+function resolveYamlBinary(object /*, explicit*/) {
+  var value, code, idx = 0, result = [], leftbits, leftdata;
+
+  leftbits = 0; // number of bits decoded, but yet to be appended
+  leftdata = 0; // bits decoded, but yet to be appended
+
+  // Convert one by one.
+  for (idx = 0; idx < object.length; idx += 1) {
+    code = object.charCodeAt(idx);
+    value = BASE64_BINTABLE[code & 0x7F];
+
+    // Skip LF(NL) || CR
+    if (0x0A !== code && 0x0D !== code) {
+      // Fail on illegal characters
+      if (-1 === value) {
+        return NIL;
+      }
+
+      // Collect data into leftdata, update bitcount
+      leftdata = (leftdata << 6) | value;
+      leftbits += 6;
+
+      // If we have 8 or more bits, append 8 bits to the result
+      if (leftbits >= 8) {
+        leftbits -= 8;
+
+        // Append if not padding.
+        if (BASE64_PADDING !== object.charAt(idx)) {
+          result.push((leftdata >> leftbits) & 0xFF);
+        }
+
+        leftdata &= (1 << leftbits) - 1;
+      }
+    }
+  }
+
+  // If there are any bits left, the base64 string was corrupted
+  if (leftbits) {
+    return NIL;
+  } else {
+    return new NodeBuffer(result);
+  }
+}
+
+
+function representYamlBinary(object /*, style*/) {
+  var result = '', index, length, rest;
+
+  // Convert every three bytes to 4 ASCII characters.
+  for (index = 0, length = object.length - 2; index < length; index += 3) {
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
+    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
+  }
+
+  rest = object.length % 3;
+
+  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
+  if (0 !== rest) {
+    index = object.length - rest;
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+
+    if (2 === rest) {
+      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
+      result += BASE64_PADDING;
+    } else {
+      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
+      result += BASE64_PADDING + BASE64_PADDING;
+    }
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:binary', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBinary
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: NodeBuffer,
+    representer: representYamlBinary
+  }
+});
+
+})()
+},{"buffer":57,"../common":37,"../type":29}],49:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+
+function resolveYamlOmap(object /*, explicit*/) {
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) {
+          pairHasKey = true;
+        } else {
+          return NIL;
+        }
+      }
+    }
+
+    if (!pairHasKey) {
+      return NIL;
+    }
+
+    if (-1 === objectKeys.indexOf(pairKey)) {
+      objectKeys.push(pairKey);
+    } else {
+      return NIL;
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":37,"../type":29}],50:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
+  }
+});
+
+},{"../common":37,"../type":29}],51:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+function resolveYamlSet(object /*, explicit*/) {
+  var key;
+
+  for (key in object) {
+    if (_hasOwnProperty.call(object, key)) {
+      if (null !== object[key]) {
+        return NIL;
+      }
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:set', {
+  loader: {
+    kind: 'object',
+    resolver: resolveYamlSet
+  }
+});
+
+},{"../common":37,"../type":29}],52:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../../type');
+
+
+function resolveJavascriptUndefined(/*object, explicit*/) {
+  var undef;
+
+  return undef;
+}
+
+
+function representJavascriptUndefined(/*object, explicit*/) {
+  return '';
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/undefined', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptUndefined
+  },
+  dumper: {
+    kind: 'undefined',
+    representer: representJavascriptUndefined
+  }
+});
+
+},{"../../type":29}],53:[function(require,module,exports){
+(function(){'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptRegExp(object /*, explicit*/) {
+  var regexp = object,
+      tail   = /\/([gim]*)$/.exec(object),
+      modifiers;
+
+  // `/foo/gim` - tail can be maximum 4 chars
+  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
+    regexp = regexp.slice(1, regexp.length - tail[0].length);
+    modifiers = tail[1];
+  }
+
+  try {
+    return new RegExp(regexp, modifiers);
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptRegExp(object /*, style*/) {
+  var result = '/' + object.source + '/';
+
+  if (object.global) {
+    result += 'g';
+  }
+
+  if (object.multiline) {
+    result += 'm';
+  }
+
+  if (object.ignoreCase) {
+    result += 'i';
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/regexp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptRegExp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: RegExp,
+    representer: representJavascriptRegExp
+  }
+});
+
+})()
+},{"../../common":37,"../../type":29}],54:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptFunction(object /*, explicit*/) {
+  /*jslint evil:true*/
+  var func;
+
+  try {
+    func = new Function('return ' + object);
+    return func();
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptFunction(object /*, style*/) {
+  return object.toString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/function', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptFunction
+  },
+  dumper: {
+    kind: 'function',
+    representer: representJavascriptFunction,
+  }
+});
+
+},{"../../common":37,"../../type":29}],56:[function(require,module,exports){
+var events = require('events');
+
+exports.isArray = isArray;
+exports.isDate = function(obj){return Object.prototype.toString.call(obj) === '[object Date]'};
+exports.isRegExp = function(obj){return Object.prototype.toString.call(obj) === '[object RegExp]'};
+
+
+exports.print = function () {};
+exports.puts = function () {};
+exports.debug = function() {};
+
+exports.inspect = function(obj, showHidden, depth, colors) {
+  var seen = [];
+
+  var stylize = function(str, styleType) {
+    // http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+    var styles =
+        { 'bold' : [1, 22],
+          'italic' : [3, 23],
+          'underline' : [4, 24],
+          'inverse' : [7, 27],
+          'white' : [37, 39],
+          'grey' : [90, 39],
+          'black' : [30, 39],
+          'blue' : [34, 39],
+          'cyan' : [36, 39],
+          'green' : [32, 39],
+          'magenta' : [35, 39],
+          'red' : [31, 39],
+          'yellow' : [33, 39] };
+
+    var style =
+        { 'special': 'cyan',
+          'number': 'blue',
+          'boolean': 'yellow',
+          'undefined': 'grey',
+          'null': 'bold',
+          'string': 'green',
+          'date': 'magenta',
+          // "name": intentionally not styling
+          'regexp': 'red' }[styleType];
+
+    if (style) {
+      return '\033[' + styles[style][0] + 'm' + str +
+             '\033[' + styles[style][1] + 'm';
+    } else {
+      return str;
+    }
+  };
+  if (! colors) {
+    stylize = function(str, styleType) { return str; };
+  }
+
+  function format(value, recurseTimes) {
+    // Provide a hook for user-specified inspect functions.
+    // Check that value is an object with an inspect function on it
+    if (value && typeof value.inspect === 'function' &&
+        // Filter out the util module, it's inspect function is special
+        value !== exports &&
+        // Also filter out any prototype objects using the circular check.
+        !(value.constructor && value.constructor.prototype === value)) {
+      return value.inspect(recurseTimes);
+    }
+
+    // Primitive types cannot have properties
+    switch (typeof value) {
+      case 'undefined':
+        return stylize('undefined', 'undefined');
+
+      case 'string':
+        var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                                 .replace(/'/g, "\\'")
+                                                 .replace(/\\"/g, '"') + '\'';
+        return stylize(simple, 'string');
+
+      case 'number':
+        return stylize('' + value, 'number');
+
+      case 'boolean':
+        return stylize('' + value, 'boolean');
+    }
+    // For some reason typeof null is "object", so special case here.
+    if (value === null) {
+      return stylize('null', 'null');
+    }
+
+    // Look up the keys of the object.
+    var visible_keys = Object_keys(value);
+    var keys = showHidden ? Object_getOwnPropertyNames(value) : visible_keys;
+
+    // Functions without properties can be shortcutted.
+    if (typeof value === 'function' && keys.length === 0) {
+      if (isRegExp(value)) {
+        return stylize('' + value, 'regexp');
+      } else {
+        var name = value.name ? ': ' + value.name : '';
+        return stylize('[Function' + name + ']', 'special');
+      }
+    }
+
+    // Dates without properties can be shortcutted
+    if (isDate(value) && keys.length === 0) {
+      return stylize(value.toUTCString(), 'date');
+    }
+
+    var base, type, braces;
+    // Determine the object type
+    if (isArray(value)) {
+      type = 'Array';
+      braces = ['[', ']'];
+    } else {
+      type = 'Object';
+      braces = ['{', '}'];
+    }
+
+    // Make functions say that they are functions
+    if (typeof value === 'function') {
+      var n = value.name ? ': ' + value.name : '';
+      base = (isRegExp(value)) ? ' ' + value : ' [Function' + n + ']';
+    } else {
+      base = '';
+    }
+
+    // Make dates with properties first say the date
+    if (isDate(value)) {
+      base = ' ' + value.toUTCString();
+    }
+
+    if (keys.length === 0) {
+      return braces[0] + base + braces[1];
+    }
+
+    if (recurseTimes < 0) {
+      if (isRegExp(value)) {
+        return stylize('' + value, 'regexp');
+      } else {
+        return stylize('[Object]', 'special');
+      }
+    }
+
+    seen.push(value);
+
+    var output = keys.map(function(key) {
+      var name, str;
+      if (value.__lookupGetter__) {
+        if (value.__lookupGetter__(key)) {
+          if (value.__lookupSetter__(key)) {
+            str = stylize('[Getter/Setter]', 'special');
+          } else {
+            str = stylize('[Getter]', 'special');
+          }
+        } else {
+          if (value.__lookupSetter__(key)) {
+            str = stylize('[Setter]', 'special');
+          }
+        }
+      }
+      if (visible_keys.indexOf(key) < 0) {
+        name = '[' + key + ']';
+      }
+      if (!str) {
+        if (seen.indexOf(value[key]) < 0) {
+          if (recurseTimes === null) {
+            str = format(value[key]);
+          } else {
+            str = format(value[key], recurseTimes - 1);
+          }
+          if (str.indexOf('\n') > -1) {
+            if (isArray(value)) {
+              str = str.split('\n').map(function(line) {
+                return '  ' + line;
+              }).join('\n').substr(2);
+            } else {
+              str = '\n' + str.split('\n').map(function(line) {
+                return '   ' + line;
+              }).join('\n');
+            }
+          }
+        } else {
+          str = stylize('[Circular]', 'special');
+        }
+      }
+      if (typeof name === 'undefined') {
+        if (type === 'Array' && key.match(/^\d+$/)) {
+          return str;
+        }
+        name = JSON.stringify('' + key);
+        if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+          name = name.substr(1, name.length - 2);
+          name = stylize(name, 'name');
+        } else {
+          name = name.replace(/'/g, "\\'")
+                     .replace(/\\"/g, '"')
+                     .replace(/(^"|"$)/g, "'");
+          name = stylize(name, 'string');
+        }
+      }
+
+      return name + ': ' + str;
+    });
+
+    seen.pop();
+
+    var numLinesEst = 0;
+    var length = output.reduce(function(prev, cur) {
+      numLinesEst++;
+      if (cur.indexOf('\n') >= 0) numLinesEst++;
+      return prev + cur.length + 1;
+    }, 0);
+
+    if (length > 50) {
+      output = braces[0] +
+               (base === '' ? '' : base + '\n ') +
+               ' ' +
+               output.join(',\n  ') +
+               ' ' +
+               braces[1];
+
+    } else {
+      output = braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+    }
+
+    return output;
+  }
+  return format(obj, (typeof depth === 'undefined' ? 2 : depth));
+};
+
+
+function isArray(ar) {
+  return ar instanceof Array ||
+         Array.isArray(ar) ||
+         (ar && ar !== Object.prototype && isArray(ar.__proto__));
+}
+
+
+function isRegExp(re) {
+  return re instanceof RegExp ||
+    (typeof re === 'object' && Object.prototype.toString.call(re) === '[object RegExp]');
+}
+
+
+function isDate(d) {
+  if (d instanceof Date) return true;
+  if (typeof d !== 'object') return false;
+  var properties = Date.prototype && Object_getOwnPropertyNames(Date.prototype);
+  var proto = d.__proto__ && Object_getOwnPropertyNames(d.__proto__);
+  return JSON.stringify(proto) === JSON.stringify(properties);
+}
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+exports.log = function (msg) {};
+
+exports.pump = null;
+
+var Object_keys = Object.keys || function (obj) {
+    var res = [];
+    for (var key in obj) res.push(key);
+    return res;
+};
+
+var Object_getOwnPropertyNames = Object.getOwnPropertyNames || function (obj) {
+    var res = [];
+    for (var key in obj) {
+        if (Object.hasOwnProperty.call(obj, key)) res.push(key);
+    }
+    return res;
+};
+
+var Object_create = Object.create || function (prototype, properties) {
+    // from es5-shim
+    var object;
+    if (prototype === null) {
+        object = { '__proto__' : null };
+    }
+    else {
+        if (typeof prototype !== 'object') {
+            throw new TypeError(
+                'typeof prototype[' + (typeof prototype) + '] != \'object\''
+            );
+        }
+        var Type = function () {};
+        Type.prototype = prototype;
+        object = new Type();
+        object.__proto__ = prototype;
+    }
+    if (typeof properties !== 'undefined' && Object.defineProperties) {
+        Object.defineProperties(object, properties);
+    }
+    return object;
+};
+
+exports.inherits = function(ctor, superCtor) {
+  ctor.super_ = superCtor;
+  ctor.prototype = Object_create(superCtor.prototype, {
+    constructor: {
+      value: ctor,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+};
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (typeof f !== 'string') {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(exports.inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j': return JSON.stringify(args[i++]);
+      default:
+        return x;
+    }
+  });
+  for(var x = args[i]; i < len; x = args[++i]){
+    if (x === null || typeof x !== 'object') {
+      str += ' ' + x;
+    } else {
+      str += ' ' + exports.inspect(x);
+    }
+  }
+  return str;
+};
+
+},{"events":58}],59:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -28319,7 +28696,7 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],55:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -29639,446 +30016,7 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":56,"./buffer_ieee754":58,"base64-js":59}],57:[function(require,module,exports){
-var events = require('events');
-
-exports.isArray = isArray;
-exports.isDate = function(obj){return Object.prototype.toString.call(obj) === '[object Date]'};
-exports.isRegExp = function(obj){return Object.prototype.toString.call(obj) === '[object RegExp]'};
-
-
-exports.print = function () {};
-exports.puts = function () {};
-exports.debug = function() {};
-
-exports.inspect = function(obj, showHidden, depth, colors) {
-  var seen = [];
-
-  var stylize = function(str, styleType) {
-    // http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
-    var styles =
-        { 'bold' : [1, 22],
-          'italic' : [3, 23],
-          'underline' : [4, 24],
-          'inverse' : [7, 27],
-          'white' : [37, 39],
-          'grey' : [90, 39],
-          'black' : [30, 39],
-          'blue' : [34, 39],
-          'cyan' : [36, 39],
-          'green' : [32, 39],
-          'magenta' : [35, 39],
-          'red' : [31, 39],
-          'yellow' : [33, 39] };
-
-    var style =
-        { 'special': 'cyan',
-          'number': 'blue',
-          'boolean': 'yellow',
-          'undefined': 'grey',
-          'null': 'bold',
-          'string': 'green',
-          'date': 'magenta',
-          // "name": intentionally not styling
-          'regexp': 'red' }[styleType];
-
-    if (style) {
-      return '\033[' + styles[style][0] + 'm' + str +
-             '\033[' + styles[style][1] + 'm';
-    } else {
-      return str;
-    }
-  };
-  if (! colors) {
-    stylize = function(str, styleType) { return str; };
-  }
-
-  function format(value, recurseTimes) {
-    // Provide a hook for user-specified inspect functions.
-    // Check that value is an object with an inspect function on it
-    if (value && typeof value.inspect === 'function' &&
-        // Filter out the util module, it's inspect function is special
-        value !== exports &&
-        // Also filter out any prototype objects using the circular check.
-        !(value.constructor && value.constructor.prototype === value)) {
-      return value.inspect(recurseTimes);
-    }
-
-    // Primitive types cannot have properties
-    switch (typeof value) {
-      case 'undefined':
-        return stylize('undefined', 'undefined');
-
-      case 'string':
-        var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                                 .replace(/'/g, "\\'")
-                                                 .replace(/\\"/g, '"') + '\'';
-        return stylize(simple, 'string');
-
-      case 'number':
-        return stylize('' + value, 'number');
-
-      case 'boolean':
-        return stylize('' + value, 'boolean');
-    }
-    // For some reason typeof null is "object", so special case here.
-    if (value === null) {
-      return stylize('null', 'null');
-    }
-
-    // Look up the keys of the object.
-    var visible_keys = Object_keys(value);
-    var keys = showHidden ? Object_getOwnPropertyNames(value) : visible_keys;
-
-    // Functions without properties can be shortcutted.
-    if (typeof value === 'function' && keys.length === 0) {
-      if (isRegExp(value)) {
-        return stylize('' + value, 'regexp');
-      } else {
-        var name = value.name ? ': ' + value.name : '';
-        return stylize('[Function' + name + ']', 'special');
-      }
-    }
-
-    // Dates without properties can be shortcutted
-    if (isDate(value) && keys.length === 0) {
-      return stylize(value.toUTCString(), 'date');
-    }
-
-    var base, type, braces;
-    // Determine the object type
-    if (isArray(value)) {
-      type = 'Array';
-      braces = ['[', ']'];
-    } else {
-      type = 'Object';
-      braces = ['{', '}'];
-    }
-
-    // Make functions say that they are functions
-    if (typeof value === 'function') {
-      var n = value.name ? ': ' + value.name : '';
-      base = (isRegExp(value)) ? ' ' + value : ' [Function' + n + ']';
-    } else {
-      base = '';
-    }
-
-    // Make dates with properties first say the date
-    if (isDate(value)) {
-      base = ' ' + value.toUTCString();
-    }
-
-    if (keys.length === 0) {
-      return braces[0] + base + braces[1];
-    }
-
-    if (recurseTimes < 0) {
-      if (isRegExp(value)) {
-        return stylize('' + value, 'regexp');
-      } else {
-        return stylize('[Object]', 'special');
-      }
-    }
-
-    seen.push(value);
-
-    var output = keys.map(function(key) {
-      var name, str;
-      if (value.__lookupGetter__) {
-        if (value.__lookupGetter__(key)) {
-          if (value.__lookupSetter__(key)) {
-            str = stylize('[Getter/Setter]', 'special');
-          } else {
-            str = stylize('[Getter]', 'special');
-          }
-        } else {
-          if (value.__lookupSetter__(key)) {
-            str = stylize('[Setter]', 'special');
-          }
-        }
-      }
-      if (visible_keys.indexOf(key) < 0) {
-        name = '[' + key + ']';
-      }
-      if (!str) {
-        if (seen.indexOf(value[key]) < 0) {
-          if (recurseTimes === null) {
-            str = format(value[key]);
-          } else {
-            str = format(value[key], recurseTimes - 1);
-          }
-          if (str.indexOf('\n') > -1) {
-            if (isArray(value)) {
-              str = str.split('\n').map(function(line) {
-                return '  ' + line;
-              }).join('\n').substr(2);
-            } else {
-              str = '\n' + str.split('\n').map(function(line) {
-                return '   ' + line;
-              }).join('\n');
-            }
-          }
-        } else {
-          str = stylize('[Circular]', 'special');
-        }
-      }
-      if (typeof name === 'undefined') {
-        if (type === 'Array' && key.match(/^\d+$/)) {
-          return str;
-        }
-        name = JSON.stringify('' + key);
-        if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-          name = name.substr(1, name.length - 2);
-          name = stylize(name, 'name');
-        } else {
-          name = name.replace(/'/g, "\\'")
-                     .replace(/\\"/g, '"')
-                     .replace(/(^"|"$)/g, "'");
-          name = stylize(name, 'string');
-        }
-      }
-
-      return name + ': ' + str;
-    });
-
-    seen.pop();
-
-    var numLinesEst = 0;
-    var length = output.reduce(function(prev, cur) {
-      numLinesEst++;
-      if (cur.indexOf('\n') >= 0) numLinesEst++;
-      return prev + cur.length + 1;
-    }, 0);
-
-    if (length > 50) {
-      output = braces[0] +
-               (base === '' ? '' : base + '\n ') +
-               ' ' +
-               output.join(',\n  ') +
-               ' ' +
-               braces[1];
-
-    } else {
-      output = braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
-    }
-
-    return output;
-  }
-  return format(obj, (typeof depth === 'undefined' ? 2 : depth));
-};
-
-
-function isArray(ar) {
-  return ar instanceof Array ||
-         Array.isArray(ar) ||
-         (ar && ar !== Object.prototype && isArray(ar.__proto__));
-}
-
-
-function isRegExp(re) {
-  return re instanceof RegExp ||
-    (typeof re === 'object' && Object.prototype.toString.call(re) === '[object RegExp]');
-}
-
-
-function isDate(d) {
-  if (d instanceof Date) return true;
-  if (typeof d !== 'object') return false;
-  var properties = Date.prototype && Object_getOwnPropertyNames(Date.prototype);
-  var proto = d.__proto__ && Object_getOwnPropertyNames(d.__proto__);
-  return JSON.stringify(proto) === JSON.stringify(properties);
-}
-
-function pad(n) {
-  return n < 10 ? '0' + n.toString(10) : n.toString(10);
-}
-
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-              'Oct', 'Nov', 'Dec'];
-
-// 26 Feb 16:19:34
-function timestamp() {
-  var d = new Date();
-  var time = [pad(d.getHours()),
-              pad(d.getMinutes()),
-              pad(d.getSeconds())].join(':');
-  return [d.getDate(), months[d.getMonth()], time].join(' ');
-}
-
-exports.log = function (msg) {};
-
-exports.pump = null;
-
-var Object_keys = Object.keys || function (obj) {
-    var res = [];
-    for (var key in obj) res.push(key);
-    return res;
-};
-
-var Object_getOwnPropertyNames = Object.getOwnPropertyNames || function (obj) {
-    var res = [];
-    for (var key in obj) {
-        if (Object.hasOwnProperty.call(obj, key)) res.push(key);
-    }
-    return res;
-};
-
-var Object_create = Object.create || function (prototype, properties) {
-    // from es5-shim
-    var object;
-    if (prototype === null) {
-        object = { '__proto__' : null };
-    }
-    else {
-        if (typeof prototype !== 'object') {
-            throw new TypeError(
-                'typeof prototype[' + (typeof prototype) + '] != \'object\''
-            );
-        }
-        var Type = function () {};
-        Type.prototype = prototype;
-        object = new Type();
-        object.__proto__ = prototype;
-    }
-    if (typeof properties !== 'undefined' && Object.defineProperties) {
-        Object.defineProperties(object, properties);
-    }
-    return object;
-};
-
-exports.inherits = function(ctor, superCtor) {
-  ctor.super_ = superCtor;
-  ctor.prototype = Object_create(superCtor.prototype, {
-    constructor: {
-      value: ctor,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-};
-
-var formatRegExp = /%[sdj%]/g;
-exports.format = function(f) {
-  if (typeof f !== 'string') {
-    var objects = [];
-    for (var i = 0; i < arguments.length; i++) {
-      objects.push(exports.inspect(arguments[i]));
-    }
-    return objects.join(' ');
-  }
-
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  var str = String(f).replace(formatRegExp, function(x) {
-    if (x === '%%') return '%';
-    if (i >= len) return x;
-    switch (x) {
-      case '%s': return String(args[i++]);
-      case '%d': return Number(args[i++]);
-      case '%j': return JSON.stringify(args[i++]);
-      default:
-        return x;
-    }
-  });
-  for(var x = args[i]; i < len; x = args[++i]){
-    if (x === null || typeof x !== 'object') {
-      str += ' ' + x;
-    } else {
-      str += ' ' + exports.inspect(x);
-    }
-  }
-  return str;
-};
-
-},{"events":60}],59:[function(require,module,exports){
-(function (exports) {
-	'use strict';
-
-	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-	function b64ToByteArray(b64) {
-		var i, j, l, tmp, placeHolders, arr;
-	
-		if (b64.length % 4 > 0) {
-			throw 'Invalid string. Length must be a multiple of 4';
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		placeHolders = b64.indexOf('=');
-		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length;
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
-			arr.push((tmp & 0xFF0000) >> 16);
-			arr.push((tmp & 0xFF00) >> 8);
-			arr.push(tmp & 0xFF);
-		}
-
-		if (placeHolders === 2) {
-			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
-			arr.push(tmp & 0xFF);
-		} else if (placeHolders === 1) {
-			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
-			arr.push((tmp >> 8) & 0xFF);
-			arr.push(tmp & 0xFF);
-		}
-
-		return arr;
-	}
-
-	function uint8ToBase64(uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length;
-
-		function tripletToBase64 (num) {
-			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
-		};
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
-			output += tripletToBase64(temp);
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1];
-				output += lookup[temp >> 2];
-				output += lookup[(temp << 4) & 0x3F];
-				output += '==';
-				break;
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
-				output += lookup[temp >> 10];
-				output += lookup[(temp >> 4) & 0x3F];
-				output += lookup[(temp << 2) & 0x3F];
-				output += '=';
-				break;
-		}
-
-		return output;
-	}
-
-	module.exports.toByteArray = b64ToByteArray;
-	module.exports.fromByteArray = uint8ToBase64;
-}());
-
-},{}],61:[function(require,module,exports){
+},{"assert":55,"./buffer_ieee754":59,"base64-js":60}],61:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -30132,7 +30070,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],60:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 (function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
 
 var EventEmitter = exports.EventEmitter = process.EventEmitter;
@@ -30318,5 +30256,91 @@ EventEmitter.prototype.listeners = function(type) {
 };
 
 })(require("__browserify_process"))
-},{"__browserify_process":61}]},{},[11,16,15,14,13,12,9,10,3,19,7,1,8,2,17])
+},{"__browserify_process":61}],60:[function(require,module,exports){
+(function (exports) {
+	'use strict';
+
+	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+	function b64ToByteArray(b64) {
+		var i, j, l, tmp, placeHolders, arr;
+	
+		if (b64.length % 4 > 0) {
+			throw 'Invalid string. Length must be a multiple of 4';
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		placeHolders = b64.indexOf('=');
+		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length;
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
+			arr.push((tmp & 0xFF0000) >> 16);
+			arr.push((tmp & 0xFF00) >> 8);
+			arr.push(tmp & 0xFF);
+		}
+
+		if (placeHolders === 2) {
+			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
+			arr.push(tmp & 0xFF);
+		} else if (placeHolders === 1) {
+			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
+			arr.push((tmp >> 8) & 0xFF);
+			arr.push(tmp & 0xFF);
+		}
+
+		return arr;
+	}
+
+	function uint8ToBase64(uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length;
+
+		function tripletToBase64 (num) {
+			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+		};
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+			output += tripletToBase64(temp);
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1];
+				output += lookup[temp >> 2];
+				output += lookup[(temp << 4) & 0x3F];
+				output += '==';
+				break;
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
+				output += lookup[temp >> 10];
+				output += lookup[(temp >> 4) & 0x3F];
+				output += lookup[(temp << 2) & 0x3F];
+				output += '=';
+				break;
+		}
+
+		return output;
+	}
+
+	module.exports.toByteArray = b64ToByteArray;
+	module.exports.fromByteArray = uint8ToBase64;
+}());
+
+},{}]},{},[11,16,15,14,13,12,9,10,3,19,7,1,8,2,17])
 ;

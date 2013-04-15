@@ -129,6 +129,7 @@ module.exports = Backbone.View.extend({
         $(that.app.render().el).prependTo(that.el);
 
         if (err) return this.notify('error', 'The requested resource could not be found.');
+
         data.preview = (mode !== 'edit');
         data.lang = _.mode(file);
         this.replaceMainView(window.authenticated ? 'post' : 'read-post', new window.app.views.Post({

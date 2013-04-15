@@ -13,7 +13,7 @@ module.exports = Backbone.View.extend({
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
-      'click a.cancel': 'toggleCommit',
+      'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
       'click a.publish': 'updateMetaData',
       'click a.translate': 'translate',
@@ -122,6 +122,12 @@ module.exports = Backbone.View.extend({
 
     save: function(e) {
       this.eventRegister.trigger('save', e);
+      this.toggleCommit();
+      return false;
+    },
+
+    cancelSave: function(e) {
+      this.eventRegister.trigger('hideDiff', e);
       this.toggleCommit();
       return false;
     },
