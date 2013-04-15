@@ -26,7 +26,7 @@ have [node.js](http://nodejs.org) installed.
 
 To avoid merge conflicts in generated files, add the following lines to `.git/config`:
 ```
-[merge "prose"]
+[merge "dist"]
   driver = "sh `git rev-parse --show-toplevel`/prose.sh %O %A %B"
 ```
 
