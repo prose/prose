@@ -15,7 +15,7 @@ window.app = {
       Post: require('./views/post'),
       Preview: require('./views/preview')
     },
-    templates: require('../../templates'),
+    templates: require('../../dist/templates'),
     router: require('./router'),
     utils: {},
     state: {'repo': ''},

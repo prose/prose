@@ -6797,7 +6797,7 @@ window.app = {
       Post: require('./views/post'),
       Preview: require('./views/preview')
     },
-    templates: require('../../templates'),
+    templates: require('../../dist/templates'),
     router: require('./router'),
     utils: {},
     state: {'repo': ''},
@@ -6838,7 +6838,7 @@ $(function() {
   }
 });
 
-},{"./models":8,"./views/application":9,"./views/app":10,"./views/notification":11,"./views/start":12,"./views/profile":13,"./views/posts":14,"./views/post":15,"./views/preview":16,"../../templates":1,"./router":3,"jquery-browserify":4,"underscore":5,"backbone":6}],8:[function(require,module,exports){
+},{"./models":8,"./views/application":9,"./views/app":10,"./views/notification":11,"./views/start":12,"./views/profile":13,"./views/posts":14,"./views/post":15,"./views/preview":16,"../../dist/templates":1,"./router":3,"jquery-browserify":4,"underscore":5,"backbone":6}],8:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -26232,7 +26232,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":37,"./exception":34,"./mark":38,"./schema/safe":32,"./schema/default":33}],28:[function(require,module,exports){
+},{"./common":37,"./exception":34,"./mark":38,"./schema/default":33,"./schema/safe":32}],28:[function(require,module,exports){
 'use strict';
 
 
