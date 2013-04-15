@@ -25,6 +25,7 @@ to manage dependencies and build. Development also requires you
 have [node.js](http://nodejs.org) installed.
 
 To avoid merge conflicts in generated files, add the following lines to `.git/config`:
+
 ```
 [merge "dist"]
   driver = "sh `git rev-parse --show-toplevel`/prose.sh %O %A %B"
@@ -36,14 +37,18 @@ To get started:
 your OS.
 - Go to the directory where you have checked out `prose`
 - Run `npm install`
-- For running prose with authentication you'll need to add a `oauth.json` file
+- To run prose with authentication you'll need to add an `oauth.json` file
 to the root directory with the following contents:
 
-  {
-    "clientId": "c602a8bd54b1e774f864",
-    "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
-  }
+``` js
+{
+  "clientId": "c602a8bd54b1e774f864",
+  "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
+}
+```
 
+Note that you should not commit this file to a remote repo or along with a pull
+request.
 - If you have python handy, from the project root run `python -m SimpleHTTPServer`
 to start a server and run the site locally. By default prose will be set up 
 on [http://localhost:8000](http://localhost:8000).
