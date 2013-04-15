@@ -1,0 +1,35 @@
+<% _.each(files, function(f, i) { %>
+  <% if (f.type === 'tree') { %>
+    <!-- folders -->
+    <li><a class='item' data-index='<%= i %>' href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= f.path ? "/" +f.path : "" %>'>
+      <span class='icon inline small folder'></span>
+      <%= f.path === _.parentPath(currentPath) ? ".." : f.name %>
+    </a></li>
+  <% } else { %>
+    <!-- files -->
+    <%
+      var parts = f.name.split('.');
+      var extension = parts.pop().toLowerCase();
+      var filename = parts.slice(0, parts.length).join('');
+    %>
+
+    <% if (app.state.jekyll && extension === 'md') { %>
+      <li class='markdown'>
+        <a class='clearfix item' data-index='<%= i %>' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>
+        <span class='fl icon round md'></span>
+        <span class='fl details'>
+          <h3><%= filename || 'Untitled' %></h3>
+          <span class='deemphasize'><%= f.name %></span>
+        </span>
+        </a>
+      </li>
+
+    <% } else { %>
+      <li><a class='light item' data-index='<%= i %>' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= f.path %>'>
+        <span class='icon inline small file <%= extension %>'></span>
+        <%= f.name || 'Untitled' %>
+      </a></li>
+    <% } %>
+
+  <% } %>
+<% }); %>
