@@ -1,7 +1,32 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'/>
+  <title>Prose &middot; A Content Editor for GitHub</title>
+  <link rel='shortcut icon' href='./img/favicon.ico' type='image/x-icon' />
+  <link rel='stylesheet' href='./app.css'>
+</head>
+<body>
 
-<div class='loading'>
-  <span>Loading info ...</span>
-</div>
+  <div id='prose'></div>
+
+  <div class='footer'>
+    <div class='limiter clearfix'>
+      <div class='fr brand'>
+        <a href='https://github.com/prose/prose#readme'>Prose v1.0.0</a>
+      </div>
+      <a class='prose-logo' href='./'>
+        <span class='icon branding'>
+          Prose
+        </span>
+      </a>
+      <ul class='menu clearfix fl'>
+        <li><a class='help' href='./help.html'><span class='icon inline small help'></span>Help</a></li>
+        <li><a class='about' href='./about.html'><span class='icon inline small about'></span>About</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script src='dist/prose.js'></script>
+</body>
+</html>

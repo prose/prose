@@ -388,73 +388,91 @@
 <body class='static'>
   <div id='container'>
     <div class='limiter'>
-      <div class='prose'>
-  <div class='inner deep'>
-    <h1 class='title'>Help</h1>
+      <div class='inner deep prose'>
+  <h1 class='title'>Prose for writers</h1>
+  <p><a href='http://prose.io'>Prose</a> is not only suitable for managing website content. You can use it as a full-featured writing environment too. It provides you a distraction-free writing experience, with a focus on content and structure. Also, you can share your work at any time or invite other people to collaborate on your document.</p>
 
-    <ul class='blocks clearfix'>
-      
-      <li><a class='round' href='/help/eventually-consistent.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/cells.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Eventually consistent</h4>
-            <p>Or how continuously improving content in the open beats the best review process.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/prose-for-writers.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/prose-for-writers.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Prose for writers</h4>
-            <p>How to use Prose as a writing workspace.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/internals.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/internals.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Internals</h4>
-            <p>A little background on how we implemented Prose.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/handbook.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/handbook.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Handbook</h4>
-            <p>A reference guide. In progress.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/getting-started.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/getting-started.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Getting Started</h4>
-            <p>A brief introduction on how to use Prose, what it can do for you and what not.</p>
-          </div>
-      </a></li>
-      
-    </ul>
+<p>Here&#8217;s what you need to get started.</p>
+
+<h2 id='create_a_new_github_repository'>Create a new GitHub Repository</h2>
+
+<p>This will be the home of your documents. Make sure there is at least one branch available. The easiest way to do it, is by creating a new GitHub Repository and initializing it with an empty README.</p>
+
+<p><img src='http://prose.io/images/screenshots/prose-for-writers/create-repository.png' alt='Create a repository on GitHub' /></p>
+
+<p>Keep in mind, this is a plain old GitHub repository, no Jekyll involved here.</p>
+
+<h2 id='start_writing'>Start writing</h2>
+
+<p>Open your fresh repository in prose and start writing your first document. To do so, click on &#8220;New File&#8221; enter some text in markdown and finally hit save.</p>
+
+<p><img src='http://prose.io/images/screenshots/prose-for-writers/start-writing.png' alt='Start writing' /></p>
+
+<h2 id='remember_every_change'>Remember every change</h2>
+
+<p>A full changeset is stored on every save. Thanks to git you can access older versions of your document using <a href='https://github.com/prose/documents/commits/master'>GitHub</a>. You can access the full commit history &#8230;</p>
+
+<p><img src='http://prose.io/images/screenshots/prose-for-writers/revisions.png' alt='Revisions' /></p>
+
+<p>or look at particular changesets.</p>
+
+<p><img src='http://prose.io/images/screenshots/prose-for-writers/changeset.png' alt='Changeset' /></p>
+
+<p>In future we&#8217;ll allow you to access revisions and changesets right from Prose. Just give us some more time please. :)</p>
+
+<h2 id='invite_collaborators'>Invite collaborators</h2>
+
+<p>If your co-workers or friends haven&#8217;t created a Github Account yet, this might be a good occasion to get started. Write permissions are totally transparent, and managed on GitHub. To invite collaborators you need to give them permission to your repository and send them the link to the document on Prose.</p>
+
+<p><img src='http://prose.io/images/screenshots/prose-for-writers/add-collaborators.png' alt='Invite collaborators' /></p>
+
+<h2 id='share_your_work'>Share your work</h2>
+
+<p>Make sure your repository is public and just share the URL of the <a href='http://prose.io/#prose/documents/blob/master/articles/hello-world.md'>post</a>. Readers will always see the most up to date version.</p>
+
+<p><img src='http://prose.io/images/screenshots/prose-for-writers/share.png' alt='Invite collaborators' /></p>
+
+<p>So if you or some of your collaborators make a change, it will immediately be visible. Just point them to the appropriate URL for either editing, or viewing the document.</p>
+
+<ul>
+<li><code>http://prose.io/#prose/documents/blob/master/articles/hello-world.md</code></li>
+
+<li><code>http://prose.io/#prose/documents/edit/master/articles/hello-world.md</code></li>
+</ul>
+
+<h2 id='organize_your_posts_in_folders'>Organize your posts in folders</h2>
+
+<p>You might want to structure your document repository, once you get more and more files. All you have to do is prefixing an arbitary folder structure to the filename. Make sure you don&#8217;t have a slash in front.</p>
+
+<p><img src='http://prose.io/images/screenshots/prose-for-writers/subfolders.png' alt='Subfolders' /></p>
+
+<h2 id='turn_it_into_a_website'>Turn it into a website</h2>
+
+<p>Remember that you always have the option to turn your document repository in a Jekyll website, featuring your own design. You can use our <a href='http://bootstrap.prose.io/'>template</a> to get started with Jekyll.</p>
+
+<p>However, before creating a website, you should have some content ready and with Prose it is easy to savely create and share that potential website content.</p>
+
+<h2 id='background'>Background</h2>
+
+<p>Prose is closely tied to Git and GitHub. We intentionally made the process transparent, and expose git concepts such as branches, folders and files. You can access every file either with Prose or the Github User interface. You can also switch to editing in your local text editor and use the regular git commit/push workflow, if you prefer that. E.g. when you&#8217;re on the road, and offline.</p>
+
+<h2 id='future_outlook'>Future outlook</h2>
+
+<ul>
+<li>Accessing revision history through the interface</li>
+
+<li>Invite collaborators right from the interface, and see who has access to the documents.</li>
+</ul>
+</div>
+
+<div class='inner deep bright'>
+  Posted by <a href='http://twitter.com/_mql' target='_blank'>Michael Aufreiter</a> on June 20, 2012
+</div>
+
+<div class='improve-article bright'>
+  <div class='inner deep clearfix centered'>
+    <p>This article has been written and published using <a href='http://prose.io' target='_blank'>Prose</a>. Please help us improve this documentation by contributing to the text.</p>
+    <p><a class='round button' href='http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-06-20-prose-for-writers.md'>Edit in Prose</a></p>
   </div>
 </div>
 

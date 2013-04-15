@@ -388,73 +388,86 @@
 <body class='static'>
   <div id='container'>
     <div class='limiter'>
-      <div class='prose'>
-  <div class='inner deep'>
-    <h1 class='title'>Help</h1>
+      <div class='inner deep prose'>
+  <h1 class='title'>Handbook</h1>
+  <p>This handbook is a work in progress. We&#8217;re going to cover certain aspects related to using Prose.io. It&#8217;s intended to be extended on-demand as questions come up. We&#8217;d like to invite you to contribute to the documentation. Just modify <a href='https://github.com/prose/prose/blob/gh-pages/_posts/help/2012-06-20-handbook.md'>this file</a>, and send us pull requests.</p>
 
-    <ul class='blocks clearfix'>
-      
-      <li><a class='round' href='/help/eventually-consistent.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/cells.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Eventually consistent</h4>
-            <p>Or how continuously improving content in the open beats the best review process.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/prose-for-writers.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/prose-for-writers.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Prose for writers</h4>
-            <p>How to use Prose as a writing workspace.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/internals.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/internals.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Internals</h4>
-            <p>A little background on how we implemented Prose.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/handbook.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/handbook.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Handbook</h4>
-            <p>A reference guide. In progress.</p>
-          </div>
-      </a></li>
-      
-      <li><a class='round' href='/help/getting-started.html'>
-          
-          <div class='img'>
-            <img src='http://prose.io/images/help/getting-started.png' width='100%' height='100%' alt='Thumbnail' />
-          </div>
-          
-          <div class='inner'>
-            <h4>Getting Started</h4>
-            <p>A brief introduction on how to use Prose, what it can do for you and what not.</p>
-          </div>
-      </a></li>
-      
-    </ul>
+<h1 id='getting_started'>Getting started</h1>
+
+<p>See the <a href='http://prose.io/help/getting-started.html'>Getting started guide</a>.</p>
+
+<h1 id='configuration_of_your_site'>Configuration of your site</h1>
+
+<p>Configuration is optional, but in many cases you might want to have more control about the behavior of Prose. You can configure it by including a <code>prose</code> property in your <code>_config.yml</code>.</p>
+
+<h2 id='set_root_url'>Set Root URL</h2>
+
+<p>In order to restrict access to a certain directory you can specify a <code>rooturl</code> property.</p>
+
+<pre><code>auto: true
+server: true
+permalink: none
+baseurl: &quot;site_name&quot;
+prose:
+  rooturl: &quot;_posts&quot;</code></pre>
+
+<h2 id='metadata_defaults'>Metadata defaults</h2>
+
+<p>Metadata defaults can be used to prepopulate metadata of posts based on the directory they&#8217;re going to live in. So for the blog on your site you might want to specify <code>title</code> and <code>abstract</code> properties while for project entries people should fill in attributes such as a project <code>name</code> and <code>image</code> (thumbnail). Be aware that metadata defaults need to be specified using the YAML block syntax.</p>
+
+<pre><code>auto: true
+server: true
+prose:
+  metadata:
+    &quot;_posts/blog&quot;: |
+      title:    &quot;Title of your article&quot;
+      abstract: &quot;Abstract&quot;
+    &quot;_posts/projects&quot;: |
+      name: &quot;Project Name&quot;
+      img:  &quot;Project Thumbnail&quot;</code></pre>
+
+<h1 id='make_your_website_editable'>Make your website editable</h1>
+
+<p>You have probably seen the <strong>&#8220;Edit in Prose&#8221;</strong>-link that sits below our help articles, like this one (scroll down). You should consider doing that with your website too in order allow readers to <a href='http://prose.io/help/eventually-consistent.html'>contribute</a>.</p>
+
+<p>Essentially, this is as easy as including a link to the Prose edit page of the corresponding markdown file. You can copy it over from GitHub and add <code>prose.io/#</code> instead of <code>github.com/</code> as a prefix.</p>
+
+<p>For the Prose help pages we just added a <code>prose_link</code> property to the YAML frontmatter of our source files.</p>
+
+<pre><code>---
+prose_link: http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-06-20-internals.md
+---</code></pre>
+
+<p>And in the help pages template used this markup:</p>
+
+<p><code>html
+&lt;div class=&quot;improve-article-wrapper&quot;&gt;
+  &lt;div class=&quot;improve-article&quot;&gt;
+    &lt;a class=&quot;button&quot; href=&quot;http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-06-20-handbook.md&quot;&gt;Edit in Prose&lt;/a&gt;
+    &lt;p&gt;
+      This article has been written and published using &lt;a href=&quot;http://prose.io&quot; target=&quot;_blank&quot;&gt;Prose&lt;/a&gt;. Please help improving this documentation by contributing to the text.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></p>
+
+<h1 id='known_issues'>Known Issues</h1>
+
+<p>This is brand-new software, and there are some known issues you should be aware of.</p>
+
+<h2 id='i_have_deleted_a_file_but_its_still_there'>I have deleted a file, but it&#8217;s still there.</h2>
+
+<p>Wait a little bit. Then refresh. It may take some time until the Github API is reflecting the changes.</p>
+</div>
+
+<div class='inner deep bright'>
+  Posted by <a href='http://twitter.com/_mql' target='_blank'>Michael Aufreiter</a> on June 20, 2012
+</div>
+
+<div class='improve-article bright'>
+  <div class='inner deep clearfix centered'>
+    <p>This article has been written and published using <a href='http://prose.io' target='_blank'>Prose</a>. Please help us improve this documentation by contributing to the text.</p>
+    <p><a class='round button' href='http://prose.io/#prose/prose/edit/gh-pages/_posts/help/2012-06-20-handbook.md'>Edit in Prose</a></p>
   </div>
 </div>
 

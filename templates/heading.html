@@ -1,0 +1,14 @@
+<% if (alterable) { %>
+  <div class='avatar round fl'><%= avatar %></div>
+  <div class='fl details'>
+    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>
+    <input type='text' class='filepath' value='<%= title %>'>
+    <div class='mask'></div>
+  </div>
+<% } else { %>
+  <div class='avatar round fl'><%= avatar %></div>
+  <div class='fl details'>
+    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>
+    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>
+  </div>
+<% } %>

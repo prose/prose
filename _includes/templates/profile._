@@ -1,7 +1,0 @@
-<div class='content-search'>
-  <span class='icon search inline fr'></span>
-  <input type='text' id='filter' placeholder='Filter projects' />
-</div>
-
-<ul id='projects' class='listing'></ul>
-
