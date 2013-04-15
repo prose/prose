@@ -6543,7 +6543,7 @@ String.prototype.split = function (separator, limit) {
     return cbSplit(this, separator, limit);
 };
 Liquid.readTemplateFile = function(path) {
-    var repo = getRepo(app.state.user, app.state.repo);
+    var repo = window.app.models.getRepo(app.state.user, app.state.repo);
     return repo.contentsSync(app.state.branch, '_includes/' + path);
 }
 
@@ -6688,157 +6688,6 @@ cookie.clear = function() {
 module.exports = cookie;
 
 },{}],3:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-// The Router
-// ---------------
-
-module.exports = Backbone.Router.extend({
-  initialize: function () {
-    // Using this.route, because order matters
-    this.route(/(.*\/.*)/, 'path', this.path);
-    this.route(':user(/)', 'user', this.profile);
-    this.route(':user/:repo(/)', 'repo', this.repo);
-    this.route('', 'start', this.start);
-  },
-
-  start: function () {
-    if (window.authenticated) {
-      this.profile(app.username);
-    } else {
-      if (confirmExit()) {
-        app.state = {
-          user: '',
-          repo: '',
-          mode: '',
-          branch: '',
-          path: ''
-        };
-        app.instance.start();
-      }
-    }
-  },
-
-  extractURL: function (url) {
-    url = url.split('/');
-    app.state = {
-      user: url[0],
-      repo: url[1],
-      mode: url[2],
-      branch: url[3],
-      path: (url.slice(4) || []).join('/')
-    };
-    return app.state;
-  },
-
-  path: function (url) {
-    var parts;
-    url = this.extractURL(url);
-    if (url.mode === 'tree') {
-      app.instance.posts(url.user, url.repo, url.branch, url.path);
-    } else if (url.mode === 'new') {
-      app.instance.newPost(url.user, url.repo, url.branch, url.path);
-    } else if (url.mode === 'preview') {
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      app.instance.preview(url.user, url.repo, url.branch, parts[0], parts[1], url.mode);
-    } else {
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      app.instance.post(url.user, url.repo, url.branch, parts[0], parts[1], url.mode);
-    }
-  },
-
-  // #example-user/example-repo
-  repo: function (username, reponame) {
-    app.state = {
-      user: username,
-      repo: reponame,
-      mode: 'tree',
-      branch: '',
-      path: ''
-    };
-    app.instance.posts(username, reponame);
-  },
-
-  // #example-user
-  // #example-organization
-  profile: function (username) {
-    if (confirmExit()) {
-      app.state = {
-        user: username,
-        repo: '',
-        mode: '',
-        branch: '',
-        path: ''
-      };
-      app.instance.profile(username);
-    }
-  }
-});
-
-},{"jquery-browserify":4,"underscore":5,"backbone":6}],7:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-window.app = {
-    config: {},
-    models: require('./models'),
-    views: {
-      Application: require('./views/application'),
-      App: require('./views/app'),
-      Notification: require('./views/notification'),
-      Start: require('./views/start'),
-      Profile: require('./views/profile'),
-      Posts: require('./views/posts'),
-      Post: require('./views/post'),
-      Preview: require('./views/preview')
-    },
-    templates: require('../../dist/templates'),
-    router: require('./router'),
-    utils: {},
-    state: {'repo': ''},
-    instance: {},
-    eventRegister: _.extend({}, Backbone.Events)
-};
-
-// Prevent exit when there are unsaved changes
-window.onbeforeunload = function() {
-  if (window.app.instance.mainView && window.app.instance.mainView.dirty)
-    return 'You have unsaved changes. Are you sure you want to leave?';
-};
-
-window.confirmExit = function() {
-  if (window.app.instance.mainView && window.app.instance.mainView.dirty)
-    return confirm('You have unsaved changes. Are you sure you want to leave?');
-  return true;
-};
-
-$(function() {
-  if (window.app.models.authenticate()) {
-    window.app.models.loadApplication(function(err, data) {
-
-      // Start the engines
-      window.app.instance = new window.app.views.Application({
-        el: '#prose',
-        model: data
-      }).render();
-
-      if (err) return window.app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
-
-      // Initialize router
-      window.router = new window.app.router();
-
-      // Start responding to routes
-      Backbone.history.start();
-    });
-  }
-});
-
-},{"./models":8,"./views/application":9,"./views/app":10,"./views/notification":11,"./views/start":12,"./views/profile":13,"./views/posts":14,"./views/post":15,"./views/preview":16,"../../dist/templates":1,"./router":3,"jquery-browserify":4,"underscore":5,"backbone":6}],8:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -7462,7 +7311,7 @@ module.exports = {
   }
 };
 
-},{"./cookie":2,"../libs/github":17,"jquery-browserify":4,"underscore":5,"js-yaml":18}],17:[function(require,module,exports){
+},{"./cookie":2,"../libs/github":4,"underscore":5,"jquery-browserify":6,"js-yaml":7}],4:[function(require,module,exports){
 // Github.js 0.7.0
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
@@ -8017,365 +7866,158 @@ var _ = require('underscore');
   module.exports = Github;
 }).call(this);
 
-},{"underscore":5}],19:[function(require,module,exports){
+},{"underscore":5}],8:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var marked = require('marked');
-var queue = require('queue-async');
-var chrono = require('chrono');
-
-// Run an array of functions in serial
-// -------
-
-_.serial = function () {
-  (_(arguments).reduceRight(_.wrap, function() {}))();
-};
-
-
-// Parent path
-// -------
-
-_.parentPath = function(path) {
-  return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
-};
-
-
-// Topmost path
-// -------
-
-_.topPath = function(path) {
-  var match = path.match(/\/?([a-zA-Z0-9_\-]*)$/);
-  return match[1];
-};
-
-
-// Valid filename check
-// -------
-
-_.validFilename = function(filename) {
-  return !!filename.match(/^([a-zA-Z0-9_\-]|\.)+$/);
-  // Disabled for now: the Jekyll post format layout
-  // return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
-};
-
-
-// Valid pathname check
-// -------
-
-_.validPathname = function(path) {
-  return _.all(path.split('/'), function(filename) {
-    return _.validFilename(filename);
-  });
-};
-
-
-// Extract filename from a given path
-// -------
-//
-// _.extractFilename('path/to/foo.md')
-// => ['path/to', 'foo.md']
-
-_.extractFilename = function(path) {
-  if (!path.match(/\//)) return ['', path];
-  var matches = path.match(/(.*)\/(.*)$/);
-  return [ matches[1], matches[2] ];
-};
-
-
-// Determine mode for CodeMirror
-// -------
-
-_.mode = function(file) {
-  if (_.markdown(file)) return 'gfm';
-
-  var extension = _.extension(file);
-
-  if (_.include(['js', 'json'], extension)) return 'javascript';
-  if (extension === 'html') return 'htmlmixed';
-  if (extension === 'rb') return 'ruby';
-  if (extension === 'yml') return 'yaml';
-  if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
-
-  return extension;
-};
-
-
-// Check if a given file is a Jekyll post
-// -------
-
-_.jekyll = function(path, file) {
-  return !!(path.match('_posts') && _.markdown(file));
-};
-
-// check if a given file has YAML frontmater
-// -------
-
-_.hasMetadata = function(content) {
-  return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
-};
-
-// Extract file extension
-// -------
-
-_.extension = function(file) {
-  var match = file.match(/\.(\w+)$/);
-  return match ? match[1] : null;
-};
-
-
-// Determines whether a given file is a markdown file or not
-// -------
-
-_.markdown = function(file) {
-  var regex = new RegExp('.(md|mkdn?|mdown|markdown)$');
-  return !!(regex.test(file));
-};
-
-
-// Clip a string
-// -------
-
-_.clip = function(str, length) {
-  var res = str.substr(0, length);
-  if (length < str.length) res += ' ...';
-  return res;
-};
-
-
-// Concatenate path + file to full filepath
-// -------
-
-_.filepath = function(path, file) {
-  return (path ? path +"/" : "") + file;
-};
-
-
-// Converts a javascript object to YAML
-// Does not support nested objects
-// Multiline values are serialized as Blocks
-
-_.toYAML = function(metadata) {
-  var res = [];
-  _.each(metadata, function(value, property) {
-    if (value.match(/\n/)) {
-      var str = property+': |\n';
-
-      _.each(value.split('\n'), function(line) {
-        str += '  ' + line;
-      });
-
-      res.push();
-    } else {
-      res.push(property+": "+value);
-    }
-  });
-
-  return res.join('\n');
-};
-
-
-// Only parses first level of YAML file
-// Considers the whole thing as a key-value pair party
-//
-// name: "michael"
-// age: 25
-// friends:
-// - Michael
-// - John
-// block: |
-//   Hello World
-//   Another line
-//   24123
-//
-// =>
-// {
-//   name: 'michael',
-//   age: "25",
-//   friends: "- Michael\n- John",
-//   block: "Hello World\nAnother line\n24123"
-// }
-//
-// var yaml = 'name:     "michael"\nage: 25\nfriends:\n- Michael\n- John\nblock: |\n  hey ho\n  some text\n  yay';
-// console.log(_.fromYAML(yaml));
-
-_.fromYAML = function(rawYAML) {
-  var data = {};
-
-  var lines = rawYAML.split('\n');
-  var key = null;
-  var value = "";
-  var blockValue = false;
-
-  function add() {
-    data[key] = _.isArray(value) ? value.join('\n') : value;
-    key = null;
-    value = "";
-  }
-
-  _.each(lines, function(line) {
-    var match = line.match(/^([A-Za-z_][A-Za-z0-9_]*):\s*(.*)$/);
-
-    if (match && key) add();
-    if (match) { // New Top Level key found
-      key = match[1];
-      value = match[2];
-      if (value.match(/\|$/)) {
-        blockValue = true;
-        value = "";
-      }
-    } else {
-      if (!_.isArray(value)) value = [];
-      if (blockValue) {
-        value.push(line.trim());
-      } else {
-        value.push(line.replace(/^\s\s/, ''));
-      }
-    }
-  });
-
-  add();
-  return data;
-};
-
-// chunked path
-// -------
-//
-// _.chunkedPath('path/to/foo')
-// =>
-// [
-//   { url: 'path',        name: 'path' },
-//   { url: 'path/to',     name: 'to' },
-//   { url: 'path/to/foo', name: 'foo' }
-// ]
-
-_.chunkedPath = function(path) {
-  var chunks = path.split('/');
-  return _.map(chunks, function(chunk, index) {
-    var url = [];
-    for (var i=0; i<=index; i++) {
-      url.push(chunks[i]);
-    }
-    return {
-      url: url.join('/'),
-      name: chunk
-    };
-  });
-};
-
-// Full Layout Preview
-// -------
-
-_.preview = function(view) {
-  var model = view.model,
-      q = queue(1),
-      p = {
-        site: app.state.config,
-        post: model.metadata,
-        page: model.metadata,
-        content: Liquid.parse(marked(model.content)).render({
-          site: app.state.config,
-          post: model.metadata,
-          page: model.metadata
-        }) || ''
-      };
-
-  if (p.site.prose && p.site.prose.site) {
-    _(p.site.prose.site).each(function(file, key) {
-      q.defer(function(cb){
-        $.ajax({
-          cache: true,
-          dataType: 'jsonp',
-          jsonp: false,
-          jsonpCallback: 'callback',
-          url: file,
-          success: function(d) {
-            p.site[key] = d;
-            cb();
-          }
-        });
-      });
-    });
-  }
-
-  q.defer(getLayout);
-  q.await(function() {
-    var content = p.content;
-
-    // Set base URL to public site
-    if (app.state.config.prose && app.state.config.prose.siteurl) {
-      content = content.replace(/(<head(?:.*)>)/, function() {
-        return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
-      });
-    }
-
-    document.write(content);
-    document.close();
-  });
-
-  function getLayout(cb) {
-    var file = p.page.layout;
-
-    model.repo.read(app.state.branch, '_layouts/' + file + '.html', function(err, d) {
-      if (err) return cb(err);
-      var meta = (d.split('---')[1]) ? jsyaml.load(d.split('---')[1]) : {},
-        content = (d.split('---')[2]) ? d.split('---')[2] : d,
-        template = Liquid.parse(content);
-      p.page = _(p.page).extend(meta);
-      p.content = template.render({
-        site: p.site,
-        post: p.post,
-        page: p.page,
-        content: p.content
-      });
-      if (meta.layout) q.defer(getLayout);
-      cb();
-    });
-
-  }
-};
-
-// UI Stuff
-// -------
-
-function dropdown() {
-    var $dropdown = $('.dropdown-menu');
-    $dropdown.each(function(i, el) {
-        $(this).hover(function() {
-            $(this).addClass('open');
-        }, function(e) {
-            $(this).removeClass('open');
-        });
-    });
-
-    $('.dropdown-hover').click(function() {
-        return false;
-    });
-}
-
-function shadowScroll($el, $parent) {
-  $el.scroll(function() {
-    if ($el.scrollTop() !== 0) {
-      if (!$parent.hasClass('shadow')) {
-        $parent.addClass('shadow');
-      }
-    } else {
-      $parent.removeClass('shadow');
-    }
-  });
-}
-
-module.exports = {
-  dropdown: function() {
-    return dropdown();
+var Backbone = require('backbone');
+
+// The Router
+// ---------------
+
+module.exports = Backbone.Router.extend({
+  initialize: function () {
+    // Using this.route, because order matters
+    this.route(/(.*\/.*)/, 'path', this.path);
+    this.route(':user(/)', 'user', this.profile);
+    this.route(':user/:repo(/)', 'repo', this.repo);
+    this.route('', 'start', this.start);
   },
 
-  shadowScroll: function($el, $parent) {
-    return shadowScroll($el, $parent);
-  }
-}
+  start: function () {
+    if (window.authenticated) {
+      this.profile(app.username);
+    } else {
+      if (confirmExit()) {
+        app.state = {
+          user: '',
+          repo: '',
+          mode: '',
+          branch: '',
+          path: ''
+        };
+        app.instance.start();
+      }
+    }
+  },
 
-},{"jquery-browserify":4,"underscore":5,"js-yaml":18,"marked":20,"queue-async":21,"chrono":22}],5:[function(require,module,exports){
+  extractURL: function (url) {
+    url = url.split('/');
+    app.state = {
+      user: url[0],
+      repo: url[1],
+      mode: url[2],
+      branch: url[3],
+      path: (url.slice(4) || []).join('/')
+    };
+    return app.state;
+  },
+
+  path: function (url) {
+    var parts;
+    url = this.extractURL(url);
+    if (url.mode === 'tree') {
+      app.instance.posts(url.user, url.repo, url.branch, url.path);
+    } else if (url.mode === 'new') {
+      app.instance.newPost(url.user, url.repo, url.branch, url.path);
+    } else if (url.mode === 'preview') {
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      app.instance.preview(url.user, url.repo, url.branch, parts[0], parts[1], url.mode);
+    } else {
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      app.instance.post(url.user, url.repo, url.branch, parts[0], parts[1], url.mode);
+    }
+  },
+
+  // #example-user/example-repo
+  repo: function (username, reponame) {
+    app.state = {
+      user: username,
+      repo: reponame,
+      mode: 'tree',
+      branch: '',
+      path: ''
+    };
+    app.instance.posts(username, reponame);
+  },
+
+  // #example-user
+  // #example-organization
+  profile: function (username) {
+    if (confirmExit()) {
+      app.state = {
+        user: username,
+        repo: '',
+        mode: '',
+        branch: '',
+        path: ''
+      };
+      app.instance.profile(username);
+    }
+  }
+});
+
+},{"underscore":5,"jquery-browserify":6,"backbone":9}],10:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+window.app = {
+    config: {},
+    models: require('./models'),
+    views: {
+      Application: require('./views/application'),
+      App: require('./views/app'),
+      Notification: require('./views/notification'),
+      Start: require('./views/start'),
+      Profile: require('./views/profile'),
+      Posts: require('./views/posts'),
+      Post: require('./views/post'),
+      Preview: require('./views/preview')
+    },
+    templates: require('../../dist/templates'),
+    router: require('./router'),
+    utils: {},
+    state: {'repo': ''},
+    instance: {},
+    eventRegister: _.extend({}, Backbone.Events)
+};
+
+// Prevent exit when there are unsaved changes
+window.onbeforeunload = function() {
+  if (window.app.instance.mainView && window.app.instance.mainView.dirty)
+    return 'You have unsaved changes. Are you sure you want to leave?';
+};
+
+window.confirmExit = function() {
+  if (window.app.instance.mainView && window.app.instance.mainView.dirty)
+    return confirm('You have unsaved changes. Are you sure you want to leave?');
+  return true;
+};
+
+$(function() {
+  if (window.app.models.authenticate()) {
+    window.app.models.loadApplication(function(err, data) {
+
+      // Start the engines
+      window.app.instance = new window.app.views.Application({
+        el: '#prose',
+        model: data
+      }).render();
+
+      if (err) return window.app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
+
+      // Initialize router
+      window.router = new window.app.router();
+
+      // Start responding to routes
+      Backbone.history.start();
+    });
+  }
+});
+
+},{"./models":3,"./views/application":11,"./views/app":12,"./views/notification":13,"./views/start":14,"./views/profile":15,"./views/posts":16,"./views/post":17,"./views/preview":18,"../../dist/templates":1,"./router":8,"jquery-browserify":6,"underscore":5,"backbone":9}],5:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -9604,7 +9246,673 @@ module.exports = {
 }).call(this);
 
 })()
-},{}],4:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+
+  id: 'notification',
+
+  initialize: function(type, message) {
+    this.model = {};
+    this.model.type = type;
+    this.model.message = message;
+  },
+
+  render: function() {
+    var tmpl = _(window.app.templates.notification).template();
+    $(this.el).html(tmpl(this.model));
+    return this;
+  }
+});
+
+},{"jquery-browserify":6,"backbone":9}],18:[function(require,module,exports){
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  render: function() {
+    this.stashApply();
+    _.preview(this);
+    return this;
+  },
+
+  stashApply: function() {
+    if (!window.localStorage) return false;
+
+    var storage = window.localStorage,
+        filepath = window.location.hash.split('/').slice(4).join('/');
+
+    var stash = JSON.parse(storage.getItem(filepath));
+
+    if (stash) {
+      this.model.content = stash.content;
+      this.model.raw_metadata = stash.raw_metadata;
+      this.model.metadata = jsyaml.load(stash.raw_metadata);
+    }
+  }
+});
+
+},{"underscore":5,"js-yaml":7,"backbone":9}],16:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+
+  id: 'posts',
+
+  events: {
+    'hover a.item': 'activeListing',
+    'keyup #filter': 'search'
+  },
+
+  initialize: function () {
+    if (!window.shortcutsRegistered) {
+      key('enter', _.bind(function (e, handler) {
+        this.goToFile();
+      }, this));
+      key('up, down', _.bind(function (e, handler) {
+        this.pageListing(handler.key);
+        e.preventDefault();
+        e.stopPropagation();
+      }, this));
+      window.shortcutsRegistered = true;
+    }
+  },
+
+  render: function () {
+    var that = this;
+    var data = _.extend(this.model, app.state, {
+      currentPath: app.state.path
+    });
+
+    // Ping `views/app.js` to let know we should swap out the sidebar
+    this.eventRegister = app.eventRegister;
+    this.eventRegister.trigger('sidebarContext', data, 'posts');
+    var isPrivate = app.state.isPrivate ? 'private' : '';
+
+    var header = {
+      avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
+      parent: data.user,
+      parentUrl: data.user,
+      title: data.repo,
+      titleUrl: data.user + '/' + data.repo,
+      alterable: false
+    }
+
+    this.eventRegister.trigger('headerContext', header);
+
+    var tmpl = _(window.app.templates.posts).template();
+    $(this.el).empty().append(tmpl(data));
+
+    _.delay(function () {
+      that.renderResults();
+      $('#filter').focus();
+      utils.shadowScroll($('#files'), $('.breadcrumb'));
+      utils.shadowScroll($('#files'), $('.content-search'));
+    }, 1);
+
+    return this;
+  },
+
+  pageListing: function (handler) {
+
+    var item, index;
+
+    if ($('.item').hasClass('active')) {
+      index = parseInt($('.item.active').data('index'), 10);
+      $('.item.active').removeClass('active');
+
+      if (handler === 'up') {
+        item = index - 1;
+        $('.item[data-index=' + item + ']').addClass('active');
+      } else {
+        item = index + 1;
+        $('.item[data-index=' + item + ']').addClass('active');
+      }
+    } else {
+      $('.item[data-index=0]').addClass('active');
+    }
+  },
+
+  goToFile: function () {
+    var path = $('.item.active').attr('href');
+    router.navigate(path, true);
+  },
+
+  search: function (e) {
+    if (e.which === 27) { // ESC
+      _.delay(_.bind(function () {
+        $('#filter', this.el).val('');
+        this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
+        this.renderResults();
+      }, this), 10);
+
+    } else if (e.which === 40 && $('.item').length > 0) {
+      this.pageListing('down'); // Arrow Down
+      e.preventDefault();
+      e.stopPropagation();
+      $('#filter').blur();
+
+    } else {
+      _.delay(_.bind(function () {
+        var searchstr = $('#filter', this.el).val();
+        this.model = window.app.models.getFiles(this.model.tree, app.state.path, searchstr);
+        this.renderResults();
+      }, this), 10);
+    }
+  },
+
+  renderResults: function () {
+    var tmpl = _(window.app.templates.files).template();
+    this.$('#files').html(tmpl(_.extend(this.model, app.state, {
+      currentPath: app.state.path
+    })));
+  },
+
+  // Creates human readable versions of _posts/paths
+  semantifyPaths: function (paths) {
+    return _.map(paths, function (path) {
+      return {
+        path: path,
+        name: path
+      }
+    });
+  },
+
+  activeListing: function (e) {
+    $listings = $('.item', this.el);
+    $listing = $(e.target, this.el);
+
+    $listings.removeClass('active');
+    $listing.addClass('active');
+  }
+});
+
+},{".././util":19,"jquery-browserify":6,"underscore":5,"js-yaml":7,"backbone":9,"keymaster":20}],15:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+    id: 'profile',
+
+    events: {
+      'keyup #filter': 'filterFiles'
+    },
+
+    render: function () {
+      var data = this.model;
+      this.eventRegister = app.eventRegister;
+
+      var header = {
+          avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
+          parent: data.user.name || data.user.login,
+          parentUrl: data.user.login,
+          title: 'Explore Projects',
+          titleUrl: data.user.login,
+          alterable: false
+      };
+
+      this.eventRegister.trigger('headerContext', header);
+
+      var tmpl = _(window.app.templates.profile).template();
+      var sidebar = _(window.app.templates.sidebarOrganizations).template();
+
+      $(this.el).empty().append(tmpl(data));
+      this.renderResults();
+
+      $('#drawer')
+        .empty()
+        .append(sidebar(this.model));
+
+      _.delay(function () {
+        utils.shadowScroll($('#projects'), $('.content-search'));
+        $('#filter').focus();
+      }, 1);
+
+      // Cache to perform autocompletion on it
+      this.cache = this.model;
+
+      return this;
+    },
+
+    filterFiles: function (e) {
+      // If this is the ESC key
+      if (e.which === 27) {
+        _.delay(_.bind(function () {
+          $('#filter', this.el).val('');
+          this.model = window.app.models.filterProjects(this.cache, '');
+          this.renderResults();
+        }, this), 10);
+      } else {
+        _.delay(_.bind(function () {
+          var searchstr = $('#filter', this.el).val();
+          this.model = window.app.models.filterProjects(this.cache, searchstr);
+          this.renderResults();
+        }, this), 10);
+      }
+    },
+
+    renderResults: function () {
+      var tmpl = _(window.app.templates.projects).template();
+      $('#projects', this.el).empty().append(tmpl(this.model));
+    }
+
+});
+
+},{".././util":19,"jquery-browserify":6,"underscore":5,"backbone":9}],14:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  id: 'start',
+  className: 'start',
+
+  events: {
+    'submit #login_form': '_login'
+  },
+
+  render: function() {
+    var tmpl = _(window.app.templates.start).template();
+
+    $('.header').hide();
+    $('#prose').empty().html(tmpl(this.model));
+
+    return this;
+  },
+
+  _login: function() {
+    var self = this;
+
+    var user = self.$('#github_user').val();
+    var password = self.$('#github_password').val();
+
+    login({username: user, password: password}, function(err) {
+      if (err) return self.$('.bad-credentials').show();
+      window.location.reload();
+    });
+    return false;
+  }
+});
+
+},{"jquery-browserify":6,"underscore":5,"backbone":9}],11:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+
+  events: {
+    'click #notification .create': 'createPost'
+  },
+
+  createPost: function (e) {
+    var hash = window.location.hash.split('/');
+    hash[2] = 'new';
+    hash[hash.length - 1] = '?file=' + hash[hash.length - 1];
+
+    router.navigate(_(hash).compact().join('/'), true);
+    return false;
+  },
+
+  // Initialize
+  // ----------
+
+  initialize: function () {
+    _.bindAll(this);
+    var that = this;
+    this.app = new window.app.views.App({
+      model: this.model
+    });
+
+    function calculateLayout() {
+      if (that.mainView && that.mainView.refreshCodeMirror)  {
+        that.mainView.refreshCodeMirror();
+      }
+    }
+
+    var lazyLayout = _.debounce(calculateLayout, 300);
+    $(window).resize(lazyLayout);
+  },
+
+
+  renderApp: function () {
+    $(this.app.render().el).prependTo(this.el);
+  },
+
+  // Helpers
+  // -------
+
+  replaceMainView: function (name, view) {
+    $('body').removeClass().addClass(name);
+
+    // Make sure the header get's shown
+    if (name !== 'start') $('#app').show();
+
+    if (this.mainView) {
+      this.mainView.remove();
+    } else {
+      $('#content').empty();
+    }
+    this.mainView = view;
+    $(view.el).appendTo(this.$('#content'));
+  },
+
+
+  // Main Views
+  // ----------
+
+  start: function (username) {
+    var that = this;
+    app.state.title = '';
+
+    // Render out the application view
+    $(that.app.render().el).prependTo(that.el);
+
+    this.replaceMainView('start', new window.app.views.Start({
+      model: _.extend(this.model, {
+        authenticated: !! window.authenticated
+      })
+    }).render());
+  },
+
+  profile: function (username) {
+    var that = this;
+    app.state.title = username;
+    this.loading('Loading profile ...');
+
+    window.app.models.loadRepos(username, function (err, data) {
+
+      // Render out the application view
+      $(that.app.render().el).prependTo(that.el);
+
+      that.loaded();
+      data.authenticated = !! window.authenticated;
+      that.replaceMainView('profile', new window.app.views.Profile({
+        model: _.extend(that.model, data)
+      }).render());
+    });
+  },
+
+  staticView: function () {
+    // Render out the application view
+    $(this.app.render().el).prependTo(this.el);
+  },
+
+  posts: function (user, repo, branch, path) {
+    var that = this;
+    this.loading('Loading posts ...');
+    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      this.loaded();
+
+      if (err) return this.notify('error', 'The requested resource could not be found.');
+      // Render out the application view
+      $(that.app.render().el).prependTo(that.el);
+      this.replaceMainView('posts', new window.app.views.Posts({
+        model: data
+      }).render());
+    }, this));
+  },
+
+  post: function (user, repo, branch, path, file, mode) {
+    var that = this;
+    this.loading('Loading post ...');
+    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      if (err) return this.notify('error', 'The requested resource could not be found.');
+      window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        this.loaded();
+
+        app.state.markdown = data.markdown;
+        // Render out the application view
+        $(that.app.render().el).prependTo(that.el);
+
+        if (err) return this.notify('error', 'The requested resource could not be found.');
+        data.preview = (mode !== 'edit');
+        data.lang = _.mode(file);
+        this.replaceMainView(window.authenticated ? 'post' : 'read-post', new window.app.views.Post({
+          model: data
+        }).render());
+      }, this));
+
+      // Render out the application view
+      $(that.app.render().el).prependTo(that.el);
+
+    }, this));
+  },
+
+  preview: function (user, repo, branch, path, file, mode) {
+    this.loading('Preview post ...');
+    window.app.models.loadConfig(user, repo, branch, _.bind(function () {
+      window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        if (err) return this.notify('error', 'The requested resource could not be found.');
+        new window.app.views.Preview({
+          model: data
+        }).render();
+      }, this));
+    }, this));
+  },
+
+  newPost: function (user, repo, branch, path) {
+    var that = this;
+    this.loading('Creating file ...');
+    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      window.app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
+        this.loaded();
+
+        // Render out the application view
+        $(that.app.render().el).prependTo(that.el);
+
+        data.jekyll = _.jekyll(path, data.file);
+        data.preview = false;
+        data.markdown = _.markdown(data.file);
+        data.lang = _.mode(data.file);
+
+        this.replaceMainView('post', new window.app.views.Post({
+          model: data
+        }).render());
+
+        this.mainView._makeDirty();
+        app.state.file = data.file;
+
+      }, this));
+    }, this));
+  },
+
+  notify: function (type, message) {
+    // Render out the application view
+    $(this.app.render().el).prependTo(this.el);
+
+    this.replaceMainView('notification', new window.app.views.Notification(type, message).render());
+  },
+
+  loading: function (msg) {
+    $('body').append('<div class="loading"><span>' + msg ||  'Loading ...' + '</span></div>');
+  },
+
+  loaded: function ()  {
+    $('.loading').remove();
+  }
+});
+
+},{"jquery-browserify":6,"underscore":5,"backbone":9}],12:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+    id: 'app',
+
+    events: {
+      'click .post-views .edit': 'edit',
+      'click .post-views .preview': 'preview',
+      'click .post-views .settings': 'settings',
+      'click a.logout': 'logout',
+      'click a.save': 'save',
+      'click a.save.confirm': 'updateFile',
+      'click a.cancel': 'toggleCommit',
+      'click a.delete': 'deleteFile',
+      'click a.publish': 'updateMetaData',
+      'click a.translate': 'translate',
+      'keypress input.filepath': 'saveFilePath'
+    },
+
+    initialize: function(options) {
+      this.eventRegister = app.eventRegister;
+
+      _.bindAll(this, 'headerContext', 'sidebarContext');
+      this.eventRegister.bind('headerContext', this.headerContext);
+      this.eventRegister.bind('sidebarContext', this.sidebarContext);
+    },
+
+    render: function () {
+      var tmpl = _(window.app.templates.app).template();
+      $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
+        state: app.state
+      })));
+
+      // When the sidebar should be open.
+      // Fix this in re-factor, could be much tighter
+      if (this.model.mode === 'edit' || this.model.mode === 'blob' || this.model.mode === 'new') {
+        $('#prose').toggleClass('open', false);
+
+      // Project contents when there aren't branches
+      } else if (app.state.mode === 'tree' && !app.state.branches.length) {
+        $('#prose').toggleClass('open', false);
+
+      } else {
+        $('#prose').toggleClass('open', true);
+      }
+
+      _.delay(function () {
+        utils.dropdown();
+      }, 1);
+
+      return this;
+    },
+
+    headerContext: function(data) {
+      var heading = _(window.app.templates.heading).template();
+      $('#heading').empty().append(heading(data));
+    },
+
+    sidebarContext: function(data, context) {
+      var sidebarTmpl;
+
+      if (context === 'post') {
+        sidebarTmpl = _(window.app.templates.settings).template();
+
+        $('#drawer')
+          .empty()
+          .append(sidebarTmpl(data));
+
+      } else if (context === 'posts') {
+        sidebarTmpl = _(window.app.templates.sidebarProject).template();
+
+        $('#drawer')
+          .empty()
+          .append(sidebarTmpl(data));
+
+        // Branch Switching
+        $('.chzn-select').chosen().change(function() {
+            router.navigate($(this).val(), true);
+        });
+      }
+    },
+
+    // Event Triggering to other files
+    edit: function(e) {
+      this.eventRegister.trigger('edit', e);
+      return false;
+    },
+
+    preview: function(e) {
+      if ($(e.target).data('jekyll')) {
+        this.eventRegister.trigger('preview', e);
+      } else {
+        this.eventRegister.trigger('preview', e);
+
+        // Cancel propagation
+        return false;
+      }
+    },
+
+    settings: function(e) {
+      this.eventRegister.trigger('settings', e);
+      return false;
+    },
+
+    deleteFile: function(e) {
+      this.eventRegister.trigger('deleteFile', e);
+      return false;
+    },
+
+    updateMetaData: function(e) {
+      this.eventRegister.trigger('updateMetaData', e);
+      return false;
+    },
+
+    translate: function(e) {
+      this.eventRegister.trigger('translate', e);
+      return false;
+    },
+
+    save: function(e) {
+      this.eventRegister.trigger('save', e);
+      this.toggleCommit();
+      return false;
+    },
+
+    toggleCommit: function() {
+      $('.commit', this.el).toggleClass('active');
+      $('.button.save', this.el).toggleClass('confirm');
+
+      // TODO Fix this this.model.writable should work as a boolean
+      $('.button.save', this.el).html($('.button.save', this.el).hasClass('confirm') ? 'Commit' : (this.model.writeable ? 'Save' : 'Save'));
+      $('.commit-message', this.el).focus();
+      return false;
+    },
+
+    updateFile: function(e) {
+      this.eventRegister.trigger('updateFile', e);
+      return false;
+    },
+
+    saveFilePath: function(e) {
+      // Trigger updateFile when a return button has been pressed.
+      if (e.which === 13) {
+        this.eventRegister.trigger('updateFile', e);
+      }
+    },
+
+    logout: function () {
+      window.app.models.logout();
+      app.instance.render();
+      if ($('#start').length > 0) {
+        app.instance.start();
+      } else {
+        window.location.reload();
+      }
+      return false;
+    },
+
+    remove: function () {
+      // Unbind pagehide event handler when View is removed
+      this.eventRegister.unbind('sidebarContext', this.sidebarContext);
+      this.eventRegister.unbind('headerContext', this.headerContext);
+    }
+});
+
+},{".././util":19,"jquery-browserify":6,"underscore":5,"backbone":9}],6:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -18939,7 +19247,1077 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var marked = require('marked');
+var queue = require('queue-async');
+var chrono = require('chrono');
+
+// Run an array of functions in serial
+// -------
+
+_.serial = function () {
+  (_(arguments).reduceRight(_.wrap, function() {}))();
+};
+
+
+// Parent path
+// -------
+
+_.parentPath = function(path) {
+  return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
+};
+
+
+// Topmost path
+// -------
+
+_.topPath = function(path) {
+  var match = path.match(/\/?([a-zA-Z0-9_\-]*)$/);
+  return match[1];
+};
+
+
+// Valid filename check
+// -------
+
+_.validFilename = function(filename) {
+  return !!filename.match(/^([a-zA-Z0-9_\-]|\.)+$/);
+  // Disabled for now: the Jekyll post format layout
+  // return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
+};
+
+
+// Valid pathname check
+// -------
+
+_.validPathname = function(path) {
+  return _.all(path.split('/'), function(filename) {
+    return _.validFilename(filename);
+  });
+};
+
+
+// Extract filename from a given path
+// -------
+//
+// _.extractFilename('path/to/foo.md')
+// => ['path/to', 'foo.md']
+
+_.extractFilename = function(path) {
+  if (!path.match(/\//)) return ['', path];
+  var matches = path.match(/(.*)\/(.*)$/);
+  return [ matches[1], matches[2] ];
+};
+
+
+// Determine mode for CodeMirror
+// -------
+
+_.mode = function(file) {
+  if (_.markdown(file)) return 'gfm';
+
+  var extension = _.extension(file);
+
+  if (_.include(['js', 'json'], extension)) return 'javascript';
+  if (extension === 'html') return 'htmlmixed';
+  if (extension === 'rb') return 'ruby';
+  if (extension === 'yml') return 'yaml';
+  if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
+
+  return extension;
+};
+
+
+// Check if a given file is a Jekyll post
+// -------
+
+_.jekyll = function(path, file) {
+  return !!(path.match('_posts') && _.markdown(file));
+};
+
+// check if a given file has YAML frontmater
+// -------
+
+_.hasMetadata = function(content) {
+  return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
+};
+
+// Extract file extension
+// -------
+
+_.extension = function(file) {
+  var match = file.match(/\.(\w+)$/);
+  return match ? match[1] : null;
+};
+
+
+// Determines whether a given file is a markdown file or not
+// -------
+
+_.markdown = function(file) {
+  var regex = new RegExp('.(md|mkdn?|mdown|markdown)$');
+  return !!(regex.test(file));
+};
+
+
+// Clip a string
+// -------
+
+_.clip = function(str, length) {
+  var res = str.substr(0, length);
+  if (length < str.length) res += ' ...';
+  return res;
+};
+
+
+// Concatenate path + file to full filepath
+// -------
+
+_.filepath = function(path, file) {
+  return (path ? path +"/" : "") + file;
+};
+
+
+// Converts a javascript object to YAML
+// Does not support nested objects
+// Multiline values are serialized as Blocks
+
+_.toYAML = function(metadata) {
+  var res = [];
+  _.each(metadata, function(value, property) {
+    if (value.match(/\n/)) {
+      var str = property+': |\n';
+
+      _.each(value.split('\n'), function(line) {
+        str += '  ' + line;
+      });
+
+      res.push();
+    } else {
+      res.push(property+": "+value);
+    }
+  });
+
+  return res.join('\n');
+};
+
+
+// Only parses first level of YAML file
+// Considers the whole thing as a key-value pair party
+//
+// name: "michael"
+// age: 25
+// friends:
+// - Michael
+// - John
+// block: |
+//   Hello World
+//   Another line
+//   24123
+//
+// =>
+// {
+//   name: 'michael',
+//   age: "25",
+//   friends: "- Michael\n- John",
+//   block: "Hello World\nAnother line\n24123"
+// }
+//
+// var yaml = 'name:     "michael"\nage: 25\nfriends:\n- Michael\n- John\nblock: |\n  hey ho\n  some text\n  yay';
+// console.log(_.fromYAML(yaml));
+
+_.fromYAML = function(rawYAML) {
+  var data = {};
+
+  var lines = rawYAML.split('\n');
+  var key = null;
+  var value = "";
+  var blockValue = false;
+
+  function add() {
+    data[key] = _.isArray(value) ? value.join('\n') : value;
+    key = null;
+    value = "";
+  }
+
+  _.each(lines, function(line) {
+    var match = line.match(/^([A-Za-z_][A-Za-z0-9_]*):\s*(.*)$/);
+
+    if (match && key) add();
+    if (match) { // New Top Level key found
+      key = match[1];
+      value = match[2];
+      if (value.match(/\|$/)) {
+        blockValue = true;
+        value = "";
+      }
+    } else {
+      if (!_.isArray(value)) value = [];
+      if (blockValue) {
+        value.push(line.trim());
+      } else {
+        value.push(line.replace(/^\s\s/, ''));
+      }
+    }
+  });
+
+  add();
+  return data;
+};
+
+// chunked path
+// -------
+//
+// _.chunkedPath('path/to/foo')
+// =>
+// [
+//   { url: 'path',        name: 'path' },
+//   { url: 'path/to',     name: 'to' },
+//   { url: 'path/to/foo', name: 'foo' }
+// ]
+
+_.chunkedPath = function(path) {
+  var chunks = path.split('/');
+  return _.map(chunks, function(chunk, index) {
+    var url = [];
+    for (var i=0; i<=index; i++) {
+      url.push(chunks[i]);
+    }
+    return {
+      url: url.join('/'),
+      name: chunk
+    };
+  });
+};
+
+// Full Layout Preview
+// -------
+
+_.preview = function(view) {
+  var model = view.model,
+      q = queue(1),
+      p = {
+        site: app.state.config,
+        post: model.metadata,
+        page: model.metadata,
+        content: Liquid.parse(marked(model.content)).render({
+          site: app.state.config,
+          post: model.metadata,
+          page: model.metadata
+        }) || ''
+      };
+
+  if (p.site.prose && p.site.prose.site) {
+    _(p.site.prose.site).each(function(file, key) {
+      q.defer(function(cb){
+        $.ajax({
+          cache: true,
+          dataType: 'jsonp',
+          jsonp: false,
+          jsonpCallback: 'callback',
+          url: file,
+          success: function(d) {
+            p.site[key] = d;
+            cb();
+          }
+        });
+      });
+    });
+  }
+
+  q.defer(getLayout);
+  q.await(function() {
+    var content = p.content;
+
+    // Set base URL to public site
+    if (app.state.config.prose && app.state.config.prose.siteurl) {
+      content = content.replace(/(<head(?:.*)>)/, function() {
+        return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
+      });
+    }
+
+    document.write(content);
+    document.close();
+  });
+
+  function getLayout(cb) {
+    var file = p.page.layout;
+
+    model.repo.read(app.state.branch, '_layouts/' + file + '.html', function(err, d) {
+      if (err) return cb(err);
+      var meta = (d.split('---')[1]) ? jsyaml.load(d.split('---')[1]) : {},
+        content = (d.split('---')[2]) ? d.split('---')[2] : d,
+        template = Liquid.parse(content);
+      p.page = _(p.page).extend(meta);
+      p.content = template.render({
+        site: p.site,
+        post: p.post,
+        page: p.page,
+        content: p.content
+      });
+      if (meta.layout) q.defer(getLayout);
+      cb();
+    });
+
+  }
+};
+
+// UI Stuff
+// -------
+
+function dropdown() {
+    var $dropdown = $('.dropdown-menu');
+    $dropdown.each(function(i, el) {
+        $(this).hover(function() {
+            $(this).addClass('open');
+        }, function(e) {
+            $(this).removeClass('open');
+        });
+    });
+
+    $('.dropdown-hover').click(function() {
+        return false;
+    });
+}
+
+function shadowScroll($el, $parent) {
+  $el.scroll(function() {
+    if ($el.scrollTop() !== 0) {
+      if (!$parent.hasClass('shadow')) {
+        $parent.addClass('shadow');
+      }
+    } else {
+      $parent.removeClass('shadow');
+    }
+  });
+}
+
+module.exports = {
+  dropdown: function() {
+    return dropdown();
+  },
+
+  shadowScroll: function($el, $parent) {
+    return shadowScroll($el, $parent);
+  }
+}
+
+},{"underscore":5,"js-yaml":7,"jquery-browserify":6,"queue-async":21,"marked":22,"chrono":23}],17:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var marked = require('marked');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+
+    id: 'post',
+    className: 'post',
+
+    events: {
+      'click .save.confirm': 'updateFile',
+      'click .markdown-snippets a': 'markdownSnippet',
+      'change input': 'makeDirty'
+    },
+
+    render: function() {
+      var data = _.extend(this.model, {
+        mode: this.mode,
+        preview: this.model.markdown ? marked(this.model.content) : '',
+        metadata: jsyaml.load(this.model.raw_metadata)
+      });
+
+      this.eventRegister = app.eventRegister;
+
+      // Listen for button clicks from the vertical nav
+       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'translate', 'updateFile');
+      this.eventRegister.bind('edit', this.edit);
+      this.eventRegister.bind('preview', this.preview);
+      this.eventRegister.bind('settings', this.settings);
+      this.eventRegister.bind('deleteFile', this.deleteFile);
+      this.eventRegister.bind('updateMetaData', this.updateMetaData);
+      this.eventRegister.bind('save', this.save);
+      this.eventRegister.bind('updateFile', this.updateFile);
+      this.eventRegister.bind('translate', this.translate);
+
+      // Ping `views/app.js` to let know we should swap out the sidebar
+      this.eventRegister.trigger('sidebarContext', data, 'post');
+
+      // Render heading
+      var isPrivate = app.state.isPrivate ? 'private' : '';
+
+      var header = {
+        avatar: '<span class="icon round file ' + isPrivate + '"></span>',
+        parent: app.state.repo,
+        parentUrl: app.state.user + '/' + app.state.repo,
+        title: _.filepath(data.path, data.file),
+        titleUrl: '#',
+        alterable: true
+      };
+
+      this.eventRegister.trigger('headerContext', header);
+
+      var tmpl = _(window.app.templates.post).template();
+
+      $(this.el)
+        .empty()
+        .append(tmpl(_.extend(this.model, {
+          mode: this.mode,
+          metadata: this.model.metadata
+        })));
+
+      // TODO Add an unpublished class to .application
+      if (!this.model.published) $(this.el).addClass('published');
+
+      this.initEditor();
+
+      // Editor is first up so trigger an active class for it
+      $('.post-views .edit').toggleClass('active', true);
+
+      return this;
+    },
+
+    edit: function(e) {
+      var that = this;
+
+      if (this.toolbar && this.toolbar !== null) {
+        this.toolbar.prependTo($('#post'));
+        this.toolbar = null;
+      }
+
+      $('.post-views a').removeClass('active');
+      $('.post-views .edit').addClass('active');
+      $('#prose').toggleClass('open', false);
+
+      $('.views .view').removeClass('active');
+      $('.views .edit').addClass('active');
+      this.model.preview = false;
+      this.updateURL();
+
+      // Refresh CodeMirror each time
+      // to reflect new changes
+      _.delay(function () {
+        that.refreshCodeMirror();
+      }, 1);
+
+      return false;
+    },
+
+    preview: function(e) {
+      var that = this;
+
+      $('#prose').toggleClass('open', false);
+
+      if (this.model.metadata && this.model.metadata.layout) {
+
+        var hash = window.location.hash.split('/');
+        hash[2] = 'preview';
+        this.stashFile();
+        this.model.preview = true;
+
+        $(e.currentTarget).attr({
+          target: '_blank',
+          href: hash.join('/')
+        });
+
+      } else {
+
+        this.toolbar = $('.toolbar').detach();
+
+        // Vertical Nav
+        $('.post-views a').removeClass('active');
+        $('.post-views .preview').addClass('active');
+
+        // Content Window
+        $('.views .view', this.el).removeClass('active');
+        $('#preview', this.el).addClass('active');
+
+        this.model.preview = true;
+        this.$('.preview').html(marked(this.model.content));
+        this.updateURL();
+        return false;
+      }
+
+      // Refresh CodeMirror each time
+      // to reflect new changes
+      _.delay(function () {
+        that.refreshCodeMirror();
+      }, 1);
+    },
+
+    settings: function(e) {
+      $('.post-views a').removeClass('active');
+      $('.post-views .settings').addClass('active');
+      $('#prose').toggleClass('open');
+    },
+
+    deleteFile: function() {
+      if (confirm('Are you sure you want to delete that file?')) {
+        window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
+          if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+          router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
+        }, this));
+      }
+      return false;
+    },
+
+    updateURL: function() {
+      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? "blob" : "edit", app.state.branch, this.model.path, this.model.file]);
+      router.navigate(url.join('/'), false);
+    },
+
+    makeDirty: function(e) {
+      this.dirty = true;
+      if (this.editor) this.model.content = this.editor.getValue();
+      if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
+      if (!this.$('.button.save').hasClass('saving')) {
+        this.$('.button.save').html(this.model.writeable ? 'Save' : 'Submit Change');
+        this.$('.button.save').removeClass('inactive error');
+      }
+    },
+
+    showDiff: function() {
+      var $diff = $('#diff', this.el);
+      var text1 = this.model.persisted ? this.prevContent : '';
+      var text2 = this.serialize();
+      var d = this.dmp.diff_main(text1, text2);
+      this.dmp.diff_cleanupSemantic(d);
+      var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, '');
+
+      // Content Window
+      $('.views .view', this.el).removeClass('active');
+      $diff.addClass('active');
+
+      $diff.html(diff);
+    },
+
+    save: function() {
+      if (!this.dirty) return false;
+      this.showDiff();
+      return false;
+    },
+
+    refreshCodeMirror: function () {
+      $('.CodeMirror-scroll').height($('.document').height());
+      this.editor.refresh();
+      // if (this.metadataEditor) this.metadataEditor.refresh();
+    },
+
+    initialize: function () {
+      this.dmp = new diff_match_patch();
+      this.mode = 'edit';
+      this.prevContent = this.serialize();
+      if (!window.shortcutsRegistered) {
+        key('⌘+s, ctrl+s', _.bind(function () {
+          this.updateFile();
+          return false;
+        }, this));
+        window.shortcutsRegistered = true;
+      }
+
+      // Stash editor and metadataEditor content to localStorage on pagehide event
+      // Always run stashFile in context of view
+      $(window).on('pagehide', _.bind(this.stashFile, this));
+    },
+
+    updateMetaData: function () {
+      if (!this.model.jekyll) return true; // metadata -> skip
+
+      // Update published
+      // TODO: refactor to use this.model.metadata instead of raw YAML
+
+      function updatePublished(yamlStr, published) {
+        var regex = /published: (false|true)/;
+        if (yamlStr.match(regex)) {
+          return yamlStr.replace(regex, 'published: ' + !! published);
+        } else {
+          return yamlStr + '\npublished: ' + !! published;
+        }
+      }
+
+      this.model.raw_metadata = this.metadataEditor.getValue();
+      var published = this.$('#post_published').prop('checked');
+
+      this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
+      this.metadataEditor.setValue(this.model.raw_metadata);
+
+      if (published) {
+        $('#post').addClass('published');
+      } else {
+        $('#post').removeClass('published');
+      }
+
+      return true;
+    },
+
+    updateFilename: function (filepath, cb) {
+      var that = this;
+
+      if (!_.validPathname(filepath)) return cb('error');
+      app.state.path = this.model.path; // ?
+      app.state.file = _.extractFilename(filepath)[1];
+      app.state.path = _.extractFilename(filepath)[0];
+
+      function finish() {
+        that.model.path = app.state.path;
+        that.model.file = app.state.file;
+        // re-render header to reflect the filename change
+        app.instance.app.render();
+        that.updateURL();
+      }
+
+      if (this.model.persisted) {
+        window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function (err) {
+          if (!err) finish();
+          if (err) {
+            cb('error');
+          } else {
+            cb(null);
+          }
+        }, this));
+      } else {
+        finish();
+        cb(null);
+      }
+    },
+
+    serialize: function () {
+      return window.app.models.serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
+    },
+
+    // Update save state (saving ..., sending patch ..., etc.)
+
+    updateSaveState: function (label, classes) {
+      $('.button.save').html(label)
+        .removeClass('inactive error saving')
+        .addClass(classes);
+    },
+
+    // Submits a patch (fork + pull request workflow)
+
+    sendPatch: function (filepath, filename, filecontent, message) {
+      var that = this;
+
+      function patch() {
+        if (that.updateMetaData()) {
+          that.model.content = that.prevContent;
+          that.editor.setValue(that.prevContent);
+
+          window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
+            if (err) {
+              _.delay(function () {
+                that.$('.button.save').html('Submit Change');
+                that.$('.button.save').removeClass('error');
+                that.$('.button.save').addClass('inactive');
+              }, 3000);
+              that.updateSaveState('! Try again in 30 seconds', 'error');
+              return;
+            }
+
+            that.dirty = false;
+            that.model.persisted = true;
+            that.model.file = filename;
+            that.updateURL();
+            that.prevContent = filecontent;
+            that.updateSaveState('Change Submitted', 'inactive');
+          });
+        } else {
+          that.updateSaveState('! Metadata', 'error');
+        }
+      }
+
+      that.updateSaveState('Submitting Change ...', 'inactive saving');
+      patch();
+
+      return false;
+    },
+
+    saveFile: function (filepath, filename, filecontent, message) {
+      var that = this;
+
+      function save() {
+        if (that.updateMetaData()) {
+          window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
+            if (err) {
+              _.delay(function () {
+                that.makeDirty();
+              }, 3000);
+              that.updateSaveState('! Try again in 30 seconds', 'error');
+              return;
+            }
+            that.dirty = false;
+            that.model.persisted = true;
+            that.model.file = filename;
+            that.updateURL();
+            that.prevContent = filecontent;
+            that.updateSaveState('SAVED', 'inactive');
+          });
+        } else {
+          that.updateSaveState('! Metadata', 'error');
+        }
+      }
+
+      that.updateSaveState('Saving ...', 'inactive saving');
+
+      if (filepath === _.filepath(this.model.path, this.model.file)) return save();
+
+      // Move or create file
+      this.updateFilename(filepath, function (err) {
+        if (err) {
+          that.updateSaveState('! Filename', 'error');
+        } else {
+          save();
+        }
+      });
+    },
+
+    stashFile: function(e) {
+      if (e) e.preventDefault();
+      if (!window.localStorage || !this.dirty) return false;
+
+      var storage = window.localStorage;
+      var filepath = $('input.filepath').val();
+
+      // Don't stash if filepath is undefined
+      if (filepath) {
+        storage.setItem(filepath, JSON.stringify({
+          sha: app.state.sha,
+          content: this.editor ? this.editor.getValue() : null,
+          raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+        }));
+      }
+    },
+
+    stashApply: function () {
+      if (!window.localStorage) return false;
+
+      var storage = window.localStorage;
+      var filepath = $('input.filepath').val();
+      var item = storage.getItem(filepath);
+      var stash = JSON.parse(item);
+
+      if (stash && stash.sha === window.app.state.sha) {
+        // Restore from stash if file sha hasn't changed
+        if (this.editor) this.editor.setValue(stash.content);
+        if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
+      } else if (item) {
+        // Remove expired content
+        storage.removeItem(filepath);
+      }
+    },
+
+    updateFile: function() {
+      var that = this;
+      var filepath = $('input.filepath').val();
+      var filename = _.extractFilename(filepath)[1];
+      var filecontent = this.serialize();
+      var message = $('.commit-message').val() || $('.commit-message').attr('placeholder');
+      var method = this.model.writeable ? this.saveFile : this.sendPatch;
+
+      // Update content
+      this.model.content = this.editor.getValue();
+
+      // Delegate
+      method.call(this, filepath, filename, filecontent, message);
+    },
+
+    keyMap: function () {
+      var that = this;
+      return {
+        'Ctrl-S': function (codemirror) {
+          that.updateFile();
+        }
+      };
+    },
+
+    translate: function(e) {
+
+      // TODO Drop the 'EN' requirement.
+      var hash = window.location.hash.split('/'),
+          href = $(e.currentTarget).attr('href').substr(1);
+
+      // If current page is not english and target page is english
+      if (href === 'en') {
+        hash.splice(-2, 2, hash[hash.length - 1]);
+      // If current page is english and target page is not english
+      } else if (this.model.metadata.lang === 'en') {
+        hash.splice(-1, 1, href, hash[hash.length - 1]);
+      // If current page is not english and target page is not english
+      } else {
+        hash.splice(-2, 2, href, hash[hash.length - 1]);
+      }
+
+      router.navigate(_(hash).compact().join('/'), true);
+
+      return false;
+    },
+
+    buildMeta: function() {
+      var $metadataEditor = $('#meta');
+      $metadataEditor.empty();
+
+      function initialize(model) {
+        var tmpl;
+
+        _(model.default_metadata).each(function(data) {
+          if (data && typeof data.field === 'object') {
+            switch(data.field.element) {
+              case 'input':
+                tmpl = _(window.app.templates.text).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  value: data.field.value
+                }));
+                break;
+              case 'select':
+                tmpl = _(window.app.templates.select).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
+                break;
+              case 'multiselect':
+                tmpl = _(window.app.templates.multiselect).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
+              break;
+            }
+          } else {
+            tmpl = _(window.app.templates.text).template();
+            $metadataEditor.append(tmpl({
+              name: key,
+              label: key,
+              value: data
+            }));
+          }
+        });
+
+        setValue(model.metadata);
+        $('.chzn-select').chosen();
+      }
+
+      function getValue() {
+        var metadata = {};
+
+        _.each($metadataEditor.find('[name]'), function(item) {
+          switch(item.tagName.toLowerCase()) {
+            case 'input':
+              if (item.type === 'text') {
+                metadata[item.name] = item.value;
+              }
+              break;
+            case 'select':
+            case 'multiselect':
+              metadata[item.name] = item.value;
+              break;
+          }
+        });
+
+        return metadata;
+      }
+
+      function getRaw() {
+        return jsyaml.dump(getValue());
+      }
+
+      function setValue(metadata) {
+        _(metadata).each(function(value, key) {
+          var input = $metadataEditor.find('[name="' + key + '"]');
+          var options = $metadataEditor.find('[name="' + key +'"] option');
+
+          if (input.length && options.length) {
+            _.each(options, function(option) {
+              if (value !== null && (option.value === value || value.indexOf(option.value) > -1)) {
+                option.selected = 'selected';
+              }
+            });
+          } else if (input.length) {
+            input.val(value);
+          } else {
+            var tmpl = _(window.app.templates.text).template();
+            $metadataEditor.append(tmpl({
+              name: key,
+              label: key,
+              value: value
+            }));
+          }
+        });
+      }
+
+      function setRaw(rawMetadata) {
+        try {
+          setValue(jsyaml.load(rawMetadata));
+        } catch(err) {
+          console.log('ERROR encoding YAML');
+          // No-op
+        }
+      }
+
+      initialize(this.model);
+
+      return {
+        el: $metadataEditor,
+        getValue: getRaw,
+        setValue: setRaw
+      };
+    },
+
+    initEditor: function () {
+      var that = this;
+
+      // TODO Remove setTimeout
+      setTimeout(function () {
+        if (that.model.jekyll) {
+          that.metadataEditor = that.buildMeta();
+          /*
+          that.metadataEditor = CodeMirror($('#meta')[0], {
+            mode: 'yaml',
+            value: that.model.raw_metadata,
+            theme: 'prose-dark',
+            lineWrapping: true,
+            extraKeys: that.keyMap(),
+            onChange: _.bind(that.makeDirty, that)
+          });
+          */
+          $('#post .metadata').hide();
+        }
+
+        that.editor = CodeMirror($('#code')[0], {
+          mode: that.model.lang,
+          value: that.model.content,
+          lineWrapping: true,
+          extraKeys: that.keyMap(),
+          matchBrackets: true,
+          theme: 'prose-bright',
+          onChange: _.bind(that.makeDirty, that)
+        });
+        that.refreshCodeMirror();
+
+        // Check localStorage for existing stash
+        // Apply if stash exists and is current, remove if expired
+        that.stashApply();
+      }, 100);
+    },
+
+    remove: function () {
+      // Unbind pagehide event handler when View is removed
+      this.eventRegister.unbind('edit', this.postViews);
+      this.eventRegister.unbind('preview', this.preview);
+      this.eventRegister.unbind('settings', this.settings);
+      this.eventRegister.unbind('deleteFile', this.deleteFile);
+      this.eventRegister.unbind('updateMetaData', this.updateMetaData);
+      this.eventRegister.unbind('save', this.save);
+      this.eventRegister.unbind('translate', this.translate);
+      this.eventRegister.unbind('updateFile', this.updateFile);
+
+      $(window).unbind('pagehide');
+      Backbone.View.prototype.remove.call(this);
+    },
+
+    markdownSnippet: function(e) {
+      var snippet = $(e.target, this.el).data('snippet');
+      if (!snippet) return;
+      this.editor.replaceSelection(snippet);
+      return false;
+    }
+});
+
+},{"jquery-browserify":6,"underscore":5,"js-yaml":7,"marked":22,"backbone":9,"keymaster":20,"chosen-jquery-browserify":24}],21:[function(require,module,exports){
+(function() {
+  if (typeof module === "undefined") self.queue = queue;
+  else module.exports = queue;
+  queue.version = "1.0.3";
+
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var queue = {},
+        deferrals = [],
+        started = 0, // number of deferrals that have been started (and perhaps finished)
+        active = 0, // number of deferrals currently being executed (started but not finished)
+        remaining = 0, // number of deferrals not yet finished
+        popping, // inside a synchronous deferral callback?
+        error,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    queue.defer = function() {
+      if (!error) {
+        deferrals.push(arguments);
+        ++remaining;
+        pop();
+      }
+      return queue;
+    };
+
+    queue.await = function(f) {
+      await = f;
+      all = false;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    queue.awaitAll = function(f) {
+      await = f;
+      all = true;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    function pop() {
+      while (popping = started < deferrals.length && active < parallelism) {
+        var i = started++,
+            d = deferrals[i],
+            a = slice.call(d, 1);
+        a.push(callback(i));
+        ++active;
+        d[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new deferrals and squelch active callbacks
+          started = remaining = NaN; // stop queued deferrals from starting
+          notify();
+        } else {
+          deferrals[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(null, deferrals);
+      else await.apply(null, [null].concat(deferrals));
+    }
+
+    return queue;
+  }
+
+  function noop() {}
+})();
+
+},{}],22:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -20018,1388 +21396,163 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
-},{}],21:[function(require,module,exports){
-(function() {
-  if (typeof module === "undefined") self.queue = queue;
-  else module.exports = queue;
-  queue.version = "1.0.3";
+},{}],20:[function(require,module,exports){
+(function(){//     keymaster.js
+//     (c) 2011 Thomas Fuchs
+//     keymaster.js may be freely distributed under the MIT license.
 
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var queue = {},
-        deferrals = [],
-        started = 0, // number of deferrals that have been started (and perhaps finished)
-        active = 0, // number of deferrals currently being executed (started but not finished)
-        remaining = 0, // number of deferrals not yet finished
-        popping, // inside a synchronous deferral callback?
-        error,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    queue.defer = function() {
-      if (!error) {
-        deferrals.push(arguments);
-        ++remaining;
-        pop();
-      }
-      return queue;
+;(function(global){
+  var k,
+    _handlers = {},
+    _mods = { 16: false, 18: false, 17: false, 91: false },
+    _scope = 'all',
+    // modifier keys
+    _MODIFIERS = {
+      '⇧': 16, shift: 16,
+      '⌥': 18, alt: 18, option: 18,
+      '⌃': 17, ctrl: 17, control: 17,
+      '⌘': 91, command: 91
+    },
+    // special keys
+    _MAP = {
+      backspace: 8, tab: 9, clear: 12,
+      enter: 13, 'return': 13,
+      esc: 27, escape: 27, space: 32,
+      left: 37, up: 38,
+      right: 39, down: 40,
+      del: 46, 'delete': 46,
+      home: 36, end: 35,
+      pageup: 33, pagedown: 34,
+      ',': 188, '.': 190, '/': 191,
+      '`': 192, '-': 189, '=': 187,
+      ';': 186, '\'': 222,
+      '[': 219, ']': 221, '\\': 220
     };
 
-    queue.await = function(f) {
-      await = f;
-      all = false;
-      if (!remaining) notify();
-      return queue;
-    };
+  for(k=1;k<20;k++) _MODIFIERS['f'+k] = 111+k;
 
-    queue.awaitAll = function(f) {
-      await = f;
-      all = true;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    function pop() {
-      while (popping = started < deferrals.length && active < parallelism) {
-        var i = started++,
-            d = deferrals[i],
-            a = slice.call(d, 1);
-        a.push(callback(i));
-        ++active;
-        d[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new deferrals and squelch active callbacks
-          started = remaining = NaN; // stop queued deferrals from starting
-          notify();
-        } else {
-          deferrals[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(null, deferrals);
-      else await.apply(null, [null].concat(deferrals));
-    }
-
-    return queue;
+  // IE doesn't support Array#indexOf, so have a simple replacement
+  function index(array, item){
+    var i = array.length;
+    while(i--) if(array[i]===item) return i;
+    return -1;
   }
 
-  function noop() {}
-})();
+  // handle keydown event
+  function dispatch(event){
+    var key, tagName, handler, k, i, modifiersMatch;
+    tagName = (event.target || event.srcElement).tagName;
+    key = event.keyCode;
 
-},{}],11:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-
-  id: 'notification',
-
-  initialize: function(type, message) {
-    this.model = {};
-    this.model.type = type;
-    this.model.message = message;
-  },
-
-  render: function() {
-    var tmpl = _(window.app.templates.notification).template();
-    $(this.el).html(tmpl(this.model));
-    return this;
-  }
-});
-
-},{"jquery-browserify":4,"backbone":6}],16:[function(require,module,exports){
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  render: function() {
-    this.stashApply();
-    _.preview(this);
-    return this;
-  },
-
-  stashApply: function() {
-    if (!window.localStorage) return false;
-
-    var storage = window.localStorage,
-        filepath = window.location.hash.split('/').slice(4).join('/');
-
-    var stash = JSON.parse(storage.getItem(filepath));
-
-    if (stash) {
-      this.model.content = stash.content;
-      this.model.raw_metadata = stash.raw_metadata;
-      this.model.metadata = jsyaml.load(stash.raw_metadata);
+    // if a modifier key, set the key.<modifierkeyname> property to true and return
+    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
+    if(key in _mods) {
+      _mods[key] = true;
+      // 'assignKey' from inside this closure is exported to window.key
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
+      return;
     }
-  }
-});
 
-},{"underscore":5,"js-yaml":18,"backbone":6}],15:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var chosen = require('chosen-jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var marked = require('marked');
-var Backbone = require('backbone');
+    // ignore keypressed in any elements that support keyboard data input
+    if (tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA') return;
 
-module.exports = Backbone.View.extend({
+    // abort if no potentially matching shortcuts found
+    if (!(key in _handlers)) return;
 
-    id: 'post',
-    className: 'post',
+    // for each potential shortcut
+    for (i = 0; i < _handlers[key].length; i++) {
+      handler = _handlers[key][i];
 
-    events: {
-      'click .save.confirm': 'updateFile',
-      'click .markdown-snippets a': 'markdownSnippet',
-      'change input': 'makeDirty'
-    },
-
-    render: function() {
-      var data = _.extend(this.model, {
-        mode: this.mode,
-        preview: this.model.markdown ? marked(this.model.content) : '',
-        metadata: jsyaml.load(this.model.raw_metadata)
-      });
-
-      this.eventRegister = app.eventRegister;
-
-      // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'translate', 'updateFile');
-      this.eventRegister.bind('edit', this.edit);
-      this.eventRegister.bind('preview', this.preview);
-      this.eventRegister.bind('settings', this.settings);
-      this.eventRegister.bind('deleteFile', this.deleteFile);
-      this.eventRegister.bind('updateMetaData', this.updateMetaData);
-      this.eventRegister.bind('save', this.save);
-      this.eventRegister.bind('updateFile', this.updateFile);
-      this.eventRegister.bind('translate', this.translate);
-
-      // Ping `views/app.js` to let know we should swap out the sidebar
-      this.eventRegister.trigger('sidebarContext', data, 'post');
-
-      // Render heading
-      var isPrivate = app.state.isPrivate ? 'private' : '';
-
-      var header = {
-        avatar: '<span class="icon round file ' + isPrivate + '"></span>',
-        parent: app.state.repo,
-        parentUrl: app.state.user + '/' + app.state.repo,
-        title: _.filepath(data.path, data.file),
-        titleUrl: '#',
-        alterable: true
-      };
-
-      this.eventRegister.trigger('headerContext', header);
-
-      var tmpl = _(window.app.templates.post).template();
-
-      $(this.el)
-        .empty()
-        .append(tmpl(_.extend(this.model, {
-          mode: this.mode,
-          metadata: this.model.metadata
-        })));
-
-      // TODO Add an unpublished class to .application
-      if (!this.model.published) $(this.el).addClass('published');
-
-      this.initEditor();
-
-      // Editor is first up so trigger an active class for it
-      $('.post-views .edit').toggleClass('active', true);
-
-      return this;
-    },
-
-    edit: function(e) {
-      var that = this;
-
-      if (this.toolbar && this.toolbar !== null) {
-        this.toolbar.prependTo($('#post'));
-        this.toolbar = null;
-      }
-
-      $('.post-views a').removeClass('active');
-      $('.post-views .edit').addClass('active');
-      $('#prose').toggleClass('open', false);
-
-      $('.views .view').removeClass('active');
-      $('.views .edit').addClass('active');
-      this.model.preview = false;
-      this.updateURL();
-
-      // Refresh CodeMirror each time
-      // to reflect new changes
-      _.delay(function () {
-        that.refreshCodeMirror();
-      }, 1);
-
-      return false;
-    },
-
-    preview: function(e) {
-      var that = this;
-
-      $('#prose').toggleClass('open', false);
-
-      if (this.model.metadata && this.model.metadata.layout) {
-
-        var hash = window.location.hash.split('/');
-        hash[2] = 'preview';
-        this.stashFile();
-        this.model.preview = true;
-
-        $(e.currentTarget).attr({
-          target: '_blank',
-          href: hash.join('/')
-        });
-
-      } else {
-
-        this.toolbar = $('.toolbar').detach();
-
-        // Vertical Nav
-        $('.post-views a').removeClass('active');
-        $('.post-views .preview').addClass('active');
-
-        // Content Window
-        $('.views .view', this.el).removeClass('active');
-        $('#preview', this.el).addClass('active');
-
-        this.model.preview = true;
-        this.$('.preview').html(marked(this.model.content));
-        this.updateURL();
-        return false;
-      }
-
-      // Refresh CodeMirror each time
-      // to reflect new changes
-      _.delay(function () {
-        that.refreshCodeMirror();
-      }, 1);
-    },
-
-    settings: function(e) {
-      $('.post-views a').removeClass('active');
-      $('.post-views .settings').addClass('active');
-      $('#prose').toggleClass('open');
-    },
-
-    deleteFile: function() {
-      if (confirm('Are you sure you want to delete that file?')) {
-        window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
-          if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
-          router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
-        }, this));
-      }
-      return false;
-    },
-
-    updateURL: function() {
-      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? "blob" : "edit", app.state.branch, this.model.path, this.model.file]);
-      router.navigate(url.join('/'), false);
-    },
-
-    makeDirty: function(e) {
-      this.dirty = true;
-      if (this.editor) this.model.content = this.editor.getValue();
-      if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
-      if (!this.$('.button.save').hasClass('saving')) {
-        this.$('.button.save').html(this.model.writeable ? 'Save' : 'Submit Change');
-        this.$('.button.save').removeClass('inactive error');
-      }
-    },
-
-    showDiff: function() {
-      var $diff = $('#diff', this.el);
-      var text1 = this.model.persisted ? this.prevContent : '';
-      var text2 = this.serialize();
-      var d = this.dmp.diff_main(text1, text2);
-      this.dmp.diff_cleanupSemantic(d);
-      var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, '');
-
-      // Content Window
-      $('.views .view', this.el).removeClass('active');
-      $diff.addClass('active');
-
-      $diff.html(diff);
-    },
-
-    save: function() {
-      if (!this.dirty) return false;
-      this.showDiff();
-      return false;
-    },
-
-    refreshCodeMirror: function () {
-      $('.CodeMirror-scroll').height($('.document').height());
-      this.editor.refresh();
-      // if (this.metadataEditor) this.metadataEditor.refresh();
-    },
-
-    initialize: function () {
-      this.dmp = new diff_match_patch();
-      this.mode = 'edit';
-      this.prevContent = this.serialize();
-      if (!window.shortcutsRegistered) {
-        key('⌘+s, ctrl+s', _.bind(function () {
-          this.updateFile();
-          return false;
-        }, this));
-        window.shortcutsRegistered = true;
-      }
-
-      // Stash editor and metadataEditor content to localStorage on pagehide event
-      // Always run stashFile in context of view
-      $(window).on('pagehide', _.bind(this.stashFile, this));
-    },
-
-    updateMetaData: function () {
-      if (!this.model.jekyll) return true; // metadata -> skip
-
-      // Update published
-      // TODO: refactor to use this.model.metadata instead of raw YAML
-
-      function updatePublished(yamlStr, published) {
-        var regex = /published: (false|true)/;
-        if (yamlStr.match(regex)) {
-          return yamlStr.replace(regex, 'published: ' + !! published);
-        } else {
-          return yamlStr + '\npublished: ' + !! published;
-        }
-      }
-
-      this.model.raw_metadata = this.metadataEditor.getValue();
-      var published = this.$('#post_published').prop('checked');
-
-      this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
-      this.metadataEditor.setValue(this.model.raw_metadata);
-
-      if (published) {
-        $('#post').addClass('published');
-      } else {
-        $('#post').removeClass('published');
-      }
-
-      return true;
-    },
-
-    updateFilename: function (filepath, cb) {
-      var that = this;
-
-      if (!_.validPathname(filepath)) return cb('error');
-      app.state.path = this.model.path; // ?
-      app.state.file = _.extractFilename(filepath)[1];
-      app.state.path = _.extractFilename(filepath)[0];
-
-      function finish() {
-        that.model.path = app.state.path;
-        that.model.file = app.state.file;
-        // re-render header to reflect the filename change
-        app.instance.app.render();
-        that.updateURL();
-      }
-
-      if (this.model.persisted) {
-        window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function (err) {
-          if (!err) finish();
-          if (err) {
-            cb('error');
-          } else {
-            cb(null);
+      // see if it's in the current scope
+      if(handler.scope == _scope || handler.scope == 'all'){
+        // check if modifiers match if any
+        modifiersMatch = handler.mods.length > 0;
+        for(k in _mods)
+          if((!_mods[k] && index(handler.mods, +k) > -1) ||
+            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
+        // call the handler and stop the event if neccessary
+        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
+          if(handler.method(event, handler)===false){
+            if(event.preventDefault) event.preventDefault();
+              else event.returnValue = false;
+            if(event.stopPropagation) event.stopPropagation();
+            if(event.cancelBubble) event.cancelBubble = true;
           }
-        }, this));
-      } else {
-        finish();
-        cb(null);
-      }
-    },
-
-    serialize: function () {
-      return window.app.models.serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
-    },
-
-    // Update save state (saving ..., sending patch ..., etc.)
-
-    updateSaveState: function (label, classes) {
-      $('.button.save').html(label)
-        .removeClass('inactive error saving')
-        .addClass(classes);
-    },
-
-    // Submits a patch (fork + pull request workflow)
-
-    sendPatch: function (filepath, filename, filecontent, message) {
-      var that = this;
-
-      function patch() {
-        if (that.updateMetaData()) {
-          that.model.content = that.prevContent;
-          that.editor.setValue(that.prevContent);
-
-          window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
-            if (err) {
-              _.delay(function () {
-                that.$('.button.save').html('Submit Change');
-                that.$('.button.save').removeClass('error');
-                that.$('.button.save').addClass('inactive');
-              }, 3000);
-              that.updateSaveState('! Try again in 30 seconds', 'error');
-              return;
-            }
-
-            that.dirty = false;
-            that.model.persisted = true;
-            that.model.file = filename;
-            that.updateURL();
-            that.prevContent = filecontent;
-            that.updateSaveState('Change Submitted', 'inactive');
-          });
-        } else {
-          that.updateSaveState('! Metadata', 'error');
         }
       }
+	}
+  };
 
-      that.updateSaveState('Submitting Change ...', 'inactive saving');
-      patch();
-
-      return false;
-    },
-
-    saveFile: function (filepath, filename, filecontent, message) {
-      var that = this;
-
-      function save() {
-        if (that.updateMetaData()) {
-          window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
-            if (err) {
-              _.delay(function () {
-                that.makeDirty();
-              }, 3000);
-              that.updateSaveState('! Try again in 30 seconds', 'error');
-              return;
-            }
-            that.dirty = false;
-            that.model.persisted = true;
-            that.model.file = filename;
-            that.updateURL();
-            that.prevContent = filecontent;
-            that.updateSaveState('SAVED', 'inactive');
-          });
-        } else {
-          that.updateSaveState('! Metadata', 'error');
-        }
-      }
-
-      that.updateSaveState('Saving ...', 'inactive saving');
-
-      if (filepath === _.filepath(this.model.path, this.model.file)) return save();
-
-      // Move or create file
-      this.updateFilename(filepath, function (err) {
-        if (err) {
-          that.updateSaveState('! Filename', 'error');
-        } else {
-          save();
-        }
-      });
-    },
-
-    stashFile: function(e) {
-      if (e) e.preventDefault();
-      if (!window.localStorage || !this.dirty) return false;
-
-      var storage = window.localStorage;
-      var filepath = $('input.filepath').val();
-
-      // Don't stash if filepath is undefined
-      if (filepath) {
-        storage.setItem(filepath, JSON.stringify({
-          sha: app.state.sha,
-          content: this.editor ? this.editor.getValue() : null,
-          raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
-        }));
-      }
-    },
-
-    stashApply: function () {
-      if (!window.localStorage) return false;
-
-      var storage = window.localStorage;
-      var filepath = $('input.filepath').val();
-      var item = storage.getItem(filepath);
-      var stash = JSON.parse(item);
-
-      if (stash && stash.sha === window.app.state.sha) {
-        // Restore from stash if file sha hasn't changed
-        if (this.editor) this.editor.setValue(stash.content);
-        if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
-      } else if (item) {
-        // Remove expired content
-        storage.removeItem(filepath);
-      }
-    },
-
-    updateFile: function() {
-      var that = this;
-      var filepath = $('input.filepath').val();
-      var filename = _.extractFilename(filepath)[1];
-      var filecontent = this.serialize();
-      var message = $('.commit-message').val() || $('.commit-message').attr('placeholder');
-      var method = this.model.writeable ? this.saveFile : this.sendPatch;
-
-      // Update content
-      this.model.content = this.editor.getValue();
-
-      // Delegate
-      method.call(this, filepath, filename, filecontent, message);
-    },
-
-    keyMap: function () {
-      var that = this;
-      return {
-        'Ctrl-S': function (codemirror) {
-          that.updateFile();
-        }
-      };
-    },
-
-    translate: function(e) {
-
-      // TODO Drop the 'EN' requirement.
-      var hash = window.location.hash.split('/'),
-          href = $(e.currentTarget).attr('href').substr(1);
-
-      // If current page is not english and target page is english
-      if (href === 'en') {
-        hash.splice(-2, 2, hash[hash.length - 1]);
-      // If current page is english and target page is not english
-      } else if (this.model.metadata.lang === 'en') {
-        hash.splice(-1, 1, href, hash[hash.length - 1]);
-      // If current page is not english and target page is not english
-      } else {
-        hash.splice(-2, 2, href, hash[hash.length - 1]);
-      }
-
-      router.navigate(_(hash).compact().join('/'), true);
-
-      return false;
-    },
-
-    buildMeta: function() {
-      var $metadataEditor = $('#meta');
-      $metadataEditor.empty();
-
-      function initialize(model) {
-        var tmpl;
-
-        _(model.default_metadata).each(function(data) {
-          if (data && typeof data.field === 'object') {
-            switch(data.field.element) {
-              case 'input':
-                tmpl = _(window.app.templates.text).template();
-                $metadataEditor.append(tmpl({
-                  name: data.name,
-                  label: data.field.label,
-                  value: data.field.value
-                }));
-                break;
-              case 'select':
-                tmpl = _(window.app.templates.select).template();
-                $metadataEditor.append(tmpl({
-                  name: data.name,
-                  label: data.field.label,
-                  placeholder: data.field.placeholder,
-                  options: data.field.options
-                }));
-                break;
-              case 'multiselect':
-                tmpl = _(window.app.templates.multiselect).template();
-                $metadataEditor.append(tmpl({
-                  name: data.name,
-                  label: data.field.label,
-                  placeholder: data.field.placeholder,
-                  options: data.field.options
-                }));
-              break;
-            }
-          } else {
-            tmpl = _(window.app.templates.text).template();
-            $metadataEditor.append(tmpl({
-              name: key,
-              label: key,
-              value: data
-            }));
-          }
-        });
-
-        setValue(model.metadata);
-        $('.chzn-select').chosen();
-      }
-
-      function getValue() {
-        var metadata = {};
-
-        _.each($metadataEditor.find('[name]'), function(item) {
-          switch(item.tagName.toLowerCase()) {
-            case 'input':
-              if (item.type === 'text') {
-                metadata[item.name] = item.value;
-              }
-              break;
-            case 'select':
-            case 'multiselect':
-              metadata[item.name] = item.value;
-              break;
-          }
-        });
-
-        return metadata;
-      }
-
-      function getRaw() {
-        return jsyaml.dump(getValue());
-      }
-
-      function setValue(metadata) {
-        _(metadata).each(function(value, key) {
-          var input = $metadataEditor.find('[name="' + key + '"]');
-          var options = $metadataEditor.find('[name="' + key +'"] option');
-
-          if (input.length && options.length) {
-            _.each(options, function(option) {
-              if (value !== null && (option.value === value || value.indexOf(option.value) > -1)) {
-                option.selected = 'selected';
-              }
-            });
-          } else if (input.length) {
-            input.val(value);
-          } else {
-            var tmpl = _(window.app.templates.text).template();
-            $metadataEditor.append(tmpl({
-              name: key,
-              label: key,
-              value: value
-            }));
-          }
-        });
-      }
-
-      function setRaw(rawMetadata) {
-        try {
-          setValue(jsyaml.load(rawMetadata));
-        } catch(err) {
-          console.log('ERROR encoding YAML');
-          // No-op
-        }
-      }
-
-      initialize(this.model);
-
-      return {
-        el: $metadataEditor,
-        getValue: getRaw,
-        setValue: setRaw
-      };
-    },
-
-    initEditor: function () {
-      var that = this;
-
-      // TODO Remove setTimeout
-      setTimeout(function () {
-        if (that.model.jekyll) {
-          that.metadataEditor = that.buildMeta();
-          /*
-          that.metadataEditor = CodeMirror($('#meta')[0], {
-            mode: 'yaml',
-            value: that.model.raw_metadata,
-            theme: 'prose-dark',
-            lineWrapping: true,
-            extraKeys: that.keyMap(),
-            onChange: _.bind(that.makeDirty, that)
-          });
-          */
-          $('#post .metadata').hide();
-        }
-
-        that.editor = CodeMirror($('#code')[0], {
-          mode: that.model.lang,
-          value: that.model.content,
-          lineWrapping: true,
-          extraKeys: that.keyMap(),
-          matchBrackets: true,
-          theme: 'prose-bright',
-          onChange: _.bind(that.makeDirty, that)
-        });
-        that.refreshCodeMirror();
-
-        // Check localStorage for existing stash
-        // Apply if stash exists and is current, remove if expired
-        that.stashApply();
-      }, 100);
-    },
-
-    remove: function () {
-      // Unbind pagehide event handler when View is removed
-      this.eventRegister.unbind('edit', this.postViews);
-      this.eventRegister.unbind('preview', this.preview);
-      this.eventRegister.unbind('settings', this.settings);
-      this.eventRegister.unbind('deleteFile', this.deleteFile);
-      this.eventRegister.unbind('updateMetaData', this.updateMetaData);
-      this.eventRegister.unbind('save', this.save);
-      this.eventRegister.unbind('translate', this.translate);
-      this.eventRegister.unbind('updateFile', this.updateFile);
-
-      $(window).unbind('pagehide');
-      Backbone.View.prototype.remove.call(this);
-    },
-
-    markdownSnippet: function(e) {
-      var snippet = $(e.target, this.el).data('snippet');
-      if (!snippet) return;
-      this.editor.replaceSelection(snippet);
-      return false;
+  // unset modifier keys on keyup
+  function clearModifier(event){
+    var key = event.keyCode, k;
+    if(key == 93 || key == 224) key = 91;
+    if(key in _mods) {
+      _mods[key] = false;
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
     }
-});
+  };
 
-},{"jquery-browserify":4,"chosen-jquery-browserify":23,"underscore":5,"js-yaml":18,"keymaster":24,"marked":20,"backbone":6}],14:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-
-  id: 'posts',
-
-  events: {
-    'hover a.item': 'activeListing',
-    'keyup #filter': 'search'
-  },
-
-  initialize: function () {
-    if (!window.shortcutsRegistered) {
-      key('enter', _.bind(function (e, handler) {
-        this.goToFile();
-      }, this));
-      key('up, down', _.bind(function (e, handler) {
-        this.pageListing(handler.key);
-        e.preventDefault();
-        e.stopPropagation();
-      }, this));
-      window.shortcutsRegistered = true;
+  // parse and assign shortcut
+  function assignKey(key, scope, method){
+    var keys, mods, i, mi;
+    if (method === undefined) {
+      method = scope;
+      scope = 'all';
     }
-  },
+    key = key.replace(/\s/g,'');
+    keys = key.split(',');
 
-  render: function () {
-    var that = this;
-    var data = _.extend(this.model, app.state, {
-      currentPath: app.state.path
-    });
-
-    // Ping `views/app.js` to let know we should swap out the sidebar
-    this.eventRegister = app.eventRegister;
-    this.eventRegister.trigger('sidebarContext', data, 'posts');
-    var isPrivate = app.state.isPrivate ? 'private' : '';
-
-    var header = {
-      avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
-      parent: data.user,
-      parentUrl: data.user,
-      title: data.repo,
-      titleUrl: data.user + '/' + data.repo,
-      alterable: false
+    if((keys[keys.length-1])=='')
+      keys[keys.length-2] += ',';
+    // for each shortcut
+    for (i = 0; i < keys.length; i++) {
+      // set modifier keys if any
+      mods = [];
+      key = keys[i].split('+');
+      if(key.length > 1){
+        mods = key.slice(0,key.length-1);
+        for (mi = 0; mi < mods.length; mi++)
+          mods[mi] = _MODIFIERS[mods[mi]];
+        key = [key[key.length-1]];
+      }
+      // convert to keycode and...
+      key = key[0]
+      key = _MAP[key] || key.toUpperCase().charCodeAt(0);
+      // ...store handler
+      if (!(key in _handlers)) _handlers[key] = [];
+      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
     }
+  };
 
-    this.eventRegister.trigger('headerContext', header);
+  // initialize key.<modifier> to false
+  for(k in _MODIFIERS) assignKey[k] = false;
 
-    var tmpl = _(window.app.templates.posts).template();
-    $(this.el).empty().append(tmpl(data));
+  // set current scope (default 'all')
+  function setScope(scope){ _scope = scope || 'all' };
 
-    _.delay(function () {
-      that.renderResults();
-      $('#filter').focus();
-      utils.shadowScroll($('#files'), $('.breadcrumb'));
-      utils.shadowScroll($('#files'), $('.content-search'));
-    }, 1);
+  // cross-browser events
+  function addEvent(object, event, method) {
+    if (object.addEventListener)
+      object.addEventListener(event, method, false);
+    else if(object.attachEvent)
+      object.attachEvent('on'+event, function(){ method(window.event) });
+  };
 
-    return this;
-  },
+  // set the handlers globally on document
+  addEvent(document, 'keydown', dispatch);
+  addEvent(document, 'keyup', clearModifier);
 
-  pageListing: function (handler) {
+  // set window.key and window.key.setScope
+  global.key = assignKey;
+  global.key.setScope = setScope;
 
-    var item, index;
+  if(typeof module !== 'undefined') module.exports = key;
 
-    if ($('.item').hasClass('active')) {
-      index = parseInt($('.item.active').data('index'), 10);
-      $('.item.active').removeClass('active');
+})(this);
 
-      if (handler === 'up') {
-        item = index - 1;
-        $('.item[data-index=' + item + ']').addClass('active');
-      } else {
-        item = index + 1;
-        $('.item[data-index=' + item + ']').addClass('active');
-      }
-    } else {
-      $('.item[data-index=0]').addClass('active');
-    }
-  },
-
-  goToFile: function () {
-    var path = $('.item.active').attr('href');
-    router.navigate(path, true);
-  },
-
-  search: function (e) {
-    if (e.which === 27) { // ESC
-      _.delay(_.bind(function () {
-        $('#filter', this.el).val('');
-        this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
-        this.renderResults();
-      }, this), 10);
-
-    } else if (e.which === 40 && $('.item').length > 0) {
-      this.pageListing('down'); // Arrow Down
-      e.preventDefault();
-      e.stopPropagation();
-      $('#filter').blur();
-
-    } else {
-      _.delay(_.bind(function () {
-        var searchstr = $('#filter', this.el).val();
-        this.model = window.app.models.getFiles(this.model.tree, app.state.path, searchstr);
-        this.renderResults();
-      }, this), 10);
-    }
-  },
-
-  renderResults: function () {
-    var tmpl = _(window.app.templates.files).template();
-    this.$('#files').html(tmpl(_.extend(this.model, app.state, {
-      currentPath: app.state.path
-    })));
-  },
-
-  // Creates human readable versions of _posts/paths
-  semantifyPaths: function (paths) {
-    return _.map(paths, function (path) {
-      return {
-        path: path,
-        name: path
-      }
-    });
-  },
-
-  activeListing: function (e) {
-    $listings = $('.item', this.el);
-    $listing = $(e.target, this.el);
-
-    $listings.removeClass('active');
-    $listing.addClass('active');
-  }
-});
-
-},{".././util":19,"jquery-browserify":4,"underscore":5,"js-yaml":18,"keymaster":24,"backbone":6}],13:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-    id: 'profile',
-
-    events: {
-      'keyup #filter': 'filterFiles'
-    },
-
-    render: function () {
-      var data = this.model;
-      this.eventRegister = app.eventRegister;
-
-      var header = {
-          avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
-          parent: data.user.name || data.user.login,
-          parentUrl: data.user.login,
-          title: 'Explore Projects',
-          titleUrl: data.user.login,
-          alterable: false
-      };
-
-      this.eventRegister.trigger('headerContext', header);
-
-      var tmpl = _(window.app.templates.profile).template();
-      var sidebar = _(window.app.templates.sidebarOrganizations).template();
-
-      $(this.el).empty().append(tmpl(data));
-      this.renderResults();
-
-      $('#drawer')
-        .empty()
-        .append(sidebar(this.model));
-
-      _.delay(function () {
-        utils.shadowScroll($('#projects'), $('.content-search'));
-        $('#filter').focus();
-      }, 1);
-
-      // Cache to perform autocompletion on it
-      this.cache = this.model;
-
-      return this;
-    },
-
-    filterFiles: function (e) {
-      // If this is the ESC key
-      if (e.which === 27) {
-        _.delay(_.bind(function () {
-          $('#filter', this.el).val('');
-          this.model = window.app.models.filterProjects(this.cache, '');
-          this.renderResults();
-        }, this), 10);
-      } else {
-        _.delay(_.bind(function () {
-          var searchstr = $('#filter', this.el).val();
-          this.model = window.app.models.filterProjects(this.cache, searchstr);
-          this.renderResults();
-        }, this), 10);
-      }
-    },
-
-    renderResults: function () {
-      var tmpl = _(window.app.templates.projects).template();
-      $('#projects', this.el).empty().append(tmpl(this.model));
-    }
-
-});
-
-},{".././util":19,"jquery-browserify":4,"underscore":5,"backbone":6}],12:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  id: 'start',
-  className: 'start',
-
-  events: {
-    'submit #login_form': '_login'
-  },
-
-  render: function() {
-    var tmpl = _(window.app.templates.start).template();
-
-    $('.header').hide();
-    $('#prose').empty().html(tmpl(this.model));
-
-    return this;
-  },
-
-  _login: function() {
-    var self = this;
-
-    var user = self.$('#github_user').val();
-    var password = self.$('#github_password').val();
-
-    login({username: user, password: password}, function(err) {
-      if (err) return self.$('.bad-credentials').show();
-      window.location.reload();
-    });
-    return false;
-  }
-});
-
-},{"jquery-browserify":4,"underscore":5,"backbone":6}],9:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-
-  events: {
-    'click #notification .create': 'createPost'
-  },
-
-  createPost: function (e) {
-    var hash = window.location.hash.split('/');
-    hash[2] = 'new';
-    hash[hash.length - 1] = '?file=' + hash[hash.length - 1];
-
-    router.navigate(_(hash).compact().join('/'), true);
-    return false;
-  },
-
-  // Initialize
-  // ----------
-
-  initialize: function () {
-    _.bindAll(this);
-    var that = this;
-    this.app = new window.app.views.App({
-      model: this.model
-    });
-
-    function calculateLayout() {
-      if (that.mainView && that.mainView.refreshCodeMirror)  {
-        that.mainView.refreshCodeMirror();
-      }
-    }
-
-    var lazyLayout = _.debounce(calculateLayout, 300);
-    $(window).resize(lazyLayout);
-  },
-
-
-  renderApp: function () {
-    $(this.app.render().el).prependTo(this.el);
-  },
-
-  // Helpers
-  // -------
-
-  replaceMainView: function (name, view) {
-    $('body').removeClass().addClass(name);
-
-    // Make sure the header get's shown
-    if (name !== 'start') $('#app').show();
-
-    if (this.mainView) {
-      this.mainView.remove();
-    } else {
-      $('#content').empty();
-    }
-    this.mainView = view;
-    $(view.el).appendTo(this.$('#content'));
-  },
-
-
-  // Main Views
-  // ----------
-
-  start: function (username) {
-    var that = this;
-    app.state.title = '';
-
-    // Render out the application view
-    $(that.app.render().el).prependTo(that.el);
-
-    this.replaceMainView('start', new window.app.views.Start({
-      model: _.extend(this.model, {
-        authenticated: !! window.authenticated
-      })
-    }).render());
-  },
-
-  profile: function (username) {
-    var that = this;
-    app.state.title = username;
-    this.loading('Loading profile ...');
-
-    window.app.models.loadRepos(username, function (err, data) {
-
-      // Render out the application view
-      $(that.app.render().el).prependTo(that.el);
-
-      that.loaded();
-      data.authenticated = !! window.authenticated;
-      that.replaceMainView('profile', new window.app.views.Profile({
-        model: _.extend(that.model, data)
-      }).render());
-    });
-  },
-
-  staticView: function () {
-    // Render out the application view
-    $(this.app.render().el).prependTo(this.el);
-  },
-
-  posts: function (user, repo, branch, path) {
-    var that = this;
-    this.loading('Loading posts ...');
-    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      this.loaded();
-
-      if (err) return this.notify('error', 'The requested resource could not be found.');
-      // Render out the application view
-      $(that.app.render().el).prependTo(that.el);
-      this.replaceMainView('posts', new window.app.views.Posts({
-        model: data
-      }).render());
-    }, this));
-  },
-
-  post: function (user, repo, branch, path, file, mode) {
-    var that = this;
-    this.loading('Loading post ...');
-    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return this.notify('error', 'The requested resource could not be found.');
-      window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        this.loaded();
-
-        app.state.markdown = data.markdown;
-        // Render out the application view
-        $(that.app.render().el).prependTo(that.el);
-
-        if (err) return this.notify('error', 'The requested resource could not be found.');
-        data.preview = (mode !== 'edit');
-        data.lang = _.mode(file);
-        this.replaceMainView(window.authenticated ? 'post' : 'read-post', new window.app.views.Post({
-          model: data
-        }).render());
-      }, this));
-
-      // Render out the application view
-      $(that.app.render().el).prependTo(that.el);
-
-    }, this));
-  },
-
-  preview: function (user, repo, branch, path, file, mode) {
-    this.loading('Preview post ...');
-    window.app.models.loadConfig(user, repo, branch, _.bind(function () {
-      window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) return this.notify('error', 'The requested resource could not be found.');
-        new window.app.views.Preview({
-          model: data
-        }).render();
-      }, this));
-    }, this));
-  },
-
-  newPost: function (user, repo, branch, path) {
-    var that = this;
-    this.loading('Creating file ...');
-    window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      window.app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
-        this.loaded();
-
-        // Render out the application view
-        $(that.app.render().el).prependTo(that.el);
-
-        data.jekyll = _.jekyll(path, data.file);
-        data.preview = false;
-        data.markdown = _.markdown(data.file);
-        data.lang = _.mode(data.file);
-
-        this.replaceMainView('post', new window.app.views.Post({
-          model: data
-        }).render());
-
-        this.mainView._makeDirty();
-        app.state.file = data.file;
-
-      }, this));
-    }, this));
-  },
-
-  notify: function (type, message) {
-    // Render out the application view
-    $(this.app.render().el).prependTo(this.el);
-
-    this.replaceMainView('notification', new window.app.views.Notification(type, message).render());
-  },
-
-  loading: function (msg) {
-    $('body').append('<div class="loading"><span>' + msg ||  'Loading ...' + '</span></div>');
-  },
-
-  loaded: function ()  {
-    $('.loading').remove();
-  }
-});
-
-},{"jquery-browserify":4,"underscore":5,"backbone":6}],10:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-    id: 'app',
-
-    events: {
-      'click .post-views .edit': 'edit',
-      'click .post-views .preview': 'preview',
-      'click .post-views .settings': 'settings',
-      'click a.logout': 'logout',
-      'click a.save': 'save',
-      'click a.save.confirm': 'updateFile',
-      'click a.cancel': 'toggleCommit',
-      'click a.delete': 'deleteFile',
-      'click a.publish': 'updateMetaData',
-      'click a.translate': 'translate',
-      'keypress input.filepath': 'saveFilePath'
-    },
-
-    initialize: function(options) {
-      this.eventRegister = app.eventRegister;
-
-      _.bindAll(this, 'headerContext', 'sidebarContext');
-      this.eventRegister.bind('headerContext', this.headerContext);
-      this.eventRegister.bind('sidebarContext', this.sidebarContext);
-    },
-
-    render: function () {
-      var tmpl = _(window.app.templates.app).template();
-      $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
-        state: app.state
-      })));
-
-      // When the sidebar should be open.
-      // Fix this in re-factor, could be much tighter
-      if (this.model.mode === 'edit' || this.model.mode === 'blob' || this.model.mode === 'new') {
-        $('#prose').toggleClass('open', false);
-
-      // Project contents when there aren't branches
-      } else if (app.state.mode === 'tree' && !app.state.branches.length) {
-        $('#prose').toggleClass('open', false);
-
-      } else {
-        $('#prose').toggleClass('open', true);
-      }
-
-      _.delay(function () {
-        utils.dropdown();
-      }, 1);
-
-      return this;
-    },
-
-    headerContext: function(data) {
-      var heading = _(window.app.templates.heading).template();
-      $('#heading').empty().append(heading(data));
-    },
-
-    sidebarContext: function(data, context) {
-      var sidebarTmpl;
-
-      if (context === 'post') {
-        sidebarTmpl = _(window.app.templates.settings).template();
-
-        $('#drawer')
-          .empty()
-          .append(sidebarTmpl(data));
-
-      } else if (context === 'posts') {
-        sidebarTmpl = _(window.app.templates.sidebarProject).template();
-
-        $('#drawer')
-          .empty()
-          .append(sidebarTmpl(data));
-
-        // Branch Switching
-        $('.chzn-select').chosen().change(function() {
-            router.navigate($(this).val(), true);
-        });
-      }
-    },
-
-    // Event Triggering to other files
-    edit: function(e) {
-      this.eventRegister.trigger('edit', e);
-      return false;
-    },
-
-    preview: function(e) {
-      if ($(e.target).data('jekyll')) {
-        this.eventRegister.trigger('preview', e);
-      } else {
-        this.eventRegister.trigger('preview', e);
-
-        // Cancel propagation
-        return false;
-      }
-    },
-
-    settings: function(e) {
-      this.eventRegister.trigger('settings', e);
-      return false;
-    },
-
-    deleteFile: function(e) {
-      this.eventRegister.trigger('deleteFile', e);
-      return false;
-    },
-
-    updateMetaData: function(e) {
-      this.eventRegister.trigger('updateMetaData', e);
-      return false;
-    },
-
-    translate: function(e) {
-      this.eventRegister.trigger('translate', e);
-      return false;
-    },
-
-    save: function(e) {
-      this.eventRegister.trigger('save', e);
-      this.toggleCommit();
-      return false;
-    },
-
-    toggleCommit: function() {
-      $('.commit', this.el).toggleClass('active');
-      $('.button.save', this.el).toggleClass('confirm');
-
-      // TODO Fix this this.model.writable should work as a boolean
-      $('.button.save', this.el).html($('.button.save', this.el).hasClass('confirm') ? 'Commit' : (this.model.writeable ? 'Save' : 'Save'));
-      $('.commit-message', this.el).focus();
-      return false;
-    },
-
-    updateFile: function(e) {
-      this.eventRegister.trigger('updateFile', e);
-      return false;
-    },
-
-    saveFilePath: function(e) {
-      // Trigger updateFile when a return button has been pressed.
-      if (e.which === 13) {
-        this.eventRegister.trigger('updateFile', e);
-      }
-    },
-
-    logout: function () {
-      window.app.models.logout();
-      app.instance.render();
-      if ($('#start').length > 0) {
-        app.instance.start();
-      } else {
-        window.location.reload();
-      }
-      return false;
-    },
-
-    remove: function () {
-      // Unbind pagehide event handler when View is removed
-      this.eventRegister.unbind('sidebarContext', this.sidebarContext);
-      this.eventRegister.unbind('headerContext', this.headerContext);
-    }
-});
-
-},{".././util":19,"jquery-browserify":4,"underscore":5,"backbone":6}],18:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
-
-},{"./lib/js-yaml.js":25}],23:[function(require,module,exports){
+})()
+},{}],24:[function(require,module,exports){
 (function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -22477,607 +22630,13 @@ module.exports = require('./lib/js-yaml.js');
 
 }).call(this);
 
-},{}],24:[function(require,module,exports){
-(function(){//     keymaster.js
-//     (c) 2011 Thomas Fuchs
-//     keymaster.js may be freely distributed under the MIT license.
+},{}],7:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
 
-;(function(global){
-  var k,
-    _handlers = {},
-    _mods = { 16: false, 18: false, 17: false, 91: false },
-    _scope = 'all',
-    // modifier keys
-    _MODIFIERS = {
-      '⇧': 16, shift: 16,
-      '⌥': 18, alt: 18, option: 18,
-      '⌃': 17, ctrl: 17, control: 17,
-      '⌘': 91, command: 91
-    },
-    // special keys
-    _MAP = {
-      backspace: 8, tab: 9, clear: 12,
-      enter: 13, 'return': 13,
-      esc: 27, escape: 27, space: 32,
-      left: 37, up: 38,
-      right: 39, down: 40,
-      del: 46, 'delete': 46,
-      home: 36, end: 35,
-      pageup: 33, pagedown: 34,
-      ',': 188, '.': 190, '/': 191,
-      '`': 192, '-': 189, '=': 187,
-      ';': 186, '\'': 222,
-      '[': 219, ']': 221, '\\': 220
-    };
-
-  for(k=1;k<20;k++) _MODIFIERS['f'+k] = 111+k;
-
-  // IE doesn't support Array#indexOf, so have a simple replacement
-  function index(array, item){
-    var i = array.length;
-    while(i--) if(array[i]===item) return i;
-    return -1;
-  }
-
-  // handle keydown event
-  function dispatch(event){
-    var key, tagName, handler, k, i, modifiersMatch;
-    tagName = (event.target || event.srcElement).tagName;
-    key = event.keyCode;
-
-    // if a modifier key, set the key.<modifierkeyname> property to true and return
-    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
-    if(key in _mods) {
-      _mods[key] = true;
-      // 'assignKey' from inside this closure is exported to window.key
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
-      return;
-    }
-
-    // ignore keypressed in any elements that support keyboard data input
-    if (tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA') return;
-
-    // abort if no potentially matching shortcuts found
-    if (!(key in _handlers)) return;
-
-    // for each potential shortcut
-    for (i = 0; i < _handlers[key].length; i++) {
-      handler = _handlers[key][i];
-
-      // see if it's in the current scope
-      if(handler.scope == _scope || handler.scope == 'all'){
-        // check if modifiers match if any
-        modifiersMatch = handler.mods.length > 0;
-        for(k in _mods)
-          if((!_mods[k] && index(handler.mods, +k) > -1) ||
-            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
-        // call the handler and stop the event if neccessary
-        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
-          if(handler.method(event, handler)===false){
-            if(event.preventDefault) event.preventDefault();
-              else event.returnValue = false;
-            if(event.stopPropagation) event.stopPropagation();
-            if(event.cancelBubble) event.cancelBubble = true;
-          }
-        }
-      }
-	}
-  };
-
-  // unset modifier keys on keyup
-  function clearModifier(event){
-    var key = event.keyCode, k;
-    if(key == 93 || key == 224) key = 91;
-    if(key in _mods) {
-      _mods[key] = false;
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
-    }
-  };
-
-  // parse and assign shortcut
-  function assignKey(key, scope, method){
-    var keys, mods, i, mi;
-    if (method === undefined) {
-      method = scope;
-      scope = 'all';
-    }
-    key = key.replace(/\s/g,'');
-    keys = key.split(',');
-
-    if((keys[keys.length-1])=='')
-      keys[keys.length-2] += ',';
-    // for each shortcut
-    for (i = 0; i < keys.length; i++) {
-      // set modifier keys if any
-      mods = [];
-      key = keys[i].split('+');
-      if(key.length > 1){
-        mods = key.slice(0,key.length-1);
-        for (mi = 0; mi < mods.length; mi++)
-          mods[mi] = _MODIFIERS[mods[mi]];
-        key = [key[key.length-1]];
-      }
-      // convert to keycode and...
-      key = key[0]
-      key = _MAP[key] || key.toUpperCase().charCodeAt(0);
-      // ...store handler
-      if (!(key in _handlers)) _handlers[key] = [];
-      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
-    }
-  };
-
-  // initialize key.<modifier> to false
-  for(k in _MODIFIERS) assignKey[k] = false;
-
-  // set current scope (default 'all')
-  function setScope(scope){ _scope = scope || 'all' };
-
-  // cross-browser events
-  function addEvent(object, event, method) {
-    if (object.addEventListener)
-      object.addEventListener(event, method, false);
-    else if(object.attachEvent)
-      object.attachEvent('on'+event, function(){ method(window.event) });
-  };
-
-  // set the handlers globally on document
-  addEvent(document, 'keydown', dispatch);
-  addEvent(document, 'keyup', clearModifier);
-
-  // set window.key and window.key.setScope
-  global.key = assignKey;
-  global.key.setScope = setScope;
-
-  if(typeof module !== 'undefined') module.exports = key;
-
-})(this);
-
-})()
-},{}],22:[function(require,module,exports){
+},{"./lib/js-yaml.js":25}],23:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
-},{"./lib/chrono":26}],26:[function(require,module,exports){
-(function(){
-
-// CommonJS exports.
-var data = (typeof exports !== 'undefined') ? exports : {};
-
-data.tzToOffset = {
-  'ACDT': -630,
-  'ACST': -570,
-  'ACT': -480,
-  'ADT': +180,
-  'AEDT': -660,
-  'AEST': -600,
-  'AFT': -270,
-  'AKDT': +480,
-  'AKST': +540,
-  'AMST': -300,
-  'AMT': -240,
-  'ART': +180,
-  'AST': -240, // Arab Standard Time
-  'AWDT': -540,
-  'AWST': -480,
-  'AZOST': +60,
-  'AZT': -240,
-  'BDT': -480,
-  'BIOT': -360,
-  'BIT': +720,
-  'BOT': +240,
-  'BRT': +180,
-  'BST': -60, // British Summer Time
-  'BTT': -360,
-  'CAT': -120,
-  'CCT': -390,
-  'CDT': +300,
-  'CEDT': -120,
-  'CEST': -120,
-  'CET': -60,
-  'CHAST': -765,
-  'ChST': -600,
-  'CIST': +480,
-  'CKT': +600,
-  'CLST': +180,
-  'CLT': +240,
-  'COST': +240,
-  'COT': +300,
-  'CST': -480,
-  'CST': +360,
-  'CVT': +60,
-  'CXT': -420,
-  'DFT': -60,
-  'EAST': +360,
-  'EAT': -180,
-  'ECT': +240,
-  'ECT': +300,
-  'EDT': +240,
-  'EEDT': -180,
-  'EEST': -180,
-  'EET': -120,
-  'EST': +300,
-  'FJT': -720,
-  'FKST': +240,
-  'GALT': +360,
-  'GET': -240,
-  'GFT': +180,
-  'GILT': -720,
-  'GIT': +540,
-  'GMT': 0,
-  'GST': +120,
-  'GYT': +240,
-  'HADT': +540,
-  'HAST': +600,
-  'HKT': -480,
-  'HMT': -300,
-  'HST': +600,
-  'IRKT': -480,
-  'IRST': -210,
-  'IST': -120,
-  'IST': -330,
-  'IST': -60,
-  'JST': -540,
-  'KRAT': -420,
-  'KST': -540,
-  'LHST': -630,
-  'LINT': -840,
-  'MAGT': -660,
-  'MDT': +360,
-  'MIT': +570,
-  'MSD': -240,
-  'MSK': -180,
-  'MST': -390,
-  'MST': -480,
-  'MST': +420,
-  'MUT': -240,
-  'NDT': +150,
-  'NFT': -690,
-  'NPT': -345,
-  'NST': +210,
-  'NT': +210,
-  'NZST': -720,
-  'NZDT': -780,
-  'OMST': -360,
-  'PDT': +420,
-  'PETT': -720,
-  'PHOT': -780,
-  'PKT': -300,
-  'PST': -480,
-  'PST': +480,
-  'RET': -240,
-  'SAMT': -240,
-  'SAST': -120,
-  'SBT': -660,
-  'SCT': -240,
-  'SLT': -330,
-  'SST': -480,
-  'SST': +660,
-  'TAHT': +600,
-  'THA': -420,
-  'UTC': 0,
-  'UYST': +120,
-  'UYT': +180,
-  'VET': +270,
-  'VLAT': -600,
-  'WAT': -60,
-  'WEDT': -60,
-  'WEST': -60,
-  'YAKT': -540,
-  'YEKT': -300
-};
-
-// While indices are strings here, numbers work fine too when retrieving.
-data.offsetToTz = {
-  '720':  ['BIT'],
-  '660':  ['SST'],
-  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
-  '570':  ['MIT'],
-  '540':  ['AKST', 'GIT', 'HADT'],
-  '480':  ['PST', 'AKDT', 'CIST'],
-  '420':  ['MST', 'PDT'],
-  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
-  '300':  ['EST', 'CDT', 'COT', 'ECT'],
-  '270':  ['VET'],
-  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
-  '210':  ['NT', 'NST'],
-  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
-  '150':  ['NDT'],
-  '120':  ['GST', 'UYST'],
-  '60':   ['AZOST', 'CVT'],
-  '0':    ['UTC', 'GMT'],
-  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
-  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
-  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
-  '-210': ['IRST'],
-  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
-  '-270': ['AFT'],
-  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
-  '-330': ['IST', 'SLT'],
-  '-345': ['NPT'],
-  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
-  '-390': ['CCT', 'MST'],
-  '-420': ['CXT', 'KRAT', 'THA'],
-  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
-  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
-  '-570': ['ACST'],
-  '-600': ['AEST', 'ChST', 'VLAT'],
-  '-630': ['ACDT', 'LHST'],
-  '-660': ['AEDT', 'MAGT', 'SBT'],
-  '-690': ['NFT'],
-  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
-  '-765': ['CHAST'],
-  '-780': ['PHOT', 'NZDT'],
-  '-840': ['LINT']
-};
-
-data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
-
-data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
-
-data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
-
-data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
-
-data.intervals = [
-    function(n) { return n !== 1 ? 'years' : 'year'; },
-    function(n) { return n !== 1 ? 'months' : 'month'; },
-    function(n) { return n !== 1 ? 'weeks' : 'week'; },
-    function(n) { return n !== 1 ? 'days' : 'day'; },
-    function(n) { return n !== 1 ? 'hours' : 'hour'; },
-    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
-    function(n) { return n !== 1 ? 'seconds' : 'second'; }
-];
-
-data.intervalFormats = {
-    'ago': '% ago',
-    'in': 'in %'
-};
-
-data.ordinals = function(number) {
-  switch (number % 10) {
-    case 1: return (number % 100 !== 11) ? 'st' : 'th';
-    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
-    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
-    default: return 'th';
-  }
-};
-
-function pad2(i) {
-  return i < 10 ? '0' + i : i;
-};
-
-function pad2sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '0' + i : i);
-};
-
-function pad3(i) {
-  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
-};
-
-function pad4sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
-}
-
-Date.prototype.interval = function(other) {
-    var self = this, inverse = self > other;
-    if (inverse) {
-        self = other;
-        other = this;
-    }
-
-    var parts = [
-        other.getUTCFullYear() - self.getUTCFullYear(),
-        other.getUTCMonth() - self.getUTCMonth(),
-        0, // weeks
-        other.getUTCDate() - self.getUTCDate(),
-        other.getUTCHours() - self.getUTCHours(),
-        other.getUTCMinutes() - self.getUTCMinutes(),
-        other.getUTCSeconds() - self.getUTCSeconds()
-    ];
-    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
-    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
-    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
-    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
-    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
-    parts[2] = (parts[3] / 7) | 0;
-    parts[3] -= parts[2] * 7;
-
-    var fragments = [];
-    for (var i = 0; i < parts.length; i++) {
-        if (parts[i]) {
-            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
-        }
-    }
-    return fragments;
-};
-
-Date.prototype.format = function(format, tz) {
-  var time = this.getTime();
-
-  if (tz === undefined) {
-    tz = this.getTimezone();
-    tzName = this.getTimezoneName();
-  }
-  else {
-    var tzData = parseTimezone(tz);
-    tz = tzData[0];
-    var tzName = tzData[1];
-  }
-
-  // Use correct timezone.
-  this.setTime(time - tz * 60000);
-
-  var result = '';
-  for (var i = 0; i < format.length; i++) {
-    switch (format.charAt(i)) {
-      // Day
-      case 'd': result += pad2(this.getUTCDate()); break;
-      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
-      case 'j': result += this.getUTCDate(); break;
-      case 'l': result += data.weekdays[this.getUTCDay()]; break;
-      case 'N': result += this.getUTCDay() || 7; break;
-      case 'S': result += data.ordinals(this.getUTCDate()); break;
-      case 'w': result += this.getUTCDay(); break;
-      case 'z': result += this.getUTCDayOfYear(); break;
-
-      // Week
-      case 'W': result += pad2(this.getUTCISOWeek()); break;
-
-      // Month
-      case 'F': result += data.months[this.getUTCMonth()]; break;
-      case 'm': result += pad2(this.getUTCMonth() + 1); break;
-      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
-      case 'n': result += this.getUTCMonth() + 1; break;
-      case 't': result += this.getUTCDaysOfMonth(); break;
-
-      // Year
-      case 'L': result += this.isLeapYear() ? 1 : 0; break;
-      case 'o': result += this.getUTCISOFullYear(); break;
-      case 'Y': result += this.getUTCFullYear(); break;
-      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
-
-      // Time
-      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
-      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
-      case 'g': result += this.getUTCHours() % 12 || 12; break;
-      case 'G': result += this.getUTCHours(); break;
-      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
-      case 'H': result += pad2(this.getUTCHours()); break;
-      case 'i': result += pad2(this.getUTCMinutes()); break;
-      case 's': result += pad2(this.getUTCSeconds()); break;
-      case 'u': result += pad3(this.getUTCMilliseconds()); break;
-
-      // Timezone
-      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
-      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
-      case 'T': result += tzName; break;
-      case 'Z': result += -tz * 60; break;
-
-      // Full Date/Time
-      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
-      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
-      case 'U': result += Math.floor(this.getTime() / 1000); break;
-
-      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
-
-      default: result += format.charAt(i); break;
-    }
-  }
-
-  this.setTime(time);
-
-  return result;
-};
-
-function parseTimezone(tz) {
-  if (typeof tz === 'number') {
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-  var number = parseInt(tz, 10);
-  if (isNaN(number)) {
-    return [data.tzToOffset[tz], tz];
-  }
-  else {
-    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-}
-
-Date.prototype.isLeapYear = function() {
-  var y = this.getUTCFullYear();
-  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
-};
-
-Date.prototype.getUTCISOWeek = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
-};
-
-Date.prototype.getUTCISOFullYear = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return d.getUTCFullYear();
-};
-
-Date.prototype.getUTCDaysOfMonth = function() {
-  var d = new Date(this);
-  d.setUTCDate(1);
-  d.setUTCMonth(d.getUTCMonth() + 1);
-  d.setUTCDate(0);
-  return d.getUTCDate();
-};
-
-Date.prototype.getUTCDayOfYear = function() {
-  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
-};
-
-Date.prototype.getTimezone = function() {
-  if (!('_tz' in this)) {
-    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
-    if (matches && matches[1]) {
-        this.setTimezone(matches[1]);
-    } else {
-        this.setTimezone(new Date().getTimezoneOffset());
-    }
-  }
-  return this._tz;
-};
-
-Date.prototype.getTimezoneName = function() {
-  this.getTimezone(); // Make sure the tz data is populated.
-  return this._tzName;
-};
-
-Date.prototype.setTimezone = function(val) {
-  var tzData = parseTimezone(val);
-  this._tz = tzData[0];
-  this._tzName = tzData[1];
-};
-
-})();
-
-},{}],25:[function(require,module,exports){
-'use strict';
-
-
-var loader = require('./js-yaml/loader');
-var dumper = require('./js-yaml/dumper');
-
-
-function deprecated(name) {
-  return function () {
-    throw new Error('Function ' + name + ' is deprecated and cannot be used.');
-  };
-}
-
-
-module.exports.Type           = require('./js-yaml/type');
-module.exports.Schema         = require('./js-yaml/schema');
-module.exports.MINIMAL_SCHEMA = require('./js-yaml/schema/minimal');
-module.exports.SAFE_SCHEMA    = require('./js-yaml/schema/safe');
-module.exports.DEFAULT_SCHEMA = require('./js-yaml/schema/default');
-module.exports.load           = loader.load;
-module.exports.loadAll        = loader.loadAll;
-module.exports.safeLoad       = loader.safeLoad;
-module.exports.safeLoadAll    = loader.safeLoadAll;
-module.exports.dump           = dumper.dump;
-module.exports.safeDump       = dumper.safeDump;
-module.exports.YAMLException  = require('./js-yaml/exception');
-module.exports.scan           = deprecated('scan');
-module.exports.parse          = deprecated('parse');
-module.exports.compose        = deprecated('compose');
-module.exports.addConstructor = deprecated('addConstructor');
-
-
-require('./js-yaml/require');
-
-},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/schema/minimal":31,"./js-yaml/schema/safe":32,"./js-yaml/schema/default":33,"./js-yaml/exception":34,"./js-yaml/require":35}],6:[function(require,module,exports){
+},{"./lib/chrono":26}],9:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -24651,7 +24210,448 @@ require('./js-yaml/require');
 }).call(this);
 
 })()
-},{"underscore":5}],34:[function(require,module,exports){
+},{"underscore":5}],26:[function(require,module,exports){
+(function(){
+
+// CommonJS exports.
+var data = (typeof exports !== 'undefined') ? exports : {};
+
+data.tzToOffset = {
+  'ACDT': -630,
+  'ACST': -570,
+  'ACT': -480,
+  'ADT': +180,
+  'AEDT': -660,
+  'AEST': -600,
+  'AFT': -270,
+  'AKDT': +480,
+  'AKST': +540,
+  'AMST': -300,
+  'AMT': -240,
+  'ART': +180,
+  'AST': -240, // Arab Standard Time
+  'AWDT': -540,
+  'AWST': -480,
+  'AZOST': +60,
+  'AZT': -240,
+  'BDT': -480,
+  'BIOT': -360,
+  'BIT': +720,
+  'BOT': +240,
+  'BRT': +180,
+  'BST': -60, // British Summer Time
+  'BTT': -360,
+  'CAT': -120,
+  'CCT': -390,
+  'CDT': +300,
+  'CEDT': -120,
+  'CEST': -120,
+  'CET': -60,
+  'CHAST': -765,
+  'ChST': -600,
+  'CIST': +480,
+  'CKT': +600,
+  'CLST': +180,
+  'CLT': +240,
+  'COST': +240,
+  'COT': +300,
+  'CST': -480,
+  'CST': +360,
+  'CVT': +60,
+  'CXT': -420,
+  'DFT': -60,
+  'EAST': +360,
+  'EAT': -180,
+  'ECT': +240,
+  'ECT': +300,
+  'EDT': +240,
+  'EEDT': -180,
+  'EEST': -180,
+  'EET': -120,
+  'EST': +300,
+  'FJT': -720,
+  'FKST': +240,
+  'GALT': +360,
+  'GET': -240,
+  'GFT': +180,
+  'GILT': -720,
+  'GIT': +540,
+  'GMT': 0,
+  'GST': +120,
+  'GYT': +240,
+  'HADT': +540,
+  'HAST': +600,
+  'HKT': -480,
+  'HMT': -300,
+  'HST': +600,
+  'IRKT': -480,
+  'IRST': -210,
+  'IST': -120,
+  'IST': -330,
+  'IST': -60,
+  'JST': -540,
+  'KRAT': -420,
+  'KST': -540,
+  'LHST': -630,
+  'LINT': -840,
+  'MAGT': -660,
+  'MDT': +360,
+  'MIT': +570,
+  'MSD': -240,
+  'MSK': -180,
+  'MST': -390,
+  'MST': -480,
+  'MST': +420,
+  'MUT': -240,
+  'NDT': +150,
+  'NFT': -690,
+  'NPT': -345,
+  'NST': +210,
+  'NT': +210,
+  'NZST': -720,
+  'NZDT': -780,
+  'OMST': -360,
+  'PDT': +420,
+  'PETT': -720,
+  'PHOT': -780,
+  'PKT': -300,
+  'PST': -480,
+  'PST': +480,
+  'RET': -240,
+  'SAMT': -240,
+  'SAST': -120,
+  'SBT': -660,
+  'SCT': -240,
+  'SLT': -330,
+  'SST': -480,
+  'SST': +660,
+  'TAHT': +600,
+  'THA': -420,
+  'UTC': 0,
+  'UYST': +120,
+  'UYT': +180,
+  'VET': +270,
+  'VLAT': -600,
+  'WAT': -60,
+  'WEDT': -60,
+  'WEST': -60,
+  'YAKT': -540,
+  'YEKT': -300
+};
+
+// While indices are strings here, numbers work fine too when retrieving.
+data.offsetToTz = {
+  '720':  ['BIT'],
+  '660':  ['SST'],
+  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
+  '570':  ['MIT'],
+  '540':  ['AKST', 'GIT', 'HADT'],
+  '480':  ['PST', 'AKDT', 'CIST'],
+  '420':  ['MST', 'PDT'],
+  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
+  '300':  ['EST', 'CDT', 'COT', 'ECT'],
+  '270':  ['VET'],
+  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
+  '210':  ['NT', 'NST'],
+  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
+  '150':  ['NDT'],
+  '120':  ['GST', 'UYST'],
+  '60':   ['AZOST', 'CVT'],
+  '0':    ['UTC', 'GMT'],
+  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
+  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
+  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
+  '-210': ['IRST'],
+  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
+  '-270': ['AFT'],
+  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
+  '-330': ['IST', 'SLT'],
+  '-345': ['NPT'],
+  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
+  '-390': ['CCT', 'MST'],
+  '-420': ['CXT', 'KRAT', 'THA'],
+  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
+  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
+  '-570': ['ACST'],
+  '-600': ['AEST', 'ChST', 'VLAT'],
+  '-630': ['ACDT', 'LHST'],
+  '-660': ['AEDT', 'MAGT', 'SBT'],
+  '-690': ['NFT'],
+  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
+  '-765': ['CHAST'],
+  '-780': ['PHOT', 'NZDT'],
+  '-840': ['LINT']
+};
+
+data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
+
+data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
+
+data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+
+data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+
+data.intervals = [
+    function(n) { return n !== 1 ? 'years' : 'year'; },
+    function(n) { return n !== 1 ? 'months' : 'month'; },
+    function(n) { return n !== 1 ? 'weeks' : 'week'; },
+    function(n) { return n !== 1 ? 'days' : 'day'; },
+    function(n) { return n !== 1 ? 'hours' : 'hour'; },
+    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
+    function(n) { return n !== 1 ? 'seconds' : 'second'; }
+];
+
+data.intervalFormats = {
+    'ago': '% ago',
+    'in': 'in %'
+};
+
+data.ordinals = function(number) {
+  switch (number % 10) {
+    case 1: return (number % 100 !== 11) ? 'st' : 'th';
+    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
+    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
+    default: return 'th';
+  }
+};
+
+function pad2(i) {
+  return i < 10 ? '0' + i : i;
+};
+
+function pad2sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '0' + i : i);
+};
+
+function pad3(i) {
+  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
+};
+
+function pad4sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
+}
+
+Date.prototype.interval = function(other) {
+    var self = this, inverse = self > other;
+    if (inverse) {
+        self = other;
+        other = this;
+    }
+
+    var parts = [
+        other.getUTCFullYear() - self.getUTCFullYear(),
+        other.getUTCMonth() - self.getUTCMonth(),
+        0, // weeks
+        other.getUTCDate() - self.getUTCDate(),
+        other.getUTCHours() - self.getUTCHours(),
+        other.getUTCMinutes() - self.getUTCMinutes(),
+        other.getUTCSeconds() - self.getUTCSeconds()
+    ];
+    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
+    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
+    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
+    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
+    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
+    parts[2] = (parts[3] / 7) | 0;
+    parts[3] -= parts[2] * 7;
+
+    var fragments = [];
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i]) {
+            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
+        }
+    }
+    return fragments;
+};
+
+Date.prototype.format = function(format, tz) {
+  var time = this.getTime();
+
+  if (tz === undefined) {
+    tz = this.getTimezone();
+    tzName = this.getTimezoneName();
+  }
+  else {
+    var tzData = parseTimezone(tz);
+    tz = tzData[0];
+    var tzName = tzData[1];
+  }
+
+  // Use correct timezone.
+  this.setTime(time - tz * 60000);
+
+  var result = '';
+  for (var i = 0; i < format.length; i++) {
+    switch (format.charAt(i)) {
+      // Day
+      case 'd': result += pad2(this.getUTCDate()); break;
+      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
+      case 'j': result += this.getUTCDate(); break;
+      case 'l': result += data.weekdays[this.getUTCDay()]; break;
+      case 'N': result += this.getUTCDay() || 7; break;
+      case 'S': result += data.ordinals(this.getUTCDate()); break;
+      case 'w': result += this.getUTCDay(); break;
+      case 'z': result += this.getUTCDayOfYear(); break;
+
+      // Week
+      case 'W': result += pad2(this.getUTCISOWeek()); break;
+
+      // Month
+      case 'F': result += data.months[this.getUTCMonth()]; break;
+      case 'm': result += pad2(this.getUTCMonth() + 1); break;
+      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
+      case 'n': result += this.getUTCMonth() + 1; break;
+      case 't': result += this.getUTCDaysOfMonth(); break;
+
+      // Year
+      case 'L': result += this.isLeapYear() ? 1 : 0; break;
+      case 'o': result += this.getUTCISOFullYear(); break;
+      case 'Y': result += this.getUTCFullYear(); break;
+      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
+
+      // Time
+      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
+      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
+      case 'g': result += this.getUTCHours() % 12 || 12; break;
+      case 'G': result += this.getUTCHours(); break;
+      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
+      case 'H': result += pad2(this.getUTCHours()); break;
+      case 'i': result += pad2(this.getUTCMinutes()); break;
+      case 's': result += pad2(this.getUTCSeconds()); break;
+      case 'u': result += pad3(this.getUTCMilliseconds()); break;
+
+      // Timezone
+      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
+      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
+      case 'T': result += tzName; break;
+      case 'Z': result += -tz * 60; break;
+
+      // Full Date/Time
+      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
+      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
+      case 'U': result += Math.floor(this.getTime() / 1000); break;
+
+      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
+
+      default: result += format.charAt(i); break;
+    }
+  }
+
+  this.setTime(time);
+
+  return result;
+};
+
+function parseTimezone(tz) {
+  if (typeof tz === 'number') {
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+  var number = parseInt(tz, 10);
+  if (isNaN(number)) {
+    return [data.tzToOffset[tz], tz];
+  }
+  else {
+    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+}
+
+Date.prototype.isLeapYear = function() {
+  var y = this.getUTCFullYear();
+  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
+};
+
+Date.prototype.getUTCISOWeek = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
+};
+
+Date.prototype.getUTCISOFullYear = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return d.getUTCFullYear();
+};
+
+Date.prototype.getUTCDaysOfMonth = function() {
+  var d = new Date(this);
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() + 1);
+  d.setUTCDate(0);
+  return d.getUTCDate();
+};
+
+Date.prototype.getUTCDayOfYear = function() {
+  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
+};
+
+Date.prototype.getTimezone = function() {
+  if (!('_tz' in this)) {
+    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
+    if (matches && matches[1]) {
+        this.setTimezone(matches[1]);
+    } else {
+        this.setTimezone(new Date().getTimezoneOffset());
+    }
+  }
+  return this._tz;
+};
+
+Date.prototype.getTimezoneName = function() {
+  this.getTimezone(); // Make sure the tz data is populated.
+  return this._tzName;
+};
+
+Date.prototype.setTimezone = function(val) {
+  var tzData = parseTimezone(val);
+  this._tz = tzData[0];
+  this._tzName = tzData[1];
+};
+
+})();
+
+},{}],25:[function(require,module,exports){
+'use strict';
+
+
+var loader = require('./js-yaml/loader');
+var dumper = require('./js-yaml/dumper');
+
+
+function deprecated(name) {
+  return function () {
+    throw new Error('Function ' + name + ' is deprecated and cannot be used.');
+  };
+}
+
+
+module.exports.Type           = require('./js-yaml/type');
+module.exports.Schema         = require('./js-yaml/schema');
+module.exports.MINIMAL_SCHEMA = require('./js-yaml/schema/minimal');
+module.exports.SAFE_SCHEMA    = require('./js-yaml/schema/safe');
+module.exports.DEFAULT_SCHEMA = require('./js-yaml/schema/default');
+module.exports.load           = loader.load;
+module.exports.loadAll        = loader.loadAll;
+module.exports.safeLoad       = loader.safeLoad;
+module.exports.safeLoadAll    = loader.safeLoadAll;
+module.exports.dump           = dumper.dump;
+module.exports.safeDump       = dumper.safeDump;
+module.exports.YAMLException  = require('./js-yaml/exception');
+module.exports.scan           = deprecated('scan');
+module.exports.parse          = deprecated('parse');
+module.exports.compose        = deprecated('compose');
+module.exports.addConstructor = deprecated('addConstructor');
+
+
+require('./js-yaml/require');
+
+},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/exception":31,"./js-yaml/schema/minimal":32,"./js-yaml/schema/safe":33,"./js-yaml/schema/default":34,"./js-yaml/require":35}],31:[function(require,module,exports){
 'use strict';
 
 
@@ -24678,10 +24678,446 @@ YAMLException.prototype.toString = function toString(compact) {
 
 module.exports = YAMLException;
 
-},{}],36:[function(require,module,exports){
-// nothing to see here... no file methods for the browser
+},{}],28:[function(require,module,exports){
+'use strict';
 
-},{}],27:[function(require,module,exports){
+
+var common         = require('./common');
+var NIL            = common.NIL;
+var YAMLException  = require('./exception');
+var DEFAULT_SCHEMA = require('./schema/default');
+var SAFE_SCHEMA    = require('./schema/safe');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+var CHAR_TAB                  = 0x09; /* Tab */
+var CHAR_LINE_FEED            = 0x0A; /* LF */
+var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
+var CHAR_SPACE                = 0x20; /* Space */
+var CHAR_EXCLAMATION          = 0x21; /* ! */
+var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
+var CHAR_SHARP                = 0x23; /* # */
+var CHAR_PERCENT              = 0x25; /* % */
+var CHAR_AMPERSAND            = 0x26; /* & */
+var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
+var CHAR_ASTERISK             = 0x2A; /* * */
+var CHAR_COMMA                = 0x2C; /* , */
+var CHAR_MINUS                = 0x2D; /* - */
+var CHAR_COLON                = 0x3A; /* : */
+var CHAR_GREATER_THAN         = 0x3E; /* > */
+var CHAR_QUESTION             = 0x3F; /* ? */
+var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
+var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
+var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
+var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
+var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
+var CHAR_VERTICAL_LINE        = 0x7C; /* | */
+var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
+
+
+var ESCAPE_SEQUENCES = {};
+
+ESCAPE_SEQUENCES[0x00]   = '\\0';
+ESCAPE_SEQUENCES[0x07]   = '\\a';
+ESCAPE_SEQUENCES[0x08]   = '\\b';
+ESCAPE_SEQUENCES[0x09]   = '\\t';
+ESCAPE_SEQUENCES[0x0A]   = '\\n';
+ESCAPE_SEQUENCES[0x0B]   = '\\v';
+ESCAPE_SEQUENCES[0x0C]   = '\\f';
+ESCAPE_SEQUENCES[0x0D]   = '\\r';
+ESCAPE_SEQUENCES[0x1B]   = '\\e';
+ESCAPE_SEQUENCES[0x22]   = '\\"';
+ESCAPE_SEQUENCES[0x5C]   = '\\\\';
+ESCAPE_SEQUENCES[0x85]   = '\\N';
+ESCAPE_SEQUENCES[0xA0]   = '\\_';
+ESCAPE_SEQUENCES[0x2028] = '\\L';
+ESCAPE_SEQUENCES[0x2029] = '\\P';
+
+
+function kindOf(object) {
+  var kind = typeof object;
+
+  if (null === object) {
+    return 'null';
+  } else if ('number' === kind) {
+    return 0 === object % 1 ? 'integer' : 'float';
+  } else if ('object' === kind && Array.isArray(object)) {
+    return 'array';
+  } else {
+    return kind;
+  }
+}
+
+
+function compileStyleMap(schema, map) {
+  var result, keys, index, length, tag, style, type;
+
+  if (null === map) {
+    return {};
+  }
+
+  result = {};
+  keys = Object.keys(map);
+
+  for (index = 0, length = keys.length; index < length; index += 1) {
+    tag = keys[index];
+    style = String(map[tag]);
+
+    if ('!!' === tag.slice(0, 2)) {
+      tag = 'tag:yaml.org,2002:' + tag.slice(2);
+    }
+
+    type = schema.compiledTypeMap[tag];
+
+    if (type && type.dumper) {
+      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
+        style = type.dumper.styleAliases[style];
+      }
+    }
+
+    result[tag] = style;
+  }
+
+  return result;
+}
+
+
+function encodeHex(character) {
+  var string, handle, length;
+
+  string = character.toString(16).toUpperCase();
+
+  if (character <= 0xFF) {
+    handle = 'x';
+    length = 2;
+  } else if (character <= 0xFFFF) {
+    handle = 'u';
+    length = 4;
+  } else if (character <= 0xFFFFFFFF) {
+    handle = 'U';
+    length = 8;
+  } else {
+    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
+  }
+
+  return '\\' + handle + common.repeat('0', length - string.length) + string;
+}
+
+
+function dump(input, options) {
+  options = options || {};
+
+  var schema    = options['schema'] || DEFAULT_SCHEMA,
+      indent    = Math.max(1, (options['indent'] || 2)),
+      flowLevel = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
+      styleMap  = compileStyleMap(schema, options['styles'] || null),
+
+      implicitTypes = schema.compiledImplicit,
+      explicitTypes = schema.compiledExplicit,
+
+      kind,
+      tag,
+      result;
+
+  function generateNextLine(level) {
+    return '\n' + common.repeat(' ', indent * level);
+  }
+
+  function testImplicitResolving(object) {
+    var index, length, type;
+
+    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
+      type = implicitTypes[index];
+
+      if (null !== type.loader &&
+          NIL !== type.loader.resolver(object, false)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeScalar(object) {
+    var isQuoted, checkpoint, position, length, character;
+
+    result = '';
+    isQuoted = false;
+    checkpoint = 0;
+
+    if (0          === object.length ||
+        CHAR_SPACE === object.charCodeAt(0) ||
+        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
+      isQuoted = true;
+    }
+
+    for (position = 0, length = object.length; position < length; position += 1) {
+      character = object.charCodeAt(position);
+
+      if (!isQuoted) {
+        if (CHAR_TAB                  === character ||
+            CHAR_LINE_FEED            === character ||
+            CHAR_CARRIAGE_RETURN      === character ||
+            CHAR_COMMA                === character ||
+            CHAR_LEFT_SQUARE_BRACKET  === character ||
+            CHAR_RIGHT_SQUARE_BRACKET === character ||
+            CHAR_LEFT_CURLY_BRACKET   === character ||
+            CHAR_RIGHT_CURLY_BRACKET  === character ||
+            CHAR_SHARP                === character ||
+            CHAR_AMPERSAND            === character ||
+            CHAR_ASTERISK             === character ||
+            CHAR_EXCLAMATION          === character ||
+            CHAR_VERTICAL_LINE        === character ||
+            CHAR_GREATER_THAN         === character ||
+            CHAR_SINGLE_QUOTE         === character ||
+            CHAR_DOUBLE_QUOTE         === character ||
+            CHAR_PERCENT              === character ||
+            CHAR_COMMERCIAL_AT        === character ||
+            CHAR_GRAVE_ACCENT         === character ||
+            CHAR_QUESTION             === character ||
+            CHAR_COLON                === character ||
+            CHAR_MINUS                === character) {
+          isQuoted = true;
+        }
+      }
+
+      if (ESCAPE_SEQUENCES[character] ||
+          !((0x00020 <= character && character <= 0x00007E) ||
+            (0x00085 === character)                         ||
+            (0x000A0 <= character && character <= 0x00D7FF) ||
+            (0x0E000 <= character && character <= 0x00FFFD) ||
+            (0x10000 <= character && character <= 0x10FFFF))) {
+        result += object.slice(checkpoint, position);
+        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
+        checkpoint = position + 1;
+        isQuoted = true;
+      }
+    }
+
+    if (checkpoint < position) {
+      result += object.slice(checkpoint, position);
+    }
+
+    if (!isQuoted && testImplicitResolving(result)) {
+      isQuoted = true;
+    }
+
+    if (isQuoted) {
+      result = '"' + result + '"';
+    }
+  }
+
+  function writeFlowSequence(level, object) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      if (0 !== index) {
+        _result += ', ';
+      }
+
+      writeNode(level, object[index], false, false);
+      _result += result;
+    }
+
+    tag = _tag;
+    result = '[' + _result + ']';
+  }
+
+  function writeBlockSequence(level, object, compact) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      if (!compact || 0 !== index) {
+        _result += generateNextLine(level);
+      }
+
+      writeNode(level + 1, object[index], true, true);
+      _result += '- ' + result;
+    }
+
+    tag = _tag;
+    result = _result;
+  }
+
+  function writeFlowMapping(level, object) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      if (0 !== index) {
+        _result += ', ';
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      writeNode(level, objectKey, false, false);
+
+      if (result.length > 1024) {
+        _result += '? ';
+      }
+
+      _result += result + ': ';
+      writeNode(level, objectValue, false, false);
+      _result += result;
+    }
+
+    tag = _tag;
+    result = '{' + _result + '}';
+  }
+
+  function writeBlockMapping(level, object, compact) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        explicitPair;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      if (!compact || 0 !== index) {
+        _result += generateNextLine(level);
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      writeNode(level + 1, objectKey, true, true);
+      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
+
+      if (explicitPair) {
+        _result += '? ';
+      }
+
+      _result += result;
+
+      if (explicitPair) {
+        _result += generateNextLine(level);
+      }
+
+      writeNode(level + 1, objectValue, true, explicitPair);
+      _result += ': ' + result;
+    }
+
+    tag = _tag;
+    result = _result;
+  }
+
+  function detectType(object, explicit) {
+    var _result, typeList, index, length, type, style;
+
+    typeList = explicit ? explicitTypes : implicitTypes;
+    kind = kindOf(object);
+
+    for (index = 0, length = typeList.length; index < length; index += 1) {
+      type = typeList[index];
+
+      if ((null !== type.dumper) &&
+          (null === type.dumper.kind       || kind === type.dumper.kind) &&
+          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
+          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
+        tag = explicit ? type.tag : '?';
+
+        if (null !== type.dumper.representer) {
+          style = styleMap[type.tag] || type.dumper.defaultStyle;
+
+          if ('function' === typeof type.dumper.representer) {
+            _result = type.dumper.representer(object, style);
+          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
+            _result = type.dumper.representer[style](object, style);
+          } else {
+            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
+          }
+
+          if (NIL !== _result) {
+            kind = kindOf(_result);
+            result = _result;
+          } else {
+            if (explicit) {
+              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
+            } else {
+              continue;
+            }
+          }
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeNode(level, object, block, compact) {
+    tag = null;
+    result = object;
+
+    if (!detectType(object, false)) {
+      detectType(object, true);
+    }
+
+    if (block) {
+      block = (0 > flowLevel || flowLevel > level);
+    }
+
+    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
+      compact = false;
+    }
+
+    if ('object' === kind) {
+      if (block && (0 !== Object.keys(result).length)) {
+        writeBlockMapping(level, result, compact);
+      } else {
+        writeFlowMapping(level, result);
+      }
+    } else if ('array' === kind) {
+      if (block && (0 !== result.length)) {
+        writeBlockSequence(level, result, compact);
+      } else {
+        writeFlowSequence(level, result);
+      }
+    } else if ('string' === kind) {
+      if ('?' !== tag) {
+        writeScalar(result);
+      }
+    } else {
+      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
+    }
+
+    if (null !== tag && '?' !== tag) {
+      result = '!<' + tag + '> ' + result;
+    }
+  }
+
+  writeNode(0, input, true, true);
+  return result + '\n';
+}
+
+
+function safeDump(input, options) {
+  return dump(input, common.extend({ schema: SAFE_SCHEMA }, options));
+}
+
+
+module.exports.dump     = dump;
+module.exports.safeDump = safeDump;
+
+},{"./exception":31,"./common":36,"./schema/default":34,"./schema/safe":33}],27:[function(require,module,exports){
 'use strict';
 
 
@@ -26232,530 +26668,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":37,"./exception":34,"./mark":38,"./schema/default":33,"./schema/safe":32}],28:[function(require,module,exports){
-'use strict';
-
-
-var common         = require('./common');
-var NIL            = common.NIL;
-var YAMLException  = require('./exception');
-var DEFAULT_SCHEMA = require('./schema/default');
-var SAFE_SCHEMA    = require('./schema/safe');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-var CHAR_TAB                  = 0x09; /* Tab */
-var CHAR_LINE_FEED            = 0x0A; /* LF */
-var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
-var CHAR_SPACE                = 0x20; /* Space */
-var CHAR_EXCLAMATION          = 0x21; /* ! */
-var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
-var CHAR_SHARP                = 0x23; /* # */
-var CHAR_PERCENT              = 0x25; /* % */
-var CHAR_AMPERSAND            = 0x26; /* & */
-var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
-var CHAR_ASTERISK             = 0x2A; /* * */
-var CHAR_COMMA                = 0x2C; /* , */
-var CHAR_MINUS                = 0x2D; /* - */
-var CHAR_COLON                = 0x3A; /* : */
-var CHAR_GREATER_THAN         = 0x3E; /* > */
-var CHAR_QUESTION             = 0x3F; /* ? */
-var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
-var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
-var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
-var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
-var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
-var CHAR_VERTICAL_LINE        = 0x7C; /* | */
-var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
-
-
-var ESCAPE_SEQUENCES = {};
-
-ESCAPE_SEQUENCES[0x00]   = '\\0';
-ESCAPE_SEQUENCES[0x07]   = '\\a';
-ESCAPE_SEQUENCES[0x08]   = '\\b';
-ESCAPE_SEQUENCES[0x09]   = '\\t';
-ESCAPE_SEQUENCES[0x0A]   = '\\n';
-ESCAPE_SEQUENCES[0x0B]   = '\\v';
-ESCAPE_SEQUENCES[0x0C]   = '\\f';
-ESCAPE_SEQUENCES[0x0D]   = '\\r';
-ESCAPE_SEQUENCES[0x1B]   = '\\e';
-ESCAPE_SEQUENCES[0x22]   = '\\"';
-ESCAPE_SEQUENCES[0x5C]   = '\\\\';
-ESCAPE_SEQUENCES[0x85]   = '\\N';
-ESCAPE_SEQUENCES[0xA0]   = '\\_';
-ESCAPE_SEQUENCES[0x2028] = '\\L';
-ESCAPE_SEQUENCES[0x2029] = '\\P';
-
-
-function kindOf(object) {
-  var kind = typeof object;
-
-  if (null === object) {
-    return 'null';
-  } else if ('number' === kind) {
-    return 0 === object % 1 ? 'integer' : 'float';
-  } else if ('object' === kind && Array.isArray(object)) {
-    return 'array';
-  } else {
-    return kind;
-  }
-}
-
-
-function compileStyleMap(schema, map) {
-  var result, keys, index, length, tag, style, type;
-
-  if (null === map) {
-    return {};
-  }
-
-  result = {};
-  keys = Object.keys(map);
-
-  for (index = 0, length = keys.length; index < length; index += 1) {
-    tag = keys[index];
-    style = String(map[tag]);
-
-    if ('!!' === tag.slice(0, 2)) {
-      tag = 'tag:yaml.org,2002:' + tag.slice(2);
-    }
-
-    type = schema.compiledTypeMap[tag];
-
-    if (type && type.dumper) {
-      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
-        style = type.dumper.styleAliases[style];
-      }
-    }
-
-    result[tag] = style;
-  }
-
-  return result;
-}
-
-
-function encodeHex(character) {
-  var string, handle, length;
-
-  string = character.toString(16).toUpperCase();
-
-  if (character <= 0xFF) {
-    handle = 'x';
-    length = 2;
-  } else if (character <= 0xFFFF) {
-    handle = 'u';
-    length = 4;
-  } else if (character <= 0xFFFFFFFF) {
-    handle = 'U';
-    length = 8;
-  } else {
-    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
-  }
-
-  return '\\' + handle + common.repeat('0', length - string.length) + string;
-}
-
-
-function dump(input, options) {
-  options = options || {};
-
-  var schema    = options['schema'] || DEFAULT_SCHEMA,
-      indent    = Math.max(1, (options['indent'] || 2)),
-      flowLevel = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
-      styleMap  = compileStyleMap(schema, options['styles'] || null),
-
-      implicitTypes = schema.compiledImplicit,
-      explicitTypes = schema.compiledExplicit,
-
-      kind,
-      tag,
-      result;
-
-  function generateNextLine(level) {
-    return '\n' + common.repeat(' ', indent * level);
-  }
-
-  function testImplicitResolving(object) {
-    var index, length, type;
-
-    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
-      type = implicitTypes[index];
-
-      if (null !== type.loader &&
-          NIL !== type.loader.resolver(object, false)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeScalar(object) {
-    var isQuoted, checkpoint, position, length, character;
-
-    result = '';
-    isQuoted = false;
-    checkpoint = 0;
-
-    if (0          === object.length ||
-        CHAR_SPACE === object.charCodeAt(0) ||
-        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
-      isQuoted = true;
-    }
-
-    for (position = 0, length = object.length; position < length; position += 1) {
-      character = object.charCodeAt(position);
-
-      if (!isQuoted) {
-        if (CHAR_TAB                  === character ||
-            CHAR_LINE_FEED            === character ||
-            CHAR_CARRIAGE_RETURN      === character ||
-            CHAR_COMMA                === character ||
-            CHAR_LEFT_SQUARE_BRACKET  === character ||
-            CHAR_RIGHT_SQUARE_BRACKET === character ||
-            CHAR_LEFT_CURLY_BRACKET   === character ||
-            CHAR_RIGHT_CURLY_BRACKET  === character ||
-            CHAR_SHARP                === character ||
-            CHAR_AMPERSAND            === character ||
-            CHAR_ASTERISK             === character ||
-            CHAR_EXCLAMATION          === character ||
-            CHAR_VERTICAL_LINE        === character ||
-            CHAR_GREATER_THAN         === character ||
-            CHAR_SINGLE_QUOTE         === character ||
-            CHAR_DOUBLE_QUOTE         === character ||
-            CHAR_PERCENT              === character ||
-            CHAR_COMMERCIAL_AT        === character ||
-            CHAR_GRAVE_ACCENT         === character ||
-            CHAR_QUESTION             === character ||
-            CHAR_COLON                === character ||
-            CHAR_MINUS                === character) {
-          isQuoted = true;
-        }
-      }
-
-      if (ESCAPE_SEQUENCES[character] ||
-          !((0x00020 <= character && character <= 0x00007E) ||
-            (0x00085 === character)                         ||
-            (0x000A0 <= character && character <= 0x00D7FF) ||
-            (0x0E000 <= character && character <= 0x00FFFD) ||
-            (0x10000 <= character && character <= 0x10FFFF))) {
-        result += object.slice(checkpoint, position);
-        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
-        checkpoint = position + 1;
-        isQuoted = true;
-      }
-    }
-
-    if (checkpoint < position) {
-      result += object.slice(checkpoint, position);
-    }
-
-    if (!isQuoted && testImplicitResolving(result)) {
-      isQuoted = true;
-    }
-
-    if (isQuoted) {
-      result = '"' + result + '"';
-    }
-  }
-
-  function writeFlowSequence(level, object) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      if (0 !== index) {
-        _result += ', ';
-      }
-
-      writeNode(level, object[index], false, false);
-      _result += result;
-    }
-
-    tag = _tag;
-    result = '[' + _result + ']';
-  }
-
-  function writeBlockSequence(level, object, compact) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      if (!compact || 0 !== index) {
-        _result += generateNextLine(level);
-      }
-
-      writeNode(level + 1, object[index], true, true);
-      _result += '- ' + result;
-    }
-
-    tag = _tag;
-    result = _result;
-  }
-
-  function writeFlowMapping(level, object) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      if (0 !== index) {
-        _result += ', ';
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      writeNode(level, objectKey, false, false);
-
-      if (result.length > 1024) {
-        _result += '? ';
-      }
-
-      _result += result + ': ';
-      writeNode(level, objectValue, false, false);
-      _result += result;
-    }
-
-    tag = _tag;
-    result = '{' + _result + '}';
-  }
-
-  function writeBlockMapping(level, object, compact) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        explicitPair;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      if (!compact || 0 !== index) {
-        _result += generateNextLine(level);
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      writeNode(level + 1, objectKey, true, true);
-      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
-
-      if (explicitPair) {
-        _result += '? ';
-      }
-
-      _result += result;
-
-      if (explicitPair) {
-        _result += generateNextLine(level);
-      }
-
-      writeNode(level + 1, objectValue, true, explicitPair);
-      _result += ': ' + result;
-    }
-
-    tag = _tag;
-    result = _result;
-  }
-
-  function detectType(object, explicit) {
-    var _result, typeList, index, length, type, style;
-
-    typeList = explicit ? explicitTypes : implicitTypes;
-    kind = kindOf(object);
-
-    for (index = 0, length = typeList.length; index < length; index += 1) {
-      type = typeList[index];
-
-      if ((null !== type.dumper) &&
-          (null === type.dumper.kind       || kind === type.dumper.kind) &&
-          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
-          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
-        tag = explicit ? type.tag : '?';
-
-        if (null !== type.dumper.representer) {
-          style = styleMap[type.tag] || type.dumper.defaultStyle;
-
-          if ('function' === typeof type.dumper.representer) {
-            _result = type.dumper.representer(object, style);
-          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
-            _result = type.dumper.representer[style](object, style);
-          } else {
-            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
-          }
-
-          if (NIL !== _result) {
-            kind = kindOf(_result);
-            result = _result;
-          } else {
-            if (explicit) {
-              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
-            } else {
-              continue;
-            }
-          }
-        }
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeNode(level, object, block, compact) {
-    tag = null;
-    result = object;
-
-    if (!detectType(object, false)) {
-      detectType(object, true);
-    }
-
-    if (block) {
-      block = (0 > flowLevel || flowLevel > level);
-    }
-
-    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
-      compact = false;
-    }
-
-    if ('object' === kind) {
-      if (block && (0 !== Object.keys(result).length)) {
-        writeBlockMapping(level, result, compact);
-      } else {
-        writeFlowMapping(level, result);
-      }
-    } else if ('array' === kind) {
-      if (block && (0 !== result.length)) {
-        writeBlockSequence(level, result, compact);
-      } else {
-        writeFlowSequence(level, result);
-      }
-    } else if ('string' === kind) {
-      if ('?' !== tag) {
-        writeScalar(result);
-      }
-    } else {
-      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
-    }
-
-    if (null !== tag && '?' !== tag) {
-      result = '!<' + tag + '> ' + result;
-    }
-  }
-
-  writeNode(0, input, true, true);
-  return result + '\n';
-}
-
-
-function safeDump(input, options) {
-  return dump(input, common.extend({ schema: SAFE_SCHEMA }, options));
-}
-
-
-module.exports.dump     = dump;
-module.exports.safeDump = safeDump;
-
-},{"./common":37,"./exception":34,"./schema/default":33,"./schema/safe":32}],29:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":34}],30:[function(require,module,exports){
+},{"./common":36,"./exception":31,"./mark":37,"./schema/safe":33,"./schema/default":34}],30:[function(require,module,exports){
 'use strict';
 
 
@@ -26860,7 +26773,94 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":37,"./exception":34,"./type":29}],35:[function(require,module,exports){
+},{"./common":36,"./exception":31,"./type":29}],29:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":31}],38:[function(require,module,exports){
+// nothing to see here... no file methods for the browser
+
+},{}],35:[function(require,module,exports){
 'use strict';
 
 
@@ -26885,22 +26885,7 @@ if (undefined !== require.extensions) {
 
 module.exports = require;
 
-},{"fs":36,"./loader":27}],31:[function(require,module,exports){
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  explicit: [
-    require('../type/str'),
-    require('../type/seq'),
-    require('../type/map')
-  ]
-});
-
-},{"../schema":30,"../type/str":39,"../type/seq":40,"../type/map":41}],32:[function(require,module,exports){
+},{"fs":38,"./loader":27}],33:[function(require,module,exports){
 'use strict';
 
 
@@ -26927,7 +26912,22 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":30,"./minimal":31,"../type/null":42,"../type/bool":43,"../type/int":44,"../type/float":45,"../type/timestamp":46,"../type/merge":47,"../type/binary":48,"../type/omap":49,"../type/pairs":50,"../type/set":51}],33:[function(require,module,exports){
+},{"../schema":30,"./minimal":32,"../type/bool":39,"../type/int":40,"../type/float":41,"../type/timestamp":42,"../type/null":43,"../type/merge":44,"../type/binary":45,"../type/omap":46,"../type/set":47,"../type/pairs":48}],32:[function(require,module,exports){
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  explicit: [
+    require('../type/str'),
+    require('../type/seq'),
+    require('../type/map')
+  ]
+});
+
+},{"../schema":30,"../type/str":49,"../type/seq":50,"../type/map":51}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -26945,7 +26945,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":30,"./safe":32,"../type/js/undefined":52,"../type/js/regexp":53,"../type/js/function":54}],37:[function(require,module,exports){
+},{"../schema":30,"./safe":33,"../type/js/undefined":52,"../type/js/regexp":53,"../type/js/function":54}],36:[function(require,module,exports){
 'use strict';
 
 
@@ -27007,7 +27007,7 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],38:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 'use strict';
 
 
@@ -27087,7 +27087,842 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":37}],55:[function(require,module,exports){
+},{"./common":36}],39:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
+},{"../common":36,"../type":29}],49:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:str', {
+  loader: {
+    kind: 'string'
+  }
+});
+
+},{"../type":29}],40:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":36,"../type":29}],41:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_FLOAT_PATTERN = new RegExp(
+  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
+  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
+  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
+  '|[-+]?\\.(?:inf|Inf|INF)' +
+  '|\\.(?:nan|NaN|NAN))$');
+
+
+function resolveYamlFloat(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_FLOAT_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '').toLowerCase();
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('.inf' === value) {
+    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+
+  } else if ('.nan' === value) {
+    return NaN;
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseFloat(v, 10));
+    });
+
+    value = 0.0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += d * base;
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseFloat(value, 10);
+  }
+}
+
+
+function representYamlFloat(object, style) {
+  if (isNaN(object)) {
+    switch (style) {
+    case 'lowercase':
+      return '.nan';
+    case 'uppercase':
+      return '.NAN';
+    case 'camelcase':
+      return '.NaN';
+    }
+  } else if (Number.POSITIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '.inf';
+    case 'uppercase':
+      return '.INF';
+    case 'camelcase':
+      return '.Inf';
+    }
+  } else if (Number.NEGATIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '-.inf';
+    case 'uppercase':
+      return '-.INF';
+    case 'camelcase':
+      return '-.Inf';
+    }
+  } else {
+    return object.toString(10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:float', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlFloat
+  },
+  dumper: {
+    kind: 'float',
+    defaultStyle: 'lowercase',
+    representer: representYamlFloat
+  }
+});
+
+},{"../common":36,"../type":29}],50:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:seq', {
+  loader: {
+    kind: 'array'
+  }
+});
+
+},{"../type":29}],45:[function(require,module,exports){
+(function(){// Modified from:
+// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
+
+'use strict';
+
+
+var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
+var common     = require('../common');
+var NIL        = common.NIL;
+var Type       = require('../type');
+
+
+
+var BASE64_PADDING = '=';
+
+var BASE64_BINTABLE = [
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
+  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
+];
+
+var BASE64_CHARTABLE =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+
+
+function resolveYamlBinary(object /*, explicit*/) {
+  var value, code, idx = 0, result = [], leftbits, leftdata;
+
+  leftbits = 0; // number of bits decoded, but yet to be appended
+  leftdata = 0; // bits decoded, but yet to be appended
+
+  // Convert one by one.
+  for (idx = 0; idx < object.length; idx += 1) {
+    code = object.charCodeAt(idx);
+    value = BASE64_BINTABLE[code & 0x7F];
+
+    // Skip LF(NL) || CR
+    if (0x0A !== code && 0x0D !== code) {
+      // Fail on illegal characters
+      if (-1 === value) {
+        return NIL;
+      }
+
+      // Collect data into leftdata, update bitcount
+      leftdata = (leftdata << 6) | value;
+      leftbits += 6;
+
+      // If we have 8 or more bits, append 8 bits to the result
+      if (leftbits >= 8) {
+        leftbits -= 8;
+
+        // Append if not padding.
+        if (BASE64_PADDING !== object.charAt(idx)) {
+          result.push((leftdata >> leftbits) & 0xFF);
+        }
+
+        leftdata &= (1 << leftbits) - 1;
+      }
+    }
+  }
+
+  // If there are any bits left, the base64 string was corrupted
+  if (leftbits) {
+    return NIL;
+  } else {
+    return new NodeBuffer(result);
+  }
+}
+
+
+function representYamlBinary(object /*, style*/) {
+  var result = '', index, length, rest;
+
+  // Convert every three bytes to 4 ASCII characters.
+  for (index = 0, length = object.length - 2; index < length; index += 3) {
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
+    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
+  }
+
+  rest = object.length % 3;
+
+  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
+  if (0 !== rest) {
+    index = object.length - rest;
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+
+    if (2 === rest) {
+      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
+      result += BASE64_PADDING;
+    } else {
+      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
+      result += BASE64_PADDING + BASE64_PADDING;
+    }
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:binary', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBinary
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: NodeBuffer,
+    representer: representYamlBinary
+  }
+});
+
+})()
+},{"buffer":55,"../common":36,"../type":29}],44:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
+},{"../common":36,"../type":29}],46:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+
+function resolveYamlOmap(object /*, explicit*/) {
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) {
+          pairHasKey = true;
+        } else {
+          return NIL;
+        }
+      }
+    }
+
+    if (!pairHasKey) {
+      return NIL;
+    }
+
+    if (-1 === objectKeys.indexOf(pairKey)) {
+      objectKeys.push(pairKey);
+    } else {
+      return NIL;
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":36,"../type":29}],42:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_TIMESTAMP_REGEXP = new RegExp(
+  '^([0-9][0-9][0-9][0-9])'          + // [1] year
+  '-([0-9][0-9]?)'                   + // [2] month
+  '-([0-9][0-9]?)'                   + // [3] day
+  '(?:(?:[Tt]|[ \\t]+)'              + // ...
+  '([0-9][0-9]?)'                    + // [4] hour
+  ':([0-9][0-9])'                    + // [5] minute
+  ':([0-9][0-9])'                    + // [6] second
+  '(?:\\.([0-9]*))?'                 + // [7] fraction
+  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
+  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
+
+
+function resolveYamlTimestamp(object /*, explicit*/) {
+  var match, year, month, day, hour, minute, second, fraction = 0,
+      delta = null, tz_hour, tz_minute, data;
+
+  match = YAML_TIMESTAMP_REGEXP.exec(object);
+
+  if (null === match) {
+    return NIL;
+  }
+
+  // match: [1] year [2] month [3] day
+
+  year = +(match[1]);
+  month = +(match[2]) - 1; // JS month starts with 0
+  day = +(match[3]);
+
+  if (!match[4]) { // no hour
+    return new Date(Date.UTC(year, month, day));
+  }
+
+  // match: [4] hour [5] minute [6] second [7] fraction
+
+  hour = +(match[4]);
+  minute = +(match[5]);
+  second = +(match[6]);
+
+  if (match[7]) {
+    fraction = match[7].slice(0, 3);
+    while (fraction.length < 3) { // milli-seconds
+      fraction += '0';
+    }
+    fraction = +fraction;
+  }
+
+  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
+
+  if (match[9]) {
+    tz_hour = +(match[10]);
+    tz_minute = +(match[11] || 0);
+    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
+    if ('-' === match[9]) {
+      delta = -delta;
+    }
+  }
+
+  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
+
+  if (delta) {
+    data.setTime(data.getTime() - delta);
+  }
+
+  return data;
+}
+
+
+function representYamlTimestamp(object /*, style*/) {
+  return object.toISOString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:timestamp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlTimestamp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: Date,
+    representer: representYamlTimestamp
+  }
+});
+
+},{"../common":36,"../type":29}],48:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
+  }
+});
+
+},{"../common":36,"../type":29}],47:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+function resolveYamlSet(object /*, explicit*/) {
+  var key;
+
+  for (key in object) {
+    if (_hasOwnProperty.call(object, key)) {
+      if (null !== object[key]) {
+        return NIL;
+      }
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:set', {
+  loader: {
+    kind: 'object',
+    resolver: resolveYamlSet
+  }
+});
+
+},{"../common":36,"../type":29}],51:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:map', {
+  loader: {
+    kind: 'object'
+  }
+});
+
+},{"../type":29}],43:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
+    }
+  }
+});
+
+},{"../common":36,"../type":29}],52:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../../type');
+
+
+function resolveJavascriptUndefined(/*object, explicit*/) {
+  var undef;
+
+  return undef;
+}
+
+
+function representJavascriptUndefined(/*object, explicit*/) {
+  return '';
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/undefined', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptUndefined
+  },
+  dumper: {
+    kind: 'undefined',
+    representer: representJavascriptUndefined
+  }
+});
+
+},{"../../type":29}],53:[function(require,module,exports){
+(function(){'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptRegExp(object /*, explicit*/) {
+  var regexp = object,
+      tail   = /\/([gim]*)$/.exec(object),
+      modifiers;
+
+  // `/foo/gim` - tail can be maximum 4 chars
+  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
+    regexp = regexp.slice(1, regexp.length - tail[0].length);
+    modifiers = tail[1];
+  }
+
+  try {
+    return new RegExp(regexp, modifiers);
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptRegExp(object /*, style*/) {
+  var result = '/' + object.source + '/';
+
+  if (object.global) {
+    result += 'g';
+  }
+
+  if (object.multiline) {
+    result += 'm';
+  }
+
+  if (object.ignoreCase) {
+    result += 'i';
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/regexp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptRegExp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: RegExp,
+    representer: representJavascriptRegExp
+  }
+});
+
+})()
+},{"../../common":36,"../../type":29}],54:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptFunction(object /*, explicit*/) {
+  /*jslint evil:true*/
+  var func;
+
+  try {
+    func = new Function('return ' + object);
+    return func();
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptFunction(object /*, style*/) {
+  return object.toString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/function', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptFunction
+  },
+  dumper: {
+    kind: 'function',
+    representer: representJavascriptFunction,
+  }
+});
+
+},{"../../common":36,"../../type":29}],56:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -27404,842 +28239,7 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":56,"buffer":57}],39:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:str', {
-  loader: {
-    kind: 'string'
-  }
-});
-
-},{"../type":29}],40:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:seq', {
-  loader: {
-    kind: 'array'
-  }
-});
-
-},{"../type":29}],41:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:map', {
-  loader: {
-    kind: 'object'
-  }
-});
-
-},{"../type":29}],42:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
-};
-
-
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
-    }
-  }
-});
-
-},{"../common":37,"../type":29}],43:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
-  }
-});
-
-},{"../common":37,"../type":29}],44:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":37,"../type":29}],45:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
-  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
-  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  '|\\.(?:nan|NaN|NAN))$');
-
-
-function resolveYamlFloat(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_FLOAT_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '').toLowerCase();
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('.inf' === value) {
-    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if ('.nan' === value) {
-    return NaN;
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseFloat(v, 10));
-    });
-
-    value = 0.0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += d * base;
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseFloat(value, 10);
-  }
-}
-
-
-function representYamlFloat(object, style) {
-  if (isNaN(object)) {
-    switch (style) {
-    case 'lowercase':
-      return '.nan';
-    case 'uppercase':
-      return '.NAN';
-    case 'camelcase':
-      return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '.inf';
-    case 'uppercase':
-      return '.INF';
-    case 'camelcase':
-      return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '-.inf';
-    case 'uppercase':
-      return '-.INF';
-    case 'camelcase':
-      return '-.Inf';
-    }
-  } else {
-    return object.toString(10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlFloat
-  },
-  dumper: {
-    kind: 'float',
-    defaultStyle: 'lowercase',
-    representer: representYamlFloat
-  }
-});
-
-},{"../common":37,"../type":29}],46:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_TIMESTAMP_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9]?)'                   + // [2] month
-  '-([0-9][0-9]?)'                   + // [3] day
-  '(?:(?:[Tt]|[ \\t]+)'              + // ...
-  '([0-9][0-9]?)'                    + // [4] hour
-  ':([0-9][0-9])'                    + // [5] minute
-  ':([0-9][0-9])'                    + // [6] second
-  '(?:\\.([0-9]*))?'                 + // [7] fraction
-  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
-  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
-
-
-function resolveYamlTimestamp(object /*, explicit*/) {
-  var match, year, month, day, hour, minute, second, fraction = 0,
-      delta = null, tz_hour, tz_minute, data;
-
-  match = YAML_TIMESTAMP_REGEXP.exec(object);
-
-  if (null === match) {
-    return NIL;
-  }
-
-  // match: [1] year [2] month [3] day
-
-  year = +(match[1]);
-  month = +(match[2]) - 1; // JS month starts with 0
-  day = +(match[3]);
-
-  if (!match[4]) { // no hour
-    return new Date(Date.UTC(year, month, day));
-  }
-
-  // match: [4] hour [5] minute [6] second [7] fraction
-
-  hour = +(match[4]);
-  minute = +(match[5]);
-  second = +(match[6]);
-
-  if (match[7]) {
-    fraction = match[7].slice(0, 3);
-    while (fraction.length < 3) { // milli-seconds
-      fraction += '0';
-    }
-    fraction = +fraction;
-  }
-
-  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
-
-  if (match[9]) {
-    tz_hour = +(match[10]);
-    tz_minute = +(match[11] || 0);
-    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-    if ('-' === match[9]) {
-      delta = -delta;
-    }
-  }
-
-  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
-
-  if (delta) {
-    data.setTime(data.getTime() - delta);
-  }
-
-  return data;
-}
-
-
-function representYamlTimestamp(object /*, style*/) {
-  return object.toISOString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:timestamp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlTimestamp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: Date,
-    representer: representYamlTimestamp
-  }
-});
-
-},{"../common":37,"../type":29}],47:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":37,"../type":29}],48:[function(require,module,exports){
-(function(){// Modified from:
-// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
-
-'use strict';
-
-
-var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
-var common     = require('../common');
-var NIL        = common.NIL;
-var Type       = require('../type');
-
-
-
-var BASE64_PADDING = '=';
-
-var BASE64_BINTABLE = [
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
-  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
-];
-
-var BASE64_CHARTABLE =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
-
-
-function resolveYamlBinary(object /*, explicit*/) {
-  var value, code, idx = 0, result = [], leftbits, leftdata;
-
-  leftbits = 0; // number of bits decoded, but yet to be appended
-  leftdata = 0; // bits decoded, but yet to be appended
-
-  // Convert one by one.
-  for (idx = 0; idx < object.length; idx += 1) {
-    code = object.charCodeAt(idx);
-    value = BASE64_BINTABLE[code & 0x7F];
-
-    // Skip LF(NL) || CR
-    if (0x0A !== code && 0x0D !== code) {
-      // Fail on illegal characters
-      if (-1 === value) {
-        return NIL;
-      }
-
-      // Collect data into leftdata, update bitcount
-      leftdata = (leftdata << 6) | value;
-      leftbits += 6;
-
-      // If we have 8 or more bits, append 8 bits to the result
-      if (leftbits >= 8) {
-        leftbits -= 8;
-
-        // Append if not padding.
-        if (BASE64_PADDING !== object.charAt(idx)) {
-          result.push((leftdata >> leftbits) & 0xFF);
-        }
-
-        leftdata &= (1 << leftbits) - 1;
-      }
-    }
-  }
-
-  // If there are any bits left, the base64 string was corrupted
-  if (leftbits) {
-    return NIL;
-  } else {
-    return new NodeBuffer(result);
-  }
-}
-
-
-function representYamlBinary(object /*, style*/) {
-  var result = '', index, length, rest;
-
-  // Convert every three bytes to 4 ASCII characters.
-  for (index = 0, length = object.length - 2; index < length; index += 3) {
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
-    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
-  }
-
-  rest = object.length % 3;
-
-  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
-  if (0 !== rest) {
-    index = object.length - rest;
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-
-    if (2 === rest) {
-      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
-      result += BASE64_PADDING;
-    } else {
-      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
-      result += BASE64_PADDING + BASE64_PADDING;
-    }
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:binary', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBinary
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: NodeBuffer,
-    representer: representYamlBinary
-  }
-});
-
-})()
-},{"buffer":57,"../common":37,"../type":29}],49:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-
-function resolveYamlOmap(object /*, explicit*/) {
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) {
-          pairHasKey = true;
-        } else {
-          return NIL;
-        }
-      }
-    }
-
-    if (!pairHasKey) {
-      return NIL;
-    }
-
-    if (-1 === objectKeys.indexOf(pairKey)) {
-      objectKeys.push(pairKey);
-    } else {
-      return NIL;
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlOmap
-  }
-});
-
-},{"../common":37,"../type":29}],50:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
-  }
-});
-
-},{"../common":37,"../type":29}],51:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-function resolveYamlSet(object /*, explicit*/) {
-  var key;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (null !== object[key]) {
-        return NIL;
-      }
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  loader: {
-    kind: 'object',
-    resolver: resolveYamlSet
-  }
-});
-
-},{"../common":37,"../type":29}],52:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../../type');
-
-
-function resolveJavascriptUndefined(/*object, explicit*/) {
-  var undef;
-
-  return undef;
-}
-
-
-function representJavascriptUndefined(/*object, explicit*/) {
-  return '';
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/undefined', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptUndefined
-  },
-  dumper: {
-    kind: 'undefined',
-    representer: representJavascriptUndefined
-  }
-});
-
-},{"../../type":29}],53:[function(require,module,exports){
-(function(){'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptRegExp(object /*, explicit*/) {
-  var regexp = object,
-      tail   = /\/([gim]*)$/.exec(object),
-      modifiers;
-
-  // `/foo/gim` - tail can be maximum 4 chars
-  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
-    regexp = regexp.slice(1, regexp.length - tail[0].length);
-    modifiers = tail[1];
-  }
-
-  try {
-    return new RegExp(regexp, modifiers);
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptRegExp(object /*, style*/) {
-  var result = '/' + object.source + '/';
-
-  if (object.global) {
-    result += 'g';
-  }
-
-  if (object.multiline) {
-    result += 'm';
-  }
-
-  if (object.ignoreCase) {
-    result += 'i';
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/regexp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptRegExp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: RegExp,
-    representer: representJavascriptRegExp
-  }
-});
-
-})()
-},{"../../common":37,"../../type":29}],54:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptFunction(object /*, explicit*/) {
-  /*jslint evil:true*/
-  var func;
-
-  try {
-    func = new Function('return ' + object);
-    return func();
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptFunction(object /*, style*/) {
-  return object.toString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/function', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptFunction
-  },
-  dumper: {
-    kind: 'function',
-    representer: representJavascriptFunction,
-  }
-});
-
-},{"../../common":37,"../../type":29}],56:[function(require,module,exports){
+},{"util":57,"buffer":55}],57:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -28678,7 +28678,7 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],57:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -29998,7 +29998,7 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":55,"./buffer_ieee754":59,"base64-js":60}],61:[function(require,module,exports){
+},{"assert":56,"./buffer_ieee754":59,"base64-js":60}],61:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -30324,5 +30324,5 @@ EventEmitter.prototype.listeners = function(type) {
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}]},{},[11,16,15,14,13,12,9,10,3,19,7,1,8,2,17])
+},{}]},{},[13,18,17,16,15,14,11,12,8,19,10,1,3,2,4])
 ;

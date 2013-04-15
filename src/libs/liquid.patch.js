@@ -1,5 +1,5 @@
 Liquid.readTemplateFile = function(path) {
-    var repo = getRepo(app.state.user, app.state.repo);
+    var repo = window.app.models.getRepo(app.state.user, app.state.repo);
     return repo.contentsSync(app.state.branch, '_includes/' + path);
 }
 
