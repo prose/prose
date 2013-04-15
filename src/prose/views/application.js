@@ -174,7 +174,7 @@ module.exports = Backbone.View.extend({
           model: data
         }).render());
 
-        this.mainView._makeDirty();
+        this.mainView.makeDirty();
         app.state.file = data.file;
 
       }, this));
