@@ -16,7 +16,7 @@
         </ul>
       </div>
     <% } else { %>
-      <a class='button round' href='https://github.com/login/oauth/authorize?client_id=c602a8bd54b1e774f864&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>
+      <a class='button round' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>
     <% } %>
     </div>
   </div>
@@ -87,7 +87,7 @@
 <div class='notify <%= type %>'>
   <div class='inner'>
     Please login with your GitHub account to access that project.
-    <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id=c602a8bd54b1e774f864&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>
+    <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>
   </div>
 </div>
 <% } else { %>
@@ -160,7 +160,7 @@
     <div class='inner'>
       <p>Prose is a content editor for GitHub designed for managing websites.</p>
       <p><a href='/about.html'>Learn more</a></p>
-      <a class='round button' href='https://github.com/login/oauth/authorize?client_id=c602a8bd54b1e774f864&scope=repo,user,gist'>Authorize with GitHub</a>
+      <a class='round button' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist'>Authorize with GitHub</a>
     </div>
   </div>
 <% } %>

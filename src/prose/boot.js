@@ -36,22 +36,31 @@ window.confirmExit = function() {
 };
 
 $(function() {
-  if (window.app.models.authenticate()) {
-    window.app.models.loadApplication(function(err, data) {
+  var auth = $.getJSON('oauth.json');
+  auth.done(function(res) {
 
-      // Start the engines
-      window.app.instance = new window.app.views.Application({
-        el: '#prose',
-        model: data
-      }).render();
+    window.app.auth = {
+      id: res.clientId,
+      url: res.gatekeeperUrl
+    }
 
-      if (err) return window.app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
+    if (window.app.models.authenticate()) {
+      window.app.models.loadApplication(function(err, data) {
 
-      // Initialize router
-      window.router = new window.app.router();
+        // Start the engines
+        window.app.instance = new window.app.views.Application({
+          el: '#prose',
+          model: data
+        }).render();
 
-      // Start responding to routes
-      Backbone.history.start();
-    });
-  }
+        if (err) return window.app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
+
+        // Initialize router
+        window.router = new window.app.router();
+
+        // Start responding to routes
+        Backbone.history.start();
+      });
+    }
+  });
 });

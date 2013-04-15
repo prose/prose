@@ -36,6 +36,14 @@ To get started:
 your OS.
 - Go to the directory where you have checked out `prose`
 - Run `npm install`
+- For running prose with authentication you'll need to add a `oauth.json` file
+to the root directory with the following contents:
+
+  {
+    "clientId": "c602a8bd54b1e774f864",
+    "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
+  }
+
 - If you have python handy, from the project root run `python -m SimpleHTTPServer`
 to start a server and run the site locally. By default prose will be set up 
 on [http://localhost:8000](http://localhost:8000).
