@@ -5,6 +5,7 @@ var jsyaml = require('js-yaml');
 var key = require('keymaster');
 var marked = require('marked');
 var Backbone = require('backbone');
+var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
 
@@ -88,6 +89,10 @@ module.exports = Backbone.View.extend({
 
       // Editor is first up so trigger an active class for it
       $('.post-views .edit').toggleClass('active', true);
+
+      _.delay(function () {
+        utils.shadowScroll($('.editor'), $('.toolbar'));
+      }, 1);
 
       return this;
     },
@@ -600,6 +605,7 @@ module.exports = Backbone.View.extend({
           mode: that.model.lang,
           value: that.model.content,
           lineWrapping: true,
+          autofocus: true,
           extraKeys: that.keyMap(),
           matchBrackets: true,
           theme: 'prose-bright',
