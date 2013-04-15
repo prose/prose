@@ -7,10 +7,10 @@ all: \
 	prose.min.js
 
 clean:
-	rm -f prose*.js && rm -f templates.js
+	rm -f dist/*
 
 TEMPLATES = $(shell find templates -type f -name '*.html')
-templates.js: $(TEMPLATES)
+dist/templates.js: $(TEMPLATES)
 	node build.js
 
 LIBS = \
@@ -40,15 +40,15 @@ APPLICATION = \
 	src/prose/router.js \
 	src/prose/util.js \
 	src/prose/boot.js \
-	templates.js \
+	dist/templates.js \
 	src/prose/models.js \
 	src/prose/cookie.js \
 	src/libs/github.js
 
 prose.js: $(APPLICATION)
-	cat $(LIBS) > prose.js
-	$(BROWSERIFY) $(APPLICATION) >> prose.js
+	cat $(LIBS) > dist/prose.js
+	$(BROWSERIFY) $(APPLICATION) >> dist/prose.js
 
 prose.min.js: $(APPLICATION)
-	cat $(LIBS) > prose.min.js
-	$(BROWSERIFY) $(APPLICATION) | $(UGLIFY) >> prose.min.js
+	cat $(LIBS) > dist/prose.min.js
+	$(BROWSERIFY) $(APPLICATION) | $(UGLIFY) >> dist/prose.min.js
