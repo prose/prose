@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
+var queue = require('queue-async');
 var cookie = require('./cookie');
 var Github = require('../libs/github');
 
@@ -327,6 +328,40 @@ module.exports = {
             });
             cb(null, that.getFiles(tree, path, ''));
           });
+        });
+
+        repo.getCommits(branch, function(err, commits) {
+          if (err) return cb('Not found');
+
+          var q = queue();
+
+          // build list of recently edited files
+          _.each(_.pluck(commits, 'sha'), function(sha) {
+            q.defer(repo.getCommit, sha);
+          });
+
+          q.awaitAll(function(err, res) {
+            var files = [];
+            var commit;
+            var file;
+            var filename;
+
+            for (var i = 0; i < res.length; i++) {
+              commit = res[i];
+
+              for (var j = 0; j < commit.files.length; j++) {
+                file = commit.files[j];
+                filename = file.filename;
+
+                if (filename.indexOf(path) > -1) {
+                  files = _.union(files, filename);
+                }
+              }
+            }
+
+            app.state.recent = files.splice(0,10);
+          });
+
         });
       });
     }

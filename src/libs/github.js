@@ -370,6 +370,17 @@ var _ = require('underscore');
         _request("GET", repoPath, null, cb);
       };
 
+      // Get commits
+      // --------
+
+      this.getCommit = function(sha, cb) {
+        _request("GET", repoPath + "/commits/" + sha, null, cb);
+      };
+
+      this.getCommits = function(branch, cb) {
+        _request("GET", repoPath + "/commits" + "?sha=" + branch, null, cb);
+      };
+
       // Get contents
       // --------
 

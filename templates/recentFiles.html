@@ -1,0 +1,6 @@
+<% if (files.length) > 0) { %>
+  <h2 class='label'>Recently Edited</h2>
+  <% _.each(files, function(file) { %>
+    <a href='#<%= [user, repo, "edit", file].join("/") %>'><%= file %></a>
+  <% }); %>
+<% } %>
