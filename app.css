@@ -451,7 +451,6 @@ em      { font-style:italic; }
     }
   .vert .nav li a {
     background-color:#404040;
-    border:1px solid #202020;
     display:block;
     width:40px;
     height:40px;
@@ -461,7 +460,6 @@ em      { font-style:italic; }
     }
     .vert .nav li a:hover {
       background-color:#505050;
-      border-color:#101010;
       }
     .vert .nav li a:active {
       -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.25),
