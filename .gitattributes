@@ -1,2 +1,1 @@
-prose.js merge=prose
-prose.min.js merge=prose
+dist/**/* merge=dist
