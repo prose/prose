@@ -314,19 +314,16 @@ em      { font-style:italic; }
   Global Layout
 ---------------------------------------------*/
 .limiter {
-  width:960px;
+  width:740px;
   margin:0 auto;
+  -webkit-transition:width 300ms;
+     -moz-transition:width 300ms;
+       -o-transition:width 300ms;
+          transition:width 300ms;
   }
-  .heading.limiter {
-    width:700px;
-    -webkit-transition:width 300ms;
-       -moz-transition:width 300ms;
-         -o-transition:width 300ms;
-            transition:width 300ms;
+  .open .limiter {
+    width:1000px;
     }
-    .open .heading.limiter {
-      width:960px;
-      }
 
 /* Alterable filename input */
 .heading .filepath {
@@ -364,9 +361,11 @@ em      { font-style:italic; }
     }
 
 .application {
-  position:relative;
+  width:1000px;
   margin:15px auto 60px;
+  position:relative;
   }
+
   /*
     Remove the presentation of the application
     when viewing static pages.
@@ -377,12 +376,12 @@ em      { font-style:italic; }
     }
 
 .content {
-  width:640px;
   position:relative;
+  z-index:500;
+  width:680px;
   height:600px;
   height:auto!important;
   min-height:600px;
-  z-index:500;
   left:130px;
   -webkit-transition:left 300ms;
      -moz-transition:left 300ms;
@@ -392,7 +391,6 @@ em      { font-style:italic; }
   .open .content {
     left:0;
     }
-
 
 .sidebar {
   position:relative;
@@ -700,6 +698,9 @@ em      { font-style:italic; }
   z-index:10;
   height:60px;
   }
+  .toolbar .inner {
+    padding:13px 15px 0;
+    }
 
 .content-search input {
   border:none;
@@ -733,6 +734,7 @@ em      { font-style:italic; }
     border-color:#526066;
     }
 
+.editor,
 .listing {
   overflow:auto;
   }
@@ -760,6 +762,10 @@ em      { font-style:italic; }
       background:#f8f8f8;
       }
 
+.content .editor {
+  height:600px;
+  }
+.content .toolbar + .editor,
 .content .listing {
   height:540px;
   }

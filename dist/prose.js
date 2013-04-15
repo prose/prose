@@ -9246,6 +9246,1168 @@ var _ = require('underscore');
 }).call(this);
 
 })()
+},{}],19:[function(require,module,exports){
+(function() {
+  if (typeof module === "undefined") self.queue = queue;
+  else module.exports = queue;
+  queue.version = "1.0.3";
+
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var queue = {},
+        deferrals = [],
+        started = 0, // number of deferrals that have been started (and perhaps finished)
+        active = 0, // number of deferrals currently being executed (started but not finished)
+        remaining = 0, // number of deferrals not yet finished
+        popping, // inside a synchronous deferral callback?
+        error,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    queue.defer = function() {
+      if (!error) {
+        deferrals.push(arguments);
+        ++remaining;
+        pop();
+      }
+      return queue;
+    };
+
+    queue.await = function(f) {
+      await = f;
+      all = false;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    queue.awaitAll = function(f) {
+      await = f;
+      all = true;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    function pop() {
+      while (popping = started < deferrals.length && active < parallelism) {
+        var i = started++,
+            d = deferrals[i],
+            a = slice.call(d, 1);
+        a.push(callback(i));
+        ++active;
+        d[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new deferrals and squelch active callbacks
+          started = remaining = NaN; // stop queued deferrals from starting
+          notify();
+        } else {
+          deferrals[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(null, deferrals);
+      else await.apply(null, [null].concat(deferrals));
+    }
+
+    return queue;
+  }
+
+  function noop() {}
+})();
+
+},{}],20:[function(require,module,exports){
+(function(global){/**
+ * marked - a markdown parser
+ * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
+ * https://github.com/chjj/marked
+ */
+
+;(function() {
+
+/**
+ * Block-Level Grammar
+ */
+
+var block = {
+  newline: /^\n+/,
+  code: /^( {4}[^\n]+\n*)+/,
+  fences: noop,
+  hr: /^( *[-*_]){3,} *(?:\n+|$)/,
+  heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
+  nptable: noop,
+  lheading: /^([^\n]+)\n *(=|-){3,} *\n*/,
+  blockquote: /^( *>[^\n]+(\n[^\n]+)*\n*)+/,
+  list: /^( *)(bull) [\s\S]+?(?:hr|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
+  html: /^ *(?:comment|closed|closing) *(?:\n{2,}|\s*$)/,
+  def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,
+  table: noop,
+  paragraph: /^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,
+  text: /^[^\n]+/
+};
+
+block.bullet = /(?:[*+-]|\d+\.)/;
+block.item = /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;
+block.item = replace(block.item, 'gm')
+  (/bull/g, block.bullet)
+  ();
+
+block.list = replace(block.list)
+  (/bull/g, block.bullet)
+  ('hr', /\n+(?=(?: *[-*_]){3,} *(?:\n+|$))/)
+  ();
+
+block._tag = '(?!(?:'
+  + 'a|em|strong|small|s|cite|q|dfn|abbr|data|time|code'
+  + '|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo'
+  + '|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|@)\\b';
+
+block.html = replace(block.html)
+  ('comment', /<!--[\s\S]*?-->/)
+  ('closed', /<(tag)[\s\S]+?<\/\1>/)
+  ('closing', /<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/)
+  (/tag/g, block._tag)
+  ();
+
+block.paragraph = replace(block.paragraph)
+  ('hr', block.hr)
+  ('heading', block.heading)
+  ('lheading', block.lheading)
+  ('blockquote', block.blockquote)
+  ('tag', '<' + block._tag)
+  ('def', block.def)
+  ();
+
+/**
+ * Normal Block Grammar
+ */
+
+block.normal = merge({}, block);
+
+/**
+ * GFM Block Grammar
+ */
+
+block.gfm = merge({}, block.normal, {
+  fences: /^ *(`{3,}|~{3,}) *(\w+)? *\n([\s\S]+?)\s*\1 *(?:\n+|$)/,
+  paragraph: /^/
+});
+
+block.gfm.paragraph = replace(block.paragraph)
+  ('(?!', '(?!' + block.gfm.fences.source.replace('\\1', '\\2') + '|')
+  ();
+
+/**
+ * GFM + Tables Block Grammar
+ */
+
+block.tables = merge({}, block.gfm, {
+  nptable: /^ *(\S.*\|.*)\n *([-:]+ *\|[-| :]*)\n((?:.*\|.*(?:\n|$))*)\n*/,
+  table: /^ *\|(.+)\n *\|( *[-:]+[-| :]*)\n((?: *\|.*(?:\n|$))*)\n*/
+});
+
+/**
+ * Block Lexer
+ */
+
+function Lexer(options) {
+  this.tokens = [];
+  this.tokens.links = {};
+  this.options = options || marked.defaults;
+  this.rules = block.normal;
+
+  if (this.options.gfm) {
+    if (this.options.tables) {
+      this.rules = block.tables;
+    } else {
+      this.rules = block.gfm;
+    }
+  }
+}
+
+/**
+ * Expose Block Rules
+ */
+
+Lexer.rules = block;
+
+/**
+ * Static Lex Method
+ */
+
+Lexer.lex = function(src, options) {
+  var lexer = new Lexer(options);
+  return lexer.lex(src);
+};
+
+/**
+ * Preprocessing
+ */
+
+Lexer.prototype.lex = function(src) {
+  src = src
+    .replace(/\r\n|\r/g, '\n')
+    .replace(/\t/g, '    ')
+    .replace(/\u00a0/g, ' ')
+    .replace(/\u2424/g, '\n');
+
+  return this.token(src, true);
+};
+
+/**
+ * Lexing
+ */
+
+Lexer.prototype.token = function(src, top) {
+  var src = src.replace(/^ +$/gm, '')
+    , next
+    , loose
+    , cap
+    , bull
+    , b
+    , item
+    , space
+    , i
+    , l;
+
+  while (src) {
+    // newline
+    if (cap = this.rules.newline.exec(src)) {
+      src = src.substring(cap[0].length);
+      if (cap[0].length > 1) {
+        this.tokens.push({
+          type: 'space'
+        });
+      }
+    }
+
+    // code
+    if (cap = this.rules.code.exec(src)) {
+      src = src.substring(cap[0].length);
+      cap = cap[0].replace(/^ {4}/gm, '');
+      this.tokens.push({
+        type: 'code',
+        text: !this.options.pedantic
+          ? cap.replace(/\n+$/, '')
+          : cap
+      });
+      continue;
+    }
+
+    // fences (gfm)
+    if (cap = this.rules.fences.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'code',
+        lang: cap[2],
+        text: cap[3]
+      });
+      continue;
+    }
+
+    // heading
+    if (cap = this.rules.heading.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'heading',
+        depth: cap[1].length,
+        text: cap[2]
+      });
+      continue;
+    }
+
+    // table no leading pipe (gfm)
+    if (top && (cap = this.rules.nptable.exec(src))) {
+      src = src.substring(cap[0].length);
+
+      item = {
+        type: 'table',
+        header: cap[1].replace(/^ *| *\| *$/g, '').split(/ *\| */),
+        align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
+        cells: cap[3].replace(/\n$/, '').split('\n')
+      };
+
+      for (i = 0; i < item.align.length; i++) {
+        if (/^ *-+: *$/.test(item.align[i])) {
+          item.align[i] = 'right';
+        } else if (/^ *:-+: *$/.test(item.align[i])) {
+          item.align[i] = 'center';
+        } else if (/^ *:-+ *$/.test(item.align[i])) {
+          item.align[i] = 'left';
+        } else {
+          item.align[i] = null;
+        }
+      }
+
+      for (i = 0; i < item.cells.length; i++) {
+        item.cells[i] = item.cells[i].split(/ *\| */);
+      }
+
+      this.tokens.push(item);
+
+      continue;
+    }
+
+    // lheading
+    if (cap = this.rules.lheading.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'heading',
+        depth: cap[2] === '=' ? 1 : 2,
+        text: cap[1]
+      });
+      continue;
+    }
+
+    // hr
+    if (cap = this.rules.hr.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'hr'
+      });
+      continue;
+    }
+
+    // blockquote
+    if (cap = this.rules.blockquote.exec(src)) {
+      src = src.substring(cap[0].length);
+
+      this.tokens.push({
+        type: 'blockquote_start'
+      });
+
+      cap = cap[0].replace(/^ *> ?/gm, '');
+
+      // Pass `top` to keep the current
+      // "toplevel" state. This is exactly
+      // how markdown.pl works.
+      this.token(cap, top);
+
+      this.tokens.push({
+        type: 'blockquote_end'
+      });
+
+      continue;
+    }
+
+    // list
+    if (cap = this.rules.list.exec(src)) {
+      src = src.substring(cap[0].length);
+
+      this.tokens.push({
+        type: 'list_start',
+        ordered: isFinite(cap[2])
+      });
+
+      // Get each top-level item.
+      cap = cap[0].match(this.rules.item);
+
+      // Get bullet.
+      if (this.options.smartLists) {
+        bull = block.bullet.exec(cap[0])[0];
+      }
+
+      next = false;
+      l = cap.length;
+      i = 0;
+
+      for (; i < l; i++) {
+        item = cap[i];
+
+        // Remove the list item's bullet
+        // so it is seen as the next token.
+        space = item.length;
+        item = item.replace(/^ *([*+-]|\d+\.) +/, '');
+
+        // Outdent whatever the
+        // list item contains. Hacky.
+        if (~item.indexOf('\n ')) {
+          space -= item.length;
+          item = !this.options.pedantic
+            ? item.replace(new RegExp('^ {1,' + space + '}', 'gm'), '')
+            : item.replace(/^ {1,4}/gm, '');
+        }
+
+        // Determine whether the next list item belongs here.
+        // Backpedal if it does not belong in this list.
+        if (this.options.smartLists && i !== l - 1) {
+          b = block.bullet.exec(cap[i+1])[0];
+          if (bull !== b && !(bull[1] === '.' && b[1] === '.')) {
+            src = cap.slice(i + 1).join('\n') + src;
+            i = l - 1;
+          }
+        }
+
+        // Determine whether item is loose or not.
+        // Use: /(^|\n)(?! )[^\n]+\n\n(?!\s*$)/
+        // for discount behavior.
+        loose = next || /\n\n(?!\s*$)/.test(item);
+        if (i !== l - 1) {
+          next = item[item.length-1] === '\n';
+          if (!loose) loose = next;
+        }
+
+        this.tokens.push({
+          type: loose
+            ? 'loose_item_start'
+            : 'list_item_start'
+        });
+
+        // Recurse.
+        this.token(item, false);
+
+        this.tokens.push({
+          type: 'list_item_end'
+        });
+      }
+
+      this.tokens.push({
+        type: 'list_end'
+      });
+
+      continue;
+    }
+
+    // html
+    if (cap = this.rules.html.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: this.options.sanitize
+          ? 'paragraph'
+          : 'html',
+        pre: cap[1] === 'pre',
+        text: cap[0]
+      });
+      continue;
+    }
+
+    // def
+    if (top && (cap = this.rules.def.exec(src))) {
+      src = src.substring(cap[0].length);
+      this.tokens.links[cap[1].toLowerCase()] = {
+        href: cap[2],
+        title: cap[3]
+      };
+      continue;
+    }
+
+    // table (gfm)
+    if (top && (cap = this.rules.table.exec(src))) {
+      src = src.substring(cap[0].length);
+
+      item = {
+        type: 'table',
+        header: cap[1].replace(/^ *| *\| *$/g, '').split(/ *\| */),
+        align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
+        cells: cap[3].replace(/(?: *\| *)?\n$/, '').split('\n')
+      };
+
+      for (i = 0; i < item.align.length; i++) {
+        if (/^ *-+: *$/.test(item.align[i])) {
+          item.align[i] = 'right';
+        } else if (/^ *:-+: *$/.test(item.align[i])) {
+          item.align[i] = 'center';
+        } else if (/^ *:-+ *$/.test(item.align[i])) {
+          item.align[i] = 'left';
+        } else {
+          item.align[i] = null;
+        }
+      }
+
+      for (i = 0; i < item.cells.length; i++) {
+        item.cells[i] = item.cells[i]
+          .replace(/^ *\| *| *\| *$/g, '')
+          .split(/ *\| */);
+      }
+
+      this.tokens.push(item);
+
+      continue;
+    }
+
+    // top-level paragraph
+    if (top && (cap = this.rules.paragraph.exec(src))) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'paragraph',
+        text: cap[1][cap[1].length-1] === '\n'
+          ? cap[1].slice(0, -1)
+          : cap[1]
+      });
+      continue;
+    }
+
+    // text
+    if (cap = this.rules.text.exec(src)) {
+      // Top-level should never reach here.
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'text',
+        text: cap[0]
+      });
+      continue;
+    }
+
+    if (src) {
+      throw new
+        Error('Infinite loop on byte: ' + src.charCodeAt(0));
+    }
+  }
+
+  return this.tokens;
+};
+
+/**
+ * Inline-Level Grammar
+ */
+
+var inline = {
+  escape: /^\\([\\`*{}\[\]()#+\-.!_>])/,
+  autolink: /^<([^ >]+(@|:\/)[^ >]+)>/,
+  url: noop,
+  tag: /^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,
+  link: /^!?\[(inside)\]\(href\)/,
+  reflink: /^!?\[(inside)\]\s*\[([^\]]*)\]/,
+  nolink: /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,
+  strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+  em: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+  code: /^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
+  br: /^ {2,}\n(?!\s*$)/,
+  del: noop,
+  text: /^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/
+};
+
+inline._inside = /(?:\[[^\]]*\]|[^\]]|\](?=[^\[]*\]))*/;
+inline._href = /\s*<?([^\s]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/;
+
+inline.link = replace(inline.link)
+  ('inside', inline._inside)
+  ('href', inline._href)
+  ();
+
+inline.reflink = replace(inline.reflink)
+  ('inside', inline._inside)
+  ();
+
+/**
+ * Normal Inline Grammar
+ */
+
+inline.normal = merge({}, inline);
+
+/**
+ * Pedantic Inline Grammar
+ */
+
+inline.pedantic = merge({}, inline.normal, {
+  strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
+  em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/
+});
+
+/**
+ * GFM Inline Grammar
+ */
+
+inline.gfm = merge({}, inline.normal, {
+  escape: replace(inline.escape)('])', '~|])')(),
+  url: /^(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/,
+  del: /^~~(?=\S)([\s\S]*?\S)~~/,
+  text: replace(inline.text)
+    (']|', '~]|')
+    ('|', '|https?://|')
+    ()
+});
+
+/**
+ * GFM + Line Breaks Inline Grammar
+ */
+
+inline.breaks = merge({}, inline.gfm, {
+  br: replace(inline.br)('{2,}', '*')(),
+  text: replace(inline.gfm.text)('{2,}', '*')()
+});
+
+/**
+ * Inline Lexer & Compiler
+ */
+
+function InlineLexer(links, options) {
+  this.options = options || marked.defaults;
+  this.links = links;
+  this.rules = inline.normal;
+
+  if (!this.links) {
+    throw new
+      Error('Tokens array requires a `links` property.');
+  }
+
+  if (this.options.gfm) {
+    if (this.options.breaks) {
+      this.rules = inline.breaks;
+    } else {
+      this.rules = inline.gfm;
+    }
+  } else if (this.options.pedantic) {
+    this.rules = inline.pedantic;
+  }
+}
+
+/**
+ * Expose Inline Rules
+ */
+
+InlineLexer.rules = inline;
+
+/**
+ * Static Lexing/Compiling Method
+ */
+
+InlineLexer.output = function(src, links, options) {
+  var inline = new InlineLexer(links, options);
+  return inline.output(src);
+};
+
+/**
+ * Lexing/Compiling
+ */
+
+InlineLexer.prototype.output = function(src) {
+  var out = ''
+    , link
+    , text
+    , href
+    , cap;
+
+  while (src) {
+    // escape
+    if (cap = this.rules.escape.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += cap[1];
+      continue;
+    }
+
+    // autolink
+    if (cap = this.rules.autolink.exec(src)) {
+      src = src.substring(cap[0].length);
+      if (cap[2] === '@') {
+        text = cap[1][6] === ':'
+          ? this.mangle(cap[1].substring(7))
+          : this.mangle(cap[1]);
+        href = this.mangle('mailto:') + text;
+      } else {
+        text = escape(cap[1]);
+        href = text;
+      }
+      out += '<a href="'
+        + href
+        + '">'
+        + text
+        + '</a>';
+      continue;
+    }
+
+    // url (gfm)
+    if (cap = this.rules.url.exec(src)) {
+      src = src.substring(cap[0].length);
+      text = escape(cap[1]);
+      href = text;
+      out += '<a href="'
+        + href
+        + '">'
+        + text
+        + '</a>';
+      continue;
+    }
+
+    // tag
+    if (cap = this.rules.tag.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.options.sanitize
+        ? escape(cap[0])
+        : cap[0];
+      continue;
+    }
+
+    // link
+    if (cap = this.rules.link.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.outputLink(cap, {
+        href: cap[2],
+        title: cap[3]
+      });
+      continue;
+    }
+
+    // reflink, nolink
+    if ((cap = this.rules.reflink.exec(src))
+        || (cap = this.rules.nolink.exec(src))) {
+      src = src.substring(cap[0].length);
+      link = (cap[2] || cap[1]).replace(/\s+/g, ' ');
+      link = this.links[link.toLowerCase()];
+      if (!link || !link.href) {
+        out += cap[0][0];
+        src = cap[0].substring(1) + src;
+        continue;
+      }
+      out += this.outputLink(cap, link);
+      continue;
+    }
+
+    // strong
+    if (cap = this.rules.strong.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += '<strong>'
+        + this.output(cap[2] || cap[1])
+        + '</strong>';
+      continue;
+    }
+
+    // em
+    if (cap = this.rules.em.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += '<em>'
+        + this.output(cap[2] || cap[1])
+        + '</em>';
+      continue;
+    }
+
+    // code
+    if (cap = this.rules.code.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += '<code>'
+        + escape(cap[2], true)
+        + '</code>';
+      continue;
+    }
+
+    // br
+    if (cap = this.rules.br.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += '<br>';
+      continue;
+    }
+
+    // del (gfm)
+    if (cap = this.rules.del.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += '<del>'
+        + this.output(cap[1])
+        + '</del>';
+      continue;
+    }
+
+    // text
+    if (cap = this.rules.text.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += escape(cap[0]);
+      continue;
+    }
+
+    if (src) {
+      throw new
+        Error('Infinite loop on byte: ' + src.charCodeAt(0));
+    }
+  }
+
+  return out;
+};
+
+/**
+ * Compile Link
+ */
+
+InlineLexer.prototype.outputLink = function(cap, link) {
+  if (cap[0][0] !== '!') {
+    return '<a href="'
+      + escape(link.href)
+      + '"'
+      + (link.title
+      ? ' title="'
+      + escape(link.title)
+      + '"'
+      : '')
+      + '>'
+      + this.output(cap[1])
+      + '</a>';
+  } else {
+    return '<img src="'
+      + escape(link.href)
+      + '" alt="'
+      + escape(cap[1])
+      + '"'
+      + (link.title
+      ? ' title="'
+      + escape(link.title)
+      + '"'
+      : '')
+      + '>';
+  }
+};
+
+/**
+ * Mangle Links
+ */
+
+InlineLexer.prototype.mangle = function(text) {
+  var out = ''
+    , l = text.length
+    , i = 0
+    , ch;
+
+  for (; i < l; i++) {
+    ch = text.charCodeAt(i);
+    if (Math.random() > 0.5) {
+      ch = 'x' + ch.toString(16);
+    }
+    out += '&#' + ch + ';';
+  }
+
+  return out;
+};
+
+/**
+ * Parsing & Compiling
+ */
+
+function Parser(options) {
+  this.tokens = [];
+  this.token = null;
+  this.options = options || marked.defaults;
+}
+
+/**
+ * Static Parse Method
+ */
+
+Parser.parse = function(src, options) {
+  var parser = new Parser(options);
+  return parser.parse(src);
+};
+
+/**
+ * Parse Loop
+ */
+
+Parser.prototype.parse = function(src) {
+  this.inline = new InlineLexer(src.links, this.options);
+  this.tokens = src.reverse();
+
+  var out = '';
+  while (this.next()) {
+    out += this.tok();
+  }
+
+  return out;
+};
+
+/**
+ * Next Token
+ */
+
+Parser.prototype.next = function() {
+  return this.token = this.tokens.pop();
+};
+
+/**
+ * Preview Next Token
+ */
+
+Parser.prototype.peek = function() {
+  return this.tokens[this.tokens.length-1] || 0;
+};
+
+/**
+ * Parse Text Tokens
+ */
+
+Parser.prototype.parseText = function() {
+  var body = this.token.text;
+
+  while (this.peek().type === 'text') {
+    body += '\n' + this.next().text;
+  }
+
+  return this.inline.output(body);
+};
+
+/**
+ * Parse Current Token
+ */
+
+Parser.prototype.tok = function() {
+  switch (this.token.type) {
+    case 'space': {
+      return '';
+    }
+    case 'hr': {
+      return '<hr>\n';
+    }
+    case 'heading': {
+      return '<h'
+        + this.token.depth
+        + '>'
+        + this.inline.output(this.token.text)
+        + '</h'
+        + this.token.depth
+        + '>\n';
+    }
+    case 'code': {
+      if (this.options.highlight) {
+        var code = this.options.highlight(this.token.text, this.token.lang);
+        if (code != null && code !== this.token.text) {
+          this.token.escaped = true;
+          this.token.text = code;
+        }
+      }
+
+      if (!this.token.escaped) {
+        this.token.text = escape(this.token.text, true);
+      }
+
+      return '<pre><code'
+        + (this.token.lang
+        ? ' class="'
+        + this.options.langPrefix
+        + this.token.lang
+        + '"'
+        : '')
+        + '>'
+        + this.token.text
+        + '</code></pre>\n';
+    }
+    case 'table': {
+      var body = ''
+        , heading
+        , i
+        , row
+        , cell
+        , j;
+
+      // header
+      body += '<thead>\n<tr>\n';
+      for (i = 0; i < this.token.header.length; i++) {
+        heading = this.inline.output(this.token.header[i]);
+        body += this.token.align[i]
+          ? '<th align="' + this.token.align[i] + '">' + heading + '</th>\n'
+          : '<th>' + heading + '</th>\n';
+      }
+      body += '</tr>\n</thead>\n';
+
+      // body
+      body += '<tbody>\n'
+      for (i = 0; i < this.token.cells.length; i++) {
+        row = this.token.cells[i];
+        body += '<tr>\n';
+        for (j = 0; j < row.length; j++) {
+          cell = this.inline.output(row[j]);
+          body += this.token.align[j]
+            ? '<td align="' + this.token.align[j] + '">' + cell + '</td>\n'
+            : '<td>' + cell + '</td>\n';
+        }
+        body += '</tr>\n';
+      }
+      body += '</tbody>\n';
+
+      return '<table>\n'
+        + body
+        + '</table>\n';
+    }
+    case 'blockquote_start': {
+      var body = '';
+
+      while (this.next().type !== 'blockquote_end') {
+        body += this.tok();
+      }
+
+      return '<blockquote>\n'
+        + body
+        + '</blockquote>\n';
+    }
+    case 'list_start': {
+      var type = this.token.ordered ? 'ol' : 'ul'
+        , body = '';
+
+      while (this.next().type !== 'list_end') {
+        body += this.tok();
+      }
+
+      return '<'
+        + type
+        + '>\n'
+        + body
+        + '</'
+        + type
+        + '>\n';
+    }
+    case 'list_item_start': {
+      var body = '';
+
+      while (this.next().type !== 'list_item_end') {
+        body += this.token.type === 'text'
+          ? this.parseText()
+          : this.tok();
+      }
+
+      return '<li>'
+        + body
+        + '</li>\n';
+    }
+    case 'loose_item_start': {
+      var body = '';
+
+      while (this.next().type !== 'list_item_end') {
+        body += this.tok();
+      }
+
+      return '<li>'
+        + body
+        + '</li>\n';
+    }
+    case 'html': {
+      return !this.token.pre && !this.options.pedantic
+        ? this.inline.output(this.token.text)
+        : this.token.text;
+    }
+    case 'paragraph': {
+      return '<p>'
+        + this.inline.output(this.token.text)
+        + '</p>\n';
+    }
+    case 'text': {
+      return '<p>'
+        + this.parseText()
+        + '</p>\n';
+    }
+  }
+};
+
+/**
+ * Helpers
+ */
+
+function escape(html, encode) {
+  return html
+    .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function replace(regex, opt) {
+  regex = regex.source;
+  opt = opt || '';
+  return function self(name, val) {
+    if (!name) return new RegExp(regex, opt);
+    val = val.source || val;
+    val = val.replace(/(^|[^\[])\^/g, '$1');
+    regex = regex.replace(name, val);
+    return self;
+  };
+}
+
+function noop() {}
+noop.exec = noop;
+
+function merge(obj) {
+  var i = 1
+    , target
+    , key;
+
+  for (; i < arguments.length; i++) {
+    target = arguments[i];
+    for (key in target) {
+      if (Object.prototype.hasOwnProperty.call(target, key)) {
+        obj[key] = target[key];
+      }
+    }
+  }
+
+  return obj;
+}
+
+/**
+ * Marked
+ */
+
+function marked(src, opt) {
+  try {
+    if (opt) opt = merge({}, marked.defaults, opt);
+    return Parser.parse(Lexer.lex(src, opt), opt);
+  } catch (e) {
+    e.message += '\nPlease report this to https://github.com/chjj/marked.';
+    if ((opt || marked.defaults).silent) {
+      return '<p>An error occured:</p><pre>'
+        + escape(e.message + '', true)
+        + '</pre>';
+    }
+    throw e;
+  }
+}
+
+/**
+ * Options
+ */
+
+marked.options =
+marked.setOptions = function(opt) {
+  merge(marked.defaults, opt);
+  return marked;
+};
+
+marked.defaults = {
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: false,
+  smartLists: false,
+  silent: false,
+  highlight: null,
+  langPrefix: 'lang-'
+};
+
+/**
+ * Expose
+ */
+
+marked.Parser = Parser;
+marked.parser = Parser.parse;
+
+marked.Lexer = Lexer;
+marked.lexer = Lexer.lex;
+
+marked.InlineLexer = InlineLexer;
+marked.inlineLexer = InlineLexer.output;
+
+marked.parse = marked;
+
+if (typeof exports === 'object') {
+  module.exports = marked;
+} else if (typeof define === 'function' && define.amd) {
+  define(function() { return marked; });
+} else {
+  this.marked = marked;
+}
+
+}).call(function() {
+  return this || (typeof window !== 'undefined' ? window : global);
+}());
+
+})(window)
 },{}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var Backbone = require('backbone');
@@ -9267,7 +10429,681 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":4,"backbone":5}],14:[function(require,module,exports){
+},{"jquery-browserify":4,"backbone":5}],16:[function(require,module,exports){
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  render: function() {
+    this.stashApply();
+    _.preview(this);
+    return this;
+  },
+
+  stashApply: function() {
+    if (!window.localStorage) return false;
+
+    var storage = window.localStorage,
+        filepath = window.location.hash.split('/').slice(4).join('/');
+
+    var stash = JSON.parse(storage.getItem(filepath));
+
+    if (stash) {
+      this.model.content = stash.content;
+      this.model.raw_metadata = stash.raw_metadata;
+      this.model.metadata = jsyaml.load(stash.raw_metadata);
+    }
+  }
+});
+
+},{"underscore":6,"js-yaml":18,"backbone":5}],15:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var marked = require('marked');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+
+    id: 'post',
+    className: 'post',
+
+    events: {
+      'click .save.confirm': 'updateFile',
+      'click .markdown-snippets a': 'markdownSnippet',
+      'change input': 'makeDirty'
+    },
+
+    initialize: function () {
+      this.dmp = new diff_match_patch();
+      this.mode = 'edit';
+      this.prevContent = this.serialize();
+      if (!window.shortcutsRegistered) {
+        key('⌘+s, ctrl+s', _.bind(function () {
+          this.updateFile();
+          return false;
+        }, this));
+        window.shortcutsRegistered = true;
+      }
+
+      // Stash editor and metadataEditor content to localStorage on pagehide event
+      // Always run stashFile in context of view
+      $(window).on('pagehide', _.bind(this.stashFile, this));
+    },
+
+    render: function() {
+      var data = _.extend(this.model, {
+        mode: this.mode,
+        preview: this.model.markdown ? marked(this.model.content) : '',
+        metadata: jsyaml.load(this.model.raw_metadata)
+      });
+
+      this.eventRegister = app.eventRegister;
+
+      // Listen for button clicks from the vertical nav
+       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'hideDiff', 'translate', 'updateFile');
+      this.eventRegister.bind('edit', this.edit);
+      this.eventRegister.bind('preview', this.preview);
+      this.eventRegister.bind('settings', this.settings);
+      this.eventRegister.bind('deleteFile', this.deleteFile);
+      this.eventRegister.bind('updateMetaData', this.updateMetaData);
+      this.eventRegister.bind('save', this.save);
+      this.eventRegister.bind('hideDiff', this.hideDiff);
+      this.eventRegister.bind('updateFile', this.updateFile);
+      this.eventRegister.bind('translate', this.translate);
+
+      // Ping `views/app.js` to let know we should swap out the sidebar
+      this.eventRegister.trigger('sidebarContext', data, 'post');
+
+      // Render heading
+      var isPrivate = app.state.isPrivate ? 'private' : '';
+
+      var header = {
+        avatar: '<span class="icon round file ' + isPrivate + '"></span>',
+        parent: app.state.repo,
+        parentUrl: app.state.user + '/' + app.state.repo,
+        title: _.filepath(data.path, data.file),
+        titleUrl: '#',
+        alterable: true
+      };
+
+      this.eventRegister.trigger('headerContext', header);
+
+      var tmpl = _(window.app.templates.post).template();
+
+      $(this.el)
+        .empty()
+        .append(tmpl(_.extend(this.model, {
+          mode: this.mode,
+          metadata: this.model.metadata
+        })));
+
+      // TODO Add an unpublished class to .application
+      if (!this.model.published) $(this.el).addClass('published');
+
+      this.initEditor();
+
+      // Editor is first up so trigger an active class for it
+      $('.post-views .edit').toggleClass('active', true);
+
+      _.delay(function () {
+        utils.shadowScroll($('.editor'), $('.toolbar'));
+      }, 1);
+
+      return this;
+    },
+
+    edit: function(e) {
+      var that = this;
+      this.model.preview = false;
+
+      if (this.toolbar && this.toolbar !== null) {
+        this.toolbar.prependTo($('#post'));
+        this.toolbar = null;
+      }
+
+      $('.post-views a').removeClass('active');
+      $('.post-views .edit').addClass('active');
+      $('#prose').toggleClass('open', false);
+
+      $('.views .view').removeClass('active');
+      $('.views .edit').addClass('active');
+      this.updateURL();
+
+      // Refresh CodeMirror each time
+      // to reflect new changes
+      _.delay(function () {
+        that.refreshCodeMirror();
+      }, 1);
+
+      return false;
+    },
+
+    preview: function(e) {
+      var that = this;
+      this.model.preview = true;
+
+      $('#prose').toggleClass('open', false);
+
+      if (this.model.metadata && this.model.metadata.layout) {
+
+        var hash = window.location.hash.split('/');
+        hash[2] = 'preview';
+        this.stashFile();
+
+        $(e.currentTarget).attr({
+          target: '_blank',
+          href: hash.join('/')
+        });
+
+      } else {
+
+        this.toolbar = $('.toolbar').detach();
+
+        // Vertical Nav
+        $('.post-views a').removeClass('active');
+        $('.post-views .preview').addClass('active');
+
+        // Content Window
+        $('.views .view', this.el).removeClass('active');
+        $('#preview', this.el).addClass('active');
+
+        this.$('.preview').html(marked(this.model.content));
+        this.updateURL();
+        return false;
+      }
+
+      // Refresh CodeMirror each time
+      // to reflect new changes
+      _.delay(function () {
+        that.refreshCodeMirror();
+      }, 1);
+    },
+
+    settings: function(e) {
+      $('.post-views a').removeClass('active');
+      $('.post-views .settings').addClass('active');
+      $('#prose').toggleClass('open');
+    },
+
+    deleteFile: function() {
+      if (confirm('Are you sure you want to delete that file?')) {
+        window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
+          if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+          router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
+        }, this));
+      }
+      return false;
+    },
+
+    updateURL: function() {
+      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? "blob" : "edit", app.state.branch, this.model.path, this.model.file]);
+      router.navigate(url.join('/'), false);
+    },
+
+    makeDirty: function(e) {
+      this.dirty = true;
+      if (this.editor) this.model.content = this.editor.getValue();
+      if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
+      if (!this.$('.button.save').hasClass('saving')) {
+        this.$('.button.save').html(this.model.writeable ? 'Save' : 'Submit Change');
+        this.$('.button.save').removeClass('inactive error');
+      }
+    },
+
+    showDiff: function() {
+      var $diff = $('#diff', this.el);
+      var text1 = this.model.persisted ? this.prevContent : '';
+      var text2 = this.serialize();
+      var d = this.dmp.diff_main(text1, text2);
+      this.dmp.diff_cleanupSemantic(d);
+      var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, '');
+
+      // Content Window
+      $('.views .view', this.el).removeClass('active');
+      $diff.addClass('active');
+
+      $diff.html(diff);
+    },
+
+    hideDiff: function() {
+      $('.views .view', this.el).removeClass('active');
+
+      if (this.model.mode === 'preview') {
+        $('#preview', this.el).addClass('active');
+      } else {
+        $('#code', this.el).addClass('active');
+      }
+    },
+
+    save: function() {
+      if (!this.dirty) return false;
+      this.showDiff();
+      return false;
+    },
+
+    refreshCodeMirror: function () {
+      $('.CodeMirror-scroll').height($('.document').height());
+      this.editor.refresh();
+      // if (this.metadataEditor) this.metadataEditor.refresh();
+    },
+
+    updateMetaData: function () {
+      if (!this.model.jekyll) return true; // metadata -> skip
+
+      // Update published
+      // TODO: refactor to use this.model.metadata instead of raw YAML
+
+      function updatePublished(yamlStr, published) {
+        var regex = /published: (false|true)/;
+        if (yamlStr.match(regex)) {
+          return yamlStr.replace(regex, 'published: ' + !! published);
+        } else {
+          return yamlStr + '\npublished: ' + !! published;
+        }
+      }
+
+      this.model.raw_metadata = this.metadataEditor.getValue();
+      var published = this.$('#post_published').prop('checked');
+
+      this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
+      this.metadataEditor.setValue(this.model.raw_metadata);
+
+      if (published) {
+        $('#post').addClass('published');
+      } else {
+        $('#post').removeClass('published');
+      }
+
+      return true;
+    },
+
+    updateFilename: function (filepath, cb) {
+      var that = this;
+
+      if (!_.validPathname(filepath)) return cb('error');
+      app.state.path = this.model.path; // ?
+      app.state.file = _.extractFilename(filepath)[1];
+      app.state.path = _.extractFilename(filepath)[0];
+
+      function finish() {
+        that.model.path = app.state.path;
+        that.model.file = app.state.file;
+        // re-render header to reflect the filename change
+        app.instance.app.render();
+        that.updateURL();
+      }
+
+      if (this.model.persisted) {
+        window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function (err) {
+          if (!err) finish();
+          if (err) {
+            cb('error');
+          } else {
+            cb(null);
+          }
+        }, this));
+      } else {
+        finish();
+        cb(null);
+      }
+    },
+
+    serialize: function () {
+      return window.app.models.serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
+    },
+
+    // Update save state (saving ..., sending patch ..., etc.)
+
+    updateSaveState: function (label, classes) {
+      $('.button.save').html(label)
+        .removeClass('inactive error saving')
+        .addClass(classes);
+    },
+
+    // Submits a patch (fork + pull request workflow)
+
+    sendPatch: function (filepath, filename, filecontent, message) {
+      var that = this;
+
+      function patch() {
+        if (that.updateMetaData()) {
+          that.model.content = that.prevContent;
+          that.editor.setValue(that.prevContent);
+
+          window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
+            if (err) {
+              _.delay(function () {
+                that.$('.button.save').html('Submit Change');
+                that.$('.button.save').removeClass('error');
+                that.$('.button.save').addClass('inactive');
+              }, 3000);
+              that.updateSaveState('! Try again in 30 seconds', 'error');
+              return;
+            }
+
+            that.dirty = false;
+            that.model.persisted = true;
+            that.model.file = filename;
+            that.updateURL();
+            that.prevContent = filecontent;
+            that.updateSaveState('Change Submitted', 'inactive');
+          });
+        } else {
+          that.updateSaveState('! Metadata', 'error');
+        }
+      }
+
+      that.updateSaveState('Submitting Change ...', 'inactive saving');
+      patch();
+
+      return false;
+    },
+
+    saveFile: function (filepath, filename, filecontent, message) {
+      var that = this;
+
+      function save() {
+        if (that.updateMetaData()) {
+          window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
+            if (err) {
+              _.delay(function () {
+                that.makeDirty();
+              }, 3000);
+              that.updateSaveState('! Try again in 30 seconds', 'error');
+              return;
+            }
+            that.dirty = false;
+            that.model.persisted = true;
+            that.model.file = filename;
+            that.updateURL();
+            that.prevContent = filecontent;
+            that.updateSaveState('SAVED', 'inactive');
+          });
+        } else {
+          that.updateSaveState('! Metadata', 'error');
+        }
+      }
+
+      that.updateSaveState('Saving ...', 'inactive saving');
+
+      if (filepath === _.filepath(this.model.path, this.model.file)) return save();
+
+      // Move or create file
+      this.updateFilename(filepath, function (err) {
+        if (err) {
+          that.updateSaveState('! Filename', 'error');
+        } else {
+          save();
+        }
+      });
+    },
+
+    stashFile: function(e) {
+      if (e) e.preventDefault();
+      if (!window.localStorage || !this.dirty) return false;
+
+      var storage = window.localStorage;
+      var filepath = $('input.filepath').val();
+
+      // Don't stash if filepath is undefined
+      if (filepath) {
+        storage.setItem(filepath, JSON.stringify({
+          sha: app.state.sha,
+          content: this.editor ? this.editor.getValue() : null,
+          raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+        }));
+      }
+    },
+
+    stashApply: function () {
+      if (!window.localStorage) return false;
+
+      var storage = window.localStorage;
+      var filepath = $('input.filepath').val();
+      var item = storage.getItem(filepath);
+      var stash = JSON.parse(item);
+
+      if (stash && stash.sha === window.app.state.sha) {
+        // Restore from stash if file sha hasn't changed
+        if (this.editor) this.editor.setValue(stash.content);
+        if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
+      } else if (item) {
+        // Remove expired content
+        storage.removeItem(filepath);
+      }
+    },
+
+    updateFile: function() {
+      var that = this;
+      var filepath = $('input.filepath').val();
+      var filename = _.extractFilename(filepath)[1];
+      var filecontent = this.serialize();
+      var message = $('.commit-message').val() || $('.commit-message').attr('placeholder');
+      var method = this.model.writeable ? this.saveFile : this.sendPatch;
+
+      // Update content
+      this.model.content = this.editor.getValue();
+
+      // Delegate
+      method.call(this, filepath, filename, filecontent, message);
+    },
+
+    keyMap: function () {
+      var that = this;
+      return {
+        'Ctrl-S': function (codemirror) {
+          that.updateFile();
+        }
+      };
+    },
+
+    translate: function(e) {
+
+      // TODO Drop the 'EN' requirement.
+      var hash = window.location.hash.split('/'),
+          href = $(e.currentTarget).attr('href').substr(1);
+
+      // If current page is not english and target page is english
+      if (href === 'en') {
+        hash.splice(-2, 2, hash[hash.length - 1]);
+      // If current page is english and target page is not english
+      } else if (this.model.metadata.lang === 'en') {
+        hash.splice(-1, 1, href, hash[hash.length - 1]);
+      // If current page is not english and target page is not english
+      } else {
+        hash.splice(-2, 2, href, hash[hash.length - 1]);
+      }
+
+      router.navigate(_(hash).compact().join('/'), true);
+
+      return false;
+    },
+
+    buildMeta: function() {
+      var $metadataEditor = $('#meta');
+      $metadataEditor.empty();
+
+      function initialize(model) {
+        var tmpl;
+
+        _(model.default_metadata).each(function(data) {
+          if (data && typeof data.field === 'object') {
+            switch(data.field.element) {
+              case 'input':
+                tmpl = _(window.app.templates.text).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  value: data.field.value
+                }));
+                break;
+              case 'select':
+                tmpl = _(window.app.templates.select).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
+                break;
+              case 'multiselect':
+                tmpl = _(window.app.templates.multiselect).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  placeholder: data.field.placeholder,
+                  options: data.field.options
+                }));
+              break;
+            }
+          } else {
+            tmpl = _(window.app.templates.text).template();
+            $metadataEditor.append(tmpl({
+              name: key,
+              label: key,
+              value: data
+            }));
+          }
+        });
+
+        setValue(model.metadata);
+        $('.chzn-select').chosen();
+      }
+
+      function getValue() {
+        var metadata = {};
+
+        _.each($metadataEditor.find('[name]'), function(item) {
+          switch(item.tagName.toLowerCase()) {
+            case 'input':
+              if (item.type === 'text') {
+                metadata[item.name] = item.value;
+              }
+              break;
+            case 'select':
+            case 'multiselect':
+              metadata[item.name] = item.value;
+              break;
+          }
+        });
+
+        return metadata;
+      }
+
+      function getRaw() {
+        return jsyaml.dump(getValue());
+      }
+
+      function setValue(metadata) {
+        _(metadata).each(function(value, key) {
+          var input = $metadataEditor.find('[name="' + key + '"]');
+          var options = $metadataEditor.find('[name="' + key +'"] option');
+
+          if (input.length && options.length) {
+            _.each(options, function(option) {
+              if (value !== null && (option.value === value || value.indexOf(option.value) > -1)) {
+                option.selected = 'selected';
+              }
+            });
+          } else if (input.length) {
+            input.val(value);
+          } else {
+            var tmpl = _(window.app.templates.text).template();
+            $metadataEditor.append(tmpl({
+              name: key,
+              label: key,
+              value: value
+            }));
+          }
+        });
+      }
+
+      function setRaw(rawMetadata) {
+        try {
+          setValue(jsyaml.load(rawMetadata));
+        } catch(err) {
+          console.log('ERROR encoding YAML');
+          // No-op
+        }
+      }
+
+      initialize(this.model);
+
+      return {
+        el: $metadataEditor,
+        getValue: getRaw,
+        setValue: setRaw
+      };
+    },
+
+    initEditor: function () {
+      var that = this;
+
+      // TODO Remove setTimeout
+      setTimeout(function () {
+        if (that.model.jekyll) {
+          that.metadataEditor = that.buildMeta();
+          /*
+          that.metadataEditor = CodeMirror($('#meta')[0], {
+            mode: 'yaml',
+            value: that.model.raw_metadata,
+            theme: 'prose-dark',
+            lineWrapping: true,
+            extraKeys: that.keyMap(),
+            onChange: _.bind(that.makeDirty, that)
+          });
+          */
+          $('#post .metadata').hide();
+        }
+
+        that.editor = CodeMirror($('#code')[0], {
+          mode: that.model.lang,
+          value: that.model.content,
+          lineWrapping: true,
+          autofocus: true,
+          extraKeys: that.keyMap(),
+          matchBrackets: true,
+          theme: 'prose-bright',
+          onChange: _.bind(that.makeDirty, that)
+        });
+        that.refreshCodeMirror();
+
+        // Check localStorage for existing stash
+        // Apply if stash exists and is current, remove if expired
+        that.stashApply();
+      }, 100);
+    },
+
+    remove: function () {
+      // Unbind pagehide event handler when View is removed
+      this.eventRegister.unbind('edit', this.postViews);
+      this.eventRegister.unbind('preview', this.preview);
+      this.eventRegister.unbind('settings', this.settings);
+      this.eventRegister.unbind('deleteFile', this.deleteFile);
+      this.eventRegister.unbind('updateMetaData', this.updateMetaData);
+      this.eventRegister.unbind('save', this.save);
+      this.eventRegister.unbind('hideDiff', this.hideDiff);
+      this.eventRegister.unbind('translate', this.translate);
+      this.eventRegister.unbind('updateFile', this.updateFile);
+
+      $(window).unbind('pagehide');
+      Backbone.View.prototype.remove.call(this);
+    },
+
+    markdownSnippet: function(e) {
+      var snippet = $(e.target, this.el).data('snippet');
+      if (!snippet) return;
+      this.editor.replaceSelection(snippet);
+      return false;
+    }
+});
+
+},{".././util":21,"jquery-browserify":4,"chosen-jquery-browserify":22,"underscore":6,"js-yaml":18,"marked":20,"backbone":5,"keymaster":23}],14:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -9407,35 +11243,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././util":19,"jquery-browserify":4,"underscore":6,"js-yaml":18,"keymaster":20,"backbone":5}],16:[function(require,module,exports){
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  render: function() {
-    this.stashApply();
-    _.preview(this);
-    return this;
-  },
-
-  stashApply: function() {
-    if (!window.localStorage) return false;
-
-    var storage = window.localStorage,
-        filepath = window.location.hash.split('/').slice(4).join('/');
-
-    var stash = JSON.parse(storage.getItem(filepath));
-
-    if (stash) {
-      this.model.content = stash.content;
-      this.model.raw_metadata = stash.raw_metadata;
-      this.model.metadata = jsyaml.load(stash.raw_metadata);
-    }
-  }
-});
-
-},{"underscore":6,"js-yaml":18,"backbone":5}],13:[function(require,module,exports){
+},{".././util":21,"jquery-browserify":4,"underscore":6,"js-yaml":18,"backbone":5,"keymaster":23}],13:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -9508,7 +11316,7 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{".././util":19,"jquery-browserify":4,"underscore":6,"backbone":5}],12:[function(require,module,exports){
+},{".././util":21,"jquery-browserify":4,"underscore":6,"backbone":5}],12:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -9811,23 +11619,26 @@ module.exports = Backbone.View.extend({
 
       if (context === 'post') {
         sidebarTmpl = _(window.app.templates.settings).template();
-
-        $('#drawer')
-          .empty()
-          .append(sidebarTmpl(data));
-
       } else if (context === 'posts') {
         sidebarTmpl = _(window.app.templates.sidebarProject).template();
-
-        $('#drawer')
-          .empty()
-          .append(sidebarTmpl(data));
-
-        // Branch Switching
-        $('.chzn-select').chosen().change(function() {
-            router.navigate($(this).val(), true);
-        });
       }
+
+      $('#drawer')
+        .empty()
+        .append(sidebarTmpl(data));
+
+      // TODO Fix this. delay is clunky.
+      _.delay(function() {
+        var height = $('.sidebar', this.el).height();
+        if (height > 600) {
+          $('.editor', this.el).height(height - 90);
+        }
+      }, 500);
+
+      // Branch Switching
+      $('.chzn-select').chosen().change(function() {
+          router.navigate($(this).val(), true);
+      });
     },
 
     // Event Triggering to other files
@@ -9919,365 +11730,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":19,"jquery-browserify":4,"underscore":6,"backbone":5}],19:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var marked = require('marked');
-var queue = require('queue-async');
-var chrono = require('chrono');
-
-// Run an array of functions in serial
-// -------
-
-_.serial = function () {
-  (_(arguments).reduceRight(_.wrap, function() {}))();
-};
-
-
-// Parent path
-// -------
-
-_.parentPath = function(path) {
-  return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
-};
-
-
-// Topmost path
-// -------
-
-_.topPath = function(path) {
-  var match = path.match(/\/?([a-zA-Z0-9_\-]*)$/);
-  return match[1];
-};
-
-
-// Valid filename check
-// -------
-
-_.validFilename = function(filename) {
-  return !!filename.match(/^([a-zA-Z0-9_\-]|\.)+$/);
-  // Disabled for now: the Jekyll post format layout
-  // return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
-};
-
-
-// Valid pathname check
-// -------
-
-_.validPathname = function(path) {
-  return _.all(path.split('/'), function(filename) {
-    return _.validFilename(filename);
-  });
-};
-
-
-// Extract filename from a given path
-// -------
-//
-// _.extractFilename('path/to/foo.md')
-// => ['path/to', 'foo.md']
-
-_.extractFilename = function(path) {
-  if (!path.match(/\//)) return ['', path];
-  var matches = path.match(/(.*)\/(.*)$/);
-  return [ matches[1], matches[2] ];
-};
-
-
-// Determine mode for CodeMirror
-// -------
-
-_.mode = function(file) {
-  if (_.markdown(file)) return 'gfm';
-
-  var extension = _.extension(file);
-
-  if (_.include(['js', 'json'], extension)) return 'javascript';
-  if (extension === 'html') return 'htmlmixed';
-  if (extension === 'rb') return 'ruby';
-  if (extension === 'yml') return 'yaml';
-  if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
-
-  return extension;
-};
-
-
-// Check if a given file is a Jekyll post
-// -------
-
-_.jekyll = function(path, file) {
-  return !!(path.match('_posts') && _.markdown(file));
-};
-
-// check if a given file has YAML frontmater
-// -------
-
-_.hasMetadata = function(content) {
-  return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
-};
-
-// Extract file extension
-// -------
-
-_.extension = function(file) {
-  var match = file.match(/\.(\w+)$/);
-  return match ? match[1] : null;
-};
-
-
-// Determines whether a given file is a markdown file or not
-// -------
-
-_.markdown = function(file) {
-  var regex = new RegExp('.(md|mkdn?|mdown|markdown)$');
-  return !!(regex.test(file));
-};
-
-
-// Clip a string
-// -------
-
-_.clip = function(str, length) {
-  var res = str.substr(0, length);
-  if (length < str.length) res += ' ...';
-  return res;
-};
-
-
-// Concatenate path + file to full filepath
-// -------
-
-_.filepath = function(path, file) {
-  return (path ? path +"/" : "") + file;
-};
-
-
-// Converts a javascript object to YAML
-// Does not support nested objects
-// Multiline values are serialized as Blocks
-
-_.toYAML = function(metadata) {
-  var res = [];
-  _.each(metadata, function(value, property) {
-    if (value.match(/\n/)) {
-      var str = property+': |\n';
-
-      _.each(value.split('\n'), function(line) {
-        str += '  ' + line;
-      });
-
-      res.push();
-    } else {
-      res.push(property+": "+value);
-    }
-  });
-
-  return res.join('\n');
-};
-
-
-// Only parses first level of YAML file
-// Considers the whole thing as a key-value pair party
-//
-// name: "michael"
-// age: 25
-// friends:
-// - Michael
-// - John
-// block: |
-//   Hello World
-//   Another line
-//   24123
-//
-// =>
-// {
-//   name: 'michael',
-//   age: "25",
-//   friends: "- Michael\n- John",
-//   block: "Hello World\nAnother line\n24123"
-// }
-//
-// var yaml = 'name:     "michael"\nage: 25\nfriends:\n- Michael\n- John\nblock: |\n  hey ho\n  some text\n  yay';
-// console.log(_.fromYAML(yaml));
-
-_.fromYAML = function(rawYAML) {
-  var data = {};
-
-  var lines = rawYAML.split('\n');
-  var key = null;
-  var value = "";
-  var blockValue = false;
-
-  function add() {
-    data[key] = _.isArray(value) ? value.join('\n') : value;
-    key = null;
-    value = "";
-  }
-
-  _.each(lines, function(line) {
-    var match = line.match(/^([A-Za-z_][A-Za-z0-9_]*):\s*(.*)$/);
-
-    if (match && key) add();
-    if (match) { // New Top Level key found
-      key = match[1];
-      value = match[2];
-      if (value.match(/\|$/)) {
-        blockValue = true;
-        value = "";
-      }
-    } else {
-      if (!_.isArray(value)) value = [];
-      if (blockValue) {
-        value.push(line.trim());
-      } else {
-        value.push(line.replace(/^\s\s/, ''));
-      }
-    }
-  });
-
-  add();
-  return data;
-};
-
-// chunked path
-// -------
-//
-// _.chunkedPath('path/to/foo')
-// =>
-// [
-//   { url: 'path',        name: 'path' },
-//   { url: 'path/to',     name: 'to' },
-//   { url: 'path/to/foo', name: 'foo' }
-// ]
-
-_.chunkedPath = function(path) {
-  var chunks = path.split('/');
-  return _.map(chunks, function(chunk, index) {
-    var url = [];
-    for (var i=0; i<=index; i++) {
-      url.push(chunks[i]);
-    }
-    return {
-      url: url.join('/'),
-      name: chunk
-    };
-  });
-};
-
-// Full Layout Preview
-// -------
-
-_.preview = function(view) {
-  var model = view.model,
-      q = queue(1),
-      p = {
-        site: app.state.config,
-        post: model.metadata,
-        page: model.metadata,
-        content: Liquid.parse(marked(model.content)).render({
-          site: app.state.config,
-          post: model.metadata,
-          page: model.metadata
-        }) || ''
-      };
-
-  if (p.site.prose && p.site.prose.site) {
-    _(p.site.prose.site).each(function(file, key) {
-      q.defer(function(cb){
-        $.ajax({
-          cache: true,
-          dataType: 'jsonp',
-          jsonp: false,
-          jsonpCallback: 'callback',
-          url: file,
-          success: function(d) {
-            p.site[key] = d;
-            cb();
-          }
-        });
-      });
-    });
-  }
-
-  q.defer(getLayout);
-  q.await(function() {
-    var content = p.content;
-
-    // Set base URL to public site
-    if (app.state.config.prose && app.state.config.prose.siteurl) {
-      content = content.replace(/(<head(?:.*)>)/, function() {
-        return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
-      });
-    }
-
-    document.write(content);
-    document.close();
-  });
-
-  function getLayout(cb) {
-    var file = p.page.layout;
-
-    model.repo.read(app.state.branch, '_layouts/' + file + '.html', function(err, d) {
-      if (err) return cb(err);
-      var meta = (d.split('---')[1]) ? jsyaml.load(d.split('---')[1]) : {},
-        content = (d.split('---')[2]) ? d.split('---')[2] : d,
-        template = Liquid.parse(content);
-      p.page = _(p.page).extend(meta);
-      p.content = template.render({
-        site: p.site,
-        post: p.post,
-        page: p.page,
-        content: p.content
-      });
-      if (meta.layout) q.defer(getLayout);
-      cb();
-    });
-
-  }
-};
-
-// UI Stuff
-// -------
-
-function dropdown() {
-    var $dropdown = $('.dropdown-menu');
-    $dropdown.each(function(i, el) {
-        $(this).hover(function() {
-            $(this).addClass('open');
-        }, function(e) {
-            $(this).removeClass('open');
-        });
-    });
-
-    $('.dropdown-hover').click(function() {
-        return false;
-    });
-}
-
-function shadowScroll($el, $parent) {
-  $el.scroll(function() {
-    if ($el.scrollTop() !== 0) {
-      if (!$parent.hasClass('shadow')) {
-        $parent.addClass('shadow');
-      }
-    } else {
-      $parent.removeClass('shadow');
-    }
-  });
-}
-
-module.exports = {
-  dropdown: function() {
-    return dropdown();
-  },
-
-  shadowScroll: function($el, $parent) {
-    return shadowScroll($el, $parent);
-  }
-}
-
-},{"jquery-browserify":4,"js-yaml":18,"underscore":6,"queue-async":21,"marked":22,"chrono":23}],4:[function(require,module,exports){
+},{".././util":21,"jquery-browserify":4,"underscore":6,"backbone":5}],4:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -19612,1968 +21065,365 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],15:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var $ = require('jquery-browserify');
-var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
-var key = require('keymaster');
 var marked = require('marked');
-var Backbone = require('backbone');
+var queue = require('queue-async');
+var chrono = require('chrono');
 
-module.exports = Backbone.View.extend({
+// Run an array of functions in serial
+// -------
 
-    id: 'post',
-    className: 'post',
+_.serial = function () {
+  (_(arguments).reduceRight(_.wrap, function() {}))();
+};
 
-    events: {
-      'click .save.confirm': 'updateFile',
-      'click .markdown-snippets a': 'markdownSnippet',
-      'change input': 'makeDirty'
-    },
 
-    initialize: function () {
-      this.dmp = new diff_match_patch();
-      this.mode = 'edit';
-      this.prevContent = this.serialize();
-      if (!window.shortcutsRegistered) {
-        key('⌘+s, ctrl+s', _.bind(function () {
-          this.updateFile();
-          return false;
-        }, this));
-        window.shortcutsRegistered = true;
-      }
+// Parent path
+// -------
 
-      // Stash editor and metadataEditor content to localStorage on pagehide event
-      // Always run stashFile in context of view
-      $(window).on('pagehide', _.bind(this.stashFile, this));
-    },
+_.parentPath = function(path) {
+  return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
+};
 
-    render: function() {
-      var data = _.extend(this.model, {
-        mode: this.mode,
-        preview: this.model.markdown ? marked(this.model.content) : '',
-        metadata: jsyaml.load(this.model.raw_metadata)
+
+// Topmost path
+// -------
+
+_.topPath = function(path) {
+  var match = path.match(/\/?([a-zA-Z0-9_\-]*)$/);
+  return match[1];
+};
+
+
+// Valid filename check
+// -------
+
+_.validFilename = function(filename) {
+  return !!filename.match(/^([a-zA-Z0-9_\-]|\.)+$/);
+  // Disabled for now: the Jekyll post format layout
+  // return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
+};
+
+
+// Valid pathname check
+// -------
+
+_.validPathname = function(path) {
+  return _.all(path.split('/'), function(filename) {
+    return _.validFilename(filename);
+  });
+};
+
+
+// Extract filename from a given path
+// -------
+//
+// _.extractFilename('path/to/foo.md')
+// => ['path/to', 'foo.md']
+
+_.extractFilename = function(path) {
+  if (!path.match(/\//)) return ['', path];
+  var matches = path.match(/(.*)\/(.*)$/);
+  return [ matches[1], matches[2] ];
+};
+
+
+// Determine mode for CodeMirror
+// -------
+
+_.mode = function(file) {
+  if (_.markdown(file)) return 'gfm';
+
+  var extension = _.extension(file);
+
+  if (_.include(['js', 'json'], extension)) return 'javascript';
+  if (extension === 'html') return 'htmlmixed';
+  if (extension === 'rb') return 'ruby';
+  if (extension === 'yml') return 'yaml';
+  if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
+
+  return extension;
+};
+
+
+// Check if a given file is a Jekyll post
+// -------
+
+_.jekyll = function(path, file) {
+  return !!(path.match('_posts') && _.markdown(file));
+};
+
+// check if a given file has YAML frontmater
+// -------
+
+_.hasMetadata = function(content) {
+  return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
+};
+
+// Extract file extension
+// -------
+
+_.extension = function(file) {
+  var match = file.match(/\.(\w+)$/);
+  return match ? match[1] : null;
+};
+
+
+// Determines whether a given file is a markdown file or not
+// -------
+
+_.markdown = function(file) {
+  var regex = new RegExp('.(md|mkdn?|mdown|markdown)$');
+  return !!(regex.test(file));
+};
+
+
+// Clip a string
+// -------
+
+_.clip = function(str, length) {
+  var res = str.substr(0, length);
+  if (length < str.length) res += ' ...';
+  return res;
+};
+
+
+// Concatenate path + file to full filepath
+// -------
+
+_.filepath = function(path, file) {
+  return (path ? path +"/" : "") + file;
+};
+
+
+// Converts a javascript object to YAML
+// Does not support nested objects
+// Multiline values are serialized as Blocks
+
+_.toYAML = function(metadata) {
+  var res = [];
+  _.each(metadata, function(value, property) {
+    if (value.match(/\n/)) {
+      var str = property+': |\n';
+
+      _.each(value.split('\n'), function(line) {
+        str += '  ' + line;
       });
 
-      this.eventRegister = app.eventRegister;
+      res.push();
+    } else {
+      res.push(property+": "+value);
+    }
+  });
 
-      // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'hideDiff', 'translate', 'updateFile');
-      this.eventRegister.bind('edit', this.edit);
-      this.eventRegister.bind('preview', this.preview);
-      this.eventRegister.bind('settings', this.settings);
-      this.eventRegister.bind('deleteFile', this.deleteFile);
-      this.eventRegister.bind('updateMetaData', this.updateMetaData);
-      this.eventRegister.bind('save', this.save);
-      this.eventRegister.bind('hideDiff', this.hideDiff);
-      this.eventRegister.bind('updateFile', this.updateFile);
-      this.eventRegister.bind('translate', this.translate);
+  return res.join('\n');
+};
 
-      // Ping `views/app.js` to let know we should swap out the sidebar
-      this.eventRegister.trigger('sidebarContext', data, 'post');
 
-      // Render heading
-      var isPrivate = app.state.isPrivate ? 'private' : '';
+// Only parses first level of YAML file
+// Considers the whole thing as a key-value pair party
+//
+// name: "michael"
+// age: 25
+// friends:
+// - Michael
+// - John
+// block: |
+//   Hello World
+//   Another line
+//   24123
+//
+// =>
+// {
+//   name: 'michael',
+//   age: "25",
+//   friends: "- Michael\n- John",
+//   block: "Hello World\nAnother line\n24123"
+// }
+//
+// var yaml = 'name:     "michael"\nage: 25\nfriends:\n- Michael\n- John\nblock: |\n  hey ho\n  some text\n  yay';
+// console.log(_.fromYAML(yaml));
 
-      var header = {
-        avatar: '<span class="icon round file ' + isPrivate + '"></span>',
-        parent: app.state.repo,
-        parentUrl: app.state.user + '/' + app.state.repo,
-        title: _.filepath(data.path, data.file),
-        titleUrl: '#',
-        alterable: true
+_.fromYAML = function(rawYAML) {
+  var data = {};
+
+  var lines = rawYAML.split('\n');
+  var key = null;
+  var value = "";
+  var blockValue = false;
+
+  function add() {
+    data[key] = _.isArray(value) ? value.join('\n') : value;
+    key = null;
+    value = "";
+  }
+
+  _.each(lines, function(line) {
+    var match = line.match(/^([A-Za-z_][A-Za-z0-9_]*):\s*(.*)$/);
+
+    if (match && key) add();
+    if (match) { // New Top Level key found
+      key = match[1];
+      value = match[2];
+      if (value.match(/\|$/)) {
+        blockValue = true;
+        value = "";
+      }
+    } else {
+      if (!_.isArray(value)) value = [];
+      if (blockValue) {
+        value.push(line.trim());
+      } else {
+        value.push(line.replace(/^\s\s/, ''));
+      }
+    }
+  });
+
+  add();
+  return data;
+};
+
+// chunked path
+// -------
+//
+// _.chunkedPath('path/to/foo')
+// =>
+// [
+//   { url: 'path',        name: 'path' },
+//   { url: 'path/to',     name: 'to' },
+//   { url: 'path/to/foo', name: 'foo' }
+// ]
+
+_.chunkedPath = function(path) {
+  var chunks = path.split('/');
+  return _.map(chunks, function(chunk, index) {
+    var url = [];
+    for (var i=0; i<=index; i++) {
+      url.push(chunks[i]);
+    }
+    return {
+      url: url.join('/'),
+      name: chunk
+    };
+  });
+};
+
+// Full Layout Preview
+// -------
+
+_.preview = function(view) {
+  var model = view.model,
+      q = queue(1),
+      p = {
+        site: app.state.config,
+        post: model.metadata,
+        page: model.metadata,
+        content: Liquid.parse(marked(model.content)).render({
+          site: app.state.config,
+          post: model.metadata,
+          page: model.metadata
+        }) || ''
       };
 
-      this.eventRegister.trigger('headerContext', header);
-
-      var tmpl = _(window.app.templates.post).template();
-
-      $(this.el)
-        .empty()
-        .append(tmpl(_.extend(this.model, {
-          mode: this.mode,
-          metadata: this.model.metadata
-        })));
-
-      // TODO Add an unpublished class to .application
-      if (!this.model.published) $(this.el).addClass('published');
-
-      this.initEditor();
-
-      // Editor is first up so trigger an active class for it
-      $('.post-views .edit').toggleClass('active', true);
-
-      return this;
-    },
-
-    edit: function(e) {
-      var that = this;
-      this.model.preview = false;
-
-      if (this.toolbar && this.toolbar !== null) {
-        this.toolbar.prependTo($('#post'));
-        this.toolbar = null;
-      }
-
-      $('.post-views a').removeClass('active');
-      $('.post-views .edit').addClass('active');
-      $('#prose').toggleClass('open', false);
-
-      $('.views .view').removeClass('active');
-      $('.views .edit').addClass('active');
-      this.updateURL();
-
-      // Refresh CodeMirror each time
-      // to reflect new changes
-      _.delay(function () {
-        that.refreshCodeMirror();
-      }, 1);
-
-      return false;
-    },
-
-    preview: function(e) {
-      var that = this;
-      this.model.preview = true;
-
-      $('#prose').toggleClass('open', false);
-
-      if (this.model.metadata && this.model.metadata.layout) {
-
-        var hash = window.location.hash.split('/');
-        hash[2] = 'preview';
-        this.stashFile();
-
-        $(e.currentTarget).attr({
-          target: '_blank',
-          href: hash.join('/')
+  if (p.site.prose && p.site.prose.site) {
+    _(p.site.prose.site).each(function(file, key) {
+      q.defer(function(cb){
+        $.ajax({
+          cache: true,
+          dataType: 'jsonp',
+          jsonp: false,
+          jsonpCallback: 'callback',
+          url: file,
+          success: function(d) {
+            p.site[key] = d;
+            cb();
+          }
         });
+      });
+    });
+  }
 
-      } else {
+  q.defer(getLayout);
+  q.await(function() {
+    var content = p.content;
 
-        this.toolbar = $('.toolbar').detach();
+    // Set base URL to public site
+    if (app.state.config.prose && app.state.config.prose.siteurl) {
+      content = content.replace(/(<head(?:.*)>)/, function() {
+        return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
+      });
+    }
 
-        // Vertical Nav
-        $('.post-views a').removeClass('active');
-        $('.post-views .preview').addClass('active');
+    document.write(content);
+    document.close();
+  });
 
-        // Content Window
-        $('.views .view', this.el).removeClass('active');
-        $('#preview', this.el).addClass('active');
+  function getLayout(cb) {
+    var file = p.page.layout;
 
-        this.$('.preview').html(marked(this.model.content));
-        this.updateURL();
+    model.repo.read(app.state.branch, '_layouts/' + file + '.html', function(err, d) {
+      if (err) return cb(err);
+      var meta = (d.split('---')[1]) ? jsyaml.load(d.split('---')[1]) : {},
+        content = (d.split('---')[2]) ? d.split('---')[2] : d,
+        template = Liquid.parse(content);
+      p.page = _(p.page).extend(meta);
+      p.content = template.render({
+        site: p.site,
+        post: p.post,
+        page: p.page,
+        content: p.content
+      });
+      if (meta.layout) q.defer(getLayout);
+      cb();
+    });
+
+  }
+};
+
+// UI Stuff
+// -------
+
+function dropdown() {
+    var $dropdown = $('.dropdown-menu');
+    $dropdown.each(function(i, el) {
+        $(this).hover(function() {
+            $(this).addClass('open');
+        }, function(e) {
+            $(this).removeClass('open');
+        });
+    });
+
+    $('.dropdown-hover').click(function() {
         return false;
+    });
+}
+
+function shadowScroll($el, $parent) {
+  $el.scroll(function() {
+    if ($el.scrollTop() !== 0) {
+      if (!$parent.hasClass('shadow')) {
+        $parent.addClass('shadow');
       }
-
-      // Refresh CodeMirror each time
-      // to reflect new changes
-      _.delay(function () {
-        that.refreshCodeMirror();
-      }, 1);
-    },
-
-    settings: function(e) {
-      $('.post-views a').removeClass('active');
-      $('.post-views .settings').addClass('active');
-      $('#prose').toggleClass('open');
-    },
-
-    deleteFile: function() {
-      if (confirm('Are you sure you want to delete that file?')) {
-        window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
-          if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
-          router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
-        }, this));
-      }
-      return false;
-    },
-
-    updateURL: function() {
-      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? "blob" : "edit", app.state.branch, this.model.path, this.model.file]);
-      router.navigate(url.join('/'), false);
-    },
-
-    makeDirty: function(e) {
-      this.dirty = true;
-      if (this.editor) this.model.content = this.editor.getValue();
-      if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
-      if (!this.$('.button.save').hasClass('saving')) {
-        this.$('.button.save').html(this.model.writeable ? 'Save' : 'Submit Change');
-        this.$('.button.save').removeClass('inactive error');
-      }
-    },
-
-    showDiff: function() {
-      var $diff = $('#diff', this.el);
-      var text1 = this.model.persisted ? this.prevContent : '';
-      var text2 = this.serialize();
-      var d = this.dmp.diff_main(text1, text2);
-      this.dmp.diff_cleanupSemantic(d);
-      var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, '');
-
-      // Content Window
-      $('.views .view', this.el).removeClass('active');
-      $diff.addClass('active');
-
-      $diff.html(diff);
-    },
-
-    hideDiff: function() {
-      $('.views .view', this.el).removeClass('active');
-
-      if (this.model.mode === 'preview') {
-        $('#preview', this.el).addClass('active');
-      } else {
-        $('#code', this.el).addClass('active');
-      }
-    },
-
-    save: function() {
-      if (!this.dirty) return false;
-      this.showDiff();
-      return false;
-    },
-
-    refreshCodeMirror: function () {
-      $('.CodeMirror-scroll').height($('.document').height());
-      this.editor.refresh();
-      // if (this.metadataEditor) this.metadataEditor.refresh();
-    },
-
-    updateMetaData: function () {
-      if (!this.model.jekyll) return true; // metadata -> skip
-
-      // Update published
-      // TODO: refactor to use this.model.metadata instead of raw YAML
-
-      function updatePublished(yamlStr, published) {
-        var regex = /published: (false|true)/;
-        if (yamlStr.match(regex)) {
-          return yamlStr.replace(regex, 'published: ' + !! published);
-        } else {
-          return yamlStr + '\npublished: ' + !! published;
-        }
-      }
-
-      this.model.raw_metadata = this.metadataEditor.getValue();
-      var published = this.$('#post_published').prop('checked');
-
-      this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
-      this.metadataEditor.setValue(this.model.raw_metadata);
-
-      if (published) {
-        $('#post').addClass('published');
-      } else {
-        $('#post').removeClass('published');
-      }
-
-      return true;
-    },
-
-    updateFilename: function (filepath, cb) {
-      var that = this;
-
-      if (!_.validPathname(filepath)) return cb('error');
-      app.state.path = this.model.path; // ?
-      app.state.file = _.extractFilename(filepath)[1];
-      app.state.path = _.extractFilename(filepath)[0];
-
-      function finish() {
-        that.model.path = app.state.path;
-        that.model.file = app.state.file;
-        // re-render header to reflect the filename change
-        app.instance.app.render();
-        that.updateURL();
-      }
-
-      if (this.model.persisted) {
-        window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function (err) {
-          if (!err) finish();
-          if (err) {
-            cb('error');
-          } else {
-            cb(null);
-          }
-        }, this));
-      } else {
-        finish();
-        cb(null);
-      }
-    },
-
-    serialize: function () {
-      return window.app.models.serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
-    },
-
-    // Update save state (saving ..., sending patch ..., etc.)
-
-    updateSaveState: function (label, classes) {
-      $('.button.save').html(label)
-        .removeClass('inactive error saving')
-        .addClass(classes);
-    },
-
-    // Submits a patch (fork + pull request workflow)
-
-    sendPatch: function (filepath, filename, filecontent, message) {
-      var that = this;
-
-      function patch() {
-        if (that.updateMetaData()) {
-          that.model.content = that.prevContent;
-          that.editor.setValue(that.prevContent);
-
-          window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
-            if (err) {
-              _.delay(function () {
-                that.$('.button.save').html('Submit Change');
-                that.$('.button.save').removeClass('error');
-                that.$('.button.save').addClass('inactive');
-              }, 3000);
-              that.updateSaveState('! Try again in 30 seconds', 'error');
-              return;
-            }
-
-            that.dirty = false;
-            that.model.persisted = true;
-            that.model.file = filename;
-            that.updateURL();
-            that.prevContent = filecontent;
-            that.updateSaveState('Change Submitted', 'inactive');
-          });
-        } else {
-          that.updateSaveState('! Metadata', 'error');
-        }
-      }
-
-      that.updateSaveState('Submitting Change ...', 'inactive saving');
-      patch();
-
-      return false;
-    },
-
-    saveFile: function (filepath, filename, filecontent, message) {
-      var that = this;
-
-      function save() {
-        if (that.updateMetaData()) {
-          window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
-            if (err) {
-              _.delay(function () {
-                that.makeDirty();
-              }, 3000);
-              that.updateSaveState('! Try again in 30 seconds', 'error');
-              return;
-            }
-            that.dirty = false;
-            that.model.persisted = true;
-            that.model.file = filename;
-            that.updateURL();
-            that.prevContent = filecontent;
-            that.updateSaveState('SAVED', 'inactive');
-          });
-        } else {
-          that.updateSaveState('! Metadata', 'error');
-        }
-      }
-
-      that.updateSaveState('Saving ...', 'inactive saving');
-
-      if (filepath === _.filepath(this.model.path, this.model.file)) return save();
-
-      // Move or create file
-      this.updateFilename(filepath, function (err) {
-        if (err) {
-          that.updateSaveState('! Filename', 'error');
-        } else {
-          save();
-        }
-      });
-    },
-
-    stashFile: function(e) {
-      if (e) e.preventDefault();
-      if (!window.localStorage || !this.dirty) return false;
-
-      var storage = window.localStorage;
-      var filepath = $('input.filepath').val();
-
-      // Don't stash if filepath is undefined
-      if (filepath) {
-        storage.setItem(filepath, JSON.stringify({
-          sha: app.state.sha,
-          content: this.editor ? this.editor.getValue() : null,
-          raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
-        }));
-      }
-    },
-
-    stashApply: function () {
-      if (!window.localStorage) return false;
-
-      var storage = window.localStorage;
-      var filepath = $('input.filepath').val();
-      var item = storage.getItem(filepath);
-      var stash = JSON.parse(item);
-
-      if (stash && stash.sha === window.app.state.sha) {
-        // Restore from stash if file sha hasn't changed
-        if (this.editor) this.editor.setValue(stash.content);
-        if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
-      } else if (item) {
-        // Remove expired content
-        storage.removeItem(filepath);
-      }
-    },
-
-    updateFile: function() {
-      var that = this;
-      var filepath = $('input.filepath').val();
-      var filename = _.extractFilename(filepath)[1];
-      var filecontent = this.serialize();
-      var message = $('.commit-message').val() || $('.commit-message').attr('placeholder');
-      var method = this.model.writeable ? this.saveFile : this.sendPatch;
-
-      // Update content
-      this.model.content = this.editor.getValue();
-
-      // Delegate
-      method.call(this, filepath, filename, filecontent, message);
-    },
-
-    keyMap: function () {
-      var that = this;
-      return {
-        'Ctrl-S': function (codemirror) {
-          that.updateFile();
-        }
-      };
-    },
-
-    translate: function(e) {
-
-      // TODO Drop the 'EN' requirement.
-      var hash = window.location.hash.split('/'),
-          href = $(e.currentTarget).attr('href').substr(1);
-
-      // If current page is not english and target page is english
-      if (href === 'en') {
-        hash.splice(-2, 2, hash[hash.length - 1]);
-      // If current page is english and target page is not english
-      } else if (this.model.metadata.lang === 'en') {
-        hash.splice(-1, 1, href, hash[hash.length - 1]);
-      // If current page is not english and target page is not english
-      } else {
-        hash.splice(-2, 2, href, hash[hash.length - 1]);
-      }
-
-      router.navigate(_(hash).compact().join('/'), true);
-
-      return false;
-    },
-
-    buildMeta: function() {
-      var $metadataEditor = $('#meta');
-      $metadataEditor.empty();
-
-      function initialize(model) {
-        var tmpl;
-
-        _(model.default_metadata).each(function(data) {
-          if (data && typeof data.field === 'object') {
-            switch(data.field.element) {
-              case 'input':
-                tmpl = _(window.app.templates.text).template();
-                $metadataEditor.append(tmpl({
-                  name: data.name,
-                  label: data.field.label,
-                  value: data.field.value
-                }));
-                break;
-              case 'select':
-                tmpl = _(window.app.templates.select).template();
-                $metadataEditor.append(tmpl({
-                  name: data.name,
-                  label: data.field.label,
-                  placeholder: data.field.placeholder,
-                  options: data.field.options
-                }));
-                break;
-              case 'multiselect':
-                tmpl = _(window.app.templates.multiselect).template();
-                $metadataEditor.append(tmpl({
-                  name: data.name,
-                  label: data.field.label,
-                  placeholder: data.field.placeholder,
-                  options: data.field.options
-                }));
-              break;
-            }
-          } else {
-            tmpl = _(window.app.templates.text).template();
-            $metadataEditor.append(tmpl({
-              name: key,
-              label: key,
-              value: data
-            }));
-          }
-        });
-
-        setValue(model.metadata);
-        $('.chzn-select').chosen();
-      }
-
-      function getValue() {
-        var metadata = {};
-
-        _.each($metadataEditor.find('[name]'), function(item) {
-          switch(item.tagName.toLowerCase()) {
-            case 'input':
-              if (item.type === 'text') {
-                metadata[item.name] = item.value;
-              }
-              break;
-            case 'select':
-            case 'multiselect':
-              metadata[item.name] = item.value;
-              break;
-          }
-        });
-
-        return metadata;
-      }
-
-      function getRaw() {
-        return jsyaml.dump(getValue());
-      }
-
-      function setValue(metadata) {
-        _(metadata).each(function(value, key) {
-          var input = $metadataEditor.find('[name="' + key + '"]');
-          var options = $metadataEditor.find('[name="' + key +'"] option');
-
-          if (input.length && options.length) {
-            _.each(options, function(option) {
-              if (value !== null && (option.value === value || value.indexOf(option.value) > -1)) {
-                option.selected = 'selected';
-              }
-            });
-          } else if (input.length) {
-            input.val(value);
-          } else {
-            var tmpl = _(window.app.templates.text).template();
-            $metadataEditor.append(tmpl({
-              name: key,
-              label: key,
-              value: value
-            }));
-          }
-        });
-      }
-
-      function setRaw(rawMetadata) {
-        try {
-          setValue(jsyaml.load(rawMetadata));
-        } catch(err) {
-          console.log('ERROR encoding YAML');
-          // No-op
-        }
-      }
-
-      initialize(this.model);
-
-      return {
-        el: $metadataEditor,
-        getValue: getRaw,
-        setValue: setRaw
-      };
-    },
-
-    initEditor: function () {
-      var that = this;
-
-      // TODO Remove setTimeout
-      setTimeout(function () {
-        if (that.model.jekyll) {
-          that.metadataEditor = that.buildMeta();
-          /*
-          that.metadataEditor = CodeMirror($('#meta')[0], {
-            mode: 'yaml',
-            value: that.model.raw_metadata,
-            theme: 'prose-dark',
-            lineWrapping: true,
-            extraKeys: that.keyMap(),
-            onChange: _.bind(that.makeDirty, that)
-          });
-          */
-          $('#post .metadata').hide();
-        }
-
-        that.editor = CodeMirror($('#code')[0], {
-          mode: that.model.lang,
-          value: that.model.content,
-          lineWrapping: true,
-          extraKeys: that.keyMap(),
-          matchBrackets: true,
-          theme: 'prose-bright',
-          onChange: _.bind(that.makeDirty, that)
-        });
-        that.refreshCodeMirror();
-
-        // Check localStorage for existing stash
-        // Apply if stash exists and is current, remove if expired
-        that.stashApply();
-      }, 100);
-    },
-
-    remove: function () {
-      // Unbind pagehide event handler when View is removed
-      this.eventRegister.unbind('edit', this.postViews);
-      this.eventRegister.unbind('preview', this.preview);
-      this.eventRegister.unbind('settings', this.settings);
-      this.eventRegister.unbind('deleteFile', this.deleteFile);
-      this.eventRegister.unbind('updateMetaData', this.updateMetaData);
-      this.eventRegister.unbind('save', this.save);
-      this.eventRegister.unbind('hideDiff', this.hideDiff);
-      this.eventRegister.unbind('translate', this.translate);
-      this.eventRegister.unbind('updateFile', this.updateFile);
-
-      $(window).unbind('pagehide');
-      Backbone.View.prototype.remove.call(this);
-    },
-
-    markdownSnippet: function(e) {
-      var snippet = $(e.target, this.el).data('snippet');
-      if (!snippet) return;
-      this.editor.replaceSelection(snippet);
-      return false;
-    }
-});
-
-},{"jquery-browserify":4,"underscore":6,"js-yaml":18,"keymaster":20,"marked":22,"backbone":5,"chosen-jquery-browserify":24}],21:[function(require,module,exports){
-(function() {
-  if (typeof module === "undefined") self.queue = queue;
-  else module.exports = queue;
-  queue.version = "1.0.3";
-
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var queue = {},
-        deferrals = [],
-        started = 0, // number of deferrals that have been started (and perhaps finished)
-        active = 0, // number of deferrals currently being executed (started but not finished)
-        remaining = 0, // number of deferrals not yet finished
-        popping, // inside a synchronous deferral callback?
-        error,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    queue.defer = function() {
-      if (!error) {
-        deferrals.push(arguments);
-        ++remaining;
-        pop();
-      }
-      return queue;
-    };
-
-    queue.await = function(f) {
-      await = f;
-      all = false;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    queue.awaitAll = function(f) {
-      await = f;
-      all = true;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    function pop() {
-      while (popping = started < deferrals.length && active < parallelism) {
-        var i = started++,
-            d = deferrals[i],
-            a = slice.call(d, 1);
-        a.push(callback(i));
-        ++active;
-        d[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new deferrals and squelch active callbacks
-          started = remaining = NaN; // stop queued deferrals from starting
-          notify();
-        } else {
-          deferrals[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(null, deferrals);
-      else await.apply(null, [null].concat(deferrals));
-    }
-
-    return queue;
-  }
-
-  function noop() {}
-})();
-
-},{}],22:[function(require,module,exports){
-(function(global){/**
- * marked - a markdown parser
- * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
- * https://github.com/chjj/marked
- */
-
-;(function() {
-
-/**
- * Block-Level Grammar
- */
-
-var block = {
-  newline: /^\n+/,
-  code: /^( {4}[^\n]+\n*)+/,
-  fences: noop,
-  hr: /^( *[-*_]){3,} *(?:\n+|$)/,
-  heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
-  nptable: noop,
-  lheading: /^([^\n]+)\n *(=|-){3,} *\n*/,
-  blockquote: /^( *>[^\n]+(\n[^\n]+)*\n*)+/,
-  list: /^( *)(bull) [\s\S]+?(?:hr|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
-  html: /^ *(?:comment|closed|closing) *(?:\n{2,}|\s*$)/,
-  def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,
-  table: noop,
-  paragraph: /^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,
-  text: /^[^\n]+/
-};
-
-block.bullet = /(?:[*+-]|\d+\.)/;
-block.item = /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;
-block.item = replace(block.item, 'gm')
-  (/bull/g, block.bullet)
-  ();
-
-block.list = replace(block.list)
-  (/bull/g, block.bullet)
-  ('hr', /\n+(?=(?: *[-*_]){3,} *(?:\n+|$))/)
-  ();
-
-block._tag = '(?!(?:'
-  + 'a|em|strong|small|s|cite|q|dfn|abbr|data|time|code'
-  + '|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo'
-  + '|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|@)\\b';
-
-block.html = replace(block.html)
-  ('comment', /<!--[\s\S]*?-->/)
-  ('closed', /<(tag)[\s\S]+?<\/\1>/)
-  ('closing', /<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/)
-  (/tag/g, block._tag)
-  ();
-
-block.paragraph = replace(block.paragraph)
-  ('hr', block.hr)
-  ('heading', block.heading)
-  ('lheading', block.lheading)
-  ('blockquote', block.blockquote)
-  ('tag', '<' + block._tag)
-  ('def', block.def)
-  ();
-
-/**
- * Normal Block Grammar
- */
-
-block.normal = merge({}, block);
-
-/**
- * GFM Block Grammar
- */
-
-block.gfm = merge({}, block.normal, {
-  fences: /^ *(`{3,}|~{3,}) *(\w+)? *\n([\s\S]+?)\s*\1 *(?:\n+|$)/,
-  paragraph: /^/
-});
-
-block.gfm.paragraph = replace(block.paragraph)
-  ('(?!', '(?!' + block.gfm.fences.source.replace('\\1', '\\2') + '|')
-  ();
-
-/**
- * GFM + Tables Block Grammar
- */
-
-block.tables = merge({}, block.gfm, {
-  nptable: /^ *(\S.*\|.*)\n *([-:]+ *\|[-| :]*)\n((?:.*\|.*(?:\n|$))*)\n*/,
-  table: /^ *\|(.+)\n *\|( *[-:]+[-| :]*)\n((?: *\|.*(?:\n|$))*)\n*/
-});
-
-/**
- * Block Lexer
- */
-
-function Lexer(options) {
-  this.tokens = [];
-  this.tokens.links = {};
-  this.options = options || marked.defaults;
-  this.rules = block.normal;
-
-  if (this.options.gfm) {
-    if (this.options.tables) {
-      this.rules = block.tables;
     } else {
-      this.rules = block.gfm;
+      $parent.removeClass('shadow');
     }
+  });
+}
+
+module.exports = {
+  dropdown: function() {
+    return dropdown();
+  },
+
+  shadowScroll: function($el, $parent) {
+    return shadowScroll($el, $parent);
   }
 }
 
-/**
- * Expose Block Rules
- */
-
-Lexer.rules = block;
-
-/**
- * Static Lex Method
- */
-
-Lexer.lex = function(src, options) {
-  var lexer = new Lexer(options);
-  return lexer.lex(src);
-};
-
-/**
- * Preprocessing
- */
-
-Lexer.prototype.lex = function(src) {
-  src = src
-    .replace(/\r\n|\r/g, '\n')
-    .replace(/\t/g, '    ')
-    .replace(/\u00a0/g, ' ')
-    .replace(/\u2424/g, '\n');
-
-  return this.token(src, true);
-};
-
-/**
- * Lexing
- */
-
-Lexer.prototype.token = function(src, top) {
-  var src = src.replace(/^ +$/gm, '')
-    , next
-    , loose
-    , cap
-    , bull
-    , b
-    , item
-    , space
-    , i
-    , l;
-
-  while (src) {
-    // newline
-    if (cap = this.rules.newline.exec(src)) {
-      src = src.substring(cap[0].length);
-      if (cap[0].length > 1) {
-        this.tokens.push({
-          type: 'space'
-        });
-      }
-    }
-
-    // code
-    if (cap = this.rules.code.exec(src)) {
-      src = src.substring(cap[0].length);
-      cap = cap[0].replace(/^ {4}/gm, '');
-      this.tokens.push({
-        type: 'code',
-        text: !this.options.pedantic
-          ? cap.replace(/\n+$/, '')
-          : cap
-      });
-      continue;
-    }
-
-    // fences (gfm)
-    if (cap = this.rules.fences.exec(src)) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'code',
-        lang: cap[2],
-        text: cap[3]
-      });
-      continue;
-    }
-
-    // heading
-    if (cap = this.rules.heading.exec(src)) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'heading',
-        depth: cap[1].length,
-        text: cap[2]
-      });
-      continue;
-    }
-
-    // table no leading pipe (gfm)
-    if (top && (cap = this.rules.nptable.exec(src))) {
-      src = src.substring(cap[0].length);
-
-      item = {
-        type: 'table',
-        header: cap[1].replace(/^ *| *\| *$/g, '').split(/ *\| */),
-        align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
-        cells: cap[3].replace(/\n$/, '').split('\n')
-      };
-
-      for (i = 0; i < item.align.length; i++) {
-        if (/^ *-+: *$/.test(item.align[i])) {
-          item.align[i] = 'right';
-        } else if (/^ *:-+: *$/.test(item.align[i])) {
-          item.align[i] = 'center';
-        } else if (/^ *:-+ *$/.test(item.align[i])) {
-          item.align[i] = 'left';
-        } else {
-          item.align[i] = null;
-        }
-      }
-
-      for (i = 0; i < item.cells.length; i++) {
-        item.cells[i] = item.cells[i].split(/ *\| */);
-      }
-
-      this.tokens.push(item);
-
-      continue;
-    }
-
-    // lheading
-    if (cap = this.rules.lheading.exec(src)) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'heading',
-        depth: cap[2] === '=' ? 1 : 2,
-        text: cap[1]
-      });
-      continue;
-    }
-
-    // hr
-    if (cap = this.rules.hr.exec(src)) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'hr'
-      });
-      continue;
-    }
-
-    // blockquote
-    if (cap = this.rules.blockquote.exec(src)) {
-      src = src.substring(cap[0].length);
-
-      this.tokens.push({
-        type: 'blockquote_start'
-      });
-
-      cap = cap[0].replace(/^ *> ?/gm, '');
-
-      // Pass `top` to keep the current
-      // "toplevel" state. This is exactly
-      // how markdown.pl works.
-      this.token(cap, top);
-
-      this.tokens.push({
-        type: 'blockquote_end'
-      });
-
-      continue;
-    }
-
-    // list
-    if (cap = this.rules.list.exec(src)) {
-      src = src.substring(cap[0].length);
-
-      this.tokens.push({
-        type: 'list_start',
-        ordered: isFinite(cap[2])
-      });
-
-      // Get each top-level item.
-      cap = cap[0].match(this.rules.item);
-
-      // Get bullet.
-      if (this.options.smartLists) {
-        bull = block.bullet.exec(cap[0])[0];
-      }
-
-      next = false;
-      l = cap.length;
-      i = 0;
-
-      for (; i < l; i++) {
-        item = cap[i];
-
-        // Remove the list item's bullet
-        // so it is seen as the next token.
-        space = item.length;
-        item = item.replace(/^ *([*+-]|\d+\.) +/, '');
-
-        // Outdent whatever the
-        // list item contains. Hacky.
-        if (~item.indexOf('\n ')) {
-          space -= item.length;
-          item = !this.options.pedantic
-            ? item.replace(new RegExp('^ {1,' + space + '}', 'gm'), '')
-            : item.replace(/^ {1,4}/gm, '');
-        }
-
-        // Determine whether the next list item belongs here.
-        // Backpedal if it does not belong in this list.
-        if (this.options.smartLists && i !== l - 1) {
-          b = block.bullet.exec(cap[i+1])[0];
-          if (bull !== b && !(bull[1] === '.' && b[1] === '.')) {
-            src = cap.slice(i + 1).join('\n') + src;
-            i = l - 1;
-          }
-        }
-
-        // Determine whether item is loose or not.
-        // Use: /(^|\n)(?! )[^\n]+\n\n(?!\s*$)/
-        // for discount behavior.
-        loose = next || /\n\n(?!\s*$)/.test(item);
-        if (i !== l - 1) {
-          next = item[item.length-1] === '\n';
-          if (!loose) loose = next;
-        }
-
-        this.tokens.push({
-          type: loose
-            ? 'loose_item_start'
-            : 'list_item_start'
-        });
-
-        // Recurse.
-        this.token(item, false);
-
-        this.tokens.push({
-          type: 'list_item_end'
-        });
-      }
-
-      this.tokens.push({
-        type: 'list_end'
-      });
-
-      continue;
-    }
-
-    // html
-    if (cap = this.rules.html.exec(src)) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: this.options.sanitize
-          ? 'paragraph'
-          : 'html',
-        pre: cap[1] === 'pre',
-        text: cap[0]
-      });
-      continue;
-    }
-
-    // def
-    if (top && (cap = this.rules.def.exec(src))) {
-      src = src.substring(cap[0].length);
-      this.tokens.links[cap[1].toLowerCase()] = {
-        href: cap[2],
-        title: cap[3]
-      };
-      continue;
-    }
-
-    // table (gfm)
-    if (top && (cap = this.rules.table.exec(src))) {
-      src = src.substring(cap[0].length);
-
-      item = {
-        type: 'table',
-        header: cap[1].replace(/^ *| *\| *$/g, '').split(/ *\| */),
-        align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
-        cells: cap[3].replace(/(?: *\| *)?\n$/, '').split('\n')
-      };
-
-      for (i = 0; i < item.align.length; i++) {
-        if (/^ *-+: *$/.test(item.align[i])) {
-          item.align[i] = 'right';
-        } else if (/^ *:-+: *$/.test(item.align[i])) {
-          item.align[i] = 'center';
-        } else if (/^ *:-+ *$/.test(item.align[i])) {
-          item.align[i] = 'left';
-        } else {
-          item.align[i] = null;
-        }
-      }
-
-      for (i = 0; i < item.cells.length; i++) {
-        item.cells[i] = item.cells[i]
-          .replace(/^ *\| *| *\| *$/g, '')
-          .split(/ *\| */);
-      }
-
-      this.tokens.push(item);
-
-      continue;
-    }
-
-    // top-level paragraph
-    if (top && (cap = this.rules.paragraph.exec(src))) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'paragraph',
-        text: cap[1][cap[1].length-1] === '\n'
-          ? cap[1].slice(0, -1)
-          : cap[1]
-      });
-      continue;
-    }
-
-    // text
-    if (cap = this.rules.text.exec(src)) {
-      // Top-level should never reach here.
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'text',
-        text: cap[0]
-      });
-      continue;
-    }
-
-    if (src) {
-      throw new
-        Error('Infinite loop on byte: ' + src.charCodeAt(0));
-    }
-  }
-
-  return this.tokens;
-};
-
-/**
- * Inline-Level Grammar
- */
-
-var inline = {
-  escape: /^\\([\\`*{}\[\]()#+\-.!_>])/,
-  autolink: /^<([^ >]+(@|:\/)[^ >]+)>/,
-  url: noop,
-  tag: /^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,
-  link: /^!?\[(inside)\]\(href\)/,
-  reflink: /^!?\[(inside)\]\s*\[([^\]]*)\]/,
-  nolink: /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,
-  strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-  em: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-  code: /^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
-  br: /^ {2,}\n(?!\s*$)/,
-  del: noop,
-  text: /^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/
-};
-
-inline._inside = /(?:\[[^\]]*\]|[^\]]|\](?=[^\[]*\]))*/;
-inline._href = /\s*<?([^\s]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/;
-
-inline.link = replace(inline.link)
-  ('inside', inline._inside)
-  ('href', inline._href)
-  ();
-
-inline.reflink = replace(inline.reflink)
-  ('inside', inline._inside)
-  ();
-
-/**
- * Normal Inline Grammar
- */
-
-inline.normal = merge({}, inline);
-
-/**
- * Pedantic Inline Grammar
- */
-
-inline.pedantic = merge({}, inline.normal, {
-  strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
-  em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/
-});
-
-/**
- * GFM Inline Grammar
- */
-
-inline.gfm = merge({}, inline.normal, {
-  escape: replace(inline.escape)('])', '~|])')(),
-  url: /^(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/,
-  del: /^~~(?=\S)([\s\S]*?\S)~~/,
-  text: replace(inline.text)
-    (']|', '~]|')
-    ('|', '|https?://|')
-    ()
-});
-
-/**
- * GFM + Line Breaks Inline Grammar
- */
-
-inline.breaks = merge({}, inline.gfm, {
-  br: replace(inline.br)('{2,}', '*')(),
-  text: replace(inline.gfm.text)('{2,}', '*')()
-});
-
-/**
- * Inline Lexer & Compiler
- */
-
-function InlineLexer(links, options) {
-  this.options = options || marked.defaults;
-  this.links = links;
-  this.rules = inline.normal;
-
-  if (!this.links) {
-    throw new
-      Error('Tokens array requires a `links` property.');
-  }
-
-  if (this.options.gfm) {
-    if (this.options.breaks) {
-      this.rules = inline.breaks;
-    } else {
-      this.rules = inline.gfm;
-    }
-  } else if (this.options.pedantic) {
-    this.rules = inline.pedantic;
-  }
-}
-
-/**
- * Expose Inline Rules
- */
-
-InlineLexer.rules = inline;
-
-/**
- * Static Lexing/Compiling Method
- */
-
-InlineLexer.output = function(src, links, options) {
-  var inline = new InlineLexer(links, options);
-  return inline.output(src);
-};
-
-/**
- * Lexing/Compiling
- */
-
-InlineLexer.prototype.output = function(src) {
-  var out = ''
-    , link
-    , text
-    , href
-    , cap;
-
-  while (src) {
-    // escape
-    if (cap = this.rules.escape.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += cap[1];
-      continue;
-    }
-
-    // autolink
-    if (cap = this.rules.autolink.exec(src)) {
-      src = src.substring(cap[0].length);
-      if (cap[2] === '@') {
-        text = cap[1][6] === ':'
-          ? this.mangle(cap[1].substring(7))
-          : this.mangle(cap[1]);
-        href = this.mangle('mailto:') + text;
-      } else {
-        text = escape(cap[1]);
-        href = text;
-      }
-      out += '<a href="'
-        + href
-        + '">'
-        + text
-        + '</a>';
-      continue;
-    }
-
-    // url (gfm)
-    if (cap = this.rules.url.exec(src)) {
-      src = src.substring(cap[0].length);
-      text = escape(cap[1]);
-      href = text;
-      out += '<a href="'
-        + href
-        + '">'
-        + text
-        + '</a>';
-      continue;
-    }
-
-    // tag
-    if (cap = this.rules.tag.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += this.options.sanitize
-        ? escape(cap[0])
-        : cap[0];
-      continue;
-    }
-
-    // link
-    if (cap = this.rules.link.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += this.outputLink(cap, {
-        href: cap[2],
-        title: cap[3]
-      });
-      continue;
-    }
-
-    // reflink, nolink
-    if ((cap = this.rules.reflink.exec(src))
-        || (cap = this.rules.nolink.exec(src))) {
-      src = src.substring(cap[0].length);
-      link = (cap[2] || cap[1]).replace(/\s+/g, ' ');
-      link = this.links[link.toLowerCase()];
-      if (!link || !link.href) {
-        out += cap[0][0];
-        src = cap[0].substring(1) + src;
-        continue;
-      }
-      out += this.outputLink(cap, link);
-      continue;
-    }
-
-    // strong
-    if (cap = this.rules.strong.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += '<strong>'
-        + this.output(cap[2] || cap[1])
-        + '</strong>';
-      continue;
-    }
-
-    // em
-    if (cap = this.rules.em.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += '<em>'
-        + this.output(cap[2] || cap[1])
-        + '</em>';
-      continue;
-    }
-
-    // code
-    if (cap = this.rules.code.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += '<code>'
-        + escape(cap[2], true)
-        + '</code>';
-      continue;
-    }
-
-    // br
-    if (cap = this.rules.br.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += '<br>';
-      continue;
-    }
-
-    // del (gfm)
-    if (cap = this.rules.del.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += '<del>'
-        + this.output(cap[1])
-        + '</del>';
-      continue;
-    }
-
-    // text
-    if (cap = this.rules.text.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += escape(cap[0]);
-      continue;
-    }
-
-    if (src) {
-      throw new
-        Error('Infinite loop on byte: ' + src.charCodeAt(0));
-    }
-  }
-
-  return out;
-};
-
-/**
- * Compile Link
- */
-
-InlineLexer.prototype.outputLink = function(cap, link) {
-  if (cap[0][0] !== '!') {
-    return '<a href="'
-      + escape(link.href)
-      + '"'
-      + (link.title
-      ? ' title="'
-      + escape(link.title)
-      + '"'
-      : '')
-      + '>'
-      + this.output(cap[1])
-      + '</a>';
-  } else {
-    return '<img src="'
-      + escape(link.href)
-      + '" alt="'
-      + escape(cap[1])
-      + '"'
-      + (link.title
-      ? ' title="'
-      + escape(link.title)
-      + '"'
-      : '')
-      + '>';
-  }
-};
-
-/**
- * Mangle Links
- */
-
-InlineLexer.prototype.mangle = function(text) {
-  var out = ''
-    , l = text.length
-    , i = 0
-    , ch;
-
-  for (; i < l; i++) {
-    ch = text.charCodeAt(i);
-    if (Math.random() > 0.5) {
-      ch = 'x' + ch.toString(16);
-    }
-    out += '&#' + ch + ';';
-  }
-
-  return out;
-};
-
-/**
- * Parsing & Compiling
- */
-
-function Parser(options) {
-  this.tokens = [];
-  this.token = null;
-  this.options = options || marked.defaults;
-}
-
-/**
- * Static Parse Method
- */
-
-Parser.parse = function(src, options) {
-  var parser = new Parser(options);
-  return parser.parse(src);
-};
-
-/**
- * Parse Loop
- */
-
-Parser.prototype.parse = function(src) {
-  this.inline = new InlineLexer(src.links, this.options);
-  this.tokens = src.reverse();
-
-  var out = '';
-  while (this.next()) {
-    out += this.tok();
-  }
-
-  return out;
-};
-
-/**
- * Next Token
- */
-
-Parser.prototype.next = function() {
-  return this.token = this.tokens.pop();
-};
-
-/**
- * Preview Next Token
- */
-
-Parser.prototype.peek = function() {
-  return this.tokens[this.tokens.length-1] || 0;
-};
-
-/**
- * Parse Text Tokens
- */
-
-Parser.prototype.parseText = function() {
-  var body = this.token.text;
-
-  while (this.peek().type === 'text') {
-    body += '\n' + this.next().text;
-  }
-
-  return this.inline.output(body);
-};
-
-/**
- * Parse Current Token
- */
-
-Parser.prototype.tok = function() {
-  switch (this.token.type) {
-    case 'space': {
-      return '';
-    }
-    case 'hr': {
-      return '<hr>\n';
-    }
-    case 'heading': {
-      return '<h'
-        + this.token.depth
-        + '>'
-        + this.inline.output(this.token.text)
-        + '</h'
-        + this.token.depth
-        + '>\n';
-    }
-    case 'code': {
-      if (this.options.highlight) {
-        var code = this.options.highlight(this.token.text, this.token.lang);
-        if (code != null && code !== this.token.text) {
-          this.token.escaped = true;
-          this.token.text = code;
-        }
-      }
-
-      if (!this.token.escaped) {
-        this.token.text = escape(this.token.text, true);
-      }
-
-      return '<pre><code'
-        + (this.token.lang
-        ? ' class="'
-        + this.options.langPrefix
-        + this.token.lang
-        + '"'
-        : '')
-        + '>'
-        + this.token.text
-        + '</code></pre>\n';
-    }
-    case 'table': {
-      var body = ''
-        , heading
-        , i
-        , row
-        , cell
-        , j;
-
-      // header
-      body += '<thead>\n<tr>\n';
-      for (i = 0; i < this.token.header.length; i++) {
-        heading = this.inline.output(this.token.header[i]);
-        body += this.token.align[i]
-          ? '<th align="' + this.token.align[i] + '">' + heading + '</th>\n'
-          : '<th>' + heading + '</th>\n';
-      }
-      body += '</tr>\n</thead>\n';
-
-      // body
-      body += '<tbody>\n'
-      for (i = 0; i < this.token.cells.length; i++) {
-        row = this.token.cells[i];
-        body += '<tr>\n';
-        for (j = 0; j < row.length; j++) {
-          cell = this.inline.output(row[j]);
-          body += this.token.align[j]
-            ? '<td align="' + this.token.align[j] + '">' + cell + '</td>\n'
-            : '<td>' + cell + '</td>\n';
-        }
-        body += '</tr>\n';
-      }
-      body += '</tbody>\n';
-
-      return '<table>\n'
-        + body
-        + '</table>\n';
-    }
-    case 'blockquote_start': {
-      var body = '';
-
-      while (this.next().type !== 'blockquote_end') {
-        body += this.tok();
-      }
-
-      return '<blockquote>\n'
-        + body
-        + '</blockquote>\n';
-    }
-    case 'list_start': {
-      var type = this.token.ordered ? 'ol' : 'ul'
-        , body = '';
-
-      while (this.next().type !== 'list_end') {
-        body += this.tok();
-      }
-
-      return '<'
-        + type
-        + '>\n'
-        + body
-        + '</'
-        + type
-        + '>\n';
-    }
-    case 'list_item_start': {
-      var body = '';
-
-      while (this.next().type !== 'list_item_end') {
-        body += this.token.type === 'text'
-          ? this.parseText()
-          : this.tok();
-      }
-
-      return '<li>'
-        + body
-        + '</li>\n';
-    }
-    case 'loose_item_start': {
-      var body = '';
-
-      while (this.next().type !== 'list_item_end') {
-        body += this.tok();
-      }
-
-      return '<li>'
-        + body
-        + '</li>\n';
-    }
-    case 'html': {
-      return !this.token.pre && !this.options.pedantic
-        ? this.inline.output(this.token.text)
-        : this.token.text;
-    }
-    case 'paragraph': {
-      return '<p>'
-        + this.inline.output(this.token.text)
-        + '</p>\n';
-    }
-    case 'text': {
-      return '<p>'
-        + this.parseText()
-        + '</p>\n';
-    }
-  }
-};
-
-/**
- * Helpers
- */
-
-function escape(html, encode) {
-  return html
-    .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function replace(regex, opt) {
-  regex = regex.source;
-  opt = opt || '';
-  return function self(name, val) {
-    if (!name) return new RegExp(regex, opt);
-    val = val.source || val;
-    val = val.replace(/(^|[^\[])\^/g, '$1');
-    regex = regex.replace(name, val);
-    return self;
-  };
-}
-
-function noop() {}
-noop.exec = noop;
-
-function merge(obj) {
-  var i = 1
-    , target
-    , key;
-
-  for (; i < arguments.length; i++) {
-    target = arguments[i];
-    for (key in target) {
-      if (Object.prototype.hasOwnProperty.call(target, key)) {
-        obj[key] = target[key];
-      }
-    }
-  }
-
-  return obj;
-}
-
-/**
- * Marked
- */
-
-function marked(src, opt) {
-  try {
-    if (opt) opt = merge({}, marked.defaults, opt);
-    return Parser.parse(Lexer.lex(src, opt), opt);
-  } catch (e) {
-    e.message += '\nPlease report this to https://github.com/chjj/marked.';
-    if ((opt || marked.defaults).silent) {
-      return '<p>An error occured:</p><pre>'
-        + escape(e.message + '', true)
-        + '</pre>';
-    }
-    throw e;
-  }
-}
-
-/**
- * Options
- */
-
-marked.options =
-marked.setOptions = function(opt) {
-  merge(marked.defaults, opt);
-  return marked;
-};
-
-marked.defaults = {
-  gfm: true,
-  tables: true,
-  breaks: false,
-  pedantic: false,
-  sanitize: false,
-  smartLists: false,
-  silent: false,
-  highlight: null,
-  langPrefix: 'lang-'
-};
-
-/**
- * Expose
- */
-
-marked.Parser = Parser;
-marked.parser = Parser.parse;
-
-marked.Lexer = Lexer;
-marked.lexer = Lexer.lex;
-
-marked.InlineLexer = InlineLexer;
-marked.inlineLexer = InlineLexer.output;
-
-marked.parse = marked;
-
-if (typeof exports === 'object') {
-  module.exports = marked;
-} else if (typeof define === 'function' && define.amd) {
-  define(function() { return marked; });
-} else {
-  this.marked = marked;
-}
-
-}).call(function() {
-  return this || (typeof window !== 'undefined' ? window : global);
-}());
-
-})(window)
-},{}],20:[function(require,module,exports){
-(function(){//     keymaster.js
-//     (c) 2011 Thomas Fuchs
-//     keymaster.js may be freely distributed under the MIT license.
-
-;(function(global){
-  var k,
-    _handlers = {},
-    _mods = { 16: false, 18: false, 17: false, 91: false },
-    _scope = 'all',
-    // modifier keys
-    _MODIFIERS = {
-      '⇧': 16, shift: 16,
-      '⌥': 18, alt: 18, option: 18,
-      '⌃': 17, ctrl: 17, control: 17,
-      '⌘': 91, command: 91
-    },
-    // special keys
-    _MAP = {
-      backspace: 8, tab: 9, clear: 12,
-      enter: 13, 'return': 13,
-      esc: 27, escape: 27, space: 32,
-      left: 37, up: 38,
-      right: 39, down: 40,
-      del: 46, 'delete': 46,
-      home: 36, end: 35,
-      pageup: 33, pagedown: 34,
-      ',': 188, '.': 190, '/': 191,
-      '`': 192, '-': 189, '=': 187,
-      ';': 186, '\'': 222,
-      '[': 219, ']': 221, '\\': 220
-    };
-
-  for(k=1;k<20;k++) _MODIFIERS['f'+k] = 111+k;
-
-  // IE doesn't support Array#indexOf, so have a simple replacement
-  function index(array, item){
-    var i = array.length;
-    while(i--) if(array[i]===item) return i;
-    return -1;
-  }
-
-  // handle keydown event
-  function dispatch(event){
-    var key, tagName, handler, k, i, modifiersMatch;
-    tagName = (event.target || event.srcElement).tagName;
-    key = event.keyCode;
-
-    // if a modifier key, set the key.<modifierkeyname> property to true and return
-    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
-    if(key in _mods) {
-      _mods[key] = true;
-      // 'assignKey' from inside this closure is exported to window.key
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
-      return;
-    }
-
-    // ignore keypressed in any elements that support keyboard data input
-    if (tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA') return;
-
-    // abort if no potentially matching shortcuts found
-    if (!(key in _handlers)) return;
-
-    // for each potential shortcut
-    for (i = 0; i < _handlers[key].length; i++) {
-      handler = _handlers[key][i];
-
-      // see if it's in the current scope
-      if(handler.scope == _scope || handler.scope == 'all'){
-        // check if modifiers match if any
-        modifiersMatch = handler.mods.length > 0;
-        for(k in _mods)
-          if((!_mods[k] && index(handler.mods, +k) > -1) ||
-            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
-        // call the handler and stop the event if neccessary
-        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
-          if(handler.method(event, handler)===false){
-            if(event.preventDefault) event.preventDefault();
-              else event.returnValue = false;
-            if(event.stopPropagation) event.stopPropagation();
-            if(event.cancelBubble) event.cancelBubble = true;
-          }
-        }
-      }
-	}
-  };
-
-  // unset modifier keys on keyup
-  function clearModifier(event){
-    var key = event.keyCode, k;
-    if(key == 93 || key == 224) key = 91;
-    if(key in _mods) {
-      _mods[key] = false;
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
-    }
-  };
-
-  // parse and assign shortcut
-  function assignKey(key, scope, method){
-    var keys, mods, i, mi;
-    if (method === undefined) {
-      method = scope;
-      scope = 'all';
-    }
-    key = key.replace(/\s/g,'');
-    keys = key.split(',');
-
-    if((keys[keys.length-1])=='')
-      keys[keys.length-2] += ',';
-    // for each shortcut
-    for (i = 0; i < keys.length; i++) {
-      // set modifier keys if any
-      mods = [];
-      key = keys[i].split('+');
-      if(key.length > 1){
-        mods = key.slice(0,key.length-1);
-        for (mi = 0; mi < mods.length; mi++)
-          mods[mi] = _MODIFIERS[mods[mi]];
-        key = [key[key.length-1]];
-      }
-      // convert to keycode and...
-      key = key[0]
-      key = _MAP[key] || key.toUpperCase().charCodeAt(0);
-      // ...store handler
-      if (!(key in _handlers)) _handlers[key] = [];
-      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
-    }
-  };
-
-  // initialize key.<modifier> to false
-  for(k in _MODIFIERS) assignKey[k] = false;
-
-  // set current scope (default 'all')
-  function setScope(scope){ _scope = scope || 'all' };
-
-  // cross-browser events
-  function addEvent(object, event, method) {
-    if (object.addEventListener)
-      object.addEventListener(event, method, false);
-    else if(object.attachEvent)
-      object.attachEvent('on'+event, function(){ method(window.event) });
-  };
-
-  // set the handlers globally on document
-  addEvent(document, 'keydown', dispatch);
-  addEvent(document, 'keyup', clearModifier);
-
-  // set window.key and window.key.setScope
-  global.key = assignKey;
-  global.key.setScope = setScope;
-
-  if(typeof module !== 'undefined') module.exports = key;
-
-})(this);
-
-})()
-},{}],18:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
-
-},{"./lib/js-yaml.js":25}],24:[function(require,module,exports){
+},{"jquery-browserify":4,"marked":20,"underscore":6,"queue-async":19,"js-yaml":18,"chrono":24}],22:[function(require,module,exports){
 (function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -22651,10 +22501,419 @@ module.exports = require('./lib/js-yaml.js');
 
 }).call(this);
 
-},{}],23:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
+
+},{"./lib/js-yaml.js":25}],24:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
-},{"./lib/chrono":26}],5:[function(require,module,exports){
+},{"./lib/chrono":26}],26:[function(require,module,exports){
+(function(){
+
+// CommonJS exports.
+var data = (typeof exports !== 'undefined') ? exports : {};
+
+data.tzToOffset = {
+  'ACDT': -630,
+  'ACST': -570,
+  'ACT': -480,
+  'ADT': +180,
+  'AEDT': -660,
+  'AEST': -600,
+  'AFT': -270,
+  'AKDT': +480,
+  'AKST': +540,
+  'AMST': -300,
+  'AMT': -240,
+  'ART': +180,
+  'AST': -240, // Arab Standard Time
+  'AWDT': -540,
+  'AWST': -480,
+  'AZOST': +60,
+  'AZT': -240,
+  'BDT': -480,
+  'BIOT': -360,
+  'BIT': +720,
+  'BOT': +240,
+  'BRT': +180,
+  'BST': -60, // British Summer Time
+  'BTT': -360,
+  'CAT': -120,
+  'CCT': -390,
+  'CDT': +300,
+  'CEDT': -120,
+  'CEST': -120,
+  'CET': -60,
+  'CHAST': -765,
+  'ChST': -600,
+  'CIST': +480,
+  'CKT': +600,
+  'CLST': +180,
+  'CLT': +240,
+  'COST': +240,
+  'COT': +300,
+  'CST': -480,
+  'CST': +360,
+  'CVT': +60,
+  'CXT': -420,
+  'DFT': -60,
+  'EAST': +360,
+  'EAT': -180,
+  'ECT': +240,
+  'ECT': +300,
+  'EDT': +240,
+  'EEDT': -180,
+  'EEST': -180,
+  'EET': -120,
+  'EST': +300,
+  'FJT': -720,
+  'FKST': +240,
+  'GALT': +360,
+  'GET': -240,
+  'GFT': +180,
+  'GILT': -720,
+  'GIT': +540,
+  'GMT': 0,
+  'GST': +120,
+  'GYT': +240,
+  'HADT': +540,
+  'HAST': +600,
+  'HKT': -480,
+  'HMT': -300,
+  'HST': +600,
+  'IRKT': -480,
+  'IRST': -210,
+  'IST': -120,
+  'IST': -330,
+  'IST': -60,
+  'JST': -540,
+  'KRAT': -420,
+  'KST': -540,
+  'LHST': -630,
+  'LINT': -840,
+  'MAGT': -660,
+  'MDT': +360,
+  'MIT': +570,
+  'MSD': -240,
+  'MSK': -180,
+  'MST': -390,
+  'MST': -480,
+  'MST': +420,
+  'MUT': -240,
+  'NDT': +150,
+  'NFT': -690,
+  'NPT': -345,
+  'NST': +210,
+  'NT': +210,
+  'NZST': -720,
+  'NZDT': -780,
+  'OMST': -360,
+  'PDT': +420,
+  'PETT': -720,
+  'PHOT': -780,
+  'PKT': -300,
+  'PST': -480,
+  'PST': +480,
+  'RET': -240,
+  'SAMT': -240,
+  'SAST': -120,
+  'SBT': -660,
+  'SCT': -240,
+  'SLT': -330,
+  'SST': -480,
+  'SST': +660,
+  'TAHT': +600,
+  'THA': -420,
+  'UTC': 0,
+  'UYST': +120,
+  'UYT': +180,
+  'VET': +270,
+  'VLAT': -600,
+  'WAT': -60,
+  'WEDT': -60,
+  'WEST': -60,
+  'YAKT': -540,
+  'YEKT': -300
+};
+
+// While indices are strings here, numbers work fine too when retrieving.
+data.offsetToTz = {
+  '720':  ['BIT'],
+  '660':  ['SST'],
+  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
+  '570':  ['MIT'],
+  '540':  ['AKST', 'GIT', 'HADT'],
+  '480':  ['PST', 'AKDT', 'CIST'],
+  '420':  ['MST', 'PDT'],
+  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
+  '300':  ['EST', 'CDT', 'COT', 'ECT'],
+  '270':  ['VET'],
+  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
+  '210':  ['NT', 'NST'],
+  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
+  '150':  ['NDT'],
+  '120':  ['GST', 'UYST'],
+  '60':   ['AZOST', 'CVT'],
+  '0':    ['UTC', 'GMT'],
+  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
+  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
+  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
+  '-210': ['IRST'],
+  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
+  '-270': ['AFT'],
+  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
+  '-330': ['IST', 'SLT'],
+  '-345': ['NPT'],
+  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
+  '-390': ['CCT', 'MST'],
+  '-420': ['CXT', 'KRAT', 'THA'],
+  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
+  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
+  '-570': ['ACST'],
+  '-600': ['AEST', 'ChST', 'VLAT'],
+  '-630': ['ACDT', 'LHST'],
+  '-660': ['AEDT', 'MAGT', 'SBT'],
+  '-690': ['NFT'],
+  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
+  '-765': ['CHAST'],
+  '-780': ['PHOT', 'NZDT'],
+  '-840': ['LINT']
+};
+
+data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
+
+data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
+
+data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+
+data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+
+data.intervals = [
+    function(n) { return n !== 1 ? 'years' : 'year'; },
+    function(n) { return n !== 1 ? 'months' : 'month'; },
+    function(n) { return n !== 1 ? 'weeks' : 'week'; },
+    function(n) { return n !== 1 ? 'days' : 'day'; },
+    function(n) { return n !== 1 ? 'hours' : 'hour'; },
+    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
+    function(n) { return n !== 1 ? 'seconds' : 'second'; }
+];
+
+data.intervalFormats = {
+    'ago': '% ago',
+    'in': 'in %'
+};
+
+data.ordinals = function(number) {
+  switch (number % 10) {
+    case 1: return (number % 100 !== 11) ? 'st' : 'th';
+    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
+    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
+    default: return 'th';
+  }
+};
+
+function pad2(i) {
+  return i < 10 ? '0' + i : i;
+};
+
+function pad2sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '0' + i : i);
+};
+
+function pad3(i) {
+  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
+};
+
+function pad4sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
+}
+
+Date.prototype.interval = function(other) {
+    var self = this, inverse = self > other;
+    if (inverse) {
+        self = other;
+        other = this;
+    }
+
+    var parts = [
+        other.getUTCFullYear() - self.getUTCFullYear(),
+        other.getUTCMonth() - self.getUTCMonth(),
+        0, // weeks
+        other.getUTCDate() - self.getUTCDate(),
+        other.getUTCHours() - self.getUTCHours(),
+        other.getUTCMinutes() - self.getUTCMinutes(),
+        other.getUTCSeconds() - self.getUTCSeconds()
+    ];
+    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
+    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
+    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
+    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
+    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
+    parts[2] = (parts[3] / 7) | 0;
+    parts[3] -= parts[2] * 7;
+
+    var fragments = [];
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i]) {
+            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
+        }
+    }
+    return fragments;
+};
+
+Date.prototype.format = function(format, tz) {
+  var time = this.getTime();
+
+  if (tz === undefined) {
+    tz = this.getTimezone();
+    tzName = this.getTimezoneName();
+  }
+  else {
+    var tzData = parseTimezone(tz);
+    tz = tzData[0];
+    var tzName = tzData[1];
+  }
+
+  // Use correct timezone.
+  this.setTime(time - tz * 60000);
+
+  var result = '';
+  for (var i = 0; i < format.length; i++) {
+    switch (format.charAt(i)) {
+      // Day
+      case 'd': result += pad2(this.getUTCDate()); break;
+      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
+      case 'j': result += this.getUTCDate(); break;
+      case 'l': result += data.weekdays[this.getUTCDay()]; break;
+      case 'N': result += this.getUTCDay() || 7; break;
+      case 'S': result += data.ordinals(this.getUTCDate()); break;
+      case 'w': result += this.getUTCDay(); break;
+      case 'z': result += this.getUTCDayOfYear(); break;
+
+      // Week
+      case 'W': result += pad2(this.getUTCISOWeek()); break;
+
+      // Month
+      case 'F': result += data.months[this.getUTCMonth()]; break;
+      case 'm': result += pad2(this.getUTCMonth() + 1); break;
+      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
+      case 'n': result += this.getUTCMonth() + 1; break;
+      case 't': result += this.getUTCDaysOfMonth(); break;
+
+      // Year
+      case 'L': result += this.isLeapYear() ? 1 : 0; break;
+      case 'o': result += this.getUTCISOFullYear(); break;
+      case 'Y': result += this.getUTCFullYear(); break;
+      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
+
+      // Time
+      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
+      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
+      case 'g': result += this.getUTCHours() % 12 || 12; break;
+      case 'G': result += this.getUTCHours(); break;
+      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
+      case 'H': result += pad2(this.getUTCHours()); break;
+      case 'i': result += pad2(this.getUTCMinutes()); break;
+      case 's': result += pad2(this.getUTCSeconds()); break;
+      case 'u': result += pad3(this.getUTCMilliseconds()); break;
+
+      // Timezone
+      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
+      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
+      case 'T': result += tzName; break;
+      case 'Z': result += -tz * 60; break;
+
+      // Full Date/Time
+      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
+      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
+      case 'U': result += Math.floor(this.getTime() / 1000); break;
+
+      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
+
+      default: result += format.charAt(i); break;
+    }
+  }
+
+  this.setTime(time);
+
+  return result;
+};
+
+function parseTimezone(tz) {
+  if (typeof tz === 'number') {
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+  var number = parseInt(tz, 10);
+  if (isNaN(number)) {
+    return [data.tzToOffset[tz], tz];
+  }
+  else {
+    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+}
+
+Date.prototype.isLeapYear = function() {
+  var y = this.getUTCFullYear();
+  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
+};
+
+Date.prototype.getUTCISOWeek = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
+};
+
+Date.prototype.getUTCISOFullYear = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return d.getUTCFullYear();
+};
+
+Date.prototype.getUTCDaysOfMonth = function() {
+  var d = new Date(this);
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() + 1);
+  d.setUTCDate(0);
+  return d.getUTCDate();
+};
+
+Date.prototype.getUTCDayOfYear = function() {
+  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
+};
+
+Date.prototype.getTimezone = function() {
+  if (!('_tz' in this)) {
+    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
+    if (matches && matches[1]) {
+        this.setTimezone(matches[1]);
+    } else {
+        this.setTimezone(new Date().getTimezoneOffset());
+    }
+  }
+  return this._tz;
+};
+
+Date.prototype.getTimezoneName = function() {
+  this.getTimezone(); // Make sure the tz data is populated.
+  return this._tzName;
+};
+
+Date.prototype.setTimezone = function(val) {
+  var tzData = parseTimezone(val);
+  this._tz = tzData[0];
+  this._tzName = tzData[1];
+};
+
+})();
+
+},{}],5:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -24263,412 +24522,162 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/schema/minimal":31,"./js-yaml/schema/safe":32,"./js-yaml/schema/default":33,"./js-yaml/exception":34,"./js-yaml/require":35}],26:[function(require,module,exports){
-(function(){
+},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/schema/minimal":31,"./js-yaml/schema/safe":32,"./js-yaml/schema/default":33,"./js-yaml/exception":34,"./js-yaml/require":35}],23:[function(require,module,exports){
+(function(){//     keymaster.js
+//     (c) 2011 Thomas Fuchs
+//     keymaster.js may be freely distributed under the MIT license.
 
-// CommonJS exports.
-var data = (typeof exports !== 'undefined') ? exports : {};
+;(function(global){
+  var k,
+    _handlers = {},
+    _mods = { 16: false, 18: false, 17: false, 91: false },
+    _scope = 'all',
+    // modifier keys
+    _MODIFIERS = {
+      '⇧': 16, shift: 16,
+      '⌥': 18, alt: 18, option: 18,
+      '⌃': 17, ctrl: 17, control: 17,
+      '⌘': 91, command: 91
+    },
+    // special keys
+    _MAP = {
+      backspace: 8, tab: 9, clear: 12,
+      enter: 13, 'return': 13,
+      esc: 27, escape: 27, space: 32,
+      left: 37, up: 38,
+      right: 39, down: 40,
+      del: 46, 'delete': 46,
+      home: 36, end: 35,
+      pageup: 33, pagedown: 34,
+      ',': 188, '.': 190, '/': 191,
+      '`': 192, '-': 189, '=': 187,
+      ';': 186, '\'': 222,
+      '[': 219, ']': 221, '\\': 220
+    };
 
-data.tzToOffset = {
-  'ACDT': -630,
-  'ACST': -570,
-  'ACT': -480,
-  'ADT': +180,
-  'AEDT': -660,
-  'AEST': -600,
-  'AFT': -270,
-  'AKDT': +480,
-  'AKST': +540,
-  'AMST': -300,
-  'AMT': -240,
-  'ART': +180,
-  'AST': -240, // Arab Standard Time
-  'AWDT': -540,
-  'AWST': -480,
-  'AZOST': +60,
-  'AZT': -240,
-  'BDT': -480,
-  'BIOT': -360,
-  'BIT': +720,
-  'BOT': +240,
-  'BRT': +180,
-  'BST': -60, // British Summer Time
-  'BTT': -360,
-  'CAT': -120,
-  'CCT': -390,
-  'CDT': +300,
-  'CEDT': -120,
-  'CEST': -120,
-  'CET': -60,
-  'CHAST': -765,
-  'ChST': -600,
-  'CIST': +480,
-  'CKT': +600,
-  'CLST': +180,
-  'CLT': +240,
-  'COST': +240,
-  'COT': +300,
-  'CST': -480,
-  'CST': +360,
-  'CVT': +60,
-  'CXT': -420,
-  'DFT': -60,
-  'EAST': +360,
-  'EAT': -180,
-  'ECT': +240,
-  'ECT': +300,
-  'EDT': +240,
-  'EEDT': -180,
-  'EEST': -180,
-  'EET': -120,
-  'EST': +300,
-  'FJT': -720,
-  'FKST': +240,
-  'GALT': +360,
-  'GET': -240,
-  'GFT': +180,
-  'GILT': -720,
-  'GIT': +540,
-  'GMT': 0,
-  'GST': +120,
-  'GYT': +240,
-  'HADT': +540,
-  'HAST': +600,
-  'HKT': -480,
-  'HMT': -300,
-  'HST': +600,
-  'IRKT': -480,
-  'IRST': -210,
-  'IST': -120,
-  'IST': -330,
-  'IST': -60,
-  'JST': -540,
-  'KRAT': -420,
-  'KST': -540,
-  'LHST': -630,
-  'LINT': -840,
-  'MAGT': -660,
-  'MDT': +360,
-  'MIT': +570,
-  'MSD': -240,
-  'MSK': -180,
-  'MST': -390,
-  'MST': -480,
-  'MST': +420,
-  'MUT': -240,
-  'NDT': +150,
-  'NFT': -690,
-  'NPT': -345,
-  'NST': +210,
-  'NT': +210,
-  'NZST': -720,
-  'NZDT': -780,
-  'OMST': -360,
-  'PDT': +420,
-  'PETT': -720,
-  'PHOT': -780,
-  'PKT': -300,
-  'PST': -480,
-  'PST': +480,
-  'RET': -240,
-  'SAMT': -240,
-  'SAST': -120,
-  'SBT': -660,
-  'SCT': -240,
-  'SLT': -330,
-  'SST': -480,
-  'SST': +660,
-  'TAHT': +600,
-  'THA': -420,
-  'UTC': 0,
-  'UYST': +120,
-  'UYT': +180,
-  'VET': +270,
-  'VLAT': -600,
-  'WAT': -60,
-  'WEDT': -60,
-  'WEST': -60,
-  'YAKT': -540,
-  'YEKT': -300
-};
+  for(k=1;k<20;k++) _MODIFIERS['f'+k] = 111+k;
 
-// While indices are strings here, numbers work fine too when retrieving.
-data.offsetToTz = {
-  '720':  ['BIT'],
-  '660':  ['SST'],
-  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
-  '570':  ['MIT'],
-  '540':  ['AKST', 'GIT', 'HADT'],
-  '480':  ['PST', 'AKDT', 'CIST'],
-  '420':  ['MST', 'PDT'],
-  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
-  '300':  ['EST', 'CDT', 'COT', 'ECT'],
-  '270':  ['VET'],
-  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
-  '210':  ['NT', 'NST'],
-  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
-  '150':  ['NDT'],
-  '120':  ['GST', 'UYST'],
-  '60':   ['AZOST', 'CVT'],
-  '0':    ['UTC', 'GMT'],
-  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
-  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
-  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
-  '-210': ['IRST'],
-  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
-  '-270': ['AFT'],
-  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
-  '-330': ['IST', 'SLT'],
-  '-345': ['NPT'],
-  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
-  '-390': ['CCT', 'MST'],
-  '-420': ['CXT', 'KRAT', 'THA'],
-  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
-  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
-  '-570': ['ACST'],
-  '-600': ['AEST', 'ChST', 'VLAT'],
-  '-630': ['ACDT', 'LHST'],
-  '-660': ['AEDT', 'MAGT', 'SBT'],
-  '-690': ['NFT'],
-  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
-  '-765': ['CHAST'],
-  '-780': ['PHOT', 'NZDT'],
-  '-840': ['LINT']
-};
-
-data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
-
-data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
-
-data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
-
-data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
-
-data.intervals = [
-    function(n) { return n !== 1 ? 'years' : 'year'; },
-    function(n) { return n !== 1 ? 'months' : 'month'; },
-    function(n) { return n !== 1 ? 'weeks' : 'week'; },
-    function(n) { return n !== 1 ? 'days' : 'day'; },
-    function(n) { return n !== 1 ? 'hours' : 'hour'; },
-    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
-    function(n) { return n !== 1 ? 'seconds' : 'second'; }
-];
-
-data.intervalFormats = {
-    'ago': '% ago',
-    'in': 'in %'
-};
-
-data.ordinals = function(number) {
-  switch (number % 10) {
-    case 1: return (number % 100 !== 11) ? 'st' : 'th';
-    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
-    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
-    default: return 'th';
+  // IE doesn't support Array#indexOf, so have a simple replacement
+  function index(array, item){
+    var i = array.length;
+    while(i--) if(array[i]===item) return i;
+    return -1;
   }
-};
 
-function pad2(i) {
-  return i < 10 ? '0' + i : i;
-};
+  // handle keydown event
+  function dispatch(event){
+    var key, tagName, handler, k, i, modifiersMatch;
+    tagName = (event.target || event.srcElement).tagName;
+    key = event.keyCode;
 
-function pad2sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '0' + i : i);
-};
-
-function pad3(i) {
-  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
-};
-
-function pad4sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
-}
-
-Date.prototype.interval = function(other) {
-    var self = this, inverse = self > other;
-    if (inverse) {
-        self = other;
-        other = this;
+    // if a modifier key, set the key.<modifierkeyname> property to true and return
+    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
+    if(key in _mods) {
+      _mods[key] = true;
+      // 'assignKey' from inside this closure is exported to window.key
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
+      return;
     }
 
-    var parts = [
-        other.getUTCFullYear() - self.getUTCFullYear(),
-        other.getUTCMonth() - self.getUTCMonth(),
-        0, // weeks
-        other.getUTCDate() - self.getUTCDate(),
-        other.getUTCHours() - self.getUTCHours(),
-        other.getUTCMinutes() - self.getUTCMinutes(),
-        other.getUTCSeconds() - self.getUTCSeconds()
-    ];
-    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
-    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
-    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
-    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
-    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
-    parts[2] = (parts[3] / 7) | 0;
-    parts[3] -= parts[2] * 7;
+    // ignore keypressed in any elements that support keyboard data input
+    if (tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA') return;
 
-    var fragments = [];
-    for (var i = 0; i < parts.length; i++) {
-        if (parts[i]) {
-            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
+    // abort if no potentially matching shortcuts found
+    if (!(key in _handlers)) return;
+
+    // for each potential shortcut
+    for (i = 0; i < _handlers[key].length; i++) {
+      handler = _handlers[key][i];
+
+      // see if it's in the current scope
+      if(handler.scope == _scope || handler.scope == 'all'){
+        // check if modifiers match if any
+        modifiersMatch = handler.mods.length > 0;
+        for(k in _mods)
+          if((!_mods[k] && index(handler.mods, +k) > -1) ||
+            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
+        // call the handler and stop the event if neccessary
+        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
+          if(handler.method(event, handler)===false){
+            if(event.preventDefault) event.preventDefault();
+              else event.returnValue = false;
+            if(event.stopPropagation) event.stopPropagation();
+            if(event.cancelBubble) event.cancelBubble = true;
+          }
         }
+      }
+	}
+  };
+
+  // unset modifier keys on keyup
+  function clearModifier(event){
+    var key = event.keyCode, k;
+    if(key == 93 || key == 224) key = 91;
+    if(key in _mods) {
+      _mods[key] = false;
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
     }
-    return fragments;
-};
+  };
 
-Date.prototype.format = function(format, tz) {
-  var time = this.getTime();
-
-  if (tz === undefined) {
-    tz = this.getTimezone();
-    tzName = this.getTimezoneName();
-  }
-  else {
-    var tzData = parseTimezone(tz);
-    tz = tzData[0];
-    var tzName = tzData[1];
-  }
-
-  // Use correct timezone.
-  this.setTime(time - tz * 60000);
-
-  var result = '';
-  for (var i = 0; i < format.length; i++) {
-    switch (format.charAt(i)) {
-      // Day
-      case 'd': result += pad2(this.getUTCDate()); break;
-      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
-      case 'j': result += this.getUTCDate(); break;
-      case 'l': result += data.weekdays[this.getUTCDay()]; break;
-      case 'N': result += this.getUTCDay() || 7; break;
-      case 'S': result += data.ordinals(this.getUTCDate()); break;
-      case 'w': result += this.getUTCDay(); break;
-      case 'z': result += this.getUTCDayOfYear(); break;
-
-      // Week
-      case 'W': result += pad2(this.getUTCISOWeek()); break;
-
-      // Month
-      case 'F': result += data.months[this.getUTCMonth()]; break;
-      case 'm': result += pad2(this.getUTCMonth() + 1); break;
-      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
-      case 'n': result += this.getUTCMonth() + 1; break;
-      case 't': result += this.getUTCDaysOfMonth(); break;
-
-      // Year
-      case 'L': result += this.isLeapYear() ? 1 : 0; break;
-      case 'o': result += this.getUTCISOFullYear(); break;
-      case 'Y': result += this.getUTCFullYear(); break;
-      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
-
-      // Time
-      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
-      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
-      case 'g': result += this.getUTCHours() % 12 || 12; break;
-      case 'G': result += this.getUTCHours(); break;
-      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
-      case 'H': result += pad2(this.getUTCHours()); break;
-      case 'i': result += pad2(this.getUTCMinutes()); break;
-      case 's': result += pad2(this.getUTCSeconds()); break;
-      case 'u': result += pad3(this.getUTCMilliseconds()); break;
-
-      // Timezone
-      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
-      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
-      case 'T': result += tzName; break;
-      case 'Z': result += -tz * 60; break;
-
-      // Full Date/Time
-      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
-      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
-      case 'U': result += Math.floor(this.getTime() / 1000); break;
-
-      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
-
-      default: result += format.charAt(i); break;
+  // parse and assign shortcut
+  function assignKey(key, scope, method){
+    var keys, mods, i, mi;
+    if (method === undefined) {
+      method = scope;
+      scope = 'all';
     }
-  }
+    key = key.replace(/\s/g,'');
+    keys = key.split(',');
 
-  this.setTime(time);
-
-  return result;
-};
-
-function parseTimezone(tz) {
-  if (typeof tz === 'number') {
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-  var number = parseInt(tz, 10);
-  if (isNaN(number)) {
-    return [data.tzToOffset[tz], tz];
-  }
-  else {
-    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-}
-
-Date.prototype.isLeapYear = function() {
-  var y = this.getUTCFullYear();
-  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
-};
-
-Date.prototype.getUTCISOWeek = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
-};
-
-Date.prototype.getUTCISOFullYear = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return d.getUTCFullYear();
-};
-
-Date.prototype.getUTCDaysOfMonth = function() {
-  var d = new Date(this);
-  d.setUTCDate(1);
-  d.setUTCMonth(d.getUTCMonth() + 1);
-  d.setUTCDate(0);
-  return d.getUTCDate();
-};
-
-Date.prototype.getUTCDayOfYear = function() {
-  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
-};
-
-Date.prototype.getTimezone = function() {
-  if (!('_tz' in this)) {
-    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
-    if (matches && matches[1]) {
-        this.setTimezone(matches[1]);
-    } else {
-        this.setTimezone(new Date().getTimezoneOffset());
+    if((keys[keys.length-1])=='')
+      keys[keys.length-2] += ',';
+    // for each shortcut
+    for (i = 0; i < keys.length; i++) {
+      // set modifier keys if any
+      mods = [];
+      key = keys[i].split('+');
+      if(key.length > 1){
+        mods = key.slice(0,key.length-1);
+        for (mi = 0; mi < mods.length; mi++)
+          mods[mi] = _MODIFIERS[mods[mi]];
+        key = [key[key.length-1]];
+      }
+      // convert to keycode and...
+      key = key[0]
+      key = _MAP[key] || key.toUpperCase().charCodeAt(0);
+      // ...store handler
+      if (!(key in _handlers)) _handlers[key] = [];
+      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
     }
-  }
-  return this._tz;
-};
+  };
 
-Date.prototype.getTimezoneName = function() {
-  this.getTimezone(); // Make sure the tz data is populated.
-  return this._tzName;
-};
+  // initialize key.<modifier> to false
+  for(k in _MODIFIERS) assignKey[k] = false;
 
-Date.prototype.setTimezone = function(val) {
-  var tzData = parseTimezone(val);
-  this._tz = tzData[0];
-  this._tzName = tzData[1];
-};
+  // set current scope (default 'all')
+  function setScope(scope){ _scope = scope || 'all' };
 
-})();
+  // cross-browser events
+  function addEvent(object, event, method) {
+    if (object.addEventListener)
+      object.addEventListener(event, method, false);
+    else if(object.attachEvent)
+      object.attachEvent('on'+event, function(){ method(window.event) });
+  };
 
+  // set the handlers globally on document
+  addEvent(document, 'keydown', dispatch);
+  addEvent(document, 'keyup', clearModifier);
+
+  // set window.key and window.key.setScope
+  global.key = assignKey;
+  global.key.setScope = setScope;
+
+  if(typeof module !== 'undefined') module.exports = key;
+
+})(this);
+
+})()
 },{}],34:[function(require,module,exports){
 'use strict';
 
@@ -24696,7 +24705,449 @@ YAMLException.prototype.toString = function toString(compact) {
 
 module.exports = YAMLException;
 
-},{}],30:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
+// nothing to see here... no file methods for the browser
+
+},{}],28:[function(require,module,exports){
+'use strict';
+
+
+var common         = require('./common');
+var NIL            = common.NIL;
+var YAMLException  = require('./exception');
+var DEFAULT_SCHEMA = require('./schema/default');
+var SAFE_SCHEMA    = require('./schema/safe');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+var CHAR_TAB                  = 0x09; /* Tab */
+var CHAR_LINE_FEED            = 0x0A; /* LF */
+var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
+var CHAR_SPACE                = 0x20; /* Space */
+var CHAR_EXCLAMATION          = 0x21; /* ! */
+var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
+var CHAR_SHARP                = 0x23; /* # */
+var CHAR_PERCENT              = 0x25; /* % */
+var CHAR_AMPERSAND            = 0x26; /* & */
+var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
+var CHAR_ASTERISK             = 0x2A; /* * */
+var CHAR_COMMA                = 0x2C; /* , */
+var CHAR_MINUS                = 0x2D; /* - */
+var CHAR_COLON                = 0x3A; /* : */
+var CHAR_GREATER_THAN         = 0x3E; /* > */
+var CHAR_QUESTION             = 0x3F; /* ? */
+var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
+var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
+var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
+var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
+var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
+var CHAR_VERTICAL_LINE        = 0x7C; /* | */
+var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
+
+
+var ESCAPE_SEQUENCES = {};
+
+ESCAPE_SEQUENCES[0x00]   = '\\0';
+ESCAPE_SEQUENCES[0x07]   = '\\a';
+ESCAPE_SEQUENCES[0x08]   = '\\b';
+ESCAPE_SEQUENCES[0x09]   = '\\t';
+ESCAPE_SEQUENCES[0x0A]   = '\\n';
+ESCAPE_SEQUENCES[0x0B]   = '\\v';
+ESCAPE_SEQUENCES[0x0C]   = '\\f';
+ESCAPE_SEQUENCES[0x0D]   = '\\r';
+ESCAPE_SEQUENCES[0x1B]   = '\\e';
+ESCAPE_SEQUENCES[0x22]   = '\\"';
+ESCAPE_SEQUENCES[0x5C]   = '\\\\';
+ESCAPE_SEQUENCES[0x85]   = '\\N';
+ESCAPE_SEQUENCES[0xA0]   = '\\_';
+ESCAPE_SEQUENCES[0x2028] = '\\L';
+ESCAPE_SEQUENCES[0x2029] = '\\P';
+
+
+function kindOf(object) {
+  var kind = typeof object;
+
+  if (null === object) {
+    return 'null';
+  } else if ('number' === kind) {
+    return 0 === object % 1 ? 'integer' : 'float';
+  } else if ('object' === kind && Array.isArray(object)) {
+    return 'array';
+  } else {
+    return kind;
+  }
+}
+
+
+function compileStyleMap(schema, map) {
+  var result, keys, index, length, tag, style, type;
+
+  if (null === map) {
+    return {};
+  }
+
+  result = {};
+  keys = Object.keys(map);
+
+  for (index = 0, length = keys.length; index < length; index += 1) {
+    tag = keys[index];
+    style = String(map[tag]);
+
+    if ('!!' === tag.slice(0, 2)) {
+      tag = 'tag:yaml.org,2002:' + tag.slice(2);
+    }
+
+    type = schema.compiledTypeMap[tag];
+
+    if (type && type.dumper) {
+      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
+        style = type.dumper.styleAliases[style];
+      }
+    }
+
+    result[tag] = style;
+  }
+
+  return result;
+}
+
+
+function encodeHex(character) {
+  var string, handle, length;
+
+  string = character.toString(16).toUpperCase();
+
+  if (character <= 0xFF) {
+    handle = 'x';
+    length = 2;
+  } else if (character <= 0xFFFF) {
+    handle = 'u';
+    length = 4;
+  } else if (character <= 0xFFFFFFFF) {
+    handle = 'U';
+    length = 8;
+  } else {
+    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
+  }
+
+  return '\\' + handle + common.repeat('0', length - string.length) + string;
+}
+
+
+function dump(input, options) {
+  options = options || {};
+
+  var schema    = options['schema'] || DEFAULT_SCHEMA,
+      indent    = Math.max(1, (options['indent'] || 2)),
+      flowLevel = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
+      styleMap  = compileStyleMap(schema, options['styles'] || null),
+
+      implicitTypes = schema.compiledImplicit,
+      explicitTypes = schema.compiledExplicit,
+
+      kind,
+      tag,
+      result;
+
+  function generateNextLine(level) {
+    return '\n' + common.repeat(' ', indent * level);
+  }
+
+  function testImplicitResolving(object) {
+    var index, length, type;
+
+    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
+      type = implicitTypes[index];
+
+      if (null !== type.loader &&
+          NIL !== type.loader.resolver(object, false)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeScalar(object) {
+    var isQuoted, checkpoint, position, length, character;
+
+    result = '';
+    isQuoted = false;
+    checkpoint = 0;
+
+    if (0          === object.length ||
+        CHAR_SPACE === object.charCodeAt(0) ||
+        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
+      isQuoted = true;
+    }
+
+    for (position = 0, length = object.length; position < length; position += 1) {
+      character = object.charCodeAt(position);
+
+      if (!isQuoted) {
+        if (CHAR_TAB                  === character ||
+            CHAR_LINE_FEED            === character ||
+            CHAR_CARRIAGE_RETURN      === character ||
+            CHAR_COMMA                === character ||
+            CHAR_LEFT_SQUARE_BRACKET  === character ||
+            CHAR_RIGHT_SQUARE_BRACKET === character ||
+            CHAR_LEFT_CURLY_BRACKET   === character ||
+            CHAR_RIGHT_CURLY_BRACKET  === character ||
+            CHAR_SHARP                === character ||
+            CHAR_AMPERSAND            === character ||
+            CHAR_ASTERISK             === character ||
+            CHAR_EXCLAMATION          === character ||
+            CHAR_VERTICAL_LINE        === character ||
+            CHAR_GREATER_THAN         === character ||
+            CHAR_SINGLE_QUOTE         === character ||
+            CHAR_DOUBLE_QUOTE         === character ||
+            CHAR_PERCENT              === character ||
+            CHAR_COMMERCIAL_AT        === character ||
+            CHAR_GRAVE_ACCENT         === character ||
+            CHAR_QUESTION             === character ||
+            CHAR_COLON                === character ||
+            CHAR_MINUS                === character) {
+          isQuoted = true;
+        }
+      }
+
+      if (ESCAPE_SEQUENCES[character] ||
+          !((0x00020 <= character && character <= 0x00007E) ||
+            (0x00085 === character)                         ||
+            (0x000A0 <= character && character <= 0x00D7FF) ||
+            (0x0E000 <= character && character <= 0x00FFFD) ||
+            (0x10000 <= character && character <= 0x10FFFF))) {
+        result += object.slice(checkpoint, position);
+        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
+        checkpoint = position + 1;
+        isQuoted = true;
+      }
+    }
+
+    if (checkpoint < position) {
+      result += object.slice(checkpoint, position);
+    }
+
+    if (!isQuoted && testImplicitResolving(result)) {
+      isQuoted = true;
+    }
+
+    if (isQuoted) {
+      result = '"' + result + '"';
+    }
+  }
+
+  function writeFlowSequence(level, object) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      if (0 !== index) {
+        _result += ', ';
+      }
+
+      writeNode(level, object[index], false, false);
+      _result += result;
+    }
+
+    tag = _tag;
+    result = '[' + _result + ']';
+  }
+
+  function writeBlockSequence(level, object, compact) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      if (!compact || 0 !== index) {
+        _result += generateNextLine(level);
+      }
+
+      writeNode(level + 1, object[index], true, true);
+      _result += '- ' + result;
+    }
+
+    tag = _tag;
+    result = _result;
+  }
+
+  function writeFlowMapping(level, object) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      if (0 !== index) {
+        _result += ', ';
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      writeNode(level, objectKey, false, false);
+
+      if (result.length > 1024) {
+        _result += '? ';
+      }
+
+      _result += result + ': ';
+      writeNode(level, objectValue, false, false);
+      _result += result;
+    }
+
+    tag = _tag;
+    result = '{' + _result + '}';
+  }
+
+  function writeBlockMapping(level, object, compact) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        explicitPair;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      if (!compact || 0 !== index) {
+        _result += generateNextLine(level);
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      writeNode(level + 1, objectKey, true, true);
+      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
+
+      if (explicitPair) {
+        _result += '? ';
+      }
+
+      _result += result;
+
+      if (explicitPair) {
+        _result += generateNextLine(level);
+      }
+
+      writeNode(level + 1, objectValue, true, explicitPair);
+      _result += ': ' + result;
+    }
+
+    tag = _tag;
+    result = _result;
+  }
+
+  function detectType(object, explicit) {
+    var _result, typeList, index, length, type, style;
+
+    typeList = explicit ? explicitTypes : implicitTypes;
+    kind = kindOf(object);
+
+    for (index = 0, length = typeList.length; index < length; index += 1) {
+      type = typeList[index];
+
+      if ((null !== type.dumper) &&
+          (null === type.dumper.kind       || kind === type.dumper.kind) &&
+          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
+          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
+        tag = explicit ? type.tag : '?';
+
+        if (null !== type.dumper.representer) {
+          style = styleMap[type.tag] || type.dumper.defaultStyle;
+
+          if ('function' === typeof type.dumper.representer) {
+            _result = type.dumper.representer(object, style);
+          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
+            _result = type.dumper.representer[style](object, style);
+          } else {
+            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
+          }
+
+          if (NIL !== _result) {
+            kind = kindOf(_result);
+            result = _result;
+          } else {
+            if (explicit) {
+              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
+            } else {
+              continue;
+            }
+          }
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeNode(level, object, block, compact) {
+    tag = null;
+    result = object;
+
+    if (!detectType(object, false)) {
+      detectType(object, true);
+    }
+
+    if (block) {
+      block = (0 > flowLevel || flowLevel > level);
+    }
+
+    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
+      compact = false;
+    }
+
+    if ('object' === kind) {
+      if (block && (0 !== Object.keys(result).length)) {
+        writeBlockMapping(level, result, compact);
+      } else {
+        writeFlowMapping(level, result);
+      }
+    } else if ('array' === kind) {
+      if (block && (0 !== result.length)) {
+        writeBlockSequence(level, result, compact);
+      } else {
+        writeFlowSequence(level, result);
+      }
+    } else if ('string' === kind) {
+      if ('?' !== tag) {
+        writeScalar(result);
+      }
+    } else {
+      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
+    }
+
+    if (null !== tag && '?' !== tag) {
+      result = '!<' + tag + '> ' + result;
+    }
+  }
+
+  writeNode(0, input, true, true);
+  return result + '\n';
+}
+
+
+function safeDump(input, options) {
+  return dump(input, common.extend({ schema: SAFE_SCHEMA }, options));
+}
+
+
+module.exports.dump     = dump;
+module.exports.safeDump = safeDump;
+
+},{"./common":37,"./exception":34,"./schema/default":33,"./schema/safe":32}],30:[function(require,module,exports){
 'use strict';
 
 
@@ -24801,7 +25252,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":36,"./exception":34,"./type":29}],27:[function(require,module,exports){
+},{"./common":37,"./exception":34,"./type":29}],27:[function(require,module,exports){
 'use strict';
 
 
@@ -26352,446 +26803,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":36,"./exception":34,"./mark":37,"./schema/safe":32,"./schema/default":33}],28:[function(require,module,exports){
-'use strict';
-
-
-var common         = require('./common');
-var NIL            = common.NIL;
-var YAMLException  = require('./exception');
-var DEFAULT_SCHEMA = require('./schema/default');
-var SAFE_SCHEMA    = require('./schema/safe');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-var CHAR_TAB                  = 0x09; /* Tab */
-var CHAR_LINE_FEED            = 0x0A; /* LF */
-var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
-var CHAR_SPACE                = 0x20; /* Space */
-var CHAR_EXCLAMATION          = 0x21; /* ! */
-var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
-var CHAR_SHARP                = 0x23; /* # */
-var CHAR_PERCENT              = 0x25; /* % */
-var CHAR_AMPERSAND            = 0x26; /* & */
-var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
-var CHAR_ASTERISK             = 0x2A; /* * */
-var CHAR_COMMA                = 0x2C; /* , */
-var CHAR_MINUS                = 0x2D; /* - */
-var CHAR_COLON                = 0x3A; /* : */
-var CHAR_GREATER_THAN         = 0x3E; /* > */
-var CHAR_QUESTION             = 0x3F; /* ? */
-var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
-var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
-var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
-var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
-var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
-var CHAR_VERTICAL_LINE        = 0x7C; /* | */
-var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
-
-
-var ESCAPE_SEQUENCES = {};
-
-ESCAPE_SEQUENCES[0x00]   = '\\0';
-ESCAPE_SEQUENCES[0x07]   = '\\a';
-ESCAPE_SEQUENCES[0x08]   = '\\b';
-ESCAPE_SEQUENCES[0x09]   = '\\t';
-ESCAPE_SEQUENCES[0x0A]   = '\\n';
-ESCAPE_SEQUENCES[0x0B]   = '\\v';
-ESCAPE_SEQUENCES[0x0C]   = '\\f';
-ESCAPE_SEQUENCES[0x0D]   = '\\r';
-ESCAPE_SEQUENCES[0x1B]   = '\\e';
-ESCAPE_SEQUENCES[0x22]   = '\\"';
-ESCAPE_SEQUENCES[0x5C]   = '\\\\';
-ESCAPE_SEQUENCES[0x85]   = '\\N';
-ESCAPE_SEQUENCES[0xA0]   = '\\_';
-ESCAPE_SEQUENCES[0x2028] = '\\L';
-ESCAPE_SEQUENCES[0x2029] = '\\P';
-
-
-function kindOf(object) {
-  var kind = typeof object;
-
-  if (null === object) {
-    return 'null';
-  } else if ('number' === kind) {
-    return 0 === object % 1 ? 'integer' : 'float';
-  } else if ('object' === kind && Array.isArray(object)) {
-    return 'array';
-  } else {
-    return kind;
-  }
-}
-
-
-function compileStyleMap(schema, map) {
-  var result, keys, index, length, tag, style, type;
-
-  if (null === map) {
-    return {};
-  }
-
-  result = {};
-  keys = Object.keys(map);
-
-  for (index = 0, length = keys.length; index < length; index += 1) {
-    tag = keys[index];
-    style = String(map[tag]);
-
-    if ('!!' === tag.slice(0, 2)) {
-      tag = 'tag:yaml.org,2002:' + tag.slice(2);
-    }
-
-    type = schema.compiledTypeMap[tag];
-
-    if (type && type.dumper) {
-      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
-        style = type.dumper.styleAliases[style];
-      }
-    }
-
-    result[tag] = style;
-  }
-
-  return result;
-}
-
-
-function encodeHex(character) {
-  var string, handle, length;
-
-  string = character.toString(16).toUpperCase();
-
-  if (character <= 0xFF) {
-    handle = 'x';
-    length = 2;
-  } else if (character <= 0xFFFF) {
-    handle = 'u';
-    length = 4;
-  } else if (character <= 0xFFFFFFFF) {
-    handle = 'U';
-    length = 8;
-  } else {
-    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
-  }
-
-  return '\\' + handle + common.repeat('0', length - string.length) + string;
-}
-
-
-function dump(input, options) {
-  options = options || {};
-
-  var schema    = options['schema'] || DEFAULT_SCHEMA,
-      indent    = Math.max(1, (options['indent'] || 2)),
-      flowLevel = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
-      styleMap  = compileStyleMap(schema, options['styles'] || null),
-
-      implicitTypes = schema.compiledImplicit,
-      explicitTypes = schema.compiledExplicit,
-
-      kind,
-      tag,
-      result;
-
-  function generateNextLine(level) {
-    return '\n' + common.repeat(' ', indent * level);
-  }
-
-  function testImplicitResolving(object) {
-    var index, length, type;
-
-    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
-      type = implicitTypes[index];
-
-      if (null !== type.loader &&
-          NIL !== type.loader.resolver(object, false)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeScalar(object) {
-    var isQuoted, checkpoint, position, length, character;
-
-    result = '';
-    isQuoted = false;
-    checkpoint = 0;
-
-    if (0          === object.length ||
-        CHAR_SPACE === object.charCodeAt(0) ||
-        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
-      isQuoted = true;
-    }
-
-    for (position = 0, length = object.length; position < length; position += 1) {
-      character = object.charCodeAt(position);
-
-      if (!isQuoted) {
-        if (CHAR_TAB                  === character ||
-            CHAR_LINE_FEED            === character ||
-            CHAR_CARRIAGE_RETURN      === character ||
-            CHAR_COMMA                === character ||
-            CHAR_LEFT_SQUARE_BRACKET  === character ||
-            CHAR_RIGHT_SQUARE_BRACKET === character ||
-            CHAR_LEFT_CURLY_BRACKET   === character ||
-            CHAR_RIGHT_CURLY_BRACKET  === character ||
-            CHAR_SHARP                === character ||
-            CHAR_AMPERSAND            === character ||
-            CHAR_ASTERISK             === character ||
-            CHAR_EXCLAMATION          === character ||
-            CHAR_VERTICAL_LINE        === character ||
-            CHAR_GREATER_THAN         === character ||
-            CHAR_SINGLE_QUOTE         === character ||
-            CHAR_DOUBLE_QUOTE         === character ||
-            CHAR_PERCENT              === character ||
-            CHAR_COMMERCIAL_AT        === character ||
-            CHAR_GRAVE_ACCENT         === character ||
-            CHAR_QUESTION             === character ||
-            CHAR_COLON                === character ||
-            CHAR_MINUS                === character) {
-          isQuoted = true;
-        }
-      }
-
-      if (ESCAPE_SEQUENCES[character] ||
-          !((0x00020 <= character && character <= 0x00007E) ||
-            (0x00085 === character)                         ||
-            (0x000A0 <= character && character <= 0x00D7FF) ||
-            (0x0E000 <= character && character <= 0x00FFFD) ||
-            (0x10000 <= character && character <= 0x10FFFF))) {
-        result += object.slice(checkpoint, position);
-        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
-        checkpoint = position + 1;
-        isQuoted = true;
-      }
-    }
-
-    if (checkpoint < position) {
-      result += object.slice(checkpoint, position);
-    }
-
-    if (!isQuoted && testImplicitResolving(result)) {
-      isQuoted = true;
-    }
-
-    if (isQuoted) {
-      result = '"' + result + '"';
-    }
-  }
-
-  function writeFlowSequence(level, object) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      if (0 !== index) {
-        _result += ', ';
-      }
-
-      writeNode(level, object[index], false, false);
-      _result += result;
-    }
-
-    tag = _tag;
-    result = '[' + _result + ']';
-  }
-
-  function writeBlockSequence(level, object, compact) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      if (!compact || 0 !== index) {
-        _result += generateNextLine(level);
-      }
-
-      writeNode(level + 1, object[index], true, true);
-      _result += '- ' + result;
-    }
-
-    tag = _tag;
-    result = _result;
-  }
-
-  function writeFlowMapping(level, object) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      if (0 !== index) {
-        _result += ', ';
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      writeNode(level, objectKey, false, false);
-
-      if (result.length > 1024) {
-        _result += '? ';
-      }
-
-      _result += result + ': ';
-      writeNode(level, objectValue, false, false);
-      _result += result;
-    }
-
-    tag = _tag;
-    result = '{' + _result + '}';
-  }
-
-  function writeBlockMapping(level, object, compact) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        explicitPair;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      if (!compact || 0 !== index) {
-        _result += generateNextLine(level);
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      writeNode(level + 1, objectKey, true, true);
-      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
-
-      if (explicitPair) {
-        _result += '? ';
-      }
-
-      _result += result;
-
-      if (explicitPair) {
-        _result += generateNextLine(level);
-      }
-
-      writeNode(level + 1, objectValue, true, explicitPair);
-      _result += ': ' + result;
-    }
-
-    tag = _tag;
-    result = _result;
-  }
-
-  function detectType(object, explicit) {
-    var _result, typeList, index, length, type, style;
-
-    typeList = explicit ? explicitTypes : implicitTypes;
-    kind = kindOf(object);
-
-    for (index = 0, length = typeList.length; index < length; index += 1) {
-      type = typeList[index];
-
-      if ((null !== type.dumper) &&
-          (null === type.dumper.kind       || kind === type.dumper.kind) &&
-          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
-          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
-        tag = explicit ? type.tag : '?';
-
-        if (null !== type.dumper.representer) {
-          style = styleMap[type.tag] || type.dumper.defaultStyle;
-
-          if ('function' === typeof type.dumper.representer) {
-            _result = type.dumper.representer(object, style);
-          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
-            _result = type.dumper.representer[style](object, style);
-          } else {
-            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
-          }
-
-          if (NIL !== _result) {
-            kind = kindOf(_result);
-            result = _result;
-          } else {
-            if (explicit) {
-              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
-            } else {
-              continue;
-            }
-          }
-        }
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeNode(level, object, block, compact) {
-    tag = null;
-    result = object;
-
-    if (!detectType(object, false)) {
-      detectType(object, true);
-    }
-
-    if (block) {
-      block = (0 > flowLevel || flowLevel > level);
-    }
-
-    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
-      compact = false;
-    }
-
-    if ('object' === kind) {
-      if (block && (0 !== Object.keys(result).length)) {
-        writeBlockMapping(level, result, compact);
-      } else {
-        writeFlowMapping(level, result);
-      }
-    } else if ('array' === kind) {
-      if (block && (0 !== result.length)) {
-        writeBlockSequence(level, result, compact);
-      } else {
-        writeFlowSequence(level, result);
-      }
-    } else if ('string' === kind) {
-      if ('?' !== tag) {
-        writeScalar(result);
-      }
-    } else {
-      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
-    }
-
-    if (null !== tag && '?' !== tag) {
-      result = '!<' + tag + '> ' + result;
-    }
-  }
-
-  writeNode(0, input, true, true);
-  return result + '\n';
-}
-
-
-function safeDump(input, options) {
-  return dump(input, common.extend({ schema: SAFE_SCHEMA }, options));
-}
-
-
-module.exports.dump     = dump;
-module.exports.safeDump = safeDump;
-
-},{"./common":36,"./exception":34,"./schema/default":33,"./schema/safe":32}],29:[function(require,module,exports){
+},{"./common":37,"./exception":34,"./mark":38,"./schema/safe":32,"./schema/default":33}],29:[function(require,module,exports){
 'use strict';
 
 
@@ -26875,7 +26887,32 @@ Type.Dumper = function TypeDumper(options) {
 
 module.exports = Type;
 
-},{"./exception":34}],32:[function(require,module,exports){
+},{"./exception":34}],35:[function(require,module,exports){
+'use strict';
+
+
+var fs     = require('fs');
+var loader = require('./loader');
+
+
+function yamlRequireHandler(module, filename) {
+  var content = fs.readFileSync(filename, 'utf8');
+
+  // fill in documents
+  module.exports = loader.load(content, { filename: filename });
+}
+
+// register require extensions only if we're on node.js
+// hack for browserify
+if (undefined !== require.extensions) {
+  require.extensions['.yml']  = yamlRequireHandler;
+  require.extensions['.yaml'] = yamlRequireHandler;
+}
+
+
+module.exports = require;
+
+},{"fs":36,"./loader":27}],32:[function(require,module,exports){
 'use strict';
 
 
@@ -26902,7 +26939,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":30,"./minimal":31,"../type/null":38,"../type/bool":39,"../type/int":40,"../type/float":41,"../type/timestamp":42,"../type/merge":43,"../type/binary":44,"../type/omap":45,"../type/pairs":46,"../type/set":47}],33:[function(require,module,exports){
+},{"../schema":30,"./minimal":31,"../type/null":39,"../type/bool":40,"../type/int":41,"../type/float":42,"../type/timestamp":43,"../type/merge":44,"../type/binary":45,"../type/omap":46,"../type/pairs":47,"../type/set":48}],33:[function(require,module,exports){
 'use strict';
 
 
@@ -26920,32 +26957,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":30,"./safe":32,"../type/js/undefined":48,"../type/js/regexp":49,"../type/js/function":50}],35:[function(require,module,exports){
-'use strict';
-
-
-var fs     = require('fs');
-var loader = require('./loader');
-
-
-function yamlRequireHandler(module, filename) {
-  var content = fs.readFileSync(filename, 'utf8');
-
-  // fill in documents
-  module.exports = loader.load(content, { filename: filename });
-}
-
-// register require extensions only if we're on node.js
-// hack for browserify
-if (undefined !== require.extensions) {
-  require.extensions['.yml']  = yamlRequireHandler;
-  require.extensions['.yaml'] = yamlRequireHandler;
-}
-
-
-module.exports = require;
-
-},{"fs":51,"./loader":27}],31:[function(require,module,exports){
+},{"../schema":30,"./safe":32,"../type/js/undefined":49,"../type/js/regexp":50,"../type/js/function":51}],31:[function(require,module,exports){
 'use strict';
 
 
@@ -26960,10 +26972,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":30,"../type/str":52,"../type/seq":53,"../type/map":54}],51:[function(require,module,exports){
-// nothing to see here... no file methods for the browser
-
-},{}],36:[function(require,module,exports){
+},{"../schema":30,"../type/str":52,"../type/seq":53,"../type/map":54}],37:[function(require,module,exports){
 'use strict';
 
 
@@ -27025,7 +27034,7 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 
@@ -27105,7 +27114,208 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":36}],41:[function(require,module,exports){
+},{"./common":37}],39:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
+    }
+  }
+});
+
+},{"../common":37,"../type":29}],40:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
+},{"../common":37,"../type":29}],41:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":37,"../type":29}],42:[function(require,module,exports){
 'use strict';
 
 
@@ -27209,7 +27419,7 @@ module.exports = new Type('tag:yaml.org,2002:float', {
   }
 });
 
-},{"../common":36,"../type":29}],42:[function(require,module,exports){
+},{"../common":37,"../type":29}],43:[function(require,module,exports){
 'use strict';
 
 
@@ -27302,7 +27512,7 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
   }
 });
 
-},{"../common":36,"../type":29}],40:[function(require,module,exports){
+},{"../common":37,"../type":29}],44:[function(require,module,exports){
 'use strict';
 
 
@@ -27310,86 +27520,150 @@ var NIL  = require('../common').NIL;
 var Type = require('../type');
 
 
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
 }
 
 
-module.exports = new Type('tag:yaml.org,2002:int', {
+module.exports = new Type('tag:yaml.org,2002:merge', {
   loader: {
     kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
+    resolver: resolveYamlMerge
   }
 });
 
-},{"../common":36,"../type":29}],44:[function(require,module,exports){
+},{"../common":37,"../type":29}],46:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+
+function resolveYamlOmap(object /*, explicit*/) {
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) {
+          pairHasKey = true;
+        } else {
+          return NIL;
+        }
+      }
+    }
+
+    if (!pairHasKey) {
+      return NIL;
+    }
+
+    if (-1 === objectKeys.indexOf(pairKey)) {
+      objectKeys.push(pairKey);
+    } else {
+      return NIL;
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":37,"../type":29}],47:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
+  }
+});
+
+},{"../common":37,"../type":29}],48:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+function resolveYamlSet(object /*, explicit*/) {
+  var key;
+
+  for (key in object) {
+    if (_hasOwnProperty.call(object, key)) {
+      if (null !== object[key]) {
+        return NIL;
+      }
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:set', {
+  loader: {
+    kind: 'object',
+    resolver: resolveYamlSet
+  }
+});
+
+},{"../common":37,"../type":29}],45:[function(require,module,exports){
 (function(){// Modified from:
 // https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
 
@@ -27510,309 +27784,46 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
 });
 
 })()
-},{"buffer":55,"../common":36,"../type":29}],39:[function(require,module,exports){
+},{"buffer":55,"../common":37,"../type":29}],52:[function(require,module,exports){
 'use strict';
 
 
-var NIL  = require('../common').NIL;
 var Type = require('../type');
 
 
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
+module.exports = new Type('tag:yaml.org,2002:str', {
   loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
+    kind: 'string'
   }
 });
 
-},{"../common":36,"../type":29}],45:[function(require,module,exports){
+},{"../type":29}],54:[function(require,module,exports){
 'use strict';
 
 
-var NIL  = require('../common').NIL;
 var Type = require('../type');
 
 
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-
-function resolveYamlOmap(object /*, explicit*/) {
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) {
-          pairHasKey = true;
-        } else {
-          return NIL;
-        }
-      }
-    }
-
-    if (!pairHasKey) {
-      return NIL;
-    }
-
-    if (-1 === objectKeys.indexOf(pairKey)) {
-      objectKeys.push(pairKey);
-    } else {
-      return NIL;
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
+module.exports = new Type('tag:yaml.org,2002:map', {
   loader: {
-    kind: 'array',
-    resolver: resolveYamlOmap
+    kind: 'object'
   }
 });
 
-},{"../common":36,"../type":29}],46:[function(require,module,exports){
+},{"../type":29}],53:[function(require,module,exports){
 'use strict';
 
 
-var NIL  = require('../common').NIL;
 var Type = require('../type');
 
 
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
+module.exports = new Type('tag:yaml.org,2002:seq', {
   loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
+    kind: 'array'
   }
 });
 
-},{"../common":36,"../type":29}],47:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-function resolveYamlSet(object /*, explicit*/) {
-  var key;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (null !== object[key]) {
-        return NIL;
-      }
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  loader: {
-    kind: 'object',
-    resolver: resolveYamlSet
-  }
-});
-
-},{"../common":36,"../type":29}],43:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":36,"../type":29}],38:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
-};
-
-
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
-    }
-  }
-});
-
-},{"../common":36,"../type":29}],50:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptFunction(object /*, explicit*/) {
-  /*jslint evil:true*/
-  var func;
-
-  try {
-    func = new Function('return ' + object);
-    return func();
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptFunction(object /*, style*/) {
-  return object.toString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/function', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptFunction
-  },
-  dumper: {
-    kind: 'function',
-    representer: representJavascriptFunction,
-  }
-});
-
-},{"../../common":36,"../../type":29}],48:[function(require,module,exports){
+},{"../type":29}],49:[function(require,module,exports){
 'use strict';
 
 
@@ -27842,33 +27853,7 @@ module.exports = new Type('tag:yaml.org,2002:js/undefined', {
   }
 });
 
-},{"../../type":29}],53:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:seq', {
-  loader: {
-    kind: 'array'
-  }
-});
-
-},{"../type":29}],52:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:str', {
-  loader: {
-    kind: 'string'
-  }
-});
-
-},{"../type":29}],49:[function(require,module,exports){
+},{"../../type":29}],50:[function(require,module,exports){
 (function(){'use strict';
 
 
@@ -27927,20 +27912,44 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
 });
 
 })()
-},{"../../common":36,"../../type":29}],54:[function(require,module,exports){
+},{"../../common":37,"../../type":29}],51:[function(require,module,exports){
 'use strict';
 
 
-var Type = require('../type');
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
 
 
-module.exports = new Type('tag:yaml.org,2002:map', {
+function resolveJavascriptFunction(object /*, explicit*/) {
+  /*jslint evil:true*/
+  var func;
+
+  try {
+    func = new Function('return ' + object);
+    return func();
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptFunction(object /*, style*/) {
+  return object.toString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/function', {
   loader: {
-    kind: 'object'
+    kind: 'string',
+    resolver: resolveJavascriptFunction
+  },
+  dumper: {
+    kind: 'function',
+    representer: representJavascriptFunction,
   }
 });
 
-},{"../type":29}],56:[function(require,module,exports){
+},{"../../common":37,"../../type":29}],56:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -28257,7 +28266,360 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":57,"buffer":55}],58:[function(require,module,exports){
+},{"util":57,"buffer":55}],57:[function(require,module,exports){
+var events = require('events');
+
+exports.isArray = isArray;
+exports.isDate = function(obj){return Object.prototype.toString.call(obj) === '[object Date]'};
+exports.isRegExp = function(obj){return Object.prototype.toString.call(obj) === '[object RegExp]'};
+
+
+exports.print = function () {};
+exports.puts = function () {};
+exports.debug = function() {};
+
+exports.inspect = function(obj, showHidden, depth, colors) {
+  var seen = [];
+
+  var stylize = function(str, styleType) {
+    // http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+    var styles =
+        { 'bold' : [1, 22],
+          'italic' : [3, 23],
+          'underline' : [4, 24],
+          'inverse' : [7, 27],
+          'white' : [37, 39],
+          'grey' : [90, 39],
+          'black' : [30, 39],
+          'blue' : [34, 39],
+          'cyan' : [36, 39],
+          'green' : [32, 39],
+          'magenta' : [35, 39],
+          'red' : [31, 39],
+          'yellow' : [33, 39] };
+
+    var style =
+        { 'special': 'cyan',
+          'number': 'blue',
+          'boolean': 'yellow',
+          'undefined': 'grey',
+          'null': 'bold',
+          'string': 'green',
+          'date': 'magenta',
+          // "name": intentionally not styling
+          'regexp': 'red' }[styleType];
+
+    if (style) {
+      return '\033[' + styles[style][0] + 'm' + str +
+             '\033[' + styles[style][1] + 'm';
+    } else {
+      return str;
+    }
+  };
+  if (! colors) {
+    stylize = function(str, styleType) { return str; };
+  }
+
+  function format(value, recurseTimes) {
+    // Provide a hook for user-specified inspect functions.
+    // Check that value is an object with an inspect function on it
+    if (value && typeof value.inspect === 'function' &&
+        // Filter out the util module, it's inspect function is special
+        value !== exports &&
+        // Also filter out any prototype objects using the circular check.
+        !(value.constructor && value.constructor.prototype === value)) {
+      return value.inspect(recurseTimes);
+    }
+
+    // Primitive types cannot have properties
+    switch (typeof value) {
+      case 'undefined':
+        return stylize('undefined', 'undefined');
+
+      case 'string':
+        var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                                 .replace(/'/g, "\\'")
+                                                 .replace(/\\"/g, '"') + '\'';
+        return stylize(simple, 'string');
+
+      case 'number':
+        return stylize('' + value, 'number');
+
+      case 'boolean':
+        return stylize('' + value, 'boolean');
+    }
+    // For some reason typeof null is "object", so special case here.
+    if (value === null) {
+      return stylize('null', 'null');
+    }
+
+    // Look up the keys of the object.
+    var visible_keys = Object_keys(value);
+    var keys = showHidden ? Object_getOwnPropertyNames(value) : visible_keys;
+
+    // Functions without properties can be shortcutted.
+    if (typeof value === 'function' && keys.length === 0) {
+      if (isRegExp(value)) {
+        return stylize('' + value, 'regexp');
+      } else {
+        var name = value.name ? ': ' + value.name : '';
+        return stylize('[Function' + name + ']', 'special');
+      }
+    }
+
+    // Dates without properties can be shortcutted
+    if (isDate(value) && keys.length === 0) {
+      return stylize(value.toUTCString(), 'date');
+    }
+
+    var base, type, braces;
+    // Determine the object type
+    if (isArray(value)) {
+      type = 'Array';
+      braces = ['[', ']'];
+    } else {
+      type = 'Object';
+      braces = ['{', '}'];
+    }
+
+    // Make functions say that they are functions
+    if (typeof value === 'function') {
+      var n = value.name ? ': ' + value.name : '';
+      base = (isRegExp(value)) ? ' ' + value : ' [Function' + n + ']';
+    } else {
+      base = '';
+    }
+
+    // Make dates with properties first say the date
+    if (isDate(value)) {
+      base = ' ' + value.toUTCString();
+    }
+
+    if (keys.length === 0) {
+      return braces[0] + base + braces[1];
+    }
+
+    if (recurseTimes < 0) {
+      if (isRegExp(value)) {
+        return stylize('' + value, 'regexp');
+      } else {
+        return stylize('[Object]', 'special');
+      }
+    }
+
+    seen.push(value);
+
+    var output = keys.map(function(key) {
+      var name, str;
+      if (value.__lookupGetter__) {
+        if (value.__lookupGetter__(key)) {
+          if (value.__lookupSetter__(key)) {
+            str = stylize('[Getter/Setter]', 'special');
+          } else {
+            str = stylize('[Getter]', 'special');
+          }
+        } else {
+          if (value.__lookupSetter__(key)) {
+            str = stylize('[Setter]', 'special');
+          }
+        }
+      }
+      if (visible_keys.indexOf(key) < 0) {
+        name = '[' + key + ']';
+      }
+      if (!str) {
+        if (seen.indexOf(value[key]) < 0) {
+          if (recurseTimes === null) {
+            str = format(value[key]);
+          } else {
+            str = format(value[key], recurseTimes - 1);
+          }
+          if (str.indexOf('\n') > -1) {
+            if (isArray(value)) {
+              str = str.split('\n').map(function(line) {
+                return '  ' + line;
+              }).join('\n').substr(2);
+            } else {
+              str = '\n' + str.split('\n').map(function(line) {
+                return '   ' + line;
+              }).join('\n');
+            }
+          }
+        } else {
+          str = stylize('[Circular]', 'special');
+        }
+      }
+      if (typeof name === 'undefined') {
+        if (type === 'Array' && key.match(/^\d+$/)) {
+          return str;
+        }
+        name = JSON.stringify('' + key);
+        if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+          name = name.substr(1, name.length - 2);
+          name = stylize(name, 'name');
+        } else {
+          name = name.replace(/'/g, "\\'")
+                     .replace(/\\"/g, '"')
+                     .replace(/(^"|"$)/g, "'");
+          name = stylize(name, 'string');
+        }
+      }
+
+      return name + ': ' + str;
+    });
+
+    seen.pop();
+
+    var numLinesEst = 0;
+    var length = output.reduce(function(prev, cur) {
+      numLinesEst++;
+      if (cur.indexOf('\n') >= 0) numLinesEst++;
+      return prev + cur.length + 1;
+    }, 0);
+
+    if (length > 50) {
+      output = braces[0] +
+               (base === '' ? '' : base + '\n ') +
+               ' ' +
+               output.join(',\n  ') +
+               ' ' +
+               braces[1];
+
+    } else {
+      output = braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+    }
+
+    return output;
+  }
+  return format(obj, (typeof depth === 'undefined' ? 2 : depth));
+};
+
+
+function isArray(ar) {
+  return ar instanceof Array ||
+         Array.isArray(ar) ||
+         (ar && ar !== Object.prototype && isArray(ar.__proto__));
+}
+
+
+function isRegExp(re) {
+  return re instanceof RegExp ||
+    (typeof re === 'object' && Object.prototype.toString.call(re) === '[object RegExp]');
+}
+
+
+function isDate(d) {
+  if (d instanceof Date) return true;
+  if (typeof d !== 'object') return false;
+  var properties = Date.prototype && Object_getOwnPropertyNames(Date.prototype);
+  var proto = d.__proto__ && Object_getOwnPropertyNames(d.__proto__);
+  return JSON.stringify(proto) === JSON.stringify(properties);
+}
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+exports.log = function (msg) {};
+
+exports.pump = null;
+
+var Object_keys = Object.keys || function (obj) {
+    var res = [];
+    for (var key in obj) res.push(key);
+    return res;
+};
+
+var Object_getOwnPropertyNames = Object.getOwnPropertyNames || function (obj) {
+    var res = [];
+    for (var key in obj) {
+        if (Object.hasOwnProperty.call(obj, key)) res.push(key);
+    }
+    return res;
+};
+
+var Object_create = Object.create || function (prototype, properties) {
+    // from es5-shim
+    var object;
+    if (prototype === null) {
+        object = { '__proto__' : null };
+    }
+    else {
+        if (typeof prototype !== 'object') {
+            throw new TypeError(
+                'typeof prototype[' + (typeof prototype) + '] != \'object\''
+            );
+        }
+        var Type = function () {};
+        Type.prototype = prototype;
+        object = new Type();
+        object.__proto__ = prototype;
+    }
+    if (typeof properties !== 'undefined' && Object.defineProperties) {
+        Object.defineProperties(object, properties);
+    }
+    return object;
+};
+
+exports.inherits = function(ctor, superCtor) {
+  ctor.super_ = superCtor;
+  ctor.prototype = Object_create(superCtor.prototype, {
+    constructor: {
+      value: ctor,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+};
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (typeof f !== 'string') {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(exports.inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j': return JSON.stringify(args[i++]);
+      default:
+        return x;
+    }
+  });
+  for(var x = args[i]; i < len; x = args[++i]){
+    if (x === null || typeof x !== 'object') {
+      str += ' ' + x;
+    } else {
+      str += ' ' + exports.inspect(x);
+    }
+  }
+  return str;
+};
+
+},{"events":58}],59:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -29663,446 +30025,7 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":56,"./buffer_ieee754":58,"base64-js":59}],57:[function(require,module,exports){
-var events = require('events');
-
-exports.isArray = isArray;
-exports.isDate = function(obj){return Object.prototype.toString.call(obj) === '[object Date]'};
-exports.isRegExp = function(obj){return Object.prototype.toString.call(obj) === '[object RegExp]'};
-
-
-exports.print = function () {};
-exports.puts = function () {};
-exports.debug = function() {};
-
-exports.inspect = function(obj, showHidden, depth, colors) {
-  var seen = [];
-
-  var stylize = function(str, styleType) {
-    // http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
-    var styles =
-        { 'bold' : [1, 22],
-          'italic' : [3, 23],
-          'underline' : [4, 24],
-          'inverse' : [7, 27],
-          'white' : [37, 39],
-          'grey' : [90, 39],
-          'black' : [30, 39],
-          'blue' : [34, 39],
-          'cyan' : [36, 39],
-          'green' : [32, 39],
-          'magenta' : [35, 39],
-          'red' : [31, 39],
-          'yellow' : [33, 39] };
-
-    var style =
-        { 'special': 'cyan',
-          'number': 'blue',
-          'boolean': 'yellow',
-          'undefined': 'grey',
-          'null': 'bold',
-          'string': 'green',
-          'date': 'magenta',
-          // "name": intentionally not styling
-          'regexp': 'red' }[styleType];
-
-    if (style) {
-      return '\033[' + styles[style][0] + 'm' + str +
-             '\033[' + styles[style][1] + 'm';
-    } else {
-      return str;
-    }
-  };
-  if (! colors) {
-    stylize = function(str, styleType) { return str; };
-  }
-
-  function format(value, recurseTimes) {
-    // Provide a hook for user-specified inspect functions.
-    // Check that value is an object with an inspect function on it
-    if (value && typeof value.inspect === 'function' &&
-        // Filter out the util module, it's inspect function is special
-        value !== exports &&
-        // Also filter out any prototype objects using the circular check.
-        !(value.constructor && value.constructor.prototype === value)) {
-      return value.inspect(recurseTimes);
-    }
-
-    // Primitive types cannot have properties
-    switch (typeof value) {
-      case 'undefined':
-        return stylize('undefined', 'undefined');
-
-      case 'string':
-        var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                                 .replace(/'/g, "\\'")
-                                                 .replace(/\\"/g, '"') + '\'';
-        return stylize(simple, 'string');
-
-      case 'number':
-        return stylize('' + value, 'number');
-
-      case 'boolean':
-        return stylize('' + value, 'boolean');
-    }
-    // For some reason typeof null is "object", so special case here.
-    if (value === null) {
-      return stylize('null', 'null');
-    }
-
-    // Look up the keys of the object.
-    var visible_keys = Object_keys(value);
-    var keys = showHidden ? Object_getOwnPropertyNames(value) : visible_keys;
-
-    // Functions without properties can be shortcutted.
-    if (typeof value === 'function' && keys.length === 0) {
-      if (isRegExp(value)) {
-        return stylize('' + value, 'regexp');
-      } else {
-        var name = value.name ? ': ' + value.name : '';
-        return stylize('[Function' + name + ']', 'special');
-      }
-    }
-
-    // Dates without properties can be shortcutted
-    if (isDate(value) && keys.length === 0) {
-      return stylize(value.toUTCString(), 'date');
-    }
-
-    var base, type, braces;
-    // Determine the object type
-    if (isArray(value)) {
-      type = 'Array';
-      braces = ['[', ']'];
-    } else {
-      type = 'Object';
-      braces = ['{', '}'];
-    }
-
-    // Make functions say that they are functions
-    if (typeof value === 'function') {
-      var n = value.name ? ': ' + value.name : '';
-      base = (isRegExp(value)) ? ' ' + value : ' [Function' + n + ']';
-    } else {
-      base = '';
-    }
-
-    // Make dates with properties first say the date
-    if (isDate(value)) {
-      base = ' ' + value.toUTCString();
-    }
-
-    if (keys.length === 0) {
-      return braces[0] + base + braces[1];
-    }
-
-    if (recurseTimes < 0) {
-      if (isRegExp(value)) {
-        return stylize('' + value, 'regexp');
-      } else {
-        return stylize('[Object]', 'special');
-      }
-    }
-
-    seen.push(value);
-
-    var output = keys.map(function(key) {
-      var name, str;
-      if (value.__lookupGetter__) {
-        if (value.__lookupGetter__(key)) {
-          if (value.__lookupSetter__(key)) {
-            str = stylize('[Getter/Setter]', 'special');
-          } else {
-            str = stylize('[Getter]', 'special');
-          }
-        } else {
-          if (value.__lookupSetter__(key)) {
-            str = stylize('[Setter]', 'special');
-          }
-        }
-      }
-      if (visible_keys.indexOf(key) < 0) {
-        name = '[' + key + ']';
-      }
-      if (!str) {
-        if (seen.indexOf(value[key]) < 0) {
-          if (recurseTimes === null) {
-            str = format(value[key]);
-          } else {
-            str = format(value[key], recurseTimes - 1);
-          }
-          if (str.indexOf('\n') > -1) {
-            if (isArray(value)) {
-              str = str.split('\n').map(function(line) {
-                return '  ' + line;
-              }).join('\n').substr(2);
-            } else {
-              str = '\n' + str.split('\n').map(function(line) {
-                return '   ' + line;
-              }).join('\n');
-            }
-          }
-        } else {
-          str = stylize('[Circular]', 'special');
-        }
-      }
-      if (typeof name === 'undefined') {
-        if (type === 'Array' && key.match(/^\d+$/)) {
-          return str;
-        }
-        name = JSON.stringify('' + key);
-        if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-          name = name.substr(1, name.length - 2);
-          name = stylize(name, 'name');
-        } else {
-          name = name.replace(/'/g, "\\'")
-                     .replace(/\\"/g, '"')
-                     .replace(/(^"|"$)/g, "'");
-          name = stylize(name, 'string');
-        }
-      }
-
-      return name + ': ' + str;
-    });
-
-    seen.pop();
-
-    var numLinesEst = 0;
-    var length = output.reduce(function(prev, cur) {
-      numLinesEst++;
-      if (cur.indexOf('\n') >= 0) numLinesEst++;
-      return prev + cur.length + 1;
-    }, 0);
-
-    if (length > 50) {
-      output = braces[0] +
-               (base === '' ? '' : base + '\n ') +
-               ' ' +
-               output.join(',\n  ') +
-               ' ' +
-               braces[1];
-
-    } else {
-      output = braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
-    }
-
-    return output;
-  }
-  return format(obj, (typeof depth === 'undefined' ? 2 : depth));
-};
-
-
-function isArray(ar) {
-  return ar instanceof Array ||
-         Array.isArray(ar) ||
-         (ar && ar !== Object.prototype && isArray(ar.__proto__));
-}
-
-
-function isRegExp(re) {
-  return re instanceof RegExp ||
-    (typeof re === 'object' && Object.prototype.toString.call(re) === '[object RegExp]');
-}
-
-
-function isDate(d) {
-  if (d instanceof Date) return true;
-  if (typeof d !== 'object') return false;
-  var properties = Date.prototype && Object_getOwnPropertyNames(Date.prototype);
-  var proto = d.__proto__ && Object_getOwnPropertyNames(d.__proto__);
-  return JSON.stringify(proto) === JSON.stringify(properties);
-}
-
-function pad(n) {
-  return n < 10 ? '0' + n.toString(10) : n.toString(10);
-}
-
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-              'Oct', 'Nov', 'Dec'];
-
-// 26 Feb 16:19:34
-function timestamp() {
-  var d = new Date();
-  var time = [pad(d.getHours()),
-              pad(d.getMinutes()),
-              pad(d.getSeconds())].join(':');
-  return [d.getDate(), months[d.getMonth()], time].join(' ');
-}
-
-exports.log = function (msg) {};
-
-exports.pump = null;
-
-var Object_keys = Object.keys || function (obj) {
-    var res = [];
-    for (var key in obj) res.push(key);
-    return res;
-};
-
-var Object_getOwnPropertyNames = Object.getOwnPropertyNames || function (obj) {
-    var res = [];
-    for (var key in obj) {
-        if (Object.hasOwnProperty.call(obj, key)) res.push(key);
-    }
-    return res;
-};
-
-var Object_create = Object.create || function (prototype, properties) {
-    // from es5-shim
-    var object;
-    if (prototype === null) {
-        object = { '__proto__' : null };
-    }
-    else {
-        if (typeof prototype !== 'object') {
-            throw new TypeError(
-                'typeof prototype[' + (typeof prototype) + '] != \'object\''
-            );
-        }
-        var Type = function () {};
-        Type.prototype = prototype;
-        object = new Type();
-        object.__proto__ = prototype;
-    }
-    if (typeof properties !== 'undefined' && Object.defineProperties) {
-        Object.defineProperties(object, properties);
-    }
-    return object;
-};
-
-exports.inherits = function(ctor, superCtor) {
-  ctor.super_ = superCtor;
-  ctor.prototype = Object_create(superCtor.prototype, {
-    constructor: {
-      value: ctor,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-};
-
-var formatRegExp = /%[sdj%]/g;
-exports.format = function(f) {
-  if (typeof f !== 'string') {
-    var objects = [];
-    for (var i = 0; i < arguments.length; i++) {
-      objects.push(exports.inspect(arguments[i]));
-    }
-    return objects.join(' ');
-  }
-
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  var str = String(f).replace(formatRegExp, function(x) {
-    if (x === '%%') return '%';
-    if (i >= len) return x;
-    switch (x) {
-      case '%s': return String(args[i++]);
-      case '%d': return Number(args[i++]);
-      case '%j': return JSON.stringify(args[i++]);
-      default:
-        return x;
-    }
-  });
-  for(var x = args[i]; i < len; x = args[++i]){
-    if (x === null || typeof x !== 'object') {
-      str += ' ' + x;
-    } else {
-      str += ' ' + exports.inspect(x);
-    }
-  }
-  return str;
-};
-
-},{"events":60}],59:[function(require,module,exports){
-(function (exports) {
-	'use strict';
-
-	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-	function b64ToByteArray(b64) {
-		var i, j, l, tmp, placeHolders, arr;
-	
-		if (b64.length % 4 > 0) {
-			throw 'Invalid string. Length must be a multiple of 4';
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		placeHolders = b64.indexOf('=');
-		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length;
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
-			arr.push((tmp & 0xFF0000) >> 16);
-			arr.push((tmp & 0xFF00) >> 8);
-			arr.push(tmp & 0xFF);
-		}
-
-		if (placeHolders === 2) {
-			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
-			arr.push(tmp & 0xFF);
-		} else if (placeHolders === 1) {
-			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
-			arr.push((tmp >> 8) & 0xFF);
-			arr.push(tmp & 0xFF);
-		}
-
-		return arr;
-	}
-
-	function uint8ToBase64(uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length;
-
-		function tripletToBase64 (num) {
-			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
-		};
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
-			output += tripletToBase64(temp);
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1];
-				output += lookup[temp >> 2];
-				output += lookup[(temp << 4) & 0x3F];
-				output += '==';
-				break;
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
-				output += lookup[temp >> 10];
-				output += lookup[(temp >> 4) & 0x3F];
-				output += lookup[(temp << 2) & 0x3F];
-				output += '=';
-				break;
-		}
-
-		return output;
-	}
-
-	module.exports.toByteArray = b64ToByteArray;
-	module.exports.fromByteArray = uint8ToBase64;
-}());
-
-},{}],61:[function(require,module,exports){
+},{"assert":56,"./buffer_ieee754":59,"base64-js":60}],61:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -30156,7 +30079,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],60:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 (function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
 
 var EventEmitter = exports.EventEmitter = process.EventEmitter;
@@ -30342,5 +30265,91 @@ EventEmitter.prototype.listeners = function(type) {
 };
 
 })(require("__browserify_process"))
-},{"__browserify_process":61}]},{},[11,15,14,16,13,12,9,10,3,19,7,1,8,2,17])
+},{"__browserify_process":61}],60:[function(require,module,exports){
+(function (exports) {
+	'use strict';
+
+	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+	function b64ToByteArray(b64) {
+		var i, j, l, tmp, placeHolders, arr;
+	
+		if (b64.length % 4 > 0) {
+			throw 'Invalid string. Length must be a multiple of 4';
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		placeHolders = b64.indexOf('=');
+		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length;
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
+			arr.push((tmp & 0xFF0000) >> 16);
+			arr.push((tmp & 0xFF00) >> 8);
+			arr.push(tmp & 0xFF);
+		}
+
+		if (placeHolders === 2) {
+			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
+			arr.push(tmp & 0xFF);
+		} else if (placeHolders === 1) {
+			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
+			arr.push((tmp >> 8) & 0xFF);
+			arr.push(tmp & 0xFF);
+		}
+
+		return arr;
+	}
+
+	function uint8ToBase64(uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length;
+
+		function tripletToBase64 (num) {
+			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+		};
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+			output += tripletToBase64(temp);
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1];
+				output += lookup[temp >> 2];
+				output += lookup[(temp << 4) & 0x3F];
+				output += '==';
+				break;
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
+				output += lookup[temp >> 10];
+				output += lookup[(temp >> 4) & 0x3F];
+				output += lookup[(temp << 2) & 0x3F];
+				output += '=';
+				break;
+		}
+
+		return output;
+	}
+
+	module.exports.toByteArray = b64ToByteArray;
+	module.exports.fromByteArray = uint8ToBase64;
+}());
+
+},{}]},{},[11,16,15,14,13,12,9,10,3,21,7,1,8,2,17])
 ;

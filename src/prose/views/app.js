@@ -64,23 +64,26 @@ module.exports = Backbone.View.extend({
 
       if (context === 'post') {
         sidebarTmpl = _(window.app.templates.settings).template();
-
-        $('#drawer')
-          .empty()
-          .append(sidebarTmpl(data));
-
       } else if (context === 'posts') {
         sidebarTmpl = _(window.app.templates.sidebarProject).template();
-
-        $('#drawer')
-          .empty()
-          .append(sidebarTmpl(data));
-
-        // Branch Switching
-        $('.chzn-select').chosen().change(function() {
-            router.navigate($(this).val(), true);
-        });
       }
+
+      $('#drawer')
+        .empty()
+        .append(sidebarTmpl(data));
+
+      // TODO Fix this. delay is clunky.
+      _.delay(function() {
+        var height = $('.sidebar', this.el).height();
+        if (height > 600) {
+          $('.editor', this.el).height(height - 90);
+        }
+      }, 500);
+
+      // Branch Switching
+      $('.chzn-select').chosen().change(function() {
+          router.navigate($(this).val(), true);
+      });
     },
 
     // Event Triggering to other files
