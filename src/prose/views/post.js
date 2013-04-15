@@ -14,7 +14,7 @@ module.exports = Backbone.View.extend({
     events: {
       'click .save.confirm': 'updateFile',
       'click .markdown-snippets a': 'markdownSnippet',
-      'change input': '_makeDirty'
+      'change input': 'makeDirty'
     },
 
     render: function() {
@@ -158,12 +158,12 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
-    updateURL: function () {
+    updateURL: function() {
       var url = _.compact([app.state.user, app.state.repo, this.model.preview ? "blob" : "edit", app.state.branch, this.model.path, this.model.file]);
       router.navigate(url.join('/'), false);
     },
 
-    _makeDirty: function (e) {
+    makeDirty: function(e) {
       this.dirty = true;
       if (this.editor) this.model.content = this.editor.getValue();
       if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
@@ -173,13 +173,19 @@ module.exports = Backbone.View.extend({
       }
     },
 
-    showDiff: function () {
+    showDiff: function() {
+      var $diff = $('#diff', this.el);
       var text1 = this.model.persisted ? this.prevContent : '';
       var text2 = this.serialize();
       var d = this.dmp.diff_main(text1, text2);
       this.dmp.diff_cleanupSemantic(d);
-      var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, "");
-      $('.diff-wrapper .diff').html(diff);
+      var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, '');
+
+      // Content Window
+      $('.views .view', this.el).removeClass('active');
+      $diff.addClass('active');
+
+      $diff.html(diff);
     },
 
     save: function() {
@@ -297,7 +303,7 @@ module.exports = Backbone.View.extend({
           window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
-                that.$('.button.save').html('SUBMIT CHANGE');
+                that.$('.button.save').html('Submit Change');
                 that.$('.button.save').removeClass('error');
                 that.$('.button.save').addClass('inactive');
               }, 3000);
@@ -331,7 +337,7 @@ module.exports = Backbone.View.extend({
           window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
-                that._makeDirty();
+                that.makeDirty();
               }, 3000);
               that.updateSaveState('! Try again in 30 seconds', 'error');
               return;
@@ -348,7 +354,7 @@ module.exports = Backbone.View.extend({
         }
       }
 
-      that.updateSaveState('SAVING ...', 'inactive saving');
+      that.updateSaveState('Saving ...', 'inactive saving');
 
       if (filepath === _.filepath(this.model.path, this.model.file)) return save();
 
@@ -574,7 +580,7 @@ module.exports = Backbone.View.extend({
             theme: 'prose-dark',
             lineWrapping: true,
             extraKeys: that.keyMap(),
-            onChange: _.bind(that._makeDirty, that)
+            onChange: _.bind(that.makeDirty, that)
           });
           */
           $('#post .metadata').hide();
@@ -587,7 +593,7 @@ module.exports = Backbone.View.extend({
           extraKeys: that.keyMap(),
           matchBrackets: true,
           theme: 'prose-bright',
-          onChange: _.bind(that._makeDirty, that)
+          onChange: _.bind(that.makeDirty, that)
         });
         that.refreshCodeMirror();
 
