@@ -92,10 +92,10 @@ a {
   color:#434c50;
   text-decoration:none;
   font-weight:700;
-  -webkit-transition:background-color 100ms linear, color 100ms linear;
-     -moz-transition:background-color 100ms linear, color 100ms linear;
-       -o-transition:background-color 100ms linear, color 100ms linear;
-          transition:background-color 100ms linear, color 100ms linear;
+  -webkit-transition:color 100ms linear;
+     -moz-transition:color 100ms linear;
+       -o-transition:color 100ms linear;
+          transition:color 100ms linear;
   }
   a.light {
     font-weight:normal;
@@ -173,7 +173,7 @@ input[type=text] {
   font-size:13px;
   line-height:18px;
   display:inline-block;
-  width:95%;
+  width:100%;
   padding:6px 8px;
   -webkit-border-radius:1px;
           border-radius:1px;
@@ -212,13 +212,13 @@ em      { font-style:italic; }
   }
 
 .prose h1 {
-  font-size:32px;
-  margin:10px 0 20px;
+  font-size:28px;
+  margin:15px 0;
   }
 
 .prose h2 {
-  font-size:24px;
-  margin:10px 0 20px;
+  font-size:20px;
+  margin:15px 0;
   font-weight:700;
   padding:0;
   }
@@ -239,23 +239,28 @@ em      { font-style:italic; }
 
 .prose .title {
   font-size:18px;
-  margin-bottom:20px;
   font-weight:700;
   border-bottom:1px solid #d5e0e4;
-  padding-bottom:20px;
+  margin-bottom:15px;
+  padding-bottom:15px;
   }
 
 .prose p,
 .prose ul,
 .prose ol,
 .prose li {
-	line-height: 1.5em;
+  font-size:16px;
+	line-height:1.5em;
   }
 
 .prose ol,
 .prose ul {
-  margin-left:0;
-  padding-left:20px;
+  margin:0 0 15px 30px;
+  }
+.prose ol {
+  list-style:decimal;
+  }
+.prose ul {
   list-style:disc;
   }
 
@@ -264,6 +269,10 @@ em      { font-style:italic; }
   border-left:1px solid #d5e0e4;
   font-style:italic;
   margin-bottom:20px;
+  }
+
+.prose p {
+  margin-bottom:15px;
   }
 
 .prose img {
@@ -277,39 +286,29 @@ em      { font-style:italic; }
     color:#73955C;
     }
 
-.prose p {
-  margin-bottom:20px;
-  }
-
 .prose code {
-  font-family:Menlo, monospace;
+  background:#f8f8f8;
+  font:13px/1.4em Menlo, monospace;
+  -webkit-font-smoothing:subpixel-antialiased;
   padding:4px;
   margin:0 2px;
   font-size:12px;
-  border:1px solid #d5e0e4;
   -webkit-border-radius:3px;
           border-radius:3px;
   }
 .prose pre {
+  background:#f8f8f8;
+  font:13px/1.4em Menlo, monospace;
+  -webkit-font-smoothing:subpixel-antialiased;
   overflow:auto;
-  padding:10px;
-  border:1px solid #d5e0e4;
-  -webkit-border-radius:3px;
-          border-radius:3px;
+  margin-bottom:15px;
+  padding:15px;
   }
   .prose pre code {
     border:none;
     margin:0;
     padding:0;
     }
-
-.prose hr {
-  margin:5px 0 19px 0;
-  border:0;
-  border-top:1px solid #d5e0e4;
-  -webkit-border-radius:5px;
-          border-radius:5px;
-  }
 
 /* ------------------------------------------
   Global Layout
@@ -328,6 +327,34 @@ em      { font-style:italic; }
     .open .heading.limiter {
       width:960px;
       }
+
+/* Alterable filename input */
+.heading .filepath {
+  background:transparent;
+  border:none;
+  color:#434c50;
+  margin:0;
+  font-size:20px;
+  line-height:1.5em;
+  font-weight:700;
+  padding:0;
+  width:580px;
+  }
+  .heading .details {
+    position:relative;
+    }
+  .heading .details .mask {
+    background:transparent url(img/filepath-mask.png) no-repeat top right;
+    position:absolute;
+    width:60px;
+    height:30px;
+    bottom:0;
+    right:0;
+    }
+  .heading .filepath:focus,
+  .heading .filepath:hover {
+    background-color:#e0e7eb;
+    }
 
 .inner {
   padding:15px;
@@ -580,7 +607,7 @@ em      { font-style:italic; }
     }
 
 .loading {
-  background:transparent url('images/ajax-loader.gif') no-repeat;
+  background:transparent url('img/ajax-loader.gif') no-repeat;
   margin:150px auto;
   width:50px;
   font-size:20px;
@@ -598,7 +625,9 @@ em      { font-style:italic; }
   border-top:1px solid #C3CCD0;
   border-bottom:1px solid #C3CCD0;
   margin-bottom:-1px;
-  padding:8px 15px;
+  padding:0 15px;
+  height:40px;
+  line-height:40px;
   }
 
 .popup {
@@ -664,25 +693,26 @@ em      { font-style:italic; }
 /* ------------------------------------------
   Page Components
 ---------------------------------------------*/
-.content-search {
+.topbar {
   border-bottom:1px solid #C3CCD0;
   margin-bottom:-1px;
   position:relative;
   z-index:10;
   height:60px;
   }
-  .content-search input {
-    border:none;
-    margin-top:5px;
-    padding:15px;
-    font-size:18px;
-    line-height:26px;
-    width:90%;
-    height:50px;
-    }
-  .content-search .icon {
-    top:10px;
-    }
+
+.content-search input {
+  border:none;
+  margin-top:5px;
+  padding:15px;
+  font-size:18px;
+  line-height:26px;
+  width:90%;
+  height:50px;
+  }
+.content-search .icon {
+  top:10px;
+  }
 
 .menu li {
   float:left;
@@ -725,14 +755,18 @@ em      { font-style:italic; }
         background-color:#fff;
         }
 
+    .listing li a.active,
     .listing li a:hover {
       background:#f8f8f8;
       }
 
-.posts .content .listing,
-.profile .content .listing {
+.content .listing {
   height:540px;
   }
+  .content .breadcrumb + .listing {
+    height:500px;
+    }
+
   .profile .content .listing li {
     position:relative;
     display:block;
@@ -834,10 +868,6 @@ em      { font-style:italic; }
       line-height:20px;
       white-space:nowrap;
       font-weight:400;
-      -webkit-transition:none;
-         -moz-transition:none;
-           -o-transition:none;
-              transition:none;
       }
     .dropdown a.active,
     .dropdown > li > a:hover,
@@ -886,14 +916,6 @@ em      { font-style:italic; }
   }
 
 /* ------------------------------------------
-  Repos /:name /:organization
----------------------------------------------*/
-
-/* ------------------------------------------
-  Repo /:repo
----------------------------------------------*/
-
-/* ------------------------------------------
   File /:filename
 ---------------------------------------------*/
 .post .view {
@@ -913,8 +935,9 @@ em      { font-style:italic; }
     top:9px;
     right:18px;
     }
-  .drawer .commit input {
+  .drawer .commit textarea {
     padding-right:30px;
+    resize:none;
     }
   .drawer .commit.active {
     display:block;

@@ -1,0 +1,61 @@
+<% if (state && (app.username === state.user)) { %>
+  <% _.each(owners, function(repos, owner) { %>
+      <% _.each(repos, function(r, i) { %>
+      <li class='clearfix' data-index='<%= i %>'>
+          <% if (r.private) { %>
+            <div class='fl icon round repo private'></div>
+          <% } else { %>
+            <div class='fl icon round repo'></div>
+          <% } %>
+
+          <div class='details fl'>
+            <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
+              <h3><%= r.name %></h3>
+            </a>
+            <span class='deemphasize'><%= r.description %></span>
+          </div>
+
+          <div class='fl actions cleafix'>
+            <a
+              data-user='<%= r.owner.login %>'
+              data-repo='<%= r.name %>'
+              href='#<%= r.owner.login %>/<%= r.name %>'>
+              View Project
+            </a>
+            <% if (r.homepage) { %>
+              <a href='<%= r.homepage %>'>View Site</a>
+            <% } %>
+          </div>
+      </li>
+      <% }); %>
+    <% }); %>
+  <% } else { %>
+  <% _.each(repos, function(r, i) { %>
+    <li class='clearfix' data-index='<%= i %>'>
+        <% if (r.private) { %>
+          <div class='fl icon round repo private'></div>
+        <% } else { %>
+          <div class='fl icon round repo'></div>
+        <% } %>
+
+        <div class='details fl'>
+          <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>
+            <h3><%= r.name %></h3>
+          </a>
+          <span class='deemphasize'><%= r.description %></span>
+        </div>
+
+        <div class='fl actions cleafix'>
+          <a
+            data-user='<%= r.owner.login %>'
+            data-repo='<%= r.name %>'
+            href='#<%= r.owner.login %>/<%= r.name %>'>
+            View Project
+          </a>
+          <% if (r.homepage) { %>
+            <a href='<%= r.homepage %>'>View Site</a>
+          <% } %>
+        </div>
+    </li>
+  <% }); %>
+<% } %>
