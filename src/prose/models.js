@@ -341,7 +341,9 @@ module.exports = {
           });
 
           q.awaitAll(function(err, res) {
-            var files = [];
+            var files = {};
+            var recent = [];
+
             var commit;
             var file;
             var filename;
@@ -353,13 +355,20 @@ module.exports = {
                 file = commit.files[j];
                 filename = file.filename;
 
-                if (filename.indexOf(path) > -1) {
-                  files = _.union(files, filename);
+                if (files[filename]) {
+                  files[filename].push(file);
+                } else {
+                  files[filename] = [file];
+                }
+
+                if (commit.author.login === app.username) {
+                  recent = _.union(recent, filename);
                 }
               }
             }
 
-            app.state.recent = files.splice(0,10);
+            app.state.recent = recent;
+            app.state.files = files;
           });
 
         });
