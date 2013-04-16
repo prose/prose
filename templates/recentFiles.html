@@ -1,10 +1,22 @@
-<% if (authenticated && recent.length > 0) { %>
-  <div class='inner'>
-    <h2 class='label inner'>Your Recent History</h2>
-  </div>
-  <ul id="recent" class="listing">
-    <% _.each(recent, function(filename) { %>
-      <li><a class="item" href='#<%= [user, repo, "edit", branch, filename].join("/") %>'><%= filename %></a></li>
-    <% }); %>
-  </ul>
+<% if (authenticated) { %>
+  <% if (typeof recent !== 'undefined' && recent.length) { %>
+    <div class='inner'>
+      <h2 class='label inner'>Your Recent History</h2>
+    </div>
+    <ul id="recent" class="listing">
+      <% _.each(recent, function(filename) { %>
+        <li><a class="item" href='#<%= [user, repo, "edit", branch, filename].join("/") %>'><%= filename %></a></li>
+      <% }); %>
+    </ul>
+  <% } %>
+  <% if (typeof removed !== 'undefined' && removed.length) { %>
+    <div class='inner'>
+      <h2 class='label inner'>Recently Deleted</h2>
+    </div>
+    <ul id="removed" class="listing">
+      <% _.each(removed, function(filename) { %>
+        <li><a class="item" href='#<%= [user, repo, "edit", branch, filename].join("/") %>'><%= filename %></a></li>
+      <% }); %>
+    </ul>
+  <% } %>
 <% } %>
