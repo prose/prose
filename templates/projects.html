@@ -15,7 +15,7 @@
             <span class='deemphasize'><%= r.description %></span>
           </div>
 
-          <div class='fl actions cleafix'>
+          <div class='fr actions cleafix'>
             <a
               data-user='<%= r.owner.login %>'
               data-repo='<%= r.name %>'
@@ -23,7 +23,7 @@
               View Project
             </a>
             <% if (r.homepage) { %>
-              <a href='<%= r.homepage %>'>View Site</a>
+              <a href='//<%= r.homepage %>'>View Site</a>
             <% } %>
           </div>
       </li>
@@ -45,7 +45,7 @@
           <span class='deemphasize'><%= r.description %></span>
         </div>
 
-        <div class='fl actions cleafix'>
+        <div class='fr actions cleafix'>
           <a
             data-user='<%= r.owner.login %>'
             data-repo='<%= r.name %>'
@@ -53,7 +53,7 @@
             View Project
           </a>
           <% if (r.homepage) { %>
-            <a href='<%= r.homepage %>'>View Site</a>
+            <a href='//<%= r.homepage %>'>View Site</a>
           <% } %>
         </div>
     </li>

@@ -46,7 +46,7 @@ module.exports = Backbone.View.extend({
       title: data.repo,
       titleUrl: data.user + '/' + data.repo,
       alterable: false
-    }
+    };
 
     this.eventRegister.trigger('headerContext', header);
 
@@ -112,10 +112,37 @@ module.exports = Backbone.View.extend({
   },
 
   renderResults: function () {
-    var tmpl = _(window.app.templates.files).template();
-    this.$('#files').html(tmpl(_.extend(this.model, app.state, {
-      currentPath: app.state.path
-    })));
+    var files = _(window.app.templates.files).template();
+    var directories = _(window.app.templates.directories).template();
+    var data = this.model;
+    var $files = $('#files', this.el);
+    $files.empty();
+
+    _(this.model.files).each(function(f, i) {
+      if (f.type === 'tree') {
+        $files.append(directories({
+          index: i,
+          user: data.user,
+          repo: data.repo,
+          path: (f.path) ? '/' + f.path : '',
+          branch: data.branch,
+          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
+        }));
+      } else {
+        console.log(_.isMedia(_.extension(f.name)));
+        $files.append(files({
+          index: i,
+          extension: _.extension(f.name),
+          isMedia: _.isMedia(this.extension),
+          repo: data.repo,
+          branch: data.branch,
+          path: f.path,
+          filename: _.filename(f.name) || 'Untitled',
+          name: f.name,
+          user: data.user
+        }));
+      }
+    });
   },
 
   // Creates human readable versions of _posts/paths
@@ -124,7 +151,7 @@ module.exports = Backbone.View.extend({
       return {
         path: path,
         name: path
-      }
+      };
     });
   },
 

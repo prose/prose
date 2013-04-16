@@ -113,6 +113,23 @@ _.markdown = function(file) {
 };
 
 
+// Returns a filename without the file extension
+// -------
+
+_.filename = function(file) {
+  return file.replace(/\.[^/.]+$/, '');
+};
+
+
+// Determines whether a given file is a media file
+// -------
+
+_.isMedia = function(file) {
+  var regex = new RegExp('.(jpeg|gif|png)$');
+  return !!(regex.test(file));
+}
+
+
 // Clip a string
 // -------
 
