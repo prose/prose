@@ -330,6 +330,7 @@ module.exports = {
           });
         });
 
+        // TODO: cache in localStorage, make this a conditional request
         repo.getCommits(branch, function(err, commits) {
           if (err) return cb('Not found');
 
@@ -367,8 +368,11 @@ module.exports = {
               }
             }
 
-            app.state.recent = recent;
             app.state.files = files;
+            app.state.recent = recent;
+
+            // Ping `views/app.js` to let know we should append recent history to the sidebar
+            app.eventRegister.trigger('recentFiles', app.state);
           });
 
         });

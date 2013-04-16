@@ -1,6 +1,10 @@
-<% if (files.length) > 0) { %>
-  <h2 class='label'>Recently Edited</h2>
-  <% _.each(files, function(file) { %>
-    <a href='#<%= [user, repo, "edit", file].join("/") %>'><%= file %></a>
-  <% }); %>
+<% if (authenticated && recent.length > 0) { %>
+  <div class='inner'>
+    <h2 class='label inner'>Your Recent History</h2>
+  </div>
+  <ul id="recent" class="listing">
+    <% _.each(recent, function(filename) { %>
+      <li><a class="item" href='#<%= [user, repo, "edit", branch, filename].join("/") %>'><%= filename %></a></li>
+    <% }); %>
+  </ul>
 <% } %>
