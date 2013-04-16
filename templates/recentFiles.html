@@ -5,7 +5,7 @@
         <h2 class='label inner'>Your Recent History</h2>
       </div>
       <ul id="recent" class="listing">
-        <% _.each(recent, function(filename) { %>
+        <% _.each(recent.slice(0,5), function(filename) { %>
           <li><a class="item" href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
             <span class="status <%= commits[filename][0].status %>">
             <% switch(commits[filename][0].status) {

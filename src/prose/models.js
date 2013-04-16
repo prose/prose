@@ -362,13 +362,14 @@ module.exports = {
                   commits[filename] = [file];
                 }
 
-                recent = _.union(recent, filename);
+                if (commit.author.login === app.username) {
+                  recent = _.union(recent, filename);
+                }
 
                 /*
                 switch(file.status) {
                   case 'added':
                   case 'modified':
-                    if (commit.author.login === app.username) {}
                     break;
                   case 'removed':
                     break;
