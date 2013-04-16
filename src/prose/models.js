@@ -344,7 +344,6 @@ module.exports = {
           q.awaitAll(function(err, res) {
             var commits = {};
             var recent = [];
-            var removed = [];
 
             var commit;
             var file;
@@ -363,25 +362,25 @@ module.exports = {
                   commits[filename] = [file];
                 }
 
+                recent = _.union(recent, filename);
+
+                /*
                 switch(file.status) {
                   case 'added':
                   case 'modified':
-                    if (commit.author.login === app.username) {
-                      recent = _.union(recent, filename);
-                    }
+                    if (commit.author.login === app.username) {}
                     break;
                   case 'removed':
-                    removed = _.union(removed, filename);
                     break;
                   case 'renamed':
                     break;
                 }
+                */
               }
             }
 
             app.state.commits = commits;
             app.state.recent = recent;
-            app.state.removed = removed;
 
             // Ping `views/app.js` to let know we should append recent history to the sidebar
             app.eventRegister.trigger('recentFiles', app.state);

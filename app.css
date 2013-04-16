@@ -435,6 +435,10 @@ em      { font-style:italic; }
           box-shadow:inset 0 0 0 1px #fff,
                      inset 4px 0 2px -2px rgba(0,0,0,0.05);
   }
+  #recent {
+    height: 449px;
+    overflow: auto;
+  }
   .vert {
     background:#404040;
     -webkit-border-radius:0 4px 4px 0;
@@ -740,13 +744,19 @@ em      { font-style:italic; }
     display:block;
     padding:8px 15px 9px;
     border-top:1px solid #C3CCD0;
+    white-space:nowrap;
     }
     .sidebar .listing li a {
       border-color:#fff;
       }
       .sidebar .listing li a:hover {
         background-color:#fff;
-        }
+      }
+      .sidebar .listing li a .status {
+        width:15px;
+        display:inline-block;
+        font-weight:normal;
+      }
     .listing .markdown a {
       padding:15px;
       overflow:hidden; /* todo: why? */
