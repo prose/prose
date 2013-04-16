@@ -122,13 +122,14 @@ module.exports = Backbone.View.extend({
     window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return this.notify('error', 'The requested resource could not be found.');
       window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        if (err) return this.notify('error', 'The requested resource could not be found.');
+
         this.loaded();
 
         app.state.markdown = data.markdown;
+
         // Render out the application view
         $(that.app.render().el).prependTo(that.el);
-
-        if (err) return this.notify('error', 'The requested resource could not be found.');
 
         data.preview = (mode !== 'edit');
         data.lang = _.mode(file);
@@ -185,7 +186,10 @@ module.exports = Backbone.View.extend({
     // Render out the application view
     $(this.app.render().el).prependTo(this.el);
 
-    this.replaceMainView('notification', new window.app.views.Notification(type, message).render());
+    this.replaceMainView('notification', new window.app.views.Notification({
+      type: type,
+      message: message
+    }).render());
   },
 
   loading: function (msg) {

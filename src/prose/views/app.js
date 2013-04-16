@@ -91,14 +91,6 @@ module.exports = Backbone.View.extend({
       var sidebarTmpl = _(window.app.templates['recentFiles']).template();
 
       $('#drawer').append(sidebarTmpl(data));
-
-      // TODO Fix this. delay is clunky.
-      _.delay(function() {
-        var height = $('.sidebar', this.el).height();
-        if (height > 600) {
-          $('.editor', this.el).height(height - 90);
-        }
-      }, 500);
     },
 
     // Event Triggering to other files

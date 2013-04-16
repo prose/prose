@@ -342,7 +342,7 @@ module.exports = {
           });
 
           q.awaitAll(function(err, res) {
-            var files = {};
+            var commits = {};
             var recent = [];
             var removed = [];
 
@@ -357,10 +357,10 @@ module.exports = {
                 file = commit.files[j];
                 filename = file.filename;
 
-                if (files[filename]) {
-                  files[filename].push(file);
+                if (commits[filename]) {
+                  commits[filename].push(file);
                 } else {
-                  files[filename] = [file];
+                  commits[filename] = [file];
                 }
 
                 switch(file.status) {
@@ -379,7 +379,7 @@ module.exports = {
               }
             }
 
-            app.state.files = files;
+            app.state.commits = commits;
             app.state.recent = recent;
             app.state.removed = removed;
 
