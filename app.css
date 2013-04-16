@@ -322,7 +322,7 @@ em      { font-style:italic; }
           transition:width 300ms;
   }
   .open .limiter {
-    width:1000px;
+    width:980px;
     }
 
 /* Alterable filename input */
@@ -361,7 +361,7 @@ em      { font-style:italic; }
     }
 
 .application {
-  width:1000px;
+  width:980px;
   margin:15px auto 60px;
   position:relative;
   }
@@ -382,7 +382,7 @@ em      { font-style:italic; }
   height:600px;
   height:auto!important;
   min-height:600px;
-  left:130px;
+  left:120px;
   -webkit-transition:left 300ms;
      -moz-transition:left 300ms;
        -o-transition:left 300ms;
@@ -395,11 +395,11 @@ em      { font-style:italic; }
 .sidebar {
   position:relative;
   z-index:100;
-  width:260px;
+  width:240px;
   height:600px;
   height:auto!important;
   min-height:600px;
-  right:130px;
+  right:120px;
   -webkit-transition:right 300ms;
      -moz-transition:right 300ms;
        -o-transition:right 300ms;
@@ -451,7 +451,6 @@ em      { font-style:italic; }
     }
   .vert .nav li a {
     background-color:#404040;
-    border:1px solid #202020;
     display:block;
     width:40px;
     height:40px;
@@ -461,7 +460,6 @@ em      { font-style:italic; }
     }
     .vert .nav li a:hover {
       background-color:#505050;
-      border-color:#101010;
       }
     .vert .nav li a:active {
       -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.25),

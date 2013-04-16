@@ -50,7 +50,7 @@ module.exports = {
 
     // Handle Code
     if (match) {
-      $.getJSON('http://prose-gatekeeper.herokuapp.com/authenticate/' + match[1], function (data) {
+      $.getJSON(window.app.auth.url + '/authenticate/' + match[1], function (data) {
         cookie.set('oauth-token', data.token);
         window.authenticated = true;
         // Adjust URL

@@ -7,6 +7,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="360"
@@ -15,11 +16,35 @@
    version="1.1"
    inkscape:version="0.48.2 r9819"
    sodipodi:docname="sprite.svg"
-   inkscape:export-filename="./sprite.png"
+   inkscape:export-filename="/Users/tristen/dev/devseed/prose/img/filepath-mask.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
      id="defs26578">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient4861">
+      <stop
+         style="stop-color:#e0e7eb;stop-opacity:1;"
+         offset="0"
+         id="stop4863" />
+      <stop
+         style="stop-color:#e0e7eb;stop-opacity:0;"
+         offset="1"
+         id="stop4865" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient4853">
+      <stop
+         style="stop-color:#e7eef2;stop-opacity:1;"
+         offset="0"
+         id="stop4855" />
+      <stop
+         style="stop-color:#e7eef2;stop-opacity:0;"
+         offset="1"
+         id="stop4857" />
+    </linearGradient>
     <linearGradient
        id="linearGradient27204">
       <stop
@@ -38,6 +63,26 @@
        inkscape:vp_z="40 : 20 : 1"
        inkscape:persp3d-origin="20 : 13.333333 : 1"
        id="perspective27128" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4861"
+       id="linearGradient4867"
+       x1="205"
+       y1="712.36218"
+       x2="235"
+       y2="712.36218"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-440,0)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4853"
+       id="linearGradient4869"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2,0,0,1,-492,-36.999965)"
+       x1="151"
+       y1="714.36218"
+       x2="181"
+       y2="714.36218" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -46,9 +91,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="139.92124"
-     inkscape:cy="165.83585"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="260.38066"
+     inkscape:cy="185.58459"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -206,7 +251,7 @@
        sodipodi:type="arc" />
     <path
        style="fill:#404040;fill-opacity:1;stroke:none"
-       d="m 251,851.3622 0,19 10,0 0,-5 6,0 0,-14 -16,0 z m 8,3 c 2.76142,0 5,2.2386 5,5 0,2.7614 -2.23858,5 -5,5 -2.76142,0 -5,-2.2386 -5,-5 0,-2.7614 2.23858,-5 5,-5 z m -1,2 0,2 -2,0 0,2 2,0 0,2 2,0 0,-2 2,0 0,-2 -2,0 0,-2 -2,0 z m 5,11 0,4 3.03125,-2.4375 1.96875,-1.5625 -5,0 z"
+       d="m 251,853.3622 0,19 10,0 0,-5 6,0 0,-14 -16,0 z m 8,3 c 2.76142,0 5,2.2386 5,5 0,2.7614 -2.23858,5 -5,5 -2.76142,0 -5,-2.2386 -5,-5 0,-2.7614 2.23858,-5 5,-5 z m -1,2 0,2 -2,0 0,2 2,0 0,2 2,0 0,-2 2,0 0,-2 -2,0 0,-2 -2,0 z m 5,11 0,4 3.03125,-2.4375 1.96875,-1.5625 -5,0 z"
        id="path21394"
        inkscape:connector-curvature="0" />
     <path
@@ -235,7 +280,7 @@
        style="fill:#e0e7eb;fill-opacity:1;stroke:none" />
     <path
        style="fill:#e0e7eb;fill-opacity:1;stroke:none"
-       d="m 251,811.3622 0,19 10,0 0,-5 6,0 0,-14 -16,0 z m 8,3 c 2.76142,0 5,2.23858 5,5 0,2.76142 -2.23858,5 -5,5 -2.76142,0 -5,-2.23858 -5,-5 0,-2.76142 2.23858,-5 5,-5 z m -1,2 0,2 -2,0 0,2 2,0 0,2 2,0 0,-2 2,0 0,-2 -2,0 0,-2 -2,0 z m 5,11 0,4 5,-4 -5,0 z"
+       d="m 251,813.3622 0,19 10,0 0,-5 6,0 0,-14 -16,0 z m 8,3 c 2.76142,0 5,2.23858 5,5 0,2.76142 -2.23858,5 -5,5 -2.76142,0 -5,-2.23858 -5,-5 0,-2.76142 2.23858,-5 5,-5 z m -1,2 0,2 -2,0 0,2 2,0 0,2 2,0 0,-2 2,0 0,-2 -2,0 0,-2 -2,0 z m 5,11 0,4 5,-4 -5,0 z"
        id="path47939"
        inkscape:connector-curvature="0" />
     <g
@@ -849,5 +894,16 @@
        id="path4249"
        d="m 184,885.3622 0,14 12,0 0,-10 -4,0 0,-4 z m 9,0 0,3 3,0 z"
        style="color:#000000;fill:#a8afb2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <rect
+       y="662.36218"
+       x="-190"
+       height="30"
+       width="60"
+       id="rect4849"
+       style="color:#000000;fill:url(#linearGradient4869);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="scale(-1,1)"
+       inkscape:export-filename="/Users/tristen/dev/devseed/prose/img/filepath-mask.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
   </g>
 </svg>
