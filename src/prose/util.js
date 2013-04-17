@@ -125,8 +125,8 @@ _.filename = function(file) {
 // -------
 
 _.isMedia = function(file) {
-  var regex = new RegExp('.(jpeg|gif|png)$');
-  return !!(regex.test(file));
+  var regex = new RegExp('(jpeg|jpg|gif|png|ico)$');
+  return regex.test(file);
 }
 
 

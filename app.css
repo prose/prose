@@ -505,9 +505,10 @@ em      { font-style:italic; }
 .icon.about         { background-position:-80px -80px; }
 .icon.folder-group  { background-position:-100px -80px; }
 .icon.cancel        { background-position:-120px -80px; }
-.icon.delete        { background-position:-140px -80px; top:0; }
+.icon.bin           { background-position:-140px -80px; top:0; }
 
 .listing .icon.round         { background-position:-280px -100px; }
+.listing .icon.round.media   { background-position:-320px -100px; }
 
 .content .icon.repo,
 .heading .icon.repo          { background-position:-40px -100px; }
@@ -733,13 +734,17 @@ em      { font-style:italic; }
 .listing {
   overflow:auto;
   }
-  .listing li > a {
+  .listing li {
     display:block;
     padding:8px 15px 9px;
     border-top:1px solid #f0f0f0;
     }
+    .listing .item.active,
     .sidebar .listing li a:hover {
       background-color:#f8f8f8;
+      }
+    .listing .item.active .round.icon {
+      background-color:#fff;
       }
 
 .content .editor {

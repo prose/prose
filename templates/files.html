@@ -1,22 +1,24 @@
-<li class='clearfix'>
-  <div class='fl icon round <%= extension %>'></div>
+<li class='clearfix item' data-index='<%= index %>'>
+  <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
   <div class='fl details'>
-    <a class='clearfix item'
-      data-index='<%= index %>'
-      href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
-      <% if (extension === 'md') { %>
-        <h3><%= filename %></h3>
-        <span class='deemphasize'><%= name %></span>
-      <% } else { %>
-        <h3 class='title'><%= name %></h3>
-      <% } %>
-    </a>
+    <% if (isMedia) { %>
+      <h3 class='title'><%= name %></h3>
+    <% } else { %>
+      <a class='clearfix'
+        href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
+        <% if (extension === 'md') { %>
+          <h3><%= filename %></h3>
+          <span class='deemphasize'><%= name %></span>
+        <% } else { %>
+          <h3 class='title'><%= name %></h3>
+        <% } %>
+      </a>
+    <% } %>
   </div>
   <div class='fr actions cleafix'>
     <% if (!isMedia) { %>
-      <a class='clearfix item'
+      <a class='clearfix linkto'
         title='Edit this File'
-        data-index='<%= index %>'
         href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
         Edit
       </a>
@@ -24,12 +26,19 @@
     <a
       class='delete'
       title='Delete this File'
-      data-name='<%= user %>'
+      data-user='<%= user %>'
       data-repo='<%= repo %>'
       data-branch='<%= branch %>'
-      data-file='<%= path %>'
+      data-file='<%= name %>'
       href='#'>
-      <span class='delete icon inline small'>Delete</span>
+      <span
+        class='bin icon inline small'
+        data-user='<%= user %>'
+        data-repo='<%= repo %>'
+        data-branch='<%= branch %>'
+        data-file='<%= name %>'>
+        Delete
+      </span>
     </a>
   </div>
 </li>

@@ -10,7 +10,8 @@ module.exports = Backbone.View.extend({
   id: 'posts',
 
   events: {
-    'hover a.item': 'activeListing',
+    'hover .item': 'activeListing',
+     'click .delete': 'deleteFile',
     'keyup #filter': 'search'
   },
 
@@ -64,9 +65,7 @@ module.exports = Backbone.View.extend({
   },
 
   pageListing: function (handler) {
-
     var item, index;
-
     if ($('.item').hasClass('active')) {
       index = parseInt($('.item.active').data('index'), 10);
       $('.item.active').removeClass('active');
@@ -84,7 +83,7 @@ module.exports = Backbone.View.extend({
   },
 
   goToFile: function () {
-    var path = $('.item.active').attr('href');
+    var path = $('.item.active').find('.linkto').attr('href');
     router.navigate(path, true);
   },
 
@@ -114,7 +113,7 @@ module.exports = Backbone.View.extend({
   renderResults: function () {
     var files = _(window.app.templates.files).template();
     var directories = _(window.app.templates.directories).template();
-    var data = this.model;
+    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
     var $files = $('#files', this.el);
     $files.empty();
 
@@ -129,11 +128,10 @@ module.exports = Backbone.View.extend({
           name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
         }));
       } else {
-        console.log(_.isMedia(_.extension(f.name)));
         $files.append(files({
           index: i,
           extension: _.extension(f.name),
-          isMedia: _.isMedia(this.extension),
+          isMedia: _.isMedia(_.extension(f.name)),
           repo: data.repo,
           branch: data.branch,
           path: f.path,
@@ -161,5 +159,24 @@ module.exports = Backbone.View.extend({
 
     $listings.removeClass('active');
     $listing.addClass('active');
+  },
+
+  deleteFile: function(e) {
+    var $file = $(e.target, this.el);
+    var file = {
+      user: $file.data('user'),
+      repo: $file.data('repo'),
+      branch: $file.data('branch'),
+      fileName: $file.data('file')
+    }
+
+    if (confirm('Are you sure you want to delete that file?')) {
+      window.app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function (err) {
+        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+        router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
+      }, this));
+    }
+
+    return false;
   }
 });
