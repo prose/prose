@@ -104,7 +104,7 @@ _.extension = function(file) {
 };
 
 
-// Determines whether a given file is a markdown file or not
+// Determine types
 // -------
 
 _.markdown = function(file) {
@@ -112,22 +112,23 @@ _.markdown = function(file) {
   return !!(regex.test(file));
 };
 
+_.isBinary = function(file) {
+  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff|zip)$');
+  return regex.test(file);
+};
+
+_.isMedia = function(file) {
+  var regex = new RegExp('(jpeg|jpg|gif|png)$');
+  return regex.test(file);
+};
+
 
 // Returns a filename without the file extension
 // -------
 
 _.filename = function(file) {
-  return file.replace(/\.[^/.]+$/, '');
+  return file.replace(/\.[^\/.]+$/, '');
 };
-
-
-// Determines whether a given file is a binary file
-// -------
-
-_.isBinary = function(file) {
-  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff)$');
-  return regex.test(file);
-}
 
 
 // Clip a string
@@ -334,40 +335,55 @@ _.preview = function(view) {
 
 // UI Stuff
 // -------
-
-function dropdown() {
-    var $dropdown = $('.dropdown-menu');
-    $dropdown.each(function(i, el) {
-        $(this).hover(function() {
-            $(this).addClass('open');
-        }, function(e) {
-            $(this).removeClass('open');
-        });
-    });
-
-    $('.dropdown-hover').click(function() {
-        return false;
-    });
-}
-
-function shadowScroll($el, $parent) {
-  $el.scroll(function() {
-    if ($el.scrollTop() !== 0) {
-      if (!$parent.hasClass('shadow')) {
-        $parent.addClass('shadow');
-      }
-    } else {
-      $parent.removeClass('shadow');
-    }
-  });
-}
-
 module.exports = {
   dropdown: function() {
-    return dropdown();
+      var $dropdown = $('.dropdown-menu');
+      $dropdown.each(function(i, el) {
+          $(this).hover(function() {
+              $(this).addClass('open');
+          }, function(e) {
+              $(this).removeClass('open');
+          });
+      });
+
+      $('.dropdown-hover').click(function() {
+          return false;
+      });
   },
 
   shadowScroll: function($el, $parent) {
-    return shadowScroll($el, $parent);
+    $el.scroll(function() {
+      if ($el.scrollTop() !== 0) {
+        if (!$parent.hasClass('shadow')) {
+          $parent.addClass('shadow');
+        }
+      } else {
+        $parent.removeClass('shadow');
+      }
+    });
+  },
+
+  pageListing: function(handler) {
+    var item, index;
+    if ($('.item').hasClass('active')) {
+      index = parseInt($('.item.active').data('index'), 10);
+      $('.item.active').removeClass('active');
+
+      if (handler === 'up') {
+        item = index - 1;
+        $('.item[data-index=' + item + ']').addClass('active');
+      } else {
+        item = index + 1;
+        $('.item[data-index=' + item + ']').addClass('active');
+      }
+    } else {
+      $('.item[data-index=0]').addClass('active');
+    }
+  },
+
+  goToFile: function($parent) {
+    var path = $parent.data('navigate');
+    router.navigate(path, true);
+    return false;
   }
-}
+};

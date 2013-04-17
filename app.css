@@ -470,7 +470,6 @@ em      { font-style:italic; }
                            inset 0 2px 2px #202020;
         }
     .vert .nav li a.active {
-      pointer-events:none;
       background-color:#fff;
       -webkit-box-shadow:inset 0 1px 0 #202020;
               box-shadow:inset 0 1px 0 #202020;
@@ -494,11 +493,14 @@ em      { font-style:italic; }
     width:20px;
     height:20px;
     }
-  .icon.inline {
-    display:inline-block;
-    position:relative;
-    top:5px;
+
+  .inline {
+     display:inline-block;
     }
+    .icon.inline {
+      position:relative;
+      top:5px;
+      }
 
 .icon.branding      { background-position:0 -100px; }
 .icon.help          { background-position:-60px -80px; }
@@ -507,7 +509,7 @@ em      { font-style:italic; }
 .icon.cancel        { background-position:-120px -80px; }
 .icon.bin           { background-position:-140px -80px; top:0; }
 
-.listing .icon.round         { background-position:-280px -100px; }
+.listing .icon.round         { background-position:-280px -100px; pointer-events:none;}
 .listing .icon.round.media   { background-position:-320px -100px; }
 
 .content .icon.repo,
@@ -591,6 +593,10 @@ em      { font-style:italic; }
   .content .details {
     width:400px;
     }
+    .listing .details > * {
+      display:inline;
+      }
+
   .content .details {
     width:340px;
     margin:0 15px;
@@ -734,7 +740,7 @@ em      { font-style:italic; }
 .listing {
   overflow:auto;
   }
-  .listing li {
+  .sidebar .listing li a {
     display:block;
     padding:8px 15px 9px;
     border-top:1px solid #f0f0f0;

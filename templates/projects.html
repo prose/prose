@@ -1,4 +1,7 @@
-<li class='item clearfix' data-index='<%= index %>'>
+<li class='item clearfix'
+    data-navigate='#<%= owner.login %>/<%= name %>'
+    data-index='<%= index %>'>
+
     <% if (private) { %>
       <div class='fl icon round repo private'></div>
     <% } else { %>
@@ -6,13 +9,12 @@
     <% } %>
 
     <div class='details fl'>
-      <a data-user='<%= owner.login %>' data-repo='<%= name %>' href='#<%= owner.login %>/<%= name %>'>
-        <h3><%= name %></h3>
-      </a>
+      <h3><a data-user='<%= owner.login %>' data-repo='<%= name %>' href='#<%= owner.login %>/<%= name %>'><%= name %></a></h3>
+      <br />
       <span class='deemphasize'><%= description %></span>
     </div>
 
-    <div class='fr actions cleafix'>
+    <div class='fr actions clearfix'>
       <a
         data-user='<%= owner.login %>'
         data-repo='<%= name %>'

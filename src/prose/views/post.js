@@ -166,7 +166,17 @@ module.exports = Backbone.View.extend({
 
     settings: function(e) {
       $('.post-views a').removeClass('active');
-      $('.post-views .settings').addClass('active');
+
+      if ($('.settings').hasClass('active')) {
+        if (this.model.mode === 'preview') {
+          // $('#preview', this.el).addClass('active');
+        } else {
+          // $('#code', this.el).addClass('active');
+        }
+      } else {
+        $('.post-views .settings').addClass('active');
+      }
+
       $('#prose').toggleClass('open');
     },
 
