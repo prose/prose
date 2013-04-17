@@ -564,13 +564,13 @@ module.exports = {
         if (!_.hasMetadata(content)) return {
           raw_metadata: '',
           content: content,
-          published: false,
+          published: true,
           writeable: writeable()
         };
 
         var res = {
           raw_metadata: '',
-          published: false,
+          published: true,
           writeable: writeable()
         };
         res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
