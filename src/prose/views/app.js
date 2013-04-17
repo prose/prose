@@ -104,7 +104,17 @@ module.exports = Backbone.View.extend({
     },
 
     settings: function(e) {
-      this.eventRegister.trigger('settings', e);
+      $navItems = $('.navigation a', this.el);
+
+      if ($(e.target, this.el).hasClass('active')) {
+        $navItems.removeClass('active');
+        $('.navigation .' + this.model.mode, this.el).addClass('active');
+      } else {
+        $navItems.removeClass('active');
+        $(e.target, this.el).addClass('active');
+      }
+
+      $('#prose').toggleClass('open');
       return false;
     },
 

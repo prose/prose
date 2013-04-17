@@ -381,8 +381,8 @@ module.exports = {
     }
   },
 
-  goToFile: function($parent) {
-    var path = $parent.data('navigate');
+  goToFile: function() {
+    var path = $('.item.active').data('navigate');
     router.navigate(path, true);
     return false;
   }

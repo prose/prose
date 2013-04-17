@@ -14,7 +14,7 @@ module.exports = Backbone.View.extend({
     initialize: function () {
       if (!window.shortcutsRegistered) {
         key('enter', _.bind(function (e, handler) {
-          utils.goToFile($('.item.active'), this.el);
+          utils.goToFile();
         }, this));
         key('up, down', _.bind(function (e, handler) {
           utils.pageListing(handler.key);
