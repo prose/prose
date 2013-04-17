@@ -758,16 +758,16 @@ em      { font-style:italic; }
     height:500px;
     }
 
+  .content .listing .directory > a,
   .content .listing li {
     position:relative;
     display:block;
     padding:10px 15px;
     border-top:1px solid #f0f0f0;
     }
-    .content .listing li > a {
-      padding:0;
-      display:inline;
+    .content .listing .directory {
       border:none;
+      padding:0;
       }
 
 .prose .blocks {
