@@ -65,7 +65,22 @@ module.exports = Backbone.View.extend({
 
     renderResults: function () {
       var tmpl = _(window.app.templates.projects).template();
-      $('#projects', this.el).empty().append(tmpl(this.model));
+      var repos;
+      var $projects = $('#projects', this.el);
+          $projects.empty();
+
+      // Flatten the listing if app.username === state.user
+      if (this.model.state && (this.model.state.user === app.username)) {
+        repos = _(this.model.owners).flatten();
+      } else {
+        repos = this.model.repos;
+      }
+
+      _(repos).each(function(r, i) {
+        $projects.append(tmpl(_.extend(r, {
+          index: i
+        })));
+      });
     }
 
 });

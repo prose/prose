@@ -6614,7 +6614,7 @@ Liquid.Block.prototype.renderAll = function(list, context) {
   });
 };
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-var templates = {"app":"<div class='header'>\n  <div class='limiter clearfix'>\n    <div class='fr user-status<%= !window.authenticated ? \" logged-out\" : \"\" %>'>\n    <% if (window.authenticated) { %>\n      <div class='dropdown-menu'>\n        <a href='#' class='round dropdown-hover'><%= app.username %></a>\n        <ul class='dropdown round arrow-top'>\n          <li><a class='logout' href='#'><strong>Logout</strong></a></li>\n        </ul>\n      </div>\n    <% } else { %>\n      <a class='button round' href='https://github.com/login/oauth/authorize?client_id=c602a8bd54b1e774f864&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>\n    <% } %>\n    </div>\n  </div>\n</div>\n\n<div id='heading' class='heading limiter clearfix'></div>\n\n<div class='application clearfix'>\n  <div id='content' class='content fl'></div>\n  <div class='sidebar fl'>\n    <div id='drawer' class='drawer'></div>\n\n    <div class='vert navigation'>\n      <ul class='project nav'>\n        <li>\n          <a href='/' class='icon round repos <% if (!app.state.mode) { %>active<% } %>'>\n            <span class='popup round arrow-left'>Explore Projects</span>\n          </a>\n        </li>\n        <% if (state.repo) { %>\n          <li>\n          <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo <% if (app.state.mode === \"tree\") { %>active<% } %>'>\n              <span class='popup round arrow-left'><%= repo %></span>\n            </a>\n          </li>\n          <% if (window.authenticated) { %>\n            <li>\n              <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='icon round new new-file'>\n                <span class='popup round arrow-left'>New File</span>\n              </a>\n            </li>\n          <% } %>\n        <% } %>\n      </ul>\n\n      <% if (state.mode === 'edit' || state.mode === 'blob' || state.mode === 'new') { %>\n      <ul class='post-views nav'>\n        <li>\n          <a href='#' class='icon round edit' data-state='edit'>\n            <span class='popup round arrow-left'>Edit</span>\n          </a>\n        </li>\n        <% if (state.markdown || state.mode === 'new') { %>\n          <li>\n            <a href='#' class='icon round preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n              <span class='popup round arrow-left'>Preview</span>\n            </a>\n          </li>\n        <% } %>\n        <li>\n          <a href='#' class='icon round settings' data-state='settings' data-drawer=true>\n            <span class='popup round arrow-left'>Post Settings</span>\n          </a>\n        </li>\n      </ul>\n      <% } %>\n    </div>\n  </div>\n</div>\n","directories":"<li class='directory'>\n  <a class='clearfix linkto item' data-index='<%= index %>' href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n    <span class='icon fl round folder'></span>\n    <span class='details fl'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item' data-index='<%= index %>'>\n  <div class='fl icon round <%= extension %> <% if (isBinary) { %>media<% } %>'></div>\n  <div class='fl details'>\n    <% if (isBinary) { %>\n      <h3 class='title'><%= name %></h3>\n    <% } else { %>\n      <a class='clearfix'\n        href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n        <% if (extension === 'md') { %>\n          <h3><%= filename %></h3>\n          <span class='deemphasize'><%= name %></span>\n        <% } else { %>\n          <h3 class='title'><%= name %></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n  <div class='fr actions cleafix'>\n    <% if (!isBinary) { %>\n      <a class='clearfix linkto'\n        title='Edit this File'\n        href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n        Edit\n      </a>\n    <% } %>\n    <a\n      class='delete'\n      title='Delete this File'\n      data-user='<%= user %>'\n      data-repo='<%= repo %>'\n      data-branch='<%= branch %>'\n      data-file='<%= name %>'\n      href='#'>\n      <span\n        class='bin icon inline small'\n        data-user='<%= user %>'\n        data-repo='<%= repo %>'\n        data-branch='<%= branch %>'\n        data-file='<%= name %>'>\n        Delete\n      </span>\n    </a>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <input type='text' class='filepath' value='<%= title %>'>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","multiselect":"<label for='<%= name %>'><%= label %></label>\n<select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n  <% _(options).each(function(o) { %>\n    <% if (o.name) { %>\n     <option value='<%= o.value %>'><%= o.name %></option>\n    <% } else { %>\n     <option value='<%= o.value %>'><%= o.value %></option>\n    <% } %>\n  <% }); %>\n</select>\n","notification":"<% if (!window.authenticated) { %>\n<div class='notify <%= type %>'>\n  <div class='inner'>\n    Please login with your GitHub account to access that project.\n    <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>\n  </div>\n</div>\n<% } else { %>\n  <div class='notify <%= type %>'>\n    <div class='inner'>\n      <p><%= message %></p>\n      <p><a class='button create' href='#'>Create it </a></p>\n      <p><a class='button round' href='../'>Go back </a></p>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='topbar toolbar'>\n  <div class='inner clearfix'>\n    <% if (markdown) { %>\n    <div class='dropdown-menu fr'>\n      <a href='#' class='round dropdown-hover'>Markdown</a>\n      <ul class='dropdown markdown-snippets round'>\n        <li><a href='#' data-snippet='<% print(\"# Heading\\n\\n\") %>'>Main Header</a></li>\n        <li><a href='#' data-snippet='<% print(\"## Sub Heading\\n\\n\") %>'>Sub Header</a></li>\n        <li><a href='#' data-snippet='<% print(\"```\\nvar foo;\\n```\\n\\n\"); %>'>Code</a></li>\n        <li><a href='#' data-snippet='<% print(\"[Google](http://google.com)\\n\\n\") %>'>Link</a></li>\n        <li><a href='#' data-snippet='<% print(\"![picture alt](http://placekitten.com/200/300)\\n\\n\") %>'>Image</a></li>\n        <li><a href='#' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>Blockquote</a></li>\n        <li><a href='#' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>List</a></li>\n        <li class='divider'></li>\n        <li><a href='http://daringfireball.net/projects/markdown/syntax' target='_blank' target='_blank'><strong>Learn More</strong></a></li>\n      </ul>\n    </div>\n    <% } %>\n  </div>\n</div>\n\n<div class='inner editor'>\n  <div class='inner views'>\n    <div id='diff' class='view prose diff'></div>\n    <div id='code' class='view active edit <% if (markdown) { %> markdown<% } %>'></div>\n    <% if (markdown) { %>\n      <div id='preview' class='view preview prose'><%= preview %></div>\n    <% } %>\n  </div>\n</div>\n","posts":"<div class='topbar content-search'>\n  <span class='icon search inline fr'></span>\n  <input type='text' id='filter' placeholder='Filter Files' />\n</div>\n\n<% if (path.length) { %>\n  <div class='breadcrumb'>\n    <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n    <% _.each(_.chunkedPath(path), function(p) { %>\n      <span class='slash'>/</span>\n      <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n    <% }); %>\n  </div>\n<% } %>\n\n<ul id='files' class='listing'></ul>\n","profile":"<div class='topbar content-search'>\n  <span class='icon search inline fr'></span>\n  <input type='text' id='filter' placeholder='Filter projects' />\n</div>\n\n<ul id='projects' class='listing'></ul>\n","projects":"<% if (state && (app.username === state.user)) { %>\n  <% _.each(owners, function(repos, owner) { %>\n      <% _.each(repos, function(r, i) { %>\n      <li class='clearfix' data-index='<%= i %>'>\n          <% if (r.private) { %>\n            <div class='fl icon round repo private'></div>\n          <% } else { %>\n            <div class='fl icon round repo'></div>\n          <% } %>\n\n          <div class='details fl'>\n            <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>\n              <h3><%= r.name %></h3>\n            </a>\n            <span class='deemphasize'><%= r.description %></span>\n          </div>\n\n          <div class='fr actions cleafix'>\n            <a\n              data-user='<%= r.owner.login %>'\n              data-repo='<%= r.name %>'\n              href='#<%= r.owner.login %>/<%= r.name %>'>\n              View Project\n            </a>\n            <% if (r.homepage) { %>\n              <a href='//<%= r.homepage %>'>View Site</a>\n            <% } %>\n          </div>\n      </li>\n      <% }); %>\n    <% }); %>\n  <% } else { %>\n  <% _.each(repos, function(r, i) { %>\n    <li class='clearfix' data-index='<%= i %>'>\n        <% if (r.private) { %>\n          <div class='fl icon round repo private'></div>\n        <% } else { %>\n          <div class='fl icon round repo'></div>\n        <% } %>\n\n        <div class='details fl'>\n          <a data-user='<%= r.owner.login %>' data-repo='<%= r.name %>' href='#<%= r.owner.login %>/<%= r.name %>'>\n            <h3><%= r.name %></h3>\n          </a>\n          <span class='deemphasize'><%= r.description %></span>\n        </div>\n\n        <div class='fr actions cleafix'>\n          <a\n            data-user='<%= r.owner.login %>'\n            data-repo='<%= r.name %>'\n            href='#<%= r.owner.login %>/<%= r.name %>'>\n            View Project\n          </a>\n          <% if (r.homepage) { %>\n            <a href='//<%= r.homepage %>'>View Site</a>\n          <% } %>\n        </div>\n    </li>\n  <% }); %>\n<% } %>\n","select":"<label for='<%= name %>'><%= label %></label>\n<select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n  <% _(options).each(function(o) { %>\n    <% if (o.name) { %>\n     <option value='<%= o.value %>'><%= o.name %></option>\n    <% } else { %>\n     <option value='<%= o.value %>'><%= o.value %></option>\n    <% } %>\n  <% }); %>\n</select>\n","settings":"<% if (jekyll) { %>\n  <div id='meta' class='meta inner'></div>\n<% } %>\n\n<% if (window.authenticated) { %>\n  <div class='inner'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder='Describe your Changes'></textarea>\n      <a class='icon inline small cancel' href='#' title='ESC'>\n        &times;<span class='popup round arrow-left'>Cancel</span>\n      </a>\n    </div>\n\n    <a class='save button round' href='#'>\n      <%= writeable ? 'Save' : 'Submit Change' %>\n      <span class='popup round arrow-left'>⌘ + s</span>\n    </a>\n\n    <% if (jekyll && markdown) { %>\n      <a href='#' class='toggle publish button round'>Publish</a>\n    <% } %>\n\n    <% if (app.state.config && app.state.config.languages) { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (metadata.lang && metadata.lang !== lang.value) { %>\n          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <a class='delete button round' href='#'>Delete this File</a>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'>\n        <span class='icon folder-group inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n      <a href='#<%= org.login %>' title='<%= org.login %>'>\n        <span class='icon folder-group inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<% if (authenticated) { %>\n  <div class='inner'>\n    <% if (app.state.branches.length > 0) { %>\n      <h2 class='label'>Switch Branch</h2>\n      <select data-placeholder='Current Branch Name' class='chzn-select'>\n          <option value='#<%= [user, repo, \"tree\", app.state.branch].join(\"/\") %>' selected><%= app.state.branch %></option>\n        <% _.each(app.state.branches, function(branch) { %>\n          <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n        <% }); %>\n      </select>\n    <% } %>\n  </div>\n<% } %>\n","start":"<% if (!authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='/about.html'>Learn more</a></p>\n      <a class='round button' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<label for='<%= name %>'><%= label %></label>\n<input type='text' name='<%= name %>' value='<%= value %>' />\n"}; module.exports = templates;
+var templates = {"app":"<div class='header'>\n  <div class='limiter clearfix'>\n    <div class='fr user-status<%= !window.authenticated ? \" logged-out\" : \"\" %>'>\n    <% if (window.authenticated) { %>\n      <div class='dropdown-menu'>\n        <a href='#' class='round dropdown-hover'><%= app.username %></a>\n        <ul class='dropdown round arrow-top'>\n          <li><a class='logout' href='#'><strong>Logout</strong></a></li>\n        </ul>\n      </div>\n    <% } else { %>\n      <a class='button round' href='https://github.com/login/oauth/authorize?client_id=c602a8bd54b1e774f864&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in using Github</a>\n    <% } %>\n    </div>\n  </div>\n</div>\n\n<div id='heading' class='heading limiter clearfix'></div>\n\n<div class='application clearfix'>\n  <div id='content' class='content fl'></div>\n  <div class='sidebar fl'>\n    <div id='drawer' class='drawer'></div>\n\n    <div class='vert navigation'>\n      <ul class='project nav'>\n        <li>\n          <a href='/' class='icon round repos <% if (!app.state.mode) { %>active<% } %>'>\n            <span class='popup round arrow-left'>Explore Projects</span>\n          </a>\n        </li>\n        <% if (state.repo) { %>\n          <li>\n          <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo <% if (app.state.mode === \"tree\") { %>active<% } %>'>\n              <span class='popup round arrow-left'><%= repo %></span>\n            </a>\n          </li>\n          <% if (window.authenticated) { %>\n            <li>\n              <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='icon round new new-file'>\n                <span class='popup round arrow-left'>New File</span>\n              </a>\n            </li>\n          <% } %>\n        <% } %>\n      </ul>\n\n      <% if (state.mode === 'edit' || state.mode === 'blob' || state.mode === 'new') { %>\n      <ul class='post-views nav'>\n        <li>\n          <a href='#' class='icon round edit' data-state='edit'>\n            <span class='popup round arrow-left'>Edit</span>\n          </a>\n        </li>\n        <% if (state.markdown || state.mode === 'new') { %>\n          <li>\n            <a href='#' class='icon round preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n              <span class='popup round arrow-left'>Preview</span>\n            </a>\n          </li>\n        <% } %>\n        <li>\n          <a href='#' class='icon round settings' data-state='settings' data-drawer=true>\n            <span class='popup round arrow-left'>Post Settings</span>\n          </a>\n        </li>\n      </ul>\n      <% } %>\n    </div>\n  </div>\n</div>\n","directories":"<li class='directory'>\n  <a class='clearfix linkto item' data-index='<%= index %>' href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n    <span class='icon fl round folder'></span>\n    <span class='details fl'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item' data-index='<%= index %>'>\n  <div class='fl icon round <%= extension %> <% if (isBinary) { %>media<% } %>'></div>\n  <div class='fl details'>\n    <% if (isBinary) { %>\n      <h3 class='title'><%= name %></h3>\n    <% } else { %>\n      <a class='clearfix'\n        href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n        <% if (extension === 'md') { %>\n          <h3><%= filename %></h3>\n          <span class='deemphasize'><%= name %></span>\n        <% } else { %>\n          <h3 class='title'><%= name %></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n  <div class='fr actions cleafix'>\n    <% if (!isBinary) { %>\n      <a class='clearfix linkto'\n        title='Edit this File'\n        href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n        Edit\n      </a>\n    <% } %>\n    <a\n      class='delete'\n      title='Delete this File'\n      data-user='<%= user %>'\n      data-repo='<%= repo %>'\n      data-branch='<%= branch %>'\n      data-file='<%= name %>'\n      href='#'>\n      <span\n        class='bin icon inline small'\n        data-user='<%= user %>'\n        data-repo='<%= repo %>'\n        data-branch='<%= branch %>'\n        data-file='<%= name %>'>\n        Delete\n      </span>\n    </a>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <input type='text' class='filepath' value='<%= title %>'>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","multiselect":"<label for='<%= name %>'><%= label %></label>\n<select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n  <% _(options).each(function(o) { %>\n    <% if (o.name) { %>\n     <option value='<%= o.value %>'><%= o.name %></option>\n    <% } else { %>\n     <option value='<%= o.value %>'><%= o.value %></option>\n    <% } %>\n  <% }); %>\n</select>\n","notification":"<% if (!window.authenticated) { %>\n<div class='notify <%= type %>'>\n  <div class='inner'>\n    Please login with your GitHub account to access that project.\n    <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>\n  </div>\n</div>\n<% } else { %>\n  <div class='notify <%= type %>'>\n    <div class='inner'>\n      <p><%= message %></p>\n      <p><a class='button create' href='#'>Create it </a></p>\n      <p><a class='button round' href='../'>Go back </a></p>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='topbar toolbar'>\n  <div class='inner clearfix'>\n    <% if (markdown) { %>\n    <div class='dropdown-menu fr'>\n      <a href='#' class='round dropdown-hover'>Markdown</a>\n      <ul class='dropdown markdown-snippets round'>\n        <li><a href='#' data-snippet='<% print(\"# Heading\\n\\n\") %>'>Main Header</a></li>\n        <li><a href='#' data-snippet='<% print(\"## Sub Heading\\n\\n\") %>'>Sub Header</a></li>\n        <li><a href='#' data-snippet='<% print(\"```\\nvar foo;\\n```\\n\\n\"); %>'>Code</a></li>\n        <li><a href='#' data-snippet='<% print(\"[Google](http://google.com)\\n\\n\") %>'>Link</a></li>\n        <li><a href='#' data-snippet='<% print(\"![picture alt](http://placekitten.com/200/300)\\n\\n\") %>'>Image</a></li>\n        <li><a href='#' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>Blockquote</a></li>\n        <li><a href='#' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>List</a></li>\n        <li class='divider'></li>\n        <li><a href='http://daringfireball.net/projects/markdown/syntax' target='_blank' target='_blank'><strong>Learn More</strong></a></li>\n      </ul>\n    </div>\n    <% } %>\n  </div>\n</div>\n\n<div class='inner editor'>\n  <div class='inner views'>\n    <div id='diff' class='view prose diff'></div>\n    <div id='code' class='view active edit <% if (markdown) { %> markdown<% } %>'></div>\n    <% if (markdown) { %>\n      <div id='preview' class='view preview prose'><%= preview %></div>\n    <% } %>\n  </div>\n</div>\n","posts":"<div class='topbar content-search'>\n  <span class='icon search inline fr'></span>\n  <input type='text' id='filter' placeholder='Filter Files' />\n</div>\n\n<% if (path.length) { %>\n  <div class='breadcrumb'>\n    <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n    <% _.each(_.chunkedPath(path), function(p) { %>\n      <span class='slash'>/</span>\n      <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n    <% }); %>\n  </div>\n<% } %>\n\n<ul id='files' class='listing'></ul>\n","profile":"<div class='topbar content-search'>\n  <span class='icon search inline fr'></span>\n  <input type='text' id='filter' placeholder='Filter projects' />\n</div>\n\n<ul id='projects' class='listing'></ul>\n","projects":"<li class='item clearfix' data-index='<%= index %>'>\n    <% if (private) { %>\n      <div class='fl icon round repo private'></div>\n    <% } else { %>\n      <div class='fl icon round repo'></div>\n    <% } %>\n\n    <div class='details fl'>\n      <a data-user='<%= owner.login %>' data-repo='<%= name %>' href='#<%= owner.login %>/<%= name %>'>\n        <h3><%= name %></h3>\n      </a>\n      <span class='deemphasize'><%= description %></span>\n    </div>\n\n    <div class='fr actions cleafix'>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        View Project\n      </a>\n      <% if (homepage) { %>\n        <a href='//<%= homepage %>'>View Site</a>\n      <% } %>\n    </div>\n</li>\n","select":"<label for='<%= name %>'><%= label %></label>\n<select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n  <% _(options).each(function(o) { %>\n    <% if (o.name) { %>\n     <option value='<%= o.value %>'><%= o.name %></option>\n    <% } else { %>\n     <option value='<%= o.value %>'><%= o.value %></option>\n    <% } %>\n  <% }); %>\n</select>\n","settings":"<% if (jekyll) { %>\n  <div id='meta' class='meta inner'></div>\n<% } %>\n\n<% if (window.authenticated) { %>\n  <div class='inner'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder='Describe your Changes'></textarea>\n      <a class='icon inline small cancel' href='#' title='ESC'>\n        &times;<span class='popup round arrow-left'>Cancel</span>\n      </a>\n    </div>\n\n    <a class='save button round' href='#'>\n      <%= writeable ? 'Save' : 'Submit Change' %>\n      <span class='popup round arrow-left'>⌘ + s</span>\n    </a>\n\n    <% if (jekyll && markdown) { %>\n      <a href='#' class='toggle publish button round'>Publish</a>\n    <% } %>\n\n    <% if (app.state.config && app.state.config.languages) { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (metadata.lang && metadata.lang !== lang.value) { %>\n          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <a class='delete button round' href='#'>Delete this File</a>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'>\n        <span class='icon folder-group inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n      <a href='#<%= org.login %>' title='<%= org.login %>'>\n        <span class='icon folder-group inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<% if (authenticated) { %>\n  <div class='inner'>\n    <% if (app.state.branches.length > 0) { %>\n      <h2 class='label'>Switch Branch</h2>\n      <select data-placeholder='Current Branch Name' class='chzn-select'>\n          <option value='#<%= [user, repo, \"tree\", app.state.branch].join(\"/\") %>' selected><%= app.state.branch %></option>\n        <% _.each(app.state.branches, function(branch) { %>\n          <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n        <% }); %>\n      </select>\n    <% } %>\n  </div>\n<% } %>\n","start":"<% if (!authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='/about.html'>Learn more</a></p>\n      <a class='round button' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<label for='<%= name %>'><%= label %></label>\n<input type='text' name='<%= name %>' value='<%= value %>' />\n"}; module.exports = templates;
 },{}],2:[function(require,module,exports){
 function tryParse(obj) {
   try {
@@ -6692,98 +6692,6 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 
-// The Router
-// ---------------
-
-module.exports = Backbone.Router.extend({
-  initialize: function () {
-    // Using this.route, because order matters
-    this.route(/(.*\/.*)/, 'path', this.path);
-    this.route(':user(/)', 'user', this.profile);
-    this.route(':user/:repo(/)', 'repo', this.repo);
-    this.route('', 'start', this.start);
-  },
-
-  start: function () {
-    if (window.authenticated) {
-      this.profile(app.username);
-    } else {
-      if (confirmExit()) {
-        app.state = {
-          user: '',
-          repo: '',
-          mode: '',
-          branch: '',
-          path: ''
-        };
-        app.instance.start();
-      }
-    }
-  },
-
-  extractURL: function (url) {
-    url = url.split('/');
-    app.state = {
-      user: url[0],
-      repo: url[1],
-      mode: url[2],
-      branch: url[3],
-      path: (url.slice(4) || []).join('/')
-    };
-    return app.state;
-  },
-
-  path: function (url) {
-    var parts;
-    url = this.extractURL(url);
-    if (url.mode === 'tree') {
-      app.instance.posts(url.user, url.repo, url.branch, url.path);
-    } else if (url.mode === 'new') {
-      app.instance.newPost(url.user, url.repo, url.branch, url.path);
-    } else if (url.mode === 'preview') {
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      app.instance.preview(url.user, url.repo, url.branch, parts[0], parts[1], url.mode);
-    } else {
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      app.instance.post(url.user, url.repo, url.branch, parts[0], parts[1], url.mode);
-    }
-  },
-
-  // #example-user/example-repo
-  repo: function (username, reponame) {
-    app.state = {
-      user: username,
-      repo: reponame,
-      mode: 'tree',
-      branch: '',
-      path: ''
-    };
-    app.instance.posts(username, reponame);
-  },
-
-  // #example-user
-  // #example-organization
-  profile: function (username) {
-    if (confirmExit()) {
-      app.state = {
-        user: username,
-        repo: '',
-        mode: '',
-        branch: '',
-        path: ''
-      };
-      app.instance.profile(username);
-    }
-  }
-});
-
-},{"jquery-browserify":4,"underscore":5,"backbone":6}],7:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
 window.app = {
     config: {},
     models: require('./models'),
@@ -6847,7 +6755,562 @@ $(function() {
   });
 });
 
-},{"./models":8,"./views/application":9,"./views/app":10,"./views/notification":11,"./views/start":12,"./views/profile":13,"./views/posts":14,"./views/post":15,"./views/preview":16,"../../dist/templates":1,"./router":3,"jquery-browserify":4,"underscore":5,"backbone":6}],8:[function(require,module,exports){
+},{"./models":4,"./views/application":5,"./views/app":6,"./views/notification":7,"./views/start":8,"./views/profile":9,"./views/posts":10,"./views/post":11,"./views/preview":12,"../../dist/templates":1,"./router":13,"jquery-browserify":14,"underscore":15,"backbone":16}],17:[function(require,module,exports){
+// Github.js 0.7.0
+// (c) 2012 Michael Aufreiter, Development Seed
+// Github.js is freely distributable under the MIT license.
+// For all details and documentation:
+// http://substance.io/michael/github
+
+var _ = require('underscore');
+
+(function() {
+  var Github;
+  var API_URL = 'https://api.github.com';
+
+  Github = window.Github = function(options) {
+
+    // HTTP Request Abstraction
+    // =======
+    // 
+    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
+
+    function _request(method, path, data, cb, raw, sync) {
+      function getURL() {
+        return url = API_URL + path;
+      }
+
+      var xhr = new XMLHttpRequest();
+      if (!raw) {xhr.dataType = "json";}
+
+      xhr.open(method, getURL(), !sync);
+      if (!sync) {
+        xhr.onreadystatechange = function () {
+          if (this.readyState == 4) {
+            if (this.status >= 200 && this.status < 300 || this.status === 304) {
+              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
+            } else {
+              cb({request: this, error: this.status});
+            }
+          }
+        };
+      }
+      xhr.setRequestHeader('Accept','application/vnd.github.raw');
+      xhr.setRequestHeader('Content-Type','application/json');
+      if (
+         (options.auth == 'oauth' && options.token) ||
+         (options.auth == 'basic' && options.username && options.password)
+         ) {
+           xhr.setRequestHeader('Authorization',options.auth == 'oauth'
+             ? 'token '+ options.token
+             : 'Basic ' + Base64.encode(options.username + ':' + options.password)
+           );
+         }
+      data ? xhr.send(JSON.stringify(data)) : xhr.send();
+      if (sync) return xhr.response;
+    }
+
+    function _parseLinkHeader(err, response, xhr, cb) {
+      var link = xhr.getResponseHeader('link');
+
+      if (!err && link) {
+        var parts = link.split(',');
+        var length = parts.length;
+
+        var links = {};
+
+        var section;
+        var url;
+        var name;
+
+        for (var i = 0; i < length; i++) {
+          section = parts[i].split(';');
+
+          if (section.length !== 2) {
+            throw new Error("section could not be split on ';'");
+          }
+
+          url = section[0].replace(/<(.*)>/, '$1').trim();
+          name = section[1].replace(/rel="(.*)"/, '$1').trim();
+
+          links[name] = url;
+        }
+
+        if (links['next']) {
+          _request('GET', links['next'].split(API_URL)[1], null, function(err, res, xhr) {
+            if (typeof response.concat === 'function') {
+              response = response.concat(res);
+            } else if (typeof response === 'string') {
+              response += res;
+            }
+
+            _parseLinkHeader(err, response, xhr, cb);
+          });
+        } else {
+          cb(err, response);
+        }
+      } else {
+        cb(err, response);
+      }
+    }
+      
+    // User API
+    // =======
+
+    Github.User = function() {
+      this.repos = function(cb) {
+        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List user organizations
+      // -------
+
+      this.orgs = function(cb) {
+        _request("GET", "/user/orgs", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List authenticated user's gists
+      // -------
+
+      this.gists = function(cb) {
+        _request("GET", "/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // Show user information
+      // -------
+
+      this.show = function(username, cb) {
+        var command = username ? "/users/"+username : "/user";
+
+        _request("GET", command, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List user repositories
+      // -------
+
+      this.userRepos = function(username, cb) {
+        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List a user's gists
+      // -------
+
+      this.userGists = function(username, cb) {
+        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // List organization repositories
+      // -------
+
+      this.orgRepos = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
+          _parseLinkHeader(err, res, xhr, cb);
+        });
+      };
+
+      // Follow user
+      // -------
+
+      this.follow = function(username, cb) {
+        _request("PUT", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // Unfollow user
+      // -------
+
+      this.unfollow = function(username, cb) {
+        _request("DELETE", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+    };
+
+
+    // Repository API
+    // =======
+
+    Github.Repository = function(options) {
+      var repo = options.name;
+      var user = options.user;
+      
+      var that = this;
+      var repoPath = "/repos/" + user + "/" + repo;
+
+      var currentTree = {
+        "branch": null,
+        "sha": null
+      };
+
+      // Uses the cache if branch has not been changed
+      // -------
+
+      function updateTree(branch, cb) {
+        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
+        that.getRef("heads/"+branch, function(err, sha) {
+          currentTree.branch = branch;
+          currentTree.sha = sha;
+          cb(err, sha);
+        });
+      }
+
+      // Get a particular reference
+      // -------
+
+      this.getRef = function(ref, cb) {
+        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.object.sha);
+        });
+      };
+
+      // Create a new reference
+      // --------
+      //
+      // {
+      //   "ref": "refs/heads/my-new-branch-name",
+      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
+      // }
+
+      this.createRef = function(options, cb) {
+        _request("POST", repoPath + "/git/refs", options, cb);
+      };
+
+      // Delete a reference
+      // --------
+      // 
+      // repo.deleteRef('heads/gh-pages')
+      // repo.deleteRef('tags/v1.0')
+
+      this.deleteRef = function(ref, cb) {
+        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
+      };
+
+      // List all branches of a repository
+      // -------
+
+      this.listBranches = function(cb) {
+        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
+          if (err) return cb(err);
+          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
+        });
+      };
+
+      // Retrieve the contents of a blob
+      // -------
+
+      this.getBlob = function(sha, cb) {
+        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
+      };
+
+      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
+      // -------
+
+      this.getSha = function(branch, path, cb) {
+        // Just use head if path is empty
+        if (path === "") return that.getRef("heads/"+branch, cb);
+        that.getTree(branch+"?recursive=true", function(err, tree) {
+          var file = _.select(tree, function(file) {
+            return file.path === path;
+          })[0];
+          cb(null, file ? file.sha : null);
+        });
+      };
+
+      // Retrieve the tree a commit points to
+      // -------
+
+      this.getTree = function(tree, cb) {
+        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.tree);
+        });
+      };
+
+      // Post a new blob object, getting a blob SHA back
+      // -------
+
+      this.postBlob = function(content, cb) {
+        if (typeof(content) === "string") {
+          content = {
+            "content": content,
+            "encoding": "utf-8"
+          };
+        }
+
+        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Update an existing tree adding a new blob object getting a tree SHA back
+      // -------
+
+      this.updateTree = function(baseTree, path, blob, cb) {
+        var data = {
+          "base_tree": baseTree,
+          "tree": [
+            {
+              "path": path,
+              "mode": "100644",
+              "type": "blob",
+              "sha": blob
+            }
+          ]
+        };
+        _request("POST", repoPath + "/git/trees", data, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Post a new tree object having a file path pointer replaced
+      // with a new blob SHA getting a tree SHA back
+      // -------
+
+      this.postTree = function(tree, cb) {
+        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Create a new commit object with the current commit SHA as the parent
+      // and the new tree SHA, getting a commit SHA back
+      // -------
+
+      this.commit = function(parent, tree, message, cb) {
+        var data = {
+          "message": message,
+          "author": {
+            "name": options.username
+          },
+          "parents": [
+            parent
+          ],
+          "tree": tree
+        };
+
+        _request("POST", repoPath + "/git/commits", data, function(err, res) {
+          currentTree.sha = res.sha; // update latest commit
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Update the reference of your head to point to the new commit SHA
+      // -------
+
+      this.updateHead = function(head, commit, cb) {
+        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
+          cb(err);
+        });
+      };
+
+      // Show repository information
+      // -------
+
+      this.show = function(cb) {
+        _request("GET", repoPath, null, cb);
+      };
+
+      // Get contents
+      // --------
+
+      this.contents = function(branch, path, cb) {
+        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
+      };
+
+      this.contentsSync = function(branch, path) {
+        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
+      };
+
+      // Fork repository
+      // -------
+
+      this.fork = function(cb) {
+        _request("POST", repoPath + "/forks", null, cb);
+      };
+
+      // Create pull request
+      // --------
+
+      this.createPullRequest = function(options, cb) {
+        _request("POST", repoPath + "/pulls", options, cb);
+      };
+
+      // Read file at given path
+      // -------
+
+      this.read = function(branch, path, cb) {
+        that.getSha(branch, path, function(err, sha) {
+          if (!sha) return cb("not found", null);
+          that.getBlob(sha, function(err, content) {
+            cb(err, content, sha);
+          });
+        });
+      };
+
+      // Remove a file from the tree
+      // -------
+
+      this.remove = function(branch, path, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
+            _.each(newTree, function(ref) {
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(newTree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Move a file to a new location
+      // -------
+
+      this.move = function(branch, path, newPath, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            _.each(tree, function(ref) {
+              if (ref.path === path) ref.path = newPath;
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(tree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Write file contents to a given branch and path
+      // -------
+
+      this.write = function(branch, path, content, message, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          if (err) return cb(err);
+          that.postBlob(content, function(err, blob) {
+            if (err) return cb(err);
+            that.updateTree(latestCommit, path, blob, function(err, tree) {
+              if (err) return cb(err);
+              that.commit(latestCommit, tree, message, function(err, commit) {
+                if (err) return cb(err);
+                that.updateHead(branch, commit, cb);
+              });
+            });
+          });
+        });
+      };
+    };
+
+    // Gists API
+    // =======
+
+    Github.Gist = function(options) {
+      var id = options.id;
+      var gistPath = "/gists/"+id;
+
+      // Read the gist
+      // --------
+
+      this.read = function(cb) {
+        _request("GET", gistPath, null, function(err, gist) {
+          cb(err, gist);
+        });
+      };
+
+      // Create the gist
+      // --------
+      // {
+      //  "description": "the description for this gist",
+      //    "public": true,
+      //    "files": {
+      //      "file1.txt": {
+      //        "content": "String file contents"
+      //      }
+      //    }
+      // }
+      
+      this.create = function(options, cb){
+        _request("POST","/gists", options, cb);
+      };
+
+      // Delete the gist
+      // --------
+
+      this.delete = function(cb) {
+        _request("DELETE", gistPath, null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Fork a gist
+      // --------
+
+      this.fork = function(cb) {
+        _request("POST", gistPath+"/fork", null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Update a gist with the new stuff
+      // --------
+
+      this.update = function(options, cb) {
+        _request("PATCH", gistPath, options, function(err,res) {
+          cb(err,res);
+        });
+      };
+    };
+
+    // Top Level API
+    // -------
+
+    this.getRepo = function(user, repo) {
+      return new Github.Repository({user: user, name: repo});
+    };
+
+    this.getUser = function() {
+      return new Github.User();
+    };
+
+    this.getGist = function(id) {
+      return new Github.Gist({id: id});
+    };
+  };
+
+  module.exports = Github;
+}).call(this);
+
+},{"underscore":15}],4:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -7471,562 +7934,99 @@ module.exports = {
   }
 };
 
-},{"./cookie":2,"../libs/github":17,"jquery-browserify":4,"underscore":5,"js-yaml":18}],17:[function(require,module,exports){
-// Github.js 0.7.0
-// (c) 2012 Michael Aufreiter, Development Seed
-// Github.js is freely distributable under the MIT license.
-// For all details and documentation:
-// http://substance.io/michael/github
-
+},{"./cookie":2,"../libs/github":17,"jquery-browserify":14,"underscore":15,"js-yaml":18}],13:[function(require,module,exports){
+var $ = require('jquery-browserify');
 var _ = require('underscore');
+var Backbone = require('backbone');
 
-(function() {
-  var Github;
-  var API_URL = 'https://api.github.com';
+// The Router
+// ---------------
 
-  Github = window.Github = function(options) {
+module.exports = Backbone.Router.extend({
+  initialize: function () {
+    // Using this.route, because order matters
+    this.route(/(.*\/.*)/, 'path', this.path);
+    this.route(':user(/)', 'user', this.profile);
+    this.route(':user/:repo(/)', 'repo', this.repo);
+    this.route('', 'start', this.start);
+  },
 
-    // HTTP Request Abstraction
-    // =======
-    // 
-    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
-
-    function _request(method, path, data, cb, raw, sync) {
-      function getURL() {
-        return url = API_URL + path;
-      }
-
-      var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
-
-      xhr.open(method, getURL(), !sync);
-      if (!sync) {
-        xhr.onreadystatechange = function () {
-          if (this.readyState == 4) {
-            if (this.status >= 200 && this.status < 300 || this.status === 304) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
-            } else {
-              cb({request: this, error: this.status});
-            }
-          }
+  start: function () {
+    if (window.authenticated) {
+      this.profile(app.username);
+    } else {
+      if (confirmExit()) {
+        app.state = {
+          user: '',
+          repo: '',
+          mode: '',
+          branch: '',
+          path: ''
         };
-      }
-      xhr.setRequestHeader('Accept','application/vnd.github.raw');
-      xhr.setRequestHeader('Content-Type','application/json');
-      if (
-         (options.auth == 'oauth' && options.token) ||
-         (options.auth == 'basic' && options.username && options.password)
-         ) {
-           xhr.setRequestHeader('Authorization',options.auth == 'oauth'
-             ? 'token '+ options.token
-             : 'Basic ' + Base64.encode(options.username + ':' + options.password)
-           );
-         }
-      data ? xhr.send(JSON.stringify(data)) : xhr.send();
-      if (sync) return xhr.response;
-    }
-
-    function _parseLinkHeader(err, response, xhr, cb) {
-      var link = xhr.getResponseHeader('link');
-
-      if (!err && link) {
-        var parts = link.split(',');
-        var length = parts.length;
-
-        var links = {};
-
-        var section;
-        var url;
-        var name;
-
-        for (var i = 0; i < length; i++) {
-          section = parts[i].split(';');
-
-          if (section.length !== 2) {
-            throw new Error("section could not be split on ';'");
-          }
-
-          url = section[0].replace(/<(.*)>/, '$1').trim();
-          name = section[1].replace(/rel="(.*)"/, '$1').trim();
-
-          links[name] = url;
-        }
-
-        if (links['next']) {
-          _request('GET', links['next'].split(API_URL)[1], null, function(err, res, xhr) {
-            if (typeof response.concat === 'function') {
-              response = response.concat(res);
-            } else if (typeof response === 'string') {
-              response += res;
-            }
-
-            _parseLinkHeader(err, response, xhr, cb);
-          });
-        } else {
-          cb(err, response);
-        }
-      } else {
-        cb(err, response);
+        app.instance.start();
       }
     }
-      
-    // User API
-    // =======
+  },
 
-    Github.User = function() {
-      this.repos = function(cb) {
-        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user organizations
-      // -------
-
-      this.orgs = function(cb) {
-        _request("GET", "/user/orgs", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List authenticated user's gists
-      // -------
-
-      this.gists = function(cb) {
-        _request("GET", "/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // Show user information
-      // -------
-
-      this.show = function(username, cb) {
-        var command = username ? "/users/"+username : "/user";
-
-        _request("GET", command, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user repositories
-      // -------
-
-      this.userRepos = function(username, cb) {
-        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List a user's gists
-      // -------
-
-      this.userGists = function(username, cb) {
-        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // List organization repositories
-      // -------
-
-      this.orgRepos = function(orgname, cb) {
-        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
-          _parseLinkHeader(err, res, xhr, cb);
-        });
-      };
-
-      // Follow user
-      // -------
-
-      this.follow = function(username, cb) {
-        _request("PUT", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // Unfollow user
-      // -------
-
-      this.unfollow = function(username, cb) {
-        _request("DELETE", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
+  extractURL: function (url) {
+    url = url.split('/');
+    app.state = {
+      user: url[0],
+      repo: url[1],
+      mode: url[2],
+      branch: url[3],
+      path: (url.slice(4) || []).join('/')
     };
+    return app.state;
+  },
 
+  path: function (url) {
+    var parts;
+    url = this.extractURL(url);
+    if (url.mode === 'tree') {
+      app.instance.posts(url.user, url.repo, url.branch, url.path);
+    } else if (url.mode === 'new') {
+      app.instance.newPost(url.user, url.repo, url.branch, url.path);
+    } else if (url.mode === 'preview') {
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      app.instance.preview(url.user, url.repo, url.branch, parts[0], parts[1], url.mode);
+    } else {
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      app.instance.post(url.user, url.repo, url.branch, parts[0], parts[1], url.mode);
+    }
+  },
 
-    // Repository API
-    // =======
-
-    Github.Repository = function(options) {
-      var repo = options.name;
-      var user = options.user;
-      
-      var that = this;
-      var repoPath = "/repos/" + user + "/" + repo;
-
-      var currentTree = {
-        "branch": null,
-        "sha": null
-      };
-
-      // Uses the cache if branch has not been changed
-      // -------
-
-      function updateTree(branch, cb) {
-        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
-        that.getRef("heads/"+branch, function(err, sha) {
-          currentTree.branch = branch;
-          currentTree.sha = sha;
-          cb(err, sha);
-        });
-      }
-
-      // Get a particular reference
-      // -------
-
-      this.getRef = function(ref, cb) {
-        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.object.sha);
-        });
-      };
-
-      // Create a new reference
-      // --------
-      //
-      // {
-      //   "ref": "refs/heads/my-new-branch-name",
-      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
-      // }
-
-      this.createRef = function(options, cb) {
-        _request("POST", repoPath + "/git/refs", options, cb);
-      };
-
-      // Delete a reference
-      // --------
-      // 
-      // repo.deleteRef('heads/gh-pages')
-      // repo.deleteRef('tags/v1.0')
-
-      this.deleteRef = function(ref, cb) {
-        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
-      };
-
-      // List all branches of a repository
-      // -------
-
-      this.listBranches = function(cb) {
-        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
-          if (err) return cb(err);
-          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
-        });
-      };
-
-      // Retrieve the contents of a blob
-      // -------
-
-      this.getBlob = function(sha, cb) {
-        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
-      };
-
-      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
-      // -------
-
-      this.getSha = function(branch, path, cb) {
-        // Just use head if path is empty
-        if (path === "") return that.getRef("heads/"+branch, cb);
-        that.getTree(branch+"?recursive=true", function(err, tree) {
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
-          cb(null, file ? file.sha : null);
-        });
-      };
-
-      // Retrieve the tree a commit points to
-      // -------
-
-      this.getTree = function(tree, cb) {
-        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.tree);
-        });
-      };
-
-      // Post a new blob object, getting a blob SHA back
-      // -------
-
-      this.postBlob = function(content, cb) {
-        if (typeof(content) === "string") {
-          content = {
-            "content": content,
-            "encoding": "utf-8"
-          };
-        }
-
-        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update an existing tree adding a new blob object getting a tree SHA back
-      // -------
-
-      this.updateTree = function(baseTree, path, blob, cb) {
-        var data = {
-          "base_tree": baseTree,
-          "tree": [
-            {
-              "path": path,
-              "mode": "100644",
-              "type": "blob",
-              "sha": blob
-            }
-          ]
-        };
-        _request("POST", repoPath + "/git/trees", data, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Post a new tree object having a file path pointer replaced
-      // with a new blob SHA getting a tree SHA back
-      // -------
-
-      this.postTree = function(tree, cb) {
-        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Create a new commit object with the current commit SHA as the parent
-      // and the new tree SHA, getting a commit SHA back
-      // -------
-
-      this.commit = function(parent, tree, message, cb) {
-        var data = {
-          "message": message,
-          "author": {
-            "name": options.username
-          },
-          "parents": [
-            parent
-          ],
-          "tree": tree
-        };
-
-        _request("POST", repoPath + "/git/commits", data, function(err, res) {
-          currentTree.sha = res.sha; // update latest commit
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update the reference of your head to point to the new commit SHA
-      // -------
-
-      this.updateHead = function(head, commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
-          cb(err);
-        });
-      };
-
-      // Show repository information
-      // -------
-
-      this.show = function(cb) {
-        _request("GET", repoPath, null, cb);
-      };
-
-      // Get contents
-      // --------
-
-      this.contents = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
-      };
-
-      this.contentsSync = function(branch, path) {
-        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
-      };
-
-      // Fork repository
-      // -------
-
-      this.fork = function(cb) {
-        _request("POST", repoPath + "/forks", null, cb);
-      };
-
-      // Create pull request
-      // --------
-
-      this.createPullRequest = function(options, cb) {
-        _request("POST", repoPath + "/pulls", options, cb);
-      };
-
-      // Read file at given path
-      // -------
-
-      this.read = function(branch, path, cb) {
-        that.getSha(branch, path, function(err, sha) {
-          if (!sha) return cb("not found", null);
-          that.getBlob(sha, function(err, content) {
-            cb(err, content, sha);
-          });
-        });
-      };
-
-      // Remove a file from the tree
-      // -------
-
-      this.remove = function(branch, path, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
-            _.each(newTree, function(ref) {
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(newTree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Move a file to a new location
-      // -------
-
-      this.move = function(branch, path, newPath, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            _.each(tree, function(ref) {
-              if (ref.path === path) ref.path = newPath;
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(tree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Write file contents to a given branch and path
-      // -------
-
-      this.write = function(branch, path, content, message, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          if (err) return cb(err);
-          that.postBlob(content, function(err, blob) {
-            if (err) return cb(err);
-            that.updateTree(latestCommit, path, blob, function(err, tree) {
-              if (err) return cb(err);
-              that.commit(latestCommit, tree, message, function(err, commit) {
-                if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
-              });
-            });
-          });
-        });
-      };
+  // #example-user/example-repo
+  repo: function (username, reponame) {
+    app.state = {
+      user: username,
+      repo: reponame,
+      mode: 'tree',
+      branch: '',
+      path: ''
     };
+    app.instance.posts(username, reponame);
+  },
 
-    // Gists API
-    // =======
-
-    Github.Gist = function(options) {
-      var id = options.id;
-      var gistPath = "/gists/"+id;
-
-      // Read the gist
-      // --------
-
-      this.read = function(cb) {
-        _request("GET", gistPath, null, function(err, gist) {
-          cb(err, gist);
-        });
+  // #example-user
+  // #example-organization
+  profile: function (username) {
+    if (confirmExit()) {
+      app.state = {
+        user: username,
+        repo: '',
+        mode: '',
+        branch: '',
+        path: ''
       };
+      app.instance.profile(username);
+    }
+  }
+});
 
-      // Create the gist
-      // --------
-      // {
-      //  "description": "the description for this gist",
-      //    "public": true,
-      //    "files": {
-      //      "file1.txt": {
-      //        "content": "String file contents"
-      //      }
-      //    }
-      // }
-      
-      this.create = function(options, cb){
-        _request("POST","/gists", options, cb);
-      };
-
-      // Delete the gist
-      // --------
-
-      this.delete = function(cb) {
-        _request("DELETE", gistPath, null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Fork a gist
-      // --------
-
-      this.fork = function(cb) {
-        _request("POST", gistPath+"/fork", null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Update a gist with the new stuff
-      // --------
-
-      this.update = function(options, cb) {
-        _request("PATCH", gistPath, options, function(err,res) {
-          cb(err,res);
-        });
-      };
-    };
-
-    // Top Level API
-    // -------
-
-    this.getRepo = function(user, repo) {
-      return new Github.Repository({user: user, name: repo});
-    };
-
-    this.getUser = function() {
-      return new Github.User();
-    };
-
-    this.getGist = function(id) {
-      return new Github.Gist({id: id});
-    };
-  };
-
-  module.exports = Github;
-}).call(this);
-
-},{"underscore":5}],19:[function(require,module,exports){
+},{"jquery-browserify":14,"backbone":16,"underscore":15}],19:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -8401,7 +8401,7 @@ module.exports = {
   }
 }
 
-},{"jquery-browserify":4,"underscore":5,"js-yaml":18,"marked":20,"queue-async":21,"chrono":22}],4:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":15,"js-yaml":18,"marked":20,"queue-async":21,"chrono":22}],14:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -17736,7 +17736,7 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],5:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -20127,7 +20127,7 @@ if (typeof exports === 'object') {
   function noop() {}
 })();
 
-},{}],11:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var Backbone = require('backbone');
 
@@ -20148,7 +20148,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":4,"backbone":6}],16:[function(require,module,exports){
+},{"jquery-browserify":14,"backbone":16}],12:[function(require,module,exports){
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
@@ -20176,7 +20176,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"underscore":5,"js-yaml":18,"backbone":6}],15:[function(require,module,exports){
+},{"underscore":15,"js-yaml":18,"backbone":16}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -20822,191 +20822,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":19,"jquery-browserify":4,"chosen-jquery-browserify":23,"underscore":5,"js-yaml":18,"keymaster":24,"marked":20,"backbone":6}],14:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-
-  id: 'posts',
-
-  events: {
-    'hover .item': 'activeListing',
-     'click .delete': 'deleteFile',
-    'keyup #filter': 'search'
-  },
-
-  initialize: function () {
-    if (!window.shortcutsRegistered) {
-      key('enter', _.bind(function (e, handler) {
-        this.goToFile();
-      }, this));
-      key('up, down', _.bind(function (e, handler) {
-        this.pageListing(handler.key);
-        e.preventDefault();
-        e.stopPropagation();
-      }, this));
-      window.shortcutsRegistered = true;
-    }
-  },
-
-  render: function () {
-    var that = this;
-    var data = _.extend(this.model, app.state, {
-      currentPath: app.state.path
-    });
-
-    // Ping `views/app.js` to let know we should swap out the sidebar
-    this.eventRegister = app.eventRegister;
-    this.eventRegister.trigger('sidebarContext', data, 'posts');
-    var isPrivate = app.state.isPrivate ? 'private' : '';
-
-    var header = {
-      avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
-      parent: data.user,
-      parentUrl: data.user,
-      title: data.repo,
-      titleUrl: data.user + '/' + data.repo,
-      alterable: false
-    };
-
-    this.eventRegister.trigger('headerContext', header);
-
-    var tmpl = _(window.app.templates.posts).template();
-    $(this.el).empty().append(tmpl(data));
-
-    _.delay(function () {
-      that.renderResults();
-      $('#filter').focus();
-      utils.shadowScroll($('#files'), $('.breadcrumb'));
-      utils.shadowScroll($('#files'), $('.content-search'));
-    }, 1);
-
-    return this;
-  },
-
-  pageListing: function (handler) {
-    var item, index;
-    if ($('.item').hasClass('active')) {
-      index = parseInt($('.item.active').data('index'), 10);
-      $('.item.active').removeClass('active');
-
-      if (handler === 'up') {
-        item = index - 1;
-        $('.item[data-index=' + item + ']').addClass('active');
-      } else {
-        item = index + 1;
-        $('.item[data-index=' + item + ']').addClass('active');
-      }
-    } else {
-      $('.item[data-index=0]').addClass('active');
-    }
-  },
-
-  goToFile: function () {
-    var path = $('.item.active').find('.linkto').attr('href');
-    router.navigate(path, true);
-  },
-
-  search: function (e) {
-    if (e.which === 27) { // ESC
-      _.delay(_.bind(function () {
-        $('#filter', this.el).val('');
-        this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
-        this.renderResults();
-      }, this), 10);
-
-    } else if (e.which === 40 && $('.item').length > 0) {
-      this.pageListing('down'); // Arrow Down
-      e.preventDefault();
-      e.stopPropagation();
-      $('#filter').blur();
-
-    } else {
-      _.delay(_.bind(function () {
-        var searchstr = $('#filter', this.el).val();
-        this.model = window.app.models.getFiles(this.model.tree, app.state.path, searchstr);
-        this.renderResults();
-      }, this), 10);
-    }
-  },
-
-  renderResults: function () {
-    var files = _(window.app.templates.files).template();
-    var directories = _(window.app.templates.directories).template();
-    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
-    var $files = $('#files', this.el);
-    $files.empty();
-
-    _(this.model.files).each(function(f, i) {
-      if (f.type === 'tree') {
-        $files.append(directories({
-          index: i,
-          user: data.user,
-          repo: data.repo,
-          path: (f.path) ? '/' + f.path : '',
-          branch: data.branch,
-          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
-        }));
-      } else {
-        $files.append(files({
-          index: i,
-          extension: _.extension(f.name),
-          isBinary: _.isBinary(_.extension(f.name)),
-          repo: data.repo,
-          branch: data.branch,
-          path: f.path,
-          filename: _.filename(f.name) || 'Untitled',
-          name: f.name,
-          user: data.user
-        }));
-      }
-    });
-  },
-
-  // Creates human readable versions of _posts/paths
-  semantifyPaths: function (paths) {
-    return _.map(paths, function (path) {
-      return {
-        path: path,
-        name: path
-      };
-    });
-  },
-
-  activeListing: function (e) {
-    $listings = $('.item', this.el);
-    $listing = $(e.target, this.el);
-
-    $listings.removeClass('active');
-    $listing.addClass('active');
-  },
-
-  deleteFile: function(e) {
-    var $file = $(e.target, this.el);
-    var file = {
-      user: $file.data('user'),
-      repo: $file.data('repo'),
-      branch: $file.data('branch'),
-      fileName: $file.data('file')
-    }
-
-    if (confirm('Are you sure you want to delete that file?')) {
-      window.app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function (err) {
-        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
-        router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
-      }, this));
-    }
-
-    return false;
-  }
-});
-
-},{".././util":19,"jquery-browserify":4,"underscore":5,"js-yaml":18,"keymaster":24,"backbone":6}],13:[function(require,module,exports){
+},{".././util":19,"jquery-browserify":14,"chosen-jquery-browserify":23,"underscore":15,"js-yaml":18,"keymaster":24,"marked":20,"backbone":16}],9:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21074,12 +20890,27 @@ module.exports = Backbone.View.extend({
 
     renderResults: function () {
       var tmpl = _(window.app.templates.projects).template();
-      $('#projects', this.el).empty().append(tmpl(this.model));
+      var repos;
+      var $projects = $('#projects', this.el);
+          $projects.empty();
+
+      // Flatten the listing if app.username === state.user
+      if (this.model.state && (this.model.state.user === app.username)) {
+        repos = _(this.model.owners).flatten();
+      } else {
+        repos = this.model.repos;
+      }
+
+      _(repos).each(function(r, i) {
+        $projects.append(tmpl(_.extend(r, {
+          index: i
+        })));
+      });
     }
 
 });
 
-},{".././util":19,"jquery-browserify":4,"underscore":5,"backbone":6}],12:[function(require,module,exports){
+},{".././util":19,"jquery-browserify":14,"underscore":15,"backbone":16}],8:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21115,7 +20946,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":4,"underscore":5,"backbone":6}],9:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":15,"backbone":16}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21315,7 +21146,191 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":4,"underscore":5,"backbone":6}],10:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":15,"backbone":16}],10:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+
+  id: 'posts',
+
+  events: {
+    'hover .item': 'activeListing',
+     'click .delete': 'deleteFile',
+    'keyup #filter': 'search'
+  },
+
+  initialize: function () {
+    if (!window.shortcutsRegistered) {
+      key('enter', _.bind(function (e, handler) {
+        this.goToFile();
+      }, this));
+      key('up, down', _.bind(function (e, handler) {
+        this.pageListing(handler.key);
+        e.preventDefault();
+        e.stopPropagation();
+      }, this));
+      window.shortcutsRegistered = true;
+    }
+  },
+
+  render: function () {
+    var that = this;
+    var data = _.extend(this.model, app.state, {
+      currentPath: app.state.path
+    });
+
+    // Ping `views/app.js` to let know we should swap out the sidebar
+    this.eventRegister = app.eventRegister;
+    this.eventRegister.trigger('sidebarContext', data, 'posts');
+    var isPrivate = app.state.isPrivate ? 'private' : '';
+
+    var header = {
+      avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
+      parent: data.user,
+      parentUrl: data.user,
+      title: data.repo,
+      titleUrl: data.user + '/' + data.repo,
+      alterable: false
+    };
+
+    this.eventRegister.trigger('headerContext', header);
+
+    var tmpl = _(window.app.templates.posts).template();
+    $(this.el).empty().append(tmpl(data));
+
+    _.delay(function () {
+      that.renderResults();
+      $('#filter').focus();
+      utils.shadowScroll($('#files'), $('.breadcrumb'));
+      utils.shadowScroll($('#files'), $('.content-search'));
+    }, 1);
+
+    return this;
+  },
+
+  pageListing: function (handler) {
+    var item, index;
+    if ($('.item').hasClass('active')) {
+      index = parseInt($('.item.active').data('index'), 10);
+      $('.item.active').removeClass('active');
+
+      if (handler === 'up') {
+        item = index - 1;
+        $('.item[data-index=' + item + ']').addClass('active');
+      } else {
+        item = index + 1;
+        $('.item[data-index=' + item + ']').addClass('active');
+      }
+    } else {
+      $('.item[data-index=0]').addClass('active');
+    }
+  },
+
+  goToFile: function () {
+    var path = $('.item.active').find('.linkto').attr('href');
+    router.navigate(path, true);
+  },
+
+  search: function (e) {
+    if (e.which === 27) { // ESC
+      _.delay(_.bind(function () {
+        $('#filter', this.el).val('');
+        this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
+        this.renderResults();
+      }, this), 10);
+
+    } else if (e.which === 40 && $('.item').length > 0) {
+      this.pageListing('down'); // Arrow Down
+      e.preventDefault();
+      e.stopPropagation();
+      $('#filter').blur();
+
+    } else {
+      _.delay(_.bind(function () {
+        var searchstr = $('#filter', this.el).val();
+        this.model = window.app.models.getFiles(this.model.tree, app.state.path, searchstr);
+        this.renderResults();
+      }, this), 10);
+    }
+  },
+
+  renderResults: function () {
+    var files = _(window.app.templates.files).template();
+    var directories = _(window.app.templates.directories).template();
+    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
+    var $files = $('#files', this.el);
+    $files.empty();
+
+    _(this.model.files).each(function(f, i) {
+      if (f.type === 'tree') {
+        $files.append(directories({
+          index: i,
+          user: data.user,
+          repo: data.repo,
+          path: (f.path) ? '/' + f.path : '',
+          branch: data.branch,
+          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
+        }));
+      } else {
+        $files.append(files({
+          index: i,
+          extension: _.extension(f.name),
+          isBinary: _.isBinary(_.extension(f.name)),
+          repo: data.repo,
+          branch: data.branch,
+          path: f.path,
+          filename: _.filename(f.name) || 'Untitled',
+          name: f.name,
+          user: data.user
+        }));
+      }
+    });
+  },
+
+  // Creates human readable versions of _posts/paths
+  semantifyPaths: function (paths) {
+    return _.map(paths, function (path) {
+      return {
+        path: path,
+        name: path
+      };
+    });
+  },
+
+  activeListing: function (e) {
+    $listings = $('.item', this.el);
+    $listing = $(e.target, this.el);
+
+    $listings.removeClass('active');
+    $listing.addClass('active');
+  },
+
+  deleteFile: function(e) {
+    var $file = $(e.target, this.el);
+    var file = {
+      user: $file.data('user'),
+      repo: $file.data('repo'),
+      branch: $file.data('branch'),
+      fileName: $file.data('file')
+    }
+
+    if (confirm('Are you sure you want to delete that file?')) {
+      window.app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function (err) {
+        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+        router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
+      }, this));
+    }
+
+    return false;
+  }
+});
+
+},{".././util":19,"jquery-browserify":14,"underscore":15,"keymaster":24,"backbone":16,"js-yaml":18}],6:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21493,7 +21508,163 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":19,"jquery-browserify":4,"underscore":5,"backbone":6}],18:[function(require,module,exports){
+},{".././util":19,"jquery-browserify":14,"backbone":16,"underscore":15}],24:[function(require,module,exports){
+(function(){//     keymaster.js
+//     (c) 2011 Thomas Fuchs
+//     keymaster.js may be freely distributed under the MIT license.
+
+;(function(global){
+  var k,
+    _handlers = {},
+    _mods = { 16: false, 18: false, 17: false, 91: false },
+    _scope = 'all',
+    // modifier keys
+    _MODIFIERS = {
+      '⇧': 16, shift: 16,
+      '⌥': 18, alt: 18, option: 18,
+      '⌃': 17, ctrl: 17, control: 17,
+      '⌘': 91, command: 91
+    },
+    // special keys
+    _MAP = {
+      backspace: 8, tab: 9, clear: 12,
+      enter: 13, 'return': 13,
+      esc: 27, escape: 27, space: 32,
+      left: 37, up: 38,
+      right: 39, down: 40,
+      del: 46, 'delete': 46,
+      home: 36, end: 35,
+      pageup: 33, pagedown: 34,
+      ',': 188, '.': 190, '/': 191,
+      '`': 192, '-': 189, '=': 187,
+      ';': 186, '\'': 222,
+      '[': 219, ']': 221, '\\': 220
+    };
+
+  for(k=1;k<20;k++) _MODIFIERS['f'+k] = 111+k;
+
+  // IE doesn't support Array#indexOf, so have a simple replacement
+  function index(array, item){
+    var i = array.length;
+    while(i--) if(array[i]===item) return i;
+    return -1;
+  }
+
+  // handle keydown event
+  function dispatch(event){
+    var key, tagName, handler, k, i, modifiersMatch;
+    tagName = (event.target || event.srcElement).tagName;
+    key = event.keyCode;
+
+    // if a modifier key, set the key.<modifierkeyname> property to true and return
+    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
+    if(key in _mods) {
+      _mods[key] = true;
+      // 'assignKey' from inside this closure is exported to window.key
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
+      return;
+    }
+
+    // ignore keypressed in any elements that support keyboard data input
+    if (tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA') return;
+
+    // abort if no potentially matching shortcuts found
+    if (!(key in _handlers)) return;
+
+    // for each potential shortcut
+    for (i = 0; i < _handlers[key].length; i++) {
+      handler = _handlers[key][i];
+
+      // see if it's in the current scope
+      if(handler.scope == _scope || handler.scope == 'all'){
+        // check if modifiers match if any
+        modifiersMatch = handler.mods.length > 0;
+        for(k in _mods)
+          if((!_mods[k] && index(handler.mods, +k) > -1) ||
+            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
+        // call the handler and stop the event if neccessary
+        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
+          if(handler.method(event, handler)===false){
+            if(event.preventDefault) event.preventDefault();
+              else event.returnValue = false;
+            if(event.stopPropagation) event.stopPropagation();
+            if(event.cancelBubble) event.cancelBubble = true;
+          }
+        }
+      }
+	}
+  };
+
+  // unset modifier keys on keyup
+  function clearModifier(event){
+    var key = event.keyCode, k;
+    if(key == 93 || key == 224) key = 91;
+    if(key in _mods) {
+      _mods[key] = false;
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
+    }
+  };
+
+  // parse and assign shortcut
+  function assignKey(key, scope, method){
+    var keys, mods, i, mi;
+    if (method === undefined) {
+      method = scope;
+      scope = 'all';
+    }
+    key = key.replace(/\s/g,'');
+    keys = key.split(',');
+
+    if((keys[keys.length-1])=='')
+      keys[keys.length-2] += ',';
+    // for each shortcut
+    for (i = 0; i < keys.length; i++) {
+      // set modifier keys if any
+      mods = [];
+      key = keys[i].split('+');
+      if(key.length > 1){
+        mods = key.slice(0,key.length-1);
+        for (mi = 0; mi < mods.length; mi++)
+          mods[mi] = _MODIFIERS[mods[mi]];
+        key = [key[key.length-1]];
+      }
+      // convert to keycode and...
+      key = key[0]
+      key = _MAP[key] || key.toUpperCase().charCodeAt(0);
+      // ...store handler
+      if (!(key in _handlers)) _handlers[key] = [];
+      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
+    }
+  };
+
+  // initialize key.<modifier> to false
+  for(k in _MODIFIERS) assignKey[k] = false;
+
+  // set current scope (default 'all')
+  function setScope(scope){ _scope = scope || 'all' };
+
+  // cross-browser events
+  function addEvent(object, event, method) {
+    if (object.addEventListener)
+      object.addEventListener(event, method, false);
+    else if(object.attachEvent)
+      object.attachEvent('on'+event, function(){ method(window.event) });
+  };
+
+  // set the handlers globally on document
+  addEvent(document, 'keydown', dispatch);
+  addEvent(document, 'keyup', clearModifier);
+
+  // set window.key and window.key.setScope
+  global.key = assignKey;
+  global.key.setScope = setScope;
+
+  if(typeof module !== 'undefined') module.exports = key;
+
+})(this);
+
+})()
+},{}],18:[function(require,module,exports){
 module.exports = require('./lib/js-yaml.js');
 
 },{"./lib/js-yaml.js":25}],23:[function(require,module,exports){
@@ -22574,162 +22745,6 @@ module.exports = require('./lib/js-yaml.js');
 
 }).call(this);
 
-},{}],24:[function(require,module,exports){
-(function(){//     keymaster.js
-//     (c) 2011 Thomas Fuchs
-//     keymaster.js may be freely distributed under the MIT license.
-
-;(function(global){
-  var k,
-    _handlers = {},
-    _mods = { 16: false, 18: false, 17: false, 91: false },
-    _scope = 'all',
-    // modifier keys
-    _MODIFIERS = {
-      '⇧': 16, shift: 16,
-      '⌥': 18, alt: 18, option: 18,
-      '⌃': 17, ctrl: 17, control: 17,
-      '⌘': 91, command: 91
-    },
-    // special keys
-    _MAP = {
-      backspace: 8, tab: 9, clear: 12,
-      enter: 13, 'return': 13,
-      esc: 27, escape: 27, space: 32,
-      left: 37, up: 38,
-      right: 39, down: 40,
-      del: 46, 'delete': 46,
-      home: 36, end: 35,
-      pageup: 33, pagedown: 34,
-      ',': 188, '.': 190, '/': 191,
-      '`': 192, '-': 189, '=': 187,
-      ';': 186, '\'': 222,
-      '[': 219, ']': 221, '\\': 220
-    };
-
-  for(k=1;k<20;k++) _MODIFIERS['f'+k] = 111+k;
-
-  // IE doesn't support Array#indexOf, so have a simple replacement
-  function index(array, item){
-    var i = array.length;
-    while(i--) if(array[i]===item) return i;
-    return -1;
-  }
-
-  // handle keydown event
-  function dispatch(event){
-    var key, tagName, handler, k, i, modifiersMatch;
-    tagName = (event.target || event.srcElement).tagName;
-    key = event.keyCode;
-
-    // if a modifier key, set the key.<modifierkeyname> property to true and return
-    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
-    if(key in _mods) {
-      _mods[key] = true;
-      // 'assignKey' from inside this closure is exported to window.key
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
-      return;
-    }
-
-    // ignore keypressed in any elements that support keyboard data input
-    if (tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA') return;
-
-    // abort if no potentially matching shortcuts found
-    if (!(key in _handlers)) return;
-
-    // for each potential shortcut
-    for (i = 0; i < _handlers[key].length; i++) {
-      handler = _handlers[key][i];
-
-      // see if it's in the current scope
-      if(handler.scope == _scope || handler.scope == 'all'){
-        // check if modifiers match if any
-        modifiersMatch = handler.mods.length > 0;
-        for(k in _mods)
-          if((!_mods[k] && index(handler.mods, +k) > -1) ||
-            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
-        // call the handler and stop the event if neccessary
-        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
-          if(handler.method(event, handler)===false){
-            if(event.preventDefault) event.preventDefault();
-              else event.returnValue = false;
-            if(event.stopPropagation) event.stopPropagation();
-            if(event.cancelBubble) event.cancelBubble = true;
-          }
-        }
-      }
-	}
-  };
-
-  // unset modifier keys on keyup
-  function clearModifier(event){
-    var key = event.keyCode, k;
-    if(key == 93 || key == 224) key = 91;
-    if(key in _mods) {
-      _mods[key] = false;
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
-    }
-  };
-
-  // parse and assign shortcut
-  function assignKey(key, scope, method){
-    var keys, mods, i, mi;
-    if (method === undefined) {
-      method = scope;
-      scope = 'all';
-    }
-    key = key.replace(/\s/g,'');
-    keys = key.split(',');
-
-    if((keys[keys.length-1])=='')
-      keys[keys.length-2] += ',';
-    // for each shortcut
-    for (i = 0; i < keys.length; i++) {
-      // set modifier keys if any
-      mods = [];
-      key = keys[i].split('+');
-      if(key.length > 1){
-        mods = key.slice(0,key.length-1);
-        for (mi = 0; mi < mods.length; mi++)
-          mods[mi] = _MODIFIERS[mods[mi]];
-        key = [key[key.length-1]];
-      }
-      // convert to keycode and...
-      key = key[0]
-      key = _MAP[key] || key.toUpperCase().charCodeAt(0);
-      // ...store handler
-      if (!(key in _handlers)) _handlers[key] = [];
-      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
-    }
-  };
-
-  // initialize key.<modifier> to false
-  for(k in _MODIFIERS) assignKey[k] = false;
-
-  // set current scope (default 'all')
-  function setScope(scope){ _scope = scope || 'all' };
-
-  // cross-browser events
-  function addEvent(object, event, method) {
-    if (object.addEventListener)
-      object.addEventListener(event, method, false);
-    else if(object.attachEvent)
-      object.attachEvent('on'+event, function(){ method(window.event) });
-  };
-
-  // set the handlers globally on document
-  addEvent(document, 'keydown', dispatch);
-  addEvent(document, 'keyup', clearModifier);
-
-  // set window.key and window.key.setScope
-  global.key = assignKey;
-  global.key.setScope = setScope;
-
-  if(typeof module !== 'undefined') module.exports = key;
-
-})(this);
-
-})()
 },{}],22:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
@@ -23174,7 +23189,7 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/schema/minimal":31,"./js-yaml/schema/safe":32,"./js-yaml/schema/default":33,"./js-yaml/exception":34,"./js-yaml/require":35}],6:[function(require,module,exports){
+},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/schema/minimal":31,"./js-yaml/schema/safe":32,"./js-yaml/schema/default":33,"./js-yaml/exception":34,"./js-yaml/require":35}],16:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -24748,7 +24763,7 @@ require('./js-yaml/require');
 }).call(this);
 
 })()
-},{"underscore":5}],34:[function(require,module,exports){
+},{"underscore":15}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -30421,5 +30436,5 @@ SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}]},{},[11,16,15,14,13,12,9,10,3,19,7,1,8,2,17])
+},{}]},{},[7,12,11,10,9,8,5,6,13,19,3,1,4,2,17])
 ;
