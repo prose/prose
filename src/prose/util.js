@@ -113,6 +113,23 @@ _.markdown = function(file) {
 };
 
 
+// Returns a filename without the file extension
+// -------
+
+_.filename = function(file) {
+  return file.replace(/\.[^/.]+$/, '');
+};
+
+
+// Determines whether a given file is a binary file
+// -------
+
+_.isBinary = function(file) {
+  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff)$');
+  return regex.test(file);
+}
+
+
 // Clip a string
 // -------
 

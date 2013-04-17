@@ -119,6 +119,8 @@ a {
   .button.delete       { background-color:#db6f6f; }
   .button.delete:hover { background-color:#d14646; }
 
+  .actions .delete:hover { border-color:#d14646; }
+
   p > a {font-weight:700;}
 
 h1,h2,h3,h4,h5,h6 {
@@ -395,7 +397,7 @@ em      { font-style:italic; }
 .sidebar {
   position:relative;
   z-index:100;
-  width:240px;
+  width:239px;
   height:600px;
   height:auto!important;
   min-height:600px;
@@ -406,7 +408,7 @@ em      { font-style:italic; }
           transition:right 300ms;
   }
   .open .sidebar {
-    right:1px;
+    right:0;
     }
   .sidebar .navigation {
     position:absolute;
@@ -427,13 +429,10 @@ em      { font-style:italic; }
   }
 
 .sidebar {
-  background:#f8f8f8;
+  background:#fff;
+  border-left:1px solid #C3CCD0;
   -webkit-border-radius:0 4px 4px 0;
           border-radius:0 4px 4px 0;
-  -webkit-box-shadow:inset 0 0 0 1px #fff,
-                     inset 4px 0 2px -2px rgba(0,0,0,0.05);
-          box-shadow:inset 0 0 0 1px #fff,
-                     inset 4px 0 2px -2px rgba(0,0,0,0.05);
   }
   #recent {
     height: 449px;
@@ -447,18 +446,13 @@ em      { font-style:italic; }
   .vert .nav.project {
     margin:10px 0 0;
     padding-bottom:5px;
-    border-bottom:1px solid #202020;
-    }
-  .vert .nav.post-views {
-    padding-top:5px;
-    border-top:1px solid #555;
     }
   .vert .nav li a {
     background-color:#404040;
     display:block;
     width:40px;
     height:40px;
-    margin:5px 10px;
+    margin:8px 10px;
     position:relative;
     z-index:10;
     }
@@ -513,20 +507,23 @@ em      { font-style:italic; }
 .icon.branding      { background-position:0 -100px; }
 .icon.help          { background-position:-60px -80px; }
 .icon.about         { background-position:-80px -80px; }
-.icon.folder        { background-position:-100px -80px; }
-.icon.file          { background-position:-120px -80px; }
-.icon.private       { background-position:-140px -80px; }
-.icon.folder-group  { background-position:-200px -80px; }
-.icon.cancel        { background-position:-220px -80px; }
+.icon.folder-group  { background-position:-100px -80px; }
+.icon.cancel        { background-position:-120px -80px; }
+.icon.bin           { background-position:-140px -80px; top:0; }
 
-.content .icon.repo          { background-position:-40px -100px; }
+.listing .icon.round         { background-position:-280px -100px; }
+.listing .icon.round.media   { background-position:-320px -100px; }
+
+.content .icon.repo,
 .heading .icon.repo          { background-position:-40px -100px; }
-.content .icon.repo.private  { background-position:-80px -100px; }
+
+.content .icon.repo.private,
 .heading .icon.repo.private  { background-position:-80px -100px; }
 
-.markdown .icon.md           { background-position:-120px -100px; }
+.content .icon.md            { background-position:-120px -100px; }
 .heading .icon.file          { background-position:-160px -100px; }
 .heading .icon.file.private  { background-position:-200px -100px; }
+.content .icon.folder        { background-position:-240px -100px; }
 
 .icon.assets                 { background-position:-40px 0; }
 .icon.assets.active:active,
@@ -574,6 +571,7 @@ em      { font-style:italic; }
   .listing .icon.small {
     background-color:transparent;
     }
+
 .heading .icon {
   background-color:#fff;
   }
@@ -597,14 +595,14 @@ em      { font-style:italic; }
   .content .details {
     width:400px;
     }
-  .details h4 {
-    position:relative;
-    top:3px;
-    }
   .content .details {
     width:340px;
     margin:0 15px;
     }
+    .content .details .title {
+      position:relative;
+      top:8px;
+      }
 
 .loading {
   background:transparent url('img/ajax-loader.gif') no-repeat;
@@ -740,34 +738,23 @@ em      { font-style:italic; }
 .listing {
   overflow:auto;
   }
-  .listing li > a {
+  .listing li {
     display:block;
     padding:8px 15px 9px;
-    border-top:1px solid #C3CCD0;
+    border-top:1px solid #f0f0f0;
     white-space:nowrap;
     }
-    .sidebar .listing li a {
-      border-color:#fff;
+    .listing .item.active,
+    .sidebar .listing li a:hover {
+      background-color:#f8f8f8;
       }
-      .sidebar .listing li a:hover {
-        background-color:#fff;
+    .listing .item.active .round.icon {
+      background-color:#fff;
       }
-      .sidebar .listing li a .status {
-        width:15px;
-        display:inline-block;
-        font-weight:normal;
-      }
-    .listing .markdown a {
-      padding:15px;
-      overflow:hidden; /* todo: why? */
-      }
-      .listing .markdown a:hover .icon {
-        background-color:#fff;
-        }
-
-    .listing li a.active,
-    .listing li a:hover {
-      background:#f8f8f8;
+    .sidebar .listing li a .status {
+      width:15px;
+      display:inline-block;
+      font-weight:normal;
       }
 
 .content .editor {
@@ -781,16 +768,16 @@ em      { font-style:italic; }
     height:500px;
     }
 
-  .profile .content .listing li {
+  .content .listing .directory > a,
+  .content .listing li {
     position:relative;
     display:block;
     padding:10px 15px;
     border-top:1px solid #f0f0f0;
     }
-    .profile .content .listing li > a {
-      padding:0;
-      display:inline;
+    .content .listing .directory {
       border:none;
+      padding:0;
       }
 
 .prose .blocks {
@@ -1374,6 +1361,9 @@ label.error {
   /* This corrects for the 1px gap introduced to the left of the scrollbar
      by the rule for .CodeMirror-scrollbar-inner. */
   margin-left:-1px;
+
+  /* Do we ever need the scrollbar if it's provided in prose */
+  display:none!important;
   }
 .CodeMirror-scrollbar-inner {
   /* This needs to have a nonzero width in order for the scrollbar to appear
@@ -1478,7 +1468,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 .cm-s-prose-bright {  color: #3D494E; }
 .cm-s-prose-bright .CodeMirror-selected {background: #AFC3CF; }
 .cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880; }
-.cm-s-prose-bright .CodeMirror-lines { margin-left:3px; margin-right:3px; }
+.cm-s-prose-bright .CodeMirror-lines { margin:0; }
 
 .cm-s-prose-bright .CodeMirror-gutter { background: #E7EEF2; border-right:1px solid #C3CCD0;; padding-right:3px; min-width:2.5em; }
 .cm-s-prose-bright .CodeMirror-gutter-text { color: #C3CCD0; }

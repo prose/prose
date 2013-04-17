@@ -10,7 +10,8 @@ module.exports = Backbone.View.extend({
   id: 'posts',
 
   events: {
-    'hover a.item': 'activeListing',
+    'hover .item': 'activeListing',
+     'click .delete': 'deleteFile',
     'keyup #filter': 'search'
   },
 
@@ -46,7 +47,7 @@ module.exports = Backbone.View.extend({
       title: data.repo,
       titleUrl: data.user + '/' + data.repo,
       alterable: false
-    }
+    };
 
     this.eventRegister.trigger('headerContext', header);
 
@@ -64,9 +65,7 @@ module.exports = Backbone.View.extend({
   },
 
   pageListing: function (handler) {
-
     var item, index;
-
     if ($('.item').hasClass('active')) {
       index = parseInt($('.item.active').data('index'), 10);
       $('.item.active').removeClass('active');
@@ -84,7 +83,7 @@ module.exports = Backbone.View.extend({
   },
 
   goToFile: function () {
-    var path = $('.item.active').attr('href');
+    var path = $('.item.active').find('.linkto').attr('href');
     router.navigate(path, true);
   },
 
@@ -112,10 +111,36 @@ module.exports = Backbone.View.extend({
   },
 
   renderResults: function () {
-    var tmpl = _(window.app.templates.files).template();
-    this.$('#files').html(tmpl(_.extend(this.model, app.state, {
-      currentPath: app.state.path
-    })));
+    var files = _(window.app.templates.files).template();
+    var directories = _(window.app.templates.directories).template();
+    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
+    var $files = $('#files', this.el);
+    $files.empty();
+
+    _(this.model.files).each(function(f, i) {
+      if (f.type === 'tree') {
+        $files.append(directories({
+          index: i,
+          user: data.user,
+          repo: data.repo,
+          path: (f.path) ? '/' + f.path : '',
+          branch: data.branch,
+          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
+        }));
+      } else {
+        $files.append(files({
+          index: i,
+          extension: _.extension(f.name),
+          isBinary: _.isBinary(_.extension(f.name)),
+          repo: data.repo,
+          branch: data.branch,
+          path: f.path,
+          filename: _.filename(f.name) || 'Untitled',
+          name: f.name,
+          user: data.user
+        }));
+      }
+    });
   },
 
   // Creates human readable versions of _posts/paths
@@ -124,7 +149,7 @@ module.exports = Backbone.View.extend({
       return {
         path: path,
         name: path
-      }
+      };
     });
   },
 
@@ -134,5 +159,24 @@ module.exports = Backbone.View.extend({
 
     $listings.removeClass('active');
     $listing.addClass('active');
+  },
+
+  deleteFile: function(e) {
+    var $file = $(e.target, this.el);
+    var file = {
+      user: $file.data('user'),
+      repo: $file.data('repo'),
+      branch: $file.data('branch'),
+      fileName: $file.data('file')
+    }
+
+    if (confirm('Are you sure you want to delete that file?')) {
+      window.app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function (err) {
+        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+        router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
+      }, this));
+    }
+
+    return false;
   }
 });
