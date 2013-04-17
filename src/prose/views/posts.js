@@ -131,7 +131,7 @@ module.exports = Backbone.View.extend({
         $files.append(files({
           index: i,
           extension: _.extension(f.name),
-          isMedia: _.isMedia(_.extension(f.name)),
+          isBinary: _.isBinary(_.extension(f.name)),
           repo: data.repo,
           branch: data.branch,
           path: f.path,

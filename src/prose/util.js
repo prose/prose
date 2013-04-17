@@ -121,11 +121,11 @@ _.filename = function(file) {
 };
 
 
-// Determines whether a given file is a media file
+// Determines whether a given file is a binary file
 // -------
 
-_.isMedia = function(file) {
-  var regex = new RegExp('(jpeg|jpg|gif|png|ico)$');
+_.isBinary = function(file) {
+  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff)$');
   return regex.test(file);
 }
 

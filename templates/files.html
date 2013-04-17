@@ -1,7 +1,7 @@
 <li class='clearfix item' data-index='<%= index %>'>
-  <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
+  <div class='fl icon round <%= extension %> <% if (isBinary) { %>media<% } %>'></div>
   <div class='fl details'>
-    <% if (isMedia) { %>
+    <% if (isBinary) { %>
       <h3 class='title'><%= name %></h3>
     <% } else { %>
       <a class='clearfix'
@@ -16,7 +16,7 @@
     <% } %>
   </div>
   <div class='fr actions cleafix'>
-    <% if (!isMedia) { %>
+    <% if (!isBinary) { %>
       <a class='clearfix linkto'
         title='Edit this File'
         href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
