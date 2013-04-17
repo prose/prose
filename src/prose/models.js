@@ -549,7 +549,8 @@ module.exports = {
       // Given a YAML front matter, determines published or not
 
       function published(metadata) {
-        return !!metadata.match(/published: true/);
+        // default to published unless explicitly set to false
+        return !metadata.match(/published: false/);
       }
 
       // Extract YAML from a post, trims whitespace

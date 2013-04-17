@@ -237,7 +237,6 @@ module.exports = Backbone.View.extend({
 
       // Update published
       // TODO: refactor to use this.model.metadata instead of raw YAML
-
       function updatePublished(yamlStr, published) {
         var regex = /published: (false|true)/;
         if (yamlStr.match(regex)) {
@@ -248,8 +247,9 @@ module.exports = Backbone.View.extend({
       }
 
       this.model.raw_metadata = this.metadataEditor.getValue();
-      var published = this.$('#post_published').prop('checked');
+      var published = $('#meta input[name="published"]').prop('checked');
 
+      this.model.published = this.model.metadata.published = published;
       this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
       this.metadataEditor.setValue(this.model.raw_metadata);
 
@@ -471,9 +471,26 @@ module.exports = Backbone.View.extend({
       function initialize(model) {
         var tmpl;
 
+        tmpl = _(window.app.templates.checkbox).template();
+        $metadataEditor.append(tmpl({
+          name: 'published',
+          label: 'Published',
+          value: 'published',
+          checked: model.published
+        }));
+
         _(model.default_metadata).each(function(data) {
           if (data && typeof data.field === 'object') {
             switch(data.field.element) {
+              case 'boolean':
+                tmpl = _(window.app.templates.checkbox).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  value: data.name,
+                  checked: data.field.value
+                }));
+                break;
               case 'input':
                 tmpl = _(window.app.templates.text).template();
                 $metadataEditor.append(tmpl({
