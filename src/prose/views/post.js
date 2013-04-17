@@ -39,7 +39,7 @@ module.exports = Backbone.View.extend({
       var data = _.extend(this.model, {
         mode: this.mode,
         preview: this.model.markdown ? marked(this.model.content) : '',
-        metadata: jsyaml.load(this.model.raw_metadata)
+        metadata: this.model.metadata
       });
 
       this.eventRegister = app.eventRegister;
