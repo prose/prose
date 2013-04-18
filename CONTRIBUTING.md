@@ -24,19 +24,13 @@ prose uses [Browserify](browserify.org) with [Make](http://www.gnu.org/software/
 to manage dependencies and build. Development also requires you
 have [node.js](http://nodejs.org) installed.
 
-To avoid merge conflicts in generated files, add the following lines to `.git/config`:
-
-```
-[merge "dist"]
-  driver = "sh `git rev-parse --show-toplevel`/prose.sh %O %A %B"
-```
-
 To get started:
 
 - [Install node.js](http://nodejs.org/). 'Install' will download a package for
 your OS.
 - Go to the directory where you have checked out `prose`
 - Run `npm install`
+- Run `make`
 - To run prose with authentication you'll need to add an `oauth.json` file
 to the root directory with the following contents:
 
