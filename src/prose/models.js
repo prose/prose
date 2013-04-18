@@ -3,6 +3,7 @@ var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var cookie = require('./cookie');
 var Github = require('../libs/github');
+var queue = require('queue-async');
 
 // Set up a GitHub object
 // -------
@@ -588,10 +589,32 @@ module.exports = {
 
       // load default metadata
       var cfg = app.state.config;
+      var q = queue();
+
       if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
         rawMetadata = cfg.prose.metadata[path];
         if (typeof rawMetadata === 'object') {
           defaultMetadata = rawMetadata;
+          _(defaultMetadata).each(function(value) {
+            if (value.field && value.field.options &&
+                typeof value.field.options === 'string' &&
+                value.field.options.match(/^https?:\/\//)) {
+
+              q.defer(function(cb){
+                $.ajax({
+                  cache: true,
+                  dataType: 'jsonp',
+                  jsonp: false,
+                  jsonpCallback: 'callback',
+                  url: value.field.options,
+                  success: function(d) {
+                    value.field.options = d;
+                    cb();
+                  }
+                });
+              });
+            }
+          });
         } else if (typeof rawMetadata === 'string') {
           try {
             defaultMetadata = jsyaml.load(rawMetadata);
@@ -606,17 +629,18 @@ module.exports = {
           }
         }
       }
-
-      cb(err, _.extend(post, {
-        'default_metadata': defaultMetadata,
-        'sha': commit,
-        'markdown': _.markdown(file),
-        'jekyll': _.hasMetadata(data),
-        'repo': repo,
-        'path': path,
-        'file': file,
-        'persisted': true
-      }));
+      q.await(function() {
+        cb(err, _.extend(post, {
+          'default_metadata': defaultMetadata,
+          'sha': commit,
+          'markdown': _.markdown(file),
+          'jekyll': _.hasMetadata(data),
+          'repo': repo,
+          'path': path,
+          'file': file,
+          'persisted': true
+        }));
+      });
     });
   }
 };
