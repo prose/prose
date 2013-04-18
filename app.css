@@ -501,6 +501,9 @@ em      { font-style:italic; }
 .content .icon.repo,
 .heading .icon.repo          { background-position:-40px -100px; }
 
+.icon.repo.owner             { background-position: -120px -140px; }
+.icon.repo.owner.private     { background-position: -160px -140px; }
+
 .content .icon.repo.private,
 .heading .icon.repo.private  { background-position:-80px -100px; }
 
