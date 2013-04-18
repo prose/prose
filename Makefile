@@ -3,6 +3,7 @@ UGLIFY = node_modules/.bin/uglifyjs
 BROWSERIFY = node_modules/.bin/browserify
 
 all: \
+	$(shell mkdir -p dist) \
 	dist/prose.js \
 	dist/prose.min.js
 

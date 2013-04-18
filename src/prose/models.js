@@ -4,6 +4,7 @@ var jsyaml = require('js-yaml');
 var queue = require('queue-async');
 var cookie = require('./cookie');
 var Github = require('../libs/github');
+var queue = require('queue-async');
 
 // Set up a GitHub object
 // -------
@@ -611,7 +612,8 @@ module.exports = {
       // Given a YAML front matter, determines published or not
 
       function published(metadata) {
-        return !!metadata.match(/published: true/);
+        // default to published unless explicitly set to false
+        return !metadata.match(/published: false/);
       }
 
       // Extract YAML from a post, trims whitespace
@@ -626,13 +628,13 @@ module.exports = {
         if (!_.hasMetadata(content)) return {
           raw_metadata: '',
           content: content,
-          published: false,
+          published: true,
           writeable: writeable()
         };
 
         var res = {
           raw_metadata: '',
-          published: false,
+          published: true,
           writeable: writeable()
         };
         res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
@@ -650,10 +652,32 @@ module.exports = {
 
       // load default metadata
       var cfg = app.state.config;
+      var q = queue();
+
       if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
         rawMetadata = cfg.prose.metadata[path];
         if (typeof rawMetadata === 'object') {
           defaultMetadata = rawMetadata;
+          _(defaultMetadata).each(function(value) {
+            if (value.field && value.field.options &&
+                typeof value.field.options === 'string' &&
+                value.field.options.match(/^https?:\/\//)) {
+
+              q.defer(function(cb){
+                $.ajax({
+                  cache: true,
+                  dataType: 'jsonp',
+                  jsonp: false,
+                  jsonpCallback: 'callback',
+                  url: value.field.options,
+                  success: function(d) {
+                    value.field.options = d;
+                    cb();
+                  }
+                });
+              });
+            }
+          });
         } else if (typeof rawMetadata === 'string') {
           try {
             defaultMetadata = jsyaml.load(rawMetadata);
@@ -668,17 +692,18 @@ module.exports = {
           }
         }
       }
-
-      cb(err, _.extend(post, {
-        'default_metadata': defaultMetadata,
-        'sha': commit,
-        'markdown': _.markdown(file),
-        'jekyll': _.hasMetadata(data),
-        'repo': repo,
-        'path': path,
-        'file': file,
-        'persisted': true
-      }));
+      q.await(function() {
+        cb(err, _.extend(post, {
+          'default_metadata': defaultMetadata,
+          'sha': commit,
+          'markdown': _.markdown(file),
+          'jekyll': _.hasMetadata(data),
+          'repo': repo,
+          'path': path,
+          'file': file,
+          'persisted': true
+        }));
+      });
     });
   }
 };

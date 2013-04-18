@@ -187,8 +187,8 @@ module.exports = Backbone.View.extend({
     $(this.app.render().el).prependTo(this.el);
 
     this.replaceMainView('notification', new window.app.views.Notification({
-      type: type,
-      message: message
+      'type': type,
+      'message': message
     }).render());
   },
 

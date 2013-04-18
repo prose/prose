@@ -83,7 +83,7 @@ textarea,
 input { font:13px/20px 'OpenSans', sans-serif; }
 
 html, body {
-  background:#e7eef2;
+  background:#fff;
   color:#57676e;
   -webkit-font-smoothing:antialiased;
   }
@@ -317,16 +317,10 @@ em      { font-style:italic; }
   Global Layout
 ---------------------------------------------*/
 .limiter {
-  width:740px;
+  position:relative;
+  width:680px;
   margin:0 auto;
-  -webkit-transition:width 300ms;
-     -moz-transition:width 300ms;
-       -o-transition:width 300ms;
-          transition:width 300ms;
   }
-  .open .limiter {
-    width:980px;
-    }
 
 /* Alterable filename input */
 .heading .filepath {
@@ -338,7 +332,7 @@ em      { font-style:italic; }
   line-height:1.5em;
   font-weight:700;
   padding:0;
-  width:580px;
+  width:560px;
   }
   .heading .details {
     position:relative;
@@ -353,7 +347,7 @@ em      { font-style:italic; }
     }
   .heading .filepath:focus,
   .heading .filepath:hover {
-    background-color:#e0e7eb;
+    background-color:#f8f8f8;
     }
 
 .inner {
@@ -362,12 +356,6 @@ em      { font-style:italic; }
   .inner.deep {
     padding:60px;
     }
-
-.application {
-  width:980px;
-  margin:0 auto 60px;
-  position:relative;
-  }
 
   /*
     Remove the presentation of the application
@@ -379,50 +367,38 @@ em      { font-style:italic; }
     }
 
 .content {
+  background:#fff;
   position:relative;
   z-index:500;
-  width:680px;
-  height:560px;
+  width:678px;
+  height:500px;
   height:auto!important;
-  min-height:560px;
-  left:120px;
-  -webkit-transition:left 300ms;
-     -moz-transition:left 300ms;
-       -o-transition:left 300ms;
-          transition:left 300ms;
+  min-height:500px;
   }
-  .open .content {
-    left:0;
-    }
 
 .sidebar {
-  position:relative;
-  z-index:100;
-  width:239px;
-  height:560px;
-  height:auto!important;
-  min-height:560px;
-  right:120px;
+  position:fixed;
+  top:0;
+  right:-220px;
+  width:220px;
+  height:100%;
   -webkit-transition:right 300ms;
      -moz-transition:right 300ms;
        -o-transition:right 300ms;
           transition:right 300ms;
   }
   .open .sidebar {
-    right:0;
-    }
-  .sidebar .navigation {
-    position:absolute;
-    top:0;
-    width:60px;
-    right:-60px;
-    height:100%;
-    z-index:-1;
+    right:60px;
+    z-index:1000;
     }
 
 /* ------------------------------------------
   Global Styles
 ---------------------------------------------*/
+.application {
+  padding:0 0 60px;
+  }
+
 .dropdown-menu.prose-menu {
   position:absolute;
   width:120px;
@@ -430,20 +406,14 @@ em      { font-style:italic; }
   left:0;
   }
   .prose-menu.open {
-    background:#fff;
+    background:#404040;
     }
-
-.content {
-  background:#fff;
-  -webkit-border-radius:4px 0 0 4px;
-          border-radius:4px 0 0 4px;
-  }
 
 .sidebar {
   background:#fff;
   border-left:1px solid #C3CCD0;
-  -webkit-border-radius:0 4px 4px 0;
-          border-radius:0 4px 4px 0;
+  -webkit-box-shadow:-1px 0 4px rgba(0,0,0,0.05);
+          box-shadow:-1px 0 4px rgba(0,0,0,0.05);
   }
   #recent {
     height: 449px;
@@ -462,37 +432,25 @@ em      { font-style:italic; }
     position:absolute;
     bottom:5px;
     }
-  .vert .nav li a {
-    background-color:#404040;
-    display:block;
-    width:40px;
-    height:40px;
-    margin:8px 10px;
-    position:relative;
-    z-index:10;
+  .vert .nav li a:active {
+    -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.25),
+                       inset 0 2px 2px #202020;
+            box-shadow:0 1px 1px rgba(255,255,255,0.25),
+                       inset 0 2px 2px #202020;
     }
-    .vert .nav li a:hover {
-      background-color:#505050;
-      }
-    .vert .nav li a:active {
+    .vert .nav li a.active:active {
+      background-color:#444;
+      border-color:#101010;
       -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.25),
                          inset 0 2px 2px #202020;
               box-shadow:0 1px 1px rgba(255,255,255,0.25),
                          inset 0 2px 2px #202020;
       }
-      .vert .nav li a.active:active {
-        background-color:#444;
-        border-color:#101010;
-        -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.25),
-                           inset 0 2px 2px #202020;
-                box-shadow:0 1px 1px rgba(255,255,255,0.25),
-                           inset 0 2px 2px #202020;
-        }
-    .vert .nav li a.active {
-      background-color:#fff;
-      -webkit-box-shadow:inset 0 1px 0 #202020;
-              box-shadow:inset 0 1px 0 #202020;
-      }
+  .vert .nav li a.active {
+    background-color:#fff;
+    -webkit-box-shadow:inset 0 1px 0 #202020;
+            box-shadow:inset 0 1px 0 #202020;
+    }
 
 .icon {
   background:transparent url('img/sprite.png') no-repeat 0 0;
@@ -521,12 +479,10 @@ em      { font-style:italic; }
       top:5px;
       }
 
-.icon.branding      { background-position:0 -100px; }
-.icon.help          { background-position:-60px -80px; }
-.icon.about         { background-position:-80px -80px; }
-.icon.folder-group  { background-position:-100px -80px; }
-.icon.cancel        { background-position:-120px -80px; }
-.icon.bin           { background-position:-140px -80px; top:0; }
+.icon.branding        { background-position:0 -40px; }
+.icon.folder-group    { background-position:-100px -80px; }
+.icon.cancel          { background-position:-120px -80px; }
+.icon.bin             { background-position:-140px -80px; top:0; }
 
 .listing .icon.round         { background-position:-280px -100px; pointer-events:none;}
 .listing .icon.round.media   { background-position:-320px -100px; }
@@ -578,7 +534,7 @@ em      { font-style:italic; }
 .icon.login                   { background-position:-360px -40px; }
 
 .avatar {
-  background:#fff;
+  background:#f8f8f8;
   display:inline-block;
   padding:5px;
   }
@@ -589,6 +545,7 @@ em      { font-style:italic; }
     width:50px;
     }
 
+.heading .icon,
 .listing .icon {
   background-color:#f8f8f8;
   }
@@ -596,13 +553,9 @@ em      { font-style:italic; }
     background-color:transparent;
     }
 
-.heading .icon {
-  background-color:#fff;
-  }
-
 /* Top Branding/Navigation */
 .heading {
-  margin:30px auto;
+  padding:30px 10px 15px;
   }
 
 .details {
@@ -641,8 +594,6 @@ em      { font-style:italic; }
   position:relative;
   z-index:20;
   border-top:1px solid #C3CCD0;
-  border-bottom:1px solid #C3CCD0;
-  margin-bottom:-1px;
   padding:0 15px;
   height:40px;
   line-height:40px;
@@ -654,9 +605,9 @@ em      { font-style:italic; }
   position:absolute;
   width:auto;
   padding:5px 10px;
-  left:0;
+  right:100%;
   display:none;
-  bottom:100%;
+  bottom:0;
   text-indent:0;
   font-size:11px;
   line-height:16px;
@@ -682,11 +633,10 @@ em      { font-style:italic; }
   Page Components
 ---------------------------------------------*/
 .topbar {
+  background:#fff;
   border-bottom:1px solid #C3CCD0;
-  margin-bottom:-1px;
   position:relative;
   z-index:10;
-  height:55px;
   }
   .topbar .dropdown-hover,
   .topbar .inner > a {
@@ -702,18 +652,23 @@ em      { font-style:italic; }
     padding:10px 15px 0;
     }
 
-.content-search input {
-  border:none;
-  margin-top:5px;
-  padding:15px;
-  font-size:16px;
-  line-height:24px;
-  width:90%;
-  height:45px;
+.toolbar,
+.content-search {
+  height:60px;  
   }
-.content-search .icon {
-  top:8px;
-  }
+  .content-search input {
+    border:none;
+    margin-top:8px;
+    padding:10px 15px;
+    margin-top:10px;
+    font-size:16px;
+    line-height:24px;
+    width:90%;
+    height:40px;
+    }
+  .content-search .icon {
+    top:10px;
+    }
 
 .menu li {
   float:left;
@@ -734,10 +689,6 @@ em      { font-style:italic; }
     border-color:#526066;
     }
 
-.editor,
-.listing {
-  overflow:auto;
-  }
   .sidebar .listing li a {
     display:block;
     padding:8px 15px 9px;
@@ -772,7 +723,7 @@ em      { font-style:italic; }
   .content .listing li {
     position:relative;
     display:block;
-    border-top:1px solid #f0f0f0;
+    border-bottom:1px solid #f0f0f0;
     padding:12px 15px;
     }
     .content .listing .directory {
@@ -820,13 +771,13 @@ em      { font-style:italic; }
             box-shadow:0 4px 10px rgba(0,0,0,0.15);
     }
   .dropdown {
-    background-color:#fff;
+    background-color:#404040;
     position:absolute;
     top:100%;
     right:0;
     z-index:1000;
     min-width:120px;
-    padding:4px 0;
+    padding:8px 0;
     text-align:left;
     display:none;
     }
@@ -834,26 +785,25 @@ em      { font-style:italic; }
       display:block;
       }
     .dropdown li.divider {
-      border-bottom:1px solid #e0e0e0;
+      border-bottom:1px solid #202020;
       margin:10px 0 5px;
       }
     .dropdown > li > a {
       background:transparent;
-      }
-    .dropdown > li > a {
+      color:#e0e7eb;
+      font-weight:400;
       display:block;
       padding:4px 15px;
-      margin-bottom:1px;
       float:none;
       clear:both;
       line-height:20px;
       white-space:nowrap;
-      font-weight:400;
+      -webkit-font-smoothing:subpixel-antialiased;
       }
     .dropdown a.active,
     .dropdown > li > a:hover,
     .dropdown > li > a:focus {
-      background-color:#e7eef2;
+      background-color:#505050;
       text-decoration:none;
       }
 
@@ -874,25 +824,25 @@ em      { font-style:italic; }
     display:block;
     }
 
-.drawer .commit {
+.sidebar .commit {
   position:relative;
   display:none;
   margin-bottom:15px;
   }
-  .drawer .commit .cancel {
+  .sidebar .commit .cancel {
     position:absolute;
     top:9px;
     right:18px;
     }
-  .drawer .commit textarea {
+  .sidebar .commit textarea {
     padding-right:30px;
     resize:none;
     }
-  .drawer .commit.active {
+  .sidebar .commit.active {
     display:block;
     }
 
-.drawer .button {
+.sidebar .button {
   margin-bottom:10px;
   }
 
@@ -1238,9 +1188,13 @@ label.error {
   font-weight:normal;
   color:#888;
   }
-.shadow {
-  -webkit-box-shadow:0 2px 6px rgba(0,0,0,0.10);
-          box-shadow:0 2px 6px rgba(0,0,0,0.10);
+.fixed {
+  position:fixed;
+  width:680px;
+  top:0;
+  left:auto;
+  -webkit-box-shadow:0 4px 6px -4px rgba(0,0,0,0.10);
+          box-shadow:0 4px 6px -4px rgba(0,0,0,0.10);
   }
 .round {
   -webkit-border-radius:4px;
