@@ -22,6 +22,9 @@
 <div class='inner editor'>
   <div class='inner views'>
     <div id='diff' class='view prose diff'></div>
+    <% if (jekyll) { %>
+      <div id='meta' class='view'></div>
+    <% } %>
     <div id='code' class='view active edit <% if (markdown) { %> markdown<% } %>'></div>
     <% if (markdown) { %>
       <div id='preview' class='view preview prose'><%= preview %></div>
