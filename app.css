@@ -661,6 +661,7 @@ em      { font-style:italic; }
     padding:10px 15px 0;
     }
 
+.toolbar,
 .content-search {
   height:60px;  
   }
