@@ -45,16 +45,16 @@ module.exports = Backbone.View.extend({
       this.eventRegister = app.eventRegister;
 
       // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'edit', 'preview', 'settings', 'deleteFile', 'updateMetaData', 'save', 'hideDiff', 'translate', 'updateFile');
+       _.bindAll(this, 'edit', 'preview', 'deleteFile', 'updateMetaData', 'save', 'hideDiff', 'translate', 'updateFile', 'meta');
       this.eventRegister.bind('edit', this.edit);
       this.eventRegister.bind('preview', this.preview);
-      this.eventRegister.bind('settings', this.settings);
       this.eventRegister.bind('deleteFile', this.deleteFile);
       this.eventRegister.bind('updateMetaData', this.updateMetaData);
       this.eventRegister.bind('save', this.save);
       this.eventRegister.bind('hideDiff', this.hideDiff);
       this.eventRegister.bind('updateFile', this.updateFile);
       this.eventRegister.bind('translate', this.translate);
+      this.eventRegister.bind('meta', this.meta);
 
       // Ping `views/app.js` to let know we should swap out the sidebar
       this.eventRegister.trigger('sidebarContext', data, 'post');
@@ -101,10 +101,7 @@ module.exports = Backbone.View.extend({
       var that = this;
       this.model.preview = false;
 
-      if (this.toolbar && this.toolbar !== null) {
-        this.toolbar.prependTo($('#post'));
-        this.toolbar = null;
-      }
+      this.toolbar.prependTo($('#post'));
 
       $('.post-views a').removeClass('active');
       $('.post-views .edit').addClass('active');
@@ -154,7 +151,6 @@ module.exports = Backbone.View.extend({
 
         this.$('.preview').html(marked(this.model.content));
         this.updateURL();
-        return false;
       }
 
       // Refresh CodeMirror each time
@@ -164,10 +160,18 @@ module.exports = Backbone.View.extend({
       }, 1);
     },
 
-    settings: function(e) {
+    meta: function() {
+
+      $('#prose').toggleClass('open', false);
+      this.toolbar = $('.toolbar').detach();
+
+      // Vertical Nav
       $('.post-views a').removeClass('active');
-      $('.post-views .settings').addClass('active');
-      $('#prose').toggleClass('open');
+      $('.post-views .meta').addClass('active');
+
+      // Content Window
+      $('.views .view', this.el).removeClass('active');
+      $('#meta', this.el).addClass('active');
     },
 
     deleteFile: function() {
@@ -465,7 +469,7 @@ module.exports = Backbone.View.extend({
     },
 
     buildMeta: function() {
-      var $metadataEditor = $('#meta');
+      var $metadataEditor = $('#meta', this.el);
       $metadataEditor.empty();
 
       function initialize(model) {
@@ -623,13 +627,13 @@ module.exports = Backbone.View.extend({
       // Unbind pagehide event handler when View is removed
       this.eventRegister.unbind('edit', this.postViews);
       this.eventRegister.unbind('preview', this.preview);
-      this.eventRegister.unbind('settings', this.settings);
       this.eventRegister.unbind('deleteFile', this.deleteFile);
       this.eventRegister.unbind('updateMetaData', this.updateMetaData);
       this.eventRegister.unbind('save', this.save);
       this.eventRegister.unbind('hideDiff', this.hideDiff);
       this.eventRegister.unbind('translate', this.translate);
       this.eventRegister.unbind('updateFile', this.updateFile);
+      this.eventRegister.unbind('meta', this.updateFile);
 
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);

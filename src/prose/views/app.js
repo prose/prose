@@ -10,6 +10,7 @@ module.exports = Backbone.View.extend({
       'click .post-views .edit': 'edit',
       'click .post-views .preview': 'preview',
       'click .post-views .settings': 'settings',
+      'click .post-views .meta': 'meta',
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
@@ -39,9 +40,13 @@ module.exports = Backbone.View.extend({
       // Fix this in re-factor, could be much tighter
       if (this.model.mode === 'edit' || this.model.mode === 'blob' || this.model.mode === 'new') {
         $('#prose').toggleClass('open', false);
+        this.viewing = 'edit';
 
       // Project contents when there aren't branches
       } else if (app.state.mode === 'tree' && !app.state.branches.length) {
+        $('#prose').toggleClass('open', false);
+
+      } else if (!window.authenticated) {
         $('#prose').toggleClass('open', false);
 
       } else {
@@ -73,14 +78,6 @@ module.exports = Backbone.View.extend({
         .empty()
         .append(sidebarTmpl(data));
 
-      // TODO Fix this. delay is clunky.
-      _.delay(function() {
-        var height = $('.sidebar', this.el).height();
-        if (height > 600) {
-          $('.editor', this.el).height(height - 90);
-        }
-      }, 500);
-
       // Branch Switching
       $('.chzn-select').chosen().change(function() {
           router.navigate($(this).val(), true);
@@ -95,6 +92,7 @@ module.exports = Backbone.View.extend({
 
     // Event Triggering to other files
     edit: function(e) {
+      this.viewing = 'edit';
       this.eventRegister.trigger('edit', e);
       return false;
     },
@@ -103,15 +101,32 @@ module.exports = Backbone.View.extend({
       if ($(e.target).data('jekyll')) {
         this.eventRegister.trigger('preview', e);
       } else {
+        this.viewing = 'preview';
         this.eventRegister.trigger('preview', e);
-
         // Cancel propagation
         return false;
       }
     },
 
+    // Event Triggering to other files
+    meta: function(e) {
+      this.viewing = 'meta';
+      this.eventRegister.trigger('meta', e);
+      return false;
+    },
+
     settings: function(e) {
-      this.eventRegister.trigger('settings', e);
+      $navItems = $('.navigation a', this.el);
+
+      if ($(e.target, this.el).hasClass('active')) {
+        $navItems.removeClass('active');
+        $('.navigation .' + this.viewing, this.el).addClass('active');
+      } else {
+        $navItems.removeClass('active');
+        $(e.target, this.el).addClass('active');
+      }
+
+      $('#prose').toggleClass('open');
       return false;
     },
 
@@ -170,7 +185,7 @@ module.exports = Backbone.View.extend({
       if ($('#start').length > 0) {
         app.instance.start();
       } else {
-        window.location.reload();
+        router.navigate('/', true);
       }
       return false;
     },
