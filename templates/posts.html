@@ -1,16 +1,15 @@
 <div class='topbar content-search'>
   <span class='icon search inline fr'></span>
   <input type='text' id='filter' placeholder='Filter Files' />
+  <% if (path.length) { %>
+    <div class='breadcrumb'>
+      <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'>..</a>
+      <% _.each(_.chunkedPath(path), function(p) { %>
+        <span class='slash'>/</span>
+        <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
+      <% }); %>
+    </div>
+  <% } %>
 </div>
-
-<% if (path.length) { %>
-  <div class='breadcrumb'>
-    <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'>..</a>
-    <% _.each(_.chunkedPath(path), function(p) { %>
-      <span class='slash'>/</span>
-      <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
-    <% }); %>
-  </div>
-<% } %>
 
 <ul id='files' class='listing'></ul>

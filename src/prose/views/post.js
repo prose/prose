@@ -91,7 +91,7 @@ module.exports = Backbone.View.extend({
       $('.post-views .edit').toggleClass('active', true);
 
       _.delay(function () {
-        utils.shadowScroll($('.editor'), $('.toolbar'));
+        utils.fixedScroll($('.topbar'));
       }, 1);
 
       return this;
