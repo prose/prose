@@ -488,8 +488,7 @@ em      { font-style:italic; }
       top:5px;
       }
 
-.icon.branding        { background-position:0 -100px; }
-.open .icon.branding  { background-position:0 -40px; }
+.icon.branding        { background-position:0 -40px; }
 .icon.folder-group    { background-position:-100px -80px; }
 .icon.cancel          { background-position:-120px -80px; }
 .icon.bin             { background-position:-140px -80px; top:0; }
@@ -603,8 +602,7 @@ em      { font-style:italic; }
   background:#F8F8F8;
   position:relative;
   z-index:20;
-  border-bottom:1px solid #C3CCD0;
-  margin-bottom:-1px;
+  border-top:1px solid #C3CCD0;
   padding:0 15px;
   height:40px;
   line-height:40px;
@@ -648,7 +646,6 @@ em      { font-style:italic; }
   border-bottom:1px solid #C3CCD0;
   position:relative;
   z-index:10;
-  height:60px;
   }
   .topbar .dropdown-hover,
   .topbar .inner > a {
@@ -664,18 +661,21 @@ em      { font-style:italic; }
     padding:10px 15px 0;
     }
 
-.content-search input {
-  border:none;
-  margin-top:8px;
-  padding:10px 15px;
-  font-size:16px;
-  line-height:24px;
-  width:90%;
-  height:40px;
+.content-search {
+  height:60px;  
   }
-.content-search .icon {
-  top:10px;
-  }
+  .content-search input {
+    border:none;
+    margin-top:8px;
+    padding:10px 15px;
+    font-size:16px;
+    line-height:24px;
+    width:90%;
+    height:40px;
+    }
+  .content-search .icon {
+    top:10px;
+    }
 
 .menu li {
   float:left;
