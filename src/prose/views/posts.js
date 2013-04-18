@@ -11,17 +11,17 @@ module.exports = Backbone.View.extend({
 
   events: {
     'hover .item': 'activeListing',
-     'click .delete': 'deleteFile',
+    'click .delete': 'deleteFile',
     'keyup #filter': 'search'
   },
 
   initialize: function () {
     if (!window.shortcutsRegistered) {
       key('enter', _.bind(function (e, handler) {
-        this.goToFile();
+        utils.goToFile();
       }, this));
       key('up, down', _.bind(function (e, handler) {
-        this.pageListing(handler.key);
+        utils.pageListing(handler.key);
         e.preventDefault();
         e.stopPropagation();
       }, this));
@@ -64,29 +64,6 @@ module.exports = Backbone.View.extend({
     return this;
   },
 
-  pageListing: function (handler) {
-    var item, index;
-    if ($('.item').hasClass('active')) {
-      index = parseInt($('.item.active').data('index'), 10);
-      $('.item.active').removeClass('active');
-
-      if (handler === 'up') {
-        item = index - 1;
-        $('.item[data-index=' + item + ']').addClass('active');
-      } else {
-        item = index + 1;
-        $('.item[data-index=' + item + ']').addClass('active');
-      }
-    } else {
-      $('.item[data-index=0]').addClass('active');
-    }
-  },
-
-  goToFile: function () {
-    var path = $('.item.active').find('.linkto').attr('href');
-    router.navigate(path, true);
-  },
-
   search: function (e) {
     if (e.which === 27) { // ESC
       _.delay(_.bind(function () {
@@ -96,7 +73,7 @@ module.exports = Backbone.View.extend({
       }, this), 10);
 
     } else if (e.which === 40 && $('.item').length > 0) {
-      this.pageListing('down'); // Arrow Down
+      utils.pageListing('down'); // Arrow Down
       e.preventDefault();
       e.stopPropagation();
       $('#filter').blur();

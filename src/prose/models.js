@@ -130,10 +130,12 @@ module.exports = {
 
   loadRepos: function(username, cb) {
     var user = github().getUser();
+    user.show(username, function(err, u) {
 
-    user.show(username, function (err, u) {
+      // TODO if error, bring up the notification to
+      // say, "You need to be a logged in user to do this!"
+      // if (err) ...
       var owners = {};
-
       if (u.type && u.type.toLowerCase() === 'user') {
         user.userRepos(username, function (err, repos) {
           cb(null, {
@@ -550,7 +552,8 @@ module.exports = {
       // Given a YAML front matter, determines published or not
 
       function published(metadata) {
-        return !!metadata.match(/published: true/);
+        // default to published unless explicitly set to false
+        return !metadata.match(/published: false/);
       }
 
       // Extract YAML from a post, trims whitespace
@@ -565,13 +568,13 @@ module.exports = {
         if (!_.hasMetadata(content)) return {
           raw_metadata: '',
           content: content,
-          published: false,
+          published: true,
           writeable: writeable()
         };
 
         var res = {
           raw_metadata: '',
-          published: false,
+          published: true,
           writeable: writeable()
         };
         res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {

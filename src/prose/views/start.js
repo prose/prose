@@ -12,9 +12,7 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var tmpl = _(window.app.templates.start).template();
-
-    $('.header').hide();
-    $('#prose').empty().html(tmpl(this.model));
+    $('.application').empty().html(tmpl(this.model));
 
     return this;
   },

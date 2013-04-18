@@ -7,7 +7,22 @@ module.exports = Backbone.View.extend({
     id: 'profile',
 
     events: {
-      'keyup #filter': 'filterFiles'
+      'hover .item': 'activeListing',
+      'keyup #filter': 'search'
+    },
+
+    initialize: function () {
+      if (!window.shortcutsRegistered) {
+        key('enter', _.bind(function (e, handler) {
+          utils.goToFile();
+        }, this));
+        key('up, down', _.bind(function (e, handler) {
+          utils.pageListing(handler.key);
+          e.preventDefault();
+          e.stopPropagation();
+        }, this));
+        window.shortcutsRegistered = true;
+      }
     },
 
     render: function () {
@@ -46,7 +61,7 @@ module.exports = Backbone.View.extend({
       return this;
     },
 
-    filterFiles: function (e) {
+    search: function (e) {
       // If this is the ESC key
       if (e.which === 27) {
         _.delay(_.bind(function () {
@@ -54,6 +69,12 @@ module.exports = Backbone.View.extend({
           this.model = window.app.models.filterProjects(this.cache, '');
           this.renderResults();
         }, this), 10);
+      } else if (e.which === 40 && $('.item').length > 0) {
+        utils.pageListing('down'); // Arrow Down
+        e.preventDefault();
+        e.stopPropagation();
+        $('#filter').blur();
+
       } else {
         _.delay(_.bind(function () {
           var searchstr = $('#filter', this.el).val();
@@ -63,9 +84,32 @@ module.exports = Backbone.View.extend({
       }
     },
 
+    activeListing: function (e) {
+      $listings = $('.item', this.el);
+      $listing = $(e.target, this.el);
+
+      $listings.removeClass('active');
+      $listing.addClass('active');
+    },
+
     renderResults: function () {
       var tmpl = _(window.app.templates.projects).template();
-      $('#projects', this.el).empty().append(tmpl(this.model));
+      var repos;
+      var $projects = $('#projects', this.el);
+          $projects.empty();
+
+      // Flatten the listing if app.username === state.user
+      if (this.model.state && (this.model.state.user === app.username)) {
+        repos = _(this.model.owners).flatten();
+      } else {
+        repos = this.model.repos;
+      }
+
+      _(repos).each(function(r, i) {
+        $projects.append(tmpl(_.extend(r, {
+          index: i
+        })));
+      });
     }
 
 });
