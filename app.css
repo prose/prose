@@ -137,7 +137,7 @@ h2 {
   padding:0 0 5px;
   }
   h2.label {
-    margin:10px 0 0;
+    margin:5px 0 0;
     padding:0;
     }
 
@@ -166,8 +166,9 @@ p {
 label {
   display:block;
   font-size:13px;
-  line-height:18px;
-  margin:5px 0 2px;
+  line-height:20px;
+  margin:10px 0 5px;
+  font-weight:700;
   }
 select,
 textarea,
@@ -364,7 +365,7 @@ em      { font-style:italic; }
 
 .application {
   width:980px;
-  margin:15px auto 60px;
+  margin:0 auto 60px;
   position:relative;
   }
 
@@ -381,9 +382,9 @@ em      { font-style:italic; }
   position:relative;
   z-index:500;
   width:680px;
-  height:600px;
+  height:560px;
   height:auto!important;
-  min-height:600px;
+  min-height:560px;
   left:120px;
   -webkit-transition:left 300ms;
      -moz-transition:left 300ms;
@@ -398,9 +399,9 @@ em      { font-style:italic; }
   position:relative;
   z-index:100;
   width:239px;
-  height:600px;
+  height:560px;
   height:auto!important;
-  min-height:600px;
+  min-height:560px;
   right:120px;
   -webkit-transition:right 300ms;
      -moz-transition:right 300ms;
@@ -422,6 +423,16 @@ em      { font-style:italic; }
 /* ------------------------------------------
   Global Styles
 ---------------------------------------------*/
+.dropdown-menu.prose-menu {
+  position:absolute;
+  width:120px;
+  top:0;
+  left:0;
+  }
+  .prose-menu.open {
+    background:#fff;
+    }
+
 .content {
   background:#fff;
   -webkit-border-radius:4px 0 0 4px;
@@ -442,6 +453,10 @@ em      { font-style:italic; }
   .vert .nav.project {
     margin:10px 0 0;
     padding-bottom:5px;
+    }
+  .vert .nav.auth {
+    position:absolute;
+    bottom:5px;
     }
   .vert .nav li a {
     background-color:#404040;
@@ -551,6 +566,13 @@ em      { font-style:italic; }
 .icon.repo.active:active      { background-position:-280px 0; }
 .icon.repo.active             { background-position:-280px -40px; }
 
+.icon.meta,
+.icon.meta.active:active      { background-position:-320px 0; }
+.icon.meta.active             { background-position:-320px -40px; }
+
+.icon.logout                  { background-position:-360px 0; }
+.icon.login                   { background-position:-360px -40px; }
+
 .avatar {
   background:#fff;
   display:inline-block;
@@ -575,16 +597,8 @@ em      { font-style:italic; }
   }
 
 /* Top Branding/Navigation */
-.header {
-  font-size:12px;
-  font-weight:700;
-  padding:15px 20px 0;
-  position:relative;
-  z-index:100;
-  }
-
 .heading {
-  height:60px;
+  margin:30px auto;
   }
 
 .details {
@@ -636,45 +650,15 @@ em      { font-style:italic; }
   position:absolute;
   width:auto;
   padding:5px 10px;
-  left:100%;
+  left:0;
   display:none;
-  top:0;
+  bottom:100%;
   text-indent:0;
   font-size:11px;
-  line-height:18px;
+  line-height:16px;
   }
-  .popup.arrow-left:after {
-    border-color:transparent #202020;
-    top:10px;
-    }
   a:hover .popup {
     display:block;
-    }
-
-.footer {
-  background:#e0e7eb;
-  position:relative;
-  font-size:12px;
-  padding:15px 0;
-  height:60px;
-  }
-  .start .footer {
-    position:fixed;
-    bottom:0;
-    width:100%;
-    }
-  .footer .prose-logo {
-    position:absolute;
-    height:60px;
-    bottom:0;
-    left:50%;
-    margin:0 0 0 -30px;
-    }
-    .footer .prose-logo .branding {
-      margin:10px;
-      }
-  .footer .brand {
-    margin-top:5px;
     }
 
 /* ------------------------------------------
@@ -698,23 +682,33 @@ em      { font-style:italic; }
   margin-bottom:-1px;
   position:relative;
   z-index:10;
-  height:60px;
+  height:55px;
   }
+  .topbar .dropdown-hover,
+  .topbar .inner > a {
+    display:block;
+    height:35px;
+    padding:0 15px;
+    border:1px solid #c4ced1;
+    line-height:34px;
+    -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.5);
+            box-shadow:0 1px 1px rgba(255,255,255,0.5);
+    }
   .toolbar .inner {
-    padding:13px 15px 0;
+    padding:10px 15px 0;
     }
 
 .content-search input {
   border:none;
   margin-top:5px;
   padding:15px;
-  font-size:18px;
-  line-height:26px;
+  font-size:16px;
+  line-height:24px;
   width:90%;
-  height:50px;
+  height:45px;
   }
 .content-search .icon {
-  top:10px;
+  top:8px;
   }
 
 .menu li {
@@ -758,18 +752,18 @@ em      { font-style:italic; }
   }
 .content .toolbar + .editor,
 .content .listing {
-  height:540px;
+  height:506px;
   }
   .content .breadcrumb + .listing {
-    height:500px;
+    height:460px;
     }
 
   .content .listing .directory > a,
   .content .listing li {
     position:relative;
     display:block;
-    padding:10px 15px;
     border-top:1px solid #f0f0f0;
+    padding:12px 15px;
     }
     .content .listing .directory {
       border:none;
@@ -811,14 +805,9 @@ em      { font-style:italic; }
 .dropdown-menu {
   position:relative;
   }
-  .dropdown-hover {
-    display:block;
-    height:35px;
-    padding:0 15px;
-    border:1px solid #c4ced1;
-    line-height:34px;
-    -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.5);
-            box-shadow:0 1px 1px rgba(255,255,255,0.5);
+  .application .dropdown {
+    -webkit-box-shadow:0 4px 10px rgba(0,0,0,0.15);
+            box-shadow:0 4px 10px rgba(0,0,0,0.15);
     }
   .dropdown {
     background-color:#fff;
@@ -826,25 +815,10 @@ em      { font-style:italic; }
     top:100%;
     right:0;
     z-index:1000;
-    float:left;
     min-width:120px;
     padding:4px 0;
     text-align:left;
     display:none;
-    opacity:0;
-    -webkit-animation-fill-mode:both;
-       -moz-animation-fill-mode:both;
-         -o-animation-fill-mode:both;
-            animation-fill-mode:both;
-    -webkit-animation-duration:100ms;
-       -moz-animation-duration:100ms;
-         -o-animation-duration:100ms;
-            animation-duration:100ms;
-    -webkit-box-shadow:0 4px 10px rgba(0,0,0,0.15);
-            box-shadow:0 4px 10px rgba(0,0,0,0.15);
-    -webkit-background-clip:padding-box;
-       -moz-background-clip:padding;
-            background-clip:padding-box;
     }
     .dropdown li {
       display:block;
@@ -872,45 +846,13 @@ em      { font-style:italic; }
       background-color:#e7eef2;
       text-decoration:none;
       }
-    .dropdown:after {
-      right:20px;
-      }
 
-.open {
+.dropdown-menu.open {
   *z-index:1000;
   }
-  .open > .dropdown {
+  .dropdown-menu.open .dropdown {
     display:block;
-    opacity:1;
-    -webkit-animation-delay:100ms;
-       -moz-animation-delay:100ms;
-         -o-animation-delay:100ms;
-            animation-delay:100ms;
-    -webkit-animation-name:fadeInTop;
-       -moz-animation-name:fadeInTop;
-         -o-animation-name:fadeInTop;
-            animation-name:fadeInTop;
     }
-
-/* ------------------------------------------
-  Animation
----------------------------------------------*/
-@-webkit-keyframes fadeInTop {
-	0%    { opacity:0; -webkit-transform:translateY(-20px); }
-	100%  { opacity:1; -webkit-transform:translateY(0); }
-  }
-@-moz-keyframes fadeInTop {
-	0%    { opacity:0; -moz-transform:translateY(-20px); }
-	100%  { opacity:1; -moz-transform:translateY(0); }
-  }
-@-o-keyframes fadeInTop {
-	0%    { opacity:0; -o-transform:translateY(-20px); }
-	100%  { opacity:1; -o-transform:translateY(0); }
-  }
-@keyframes fadeInTop {
-	0%    { opacity:0; transform:translateY(-20px); }
-	100%  { opacity:1; transform:translateY(0); }
-  }
 
 /* ------------------------------------------
   File /:filename
@@ -1294,7 +1236,6 @@ label.error {
   -webkit-border-radius:4px;
           border-radius:4px;
   }
-
 .arrow-top:after,
 .arrow-right:after,
 .arrow-bottom:after,
@@ -1303,7 +1244,7 @@ label.error {
   border-width:0 5px 5px;
   border-style:solid;
   position:absolute;
-  border-color:#fff transparent;
+  border-color:#202020 transparent;
   }
   .arrow-top:after {
     top:-5px;
@@ -1311,10 +1252,11 @@ label.error {
   .arrow-bottom:after {
     border-width:5px 5px 0;
     bottom:-5px;
+    left:5px;
     }
   .arrow-left:after,
   .arrow-right:after {
-    border-color:transparent #fff;
+    border-color:transparent #202020;
     }
   .arrow-left:after {
     border-width:5px 5px 5px 0;
@@ -1337,7 +1279,7 @@ label.error {
   overflow:hidden;
   }
   .markdown .CodeMirror {
-    font:14px/1.7em Menlo, monospace;
+    font:14px/1.75em Menlo, monospace;
     }
 
 .CodeMirror-scroll {

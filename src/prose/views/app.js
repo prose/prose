@@ -10,6 +10,7 @@ module.exports = Backbone.View.extend({
       'click .post-views .edit': 'edit',
       'click .post-views .preview': 'preview',
       'click .post-views .settings': 'settings',
+      'click .post-views .meta': 'meta',
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
@@ -43,6 +44,9 @@ module.exports = Backbone.View.extend({
       } else if (app.state.mode === 'tree' && !app.state.branches.length) {
         $('#prose').toggleClass('open', false);
 
+      } else if (!window.authenticated) {
+        $('#prose').toggleClass('open', false);
+
       } else {
         $('#prose').toggleClass('open', true);
       }
@@ -72,14 +76,6 @@ module.exports = Backbone.View.extend({
         .empty()
         .append(sidebarTmpl(data));
 
-      // TODO Fix this. delay is clunky.
-      _.delay(function() {
-        var height = $('.sidebar', this.el).height();
-        if (height > 600) {
-          $('.editor', this.el).height(height - 90);
-        }
-      }, 500);
-
       // Branch Switching
       $('.chzn-select').chosen().change(function() {
           router.navigate($(this).val(), true);
@@ -97,10 +93,15 @@ module.exports = Backbone.View.extend({
         this.eventRegister.trigger('preview', e);
       } else {
         this.eventRegister.trigger('preview', e);
-
         // Cancel propagation
         return false;
       }
+    },
+
+    // Event Triggering to other files
+    meta: function(e) {
+      this.eventRegister.trigger('meta', e);
+      return false;
     },
 
     settings: function(e) {
@@ -173,7 +174,7 @@ module.exports = Backbone.View.extend({
       if ($('#start').length > 0) {
         app.instance.start();
       } else {
-        window.location.reload();
+        router.navigate('/', true);
       }
       return false;
     },

@@ -129,10 +129,12 @@ module.exports = {
 
   loadRepos: function(username, cb) {
     var user = github().getUser();
+    user.show(username, function(err, u) {
 
-    user.show(username, function (err, u) {
+      // TODO if error, bring up the notification to
+      // say, "You need to be a logged in user to do this!"
+      // if (err) ...
       var owners = {};
-
       if (u.type && u.type.toLowerCase() === 'user') {
         user.userRepos(username, function (err, repos) {
           cb(null, {
