@@ -39,6 +39,7 @@ module.exports = Backbone.View.extend({
       // Fix this in re-factor, could be much tighter
       if (this.model.mode === 'edit' || this.model.mode === 'blob' || this.model.mode === 'new') {
         $('#prose').toggleClass('open', false);
+        this.viewing = 'edit';
 
       // Project contents when there aren't branches
       } else if (app.state.mode === 'tree' && !app.state.branches.length) {
@@ -84,6 +85,7 @@ module.exports = Backbone.View.extend({
 
     // Event Triggering to other files
     edit: function(e) {
+      this.viewing = 'edit';
       this.eventRegister.trigger('edit', e);
       return false;
     },
@@ -92,6 +94,7 @@ module.exports = Backbone.View.extend({
       if ($(e.target).data('jekyll')) {
         this.eventRegister.trigger('preview', e);
       } else {
+        this.viewing = 'preview';
         this.eventRegister.trigger('preview', e);
         // Cancel propagation
         return false;
@@ -100,6 +103,7 @@ module.exports = Backbone.View.extend({
 
     // Event Triggering to other files
     meta: function(e) {
+      this.viewing = 'meta';
       this.eventRegister.trigger('meta', e);
       return false;
     },
@@ -109,7 +113,7 @@ module.exports = Backbone.View.extend({
 
       if ($(e.target, this.el).hasClass('active')) {
         $navItems.removeClass('active');
-        $('.navigation .' + this.model.mode, this.el).addClass('active');
+        $('.navigation .' + this.viewing, this.el).addClass('active');
       } else {
         $navItems.removeClass('active');
         $(e.target, this.el).addClass('active');
