@@ -51,7 +51,7 @@ module.exports = Backbone.View.extend({
         .append(sidebar(this.model));
 
       _.delay(function () {
-        utils.shadowScroll($('#projects'), $('.content-search'));
+        utils.fixedScroll($('.topbar'));
         $('#filter').focus();
       }, 1);
 

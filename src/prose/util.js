@@ -347,18 +347,20 @@ module.exports = {
       });
 
       $('.dropdown-hover').click(function() {
-          return false;
+          var hasLink = $(this).data('link');
+          if (!hasLink) return false;
       });
   },
 
-  shadowScroll: function($el, $parent) {
-    $el.scroll(function() {
-      if ($el.scrollTop() !== 0) {
-        if (!$parent.hasClass('shadow')) {
-          $parent.addClass('shadow');
-        }
+  fixedScroll: function($el) {
+    var top = $el.offset().top;
+
+    $(window).scroll(function (e) {
+      var y = $(this).scrollTop();
+      if (y >= top) {
+        $el.addClass('fixed');
       } else {
-        $parent.removeClass('shadow');
+        $el.removeClass('fixed');
       }
     });
   },
