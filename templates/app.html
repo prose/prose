@@ -1,9 +1,9 @@
 <div class='prose-menu dropdown-menu'>
   <div class='inner'>
-    <a href='./' class='icon branding dropdown-hover'>Prose</a>
+    <a href='/' class='icon branding dropdown-hover' data-link=true>Prose</a>
     <ul class='dropdown'>
-      <li><a class='help' href='./help.html'><span class='icon inline small help'></span>Help</a></li>
-      <li><a class='about' href='./about.html'><span class='icon inline small about'></span>About</a></li>
+      <li><a class='help' href='./help.html'>Help</a></li>
+      <li><a class='about' href='./about.html'>About</a></li>
       <li class='divider'></li>
       <li><a href='https://github.com/prose/prose#readme'>Prose v1.0.0</a></li>
     </ul>
@@ -11,82 +11,77 @@
 </div>
 
 <div id='heading' class='heading limiter clearfix'></div>
+<div id='content' class='application content limiter'></div>
+<div id='drawer' class='sidebar'></div>
 
-<div class='application clearfix'>
-  <div id='content' class='content fl'></div>
-  <div class='sidebar fl'>
-    <div id='drawer' class='drawer'></div>
-
-    <div class='vert navigation'>
-      <ul class='project nav'>
+<div class='vert navigation'>
+  <ul class='project nav'>
+    <li>
+      <a href='/' class='icon round repos <% if (!app.state.mode) { %>active<% } %>'>
+        <span class='popup round arrow-right'>Explore Projects</span>
+      </a>
+    </li>
+    <% if (state.repo) { %>
+      <li>
+      <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo <% if (app.state.mode === "tree") { %>active<% } %>'>
+          <span class='popup round arrow-right'><%= repo %></span>
+        </a>
+      </li>
+      <% if (window.authenticated) { %>
         <li>
-          <a href='/' class='icon round repos <% if (!app.state.mode) { %>active<% } %>'>
-            <span class='popup round arrow-bottom'>Explore Projects</span>
+          <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='icon round new new-file'>
+            <span class='popup round arrow-right'>New File</span>
           </a>
         </li>
-        <% if (state.repo) { %>
-          <li>
-          <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='icon round repo <% if (app.state.mode === "tree") { %>active<% } %>'>
-              <span class='popup round arrow-bottom'><%= repo %></span>
-            </a>
-          </li>
-          <% if (window.authenticated) { %>
-            <li>
-              <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='icon round new new-file'>
-                <span class='popup round arrow-bottom'>New File</span>
-              </a>
-            </li>
-          <% } %>
-        <% } %>
-      </ul>
-
-      <% if (state.mode === 'edit' || state.mode === 'blob' || state.mode === 'new') { %>
-      <ul class='post-views nav'>
-        <li>
-          <a href='#' class='icon round edit' data-state='edit'>
-            <span class='popup round arrow-bottom'>Edit</span>
-          </a>
-        </li>
-        <% if (state.markdown || state.mode === 'new') { %>
-          <li>
-            <a href='#' class='icon round preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>
-              <span class='popup round arrow-bottom'>Preview</span>
-            </a>
-          </li>
-        <% } %>
-
-        <% if (window.authenticated) { %>
-          <% if (jekyll) { %>
-          <li>
-            <a href='#' class='icon round meta' data-state='meta'>
-              <span class='popup round arrow-bottom'>Meta Data</span>
-            </a>
-          </li>
-          <% } %>
-        <li>
-          <a href='#' class='icon round settings' data-state='settings' data-drawer=true>
-            <span class='popup round arrow-bottom'>Post Settings</span>
-          </a>
-        </li>
-        <% } %>
-      </ul>
       <% } %>
+    <% } %>
+  </ul>
 
-      <ul class='auth nav'>
-        <% if (window.authenticated) { %>
-        <li>
-          <a href='#' class='icon round auth logout'>
-            <span class='popup round arrow-bottom'>Logout <%= app.username %></span>
-          </a>
-        </li>
-        <% } else { %>
-        <li>
-          <a class='icon round auth login' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>
-            <span class='popup round arrow-bottom'>Sign in using GitHub</span>
-          </a>
-        </li>
-        <% } %>
-      </ul>
-    </div>
-  </div>
+  <% if (state.mode === 'edit' || state.mode === 'blob' || state.mode === 'new') { %>
+  <ul class='post-views nav'>
+    <li>
+      <a href='#' class='icon round edit' data-state='edit'>
+        <span class='popup round arrow-right'>Edit</span>
+      </a>
+    </li>
+    <% if (state.markdown || state.mode === 'new') { %>
+      <li>
+        <a href='#' class='icon round preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>
+          <span class='popup round arrow-right'>Preview</span>
+        </a>
+      </li>
+    <% } %>
+
+    <% if (window.authenticated) { %>
+      <% if (jekyll) { %>
+      <li>
+        <a href='#' class='icon round meta' data-state='meta'>
+          <span class='popup round arrow-right'>Meta Data</span>
+        </a>
+      </li>
+      <% } %>
+    <li>
+      <a href='#' class='icon round settings' data-state='settings' data-drawer=true>
+        <span class='popup round arrow-right'>Post Settings</span>
+      </a>
+    </li>
+    <% } %>
+  </ul>
+  <% } %>
+
+  <ul class='auth nav'>
+    <% if (window.authenticated) { %>
+    <li>
+      <a href='#' class='icon round auth logout'>
+        <span class='popup round arrow-right'>Logout <%= app.username %></span>
+      </a>
+    </li>
+    <% } else { %>
+    <li>
+      <a class='icon round auth login' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>
+        <span class='popup round arrow-right'>Sign in using GitHub</span>
+      </a>
+    </li>
+    <% } %>
+  </ul>
 </div>
