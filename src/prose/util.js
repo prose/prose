@@ -347,7 +347,8 @@ module.exports = {
       });
 
       $('.dropdown-hover').click(function() {
-          return false;
+          var hasLink = $(this).data('link');
+          if (!hasLink) return false;
       });
   },
 
