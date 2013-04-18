@@ -551,7 +551,8 @@ module.exports = {
       // Given a YAML front matter, determines published or not
 
       function published(metadata) {
-        return !!metadata.match(/published: true/);
+        // default to published unless explicitly set to false
+        return !metadata.match(/published: false/);
       }
 
       // Extract YAML from a post, trims whitespace
@@ -566,13 +567,13 @@ module.exports = {
         if (!_.hasMetadata(content)) return {
           raw_metadata: '',
           content: content,
-          published: false,
+          published: true,
           writeable: writeable()
         };
 
         var res = {
           raw_metadata: '',
-          published: false,
+          published: true,
           writeable: writeable()
         };
         res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
