@@ -337,7 +337,7 @@ module.exports = {
             if (store) {
               app.state.history = history = JSON.parse(store.getItem('history'));
 
-              if (history && history.branch === branch) {
+              if (history && history.user === user && history.repo === reponame && history.branch === branch) {
                 lastModified = history.modified;
               }
             }
@@ -356,15 +356,16 @@ module.exports = {
                 q.awaitAll(function(err, res) {
                   var history;
 
-                  var commits = res;
                   var files = {};
+                  var recent = {};
 
                   var commit;
                   var file;
                   var filename;
+                  var author;
 
-                  for (var i = 0; i < commits.length; i++) {
-                    commit = commits[i];
+                  for (var i = 0; i < res.length; i++) {
+                    commit = res[i];
 
                     for (var j = 0; j < commit.files.length; j++) {
                       file = commit.files[j];
@@ -375,14 +376,23 @@ module.exports = {
                       } else {
                         files[filename] = [file];
                       }
+
+                      author = commit.author.login;
+                      if (recent[author] && recent[author].length < 5) {
+                        recent[author] = _.union(recent[author], filename);
+                      } else if (!recent[author]) {
+                        recent[author] = [filename];
+                      }
                     }
                   }
 
                   var history = app.state.history = {
+                    'user': user,
+                    'repo': reponame,
                     'branch': branch,
                     'modified': xhr.getResponseHeader('Last-Modified'),
-                    'commits': commits,
                     'files': files,
+                    'recent': recent,
                     'link': xhr.getResponseHeader('link')
                   };
 

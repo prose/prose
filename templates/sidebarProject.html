@@ -10,33 +10,13 @@
   <% } %>
 </div>
 <% if (authenticated) { %>
-  <% if (history.commits.length) { %>
+  <% if (history.recent && history.recent[app.username]) { %>
     <div class='history'>
       <div class='inner'>
         <h2 class='label inner'>Your Recent History</h2>
       </div>
       <ul id="recent" class="listing">
-        <% 
-          // filter by author
-          var commits = history.commits;
-          var commit;
-          var recent = [];
-
-          for (var i = 0; i < commits.length; i++) {
-            commit = commits[i];
-
-            for (var j = 0; j < commit.files.length; j++) {
-              if (commit.author.login === app.username) {
-                recent = _.union(recent, commit.files[j].filename);
-
-                if (recent.length > 4) break;
-              }
-            }
-
-            if (recent.length > 4) break;
-          }
-        %>
-        <% _.each(recent, function(filename) { %>
+        <% _.each(history.recent[app.username], function(filename) { %>
           <li><a class="item" href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
             <span class="status <%= history.files[filename][0].status %>">
             <% switch(history.files[filename][0].status) {
