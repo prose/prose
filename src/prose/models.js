@@ -335,8 +335,11 @@ module.exports = {
             var lastModified;
 
             if (store) {
-              app.state.history = history = JSON.parse(store.getItem('history:' + branch));
-              lastModified = history ? history.modified : undefined;
+              app.state.history = history = JSON.parse(store.getItem('history'));
+
+              if (history && history.branch === branch) {
+                lastModified = history.modified;
+              }
             }
 
             repo.getCommits(branch, lastModified, function(err, commits, xhr) {
@@ -376,6 +379,7 @@ module.exports = {
                   }
 
                   var history = app.state.history = {
+                    'branch': branch,
                     'modified': xhr.getResponseHeader('Last-Modified'),
                     'commits': commits,
                     'files': files,
@@ -384,7 +388,11 @@ module.exports = {
 
                   var store = window.localStorage;
                   if (store) {
-                    store.setItem('history:' + branch, JSON.stringify(history));
+                    try {
+                      store.setItem('history', JSON.stringify(history));
+                    } catch(err) {
+                      console.log(err);
+                    }
                   }
 
                   // Ping `views/app.js` to let know we should swap out the sidebar
