@@ -391,25 +391,29 @@ module.exports = Backbone.View.extend({
       if (e) e.preventDefault();
       if (!window.localStorage || !this.dirty) return false;
 
-      var storage = window.localStorage;
+      var store = window.localStorage;
       var filepath = $('input.filepath').val();
 
       // Don't stash if filepath is undefined
       if (filepath) {
-        storage.setItem(filepath, JSON.stringify({
-          sha: app.state.sha,
-          content: this.editor ? this.editor.getValue() : null,
-          raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
-        }));
+        try {
+          store.setItem(filepath, JSON.stringify({
+            sha: app.state.sha,
+            content: this.editor ? this.editor.getValue() : null,
+            raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+          }));
+        } catch(err) {
+          console.log(err);
+        }
       }
     },
 
     stashApply: function () {
       if (!window.localStorage) return false;
 
-      var storage = window.localStorage;
+      var store = window.localStorage;
       var filepath = $('input.filepath').val();
-      var item = storage.getItem(filepath);
+      var item = store.getItem(filepath);
       var stash = JSON.parse(item);
 
       if (stash && stash.sha === window.app.state.sha) {
@@ -418,7 +422,7 @@ module.exports = Backbone.View.extend({
         if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
       } else if (item) {
         // Remove expired content
-        storage.removeItem(filepath);
+        store.removeItem(filepath);
       }
     },
 
@@ -509,7 +513,8 @@ module.exports = Backbone.View.extend({
                   name: data.name,
                   label: data.field.label,
                   placeholder: data.field.placeholder,
-                  options: data.field.options
+                  options: data.field.options,
+                  lang: model.metadata.lang || 'en'
                 }));
                 break;
               case 'multiselect':
@@ -518,7 +523,8 @@ module.exports = Backbone.View.extend({
                   name: data.name,
                   label: data.field.label,
                   placeholder: data.field.placeholder,
-                  options: data.field.options
+                  options: data.field.options,
+                  lang: model.metadata.lang || 'en'
                 }));
               break;
             }

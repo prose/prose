@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
+var queue = require('queue-async');
 var cookie = require('./cookie');
 var Github = require('../libs/github');
 var queue = require('queue-async');
@@ -328,6 +329,89 @@ module.exports = {
             repo.getSha(branch, app.state.path, function (err, sha) {
               app.state.sha = sha;
             });
+
+            var store = window.localStorage;
+            var history;
+            var lastModified;
+
+            if (store) {
+              app.state.history = history = JSON.parse(store.getItem('history'));
+
+              if (history && history.user === user && history.repo === reponame && history.branch === branch) {
+                lastModified = history.modified;
+              }
+            }
+
+            repo.getCommits(branch, lastModified, function(err, commits, xhr) {
+              if (err) return cb('Not found');
+
+              if (xhr.status !== 304) {
+                var q = queue();
+
+                // build list of recently edited files
+                _.each(_.pluck(commits, 'sha'), function(sha) {
+                  q.defer(repo.getCommit, sha);
+                });
+
+                q.awaitAll(function(err, res) {
+                  var state = {};
+                  var recent = {};
+
+                  var commit;
+                  var file;
+                  var filename;
+                  var author;
+
+                  for (var i = 0; i < res.length; i++) {
+                    commit = res[i];
+
+                    for (var j = 0; j < commit.files.length; j++) {
+                      file = commit.files[j];
+                      filename = file.filename;
+
+                      if (state[filename]) {
+                        state[filename].push(file.status);
+                      } else {
+                        state[filename] = [file.status];
+                      }
+
+                      author = commit.author.login;
+                      if (recent[author] && recent[author].length < 5) {
+                        recent[author] = _.union(recent[author], filename);
+                      } else if (!recent[author]) {
+                        recent[author] = [filename];
+                      }
+                    }
+                  }
+
+                  var history = app.state.history = {
+                    'user': user,
+                    'repo': reponame,
+                    'branch': branch,
+                    'modified': xhr.getResponseHeader('Last-Modified'),
+                    'state': state,
+                    'recent': recent,
+                    'link': xhr.getResponseHeader('link')
+                  };
+
+                  var store = window.localStorage;
+                  if (store) {
+                    try {
+                      store.setItem('history', JSON.stringify(history));
+                    } catch(err) {
+                      console.log(err);
+                    }
+                  }
+
+                  // Ping `views/app.js` to let know we should swap out the sidebar
+                  app.eventRegister.trigger('sidebarContext', app.state, 'posts');
+                });
+              } else {
+                // Ping `views/app.js` to let know we should swap out the sidebar
+                app.eventRegister.trigger('sidebarContext', app.state, 'posts');
+              }
+            });
+
             cb(null, that.getFiles(tree, path, ''));
           });
         });
@@ -473,6 +557,8 @@ module.exports = {
     };
 
     var cfg = app.state.config;
+    var q = queue();
+
     if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
       rawMetadata = cfg.prose.metadata[path];
       if (typeof rawMetadata === 'object') {
@@ -481,20 +567,42 @@ module.exports = {
         _.each(rawMetadata, function(data, key) {
           var selected;
 
-          if (data && typeof data.field === 'object') {
-            selected = data.field.selected;
 
-            switch(data.field.element) {
-              case 'text':
-                metadata[data.name] = data.field.value;
-                break;
-              case 'select':
-              case 'multiselect':
-                metadata[data.name] = selected ? selected : null;
-                break;
-            }
-          } else {
-            metadata[key] = data;
+
+          if (data.field && data.field.options &&
+              typeof data.field.options === 'string' &&
+              data.field.options.match(/^https?:\/\//)) {
+
+            q.defer(function(cb){
+              $.ajax({
+                cache: true,
+                dataType: 'jsonp',
+                jsonp: false,
+                jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
+                url: data.field.options,
+                success: function(d) {
+                  data.field.options = d;
+
+                  if (data && typeof data.field === 'object') {
+                    selected = data.field.selected;
+        
+                    switch(data.field.element) {
+                      case 'text':
+                        metadata[data.name] = data.field.value;
+                        break;
+                      case 'select':
+                      case 'multiselect':
+                        metadata[data.name] = selected ? selected : null;
+                        break;
+                    }
+                  } else {
+                    metadata[key] = data;
+                  }
+
+                  cb();
+                }
+              });
+            });
           }
         });
       } else if (typeof rawMetadata === 'string') {
@@ -517,23 +625,25 @@ module.exports = {
       }
     }
 
-    // If ?file= in path, use it as file name
-    if (path.indexOf('?file=') !== -1) {
-      file = path.split('?file=')[1];
-      path = path.split('?file=')[0].replace(/\/$/, '');
-    }
+    q.await(function() {
 
-    cb(null, {
-      'metadata': metadata,
-      'raw_metadata': rawMetadata,
-      'default_metadata': defaultMetadata,
-      'content': '# How does it work?\n\nEnter Text in Markdown format.',
-      'repo': repo,
-      'path': path,
-      'published': false,
-      'persisted': false,
-      'writeable': true,
-      'file': file
+      // If ?file= in path, use it as file name
+      if (path.indexOf('?file=') !== -1) {
+        file = path.split('?file=')[1];
+        path = path.split('?file=')[0].replace(/\/$/, '');
+      }
+      cb(null, {
+        'metadata': metadata,
+        'raw_metadata': rawMetadata,
+        'default_metadata': defaultMetadata,
+        'content': '# How does it work?\n\nEnter Text in Markdown format.',
+        'repo': repo,
+        'path': path,
+        'published': false,
+        'persisted': false,
+        'writeable': true,
+        'file': file
+      });
     });
   },
 
@@ -608,7 +718,7 @@ module.exports = {
                   cache: true,
                   dataType: 'jsonp',
                   jsonp: false,
-                  jsonpCallback: 'callback',
+                  jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
                   url: value.field.options,
                   success: function(d) {
                     value.field.options = d;

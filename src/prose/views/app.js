@@ -27,6 +27,7 @@ module.exports = Backbone.View.extend({
       _.bindAll(this, 'headerContext', 'sidebarContext');
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('sidebarContext', this.sidebarContext);
+      this.eventRegister.bind('recentFiles', this.recentFiles);
     },
 
     render: function () {
@@ -77,6 +78,12 @@ module.exports = Backbone.View.extend({
       $('.chzn-select').chosen().change(function() {
           router.navigate($(this).val(), true);
       });
+    },
+
+    recentFiles: function(data) {
+      var sidebarTmpl = _(window.app.templates['recentFiles']).template();
+
+      $('#drawer').append(sidebarTmpl(data));
     },
 
     // Event Triggering to other files
@@ -183,5 +190,6 @@ module.exports = Backbone.View.extend({
       // Unbind pagehide event handler when View is removed
       this.eventRegister.unbind('sidebarContext', this.sidebarContext);
       this.eventRegister.unbind('headerContext', this.headerContext);
+      this.eventRegister.unbind('recentFiles', this.recentFiles);
     }
 });
