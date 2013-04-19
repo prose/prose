@@ -107,7 +107,7 @@ module.exports = Backbone.View.extend({
     window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       this.loaded();
 
-      if (err) return this.notify('error', 'The requested resource could not be found.');
+      if (err) return this.notify('error', 'This post does not exist.');
       // Render out the application view
       $(that.app.render().el).prependTo(that.el);
       this.replaceMainView('posts', new window.app.views.Posts({
@@ -120,9 +120,9 @@ module.exports = Backbone.View.extend({
     var that = this;
     this.loading('Loading post ...');
     window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return this.notify('error', 'The requested resource could not be found.');
+      if (err) return this.notify('error', 'This post does not exist.');
       window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) return this.notify('error', 'The requested resource could not be found.');
+        if (err) return this.notify('error', 'This post does not exist.');
 
         this.loaded();
 
@@ -148,7 +148,7 @@ module.exports = Backbone.View.extend({
     this.loading('Preview post ...');
     window.app.models.loadConfig(user, repo, branch, _.bind(function () {
       window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) return this.notify('error', 'The requested resource could not be found.');
+        if (err) return this.notify('error', 'This post does not exist.');
         new window.app.views.Preview({
           model: data
         }).render();
@@ -190,6 +190,7 @@ module.exports = Backbone.View.extend({
       'type': type,
       'message': message
     }).render());
+    this.loaded();
   },
 
   loading: function (msg) {

@@ -513,7 +513,8 @@ module.exports = Backbone.View.extend({
                   name: data.name,
                   label: data.field.label,
                   placeholder: data.field.placeholder,
-                  options: data.field.options
+                  options: data.field.options,
+                  lang: model.metadata.lang || 'en'
                 }));
                 break;
               case 'multiselect':
@@ -522,7 +523,8 @@ module.exports = Backbone.View.extend({
                   name: data.name,
                   label: data.field.label,
                   placeholder: data.field.placeholder,
-                  options: data.field.options
+                  options: data.field.options,
+                  lang: model.metadata.lang || 'en'
                 }));
               break;
             }
