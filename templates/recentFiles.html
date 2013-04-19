@@ -1,14 +1,14 @@
 <% if (authenticated) { %>
-  <% if (recent.length) { %>
+  <% if (history.recent.length) { %>
     <div class='history'>
       <div class='inner'>
         <h2 class='label inner'>Your Recent History</h2>
       </div>
       <ul id="recent" class="listing">
-        <% _.each(recent.slice(0,5), function(filename) { %>
+        <% _.each(history.recent.slice(0,5), function(filename) { %>
           <li><a class="item" href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
-            <span class="status <%= commits[filename][0].status %>">
-            <% switch(commits[filename][0].status) {
+            <span class="status <%= history.files[filename][0].status %>">
+            <% switch(history.files[filename][0].status) {
               case 'added':
                 print('+');
                 break;
