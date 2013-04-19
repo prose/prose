@@ -38,10 +38,17 @@ module.exports = Backbone.View.extend({
     // Ping `views/app.js` to let know we should swap out the sidebar
     this.eventRegister = app.eventRegister;
     this.eventRegister.trigger('sidebarContext', data, 'posts');
-    var isPrivate = app.state.isPrivate ? 'private' : '';
+
+    // console.log(data);
+    var isPrivate = app.state.isPrivate ? ' private' : '';
+    var isBelonging = '';
+
+    if (data.permissions.pull === true || data.permissions.push === true) {
+      isBelonging = ' owner';
+    } 
 
     var header = {
-      avatar: '<span class="icon round repo ' + isPrivate + '"></span>',
+      avatar: '<span class="icon round repo' + isPrivate + isBelonging +  '"></span>',
       parent: data.user,
       parentUrl: data.user,
       title: data.repo,

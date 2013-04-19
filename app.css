@@ -1347,12 +1347,11 @@ label.error {
   width:auto;
   border:0;
   }
-.CodeMirror pre.CodeMirror-cursor.CodeMirror-overwrite {}
 .CodeMirror-focused pre.CodeMirror-cursor {
   visibility:visible;
   }
 
-div.CodeMirror-selected { background:#d9d9d9; }
+div.CodeMirror-selected { background:#d7d4f0; }
 .CodeMirror-focused div.CodeMirror-selected { background:#d7d4f0; }
 
 .CodeMirror-searching {
@@ -1365,7 +1364,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
 /* Prose Bright Theme */
 .cm-s-prose-bright {  color: #3D494E; }
-.cm-s-prose-bright .CodeMirror-selected {background: #AFC3CF; }
+.cm-s-prose-bright .CodeMirror-selected {background: #d7d4f0; }
 .cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880; }
 .cm-s-prose-bright .CodeMirror-lines { margin:0; }
 

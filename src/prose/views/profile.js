@@ -106,9 +106,6 @@ module.exports = Backbone.View.extend({
       }
 
       _(repos).each(function(r, i) {
-
-        console.log(r);
-
         $projects.append(tmpl(_.extend(r, {
           index: i
         })));

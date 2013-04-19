@@ -2,9 +2,9 @@
     data-navigate='#<%= owner.login %>/<%= name %>'
     data-index='<%= index %>'>
 
-    <% if (owner.login !== app.username && private) { %>
+    <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>
       <div class='fl icon round repo owner private' title='Shared repo with <%= owner.login %>'></div>
-    <% } else if (owner.login !== app.username) { %>
+    <% } else if (app.state.user === app.username && owner.login !== app.username) { %>
       <div class='fl icon round repo owner' title='Shared repo with <%= owner.login %>'></div>
     <% } else if (private) { %>
       <div class='fl icon round repo private'></div>
