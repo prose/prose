@@ -400,7 +400,7 @@ em      { font-style:italic; }
   }
 
 .dropdown-menu.prose-menu {
-  position:absolute;
+  position:fixed;
   width:120px;
   top:0;
   left:0;
