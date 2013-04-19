@@ -53,10 +53,6 @@ module.exports = Backbone.View.extend({
         $('#prose').toggleClass('open', true);
       }
 
-      _.delay(function () {
-        utils.dropdown();
-      }, 1);
-
       return this;
     },
 

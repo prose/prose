@@ -35,7 +35,6 @@ window.confirmExit = function() {
   return true;
 };
 
-
 // Bootup
 var auth = $.getJSON('oauth.json');
 auth.done(function(res) {

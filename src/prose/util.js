@@ -336,22 +336,6 @@ _.preview = function(view) {
 // UI Stuff
 // -------
 module.exports = {
-  dropdown: function() {
-      var $dropdown = $('.dropdown-menu');
-      $dropdown.each(function(i, el) {
-          $(this).hover(function() {
-              $(this).addClass('open');
-          }, function(e) {
-              $(this).removeClass('open');
-          });
-      });
-
-      $('.dropdown-hover').click(function() {
-          var hasLink = $(this).data('link');
-          if (!hasLink) return false;
-      });
-  },
-
   fixedScroll: function($el) {
     var top = $el.offset().top;
 

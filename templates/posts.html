@@ -1,8 +1,13 @@
-<div class='topbar'>
-  <div class='content-search'>
-    <span class='icon search inline fr'></span>
-    <input type='text' id='filter' placeholder='Filter Files' />
+<div class='topbar-wrapper'>
+  <div class='topbar'>
+    <div class='content-search'>
+      <span class='icon search inline fr'></span>
+      <input type='text' id='filter' placeholder='Filter Files' />
+    </div>
   </div>
+</div>
+
+<div class='listing'>
   <% if (path.length) { %>
     <div class='breadcrumb'>
       <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'>..</a>
@@ -12,6 +17,6 @@
       <% }); %>
     </div>
   <% } %>
-</div>
 
-<ul id='files' class='listing'></ul>
+  <ul id='files'></ul>
+</div>

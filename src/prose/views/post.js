@@ -139,7 +139,7 @@ module.exports = Backbone.View.extend({
 
       } else {
 
-        this.toolbar = $('.toolbar').detach();
+        this.toolbar = $('.topbar-wrapper').detach();
 
         // Vertical Nav
         $('.post-views a').removeClass('active');

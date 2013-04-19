@@ -1,8 +1,8 @@
 CodeMirror.defineMode("yaml", function() {
-  
+
   var cons = ['true', 'false', 'on', 'off', 'yes', 'no'];
   var keywordRegex = new RegExp("\\b(("+cons.join(")|(")+"))$", 'i');
-  
+
   return {
     token: function(stream, state) {
       var ch = stream.peek();
@@ -31,7 +31,7 @@ CodeMirror.defineMode("yaml", function() {
         return "atom";
       }
       if (state.pair && stream.match(/^:\s*/)) { state.pairStart = true; return 'meta'; }
-      
+
       /* inline pairs/lists */
       if (stream.match(/^(\{|\}|\[|\])/)) {
         if (ch == '{')
@@ -44,7 +44,7 @@ CodeMirror.defineMode("yaml", function() {
           state.inlineList--;
         return 'meta';
       }
-      
+
       /* list seperator */
       if (state.inlineList > 0 && !esc && ch == ',') {
         stream.next();
@@ -58,7 +58,7 @@ CodeMirror.defineMode("yaml", function() {
         stream.next();
         return 'meta';
       }
-      
+
       /* start of value of a pair */
       if (state.pairStart) {
         /* block literals */
