@@ -29,10 +29,11 @@
               if (commit.author.login === app.username) {
                 recent = _.union(recent, commit.files[j].filename);
 
-                // render max 5 results
-                if (recent.length > 4) break; break;
+                if (recent.length > 4) break;
               }
             }
+
+            if (recent.length > 4) break;
           }
         %>
         <% _.each(recent, function(filename) { %>
