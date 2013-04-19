@@ -13,8 +13,14 @@
     <% } %>
 
     <div class='details fl'>
-      <h3><a data-user='<%= owner.login %>' data-repo='<%= name %>' href='#<%= owner.login %>/<%= name %>'><%= name %></a></h3>
-      <br />
+      <h3>
+        <a
+          data-user='<%= owner.login %>'
+          data-repo='<%= name %>'
+          href='#<%= owner.login %>/<%= name %>'>
+          <%= name %>
+        </a>
+      </h3>
       <span class='deemphasize'><%= description %></span>
     </div>
 

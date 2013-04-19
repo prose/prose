@@ -16,6 +16,7 @@ dist/templates.js: $(TEMPLATES)
 
 LIBS = \
 	src/libs/codemirror/codemirror.js \
+	src/libs/codemirror/overlay.js \
 	src/libs/codemirror/htmlmixed.js \
 	src/libs/codemirror/clike.js \
 	src/libs/codemirror/yaml.js \
