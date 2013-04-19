@@ -35,10 +35,6 @@ module.exports = Backbone.View.extend({
       currentPath: app.state.path
     });
 
-    // Ping `views/app.js` to let know we should swap out the sidebar
-    this.eventRegister = app.eventRegister;
-    this.eventRegister.trigger('sidebarContext', data, 'posts');
-
     // console.log(data);
     var isPrivate = app.state.isPrivate ? ' private' : '';
     var isBelonging = '';
@@ -56,7 +52,7 @@ module.exports = Backbone.View.extend({
       alterable: false
     };
 
-    this.eventRegister.trigger('headerContext', header);
+    app.eventRegister.trigger('headerContext', header);
 
     var tmpl = _(window.app.templates.posts).template();
     $(this.el).empty().append(tmpl(data));

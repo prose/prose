@@ -2,10 +2,61 @@
   <% if (app.state.branches.length > 0) { %>
     <h2 class='label'>Switch Branch</h2>
     <select data-placeholder='Current Branch Name' class='chzn-select'>
-        <option value='#<%= [user, repo, "tree", app.state.branch].join("/") %>' selected><%= app.state.branch %></option>
-      <% _.each(app.state.branches, function(branch) { %>
+        <option value='#<%= [user, repo, "tree", branch].join("/") %>' selected><%= branch %></option>
+      <% _.each(branches, function(branch) { %>
         <option value='#<%= [user, repo, "tree", branch].join("/") %>'><%= branch %></option>
       <% }); %>
     </select>
   <% } %>
 </div>
+<% if (authenticated) { %>
+  <% if (history.commits.length) { %>
+    <div class='history'>
+      <div class='inner'>
+        <h2 class='label inner'>Your Recent History</h2>
+      </div>
+      <ul id="recent" class="listing">
+        <% 
+          // filter by author
+          var commits = history.commits;
+          var commit;
+          var recent = [];
+
+          for (var i = 0; i < commits.length; i++) {
+            commit = commits[i];
+
+            for (var j = 0; j < commit.files.length; j++) {
+              if (commit.author.login === app.username) {
+                recent = _.union(recent, commit.files[j].filename);
+
+                // render max 5 results
+                if (recent.length > 4) break; break;
+              }
+            }
+          }
+        %>
+        <% _.each(recent, function(filename) { %>
+          <li><a class="item" href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
+            <span class="status <%= history.files[filename][0].status %>">
+            <% switch(history.files[filename][0].status) {
+              case 'added':
+                print('+');
+                break;
+              case 'modified':
+                print('M');
+                break;
+              case 'removed':
+                print('-');
+                break;
+              case 'renamed':
+                print('&#8594;');
+                break;
+            } %>
+            </span>
+            <%= filename %>
+          </a></li>
+        <% }); %>
+      </ul>
+    </div>
+  <% } %>
+<% } %>

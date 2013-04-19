@@ -329,75 +329,74 @@ module.exports = {
             repo.getSha(branch, app.state.path, function (err, sha) {
               app.state.sha = sha;
             });
+
+            var store = window.localStorage;
+            var history;
+            var lastModified;
+
+            if (store) {
+              app.state.history = history = JSON.parse(store.getItem('history:' + branch));
+              lastModified = history ? history.modified : undefined;
+            }
+
+            repo.getCommits(branch, lastModified, function(err, commits, xhr) {
+              if (err) return cb('Not found');
+
+              if (xhr.status !== 304) {
+                var q = queue();
+
+                // build list of recently edited files
+                _.each(_.pluck(commits, 'sha'), function(sha) {
+                  q.defer(repo.getCommit, sha);
+                });
+
+                q.awaitAll(function(err, res) {
+                  var history;
+
+                  var commits = res;
+                  var files = {};
+
+                  var commit;
+                  var file;
+                  var filename;
+
+                  for (var i = 0; i < commits.length; i++) {
+                    commit = commits[i];
+
+                    for (var j = 0; j < commit.files.length; j++) {
+                      file = commit.files[j];
+                      filename = file.filename;
+
+                      if (files[filename]) {
+                        files[filename].push(file);
+                      } else {
+                        files[filename] = [file];
+                      }
+                    }
+                  }
+
+                  var history = app.state.history = {
+                    'modified': xhr.getResponseHeader('Last-Modified'),
+                    'commits': commits,
+                    'files': files
+                  };
+
+                  var store = window.localStorage;
+                  if (store) {
+                    store.setItem('history:' + branch, JSON.stringify(history));
+                  }
+
+                  // Ping `views/app.js` to let know we should swap out the sidebar
+                  app.eventRegister.trigger('sidebarContext', app.state, 'posts');
+                });
+              } else {
+                // Ping `views/app.js` to let know we should swap out the sidebar
+                app.eventRegister.trigger('sidebarContext', app.state, 'posts');
+              }
+            });
+
             cb(null, that.getFiles(tree, path, ''));
           });
-        });
-
-        var store = window.localStorage;
-        var history;
-        var lastModified;
-
-        if (store) {
-          app.state.history = history = JSON.parse(store.getItem('history:' + branch));
-          lastModified = history ? history.modified : undefined;
-        }
-
-        repo.getCommits(branch, lastModified, function(err, commits, xhr) {
-          if (err) return cb('Not found');
-
-          if (xhr.status !== 304) {
-            var q = queue();
-
-            // build list of recently edited files
-            _.each(_.pluck(commits, 'sha'), function(sha) {
-              q.defer(repo.getCommit, sha);
-            });
-
-            q.awaitAll(function(err, res) {
-              var files = {};
-              var recent = [];
-
-              var commit;
-              var file;
-              var filename;
-
-              for (var i = 0; i < res.length; i++) {
-                commit = res[i];
-
-                for (var j = 0; j < commit.files.length; j++) {
-                  file = commit.files[j];
-                  filename = file.filename;
-
-                  if (files[filename]) {
-                    files[filename].push(file);
-                  } else {
-                    files[filename] = [file];
-                  }
-
-                  if (commit.author.login === app.username) {
-                    recent = _.union(recent, filename);
-                  }
-                }
-              }
-
-              var history = app.state.history = {
-                'modified': xhr.getResponseHeader('Last-Modified'),
-                'files': files,
-                'recent': recent
-              };
-
-              var store = window.localStorage;
-              if (store) {
-                store.setItem('history:' + branch, JSON.stringify(history));
-              }
-
-              // Ping `views/app.js` to let know we should append recent history to the sidebar
-              app.eventRegister.trigger('recentFiles', app.state);
-            });
-          } else {
-            // Ping `views/app.js` to let know we should append recent history to the sidebar
-            app.eventRegister.trigger('recentFiles', app.state);
-          }
         });
       });
     }
