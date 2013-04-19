@@ -1,10 +1,10 @@
 <% if (!window.authenticated) { %>
-<div class='notify <%= type %>'>
-  <div class='inner'>
-    Please login with your GitHub account to access that project.
-    <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>
+  <div class='notify <%= type %>'>
+    <div class='inner'>
+      Please login with your GitHub account to access that project.
+      <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>
+    </div>
   </div>
-</div>
 <% } else { %>
   <div class='notify <%= type %>'>
     <div class='inner'>

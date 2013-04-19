@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
+var queue = require('queue-async');
 var cookie = require('./cookie');
 var Github = require('../libs/github');
 var queue = require('queue-async');
@@ -328,6 +329,89 @@ module.exports = {
             repo.getSha(branch, app.state.path, function (err, sha) {
               app.state.sha = sha;
             });
+
+            var store = window.localStorage;
+            var history;
+            var lastModified;
+
+            if (store) {
+              app.state.history = history = JSON.parse(store.getItem('history'));
+
+              if (history && history.user === user && history.repo === reponame && history.branch === branch) {
+                lastModified = history.modified;
+              }
+            }
+
+            repo.getCommits(branch, lastModified, function(err, commits, xhr) {
+              if (err) return cb('Not found');
+
+              if (xhr.status !== 304) {
+                var q = queue();
+
+                // build list of recently edited files
+                _.each(_.pluck(commits, 'sha'), function(sha) {
+                  q.defer(repo.getCommit, sha);
+                });
+
+                q.awaitAll(function(err, res) {
+                  var state = {};
+                  var recent = {};
+
+                  var commit;
+                  var file;
+                  var filename;
+                  var author;
+
+                  for (var i = 0; i < res.length; i++) {
+                    commit = res[i];
+
+                    for (var j = 0; j < commit.files.length; j++) {
+                      file = commit.files[j];
+                      filename = file.filename;
+
+                      if (state[filename]) {
+                        state[filename].push(file.status);
+                      } else {
+                        state[filename] = [file.status];
+                      }
+
+                      author = commit.author.login;
+                      if (recent[author] && recent[author].length < 5) {
+                        recent[author] = _.union(recent[author], filename);
+                      } else if (!recent[author]) {
+                        recent[author] = [filename];
+                      }
+                    }
+                  }
+
+                  var history = app.state.history = {
+                    'user': user,
+                    'repo': reponame,
+                    'branch': branch,
+                    'modified': xhr.getResponseHeader('Last-Modified'),
+                    'state': state,
+                    'recent': recent,
+                    'link': xhr.getResponseHeader('link')
+                  };
+
+                  var store = window.localStorage;
+                  if (store) {
+                    try {
+                      store.setItem('history', JSON.stringify(history));
+                    } catch(err) {
+                      console.log(err);
+                    }
+                  }
+
+                  // Ping `views/app.js` to let know we should swap out the sidebar
+                  app.eventRegister.trigger('sidebarContext', app.state, 'posts');
+                });
+              } else {
+                // Ping `views/app.js` to let know we should swap out the sidebar
+                app.eventRegister.trigger('sidebarContext', app.state, 'posts');
+              }
+            });
+
             cb(null, that.getFiles(tree, path, ''));
           });
         });

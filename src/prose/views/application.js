@@ -127,6 +127,7 @@ module.exports = Backbone.View.extend({
         this.loaded();
 
         app.state.markdown = data.markdown;
+
         // Render out the application view
         $(that.app.render().el).prependTo(that.el);
 
