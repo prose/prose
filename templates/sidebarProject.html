@@ -18,8 +18,8 @@
       <ul id="recent" class="listing">
         <% _.each(history.recent[app.username], function(filename) { %>
           <li><a class="item" href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
-            <span class="status <%= history.files[filename][0].status %>">
-            <% switch(history.files[filename][0].status) {
+            <span class="status <%= history.state[filename][0] %>">
+            <% switch(history.state[filename][0]) {
               case 'added':
                 print('+');
                 break;

@@ -354,9 +354,7 @@ module.exports = {
                 });
 
                 q.awaitAll(function(err, res) {
-                  var history;
-
-                  var files = {};
+                  var state = {};
                   var recent = {};
 
                   var commit;
@@ -371,10 +369,10 @@ module.exports = {
                       file = commit.files[j];
                       filename = file.filename;
 
-                      if (files[filename]) {
-                        files[filename].push(file);
+                      if (state[filename]) {
+                        state[filename].push(file.status);
                       } else {
-                        files[filename] = [file];
+                        state[filename] = [file.status];
                       }
 
                       author = commit.author.login;
@@ -391,7 +389,7 @@ module.exports = {
                     'repo': reponame,
                     'branch': branch,
                     'modified': xhr.getResponseHeader('Last-Modified'),
-                    'files': files,
+                    'state': state,
                     'recent': recent,
                     'link': xhr.getResponseHeader('link')
                   };
