@@ -473,6 +473,8 @@ module.exports = {
     };
 
     var cfg = app.state.config;
+    var q = queue();
+
     if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
       rawMetadata = cfg.prose.metadata[path];
       if (typeof rawMetadata === 'object') {
@@ -481,20 +483,42 @@ module.exports = {
         _.each(rawMetadata, function(data, key) {
           var selected;
 
-          if (data && typeof data.field === 'object') {
-            selected = data.field.selected;
 
-            switch(data.field.element) {
-              case 'text':
-                metadata[data.name] = data.field.value;
-                break;
-              case 'select':
-              case 'multiselect':
-                metadata[data.name] = selected ? selected : null;
-                break;
-            }
-          } else {
-            metadata[key] = data;
+
+          if (data.field && data.field.options &&
+              typeof data.field.options === 'string' &&
+              data.field.options.match(/^https?:\/\//)) {
+
+            q.defer(function(cb){
+              $.ajax({
+                cache: true,
+                dataType: 'jsonp',
+                jsonp: false,
+                jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
+                url: data.field.options,
+                success: function(d) {
+                  data.field.options = d;
+
+                  if (data && typeof data.field === 'object') {
+                    selected = data.field.selected;
+        
+                    switch(data.field.element) {
+                      case 'text':
+                        metadata[data.name] = data.field.value;
+                        break;
+                      case 'select':
+                      case 'multiselect':
+                        metadata[data.name] = selected ? selected : null;
+                        break;
+                    }
+                  } else {
+                    metadata[key] = data;
+                  }
+
+                  cb();
+                }
+              });
+            });
           }
         });
       } else if (typeof rawMetadata === 'string') {
@@ -517,23 +541,25 @@ module.exports = {
       }
     }
 
-    // If ?file= in path, use it as file name
-    if (path.indexOf('?file=') !== -1) {
-      file = path.split('?file=')[1];
-      path = path.split('?file=')[0].replace(/\/$/, '');
-    }
+    q.await(function() {
 
-    cb(null, {
-      'metadata': metadata,
-      'raw_metadata': rawMetadata,
-      'default_metadata': defaultMetadata,
-      'content': '# How does it work?\n\nEnter Text in Markdown format.',
-      'repo': repo,
-      'path': path,
-      'published': false,
-      'persisted': false,
-      'writeable': true,
-      'file': file
+      // If ?file= in path, use it as file name
+      if (path.indexOf('?file=') !== -1) {
+        file = path.split('?file=')[1];
+        path = path.split('?file=')[0].replace(/\/$/, '');
+      }
+      cb(null, {
+        'metadata': metadata,
+        'raw_metadata': rawMetadata,
+        'default_metadata': defaultMetadata,
+        'content': '# How does it work?\n\nEnter Text in Markdown format.',
+        'repo': repo,
+        'path': path,
+        'published': false,
+        'persisted': false,
+        'writeable': true,
+        'file': file
+      });
     });
   },
 
@@ -608,7 +634,7 @@ module.exports = {
                   cache: true,
                   dataType: 'jsonp',
                   jsonp: false,
-                  jsonpCallback: 'callback',
+                  jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
                   url: value.field.options,
                   success: function(d) {
                     value.field.options = d;
