@@ -405,7 +405,7 @@ em      { font-style:italic; }
   top:0;
   left:0;
   }
-  .prose-menu.open {
+  .prose-menu:hover {
     background:#404040;
     }
 
@@ -804,10 +804,10 @@ em      { font-style:italic; }
       text-decoration:none;
       }
 
-.dropdown-menu.open {
+.dropdown-menu:hover {
   *z-index:1000;
   }
-  .dropdown-menu.open .dropdown {
+  .dropdown-menu:hover .dropdown {
     display:block;
     }
 
