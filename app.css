@@ -724,6 +724,7 @@ em      { font-style:italic; }
   display:block;
   padding:4px 15px 8px;
   border-bottom:1px solid #f0f0f0;
+  white-space:nowrap;
   }
   .listing .item.active,
   .sidebar .listing li a:hover {
@@ -731,6 +732,11 @@ em      { font-style:italic; }
     }
   .listing .item.active .round.icon {
     background-color:#fff;
+    }
+  .sidebar .listing li a .status {
+    width:20px;
+    display:inline-block;
+    font-weight:normal;
     }
 
   .content .listing .directory > a,

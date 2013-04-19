@@ -6,7 +6,7 @@ module.exports = Backbone.View.extend({
 
   id: 'notification',
 
-  initialize: function(type, message) {
+  initialize: function() {
     this.model = this.options;
   },
 
