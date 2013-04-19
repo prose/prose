@@ -495,6 +495,15 @@ em      { font-style:italic; }
 .icon.cancel          { background-position:-120px -80px; }
 .icon.bin             { background-position:-140px -80px; top:0; }
 
+/* Markdown Snippet Links */
+.icon.link            { background-position:-110px -225px; }
+.icon.italic          { background-position:-150px -225px; }
+.icon.image           { background-position:-190px -225px; }
+.icon.quote           { background-position:-230px -225px; }
+.icon.list            { background-position:-270px -225px; }
+.icon.numbered-list   { background-position:-310px -225px; }
+.icon.info            { background-position:-350px -225px; }
+
 .listing .icon.round         { background-position:-280px -100px; }
 .listing .icon.round.media   { background-position:-320px -100px; }
 
@@ -650,6 +659,10 @@ em      { font-style:italic; }
   position:absolute;
   z-index:1000;
   }
+  .post .topbar-wrapper {
+    margin-top:20px;
+    }
+
   .topbar-wrapper + div,
   .topbar-wrapper + ul {
     position:relative;
@@ -660,7 +673,11 @@ em      { font-style:italic; }
   background:#fff;
   border-bottom:1px solid #C3CCD0;
   width:680px;
+  height:60px;
   }
+  .topbar.toolbar {
+    height:40px;
+    }
   .topbar .dropdown-hover,
   .topbar .inner > a {
     display:block;
@@ -683,10 +700,6 @@ em      { font-style:italic; }
           box-shadow:0 4px 6px -4px rgba(0,0,0,0.10);
   }
 
-.toolbar,
-.content-search {
-  height:60px;
-  }
   .content-search input {
     border:none;
     margin-top:8px;
@@ -700,6 +713,29 @@ em      { font-style:italic; }
   .content-search .icon {
     top:10px;
     }
+
+.toolbar {
+  background:#f8f8f8;
+  }
+  .toolbar ul {
+    background:#fff;
+    float:left;
+    margin-left:15px;
+    margin-top:7px;
+    }
+    .toolbar li {
+      float:left;
+      border-left:1px solid #f8f8f8;
+      }
+     .toolbar li .icon,
+     .toolbar li a {
+        -webkit-font-smoothing:subpixel-antialiased;
+        display:inline-block;
+        text-align:center;
+        height:25px;
+        line-height:25px;
+        width:40px;
+        }
 
 .menu li {
   float:left;

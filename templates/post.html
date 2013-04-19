@@ -1,21 +1,27 @@
 <% if (markdown) { %>
 <div class='topbar-wrapper'>
   <div class='topbar toolbar'>
-    <div class='inner clearfix'>
-      <div class='dropdown-menu fr'>
-        <a href='#' class='round dropdown-hover'>Markdown</a>
-        <ul class='dropdown markdown-snippets round'>
-          <li><a href='#' data-snippet='<% print("# Heading\n\n") %>'>Main Header</a></li>
-          <li><a href='#' data-snippet='<% print("## Sub Heading\n\n") %>'>Sub Header</a></li>
-          <li><a href='#' data-snippet='<% print("```\nvar foo;\n```\n\n"); %>'>Code</a></li>
-          <li><a href='#' data-snippet='<% print("[Google](http://google.com)\n\n") %>'>Link</a></li>
-          <li><a href='#' data-snippet='<% print("![picture alt](http://placekitten.com/200/300)\n\n") %>'>Image</a></li>
-          <li><a href='#' data-snippet='<% print("> We loved with a love that was more than love\n\n"); %>'>Blockquote</a></li>
-          <li><a href='#' data-snippet='<% print("- item\n- item\n- item\n\n"); %>'>List</a></li>
-          <li class='divider'></li>
-          <li><a href='http://daringfireball.net/projects/markdown/syntax' target='_blank' target='_blank'><strong>Learn More</strong></a></li>
-        </ul>
-      </div>
+    <div class='markdown-snippets clearfix'>
+      <ul class='group round clearfix'>
+        <li><a href='#' title='Heading' data-snippet='<% print("# Heading\n\n") %>'>h1</a></li>
+        <li><a href='#' title='Sub Heading' data-snippet='<% print("## Sub Heading\n\n") %>'>h2</a></li>
+      </ul>
+      <ul class='group round clearfix'>
+        <li><a class='icon small link' title='Insert Link' href='#' data-snippet='<% print("[Google](http://google.com)\n\n") %>'>Link</a></li>
+        <li><a class='icon small image' title='Insert Image' href='#' data-snippet='<% print("![picture alt](http://placekitten.com/200/300)\n\n") %>'>Image</a></li>
+      </ul>
+      <ul class='group round clearfix'>
+        <li><a href='#' title='Bold' data-snippet='**text**'><strong>B</strong></a></li>
+        <li><a class='icon small italic' href='#' title='Italic' data-snippet='_text_'>i</a></li>
+      </ul>
+      <ul class='group round clearfix'>
+        <li><a class='icon small quote' title='Blockquote' href='#' data-snippet='<% print("> We loved with a love that was more than love\n\n"); %>'>Blockquote</a></li>
+        <li><a class='icon small list' href='#' title='List' data-snippet='<% print("- item\n- item\n- item\n\n"); %>'>List</a></li>
+        <li><a class='icon small numbered-list' href='#' title='Numbered List' data-snippet='<% print("1. item\n2. item\n3. item\n\n"); %>'>Numbered List</a></li>
+      </ul>
+      <ul class='group round clearfix'>
+        <li><a class='icon small info' href='http://daringfireball.net/projects/markdown/syntax' title='More Markdown' target='_blank'>More Markdown</a></li>
+      </ul>
     </div>
   </div>
 </div>
