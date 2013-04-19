@@ -185,7 +185,7 @@ module.exports = Backbone.View.extend({
       if ($('#start').length > 0) {
         app.instance.start();
       } else {
-        router.navigate('/', true);
+        window.location.reload();
       }
       return false;
     },
