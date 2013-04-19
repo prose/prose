@@ -378,7 +378,8 @@ module.exports = {
                   var history = app.state.history = {
                     'modified': xhr.getResponseHeader('Last-Modified'),
                     'commits': commits,
-                    'files': files
+                    'files': files,
+                    'link': xhr.getResponseHeader('link')
                   };
 
                   var store = window.localStorage;
