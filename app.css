@@ -415,22 +415,33 @@ em      { font-style:italic; }
   -webkit-box-shadow:-1px 0 4px rgba(0,0,0,0.05);
           box-shadow:-1px 0 4px rgba(0,0,0,0.05);
   }
-  #recent {
-    height: 449px;
-    overflow: auto;
+
+.vert {
+  background:#404040;
+  position:fixed;
+  right:0;top:0;
+  z-index:1000;
+  height:100%;
   }
-  .vert {
-    background:#404040;
-    -webkit-border-radius:0 4px 4px 0;
-            border-radius:0 4px 4px 0;
-    }
-  .vert .nav.project {
-    margin:10px 0 0;
-    padding-bottom:5px;
-    }
-  .vert .nav.auth {
-    position:absolute;
-    bottom:5px;
+.vert .nav.project {
+  margin:10px 0 0;
+  padding-bottom:5px;
+  }
+.vert .nav.auth {
+  position:absolute;
+  bottom:5px;
+  }
+.vert .nav li a {
+  background-color:#404040;
+  display:block;
+  width:40px;
+  height:40px;
+  margin:8px 10px;
+  position:relative;
+  z-index:10;
+  }
+  .vert .nav li a:hover {
+    background-color:#505050;
     }
   .vert .nav li a:active {
     -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.25),
@@ -489,6 +500,9 @@ em      { font-style:italic; }
 
 .content .icon.repo,
 .heading .icon.repo          { background-position:-40px -100px; }
+
+.icon.repo.owner             { background-position: -120px -140px; }
+.icon.repo.owner.private     { background-position: -160px -140px; }
 
 .content .icon.repo.private,
 .heading .icon.repo.private  { background-position:-80px -100px; }
@@ -689,34 +703,17 @@ em      { font-style:italic; }
     border-color:#526066;
     }
 
-  .sidebar .listing li a {
-    display:block;
-    padding:8px 15px 9px;
-    border-top:1px solid #f0f0f0;
-    white-space:nowrap;
+.sidebar .listing li a {
+  display:block;
+  padding:8px 15px 9px;
+  border-bottom:1px solid #f0f0f0;
+  }
+  .listing .item.active,
+  .sidebar .listing li a:hover {
+    background-color:#f8f8f8;
     }
-    .listing .item.active,
-    .sidebar .listing li a:hover {
-      background-color:#f8f8f8;
-      }
-    .listing .item.active .round.icon {
-      background-color:#fff;
-      }
-    .sidebar .listing li a .status {
-      width:15px;
-      display:inline-block;
-      font-weight:normal;
-      }
-
-.content .editor {
-  height:600px;
-  }
-.content .toolbar + .editor,
-.content .listing {
-  height:506px;
-  }
-  .content .breadcrumb + .listing {
-    height:460px;
+  .listing .item.active .round.icon {
+    background-color:#fff;
     }
 
   .content .listing .directory > a,
@@ -1350,12 +1347,11 @@ label.error {
   width:auto;
   border:0;
   }
-.CodeMirror pre.CodeMirror-cursor.CodeMirror-overwrite {}
 .CodeMirror-focused pre.CodeMirror-cursor {
   visibility:visible;
   }
 
-div.CodeMirror-selected { background:#d9d9d9; }
+div.CodeMirror-selected { background:#d7d4f0; }
 .CodeMirror-focused div.CodeMirror-selected { background:#d7d4f0; }
 
 .CodeMirror-searching {
@@ -1368,7 +1364,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
 /* Prose Bright Theme */
 .cm-s-prose-bright {  color: #3D494E; }
-.cm-s-prose-bright .CodeMirror-selected {background: #AFC3CF; }
+.cm-s-prose-bright .CodeMirror-selected {background: #d7d4f0; }
 .cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880; }
 .cm-s-prose-bright .CodeMirror-lines { margin:0; }
 
