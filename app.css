@@ -612,8 +612,17 @@ em      { font-style:italic; }
   bottom:0;
   text-indent:0;
   font:11px/16px 'OpenSans', sans-serif;
-  -webkit-font-smoothing:antialiased;
+  -webkit-font-smoothing:subpixel-antialiased;
   }
+  .popup.arrow-top {
+    top:100%;
+    left:0;
+    right:auto;
+    bottom:auto;
+    }
+    .popup.arrow-top:after {
+      left:15px;
+      }
   a:hover .popup {
     display:block;
     }
