@@ -69,6 +69,15 @@ table { border-collapse: collapse; border-spacing:0; }
   font-style:normal;
   }
 
+@font-face {
+  font-family:'Prose';
+    src:url('fonts/prose-d91d5154a737d891631d27f8eefa2abe.eot');
+    src:url('fonts/prose-d91d5154a737d891631d27f8eefa2abe.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-d91d5154a737d891631d27f8eefa2abe.woff') format('woff');
+  font-weight:700;
+  font-style:normal;
+  }
+
 /* ------------------------------------------
   Typography / Basics
 ---------------------------------------------*/
@@ -357,15 +366,6 @@ em      { font-style:italic; }
     padding:60px;
     }
 
-  /*
-    Remove the presentation of the application
-    when viewing static pages.
-  */
-  .static .heading,
-  .static .application {
-    display:none;
-    }
-
 .content {
   background:#fff;
   position:relative;
@@ -412,12 +412,13 @@ em      { font-style:italic; }
 .sidebar {
   background:#fff;
   border-left:1px solid #C3CCD0;
+  border-right:1px solid #C3CCD0;
   -webkit-box-shadow:-1px 0 4px rgba(0,0,0,0.05);
           box-shadow:-1px 0 4px rgba(0,0,0,0.05);
   }
 
 .vert {
-  background:#404040;
+  background:#fff;
   position:fixed;
   right:0;top:0;
   z-index:1000;
@@ -432,36 +433,29 @@ em      { font-style:italic; }
   bottom:5px;
   }
 .vert .nav li a {
-  background-color:#404040;
+  background-color:#f8f8f8;
+  color:#a8afb2;
   display:block;
   width:40px;
   height:40px;
+  line-height:40px;
+  text-align:center;
   margin:8px 10px;
   position:relative;
   z-index:10;
   }
   .vert .nav li a:hover {
-    background-color:#505050;
+    background-color:#f0f0f0;
     }
   .vert .nav li a:active {
-    -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.25),
-                       inset 0 2px 2px #202020;
-            box-shadow:0 1px 1px rgba(255,255,255,0.25),
-                       inset 0 2px 2px #202020;
+    -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
+            box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
     }
-    .vert .nav li a.active:active {
-      background-color:#444;
-      border-color:#101010;
-      -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.25),
-                         inset 0 2px 2px #202020;
-              box-shadow:0 1px 1px rgba(255,255,255,0.25),
-                         inset 0 2px 2px #202020;
+    .vert .nav li a.active {
+      color:#434C50;
+      -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
+              box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
       }
-  .vert .nav li a.active {
-    background-color:#fff;
-    -webkit-box-shadow:inset 0 1px 0 #202020;
-            box-shadow:inset 0 1px 0 #202020;
-    }
 
 .icon {
   background:transparent url('img/sprite.png') no-repeat 0 0;
@@ -471,7 +465,7 @@ em      { font-style:italic; }
   text-indent:-999em;
   }
   .icon.landing {
-    background-position:0 -140px;
+    background-position:-60px -40px;
     width:110px;
     height:110px;
     margin:30px auto 0;
@@ -483,7 +477,8 @@ em      { font-style:italic; }
     }
 
   .inline {
-     display:inline-block;
+    display:inline-block;
+    margin-right:5px;
     }
     .icon.inline {
       position:relative;
@@ -492,69 +487,52 @@ em      { font-style:italic; }
 
 .icon.branding        { background-position:0 -40px; }
 .icon.folder-group    { background-position:-100px -80px; }
-.icon.cancel          { background-position:-120px -80px; }
-.icon.bin             { background-position:-140px -80px; top:0; }
 
-/* Markdown Snippet Links */
-.icon.link            { background-position:-110px -225px; }
-.icon.italic          { background-position:-150px -225px; }
-.icon.image           { background-position:-190px -225px; }
-.icon.quote           { background-position:-230px -225px; }
-.icon.list            { background-position:-270px -225px; }
-.icon.numbered-list   { background-position:-310px -225px; }
-.icon.info            { background-position:-350px -225px; }
+/* Listing and Heading Icons */
+.icon.round               { background-position:-240px 0; }
+.icon.repo                { background-position:0 0; }
+.icon.repo.private        { background-position:-40px 0; }
+.icon.md                  { background-position:-80px 0; }
+.icon.file                { background-position:-120px 0; }
+.icon.file.private        { background-position:-160px 0; }
+.icon.folder              { background-position:-200px 0; }
+.icon.media               { background-position:-280px 0; }
+.icon.repo.owner          { background-position:-320px 0; }
+.icon.repo.owner.private  { background-position:-360px 0; }
 
-.listing .icon.round         { background-position:-280px -100px; }
-.listing .icon.round.media   { background-position:-320px -100px; }
+.vert .ico.login   { color:#9baf6c; }
+.vert .ico.logout  { color:#db6f6f; }
 
-.content .icon.repo,
-.heading .icon.repo          { background-position:-40px -100px; }
+.vert .ico.logout:hover  { background-color:#db6f6f; color:#fff; }
+.vert .ico.login:hover   { background-color:#9baf6c; color:#fff; }
 
-.icon.repo.owner             { background-position: -120px -140px; }
-.icon.repo.owner.private     { background-position: -160px -140px; }
+.ico {
+  font-family:'Prose';
+  font-size:22px;
+  }
+  .ico.small {
+    font-size:16px;
+    }
 
-.content .icon.repo.private,
-.heading .icon.repo.private  { background-position:-80px -100px; }
-
-.content .icon.md            { background-position:-120px -100px; }
-.heading .icon.file          { background-position:-160px -100px; }
-.heading .icon.file.private  { background-position:-200px -100px; }
-.content .icon.folder        { background-position:-240px -100px; }
-
-.icon.assets                 { background-position:-40px 0; }
-.icon.assets.active:active,
-.icon.assetsactive           { background-position:-40px -40px; }
-
-.icon.settings,
-.icon.settings.active:active  { background-position:-80px 0; }
-.icon.settings.active         { background-position:-80px -40px; }
-
-.icon.edit,
-.icon.edit.active:active      { background-position:-120px 0; }
-.icon.edit.active             { background-position:-120px -40px; }
-
-.icon.preview,
-.icon.preview.active:active   { background-position:-160px 0; }
-.icon.preview.active          { background-position:-160px -40px; }
-
-.icon.repos,
-.icon.repos.active:active     { background-position:-200px 0; }
-.icon.repos.active            { background-position:-200px -40px; }
-
-.icon.new,
-.icon.new.active:active       { background-position:-240px 0; }
-.icon.new.active              { background-position:-240px -40px; }
-
-.icon.repo,
-.icon.repo.active:active      { background-position:-280px 0; }
-.icon.repo.active             { background-position:-280px -40px; }
-
-.icon.meta,
-.icon.meta.active:active      { background-position:-320px 0; }
-.icon.meta.active             { background-position:-320px -40px; }
-
-.icon.logout                  { background-position:-360px 0; }
-.icon.login                   { background-position:-360px -40px; }
+  .ico.cancel:before        { content:'\f100'; }
+  .ico.eye:before           { content:'\f101'; }
+  .ico.folder:before        { content:'\f102'; }
+  .ico.italic:before        { content:'\f103'; }
+  .ico.link:before          { content:'\f104'; }
+  .ico.list:before          { content:'\f105'; }
+  .ico.markdown:before      { content:'\f106'; }
+  .ico.media:before         { content:'\f107'; }
+  .ico.metadata:before      { content:'\f108'; }
+  .ico.new-file:before      { content:'\f109'; }
+  .ico.numbered-list:before { content:'\f10a'; }
+  .ico.pencil:before        { content:'\f10b'; }
+  .ico.picture:before       { content:'\f10c'; }
+  .ico.quote:before         { content:'\f10d'; }
+  .ico.repos:before         { content:'\f10e'; }
+  .ico.rubbish:before       { content:'\f10f'; }
+  .ico.search:before        { content:'\f110'; }
+  .ico.sprocket:before      { content:'\f111'; }
+  .ico.switch:before        { content:'\f112'; }
 
 .avatar {
   background:#f8f8f8;
@@ -624,7 +602,8 @@ em      { font-style:italic; }
 
 .popup {
   background:#202020;
-  color:#fff;
+  color:#e0e7eb;
+  text-align:left;
   position:absolute;
   width:auto;
   padding:5px 10px;
@@ -632,8 +611,8 @@ em      { font-style:italic; }
   display:none;
   bottom:0;
   text-indent:0;
-  font-size:11px;
-  line-height:16px;
+  font:11px/16px 'OpenSans', sans-serif;
+  -webkit-font-smoothing:antialiased;
   }
   a:hover .popup {
     display:block;
@@ -710,13 +689,17 @@ em      { font-style:italic; }
     width:90%;
     height:40px;
     }
-  .content-search .icon {
-    top:10px;
+  .content-search .ico {
+    margin:25px 15px 0 0;
     }
 
 .toolbar {
   background:#f8f8f8;
+  border-color:#f8f8f8;
   }
+  .toolbar.fixed {
+    border-color:#C3CCD0;
+    }
   .toolbar ul {
     background:#fff;
     float:left;
@@ -727,9 +710,10 @@ em      { font-style:italic; }
       float:left;
       border-left:1px solid #f8f8f8;
       }
-     .toolbar li .icon,
+     .toolbar li .ico,
      .toolbar li a {
         -webkit-font-smoothing:subpixel-antialiased;
+        position:relative;
         display:inline-block;
         text-align:center;
         height:25px;
@@ -750,11 +734,16 @@ em      { font-style:italic; }
   background:#f8f8f8;
   display:block;
   border:1px solid #c3ccd0;
-  padding:4px 10px;
+  padding:0 10px;
   font-weight:400;
   margin:5px -1px 0;
+  height:30px;
+  line-height:28px;
   float:left;
   }
+  .actions .ico {
+    font-size:18px;
+    }
   .actions a:active {
     position:relative;
     border-color:#526066;
@@ -765,6 +754,7 @@ em      { font-style:italic; }
   padding:4px 15px 8px;
   border-bottom:1px solid #f0f0f0;
   white-space:nowrap;
+  font-weight:400;
   }
   .listing .item.active,
   .sidebar .listing li a:hover {

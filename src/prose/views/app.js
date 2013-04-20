@@ -5,6 +5,7 @@ var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
     id: 'app',
+    className: 'application',
 
     events: {
       'click .post-views .edit': 'edit',
