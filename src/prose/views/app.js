@@ -43,10 +43,6 @@ module.exports = Backbone.View.extend({
         $('#prose').toggleClass('open', false);
         this.viewing = 'edit';
 
-      // Project contents when there aren't branches
-      } else if (app.state.mode === 'tree' && !app.state.branches.length) {
-        $('#prose').toggleClass('open', false);
-
       } else if (!window.authenticated) {
         $('#prose').toggleClass('open', false);
 
