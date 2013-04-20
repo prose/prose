@@ -15,10 +15,10 @@
       <div class='inner'>
         <h2 class='label inner'>Your Recent History</h2>
       </div>
-      <ul id="recent" class="listing">
+      <ul id='recent' class='listing'>
         <% _.each(history.recent[app.username], function(filename) { %>
-          <li><a class="item" href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
-            <span class="status <%= history.state[filename][0] %>">
+        <li><a class='item' title='<%= history.state[filename][0] %>: <%= filename %>' href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
+            <span class='status <%= history.state[filename][0] %>'>
             <% switch(history.state[filename][0]) {
               case 'added':
                 print('+');
