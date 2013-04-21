@@ -11,6 +11,7 @@ clean:
 	rm -f dist/*
 
 TEMPLATES = $(shell find templates -type f -name '*.html')
+
 dist/templates.js: $(TEMPLATES)
 	node build.js
 
@@ -31,26 +32,14 @@ LIBS = \
 	src/libs/liquid.patch.js
 
 APPLICATION = \
-	src/prose/views/notification.js \
-	src/prose/views/preview.js \
-	src/prose/views/post.js \
-	src/prose/views/posts.js \
-	src/prose/views/profile.js \
-	src/prose/views/start.js \
-	src/prose/views/application.js \
-	src/prose/views/app.js \
-	src/prose/router.js \
-	src/prose/util.js \
 	src/prose/boot.js \
-	dist/templates.js \
-	src/prose/models.js \
-	src/prose/cookie.js \
 	src/libs/github.js
 
-dist/prose.js: $(APPLICATION) $(LIBS)
+dist/prose.js: $(APPLICATION) $(LIBS) dist/templates.js
 	cat $(LIBS) > dist/prose.js
 	$(BROWSERIFY) $(APPLICATION) >> dist/prose.js
 
-dist/prose.min.js: $(APPLICATION) $(LIBS)
-	cat $(LIBS) > dist/prose.min.js
-	$(BROWSERIFY) $(APPLICATION) | $(UGLIFY) >> dist/prose.min.js
+dist/prose.min.js: dist/prose.js
+	$(UGLIFY) dist/prose.js > dist/prose.min.js
+
+.PHONY: clean
