@@ -90,9 +90,11 @@ module.exports = Backbone.View.extend({
       // Editor is first up so trigger an active class for it
       $('.post-views .edit').toggleClass('active', true);
 
-      _.delay(function () {
-        utils.fixedScroll($('.topbar'));
-      }, 1);
+      if (this.model.markdown) {
+        _.delay(function () {
+          utils.fixedScroll($('.topbar'));
+        }, 1);
+      }
 
       return this;
     },
