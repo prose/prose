@@ -402,13 +402,7 @@ module.exports = {
                       console.log(err);
                     }
                   }
-
-                  // Ping `views/app.js` to let know we should swap out the sidebar
-                  app.eventRegister.trigger('sidebarContext', app.state, 'posts');
                 });
-              } else {
-                // Ping `views/app.js` to let know we should swap out the sidebar
-                app.eventRegister.trigger('sidebarContext', app.state, 'posts');
               }
             });
 

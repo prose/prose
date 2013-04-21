@@ -67,7 +67,7 @@ module.exports = Backbone.View.extend({
         sidebarTmpl = _(window.app.templates.sidebarProject).template();
       }
 
-      $('#drawer')
+      $('#drawer', this.el)
         .empty()
         .append(sidebarTmpl(data));
 
@@ -79,8 +79,7 @@ module.exports = Backbone.View.extend({
 
     recentFiles: function(data) {
       var sidebarTmpl = _(window.app.templates['recentFiles']).template();
-
-      $('#drawer').append(sidebarTmpl(data));
+      $('#drawer', this.el).empty().append(sidebarTmpl(data));
     },
 
     // Event Triggering to other files

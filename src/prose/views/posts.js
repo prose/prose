@@ -52,6 +52,7 @@ module.exports = Backbone.View.extend({
       alterable: false
     };
 
+    app.eventRegister.trigger('sidebarContext', app.state, 'posts');
     app.eventRegister.trigger('headerContext', header);
 
     var tmpl = _(window.app.templates.posts).template();
