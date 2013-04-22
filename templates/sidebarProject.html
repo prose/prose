@@ -18,7 +18,7 @@
       <ul id='recent' class='listing'>
         <% _.each(history.recent[app.username], function(filename) { %>
         <li><a class='item' title='<%= history.state[filename][0] %>: <%= filename %>' href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
-            <span class='status <%= history.state[filename][0] %>'><%= history.state[filename][0] %></span>
+            <span class='ico small inline <%= history.state[filename][0] %>'></span>
             <%= filename %>
           </a></li>
         <% }); %>

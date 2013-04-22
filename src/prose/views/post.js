@@ -102,8 +102,6 @@ module.exports = Backbone.View.extend({
       var that = this;
       this.model.preview = false;
 
-      this.toolbar.prependTo($('#post'));
-
       $('.post-views a').removeClass('active');
       $('.post-views .edit').addClass('active');
       $('#prose').toggleClass('open', false);
@@ -140,8 +138,6 @@ module.exports = Backbone.View.extend({
 
       } else {
 
-        this.toolbar = $('.topbar-wrapper').detach();
-
         // Vertical Nav
         $('.post-views a').removeClass('active');
         $('.post-views .preview').addClass('active');
@@ -164,7 +160,6 @@ module.exports = Backbone.View.extend({
     meta: function() {
 
       $('#prose').toggleClass('open', false);
-      this.toolbar = $('.topbar-wrapper').detach();
 
       // Vertical Nav
       $('.post-views a').removeClass('active');
@@ -218,9 +213,9 @@ module.exports = Backbone.View.extend({
       $('.views .view', this.el).removeClass('active');
 
       if (this.model.mode === 'preview') {
-        $('#preview', this.el).addClass('active');
+        $('.preview', this.el).addClass('active');
       } else {
-        $('#code', this.el).addClass('active');
+        $('.edit', this.el).addClass('active');
       }
     },
 
@@ -429,6 +424,7 @@ module.exports = Backbone.View.extend({
       var filecontent = this.serialize();
       var message = $('.commit-message').val() || $('.commit-message').attr('placeholder');
       var method = this.model.writeable ? this.saveFile : this.sendPatch;
+      this.hideDiff();
 
       // Update content
       this.model.content = this.editor.getValue();
