@@ -591,14 +591,18 @@ em      { font-style:italic; }
 .details {
   padding-right:15px;
   }
-  .details a {
-    display:block;
+  .details .user {
+    font-weight:400;
+    position:relative;
+    top:2px;
     }
-
   .content .details {
     width:360px;
     margin:0 15px;
     }
+    .content .details a {
+      display:block;
+      }
     .content .details .title {
       position:relative;
       top:8px;

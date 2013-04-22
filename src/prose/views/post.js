@@ -60,13 +60,12 @@ module.exports = Backbone.View.extend({
 
       // Render heading
       var isPrivate = app.state.isPrivate ? 'private' : '';
+      var breadcrumb = '<a class="user" href="#"' + app.state.user + '>' + app.state.user + '</a> / <a class="user" href="#"' + app.state.user + '/' + app.state.repo + '>' + app.state.repo + '</a>';
 
       var header = {
         avatar: '<span class="icon round file ' + isPrivate + '"></span>',
-        parent: app.state.repo,
-        parentUrl: app.state.user + '/' + app.state.repo,
+        breadcrumb: breadcrumb,
         title: _.filepath(data.path, data.file),
-        titleUrl: '#',
         alterable: true
       };
 
