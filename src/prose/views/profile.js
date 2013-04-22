@@ -7,7 +7,7 @@ module.exports = Backbone.View.extend({
     id: 'profile',
 
     events: {
-      'hover .item': 'activeListing',
+      'mouseenter .item': 'activeListing',
       'keyup #filter': 'search'
     },
 
@@ -85,11 +85,13 @@ module.exports = Backbone.View.extend({
     },
 
     activeListing: function (e) {
-      $listings = $('.item', this.el);
-      $listing = $(e.target, this.el);
+      if ($(e.target, this.el).hasClass('item')) {
+        $listings = $('.item', this.el);
+        $listing = $(e.target, this.el);
 
-      $listings.removeClass('active');
-      $listing.addClass('active');
+        $listings.removeClass('active');
+        $listing.addClass('active');
+      }
     },
 
     renderResults: function () {

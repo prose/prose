@@ -147,6 +147,7 @@ h2 {
   }
   h2.label {
     margin:5px 0 0;
+    font-weight:700;
     padding:0;
     }
 
@@ -341,7 +342,7 @@ em      { font-style:italic; }
   line-height:1.5em;
   font-weight:700;
   padding:0;
-  width:560px;
+  width:580px;
   }
   .heading .details {
     position:relative;
@@ -352,7 +353,7 @@ em      { font-style:italic; }
     width:60px;
     height:30px;
     bottom:0;
-    right:0;
+    right:15px;
     }
   .heading .filepath:focus,
   .heading .filepath:hover {
@@ -565,9 +566,6 @@ em      { font-style:italic; }
   .details a {
     display:block;
     }
-    .listing .details > * {
-      display:inline;
-      }
 
   .content .details {
     width:360px;
@@ -772,15 +770,8 @@ em      { font-style:italic; }
   .listing .item.active .round.icon {
     background-color:#fff;
     }
-  .sidebar .listing li a .status {
-    width:20px;
-    display:inline-block;
-    font-weight:normal;
-    }
-
   .content .listing .directory > a,
   .content .listing li {
-    position:relative;
     display:block;
     border-bottom:1px solid #f0f0f0;
     padding:12px 15px;
@@ -789,6 +780,11 @@ em      { font-style:italic; }
       border:none;
       padding:0;
       }
+
+.history .status {
+  color:#a8afb2;
+  font-style:italic;
+  }
 
 .prose .blocks {
   margin:0;
@@ -886,17 +882,28 @@ em      { font-style:italic; }
 .sidebar .commit {
   position:relative;
   display:none;
-  margin-bottom:15px;
   }
   .sidebar .commit .cancel {
     position:absolute;
-    top:9px;
-    right:18px;
+    z-index:10;
+    top:0;
+    right:0;
+    padding:3px 6px;
+    font-size:13px;
+    display:block;
     }
-  .sidebar .commit textarea {
-    padding-right:30px;
-    resize:none;
-    }
+    .cancel:hover {
+      color:#DB6F6F;
+      }
+    .sidebar .commit textarea {
+      padding-right:25px;
+      margin:0 0 -2px;
+      display:block;
+      position:relative;
+      z-index:1;
+      height:80px;
+      resize:none;
+      }
   .sidebar .commit.active {
     display:block;
     }

@@ -10,7 +10,7 @@ module.exports = Backbone.View.extend({
   id: 'posts',
 
   events: {
-    'hover .item': 'activeListing',
+    'mouseenter .item': 'activeListing',
     'click .delete': 'deleteFile',
     'keyup #filter': 'search'
   },
@@ -134,11 +134,13 @@ module.exports = Backbone.View.extend({
   },
 
   activeListing: function (e) {
-    $listings = $('.item', this.el);
-    $listing = $(e.target, this.el);
+    if ($(e.target, this.el).hasClass('item')) {
+      $listings = $('.item', this.el);
+      $listing = $(e.target, this.el);
 
-    $listings.removeClass('active');
-    $listing.addClass('active');
+      $listings.removeClass('active');
+      $listing.addClass('active');
+    }
   },
 
   deleteFile: function(e) {
