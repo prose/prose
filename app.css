@@ -214,7 +214,9 @@ input[type=text] {
        -o-transition:border linear 100ms;
           transition:border linear 100ms;
   }
+.authoring textarea,
 .views textarea,
+.authoring input[type=text],
 .views input[type=text] {
   -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.15);
           box-shadow:inset 0 1px 3px rgba(0,0,0,0.15);
@@ -964,13 +966,17 @@ label.error {
 /* ------------------------------------------
   Chosen Plugin for fancy selects
 ---------------------------------------------*/
+.search-field input,
+.chzn-container,
+.chzn-drop {
+  /*TODO Fix this upstream*/
+  width:100%!important;
+  }
 .chzn-container {
   font-size:13px;
   line-height:18px;
   position:relative;
-  display:inline-block;
-  zoom:1;
-  *display:inline;
+  display:block;
   }
 .chzn-container .chzn-drop {
   background:#fff;
@@ -981,6 +987,7 @@ label.error {
   top:29px;
   left:0;
   margin:1px;
+
   -webkit-box-shadow:0 4px 5px rgba(0,0,0,.15);
           box-shadow:0 4px 5px rgba(0,0,0,.15);
   }
@@ -1110,11 +1117,10 @@ label.error {
   color:#999;
   }
 .chzn-container-multi .chzn-choices .search-choice {
-  background:#f0f0f0;
-  color:#404040;
+  background:#f8f8f8;
+  width:98%;
   border:1px solid #aaa;
-  line-height:13px;
-  padding:3px 20px 3px 5px;
+  padding:4px 20px 5px 5px;
   margin:3px;
   position:relative;
   cursor:default;
@@ -1134,7 +1140,7 @@ label.error {
   padding-right:5px;
   }
 .chzn-container-multi .chzn-choices .search-choice-focus {
-  background:#d4d4d4;
+  border-color:#DB6F6F;
   }
 .chzn-container-multi .chzn-choices .search-choice .search-choice-close {
   background:transparent url('img/sprite.png') no-repeat -40px -80px;

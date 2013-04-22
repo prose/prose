@@ -211,7 +211,6 @@ module.exports = Backbone.View.extend({
       // Content Window
       $('.views .view', this.el).removeClass('active');
       $diff.addClass('active');
-
       $diff.html(diff);
     },
 
@@ -226,9 +225,7 @@ module.exports = Backbone.View.extend({
     },
 
     save: function() {
-      if (!this.dirty) return false;
       this.showDiff();
-      return false;
     },
 
     refreshCodeMirror: function () {
