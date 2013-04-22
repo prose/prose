@@ -15,10 +15,6 @@
       <span class='popup round arrow-right'>⌘&nbsp;+&nbsp;s</span>
     </a>
 
-    <% if (jekyll && markdown) { %>
-      <a href='#' class='toggle publish button round'>Publish</a>
-    <% } %>
-
     <% if (app.state.config && app.state.config.languages) { %>
       <% _(app.state.config.languages).each(function(lang) { %>
         <% if (lang.value && (metadata.lang && metadata.lang !== lang.value)) { %>
