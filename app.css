@@ -225,10 +225,9 @@ input[type=text] {
   input[type=text]:focus {
     outline:thin dotted\8; /* ie8 below */
     color:#404040;
-    border-color:#808080;
+    border-color:#516066;
     border-width:1px;
     }
-
 
 strong  { font-weight:700; }
 em      { font-style:italic; }

@@ -14,8 +14,7 @@ module.exports = Backbone.View.extend({
 
     events: {
       'click .save.confirm': 'updateFile',
-      'click .markdown-snippets a': 'markdownSnippet',
-      'change input': 'makeDirty'
+      'click .markdown-snippets a': 'markdownSnippet'
     },
 
     initialize: function () {
@@ -633,9 +632,10 @@ module.exports = Backbone.View.extend({
           autofocus: true,
           extraKeys: that.keyMap(),
           matchBrackets: true,
-          theme: 'prose-bright',
-          onChange: _.bind(that.makeDirty, that)
+          theme: 'prose-bright'
         });
+
+        that.editor.on('change', _.bind(that.makeDirty, that));
         that.refreshCodeMirror();
 
         // Check localStorage for existing stash
