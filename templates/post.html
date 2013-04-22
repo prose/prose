@@ -1,40 +1,41 @@
-<% if (markdown) { %>
-<div class='topbar-wrapper'>
-  <div class='topbar toolbar'>
-    <div class='markdown-snippets clearfix'>
-      <ul class='group round clearfix'>
-        <li><a href='#' title='Heading' data-snippet='<% print("# Heading\n\n") %>'>h1</a></li>
-        <li><a href='#' title='Sub Heading' data-snippet='<% print("## Sub Heading\n\n") %>'>h2</a></li>
-      </ul>
-      <ul class='group round clearfix'>
-        <li><a class='ico small link' title='Insert Link' href='#' data-snippet='<% print("[Google](http://google.com)\n\n") %>'></a></li>
-        <li><a class='ico small picture' title='Insert Image' href='#' data-snippet='<% print("![picture alt](http://placekitten.com/200/300)\n\n") %>'></a></li>
-      </ul>
-      <ul class='group round clearfix'>
-        <li><a href='#' title='Bold' data-snippet='**text**'><strong>B</strong></a></li>
-        <li><a class='ico small italic' href='#' title='Italic' data-snippet='_text_'></a></li>
-      </ul>
-      <ul class='group round clearfix'>
-        <li><a class='ico small quote' title='Blockquote' href='#' data-snippet='<% print("> We loved with a love that was more than love\n\n"); %>'></a></li>
-        <li><a class='ico small list' href='#' title='List' data-snippet='<% print("- item\n- item\n- item\n\n"); %>'></a></li>
-        <li><a class='ico small numbered-list' href='#' title='Numbered List' data-snippet='<% print("1. item\n2. item\n3. item\n\n"); %>'></a></li>
-      </ul>
-      <ul class='group round clearfix'>
-        <li><a class='ico small markdown' href='http://daringfireball.net/projects/markdown/syntax' target='_blank'>
-        <span class='popup round arrow-top'>More About Markdown</span>
-        </a></li>
-      </ul>
-    </div>
-  </div>
-</div>
-<% } %>
-
 <div class='inner editor views'>
   <div id='diff' class='view prose diff'></div>
   <% if (jekyll) { %>
     <div id='meta' class='view meta'></div>
   <% } %>
-  <div id='code' class='view active edit<% if (markdown) { %> markdown<% } %>'></div>
+  <div class='view active edit<% if (markdown) { %> markdown<% } %>'>
+    <% if (markdown) { %>
+    <div class='topbar-wrapper'>
+      <div class='topbar toolbar'>
+        <div class='markdown-snippets clearfix'>
+          <ul class='group round clearfix'>
+            <li><a href='#' title='Heading' data-snippet='<% print("# Heading\n\n") %>'>h1</a></li>
+            <li><a href='#' title='Sub Heading' data-snippet='<% print("## Sub Heading\n\n") %>'>h2</a></li>
+          </ul>
+          <ul class='group round clearfix'>
+            <li><a class='ico small link' title='Insert Link' href='#' data-snippet='<% print("[Google](http://google.com)\n\n") %>'></a></li>
+            <li><a class='ico small picture' title='Insert Image' href='#' data-snippet='<% print("![picture alt](http://placekitten.com/200/300)\n\n") %>'></a></li>
+          </ul>
+          <ul class='group round clearfix'>
+            <li><a href='#' title='Bold' data-snippet='**text**'><strong>B</strong></a></li>
+            <li><a class='ico small italic' href='#' title='Italic' data-snippet='_text_'></a></li>
+          </ul>
+          <ul class='group round clearfix'>
+            <li><a class='ico small quote' title='Blockquote' href='#' data-snippet='<% print("> We loved with a love that was more than love\n\n"); %>'></a></li>
+            <li><a class='ico small list' href='#' title='List' data-snippet='<% print("- item\n- item\n- item\n\n"); %>'></a></li>
+            <li><a class='ico small numbered-list' href='#' title='Numbered List' data-snippet='<% print("1. item\n2. item\n3. item\n\n"); %>'></a></li>
+          </ul>
+          <ul class='group round clearfix'>
+            <li><a class='ico small markdown' href='http://daringfireball.net/projects/markdown/syntax' target='_blank'>
+            <span class='popup round arrow-top'>More About Markdown</span>
+            </a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <% } %>
+    <div id='code'></div>
+  </div>
   <% if (markdown) { %>
     <div id='preview' class='view preview prose'><%= preview %></div>
   <% } %>

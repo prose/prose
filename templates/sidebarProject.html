@@ -21,7 +21,7 @@
             if (app.state.config && app.state.config.prose) { rooturl = app.state.config.prose.rooturl; }
             if (!rooturl || filename.indexOf(rooturl) > -1) { %>
           <li><a class='item' title='<%= history.state[filename][0] %>: <%= filename %>' href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
-            <span class='status <%= history.state[filename][0] %>'><%= history.state[filename][0] %></span>
+            <span class='ico small inline <%= history.state[filename][0] %>'></span>
             <%= filename %>
           </a></li>
         <% }}); %>

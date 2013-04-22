@@ -13,7 +13,7 @@
     <% } %>
 
     <div class='details fl'>
-      <h3>
+      <h3<% if (!description) { %> class='title'<% } %>>
         <a
           data-user='<%= owner.login %>'
           data-repo='<%= name %>'

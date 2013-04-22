@@ -39,7 +39,7 @@ module.exports = Backbone.View.extend({
     var isPrivate = app.state.isPrivate ? ' private' : '';
     var isBelonging = '';
 
-    if (data.user !== app.username && (data.permissions.pull === true || data.permissions.push === true)) {
+    if (data.user !== app.username && data.permissions.push === true) {
       isBelonging = ' owner';
     } 
 
