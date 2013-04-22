@@ -45,11 +45,10 @@ module.exports = Backbone.View.extend({
       this.eventRegister = app.eventRegister;
 
       // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'edit', 'preview', 'deleteFile', 'updateMetaData', 'save', 'hideDiff', 'translate', 'updateFile', 'meta');
+       _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'hideDiff', 'translate', 'updateFile', 'meta');
       this.eventRegister.bind('edit', this.edit);
       this.eventRegister.bind('preview', this.preview);
       this.eventRegister.bind('deleteFile', this.deleteFile);
-      this.eventRegister.bind('updateMetaData', this.updateMetaData);
       this.eventRegister.bind('save', this.save);
       this.eventRegister.bind('hideDiff', this.hideDiff);
       this.eventRegister.bind('updateFile', this.updateFile);
@@ -653,7 +652,6 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('edit', this.postViews);
       this.eventRegister.unbind('preview', this.preview);
       this.eventRegister.unbind('deleteFile', this.deleteFile);
-      this.eventRegister.unbind('updateMetaData', this.updateMetaData);
       this.eventRegister.unbind('save', this.save);
       this.eventRegister.unbind('hideDiff', this.hideDiff);
       this.eventRegister.unbind('translate', this.translate);

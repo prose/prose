@@ -174,12 +174,20 @@ p {
 	margin:0 0 20px;
   }
 label {
-  display:block;
+  color:#434C50;
   font-size:13px;
   line-height:20px;
-  margin:10px 0 5px;
   font-weight:700;
+  display:block;
+  margin:10px 0 3px;
   }
+  label.aside {
+    display:inline-block;
+    font-weight:normal;
+    position:relative;
+    top:1px;
+    }
+
 select,
 textarea,
 input[type=text] {
@@ -194,12 +202,22 @@ input[type=text] {
 textarea,
 input[type=text] {
   background-color:#fff;
-  border:1px solid #aaa;
+  vertical-align:middle;
+  max-width:100%;
+  border:1px solid #CCC;
+  border-color:#CCC #DDD #DDD;
   color:#999;
-  -webkit-transition:border linear .2s, box-shadow linear .2s;
-     -moz-transition:border linear .2s, box-shadow linear .2s;
-       -o-transition:border linear .2s, box-shadow linear .2s;
-          transition:border linear .2s, box-shadow linear .2s;
+  -webkit-box-sizing:border-box;
+          box-sizing:border-box;
+  -webkit-transition:border linear 100ms;
+     -moz-transition:border linear 100ms;
+       -o-transition:border linear 100ms;
+          transition:border linear 100ms;
+  }
+.views textarea,
+.views input[type=text] {
+  -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.15);
+          box-shadow:inset 0 1px 3px rgba(0,0,0,0.15);
   }
   textarea:focus,
   input[type=text]:focus {
@@ -878,6 +896,9 @@ em      { font-style:italic; }
   .post .view.active {
     display:block;
     }
+  .post .view.meta {
+    width:360px;
+    }
 
 .sidebar .commit {
   position:relative;
@@ -1294,7 +1315,7 @@ label.error {
 ---------------------------------------------*/
 .CodeMirror {
   font-family:Menlo, monospace;
-  font-size:13px; 
+  font-size:13px;
   line-height:1.4em;
   -webkit-font-smoothing:subpixel-antialiased;
   }
