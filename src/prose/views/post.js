@@ -14,7 +14,8 @@ module.exports = Backbone.View.extend({
 
     events: {
       'click .save.confirm': 'updateFile',
-      'click .markdown-snippets a': 'markdownSnippet'
+      'click .markdown-snippets a': 'markdownSnippet',
+      'change input': 'makeDirty'
     },
 
     initialize: function () {
@@ -228,9 +229,7 @@ module.exports = Backbone.View.extend({
     },
 
     refreshCodeMirror: function () {
-      $('.CodeMirror-scroll').height($('.document').height());
       this.editor.refresh();
-      // if (this.metadataEditor) this.metadataEditor.refresh();
     },
 
     updateMetaData: function () {
