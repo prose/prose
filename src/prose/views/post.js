@@ -60,11 +60,11 @@ module.exports = Backbone.View.extend({
 
       // Render heading
       var isPrivate = app.state.isPrivate ? 'private' : '';
-      var breadcrumb = '<a class="user" href="#"' + app.state.user + '>' + app.state.user + '</a> / <a class="user" href="#"' + app.state.user + '/' + app.state.repo + '>' + app.state.repo + '</a>';
+      var parentTrail = '<a href="#"' + app.state.user + '>' + app.state.user + '</a> / <a href="#"' + app.state.user + '/' + app.state.repo + '>' + app.state.repo + '</a>';
 
       var header = {
         avatar: '<span class="icon round file ' + isPrivate + '"></span>',
-        breadcrumb: breadcrumb,
+        parentTrail: parentTrail,
         title: _.filepath(data.path, data.file),
         alterable: true
       };
@@ -188,10 +188,9 @@ module.exports = Backbone.View.extend({
       this.dirty = true;
       if (this.editor) this.model.content = this.editor.getValue();
       if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
-      if (!this.$('.button.save').hasClass('saving')) {
-        this.$('.button.save').html(this.model.writeable ? 'Save' : 'Submit Change');
-        this.$('.button.save').removeClass('inactive error');
-      }
+
+      var saveState = this.model.writeable ? 'Save' : 'Submit Change';
+      this.eventRegister.trigger('updateSave', saveState);
     },
 
     showDiff: function() {
