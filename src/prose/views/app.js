@@ -24,10 +24,11 @@ module.exports = Backbone.View.extend({
     initialize: function(options) {
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'headerContext', 'sidebarContext');
+      _.bindAll(this, 'headerContext', 'sidebarContext', 'recentFiles', 'updateSave');
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('sidebarContext', this.sidebarContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
+      this.eventRegister.bind('updateSave', this.updateSave);
     },
 
     render: function () {
@@ -41,10 +42,8 @@ module.exports = Backbone.View.extend({
       if (this.model.mode === 'edit' || this.model.mode === 'blob' || this.model.mode === 'new') {
         $('#prose').toggleClass('open', false);
         this.viewing = 'edit';
-
       } else if (!window.authenticated) {
         $('#prose').toggleClass('open', false);
-
       } else {
         $('#prose').toggleClass('open', true);
       }
@@ -176,10 +175,18 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
+    updateSave: function(saveState) {
+      if (!$('.button.save', this.el).hasClass('saving')) {
+        $('.button.save', this.el).html(saveState);
+        $('.button.save', this.el).removeClass('inactive error');
+      }
+    },
+
     remove: function () {
       // Unbind pagehide event handler when View is removed
       this.eventRegister.unbind('sidebarContext', this.sidebarContext);
       this.eventRegister.unbind('headerContext', this.headerContext);
       this.eventRegister.unbind('recentFiles', this.recentFiles);
+      this.eventRegister.unbind('updateSave', this.recentFiles);
     }
 });
