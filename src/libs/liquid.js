@@ -1316,6 +1316,10 @@ Liquid.Template.registerFilter({
   last: function(input) {
     input = input;
     return input[input.length -1];
+  },
+
+  split: function(input, separator) {
+    return input.split(separator);
   }
 });
 
