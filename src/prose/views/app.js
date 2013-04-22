@@ -17,7 +17,6 @@ module.exports = Backbone.View.extend({
       'click a.save.confirm': 'updateFile',
       'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
-      'click a.publish': 'updateMetaData',
       'click a.translate': 'translate',
       'keypress input.filepath': 'saveFilePath'
     },
@@ -124,11 +123,6 @@ module.exports = Backbone.View.extend({
 
     deleteFile: function(e) {
       this.eventRegister.trigger('deleteFile', e);
-      return false;
-    },
-
-    updateMetaData: function(e) {
-      this.eventRegister.trigger('updateMetaData', e);
       return false;
     },
 
