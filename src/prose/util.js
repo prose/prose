@@ -371,5 +371,19 @@ module.exports = {
     var path = $('.item.active').data('navigate');
     if (path) router.navigate(path, true);
     return false;
+  },
+
+  loader: {
+    loading: function(message) {
+      var tmpl = _(window.app.templates.loading).template();
+      $('#app').append(tmpl({
+        message: message
+      }))
+    },
+
+    loaded: function() {
+      // TODO A nicer action.
+      $('#loader').remove();
+    }
   }
 };

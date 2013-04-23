@@ -647,16 +647,13 @@ em      { font-style:italic; }
       }
 
 .loading {
-  background:transparent url('img/ajax-loader.gif') no-repeat;
+  background:transparent url('img/loader.gif') no-repeat;
   margin:150px auto;
   width:50px;
   font-size:20px;
   text-align:center;
   height:11px;
   }
-  .loading span {
-    display:none;
-    }
 
 .breadcrumb {
   background:#F8F8F8;

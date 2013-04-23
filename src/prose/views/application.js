@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
 
@@ -81,18 +82,18 @@ module.exports = Backbone.View.extend({
   profile: function (username) {
     var that = this;
     app.state.title = username;
-    this.loading('Loading profile ...');
 
+    utils.loader.loading('Loading Profile');
     window.app.models.loadRepos(username, function (err, data) {
 
       // Render out the application view
       $(that.app.render().el).prependTo(that.el);
 
-      that.loaded();
       data.authenticated = !! window.authenticated;
       that.replaceMainView('profile', new window.app.views.Profile({
         model: _.extend(that.model, data)
       }).render());
+      utils.loader.loaded();
     });
   },
 
@@ -103,28 +104,26 @@ module.exports = Backbone.View.extend({
 
   posts: function (user, repo, branch, path) {
     var that = this;
-    this.loading('Loading posts ...');
+    utils.loader.loading('Loading Posts');
     window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      this.loaded();
-
       if (err) return this.notify('error', 'This post does not exist.');
       // Render out the application view
       $(that.app.render().el).prependTo(that.el);
       this.replaceMainView('posts', new window.app.views.Posts({
         model: data
       }).render());
+      utils.loader.loaded();
     }, this));
   },
 
   post: function (user, repo, branch, path, file, mode) {
     var that = this;
-    this.loading('Loading post ...');
+    utils.loader.loading('Loading Post');
+
     window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return this.notify('error', 'This post does not exist.');
       window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         if (err) return this.notify('error', 'This post does not exist.');
-
-        this.loaded();
 
         app.state.markdown = data.markdown;
 
@@ -136,6 +135,7 @@ module.exports = Backbone.View.extend({
         this.replaceMainView(window.authenticated ? 'post' : 'read-post', new window.app.views.Post({
           model: data
         }).render());
+        utils.loader.loaded();
       }, this));
 
       // Render out the application view
@@ -145,7 +145,8 @@ module.exports = Backbone.View.extend({
   },
 
   preview: function (user, repo, branch, path, file, mode) {
-    this.loading('Preview post ...');
+    utils.loader.loading('Previewing Post');
+
     window.app.models.loadConfig(user, repo, branch, _.bind(function () {
       window.app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         if (err) return this.notify('error', 'This post does not exist.');
@@ -158,10 +159,9 @@ module.exports = Backbone.View.extend({
 
   newPost: function (user, repo, branch, path) {
     var that = this;
-    this.loading('Creating file ...');
+    utils.loader.loading('Creating a new post');
     window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       window.app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
-        this.loaded();
 
         // Render out the application view
         $(that.app.render().el).prependTo(that.el);
@@ -178,6 +178,7 @@ module.exports = Backbone.View.extend({
         this.mainView.makeDirty();
         app.state.file = data.file;
 
+        utils.loader.loaded;
       }, this));
     }, this));
   },
@@ -190,14 +191,6 @@ module.exports = Backbone.View.extend({
       'type': type,
       'message': message
     }).render());
-    this.loaded();
-  },
-
-  loading: function (msg) {
-    $('body').append('<div class="loading"><span>' + msg ||  'Loading ...' + '</span></div>');
-  },
-
-  loaded: function ()  {
-    $('.loading').remove();
+    utils.loader.loaded;
   }
 });
