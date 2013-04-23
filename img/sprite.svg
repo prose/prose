@@ -68,15 +68,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4"
-     inkscape:cx="-29.437042"
-     inkscape:cy="148.45613"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="3.4309242"
+     inkscape:cy="81.029726"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1280"
      inkscape:window-height="752"
-     inkscape:window-x="10"
+     inkscape:window-x="108"
      inkscape:window-y="0"
      inkscape:window-maximized="0">
     <inkscape:grid
@@ -123,6 +123,13 @@
      id="layer1"
      transform="translate(0,-902.3622)"
      style="display:inline">
+    <rect
+       y="962.36218"
+       x="-50"
+       height="40.000038"
+       width="40"
+       id="rect23480"
+       style="color:#000000;fill:#f2f2f2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     <rect
        style="color:#000000;fill:#e0e7eb;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect12770"
@@ -239,7 +246,7 @@
        inkscape:export-ydpi="90" />
     <g
        id="g13114"
-       transform="matrix(0.3,0,0,0.3,-271.5,878.6497)">
+       transform="matrix(0.3,0,0,0.3,-271.5,877.6497)">
       <path
          style="color:#000000;fill:#e0e7eb;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.49999997;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
          d="m 915,222.375 0,110 10,0 10,0 70,-110 -80,0 -10,0 z m 10,10 61.625,0 -6.375,10 -55.25,0 0,-10 z m 0,20 48.9375,0 -6.375,10 -42.5625,0 0,-10 z m 0,20 36.1875,0 -6.375,10 -29.8125,0 0,-10 z m 0,20 23.4375,0 -6.375,10 -17.0625,0 0,-10 z m 0,20 10.75,0 -6.375,10 -4.375,0 0,-10 z"
@@ -556,13 +563,6 @@
        id="path11260"
        d="m 262,913.3622 0,6 7,0 z"
        style="fill:#d4d7d9;fill-opacity:1;stroke:none" />
-    <rect
-       y="962.36218"
-       x="-50"
-       height="20"
-       width="20"
-       id="rect23480"
-       style="color:#000000;fill:#f2f2f2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     <g
        style="fill:#526066;fill-opacity:1;display:inline"
        id="g13338"

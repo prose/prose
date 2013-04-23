@@ -613,7 +613,6 @@ module.exports = Backbone.View.extend({
           mode: that.model.lang,
           value: that.model.content,
           lineWrapping: true,
-          autofocus: true,
           extraKeys: that.keyMap(),
           matchBrackets: true,
           theme: 'prose-bright'

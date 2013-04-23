@@ -146,7 +146,7 @@ h2 {
   padding:0 0 5px;
   }
   h2.label {
-    margin:5px 0 0;
+    margin:5px 0;
     font-weight:700;
     padding:0;
     }
@@ -278,6 +278,7 @@ em      { font-style:italic; }
   }
 
 .prose p,
+.prose span,
 .prose ul,
 .prose ol,
 .prose li {
@@ -295,6 +296,29 @@ em      { font-style:italic; }
 .prose ul {
   list-style:disc;
   }
+
+.prose table {
+  background-color:transparent;
+  border-collapse:collapse;
+  border-spacing:0;
+  width:100%;
+  margin-bottom:20px;
+  table-layout:fixed;
+  }
+  .prose th,
+  .prose td {
+    padding:4px 8px;
+    line-height:20px;
+    text-align:left;
+    vertical-align:top;
+    border-bottom:1px solid #f0f0f0;
+    }
+  .prose th {
+    font-weight:700;
+    }
+  .prose thead th {
+    vertical-align:bottom;
+    }
 
 .prose blockquote {
 	padding-left:19px;
@@ -539,6 +563,11 @@ em      { font-style:italic; }
   .ico.small {
     font-size:15px;
     }
+  .ico.small.repos {
+    font-size:12px;
+    line-height:16px;
+    }
+
 .ico.added:before { content: "\f100"; }
 .ico.cancel:before { content: "\f101"; }
 .ico.eye:before { content: "\f102"; }
@@ -787,7 +816,7 @@ em      { font-style:italic; }
 
 .sidebar .listing li a {
   display:block;
-  padding:4px 15px 8px;
+  padding:5px 15px;
   border-bottom:1px solid #f0f0f0;
   white-space:nowrap;
   text-overflow:ellipsis;
@@ -999,7 +1028,7 @@ label.error {
   z-index:1010;
   top:29px;
   left:0;
-  margin:1px;
+  margin:1px 0;
 
   -webkit-box-shadow:0 4px 5px rgba(0,0,0,.15);
           box-shadow:0 4px 5px rgba(0,0,0,.15);
@@ -1078,7 +1107,7 @@ label.error {
   z-index:1010;
   }
   .chzn-container-single .chzn-search input {
-    background:#fff url('img/sprite.png') no-repeat 190px -75px;
+    background:#fff url('img/sprite.png') no-repeat 125px -75px;
     margin:0 4px;
     padding:4px 20px 4px 4px;
     border:1px solid #aaa;
