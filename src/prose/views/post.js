@@ -59,12 +59,13 @@ module.exports = Backbone.View.extend({
       this.eventRegister.trigger('sidebarContext', data, 'post');
 
       // Render heading
-      var isPrivate = app.state.isPrivate ? 'private' : '';
+      var isPrivate = app.state.isPrivate ? true : false;
       var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
 
       var header = {
-        avatar: '<span class="icon round file ' + isPrivate + '"></span>',
+        avatar: '<span class="icon round file ' + data.lang + '"></span>',
         parentTrail: parentTrail,
+        isPrivate: isPrivate,
         title: _.filepath(data.path, data.file),
         alterable: true
       };

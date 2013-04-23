@@ -2,7 +2,7 @@
 
 <% if (alterable) { %>
   <div class='fl details'>
-    <h4 class='parent-trail'><%= parentTrail %></h4>
+    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
     <input type='text' class='filepath' value='<%= title %>'>
     <div class='mask'></div>
   </div>

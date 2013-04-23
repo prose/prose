@@ -71,9 +71,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-0f743141a1799baa2727602c74a403f2.eot');
-    src:url('fonts/prose-0f743141a1799baa2727602c74a403f2.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-0f743141a1799baa2727602c74a403f2.woff') format('woff');
+    src:url('fonts/prose-deca6f065e9b0727ab40a791a562902a.eot');
+    src:url('fonts/prose-deca6f065e9b0727ab40a791a562902a.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-deca6f065e9b0727ab40a791a562902a.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -385,7 +385,7 @@ em      { font-style:italic; }
   line-height:1.5em;
   font-weight:700;
   padding:0;
-  width:580px;
+  width:575px;
   }
   .heading .details {
     position:relative;
@@ -536,13 +536,17 @@ em      { font-style:italic; }
 .icon.round               { background-position:-240px 0; }
 .icon.repo                { background-position:0 0; }
 .icon.repo.private        { background-position:-40px 0; }
-.icon.md                  { background-position:-80px 0; }
 .icon.file                { background-position:-120px 0; }
-.icon.file.private        { background-position:-160px 0; }
+
+.icon.htmlmixed,
+.icon.html                { background-position:-160px 0; }
 .icon.folder              { background-position:-200px 0; }
 .icon.media               { background-position:-280px 0; }
 .icon.repo.owner          { background-position:-320px 0; }
 .icon.repo.owner.private  { background-position:-360px 0; }
+
+.icon.gfm,
+.icon.md                  { background-position:-80px 0; }
 
 .vert .ico.login   { color:#9baf6c; }
 .vert .ico.logout  { color:#db6f6f; }
@@ -551,7 +555,7 @@ em      { font-style:italic; }
 .ico.modified      { color:#2099aa; }
 .ico.removed       { color:#d35151; }
 .ico.renamed       { color:#cea908; }
-
+.ico.private       { color:#ce8b08; }
 
 .vert .ico.logout:hover  { background-color:#db6f6f; color:#fff; }
 .vert .ico.login:hover   { background-color:#9baf6c; color:#fff; }
@@ -583,14 +587,15 @@ em      { font-style:italic; }
 .ico.numbered-list:before { content: "\f10c"; }
 .ico.pencil:before { content: "\f10d"; }
 .ico.picture:before { content: "\f10e"; }
-.ico.quote:before { content: "\f10f"; }
-.ico.removed:before { content: "\f110"; }
-.ico.renamed:before { content: "\f111"; }
-.ico.repos:before { content: "\f112"; }
-.ico.rubbish:before { content: "\f113"; }
-.ico.search:before { content: "\f114"; }
-.ico.sprocket:before { content: "\f115"; }
-.ico.switch:before { content: "\f116"; }
+.ico.private:before { content: "\f10f"; }
+.ico.quote:before { content: "\f110"; }
+.ico.removed:before { content: "\f111"; }
+.ico.renamed:before { content: "\f112"; }
+.ico.repos:before { content: "\f113"; }
+.ico.rubbish:before { content: "\f114"; }
+.ico.search:before { content: "\f115"; }
+.ico.sprocket:before { content: "\f116"; }
+.ico.switch:before { content: "\f117"; }
 
 .avatar {
   background:#f8f8f8;
@@ -614,7 +619,7 @@ em      { font-style:italic; }
 
 /* Top Branding/Navigation */
 .heading {
-  padding:30px 10px 0;
+  padding:30px 15px 0;
   }
 
 .details {
@@ -625,6 +630,9 @@ em      { font-style:italic; }
   .details .parent-trail a {
     font-weight:400;
     }
+    .details .parent-trail span {
+      margin-left:5px;
+      }
 
   .content .details {
     width:360px;
