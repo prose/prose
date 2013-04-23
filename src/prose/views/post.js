@@ -290,14 +290,6 @@ module.exports = Backbone.View.extend({
       return window.app.models.serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
     },
 
-    // Update save state (saving ..., sending patch ..., etc.)
-
-    updateSaveState: function (label, classes) {
-      $('.button.save').html(label)
-        .removeClass('inactive error saving')
-        .addClass(classes);
-    },
-
     // Submits a patch (fork + pull request workflow)
 
     sendPatch: function (filepath, filename, filecontent, message) {
@@ -311,11 +303,10 @@ module.exports = Backbone.View.extend({
           window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
-                that.$('.button.save').html('Submit Change');
-                that.$('.button.save').removeClass('error');
-                that.$('.button.save').addClass('inactive');
+                that.eventRegister.trigger('updateSaveState', 'Submit Change', 'inactive');
               }, 3000);
-              that.updateSaveState('! Try again in 30 seconds', 'error');
+
+              that.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
               return;
             }
 
@@ -324,14 +315,14 @@ module.exports = Backbone.View.extend({
             that.model.file = filename;
             that.updateURL();
             that.prevContent = filecontent;
-            that.updateSaveState('Change Submitted', 'inactive');
+            that.eventRegister.trigger('Change Submitted', 'inactive');
           });
         } else {
-          that.updateSaveState('! Metadata', 'error');
+          that.eventRegister.trigger('! Metadata', 'error');
         }
       }
 
-      that.updateSaveState('Submitting Change ...', 'inactive saving');
+      that.eventRegister.trigger('updateSaveState', 'Submitting Change', 'inactive saving');
       patch();
 
       return false;
@@ -347,7 +338,7 @@ module.exports = Backbone.View.extend({
               _.delay(function () {
                 that.makeDirty();
               }, 3000);
-              that.updateSaveState('! Try again in 30 seconds', 'error');
+              that.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
               return;
             }
             that.dirty = false;
@@ -355,21 +346,21 @@ module.exports = Backbone.View.extend({
             that.model.file = filename;
             that.updateURL();
             that.prevContent = filecontent;
-            that.updateSaveState('Saved', 'inactive');
+            that.eventRegister.trigger('updateSaveState', 'Saved', 'inactive');
           });
         } else {
-          that.updateSaveState('! Metadata', 'error');
+          that.eventRegister.trigger('updateSaveState', '! Metadata', 'error');
         }
       }
 
-      that.updateSaveState('Saving ...', 'inactive saving');
+      that.eventRegister.trigger('updateSaveState', 'Saving', 'inactive saving');
 
       if (filepath === _.filepath(this.model.path, this.model.file)) return save();
 
       // Move or create file
       this.updateFilename(filepath, function (err) {
         if (err) {
-          that.updateSaveState('! Filename', 'error');
+          that.eventRegister.trigger('updateSaveState', '! Filename', 'error');
         } else {
           save();
         }
@@ -420,7 +411,7 @@ module.exports = Backbone.View.extend({
       var filepath = $('input.filepath').val();
       var filename = _.extractFilename(filepath)[1];
       var filecontent = this.serialize();
-      var message = $('.commit-message').val() || 'Updated File';
+      var message = $('.commit-message').val() || '';
       var method = this.model.writeable ? this.saveFile : this.sendPatch;
       this.hideDiff();
 

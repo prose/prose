@@ -24,11 +24,12 @@ module.exports = Backbone.View.extend({
     initialize: function(options) {
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'headerContext', 'sidebarContext', 'recentFiles', 'updateSave');
+      _.bindAll(this, 'headerContext', 'sidebarContext', 'recentFiles', 'updateSave', 'updateSaveState');
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('sidebarContext', this.sidebarContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
       this.eventRegister.bind('updateSave', this.updateSave);
+      this.eventRegister.bind('updateSaveState', this.updateSaveState);
     },
 
     render: function () {
@@ -159,9 +160,7 @@ module.exports = Backbone.View.extend({
 
     saveFilePath: function(e) {
       // Trigger updateFile when a return button has been pressed.
-      if (e.which === 13) {
-        this.eventRegister.trigger('updateFile', e);
-      }
+      if (e.which === 13) this.eventRegister.trigger('updateFile', e);
     },
 
     logout: function () {
@@ -177,9 +176,17 @@ module.exports = Backbone.View.extend({
 
     updateSave: function(saveState) {
       if (!$('.button.save', this.el).hasClass('saving')) {
-        $('.button.save', this.el).html(saveState);
-        $('.button.save', this.el).removeClass('inactive error');
+        $('.button.save', this.el)
+          .html(saveState)
+          .removeClass('inactive error');
       }
+    },
+
+    updateSaveState: function(label, classes) {
+      $('.button.save', this.el)
+        .html(label)
+        .removeClass('inactive error saving')
+        .addClass(classes);
     },
 
     remove: function () {
@@ -187,6 +194,7 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('sidebarContext', this.sidebarContext);
       this.eventRegister.unbind('headerContext', this.headerContext);
       this.eventRegister.unbind('recentFiles', this.recentFiles);
-      this.eventRegister.unbind('updateSave', this.recentFiles);
+      this.eventRegister.unbind('updateSave', this.updateSave);
+      this.eventRegister.unbind('updateSaveState', this.updateSaveState);
     }
 });
