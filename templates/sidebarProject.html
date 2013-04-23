@@ -16,8 +16,17 @@
         <h2 class='label inner'>Your Recent History</h2>
       </div>
       <ul id='recent' class='listing'>
-        <% _.each(history.recent[app.username], function(filename) { %>
-        <li><a class='item' title='<%= history.state[filename][0] %>: <%= filename %>' href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
+        <%
+          var recent = history.recent[app.username];
+          var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; 
+          if (rooturl) {
+            recent = recent.filter(function(item) {
+              return item.indexOf(rooturl) > -1;
+            });
+          }
+        %>
+        <% _.each(recent.slice(0,5), function(filename) { %>
+          <li><a class='item' title='<%= history.state[filename][0] %>: <%= filename %>' href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
             <span class='ico small inline <%= history.state[filename][0] %>'></span>
             <%= filename %>
           </a></li>
