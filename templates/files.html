@@ -1,8 +1,8 @@
 <li class='clearfix item'
-    data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'
+    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>
     data-index='<%= index %>'>
 
-  <div class='fl icon round <%= extension %> <% if (isBinary) { %>media<% } %>'></div>
+  <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
   <div class='fl details'>
     <% if (isBinary) { %>
       <h3 class='title'><%= name %></h3>

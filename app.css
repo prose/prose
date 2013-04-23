@@ -585,7 +585,7 @@ em      { font-style:italic; }
 
 /* Top Branding/Navigation */
 .heading {
-  padding:30px 10px 15px;
+  padding:30px 10px 0;
   }
 
 .details {

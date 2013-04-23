@@ -113,12 +113,12 @@ _.markdown = function(file) {
 };
 
 _.isBinary = function(file) {
-  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff|zip)$');
+  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff|zip|swf|mov)$');
   return regex.test(file);
 };
 
 _.isMedia = function(file) {
-  var regex = new RegExp('(jpeg|jpg|gif|png)$');
+  var regex = new RegExp('(jpeg|jpg|gif|png|swf|mov)$');
   return regex.test(file);
 };
 
@@ -369,7 +369,7 @@ module.exports = {
 
   goToFile: function() {
     var path = $('.item.active').data('navigate');
-    router.navigate(path, true);
+    if (path) router.navigate(path, true);
     return false;
   }
 };
