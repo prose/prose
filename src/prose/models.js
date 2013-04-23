@@ -376,9 +376,9 @@ module.exports = {
                       }
 
                       author = commit.author.login;
-                      if (recent[author] && recent[author].length < 5) {
+                      if (recent[author]) {
                         recent[author] = _.union(recent[author], filename);
-                      } else if (!recent[author]) {
+                      } else {
                         recent[author] = [filename];
                       }
                     }
