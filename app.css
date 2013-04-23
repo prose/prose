@@ -71,9 +71,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-865f04674361b55204a7f621661022cb.eot');
-    src:url('fonts/prose-865f04674361b55204a7f621661022cb.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-865f04674361b55204a7f621661022cb.woff') format('woff');
+    src:url('fonts/prose-0f743141a1799baa2727602c74a403f2.eot');
+    src:url('fonts/prose-0f743141a1799baa2727602c74a403f2.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-0f743141a1799baa2727602c74a403f2.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -426,7 +426,7 @@ em      { font-style:italic; }
   left:0;
   }
   .prose-menu:hover {
-    background:#404040;
+    background-color:#3d494e;
     }
 
 .sidebar {
@@ -524,9 +524,9 @@ em      { font-style:italic; }
 .vert .ico.logout  { color:#db6f6f; }
 
 .ico.added         { color:#9baf6c; }
-.ico.modified      { color:#a8afb2; }
+.ico.modified      { color:#2099aa; }
 .ico.removed       { color:#d35151; }
-.ico.renamed       { color:#a8afb2; }
+.ico.renamed       { color:#cea908; }
 
 
 .vert .ico.logout:hover  { background-color:#db6f6f; color:#fff; }
@@ -539,29 +539,29 @@ em      { font-style:italic; }
   .ico.small {
     font-size:15px;
     }
-    .ico.added:before         { content:'\f100'; }
-    .ico.cancel:before        { content:'\f101'; }
-    .ico.removed:before       { content:'\f102'; }
-    .ico.eye:before           { content:'\f103'; }
-    .ico.folder:before        { content:'\f104'; }
-    .ico.italic:before        { content:'\f105'; }
-    .ico.link:before          { content:'\f106'; }
-    .ico.list:before          { content:'\f107'; }
-    .ico.markdown:before      { content:'\f108'; }
-    .ico.media:before         { content:'\f109'; }
-    .ico.metadata:before      { content:'\f10a'; }
-    .ico.modified:before      { content:'\f10b'; }
-    .ico.new-file:before      { content:'\f10c'; }
-    .ico.numbered-list:before { content:'\f10d'; }
-    .ico.pencil:before        { content:'\f10e'; }
-    .ico.picture:before       { content:'\f10f'; }
-    .ico.quote:before         { content:'\f110'; }
-    .ico.renamed:before       { content:'\f111'; }
-    .ico.repos:before         { content:'\f112'; }
-    .ico.rubbish:before       { content:'\f113'; }
-    .ico.search:before        { content:'\f114'; }
-    .ico.sprocket:before      { content:'\f115'; }
-    .ico.switch:before        { content:'\f116'; }
+.ico.added:before { content: "\f100"; }
+.ico.cancel:before { content: "\f101"; }
+.ico.eye:before { content: "\f102"; }
+.ico.folder:before { content: "\f103"; }
+.ico.italic:before { content: "\f104"; }
+.ico.link:before { content: "\f105"; }
+.ico.list:before { content: "\f106"; }
+.ico.markdown:before { content: "\f107"; }
+.ico.media:before { content: "\f108"; }
+.ico.metadata:before { content: "\f109"; }
+.ico.modified:before { content: "\f10a"; }
+.ico.new-file:before { content: "\f10b"; }
+.ico.numbered-list:before { content: "\f10c"; }
+.ico.pencil:before { content: "\f10d"; }
+.ico.picture:before { content: "\f10e"; }
+.ico.quote:before { content: "\f10f"; }
+.ico.removed:before { content: "\f110"; }
+.ico.renamed:before { content: "\f111"; }
+.ico.repos:before { content: "\f112"; }
+.ico.rubbish:before { content: "\f113"; }
+.ico.search:before { content: "\f114"; }
+.ico.sprocket:before { content: "\f115"; }
+.ico.switch:before { content: "\f116"; }
 
 .avatar {
   background:#f8f8f8;
@@ -857,7 +857,7 @@ em      { font-style:italic; }
             box-shadow:0 4px 10px rgba(0,0,0,0.15);
     }
   .dropdown {
-    background-color:#404040;
+    background-color:#3d494e;
     position:absolute;
     top:100%;
     right:0;
@@ -889,7 +889,7 @@ em      { font-style:italic; }
     .dropdown a.active,
     .dropdown > li > a:hover,
     .dropdown > li > a:focus {
-      background-color:#505050;
+      background-color:#516066;
       text-decoration:none;
       }
 
@@ -937,6 +937,8 @@ em      { font-style:italic; }
       z-index:1;
       height:80px;
       resize:none;
+      -webkit-border-radius:4px 4px 0 0;
+              border-radius:4px 4px 0 0;
       }
   .sidebar .commit.active {
     display:block;

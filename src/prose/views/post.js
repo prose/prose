@@ -60,7 +60,7 @@ module.exports = Backbone.View.extend({
 
       // Render heading
       var isPrivate = app.state.isPrivate ? 'private' : '';
-      var parentTrail = '<a href="#"' + app.state.user + '>' + app.state.user + '</a> / <a href="#"' + app.state.user + '/' + app.state.repo + '>' + app.state.repo + '</a>';
+      var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
 
       var header = {
         avatar: '<span class="icon round file ' + isPrivate + '"></span>',
@@ -355,7 +355,7 @@ module.exports = Backbone.View.extend({
             that.model.file = filename;
             that.updateURL();
             that.prevContent = filecontent;
-            that.updateSaveState('SAVED', 'inactive');
+            that.updateSaveState('Saved', 'inactive');
           });
         } else {
           that.updateSaveState('! Metadata', 'error');
@@ -420,7 +420,7 @@ module.exports = Backbone.View.extend({
       var filepath = $('input.filepath').val();
       var filename = _.extractFilename(filepath)[1];
       var filecontent = this.serialize();
-      var message = $('.commit-message').val() || $('.commit-message').attr('placeholder');
+      var message = $('.commit-message').val() || 'Updated File';
       var method = this.model.writeable ? this.saveFile : this.sendPatch;
       this.hideDiff();
 
