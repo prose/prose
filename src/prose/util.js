@@ -376,14 +376,14 @@ module.exports = {
   loader: {
     loading: function(message) {
       var tmpl = _(window.app.templates.loading).template();
-      $('#app').append(tmpl({
+      $('body').append(tmpl({
         message: message
       }))
     },
 
     loaded: function() {
       // TODO A nicer action.
-      $('#loader').remove();
+      // $('#loader').remove();
     }
   }
 };

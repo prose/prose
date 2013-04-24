@@ -118,6 +118,7 @@ module.exports = Backbone.View.extend({
 
   post: function (user, repo, branch, path, file, mode) {
     var that = this;
+
     utils.loader.loading('Loading Post');
 
     window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {

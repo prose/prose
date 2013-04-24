@@ -645,7 +645,6 @@ module.exports = Backbone.View.extend({
 
     markdownSnippet: function(e) {
       var snippet = $(e.target, this.el).data('snippet');
-      if (!snippet) return;
       this.editor.replaceSelection(snippet);
       this.editor.focus();
       return false;
