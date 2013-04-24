@@ -8,7 +8,7 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var tmpl = _(window.app.templates.start).template();
-    $('#app').empty().append(tmpl(this.model));
+    $(this.el).empty().append(tmpl(this.model));
     return this;
   }
 });

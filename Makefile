@@ -38,7 +38,6 @@ APPLICATION = \
 	src/prose/views/posts.js \
 	src/prose/views/profile.js \
 	src/prose/views/start.js \
-	src/prose/views/application.js \
 	src/prose/views/app.js \
 	src/prose/router.js \
 	src/prose/util.js \

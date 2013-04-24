@@ -326,6 +326,7 @@ module.exports = {
             app.state.branches = _.filter(branches, function (b) {
               return b !== branch;
             });
+
             repo.getSha(branch, app.state.path, function (err, sha) {
               app.state.sha = sha;
             });
