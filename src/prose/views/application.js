@@ -160,7 +160,6 @@ module.exports = Backbone.View.extend({
 
   newPost: function (user, repo, branch, path) {
     var that = this;
-    utils.loader.loading('Creating a new post');
     window.app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       window.app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
 
@@ -178,8 +177,6 @@ module.exports = Backbone.View.extend({
 
         this.mainView.makeDirty();
         app.state.file = data.file;
-
-        utils.loader.loaded;
       }, this));
     }, this));
   },

@@ -7,6 +7,9 @@
     <% if (markdown) { %>
     <div class='topbar-wrapper'>
       <div class='topbar toolbar'>
+        <% if (!published) { %>
+          <span class='fr flag unpublished'>Unpublished</span>
+        <% } %>
         <div class='markdown-snippets clearfix'>
           <ul class='group round clearfix'>
             <li><a href='#' title='Heading' data-snippet='<% print("# Heading\n\n") %>'>h1</a></li>
