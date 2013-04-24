@@ -412,7 +412,7 @@ module.exports = Backbone.View.extend({
       var filepath = $('input.filepath').val();
       var filename = _.extractFilename(filepath)[1];
       var filecontent = this.serialize();
-      var message = $('.commit-message').val() || '';
+      var message = $('.commit-message').val() || 'Updated file';
       var method = this.model.writeable ? this.saveFile : this.sendPatch;
       this.hideDiff();
 
