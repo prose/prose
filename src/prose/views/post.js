@@ -19,16 +19,16 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function () {
+      var that = this;
       this.dmp = new diff_match_patch();
       this.mode = 'edit';
       this.prevContent = this.serialize();
-      if (!window.shortcutsRegistered) {
-        key('⌘+s, ctrl+s', _.bind(function () {
-          this.updateFile();
-          return false;
-        }, this));
-        window.shortcutsRegistered = true;
-      }
+
+      // Key Binding support.
+      key('⌘+s, ctrl+s', _.bind(function () {
+        that.updateFile();
+        return false;
+      }, that));
 
       // Stash editor and metadataEditor content to localStorage on pagehide event
       // Always run stashFile in context of view
@@ -256,7 +256,7 @@ module.exports = Backbone.View.extend({
       return true;
     },
 
-    updateFilename: function (filepath, cb) {
+    updateFilename: function(filepath, cb) {
       var that = this;
 
       if (!_.validPathname(filepath)) return cb('error');
@@ -621,6 +621,7 @@ module.exports = Backbone.View.extend({
         });
 
         that.editor.on('change', _.bind(that.makeDirty, that));
+
         that.refreshCodeMirror();
 
         // Check localStorage for existing stash
@@ -645,7 +646,27 @@ module.exports = Backbone.View.extend({
     },
 
     markdownSnippet: function(e) {
+      var key = $(e.target, this.el).data('key');
       var snippet = $(e.target, this.el).data('snippet');
+
+      if (this.editor.getSelection !== '') {
+        switch(key) {
+          case 'bold':
+            this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
+          break;
+          case 'italic':
+            this.editor.replaceSelection('_' + this.editor.getSelection().replace(/_/g, '') + '_');
+          break;
+          case 'heading':
+            this.editor.replaceSelection('#' + this.editor.getSelection().replace(/#/g, ''));
+          break;
+          case 'sub-heading':
+            this.editor.replaceSelection('##' + this.editor.getSelection().replace(/#/g, ''));
+          break;
+        }
+        return false;
+      }
+
       this.editor.replaceSelection(snippet);
       this.editor.focus();
       return false;
