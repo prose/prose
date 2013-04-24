@@ -383,7 +383,7 @@ module.exports = {
 
     loaded: function() {
       // TODO A nicer action.
-      // $('#loader').remove();
+      $('#loader').remove();
     }
   }
 };
