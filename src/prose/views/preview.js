@@ -19,8 +19,7 @@ module.exports = Backbone.View.extend({
 
     if (stash) {
       this.model.content = stash.content;
-      this.model.raw_metadata = stash.raw_metadata;
-      this.model.metadata = jsyaml.load(stash.raw_metadata);
+      this.model.metadata = stash.metadata;
     }
   }
 });
