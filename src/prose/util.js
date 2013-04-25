@@ -220,7 +220,7 @@ _.fromYAML = function(rawYAML) {
       value = match[2];
       if (value.match(/\|$/)) {
         blockValue = true;
-        value = "";
+        value = '';
       }
     } else {
       if (!_.isArray(value)) value = [];
@@ -375,15 +375,19 @@ module.exports = {
 
   loader: {
     loading: function(message) {
-      var tmpl = _(window.app.templates.loading).template();
-      $('body').append(tmpl({
-        message: message
-      }))
+      _.delay(function() {
+        var tmpl = _(window.app.templates.loading).template();
+        $('body').append(tmpl({
+          message: message
+        }));
+      }, 500);
     },
 
     loaded: function() {
-      // TODO A nicer action.
-      $('#loader').remove();
+      _.delay(function() {
+        // TODO A nicer action.
+        $('#loader').remove();
+      }, 500);
     }
   }
 };

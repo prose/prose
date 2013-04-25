@@ -4,6 +4,7 @@ var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var key = require('keymaster');
 var marked = require('marked');
+var diff = require('diff');
 var Backbone = require('backbone');
 var utils = require('.././util');
 
@@ -16,16 +17,16 @@ module.exports = Backbone.View.extend({
     className: 'post',
 
     events: {
-      'click .save.confirm': 'updateFile',
+      'click .update': 'saveMeta',
       'click .markdown-snippets a': 'markdownSnippet',
       'change input': 'makeDirty'
     },
 
     initialize: function () {
       var that = this;
-      this.dmp = new diff_match_patch();
       this.mode = 'edit';
-      this.prevContent = this.serialize();
+      this.prevFile = this.serialize();
+      this.model.original = this.model.content;
 
       // Key Binding support.
       key('⌘+s, ctrl+s', _.bind(function () {
@@ -103,7 +104,13 @@ module.exports = Backbone.View.extend({
 
     edit: function(e) {
       var that = this;
-      this.model.preview = false;
+
+      // We want to trigger a re-rendering of the url
+      // if mode is set to preview
+      if (this.model.preview) {
+        this.model.preview = false;
+        this.updateURL();
+      }
 
       $('.post-views a').removeClass('active');
       $('.post-views .edit').addClass('active');
@@ -111,13 +118,6 @@ module.exports = Backbone.View.extend({
 
       $('.views .view').removeClass('active');
       $('.views .edit').addClass('active');
-      this.updateURL();
-
-      // Refresh CodeMirror each time
-      // to reflect new changes
-      _.delay(function () {
-        that.refreshCodeMirror();
-      }, 1);
 
       return false;
     },
@@ -185,7 +185,10 @@ module.exports = Backbone.View.extend({
 
     updateURL: function() {
       var url = _.compact([app.state.user, app.state.repo, this.model.preview ? 'blob' : 'edit', app.state.branch, this.model.path, this.model.file]);
-      router.navigate(url.join('/'), {trigger: true, replace: true});
+      router.navigate(url.join('/'), {
+        trigger: false,
+        replace: true
+      });
     },
 
     makeDirty: function(e) {
@@ -199,16 +202,25 @@ module.exports = Backbone.View.extend({
 
     showDiff: function() {
       var $diff = $('#diff', this.el);
-      var text1 = this.model.persisted ? this.prevContent : '';
+      var text1 = this.model.persisted ? this.prevFile : '';
       var text2 = this.serialize();
-      var d = this.dmp.diff_main(text1, text2);
-      this.dmp.diff_cleanupSemantic(d);
-      var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, '');
+      var d = diff.diffWords(text1, text2);
+      var compare = '';
+
+      for (var i = 0; i < d.length; i++) {
+        if (d[i].removed) {
+          compare += '<del>' + d[i].value + '</del>';
+        } else if (d[i].added) {
+          compare += '<ins>' + d[i].value + '</ins>';
+        } else {
+          compare += d[i].value;
+        }
+      }
 
       // Content Window
       $('.views .view', this.el).removeClass('active');
+      $diff.html('<pre>' + compare + '</pre>');
       $diff.addClass('active');
-      $diff.html(diff);
     },
 
     hideDiff: function() {
@@ -301,8 +313,8 @@ module.exports = Backbone.View.extend({
 
       function patch() {
         if (that.updateMetaData()) {
-          that.model.content = that.prevContent;
-          that.editor.setValue(that.prevContent);
+          that.model.content = that.prevFile;
+          that.editor.setValue(that.prevFile);
 
           window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
@@ -318,7 +330,7 @@ module.exports = Backbone.View.extend({
             that.model.persisted = true;
             that.model.file = filename;
             that.updateURL();
-            that.prevContent = filecontent;
+            that.prevFile = filecontent;
             that.eventRegister.trigger('Change Submitted', 'inactive');
           });
         } else {
@@ -332,7 +344,7 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
-    saveFile: function (filepath, filename, filecontent, message) {
+    saveFile: function(filepath, filename, filecontent, message) {
       var that = this;
 
       function save() {
@@ -349,7 +361,8 @@ module.exports = Backbone.View.extend({
             that.model.persisted = true;
             that.model.file = filename;
             that.updateURL();
-            that.prevContent = filecontent;
+            that.prevFile = filecontent;
+            that.model.original = that.model.content;
             that.eventRegister.trigger('updateSaveState', 'Saved', 'inactive');
           });
         } else {
@@ -410,8 +423,33 @@ module.exports = Backbone.View.extend({
       }
     },
 
+    saveMeta: function() {
+      var filepath = $('input.filepath').val();
+      var filename = _.extractFilename(filepath)[1];
+      var defaultMessage = 'Updated metadata for ' + filename;
+      var message = $('.commit-message').val() || defaultMessage;
+      var method = this.model.writeable ? this.saveFile : this.sendPatch;
+
+      // We want to update the metadata but not the current edited content.
+      var filecontent =  window.app.models.serialize(this.model.original, this.model.raw_metadata);
+
+      // Update content
+      this.model.content = this.editor.getValue();
+
+      // Delegate
+      method.call(this, filepath, filename, filecontent, message);
+
+      $('.post-views a').removeClass('active');
+      $('.post-views .edit').addClass('active');
+      $('#prose').toggleClass('open', false);
+
+      $('.views .view').removeClass('active');
+      $('.views .edit').addClass('active');
+
+      return false;
+    },
+
     updateFile: function() {
-      var that = this;
       var filepath = $('input.filepath').val();
       var filename = _.extractFilename(filepath)[1];
       var filecontent = this.serialize();
@@ -429,24 +467,32 @@ module.exports = Backbone.View.extend({
 
     keyMap: function () {
       var that = this;
-      return {
-        'Ctrl-S': function (codemirror) {
-          that.updateFile();
-        },
-        'Cmd-B': function(codemirror) {
-          console.log('hihihi');
-          if (that.editor.getSelection !== '') that.bold();
-        },
-        'Ctrl-B': function(codemirror) {
-          if (that.editor.getSelection !== '') that.bold();
-        },
-        'Cmd-I': function(codemirror) {
-          if (that.editor.getSelection !== '') that.italic();
-        },
-        'Ctrl-I': function(codemirror) {
-          if (that.editor.getSelection !== '') that.italic();
-        }
-      };
+
+      if (this.model.markdown) {
+        return {
+          'Ctrl-S': function(codemirror) {
+            that.updateFile();
+          },
+          'Cmd-B': function(codemirror) {
+            if (that.editor.getSelection !== '') that.bold();
+          },
+          'Ctrl-B': function(codemirror) {
+            if (that.editor.getSelection !== '') that.bold();
+          },
+          'Cmd-I': function(codemirror) {
+            if (that.editor.getSelection !== '') that.italic();
+          },
+          'Ctrl-I': function(codemirror) {
+            if (that.editor.getSelection !== '') that.italic();
+          }
+        };
+      } else {
+        return {
+          'Ctrl-S': function (codemirror) {
+            that.updateFile();
+          }
+        };
+      }
     },
 
     translate: function(e) {
@@ -472,7 +518,7 @@ module.exports = Backbone.View.extend({
     },
 
     buildMeta: function() {
-      var $metadataEditor = $('#meta', this.el);
+      var $metadataEditor = $('#meta', this.el).find('.form');
       $metadataEditor.empty();
 
       function initialize(model) {
