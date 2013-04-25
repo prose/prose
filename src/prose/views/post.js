@@ -13,7 +13,7 @@ module.exports = Backbone.View.extend({
     className: 'post',
 
     events: {
-      'click .save.confirm': 'updateFile',
+      'click .update': 'saveMeta',
       'click .markdown-snippets a': 'markdownSnippet',
       'change input': 'makeDirty'
     },
@@ -23,6 +23,7 @@ module.exports = Backbone.View.extend({
       this.dmp = new diff_match_patch();
       this.mode = 'edit';
       this.prevContent = this.serialize();
+      this.model.original = this.model.content;
 
       // Key Binding support.
       key('⌘+s, ctrl+s', _.bind(function () {
@@ -347,6 +348,7 @@ module.exports = Backbone.View.extend({
             that.model.file = filename;
             that.updateURL();
             that.prevContent = filecontent;
+            that.model.original = that.model.content;
             that.eventRegister.trigger('updateSaveState', 'Saved', 'inactive');
           });
         } else {
@@ -407,8 +409,33 @@ module.exports = Backbone.View.extend({
       }
     },
 
+    saveMeta: function() {
+      var filepath = $('input.filepath').val();
+      var filename = _.extractFilename(filepath)[1];
+      var defaultMessage = 'Updated metadata for ' + filename;
+      var message = $('.commit-message').val() || defaultMessage;
+      var method = this.model.writeable ? this.saveFile : this.sendPatch;
+
+      // We want to update the metadata but not the current edited content.
+      var filecontent =  window.app.models.serialize(this.model.original, this.model.raw_metadata);
+
+      // Update content
+      this.model.content = this.editor.getValue();
+
+      // Delegate
+      method.call(this, filepath, filename, filecontent, message);
+
+      $('.post-views a').removeClass('active');
+      $('.post-views .edit').addClass('active');
+      $('#prose').toggleClass('open', false);
+
+      $('.views .view').removeClass('active');
+      $('.views .edit').addClass('active');
+
+      return false;
+    },
+
     updateFile: function() {
-      var that = this;
       var filepath = $('input.filepath').val();
       var filename = _.extractFilename(filepath)[1];
       var filecontent = this.serialize();
@@ -477,7 +504,7 @@ module.exports = Backbone.View.extend({
     },
 
     buildMeta: function() {
-      var $metadataEditor = $('#meta', this.el);
+      var $metadataEditor = $('#meta', this.el).find('.form');
       $metadataEditor.empty();
 
       function initialize(model) {
