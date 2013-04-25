@@ -619,7 +619,7 @@ em      { font-style:italic; }
 
 /* Top Branding/Navigation */
 .heading {
-  padding:30px 15px 0;
+  padding:30px 15px 10px;
   }
 
 .details {
@@ -953,13 +953,20 @@ em      { font-style:italic; }
 /* ------------------------------------------
   File /:filename
 ---------------------------------------------*/
-
 .flag {
   display:inline-block;
   text-align:right;
   font-weight:700;
   margin:10px 15px;
+  opacity:0;
+  -webkit-transition:opacity 150ms;
+     -moz-transition:opacity 150ms;
+       -o-transition:opacity 150ms;
+          transition:opacity 150ms;
   }
+  .fixed .flag {
+    opacity:1;
+    }
   .flag.unpublished { color:#cea908; }
 
 .post .view {
@@ -969,7 +976,20 @@ em      { font-style:italic; }
     display:block;
     }
   .post .view.meta {
+    background:#f8f8f8;
     width:360px;
+    margin:0 auto;
+    }
+
+.meta .form {
+  padding-bottom:30px;
+  }
+  .meta .form-item {
+    padding:0 15px;
+    }
+  .meta .update {
+    -webkit-border-radius:0 0 4px 4px;
+            border-radius:0 0 4px 4px;
     }
 
 .sidebar .commit {
