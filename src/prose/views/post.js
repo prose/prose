@@ -431,7 +431,6 @@ module.exports = Backbone.View.extend({
           that.updateFile();
         },
         'Cmd-B': function(codemirror) {
-          console.log('hihihi');
           if (that.editor.getSelection !== '') that.bold();
         },
         'Ctrl-B': function(codemirror) {
