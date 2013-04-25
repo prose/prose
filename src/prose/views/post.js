@@ -429,6 +429,19 @@ module.exports = Backbone.View.extend({
       return {
         'Ctrl-S': function (codemirror) {
           that.updateFile();
+        },
+        'Cmd-B': function(codemirror) {
+          console.log('hihihi');
+          if (that.editor.getSelection !== '') that.bold();
+        },
+        'Ctrl-B': function(codemirror) {
+          if (that.editor.getSelection !== '') that.bold();
+        },
+        'Cmd-I': function(codemirror) {
+          if (that.editor.getSelection !== '') that.italic();
+        },
+        'Ctrl-I': function(codemirror) {
+          if (that.editor.getSelection !== '') that.italic();
         }
       };
     },
@@ -621,7 +634,6 @@ module.exports = Backbone.View.extend({
         });
 
         that.editor.on('change', _.bind(that.makeDirty, that));
-
         that.refreshCodeMirror();
 
         // Check localStorage for existing stash
@@ -652,16 +664,16 @@ module.exports = Backbone.View.extend({
       if (this.editor.getSelection !== '') {
         switch(key) {
           case 'bold':
-            this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
+            this.bold();
           break;
           case 'italic':
-            this.editor.replaceSelection('_' + this.editor.getSelection().replace(/_/g, '') + '_');
+            this.italic();
           break;
           case 'heading':
-            this.editor.replaceSelection('#' + this.editor.getSelection().replace(/#/g, ''));
+            this.heading();
           break;
           case 'sub-heading':
-            this.editor.replaceSelection('##' + this.editor.getSelection().replace(/#/g, ''));
+            this.subHeading();
           break;
         }
         return false;
@@ -670,5 +682,22 @@ module.exports = Backbone.View.extend({
       this.editor.replaceSelection(snippet);
       this.editor.focus();
       return false;
+    },
+
+    heading: function() {
+      this.editor.replaceSelection('# ' + this.editor.getSelection().replace(/#/g, ''));
+    },
+
+    subHeading: function() {
+      this.editor.replaceSelection('## ' + this.editor.getSelection().replace(/#/g, ''));
+    },
+
+    italic: function() {
+      this.editor.replaceSelection('_' + this.editor.getSelection().replace(/_/g, '') + '_');
+    },
+
+    bold: function() {
+      this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
     }
+
 });
