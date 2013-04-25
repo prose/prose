@@ -4,6 +4,7 @@ var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var key = require('keymaster');
 var marked = require('marked');
+var diff = require('diff');
 var Backbone = require('backbone');
 var utils = require('.././util');
 
@@ -20,7 +21,6 @@ module.exports = Backbone.View.extend({
 
     initialize: function () {
       var that = this;
-      this.dmp = new diff_match_patch();
       this.mode = 'edit';
       this.prevFile = this.serialize();
       this.model.original = this.model.content;
@@ -201,14 +201,23 @@ module.exports = Backbone.View.extend({
       var $diff = $('#diff', this.el);
       var text1 = this.model.persisted ? this.prevFile : '';
       var text2 = this.serialize();
-      var d = this.dmp.diff_main(text1, text2);
-      this.dmp.diff_cleanupSemantic(d);
-      var diff = this.dmp.diff_prettyHtml(d).replace(/&para;/g, '');
+      var d = diff.diffWords(text1, text2);
+      var compare = '';
+
+      for (var i = 0; i < d.length; i++) {
+        if (d[i].removed) {
+          compare += '<del>' + d[i].value + '</del>';
+        } else if (d[i].added) {
+          compare += '<ins>' + d[i].value + '</ins>';
+        } else {
+          compare += d[i].value;
+        }
+      }
 
       // Content Window
       $('.views .view', this.el).removeClass('active');
+      $diff.html('<pre>' + compare + '</pre>');
       $diff.addClass('active');
-      $diff.html(diff);
     },
 
     hideDiff: function() {

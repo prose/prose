@@ -232,6 +232,18 @@ input[type=text] {
 strong  { font-weight:700; }
 em      { font-style:italic; }
 
+/* For Diff Viewing */
+del {
+	background:#fadad7;
+  text-decoration:none;
+	color:#b30000;
+  }
+ins {
+	background:#eaf2c2;
+  text-decoration:none;
+	color:#406619;
+  }
+
 /* ------------------------------------------
   Styled Content
 ---------------------------------------------*/
@@ -980,6 +992,11 @@ em      { font-style:italic; }
     width:360px;
     margin:0 auto;
     }
+
+.post .view.diff pre {
+  word-wrap:break-word;
+  white-space:pre-wrap;
+  }
 
 .meta .form {
   padding-bottom:30px;

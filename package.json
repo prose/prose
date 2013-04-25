@@ -12,7 +12,8 @@
     "js-base64": "~2.1.1",
     "keymaster": "~1.0.2",
     "marked": "~0.2.8",
-    "queue-async": "~1.0.3"
+    "queue-async": "~1.0.3",
+    "diff": "~1.0.4"
   },
   "devDependencies": {
     "mocha": "~1.9.0",
