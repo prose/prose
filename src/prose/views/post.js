@@ -578,6 +578,7 @@ module.exports = Backbone.View.extend({
       }
 
       function setValue(data) {
+        var missing = {};
 
         _(data).each(function(value, key) {
           var matched = false;
@@ -643,15 +644,11 @@ module.exports = Backbone.View.extend({
             }
 
             if (!matched && value !== null) {
-              // console.log('ERROR match not found for ' + typeof value, key + ': ' + value);
-              // console.log(input);
-              tmpl = _(window.app.templates.checkbox).template();
-              $metadataEditor.append(tmpl({
-                name: key,
-                label: value,
-                value: value,
-                checked: value ? 'checked' : false
-              }));
+              if (missing.hasOwnProperty(key)) {
+                missing[key] = _.union(missing[key], value);
+              } else {
+                missing[key] = value;
+              }
             }
 
           } else {
@@ -662,6 +659,43 @@ module.exports = Backbone.View.extend({
               label: key,
               value: value
             }));
+          }
+        });
+
+        _.each(missing, function(value, key) {
+          if (value === null) return;
+
+          switch(typeof value) {
+            case 'boolean':
+              tmpl = _(window.app.templates.checkbox).template();
+              $metadataEditor.append(tmpl({
+                name: key,
+                label: value,
+                value: value,
+                checked: value ? 'checked' : false
+              }));
+              break;
+            case 'string':
+              tmpl = _(window.app.templates.text).template();
+              $metadataEditor.append(tmpl({
+                name: key,
+                label: value,
+                value: value
+              }));
+              break;
+            case 'object':
+              tmpl = _(window.app.templates.multiselect).template();
+              $metadataEditor.append(tmpl({
+                name: key,
+                label: key,
+                placeholder: key,
+                options: value,
+                lang: data.lang || 'en'
+              }));
+              break;
+            default:
+              console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
+              break;
           }
         });
       }

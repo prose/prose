@@ -7,7 +7,7 @@
     <% if (markdown) { %>
     <div class='topbar-wrapper'>
       <div class='topbar toolbar'>
-        <% if (!published) { %>
+        <% if (!metadata.published) { %>
           <span class='fr flag unpublished'>Unpublished</span>
         <% } %>
         <div class='markdown-snippets clearfix'>
