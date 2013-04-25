@@ -961,6 +961,15 @@ em      { font-style:italic; }
 /* ------------------------------------------
   File /:filename
 ---------------------------------------------*/
+
+.flag {
+  display:inline-block;
+  text-align:right;
+  font-weight:700;
+  margin:10px 15px;
+  }
+  .flag.unpublished { color:#cea908; }
+
 .post .view {
   display:none;
   }

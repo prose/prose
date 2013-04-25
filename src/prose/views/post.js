@@ -22,16 +22,16 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function () {
+      var that = this;
       this.dmp = new diff_match_patch();
       this.mode = 'edit';
       this.prevContent = this.serialize();
-      if (!window.shortcutsRegistered) {
-        key('⌘+s, ctrl+s', _.bind(function () {
-          this.updateFile();
-          return false;
-        }, this));
-        window.shortcutsRegistered = true;
-      }
+
+      // Key Binding support.
+      key('⌘+s, ctrl+s', _.bind(function () {
+        that.updateFile();
+        return false;
+      }, that));
 
       // Stash editor and metadataEditor content to localStorage on pagehide event
       // Always run stashFile in context of view
@@ -259,7 +259,7 @@ module.exports = Backbone.View.extend({
       return true;
     },
 
-    updateFilename: function (filepath, cb) {
+    updateFilename: function(filepath, cb) {
       var that = this;
 
       if (!_.validPathname(filepath)) return cb('error');
@@ -415,7 +415,8 @@ module.exports = Backbone.View.extend({
       var filepath = $('input.filepath').val();
       var filename = _.extractFilename(filepath)[1];
       var filecontent = this.serialize();
-      var message = $('.commit-message').val() || 'Updated file';
+      var defaultMessage = 'Updated ' + filename;
+      var message = $('.commit-message').val() || defaultMessage;
       var method = this.model.writeable ? this.saveFile : this.sendPatch;
       this.hideDiff();
 
@@ -431,6 +432,19 @@ module.exports = Backbone.View.extend({
       return {
         'Ctrl-S': function (codemirror) {
           that.updateFile();
+        },
+        'Cmd-B': function(codemirror) {
+          console.log('hihihi');
+          if (that.editor.getSelection !== '') that.bold();
+        },
+        'Ctrl-B': function(codemirror) {
+          if (that.editor.getSelection !== '') that.bold();
+        },
+        'Cmd-I': function(codemirror) {
+          if (that.editor.getSelection !== '') that.italic();
+        },
+        'Ctrl-I': function(codemirror) {
+          if (that.editor.getSelection !== '') that.italic();
         }
       };
     },
@@ -647,9 +661,46 @@ module.exports = Backbone.View.extend({
     },
 
     markdownSnippet: function(e) {
+      var key = $(e.target, this.el).data('key');
       var snippet = $(e.target, this.el).data('snippet');
+
+      if (this.editor.getSelection !== '') {
+        switch(key) {
+          case 'bold':
+            this.bold();
+          break;
+          case 'italic':
+            this.italic();
+          break;
+          case 'heading':
+            this.heading();
+          break;
+          case 'sub-heading':
+            this.subHeading();
+          break;
+        }
+        return false;
+      }
+
       this.editor.replaceSelection(snippet);
       this.editor.focus();
       return false;
+    },
+
+    heading: function() {
+      this.editor.replaceSelection('# ' + this.editor.getSelection().replace(/#/g, ''));
+    },
+
+    subHeading: function() {
+      this.editor.replaceSelection('## ' + this.editor.getSelection().replace(/#/g, ''));
+    },
+
+    italic: function() {
+      this.editor.replaceSelection('_' + this.editor.getSelection().replace(/_/g, '') + '_');
+    },
+
+    bold: function() {
+      this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
     }
+
 });
