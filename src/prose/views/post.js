@@ -426,23 +426,32 @@ module.exports = Backbone.View.extend({
 
     keyMap: function () {
       var that = this;
-      return {
-        'Ctrl-S': function (codemirror) {
-          that.updateFile();
-        },
-        'Cmd-B': function(codemirror) {
-          if (that.editor.getSelection !== '') that.bold();
-        },
-        'Ctrl-B': function(codemirror) {
-          if (that.editor.getSelection !== '') that.bold();
-        },
-        'Cmd-I': function(codemirror) {
-          if (that.editor.getSelection !== '') that.italic();
-        },
-        'Ctrl-I': function(codemirror) {
-          if (that.editor.getSelection !== '') that.italic();
-        }
-      };
+
+      if (this.model.markdown) {
+        return {
+          'Ctrl-S': function(codemirror) {
+            that.updateFile();
+          },
+          'Cmd-B': function(codemirror) {
+            if (that.editor.getSelection !== '') that.bold();
+          },
+          'Ctrl-B': function(codemirror) {
+            if (that.editor.getSelection !== '') that.bold();
+          },
+          'Cmd-I': function(codemirror) {
+            if (that.editor.getSelection !== '') that.italic();
+          },
+          'Ctrl-I': function(codemirror) {
+            if (that.editor.getSelection !== '') that.italic();
+          }
+        };
+      } else {
+        return {
+          'Ctrl-S': function (codemirror) {
+            that.updateFile();
+          }
+        };
+      }
     },
 
     translate: function(e) {
