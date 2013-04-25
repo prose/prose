@@ -721,12 +721,28 @@ module.exports = Backbone.View.extend({
           case 'sub-heading':
             this.subHeading();
           break;
+          case 'link':
+            this.editor.replaceSelection(snippet);
+          break;
+          case 'picture':
+            this.editor.replaceSelection(snippet);
+          break;
+          case 'quote':
+            this.editor.replaceSelection(snippet);
+          break;
+          case 'list':
+            this.editor.replaceSelection(snippet);
+          break;
+          case 'numbered-list':
+            this.editor.replaceSelection(snippet);
+          break;
         }
-        return false;
+        this.editor.focus();
+      } else {
+        this.editor.replaceSelection(snippet);
+        this.editor.focus();
       }
 
-      this.editor.replaceSelection(snippet);
-      this.editor.focus();
       return false;
     },
 
