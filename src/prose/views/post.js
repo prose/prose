@@ -494,6 +494,7 @@ module.exports = Backbone.View.extend({
     },
 
     buildMeta: function() {
+      var that = this;
       var $metadataEditor = $('#meta', this.el).find('.form');
       $metadataEditor.empty();
 
@@ -607,6 +608,9 @@ module.exports = Backbone.View.extend({
       }
 
       function setValue(data) {
+        var $rawEditor;
+        var $raw;
+
         var missing = {};
 
         _(data).each(function(value, key) {
@@ -681,13 +685,25 @@ module.exports = Backbone.View.extend({
             }
 
           } else {
-            // TODO: RAW YAML INSTEAD
-            tmpl = _(window.app.templates.text).template();
-            $metadataEditor.append(tmpl({
-              name: key,
-              label: key,
-              value: value
-            }));
+            if ($rawEditor) {
+              $rawEditor.setValue($rawEditor.getValue() + jsyaml.dump({ key: value }));
+            } else {
+              $raw = $('<div class="form-item"><div id="raw"></div></div>')
+                .appendTo($metadataEditor)
+                .find('#raw');
+
+              $rawEditor = CodeMirror($raw[0], {
+                mode: 'yaml',
+                value: jsyaml.dump({ key: value }),
+                lineWrapping: true,
+                extraKeys: that.keyMap(),
+                theme: 'prose-bright',
+                onChange: _.bind(that.makeDirty, that)
+              });
+
+              // TODO: race condition on refresh, call async?
+              $globalRaw = $rawEditor;
+            }
           }
         });
 
@@ -756,16 +772,6 @@ module.exports = Backbone.View.extend({
       setTimeout(function () {
         if (that.model.jekyll) {
           that.metadataEditor = that.buildMeta();
-          /*
-          that.metadataEditor = CodeMirror($('#meta')[0], {
-            mode: 'yaml',
-            value: that.model.raw_metadata,
-            theme: 'prose-dark',
-            lineWrapping: true,
-            extraKeys: that.keyMap(),
-            onChange: _.bind(that.makeDirty, that)
-          });
-          */
           $('#post .metadata').hide();
         }
 
