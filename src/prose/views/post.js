@@ -28,12 +28,6 @@ module.exports = Backbone.View.extend({
       this.prevFile = this.serialize();
       this.model.original = this.model.content;
 
-      // Key Binding support.
-      key('⌘+s, ctrl+s', _.bind(function () {
-        that.updateFile();
-        return false;
-      }, that));
-
       // Stash editor and metadataEditor content to localStorage on pagehide event
       // Always run stashFile in context of view
       $(window).on('pagehide', _.bind(this.stashFile, this));
@@ -45,6 +39,15 @@ module.exports = Backbone.View.extend({
         preview: this.model.markdown ? marked(this.model.content) : '',
         metadata: this.model.metadata
       });
+
+      // Key Binding support.
+      key('⌘+s, ctrl+s', 'file', _.bind(function() {
+        that.updateFile();
+        return false;
+      }, this));
+
+      // Attach Keybindings to the current scope
+      key.setScope('file');
 
       this.eventRegister = app.eventRegister;
 
@@ -691,21 +694,6 @@ module.exports = Backbone.View.extend({
       }, 100);
     },
 
-    remove: function () {
-      // Unbind pagehide event handler when View is removed
-      this.eventRegister.unbind('edit', this.postViews);
-      this.eventRegister.unbind('preview', this.preview);
-      this.eventRegister.unbind('deleteFile', this.deleteFile);
-      this.eventRegister.unbind('save', this.save);
-      this.eventRegister.unbind('hideDiff', this.hideDiff);
-      this.eventRegister.unbind('translate', this.translate);
-      this.eventRegister.unbind('updateFile', this.updateFile);
-      this.eventRegister.unbind('meta', this.updateFile);
-
-      $(window).unbind('pagehide');
-      Backbone.View.prototype.remove.call(this);
-    },
-
     markdownSnippet: function(e) {
       var key = $(e.target, this.el).data('key');
       var snippet = $(e.target, this.el).data('snippet');
@@ -724,12 +712,16 @@ module.exports = Backbone.View.extend({
           case 'sub-heading':
             this.subHeading();
           break;
+          default:
+            this.editor.replaceSelection(snippet);
+          break;
         }
-        return false;
+        this.editor.focus();
+      } else {
+        this.editor.replaceSelection(snippet);
+        this.editor.focus();
       }
 
-      this.editor.replaceSelection(snippet);
-      this.editor.focus();
       return false;
     },
 
@@ -747,6 +739,23 @@ module.exports = Backbone.View.extend({
 
     bold: function() {
       this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
-    }
+    },
 
+    remove: function () {
+      // Unbind pagehide event handler when View is removed
+      this.eventRegister.unbind('edit', this.postViews);
+      this.eventRegister.unbind('preview', this.preview);
+      this.eventRegister.unbind('deleteFile', this.deleteFile);
+      this.eventRegister.unbind('save', this.save);
+      this.eventRegister.unbind('hideDiff', this.hideDiff);
+      this.eventRegister.unbind('translate', this.translate);
+      this.eventRegister.unbind('updateFile', this.updateFile);
+      this.eventRegister.unbind('meta', this.updateFile);
+
+      // Unbind Keybindings
+      key.unbind('⌘+s, ctrl+s', 'file');
+
+      $(window).unbind('pagehide');
+      Backbone.View.prototype.remove.call(this);
+    }
 });
