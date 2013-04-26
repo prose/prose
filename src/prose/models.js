@@ -421,17 +421,6 @@ module.exports = {
     });
   },
 
-  // Serialize
-  // -------
-
-  serialize: function(content, metadata) {
-    if (metadata) {
-      return ['---', metadata, '---'].join('\n') + '\n\n' + content;
-    } else {
-      return content;
-    }
-  },
-
   // Save File
   // -------
   //
@@ -554,56 +543,51 @@ module.exports = {
     var q = queue();
 
     if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
-      rawMetadata = cfg.prose.metadata[path];
-      if (typeof rawMetadata === 'object') {
-        defaultMetadata = rawMetadata;
+      defaultMetadata = cfg.prose.metadata[path];
 
-        _.each(rawMetadata, function(data, key) {
-          var selected;
+      if (typeof defaultMetadata === 'object') {
+        _.each(defaultMetadata, function(data, key) {
+          if (data && data.field) {
+            if (typeof data.field.options === 'string' && data.field.options.match(/^https?:\/\//)) {
 
-
-
-          if (data.field && data.field.options &&
-              typeof data.field.options === 'string' &&
-              data.field.options.match(/^https?:\/\//)) {
-
-            q.defer(function(cb){
-              $.ajax({
-                cache: true,
-                dataType: 'jsonp',
-                jsonp: false,
-                jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
-                url: data.field.options,
-                success: function(d) {
-                  data.field.options = d;
-
-                  if (data && typeof data.field === 'object') {
-                    selected = data.field.selected;
-        
-                    switch(data.field.element) {
-                      case 'text':
-                        metadata[data.name] = data.field.value;
-                        break;
-                      case 'select':
-                      case 'multiselect':
-                        metadata[data.name] = selected ? selected : null;
-                        break;
-                    }
-                  } else {
-                    metadata[key] = data;
+              q.defer(function(cb){
+                $.ajax({
+                  cache: true,
+                  dataType: 'jsonp',
+                  jsonp: false,
+                  jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
+                  url: data.field.options,
+                  success: function(d) {
+                    data.field.options = d;
+                    cb();
                   }
-
-                  cb();
-                }
+                });
               });
-            });
+            }
+
+            switch(data.field.element) {
+              case 'boolean':
+              case 'text':
+                metadata[data.name] = data.field.value;
+                break;
+              case 'select':
+              case 'multiselect':
+                metadata[data.name] = data.field.selected ? data.field.selected : null;
+                break;
+            }
+          } else {
+            metadata[key] = data;
           }
         });
-      } else if (typeof rawMetadata === 'string') {
+
+        rawMetadata = jsyaml.dump(metadata);
+      } else if (typeof defaultMetadata === 'string') {
+        rawMetadata = defaultMetadata;
+
         try {
           defaultMetadata = jsyaml.load(rawMetadata);
 
-          _.each(rawMetadata, function(data, key) {
+          _.each(defaultMetadata, function(data, key) {
             metadata[key] = data;
           });
 
@@ -628,7 +612,6 @@ module.exports = {
       }
       cb(null, {
         'metadata': metadata,
-        'raw_metadata': rawMetadata,
         'default_metadata': defaultMetadata,
         'content': '# How does it work?\n\nEnter Text in Markdown format.',
         'repo': repo,
@@ -653,16 +636,14 @@ module.exports = {
     repo.contents(branch, path ? path + '/' + file : file, function(err, data, commit) {
       if (err) return cb(err);
 
-      // Given a YAML front matter, determines published or not
-
       function published(metadata) {
+        // Given a YAML front matter, determines published or not
         // default to published unless explicitly set to false
         return !metadata.match(/published: false/);
       }
 
-      // Extract YAML from a post, trims whitespace
-
       function parse(content) {
+        // Extract YAML from a post, trims whitespace
         content = content.replace(/\r\n/g, '\n'); // normalize a little bit
 
         function writeable() {
@@ -670,23 +651,26 @@ module.exports = {
         }
 
         if (!_.hasMetadata(content)) return {
-          raw_metadata: '',
           content: content,
           published: true,
           writeable: writeable()
         };
 
         var res = {
-          raw_metadata: '',
-          published: true,
           writeable: writeable()
         };
+
         res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
-          res.raw_metadata = frontmatter;
-          res.metadata = jsyaml.load(frontmatter);
-          res.published = published(frontmatter);
+          try {
+            res.metadata = jsyaml.load(frontmatter);
+            res.metadata.published = published(frontmatter);
+          } catch(err) {
+            console.log('ERROR encoding YAML');
+          }
+
           return '';
         }).trim();
+
         return res;
       }
 
@@ -699,9 +683,8 @@ module.exports = {
       var q = queue();
 
       if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
-        rawMetadata = cfg.prose.metadata[path];
-        if (typeof rawMetadata === 'object') {
-          defaultMetadata = rawMetadata;
+        defaultMetadata = cfg.prose.metadata[path];
+        if (typeof defaultMetadata === 'object') {
           _(defaultMetadata).each(function(value) {
             if (value.field && value.field.options &&
                 typeof value.field.options === 'string' &&
@@ -722,7 +705,9 @@ module.exports = {
               });
             }
           });
-        } else if (typeof rawMetadata === 'string') {
+        } else if (typeof defaultMetadata === 'string') {
+          rawMetadata = defaultMetadata;
+
           try {
             defaultMetadata = jsyaml.load(rawMetadata);
             if (defaultMetadata.date === "CURRENT_DATETIME") {

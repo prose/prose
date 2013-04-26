@@ -5,8 +5,10 @@
       <% if (!o.lang || o.lang === lang) { %>
         <% if (o.name) { %>
          <option value='<%= o.value %>'><%= o.name %></option>
-        <% } else { %>
+        <% } else if (o.value) { %>
          <option value='<%= o.value %>'><%= o.value %></option>
+        <% } else { %>
+         <option value='<%= o %>' selected='selected'><%= o %></option>
         <% } %>
       <% } %>
     <% }); %>
