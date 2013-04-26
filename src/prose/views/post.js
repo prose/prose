@@ -580,18 +580,18 @@ module.exports = Backbone.View.extend({
         var metadata = {};
 
         _.each($metadataEditor.find('[name]'), function(item) {
+          var value = $(item).val();
+
           switch(item.type) {
             case 'select-multiple':
             case 'select-one':
             case 'text':
-              if (item.value) {
+              if (value) {
                 if (metadata.hasOwnProperty(item.name)) {
-                  metadata[item.name] = _.union(metadata[item.name], item.value);
+                  metadata[item.name] = _.union(metadata[item.name], value);
                 } else {
-                  metadata[item.name] = item.value;
+                  metadata[item.name] = value;
                 }
-              } else {
-                metadata[item.name] = null;
               }
               break;
             case 'checkbox':
@@ -606,6 +606,8 @@ module.exports = Backbone.View.extend({
                 }
 
               } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
+                metadata[item.name] = item.checked;
+              } else {
                 metadata[item.name] = item.checked;
               }
               break;
@@ -644,7 +646,7 @@ module.exports = Backbone.View.extend({
             for (var i = 0; i < length; i++) {
 
               // if value is an array
-              if (value && typeof value === 'object' && value.length) {
+              if (typeof value === 'object' && value.length) {
 
                 // iterate over values in array
                 for (var j = 0; j < value.length; j++) {
@@ -653,7 +655,10 @@ module.exports = Backbone.View.extend({
                     case 'select-one':
                       options = $(input[i]).find('option[value="' + value[j] + '"]');
                       if (options.length) {
-                        options.selected = 'selected';
+                        for (var k = 0; k < options.length; k++) {
+                          options[k].selected = 'selected';
+                        }
+
                         matched = true;
                       }
                       break;
@@ -677,7 +682,10 @@ module.exports = Backbone.View.extend({
                   case 'select-one':
                     options = $(input[i]).find('option[value="' + value + '"]');
                     if (options.length) {
-                      options.selected = 'selected';
+                      for (var m = 0; m < options.length; m++) {
+                        options[m].selected = 'selected';
+                      }
+
                       matched = true;
                     }
                     break;
