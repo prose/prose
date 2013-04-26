@@ -167,6 +167,9 @@ module.exports = Backbone.View.extend({
       // Content Window
       $('.views .view', this.el).removeClass('active');
       $('#meta', this.el).addClass('active');
+
+      // Refresh CodeMirror
+      if (this.rawEditor) this.rawEditor.refresh();
     },
 
     deleteFile: function() {
@@ -609,6 +612,14 @@ module.exports = Backbone.View.extend({
           }
         });
 
+        if (that.rawEditor) {
+          try {
+            metadata = $.extend(metadata, jsyaml.load(that.rawEditor.getValue()));
+          } catch(err) {
+            console.log(err);
+          }
+        }
+
         return metadata;
       }
 
@@ -617,10 +628,8 @@ module.exports = Backbone.View.extend({
       }
 
       function setValue(data) {
-        var $rawEditor;
-        var $raw;
-
         var missing = {};
+        var raw;
 
         _(data).each(function(value, key) {
           var matched = false;
@@ -694,24 +703,25 @@ module.exports = Backbone.View.extend({
             }
 
           } else {
-            if ($rawEditor) {
-              $rawEditor.setValue($rawEditor.getValue() + jsyaml.dump({ key: value }));
+            raw = {};
+            raw[key] = value;
+
+            if (that.rawEditor) {
+              that.rawEditor.setValue(that.rawEditor.getValue() + jsyaml.dump(raw));
             } else {
-              $raw = $('<div class="form-item"><div id="raw"></div></div>')
-                .appendTo($metadataEditor)
-                .find('#raw');
+              $('<div class="form-item"><div name="raw" id="raw"></div></div>')
+                .prepend('<label for="raw">Raw Metadata</label>')
+                .appendTo($metadataEditor);
 
-              $rawEditor = CodeMirror($raw[0], {
-                mode: 'yaml',
-                value: jsyaml.dump({ key: value }),
-                lineWrapping: true,
-                extraKeys: that.keyMap(),
-                theme: 'prose-bright',
-                onChange: _.bind(that.makeDirty, that)
+              that.rawEditor = CodeMirror(
+                $('#raw')[0], {
+                  mode: 'yaml',
+                  value: jsyaml.dump(raw),
+                  lineWrapping: true,
+                  extraKeys: that.keyMap(),
+                  theme: 'prose-bright',
+                  onChange: _.bind(that.makeDirty, that)
               });
-
-              // TODO: race condition on refresh, call async?
-              $globalRaw = $rawEditor;
             }
           }
         });
