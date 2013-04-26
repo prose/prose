@@ -10,23 +10,9 @@ module.exports = Backbone.View.extend({
   id: 'posts',
 
   events: {
-    'mouseenter .item': 'activeListing',
+    'mouseover .item': 'activeListing',
     'click .delete': 'deleteFile',
     'keyup #filter': 'search'
-  },
-
-  initialize: function () {
-    if (!window.shortcutsRegistered) {
-      key('enter', _.bind(function (e, handler) {
-        utils.goToFile();
-      }, this));
-      key('up, down', _.bind(function (e, handler) {
-        utils.pageListing(handler.key);
-        e.preventDefault();
-        e.stopPropagation();
-      }, this));
-      window.shortcutsRegistered = true;
-    }
   },
 
   render: function () {
@@ -34,6 +20,13 @@ module.exports = Backbone.View.extend({
     var data = _.extend(this.model, app.state, {
       currentPath: app.state.path
     });
+
+    key('enter, o', _.bind(function(e, handler) {
+      utils.goToFile();
+    }, this));
+    key('j, k', _.bind(function(e, handler) {
+      utils.pageListing(handler.key);
+    }, this));
 
     // console.log(data);
     var isPrivate = app.state.isPrivate ? ' private' : '';
@@ -74,13 +67,6 @@ module.exports = Backbone.View.extend({
         this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
         this.renderResults();
       }, this), 10);
-
-    } else if (e.which === 40 && $('.item').length > 0) {
-      utils.pageListing('down'); // Arrow Down
-      e.preventDefault();
-      e.stopPropagation();
-      $('#filter').blur();
-
     } else {
       _.delay(_.bind(function () {
         var searchstr = $('#filter', this.el).val();
@@ -141,6 +127,9 @@ module.exports = Backbone.View.extend({
 
       $listings.removeClass('active');
       $listing.addClass('active');
+
+      // Blur out search if its selected
+      $('#filter').blur();
     }
   },
 
@@ -161,5 +150,11 @@ module.exports = Backbone.View.extend({
     }
 
     return false;
+  },
+
+  remove: function() {
+    // Cleanup
+    key.unbind('enter, o')
+    key.unbind('j, k');
   }
 });

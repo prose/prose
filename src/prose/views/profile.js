@@ -7,27 +7,20 @@ module.exports = Backbone.View.extend({
     id: 'profile',
 
     events: {
-      'mouseenter .item': 'activeListing',
+      'mouseover .item': 'activeListing',
       'keyup #filter': 'search'
-    },
-
-    initialize: function () {
-      if (!window.shortcutsRegistered) {
-        key('enter', _.bind(function (e, handler) {
-          utils.goToFile();
-        }, this));
-        key('up, down', _.bind(function (e, handler) {
-          utils.pageListing(handler.key);
-          e.preventDefault();
-          e.stopPropagation();
-        }, this));
-        window.shortcutsRegistered = true;
-      }
     },
 
     render: function () {
       var data = this.model;
       this.eventRegister = app.eventRegister;
+
+      key('enter, o', _.bind(function(e, handler) {
+        utils.goToFile();
+      }, this));
+      key('j, k', _.bind(function(e, handler) {
+        utils.pageListing(handler.key);
+      }, this));
 
       var header = {
           avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
@@ -91,6 +84,9 @@ module.exports = Backbone.View.extend({
 
         $listings.removeClass('active');
         $listing.addClass('active');
+
+        // Blur out search if its selected
+        $('#filter').blur();
       }
     },
 
@@ -112,6 +108,12 @@ module.exports = Backbone.View.extend({
           index: i
         })));
       });
+    },
+
+    remove: function() {
+      // Cleanup
+      key.unbind('enter, o')
+      key.unbind('j, k');
     }
 
 });
