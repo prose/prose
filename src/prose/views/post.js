@@ -22,7 +22,7 @@ module.exports = Backbone.View.extend({
       'change input': 'makeDirty'
     },
 
-    initialize: function () {
+    initialize: function() {
       var that = this;
       this.mode = 'edit';
       this.prevFile = this.serialize();
@@ -164,7 +164,6 @@ module.exports = Backbone.View.extend({
     },
 
     meta: function() {
-
       $('#prose').toggleClass('open', false);
 
       // Vertical Nav
@@ -174,6 +173,9 @@ module.exports = Backbone.View.extend({
       // Content Window
       $('.views .view', this.el).removeClass('active');
       $('#meta', this.el).addClass('active');
+
+      // Refresh CodeMirror
+      if (this.rawEditor) this.rawEditor.refresh();
     },
 
     deleteFile: function() {
@@ -197,7 +199,7 @@ module.exports = Backbone.View.extend({
     makeDirty: function(e) {
       this.dirty = true;
       if (this.editor) this.model.content = this.editor.getValue();
-      if (this.metadataEditor) this.model.raw_metadata = this.metadataEditor.getValue();
+      if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
       var saveState = this.model.writeable ? 'Save' : 'Submit Change';
       this.eventRegister.trigger('updateSave', saveState);
@@ -240,32 +242,16 @@ module.exports = Backbone.View.extend({
       this.showDiff();
     },
 
-    refreshCodeMirror: function () {
+    refreshCodeMirror: function() {
       this.editor.refresh();
     },
 
-    updateMetaData: function () {
+    updateMetaData: function() {
       if (!this.model.jekyll) return true; // metadata -> skip
 
-      // Update published
-      // TODO: refactor to use this.model.metadata instead of raw YAML
-      function updatePublished(yamlStr, published) {
-        var regex = /published: (false|true)/;
-        if (yamlStr.match(regex)) {
-          return yamlStr.replace(regex, 'published: ' + !! published);
-        } else {
-          return yamlStr + '\npublished: ' + !! published;
-        }
-      }
+      this.model.metadata = this.metadataEditor.getValue();
 
-      this.model.raw_metadata = this.metadataEditor.getValue();
-      var published = $('#meta input[name="published"]').prop('checked');
-
-      this.model.published = this.model.metadata.published = published;
-      this.model.raw_metadata = updatePublished(this.model.raw_metadata, published);
-      this.metadataEditor.setValue(this.model.raw_metadata);
-
-      if (published) {
+      if (this.model.metadata.published) {
         $('#post').addClass('published');
       } else {
         $('#post').removeClass('published');
@@ -305,13 +291,19 @@ module.exports = Backbone.View.extend({
       }
     },
 
-    serialize: function () {
-      return window.app.models.serialize(this.model.content, this.model.jekyll ? this.model.raw_metadata : null);
+    serialize: function() {
+      var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata);
+
+      if (this.model.jekyll) {
+        return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
+      } else {
+        return this.model.content;
+      }
     },
 
-    // Submits a patch (fork + pull request workflow)
+    sendPatch: function(filepath, filename, filecontent, message) {
+      // Submits a patch (fork + pull request workflow)
 
-    sendPatch: function (filepath, filename, filecontent, message) {
       var that = this;
 
       function patch() {
@@ -400,7 +392,7 @@ module.exports = Backbone.View.extend({
           store.setItem(filepath, JSON.stringify({
             sha: app.state.sha,
             content: this.editor ? this.editor.getValue() : null,
-            raw_metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+            metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
           }));
         } catch(err) {
           console.log(err);
@@ -408,7 +400,7 @@ module.exports = Backbone.View.extend({
       }
     },
 
-    stashApply: function () {
+    stashApply: function() {
       if (!window.localStorage) return false;
 
       var store = window.localStorage;
@@ -419,7 +411,7 @@ module.exports = Backbone.View.extend({
       if (stash && stash.sha === window.app.state.sha) {
         // Restore from stash if file sha hasn't changed
         if (this.editor) this.editor.setValue(stash.content);
-        if (this.metadataEditor) this.metadataEditor.setValue(stash.raw_metadata);
+        if (this.metadataEditor) this.metadataEditor.setValue(stash.metadata);
       } else if (item) {
         // Remove expired content
         store.removeItem(filepath);
@@ -468,7 +460,7 @@ module.exports = Backbone.View.extend({
       method.call(this, filepath, filename, filecontent, message);
     },
 
-    keyMap: function () {
+    keyMap: function() {
       var that = this;
 
       if (this.model.markdown) {
@@ -499,7 +491,6 @@ module.exports = Backbone.View.extend({
     },
 
     translate: function(e) {
-
       // TODO Drop the 'EN' requirement.
       var hash = window.location.hash.split('/'),
           href = $(e.currentTarget).attr('href').substr(1);
@@ -521,6 +512,7 @@ module.exports = Backbone.View.extend({
     },
 
     buildMeta: function() {
+      var that = this;
       var $metadataEditor = $('#meta', this.el).find('.form');
       $metadataEditor.empty();
 
@@ -594,18 +586,47 @@ module.exports = Backbone.View.extend({
         var metadata = {};
 
         _.each($metadataEditor.find('[name]'), function(item) {
-          switch(item.tagName.toLowerCase()) {
-            case 'input':
-              if (item.type === 'text') {
-                metadata[item.name] = item.value;
+          var value = $(item).val();
+
+          switch(item.type) {
+            case 'select-multiple':
+            case 'select-one':
+            case 'text':
+              if (value) {
+                if (metadata.hasOwnProperty(item.name)) {
+                  metadata[item.name] = _.union(metadata[item.name], value);
+                } else {
+                  metadata[item.name] = value;
+                }
               }
               break;
-            case 'select':
-            case 'multiselect':
-              metadata[item.name] = item.value;
+            case 'checkbox':
+              if (item.checked) {
+
+                if (metadata.hasOwnProperty(item.name)) {
+                  metadata[item.name] = _.union(metadata[item.name], item.value);
+                } else if (item.value === item.name) {
+                  metadata[item.name] = item.checked
+                } else {
+                  metadata[item.name] = item.value;
+                }
+
+              } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
+                metadata[item.name] = item.checked;
+              } else {
+                metadata[item.name] = item.checked;
+              }
               break;
           }
         });
+
+        if (that.rawEditor) {
+          try {
+            metadata = $.extend(metadata, jsyaml.load(that.rawEditor.getValue()));
+          } catch(err) {
+            console.log(err);
+          }
+        }
 
         return metadata;
       }
@@ -614,33 +635,152 @@ module.exports = Backbone.View.extend({
         return jsyaml.dump(getValue());
       }
 
-      function setValue(metadata) {
-        _(metadata).each(function(value, key) {
-          var input = $metadataEditor.find('[name="' + key + '"]');
-          var options = $metadataEditor.find('[name="' + key +'"] option');
+      function setValue(data) {
+        var missing = {};
+        var raw;
 
-          if (input.length && options.length) {
-            _.each(options, function(option) {
-              if (value !== null && (option.value === value || value.indexOf(option.value) > -1)) {
-                option.selected = 'selected';
+        _(data).each(function(value, key) {
+          var matched = false;
+          var input = $metadataEditor.find('[name="' + key + '"]');
+          var length = input.length;
+          var options;
+          var tmpl;
+
+          if (length) {
+
+            // iterate over matching fields
+            for (var i = 0; i < length; i++) {
+
+              // if value is an array
+              if (value !== null && typeof value === 'object' && value.length) {
+
+                // iterate over values in array
+                for (var j = 0; j < value.length; j++) {
+                  switch(input[i].type) {
+                    case 'select-multiple':
+                    case 'select-one':
+                      options = $(input[i]).find('option[value="' + value[j] + '"]');
+                      if (options.length) {
+                        for (var k = 0; k < options.length; k++) {
+                          options[k].selected = 'selected';
+                        }
+
+                        matched = true;
+                      }
+                      break;
+                    case 'text':
+                      input[i].value = value;
+                      matched = true;
+                      break;
+                    case 'checkbox':
+                      if (input[i].value === value) {
+                        input[i].checked = 'checked';
+                        matched = true;
+                      }
+                      break;
+                  }
+                }
+
+              } else {
+
+                switch(input[i].type) {
+                  case 'select-multiple':
+                  case 'select-one':
+                    options = $(input[i]).find('option[value="' + value + '"]');
+                    if (options.length) {
+                      for (var m = 0; m < options.length; m++) {
+                        options[m].selected = 'selected';
+                      }
+
+                      matched = true;
+                    }
+                    break;
+                  case 'text':
+                    input[i].value = value;
+                    matched = true;
+                    break;
+                  case 'checkbox':
+                    input[i].checked = value ? 'checked' : false;
+                    matched = true;
+                    break;
+                }
+
               }
-            });
-          } else if (input.length) {
-            input.val(value);
+            }
+
+            if (!matched && value !== null) {
+              if (missing.hasOwnProperty(key)) {
+                missing[key] = _.union(missing[key], value);
+              } else {
+                missing[key] = value;
+              }
+            }
+
           } else {
-            var tmpl = _(window.app.templates.text).template();
-            $metadataEditor.append(tmpl({
-              name: key,
-              label: key,
-              value: value
-            }));
+            raw = {};
+            raw[key] = value;
+
+            if (that.rawEditor) {
+              that.rawEditor.setValue(that.rawEditor.getValue() + jsyaml.dump(raw));
+            } else {
+              $('<div class="form-item"><div name="raw" id="raw"></div></div>')
+                .prepend('<label for="raw">Raw Metadata</label>')
+                .appendTo($metadataEditor);
+
+              that.rawEditor = CodeMirror(
+                $('#raw')[0], {
+                  mode: 'yaml',
+                  value: jsyaml.dump(raw),
+                  lineWrapping: true,
+                  extraKeys: that.keyMap(),
+                  theme: 'prose-bright',
+                  onChange: _.bind(that.makeDirty, that)
+              });
+            }
+          }
+        });
+
+        _.each(missing, function(value, key) {
+          if (value === null) return;
+
+          switch(typeof value) {
+            case 'boolean':
+              tmpl = _(window.app.templates.checkbox).template();
+              $metadataEditor.append(tmpl({
+                name: key,
+                label: value,
+                value: value,
+                checked: value ? 'checked' : false
+              }));
+              break;
+            case 'string':
+              tmpl = _(window.app.templates.text).template();
+              $metadataEditor.append(tmpl({
+                name: key,
+                label: value,
+                value: value
+              }));
+              break;
+            case 'object':
+              tmpl = _(window.app.templates.multiselect).template();
+              $metadataEditor.append(tmpl({
+                name: key,
+                label: key,
+                placeholder: key,
+                options: value,
+                lang: data.lang || 'en'
+              }));
+              break;
+            default:
+              console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
+              break;
           }
         });
       }
 
-      function setRaw(rawMetadata) {
+      function setRaw(data) {
         try {
-          setValue(jsyaml.load(rawMetadata));
+          setValue(jsyaml.load(data));
         } catch(err) {
           console.log('ERROR encoding YAML');
           // No-op
@@ -651,28 +791,20 @@ module.exports = Backbone.View.extend({
 
       return {
         el: $metadataEditor,
-        getValue: getRaw,
-        setValue: setRaw
+        getRaw: getRaw,
+        setRaw: setRaw,
+        getValue: getValue,
+        setValue: setValue
       };
     },
 
-    initEditor: function () {
+    initEditor: function() {
       var that = this;
 
       // TODO Remove setTimeout
       setTimeout(function () {
         if (that.model.jekyll) {
           that.metadataEditor = that.buildMeta();
-          /*
-          that.metadataEditor = CodeMirror($('#meta')[0], {
-            mode: 'yaml',
-            value: that.model.raw_metadata,
-            theme: 'prose-dark',
-            lineWrapping: true,
-            extraKeys: that.keyMap(),
-            onChange: _.bind(that.makeDirty, that)
-          });
-          */
           $('#post .metadata').hide();
         }
 
