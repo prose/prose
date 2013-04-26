@@ -15,12 +15,16 @@ module.exports = Backbone.View.extend({
       var data = this.model;
       this.eventRegister = app.eventRegister;
 
-      key('enter, o', _.bind(function(e, handler) {
-        utils.goToFile();
+      key('j, k, enter, o', 'projects', _.bind(function(e, handler) {
+        if (handler.key === 'j' || handler.key === 'k') {
+          utils.pageListing(handler.key);
+        } else {
+          utils.goToFile();
+        }
       }, this));
-      key('j, k', _.bind(function(e, handler) {
-        utils.pageListing(handler.key);
-      }, this));
+
+      // Attach Keybindings to the current scope
+      key.setScope('projects');
 
       var header = {
           avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
@@ -111,9 +115,7 @@ module.exports = Backbone.View.extend({
     },
 
     remove: function() {
-      // Cleanup
-      key.unbind('enter, o')
-      key.unbind('j, k');
+      // Unbind Keybindings from the scope
+      key.unbind('j, k, enter, o', 'posts');
     }
-
 });

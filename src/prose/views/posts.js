@@ -21,12 +21,16 @@ module.exports = Backbone.View.extend({
       currentPath: app.state.path
     });
 
-    key('enter, o', _.bind(function(e, handler) {
-      utils.goToFile();
+    key('j, k, enter, o', 'posts', _.bind(function(e, handler) {
+      if (handler.key === 'j' || handler.key === 'k') {
+        utils.pageListing(handler.key);
+      } else {
+        utils.goToFile();
+      }
     }, this));
-    key('j, k', _.bind(function(e, handler) {
-      utils.pageListing(handler.key);
-    }, this));
+
+    // Attach Keybindings to the current scope
+    key.setScope('posts');
 
     // console.log(data);
     var isPrivate = app.state.isPrivate ? ' private' : '';
@@ -153,8 +157,7 @@ module.exports = Backbone.View.extend({
   },
 
   remove: function() {
-    // Cleanup
-    key.unbind('enter, o')
-    key.unbind('j, k');
+    // Unbind Keybindings from the scope
+    key.unbind('j, k, enter, o', 'posts');
   }
 });
