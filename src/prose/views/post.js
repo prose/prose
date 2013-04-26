@@ -646,7 +646,7 @@ module.exports = Backbone.View.extend({
             for (var i = 0; i < length; i++) {
 
               // if value is an array
-              if (typeof value === 'object' && value.length) {
+              if (value !== null && typeof value === 'object' && value.length) {
 
                 // iterate over values in array
                 for (var j = 0; j < value.length; j++) {
