@@ -203,7 +203,8 @@ module.exports = Backbone.Router.extend({
       // Redirect
       router.navigate(app.username, {trigger: true});
     } else {
-      that.application.render();
+      this.application.render();
+
       var view = new app.views.Start({
         model: _.extend(this.model, {
           authenticated: !! window.authenticated
@@ -216,7 +217,8 @@ module.exports = Backbone.Router.extend({
   },
 
   notify: function(type, message) {
-    that.application.render();
+    this.application.render();
+
     var view = new app.views.Notification({
       'type': type,
       'message': message
