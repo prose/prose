@@ -17,7 +17,7 @@
 
     <% if (app.state.config && app.state.config.languages) { %>
       <% _(app.state.config.languages).each(function(lang) { %>
-        <% if (lang.value && (metadata.lang && metadata.lang !== lang.value)) { %>
+        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>
           <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>
         <% } %>
       <% }); %>
