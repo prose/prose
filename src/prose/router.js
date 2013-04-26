@@ -46,6 +46,7 @@ module.exports = Backbone.Router.extend({
 
       app.models.loadRepos(user, function(err, data) {
         data.authenticated = !! window.authenticated;
+
         that.application.render();
         var view = new app.views.Profile({
           model: _.extend(that.model, data)
@@ -200,7 +201,7 @@ module.exports = Backbone.Router.extend({
       $('#start').remove();
 
       // Redirect
-      router.navigate(app.username, false);
+      router.navigate(app.username, {trigger: true});
     } else {
       that.application.render();
       var view = new app.views.Start({
