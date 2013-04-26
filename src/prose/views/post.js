@@ -11,6 +11,9 @@ var utils = require('.././util');
 module.exports = Backbone.View.extend({
 
     id: 'post',
+
+    // TODO Maybe:
+    // id: window.authenticated ? 'post' : 'read-post',
     className: 'post',
 
     events: {

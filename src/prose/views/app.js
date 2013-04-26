@@ -4,7 +4,6 @@ var Backbone = require('backbone');
 var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
-    id: 'app',
     className: 'application',
 
     events: {
@@ -22,6 +21,15 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function(options) {
+
+      app.state = {
+        user: '',
+        repo: '',
+        mode: '',
+        branch: '',
+        path: ''
+      };
+
       this.eventRegister = app.eventRegister;
 
       _.bindAll(this, 'headerContext', 'sidebarContext', 'recentFiles', 'updateSave', 'updateSaveState');
@@ -34,6 +42,7 @@ module.exports = Backbone.View.extend({
 
     render: function () {
       var tmpl = _(window.app.templates.app).template();
+
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
         state: app.state
       })));
@@ -165,9 +174,8 @@ module.exports = Backbone.View.extend({
 
     logout: function () {
       window.app.models.logout();
-      app.instance.render();
       if ($('#start').length > 0) {
-        app.instance.start();
+        app.router.navigate('/', true);
       } else {
         window.location.reload();
       }
