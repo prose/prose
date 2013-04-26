@@ -189,7 +189,7 @@ module.exports = Backbone.View.extend({
         .addClass(classes);
     },
 
-    remove: function () {
+    remove: function() {
       // Unbind pagehide event handler when View is removed
       this.eventRegister.unbind('sidebarContext', this.sidebarContext);
       this.eventRegister.unbind('headerContext', this.headerContext);

@@ -350,17 +350,16 @@ module.exports = {
   },
 
   pageListing: function(handler) {
-    var item, index;
     if ($('.item').hasClass('active')) {
-      index = parseInt($('.item.active').data('index'), 10);
+      var index = parseInt($('.item.active').data('index'), 10);
       $('.item.active').removeClass('active');
 
-      if (handler === 'up') {
-        item = index - 1;
-        $('.item[data-index=' + item + ']').addClass('active');
+      if (handler === 'k') {
+        --index;
+        $('.item[data-index=' + index + ']').addClass('active');
       } else {
-        item = index + 1;
-        $('.item[data-index=' + item + ']').addClass('active');
+        ++index;
+        $('.item[data-index=' + index + ']').addClass('active');
       }
     } else {
       $('.item[data-index=0]').addClass('active');

@@ -7,27 +7,24 @@ module.exports = Backbone.View.extend({
     id: 'profile',
 
     events: {
-      'mouseenter .item': 'activeListing',
+      'mouseover .item': 'activeListing',
       'keyup #filter': 'search'
-    },
-
-    initialize: function () {
-      if (!window.shortcutsRegistered) {
-        key('enter', _.bind(function (e, handler) {
-          utils.goToFile();
-        }, this));
-        key('up, down', _.bind(function (e, handler) {
-          utils.pageListing(handler.key);
-          e.preventDefault();
-          e.stopPropagation();
-        }, this));
-        window.shortcutsRegistered = true;
-      }
     },
 
     render: function () {
       var data = this.model;
       this.eventRegister = app.eventRegister;
+
+      key('j, k, enter, o', 'projects', _.bind(function(e, handler) {
+        if (handler.key === 'j' || handler.key === 'k') {
+          utils.pageListing(handler.key);
+        } else {
+          utils.goToFile();
+        }
+      }, this));
+
+      // Attach Keybindings to the current scope
+      key.setScope('projects');
 
       var header = {
           avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
@@ -91,6 +88,9 @@ module.exports = Backbone.View.extend({
 
         $listings.removeClass('active');
         $listing.addClass('active');
+
+        // Blur out search if its selected
+        $('#filter').blur();
       }
     },
 
@@ -112,6 +112,10 @@ module.exports = Backbone.View.extend({
           index: i
         })));
       });
-    }
+    },
 
+    remove: function() {
+      // Unbind Keybindings from the scope
+      key.unbind('j, k, enter, o', 'posts');
+    }
 });
