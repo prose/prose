@@ -36,7 +36,6 @@ module.exports = Backbone.View.extend({
       };
 
       this.eventRegister.trigger('headerContext', header);
-
       var tmpl = _(window.app.templates.profile).template();
       var sidebar = _(window.app.templates.sidebarOrganizations).template();
 
@@ -45,7 +44,7 @@ module.exports = Backbone.View.extend({
 
       $('#drawer')
         .empty()
-        .append(sidebar(this.model));
+        .append(sidebar(data));
 
       _.delay(function () {
         utils.fixedScroll($('.topbar'));

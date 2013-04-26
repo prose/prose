@@ -6,7 +6,6 @@ window.app = {
     config: {},
     models: require('./models'),
     views: {
-      Application: require('./views/application'),
       App: require('./views/app'),
       Notification: require('./views/notification'),
       Start: require('./views/start'),
@@ -39,6 +38,7 @@ window.confirmExit = function() {
 var auth = $.getJSON('oauth.json');
 auth.done(function(res) {
 
+  var view;
   window.app.auth = {
     id: res.clientId,
     url: res.gatekeeperUrl
@@ -46,20 +46,23 @@ auth.done(function(res) {
 
   if (window.app.models.authenticate()) {
     window.app.models.loadApplication(function(err, data) {
+      if (err) {
+        view = new window.app.views.Notification({
+          'type': 'eror',
+          'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
+        }).render();
 
-      // Start the engines
-      window.app.instance = new window.app.views.Application({
-        el: '#prose',
-        model: data
-      }).render();
+        $('#prose').empty().append(view.el);
+      } else {
 
-      if (err) return window.app.instance.notify('error', 'Error while loading data from Github. This might be a temporary issue. Please try again later.');
+        // Initialize router
+        window.router = new app.router({
+          model: data
+        });
 
-      // Initialize router
-      window.router = new window.app.router();
-
-      // Start responding to routes
-      Backbone.history.start();
+        // Start responding to routes
+        Backbone.history.start();
+      }
     });
   }
 });

@@ -723,15 +723,23 @@ ins {
 /* ------------------------------------------
   Unauthenticated Landing
 ---------------------------------------------*/
-.start .splash {
+.start {
   background:#fff;
-  text-align:center;
-  margin:60px auto 0;
-  width:340px;
-  border:1px solid #C3CCD0;
-  box-shadow:0 1px 0 rgba(255, 255, 255, 0),
-             0 0 10px rgba(0, 0, 0, 0.1);
+  position:fixed;
+  top:0;bottom:0;left:0;right:0; 
+  width:100%;
+  height:100%;
+  z-index:5000;
   }
+  .start .splash {
+    background:#fff;
+    text-align:center;
+    margin:60px auto 0;
+    width:340px;
+    border:1px solid #C3CCD0;
+    box-shadow:0 1px 0 rgba(255, 255, 255, 0),
+               0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
 /* ------------------------------------------
   Page Components
