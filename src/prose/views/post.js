@@ -38,10 +38,10 @@ module.exports = Backbone.View.extend({
       });
 
       // Key Binding support.
-      key('⌘+s, ctrl+s', 'file', _.bind(function () {
+      key('⌘+s, ctrl+s', 'file', _.bind(function() {
         that.updateFile();
         return false;
-      }, that));
+      }, this));
 
       // Attach Keybindings to the current scope
       key.setScope('file');
