@@ -216,7 +216,8 @@ module.exports = Backbone.Router.extend({
   },
 
   notify: function(type, message) {
-    that.application.render();
+    this.application.render();
+
     var view = new app.views.Notification({
       'type': type,
       'message': message
