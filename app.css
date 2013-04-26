@@ -1083,12 +1083,19 @@ label.error {
 /* ------------------------------------------
   Chosen Plugin for fancy selects
 ---------------------------------------------*/
-.search-field input,
-.chzn-container,
 .chzn-drop {
   /*TODO Fix this upstream*/
   width:100%!important;
   }
+.search-field input,
+.chzn-search input {
+  width:90%!important;
+  }
+.chzn-container {
+  /*TODO Fix this upstream*/
+  width:70%!important;
+  }
+
 .chzn-container {
   font-size:13px;
   line-height:18px;
@@ -1182,7 +1189,7 @@ label.error {
   z-index:1010;
   }
   .chzn-container-single .chzn-search input {
-    background:#fff url('img/sprite.png') no-repeat 125px -75px;
+    background:#fff url('img/sprite.png') no-repeat 170px -75px;
     margin:0 4px;
     padding:4px 20px 4px 4px;
     border:1px solid #aaa;
@@ -1234,19 +1241,18 @@ label.error {
   color:#999;
   }
 .chzn-container-multi .chzn-choices .search-choice {
-  background:#f8f8f8;
+  background:#D4D7D9;
+  border:1px solid #A8AFB2;
+  color:#434C51;
   width:98%;
-  border:1px solid #aaa;
   padding:4px 20px 5px 5px;
   margin:3px;
   position:relative;
   cursor:default;
   -webkit-background-clip:padding-box;
           background-clip:padding-box;
-  -webkit-box-shadow:0 0 2px #ffffff inset,
-                     0 1px 0 rgba(0,0,0,0.05);
-          box-shadow:0 0 2px #ffffff inset,
-                     0 1px 0 rgba(0,0,0,0.05);
+  box-shadow:0 0 2px #FFF inset,
+             0 1px 0 rgba(0, 0, 0, 0.05);
   -webkit-border-radius:3px;
           border-radius:3px;
   }
@@ -1294,7 +1300,7 @@ label.error {
   display:list-item;
   }
 .chzn-container .chzn-results .highlighted {
-  background-color:#1f90ff;
+  background-color:#516066;
   color:#fff;
   }
 .chzn-container .chzn-results li em {
