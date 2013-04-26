@@ -27,7 +27,6 @@ LIBS = \
 	src/libs/codemirror/javascript.js \
 	src/libs/codemirror/css.js \
 	src/libs/codemirror/gfm.js \
-	src/libs/diff-match-patch.js \
 	src/libs/liquid.js \
 	src/libs/liquid.patch.js
 
