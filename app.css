@@ -658,30 +658,24 @@ ins {
       top:8px;
       }
 
-.overlay {
-  background:rgba(255,255,255,0.25);
-  position:fixed;
-  top:0;left:0;right:0;bottom:0;
-  z-index:5000;
+.loading {
+  background:#fff;
+  position:absolute;
+  width:240px;
+  height:240px;
+  top:120px;
+  left:50%;
+  margin:0 0 0 -120px;
+  text-align:center;
+  box-shadow:0 1px 0 rgba(255, 255, 255, 0),
+             0 0 10px rgba(0, 0, 0, 0.1);
   }
-  .loading {
-    background:#fff;
-    position:absolute;
-    width:240px;
-    height:240px;
-    top:120px;
-    left:50%;
-    margin:0 0 0 -120px;
-    text-align:center;
-    box-shadow:0 1px 0 rgba(255, 255, 255, 0),
-               0 0 10px rgba(0, 0, 0, 0.1);
+  .loading .loading-icon {
+    background:transparent url('img/loader.gif') no-repeat;
+    width:110px;
+    height:110px;
+    margin:30px auto;
     }
-    .loading .loading-icon {
-      background:transparent url('img/loader.gif') no-repeat;
-      width:110px;
-      height:110px;
-      margin:30px auto;
-      }
 
 .breadcrumb {
   background:#F8F8F8;
@@ -1006,6 +1000,9 @@ ins {
   white-space:pre-wrap;
   }
 
+.meta .inner {
+  background:#fff;
+  }
 .meta .form {
   padding-bottom:30px;
   }
@@ -1093,7 +1090,7 @@ label.error {
   }
 .chzn-container {
   /*TODO Fix this upstream*/
-  width:70%!important;
+  width:180px!important;
   }
 
 .chzn-container {

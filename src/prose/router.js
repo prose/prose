@@ -3,11 +3,6 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var utils = require('./util');
 
-// The Router
-// ---------------
-
-// TODO May need to render out the application view again 
-// to take in changes to the sidebar.
 module.exports = Backbone.Router.extend({
 
   routes: {
@@ -35,14 +30,13 @@ module.exports = Backbone.Router.extend({
     utils.loader.loading('Loading Profile');
 
     if (confirmExit()) {
-      app.state = {
-        user: user,
-        title: user,
-        repo: '',
-        mode: '',
-        branch: '',
-        path: ''
-      };
+      app.state = app.state || {};
+      app.state.user = user;
+      app.state.title = user;
+      app.state.repo = '';
+      app.state.mode = '';
+      app.state.branch = '';
+      app.state.path = '';
 
       app.models.loadRepos(user, function(err, data) {
         data.authenticated = !! window.authenticated;
@@ -64,13 +58,12 @@ module.exports = Backbone.Router.extend({
     var that = this;
     utils.loader.loading('Loading Posts');
 
-    app.state = {
-      user: user,
-      repo: repo,
-      mode: 'tree',
-      branch: '',
-      path: ''
-    };
+    app.state = app.state || {};
+    app.state.user = user;
+    app.state.repo = repo;
+    app.state.mode = 'tree';
+    app.state.branch = '';
+    app.state.path = '';
 
     app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
       if (err) return that.notify('error', 'This post does not exist.');

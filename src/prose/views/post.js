@@ -723,7 +723,7 @@ module.exports = Backbone.View.extend({
             if (that.rawEditor) {
               that.rawEditor.setValue(that.rawEditor.getValue() + jsyaml.dump(raw));
             } else {
-              $('<div class="form-item"><div name="raw" id="raw"></div></div>')
+              $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>')
                 .prepend('<label for="raw">Raw Metadata</label>')
                 .appendTo($metadataEditor);
 

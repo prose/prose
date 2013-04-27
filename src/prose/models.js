@@ -240,7 +240,7 @@ module.exports = {
     }
 
     // Filter
-    var files = _.filter(tree, function (file) {
+    var files = _(tree).filter(function(file) {
       var matchSearch = new RegExp('(' + searchstr + ')', 'i');
 
       // Depending on search use full path or filename
@@ -307,27 +307,28 @@ module.exports = {
   // plus load _config.yml or _prose.yml
 
   loadPosts: function(user, reponame, branch, path, cb) {
-    var that = this;
+    var models = this;
     var repo = this.getRepo(user, reponame);
 
     function load(repodata) {
-      that.loadConfig(user, reponame, branch, function(err, config) {
+      models.loadConfig(user, reponame, branch, function(config, err) {
         app.state.jekyll = !err;
 
         var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
         if (!path) path = root;
 
-        repo.getTree(branch + '?recursive=true', function (err, tree) {
+        repo.getTree(branch + '?recursive=true', function(err, tree) {
           if (err) return cb('Not found');
-          that.loadBranches(user, reponame, function (err, branches) {
+
+          models.loadBranches(user, reponame, function(err, branches) {
             if (err) return cb('Branches could not be fetched');
             app.state.path = path ? path : '';
 
-            app.state.branches = _.filter(branches, function (b) {
+            app.state.branches = _.filter(branches, function(b) {
               return b !== branch;
             });
 
-            repo.getSha(branch, app.state.path, function (err, sha) {
+            repo.getSha(branch, app.state.path, function(err, sha) {
               app.state.sha = sha;
             });
 
@@ -407,15 +408,14 @@ module.exports = {
               }
             });
 
-            cb(null, that.getFiles(tree, path, ''));
+            cb(null, models.getFiles(tree, path, ''));
           });
         });
       });
     }
 
-    repo.show(function (err, repodata) {
+    repo.show(function(err, repodata) {
       if (!branch) app.state.branch = branch = repodata.master_branch;
-
       app.state.isPrivate = repodata.private;
       app.state.permissions = repodata.permissions;
       load();
@@ -494,10 +494,10 @@ module.exports = {
   // Send a pull request on GitHub
 
   patchFile: function(user, repo, branch, path, content, message, cb) {
-    var that = this;
+    var models = this;
     this.forkRepo(user, repo, branch, function (err, info) {
       branch = info.ref.substring(info.ref.lastIndexOf('/') + 1);
-      that.saveFile(app.username, repo, branch, path, content, message, function (err) {
+      models.saveFile(app.username, repo, branch, path, content, message, function (err) {
         if (err) return cb(err);
         var pull = {
           title: message,
@@ -505,7 +505,7 @@ module.exports = {
           base: app.state.branch,
           head: app.username + ':' + branch
         };
-        that.createPullRequest(app.state.user, app.state.repo, pull, cb);
+        models.createPullRequest(app.state.user, app.state.repo, pull, cb);
       });
     });
   },
