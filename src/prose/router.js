@@ -102,17 +102,13 @@ module.exports = Backbone.Router.extend({
     app.state.user = user;
     app.state.repo = repo;
  
-    url = this.extractURL(path);
+    url = _.extractURL(path);
 
     if (url.mode === 'tree') {
       this.repoBranch(user, repo, url.branch, url.path);
     } else if (url.mode === 'new') {
       this.newPost(user, repo, url.branch, url.path);
-    } else if (url.mode === 'preview') {
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
-    } else {
+    } else { // preview or edit ..
       parts = _.extractFilename(url.path);
       app.state.file = parts[1];
       this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
@@ -145,29 +141,14 @@ module.exports = Backbone.Router.extend({
     }, this));
   },
 
-  preview: function(user, repo, branch, path, file, mode) {
-    var router = this;
-    utils.loader.loading('Previewing Post');
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) return router.notify('error', 'This post does not exist.');
-
-        router.application.render();
-        var view = new app.views.Preview({
-          model: data
-        }).render();
-
-        $('#content').empty().append(view.el);
-        utils.loader.loaded();
-      }, this));
-    }, this));
-  },
-
   post: function(user, repo, branch, path, file, mode) {
     var router = this;
-    utils.loader.loading('Loading Post');
+
+    if (mode === 'edit') {
+      utils.loader.loading('Loading Post');
+    } else {
+      utils.loader.loading('Previewing Post');
+    }
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return router.notify('error', 'This post does not exist.');
@@ -219,15 +200,5 @@ module.exports = Backbone.Router.extend({
 
     $('#content').empty().append(view.el);
     utils.loader.loaded();
-  },
-
-  // Utils
-  // ------------
-  extractURL: function(url) {
-    url = url.split('/');
-    app.state.mode = url[0];
-    app.state.branch = url[1];
-    app.state.path = (url.slice(2) || []).join('/');
-    return app.state;
   }
 });

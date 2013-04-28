@@ -63,6 +63,18 @@ _.extractFilename = function(path) {
 };
 
 
+// Extract parts of the path
+// into a state from the router
+// -------
+
+_.extractURL = function(url) {
+  url = url.split('/');
+  app.state.mode = url[0];
+  app.state.branch = url[1];
+  app.state.path = (url.slice(2) || []).join('/');
+  return app.state;
+};
+
 // Determine mode for CodeMirror
 // -------
 

@@ -11,9 +11,6 @@ var utils = require('.././util');
 module.exports = Backbone.View.extend({
 
     id: 'post',
-
-    // TODO Maybe:
-    // id: window.authenticated ? 'post' : 'read-post',
     className: 'post',
 
     events: {
@@ -23,8 +20,6 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function() {
-      var that = this;
-      this.mode = 'edit';
       this.prevFile = this.serialize();
       this.model.original = this.model.content;
 
@@ -34,15 +29,16 @@ module.exports = Backbone.View.extend({
     },
 
     render: function() {
+      var view = this;
       var data = _.extend(this.model, {
-        mode: this.mode,
+        mode: app.state.mode,
         preview: this.model.markdown ? marked(this.model.content) : '',
         metadata: this.model.metadata
       });
 
       // Key Binding support.
       key('⌘+s, ctrl+s', 'file', _.bind(function() {
-        that.updateFile();
+        this.updateFile();
         return false;
       }, this));
 
@@ -84,19 +80,21 @@ module.exports = Backbone.View.extend({
       $(this.el)
         .empty()
         .append(tmpl(_.extend(this.model, {
-          mode: this.mode,
+          mode: app.state.mode,
           metadata: this.model.metadata
         })));
 
       // TODO Add an unpublished class to .application
       if (!this.model.published) $(this.el).addClass('published');
 
-      this.initEditor();
-
       // Editor is first up so trigger an active class for it
       $('.post-views .edit').toggleClass('active', true);
 
-      if (this.model.markdown) {
+
+      if (this.model.markdown && app.state.mode === 'preview') {
+        this.preview();
+      } else {
+        this.initEditor();
         _.delay(function () {
           utils.fixedScroll($('.topbar'));
         }, 1);
@@ -106,7 +104,17 @@ module.exports = Backbone.View.extend({
     },
 
     edit: function(e) {
-      var that = this;
+
+      // If preview was hit on load this.editor
+      // was not initialized.
+      if (!this.editor) {
+        this.initEditor();
+        if (this.model.markdown) {
+          _.delay(function () {
+            utils.fixedScroll($('.topbar'));
+          }, 1);
+        }
+      }
 
       // We want to trigger a re-rendering of the url
       // if mode is set to preview
@@ -126,7 +134,7 @@ module.exports = Backbone.View.extend({
     },
 
     preview: function(e) {
-      var that = this;
+      var view = this;
       this.model.preview = true;
 
       $('#prose').toggleClass('open', false);
@@ -155,12 +163,6 @@ module.exports = Backbone.View.extend({
         this.$('.preview').html(marked(this.model.content));
         this.updateURL();
       }
-
-      // Refresh CodeMirror each time
-      // to reflect new changes
-      _.delay(function () {
-        that.refreshCodeMirror();
-      }, 1);
     },
 
     meta: function() {
@@ -189,7 +191,7 @@ module.exports = Backbone.View.extend({
     },
 
     updateURL: function() {
-      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? 'blob' : 'edit', app.state.branch, this.model.path, this.model.file]);
+      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? 'preview' : 'edit', app.state.branch, this.model.path, this.model.file]);
       router.navigate(url.join('/'), {
         trigger: false,
         replace: true
@@ -261,7 +263,7 @@ module.exports = Backbone.View.extend({
     },
 
     updateFilename: function(filepath, cb) {
-      var that = this;
+      var view = this;
 
       if (!_.validPathname(filepath)) return cb('error');
       app.state.path = this.model.path; // ?
@@ -269,11 +271,11 @@ module.exports = Backbone.View.extend({
       app.state.path = _.extractFilename(filepath)[0];
 
       function finish() {
-        that.model.path = app.state.path;
-        that.model.file = app.state.file;
+        view.model.path = app.state.path;
+        view.model.file = app.state.file;
         // re-render header to reflect the filename change
         app.instance.app.render();
-        that.updateURL();
+        view.updateURL();
       }
 
       if (this.model.persisted) {
@@ -304,75 +306,75 @@ module.exports = Backbone.View.extend({
     sendPatch: function(filepath, filename, filecontent, message) {
       // Submits a patch (fork + pull request workflow)
 
-      var that = this;
+      var view = this;
 
       function patch() {
-        if (that.updateMetaData()) {
-          that.model.content = that.prevFile;
-          that.editor.setValue(that.prevFile);
+        if (view.updateMetaData()) {
+          view.model.content = view.prevFile;
+          view.editor.setValue(view.prevFile);
 
           window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
-                that.eventRegister.trigger('updateSaveState', 'Submit Change', 'inactive');
+                view.eventRegister.trigger('updateSaveState', 'Submit Change', 'inactive');
               }, 3000);
 
-              that.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
+              view.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
               return;
             }
 
-            that.dirty = false;
-            that.model.persisted = true;
-            that.model.file = filename;
-            that.updateURL();
-            that.prevFile = filecontent;
-            that.eventRegister.trigger('Change Submitted', 'inactive');
+            view.dirty = false;
+            view.model.persisted = true;
+            view.model.file = filename;
+            view.updateURL();
+            view.prevFile = filecontent;
+            view.eventRegister.trigger('Change Submitted', 'inactive');
           });
         } else {
-          that.eventRegister.trigger('! Metadata', 'error');
+          view.eventRegister.trigger('! Metadata', 'error');
         }
       }
 
-      that.eventRegister.trigger('updateSaveState', 'Submitting Change', 'inactive saving');
+      view.eventRegister.trigger('updateSaveState', 'Submitting Change', 'inactive saving');
       patch();
 
       return false;
     },
 
     saveFile: function(filepath, filename, filecontent, message) {
-      var that = this;
+      var view = this;
 
       function save() {
-        if (that.updateMetaData()) {
+        if (view.updateMetaData()) {
           window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
-                that.makeDirty();
+                view.makeDirty();
               }, 3000);
-              that.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
+              view.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
               return;
             }
-            that.dirty = false;
-            that.model.persisted = true;
-            that.model.file = filename;
-            that.updateURL();
-            that.prevFile = filecontent;
-            that.model.original = that.model.content;
-            that.eventRegister.trigger('updateSaveState', 'Saved', 'inactive');
+            view.dirty = false;
+            view.model.persisted = true;
+            view.model.file = filename;
+            view.updateURL();
+            view.prevFile = filecontent;
+            view.model.original = view.model.content;
+            view.eventRegister.trigger('updateSaveState', 'Saved', 'inactive');
           });
         } else {
-          that.eventRegister.trigger('updateSaveState', '! Metadata', 'error');
+          view.eventRegister.trigger('updateSaveState', '! Metadata', 'error');
         }
       }
 
-      that.eventRegister.trigger('updateSaveState', 'Saving', 'inactive saving');
+      view.eventRegister.trigger('updateSaveState', 'Saving', 'inactive saving');
 
       if (filepath === _.filepath(this.model.path, this.model.file)) return save();
 
       // Move or create file
       this.updateFilename(filepath, function (err) {
         if (err) {
-          that.eventRegister.trigger('updateSaveState', '! Filename', 'error');
+          view.eventRegister.trigger('updateSaveState', '! Filename', 'error');
         } else {
           save();
         }
@@ -461,30 +463,30 @@ module.exports = Backbone.View.extend({
     },
 
     keyMap: function() {
-      var that = this;
+      var view = this;
 
       if (this.model.markdown) {
         return {
           'Ctrl-S': function(codemirror) {
-            that.updateFile();
+            view.updateFile();
           },
           'Cmd-B': function(codemirror) {
-            if (that.editor.getSelection !== '') that.bold();
+            if (view.editor.getSelection !== '') view.bold();
           },
           'Ctrl-B': function(codemirror) {
-            if (that.editor.getSelection !== '') that.bold();
+            if (view.editor.getSelection !== '') view.bold();
           },
           'Cmd-I': function(codemirror) {
-            if (that.editor.getSelection !== '') that.italic();
+            if (view.editor.getSelection !== '') view.italic();
           },
           'Ctrl-I': function(codemirror) {
-            if (that.editor.getSelection !== '') that.italic();
+            if (view.editor.getSelection !== '') view.italic();
           }
         };
       } else {
         return {
           'Ctrl-S': function (codemirror) {
-            that.updateFile();
+            view.updateFile();
           }
         };
       }
@@ -512,7 +514,7 @@ module.exports = Backbone.View.extend({
     },
 
     buildMeta: function() {
-      var that = this;
+      var view = this;
       var $metadataEditor = $('#meta', this.el).find('.form');
       $metadataEditor.empty();
 
@@ -620,9 +622,9 @@ module.exports = Backbone.View.extend({
           }
         });
 
-        if (that.rawEditor) {
+        if (view.rawEditor) {
           try {
-            metadata = $.extend(metadata, jsyaml.load(that.rawEditor.getValue()));
+            metadata = $.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
           } catch(err) {
             console.log(err);
           }
@@ -720,21 +722,21 @@ module.exports = Backbone.View.extend({
             raw = {};
             raw[key] = value;
 
-            if (that.rawEditor) {
-              that.rawEditor.setValue(that.rawEditor.getValue() + jsyaml.dump(raw));
+            if (view.rawEditor) {
+              view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
             } else {
               $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>')
                 .prepend('<label for="raw">Raw Metadata</label>')
                 .appendTo($metadataEditor);
 
-              that.rawEditor = CodeMirror(
+              view.rawEditor = CodeMirror(
                 $('#raw')[0], {
                   mode: 'yaml',
                   value: jsyaml.dump(raw),
                   lineWrapping: true,
-                  extraKeys: that.keyMap(),
+                  extraKeys: view.keyMap(),
                   theme: 'prose-bright',
-                  onChange: _.bind(that.makeDirty, that)
+                  onChange: _.bind(view.makeDirty, view)
               });
             }
           }
@@ -799,30 +801,30 @@ module.exports = Backbone.View.extend({
     },
 
     initEditor: function() {
-      var that = this;
+      var view = this;
 
       // TODO Remove setTimeout
       setTimeout(function () {
-        if (that.model.jekyll) {
-          that.metadataEditor = that.buildMeta();
+        if (view.model.jekyll) {
+          view.metadataEditor = view.buildMeta();
           $('#post .metadata').hide();
         }
 
-        that.editor = CodeMirror($('#code')[0], {
-          mode: that.model.lang,
-          value: that.model.content,
+        view.editor = CodeMirror($('#code')[0], {
+          mode: view.model.lang,
+          value: view.model.content,
           lineWrapping: true,
-          extraKeys: that.keyMap(),
+          extraKeys: view.keyMap(),
           matchBrackets: true,
           theme: 'prose-bright'
         });
 
-        that.editor.on('change', _.bind(that.makeDirty, that));
-        that.refreshCodeMirror();
+        view.editor.on('change', _.bind(view.makeDirty, view));
+        view.refreshCodeMirror();
 
         // Check localStorage for existing stash
         // Apply if stash exists and is current, remove if expired
-        that.stashApply();
+        view.stashApply();
       }, 100);
     },
 
