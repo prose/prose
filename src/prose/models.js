@@ -282,22 +282,24 @@ module.exports = {
   //
   // Load _config.yml or _prose.yml
 
-  loadConfig: function(user, reponame, branch, cb) {
-    var repo = this.getRepo(user, reponame);
-
-    // Check for a _prose.yml file. If this doesn't exist, check _config.yml
-    repo.contents(branch, '_prose.yml', function(err, data) {
-      if (err) {
-        repo.contents(branch, '_config.yml', function(err, d) {
-          if (err) return cb(err);
-          app.state.config = jsyaml.load(d);
-          cb(err, app.state.config);
-        });
+  loadConfig: function(user, reponame, branch, file, cb) {
+    if (file) {
+      if (reponame === app.state.currentRepo) {
+        cb(app.state.config);
       } else {
-        app.state.config = jsyaml.load(data);
-        cb(err, app.state.config);
+        var repo = this.getRepo(user, reponame);
+        app.state.currentRepo = reponame;
+        repo.contents(branch, file, function(err, data) {
+          if (err) return cb(err);
+          app.state.config = jsyaml.load(data);
+          app.state.jekyll = true;
+          cb(app.state.config, err);
+        });
       }
-    });
+    } else {
+      app.state.jekyll = false;
+      cb(false);
+    }
   },
 
   // Load Posts
@@ -311,13 +313,25 @@ module.exports = {
     var repo = this.getRepo(user, reponame);
 
     function load(repodata) {
-      models.loadConfig(user, reponame, branch, function(config, err) {
-        app.state.jekyll = !err;
+      repo.getTree(branch + '?recursive=true', function(err, tree) {
 
-        var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
-        if (!path) path = root;
+        // Check for _prose.yml or _config.yml
+        var configName = _(tree).find(function(t) {
+          if (t.path === '_prose.yml') {
+            return t.path;
+          } else if (t.path === '_config.yml') {
+            return t.path;
+          } else {
+            return false;
+          }
+        });
 
-        repo.getTree(branch + '?recursive=true', function(err, tree) {
+        var file = configName ? configName.path : false;
+
+        models.loadConfig(user, reponame, branch, file, function(config, err) {
+          var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
+          if (!path) path = root;
+
           if (err) return cb('Not found');
 
           models.loadBranches(user, reponame, function(err, branches) {

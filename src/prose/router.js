@@ -25,7 +25,7 @@ module.exports = Backbone.Router.extend({
   // #example-user
   // #example-organization
   profile: function(user) {
-    var that = this;
+    var router = this;
 
     utils.loader.loading('Loading Profile');
 
@@ -41,9 +41,9 @@ module.exports = Backbone.Router.extend({
       app.models.loadRepos(user, function(err, data) {
         data.authenticated = !! window.authenticated;
 
-        that.application.render();
+        router.application.render();
         var view = new app.views.Profile({
-          model: _.extend(that.model, data)
+          model: _.extend(router.model, data)
         }).render();
 
         $('#content').empty().append(view.el);
@@ -54,21 +54,21 @@ module.exports = Backbone.Router.extend({
 
   // #example-user/example-repo
   repo: function(user, repo) {
-
-    var that = this;
+    var router = this;
     utils.loader.loading('Loading Posts');
 
-    app.state = app.state || {};
-    app.state.user = user;
-    app.state.repo = repo;
-    app.state.mode = 'tree';
-    app.state.branch = '';
-    app.state.path = '';
+    app.state = {
+      user: user,
+      repo: repo,
+      mode: 'tree',
+      branch: '',
+      path: ''
+    }
 
     app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
-      if (err) return that.notify('error', 'This post does not exist.');
+      if (err) return router.notify('error', 'This post does not exist.');
 
-      that.application.render();
+      router.application.render();
       var view = new app.views.Posts({
         model: data
       }).render();
@@ -81,12 +81,12 @@ module.exports = Backbone.Router.extend({
   // #example-user/example-repo/tree/BRANCH
   repoBranch: function(user, repo, branch, path) {
 
-    var that = this;
+    var router = this;
     utils.loader.loading('Loading Posts');
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return that.notify('error', 'This post does not exist.');
-      that.application.render();
+      if (err) return router.notify('error', 'This post does not exist.');
+      router.application.render();
 
       var view = new app.views.Posts({
         model: data
@@ -120,7 +120,7 @@ module.exports = Backbone.Router.extend({
   },
 
   newPost: function (user, repo, branch, path) {
-    var that = this;
+    var router = this;
     utils.loader.loading('Creating a new post');
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
@@ -130,7 +130,7 @@ module.exports = Backbone.Router.extend({
         data.markdown = _.markdown(data.file);
         data.lang = _.mode(data.file);
 
-        that.application.render();
+        router.application.render();
         var view = new app.views.Post({
           model: data
         }).render();
@@ -146,14 +146,15 @@ module.exports = Backbone.Router.extend({
   },
 
   preview: function(user, repo, branch, path, file, mode) {
-    var that = this;
+    var router = this;
     utils.loader.loading('Previewing Post');
 
-    app.models.loadConfig(user, repo, branch, _.bind(function () {
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      if (err) return router.notify('error', 'This post does not exist.');
       app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) return that.notify('error', 'This post does not exist.');
+        if (err) return router.notify('error', 'This post does not exist.');
 
-        that.application.render();
+        router.application.render();
         var view = new app.views.Preview({
           model: data
         }).render();
@@ -165,19 +166,19 @@ module.exports = Backbone.Router.extend({
   },
 
   post: function(user, repo, branch, path, file, mode) {
-    var that = this;
+    var router = this;
     utils.loader.loading('Loading Post');
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return that.notify('error', 'This post does not exist.');
+      if (err) return router.notify('error', 'This post does not exist.');
       app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) return that.notify('error', 'This post does not exist.');
+        if (err) return router.notify('error', 'This post does not exist.');
 
         app.state.markdown = data.markdown;
         data.preview = (mode !== 'edit');
         data.lang = _.mode(file);
 
-        that.application.render();
+        router.application.render();
         var view = new app.views.Post({
           model: data
         }).render();
