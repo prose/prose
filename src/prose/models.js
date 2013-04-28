@@ -315,6 +315,10 @@ module.exports = {
     function load(repodata) {
       repo.getTree(branch + '?recursive=true', function(err, tree) {
 
+        // TODO This could be better. It would be great to
+        // avoid the callback dependency and order when
+        // we refacor models.
+
         // Check for _prose.yml or _config.yml
         var configName = _(tree).find(function(t) {
           if (t.path === '_prose.yml') {
