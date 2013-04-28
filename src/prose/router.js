@@ -132,8 +132,6 @@ module.exports = Backbone.Router.extend({
         }).render();
 
         $('#content').empty().append(view.el);
- 
-        this.mainView.makeDirty();
         app.state.file = data.file;
         utils.loader.loaded();
 
