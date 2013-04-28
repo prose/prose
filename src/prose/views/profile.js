@@ -65,12 +65,6 @@ module.exports = Backbone.View.extend({
           this.model = window.app.models.filterProjects(this.cache, '');
           this.renderResults();
         }, this), 10);
-      } else if (e.which === 40 && $('.item').length > 0) {
-        utils.pageListing('down'); // Arrow Down
-        e.preventDefault();
-        e.stopPropagation();
-        $('#filter').blur();
-
       } else {
         _.delay(_.bind(function () {
           var searchstr = $('#filter', this.el).val();
