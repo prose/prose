@@ -661,6 +661,7 @@ ins {
 .loading {
   background:#fff;
   position:absolute;
+  z-index:5000;
   width:240px;
   height:240px;
   top:120px;
