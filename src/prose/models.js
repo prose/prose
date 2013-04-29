@@ -171,11 +171,12 @@ module.exports = {
   // Filter on projects based on a searchstr
   // -------
   filterProjects: function(repos, searchstr) {
+
     var matchSearch = new RegExp('(' + searchstr + ')', 'i');
     var listings;
 
     // Dive into repos.owners and pull each match into a new owners array.
-    if (repos.state.user === app.username) {
+    if (repos.user.name === app.username) {
 
       var owners = {};
       var owner = _(repos.owners).filter(function(ownerRepos, owns) {
@@ -193,25 +194,22 @@ module.exports = {
       });
 
       return {
-        owners: owners,
-        state: repos.state
+        title: repos.user.name,
+        owners: owners
       };
 
     } else {
-      listings = _(repos.repos).filter(function (repo) {
-
+      listings = _(repos.repos).filter(function(repo) {
         if (searchstr && searchstr.length) {
           repo.name = repo.name.replace(matchSearch, '$1');
         }
-
         if (!searchstr) return true;
         return repo.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
       });
 
       // TODO sort by name eg: listigs = _(listings).sortby( ...
       return {
-        repos: listings,
-        state: repos.state
+        repos: listings
       };
     }
   },

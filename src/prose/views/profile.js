@@ -98,7 +98,7 @@ module.exports = Backbone.View.extend({
           $projects.empty();
 
       // Flatten the listing if app.username === state.user
-      if (this.model.state && (this.model.state.user === app.username)) {
+      if (this.model.title === app.username) {
         repos = _(this.model.owners).flatten();
       } else {
         repos = this.model.repos;
