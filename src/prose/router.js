@@ -161,9 +161,9 @@ module.exports = Backbone.Router.extend({
       utils.loader.loading('Previewing Post');
     }
 
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
       if (err) return this.notify('error', 'This post does not exist.');
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
         if (err) return this.notify('error', 'This post does not exist.');
 
         app.state.markdown = data.markdown;

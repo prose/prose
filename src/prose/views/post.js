@@ -91,17 +91,32 @@ module.exports = Backbone.View.extend({
       // Editor is first up so trigger an active class for it
       $('.post-views .edit').toggleClass('active', true);
 
-      this.initEditor();
-      if (this.model.markdown) {
-        _.delay(function () {
-          utils.fixedScroll($('.topbar'));
-        }, 1);
+      if (this.model.markdown && app.state.mode === 'blob') {
+        this.preview();
+      } else {
+        this.initEditor();
+        if (this.model.markdown) {
+          _.delay(function () {
+            utils.fixedScroll($('.topbar'));
+          }, 1);
+        }
       }
 
       return this;
     },
 
     edit: function(e) {
+      // If preview was hit on load this.editor
+      // was not initialized.
+      if (!this.editor) {
+        this.initEditor();
+        if (this.model.markdown) {
+          _.delay(function () {
+            utils.fixedScroll($('.topbar'));
+          }, 1);
+        }
+      }
+
       // We want to trigger a re-rendering of the url
       // if mode is set to preview
       if (this.model.preview) {
