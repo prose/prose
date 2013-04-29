@@ -436,14 +436,23 @@ function loadPost(user, repo, branch, path, file, cb) {
         return !!(app.state.permissions && app.state.permissions.push);
       }
 
-      if (!_.hasMetadata(content)) return {
+      var jekyll = !_.hasMetadata(content);
+
+      if (jekyll) return {
         raw_metadata: "",
         content: content,
         published: false,
-        writeable: writeable()
+        writeable: writeable(),
+        jekyll: jekyll
       };
 
-      var res = { raw_metadata: "", published: false, writeable: writeable() };
+      var res = {
+        raw_metadata: "",
+        published: false,
+        writeable: writeable(),
+        jekyll: jekyll
+      };
+
       res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function(match, dashes, frontmatter) {
         res.raw_metadata = frontmatter;
         res.published = published(frontmatter);
@@ -456,7 +465,6 @@ function loadPost(user, repo, branch, path, file, cb) {
     cb(err, _.extend(post, {
       "sha": commit,
       "markdown": _.markdown(file),
-      "jekyll": _.hasMetadata(data),
       "repo": repo,
       "path": path,
       "file": file,
