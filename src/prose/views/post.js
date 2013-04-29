@@ -67,7 +67,7 @@ module.exports = Backbone.View.extend({
       var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
 
       var header = {
-        avatar: '<span class="icon round file ' + data.lang + '"></span>',
+        avatar: '<span class="ico round document ' + data.lang + '"></span>',
         parentTrail: parentTrail,
         isPrivate: isPrivate,
         title: _.filepath(data.path, data.file),
@@ -142,16 +142,13 @@ module.exports = Backbone.View.extend({
       $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
-
         var hash = window.location.hash.split('/');
         hash[2] = 'preview';
         // this.stashPreview();
+        this.stashFile();
+        this.stashApply();
 
-        $(e.currentTarget).attr({
-          target: '_blank',
-          href: hash.join('/')
-        });
-
+         _.preview(this);
       } else {
 
         // Vertical Nav
@@ -447,7 +444,7 @@ module.exports = Backbone.View.extend({
       var method = this.model.writeable ? this.saveFile : this.sendPatch;
 
       // We want to update the metadata but not the current edited content.
-      var filecontent =  window.app.models.serialize(this.model.original, this.model.raw_metadata);
+      var filecontent =  this.serialize(this.model.original, this.model.raw_metadata);
 
       // Update content
       this.model.content = this.editor.getValue();
@@ -627,7 +624,7 @@ module.exports = Backbone.View.extend({
                 if (metadata.hasOwnProperty(item.name)) {
                   metadata[item.name] = _.union(metadata[item.name], item.value);
                 } else if (item.value === item.name) {
-                  metadata[item.name] = item.checked
+                  metadata[item.name] = item.checked;
                 } else {
                   metadata[item.name] = item.value;
                 }
