@@ -10,7 +10,7 @@
     "underscore": "~1.4.4",
     "chrono": "~1.0.4",
     "js-base64": "~2.1.1",
-    "keymaster": "git://github.com/madrobby/keymaster.git",
+    "keymaster": "git://github.com/madrobby/keymaster.git#ddcb72eceb033db",
     "marked": "~0.2.8",
     "queue-async": "~1.0.3",
     "diff": "~1.0.4"
