@@ -436,21 +436,21 @@ function loadPost(user, repo, branch, path, file, cb) {
         return !!(app.state.permissions && app.state.permissions.push);
       }
 
-      var jekyll = !_.hasMetadata(content);
+      var hasMetadata = !!_.hasMetadata(content);
 
-      if (jekyll) return {
+      if (!hasMetadata) return {
         raw_metadata: "",
         content: content,
         published: false,
         writeable: writeable(),
-        jekyll: jekyll
+        jekyll: hasMetadata
       };
 
       var res = {
         raw_metadata: "",
         published: false,
         writeable: writeable(),
-        jekyll: jekyll
+        jekyll: hasMetadata
       };
 
       res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function(match, dashes, frontmatter) {
