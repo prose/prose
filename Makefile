@@ -35,6 +35,7 @@ APPLICATION = \
 	src/prose/views/post.js \
 	src/prose/views/posts.js \
 	src/prose/views/profile.js \
+	src/prose/views/preview.js \
 	src/prose/views/start.js \
 	src/prose/views/app.js \
 	src/prose/router.js \

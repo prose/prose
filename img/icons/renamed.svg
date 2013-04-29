@@ -14,7 +14,7 @@
    id="svg11278"
    version="1.1"
    inkscape:version="0.48.2 r9819"
-   sodipodi:docname="markdown.svg">
+   sodipodi:docname="renamed.svg">
   <defs
      id="defs11280" />
   <sodipodi:namedview
@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.50964248"
-     inkscape:cx="263.45695"
-     inkscape:cy="404.81435"
+     inkscape:zoom="0.41860283"
+     inkscape:cx="554.79718"
+     inkscape:cy="470.11105"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -64,22 +64,10 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-52.3622)">
-    <g
-       style="fill:#434350;fill-opacity:1;display:inline"
-       id="g13338"
-       transform="matrix(50,0,0,50,-36775,-3997.6378)">
-      <path
-         style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.28068599;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         d="m 735.5,87.8 0,8.4 0.8,0.8 1.6,0 0.8,-0.8 0,-4.4 2.4,2 2.4,-2 0,4.4 0.8,0.8 1.6,0 0.8,-0.8 0,-8.4 -0.8,-0.8 -1.6,0 -3.2,2.8 -3.2,-2.8 -1.6,0 z"
-         id="path13340"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccccccccccccccc" />
-      <path
-         style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.28068599;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         d="m 750.7,87 -0.8,0.8 0,5.2 -2.4,0 4,4 4,-4 -2.4,0 0,-5.2 -0.8,-0.8 z"
-         id="path13342"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="cccccccccc" />
-    </g>
+    <path
+       style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 500 0 C 251.47187 0 50 201.47185 50 450 C 50 698.52815 251.47187 900 500 900 C 748.52814 900 950 698.52815 950 450 C 950 201.47185 748.52814 0 500 0 z M 362.5 250 L 600 250 L 700 300 L 700 450 L 650 500 L 700 550 L 700 650 L 600 650 L 500 550 L 450 550 L 450 600 L 400 650 L 350 650 L 300 600 L 300 300 L 362.5 250 z M 450 350 L 450 450 L 550 450 L 550 350 L 450 350 z "
+       transform="translate(0,52.3622)"
+       id="path24459" />
   </g>
 </svg>
