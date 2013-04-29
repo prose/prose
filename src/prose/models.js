@@ -673,18 +673,18 @@ module.exports = {
           return !!(app.state.permissions && app.state.permissions.push);
         }
 
-        var jekyll = !_.hasMetadata(content);
+        var hasMetadata = !!_.hasMetadata(content);
 
-        if (jekyll) return {
+        if (!hasMetadata) return {
           content: content,
           published: true,
           writeable: writeable(),
-          jekyll: jekyll
+          jekyll: hasMetadata
         };
 
         var res = {
           writeable: writeable(),
-          jekyll: jekyll
+          jekyll: hasMetadata
         };
 
         res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
