@@ -186,14 +186,18 @@ module.exports = Backbone.View.extend({
       if (!$('.button.save', this.el).hasClass('saving')) {
         $('.button.save', this.el)
           .html(saveState)
-          .removeClass('inactive error');
+          .removeClass('error');
+
+        $('#prose')
+          .removeClass()
+          .addClass('save');
       }
     },
 
     updateSaveState: function(label, classes) {
-      $('.button.save', this.el)
-        .html(label)
-        .removeClass('inactive error saving')
+      $('.button.save', this.el).html(label)
+      $('#prose')
+        .removeClass()
         .addClass(classes);
     },
 

@@ -48,7 +48,7 @@ module.exports = Backbone.View.extend({
       this.eventRegister = app.eventRegister;
 
       // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'hideDiff', 'translate', 'updateFile', 'meta');
+       _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'hideDiff', 'translate', 'updateFile', 'meta', 'remove');
       this.eventRegister.bind('edit', this.edit);
       this.eventRegister.bind('preview', this.preview);
       this.eventRegister.bind('deleteFile', this.deleteFile);
@@ -57,6 +57,7 @@ module.exports = Backbone.View.extend({
       this.eventRegister.bind('updateFile', this.updateFile);
       this.eventRegister.bind('translate', this.translate);
       this.eventRegister.bind('meta', this.meta);
+      this.eventRegister.bind('remove', this.remove);
 
       // Ping `views/app.js` to let know we should swap out the sidebar
       this.eventRegister.trigger('sidebarContext', data, 'post');
@@ -90,14 +91,15 @@ module.exports = Backbone.View.extend({
       // Editor is first up so trigger an active class for it
       $('.post-views .edit').toggleClass('active', true);
 
-
       if (this.model.markdown && app.state.mode === 'preview') {
         this.preview();
       } else {
         this.initEditor();
-        _.delay(function () {
-          utils.fixedScroll($('.topbar'));
-        }, 1);
+        if (this.model.markdown) {
+          _.delay(function () {
+            utils.fixedScroll($('.topbar'));
+          }, 1);
+        }
       }
 
       return this;
@@ -191,7 +193,7 @@ module.exports = Backbone.View.extend({
     },
 
     updateURL: function() {
-      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? 'preview' : 'edit', app.state.branch, this.model.path, this.model.file]);
+      var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
       router.navigate(url.join('/'), {
         trigger: false,
         replace: true
@@ -316,7 +318,7 @@ module.exports = Backbone.View.extend({
           window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
               _.delay(function () {
-                view.eventRegister.trigger('updateSaveState', 'Submit Change', 'inactive');
+                view.eventRegister.trigger('updateSaveState', 'Submit Change', '');
               }, 3000);
 
               view.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
@@ -328,14 +330,14 @@ module.exports = Backbone.View.extend({
             view.model.file = filename;
             view.updateURL();
             view.prevFile = filecontent;
-            view.eventRegister.trigger('Change Submitted', 'inactive');
+            view.eventRegister.trigger('Change Submitted', 'saved');
           });
         } else {
           view.eventRegister.trigger('! Metadata', 'error');
         }
       }
 
-      view.eventRegister.trigger('updateSaveState', 'Submitting Change', 'inactive saving');
+      view.eventRegister.trigger('updateSaveState', 'Submitting Change', 'saving');
       patch();
 
       return false;
@@ -360,14 +362,14 @@ module.exports = Backbone.View.extend({
             view.updateURL();
             view.prevFile = filecontent;
             view.model.original = view.model.content;
-            view.eventRegister.trigger('updateSaveState', 'Saved', 'inactive');
+            view.eventRegister.trigger('updateSaveState', 'Saved', 'saved');
           });
         } else {
           view.eventRegister.trigger('updateSaveState', '! Metadata', 'error');
         }
       }
 
-      view.eventRegister.trigger('updateSaveState', 'Saving', 'inactive saving');
+      view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
 
       if (filepath === _.filepath(this.model.path, this.model.file)) return save();
 
@@ -876,7 +878,6 @@ module.exports = Backbone.View.extend({
     },
 
     remove: function () {
-      // Unbind pagehide event handler when View is removed
       this.eventRegister.unbind('edit', this.postViews);
       this.eventRegister.unbind('preview', this.preview);
       this.eventRegister.unbind('deleteFile', this.deleteFile);
@@ -885,6 +886,10 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('translate', this.translate);
       this.eventRegister.unbind('updateFile', this.updateFile);
       this.eventRegister.unbind('meta', this.updateFile);
+      this.eventRegister.unbind('remove', this.remove);
+
+      // Clear any file state classes in #prose
+      this.eventRegister.trigger('updateSaveState', '', '');
 
       // Unbind Keybindings
       key.unbind('⌘+s, ctrl+s', 'file');

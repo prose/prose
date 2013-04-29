@@ -15,6 +15,10 @@ module.exports = Backbone.View.extend({
       var data = this.model;
       this.eventRegister = app.eventRegister;
 
+      // Listen for button clicks from the vertical nav
+       _.bindAll(this, 'remove');
+      this.eventRegister.bind('remove', this.remove);
+
       key('j, k, enter, o', 'projects', _.bind(function(e, handler) {
         if (handler.key === 'j' || handler.key === 'k') {
           utils.pageListing(handler.key);
@@ -108,6 +112,8 @@ module.exports = Backbone.View.extend({
     },
 
     remove: function() {
+      this.eventRegister.unbind('remove', this.remove);
+
       // Unbind Keybindings from the scope
       key.unbind('j, k, enter, o', 'posts');
     }

@@ -125,7 +125,7 @@ _.markdown = function(file) {
 };
 
 _.isBinary = function(file) {
-  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff|zip|swf|mov|dbf|index|prj|shp|shx)$');
+  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store)$');
   return regex.test(file);
 };
 

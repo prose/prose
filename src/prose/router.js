@@ -14,6 +14,7 @@ module.exports = Backbone.Router.extend({
 
   initialize: function(options) {
     this.model = options.model;
+    this.eventRegister = app.eventRegister;
 
     // Load up the main layout
     this.application = new app.views.App({
@@ -28,6 +29,9 @@ module.exports = Backbone.Router.extend({
     var router = this;
 
     utils.loader.loading('Loading Profile');
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
 
     if (confirmExit()) {
       app.state = app.state || {};
@@ -56,6 +60,9 @@ module.exports = Backbone.Router.extend({
   repo: function(user, repo) {
     var router = this;
     utils.loader.loading('Loading Posts');
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
 
     app.state = {
       user: user,
@@ -101,7 +108,10 @@ module.exports = Backbone.Router.extend({
     var parts;
     app.state.user = user;
     app.state.repo = repo;
- 
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
+
     url = _.extractURL(path);
 
     if (url.mode === 'tree') {

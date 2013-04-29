@@ -21,6 +21,12 @@ module.exports = Backbone.View.extend({
       currentPath: app.state.path
     });
 
+    this.eventRegister = app.eventRegister;
+
+    // Listen for button clicks from the vertical nav
+    _.bindAll(this, 'remove');
+    this.eventRegister.bind('remove', this.remove);
+
     key('j, k, enter, o', 'posts', _.bind(function(e, handler) {
       if (handler.key === 'j' || handler.key === 'k') {
         utils.pageListing(handler.key);
@@ -38,7 +44,7 @@ module.exports = Backbone.View.extend({
 
     if (data.user !== app.username && data.permissions.push === true) {
       isBelonging = ' owner';
-    } 
+    }
 
     var header = {
       avatar: '<span class="icon round repo' + isPrivate + isBelonging +  '"></span>',
@@ -49,8 +55,8 @@ module.exports = Backbone.View.extend({
       alterable: false
     };
 
-    app.eventRegister.trigger('sidebarContext', app.state, 'posts');
-    app.eventRegister.trigger('headerContext', header);
+    this.eventRegister.trigger('sidebarContext', app.state, 'posts');
+    this.eventRegister.trigger('headerContext', header);
 
     var tmpl = _(window.app.templates.posts).template();
     $(this.el).empty().append(tmpl(data));
@@ -157,6 +163,8 @@ module.exports = Backbone.View.extend({
   },
 
   remove: function() {
+    this.eventRegister.unbind('remove', this.remove);
+
     // Unbind Keybindings from the scope
     key.unbind('j, k, enter, o', 'posts');
   }
