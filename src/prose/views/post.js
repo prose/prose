@@ -141,7 +141,6 @@ module.exports = Backbone.View.extend({
       if (this.model.metadata && this.model.metadata.layout) {
         var hash = window.location.hash.split('/');
         hash[2] = 'preview';
-        // this.stashPreview();
         this.stashFile();
 
         $(e.currentTarget).attr({
@@ -397,23 +396,6 @@ module.exports = Backbone.View.extend({
         } catch(err) {
           console.log(err);
         }
-      }
-    },
-
-    stashPreview: function(e) {
-      if (e) e.preventDefault();
-      if (!window.localStorage || !this.dirty) return false;
-
-      var store = window.localStorage;
-
-      try {
-        store.setItem('preview', JSON.stringify({
-          sha: app.state.sha,
-          content: this.editor ? this.editor.getValue() : null,
-          metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
-        }));
-      } catch(err) {
-        console.log(err);
       }
     },
 

@@ -10,10 +10,12 @@ module.exports = Backbone.View.extend({
   },
 
   stashApply: function() {
-    if (!window.localStorage) return false;
+    if (!window.sessionStorage) return false;
 
-    var storage = window.localStorage;
-    var stash = JSON.parse(storage.getItem('preview'));
+    var storage = window.sessionStorage,
+        filepath = window.location.hash.split('/').slice(4).join('/');
+
+    var stash = JSON.parse(storage.getItem(filepath));
 
     if (stash) {
       this.model.content = stash.content;
