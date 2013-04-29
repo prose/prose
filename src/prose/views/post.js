@@ -430,7 +430,7 @@ module.exports = Backbone.View.extend({
       var method = this.model.writeable ? this.saveFile : this.sendPatch;
 
       // We want to update the metadata but not the current edited content.
-      var filecontent =  window.app.models.serialize(this.model.original, this.model.raw_metadata);
+      var filecontent =  this.serialize(this.model.original, this.model.raw_metadata);
 
       // Update content
       this.model.content = this.editor.getValue();
