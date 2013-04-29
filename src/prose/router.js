@@ -50,8 +50,8 @@ module.exports = Backbone.Router.extend({
           model: _.extend(router.model, data)
         }).render();
 
-        $('#content').empty().append(view.el);
         utils.loader.loaded();
+        $('#content').empty().append(view.el);
       });
     }
   },
@@ -80,8 +80,8 @@ module.exports = Backbone.Router.extend({
         model: data
       }).render();
 
-      $('#content').empty().append(view.el);
       utils.loader.loaded();
+      $('#content').empty().append(view.el);
     }, this));
   },
 
@@ -99,8 +99,8 @@ module.exports = Backbone.Router.extend({
         model: data
       }).render();
 
-      $('#content').empty().append(view.el);
       utils.loader.loaded();
+      $('#content').empty().append(view.el);
     }, this));
   },
 
@@ -146,9 +146,9 @@ module.exports = Backbone.Router.extend({
           model: data
         }).render();
 
+        utils.loader.loaded();
         $('#content').empty().append(view.el);
         app.state.file = data.file;
-        utils.loader.loaded();
 
       }, this));
     }, this));
@@ -179,9 +179,8 @@ module.exports = Backbone.Router.extend({
           model: data
         }).render();
 
-        $('#content').empty().html(view.el);
-
         utils.loader.loaded();
+        $('#content').empty().html(view.el);
       }, this));
     }, this));
   },
@@ -233,7 +232,7 @@ module.exports = Backbone.Router.extend({
       'message': message
     }).render();
 
-    $('#content').empty().append(view.el);
     utils.loader.loaded();
+    $('#content').empty().append(view.el);
   }
 });

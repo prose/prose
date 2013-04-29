@@ -85,9 +85,6 @@ module.exports = Backbone.View.extend({
           metadata: this.model.metadata
         })));
 
-      // TODO Add an unpublished class to .application
-      if (!this.model.published) $(this.el).addClass('published');
-
       // Editor is first up so trigger an active class for it
       $('.post-views .edit').toggleClass('active', true);
 
@@ -188,7 +185,7 @@ module.exports = Backbone.View.extend({
     },
 
     updateURL: function() {
-      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? 'blob' : 'edit', app.state.branch, this.model.path, this.model.file]);
+      var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
       router.navigate(url.join('/'), {
         trigger: false,
         replace: true
@@ -247,15 +244,7 @@ module.exports = Backbone.View.extend({
 
     updateMetaData: function() {
       if (!this.model.jekyll) return true; // metadata -> skip
-
       this.model.metadata = this.metadataEditor.getValue();
-
-      if (this.model.metadata.published) {
-        $('#post').addClass('published');
-      } else {
-        $('#post').removeClass('published');
-      }
-
       return true;
     },
 

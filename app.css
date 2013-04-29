@@ -656,7 +656,7 @@ ins {
   }
 
 /* Saving States */
-.heading .ico {
+.heading .avatar .ico {
   -webkit-animation-duration:1s;
      -moz-animation-duration:1s;
           animation-duration:1s;
@@ -670,7 +670,7 @@ ins {
      -moz-animation-delay:200ms;
           animation-delay:200ms;
   }
-.saved .heading .ico {
+.saved .heading .avatar .ico {
 	-webkit-animation-name:saved;
      -moz-animation-name:saved;
           animation-name:saved;
@@ -717,20 +717,20 @@ ins {
   background:#fff;
   position:absolute;
   z-index:5000;
-  width:240px;
-  height:240px;
+  width:180px;
+  height:180px;
   top:120px;
   left:50%;
-  margin:0 0 0 -120px;
+  margin:0 0 0 -90px;
   text-align:center;
   box-shadow:0 1px 0 rgba(255, 255, 255, 0),
              0 0 10px rgba(0, 0, 0, 0.1);
   }
   .loading .loading-icon {
     background:transparent url('img/loader.gif') no-repeat;
-    width:110px;
-    height:110px;
-    margin:30px auto;
+    width:55px;
+    height:55px;
+    margin:40px auto 15px;
     }
 
 .breadcrumb {
