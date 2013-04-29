@@ -142,16 +142,12 @@ module.exports = Backbone.View.extend({
       $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
-
         var hash = window.location.hash.split('/');
         hash[2] = 'preview';
         this.stashFile();
+        this.stashApply();
 
-        $(e.currentTarget).attr({
-          target: '_blank',
-          href: hash.join('/')
-        });
-
+         _.preview(this);
       } else {
 
         // Vertical Nav
@@ -610,7 +606,7 @@ module.exports = Backbone.View.extend({
                 if (metadata.hasOwnProperty(item.name)) {
                   metadata[item.name] = _.union(metadata[item.name], item.value);
                 } else if (item.value === item.name) {
-                  metadata[item.name] = item.checked
+                  metadata[item.name] = item.checked;
                 } else {
                   metadata[item.name] = item.value;
                 }
