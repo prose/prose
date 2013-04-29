@@ -71,9 +71,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-5c22b06564b544314cbc6fe43006aa10.eot');
-    src:url('fonts/prose-5c22b06564b544314cbc6fe43006aa10.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-5c22b06564b544314cbc6fe43006aa10.woff') format('woff');
+    src:url('fonts/prose-749ab492b3be77695d19ba7f42e67746.eot');
+    src:url('fonts/prose-749ab492b3be77695d19ba7f42e67746.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-749ab492b3be77695d19ba7f42e67746.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -621,8 +621,7 @@ ins {
   display:inline-block;
   padding:5px;
   }
-  .heading .ico {
-    font-size:27px;
+  .heading .avatar .ico {
     line-height:40px;
     text-align:center;
     display:block;

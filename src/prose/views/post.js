@@ -91,33 +91,17 @@ module.exports = Backbone.View.extend({
       // Editor is first up so trigger an active class for it
       $('.post-views .edit').toggleClass('active', true);
 
-      if (this.model.markdown && app.state.mode === 'preview') {
-        this.preview();
-      } else {
-        this.initEditor();
-        if (this.model.markdown) {
-          _.delay(function () {
-            utils.fixedScroll($('.topbar'));
-          }, 1);
-        }
+      this.initEditor();
+      if (this.model.markdown) {
+        _.delay(function () {
+          utils.fixedScroll($('.topbar'));
+        }, 1);
       }
 
       return this;
     },
 
     edit: function(e) {
-
-      // If preview was hit on load this.editor
-      // was not initialized.
-      if (!this.editor) {
-        this.initEditor();
-        if (this.model.markdown) {
-          _.delay(function () {
-            utils.fixedScroll($('.topbar'));
-          }, 1);
-        }
-      }
-
       // We want to trigger a re-rendering of the url
       // if mode is set to preview
       if (this.model.preview) {
@@ -136,18 +120,18 @@ module.exports = Backbone.View.extend({
     },
 
     preview: function(e) {
-      var view = this;
       this.model.preview = true;
-
       $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
         var hash = window.location.hash.split('/');
         hash[2] = 'preview';
         this.stashFile();
-        this.stashApply();
 
-         _.preview(this);
+        $(e.currentTarget).attr({
+          target: '_blank',
+          href: hash.join('/')
+        });
       } else {
 
         // Vertical Nav
@@ -189,7 +173,7 @@ module.exports = Backbone.View.extend({
     },
 
     updateURL: function() {
-      var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
+      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? 'blob' : 'edit', app.state.branch, this.model.path, this.model.file]);
       router.navigate(url.join('/'), {
         trigger: false,
         replace: true

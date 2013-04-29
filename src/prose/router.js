@@ -111,14 +111,17 @@ module.exports = Backbone.Router.extend({
 
     // Clean any previous view
     this.eventRegister.trigger('remove');
-
     url = _.extractURL(path);
 
     if (url.mode === 'tree') {
       this.repoBranch(user, repo, url.branch, url.path);
     } else if (url.mode === 'new') {
       this.newPost(user, repo, url.branch, url.path);
-    } else { // preview or edit ..
+    } else if (url.mode === 'preview') {
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
+    } else { // blob or edit ..
       parts = _.extractFilename(url.path);
       app.state.file = parts[1];
       this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
@@ -178,6 +181,26 @@ module.exports = Backbone.Router.extend({
 
         $('#content').empty().html(view.el);
 
+        utils.loader.loaded();
+      }, this));
+    }, this));
+  },
+
+  preview: function(user, repo, branch, path, file, mode) {
+    var router = this;
+    utils.loader.loading('Previewing Post');
+
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      if (err) return router.notify('error', 'This post does not exist.');
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        if (err) return router.notify('error', 'This post does not exist.');
+
+        // router.application.render();
+        var view = new app.views.Preview({
+          model: data
+        }).render();
+
+        // $('#content').empty().append(view.el);
         utils.loader.loaded();
       }, this));
     }, this));

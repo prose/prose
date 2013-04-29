@@ -9,6 +9,7 @@ window.app = {
       App: require('./views/app'),
       Notification: require('./views/notification'),
       Start: require('./views/start'),
+      Preview: require('./views/preview'),
       Profile: require('./views/profile'),
       Posts: require('./views/posts'),
       Post: require('./views/post')
