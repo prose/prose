@@ -71,9 +71,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-444d859bd1de33cd20d6c676491d10bf.eot');
-    src:url('fonts/prose-444d859bd1de33cd20d6c676491d10bf.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-444d859bd1de33cd20d6c676491d10bf.woff') format('woff');
+    src:url('fonts/prose-5c22b06564b544314cbc6fe43006aa09.eot');
+    src:url('fonts/prose-5c22b06564b544314cbc6fe43006aa09.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-5c22b06564b544314cbc6fe43006aa09.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -586,28 +586,31 @@ ins {
 
 .ico.added:before { content: "\f100"; }
 .ico.cancel:before { content: "\f101"; }
-.ico.eye:before { content: "\f102"; }
-.ico.folder:before { content: "\f103"; }
-.ico.italic:before { content: "\f104"; }
-.ico.link:before { content: "\f105"; }
-.ico.list:before { content: "\f106"; }
-.ico.markdown:before { content: "\f107"; }
-.ico.media:before { content: "\f108"; }
-.ico.metadata:before { content: "\f109"; }
-.ico.modified:before { content: "\f10a"; }
-.ico.new-file:before { content: "\f10b"; }
-.ico.numbered-list:before { content: "\f10c"; }
-.ico.pencil:before { content: "\f10d"; }
-.ico.picture:before { content: "\f10e"; }
-.ico.private:before { content: "\f10f"; }
-.ico.quote:before { content: "\f110"; }
-.ico.removed:before { content: "\f111"; }
-.ico.renamed:before { content: "\f112"; }
-.ico.repos:before { content: "\f113"; }
-.ico.rubbish:before { content: "\f114"; }
-.ico.search:before { content: "\f115"; }
-.ico.sprocket:before { content: "\f116"; }
-.ico.switch:before { content: "\f117"; }
+.ico.document:before { content: "\f102"; }
+.ico.error:before { content: "\f103"; }
+.ico.eye:before { content: "\f104"; }
+.ico.folder:before { content: "\f105"; }
+.ico.html:before { content: "\f106"; }
+.ico.italic:before { content: "\f107"; }
+.ico.link:before { content: "\f108"; }
+.ico.list:before { content: "\f109"; }
+.ico.markdown:before { content: "\f10a"; }
+.ico.media:before { content: "\f10b"; }
+.ico.metadata:before { content: "\f10c"; }
+.ico.modified:before { content: "\f10d"; }
+.ico.new-file:before { content: "\f10e"; }
+.ico.numbered-list:before { content: "\f10f"; }
+.ico.pencil:before { content: "\f110"; }
+.ico.picture:before { content: "\f111"; }
+.ico.private:before { content: "\f112"; }
+.ico.quote:before { content: "\f113"; }
+.ico.removed:before { content: "\f114"; }
+.ico.renamed:before { content: "\f115"; }
+.ico.repos:before { content: "\f116"; }
+.ico.rubbish:before { content: "\f117"; }
+.ico.search:before { content: "\f118"; }
+.ico.sprocket:before { content: "\f119"; }
+.ico.switch:before { content: "\f11a"; }
 
 .avatar {
   background:#f8f8f8;
@@ -755,6 +758,7 @@ ins {
     .popup.arrow-top:after {
       left:15px;
       }
+  .popup-hover:hover .popup,
   a:hover .popup {
     display:block;
     }

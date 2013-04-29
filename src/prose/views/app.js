@@ -40,16 +40,16 @@ module.exports = Backbone.View.extend({
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
     },
 
-    render: function () {
+    render: function(options) {
       var tmpl = _(window.app.templates.app).template();
 
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
-        state: app.state
+        jekyll: options.jekyll ? options.jekyll : false
       })));
 
       // When the sidebar should be open.
       // Fix this in re-factor, could be much tighter
-      if (this.model.mode === 'edit' || this.model.mode === 'blob' || this.model.mode === 'new') {
+      if (this.model.mode === 'edit' || this.model.mode === 'preview' || this.model.mode === 'new') {
         $('#prose').toggleClass('open', false);
         this.viewing = 'edit';
       } else if (!window.authenticated) {

@@ -20,7 +20,7 @@ module.exports = Backbone.Router.extend({
     this.application = new app.views.App({
       el: '#prose',
       model: this.model
-    }).render();
+    });
   },
 
   // #example-user
@@ -126,7 +126,6 @@ module.exports = Backbone.Router.extend({
   },
 
   newPost: function (user, repo, branch, path) {
-    var router = this;
     utils.loader.loading('Creating a new post');
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
@@ -136,7 +135,10 @@ module.exports = Backbone.Router.extend({
         data.markdown = _.markdown(data.file);
         data.lang = _.mode(data.file);
 
-        router.application.render();
+        this.application.render({
+          jekyll: data.jekyll
+        });
+
         var view = new app.views.Post({
           model: data
         }).render();
@@ -150,8 +152,6 @@ module.exports = Backbone.Router.extend({
   },
 
   post: function(user, repo, branch, path, file, mode) {
-    var router = this;
-
     if (mode === 'edit') {
       utils.loader.loading('Loading Post');
     } else {
@@ -159,15 +159,19 @@ module.exports = Backbone.Router.extend({
     }
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
+      if (err) return this.notify('error', 'This post does not exist.');
       app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) return router.notify('error', 'This post does not exist.');
+        if (err) return this.notify('error', 'This post does not exist.');
 
         app.state.markdown = data.markdown;
+        data.jekyll = _.jekyll(path, data.file);
         data.preview = (mode !== 'edit');
         data.lang = _.mode(file);
 
-        router.application.render();
+        this.application.render({
+          jekyll: data.jekyll
+        });
+
         var view = new app.views.Post({
           model: data
         }).render();

@@ -292,12 +292,10 @@ module.exports = {
         repo.contents(branch, file, function(err, data) {
           if (err) return cb(err);
           app.state.config = jsyaml.load(data);
-          app.state.jekyll = true;
           cb(app.state.config, err);
         });
       }
     } else {
-      app.state.jekyll = false;
       cb(false);
     }
   },

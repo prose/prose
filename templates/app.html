@@ -22,13 +22,13 @@
 <div class='vert navigation'>
   <ul class='project nav'>
     <li>
-      <a href='/' class='ico round repos <% if (!app.state.mode) { %>active<% } %>'>
+      <a href='/' class='ico round repos <% if (!mode) { %>active<% } %>'>
         <span class='popup round arrow-right'>Explore Projects</span>
       </a>
     </li>
-    <% if (state.repo) { %>
+    <% if (repo) { %>
       <li>
-      <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='ico round folder <% if (app.state.mode === "tree") { %>active<% } %>'>
+      <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='ico round folder <% if (mode === "tree") { %>active<% } %>'>
           <span class='popup round arrow-right'><%= repo %></span>
         </a>
       </li>
@@ -42,14 +42,14 @@
     <% } %>
   </ul>
 
-  <% if (state.mode === 'edit' || state.mode === 'preview' || state.mode === 'new') { %>
+  <% if (mode === 'edit' || mode === 'preview' || mode === 'new') { %>
   <ul class='post-views nav'>
     <li>
       <a href='#' class='ico round pencil edit' data-state='edit'>
         <span class='popup round arrow-right'>Edit</span>
       </a>
     </li>
-    <% if (state.markdown || state.mode === 'new') { %>
+    <% if (markdown || mode === 'new') { %>
       <li>
         <a href='#' class='ico round eye preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>
           <span class='popup round arrow-right'>Preview</span>
