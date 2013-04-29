@@ -446,6 +446,11 @@ module.exports = {
   // Store a file to GitHub
 
   saveFile: function(user, repo, branch, path, content, message, cb) {
+    // add newline to eof if not present to make git happy
+    if (!content.match(/\n$/)) {
+      content = content + '\n';
+    }
+
     repo = this.getRepo(user, repo);
     repo.write(branch, path, content, message, cb);
   },
