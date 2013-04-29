@@ -67,7 +67,7 @@ module.exports = Backbone.View.extend({
       var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
 
       var header = {
-        avatar: '<span class="icon round file ' + data.lang + '"></span>',
+        avatar: '<span class="ico round document ' + data.lang + '"></span>',
         parentTrail: parentTrail,
         isPrivate: isPrivate,
         title: _.filepath(data.path, data.file),
