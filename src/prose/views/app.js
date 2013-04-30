@@ -191,7 +191,7 @@ module.exports = Backbone.View.extend({
           .removeClass('error');
 
         $('#prose')
-          .removeClass('error, saving, saved')
+          .removeClass('error saving saved save')
           .addClass('save');
       }
     },
@@ -199,7 +199,7 @@ module.exports = Backbone.View.extend({
     updateSaveState: function(label, classes) {
       $('.button.save', this.el).html(label);
       $('#prose')
-        .removeClass('error, saving, saved')
+        .removeClass('error saving saved save')
         .addClass(classes);
     },
 

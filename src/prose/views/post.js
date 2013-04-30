@@ -179,7 +179,7 @@ module.exports = Backbone.View.extend({
     },
 
     deleteFile: function() {
-      if (confirm('Are you sure you want to delete that file?')) {
+      if (confirm('Are you sure you want to delete this file?')) {
         window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
           if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
           router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
@@ -722,9 +722,10 @@ module.exports = Backbone.View.extend({
                   value: jsyaml.dump(raw),
                   lineWrapping: true,
                   extraKeys: view.keyMap(),
-                  theme: 'prose-bright',
-                  onChange: _.bind(view.makeDirty, view)
+                  theme: 'prose-bright'
               });
+
+              view.rawEditor.on('change', _.bind(view.makeDirty, view));
             }
           }
         });
@@ -791,7 +792,7 @@ module.exports = Backbone.View.extend({
       var view = this;
 
       // TODO Remove setTimeout
-      setTimeout(function () {
+      setTimeout(function() {
         if (view.model.jekyll) {
           view.metadataEditor = view.buildMeta();
           $('#post .metadata').hide();

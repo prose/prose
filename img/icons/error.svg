@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.53417969"
-     inkscape:cx="505.62305"
-     inkscape:cy="382.46744"
+     inkscape:zoom="0.57069588"
+     inkscape:cx="615.21677"
+     inkscape:cy="549.72696"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -65,11 +65,10 @@
      id="layer1"
      transform="translate(0,-52.3622)">
     <path
-       style="fill:#434350;fill-opacity:1;stroke:none;display:inline"
-       d="m 420,120 -40,40 40,400 40,40 80,0 40,-40 40,-400 -40,-40 z m 40,540 -60,60 0,80 60,60 80,0 60,-60 0,-80 -60,-60 z"
-       transform="translate(0,52.3622)"
-       id="path4117"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccccccccccccccc" />
+       style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 500,52.3622 c -248.52825,0 -450,201.47175 -450,450 0,248.52825 201.47175,450 450,450 248.52825,0 450,-201.47175 450,-450 0,-248.52825 -201.47175,-450 -450,-450 z m -60,220 120,0 40,40 -20,180 -40,40 -80,0 -40,-40 -20,-180 z m 20,300 80,0 60,60 0,60 -60,60 -80,0 -60,-60 0,-60 z"
+       id="path5171"
+       sodipodi:nodetypes="ssssscccccccccccccccccc" />
   </g>
 </svg>

@@ -145,7 +145,7 @@ module.exports = Backbone.View.extend({
       fileName: $file.data('file')
     };
 
-    if (confirm('Are you sure you want to delete that file?')) {
+    if (confirm('Are you sure you want to delete this file?')) {
       window.app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function (err) {
         if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
         router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
