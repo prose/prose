@@ -129,6 +129,10 @@ module.exports = Backbone.Router.extend({
   },
 
   newPost: function (user, repo, branch, path) {
+    // TODO Fix this, shouldn't have to pass
+    // something like this here.
+    app.state.markdown = true;
+
     utils.loader.loading('Creating a new post');
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
@@ -194,12 +198,10 @@ module.exports = Backbone.Router.extend({
       app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         if (err) return router.notify('error', 'This post does not exist.');
 
-        // router.application.render();
         var view = new app.views.Preview({
           model: data
         }).render();
 
-        // $('#content').empty().append(view.el);
         utils.loader.loaded();
       }, this));
     }, this));
@@ -225,8 +227,10 @@ module.exports = Backbone.Router.extend({
   },
 
   notify: function(type, message) {
+    // TODO Fix this, shouldn't have to pass
+    // something like this here.
+    app.state.markdown = false;
     this.application.render();
-
     var view = new app.views.Notification({
       'type': type,
       'message': message

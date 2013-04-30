@@ -30,7 +30,8 @@ module.exports = Backbone.View.extend({
 
     render: function() {
       var view = this;
-      var data = _.extend(this.model, {
+
+      this.data = _.extend(this.model, {
         mode: app.state.mode,
         preview: this.model.markdown ? marked(this.model.content) : '',
         metadata: this.model.metadata
@@ -60,21 +61,8 @@ module.exports = Backbone.View.extend({
       this.eventRegister.bind('remove', this.remove);
 
       // Ping `views/app.js` to let know we should swap out the sidebar
-      this.eventRegister.trigger('sidebarContext', data, 'post');
-
-      // Render heading
-      var isPrivate = app.state.isPrivate ? true : false;
-      var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
-
-      var header = {
-        avatar: '<span class="ico round document ' + data.lang + '"></span>',
-        parentTrail: parentTrail,
-        isPrivate: isPrivate,
-        title: _.filepath(data.path, data.file),
-        alterable: true
-      };
-
-      this.eventRegister.trigger('headerContext', header);
+      this.eventRegister.trigger('sidebarContext', this.data, 'post');
+      this.renderHeading();
 
       var tmpl = _(window.app.templates.post).template();
 
@@ -100,6 +88,22 @@ module.exports = Backbone.View.extend({
       }
 
       return this;
+    },
+
+    renderHeading: function() {
+      // Render heading
+      var isPrivate = app.state.isPrivate ? true : false;
+      var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
+
+      var header = {
+        avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
+        parentTrail: parentTrail,
+        isPrivate: isPrivate,
+        title: _.filepath(this.data.path, this.data.file),
+        alterable: true
+      };
+
+      this.eventRegister.trigger('headerContext', header);
     },
 
     edit: function(e) {
@@ -260,7 +264,7 @@ module.exports = Backbone.View.extend({
         view.model.path = app.state.path;
         view.model.file = app.state.file;
         // re-render header to reflect the filename change
-        app.instance.app.render();
+        view.renderHeading();
         view.updateURL();
       }
 

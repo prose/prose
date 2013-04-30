@@ -476,7 +476,7 @@ ins {
     background:transparent url('img/loader@33x33.gif') no-repeat;
     width:33px;
     height:33px;
-    margin:2px 5px 0 2px;
+    margin:0 5px 0 0;
     }
 
 .sidebar {
