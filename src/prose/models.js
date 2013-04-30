@@ -391,11 +391,15 @@ module.exports = {
                         state[filename] = [file.status];
                       }
 
-                      author = commit.author.login;
-                      if (recent[author]) {
-                        recent[author] = _.union(recent[author], filename);
-                      } else {
-                        recent[author] = [filename];
+                      // some malformed commit data requires this
+                      if (commit.author) {
+                        author = commit.author.login;
+
+                        if (recent[author]) {
+                          recent[author] = _.union(recent[author], filename);
+                        } else {
+                          recent[author] = [filename];
+                        }
                       }
                     }
                   }
@@ -670,14 +674,18 @@ module.exports = {
           return !!(app.state.permissions && app.state.permissions.push);
         }
 
-        if (!_.hasMetadata(content)) return {
+        var hasMetadata = !!_.hasMetadata(content);
+
+        if (!hasMetadata) return {
           content: content,
           published: true,
-          writeable: writeable()
+          writeable: writeable(),
+          jekyll: hasMetadata
         };
 
         var res = {
-          writeable: writeable()
+          writeable: writeable(),
+          jekyll: hasMetadata
         };
 
         res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
@@ -753,7 +761,6 @@ module.exports = {
           'default_metadata': defaultMetadata,
           'sha': commit,
           'markdown': _.markdown(file),
-          'jekyll': _.hasMetadata(data),
           'repo': repo,
           'path': path,
           'file': file,
