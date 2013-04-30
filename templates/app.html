@@ -1,3 +1,8 @@
+<%
+  var editMode = false;
+  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;
+%>
+
 <div class='prose-menu dropdown-menu'>
   <div class='inner'>
     <a href='/' class='icon branding dropdown-hover' data-link=true>Prose</a>
@@ -19,7 +24,7 @@
 
 <div id='drawer' class='sidebar'></div>
 
-<div class='vert navigation'>
+<div class='vert navigation<% if (editMode) { %> editing<% } %>'>
   <ul class='project nav'>
     <li>
       <a href='/' class='ico round repos <% if (!mode) { %>active<% } %>'>
@@ -42,7 +47,7 @@
     <% } %>
   </ul>
 
-  <% if (mode === 'edit' || mode === 'blob' || mode === 'new') { %>
+  <% if (editMode) { %>
   <ul class='post-views nav'>
     <li>
       <a href='#' class='ico round pencil edit' data-state='edit'>

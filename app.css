@@ -101,10 +101,10 @@ a {
   color:#3d494e;
   text-decoration:none;
   font-weight:700;
-  -webkit-transition:color 150ms linear;
-     -moz-transition:color 150ms linear;
-       -o-transition:color 150ms linear;
-          transition:color 150ms linear;
+  -webkit-transition:color 100ms linear;
+     -moz-transition:color 100ms linear;
+       -o-transition:color 100ms linear;
+          transition:color 100ms linear;
   }
   a.light {
     font-weight:normal;
@@ -484,13 +484,20 @@ ins {
   margin:10px 0 0;
   padding-bottom:20px;
   }
+  .editing .nav.project a {
+    color:#d4d7d9; 
+    }
+    .editing .nav.project a:hover {
+      color:#868F93; 
+      }
+
 .vert .nav.auth {
   position:absolute;
   bottom:5px;
   }
 .vert .nav li a {
   background-color:#f8f8f8;
-  color:#a8afb2;
+  color:#868F93;
   display:block;
   width:40px;
   height:40px;
@@ -508,7 +515,7 @@ ins {
             box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
     }
     .vert .nav li a.active {
-      color:#434C50;
+      color:#3d494e;
       -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
               box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
       }
@@ -1540,6 +1547,9 @@ label.error {
   border-left: 1px solid #3D494E;
   z-index: 3;
   }
+.cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880; }
+.cm-s-prose-bright .CodeMirror-lines { margin:0; }
+
 /* Shown when moving in bi-directional text */
 .CodeMirror div.CodeMirror-secondarycursor {
   border-left: 1px solid #e0e7eb;
@@ -1565,12 +1575,9 @@ label.error {
 .cm-s-prose-bright span.cm-meta       { color:#516066; }
 .cm-s-prose-bright span.cm-hr         { color:#516066;}
 
-/* Light Grey */
-.cm-s-prose-bright span.cm-comment    { color:#a8afb2; }
-.cm-s-prose-bright span.cm-qualifier  { color:#a8afb2; }
-
-.cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880; }
-.cm-s-prose-bright .CodeMirror-lines { margin:0; }
+/* Lighter Grey */
+.cm-s-prose-bright span.cm-comment    { color:#868f93; }
+.cm-s-prose-bright span.cm-qualifier  { color:#868f93; }
 
 /* Dark Blue/Green */
 .cm-s-prose-bright span.cm-atom       { color:#197987; }

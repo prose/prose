@@ -793,11 +793,12 @@ module.exports = Backbone.View.extend({
           $('#post .metadata').hide();
         }
 
+        var lang = view.model.lang;
         view.editor = CodeMirror($('#code')[0], {
           mode: view.model.lang,
           value: view.model.content,
           lineWrapping: true,
-          lineNumbers: (view.model.lang === 'gfm') ? false : true,
+          lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
           extraKeys: view.keyMap(),
           matchBrackets: true,
           theme: 'prose-bright'
