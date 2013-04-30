@@ -38,16 +38,9 @@ module.exports = Backbone.View.extend({
     // Attach Keybindings to the current scope
     key.setScope('posts');
 
-    // console.log(data);
     var isPrivate = app.state.isPrivate ? ' private' : '';
-    var isBelonging = '';
-
-    if (data.user !== app.username && data.permissions.push === true) {
-      isBelonging = ' owner';
-    }
-
     var header = {
-      avatar: '<span class="icon round repo' + isPrivate + isBelonging +  '"></span>',
+      avatar: '<span class="icon round repo' + isPrivate +  '"></span>',
       parent: data.user,
       parentUrl: data.user,
       title: data.repo,

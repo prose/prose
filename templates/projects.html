@@ -6,6 +6,10 @@
       <div class='fl icon round repo owner private' title='Shared repo with <%= owner.login %>'></div>
     <% } else if (app.state.user === app.username && owner.login !== app.username) { %>
       <div class='fl icon round repo owner' title='Shared repo with <%= owner.login %>'></div>
+    <% } else if (fork && private) { %>
+      <div class='fl icon round repo private fork' title='Forked repo'></div>
+    <% } else if (fork) { %>
+      <div class='fl icon round repo fork' title='Forked repo'></div>
     <% } else if (private) { %>
       <div class='fl icon round repo private'></div>
     <% } else { %>

@@ -577,6 +577,8 @@ ins {
 .icon.media               { background-position:-280px 0; }
 .icon.repo.owner          { background-position:-320px 0; }
 .icon.repo.owner.private  { background-position:-360px 0; }
+.icon.repo.fork           { background-position:-320px -40px; }
+.icon.repo.fork.private   { background-position:-360px -40px; }
 
 .icon.gfm,
 .icon.md                  { background-position:-80px 0; }

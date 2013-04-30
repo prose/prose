@@ -61,7 +61,7 @@ module.exports = Backbone.View.extend({
       return this;
     },
 
-    search: function (e) {
+    search: function(e) {
       // If this is the ESC key
       if (e.which === 27) {
         _.delay(_.bind(function () {
