@@ -465,6 +465,20 @@ ins {
     background-color:#3d494e;
     }
 
+.loading {
+  position:fixed;
+  z-index:5000;
+  top:15px;
+  left:15px;
+  line-height:35px;
+  }
+  .loading .loading-icon {
+    background:transparent url('img/loader@33x33.gif') no-repeat;
+    width:33px;
+    height:33px;
+    margin:2px 5px 0 2px;
+    }
+
 .sidebar {
   background:#fff;
   border-left:1px solid #a8afb2;
@@ -722,26 +736,6 @@ ins {
       position:relative;
       top:8px;
       }
-
-.loading {
-  background:#fff;
-  position:absolute;
-  z-index:5000;
-  width:180px;
-  height:180px;
-  top:120px;
-  left:50%;
-  margin:0 0 0 -90px;
-  text-align:center;
-  box-shadow:0 1px 0 rgba(255, 255, 255, 0),
-             0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  .loading .loading-icon {
-    background:transparent url('img/loader.gif') no-repeat;
-    width:55px;
-    height:55px;
-    margin:40px auto 15px;
-    }
 
 .breadcrumb {
   background:#f8f8f8;
@@ -1055,7 +1049,7 @@ ins {
     display:block;
     }
   .post .view.meta {
-    background:#eff3f5;
+    background:#f0f0f0;
     width:360px;
     margin:0 auto;
     }
@@ -1074,8 +1068,9 @@ ins {
   .meta .form-item {
     padding:0 15px;
     }
-    .form-item .button {
+    .meta .form-item.link {
       margin:15px 0 0;
+      padding:15px 15px 0;
       }
       .form-item .publish {
         background-color:#90bb74;

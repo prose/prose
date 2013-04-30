@@ -396,8 +396,9 @@ module.exports = {
 
     loaded: function() {
       _.delay(function() {
-        // TODO A nicer action.
-        $('#loader').remove();
+        $('#loader').fadeOut(150, function() {
+          $(this).remove();
+        });
       }, 500);
     }
   }
