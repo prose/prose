@@ -701,9 +701,16 @@ module.exports = {
       // load default metadata
       var cfg = app.state.config;
       var q = queue();
+      
+      // match nearest parent directory default metadata
+      var nearestPath = path;
+      var nearestDir = /\/(?!.*\/).*$/;
+      while (cfg.prose.metadata[nearestPath] === undefined && nearestPath.match( nearestDir )) {
+        nearestPath = nearestPath.replace( nearestDir, '' );
+      }
 
-      if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
-        defaultMetadata = cfg.prose.metadata[path];
+      if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[nearestPath]) {
+        defaultMetadata = cfg.prose.metadata[nearestPath];
         if (typeof defaultMetadata === 'object') {
           _(defaultMetadata).each(function(value) {
             if (value.field && value.field.options &&
