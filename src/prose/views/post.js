@@ -37,7 +37,7 @@ module.exports = Backbone.View.extend({
       });
 
       // Key Binding support.
-      key('⌘+s, ctrl+s', 'file', _.bind(function() {
+      key('ctrl+s', 'file', _.bind(function() {
         this.updateFile();
         return false;
       }, this));
@@ -506,13 +506,10 @@ module.exports = Backbone.View.extend({
 
       function initialize(model) {
         var tmpl;
-
-        tmpl = _(window.app.templates.checkbox).template();
+        tmpl = _(window.app.templates.button).template();
         $metadataEditor.append(tmpl({
-          name: 'published',
-          label: 'Published',
-          value: 'published',
-          checked: model.published
+          label: model.published ? 'Unpublish' : 'Publish',
+          value: model.published ? 'unpublish' : 'publish'
         }));
 
         _(model.default_metadata).each(function(data) {
@@ -876,7 +873,7 @@ module.exports = Backbone.View.extend({
       this.eventRegister.trigger('updateSaveState', '', '');
 
       // Unbind Keybindings
-      key.unbind('⌘+s, ctrl+s', 'file');
+      key.unbind('ctrl+s', 'file');
 
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);

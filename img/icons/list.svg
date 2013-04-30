@@ -24,7 +24,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.29599692"
+     inkscape:zoom="0.63246217"
      inkscape:cx="528.23367"
      inkscape:cy="500"
      inkscape:document-units="px"
@@ -68,7 +68,7 @@
        transform="translate(355,2034)"
        id="g16256" />
     <rect
-       y="612.36218"
+       y="592.36218"
        x="300"
        height="60.000046"
        width="640"
@@ -80,16 +80,16 @@
        width="120"
        height="100"
        x="40"
-       y="572.36218" />
+       y="552.36218" />
     <rect
        style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect18163"
        width="640"
        height="60.000046"
        x="300"
-       y="392.36212" />
+       y="372.36212" />
     <rect
-       y="352.36212"
+       y="332.36212"
        x="40"
        height="100"
        width="120"
@@ -101,9 +101,9 @@
        width="640"
        height="60.000046"
        x="300"
-       y="812.36218" />
+       y="792.36218" />
     <rect
-       y="772.36218"
+       y="752.36218"
        x="40"
        height="100"
        width="120"
