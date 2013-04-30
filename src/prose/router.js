@@ -70,7 +70,7 @@ module.exports = Backbone.Router.extend({
       mode: 'tree',
       branch: '',
       path: ''
-    }
+    };
 
     app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
       if (err) return router.notify('error', 'This post does not exist.');

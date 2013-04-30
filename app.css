@@ -412,7 +412,7 @@ ins {
     }
   .heading .filepath:focus,
   .heading .filepath:hover {
-    background-color:#eff3f5;
+    background-color:#f0f0f0;
     }
 
 .inner {
@@ -489,7 +489,7 @@ ins {
   bottom:5px;
   }
 .vert .nav li a {
-  background-color:#eff3f5;
+  background-color:#f8f8f8;
   color:#a8afb2;
   display:block;
   width:40px;
@@ -501,7 +501,7 @@ ins {
   z-index:10;
   }
   .vert .nav li a:hover {
-    background-color:#e0e7eb;
+    background-color:#f0f0f0;
     }
   .vert .nav li a:active {
     -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
@@ -586,41 +586,41 @@ ins {
     line-height:16px;
     }
 
-.icon-added:before { content: "\f100"; }
-.icon-cancel:before { content: "\f101"; }
-.icon-document:before { content: "\f102"; }
-.icon-error:before { content: "\f103"; }
-.icon-eye:before { content: "\f104"; }
-.icon-folder:before { content: "\f105"; }
-.icon-html:before { content: "\f106"; }
-.icon-italic:before { content: "\f107"; }
-.icon-link:before { content: "\f108"; }
-.icon-list:before { content: "\f109"; }
-.icon-markdown:before { content: "\f10a"; }
-.icon-media:before { content: "\f10b"; }
-.icon-metadata:before { content: "\f10c"; }
-.icon-modified:before { content: "\f10d"; }
-.icon-new-file:before { content: "\f10e"; }
-.icon-numbered-list:before { content: "\f10f"; }
-.icon-pencil:before { content: "\f110"; }
-.icon-picture:before { content: "\f111"; }
-.icon-private:before { content: "\f112"; }
-.icon-quote:before { content: "\f113"; }
-.icon-removed:before { content: "\f114"; }
-.icon-renamed:before { content: "\f115"; }
-.icon-repos:before { content: "\f116"; }
-.icon-rubbish:before { content: "\f117"; }
-.icon-search:before { content: "\f118"; }
-.icon-settings:before { content: "\f119"; }
-.icon-sprocket:before { content: "\f11a"; }
-.icon-switch:before { content: "\f11b"; }
+.ico.added:before { content: "\f100"; }
+.ico.cancel:before { content: "\f101"; }
+.ico.document:before { content: "\f102"; }
+.ico.error:before { content: "\f103"; }
+.ico.eye:before { content: "\f104"; }
+.ico.folder:before { content: "\f105"; }
+.ico.html:before { content: "\f106"; }
+.ico.italic:before { content: "\f107"; }
+.ico.link:before { content: "\f108"; }
+.ico.list:before { content: "\f109"; }
+.ico.markdown:before { content: "\f10a"; }
+.ico.media:before { content: "\f10b"; }
+.ico.metadata:before { content: "\f10c"; }
+.ico.modified:before { content: "\f10d"; }
+.ico.new-file:before { content: "\f10e"; }
+.ico.numbered-list:before { content: "\f10f"; }
+.ico.pencil:before { content: "\f110"; }
+.ico.picture:before { content: "\f111"; }
+.ico.private:before { content: "\f112"; }
+.ico.quote:before { content: "\f113"; }
+.ico.removed:before { content: "\f114"; }
+.ico.renamed:before { content: "\f115"; }
+.ico.repos:before { content: "\f116"; }
+.ico.rubbish:before { content: "\f117"; }
+.ico.search:before { content: "\f118"; }
+.ico.settings:before { content: "\f119"; }
+.ico.sprocket:before { content: "\f11a"; }
+.ico.switch:before { content: "\f11b"; }
 
 /* Custom Class Names for ico's */
 .ico.gfm:before { content: "\f10a"; }
 .ico.htmlmixed:before { content: "\f106"; }
 
 .avatar {
-  background:#eff3f5;
+  background:#f8f8f8;
   display:inline-block;
   padding:5px;
   }
@@ -681,7 +681,7 @@ ins {
 
 .heading .icon,
 .listing .icon {
-  background-color:#eff3f5;
+  background-color:#f8f8f8;
   }
   .listing .icon.small {
     background-color:transparent;
@@ -737,8 +737,8 @@ ins {
     }
 
 .breadcrumb {
-  background:#eff3f5;
-  border-bottom:1px solid #a8afb2;
+  background:#f8f8f8;
+  border-bottom:1px solid #d4d7d9;
   position:relative;
   z-index:20;
   padding:0 15px;
@@ -814,7 +814,7 @@ ins {
 
 .topbar {
   background:#fff;
-  border-bottom:1px solid #a8afb2;
+  border-bottom:1px solid #d4d7d9;
   width:680px;
   height:60px;
   }
@@ -858,8 +858,8 @@ ins {
     }
 
 .toolbar {
-  background:#eff3f5;
-  border-color:#eff3f5;
+  background:#f8f8f8;
+  border-color:#f8f8f8;
   }
   .toolbar.fixed {
     border-color:#a8afb2;
@@ -895,7 +895,7 @@ ins {
   }
 
 .actions a {
-  background:#eff3f5;
+  background:#f8f8f8;
   display:block;
   border:1px solid #a8afb2;
   padding:0 10px;
@@ -916,7 +916,7 @@ ins {
 .sidebar .listing li a {
   display:block;
   padding:5px 15px;
-  border-bottom:1px solid #e0e7eb;
+  border-bottom:1px solid #f0f0f0;
   white-space:nowrap;
   text-overflow:ellipsis;
 	overflow:hidden;
@@ -924,7 +924,7 @@ ins {
   }
   .listing .item.active,
   .sidebar .listing li a:hover {
-    background-color:#eff3f5;
+    background-color:#f8f8f8;
     }
   .listing .item.active .round.icon {
     background-color:#fff;
@@ -932,7 +932,7 @@ ins {
   .content .listing .directory > a,
   .content .listing li {
     display:block;
-    border-bottom:1px solid #e0e7eb;
+    border-bottom:1px solid #f0f0f0;
     padding:12px 15px;
     }
     .content .listing .directory {
@@ -1521,16 +1521,18 @@ label.error {
 }
 
 /* GUTTER */
-.CodeMirror-gutters {
-  border-right: 1px solid #d4d7d9;
-  background-color: #eff3f5;
-  }
 .CodeMirror-linenumbers {}
 .CodeMirror-linenumber {
-  padding: 0 3px 0 5px;
-  min-width: 20px;
-  text-align: right;
-  color: #999;
+  padding:0 3px 0 5px;
+  min-width:20px;
+  text-align:right;
+  color:#d4d7d9;
+  }
+.cm-s-prose-bright .CodeMirror-gutter {
+  border-right:1px solid #eff3f5;
+  padding-right:5px;
+  margin-right:15px;
+  min-width:2.5em;
   }
 
 /* CURSOR */
@@ -1569,13 +1571,6 @@ label.error {
 
 .cm-s-prose-bright .CodeMirror-cursor { border-left: 2px solid #667880; }
 .cm-s-prose-bright .CodeMirror-lines { margin:0; }
-.cm-s-prose-bright .CodeMirror-gutter {
-  background:#e0e7eb;
-  border-right:1px solid #a8afb2;
-  padding-right:3px;
-  min-width:2.5em;
-  }
-.cm-s-prose-bright .CodeMirror-gutter-text { color: #a8afb2; }
 
 /* Dark Blue/Green */
 .cm-s-prose-bright span.cm-atom       { color:#197987; }

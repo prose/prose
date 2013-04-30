@@ -150,7 +150,7 @@ module.exports = Backbone.View.extend({
       repo: $file.data('repo'),
       branch: $file.data('branch'),
       fileName: $file.data('file')
-    }
+    };
 
     if (confirm('Are you sure you want to delete that file?')) {
       window.app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function (err) {

@@ -88,7 +88,7 @@ module.exports = Backbone.View.extend({
     },
 
     recentFiles: function(data) {
-      var sidebarTmpl = _(window.app.templates['recentFiles']).template();
+      var sidebarTmpl = _(window.app.templates.recentFiles).template();
       $('#drawer', this.el).empty().append(sidebarTmpl(data));
     },
 
@@ -197,7 +197,7 @@ module.exports = Backbone.View.extend({
     },
 
     updateSaveState: function(label, classes) {
-      $('.button.save', this.el).html(label)
+      $('.button.save', this.el).html(label);
       $('#prose')
         .removeClass()
         .addClass(classes);
