@@ -10,7 +10,12 @@
   <% } %>
 </div>
 <% if (authenticated) { %>
-  <% if (history.recent && history.recent[app.username]) { %>
+<% if (history &&
+        history.user === user &&
+        history.repo === repo &&
+        history.branch === branch &&
+        history.recent &&
+        history.recent[app.username]) { %>
     <div class='history'>
       <div class='inner'>
         <h2 class='label inner'>Your Recent History</h2>
