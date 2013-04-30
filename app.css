@@ -71,9 +71,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-9d66c1d1adf5ae0b4e94583acf6acf32.eot');
-    src:url('fonts/prose-9d66c1d1adf5ae0b4e94583acf6acf32.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-9d66c1d1adf5ae0b4e94583acf6acf32.woff') format('woff');
+    src:url('fonts/prose-18e902af311ccc975d09744f6c010443.eot');
+    src:url('fonts/prose-18e902af311ccc975d09744f6c010443.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-18e902af311ccc975d09744f6c010443.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -611,36 +611,55 @@ ins {
 
 .ico.added:before { content: "\f100"; }
 .ico.cancel:before { content: "\f101"; }
-.ico.document:before { content: "\f102"; }
-.ico.error:before { content: "\f103"; }
-.ico.eye:before { content: "\f104"; }
-.ico.folder:before { content: "\f105"; }
-.ico.html:before { content: "\f106"; }
-.ico.italic:before { content: "\f107"; }
-.ico.link:before { content: "\f108"; }
-.ico.list:before { content: "\f109"; }
-.ico.markdown:before { content: "\f10a"; }
-.ico.media:before { content: "\f10b"; }
-.ico.metadata:before { content: "\f10c"; }
-.ico.modified:before { content: "\f10d"; }
-.ico.new-file:before { content: "\f10e"; }
-.ico.numbered-list:before { content: "\f10f"; }
-.ico.pencil:before { content: "\f110"; }
-.ico.picture:before { content: "\f111"; }
-.ico.private:before { content: "\f112"; }
-.ico.quote:before { content: "\f113"; }
-.ico.removed:before { content: "\f114"; }
-.ico.renamed:before { content: "\f115"; }
-.ico.repos:before { content: "\f116"; }
-.ico.rubbish:before { content: "\f117"; }
-.ico.search:before { content: "\f118"; }
-.ico.settings:before { content: "\f119"; }
-.ico.sprocket:before { content: "\f11a"; }
-.ico.switch:before { content: "\f11b"; }
+.ico.checkmark:before { content: "\f102"; }
+.ico.document:before { content: "\f103"; }
+.ico.error:before { content: "\f104"; }
+.ico.eye:before { content: "\f105"; }
+.ico.folder:before { content: "\f106"; }
+.ico.html:before { content: "\f107"; }
+.ico.italic:before { content: "\f108"; }
+.ico.link:before { content: "\f109"; }
+.ico.list:before { content: "\f10a"; }
+.ico.markdown:before { content: "\f10b"; }
+.ico.media:before { content: "\f10c"; }
+.ico.metadata:before { content: "\f10d"; }
+.ico.modified:before { content: "\f10e"; }
+.ico.new-file:before { content: "\f10f"; }
+.ico.numbered-list:before { content: "\f110"; }
+.ico.pencil:before { content: "\f111"; }
+.ico.picture:before { content: "\f112"; }
+.ico.private:before { content: "\f113"; }
+.ico.quote:before { content: "\f114"; }
+.ico.removed:before { content: "\f115"; }
+.ico.renamed:before { content: "\f116"; }
+.ico.repos:before { content: "\f117"; }
+.ico.rubbish:before { content: "\f118"; }
+.ico.search:before { content: "\f119"; }
+.ico.settings:before { content: "\f11a"; }
+.ico.sprocket:before { content: "\f11b"; }
+.ico.switch:before { content: "\f11c"; }
 
 /* Custom Class Names for ico's */
-.ico.gfm:before { content: "\f10a"; }
-.ico.htmlmixed:before { content: "\f106"; }
+.ico.gfm:before       { content:'\f10b'; }
+.ico.htmlmixed:before { content:'\f107'; }
+
+.error .heading .status,
+.saved .heading .status {
+  background:#f8f8f8;
+  }
+  .saved .heading .status {
+    -webkit-animation-name:saved;
+       -moz-animation-name:saved;
+            animation-name:saved;
+    }
+  .error .heading .status:before {
+    content:'\f104';
+    color:#db6f6f;
+    }
+  .saved .heading .status:before {
+    content:'\f102';
+    color:#90bb74;
+    }
 
 .avatar {
   background:#f8f8f8;
@@ -657,49 +676,45 @@ ins {
     margin:0 10px 0 0;
     height:50px;
     width:50px;
+    position:relative;
     }
 
 @-webkit-keyframes saved {
-	0%                  { -webkit-transform:scale(1); }	
-	10%, 20%            { -webkit-transform:scale(0.9) rotate(-3deg); }
-	30%, 50%, 70%, 90%  { -webkit-transform:scale(1.15) rotate(3deg); }
-	40%, 60%, 80%       { -webkit-transform:scale(1.15) rotate(-3deg); }
-	100%                { -webkit-transform:scale(1) rotate(0); }
+	0%    { -webkit-transform:scale(1); opacity:1; }	
+	100%  { -webkit-transform:scale(1.5); opacity:0; }
   }
 @-moz-keyframes saved {
-	0%                  { -moz-transform:scale(1); }	
-	10%, 20%            { -moz-transform:scale(0.9) rotate(-3deg); }
-	30%, 50%, 70%, 90%  { -moz-transform:scale(1.15) rotate(3deg); }
-	40%, 60%, 80%       { -moz-transform:scale(1.15) rotate(-3deg); }
-	100%                { -moz-transform:scale(1) rotate(0); }
+	0%    { -moz-transform:scale(1); opacity:1; }	
+	100%  { -moz-transform:scale(1.5); opacity:0; }
   }
 @keyframes saved {
-	0%                  { transform: scale(1); }	
-	10%, 20%            { transform:scale(0.9) rotate(-3deg); }
-	30%, 50%, 70%, 90%  { transform:scale(1.15) rotate(3deg); }
-	40%, 60%, 80%       { transform:scale(1.15) rotate(-3deg); }
-	100%                { transform:scale(1) rotate(0); }
+	0%    { transform:scale(1); opacity:1; }	
+	100%  { transform:scale(1.5); opacity:0; }
   }
 
 /* Saving States */
-.heading .avatar .ico {
-  -webkit-animation-duration:1s;
-     -moz-animation-duration:1s;
-          animation-duration:1s;
+.heading .avatar .status {
+  position:absolute;
+  width:50px;
+  height:50px;
+  line-height:50px;
+  font-size:27px;
+  display:block;
+  text-align:center;
+  top:0;
+  left:0;
+  -webkit-animation-duration:500ms;
+     -moz-animation-duration:500ms;
+          animation-duration:500ms;
   -webkit-animation-timing-function:ease;
      -moz-animation-timing-function:ease;
           animation-timing-function:ease;
   -webkit-animation-fill-mode:both;
      -moz-animation-fill-mode:both;
           animation-fill-mode:both;
-  -webkit-animation-delay:200ms;
-     -moz-animation-delay:200ms;
-          animation-delay:200ms;
-  }
-.saved .heading .avatar .ico {
-	-webkit-animation-name:saved;
-     -moz-animation-name:saved;
-          animation-name:saved;
+  -webkit-animation-delay:1000ms;
+     -moz-animation-delay:1000ms;
+          animation-delay:1000ms;
   }
 
 .heading .icon,
@@ -1121,14 +1136,6 @@ ins {
 
 .sidebar .button {
   margin-bottom:10px;
-  }
-
-/* ------------------------------------------
-  Pages: Help
----------------------------------------------*/
-.improve-article {
-  font-size:20px;
-  border-top:1px solid #a8afb2;
   }
 
 /* ------------------------------------------
