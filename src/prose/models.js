@@ -710,52 +710,55 @@ module.exports = {
       var cfg = app.state.config;
       var q = queue();
       
-      // match nearest parent directory default metadata
-      var nearestPath = path;
-      var nearestDir = /\/(?!.*\/).*$/;
-      while (cfg.prose.metadata[nearestPath] === undefined && nearestPath.match( nearestDir )) {
-        nearestPath = nearestPath.replace( nearestDir, '' );
-      }
+      if (cfg && cfg.prose && cfg.prose.metadata) {
+        // match nearest parent directory default metadata
+        var nearestPath = path;
+        var nearestDir = /\/(?!.*\/).*$/;
+        while (cfg.prose.metadata[nearestPath] === undefined && nearestPath.match( nearestDir )) {
+          nearestPath = nearestPath.replace( nearestDir, '' );
+        }
 
-      if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[nearestPath]) {
-        defaultMetadata = cfg.prose.metadata[nearestPath];
-        if (typeof defaultMetadata === 'object') {
-          _(defaultMetadata).each(function(value) {
-            if (value.field && value.field.options &&
-                typeof value.field.options === 'string' &&
-                value.field.options.match(/^https?:\/\//)) {
+        if (cfg.prose.metadata[nearestPath]) {
+          defaultMetadata = cfg.prose.metadata[nearestPath];
+          if (typeof defaultMetadata === 'object') {
+            _(defaultMetadata).each(function(value) {
+              if (value.field && value.field.options &&
+                  typeof value.field.options === 'string' &&
+                  value.field.options.match(/^https?:\/\//)) {
 
-              q.defer(function(cb){
-                $.ajax({
-                  cache: true,
-                  dataType: 'jsonp',
-                  jsonp: false,
-                  jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
-                  url: value.field.options,
-                  success: function(d) {
-                    value.field.options = d;
-                    cb();
-                  }
+                q.defer(function(cb){
+                  $.ajax({
+                    cache: true,
+                    dataType: 'jsonp',
+                    jsonp: false,
+                    jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
+                    url: value.field.options,
+                    success: function(d) {
+                      value.field.options = d;
+                      cb();
+                    }
+                  });
                 });
-              });
-            }
-          });
-        } else if (typeof defaultMetadata === 'string') {
-          rawMetadata = defaultMetadata;
+              }
+            });
+          } else if (typeof defaultMetadata === 'string') {
+            rawMetadata = defaultMetadata;
 
-          try {
-            defaultMetadata = jsyaml.load(rawMetadata);
-            if (defaultMetadata.date === "CURRENT_DATETIME") {
-              var current = (new Date()).format('Y-m-d H:i');
-              defaultMetadata.date = current;
-              rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+            try {
+              defaultMetadata = jsyaml.load(rawMetadata);
+              if (defaultMetadata.date === "CURRENT_DATETIME") {
+                var current = (new Date()).format('Y-m-d H:i');
+                defaultMetadata.date = current;
+                rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
+              }
+            } catch(err) {
+              console.log('ERROR encoding YAML');
+              // No-op
             }
-          } catch(err) {
-            console.log('ERROR encoding YAML');
-            // No-op
           }
         }
       }
+
       q.await(function() {
         cb(err, _.extend(post, {
           'default_metadata': defaultMetadata,
