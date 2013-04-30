@@ -722,9 +722,10 @@ module.exports = Backbone.View.extend({
                   value: jsyaml.dump(raw),
                   lineWrapping: true,
                   extraKeys: view.keyMap(),
-                  theme: 'prose-bright',
-                  onChange: _.bind(view.makeDirty, view)
+                  theme: 'prose-bright'
               });
+
+              view.rawEditor.on('change', _.bind(view.makeDirty, view));
             }
           }
         });
@@ -791,7 +792,7 @@ module.exports = Backbone.View.extend({
       var view = this;
 
       // TODO Remove setTimeout
-      setTimeout(function () {
+      setTimeout(function() {
         if (view.model.jekyll) {
           view.metadataEditor = view.buildMeta();
           $('#post .metadata').hide();
