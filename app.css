@@ -754,6 +754,7 @@ ins {
   color:#e0e7eb;
   text-align:left;
   position:absolute;
+  z-index:5000;
   width:auto;
   padding:5px 10px;
   right:100%;
@@ -763,6 +764,10 @@ ins {
   font:11px/16px 'OpenSans', sans-serif;
   -webkit-font-smoothing:subpixel-antialiased;
   }
+  .popup.arrow-left {
+    left:100%;
+    right:auto;
+    }
   .popup.arrow-top {
     top:100%;
     left:0;

@@ -3,13 +3,21 @@
     data-index='<%= index %>'>
 
     <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>
-      <div class='fl icon round repo owner private' title='Shared repo with <%= owner.login %>'></div>
+      <div class='fl icon round repo owner private popup-hover'>
+        <span class='popup round arrow-left'>Shared with <%= owner.login %></span>
+      </div>
     <% } else if (app.state.user === app.username && owner.login !== app.username) { %>
-      <div class='fl icon round repo owner' title='Shared repo with <%= owner.login %>'></div>
+      <div class='fl icon round repo owner popup-hover'>
+        <span class='popup round arrow-left'>Shared with <%= owner.login %></span>
+      </div>
     <% } else if (fork && private) { %>
-      <div class='fl icon round repo private fork' title='Forked repo'></div>
+      <div class='fl icon round repo private fork popup-hover'>
+        <span class='popup round arrow-left'>Forked Project</span>
+      </div>
     <% } else if (fork) { %>
-      <div class='fl icon round repo fork' title='Forked repo'></div>
+      <div class='fl icon round repo fork popup-hover'>
+        <span class='popup round arrow-left'>Forked Project</span>
+      </div>
     <% } else if (private) { %>
       <div class='fl icon round repo private'></div>
     <% } else { %>
