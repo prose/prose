@@ -71,9 +71,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-fc75b593ea16905d8452961dd8dfd08a.eot');
-    src:url('fonts/prose-fc75b593ea16905d8452961dd8dfd08a.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-fc75b593ea16905d8452961dd8dfd08a.woff') format('woff');
+    src:url('fonts/prose-9d66c1d1adf5ae0b4e94583acf6acf32.eot');
+    src:url('fonts/prose-9d66c1d1adf5ae0b4e94583acf6acf32.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-9d66c1d1adf5ae0b4e94583acf6acf32.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -1005,7 +1005,7 @@ ins {
       display:block;
       }
     .dropdown li.divider {
-      border-bottom:1px solid #3d494e;
+      border-bottom:1px solid #202020;
       margin:10px 0;
       }
     .dropdown > li > a {
