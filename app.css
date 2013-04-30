@@ -929,6 +929,11 @@ ins {
 	overflow:hidden;
   font-weight:400;
   }
+  .sidebar .listing li a.active,
+  .sidebar .listing li a.active:hover {
+    background-color:#f0f0f0;
+    color:#3d494e;
+    }
   .listing .item.active,
   .sidebar .listing li a:hover {
     background-color:#f8f8f8;
