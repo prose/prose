@@ -71,9 +71,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-18e902af311ccc975d09744f6c010443.eot');
-    src:url('fonts/prose-18e902af311ccc975d09744f6c010443.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-18e902af311ccc975d09744f6c010443.woff') format('woff');
+    src:url('fonts/prose-ed24fd6537b155aedfbae0a4580b64ca.eot');
+    src:url('fonts/prose-ed24fd6537b155aedfbae0a4580b64ca.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-ed24fd6537b155aedfbae0a4580b64ca.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -634,31 +634,66 @@ ins {
 .ico.renamed:before { content: "\f116"; }
 .ico.repos:before { content: "\f117"; }
 .ico.rubbish:before { content: "\f118"; }
-.ico.search:before { content: "\f119"; }
-.ico.settings:before { content: "\f11a"; }
-.ico.sprocket:before { content: "\f11b"; }
-.ico.switch:before { content: "\f11c"; }
+.ico.saving:before { content: "\f119"; }
+.ico.search:before { content: "\f11a"; }
+.ico.settings:before { content: "\f11b"; }
+.ico.sprocket:before { content: "\f11c"; }
+.ico.switch:before { content: "\f11d"; }
 
 /* Custom Class Names for ico's */
 .ico.gfm:before       { content:'\f10b'; }
 .ico.htmlmixed:before { content:'\f107'; }
+.saving .heading .status:before {
+  content:'\f119';
+  color:#d4d7d9;
+  }
+.error .heading .status:before {
+  content:'\f104';
+  color:#db6f6f;
+  }
+.saved .heading .status:before {
+  content:'\f102';
+  color:#90bb74;
+  }
 
+.saving .heading .status,
 .error .heading .status,
 .saved .heading .status {
   background:#f8f8f8;
   }
+  .saving .heading .avatar .status {
+    -webkit-animation-duration:1000ms;
+       -moz-animation-duration:1000ms;
+            animation-duration:1000ms;
+    -webkit-animation-timing-function:linear;
+       -moz-animation-timing-function:linear;
+            animation-timing-function:linear;
+    -webkit-animation-fill-mode:both;
+       -moz-animation-fill-mode:both;
+            animation-fill-mode:both;
+    -webkit-animation-iteration-count:infinite;
+       -moz-animation-iteration-count:infinite;
+            animation-iteration-count:infinite;
+    -webkit-animation-name:spin;
+       -moz-animation-name:spin;
+            animation-name:spin;
+    }
   .saved .heading .status {
+    -webkit-animation-duration:500ms;
+       -moz-animation-duration:500ms;
+            animation-duration:500ms;
+    -webkit-animation-timing-function:ease;
+       -moz-animation-timing-function:ease;
+            animation-timing-function:ease;
+    -webkit-animation-fill-mode:both;
+       -moz-animation-fill-mode:both;
+            animation-fill-mode:both;
+    -webkit-animation-delay:1000ms;
+       -moz-animation-delay:1000ms;
+            animation-delay:1000ms;
     -webkit-animation-name:saved;
        -moz-animation-name:saved;
             animation-name:saved;
-    }
-  .error .heading .status:before {
-    content:'\f104';
-    color:#db6f6f;
-    }
-  .saved .heading .status:before {
-    content:'\f102';
-    color:#90bb74;
     }
 
 .avatar {
@@ -679,6 +714,19 @@ ins {
     position:relative;
     }
 
+@-webkit-keyframes spin {
+	0%    { -webkit-transform: rotate(0deg); }	
+	100%  { -webkit-transform: rotate(360deg); }
+  }
+@-moz-keyframes spin {
+	0%    { -moz-transform: rotate(0deg); }	
+	100%  { -moz-transform: rotate(360deg); }
+  }
+@keyframes spin {
+	0%    { transform: rotate(0deg); }	
+	100%  { transform: rotate(360deg); }
+  }
+
 @-webkit-keyframes saved {
 	0%    { -webkit-transform:scale(1); opacity:1; }	
 	100%  { -webkit-transform:scale(1.5); opacity:0; }
@@ -695,26 +743,14 @@ ins {
 /* Saving States */
 .heading .avatar .status {
   position:absolute;
-  width:50px;
-  height:50px;
-  line-height:50px;
+  width:30px;
+  height:30px;
+  line-height:32px;
   font-size:27px;
   display:block;
   text-align:center;
-  top:0;
-  left:0;
-  -webkit-animation-duration:500ms;
-     -moz-animation-duration:500ms;
-          animation-duration:500ms;
-  -webkit-animation-timing-function:ease;
-     -moz-animation-timing-function:ease;
-          animation-timing-function:ease;
-  -webkit-animation-fill-mode:both;
-     -moz-animation-fill-mode:both;
-          animation-fill-mode:both;
-  -webkit-animation-delay:1000ms;
-     -moz-animation-delay:1000ms;
-          animation-delay:1000ms;
+  top:10px;
+  left:10px;
   }
 
 .heading .icon,

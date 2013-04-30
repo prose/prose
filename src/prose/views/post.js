@@ -338,9 +338,6 @@ module.exports = Backbone.View.extend({
         if (view.updateMetaData()) {
           window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
-              _.delay(function () {
-                view.makeDirty();
-              }, 3000);
               view.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
               return;
             }
