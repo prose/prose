@@ -160,5 +160,7 @@ module.exports = Backbone.View.extend({
 
     // Unbind Keybindings from the scope
     key.unbind('j, k, enter, o', 'posts');
+
+    Backbone.View.prototype.remove.call(this);
   }
 });
