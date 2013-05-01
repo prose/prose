@@ -26,8 +26,8 @@
           }
         %>
         <% _.each(recent.slice(0,5), function(filename) { %>
-          <li><a class='item' title='<%= history.state[filename][0] %>: <%= filename %>' href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
-            <span class='ico small inline <%= history.state[filename][0] %>'></span>
+          <li><a class='item' title='<%= history.commits[filename][0].status %>: <%= filename %>' href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
+            <span class='ico small inline <%= history.commits[filename][0].status %>'></span>
             <%= filename %>
           </a></li>
         <% }); %>
