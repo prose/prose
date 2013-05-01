@@ -14,7 +14,6 @@ module.exports = Backbone.View.extend({
     className: 'post',
 
     events: {
-      'click .update': 'saveMeta',
       'click .markdown-snippets a': 'markdownSnippet',
       'change input': 'makeDirty'
     },
@@ -405,32 +404,6 @@ module.exports = Backbone.View.extend({
         // Remove expired content
         store.removeItem(filepath);
       }
-    },
-
-    saveMeta: function() {
-      var filepath = $('input.filepath').val();
-      var filename = _.extractFilename(filepath)[1];
-      var defaultMessage = 'Updated metadata for ' + filename;
-      var message = $('.commit-message').val() || defaultMessage;
-      var method = this.model.writeable ? this.saveFile : this.sendPatch;
-
-      // We want to update the metadata but not the current edited content.
-      var filecontent =  this.serialize(this.model.original, this.model.raw_metadata);
-
-      // Update content
-      this.model.content = this.editor.getValue();
-
-      // Delegate
-      method.call(this, filepath, filename, filecontent, message);
-
-      $('.post-views a').removeClass('active');
-      $('.post-views .edit').addClass('active');
-      $('#prose').toggleClass('open', false);
-
-      $('.views .view').removeClass('active');
-      $('.views .edit').addClass('active');
-
-      return false;
     },
 
     updateFile: function() {
