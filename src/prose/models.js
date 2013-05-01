@@ -422,6 +422,9 @@ module.exports = {
                       console.log(err);
                     }
                   }
+
+                  // TODO: temporary fix, break history sidebar into a discrete view
+                  app.eventRegister.trigger('sidebarContext', app.state, 'posts');
                 });
               }
             });
