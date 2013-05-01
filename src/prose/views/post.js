@@ -20,7 +20,6 @@ module.exports = Backbone.View.extend({
 
     initialize: function() {
       this.prevFile = this.serialize();
-      this.model.original = this.model.content;
 
       // Stash editor and metadataEditor content to localStorage on pagehide event
       // Always run stashFile in context of view
@@ -345,7 +344,6 @@ module.exports = Backbone.View.extend({
             view.model.file = filename;
             view.updateURL();
             view.prevFile = filecontent;
-            view.model.original = view.model.content;
             view.eventRegister.trigger('updateSaveState', 'Saved', 'saved');
           });
         } else {
