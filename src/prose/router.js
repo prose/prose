@@ -196,13 +196,19 @@ module.exports = Backbone.Router.extend({
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return router.notify('error', 'This post does not exist.');
       app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) return router.notify('error', 'This post does not exist.');
+        if (err) {
+          app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
+        } else {
+          cb(err, data);
+        }
 
-        var view = new app.views.Preview({
-          model: data
-        }).render();
+        function cb(err, data) {
+          var view = new app.views.Preview({
+            model: data
+          }).render();
 
-        utils.loader.loaded();
+          utils.loader.loaded();
+        }
       }, this));
     }, this));
   },

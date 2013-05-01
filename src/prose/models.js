@@ -566,6 +566,8 @@ module.exports = {
     var cfg = app.state.config;
     var q = queue();
 
+    repo = this.getRepo(user, repo);
+
     if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
       defaultMetadata = cfg.prose.metadata[path];
 
