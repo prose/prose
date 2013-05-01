@@ -481,8 +481,8 @@ ins {
 
 .sidebar {
   background:#fff;
-  border-left:1px solid #a8afb2;
-  border-right:1px solid #a8afb2;
+  border-left:1px solid #D4D7D9;
+  border-right:1px solid #D4D7D9;
   -webkit-box-shadow:-1px 0 4px rgba(0,0,0,0.05);
           box-shadow:-1px 0 4px rgba(0,0,0,0.05);
   }
@@ -764,9 +764,9 @@ ins {
   width:25px;
   height:25px;
   position:absolute;
+  left:8px;
   display:block;
   text-align:center;
-  left:10px;
   -webkit-border-radius:50%;
           border-radius:50%;
   }
@@ -776,6 +776,7 @@ ins {
     line-height:32px;
     font-size:27px;
     top:10px;
+    left:10px;
     }
   .save .save-action .status {
     background:#d4d7d9;
@@ -1190,7 +1191,7 @@ ins {
     display:block;
     }
   .post .view.meta {
-    background:#f0f0f0;
+    background:#f8f8f8;
     width:360px;
     margin:0 auto;
     }
@@ -1216,6 +1217,9 @@ ins {
       .form-item .publish {
         background-color:#90bb74;
         }
+        .form-item .publish:hover {
+          background-color:#73955c;
+          }
 
 .sidebar .commit {
   position:relative;
@@ -1433,14 +1437,15 @@ label.error {
   color:#999;
   }
 .chzn-container-multi .chzn-choices .search-choice {
-  background:#D4D7D9;
-  border:1px solid #A8AFB2;
+  background:#90D5DF;
+  border:1px solid #2099AA;
   color:#3d494e;
   width:98%;
   padding:4px 20px 5px 5px;
   margin:3px;
   position:relative;
   cursor:default;
+  -webkit-font-smoothing:subpixel-antialiased;
   -webkit-background-clip:padding-box;
           background-clip:padding-box;
   box-shadow:0 0 2px #FFF inset,
