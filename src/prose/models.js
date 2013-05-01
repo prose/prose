@@ -346,7 +346,7 @@ module.exports = {
               app.state.sha = sha;
             });
 
-            var store = window.localStorage;
+            var store = window.sessionStorage;
             var history;
             var lastModified;
 
@@ -414,7 +414,7 @@ module.exports = {
                     'link': xhr.getResponseHeader('link')
                   };
 
-                  var store = window.localStorage;
+                  var store = window.sessionStorage;
                   if (store) {
                     try {
                       store.setItem('history', JSON.stringify(history));

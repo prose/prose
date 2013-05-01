@@ -21,7 +21,7 @@ module.exports = Backbone.View.extend({
     initialize: function() {
       this.prevFile = this.serialize();
 
-      // Stash editor and metadataEditor content to localStorage on pagehide event
+      // Stash editor and metadataEditor content to sessionStorage on pagehide event
       // Always run stashFile in context of view
       $(window).on('pagehide', _.bind(this.stashFile, this));
     },
@@ -367,9 +367,9 @@ module.exports = Backbone.View.extend({
 
     stashFile: function(e) {
       if (e) e.preventDefault();
-      if (!window.localStorage || !this.dirty) return false;
+      if (!window.sessionStorage || !this.dirty) return false;
 
-      var store = window.localStorage;
+      var store = window.sessionStorage;
       var filepath = $('input.filepath').val();
 
       // Don't stash if filepath is undefined
@@ -387,9 +387,9 @@ module.exports = Backbone.View.extend({
     },
 
     stashApply: function() {
-      if (!window.localStorage) return false;
+      if (!window.sessionStorage) return false;
 
-      var store = window.localStorage;
+      var store = window.sessionStorage;
       var filepath = $('input.filepath').val();
       var item = store.getItem(filepath);
       var stash = JSON.parse(item);
@@ -780,7 +780,7 @@ module.exports = Backbone.View.extend({
         view.editor.on('change', _.bind(view.makeDirty, view));
         view.refreshCodeMirror();
 
-        // Check localStorage for existing stash
+        // Check sessionStorage for existing stash
         // Apply if stash exists and is current, remove if expired
         view.stashApply();
       }, 100);
