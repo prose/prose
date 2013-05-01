@@ -387,7 +387,7 @@ module.exports = {
 
                       var fileCommit = {
                         status: file.status,
-                        raw_url: file.raw_url
+                        url: file.contents_url
                       };
 
                       if (state[filename]) {
@@ -655,6 +655,7 @@ module.exports = {
     });
   },
 
+  // breaks the err first pattern because of use by _.partial
   _loadPostData: function(repo, path, file, cb, err, data, xhr) {
     if (err) return cb(err);
 
@@ -787,5 +788,23 @@ module.exports = {
       file,
       cb
     ));
+  },
+
+  restorePost: function(user, repo, branch, path, file, raw, cb) {
+    repo = this.getRepo(user, repo);
+    $.ajax({
+      type: 'GET',
+      url: raw,
+      headers: {
+        Authorization: 'token ' + cookie.get('oauth-token'),
+        Accept: 'application/vnd.github.raw'
+      },
+      success: (function(res) {
+        this._loadPostData(repo, path, file, cb, null, res);
+      }).bind(this),
+      error: function(err) {
+        cb(err);
+      }
+    });
   }
 };
