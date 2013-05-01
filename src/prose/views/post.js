@@ -833,6 +833,9 @@ module.exports = Backbone.View.extend({
           case 'sub-heading':
             this.subHeading();
           break;
+          case 'quote':
+            this.quote();
+          break;
           default:
             this.editor.replaceSelection(snippet);
           break;
@@ -860,6 +863,10 @@ module.exports = Backbone.View.extend({
 
     bold: function() {
       this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
+    },
+
+    quote: function() {
+      this.editor.replaceSelection('> ' + this.editor.getSelection().replace(/\*/g, ''));
     },
 
     remove: function () {
