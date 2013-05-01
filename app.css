@@ -71,9 +71,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-ed24fd6537b155aedfbae0a4580b64ca.eot');
-    src:url('fonts/prose-ed24fd6537b155aedfbae0a4580b64ca.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-ed24fd6537b155aedfbae0a4580b64ca.woff') format('woff');
+    src:url('fonts/prose-ed39c7704329c1d0d94f7f8942393132.eot');
+    src:url('fonts/prose-ed39c7704329c1d0d94f7f8942393132.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-ed39c7704329c1d0d94f7f8942393132.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
