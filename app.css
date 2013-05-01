@@ -660,8 +660,13 @@ ins {
 .saving .save-action .status,
 .error .save-action .status,
 .saved .save-action .status {
-  background:#f8f8f8;
+  background:#f0f0f0;
   }
+  .saving .heading .save-action .status,
+  .error .heading .save-action .status,
+  .saved .heading .save-action .status {
+    background:#f8f8f8;
+    }
   .saving .save-action .status {
     -webkit-animation-duration:1000ms;
        -moz-animation-duration:1000ms;
@@ -675,9 +680,6 @@ ins {
        -moz-animation-iteration-count:infinite;
          -o-animation-iteration-count:infinite;
             animation-iteration-count:infinite;
-      -webkit-backface-visibility:hidden;
-         -moz-backface-visibility:hidden;
-          -ms-backface-visibility:hidden;
     -webkit-animation-name:spin;
        -moz-animation-name:spin;
          -o-animation-name:spin;
@@ -692,9 +694,6 @@ ins {
        -moz-animation-timing-function:ease;
          -o-animation-timing-function:ease;
             animation-timing-function:ease;
-    -webkit-backface-visibility:hidden;
-       -moz-backface-visibility:hidden;
-        -ms-backface-visibility:hidden;
     -webkit-animation-delay:500ms;
        -moz-animation-delay:500ms;
          -o-animation-delay:500ms;
@@ -768,6 +767,8 @@ ins {
   display:block;
   text-align:center;
   left:10px;
+  -webkit-border-radius:50%;
+          border-radius:50%;
   }
   .heading .save-action .status {
     width:30px;
@@ -913,8 +914,8 @@ ins {
   position:absolute;
   z-index:1000;
   }
-  .topbar-wrapper + div,
-  .topbar-wrapper + ul {
+  .markdown .topbar-wrapper + div,
+  .topbar-wrapper + .listing {
     position:relative;
     top:60px;
     }
@@ -926,8 +927,13 @@ ins {
   height:60px;
   }
   .topbar.toolbar {
+    height:0;
+    }
+  .fixed.topbar.toolbar,
+  .markdown .topbar.toolbar {
     height:40px;
     }
+
   .topbar .dropdown-hover,
   .topbar .inner > a {
     display:block;
@@ -946,9 +952,16 @@ ins {
   position:fixed;
   top:0;
   left:auto;
+  -webkit-transform:translate3d(0,0,0);
+          transform:translate3d(0,0,0);
   -webkit-box-shadow:0 4px 6px -4px rgba(0,0,0,0.10);
           box-shadow:0 4px 6px -4px rgba(0,0,0,0.10);
   }
+  .markdown .toolbar.fixed,
+  .toolbar.fixed {
+    background:#f8f8f8;
+    border-color:#a8afb2;
+    }
 
   .content-search input {
     border:none;
@@ -965,11 +978,12 @@ ins {
     }
 
 .toolbar {
-  background:#f8f8f8;
-  border-color:#f8f8f8;
+  background:#fff;
+  border-color:#fff;
   }
-  .toolbar.fixed {
-    border-color:#a8afb2;
+  .markdown .toolbar {
+    background:#f8f8f8;
+    border-color:#f8f8f8;
     }
   .toolbar ul {
     background:#fff;
@@ -1000,6 +1014,7 @@ ins {
           }
 
 .toolbar .save-action {
+  background:#f0f0f0;
   display:block;
   width:40px;
   height:25px;

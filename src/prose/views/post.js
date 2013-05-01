@@ -80,11 +80,9 @@ module.exports = Backbone.View.extend({
         this.preview();
       } else {
         this.initEditor();
-        if (this.model.markdown) {
-          _.delay(function () {
-            utils.fixedScroll($('.topbar'));
-          }, 1);
-        }
+        _.delay(function () {
+          utils.fixedScroll($('.topbar'));
+        }, 1);
       }
 
       return this;
@@ -111,11 +109,9 @@ module.exports = Backbone.View.extend({
       // was not initialized.
       if (!this.editor) {
         this.initEditor();
-        if (this.model.markdown) {
-          _.delay(function () {
-            utils.fixedScroll($('.topbar'));
-          }, 1);
-        }
+        _.delay(function () {
+          utils.fixedScroll($('.topbar'));
+        }, 1);
       }
 
       // We want to trigger a re-rendering of the url
