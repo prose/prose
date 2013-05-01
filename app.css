@@ -1136,11 +1136,6 @@ ins {
         background-color:#90bb74;
         }
 
-  .meta .update {
-    -webkit-border-radius:0 0 4px 4px;
-            border-radius:0 0 4px 4px;
-    }
-
 .sidebar .commit {
   position:relative;
   display:none;
