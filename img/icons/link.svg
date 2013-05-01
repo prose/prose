@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.54996883"
-     inkscape:cx="190.51151"
-     inkscape:cy="564.37429"
+     inkscape:zoom="0.59508346"
+     inkscape:cx="392.1639"
+     inkscape:cy="362.7219"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -66,18 +66,18 @@
      transform="translate(0,-52.3622)">
     <g
        id="g23046"
-       transform="translate(768,948)">
+       transform="translate(768,888)">
       <path
-         sodipodi:nodetypes="ccccsssssccssssssc"
+         sodipodi:nodetypes="cccsssssccssssscc"
          inkscape:connector-curvature="0"
          id="rect13204-4"
-         d="m 2,-515.6378 -60,0 0,120 60,0 c 33.24,0 60,26.76 60,60 l 0,120 c 0,33.24 -26.76,60 -60,60 l -240,0 c -33.24,0 -60,-26.76 -60,-60 l 0,-120 -120,0 0,180 c 0,66.48 53.52,120 120,120 l 360,0 c 66.48,0 120,-53.52 120,-120 l 0,-240 c 0,-66.48 -53.52,-120 -120,-120 z"
+         d="m -68,-515.6378 0,120 60,0 c 40,0 60,20 60,60 l 0,120 c 0,40 -20,60 -60,60 l -240,0 c -40,0 -60,-20 -60,-60 l 0,-100 -120,0 0,160 c 0,60 60,120 120,120 l 360,0 c 60,0 120,-60 120,-120 l 0,-240 c 0,-60 -60,-120 -120,-120 z"
          style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <path
-         sodipodi:nodetypes="ssssccccsssssccsss"
+         sodipodi:nodetypes="sssccccsssssccsss"
          inkscape:connector-curvature="0"
          id="path13219-0"
-         d="m -598,-515.6378 c -66.48,0 -120,53.52 -120,120 l 0,240 c 0,66.48 53.52,120 120,120 l 60,0 60,0 0,-120 -60,0 c -33.24,0 -60,-26.76 -60,-60 l 0,-120 c 0,-33.24 26.76,-60 60,-60 l 240,0 c 33.24,0 60,26.76 60,60 l 0,60 120,0 0,-120 c 0,-66.48 -53.52,-120 -120,-120 z"
+         d="m -588,-515.6378 c -60,0 -120,60 -120,120 l 0,240 c 0,60 60,120 120,120 l 100,0 0,-120 -40,0 c -40,0 -60,-20 -60,-60 l 0,-120 c 0,-40 20,-60 60,-60 l 220,0 c 33.24,0 60,26.76 60,60 l 0,60 120,0 0,-120 c 0,-60 -60,-120 -120,-120 z"
          style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     </g>
   </g>
