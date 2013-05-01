@@ -654,6 +654,25 @@ ins {
   content:'\f102';
   color:#90bb74;
   }
+.save .heading .avatar .status {
+  background:#d4d7d9;
+  top:0;
+  right:0;
+  left:auto;
+  width:10px;
+  height:10px;
+  display:block;
+  -webkit-border-radius:0 4px 0 4px;
+          border-radius:0 4px 0 4px;
+  }
+  .save .heading .avatar:hover {
+    -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.25);
+            box-shadow:0 1px 1px rgba(0,0,0,0.25);
+    }
+    .save .heading .avatar:active {
+      -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
+              box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
+      }
 
 .saving .heading .status,
 .error .heading .status,
@@ -687,9 +706,9 @@ ins {
     -webkit-animation-fill-mode:both;
        -moz-animation-fill-mode:both;
             animation-fill-mode:both;
-    -webkit-animation-delay:1000ms;
-       -moz-animation-delay:1000ms;
-            animation-delay:1000ms;
+    -webkit-animation-delay:500ms;
+       -moz-animation-delay:500ms;
+            animation-delay:500ms;
     -webkit-animation-name:saved;
        -moz-animation-name:saved;
             animation-name:saved;

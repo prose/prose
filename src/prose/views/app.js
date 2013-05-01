@@ -14,6 +14,7 @@ module.exports = Backbone.View.extend({
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
+      'click a.avatar': 'updateFile',
       'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
@@ -190,6 +191,9 @@ module.exports = Backbone.View.extend({
           .html(saveState)
           .removeClass('error');
 
+        // Pass a popover span to the avatar icon
+        $('#heading', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
+
         $('#prose')
           .removeClass('error saving saved save')
           .addClass('save');
@@ -198,6 +202,10 @@ module.exports = Backbone.View.extend({
 
     updateSaveState: function(label, classes) {
       $('.button.save', this.el).html(label);
+
+      // Pass a popover span to the avatar icon
+      $('#heading', this.el).find('.popup').html(label);
+
       $('#prose')
         .removeClass('error saving saved save')
         .addClass(classes);

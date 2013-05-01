@@ -1,8 +1,9 @@
 <% if (alterable) { %>
-  <div class='avatar round fl'>
-    <span class='ico status popup-hover'></span>
+  <a href='#' class='avatar round fl'>
+    <span class='ico status'></span>
+    <span class='popup arrow-left'>Ctrl&nbsp;+&nbsp;S</span>
     <%= avatar %>
-  </div>
+  </a>
   <div class='fl details'>
     <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
     <input type='text' class='filepath' value='<%= title %>'>
