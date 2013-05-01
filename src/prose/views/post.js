@@ -15,6 +15,7 @@ module.exports = Backbone.View.extend({
 
     events: {
       'click .markdown-snippets a': 'markdownSnippet',
+      'click .save-action': 'updateFile',
       'change input': 'makeDirty'
     },
 
@@ -68,7 +69,8 @@ module.exports = Backbone.View.extend({
         .empty()
         .append(tmpl(_.extend(this.model, {
           mode: app.state.mode,
-          metadata: this.model.metadata
+          metadata: this.model.metadata,
+          avatar: this.header.avatar
         })));
 
       // Editor is first up so trigger an active class for it
@@ -93,7 +95,7 @@ module.exports = Backbone.View.extend({
       var isPrivate = app.state.isPrivate ? true : false;
       var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
 
-      var header = {
+      this.header = {
         avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
         parentTrail: parentTrail,
         isPrivate: isPrivate,
@@ -101,7 +103,7 @@ module.exports = Backbone.View.extend({
         alterable: true
       };
 
-      this.eventRegister.trigger('headerContext', header);
+      this.eventRegister.trigger('headerContext', this.header);
     },
 
     edit: function(e) {
@@ -201,6 +203,9 @@ module.exports = Backbone.View.extend({
 
       var saveState = this.model.writeable ? 'Save' : 'Submit Change';
       this.eventRegister.trigger('updateSave', saveState);
+
+      // Pass a popover span to the avatar icon
+      $('.save-action', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
     },
 
     showDiff: function() {
@@ -307,7 +312,7 @@ module.exports = Backbone.View.extend({
                 view.eventRegister.trigger('updateSaveState', 'Submit Change', '');
               }, 3000);
 
-              view.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
+              view.eventRegister.trigger('updateSaveState', '! Try again in 30&nbsp;seconds', 'error');
               return;
             }
 
@@ -418,6 +423,7 @@ module.exports = Backbone.View.extend({
 
       // Delegate
       method.call(this, filepath, filename, filecontent, message);
+      return false;
     },
 
     keyMap: function() {
