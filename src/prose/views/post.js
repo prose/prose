@@ -812,6 +812,64 @@ module.exports = Backbone.View.extend({
           theme: 'prose-bright'
         });
 
+        // Monitor the current selection and apply
+        // an active class to any snippet links
+        if (view.model.lang === 'gfm') {
+          var $snippetLinks = $('.markdown-snippets a', view.el);
+          view.editor.on('cursorActivity', _.bind(function() {
+
+              var selection = _.trim(view.editor.getSelection());
+                  $snippetLinks.removeClass('active');
+
+              var isNumber = parseInt(selection.charAt(0), 10);
+
+              if (!isNumber) {
+                switch (selection.charAt(0)) {
+                  case '#':
+                    if (selection.charAt(1) === '#') { // Subheading Check
+                      $('[data-key="sub-heading"]').addClass('active');
+                    } else {
+                      $('[data-key="heading"]').addClass('active');
+                    }
+                  break;
+                  case '>':
+                      $('[data-key="quote"]').addClass('active');
+                  break;
+                  case '*':
+                    if (selection.charAt(selection.length - 1) === '*') {
+                      $('[data-key="bold"]').addClass('active');
+                    }
+                  break;
+                  case '_':
+                    if (selection.charAt(selection.length - 1) === '_') {
+                      $('[data-key="italic"]').addClass('active');
+                    }
+                  break;
+                  case '!':
+                    if (selection.charAt(1) === '[' && selection.charAt(selection.length - 1) === ')') {
+                      $('[data-key="image"]').addClass('active');
+                    }
+                  break;
+                  case '[':
+                    if (selection.charAt(selection.length - 1) === ')') {
+                      $('[data-key="link"]').addClass('active');
+                    }
+                  break;
+                  case '-':
+                    if (selection.charAt(1) === ' ') {
+                      $('[data-key="list"]').addClass('active');
+                    }
+                  break;
+                }
+              } else {
+
+                if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
+                  $('[data-key="numbered-list"]').addClass('active');
+                }
+              }
+          }, view));
+        }
+
         view.editor.on('change', _.bind(view.makeDirty, view));
         view.refreshCodeMirror();
 

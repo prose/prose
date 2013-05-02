@@ -95,9 +95,9 @@ module.exports = Backbone.View.extend({
       var sidebarTmpl;
 
       if (context === 'post') {
-        sidebarTmpl = _(window.app.templates.settings).template();
+        sidebarTmpl = _(app.templates.settings).template();
       } else if (context === 'posts') {
-        sidebarTmpl = _(window.app.templates.sidebarProject).template();
+        sidebarTmpl = _(app.templates.sidebarProject).template();
       }
 
       $('#drawer', this.el)
