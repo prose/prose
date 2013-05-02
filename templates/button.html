@@ -1,3 +1,6 @@
-<div class='form-item link'>
-  <a href='#' class='button round <%= value %>'><%= label %></a>
+<div class='form-item'>
+  <label for='<%= name %>'><%= label %></label>
+  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>
+    <% print(value ? on : off); %>
+  </button>
 </div>
