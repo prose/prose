@@ -219,5 +219,6 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('recentFiles', this.recentFiles);
       this.eventRegister.unbind('updateSave', this.updateSave);
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
+      Backbone.View.prototype.remove.call(this);
     }
 });
