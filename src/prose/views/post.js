@@ -882,23 +882,24 @@ module.exports = Backbone.View.extend({
     markdownSnippet: function(e) {
       var key = $(e.target, this.el).data('key');
       var snippet = $(e.target, this.el).data('snippet');
+      var selection = _.trim(this.editor.getSelection());
 
       if (this.editor.getSelection !== '') {
         switch(key) {
           case 'bold':
-            this.bold();
+            this.bold(selection);
           break;
           case 'italic':
-            this.italic();
+            this.italic(selection);
           break;
           case 'heading':
-            this.heading();
+            this.heading(selection);
           break;
           case 'sub-heading':
-            this.subHeading();
+            this.subHeading(selection);
           break;
           case 'quote':
-            this.quote();
+            this.quote(selection);
           break;
           default:
             this.editor.replaceSelection(snippet);
@@ -913,45 +914,43 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
-    heading: function() {
-      if (this.editor.getSelection().charAt(0) === '#') {
-        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/#/g, '')));
+    heading: function(s) {
+      if (s.charAt(0) === '#') {
+        this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
       } else {
-        this.editor.replaceSelection('# ' + this.editor.getSelection().replace(/#/g, ''));
+        this.editor.replaceSelection('# ' + s.replace(/#/g, ''));
       }
     },
 
-    subHeading: function() {
-      if (this.editor.getSelection().charAt(0) === '#') {
-        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/#/g, '')));
+    subHeading: function(s) {
+      if (s.charAt(0) === '#') {
+        this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
       } else {
-        this.editor.replaceSelection('## ' + this.editor.getSelection().replace(/#/g, ''));
+        this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
       }
     },
 
-    italic: function() {
-      var selection = this.editor.getSelection();
-      if (selection.charAt(0) === '_' && selection.charAt(selection.length - 1 === '_')) {
-        this.editor.replaceSelection(selection.replace(/_/g, ''));
+    italic: function(s) {
+      if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
+        this.editor.replaceSelection(s.replace(/_/g, ''));
       } else {
-        this.editor.replaceSelection('_' + selection.replace(/_/g, '') + '_');
+        this.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
       }
     },
 
-    bold: function() {
-      var selection = this.editor.getSelection();
-      if (selection.charAt(0) === '*' && selection.charAt(selection.length - 1 === '*')) {
-        this.editor.replaceSelection(selection.replace(/\*/g, ''));
+    bold: function(s) {
+      if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
+        this.editor.replaceSelection(s.replace(/\*/g, ''));
       } else {
-        this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
+        this.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
       }
     },
 
-    quote: function() {
-      if (this.editor.getSelection().charAt(0) === '>') {
-        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/\>/g, '')));
+    quote: function(s) {
+      if (s.charAt(0) === '>') {
+        this.editor.replaceSelection(_.lTrim(s.replace(/\>/g, '')));
       } else {
-        this.editor.replaceSelection('> ' + this.editor.getSelection().replace(/\>/g, ''));
+        this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
       }
     },
 
