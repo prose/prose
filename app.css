@@ -980,7 +980,9 @@ ins {
   .markdown .toolbar.fixed,
   .toolbar.fixed {
     background:#f8f8f8;
-    border-color:#a8afb2;
+    border-color:#D4D7D9;
+    -webkit-border-radius:0;
+            border-radius:0;
     }
 
   .content-search input {
