@@ -69,3 +69,29 @@ Liquid.Block.prototype.renderAll = function(list, context) {
     return output;
   });
 };
+
+Liquid.Template.registerTag( 'highlight', Liquid.Block.extend({
+  tagSyntax: /(\w+)/,
+
+  init: function(tagName, markup, tokens) {
+    var parts = markup.match(this.tagSyntax);
+    if( parts ) {
+      this.to = parts[1];
+    } else {
+      throw ("Syntax error in 'highlight' - Valid syntax: hightlight [language]");
+    }
+    this._super(tagName, markup, tokens);
+  },
+  render: function(context) {
+    var output = this._super(context);
+    return '<pre>' + output[0] + '</pre>';
+  }
+}));
+
+Liquid.Block.prototype.unknownTag = function(tag, params, tokens) {
+  switch(tag) {
+    case 'else': console.log(this.blockName +" tag does not expect else tag"); break;
+    case 'end':  console.log("'end' is not a valid delimiter for "+ this.blockName +" tags. use "+ this.blockDelimiter); break;
+    default:     console.log("Unknown tag: "+ tag);
+  }
+};
