@@ -509,7 +509,17 @@ module.exports = Backbone.View.extend({
         _(model.default_metadata).each(function(data) {
           if (data && typeof data.field === 'object') {
             switch(data.field.element) {
-              case 'boolean':
+              case 'button':
+                tmpl = _(window.app.templates.button).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  value: data.field.value,
+                  on: data.field.on,
+                  off: data.field.off
+                }));
+                break;
+              case 'checkbox':
                 tmpl = _(window.app.templates.checkbox).template();
                 $metadataEditor.append(tmpl({
                   name: data.name,
