@@ -409,8 +409,6 @@ module.exports = {
                     }
                   }
 
-                  debugger;
-
                   var history = app.state.history = {
                     'user': user,
                     'repo': reponame,
@@ -662,8 +660,6 @@ module.exports = {
   _loadPostData: function(repo, path, file, cb, err, data, xhr) {
     if (err) return cb(err);
 
-    debugger;
-
     function published(metadata) {
       // Given a YAML front matter, determines published or not
       // default to published unless explicitly set to false
@@ -793,17 +789,22 @@ module.exports = {
     ));
   },
 
-  restorePost: function(user, repo, branch, path, file, raw, cb) {
-    repo = this.getRepo(user, repo);
+  restoreFile: function(user, repo, branch, path, url, cb) {
     $.ajax({
       type: 'GET',
-      url: raw,
+      url: url,
       headers: {
         Authorization: 'token ' + cookie.get('oauth-token'),
         Accept: 'application/vnd.github.raw'
       },
       success: (function(res) {
-        this._loadPostData(repo, path, file, cb, null, res);
+        this.saveFile(user, repo, branch, path, res, 'Restored ' + path, function(err) {
+          if (err) {
+            cb(err);
+          } else {
+            cb();
+          }
+        });
       }).bind(this),
       error: function(err) {
         cb(err);

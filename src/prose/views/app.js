@@ -11,6 +11,7 @@ module.exports = Backbone.View.extend({
       'click .post-views .preview': 'preview',
       'click .post-views .settings': 'settings',
       'click .post-views .meta': 'meta',
+      'click a.item.removed': 'restoreFile',
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
@@ -152,6 +153,21 @@ module.exports = Backbone.View.extend({
       }
 
       $('#prose').toggleClass('open');
+      return false;
+    },
+
+    restoreFile: function(e) {
+      var $target = $(e.target);
+      var path = $target.data('path');
+
+      app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
+        if (err) {
+          console.log(err);
+        } else {
+          // TODO: update UI
+          console.log('File restored!')
+        }
+      });
       return false;
     },
 
