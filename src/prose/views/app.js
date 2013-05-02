@@ -37,7 +37,7 @@ module.exports = Backbone.View.extend({
             // We are in state of the application
             // where we can edit a file
             if (handler.key === 'ctrl+s') {
-              this.udpateFile();
+              this.updateFile();
             }
           }
         }, this));

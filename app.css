@@ -1488,7 +1488,7 @@ label.error {
 .chzn-container .chzn-results li {
   display:none;
   line-height:15px;
-  padding:5px 6px;
+  padding:8px 6px;
   margin:0;
   list-style:none;
   }
@@ -1497,8 +1497,9 @@ label.error {
   display:list-item;
   }
 .chzn-container .chzn-results .highlighted {
-  background-color:#516066;
+  background-color:#90bb74;
   color:#fff;
+  -webkit-font-smoothing:subpixel-antialiased;
   }
 .chzn-container .chzn-results li em {
   background:#f3e3a2;
