@@ -89,6 +89,7 @@ table { border-collapse: collapse; border-spacing:0; }
 
 body,
 textarea,
+button,
 input { font:13px/20px 'OpenSans', sans-serif; }
 
 html, body {
@@ -113,6 +114,19 @@ a {
     color:#202020;
     }
 
+button {
+  border:none;
+  margin:0;
+  width:100%;
+  overflow:visible;
+  cursor:pointer;
+  }
+  button::-moz-focus-inner {
+    border:0;
+    padding:0;
+    }
+
+button,
 .button {
   background:#516066;
   display:block;
@@ -124,6 +138,11 @@ a {
   color:#fff;
   text-align:center;
   }
+  button:active,
+  .button:active {
+    position:relative;
+    top:1px;
+    }
   .button:hover        { background:#3d494e; color:#fff; }
   .button.delete       { background-color:#db6f6f; }
 
@@ -1205,7 +1224,7 @@ ins {
   background:#fff;
   }
 .meta .form {
-  padding-bottom:30px;
+  padding:15px 15px 30px;
   }
   .meta .form-item {
     padding:0 15px;
@@ -1214,10 +1233,10 @@ ins {
       margin:15px 0 0;
       padding:15px 15px 0;
       }
-      .form-item .publish {
+      .form-item button.published {
         background-color:#90bb74;
         }
-        .form-item .publish:hover {
+        .form-item button.published:hover {
           background-color:#73955c;
           }
 
@@ -1437,7 +1456,7 @@ label.error {
   color:#999;
   }
 .chzn-container-multi .chzn-choices .search-choice {
-  background:#90D5DF;
+  background:#eff3f5;
   border:1px solid #2099AA;
   color:#3d494e;
   width:98%;

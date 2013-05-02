@@ -16,6 +16,7 @@ module.exports = Backbone.View.extend({
     events: {
       'click .markdown-snippets a': 'markdownSnippet',
       'click .save-action': 'updateFile',
+      'click .publish': 'updatePublish',
       'change input': 'makeDirty'
     },
 
@@ -202,6 +203,14 @@ module.exports = Backbone.View.extend({
 
       // Pass a popover span to the avatar icon
       $('.save-action', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
+    },
+
+    updatePublish: function() {
+
+      // Check whether this.model.published exists if it does
+      // unpublish and vice versa
+      this.makeDirty();
+      return false;
     },
 
     showDiff: function() {
@@ -482,8 +491,10 @@ module.exports = Backbone.View.extend({
         var tmpl;
         tmpl = _(window.app.templates.button).template();
         $metadataEditor.append(tmpl({
-          label: model.published ? 'Unpublish' : 'Publish',
-          value: model.published ? 'unpublish' : 'publish'
+          name: 'published',
+          label: 'Published',
+          value: model.published ? true : false,
+          state: model.published ? 'Unpublish' : 'Publish'
         }));
 
         _(model.default_metadata).each(function(data) {
