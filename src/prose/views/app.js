@@ -23,6 +23,28 @@ module.exports = Backbone.View.extend({
 
     initialize: function(options) {
 
+      // Key Binding support accross the application.
+      if (!window.shortcutsRegistered) {
+        key('j, k, enter, o, ctrl+s', _.bind(function(e, handler) {
+          if (!app.state.mode || app.state.mode === 'tree') {
+            // We are in any navigation view
+            if (handler.key === 'j' || handler.key === 'k') {
+              utils.pageListing(handler.key);
+            } else {
+              utils.goToFile();
+            }
+          } else {
+            // We are in state of the application
+            // where we can edit a file
+            if (handler.key === 'ctrl+s') {
+              this.udpateFile();
+            }
+          }
+        }, this));
+
+        window.shortcutsRegistered = true;
+      }
+
       app.state = {
         user: '',
         repo: '',

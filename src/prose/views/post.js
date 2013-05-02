@@ -36,15 +36,6 @@ module.exports = Backbone.View.extend({
         metadata: this.model.metadata
       });
 
-      // Key Binding support.
-      key('ctrl+s', 'file', _.bind(function() {
-        this.updateFile();
-        return false;
-      }, this));
-
-      // Attach Keybindings to the current scope
-      key.setScope('file');
-
       this.eventRegister = app.eventRegister;
 
       // Listen for button clicks from the vertical nav
@@ -855,9 +846,6 @@ module.exports = Backbone.View.extend({
 
       // Clear any file state classes in #prose
       this.eventRegister.trigger('updateSaveState', '', '');
-
-      // Unbind Keybindings
-      key.unbind('ctrl+s', 'file');
 
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);

@@ -365,7 +365,6 @@ module.exports = {
     if ($('.item').hasClass('active')) {
       var index = parseInt($('.item.active').data('index'), 10);
       $('.item.active').removeClass('active');
-
       if (handler === 'k') {
         --index;
         $('.item[data-index=' + index + ']').addClass('active');

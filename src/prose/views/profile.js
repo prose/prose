@@ -19,17 +19,6 @@ module.exports = Backbone.View.extend({
        _.bindAll(this, 'remove');
       this.eventRegister.bind('remove', this.remove);
 
-      key('j, k, enter, o', 'projects', _.bind(function(e, handler) {
-        if (handler.key === 'j' || handler.key === 'k') {
-          utils.pageListing(handler.key);
-        } else {
-          utils.goToFile();
-        }
-      }, this));
-
-      // Attach Keybindings to the current scope
-      key.setScope('projects');
-
       var header = {
           avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
           parent: data.user.name || data.user.login,
@@ -109,13 +98,5 @@ module.exports = Backbone.View.extend({
           index: i
         })));
       });
-    },
-
-    remove: function() {
-      this.eventRegister.unbind('remove', this.remove);
-
-      // Unbind Keybindings from the scope
-      key.unbind('j, k, enter, o', 'posts');
-      Backbone.View.prototype.remove.call(this);
     }
 });

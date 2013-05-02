@@ -27,17 +27,6 @@ module.exports = Backbone.View.extend({
     _.bindAll(this, 'remove');
     this.eventRegister.bind('remove', this.remove);
 
-    key('j, k, enter, o', 'posts', _.bind(function(e, handler) {
-      if (handler.key === 'j' || handler.key === 'k') {
-        utils.pageListing(handler.key);
-      } else {
-        utils.goToFile();
-      }
-    }, this));
-
-    // Attach Keybindings to the current scope
-    key.setScope('posts');
-
     var isPrivate = app.state.isPrivate ? ' private' : '';
     var header = {
       avatar: '<span class="icon round repo' + isPrivate +  '"></span>',
@@ -153,14 +142,5 @@ module.exports = Backbone.View.extend({
     }
 
     return false;
-  },
-
-  remove: function() {
-    this.eventRegister.unbind('remove', this.remove);
-
-    // Unbind Keybindings from the scope
-    key.unbind('j, k, enter, o', 'posts');
-
-    Backbone.View.prototype.remove.call(this);
   }
 });
