@@ -16,6 +16,7 @@ module.exports = Backbone.View.extend({
     events: {
       'click .markdown-snippets a': 'markdownSnippet',
       'click .save-action': 'updateFile',
+      'click button': 'toggleButton',
       'change input': 'makeDirty'
     },
 
@@ -193,6 +194,22 @@ module.exports = Backbone.View.extend({
 
       // Pass a popover span to the avatar icon
       $('.save-action', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
+    },
+
+    toggleButton: function(e) {
+      // Check whether this.model.metadata.published exists
+      // if it does unpublish and vice versa
+      var $target = $(e.target);
+      var value = $target.val();
+
+      if (value === 'true') {
+        $target.val(false).html($target.data('off'));
+      } else if (value === 'false') {
+        $target.val(true).html($target.data('on'));
+      }
+
+      this.makeDirty();
+      return false;
     },
 
     showDiff: function() {
@@ -473,14 +490,27 @@ module.exports = Backbone.View.extend({
         var tmpl;
         tmpl = _(window.app.templates.button).template();
         $metadataEditor.append(tmpl({
-          label: model.published ? 'Unpublish' : 'Publish',
-          value: model.published ? 'unpublish' : 'publish'
+          name: 'published',
+          label: 'Published',
+          value: model.metadata.published,
+          on: 'Unpublish',
+          off: 'Publish'
         }));
 
         _(model.default_metadata).each(function(data) {
           if (data && typeof data.field === 'object') {
             switch(data.field.element) {
-              case 'boolean':
+              case 'button':
+                tmpl = _(window.app.templates.button).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  value: data.field.value,
+                  on: data.field.on,
+                  off: data.field.off
+                }));
+                break;
+              case 'checkbox':
                 tmpl = _(window.app.templates.checkbox).template();
                 $metadataEditor.append(tmpl({
                   name: data.name,
@@ -567,6 +597,13 @@ module.exports = Backbone.View.extend({
                 metadata[item.name] = item.checked;
               }
               break;
+            case 'button':
+              if (value === 'true') {
+                metadata[item.name] = true;
+              } else if (value === 'false') {
+                metadata[item.name] = false;
+              }
+              break;
           }
         });
 
@@ -651,6 +688,11 @@ module.exports = Backbone.View.extend({
                     break;
                   case 'checkbox':
                     input[i].checked = value ? 'checked' : false;
+                    matched = true;
+                    break;
+                  case 'button':
+                    input[i].value = value ? true : false;
+                    input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
                     matched = true;
                     break;
                 }
@@ -770,6 +812,64 @@ module.exports = Backbone.View.extend({
           theme: 'prose-bright'
         });
 
+        // Monitor the current selection and apply
+        // an active class to any snippet links
+        if (view.model.lang === 'gfm') {
+          var $snippetLinks = $('.markdown-snippets a', view.el);
+          view.editor.on('cursorActivity', _.bind(function() {
+
+              var selection = _.trim(view.editor.getSelection());
+                  $snippetLinks.removeClass('active');
+
+              var isNumber = parseInt(selection.charAt(0), 10);
+
+              if (!isNumber) {
+                switch (selection.charAt(0)) {
+                  case '#':
+                    if (selection.charAt(1) === '#') { // Subheading Check
+                      $('[data-key="sub-heading"]').addClass('active');
+                    } else {
+                      $('[data-key="heading"]').addClass('active');
+                    }
+                  break;
+                  case '>':
+                      $('[data-key="quote"]').addClass('active');
+                  break;
+                  case '*':
+                    if (selection.charAt(selection.length - 1) === '*') {
+                      $('[data-key="bold"]').addClass('active');
+                    }
+                  break;
+                  case '_':
+                    if (selection.charAt(selection.length - 1) === '_') {
+                      $('[data-key="italic"]').addClass('active');
+                    }
+                  break;
+                  case '!':
+                    if (selection.charAt(1) === '[' && selection.charAt(selection.length - 1) === ')') {
+                      $('[data-key="image"]').addClass('active');
+                    }
+                  break;
+                  case '[':
+                    if (selection.charAt(selection.length - 1) === ')') {
+                      $('[data-key="link"]').addClass('active');
+                    }
+                  break;
+                  case '-':
+                    if (selection.charAt(1) === ' ') {
+                      $('[data-key="list"]').addClass('active');
+                    }
+                  break;
+                }
+              } else {
+
+                if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
+                  $('[data-key="numbered-list"]').addClass('active');
+                }
+              }
+          }, view));
+        }
+
         view.editor.on('change', _.bind(view.makeDirty, view));
         view.refreshCodeMirror();
 
@@ -782,23 +882,24 @@ module.exports = Backbone.View.extend({
     markdownSnippet: function(e) {
       var key = $(e.target, this.el).data('key');
       var snippet = $(e.target, this.el).data('snippet');
+      var selection = _.trim(this.editor.getSelection());
 
       if (this.editor.getSelection !== '') {
         switch(key) {
           case 'bold':
-            this.bold();
+            this.bold(selection);
           break;
           case 'italic':
-            this.italic();
+            this.italic(selection);
           break;
           case 'heading':
-            this.heading();
+            this.heading(selection);
           break;
           case 'sub-heading':
-            this.subHeading();
+            this.subHeading(selection);
           break;
           case 'quote':
-            this.quote();
+            this.quote(selection);
           break;
           default:
             this.editor.replaceSelection(snippet);
@@ -813,45 +914,43 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
-    heading: function() {
-      if (this.editor.getSelection().charAt(0) === '#') {
-        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/#/g, '')));
+    heading: function(s) {
+      if (s.charAt(0) === '#') {
+        this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
       } else {
-        this.editor.replaceSelection('# ' + this.editor.getSelection().replace(/#/g, ''));
+        this.editor.replaceSelection('# ' + s.replace(/#/g, ''));
       }
     },
 
-    subHeading: function() {
-      if (this.editor.getSelection().charAt(0) === '#') {
-        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/#/g, '')));
+    subHeading: function(s) {
+      if (s.charAt(0) === '#') {
+        this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
       } else {
-        this.editor.replaceSelection('## ' + this.editor.getSelection().replace(/#/g, ''));
+        this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
       }
     },
 
-    italic: function() {
-      var selection = this.editor.getSelection();
-      if (selection.charAt(0) === '_' && selection.charAt(selection.length - 1 === '_')) {
-        this.editor.replaceSelection(selection.replace(/_/g, ''));
+    italic: function(s) {
+      if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
+        this.editor.replaceSelection(s.replace(/_/g, ''));
       } else {
-        this.editor.replaceSelection('_' + selection.replace(/_/g, '') + '_');
+        this.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
       }
     },
 
-    bold: function() {
-      var selection = this.editor.getSelection();
-      if (selection.charAt(0) === '*' && selection.charAt(selection.length - 1 === '*')) {
-        this.editor.replaceSelection(selection.replace(/\*/g, ''));
+    bold: function(s) {
+      if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
+        this.editor.replaceSelection(s.replace(/\*/g, ''));
       } else {
-        this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
+        this.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
       }
     },
 
-    quote: function() {
-      if (this.editor.getSelection().charAt(0) === '>') {
-        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/\>/g, '')));
+    quote: function(s) {
+      if (s.charAt(0) === '>') {
+        this.editor.replaceSelection(_.lTrim(s.replace(/\>/g, '')));
       } else {
-        this.editor.replaceSelection('> ' + this.editor.getSelection().replace(/\>/g, ''));
+        this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
       }
     },
 

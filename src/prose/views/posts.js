@@ -17,8 +17,17 @@ module.exports = Backbone.View.extend({
 
   render: function () {
     var that = this;
+    var jailed;
+
+    // Pass a check to template whether we should
+    // stagger the output of a breadcrumb trail
+    if (app.state.config && app.state.config.prose && app.state.config.prose.rooturl) {
+      jailed = app.state.config.prose.rooturl;
+    }
+
     var data = _.extend(this.model, app.state, {
-      currentPath: app.state.path
+      currentPath: app.state.path,
+      jailed: jailed
     });
 
     this.eventRegister = app.eventRegister;
