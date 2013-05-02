@@ -14,7 +14,7 @@ module.exports = Backbone.View.extend({
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
-      'click a.avatar': 'updateFile',
+      'click a.save-action': 'updateFile',
       'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
@@ -22,6 +22,28 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function(options) {
+
+      // Key Binding support accross the application.
+      if (!window.shortcutsRegistered) {
+        key('j, k, enter, o, ctrl+s', _.bind(function(e, handler) {
+          if (!app.state.mode || app.state.mode === 'tree') {
+            // We are in any navigation view
+            if (handler.key === 'j' || handler.key === 'k') {
+              utils.pageListing(handler.key);
+            } else {
+              utils.goToFile();
+            }
+          } else {
+            // We are in state of the application
+            // where we can edit a file
+            if (handler.key === 'ctrl+s') {
+              this.updateFile();
+            }
+          }
+        }, this));
+
+        window.shortcutsRegistered = true;
+      }
 
       app.state = {
         user: '',
@@ -205,6 +227,7 @@ module.exports = Backbone.View.extend({
 
       // Pass a popover span to the avatar icon
       $('#heading', this.el).find('.popup').html(label);
+      $('.save-action').find('.popup').html(label);
 
       $('#prose')
         .removeClass('error saving saved save')
@@ -218,5 +241,6 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('recentFiles', this.recentFiles);
       this.eventRegister.unbind('updateSave', this.updateSave);
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
+      Backbone.View.prototype.remove.call(this);
     }
 });

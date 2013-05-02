@@ -143,15 +143,19 @@ _.filename = function(file) {
 };
 
 
-// Clip a string
+// String Manipulations
 // -------
-
-_.clip = function(str, length) {
-  var res = str.substr(0, length);
-  if (length < str.length) res += ' ...';
-  return res;
+_.trim = function(str) {
+  return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 };
 
+_.rTrim = function(str) {
+  return str.replace(/\s\s*$/, '');
+};
+
+_.lTrim = function(str) {
+  return str.replace(/^\s\s*/, '');
+};
 
 // Concatenate path + file to full filepath
 // -------
@@ -365,7 +369,6 @@ module.exports = {
     if ($('.item').hasClass('active')) {
       var index = parseInt($('.item.active').data('index'), 10);
       $('.item.active').removeClass('active');
-
       if (handler === 'k') {
         --index;
         $('.item[data-index=' + index + ']').addClass('active');

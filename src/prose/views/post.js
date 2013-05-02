@@ -15,6 +15,7 @@ module.exports = Backbone.View.extend({
 
     events: {
       'click .markdown-snippets a': 'markdownSnippet',
+      'click .save-action': 'updateFile',
       'change input': 'makeDirty'
     },
 
@@ -34,15 +35,6 @@ module.exports = Backbone.View.extend({
         preview: this.model.markdown ? marked(this.model.content) : '',
         metadata: this.model.metadata
       });
-
-      // Key Binding support.
-      key('ctrl+s', 'file', _.bind(function() {
-        this.updateFile();
-        return false;
-      }, this));
-
-      // Attach Keybindings to the current scope
-      key.setScope('file');
 
       this.eventRegister = app.eventRegister;
 
@@ -68,7 +60,8 @@ module.exports = Backbone.View.extend({
         .empty()
         .append(tmpl(_.extend(this.model, {
           mode: app.state.mode,
-          metadata: this.model.metadata
+          metadata: this.model.metadata,
+          avatar: this.header.avatar
         })));
 
       // Editor is first up so trigger an active class for it
@@ -78,11 +71,9 @@ module.exports = Backbone.View.extend({
         this.preview();
       } else {
         this.initEditor();
-        if (this.model.markdown) {
-          _.delay(function () {
-            utils.fixedScroll($('.topbar'));
-          }, 1);
-        }
+        _.delay(function () {
+          utils.fixedScroll($('.topbar'));
+        }, 1);
       }
 
       return this;
@@ -93,7 +84,7 @@ module.exports = Backbone.View.extend({
       var isPrivate = app.state.isPrivate ? true : false;
       var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
 
-      var header = {
+      this.header = {
         avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
         parentTrail: parentTrail,
         isPrivate: isPrivate,
@@ -101,7 +92,7 @@ module.exports = Backbone.View.extend({
         alterable: true
       };
 
-      this.eventRegister.trigger('headerContext', header);
+      this.eventRegister.trigger('headerContext', this.header);
     },
 
     edit: function(e) {
@@ -109,11 +100,9 @@ module.exports = Backbone.View.extend({
       // was not initialized.
       if (!this.editor) {
         this.initEditor();
-        if (this.model.markdown) {
-          _.delay(function () {
-            utils.fixedScroll($('.topbar'));
-          }, 1);
-        }
+        _.delay(function () {
+          utils.fixedScroll($('.topbar'));
+        }, 1);
       }
 
       // We want to trigger a re-rendering of the url
@@ -201,6 +190,9 @@ module.exports = Backbone.View.extend({
 
       var saveState = this.model.writeable ? 'Save' : 'Submit Change';
       this.eventRegister.trigger('updateSave', saveState);
+
+      // Pass a popover span to the avatar icon
+      $('.save-action', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
     },
 
     showDiff: function() {
@@ -307,7 +299,7 @@ module.exports = Backbone.View.extend({
                 view.eventRegister.trigger('updateSaveState', 'Submit Change', '');
               }, 3000);
 
-              view.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
+              view.eventRegister.trigger('updateSaveState', '! Try again in 30&nbsp;seconds', 'error');
               return;
             }
 
@@ -418,6 +410,7 @@ module.exports = Backbone.View.extend({
 
       // Delegate
       method.call(this, filepath, filename, filecontent, message);
+      return false;
     },
 
     keyMap: function() {
@@ -821,23 +814,45 @@ module.exports = Backbone.View.extend({
     },
 
     heading: function() {
-      this.editor.replaceSelection('# ' + this.editor.getSelection().replace(/#/g, ''));
+      if (this.editor.getSelection().charAt(0) === '#') {
+        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/#/g, '')));
+      } else {
+        this.editor.replaceSelection('# ' + this.editor.getSelection().replace(/#/g, ''));
+      }
     },
 
     subHeading: function() {
-      this.editor.replaceSelection('## ' + this.editor.getSelection().replace(/#/g, ''));
+      if (this.editor.getSelection().charAt(0) === '#') {
+        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/#/g, '')));
+      } else {
+        this.editor.replaceSelection('## ' + this.editor.getSelection().replace(/#/g, ''));
+      }
     },
 
     italic: function() {
-      this.editor.replaceSelection('_' + this.editor.getSelection().replace(/_/g, '') + '_');
+      var selection = this.editor.getSelection();
+      if (selection.charAt(0) === '_' && selection.charAt(selection.length - 1 === '_')) {
+        this.editor.replaceSelection(selection.replace(/_/g, ''));
+      } else {
+        this.editor.replaceSelection('_' + selection.replace(/_/g, '') + '_');
+      }
     },
 
     bold: function() {
-      this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
+      var selection = this.editor.getSelection();
+      if (selection.charAt(0) === '*' && selection.charAt(selection.length - 1 === '*')) {
+        this.editor.replaceSelection(selection.replace(/\*/g, ''));
+      } else {
+        this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
+      }
     },
 
     quote: function() {
-      this.editor.replaceSelection('> ' + this.editor.getSelection().replace(/\*/g, ''));
+      if (this.editor.getSelection().charAt(0) === '>') {
+        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/\>/g, '')));
+      } else {
+        this.editor.replaceSelection('> ' + this.editor.getSelection().replace(/\>/g, ''));
+      }
     },
 
     remove: function () {
@@ -853,9 +868,6 @@ module.exports = Backbone.View.extend({
 
       // Clear any file state classes in #prose
       this.eventRegister.trigger('updateSaveState', '', '');
-
-      // Unbind Keybindings
-      key.unbind('ctrl+s', 'file');
 
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);
