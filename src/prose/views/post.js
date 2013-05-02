@@ -814,23 +814,45 @@ module.exports = Backbone.View.extend({
     },
 
     heading: function() {
-      this.editor.replaceSelection('# ' + this.editor.getSelection().replace(/#/g, ''));
+      if (this.editor.getSelection().charAt(0) === '#') {
+        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/#/g, '')));
+      } else {
+        this.editor.replaceSelection('# ' + this.editor.getSelection().replace(/#/g, ''));
+      }
     },
 
     subHeading: function() {
-      this.editor.replaceSelection('## ' + this.editor.getSelection().replace(/#/g, ''));
+      if (this.editor.getSelection().charAt(0) === '#') {
+        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/#/g, '')));
+      } else {
+        this.editor.replaceSelection('## ' + this.editor.getSelection().replace(/#/g, ''));
+      }
     },
 
     italic: function() {
-      this.editor.replaceSelection('_' + this.editor.getSelection().replace(/_/g, '') + '_');
+      var selection = this.editor.getSelection();
+      if (selection.charAt(0) === '_' && selection.charAt(selection.length - 1 === '_')) {
+        this.editor.replaceSelection(selection.replace(/_/g, ''));
+      } else {
+        this.editor.replaceSelection('_' + selection.replace(/_/g, '') + '_');
+      }
     },
 
     bold: function() {
-      this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
+      var selection = this.editor.getSelection();
+      if (selection.charAt(0) === '*' && selection.charAt(selection.length - 1 === '*')) {
+        this.editor.replaceSelection(selection.replace(/\*/g, ''));
+      } else {
+        this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
+      }
     },
 
     quote: function() {
-      this.editor.replaceSelection('> ' + this.editor.getSelection().replace(/\*/g, ''));
+      if (this.editor.getSelection().charAt(0) === '>') {
+        this.editor.replaceSelection(_.lTrim(this.editor.getSelection().replace(/\>/g, '')));
+      } else {
+        this.editor.replaceSelection('> ' + this.editor.getSelection().replace(/\>/g, ''));
+      }
     },
 
     remove: function () {
