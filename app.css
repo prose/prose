@@ -1233,10 +1233,16 @@ ins {
       margin:15px 0 0;
       padding:15px 15px 0;
       }
-      .form-item button.published {
+      .form-item button[value='true'] {
+        background-color:#db6f6f;
+        }
+        .form-item button[value='true']:hover {
+          background-color:#ba0000;
+          }
+      .form-item button[value='false'] {
         background-color:#90bb74;
         }
-        .form-item button.published:hover {
+        .form-item button[value='false']:hover {
           background-color:#73955c;
           }
 

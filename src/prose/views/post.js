@@ -16,7 +16,7 @@ module.exports = Backbone.View.extend({
     events: {
       'click .markdown-snippets a': 'markdownSnippet',
       'click .save-action': 'updateFile',
-      'click .publish': 'updatePublish',
+      'click button': 'toggleButton',
       'change input': 'makeDirty'
     },
 
@@ -205,10 +205,18 @@ module.exports = Backbone.View.extend({
       $('.save-action', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
     },
 
-    updatePublish: function() {
+    toggleButton: function(e) {
+      // Check whether this.model.metadata.published exists
+      // if it does unpublish and vice versa
+      var $target = $(e.target);
+      var value = $target.val();
 
-      // Check whether this.model.published exists if it does
-      // unpublish and vice versa
+      if (value === 'true') {
+        $target.val(false).html($target.data('off'));
+      } else if (value === 'false') {
+        $target.val(true).html($target.data('on'));
+      }
+
       this.makeDirty();
       return false;
     },
@@ -493,8 +501,9 @@ module.exports = Backbone.View.extend({
         $metadataEditor.append(tmpl({
           name: 'published',
           label: 'Published',
-          value: model.published ? true : false,
-          state: model.published ? 'Unpublish' : 'Publish'
+          value: model.metadata.published,
+          on: 'Unpublish',
+          off: 'Publish'
         }));
 
         _(model.default_metadata).each(function(data) {
@@ -587,6 +596,13 @@ module.exports = Backbone.View.extend({
                 metadata[item.name] = item.checked;
               }
               break;
+            case 'button':
+              if (value === 'true') {
+                metadata[item.name] = true;
+              } else if (value === 'false') {
+                metadata[item.name] = false;
+              }
+              break;
           }
         });
 
@@ -671,6 +687,11 @@ module.exports = Backbone.View.extend({
                     break;
                   case 'checkbox':
                     input[i].checked = value ? 'checked' : false;
+                    matched = true;
+                    break;
+                  case 'button':
+                    input[i].value = value ? true : false;
+                    input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
                     matched = true;
                     break;
                 }
