@@ -492,7 +492,7 @@ module.exports = Backbone.View.extend({
         tmpl = _(window.app.templates.button).template();
         $metadataEditor.append(tmpl({
           name: 'published',
-          label: 'Published',
+          label: 'Publishing',
           value: model.metadata.published,
           on: 'Unpublish',
           off: 'Publish'
