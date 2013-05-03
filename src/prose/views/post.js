@@ -124,7 +124,7 @@ module.exports = Backbone.View.extend({
     },
 
     preview: function(e) {
-        $('#prose').toggleClass('open', false);
+      $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
         var hash = window.location.hash.split('/');
@@ -238,8 +238,7 @@ module.exports = Backbone.View.extend({
 
     hideDiff: function() {
       $('.views .view', this.el).removeClass('active');
-
-      if (this.model.mode === 'blob') {
+      if (app.state.mode === 'blob') {
         $('.preview', this.el).addClass('active');
       } else {
         $('.edit', this.el).addClass('active');
