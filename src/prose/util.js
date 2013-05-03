@@ -389,20 +389,16 @@ module.exports = {
 
   loader: {
     loading: function(message) {
-      _.delay(function() {
-        var tmpl = _(window.app.templates.loading).template();
-        $('body').append(tmpl({
-          message: message
-        }));
-      }, 500);
+      var tmpl = _(window.app.templates.loading).template();
+      $('body').append(tmpl({
+        message: message
+      }));
     },
 
     loaded: function() {
-      _.delay(function() {
-        $('#loader').fadeOut(150, function() {
-          $(this).remove();
-        });
-      }, 500);
+      $('#loader').fadeOut(150, function() {
+        $(this).remove();
+      });
     }
   }
 };

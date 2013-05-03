@@ -27,7 +27,6 @@ module.exports = Backbone.Router.extend({
   // #example-organization
   profile: function(user) {
     var router = this;
-
     utils.loader.loading('Loading Profile');
 
     // Clean any previous view
