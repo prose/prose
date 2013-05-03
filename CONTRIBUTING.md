@@ -26,12 +26,12 @@ have [node.js](http://nodejs.org) installed.
 
 To get started:
 
-- [Install node.js](http://nodejs.org/). 'Install' will download a package for
+1. [Install node.js](http://nodejs.org/). 'Install' will download a package for
 your OS.
-- Go to the directory where you have checked out `prose`
-- Run `npm install`
-- Run `make`
-- To run prose with authentication you'll need to add an `oauth.json` file
+2. Go to the directory where you have checked out `prose`
+3. Run `npm install`
+4. Run `make`
+5. To run prose with authentication you'll need to add an `oauth.json` file
 to the root directory with the following contents:
 
 ``` js
@@ -43,7 +43,8 @@ to the root directory with the following contents:
 
 Note that you should not commit this file to a remote repo or along with a pull
 request.
-- If you have python handy, from the project root run `python -m SimpleHTTPServer`
+
+Finally, If you have python handy, from the project root run `python -m SimpleHTTPServer`
 to start a server and run the site locally. By default prose will be set up 
 on [http://localhost:8000](http://localhost:8000).
 
@@ -52,3 +53,18 @@ code into a minified `prose.min.js` and see changes.
 
 __ProTip:__ You may want to install `watch` so you can run `watch make` without
 needing to execute `make` on every change.
+
+## Code Style
+
+### Javascript
+
+We use the [Airbnb style for Javascript](https://github.com/airbnb/javascript) with a few differences:
+
+No aligned `=`, no aligned arguments, spaces are either indents or the 1
+space between expressions. No hard tabs, ever. Javascript code should pass
+through [JSHint](http://www.jshint.com/) with no warnings.
+
+### CSS 
+- Use 
+
+
