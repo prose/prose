@@ -54,7 +54,7 @@ module.exports = Backbone.View.extend({
 
       var pathTitle = (app.state.path) ? app.state.path : '';
       var context = 'Editing ';
-      if (app.state.mode = 'preview') context = 'Previewing ';
+      if (app.state.mode = 'blob') context = 'Previewing ';
 
       this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
       this.eventRegister.trigger('sidebarContext', this.data, 'post');
@@ -152,6 +152,8 @@ module.exports = Backbone.View.extend({
         $('#preview', this.el).addClass('active');
 
         this.$('.preview').html(marked(this.model.content));
+
+        app.state.mode = 'blob';
         this.updateURL();
       }
     },
@@ -244,7 +246,7 @@ module.exports = Backbone.View.extend({
     hideDiff: function() {
       $('.views .view', this.el).removeClass('active');
 
-      if (this.model.mode === 'preview') {
+      if (this.model.mode === 'blob') {
         $('.preview', this.el).addClass('active');
       } else {
         $('.edit', this.el).addClass('active');
