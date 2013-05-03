@@ -35,6 +35,12 @@
         %>
         <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, "edit", branch, filename].join("/") %>' data-path='<%= filename %>'>
             <span class='ico small inline <%= status %>'></span>
+            <% if (status === 'removed') { %>
+              <span class='overlay'>
+                <span class='ico small inline <%= status %>'></span>
+                Restore?
+              </span>
+            <% } %>
             <%= filename %>
           </a></li>
         <% }); %>

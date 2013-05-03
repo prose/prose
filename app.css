@@ -1149,6 +1149,23 @@ ins {
   color:#a8afb2;
   font-style:italic;
   }
+  .listing .overlay {
+    background:#fff;
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    width:100%;
+    padding:4px 15px;
+    border-top:1px solid #d4d7d9;
+    border-bottom:1px solid #d4d7d9;
+    opacity:0;
+    -webkit-transition:opacity 150ms;
+       -moz-transition:opacity 150ms;
+         -o-transition:opacity 150ms;
+            transition:opacity 150ms;
+    }
+    .listing a:hover .overlay {
+      opacity:1;
+      }
 
 .prose .blocks {
   margin:0;
