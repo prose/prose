@@ -64,7 +64,9 @@ No aligned `=`, no aligned arguments, spaces are either indents or the 1
 space between expressions. No hard tabs, ever. Javascript code should pass
 through [JSHint](http://www.jshint.com/) with no warnings.
 
-### CSS 
-- Use 
+### CSS & Markup
+- Single Quotes
+- 2 spaces soft tabs
 
+for CSS, use classes to target elements
 
