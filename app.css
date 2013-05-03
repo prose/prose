@@ -233,6 +233,11 @@ input[type=text] {
        -o-transition:border linear 150ms;
           transition:border linear 150ms;
   }
+
+textarea#code {
+  resize:none;
+  border:none;
+  }
 .authoring textarea,
 .views textarea,
 .authoring input[type=text],
@@ -907,7 +912,7 @@ ins {
     }
 
 /* ------------------------------------------
-  Unauthenticated Landing
+  Unauthenticated Landing & Notifications
 ---------------------------------------------*/
 .start {
   background:#fff;
@@ -917,6 +922,7 @@ ins {
   height:100%;
   z-index:5000;
   }
+  .notification,
   .start .splash {
     background:#fff;
     text-align:center;
@@ -1295,26 +1301,6 @@ ins {
 
 .sidebar .button {
   margin-bottom:10px;
-  }
-
-/* ------------------------------------------
-  Notifications
----------------------------------------------*/
-.notify {
-  text-align:center;
-  width:440px;
-  margin:60px auto 0 auto;
-  font-size:24px;
-  line-height:1.5em;
-  font-weight:700;
-  }
-
-label.error {
-  color:#E73C58;
-  position:absolute;
-  right:5px;
-  top:23px;
-  font-size:12px;
   }
 
 /* ------------------------------------------

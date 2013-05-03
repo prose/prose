@@ -5,6 +5,7 @@ var Backbone = require('backbone');
 module.exports = Backbone.View.extend({
 
   id: 'notification',
+  className: 'notification round',
 
   events: {
     'click .create': 'createPost'

@@ -418,6 +418,7 @@ module.exports = Backbone.View.extend({
       var filename = _.extractFilename(filepath)[1];
       var filecontent = this.serialize();
       var defaultMessage = 'Updated ' + filename;
+      if (app.state.mode === 'new') defaultMessage = 'Created ' + filename;
       var message = $('.commit-message').val() || defaultMessage;
       var method = this.model.writeable ? this.saveFile : this.sendPatch;
       this.hideDiff();
@@ -802,7 +803,7 @@ module.exports = Backbone.View.extend({
         }
 
         var lang = view.model.lang;
-        view.editor = CodeMirror($('#code')[0], {
+        view.editor = CodeMirror(document.getElementById('code'), {
           mode: view.model.lang,
           value: view.model.content,
           lineWrapping: true,
