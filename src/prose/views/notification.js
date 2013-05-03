@@ -5,6 +5,7 @@ var Backbone = require('backbone');
 module.exports = Backbone.View.extend({
 
   id: 'notification',
+  className: 'notification round',
 
   events: {
     'click .create': 'createPost'
@@ -16,7 +17,12 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var tmpl = _(window.app.templates.notification).template();
-    $(this.el).html(tmpl(this.model));
+    var pathFromFile = false;
+    if (app.state.mode !== '' && app.state.mode !== 'tree') pathFromFile = true;
+
+    $(this.el).html(tmpl(_.extend(this.model, {
+      pathFromFile: pathFromFile
+    })));
     return this;
   },
 
