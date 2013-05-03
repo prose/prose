@@ -5,7 +5,6 @@ issues or develop on the project the sections below provide
 outlines on how to get started.
 
 ## Reporting Issues
-
 Here's a quick list of things to consider before submitting an issue:
 
 * Please [search for your issue before filing it: many bugs and improvements have already been reported](https://github.com/prose/prose/issues/search?q=)
