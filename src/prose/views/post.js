@@ -439,16 +439,16 @@ module.exports = Backbone.View.extend({
             view.updateFile();
           },
           'Cmd-B': function(codemirror) {
-            if (view.editor.getSelection !== '') view.bold();
+            if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
           },
           'Ctrl-B': function(codemirror) {
-            if (view.editor.getSelection !== '') view.bold();
+            if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
           },
           'Cmd-I': function(codemirror) {
-            if (view.editor.getSelection !== '') view.italic();
+            if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
           },
           'Ctrl-I': function(codemirror) {
-            if (view.editor.getSelection !== '') view.italic();
+            if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
           }
         };
       } else {
