@@ -47,6 +47,8 @@ module.exports = Backbone.View.extend({
       alterable: false
     };
 
+    var pathTitle = (app.state.path) ? '/' + app.state.path : '';
+    this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
     this.eventRegister.trigger('sidebarContext', app.state, 'posts');
     this.eventRegister.trigger('headerContext', header);
 

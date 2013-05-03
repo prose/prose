@@ -29,7 +29,9 @@ module.exports = Backbone.View.extend({
           alterable: false
       };
 
+      this.eventRegister.trigger('documentTitle', app.state.user);
       this.eventRegister.trigger('headerContext', header);
+
       var tmpl = _(window.app.templates.profile).template();
       var sidebar = _(window.app.templates.sidebarOrganizations).template();
 

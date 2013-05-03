@@ -55,7 +55,8 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'headerContext', 'sidebarContext', 'recentFiles', 'updateSave', 'updateSaveState');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSave', 'updateSaveState');
+      this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('sidebarContext', this.sidebarContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
@@ -84,6 +85,10 @@ module.exports = Backbone.View.extend({
       }
 
       return this;
+    },
+
+    documentTitle: function(title) {
+      document.title = title + ' · Prose';
     },
 
     headerContext: function(data) {
@@ -236,6 +241,7 @@ module.exports = Backbone.View.extend({
 
     remove: function() {
       // Unbind pagehide event handler when View is removed
+      this.eventRegister.unbind('documentTitle', this.documentTitle);
       this.eventRegister.unbind('sidebarContext', this.sidebarContext);
       this.eventRegister.unbind('headerContext', this.headerContext);
       this.eventRegister.unbind('recentFiles', this.recentFiles);

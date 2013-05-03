@@ -52,7 +52,11 @@ module.exports = Backbone.View.extend({
       this.eventRegister.bind('meta', this.meta);
       this.eventRegister.bind('remove', this.remove);
 
-      // Ping `views/app.js` to let know we should swap out the sidebar
+      var pathTitle = (app.state.path) ? app.state.path : '';
+      var context = 'Editing ';
+      if (app.state.mode = 'preview') context = 'Previewing ';
+
+      this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
       this.eventRegister.trigger('sidebarContext', this.data, 'post');
       this.renderHeading();
 
