@@ -132,6 +132,7 @@ module.exports = {
   loadRepos: function(username, cb) {
     var user = github().getUser();
     user.show(username, function(err, u) {
+      if (err) return router.navigate('error/' + err.error, true);
 
       // TODO if error, bring up the notification to
       // say, "You need to be a logged in user to do this!"
@@ -455,6 +456,7 @@ module.exports = {
     }
 
     repo.show(function(err, repodata) {
+      if (err) return router.navigate('error/' + err.error, true);
       if (!branch) app.state.branch = branch = repodata.master_branch;
       app.state.isPrivate = repodata.private;
       app.state.permissions = repodata.permissions;
@@ -723,7 +725,7 @@ module.exports = {
     // load default metadata
     var cfg = app.state.config;
     var q = queue();
-    
+
     if (cfg && cfg.prose && cfg.prose.metadata) {
       // match nearest parent directory default metadata
       var nearestPath = path;

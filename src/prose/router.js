@@ -6,6 +6,7 @@ var utils = require('./util');
 module.exports = Backbone.Router.extend({
 
   routes: {
+    'error/:code': 'error',
     ':user': 'profile',
     ':user/:repo': 'repo',
     ':user/:repo/*path': 'path',
@@ -27,7 +28,6 @@ module.exports = Backbone.Router.extend({
   // #example-organization
   profile: function(user) {
     var router = this;
-
     utils.loader.loading('Loading Profile');
 
     // Clean any previous view
@@ -172,7 +172,6 @@ module.exports = Backbone.Router.extend({
 
         app.state.markdown = data.markdown;
         data.jekyll = _.jekyll(path, data.file);
-        data.preview = (mode !== 'edit');
         data.lang = _.mode(file);
 
         this.application.render({
@@ -224,6 +223,29 @@ module.exports = Backbone.Router.extend({
       $('#content').empty();
       $('#prose').append(view.el);
     }
+  },
+
+  // if the application after routing
+  // hits an error code router.navigate('error' + err.error)
+  // sends the route here.
+  error: function(code) {
+    switch (code) {
+      case '404':
+        code = 'Page not Found'
+      break;
+      default:
+        code = 'Error'
+      break;
+    }
+
+    this.application.render();
+    var view = new app.views.Notification({
+      'type': 'Error',
+      'message': code
+    }).render();
+
+    utils.loader.loaded();
+    $('#content').empty().append(view.el);
   },
 
   notify: function(type, message) {
