@@ -258,14 +258,13 @@ em      { font-style:italic; }
 
 /* For Diff Viewing */
 del {
-	background:#f0a4a4;
-  text-decoration:none;
-	color:#d35252;
+  color:#a8afb2;
   }
 ins {
-	background:#bed6a1;
+  background:#D4ECB6;
   text-decoration:none;
-	color:#90bb74;
+  color:#73955c;
+  padding:1px 0;
   }
 
 /* ------------------------------------------
@@ -1245,6 +1244,19 @@ ins {
   .post .view.active {
     display:block;
     }
+  .post .view.diff pre {
+    background:#fff;
+    font-family:Menlo, monospace;
+    font-size:13px;
+    line-height:1.4em;
+    -webkit-font-smoothing:subpixel-antialiased;
+    padding:0;
+    }
+    .post .markdown .view.diff pre {
+      font-size:14px;
+      line-height:1.75em
+      }
+
   .post .view.meta {
     background:#f8f8f8;
     width:360px;
