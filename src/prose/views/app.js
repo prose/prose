@@ -75,13 +75,12 @@ module.exports = Backbone.View.extend({
 
       // When the sidebar should be open.
       // Fix this in re-factor, could be much tighter
-      if (this.model.mode === 'edit' || this.model.mode === 'preview' || this.model.mode === 'new') {
-        $('#prose').toggleClass('open', false);
-        this.viewing = 'edit';
-      } else if (!window.authenticated) {
-        $('#prose').toggleClass('open', false);
-      } else {
+      if (app.state.mode === 'tree') {
         $('#prose').toggleClass('open', true);
+      } else if (app.state.mode === '' && window.authenticated && app.state.user !== '') {
+        $('#prose').toggleClass('open', true);
+      } else {
+        $('#prose').toggleClass('open', false);
       }
 
       return this;
@@ -205,7 +204,7 @@ module.exports = Backbone.View.extend({
     logout: function () {
       window.app.models.logout();
       if ($('#start').length > 0) {
-        app.router.navigate('/', true);
+        router.navigate('/', true);
       } else {
         window.location.reload();
       }
