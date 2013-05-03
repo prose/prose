@@ -2,22 +2,31 @@
     <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>
     data-index='<%= index %>'>
 
-  <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
+  <% if (isBinary) { %>
+    <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
+  <% } else { %>
+  <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
+    <span class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>
+  </a>
+  <% } %>
+
   <div class='fl details'>
     <% if (isBinary) { %>
       <h3 class='title'><%= name %></h3>
     <% } else { %>
         <% if (extension === 'md') { %>
-          <h3><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= filename %></a></h3>
-          <span class='deemphasize'><%= name %></span>
+          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
+            <h3><%= filename %></h3>
+            <span class='deemphasize'><%= name %></span>
+          </a>
         <% } else { %>
-        <h3 class='title'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>
+          <h3 class='title'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>
         <% } %>
       </a>
     <% } %>
   </div>
 
-  <div class='fr actions cleafix'>
+  <div class='actions cleafix'>
     <% if (!isBinary) { %>
       <a class='clearfix'
         title='Edit this File'

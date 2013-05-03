@@ -8,6 +8,7 @@ module.exports = Backbone.View.extend({
 
     events: {
       'mouseover .item': 'activeListing',
+      'mouseover .item a': 'parentActiveListing',
       'keyup #filter': 'search'
     },
 
@@ -83,6 +84,17 @@ module.exports = Backbone.View.extend({
         // Blur out search if its selected
         $('#filter').blur();
       }
+    },
+
+    parentActiveListing: function (e) {
+      $listings = $('.item', this.el);
+      $listing = $(e.target, this.el).closest('li');
+
+      $listings.removeClass('active');
+      $listing.addClass('active');
+
+      // Blur out search if its selected
+      $('#filter').blur();
     },
 
     renderResults: function () {
