@@ -329,10 +329,12 @@ module.exports = {
         var file = configName ? configName.path : false;
 
         models.loadConfig(user, reponame, branch, file, function(config, err) {
+          if (err) return cb('Not found');
+
           var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
           if (!path) path = root;
 
-          if (err) return cb('Not found');
+          var paths = _.pluck(tree, 'path');
 
           models.loadBranches(user, reponame, function(err, branches) {
             if (err) return cb('Branches could not be fetched');
@@ -351,10 +353,16 @@ module.exports = {
             var lastModified;
 
             if (store) {
-              app.state.history = history = JSON.parse(store.getItem('history'));
+              history = JSON.parse(store.getItem('history'));
 
               if (history && history.user === user && history.repo === reponame && history.branch === branch) {
                 lastModified = history.modified;
+
+                history.recent[app.username] = _.filter(history.recent[app.username], function(value) {
+                  return _.pluck(tree, 'path').indexOf(value) > -1;
+                });
+
+                app.state.history = history;
               }
             }
 
@@ -408,6 +416,10 @@ module.exports = {
                       }
                     }
                   }
+
+                  recent[app.username] = _.filter(recent[app.username], function(value) {
+                    return _.pluck(tree, 'path').indexOf(value) > -1;
+                  });
 
                   var history = app.state.history = {
                     'user': user,
