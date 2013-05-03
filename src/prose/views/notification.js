@@ -16,6 +16,11 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
+    this.eventRegister = app.eventRegister;
+
+    var pathTitle = (app.state.path) ? app.state.path : '';
+    this.eventRegister.trigger('documentTitle', 'Error ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+
     var tmpl = _(window.app.templates.notification).template();
     var pathFromFile = false;
     if (app.state.mode !== '' && app.state.mode !== 'tree') pathFromFile = true;

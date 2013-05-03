@@ -198,7 +198,7 @@ label {
   line-height:20px;
   font-weight:700;
   display:block;
-  margin:10px 0 3px;
+  margin:10px 0 4px;
   }
   label.aside {
     display:inline-block;
@@ -258,14 +258,13 @@ em      { font-style:italic; }
 
 /* For Diff Viewing */
 del {
-	background:#f0a4a4;
-  text-decoration:none;
-	color:#d35252;
+  color:#a8afb2;
   }
 ins {
-	background:#bed6a1;
+  background:#D4ECB6;
   text-decoration:none;
-	color:#90bb74;
+  color:#73955c;
+  padding:1px 0;
   }
 
 /* ------------------------------------------
@@ -553,10 +552,13 @@ ins {
             box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
     }
     .vert .nav li a.active {
-      color:#3d494e;
       -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
               box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
       }
+      .vert .nav.post-views li a.active {
+        background-color:#526066;
+        color:#fff;
+        }
 
 .icon {
   background:transparent url('img/sprite.png') no-repeat 0 0;
@@ -740,6 +742,7 @@ ins {
     line-height:40px;
     text-align:center;
     display:block;
+    color:#516066;
     }
   .heading .avatar {
     padding:5px;
@@ -853,12 +856,16 @@ ins {
       }
 
   .content .details {
-    width:360px;
+    width:580px;
     margin:0 15px;
     }
     .content .details a {
       display:block;
       }
+      .content .details a strong {
+        color:#d4d7d9;
+        }
+
     .content .details .title {
       position:relative;
       top:8px;
@@ -1078,56 +1085,65 @@ ins {
   margin-right:15px;
   }
 
-.actions a {
-  background:#f8f8f8;
-  display:block;
-  border:1px solid #a8afb2;
-  padding:0 10px;
-  font-weight:400;
-  margin:5px -1px 0;
-  height:30px;
-  line-height:28px;
-  float:left;
+.listing .actions {
+  position:absolute;
+  right:15px;
+  top:15px;
+  z-index:100;
   }
-  .actions .ico {
-    font-size:18px;
-    }
-  .actions a:active {
-    position:relative;
-    border-color:#516066;
-    }
-
-.sidebar .listing li a {
-  display:block;
-  padding:5px 15px;
-  border-bottom:1px solid #f0f0f0;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-	overflow:hidden;
-  font-weight:400;
-  }
-  .sidebar .listing li:first-child a {
-    border-top:1px solid #f0f0f0;
-    }
-  .listing .item.active,
-  .sidebar .listing li a.active,
-  .sidebar .listing li a:hover {
-    background-color:#f8f8f8;
-    color:#3d494e;
-    }
-  .listing .item.active .round.icon {
-    background-color:#fff;
-    }
-  .content .listing .directory > a,
-  .content .listing li {
+  .listing .actions a {
+    background:#f8f8f8;
     display:block;
-    border-bottom:1px solid #f0f0f0;
-    padding:12px 15px;
+    border:1px solid #a8afb2;
+    padding:0 10px;
+    font-weight:400;
+    margin:5px -1px 0;
+    height:30px;
+    line-height:28px;
+    float:left;
     }
-    .content .listing .directory {
-      border:none;
-      padding:0;
+    .listing .actions .ico {
+      font-size:18px;
       }
+    .listing .actions a:active {
+      position:relative;
+      border-color:#516066;
+      }
+
+.listing li {
+  position:relative;
+  }
+  .sidebar .listing li a {
+    display:block;
+    padding:5px 15px;
+    border-bottom:1px solid #f0f0f0;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    font-weight:400;
+    }
+    .sidebar .listing li:first-child a {
+      border-top:1px solid #f0f0f0;
+      }
+    .listing .item.active,
+    .sidebar .listing li a.active,
+    .sidebar .listing li a:hover {
+      background-color:#f8f8f8;
+      color:#3d494e;
+      }
+    .listing .item.active .round.icon {
+      background-color:#fff;
+      }
+    .content .listing .directory > a,
+    .content .listing li {
+      display:block;
+      padding:12px 15px;
+      border-bottom:1px solid #f0f0f0;
+      }
+      .content .listing .directory {
+        border:none;
+        padding:0;
+        }
 
 .history .status {
   color:#a8afb2;
@@ -1223,7 +1239,13 @@ ins {
   display:inline-block;
   margin:10px 15px;
   }
-  .flag.unpublished { color:#bb9f1a; }
+  .flag.unpublished-flag {
+    font-weight:400;
+    color:#bb9f1a;
+    }
+    .flag.unpublished-flag:hover {
+      color:#deb400;
+      }
 
 .post .view {
   display:none;
@@ -1231,6 +1253,19 @@ ins {
   .post .view.active {
     display:block;
     }
+  .post .view.diff pre {
+    background:#fff;
+    font-family:Menlo, monospace;
+    font-size:13px;
+    line-height:1.4em;
+    -webkit-font-smoothing:subpixel-antialiased;
+    padding:0;
+    }
+    .post .markdown .view.diff pre {
+      font-size:14px;
+      line-height:1.75em
+      }
+
   .post .view.meta {
     background:#f8f8f8;
     width:360px;

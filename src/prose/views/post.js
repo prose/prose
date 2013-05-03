@@ -17,6 +17,7 @@ module.exports = Backbone.View.extend({
       'click .markdown-snippets a': 'markdownSnippet',
       'click .save-action': 'updateFile',
       'click button': 'toggleButton',
+      'click .unpublished-flag': 'meta',
       'change input': 'makeDirty'
     },
 
@@ -51,7 +52,11 @@ module.exports = Backbone.View.extend({
       this.eventRegister.bind('meta', this.meta);
       this.eventRegister.bind('remove', this.remove);
 
-      // Ping `views/app.js` to let know we should swap out the sidebar
+      var pathTitle = (app.state.path) ? app.state.path : '';
+      var context = 'Editing ';
+      if (app.state.mode = 'preview') context = 'Previewing ';
+
+      this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
       this.eventRegister.trigger('sidebarContext', this.data, 'post');
       this.renderHeading();
 
@@ -164,6 +169,7 @@ module.exports = Backbone.View.extend({
 
       // Refresh CodeMirror
       if (this.rawEditor) this.rawEditor.refresh();
+      return false;
     },
 
     deleteFile: function() {
@@ -492,7 +498,7 @@ module.exports = Backbone.View.extend({
         tmpl = _(window.app.templates.button).template();
         $metadataEditor.append(tmpl({
           name: 'published',
-          label: 'Published',
+          label: 'Publishing',
           value: model.metadata.published,
           on: 'Unpublish',
           off: 'Publish'

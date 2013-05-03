@@ -11,6 +11,7 @@ module.exports = Backbone.View.extend({
 
   events: {
     'mouseover .item': 'activeListing',
+    'mouseover .item a': 'parentActiveListing',
     'click .delete': 'deleteFile',
     'keyup #filter': 'search'
   },
@@ -46,6 +47,8 @@ module.exports = Backbone.View.extend({
       alterable: false
     };
 
+    var pathTitle = (app.state.path) ? '/' + app.state.path : '';
+    this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
     this.eventRegister.trigger('sidebarContext', app.state, 'posts');
     this.eventRegister.trigger('headerContext', header);
 
@@ -90,6 +93,7 @@ module.exports = Backbone.View.extend({
     $files.empty();
 
     _(this.model.files).each(function(f, i) {
+      // Directories ..
       if (f.type === 'tree') {
         $files.append(directories({
           index: i,
@@ -100,11 +104,12 @@ module.exports = Backbone.View.extend({
           name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
         }));
       } else {
+        // Files ..
         $files.append(files({
           index: i,
-          extension: _.extension(f.name),
-          isBinary: _.isBinary(_.extension(f.name)),
-          isMedia: _.isMedia(_.extension(f.name)),
+          extension: _.extension(f.path),
+          isBinary: _.isBinary(_.extension(f.path)),
+          isMedia: _.isMedia(_.extension(f.path)),
           repo: data.repo,
           branch: data.branch,
           path: f.path,
@@ -137,6 +142,17 @@ module.exports = Backbone.View.extend({
       // Blur out search if its selected
       $('#filter').blur();
     }
+  },
+
+  parentActiveListing: function (e) {
+    $listings = $('.item', this.el);
+    $listing = $(e.target, this.el).closest('li');
+
+    $listings.removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    $('#filter').blur();
   },
 
   deleteFile: function(e) {
