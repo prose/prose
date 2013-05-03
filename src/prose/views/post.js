@@ -17,6 +17,7 @@ module.exports = Backbone.View.extend({
       'click .markdown-snippets a': 'markdownSnippet',
       'click .save-action': 'updateFile',
       'click button': 'toggleButton',
+      'click .unpublished-flag': 'meta',
       'change input': 'makeDirty'
     },
 
@@ -164,6 +165,7 @@ module.exports = Backbone.View.extend({
 
       // Refresh CodeMirror
       if (this.rawEditor) this.rawEditor.refresh();
+      return false;
     },
 
     deleteFile: function() {
