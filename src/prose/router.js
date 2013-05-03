@@ -172,7 +172,6 @@ module.exports = Backbone.Router.extend({
 
         app.state.markdown = data.markdown;
         data.jekyll = _.jekyll(path, data.file);
-        data.preview = (mode !== 'edit');
         data.lang = _.mode(file);
 
         this.application.render({

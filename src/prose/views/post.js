@@ -31,7 +31,6 @@ module.exports = Backbone.View.extend({
 
     render: function() {
       var view = this;
-
       this.data = _.extend(this.model, {
         mode: app.state.mode,
         preview: this.model.markdown ? marked(this.model.content) : '',
@@ -54,7 +53,7 @@ module.exports = Backbone.View.extend({
 
       var pathTitle = (app.state.path) ? app.state.path : '';
       var context = 'Editing ';
-      if (app.state.mode = 'blob') context = 'Previewing ';
+      if (app.state.mode === 'blob') context = 'Previewing ';
 
       this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
       this.eventRegister.trigger('sidebarContext', this.data, 'post');
@@ -70,12 +69,12 @@ module.exports = Backbone.View.extend({
           avatar: this.header.avatar
         })));
 
-      // Editor is first up so trigger an active class for it
-      $('.post-views .edit').toggleClass('active', true);
-
       if (this.model.markdown && app.state.mode === 'blob') {
         this.preview();
       } else {
+        // Editor is first up so trigger an active class for it
+        $('.post-views .edit').toggleClass('active', true);
+
         this.initEditor();
         _.delay(function () {
           utils.fixedScroll($('.topbar'));
@@ -111,12 +110,8 @@ module.exports = Backbone.View.extend({
         }, 1);
       }
 
-      // We want to trigger a re-rendering of the url
-      // if mode is set to preview
-      if (this.model.preview) {
-        this.model.preview = false;
-        this.updateURL();
-      }
+      app.state.mode = 'edit';
+      this.updateURL();
 
       $('.post-views a').removeClass('active');
       $('.post-views .edit').addClass('active');
@@ -129,8 +124,7 @@ module.exports = Backbone.View.extend({
     },
 
     preview: function(e) {
-      this.model.preview = true;
-      $('#prose').toggleClass('open', false);
+        $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
         var hash = window.location.hash.split('/');
@@ -142,7 +136,6 @@ module.exports = Backbone.View.extend({
           href: hash.join('/')
         });
       } else {
-
         // Vertical Nav
         $('.post-views a').removeClass('active');
         $('.post-views .preview').addClass('active');
