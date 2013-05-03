@@ -359,7 +359,8 @@ module.exports = {
                 lastModified = history.modified;
 
                 history.recent[app.username] = _.filter(history.recent[app.username], function(value) {
-                  return _.pluck(tree, 'path').indexOf(value) > -1;
+                  return history.commits[value][0].status === 'removed' ||
+                    _.pluck(tree, 'path').indexOf(value) > -1;
                 });
 
                 app.state.history = history;
@@ -418,7 +419,8 @@ module.exports = {
                   }
 
                   recent[app.username] = _.filter(recent[app.username], function(value) {
-                    return _.pluck(tree, 'path').indexOf(value) > -1;
+                    return state[value][0].status === 'removed' ||
+                      _.pluck(tree, 'path').indexOf(value) > -1;
                   });
 
                   var history = app.state.history = {
