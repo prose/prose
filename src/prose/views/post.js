@@ -827,9 +827,9 @@ module.exports = Backbone.View.extend({
               if (!isNumber) {
                 switch (selection.charAt(0)) {
                   case '#':
-                    if (selection.charAt(1) === '#') { // Subheading Check
+                    if (selection.charAt(1) === '#' && selection.charAt(2) !== '#') { // Subheading Check
                       $('[data-key="sub-heading"]').addClass('active');
-                    } else {
+                    } else if (selection.charAt(1) !== '#'){
                       $('[data-key="heading"]').addClass('active');
                     }
                   break;
@@ -916,7 +916,7 @@ module.exports = Backbone.View.extend({
     },
 
     heading: function(s) {
-      if (s.charAt(0) === '#') {
+      if (s.charAt(0) === '#' && s.charAt(1) !== '#') {
         this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
       } else {
         this.editor.replaceSelection('# ' + s.replace(/#/g, ''));
@@ -924,7 +924,7 @@ module.exports = Backbone.View.extend({
     },
 
     subHeading: function(s) {
-      if (s.charAt(0) === '#') {
+      if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
         this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
       } else {
         this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
