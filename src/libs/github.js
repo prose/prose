@@ -529,7 +529,7 @@ var _ = require('underscore');
       // Delete the gist
       // --------
 
-      this.delete = function(cb) {
+      this.removeGist = function(cb) {
         _request("DELETE", gistPath, null, function(err,res) {
           cb(err,res);
         });
