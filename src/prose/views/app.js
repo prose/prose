@@ -11,9 +11,11 @@ module.exports = Backbone.View.extend({
       'click .post-views .preview': 'preview',
       'click .post-views .settings': 'settings',
       'click .post-views .meta': 'meta',
+      'click a.item.removed': 'restoreFile',
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
+      'click a.save-action': 'updateFile',
       'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
@@ -21,6 +23,28 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function(options) {
+
+      // Key Binding support accross the application.
+      if (!window.shortcutsRegistered) {
+        key('j, k, enter, o, ctrl+s', _.bind(function(e, handler) {
+          if (!app.state.mode || app.state.mode === 'tree') {
+            // We are in any navigation view
+            if (handler.key === 'j' || handler.key === 'k') {
+              utils.pageListing(handler.key);
+            } else {
+              utils.goToFile();
+            }
+          } else {
+            // We are in state of the application
+            // where we can edit a file
+            if (handler.key === 'ctrl+s') {
+              this.updateFile();
+            }
+          }
+        }, this));
+
+        window.shortcutsRegistered = true;
+      }
 
       app.state = {
         user: '',
@@ -32,35 +56,41 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'headerContext', 'sidebarContext', 'recentFiles', 'updateSave', 'updateSaveState');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState');
+      this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('sidebarContext', this.sidebarContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
-      this.eventRegister.bind('updateSave', this.updateSave);
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
     },
 
     render: function(options) {
       var tmpl = _(window.app.templates.app).template();
       var isJekyll = false;
+      var errorPage = false;
       if (options && options.jekyll) isJekyll = options.jekyll;
+      if (options && options.error) errorPage = options.error;
 
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
-        jekyll: isJekyll
+        jekyll: isJekyll,
+        error: errorPage
       })));
 
       // When the sidebar should be open.
       // Fix this in re-factor, could be much tighter
-      if (this.model.mode === 'edit' || this.model.mode === 'preview' || this.model.mode === 'new') {
-        $('#prose').toggleClass('open', false);
-        this.viewing = 'edit';
-      } else if (!window.authenticated) {
-        $('#prose').toggleClass('open', false);
-      } else {
+      if (app.state.mode === 'tree') {
         $('#prose').toggleClass('open', true);
+      } else if (app.state.mode === '' && window.authenticated && app.state.user !== '') {
+        $('#prose').toggleClass('open', true);
+      } else {
+        $('#prose').toggleClass('open', false);
       }
 
       return this;
+    },
+
+    documentTitle: function(title) {
+      document.title = title + ' · Prose';
     },
 
     headerContext: function(data) {
@@ -72,9 +102,9 @@ module.exports = Backbone.View.extend({
       var sidebarTmpl;
 
       if (context === 'post') {
-        sidebarTmpl = _(window.app.templates.settings).template();
+        sidebarTmpl = _(app.templates.settings).template();
       } else if (context === 'posts') {
-        sidebarTmpl = _(window.app.templates.sidebarProject).template();
+        sidebarTmpl = _(app.templates.sidebarProject).template();
       }
 
       $('#drawer', this.el)
@@ -88,7 +118,7 @@ module.exports = Backbone.View.extend({
     },
 
     recentFiles: function(data) {
-      var sidebarTmpl = _(window.app.templates['recentFiles']).template();
+      var sidebarTmpl = _(window.app.templates.recentFiles).template();
       $('#drawer', this.el).empty().append(sidebarTmpl(data));
     },
 
@@ -129,6 +159,40 @@ module.exports = Backbone.View.extend({
       }
 
       $('#prose').toggleClass('open');
+      return false;
+    },
+
+    restoreFile: function(e) {
+      var $target = $(e.currentTarget);
+      var $overlay = $(e.currentTarget).find('.overlay');
+      var path = $target.data('path');
+
+      // Spinning icon
+      var message = '<span class="ico small inline saving"></span> Restoring ' + path;
+      $overlay.html(message);
+
+      app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
+        if (err) {
+          message = '<span class="ico small inline error"></span> !Try again in 30 Seconds';
+          $overlay.html(message);
+        } else {
+          message = '<span class="ico small inline checkmark"></span> Restored ' + path;
+          $overlay.html(message);
+          $overlay.removeClass('removed').addClass('restored');
+
+          // Update the listing anchor link
+          $target
+            .removeClass('removed')
+            .attr('title', 'Restored ' + path)
+            .addClass('added');
+
+          // Update the anchor listing icon
+          $target.find('.removed')
+            .removeClass('removed')
+            .addClass('added');
+        }
+      });
+
       return false;
     },
 
@@ -177,38 +241,42 @@ module.exports = Backbone.View.extend({
     logout: function () {
       window.app.models.logout();
       if ($('#start').length > 0) {
-        app.router.navigate('/', true);
+        router.navigate('/', true);
       } else {
         window.location.reload();
       }
       return false;
     },
 
-    updateSave: function(saveState) {
-      if (!$('.button.save', this.el).hasClass('saving')) {
-        $('.button.save', this.el)
-          .html(saveState)
-          .removeClass('error');
+    updateSaveState: function(label, classes, kill) {
+      var view = this;
 
-        $('#prose')
-          .removeClass()
-          .addClass('save');
-      }
-    },
+      // Cancel if this condition is met
+      if (classes === 'save' && $(this.el).hasClass('saving')) return;
+      $('.button.save', this.el).html(label);
 
-    updateSaveState: function(label, classes) {
-      $('.button.save', this.el).html(label)
-      $('#prose')
-        .removeClass()
+      // Pass a popover span to the avatar icon
+      $('#heading', this.el).find('.popup').html(label);
+      $('.save-action').find('.popup').html(label);
+
+      $(this.el)
+        .removeClass('error saving saved save')
         .addClass(classes);
+
+      if (kill) {
+        _.delay(function() {
+          $(view.el).removeClass(classes);
+        }, 2000);
+      }
     },
 
     remove: function() {
       // Unbind pagehide event handler when View is removed
+      this.eventRegister.unbind('documentTitle', this.documentTitle);
       this.eventRegister.unbind('sidebarContext', this.sidebarContext);
       this.eventRegister.unbind('headerContext', this.headerContext);
       this.eventRegister.unbind('recentFiles', this.recentFiles);
-      this.eventRegister.unbind('updateSave', this.updateSave);
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
+      Backbone.View.prototype.remove.call(this);
     }
 });

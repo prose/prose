@@ -42,7 +42,7 @@ auth.done(function(res) {
   window.app.auth = {
     id: res.clientId,
     url: res.gatekeeperUrl
-  }
+  };
 
   if (window.app.models.authenticate()) {
     window.app.models.loadApplication(function(err, data) {

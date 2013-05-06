@@ -14,14 +14,15 @@ module.exports = Backbone.View.extend({
     className: 'post',
 
     events: {
-      'click .update': 'saveMeta',
       'click .markdown-snippets a': 'markdownSnippet',
+      'click .save-action': 'updateFile',
+      'click button': 'toggleButton',
+      'click .unpublished-flag': 'meta',
       'change input': 'makeDirty'
     },
 
     initialize: function() {
       this.prevFile = this.serialize();
-      this.model.original = this.model.content;
 
       // Stash editor and metadataEditor content to sessionStorage on pagehide event
       // Always run stashFile in context of view
@@ -30,20 +31,11 @@ module.exports = Backbone.View.extend({
 
     render: function() {
       var view = this;
-      var data = _.extend(this.model, {
+      this.data = _.extend(this.model, {
         mode: app.state.mode,
         preview: this.model.markdown ? marked(this.model.content) : '',
         metadata: this.model.metadata
       });
-
-      // Key Binding support.
-      key('⌘+s, ctrl+s', 'file', _.bind(function() {
-        this.updateFile();
-        return false;
-      }, this));
-
-      // Attach Keybindings to the current scope
-      key.setScope('file');
 
       this.eventRegister = app.eventRegister;
 
@@ -59,22 +51,13 @@ module.exports = Backbone.View.extend({
       this.eventRegister.bind('meta', this.meta);
       this.eventRegister.bind('remove', this.remove);
 
-      // Ping `views/app.js` to let know we should swap out the sidebar
-      this.eventRegister.trigger('sidebarContext', data, 'post');
+      var pathTitle = (app.state.path) ? app.state.path : '';
+      var context = 'Editing ';
+      if (app.state.mode === 'blob') context = 'Previewing ';
 
-      // Render heading
-      var isPrivate = app.state.isPrivate ? true : false;
-      var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
-
-      var header = {
-        avatar: '<span class="ico round document ' + data.lang + '"></span>',
-        parentTrail: parentTrail,
-        isPrivate: isPrivate,
-        title: _.filepath(data.path, data.file),
-        alterable: true
-      };
-
-      this.eventRegister.trigger('headerContext', header);
+      this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+      this.eventRegister.trigger('sidebarContext', this.data, 'post');
+      this.renderHeading();
 
       var tmpl = _(window.app.templates.post).template();
 
@@ -82,60 +65,66 @@ module.exports = Backbone.View.extend({
         .empty()
         .append(tmpl(_.extend(this.model, {
           mode: app.state.mode,
-          metadata: this.model.metadata
+          metadata: this.model.metadata,
+          avatar: this.header.avatar
         })));
-
-      // TODO Add an unpublished class to .application
-      if (!this.model.published) $(this.el).addClass('published');
-
-      // Editor is first up so trigger an active class for it
-      $('.post-views .edit').toggleClass('active', true);
 
       if (this.model.markdown && app.state.mode === 'blob') {
         this.preview();
       } else {
+        // Editor is first up so trigger an active class for it
+        $('#edit', this.el).toggleClass('active', true);
+
         this.initEditor();
-        if (this.model.markdown) {
-          _.delay(function () {
-            utils.fixedScroll($('.topbar'));
-          }, 1);
-        }
+        _.delay(function () {
+          utils.fixedScroll($('.topbar', view.el));
+        }, 1);
       }
 
       return this;
     },
 
+    renderHeading: function() {
+      // Render heading
+      var isPrivate = app.state.isPrivate ? true : false;
+      var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
+
+      this.header = {
+        avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
+        parentTrail: parentTrail,
+        isPrivate: isPrivate,
+        title: _.filepath(this.data.path, this.data.file),
+        alterable: true
+      };
+
+      this.eventRegister.trigger('headerContext', this.header);
+    },
+
     edit: function(e) {
+      var view = this;
       // If preview was hit on load this.editor
       // was not initialized.
       if (!this.editor) {
         this.initEditor();
-        if (this.model.markdown) {
-          _.delay(function () {
-            utils.fixedScroll($('.topbar'));
-          }, 1);
-        }
+        _.delay(function () {
+          utils.fixedScroll($('.topbar', view.el));
+        }, 1);
       }
 
-      // We want to trigger a re-rendering of the url
-      // if mode is set to preview
-      if (this.model.preview) {
-        this.model.preview = false;
-        this.updateURL();
-      }
+      app.state.mode = 'edit';
+      this.updateURL();
 
       $('.post-views a').removeClass('active');
       $('.post-views .edit').addClass('active');
       $('#prose').toggleClass('open', false);
 
-      $('.views .view').removeClass('active');
-      $('.views .edit').addClass('active');
+      $('.views .view', this.el).removeClass('active');
+      $('#edit', this.el).addClass('active');
 
       return false;
     },
 
     preview: function(e) {
-      this.model.preview = true;
       $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
@@ -148,16 +137,17 @@ module.exports = Backbone.View.extend({
           href: hash.join('/')
         });
       } else {
-
         // Vertical Nav
         $('.post-views a').removeClass('active');
         $('.post-views .preview').addClass('active');
 
         // Content Window
         $('.views .view', this.el).removeClass('active');
-        $('#preview', this.el).addClass('active');
+        $('#preview', this.el)
+          .addClass('active')
+          .html(marked(this.model.content));
 
-        this.$('.preview').html(marked(this.model.content));
+        app.state.mode = 'blob';
         this.updateURL();
       }
     },
@@ -175,10 +165,11 @@ module.exports = Backbone.View.extend({
 
       // Refresh CodeMirror
       if (this.rawEditor) this.rawEditor.refresh();
+      return false;
     },
 
     deleteFile: function() {
-      if (confirm('Are you sure you want to delete that file?')) {
+      if (confirm('Are you sure you want to delete this file?')) {
         window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function (err) {
           if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
           router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
@@ -188,7 +179,7 @@ module.exports = Backbone.View.extend({
     },
 
     updateURL: function() {
-      var url = _.compact([app.state.user, app.state.repo, this.model.preview ? 'blob' : 'edit', app.state.branch, this.model.path, this.model.file]);
+      var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
       router.navigate(url.join('/'), {
         trigger: false,
         replace: true
@@ -200,14 +191,33 @@ module.exports = Backbone.View.extend({
       if (this.editor) this.model.content = this.editor.getValue();
       if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
-      var saveState = this.model.writeable ? 'Save' : 'Submit Change';
-      this.eventRegister.trigger('updateSave', saveState);
+      var label = this.model.writeable ? 'Save' : 'Submit Change';
+      this.eventRegister.trigger('updateSaveState', label, 'save');
+
+      // Pass a popover span to the avatar icon
+      $('.save-action', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
+    },
+
+    toggleButton: function(e) {
+      // Check whether this.model.metadata.published exists
+      // if it does unpublish and vice versa
+      var $target = $(e.target);
+      var value = $target.val();
+
+      if (value === 'true') {
+        $target.val(false).html($target.data('off'));
+      } else if (value === 'false') {
+        $target.val(true).html($target.data('on'));
+      }
+
+      this.makeDirty();
+      return false;
     },
 
     showDiff: function() {
       var $diff = $('#diff', this.el);
-      var text1 = this.model.persisted ? this.prevFile : '';
-      var text2 = this.serialize();
+      var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
+      var text2 = _.escape(this.serialize());
       var d = diff.diffWords(text1, text2);
       var compare = '';
 
@@ -229,11 +239,10 @@ module.exports = Backbone.View.extend({
 
     hideDiff: function() {
       $('.views .view', this.el).removeClass('active');
-
-      if (this.model.mode === 'preview') {
-        $('.preview', this.el).addClass('active');
+      if (app.state.mode === 'blob') {
+        $('#preview', this.el).addClass('active');
       } else {
-        $('.edit', this.el).addClass('active');
+        $('#edit', this.el).addClass('active');
       }
     },
 
@@ -247,15 +256,7 @@ module.exports = Backbone.View.extend({
 
     updateMetaData: function() {
       if (!this.model.jekyll) return true; // metadata -> skip
-
       this.model.metadata = this.metadataEditor.getValue();
-
-      if (this.model.metadata.published) {
-        $('#post').addClass('published');
-      } else {
-        $('#post').removeClass('published');
-      }
-
       return true;
     },
 
@@ -271,7 +272,7 @@ module.exports = Backbone.View.extend({
         view.model.path = app.state.path;
         view.model.file = app.state.file;
         // re-render header to reflect the filename change
-        app.instance.app.render();
+        view.renderHeading();
         view.updateURL();
       }
 
@@ -316,7 +317,7 @@ module.exports = Backbone.View.extend({
                 view.eventRegister.trigger('updateSaveState', 'Submit Change', '');
               }, 3000);
 
-              view.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
+              view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
 
@@ -345,10 +346,7 @@ module.exports = Backbone.View.extend({
         if (view.updateMetaData()) {
           window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
-              _.delay(function () {
-                view.makeDirty();
-              }, 3000);
-              view.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
+              view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
             view.dirty = false;
@@ -356,11 +354,10 @@ module.exports = Backbone.View.extend({
             view.model.file = filename;
             view.updateURL();
             view.prevFile = filecontent;
-            view.model.original = view.model.content;
-            view.eventRegister.trigger('updateSaveState', 'Saved', 'saved');
+            view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
           });
         } else {
-          view.eventRegister.trigger('updateSaveState', '! Metadata', 'error');
+          view.eventRegister.trigger('updateSaveState', '!Metadata', 'error');
         }
       }
 
@@ -417,37 +414,12 @@ module.exports = Backbone.View.extend({
       }
     },
 
-    saveMeta: function() {
-      var filepath = $('input.filepath').val();
-      var filename = _.extractFilename(filepath)[1];
-      var defaultMessage = 'Updated metadata for ' + filename;
-      var message = $('.commit-message').val() || defaultMessage;
-      var method = this.model.writeable ? this.saveFile : this.sendPatch;
-
-      // We want to update the metadata but not the current edited content.
-      var filecontent =  this.serialize(this.model.original, this.model.raw_metadata);
-
-      // Update content
-      this.model.content = this.editor.getValue();
-
-      // Delegate
-      method.call(this, filepath, filename, filecontent, message);
-
-      $('.post-views a').removeClass('active');
-      $('.post-views .edit').addClass('active');
-      $('#prose').toggleClass('open', false);
-
-      $('.views .view').removeClass('active');
-      $('.views .edit').addClass('active');
-
-      return false;
-    },
-
     updateFile: function() {
       var filepath = $('input.filepath').val();
       var filename = _.extractFilename(filepath)[1];
       var filecontent = this.serialize();
       var defaultMessage = 'Updated ' + filename;
+      if (app.state.mode === 'new') defaultMessage = 'Created ' + filename;
       var message = $('.commit-message').val() || defaultMessage;
       var method = this.model.writeable ? this.saveFile : this.sendPatch;
       this.hideDiff();
@@ -457,6 +429,7 @@ module.exports = Backbone.View.extend({
 
       // Delegate
       method.call(this, filepath, filename, filecontent, message);
+      return false;
     },
 
     keyMap: function() {
@@ -468,16 +441,16 @@ module.exports = Backbone.View.extend({
             view.updateFile();
           },
           'Cmd-B': function(codemirror) {
-            if (view.editor.getSelection !== '') view.bold();
+            if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
           },
           'Ctrl-B': function(codemirror) {
-            if (view.editor.getSelection !== '') view.bold();
+            if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
           },
           'Cmd-I': function(codemirror) {
-            if (view.editor.getSelection !== '') view.italic();
+            if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
           },
           'Ctrl-I': function(codemirror) {
-            if (view.editor.getSelection !== '') view.italic();
+            if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
           }
         };
       } else {
@@ -517,19 +490,29 @@ module.exports = Backbone.View.extend({
 
       function initialize(model) {
         var tmpl;
-
-        tmpl = _(window.app.templates.checkbox).template();
+        tmpl = _(window.app.templates.button).template();
         $metadataEditor.append(tmpl({
           name: 'published',
-          label: 'Published',
-          value: 'published',
-          checked: model.published
+          label: 'Publishing',
+          value: model.metadata.published,
+          on: 'Unpublish',
+          off: 'Publish'
         }));
 
         _(model.default_metadata).each(function(data) {
           if (data && typeof data.field === 'object') {
             switch(data.field.element) {
-              case 'boolean':
+              case 'button':
+                tmpl = _(window.app.templates.button).template();
+                $metadataEditor.append(tmpl({
+                  name: data.name,
+                  label: data.field.label,
+                  value: data.field.value,
+                  on: data.field.on,
+                  off: data.field.off
+                }));
+                break;
+              case 'checkbox':
                 tmpl = _(window.app.templates.checkbox).template();
                 $metadataEditor.append(tmpl({
                   name: data.name,
@@ -614,6 +597,13 @@ module.exports = Backbone.View.extend({
                 metadata[item.name] = item.checked;
               } else {
                 metadata[item.name] = item.checked;
+              }
+              break;
+            case 'button':
+              if (value === 'true') {
+                metadata[item.name] = true;
+              } else if (value === 'false') {
+                metadata[item.name] = false;
               }
               break;
           }
@@ -702,6 +692,11 @@ module.exports = Backbone.View.extend({
                     input[i].checked = value ? 'checked' : false;
                     matched = true;
                     break;
+                  case 'button':
+                    input[i].value = value ? true : false;
+                    input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
+                    matched = true;
+                    break;
                 }
 
               }
@@ -726,15 +721,15 @@ module.exports = Backbone.View.extend({
                 .prepend('<label for="raw">Raw Metadata</label>')
                 .appendTo($metadataEditor);
 
-              view.rawEditor = CodeMirror(
-                $('#raw')[0], {
+              view.rawEditor = CodeMirror(document.getElementById('raw'), {
                   mode: 'yaml',
                   value: jsyaml.dump(raw),
                   lineWrapping: true,
                   extraKeys: view.keyMap(),
-                  theme: 'prose-bright',
-                  onChange: _.bind(view.makeDirty, view)
+                  theme: 'prose-bright'
               });
+
+              view.rawEditor.on('change', _.bind(view.makeDirty, view));
             }
           }
         });
@@ -801,20 +796,79 @@ module.exports = Backbone.View.extend({
       var view = this;
 
       // TODO Remove setTimeout
-      setTimeout(function () {
+      setTimeout(function() {
         if (view.model.jekyll) {
           view.metadataEditor = view.buildMeta();
-          $('#post .metadata').hide();
         }
 
-        view.editor = CodeMirror($('#code')[0], {
+        var lang = view.model.lang;
+        view.editor = CodeMirror(document.getElementById('code'), {
           mode: view.model.lang,
           value: view.model.content,
           lineWrapping: true,
+          lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
           extraKeys: view.keyMap(),
           matchBrackets: true,
           theme: 'prose-bright'
         });
+
+        // Monitor the current selection and apply
+        // an active class to any snippet links
+        if (view.model.lang === 'gfm') {
+          var $snippetLinks = $('.markdown-snippets a', view.el);
+          view.editor.on('cursorActivity', _.bind(function() {
+
+              var selection = _.trim(view.editor.getSelection());
+                  $snippetLinks.removeClass('active');
+
+              var isNumber = parseInt(selection.charAt(0), 10);
+
+              if (!isNumber) {
+                switch (selection.charAt(0)) {
+                  case '#':
+                    if (selection.charAt(1) === '#' && selection.charAt(2) !== '#') { // Subheading Check
+                      $('[data-key="sub-heading"]').addClass('active');
+                    } else if (selection.charAt(1) !== '#'){
+                      $('[data-key="heading"]').addClass('active');
+                    }
+                  break;
+                  case '>':
+                      $('[data-key="quote"]').addClass('active');
+                  break;
+                  case '*':
+                    if (selection.charAt(selection.length - 1) === '*') {
+                      $('[data-key="bold"]').addClass('active');
+                    }
+                  break;
+                  case '_':
+                    if (selection.charAt(selection.length - 1) === '_') {
+                      $('[data-key="italic"]').addClass('active');
+                    }
+                  break;
+                  case '!':
+                    if (selection.charAt(1) === '[' && selection.charAt(selection.length - 1) === ')') {
+                      $('[data-key="image"]').addClass('active');
+                    }
+                  break;
+                  case '[':
+                    if (selection.charAt(selection.length - 1) === ')') {
+                      $('[data-key="link"]').addClass('active');
+                    }
+                  break;
+                  case '-':
+                    if (selection.charAt(1) === ' ') {
+                      $('[data-key="list"]').addClass('active');
+                    }
+                  break;
+                }
+              } else {
+
+                if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
+                  $('[data-key="numbered-list"]').addClass('active');
+                }
+              }
+          }, view));
+        }
 
         view.editor.on('change', _.bind(view.makeDirty, view));
         view.refreshCodeMirror();
@@ -828,20 +882,24 @@ module.exports = Backbone.View.extend({
     markdownSnippet: function(e) {
       var key = $(e.target, this.el).data('key');
       var snippet = $(e.target, this.el).data('snippet');
+      var selection = _.trim(this.editor.getSelection());
 
       if (this.editor.getSelection !== '') {
         switch(key) {
           case 'bold':
-            this.bold();
+            this.bold(selection);
           break;
           case 'italic':
-            this.italic();
+            this.italic(selection);
           break;
           case 'heading':
-            this.heading();
+            this.heading(selection);
           break;
           case 'sub-heading':
-            this.subHeading();
+            this.subHeading(selection);
+          break;
+          case 'quote':
+            this.quote(selection);
           break;
           default:
             this.editor.replaceSelection(snippet);
@@ -856,20 +914,44 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
-    heading: function() {
-      this.editor.replaceSelection('# ' + this.editor.getSelection().replace(/#/g, ''));
+    heading: function(s) {
+      if (s.charAt(0) === '#' && s.charAt(1) !== '#') {
+        this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
+      } else {
+        this.editor.replaceSelection('# ' + s.replace(/#/g, ''));
+      }
     },
 
-    subHeading: function() {
-      this.editor.replaceSelection('## ' + this.editor.getSelection().replace(/#/g, ''));
+    subHeading: function(s) {
+      if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
+        this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
+      } else {
+        this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
+      }
     },
 
-    italic: function() {
-      this.editor.replaceSelection('_' + this.editor.getSelection().replace(/_/g, '') + '_');
+    italic: function(s) {
+      if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
+        this.editor.replaceSelection(s.replace(/_/g, ''));
+      } else {
+        this.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
+      }
     },
 
-    bold: function() {
-      this.editor.replaceSelection('**' + this.editor.getSelection().replace(/\*/g, '') + '**');
+    bold: function(s) {
+      if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
+        this.editor.replaceSelection(s.replace(/\*/g, ''));
+      } else {
+        this.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
+      }
+    },
+
+    quote: function(s) {
+      if (s.charAt(0) === '>') {
+        this.editor.replaceSelection(_.lTrim(s.replace(/\>/g, '')));
+      } else {
+        this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
+      }
     },
 
     remove: function () {
@@ -885,9 +967,6 @@ module.exports = Backbone.View.extend({
 
       // Clear any file state classes in #prose
       this.eventRegister.trigger('updateSaveState', '', '');
-
-      // Unbind Keybindings
-      key.unbind('⌘+s, ctrl+s', 'file');
 
       $(window).unbind('pagehide');
       Backbone.View.prototype.remove.call(this);

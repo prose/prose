@@ -8,6 +8,7 @@ module.exports = Backbone.View.extend({
 
     events: {
       'mouseover .item': 'activeListing',
+      'mouseover .item a': 'parentActiveListing',
       'keyup #filter': 'search'
     },
 
@@ -19,17 +20,6 @@ module.exports = Backbone.View.extend({
        _.bindAll(this, 'remove');
       this.eventRegister.bind('remove', this.remove);
 
-      key('j, k, enter, o', 'projects', _.bind(function(e, handler) {
-        if (handler.key === 'j' || handler.key === 'k') {
-          utils.pageListing(handler.key);
-        } else {
-          utils.goToFile();
-        }
-      }, this));
-
-      // Attach Keybindings to the current scope
-      key.setScope('projects');
-
       var header = {
           avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
           parent: data.user.name || data.user.login,
@@ -39,7 +29,9 @@ module.exports = Backbone.View.extend({
           alterable: false
       };
 
+      this.eventRegister.trigger('documentTitle', app.state.user);
       this.eventRegister.trigger('headerContext', header);
+
       var tmpl = _(window.app.templates.profile).template();
       var sidebar = _(window.app.templates.sidebarOrganizations).template();
 
@@ -61,7 +53,7 @@ module.exports = Backbone.View.extend({
       return this;
     },
 
-    search: function (e) {
+    search: function(e) {
       // If this is the ESC key
       if (e.which === 27) {
         _.delay(_.bind(function () {
@@ -69,6 +61,11 @@ module.exports = Backbone.View.extend({
           this.model = window.app.models.filterProjects(this.cache, '');
           this.renderResults();
         }, this), 10);
+      } else if (e.which === 40 && $('.item').length > 0) {
+          utils.pageListing('down'); // Arrow Down
+          e.preventDefault();
+          e.stopPropagation();
+          $('#filter').blur();
       } else {
         _.delay(_.bind(function () {
           var searchstr = $('#filter', this.el).val();
@@ -91,6 +88,17 @@ module.exports = Backbone.View.extend({
       }
     },
 
+    parentActiveListing: function (e) {
+      $listings = $('.item', this.el);
+      $listing = $(e.target, this.el).closest('li');
+
+      $listings.removeClass('active');
+      $listing.addClass('active');
+
+      // Blur out search if its selected
+      $('#filter').blur();
+    },
+
     renderResults: function () {
       var tmpl = _(window.app.templates.projects).template();
       var repos;
@@ -109,12 +117,5 @@ module.exports = Backbone.View.extend({
           index: i
         })));
       });
-    },
-
-    remove: function() {
-      this.eventRegister.unbind('remove', this.remove);
-
-      // Unbind Keybindings from the scope
-      key.unbind('j, k, enter, o', 'posts');
     }
 });

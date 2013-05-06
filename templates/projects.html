@@ -2,26 +2,33 @@
     data-navigate='#<%= owner.login %>/<%= name %>'
     data-index='<%= index %>'>
 
-    <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>
-      <div class='fl icon round repo owner private' title='Shared repo with <%= owner.login %>'></div>
-    <% } else if (app.state.user === app.username && owner.login !== app.username) { %>
-      <div class='fl icon round repo owner' title='Shared repo with <%= owner.login %>'></div>
-    <% } else if (private) { %>
-      <div class='fl icon round repo private'></div>
-    <% } else { %>
-      <div class='fl icon round repo'></div>
-    <% } %>
+    <a
+      data-user='<%= owner.login %>'
+      data-repo='<%= name %>'
+      href='#<%= owner.login %>/<%= name %>'>
+      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>
+        <span class='fl icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>
+      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>
+        <span class='fl icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>
+      <% } else if (fork && private) { %>
+        <span class='fl icon round repo private fork' title='Forked from another project'></span>
+      <% } else if (fork) { %>
+        <span class='fl icon round repo fork' title='Forked from another project'></span>
+      <% } else if (private) { %>
+        <span class='fl icon round repo private'></span>
+      <% } else { %>
+        <span class='fl icon round repo'></span>
+      <% } %>
+    </a>
 
     <div class='details fl'>
-      <h3<% if (!description) { %> class='title'<% } %>>
-        <a
-          data-user='<%= owner.login %>'
-          data-repo='<%= name %>'
-          href='#<%= owner.login %>/<%= name %>'>
-          <%= name %>
-        </a>
-      </h3>
-      <span class='deemphasize'><%= description %></span>
+      <a
+        data-user='<%= owner.login %>'
+        data-repo='<%= name %>'
+        href='#<%= owner.login %>/<%= name %>'>
+        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>
+        <span class='deemphasize'><%= description %></span>
+      </a>
     </div>
 
     <div class='fr actions clearfix'>

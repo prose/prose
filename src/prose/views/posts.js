@@ -11,15 +11,29 @@ module.exports = Backbone.View.extend({
 
   events: {
     'mouseover .item': 'activeListing',
+    'mouseover .item a': 'parentActiveListing',
     'click .delete': 'deleteFile',
     'keyup #filter': 'search'
   },
 
   render: function () {
     var that = this;
+    var jailed;
+
+    // Pass a check to template whether we should
+    // stagger the output of a breadcrumb trail
+    if (app.state.config && app.state.config.prose && app.state.config.prose.rooturl) {
+      jailed = app.state.config.prose.rooturl;
+    }
+
     var data = _.extend(this.model, app.state, {
-      currentPath: app.state.path
+      currentPath: app.state.path,
+      jailed: jailed
     });
+
+    // If this repo is writable to the current user we use
+    // this check to provide a deletion option to the user
+    this.writePermissions = this.model.permissions.push;
 
     this.eventRegister = app.eventRegister;
 
@@ -27,27 +41,9 @@ module.exports = Backbone.View.extend({
     _.bindAll(this, 'remove');
     this.eventRegister.bind('remove', this.remove);
 
-    key('j, k, enter, o', 'posts', _.bind(function(e, handler) {
-      if (handler.key === 'j' || handler.key === 'k') {
-        utils.pageListing(handler.key);
-      } else {
-        utils.goToFile();
-      }
-    }, this));
-
-    // Attach Keybindings to the current scope
-    key.setScope('posts');
-
-    // console.log(data);
     var isPrivate = app.state.isPrivate ? ' private' : '';
-    var isBelonging = '';
-
-    if (data.user !== app.username && data.permissions.push === true) {
-      isBelonging = ' owner';
-    }
-
     var header = {
-      avatar: '<span class="icon round repo' + isPrivate + isBelonging +  '"></span>',
+      avatar: '<span class="icon round repo' + isPrivate +  '"></span>',
       parent: data.user,
       parentUrl: data.user,
       title: data.repo,
@@ -55,6 +51,8 @@ module.exports = Backbone.View.extend({
       alterable: false
     };
 
+    var pathTitle = (app.state.path) ? '/' + app.state.path : '';
+    this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
     this.eventRegister.trigger('sidebarContext', app.state, 'posts');
     this.eventRegister.trigger('headerContext', header);
 
@@ -77,6 +75,11 @@ module.exports = Backbone.View.extend({
         this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
         this.renderResults();
       }, this), 10);
+    } else if (e.which === 40 && $('.item').length > 0) {
+        utils.pageListing('down'); // Arrow Down
+        e.preventDefault();
+        e.stopPropagation();
+        $('#filter').blur();
     } else {
       _.delay(_.bind(function () {
         var searchstr = $('#filter', this.el).val();
@@ -87,6 +90,7 @@ module.exports = Backbone.View.extend({
   },
 
   renderResults: function () {
+    var view = this;
     var files = _(window.app.templates.files).template();
     var directories = _(window.app.templates.directories).template();
     var data = _.extend(this.model, app.state, { currentPath: app.state.path });
@@ -94,6 +98,7 @@ module.exports = Backbone.View.extend({
     $files.empty();
 
     _(this.model.files).each(function(f, i) {
+      // Directories ..
       if (f.type === 'tree') {
         $files.append(directories({
           index: i,
@@ -104,11 +109,13 @@ module.exports = Backbone.View.extend({
           name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
         }));
       } else {
+        // Files ..
         $files.append(files({
           index: i,
-          extension: _.extension(f.name),
-          isBinary: _.isBinary(_.extension(f.name)),
-          isMedia: _.isMedia(_.extension(f.name)),
+          extension: _.extension(f.path),
+          isBinary: _.isBinary(_.extension(f.path)),
+          isMedia: _.isMedia(_.extension(f.path)),
+          writePermissions: view.writePermissions,
           repo: data.repo,
           branch: data.branch,
           path: f.path,
@@ -143,6 +150,17 @@ module.exports = Backbone.View.extend({
     }
   },
 
+  parentActiveListing: function (e) {
+    $listings = $('.item', this.el);
+    $listing = $(e.target, this.el).closest('li');
+
+    $listings.removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    $('#filter').blur();
+  },
+
   deleteFile: function(e) {
     var $file = $(e.target, this.el);
     var file = {
@@ -150,9 +168,9 @@ module.exports = Backbone.View.extend({
       repo: $file.data('repo'),
       branch: $file.data('branch'),
       fileName: $file.data('file')
-    }
+    };
 
-    if (confirm('Are you sure you want to delete that file?')) {
+    if (confirm('Are you sure you want to delete this file?')) {
       window.app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function (err) {
         if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
         router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
@@ -160,12 +178,5 @@ module.exports = Backbone.View.extend({
     }
 
     return false;
-  },
-
-  remove: function() {
-    this.eventRegister.unbind('remove', this.remove);
-
-    // Unbind Keybindings from the scope
-    key.unbind('j, k, enter, o', 'posts');
   }
 });

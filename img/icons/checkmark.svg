@@ -14,7 +14,7 @@
    id="svg11278"
    version="1.1"
    inkscape:version="0.48.2 r9819"
-   sodipodi:docname="error.svg">
+   sodipodi:docname="checkmark.svg">
   <defs
      id="defs11280" />
   <sodipodi:namedview
@@ -24,15 +24,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.57069588"
-     inkscape:cx="615.21677"
-     inkscape:cy="549.72696"
+     inkscape:zoom="0.09640435"
+     inkscape:cx="1908.949"
+     inkscape:cy="617.42398"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1010"
      inkscape:window-height="745"
-     inkscape:window-x="111"
+     inkscape:window-x="264"
      inkscape:window-y="0"
      inkscape:window-maximized="0">
     <inkscape:grid
@@ -65,10 +65,10 @@
      id="layer1"
      transform="translate(0,-52.3622)">
     <path
-       inkscape:connector-curvature="0"
        style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 500,52.3622 c -248.52825,0 -450,201.47175 -450,450 0,248.52825 201.47175,450 450,450 248.52825,0 450,-201.47175 450,-450 0,-248.52825 -201.47175,-450 -450,-450 z m -60,220 120,0 40,40 -20,180 -40,40 -80,0 -40,-40 -20,-180 z m 20,300 80,0 60,60 0,60 -60,60 -80,0 -60,-60 0,-60 z"
-       id="path5171"
-       sodipodi:nodetypes="ssssscccccccccccccccccc" />
+       d="m 500,52.3622 c -248.5281,0 -450,201.47186 -450,450 0,248.52814 201.4719,450 450,450 248.5281,0 450,-201.47186 450,-450 0,-248.52814 -201.4719,-450 -450,-450 z m 80,240 40,-20 100,60 0,40 -200,360 -120,0 -160,-140 0,-40 60,-80 40,0 100,100 z"
+       id="path5169"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ssssscccccccccccc" />
   </g>
 </svg>

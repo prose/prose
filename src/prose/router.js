@@ -6,6 +6,7 @@ var utils = require('./util');
 module.exports = Backbone.Router.extend({
 
   routes: {
+    'error/:code': 'error',
     ':user': 'profile',
     ':user/:repo': 'repo',
     ':user/:repo/*path': 'path',
@@ -27,7 +28,6 @@ module.exports = Backbone.Router.extend({
   // #example-organization
   profile: function(user) {
     var router = this;
-
     utils.loader.loading('Loading Profile');
 
     // Clean any previous view
@@ -50,8 +50,8 @@ module.exports = Backbone.Router.extend({
           model: _.extend(router.model, data)
         }).render();
 
-        $('#content').empty().append(view.el);
         utils.loader.loaded();
+        $('#content').empty().append(view.el);
       });
     }
   },
@@ -70,7 +70,7 @@ module.exports = Backbone.Router.extend({
       mode: 'tree',
       branch: '',
       path: ''
-    }
+    };
 
     app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
       if (err) return router.notify('error', 'This post does not exist.');
@@ -80,8 +80,8 @@ module.exports = Backbone.Router.extend({
         model: data
       }).render();
 
-      $('#content').empty().append(view.el);
       utils.loader.loaded();
+      $('#content').empty().append(view.el);
     }, this));
   },
 
@@ -99,8 +99,8 @@ module.exports = Backbone.Router.extend({
         model: data
       }).render();
 
-      $('#content').empty().append(view.el);
       utils.loader.loaded();
+      $('#content').empty().append(view.el);
     }, this));
   },
 
@@ -129,6 +129,10 @@ module.exports = Backbone.Router.extend({
   },
 
   newPost: function (user, repo, branch, path) {
+    // TODO Fix this, shouldn't have to pass
+    // something like this here.
+    app.state.markdown = true;
+
     utils.loader.loading('Creating a new post');
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
@@ -146,9 +150,9 @@ module.exports = Backbone.Router.extend({
           model: data
         }).render();
 
+        utils.loader.loaded();
         $('#content').empty().append(view.el);
         app.state.file = data.file;
-        utils.loader.loaded();
 
       }, this));
     }, this));
@@ -162,13 +166,12 @@ module.exports = Backbone.Router.extend({
     }
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', 'This post does not exist.');
+      if (err) return this.notify('error', 'This file does not exist.');
       app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) return this.notify('error', 'This post does not exist.');
+        if (err) return this.notify('error', 'This file does not exist.');
 
         app.state.markdown = data.markdown;
         data.jekyll = _.jekyll(path, data.file);
-        data.preview = (mode !== 'edit');
         data.lang = _.mode(file);
 
         this.application.render({
@@ -179,9 +182,8 @@ module.exports = Backbone.Router.extend({
           model: data
         }).render();
 
-        $('#content').empty().html(view.el);
-
         utils.loader.loaded();
+        $('#content').empty().html(view.el);
       }, this));
     }, this));
   },
@@ -195,12 +197,10 @@ module.exports = Backbone.Router.extend({
       app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         if (err) return router.notify('error', 'This post does not exist.');
 
-        // router.application.render();
         var view = new app.views.Preview({
           model: data
         }).render();
 
-        // $('#content').empty().append(view.el);
         utils.loader.loaded();
       }, this));
     }, this));
@@ -225,15 +225,46 @@ module.exports = Backbone.Router.extend({
     }
   },
 
+  // if the application after routing
+  // hits an error code router.navigate('error' + err.error)
+  // sends the route here.
+  error: function(code) {
+    switch (code) {
+      case '404':
+        code = 'Page not Found'
+      break;
+      default:
+        code = 'Error'
+      break;
+    }
+
+    this.application.render({
+      error: true
+    });
+
+    var view = new app.views.Notification({
+      'type': 'Error',
+      'message': code
+    }).render();
+
+    utils.loader.loaded();
+    $('#content').empty().append(view.el);
+  },
+
   notify: function(type, message) {
-    this.application.render();
+    // TODO Fix this, shouldn't have to pass
+    // something like this here.
+    app.state.markdown = false;
+    this.application.render({
+      error: true
+    });
 
     var view = new app.views.Notification({
       'type': type,
       'message': message
     }).render();
 
-    $('#content').empty().append(view.el);
     utils.loader.loaded();
+    $('#content').empty().append(view.el);
   }
 });

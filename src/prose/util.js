@@ -125,7 +125,7 @@ _.markdown = function(file) {
 };
 
 _.isBinary = function(file) {
-  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store)$');
+  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store)$');
   return regex.test(file);
 };
 
@@ -143,21 +143,25 @@ _.filename = function(file) {
 };
 
 
-// Clip a string
+// String Manipulations
 // -------
-
-_.clip = function(str, length) {
-  var res = str.substr(0, length);
-  if (length < str.length) res += ' ...';
-  return res;
+_.trim = function(str) {
+  return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 };
 
+_.rTrim = function(str) {
+  return str.replace(/\s\s*$/, '');
+};
+
+_.lTrim = function(str) {
+  return str.replace(/^\s\s*/, '');
+};
 
 // Concatenate path + file to full filepath
 // -------
 
 _.filepath = function(path, file) {
-  return (path ? path +"/" : "") + file;
+  return (path ? path + '/' : '') + file;
 };
 
 
@@ -177,7 +181,7 @@ _.toYAML = function(metadata) {
 
       res.push();
     } else {
-      res.push(property+": "+value);
+      res.push(property + ': ' + value);
     }
   });
 
@@ -214,13 +218,13 @@ _.fromYAML = function(rawYAML) {
 
   var lines = rawYAML.split('\n');
   var key = null;
-  var value = "";
+  var value = '';
   var blockValue = false;
 
   function add() {
     data[key] = _.isArray(value) ? value.join('\n') : value;
     key = null;
-    value = "";
+    value = '';
   }
 
   _.each(lines, function(line) {
@@ -365,9 +369,8 @@ module.exports = {
     if ($('.item').hasClass('active')) {
       var index = parseInt($('.item.active').data('index'), 10);
       $('.item.active').removeClass('active');
-
       if (handler === 'k') {
-        --index;
+        if (index !== 0) --index;
         $('.item[data-index=' + index + ']').addClass('active');
       } else {
         ++index;
@@ -386,19 +389,16 @@ module.exports = {
 
   loader: {
     loading: function(message) {
-      _.delay(function() {
-        var tmpl = _(window.app.templates.loading).template();
-        $('body').append(tmpl({
-          message: message
-        }));
-      }, 500);
+      var tmpl = _(window.app.templates.loading).template();
+      $('body').append(tmpl({
+        message: message
+      }));
     },
 
     loaded: function() {
-      _.delay(function() {
-        // TODO A nicer action.
-        $('#loader').remove();
-      }, 500);
+      $('#loader').fadeOut(150, function() {
+        $(this).remove();
+      });
     }
   }
 };

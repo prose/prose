@@ -24,7 +24,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.44721826"
+     inkscape:zoom="0.47778982"
      inkscape:cx="533.55476"
      inkscape:cy="470.11105"
      inkscape:document-units="px"
@@ -32,8 +32,8 @@
      showgrid="true"
      inkscape:window-width="1010"
      inkscape:window-height="745"
-     inkscape:window-x="47"
-     inkscape:window-y="20"
+     inkscape:window-x="264"
+     inkscape:window-y="0"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -66,16 +66,8 @@
      transform="translate(0,-52.3622)">
     <path
        style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="M 500,0 C 251.47187,0 50,201.47185 50,450 50,698.52815 251.47187,900 500,900 748.52814,900 950,698.52815 950,450 950,201.47185 748.52814,0 500,0 z"
+       d="M 500 0 C 251.47187 0 50 201.47185 50 450 C 50 698.52815 251.47187 900 500 900 C 748.52814 900 950 698.52815 950 450 C 950 201.47185 748.52814 0 500 0 z M 420 260 L 580 260 L 580 380 L 700 380 L 700 520 L 580 520 L 580 640 L 420 640 L 420 520 L 300 520 L 300 380 L 420 380 L 420 260 z "
        transform="translate(0,52.3622)"
-       id="path24459"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="sssss" />
-    <path
-       style="fill:#ffffff;fill-opacity:1;stroke:none;display:inline"
-       d="m 420,312.3622 0,120 -120,0 0,140 120,0 0,120 160,0 0,-120 120,0 0,-140 -120,0 0,-120 z"
-       id="path24351"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccccccccccc" />
+       id="path24459" />
   </g>
 </svg>

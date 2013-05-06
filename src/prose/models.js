@@ -132,6 +132,7 @@ module.exports = {
   loadRepos: function(username, cb) {
     var user = github().getUser();
     user.show(username, function(err, u) {
+      if (err) return router.navigate('error/' + err.error, true);
 
       // TODO if error, bring up the notification to
       // say, "You need to be a logged in user to do this!"
@@ -329,10 +330,12 @@ module.exports = {
         var file = configName ? configName.path : false;
 
         models.loadConfig(user, reponame, branch, file, function(config, err) {
+          if (err) return cb('Not found');
+
           var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
           if (!path) path = root;
 
-          if (err) return cb('Not found');
+          var paths = _.pluck(tree, 'path');
 
           models.loadBranches(user, reponame, function(err, branches) {
             if (err) return cb('Branches could not be fetched');
@@ -351,10 +354,17 @@ module.exports = {
             var lastModified;
 
             if (store) {
-              app.state.history = history = JSON.parse(store.getItem('history'));
+              history = JSON.parse(store.getItem('history'));
 
               if (history && history.user === user && history.repo === reponame && history.branch === branch) {
                 lastModified = history.modified;
+
+                history.recent[app.username] = _.filter(history.recent[app.username], function(value) {
+                  return history.commits[value][0].status === 'removed' ||
+                    _.pluck(tree, 'path').indexOf(value) > -1;
+                });
+
+                app.state.history = history;
               }
             }
 
@@ -385,27 +395,41 @@ module.exports = {
                       file = commit.files[j];
                       filename = file.filename;
 
+                      var fileCommit = {
+                        status: file.status,
+                        url: file.contents_url
+                      };
+
                       if (state[filename]) {
-                        state[filename].push(file.status);
+                        state[filename].push(fileCommit);
                       } else {
-                        state[filename] = [file.status];
+                        state[filename] = [fileCommit];
                       }
 
-                      author = commit.author.login;
-                      if (recent[author]) {
-                        recent[author] = _.union(recent[author], filename);
-                      } else {
-                        recent[author] = [filename];
+                      // some malformed commit data requires this
+                      if (commit.author) {
+                        author = commit.author.login;
+
+                        if (recent[author]) {
+                          recent[author] = _.union(recent[author], filename);
+                        } else {
+                          recent[author] = [filename];
+                        }
                       }
                     }
                   }
+
+                  recent[app.username] = _.filter(recent[app.username], function(value) {
+                    return state[value][0].status === 'removed' ||
+                      _.pluck(tree, 'path').indexOf(value) > -1;
+                  });
 
                   var history = app.state.history = {
                     'user': user,
                     'repo': reponame,
                     'branch': branch,
                     'modified': xhr.getResponseHeader('Last-Modified'),
-                    'state': state,
+                    'commits': state,
                     'recent': recent,
                     'link': xhr.getResponseHeader('link')
                   };
@@ -418,6 +442,9 @@ module.exports = {
                       console.log(err);
                     }
                   }
+
+                  // TODO: temporary fix, break history sidebar into a discrete view
+                  app.eventRegister.trigger('sidebarContext', app.state, 'posts');
                 });
               }
             });
@@ -429,6 +456,7 @@ module.exports = {
     }
 
     repo.show(function(err, repodata) {
+      if (err) return router.navigate('error/' + err.error, true);
       if (!branch) app.state.branch = branch = repodata.master_branch;
       app.state.isPrivate = repodata.private;
       app.state.permissions = repodata.permissions;
@@ -442,6 +470,11 @@ module.exports = {
   // Store a file to GitHub
 
   saveFile: function(user, repo, branch, path, content, message, cb) {
+    // add newline to eof if not present to make git happy
+    if (!content.match(/\n$/)) {
+      content = content + '\n';
+    }
+
     repo = this.getRepo(user, repo);
     repo.write(branch, path, content, message, cb);
   },
@@ -554,66 +587,76 @@ module.exports = {
       'published': false
     };
 
+    // load default metadata
     var cfg = app.state.config;
     var q = queue();
 
-    if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
-      defaultMetadata = cfg.prose.metadata[path];
+    if (cfg && cfg.prose && cfg.prose.metadata) {
+      // match nearest parent directory default metadata
+      var nearestPath = path;
+      var nearestDir = /\/(?!.*\/).*$/;
+      while (cfg.prose.metadata[nearestPath] === undefined && nearestPath.match( nearestDir )) {
+        nearestPath = nearestPath.replace( nearestDir, '' );
+      }
 
-      if (typeof defaultMetadata === 'object') {
-        _.each(defaultMetadata, function(data, key) {
-          if (data && data.field) {
-            if (typeof data.field.options === 'string' && data.field.options.match(/^https?:\/\//)) {
+      if (cfg.prose.metadata[nearestPath]) {
+        defaultMetadata = cfg.prose.metadata[nearestPath];
 
-              q.defer(function(cb){
-                $.ajax({
-                  cache: true,
-                  dataType: 'jsonp',
-                  jsonp: false,
-                  jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
-                  url: data.field.options,
-                  success: function(d) {
-                    data.field.options = d;
-                    cb();
-                  }
-                });
-              });
-            }
-
-            switch(data.field.element) {
-              case 'boolean':
-              case 'text':
-                metadata[data.name] = data.field.value;
-                break;
-              case 'select':
-              case 'multiselect':
-                metadata[data.name] = data.field.selected ? data.field.selected : null;
-                break;
-            }
-          } else {
-            metadata[key] = data;
-          }
-        });
-
-        rawMetadata = jsyaml.dump(metadata);
-      } else if (typeof defaultMetadata === 'string') {
-        rawMetadata = defaultMetadata;
-
-        try {
-          defaultMetadata = jsyaml.load(rawMetadata);
-
+        if (typeof defaultMetadata === 'object') {
           _.each(defaultMetadata, function(data, key) {
-            metadata[key] = data;
+            if (data && data.field) {
+              if (typeof data.field.options === 'string' && data.field.options.match(/^https?:\/\//)) {
+
+                q.defer(function(cb){
+                  $.ajax({
+                    cache: true,
+                    dataType: 'jsonp',
+                    jsonp: false,
+                    jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
+                    url: data.field.options,
+                    success: function(d) {
+                      data.field.options = d;
+                      cb();
+                    }
+                  });
+                });
+              }
+
+              switch(data.field.element) {
+                case 'boolean':
+                case 'text':
+                  metadata[data.name] = data.field.value;
+                  break;
+                case 'select':
+                case 'multiselect':
+                  metadata[data.name] = data.field.selected ? data.field.selected : null;
+                  break;
+              }
+            } else {
+              metadata[key] = data;
+            }
           });
 
-          if (metadata.date === 'CURRENT_DATETIME') {
-            var current = (new Date()).format('Y-m-d H:i');
-            metadata.date = current;
-            rawMetadata = rawMetadata.replace('CURRENT_DATETIME', current);
+          rawMetadata = jsyaml.dump(metadata);
+        } else if (typeof defaultMetadata === 'string') {
+          rawMetadata = defaultMetadata;
+
+          try {
+            defaultMetadata = jsyaml.load(rawMetadata);
+
+            _.each(defaultMetadata, function(data, key) {
+              metadata[key] = data;
+            });
+
+            if (metadata.date === 'CURRENT_DATETIME') {
+              var current = (new Date()).format('Y-m-d H:i');
+              metadata.date = current;
+              rawMetadata = rawMetadata.replace('CURRENT_DATETIME', current);
+            }
+          } catch(err) {
+            console.log('ERROR encoding YAML');
+            // No-op
           }
-        } catch(err) {
-          console.log('ERROR encoding YAML');
-          // No-op
         }
       }
     }
@@ -639,73 +682,77 @@ module.exports = {
     });
   },
 
-  // Load Post
-  // -------
-  //
-  // List all postings for a given repository
-  // Looks into _posts/blog
+  // breaks the err first pattern because of use by _.partial
+  _loadPostData: function(repo, path, file, cb, err, data, xhr) {
+    if (err) return cb(err);
 
-  loadPost: function(user, repo, branch, path, file, cb) {
-    repo = this.getRepo(user, repo);
+    function published(metadata) {
+      // Given a YAML front matter, determines published or not
+      // default to published unless explicitly set to false
+      return !metadata.match(/published: false/);
+    }
 
-    repo.contents(branch, path ? path + '/' + file : file, function(err, data, commit) {
-      if (err) return cb(err);
+    function parse(content) {
+      // Extract YAML from a post, trims whitespace
+      content = content.replace(/\r\n/g, '\n'); // normalize a little bit
 
-      function published(metadata) {
-        // Given a YAML front matter, determines published or not
-        // default to published unless explicitly set to false
-        return !metadata.match(/published: false/);
+      function writeable() {
+        return !!(app.state.permissions && app.state.permissions.push);
       }
 
-      function parse(content) {
-        // Extract YAML from a post, trims whitespace
-        content = content.replace(/\r\n/g, '\n'); // normalize a little bit
+      var hasMetadata = !!_.hasMetadata(content);
 
-        function writeable() {
-          return !!(app.state.permissions && app.state.permissions.push);
+      if (!hasMetadata) return {
+        content: content,
+        published: true,
+        writeable: writeable(),
+        jekyll: hasMetadata
+      };
+
+      var res = {
+        writeable: writeable(),
+        jekyll: hasMetadata
+      };
+
+      res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
+        try {
+          res.metadata = jsyaml.load(frontmatter);
+          res.metadata.published = published(frontmatter);
+        } catch(err) {
+          console.log('ERROR encoding YAML');
         }
 
-        if (!_.hasMetadata(content)) return {
-          content: content,
-          published: true,
-          writeable: writeable()
-        };
+        return '';
+      }).trim();
 
-        var res = {
-          writeable: writeable()
-        };
+      return res;
+    }
 
-        res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
-          try {
-            res.metadata = jsyaml.load(frontmatter);
-            res.metadata.published = published(frontmatter);
-          } catch(err) {
-            console.log('ERROR encoding YAML');
-          }
+    var post = parse(data);
+    var rawMetadata;
+    var defaultMetadata;
 
-          return '';
-        }).trim();
+    // load default metadata
+    var cfg = app.state.config;
+    var q = queue();
 
-        return res;
+    if (cfg && cfg.prose && cfg.prose.metadata) {
+      // match nearest parent directory default metadata
+      var nearestPath = path;
+      var nearestDir = /\/(?!.*\/).*$/;
+      while (cfg.prose.metadata[nearestPath] === undefined && nearestPath.match( nearestDir )) {
+        nearestPath = nearestPath.replace( nearestDir, '' );
       }
 
-      var post = parse(data);
-      var rawMetadata;
-      var defaultMetadata;
-
-      // load default metadata
-      var cfg = app.state.config;
-      var q = queue();
-
-      if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
-        defaultMetadata = cfg.prose.metadata[path];
+      if (cfg.prose.metadata[nearestPath]) {
+        defaultMetadata = cfg.prose.metadata[nearestPath];
         if (typeof defaultMetadata === 'object') {
           _(defaultMetadata).each(function(value) {
             if (value.field && value.field.options &&
                 typeof value.field.options === 'string' &&
                 value.field.options.match(/^https?:\/\//)) {
 
-              q.defer(function(cb){
+              q.defer(function(cb) {
                 $.ajax({
                   cache: true,
                   dataType: 'jsonp',
@@ -736,18 +783,58 @@ module.exports = {
           }
         }
       }
-      q.await(function() {
-        cb(err, _.extend(post, {
-          'default_metadata': defaultMetadata,
-          'sha': commit,
-          'markdown': _.markdown(file),
-          'jekyll': _.hasMetadata(data),
-          'repo': repo,
-          'path': path,
-          'file': file,
-          'persisted': true
-        }));
-      });
+    }
+
+    q.await((function() {
+      cb(err, _.extend(post, {
+        'default_metadata': defaultMetadata,
+        'markdown': _.markdown(file),
+        'repo': repo,
+        'path': path,
+        'file': file,
+        'persisted': true
+      }));
+    }).bind(this));
+  },
+
+  // Load Post
+  // -------
+  //
+  // List all postings for a given repository
+  // Looks into _posts/blog
+
+  loadPost: function(user, repo, branch, path, file, cb) {
+    repo = this.getRepo(user, repo);
+
+    repo.contents(branch, path ? path + '/' + file : file, _.partial(
+      this._loadPostData,
+      repo,
+      path,
+      file,
+      cb
+    ));
+  },
+
+  restoreFile: function(user, repo, branch, path, url, cb) {
+    $.ajax({
+      type: 'GET',
+      url: url,
+      headers: {
+        Authorization: 'token ' + cookie.get('oauth-token'),
+        Accept: 'application/vnd.github.raw'
+      },
+      success: (function(res) {
+        this.saveFile(user, repo, branch, path, res, 'Restored ' + path, function(err) {
+          if (err) {
+            cb(err);
+          } else {
+            cb();
+          }
+        });
+      }).bind(this),
+      error: function(err) {
+        cb(err);
+      }
     });
   }
 };
