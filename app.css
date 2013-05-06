@@ -573,6 +573,9 @@ ins {
     height:110px;
     margin:30px auto 0;
     }
+    .icon.landing.error {
+      background-position:-170px -40px;
+      }
   .icon.small {
     background-position:0 -80px;
     width:20px;
