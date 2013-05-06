@@ -166,9 +166,9 @@ module.exports = Backbone.Router.extend({
     }
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', 'This post does not exist.');
+      if (err) return this.notify('error', 'This file does not exist.');
       app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) return this.notify('error', 'This post does not exist.');
+        if (err) return this.notify('error', 'This file does not exist.');
 
         app.state.markdown = data.markdown;
         data.jekyll = _.jekyll(path, data.file);
@@ -238,7 +238,10 @@ module.exports = Backbone.Router.extend({
       break;
     }
 
-    this.application.render();
+    this.application.render({
+      error: true
+    });
+
     var view = new app.views.Notification({
       'type': 'Error',
       'message': code
@@ -252,7 +255,10 @@ module.exports = Backbone.Router.extend({
     // TODO Fix this, shouldn't have to pass
     // something like this here.
     app.state.markdown = false;
-    this.application.render();
+    this.application.render({
+      error: true
+    });
+
     var view = new app.views.Notification({
       'type': type,
       'message': message
