@@ -215,8 +215,8 @@ module.exports = Backbone.View.extend({
 
     showDiff: function() {
       var $diff = $('#diff', this.el);
-      var text1 = this.model.persisted ? this.prevFile : '';
-      var text2 = this.serialize();
+      var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
+      var text2 = _.escape(this.serialize());
       var d = diff.diffWords(text1, text2);
       var compare = '';
 
