@@ -587,66 +587,76 @@ module.exports = {
       'published': false
     };
 
+    // load default metadata
     var cfg = app.state.config;
     var q = queue();
 
-    if (cfg && cfg.prose && cfg.prose.metadata && cfg.prose.metadata[path]) {
-      defaultMetadata = cfg.prose.metadata[path];
+    if (cfg && cfg.prose && cfg.prose.metadata) {
+      // match nearest parent directory default metadata
+      var nearestPath = path;
+      var nearestDir = /\/(?!.*\/).*$/;
+      while (cfg.prose.metadata[nearestPath] === undefined && nearestPath.match( nearestDir )) {
+        nearestPath = nearestPath.replace( nearestDir, '' );
+      }
 
-      if (typeof defaultMetadata === 'object') {
-        _.each(defaultMetadata, function(data, key) {
-          if (data && data.field) {
-            if (typeof data.field.options === 'string' && data.field.options.match(/^https?:\/\//)) {
+      if (cfg.prose.metadata[nearestPath]) {
+        defaultMetadata = cfg.prose.metadata[nearestPath];
 
-              q.defer(function(cb){
-                $.ajax({
-                  cache: true,
-                  dataType: 'jsonp',
-                  jsonp: false,
-                  jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
-                  url: data.field.options,
-                  success: function(d) {
-                    data.field.options = d;
-                    cb();
-                  }
-                });
-              });
-            }
-
-            switch(data.field.element) {
-              case 'boolean':
-              case 'text':
-                metadata[data.name] = data.field.value;
-                break;
-              case 'select':
-              case 'multiselect':
-                metadata[data.name] = data.field.selected ? data.field.selected : null;
-                break;
-            }
-          } else {
-            metadata[key] = data;
-          }
-        });
-
-        rawMetadata = jsyaml.dump(metadata);
-      } else if (typeof defaultMetadata === 'string') {
-        rawMetadata = defaultMetadata;
-
-        try {
-          defaultMetadata = jsyaml.load(rawMetadata);
-
+        if (typeof defaultMetadata === 'object') {
           _.each(defaultMetadata, function(data, key) {
-            metadata[key] = data;
+            if (data && data.field) {
+              if (typeof data.field.options === 'string' && data.field.options.match(/^https?:\/\//)) {
+
+                q.defer(function(cb){
+                  $.ajax({
+                    cache: true,
+                    dataType: 'jsonp',
+                    jsonp: false,
+                    jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
+                    url: data.field.options,
+                    success: function(d) {
+                      data.field.options = d;
+                      cb();
+                    }
+                  });
+                });
+              }
+
+              switch(data.field.element) {
+                case 'boolean':
+                case 'text':
+                  metadata[data.name] = data.field.value;
+                  break;
+                case 'select':
+                case 'multiselect':
+                  metadata[data.name] = data.field.selected ? data.field.selected : null;
+                  break;
+              }
+            } else {
+              metadata[key] = data;
+            }
           });
 
-          if (metadata.date === 'CURRENT_DATETIME') {
-            var current = (new Date()).format('Y-m-d H:i');
-            metadata.date = current;
-            rawMetadata = rawMetadata.replace('CURRENT_DATETIME', current);
+          rawMetadata = jsyaml.dump(metadata);
+        } else if (typeof defaultMetadata === 'string') {
+          rawMetadata = defaultMetadata;
+
+          try {
+            defaultMetadata = jsyaml.load(rawMetadata);
+
+            _.each(defaultMetadata, function(data, key) {
+              metadata[key] = data;
+            });
+
+            if (metadata.date === 'CURRENT_DATETIME') {
+              var current = (new Date()).format('Y-m-d H:i');
+              metadata.date = current;
+              rawMetadata = rawMetadata.replace('CURRENT_DATETIME', current);
+            }
+          } catch(err) {
+            console.log('ERROR encoding YAML');
+            // No-op
           }
-        } catch(err) {
-          console.log('ERROR encoding YAML');
-          // No-op
         }
       }
     }

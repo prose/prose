@@ -124,7 +124,7 @@ module.exports = Backbone.View.extend({
     },
 
     preview: function(e) {
-        $('#prose').toggleClass('open', false);
+      $('#prose').toggleClass('open', false);
 
       if (this.model.metadata && this.model.metadata.layout) {
         var hash = window.location.hash.split('/');
@@ -238,8 +238,7 @@ module.exports = Backbone.View.extend({
 
     hideDiff: function() {
       $('.views .view', this.el).removeClass('active');
-
-      if (this.model.mode === 'blob') {
+      if (app.state.mode === 'blob') {
         $('.preview', this.el).addClass('active');
       } else {
         $('.edit', this.el).addClass('active');
@@ -317,7 +316,7 @@ module.exports = Backbone.View.extend({
                 view.eventRegister.trigger('updateSaveState', 'Submit Change', '');
               }, 3000);
 
-              view.eventRegister.trigger('updateSaveState', '! Try again in 30&nbsp;seconds', 'error');
+              view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
 
@@ -346,7 +345,7 @@ module.exports = Backbone.View.extend({
         if (view.updateMetaData()) {
           window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
             if (err) {
-              view.eventRegister.trigger('updateSaveState', '! Try again in 30 seconds', 'error');
+              view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
             view.dirty = false;
@@ -354,10 +353,10 @@ module.exports = Backbone.View.extend({
             view.model.file = filename;
             view.updateURL();
             view.prevFile = filecontent;
-            view.eventRegister.trigger('updateSaveState', 'Saved', 'saved');
+            view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
           });
         } else {
-          view.eventRegister.trigger('updateSaveState', '! Metadata', 'error');
+          view.eventRegister.trigger('updateSaveState', '!Metadata', 'error');
         }
       }
 

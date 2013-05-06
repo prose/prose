@@ -161,7 +161,7 @@ _.lTrim = function(str) {
 // -------
 
 _.filepath = function(path, file) {
-  return (path ? path +"/" : "") + file;
+  return (path ? path + '/' : '') + file;
 };
 
 
@@ -181,7 +181,7 @@ _.toYAML = function(metadata) {
 
       res.push();
     } else {
-      res.push(property+": "+value);
+      res.push(property + ': ' + value);
     }
   });
 
@@ -218,13 +218,13 @@ _.fromYAML = function(rawYAML) {
 
   var lines = rawYAML.split('\n');
   var key = null;
-  var value = "";
+  var value = '';
   var blockValue = false;
 
   function add() {
     data[key] = _.isArray(value) ? value.join('\n') : value;
     key = null;
-    value = "";
+    value = '';
   }
 
   _.each(lines, function(line) {

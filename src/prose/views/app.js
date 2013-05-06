@@ -68,10 +68,13 @@ module.exports = Backbone.View.extend({
     render: function(options) {
       var tmpl = _(window.app.templates.app).template();
       var isJekyll = false;
+      var errorPage = false;
       if (options && options.jekyll) isJekyll = options.jekyll;
+      if (options && options.error) errorPage = options.error;
 
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
-        jekyll: isJekyll
+        jekyll: isJekyll,
+        error: errorPage
       })));
 
       // When the sidebar should be open.
@@ -248,16 +251,23 @@ module.exports = Backbone.View.extend({
       }
     },
 
-    updateSaveState: function(label, classes) {
+    updateSaveState: function(label, classes, kill) {
+      var view = this;
       $('.button.save', this.el).html(label);
 
       // Pass a popover span to the avatar icon
       $('#heading', this.el).find('.popup').html(label);
       $('.save-action').find('.popup').html(label);
 
-      $('#prose')
+      $(this.el)
         .removeClass('error saving saved save')
         .addClass(classes);
+
+      if (kill) {
+        _.delay(function() {
+          $(view.el).removeClass(classes);
+        }, 2000);
+      }
     },
 
     remove: function() {

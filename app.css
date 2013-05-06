@@ -284,14 +284,14 @@ ins {
   }
 
 .prose h2 {
-  font-size:20px;
+  font-size:22px;
   margin:15px 0;
   font-weight:700;
   padding:0;
   }
 
 .prose h3 {
-  font-size:18px;
+  font-size:16px;
   font-weight:700;
   margin:10px 0 5px;
   }
@@ -475,7 +475,7 @@ ins {
   Global Styles
 ---------------------------------------------*/
 .application {
-  padding:0 0 60px;
+  padding:0 0 120px;
   }
 
 .dropdown-menu.prose-menu {
@@ -573,6 +573,9 @@ ins {
     height:110px;
     margin:30px auto 0;
     }
+    .icon.landing.error {
+      background-position:-170px -40px;
+      }
   .icon.small {
     background-position:0 -80px;
     width:20px;
@@ -858,6 +861,7 @@ ins {
   .content .details {
     width:580px;
     margin:0 15px;
+    padding-right:150px;
     }
     .content .details a {
       display:block;
