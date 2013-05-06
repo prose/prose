@@ -164,21 +164,32 @@ module.exports = Backbone.View.extend({
 
     restoreFile: function(e) {
       var $target = $(e.currentTarget);
+      var $overlay = $(e.currentTarget).find('.overlay');
       var path = $target.data('path');
 
       // Spinning icon
       var message = '<span class="ico small inline saving"></span> Restoring ' + path;
-      $target.find('.overlay').remove();
-      $target.html(message);
+      $overlay.html(message);
 
       app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
         if (err) {
-          message = '<span class="ico small inline error"></span> Error restoring file try again ' + path;
-          $target.html(message);
+          message = '<span class="ico small inline error"></span> !Try again in 30 Seconds';
+          $overlay.html(message);
         } else {
           message = '<span class="ico small inline checkmark"></span> Restored ' + path;
-          $target.html(message);
-          $target.removeClass('removed').addClass('restored');
+          $overlay.html(message);
+          $overlay.removeClass('removed').addClass('restored');
+
+          // Update the listing anchor link
+          $target
+            .removeClass('removed')
+            .attr('title', 'Restored ' + path)
+            .addClass('added');
+
+          // Update the anchor listing icon
+          $target.find('.removed')
+            .removeClass('removed')
+            .addClass('added');
         }
       });
 
