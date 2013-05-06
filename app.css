@@ -475,7 +475,7 @@ ins {
   Global Styles
 ---------------------------------------------*/
 .application {
-  padding:0 0 60px;
+  padding:0 0 120px;
   }
 
 .dropdown-menu.prose-menu {
@@ -861,6 +861,7 @@ ins {
   .content .details {
     width:580px;
     margin:0 15px;
+    padding-right:150px;
     }
     .content .details a {
       display:block;
