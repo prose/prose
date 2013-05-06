@@ -613,6 +613,7 @@ ins {
 .icon.md           { background-position:-80px 0; }
 
 .ico.login         { background-color:#90bb74; color:#fff; }
+.ico.checkmark,
 .ico.added         { color:#90bb74; }
 
 .vert .ico.logout  { color:#db6f6f; }
@@ -620,6 +621,7 @@ ins {
 .ico.modified      { color:#2099aa; }
 .ico.removed       { color:#d35252; }
 
+.ico.error         { color:#db6f6f; }
 .ico.renamed       { color:#bb9f1a; }
 .ico.private       { color:#deb400; }
 
@@ -673,6 +675,7 @@ ins {
 .ico.gfm:before       { content:'\f10b'; }
 .ico.htmlmixed:before { content:'\f107'; }
 
+.listing .saving,
 .saving .save-action .status:before {
   content:'\f11a';
   color:#d4d7d9;
@@ -696,6 +699,7 @@ ins {
   .saved .heading .save-action .status {
     background:#f8f8f8;
     }
+  .listing .saving,
   .saving .save-action .status {
     -webkit-animation-duration:1000ms;
        -moz-animation-duration:1000ms;
@@ -714,6 +718,7 @@ ins {
          -o-animation-name:spin;
             animation-name:spin;
     }
+  .listing .restored .ico,
   .saved .save-action .status {
     -webkit-animation-duration:500ms;
        -moz-animation-duration:500ms;
@@ -731,10 +736,12 @@ ins {
        -moz-animation-name:saved;
          -o-animation-name:saved;
             animation-name:saved;
--webkit-animation-fill-mode:both;
-   -moz-animation-fill-mode:both;
-        animation-fill-mode:both;
     }
+    .saved .save-action .status {
+      -webkit-animation-fill-mode:both;
+         -moz-animation-fill-mode:both;
+              animation-fill-mode:both;
+      }
 
 .avatar {
   background:#f8f8f8;
@@ -1155,6 +1162,23 @@ ins {
   color:#a8afb2;
   font-style:italic;
   }
+  .listing .overlay {
+    background:#fff;
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    width:100%;
+    padding:5px 15px 3px;
+    border-top:1px solid #d4d7d9;
+    border-bottom:1px solid #d4d7d9;
+    opacity:0;
+    -webkit-transition:opacity 150ms;
+       -moz-transition:opacity 150ms;
+         -o-transition:opacity 150ms;
+            transition:opacity 150ms;
+    }
+    .listing a:hover .overlay {
+      opacity:1;
+      }
 
 .prose .blocks {
   margin:0;
