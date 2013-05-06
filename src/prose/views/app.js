@@ -229,16 +229,23 @@ module.exports = Backbone.View.extend({
       }
     },
 
-    updateSaveState: function(label, classes) {
+    updateSaveState: function(label, classes, kill) {
+      var view = this;
       $('.button.save', this.el).html(label);
 
       // Pass a popover span to the avatar icon
       $('#heading', this.el).find('.popup').html(label);
       $('.save-action').find('.popup').html(label);
 
-      $('#prose')
+      $(this.el)
         .removeClass('error saving saved save')
         .addClass(classes);
+
+      if (kill) {
+        _.delay(function() {
+          $(view.el).removeClass(classes);
+        }, 2000);
+      }
     },
 
     remove: function() {
