@@ -959,6 +959,7 @@ ins {
 
 .topbar {
   background:#fff;
+  background:rgba(255,255,255,0.95);
   border-bottom:1px solid #d4d7d9;
   width:680px;
   height:60px;
@@ -1003,6 +1004,7 @@ ins {
     }
 
   .content-search input {
+    background:transparent;
     border:none;
     margin-top:8px;
     padding:10px 15px;
