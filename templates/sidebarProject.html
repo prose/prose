@@ -30,9 +30,17 @@
             });
           }
         %>
-        <% _.each(recent.slice(0,5), function(filename) { %>
-          <li><a class='item' title='<%= history.state[filename][0] %>: <%= filename %>' href='#<%= [user, repo, "edit", branch, filename].join("/") %>'>
-            <span class='ico small inline <%= history.state[filename][0] %>'></span>
+        <% _.each(recent.slice(0,5), function(filename) { 
+            var status = history.commits[filename][0].status;
+        %>
+        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, "edit", branch, filename].join("/") %>' data-path='<%= filename %>'>
+            <span class='ico small inline <%= status %>'></span>
+            <% if (status === 'removed') { %>
+              <span class='overlay'>
+                <span class='ico small inline <%= status %>'></span>
+                Restore?
+              </span>
+            <% } %>
             <%= filename %>
           </a></li>
         <% }); %>

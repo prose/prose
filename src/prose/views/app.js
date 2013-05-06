@@ -11,6 +11,7 @@ module.exports = Backbone.View.extend({
       'click .post-views .preview': 'preview',
       'click .post-views .settings': 'settings',
       'click .post-views .meta': 'meta',
+      'click a.item.removed': 'restoreFile',
       'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
@@ -158,6 +159,40 @@ module.exports = Backbone.View.extend({
       }
 
       $('#prose').toggleClass('open');
+      return false;
+    },
+
+    restoreFile: function(e) {
+      var $target = $(e.currentTarget);
+      var $overlay = $(e.currentTarget).find('.overlay');
+      var path = $target.data('path');
+
+      // Spinning icon
+      var message = '<span class="ico small inline saving"></span> Restoring ' + path;
+      $overlay.html(message);
+
+      app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
+        if (err) {
+          message = '<span class="ico small inline error"></span> !Try again in 30 Seconds';
+          $overlay.html(message);
+        } else {
+          message = '<span class="ico small inline checkmark"></span> Restored ' + path;
+          $overlay.html(message);
+          $overlay.removeClass('removed').addClass('restored');
+
+          // Update the listing anchor link
+          $target
+            .removeClass('removed')
+            .attr('title', 'Restored ' + path)
+            .addClass('added');
+
+          // Update the anchor listing icon
+          $target.find('.removed')
+            .removeClass('removed')
+            .addClass('added');
+        }
+      });
+
       return false;
     },
 
