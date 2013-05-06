@@ -73,11 +73,11 @@ module.exports = Backbone.View.extend({
         this.preview();
       } else {
         // Editor is first up so trigger an active class for it
-        $('.post-views .edit').toggleClass('active', true);
+        $('.post-views .edit', this.el).toggleClass('active', true);
 
         this.initEditor();
         _.delay(function () {
-          utils.fixedScroll($('.topbar'));
+          utils.fixedScroll($('.topbar', view.el));
         }, 1);
       }
 
@@ -101,12 +101,13 @@ module.exports = Backbone.View.extend({
     },
 
     edit: function(e) {
+      var view = this;
       // If preview was hit on load this.editor
       // was not initialized.
       if (!this.editor) {
         this.initEditor();
         _.delay(function () {
-          utils.fixedScroll($('.topbar'));
+          utils.fixedScroll($('.topbar', view.el));
         }, 1);
       }
 
@@ -117,8 +118,8 @@ module.exports = Backbone.View.extend({
       $('.post-views .edit').addClass('active');
       $('#prose').toggleClass('open', false);
 
-      $('.views .view').removeClass('active');
-      $('.views .edit').addClass('active');
+      $('.views .view', this.el).removeClass('active');
+      $('.views .edit', this.el).addClass('active');
 
       return false;
     },
@@ -142,9 +143,9 @@ module.exports = Backbone.View.extend({
 
         // Content Window
         $('.views .view', this.el).removeClass('active');
-        $('#preview', this.el).addClass('active');
-
-        this.$('.preview').html(marked(this.model.content));
+        $('#preview', this.el)
+          .addClass('active')
+          .html(marked(this.model.content));
 
         app.state.mode = 'blob';
         this.updateURL();
@@ -721,7 +722,7 @@ module.exports = Backbone.View.extend({
                 .appendTo($metadataEditor);
 
               view.rawEditor = CodeMirror(
-                $('#raw')[0], {
+                $('#raw', this.el)[0], {
                   mode: 'yaml',
                   value: jsyaml.dump(raw),
                   lineWrapping: true,
@@ -799,7 +800,7 @@ module.exports = Backbone.View.extend({
       setTimeout(function() {
         if (view.model.jekyll) {
           view.metadataEditor = view.buildMeta();
-          $('#post .metadata').hide();
+          $('#meta', this.el).hide();
         }
 
         var lang = view.model.lang;
