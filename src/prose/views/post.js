@@ -73,7 +73,7 @@ module.exports = Backbone.View.extend({
         this.preview();
       } else {
         // Editor is first up so trigger an active class for it
-        $('.post-views .edit', this.el).toggleClass('active', true);
+        $('#edit', this.el).toggleClass('active', true);
 
         this.initEditor();
         _.delay(function () {
@@ -119,7 +119,7 @@ module.exports = Backbone.View.extend({
       $('#prose').toggleClass('open', false);
 
       $('.views .view', this.el).removeClass('active');
-      $('.views .edit', this.el).addClass('active');
+      $('#edit', this.el).addClass('active');
 
       return false;
     },
@@ -240,9 +240,9 @@ module.exports = Backbone.View.extend({
     hideDiff: function() {
       $('.views .view', this.el).removeClass('active');
       if (app.state.mode === 'blob') {
-        $('.preview', this.el).addClass('active');
+        $('#preview', this.el).addClass('active');
       } else {
-        $('.edit', this.el).addClass('active');
+        $('#edit', this.el).addClass('active');
       }
     },
 
@@ -721,8 +721,7 @@ module.exports = Backbone.View.extend({
                 .prepend('<label for="raw">Raw Metadata</label>')
                 .appendTo($metadataEditor);
 
-              view.rawEditor = CodeMirror(
-                $('#raw', this.el)[0], {
+              view.rawEditor = CodeMirror(document.getElementById('raw'), {
                   mode: 'yaml',
                   value: jsyaml.dump(raw),
                   lineWrapping: true,
@@ -800,7 +799,6 @@ module.exports = Backbone.View.extend({
       setTimeout(function() {
         if (view.model.jekyll) {
           view.metadataEditor = view.buildMeta();
-          $('#meta', this.el).hide();
         }
 
         var lang = view.model.lang;
