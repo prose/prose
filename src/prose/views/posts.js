@@ -31,6 +31,10 @@ module.exports = Backbone.View.extend({
       jailed: jailed
     });
 
+    // If this repo is writable to the current user we use
+    // this check to provide a deletion option to the user
+    this.writePermissions = this.model.permissions.push;
+
     this.eventRegister = app.eventRegister;
 
     // Listen for button clicks from the vertical nav
@@ -86,6 +90,7 @@ module.exports = Backbone.View.extend({
   },
 
   renderResults: function () {
+    var view = this;
     var files = _(window.app.templates.files).template();
     var directories = _(window.app.templates.directories).template();
     var data = _.extend(this.model, app.state, { currentPath: app.state.path });
@@ -110,6 +115,7 @@ module.exports = Backbone.View.extend({
           extension: _.extension(f.path),
           isBinary: _.isBinary(_.extension(f.path)),
           isMedia: _.isMedia(_.extension(f.path)),
+          writePermissions: view.writePermissions,
           repo: data.repo,
           branch: data.branch,
           path: f.path,

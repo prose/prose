@@ -73,11 +73,11 @@ module.exports = Backbone.View.extend({
         this.preview();
       } else {
         // Editor is first up so trigger an active class for it
-        $('.post-views .edit').toggleClass('active', true);
+        $('#edit', this.el).toggleClass('active', true);
 
         this.initEditor();
         _.delay(function () {
-          utils.fixedScroll($('.topbar'));
+          utils.fixedScroll($('.topbar', view.el));
         }, 1);
       }
 
@@ -101,12 +101,13 @@ module.exports = Backbone.View.extend({
     },
 
     edit: function(e) {
+      var view = this;
       // If preview was hit on load this.editor
       // was not initialized.
       if (!this.editor) {
         this.initEditor();
         _.delay(function () {
-          utils.fixedScroll($('.topbar'));
+          utils.fixedScroll($('.topbar', view.el));
         }, 1);
       }
 
@@ -117,8 +118,8 @@ module.exports = Backbone.View.extend({
       $('.post-views .edit').addClass('active');
       $('#prose').toggleClass('open', false);
 
-      $('.views .view').removeClass('active');
-      $('.views .edit').addClass('active');
+      $('.views .view', this.el).removeClass('active');
+      $('#edit', this.el).addClass('active');
 
       return false;
     },
@@ -142,9 +143,9 @@ module.exports = Backbone.View.extend({
 
         // Content Window
         $('.views .view', this.el).removeClass('active');
-        $('#preview', this.el).addClass('active');
-
-        this.$('.preview').html(marked(this.model.content));
+        $('#preview', this.el)
+          .addClass('active')
+          .html(marked(this.model.content));
 
         app.state.mode = 'blob';
         this.updateURL();
@@ -190,8 +191,8 @@ module.exports = Backbone.View.extend({
       if (this.editor) this.model.content = this.editor.getValue();
       if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
-      var saveState = this.model.writeable ? 'Save' : 'Submit Change';
-      this.eventRegister.trigger('updateSave', saveState);
+      var label = this.model.writeable ? 'Save' : 'Submit Change';
+      this.eventRegister.trigger('updateSaveState', label, 'save');
 
       // Pass a popover span to the avatar icon
       $('.save-action', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
@@ -215,8 +216,8 @@ module.exports = Backbone.View.extend({
 
     showDiff: function() {
       var $diff = $('#diff', this.el);
-      var text1 = this.model.persisted ? this.prevFile : '';
-      var text2 = this.serialize();
+      var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
+      var text2 = _.escape(this.serialize());
       var d = diff.diffWords(text1, text2);
       var compare = '';
 
@@ -239,9 +240,9 @@ module.exports = Backbone.View.extend({
     hideDiff: function() {
       $('.views .view', this.el).removeClass('active');
       if (app.state.mode === 'blob') {
-        $('.preview', this.el).addClass('active');
+        $('#preview', this.el).addClass('active');
       } else {
-        $('.edit', this.el).addClass('active');
+        $('#edit', this.el).addClass('active');
       }
     },
 
@@ -720,8 +721,7 @@ module.exports = Backbone.View.extend({
                 .prepend('<label for="raw">Raw Metadata</label>')
                 .appendTo($metadataEditor);
 
-              view.rawEditor = CodeMirror(
-                $('#raw')[0], {
+              view.rawEditor = CodeMirror(document.getElementById('raw'), {
                   mode: 'yaml',
                   value: jsyaml.dump(raw),
                   lineWrapping: true,
@@ -799,7 +799,6 @@ module.exports = Backbone.View.extend({
       setTimeout(function() {
         if (view.model.jekyll) {
           view.metadataEditor = view.buildMeta();
-          $('#post .metadata').hide();
         }
 
         var lang = view.model.lang;

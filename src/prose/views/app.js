@@ -56,12 +56,11 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSave', 'updateSaveState');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState');
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('sidebarContext', this.sidebarContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
-      this.eventRegister.bind('updateSave', this.updateSave);
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
     },
 
@@ -238,23 +237,11 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
-    updateSave: function(saveState) {
-      if (!$('.button.save', this.el).hasClass('saving')) {
-        $('.button.save', this.el)
-          .html(saveState)
-          .removeClass('error');
-
-        // Pass a popover span to the avatar icon
-        $('#heading', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
-
-        $('#prose')
-          .removeClass('error saving saved save')
-          .addClass('save');
-      }
-    },
-
     updateSaveState: function(label, classes, kill) {
       var view = this;
+
+      // Cancel if this condition is met
+      if (classes === 'save' && $(this.el).hasClass('saving')) return;
       $('.button.save', this.el).html(label);
 
       // Pass a popover span to the avatar icon
@@ -278,7 +265,6 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('sidebarContext', this.sidebarContext);
       this.eventRegister.unbind('headerContext', this.headerContext);
       this.eventRegister.unbind('recentFiles', this.recentFiles);
-      this.eventRegister.unbind('updateSave', this.updateSave);
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
       Backbone.View.prototype.remove.call(this);
     }
