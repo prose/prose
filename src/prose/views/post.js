@@ -130,6 +130,9 @@ module.exports = Backbone.View.extend({
       if (this.model.metadata && this.model.metadata.layout) {
         var hash = window.location.hash.split('/');
         hash[2] = 'preview';
+        if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
+          hash.push(_($('input.filepath').val().split('/')).last());
+        }
         this.stashFile();
 
         $(e.currentTarget).attr({
@@ -377,7 +380,7 @@ module.exports = Backbone.View.extend({
 
     stashFile: function(e) {
       if (e) e.preventDefault();
-      if (!window.sessionStorage || !this.dirty) return false;
+      if (!window.sessionStorage) return false;
 
       var store = window.sessionStorage;
       var filepath = $('input.filepath').val();
