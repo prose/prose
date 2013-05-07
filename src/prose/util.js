@@ -369,12 +369,32 @@ module.exports = {
     if ($('.item').hasClass('active')) {
       var index = parseInt($('.item.active').data('index'), 10);
       $('.item.active').removeClass('active');
+
       if (handler === 'k') {
         if (index !== 0) --index;
-        $('.item[data-index=' + index + ']').addClass('active');
+        var $prev = $('.item[data-index=' + index + ']');
+        var prevTop = $prev.offset().top + $prev.height();
+
+        if (prevTop < $(window).height()) {
+          $('html, body').animate({
+             scrollTop: $prev.offset().top - ($prev.height() + 20)
+          }, 0);
+        }
+
+        $prev.addClass('active');
+
       } else {
-        ++index;
-        $('.item[data-index=' + index + ']').addClass('active');
+        if (index < $('#content li').length - 1) ++index;
+        var $next = $('.item[data-index=' + index + ']');
+        var nextTop = $next.offset().top + $next.height();
+
+        if (nextTop > $(window).height()) {
+          $('html, body').animate({
+             scrollTop: $next.offset().top + $next.height()
+          }, 0);
+        }
+
+        $next.addClass('active');
       }
     } else {
       $('.item[data-index=0]').addClass('active');
