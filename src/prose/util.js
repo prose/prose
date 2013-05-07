@@ -371,27 +371,46 @@ module.exports = {
       var index = parseInt($('.item.active').data('index'), 10);
       $('.item.active').removeClass('active');
 
+      function inView(el) {
+          var curTop = el.offset().top;
+          var screenHeight = $(window).height();
+          return (curTop > screenHeight) ? false : true;
+      }
+
+      // UP
       if (handler === 'k') {
         if (index !== 0) --index;
         var $prev = $('.item[data-index=' + index + ']');
         var prevTop = $prev.offset().top + $prev.height();
 
-        if (prevTop < $(window).height()) {
+        console.log(inView($prev));
+
+        if (!inView($prev)) {
+          // Offset is the list height minus the difference between the
+          // height and .content-search (60) that is fixed down the page
+          var offset = $prev.height() + 60;
+
           $('html, body').animate({
-             scrollTop: $prev.offset().top - ($prev.height() + 20)
+            scrollTop: $prev.offset().top + ($prev.height() - offset)
+          }, 0);
+        } else {
+          $('html, body').animate({
+            scrollTop: 0
           }, 0);
         }
 
         $prev.addClass('active');
 
+      // DOWN
       } else {
         if (index < $('#content li').length - 1) ++index;
         var $next = $('.item[data-index=' + index + ']');
         var nextTop = $next.offset().top + $next.height();
+        var offset = $next.height() + 60;
 
-        if (nextTop > $(window).height()) {
+        if (!inView($next)) {
           $('html, body').animate({
-             scrollTop: $next.offset().top + $next.height()
+             scrollTop: $next.offset().top + ($next.height() - offset)
           }, 0);
         }
 
