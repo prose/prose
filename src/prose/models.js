@@ -391,29 +391,31 @@ module.exports = {
                   for (var i = 0; i < res.length; i++) {
                     commit = res[i];
 
-                    for (var j = 0; j < commit.files.length; j++) {
-                      file = commit.files[j];
-                      filename = file.filename;
+                    if (commit.files) {
+                      for (var j = 0; j < commit.files.length; j++) {
+                        file = commit.files[j];
+                        filename = file.filename;
 
-                      var fileCommit = {
-                        status: file.status,
-                        url: file.contents_url
-                      };
+                        var fileCommit = {
+                          status: file.status,
+                          url: file.contents_url
+                        };
 
-                      if (state[filename]) {
-                        state[filename].push(fileCommit);
-                      } else {
-                        state[filename] = [fileCommit];
-                      }
-
-                      // some malformed commit data requires this
-                      if (commit.author) {
-                        author = commit.author.login;
-
-                        if (recent[author]) {
-                          recent[author] = _.union(recent[author], filename);
+                        if (state[filename]) {
+                          state[filename].push(fileCommit);
                         } else {
-                          recent[author] = [filename];
+                          state[filename] = [fileCommit];
+                        }
+
+                        // some malformed commit data requires this
+                        if (commit.author) {
+                          author = commit.author.login;
+
+                          if (recent[author]) {
+                            recent[author] = _.union(recent[author], filename);
+                          } else {
+                            recent[author] = [filename];
+                          }
                         }
                       }
                     }
