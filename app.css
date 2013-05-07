@@ -147,6 +147,8 @@ button,
   .button.delete       { background-color:#db6f6f; }
 
   .button.delete:hover   { background-color:#d35252; }
+
+  .actions .working,
   .actions .delete:hover { border-color:#d35252; }
 
   p > a {font-weight:700;}
@@ -718,7 +720,6 @@ ins {
          -o-animation-name:spin;
             animation-name:spin;
     }
-  .listing .restored .ico,
   .saved .save-action .status {
     -webkit-animation-duration:500ms;
        -moz-animation-duration:500ms;
@@ -1107,6 +1108,7 @@ ins {
   .listing .actions a {
     background:#f8f8f8;
     display:block;
+    position:relative;
     border:1px solid #a8afb2;
     padding:0 10px;
     font-weight:400;

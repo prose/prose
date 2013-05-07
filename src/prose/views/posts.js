@@ -56,7 +56,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.trigger('sidebarContext', app.state, 'posts');
     this.eventRegister.trigger('headerContext', header);
 
-    var tmpl = _(window.app.templates.posts).template();
+    var tmpl = _(app.templates.posts).template();
     $(this.el).empty().append(tmpl(data));
 
     _.delay(function () {
@@ -72,7 +72,7 @@ module.exports = Backbone.View.extend({
     if (e.which === 27) { // ESC
       _.delay(_.bind(function () {
         $('#filter', this.el).val('');
-        this.model = window.app.models.getFiles(this.model.tree, app.state.path, '');
+        this.model = app.models.getFiles(this.model.tree, app.state.path, '');
         this.renderResults();
       }, this), 10);
     } else if (e.which === 40 && $('.item').length > 0) {
@@ -83,7 +83,7 @@ module.exports = Backbone.View.extend({
     } else {
       _.delay(_.bind(function () {
         var searchstr = $('#filter', this.el).val();
-        this.model = window.app.models.getFiles(this.model.tree, app.state.path, searchstr);
+        this.model = app.models.getFiles(this.model.tree, app.state.path, searchstr);
         this.renderResults();
       }, this), 10);
     }
@@ -91,8 +91,8 @@ module.exports = Backbone.View.extend({
 
   renderResults: function () {
     var view = this;
-    var files = _(window.app.templates.files).template();
-    var directories = _(window.app.templates.directories).template();
+    var files = _(app.templates.files).template();
+    var directories = _(app.templates.directories).template();
     var data = _.extend(this.model, app.state, { currentPath: app.state.path });
     var $files = $('#files', this.el);
     $files.empty();
@@ -163,6 +163,8 @@ module.exports = Backbone.View.extend({
 
   deleteFile: function(e) {
     var $file = $(e.target, this.el);
+    var $message = $file.find('.popup');
+
     var file = {
       user: $file.data('user'),
       repo: $file.data('repo'),
@@ -171,9 +173,35 @@ module.exports = Backbone.View.extend({
     };
 
     if (confirm('Are you sure you want to delete this file?')) {
-      window.app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function (err) {
-        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
-        router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
+
+      $message.html('Working');
+      $file.addClass('working');
+
+      // Change the icon to a spinning one
+      app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
+
+        if (err) {
+          $message.html('Error Try&nbsp;again&nbsp;in 30&nbsp;Seconds');
+          $file
+            .removeClass('working rubbish')
+            .addClass('error');
+          return
+        }
+
+        // On Success
+        $file.closest('.item').fadeOut();
+
+        // Capture the filename and make sure the enty
+        // does not exist in the model object
+        for (var i = 0; i < this.model.tree.length; i++) {
+          if (this.model.tree[i]['name'] === file.fileName) {
+            delete this.model.tree[i];
+          }
+        }
+
+        // TODO Bring this back in. Currently hitting githubs api this fast
+        // does not return an updated file listing.
+        // router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
       }, this));
     }
 
