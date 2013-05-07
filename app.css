@@ -1534,7 +1534,7 @@ ins {
   background:#eff3f5;
   border:1px solid #2099AA;
   color:#3d494e;
-  width:98%;
+  width:95%;
   padding:4px 20px 5px 5px;
   margin:3px;
   position:relative;
@@ -1576,8 +1576,7 @@ ins {
   -webkit-overflow-scrolling:touch;
   }
 .chzn-container-multi .chzn-results {
-  margin:-1px 0 0;
-  padding:0;
+  padding:0 0 0 4px;
   }
 .chzn-container .chzn-results li {
   display:none;
@@ -1591,7 +1590,7 @@ ins {
   display:list-item;
   }
 .chzn-container .chzn-results .highlighted {
-  background-color:#90bb74;
+  background-color:#2d9faf;
   color:#fff;
   -webkit-font-smoothing:subpixel-antialiased;
   }
