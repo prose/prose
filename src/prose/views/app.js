@@ -173,7 +173,7 @@ module.exports = Backbone.View.extend({
 
       app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
         if (err) {
-          message = '<span class="ico small inline error"></span> !Try again in 30 Seconds';
+          message = '<span class="ico small inline error"></span> Error Try again in 30 Seconds';
           $overlay.html(message);
         } else {
           message = '<span class="ico small inline checkmark"></span> Restored ' + path;
