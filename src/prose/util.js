@@ -342,7 +342,8 @@ _.preview = function(view) {
         page: p.page,
         content: p.content
       });
-      if (meta.layout) q.defer(getLayout);
+
+      if (meta && meta.layout) q.defer(getLayout);
       cb();
     });
 
