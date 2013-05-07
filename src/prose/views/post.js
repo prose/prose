@@ -74,6 +74,7 @@ module.exports = Backbone.View.extend({
       } else {
         // Editor is first up so trigger an active class for it
         $('#edit', this.el).toggleClass('active', true);
+        $('.post-views .edit').addClass('active');
 
         this.initEditor();
         _.delay(function () {
