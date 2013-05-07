@@ -383,8 +383,6 @@ module.exports = {
         var $prev = $('.item[data-index=' + index + ']');
         var prevTop = $prev.offset().top + $prev.height();
 
-        console.log(inView($prev));
-
         if (!inView($prev)) {
           // Offset is the list height minus the difference between the
           // height and .content-search (60) that is fixed down the page
