@@ -148,7 +148,7 @@ button,
 
   .button.delete:hover   { background-color:#d35252; }
 
-  .actions .working,
+  .listing .actions .working,
   .actions .delete:hover { border-color:#d35252; }
 
   p > a {font-weight:700;}

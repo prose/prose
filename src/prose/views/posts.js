@@ -189,7 +189,7 @@ module.exports = Backbone.View.extend({
         }
 
         // On Success
-        $file.closest('.item').fadeOut();
+        $file.closest('.item').fadeOut('fast');
 
         // Capture the filename and make sure the enty
         // does not exist in the model object
