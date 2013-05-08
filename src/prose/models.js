@@ -673,7 +673,7 @@ module.exports = {
       cb(null, {
         'metadata': metadata,
         'default_metadata': defaultMetadata,
-        'content': '# How does it work?\n\nEnter Text in Markdown format.',
+        'content': '## A New Post\n\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.',
         'repo': repo,
         'path': path,
         'published': false,

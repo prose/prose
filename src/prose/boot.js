@@ -12,7 +12,8 @@ window.app = {
       Preview: require('./views/preview'),
       Profile: require('./views/profile'),
       Posts: require('./views/posts'),
-      Post: require('./views/post')
+      Post: require('./views/post'),
+      Page: require('./views/page')
     },
     templates: require('../../dist/templates'),
     router: require('./router'),

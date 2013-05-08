@@ -6,6 +6,7 @@ var utils = require('./util');
 module.exports = Backbone.Router.extend({
 
   routes: {
+    'about': 'about',
     'error/:code': 'error',
     ':user': 'profile',
     ':user/:repo': 'repo',
@@ -22,6 +23,12 @@ module.exports = Backbone.Router.extend({
       el: '#prose',
       model: this.model
     });
+  },
+
+  about: function() {
+    router.application.render();
+    var view = new app.views.Page().render();
+    $('#content').empty().append(view.el);
   },
 
   // #example-user
