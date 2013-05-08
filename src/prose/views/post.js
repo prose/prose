@@ -56,7 +56,7 @@ module.exports = Backbone.View.extend({
       if (app.state.mode === 'blob') context = 'Previewing ';
 
       this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-      this.eventRegister.trigger('sidebarContext', this.data, 'post');
+      this.eventRegister.trigger('sidebarContext', this.data);
       this.renderHeading();
 
       var tmpl = _(window.app.templates.post).template();

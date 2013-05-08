@@ -98,12 +98,14 @@ module.exports = Backbone.View.extend({
       $('#heading').empty().append(heading(data));
     },
 
-    sidebarContext: function(data, context) {
+    sidebarContext: function(data) {
+
+      // debugger;
       var sidebarTmpl;
 
-      if (context === 'post') {
+      if (app.state.file) {
         sidebarTmpl = _(app.templates.settings).template();
-      } else if (context === 'posts') {
+      } else if (app.state.mode === 'tree') {
         sidebarTmpl = _(app.templates.sidebarProject).template();
       }
 
