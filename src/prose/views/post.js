@@ -198,7 +198,7 @@ module.exports = Backbone.View.extend({
     },
 
     makeDirty: function(e) {
-      this.dirty = true;
+      app.state._dirty = true;
       if (this.editor) this.model.content = this.editor.getValue();
       if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
@@ -332,7 +332,7 @@ module.exports = Backbone.View.extend({
               return;
             }
 
-            view.dirty = false;
+            app.state._dirty = false;
             view.model.persisted = true;
             view.model.file = filename;
             view.updateURL();
@@ -360,7 +360,7 @@ module.exports = Backbone.View.extend({
               view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
-            view.dirty = false;
+            app.state._dirty = false;
             view.model.persisted = true;
             view.model.file = filename;
             view.updateURL();

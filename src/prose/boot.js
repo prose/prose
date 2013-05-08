@@ -25,14 +25,8 @@ window.app = {
 
 // Prevent exit when there are unsaved changes
 window.onbeforeunload = function() {
-  if (window.app.instance.mainView && window.app.instance.mainView.dirty)
+  if (app.state.file && app.state._dirty)
     return 'You have unsaved changes. Are you sure you want to leave?';
-};
-
-window.confirmExit = function() {
-  if (window.app.instance.mainView && window.app.instance.mainView.dirty)
-    return confirm('You have unsaved changes. Are you sure you want to leave?');
-  return true;
 };
 
 // Bootup

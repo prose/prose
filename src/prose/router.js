@@ -40,27 +40,26 @@ module.exports = Backbone.Router.extend({
     // Clean any previous view
     this.eventRegister.trigger('remove');
 
-    if (confirmExit()) {
-      app.state = app.state || {};
-      app.state.user = user;
-      app.state.title = user;
-      app.state.repo = '';
-      app.state.mode = '';
-      app.state.branch = '';
-      app.state.path = '';
+    app.state = app.state || {};
+    app.state.user = user;
+    app.state.title = user;
+    app.state.repo = '';
+    app.state.mode = '';
+    app.state.branch = '';
+    app.state.path = '';
+    app.state.file = '';
 
-      app.models.loadRepos(user, function(err, data) {
-        data.authenticated = !! window.authenticated;
+    app.models.loadRepos(user, function(err, data) {
+      data.authenticated = !! window.authenticated;
 
-        router.application.render();
-        var view = new app.views.Profile({
-          model: _.extend(router.model, data)
-        }).render();
+      router.application.render();
+      var view = new app.views.Profile({
+        model: _.extend(router.model, data)
+      }).render();
 
-        utils.loader.loaded();
-        $('#content').empty().append(view.el);
-      });
-    }
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    });
   },
 
   // #example-user/example-repo
@@ -76,7 +75,8 @@ module.exports = Backbone.Router.extend({
       repo: repo,
       mode: 'tree',
       branch: '',
-      path: ''
+      path: '',
+      file: ''
     };
 
     app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
