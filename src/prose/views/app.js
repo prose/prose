@@ -99,14 +99,12 @@ module.exports = Backbone.View.extend({
     },
 
     sidebarContext: function(data) {
-
-      // debugger;
       var sidebarTmpl;
 
-      if (app.state.file) {
-        sidebarTmpl = _(app.templates.settings).template();
-      } else if (app.state.mode === 'tree') {
+      if (app.state.mode === 'tree') {
         sidebarTmpl = _(app.templates.sidebarProject).template();
+      } else if (data.file) {
+        sidebarTmpl = _(app.templates.settings).template();
       }
 
       $('#drawer', this.el)
