@@ -1,28 +1,29 @@
 # Prose
 
-[Prose](http://prose.io) is a web-based interface for managing text-based content in your GitHub repositories. Use it to create, edit, and delete files, and save your changes directly to GitHub.
+Prose provides a beatifully simple content authoring environment for [CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/). It's a web-based interface for managing content on [GitHub](http://github.com). Use it to create, edit, and delete files, and save your changes directly to GitHub. Host your website on [GitHub Pages](http://pages.github.com) for free, or set up your own [GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).
 
-Prose is great for making quick updates to your code or managing your blog. Prose pays special attention to [Jekyll sites](https://github.com/mojombo/jekyll) [hosted on GitHub Pages](http://pages.github.com) with Markdown text preview and syntax reference. It's [configurable](http://prose.io/help/handbook.html) to restrict users to files that live within the `_posts` directory so you can use it to manage the content on your blog without fear of changing other critical files. Using Jekyll in conjunction with Prose is a smart way of maintaining websites for developers and editors alike by allowing them to use a visual, web-based tool to manage the content.
+[Read more about Prose](http://prose.io/#about)
 
-[Get started now](http://prose.io/help/getting-started.html) or learn more about [using Jekyll to design flexible static websites](http://developmentseed.org/blog/2011/09/09/jekyll-github-pages/).
+## Setting up Prose with your site
 
-![Screen shot of the Prose interface](https://github.com/prose/prose/raw/gh-pages/images/screenshots/edit.png)
+Prose supports configuration settings with a variety of options making it easy to adjust the application to support your needs on a project. You can see a list of [options on the wiki page](https://github.com/prose/prose/wiki/Configuration).
 
+## Installation and developing
 
-## Future plans
+Prose is hosted at [Prose.io](http://prose.io), or you can use on your own server. For installation instructions and contributing guidelines, please [read contributing.md](CONTRIBUTING.md).
 
-This is a first release dedicated to developers at this early stage. It will be buggy as we work out the kinks, but we plan to make this rock solid and extend the feature set (while keeping the UI as minimal as possible). We hope Prose + Jekyll will provide a simple, efficient alternative to traditional CMSs that require web and database servers to host content.
-
-
-## Contributors
-
-- [Saman Bemel Benrud](https://github.com/samanpwbb) - Design
-- [Michael Aufreiter](https://github.com/michael) - Code
-
-Now that you're here, why not start contributing as well? :)
-
+To host your own GitHub webhook Jekyll server, check out [Jekyll-Hook](https://github.com/developmentseed/jekyll-hook).
 
 ## Change Log
+
+**1.0.0** -  *May 8 2013*
+
+- Complete user interface redesign
+- Metadata editor for Jekyll post front matter
+- In-layout previews for Jekyll posts
+- Support for multilingual content
+- Many bug fixes and performance improvements
+- [See the v1.0.0 milestone for the full list](https://github.com/prose/prose/issues?milestone=12&page=1&state=closed)
 
 **0.4.0** -  *July 30 2012*
 
@@ -38,7 +39,7 @@ Now that you're here, why not start contributing as well? :)
 
 **0.2.0** -  *July 6 2012*
 
-Added support for organizations and user profiles. Users can manipulate the full filepath now, allowing them to organize their files in subfolders. Fixes ~ 40 reported issues. Also, updated CodeMirror and added syntax highlighting for some popular programming languages.
+Added support for organizations and user profiles. Users can manipulate the full filepath now, allowing them to organize their files in subfolders. Fixes ~ 40 reported issues. Also, updated CodeMirror and added syntax highlighting for some popular programming languages.
 
 **0.1.1** -  *June 27 2012*
 
@@ -47,3 +48,6 @@ Improved error handling. Upgraded CodeMirror to version 2.3 and added basic supp
 **0.1.0** - *June 25 2012*
 
 Initial release.
+
+
+*Prose is developed and maintained by [Development Seed](http://developmentseed.org).*
