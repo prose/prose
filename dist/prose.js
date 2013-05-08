@@ -9873,14 +9873,8 @@ window.app = {
 
 // Prevent exit when there are unsaved changes
 window.onbeforeunload = function() {
-  if (window.app.instance.mainView && window.app.instance.mainView.dirty)
+  if (app.state.file && app.state._dirty)
     return 'You have unsaved changes. Are you sure you want to leave?';
-};
-
-window.confirmExit = function() {
-  if (window.app.instance.mainView && window.app.instance.mainView.dirty)
-    return confirm('You have unsaved changes. Are you sure you want to leave?');
-  return true;
 };
 
 // Bootup
@@ -9916,7 +9910,7 @@ auth.done(function(res) {
   }
 });
 
-},{"./models":3,"./views/app":4,"./views/notification":5,"./views/start":6,"./views/preview":7,"./views/profile":8,"./views/posts":9,"./views/post":10,"./views/page":11,"../../dist/templates":1,"./router":12,"jquery-browserify":13,"underscore":14,"backbone":15}],16:[function(require,module,exports){
+},{"./models":3,"./views/app":4,"./views/notification":5,"./views/start":6,"./views/preview":7,"./views/profile":8,"./views/posts":9,"./views/post":10,"./views/page":11,"../../dist/templates":1,"./router":12,"underscore":13,"jquery-browserify":14,"backbone":15}],16:[function(require,module,exports){
 function tryParse(obj) {
   try {
     return JSON.parse(obj);
@@ -9988,7 +9982,7 @@ cookie.clear = function() {
 
 module.exports = cookie;
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11217,7 +11211,7 @@ module.exports = cookie;
 }).call(this);
 
 })()
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -21396,7 +21390,7 @@ module.exports = {
   }
 };
 
-},{"./cookie":16,"../libs/github":17,"jquery-browserify":13,"underscore":14,"js-yaml":18,"queue-async":19}],12:[function(require,module,exports){
+},{"./cookie":16,"../libs/github":17,"jquery-browserify":14,"underscore":13,"queue-async":18,"js-yaml":19}],12:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21439,27 +21433,26 @@ module.exports = Backbone.Router.extend({
     // Clean any previous view
     this.eventRegister.trigger('remove');
 
-    if (confirmExit()) {
-      app.state = app.state || {};
-      app.state.user = user;
-      app.state.title = user;
-      app.state.repo = '';
-      app.state.mode = '';
-      app.state.branch = '';
-      app.state.path = '';
+    app.state = app.state || {};
+    app.state.user = user;
+    app.state.title = user;
+    app.state.repo = '';
+    app.state.mode = '';
+    app.state.branch = '';
+    app.state.path = '';
+    app.state.file = '';
 
-      app.models.loadRepos(user, function(err, data) {
-        data.authenticated = !! window.authenticated;
+    app.models.loadRepos(user, function(err, data) {
+      data.authenticated = !! window.authenticated;
 
-        router.application.render();
-        var view = new app.views.Profile({
-          model: _.extend(router.model, data)
-        }).render();
+      router.application.render();
+      var view = new app.views.Profile({
+        model: _.extend(router.model, data)
+      }).render();
 
-        utils.loader.loaded();
-        $('#content').empty().append(view.el);
-      });
-    }
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    });
   },
 
   // #example-user/example-repo
@@ -21475,7 +21468,8 @@ module.exports = Backbone.Router.extend({
       repo: repo,
       mode: 'tree',
       branch: '',
-      path: ''
+      path: '',
+      file: ''
     };
 
     app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
@@ -21681,7 +21675,7 @@ module.exports = Backbone.Router.extend({
   }
 });
 
-},{"./util":20,"jquery-browserify":13,"underscore":14,"backbone":15}],19:[function(require,module,exports){
+},{"./util":20,"jquery-browserify":14,"underscore":13,"backbone":15}],18:[function(require,module,exports){
 (function() {
   if (typeof module === "undefined") self.queue = queue;
   else module.exports = queue;
@@ -22048,7 +22042,54 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":13,"backbone":15,"underscore":14}],5:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":14,"underscore":13,"backbone":15}],6:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  id: 'start',
+  className: 'start',
+
+  render: function() {
+    var tmpl = _(window.app.templates.start).template();
+    $(this.el).empty().append(tmpl(this.model));
+    return this;
+  }
+});
+
+},{"jquery-browserify":14,"underscore":13,"backbone":15}],7:[function(require,module,exports){
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  render: function() {
+    this.eventRegister = app.eventRegister;
+
+    var pathTitle = (app.state.path) ? app.state.path : '';
+    this.eventRegister.trigger('documentTitle', 'Previewing ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    this.stashApply();
+    _.preview(this);
+    return this;
+  },
+
+  stashApply: function() {
+    if (!window.sessionStorage) return false;
+
+    var storage = window.sessionStorage,
+        filepath = window.location.hash.split('/').slice(4).join('/');
+
+    var stash = JSON.parse(storage.getItem(filepath));
+
+    if (stash) {
+      this.model.content = stash.content;
+      this.model.metadata = stash.metadata;
+    }
+  }
+});
+
+},{"underscore":13,"js-yaml":19,"backbone":15}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22093,54 +22134,7 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{"jquery-browserify":13,"underscore":14,"backbone":15}],6:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  id: 'start',
-  className: 'start',
-
-  render: function() {
-    var tmpl = _(window.app.templates.start).template();
-    $(this.el).empty().append(tmpl(this.model));
-    return this;
-  }
-});
-
-},{"jquery-browserify":13,"underscore":14,"backbone":15}],7:[function(require,module,exports){
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  render: function() {
-    this.eventRegister = app.eventRegister;
-
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', 'Previewing ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    this.stashApply();
-    _.preview(this);
-    return this;
-  },
-
-  stashApply: function() {
-    if (!window.sessionStorage) return false;
-
-    var storage = window.sessionStorage,
-        filepath = window.location.hash.split('/').slice(4).join('/');
-
-    var stash = JSON.parse(storage.getItem(filepath));
-
-    if (stash) {
-      this.model.content = stash.content;
-      this.model.metadata = stash.metadata;
-    }
-  }
-});
-
-},{"underscore":14,"js-yaml":18,"backbone":15}],8:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":13,"backbone":15}],8:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22263,7 +22257,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":13,"underscore":14,"backbone":15}],9:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":14,"underscore":13,"backbone":15}],9:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -22475,7 +22469,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././util":20,"jquery-browserify":13,"underscore":14,"js-yaml":18,"keymaster":21,"backbone":15}],10:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":14,"underscore":13,"js-yaml":19,"keymaster":21,"backbone":15}],10:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -22676,7 +22670,7 @@ module.exports = Backbone.View.extend({
     },
 
     makeDirty: function(e) {
-      this.dirty = true;
+      app.state._dirty = true;
       if (this.editor) this.model.content = this.editor.getValue();
       if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
@@ -22810,7 +22804,7 @@ module.exports = Backbone.View.extend({
               return;
             }
 
-            view.dirty = false;
+            app.state._dirty = false;
             view.model.persisted = true;
             view.model.file = filename;
             view.updateURL();
@@ -22838,7 +22832,7 @@ module.exports = Backbone.View.extend({
               view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
-            view.dirty = false;
+            app.state._dirty = false;
             view.model.persisted = true;
             view.model.file = filename;
             view.updateURL();
@@ -23462,7 +23456,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":13,"underscore":14,"js-yaml":18,"keymaster":21,"marked":22,"backbone":15,"chosen-jquery-browserify":23,"diff":24}],11:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":14,"chosen-jquery-browserify":22,"underscore":13,"js-yaml":19,"keymaster":21,"marked":23,"backbone":15,"diff":24}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -23486,7 +23480,7 @@ module.exports = Backbone.View.extend({
 
 
 
-},{".././util":20,"jquery-browserify":13,"underscore":14,"js-yaml":18,"keymaster":21,"marked":22,"backbone":15,"chosen-jquery-browserify":23,"diff":24}],15:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":14,"underscore":13,"chosen-jquery-browserify":22,"js-yaml":19,"keymaster":21,"marked":23,"backbone":15,"diff":24}],15:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -25060,7 +25054,7 @@ module.exports = Backbone.View.extend({
 }).call(this);
 
 })()
-},{"underscore":14}],18:[function(require,module,exports){
+},{"underscore":13}],19:[function(require,module,exports){
 module.exports = require('./lib/js-yaml.js');
 
 },{"./lib/js-yaml.js":25}],21:[function(require,module,exports){
@@ -25355,6 +25349,1084 @@ module.exports = require('./lib/js-yaml.js');
 
 })()
 },{}],22:[function(require,module,exports){
+(function() {
+  var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  AbstractChosen = (function() {
+    function AbstractChosen(form_field, options) {
+      this.form_field = form_field;
+      this.options = options != null ? options : {};
+      this.is_multiple = this.form_field.multiple;
+      this.set_default_text();
+      this.set_default_values();
+      this.setup();
+      this.set_up_html();
+      this.register_observers();
+      this.finish_setup();
+    }
+
+    AbstractChosen.prototype.set_default_values = function() {
+      var _this = this;
+
+      this.click_test_action = function(evt) {
+        return _this.test_active_click(evt);
+      };
+      this.activate_action = function(evt) {
+        return _this.activate_field(evt);
+      };
+      this.active_field = false;
+      this.mouse_on_container = false;
+      this.results_showing = false;
+      this.result_highlighted = null;
+      this.result_single_selected = null;
+      this.allow_single_deselect = (this.options.allow_single_deselect != null) && (this.form_field.options[0] != null) && this.form_field.options[0].text === "" ? this.options.allow_single_deselect : false;
+      this.disable_search_threshold = this.options.disable_search_threshold || 0;
+      this.disable_search = this.options.disable_search || false;
+      this.enable_split_word_search = this.options.enable_split_word_search != null ? this.options.enable_split_word_search : true;
+      this.search_contains = this.options.search_contains || false;
+      this.choices = 0;
+      this.single_backstroke_delete = this.options.single_backstroke_delete || false;
+      this.max_selected_options = this.options.max_selected_options || Infinity;
+      return this.inherit_select_classes = this.options.inherit_select_classes || false;
+    };
+
+    AbstractChosen.prototype.set_default_text = function() {
+      if (this.form_field.getAttribute("data-placeholder")) {
+        this.default_text = this.form_field.getAttribute("data-placeholder");
+      } else if (this.is_multiple) {
+        this.default_text = this.options.placeholder_text_multiple || this.options.placeholder_text || "Select Some Options";
+      } else {
+        this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || "Select an Option";
+      }
+      return this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || "No results match";
+    };
+
+    AbstractChosen.prototype.mouse_enter = function() {
+      return this.mouse_on_container = true;
+    };
+
+    AbstractChosen.prototype.mouse_leave = function() {
+      return this.mouse_on_container = false;
+    };
+
+    AbstractChosen.prototype.input_focus = function(evt) {
+      var _this = this;
+
+      if (this.is_multiple) {
+        if (!this.active_field) {
+          return setTimeout((function() {
+            return _this.container_mousedown();
+          }), 50);
+        }
+      } else {
+        if (!this.active_field) {
+          return this.activate_field();
+        }
+      }
+    };
+
+    AbstractChosen.prototype.input_blur = function(evt) {
+      var _this = this;
+
+      if (!this.mouse_on_container) {
+        this.active_field = false;
+        return setTimeout((function() {
+          return _this.blur_test();
+        }), 100);
+      }
+    };
+
+    AbstractChosen.prototype.result_add_option = function(option) {
+      var classes, style;
+
+      if (!option.disabled) {
+        option.dom_id = this.container_id + "_o_" + option.array_index;
+        classes = option.selected && this.is_multiple ? [] : ["active-result"];
+        if (option.selected) {
+          classes.push("result-selected");
+        }
+        if (option.group_array_index != null) {
+          classes.push("group-option");
+        }
+        if (option.classes !== "") {
+          classes.push(option.classes);
+        }
+        style = option.style.cssText !== "" ? " style=\"" + option.style + "\"" : "";
+        return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
+      } else {
+        return "";
+      }
+    };
+
+    AbstractChosen.prototype.results_update_field = function() {
+      if (!this.is_multiple) {
+        this.results_reset_cleanup();
+      }
+      this.result_clear_highlight();
+      this.result_single_selected = null;
+      return this.results_build();
+    };
+
+    AbstractChosen.prototype.results_toggle = function() {
+      if (this.results_showing) {
+        return this.results_hide();
+      } else {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.results_search = function(evt) {
+      if (this.results_showing) {
+        return this.winnow_results();
+      } else {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.keyup_checker = function(evt) {
+      var stroke, _ref;
+
+      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
+      this.search_field_scale();
+      switch (stroke) {
+        case 8:
+          if (this.is_multiple && this.backstroke_length < 1 && this.choices > 0) {
+            return this.keydown_backstroke();
+          } else if (!this.pending_backstroke) {
+            this.result_clear_highlight();
+            return this.results_search();
+          }
+          break;
+        case 13:
+          evt.preventDefault();
+          if (this.results_showing) {
+            return this.result_select(evt);
+          }
+          break;
+        case 27:
+          if (this.results_showing) {
+            this.results_hide();
+          }
+          return true;
+        case 9:
+        case 38:
+        case 40:
+        case 16:
+        case 91:
+        case 17:
+          break;
+        default:
+          return this.results_search();
+      }
+    };
+
+    AbstractChosen.prototype.generate_field_id = function() {
+      var new_id;
+
+      new_id = this.generate_random_id();
+      this.form_field.id = new_id;
+      return new_id;
+    };
+
+    AbstractChosen.prototype.generate_random_char = function() {
+      var chars, newchar, rand;
+
+      chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      rand = Math.floor(Math.random() * chars.length);
+      return newchar = chars.substring(rand, rand + 1);
+    };
+
+    return AbstractChosen;
+
+  })();
+
+  $ = window.jQuery;
+
+  get_side_border_padding = function(elmt) {
+    var side_border_padding;
+
+    return side_border_padding = elmt.outerWidth() - elmt.width();
+  };
+
+  $.fn.extend({
+    chosen: function(options) {
+      var browser, match, ua;
+
+      ua = window.navigator.userAgent.toLowerCase();
+      match = /(msie) ([\w.]+)/.exec(ua) || [];
+      browser = {
+        name: match[1] || "",
+        version: match[2] || "0"
+      };
+      if (browser.name === "msie" && (browser.version === "6.0" || (browser.version === "7.0" && document.documentMode === 7))) {
+        return this;
+      }
+      return this.each(function(input_field) {
+        var $this;
+
+        $this = $(this);
+        if (!$this.hasClass("chzn-done")) {
+          return $this.data('chosen', new Chosen(this, options));
+        }
+      });
+    }
+  });
+
+  Chosen = (function(_super) {
+    __extends(Chosen, _super);
+
+    function Chosen() {
+      _ref = Chosen.__super__.constructor.apply(this, arguments);
+      return _ref;
+    }
+
+    Chosen.prototype.setup = function() {
+      this.form_field_jq = $(this.form_field);
+      this.current_value = this.form_field_jq.val();
+      return this.is_rtl = this.form_field_jq.hasClass("chzn-rtl");
+    };
+
+    Chosen.prototype.finish_setup = function() {
+      return this.form_field_jq.addClass("chzn-done");
+    };
+
+    Chosen.prototype.set_up_html = function() {
+      var container_classes, container_div, container_props, dd_top, dd_width, sf_width;
+
+      this.container_id = this.form_field.id.length ? this.form_field.id.replace(/[^\w]/g, '_') : this.generate_field_id();
+      this.container_id += "_chzn";
+      container_classes = ["chzn-container"];
+      container_classes.push("chzn-container-" + (this.is_multiple ? "multi" : "single"));
+      if (this.inherit_select_classes && this.form_field.className) {
+        container_classes.push(this.form_field.className);
+      }
+      if (this.is_rtl) {
+        container_classes.push("chzn-rtl");
+      }
+      this.f_width = this.form_field_jq.outerWidth();
+      container_props = {
+        id: this.container_id,
+        "class": container_classes.join(' '),
+        style: 'width: ' + this.f_width + 'px;',
+        title: this.form_field.title
+      };
+      container_div = $("<div />", container_props);
+      if (this.is_multiple) {
+        container_div.html('<ul class="chzn-choices"><li class="search-field"><input type="text" value="' + this.default_text + '" class="default" autocomplete="off" style="width:25px;" /></li></ul><div class="chzn-drop" style="left:-9000px;"><ul class="chzn-results"></ul></div>');
+      } else {
+        container_div.html('<a href="javascript:void(0)" class="chzn-single chzn-default" tabindex="-1"><span>' + this.default_text + '</span><div><b></b></div></a><div class="chzn-drop" style="left:-9000px;"><div class="chzn-search"><input type="text" autocomplete="off" /></div><ul class="chzn-results"></ul></div>');
+      }
+      this.form_field_jq.hide().after(container_div);
+      this.container = $('#' + this.container_id);
+      this.dropdown = this.container.find('div.chzn-drop').first();
+      dd_top = this.container.height();
+      dd_width = this.f_width - get_side_border_padding(this.dropdown);
+      this.dropdown.css({
+        "width": dd_width + "px",
+        "top": dd_top + "px"
+      });
+      this.search_field = this.container.find('input').first();
+      this.search_results = this.container.find('ul.chzn-results').first();
+      this.search_field_scale();
+      this.search_no_results = this.container.find('li.no-results').first();
+      if (this.is_multiple) {
+        this.search_choices = this.container.find('ul.chzn-choices').first();
+        this.search_container = this.container.find('li.search-field').first();
+      } else {
+        this.search_container = this.container.find('div.chzn-search').first();
+        this.selected_item = this.container.find('.chzn-single').first();
+        sf_width = dd_width - get_side_border_padding(this.search_container) - get_side_border_padding(this.search_field);
+        this.search_field.css({
+          "width": sf_width + "px"
+        });
+      }
+      this.results_build();
+      this.set_tab_index();
+      return this.form_field_jq.trigger("liszt:ready", {
+        chosen: this
+      });
+    };
+
+    Chosen.prototype.register_observers = function() {
+      var _this = this;
+
+      this.container.mousedown(function(evt) {
+        return _this.container_mousedown(evt);
+      });
+      this.container.mouseup(function(evt) {
+        return _this.container_mouseup(evt);
+      });
+      this.container.mouseenter(function(evt) {
+        return _this.mouse_enter(evt);
+      });
+      this.container.mouseleave(function(evt) {
+        return _this.mouse_leave(evt);
+      });
+      this.search_results.mouseup(function(evt) {
+        return _this.search_results_mouseup(evt);
+      });
+      this.search_results.mouseover(function(evt) {
+        return _this.search_results_mouseover(evt);
+      });
+      this.search_results.mouseout(function(evt) {
+        return _this.search_results_mouseout(evt);
+      });
+      this.form_field_jq.bind("liszt:updated", function(evt) {
+        return _this.results_update_field(evt);
+      });
+      this.form_field_jq.bind("liszt:activate", function(evt) {
+        return _this.activate_field(evt);
+      });
+      this.form_field_jq.bind("liszt:open", function(evt) {
+        return _this.container_mousedown(evt);
+      });
+      this.search_field.blur(function(evt) {
+        return _this.input_blur(evt);
+      });
+      this.search_field.keyup(function(evt) {
+        return _this.keyup_checker(evt);
+      });
+      this.search_field.keydown(function(evt) {
+        return _this.keydown_checker(evt);
+      });
+      this.search_field.focus(function(evt) {
+        return _this.input_focus(evt);
+      });
+      if (this.is_multiple) {
+        return this.search_choices.click(function(evt) {
+          return _this.choices_click(evt);
+        });
+      } else {
+        return this.container.click(function(evt) {
+          return evt.preventDefault();
+        });
+      }
+    };
+
+    Chosen.prototype.search_field_disabled = function() {
+      this.is_disabled = this.form_field_jq[0].disabled;
+      if (this.is_disabled) {
+        this.container.addClass('chzn-disabled');
+        this.search_field[0].disabled = true;
+        if (!this.is_multiple) {
+          this.selected_item.unbind("focus", this.activate_action);
+        }
+        return this.close_field();
+      } else {
+        this.container.removeClass('chzn-disabled');
+        this.search_field[0].disabled = false;
+        if (!this.is_multiple) {
+          return this.selected_item.bind("focus", this.activate_action);
+        }
+      }
+    };
+
+    Chosen.prototype.container_mousedown = function(evt) {
+      var target_closelink;
+
+      if (!this.is_disabled) {
+        target_closelink = evt != null ? $(evt.target).hasClass("search-choice-close") : false;
+        if ((evt != null ? evt.type : void 0) === "mousedown" && !this.results_showing) {
+          evt.preventDefault();
+        }
+        if (!this.pending_destroy_click && !target_closelink) {
+          if (!this.active_field) {
+            if (this.is_multiple) {
+              this.search_field.val("");
+            }
+            $(document).click(this.click_test_action);
+            this.results_show();
+          } else if (!this.is_multiple && evt && (($(evt.target)[0] === this.selected_item[0]) || $(evt.target).parents("a.chzn-single").length)) {
+            evt.preventDefault();
+            this.results_toggle();
+          }
+          return this.activate_field();
+        } else {
+          return this.pending_destroy_click = false;
+        }
+      }
+    };
+
+    Chosen.prototype.container_mouseup = function(evt) {
+      if (evt.target.nodeName === "ABBR" && !this.is_disabled) {
+        return this.results_reset(evt);
+      }
+    };
+
+    Chosen.prototype.blur_test = function(evt) {
+      if (!this.active_field && this.container.hasClass("chzn-container-active")) {
+        return this.close_field();
+      }
+    };
+
+    Chosen.prototype.close_field = function() {
+      $(document).unbind("click", this.click_test_action);
+      this.active_field = false;
+      this.results_hide();
+      this.container.removeClass("chzn-container-active");
+      this.winnow_results_clear();
+      this.clear_backstroke();
+      this.show_search_field_default();
+      return this.search_field_scale();
+    };
+
+    Chosen.prototype.activate_field = function() {
+      this.container.addClass("chzn-container-active");
+      this.active_field = true;
+      this.search_field.val(this.search_field.val());
+      return this.search_field.focus();
+    };
+
+    Chosen.prototype.test_active_click = function(evt) {
+      if ($(evt.target).parents('#' + this.container_id).length) {
+        return this.active_field = true;
+      } else {
+        return this.close_field();
+      }
+    };
+
+    Chosen.prototype.results_build = function() {
+      var content, data, _i, _len, _ref1;
+
+      this.parsing = true;
+      this.results_data = SelectParser.select_to_array(this.form_field);
+      if (this.is_multiple && this.choices > 0) {
+        this.search_choices.find("li.search-choice").remove();
+        this.choices = 0;
+      } else if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-default").find("span").text(this.default_text);
+        if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
+          this.container.addClass("chzn-container-single-nosearch");
+        } else {
+          this.container.removeClass("chzn-container-single-nosearch");
+        }
+      }
+      content = '';
+      _ref1 = this.results_data;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        data = _ref1[_i];
+        if (data.group) {
+          content += this.result_add_group(data);
+        } else if (!data.empty) {
+          content += this.result_add_option(data);
+          if (data.selected && this.is_multiple) {
+            this.choice_build(data);
+          } else if (data.selected && !this.is_multiple) {
+            this.selected_item.removeClass("chzn-default").find("span").text(data.text);
+            if (this.allow_single_deselect) {
+              this.single_deselect_control_build();
+            }
+          }
+        }
+      }
+      this.search_field_disabled();
+      this.show_search_field_default();
+      this.search_field_scale();
+      this.search_results.html(content);
+      return this.parsing = false;
+    };
+
+    Chosen.prototype.result_add_group = function(group) {
+      if (!group.disabled) {
+        group.dom_id = this.container_id + "_g_" + group.array_index;
+        return '<li id="' + group.dom_id + '" class="group-result">' + $("<div />").text(group.label).html() + '</li>';
+      } else {
+        return "";
+      }
+    };
+
+    Chosen.prototype.result_do_highlight = function(el) {
+      var high_bottom, high_top, maxHeight, visible_bottom, visible_top;
+
+      if (el.length) {
+        this.result_clear_highlight();
+        this.result_highlight = el;
+        this.result_highlight.addClass("highlighted");
+        maxHeight = parseInt(this.search_results.css("maxHeight"), 10);
+        visible_top = this.search_results.scrollTop();
+        visible_bottom = maxHeight + visible_top;
+        high_top = this.result_highlight.position().top + this.search_results.scrollTop();
+        high_bottom = high_top + this.result_highlight.outerHeight();
+        if (high_bottom >= visible_bottom) {
+          return this.search_results.scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
+        } else if (high_top < visible_top) {
+          return this.search_results.scrollTop(high_top);
+        }
+      }
+    };
+
+    Chosen.prototype.result_clear_highlight = function() {
+      if (this.result_highlight) {
+        this.result_highlight.removeClass("highlighted");
+      }
+      return this.result_highlight = null;
+    };
+
+    Chosen.prototype.results_show = function() {
+      var dd_top;
+
+      if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-single-with-drop");
+        if (this.result_single_selected) {
+          this.result_do_highlight(this.result_single_selected);
+        }
+      } else if (this.max_selected_options <= this.choices) {
+        this.form_field_jq.trigger("liszt:maxselected", {
+          chosen: this
+        });
+        false;
+      }
+      dd_top = this.is_multiple ? this.container.height() : this.container.height() - 1;
+      this.form_field_jq.trigger("liszt:showing_dropdown", {
+        chosen: this
+      });
+      this.dropdown.css({
+        "top": dd_top + "px",
+        "left": 0
+      });
+      this.results_showing = true;
+      this.search_field.focus();
+      this.search_field.val(this.search_field.val());
+      return this.winnow_results();
+    };
+
+    Chosen.prototype.results_hide = function() {
+      if (!this.is_multiple) {
+        this.selected_item.removeClass("chzn-single-with-drop");
+      }
+      this.result_clear_highlight();
+      this.form_field_jq.trigger("liszt:hiding_dropdown", {
+        chosen: this
+      });
+      this.dropdown.css({
+        left: "-9000px"
+      });
+      return this.results_showing = false;
+    };
+
+    Chosen.prototype.set_tab_index = function(el) {
+      var ti;
+
+      if (this.form_field_jq.attr("tabindex")) {
+        ti = this.form_field_jq.attr("tabindex");
+        this.form_field_jq.attr("tabindex", -1);
+        return this.search_field.attr("tabindex", ti);
+      }
+    };
+
+    Chosen.prototype.show_search_field_default = function() {
+      if (this.is_multiple && this.choices < 1 && !this.active_field) {
+        this.search_field.val(this.default_text);
+        return this.search_field.addClass("default");
+      } else {
+        this.search_field.val("");
+        return this.search_field.removeClass("default");
+      }
+    };
+
+    Chosen.prototype.search_results_mouseup = function(evt) {
+      var target;
+
+      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
+      if (target.length) {
+        this.result_highlight = target;
+        this.result_select(evt);
+        return this.search_field.focus();
+      }
+    };
+
+    Chosen.prototype.search_results_mouseover = function(evt) {
+      var target;
+
+      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
+      if (target) {
+        return this.result_do_highlight(target);
+      }
+    };
+
+    Chosen.prototype.search_results_mouseout = function(evt) {
+      if ($(evt.target).hasClass("active-result" || $(evt.target).parents('.active-result').first())) {
+        return this.result_clear_highlight();
+      }
+    };
+
+    Chosen.prototype.choices_click = function(evt) {
+      evt.preventDefault();
+      if (this.active_field && !($(evt.target).hasClass("search-choice" || $(evt.target).parents('.search-choice').first)) && !this.results_showing) {
+        return this.results_show();
+      }
+    };
+
+    Chosen.prototype.choice_build = function(item) {
+      var choice_id, html, link,
+        _this = this;
+
+      if (this.is_multiple && this.max_selected_options <= this.choices) {
+        this.form_field_jq.trigger("liszt:maxselected", {
+          chosen: this
+        });
+        false;
+      }
+      choice_id = this.container_id + "_c_" + item.array_index;
+      this.choices += 1;
+      if (item.disabled) {
+        html = '<li class="search-choice search-choice-disabled" id="' + choice_id + '"><span>' + item.html + '</span></li>';
+      } else {
+        html = '<li class="search-choice" id="' + choice_id + '"><span>' + item.html + '</span><a href="javascript:void(0)" class="search-choice-close" rel="' + item.array_index + '"></a></li>';
+      }
+      this.search_container.before(html);
+      link = $('#' + choice_id).find("a").first();
+      return link.click(function(evt) {
+        return _this.choice_destroy_link_click(evt);
+      });
+    };
+
+    Chosen.prototype.choice_destroy_link_click = function(evt) {
+      evt.preventDefault();
+      if (!this.is_disabled) {
+        this.pending_destroy_click = true;
+        return this.choice_destroy($(evt.target));
+      } else {
+        return evt.stopPropagation;
+      }
+    };
+
+    Chosen.prototype.choice_destroy = function(link) {
+      if (this.result_deselect(link.attr("rel"))) {
+        this.choices -= 1;
+        this.show_search_field_default();
+        if (this.is_multiple && this.choices > 0 && this.search_field.val().length < 1) {
+          this.results_hide();
+        }
+        link.parents('li').first().remove();
+        return this.search_field_scale();
+      }
+    };
+
+    Chosen.prototype.results_reset = function() {
+      this.form_field.options[0].selected = true;
+      this.selected_item.find("span").text(this.default_text);
+      if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-default");
+      }
+      this.show_search_field_default();
+      this.results_reset_cleanup();
+      this.form_field_jq.trigger("change");
+      if (this.active_field) {
+        return this.results_hide();
+      }
+    };
+
+    Chosen.prototype.results_reset_cleanup = function() {
+      this.current_value = this.form_field_jq.val();
+      return this.selected_item.find("abbr").remove();
+    };
+
+    Chosen.prototype.result_select = function(evt) {
+      var high, high_id, item, position;
+
+      if (this.result_highlight) {
+        high = this.result_highlight;
+        high_id = high.attr("id");
+        this.result_clear_highlight();
+        if (this.is_multiple) {
+          this.result_deactivate(high);
+        } else {
+          this.search_results.find(".result-selected").removeClass("result-selected");
+          this.result_single_selected = high;
+          this.selected_item.removeClass("chzn-default");
+        }
+        high.addClass("result-selected");
+        position = high_id.substr(high_id.lastIndexOf("_") + 1);
+        item = this.results_data[position];
+        item.selected = true;
+        this.form_field.options[item.options_index].selected = true;
+        if (this.is_multiple) {
+          this.choice_build(item);
+        } else {
+          this.selected_item.find("span").first().text(item.text);
+          if (this.allow_single_deselect) {
+            this.single_deselect_control_build();
+          }
+        }
+        if (!((evt.metaKey || evt.ctrlKey) && this.is_multiple)) {
+          this.results_hide();
+        }
+        this.search_field.val("");
+        if (this.is_multiple || this.form_field_jq.val() !== this.current_value) {
+          this.form_field_jq.trigger("change", {
+            'selected': this.form_field.options[item.options_index].value
+          });
+        }
+        this.current_value = this.form_field_jq.val();
+        return this.search_field_scale();
+      }
+    };
+
+    Chosen.prototype.result_activate = function(el) {
+      return el.addClass("active-result");
+    };
+
+    Chosen.prototype.result_deactivate = function(el) {
+      return el.removeClass("active-result");
+    };
+
+    Chosen.prototype.result_deselect = function(pos) {
+      var result, result_data;
+
+      result_data = this.results_data[pos];
+      if (!this.form_field.options[result_data.options_index].disabled) {
+        result_data.selected = false;
+        this.form_field.options[result_data.options_index].selected = false;
+        result = $("#" + this.container_id + "_o_" + pos);
+        result.removeClass("result-selected").addClass("active-result").show();
+        this.result_clear_highlight();
+        this.winnow_results();
+        this.form_field_jq.trigger("change", {
+          deselected: this.form_field.options[result_data.options_index].value
+        });
+        this.search_field_scale();
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    Chosen.prototype.single_deselect_control_build = function() {
+      if (this.allow_single_deselect && this.selected_item.find("abbr").length < 1) {
+        return this.selected_item.find("span").first().after("<abbr class=\"search-choice-close\"></abbr>");
+      }
+    };
+
+    Chosen.prototype.winnow_results = function() {
+      var found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref1;
+
+      this.no_results_clear();
+      results = 0;
+      searchText = this.search_field.val() === this.default_text ? "" : $('<div/>').text($.trim(this.search_field.val())).html();
+      regexAnchor = this.search_contains ? "" : "^";
+      regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
+      zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
+      _ref1 = this.results_data;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        option = _ref1[_i];
+        if (!option.disabled && !option.empty) {
+          if (option.group) {
+            $('#' + option.dom_id).css('display', 'none');
+          } else if (!(this.is_multiple && option.selected)) {
+            found = false;
+            result_id = option.dom_id;
+            result = $("#" + result_id);
+            if (regex.test(option.html)) {
+              found = true;
+              results += 1;
+            } else if (this.enable_split_word_search && (option.html.indexOf(" ") >= 0 || option.html.indexOf("[") === 0)) {
+              parts = option.html.replace(/\[|\]/g, "").split(" ");
+              if (parts.length) {
+                for (_j = 0, _len1 = parts.length; _j < _len1; _j++) {
+                  part = parts[_j];
+                  if (!(regex.test(part))) {
+                    continue;
+                  }
+                  found = true;
+                  results += 1;
+                }
+              }
+            }
+            if (found) {
+              if (searchText.length) {
+                startpos = option.html.search(zregex);
+                text = option.html.substr(0, startpos + searchText.length) + '</em>' + option.html.substr(startpos + searchText.length);
+                text = text.substr(0, startpos) + '<em>' + text.substr(startpos);
+              } else {
+                text = option.html;
+              }
+              result.html(text);
+              this.result_activate(result);
+              if (option.group_array_index != null) {
+                $("#" + this.results_data[option.group_array_index].dom_id).css('display', 'list-item');
+              }
+            } else {
+              if (this.result_highlight && result_id === this.result_highlight.attr('id')) {
+                this.result_clear_highlight();
+              }
+              this.result_deactivate(result);
+            }
+          }
+        }
+      }
+      if (results < 1 && searchText.length) {
+        return this.no_results(searchText);
+      } else {
+        return this.winnow_results_set_highlight();
+      }
+    };
+
+    Chosen.prototype.winnow_results_clear = function() {
+      var li, lis, _i, _len, _results;
+
+      this.search_field.val("");
+      lis = this.search_results.find("li");
+      _results = [];
+      for (_i = 0, _len = lis.length; _i < _len; _i++) {
+        li = lis[_i];
+        li = $(li);
+        if (li.hasClass("group-result")) {
+          _results.push(li.css('display', 'auto'));
+        } else if (!this.is_multiple || !li.hasClass("result-selected")) {
+          _results.push(this.result_activate(li));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Chosen.prototype.winnow_results_set_highlight = function() {
+      var do_high, selected_results;
+
+      if (!this.result_highlight) {
+        selected_results = !this.is_multiple ? this.search_results.find(".result-selected.active-result") : [];
+        do_high = selected_results.length ? selected_results.first() : this.search_results.find(".active-result").first();
+        if (do_high != null) {
+          return this.result_do_highlight(do_high);
+        }
+      }
+    };
+
+    Chosen.prototype.no_results = function(terms) {
+      var no_results_html;
+
+      no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
+      no_results_html.find("span").first().html(terms);
+      return this.search_results.append(no_results_html);
+    };
+
+    Chosen.prototype.no_results_clear = function() {
+      return this.search_results.find(".no-results").remove();
+    };
+
+    Chosen.prototype.keydown_arrow = function() {
+      var first_active, next_sib;
+
+      if (!this.result_highlight) {
+        first_active = this.search_results.find("li.active-result").first();
+        if (first_active) {
+          this.result_do_highlight($(first_active));
+        }
+      } else if (this.results_showing) {
+        next_sib = this.result_highlight.nextAll("li.active-result").first();
+        if (next_sib) {
+          this.result_do_highlight(next_sib);
+        }
+      }
+      if (!this.results_showing) {
+        return this.results_show();
+      }
+    };
+
+    Chosen.prototype.keyup_arrow = function() {
+      var prev_sibs;
+
+      if (!this.results_showing && !this.is_multiple) {
+        return this.results_show();
+      } else if (this.result_highlight) {
+        prev_sibs = this.result_highlight.prevAll("li.active-result");
+        if (prev_sibs.length) {
+          return this.result_do_highlight(prev_sibs.first());
+        } else {
+          if (this.choices > 0) {
+            this.results_hide();
+          }
+          return this.result_clear_highlight();
+        }
+      }
+    };
+
+    Chosen.prototype.keydown_backstroke = function() {
+      var next_available_destroy;
+
+      if (this.pending_backstroke) {
+        this.choice_destroy(this.pending_backstroke.find("a").first());
+        return this.clear_backstroke();
+      } else {
+        next_available_destroy = this.search_container.siblings("li.search-choice").last();
+        if (next_available_destroy.length && !next_available_destroy.hasClass("search-choice-disabled")) {
+          this.pending_backstroke = next_available_destroy;
+          if (this.single_backstroke_delete) {
+            return this.keydown_backstroke();
+          } else {
+            return this.pending_backstroke.addClass("search-choice-focus");
+          }
+        }
+      }
+    };
+
+    Chosen.prototype.clear_backstroke = function() {
+      if (this.pending_backstroke) {
+        this.pending_backstroke.removeClass("search-choice-focus");
+      }
+      return this.pending_backstroke = null;
+    };
+
+    Chosen.prototype.keydown_checker = function(evt) {
+      var stroke, _ref1;
+
+      stroke = (_ref1 = evt.which) != null ? _ref1 : evt.keyCode;
+      this.search_field_scale();
+      if (stroke !== 8 && this.pending_backstroke) {
+        this.clear_backstroke();
+      }
+      switch (stroke) {
+        case 8:
+          return this.backstroke_length = this.search_field.val().length;
+        case 9:
+          if (this.results_showing && !this.is_multiple) {
+            this.result_select(evt);
+          }
+          return this.mouse_on_container = false;
+        case 13:
+          return evt.preventDefault();
+        case 38:
+          evt.preventDefault();
+          return this.keyup_arrow();
+        case 40:
+          return this.keydown_arrow();
+      }
+    };
+
+    Chosen.prototype.search_field_scale = function() {
+      var dd_top, div, h, style, style_block, styles, w, _i, _len;
+
+      if (this.is_multiple) {
+        h = 0;
+        w = 0;
+        style_block = "position:absolute; left: -1000px; top: -1000px; display:none;";
+        styles = ['font-size', 'font-style', 'font-weight', 'font-family', 'line-height', 'text-transform', 'letter-spacing'];
+        for (_i = 0, _len = styles.length; _i < _len; _i++) {
+          style = styles[_i];
+          style_block += style + ":" + this.search_field.css(style) + ";";
+        }
+        div = $('<div />', {
+          'style': style_block
+        });
+        div.text(this.search_field.val());
+        $('body').append(div);
+        w = div.width() + 25;
+        div.remove();
+        if (w > this.f_width - 10) {
+          w = this.f_width - 10;
+        }
+        this.search_field.css({
+          'width': w + 'px'
+        });
+        dd_top = this.container.height();
+        return this.dropdown.css({
+          "top": dd_top + "px"
+        });
+      }
+    };
+
+    Chosen.prototype.generate_random_id = function() {
+      var string;
+
+      string = "sel" + this.generate_random_char() + this.generate_random_char() + this.generate_random_char();
+      while ($("#" + string).length > 0) {
+        string += this.generate_random_char();
+      }
+      return string;
+    };
+
+    return Chosen;
+
+  })(AbstractChosen);
+
+  exports.Chosen = Chosen;
+
+  SelectParser = (function() {
+    function SelectParser() {
+      this.options_index = 0;
+      this.parsed = [];
+    }
+
+    SelectParser.prototype.add_node = function(child) {
+      if (child.nodeName.toUpperCase() === "OPTGROUP") {
+        return this.add_group(child);
+      } else {
+        return this.add_option(child);
+      }
+    };
+
+    SelectParser.prototype.add_group = function(group) {
+      var group_position, option, _i, _len, _ref1, _results;
+
+      group_position = this.parsed.length;
+      this.parsed.push({
+        array_index: group_position,
+        group: true,
+        label: group.label,
+        children: 0,
+        disabled: group.disabled
+      });
+      _ref1 = group.childNodes;
+      _results = [];
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        option = _ref1[_i];
+        _results.push(this.add_option(option, group_position, group.disabled));
+      }
+      return _results;
+    };
+
+    SelectParser.prototype.add_option = function(option, group_position, group_disabled) {
+      if (option.nodeName.toUpperCase() === "OPTION") {
+        if (option.text !== "") {
+          if (group_position != null) {
+            this.parsed[group_position].children += 1;
+          }
+          this.parsed.push({
+            array_index: this.parsed.length,
+            options_index: this.options_index,
+            value: option.value,
+            text: option.text,
+            html: option.innerHTML,
+            selected: option.selected,
+            disabled: group_disabled === true ? group_disabled : option.disabled,
+            group_array_index: group_position,
+            classes: option.className,
+            style: option.style.cssText
+          });
+        } else {
+          this.parsed.push({
+            array_index: this.parsed.length,
+            options_index: this.options_index,
+            empty: true
+          });
+        }
+        return this.options_index += 1;
+      }
+    };
+
+    return SelectParser;
+
+  })();
+
+  SelectParser.select_to_array = function(select) {
+    var child, parser, _i, _len, _ref1;
+
+    parser = new SelectParser();
+    _ref1 = select.childNodes;
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      child = _ref1[_i];
+      parser.add_node(child);
+    }
+    return parser.parsed;
+  };
+
+}).call(this);
+
+},{}],23:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -26433,6 +27505,357 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
+},{}],24:[function(require,module,exports){
+/* See LICENSE file for terms of use */
+
+/*
+ * Text diff implementation.
+ * 
+ * This library supports the following APIS:
+ * JsDiff.diffChars: Character by character diff
+ * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
+ * JsDiff.diffLines: Line based diff
+ * 
+ * JsDiff.diffCss: Diff targeted at CSS content
+ * 
+ * These methods are based on the implementation proposed in
+ * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
+ * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
+ */
+var JsDiff = (function() {
+  function clonePath(path) {
+    return { newPos: path.newPos, components: path.components.slice(0) };
+  }
+  function removeEmpty(array) {
+    var ret = [];
+    for (var i = 0; i < array.length; i++) {
+      if (array[i]) {
+        ret.push(array[i]);
+      }
+    }
+    return ret;
+  }
+  function escapeHTML(s) {
+    var n = s;
+    n = n.replace(/&/g, "&amp;");
+    n = n.replace(/</g, "&lt;");
+    n = n.replace(/>/g, "&gt;");
+    n = n.replace(/"/g, "&quot;");
+
+    return n;
+  }
+
+  var fbDiff = function(ignoreWhitespace) {
+    this.ignoreWhitespace = ignoreWhitespace;
+  };
+  fbDiff.prototype = {
+      diff: function(oldString, newString) {
+        // Handle the identity case (this is due to unrolling editLength == 0
+        if (newString == oldString) {
+          return [{ value: newString }];
+        }
+        if (!newString) {
+          return [{ value: oldString, removed: true }];
+        }
+        if (!oldString) {
+          return [{ value: newString, added: true }];
+        }
+
+        newString = this.tokenize(newString);
+        oldString = this.tokenize(oldString);
+
+        var newLen = newString.length, oldLen = oldString.length;
+        var maxEditLength = newLen + oldLen;
+        var bestPath = [{ newPos: -1, components: [] }];
+
+        // Seed editLength = 0
+        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
+        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
+          return bestPath[0].components;
+        }
+
+        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
+          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
+            var basePath;
+            var addPath = bestPath[diagonalPath-1],
+                removePath = bestPath[diagonalPath+1];
+            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
+            if (addPath) {
+              // No one else is going to attempt to use this value, clear it
+              bestPath[diagonalPath-1] = undefined;
+            }
+
+            var canAdd = addPath && addPath.newPos+1 < newLen;
+            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
+            if (!canAdd && !canRemove) {
+              bestPath[diagonalPath] = undefined;
+              continue;
+            }
+
+            // Select the diagonal that we want to branch from. We select the prior
+            // path whose position in the new string is the farthest from the origin
+            // and does not pass the bounds of the diff graph
+            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
+              basePath = clonePath(removePath);
+              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
+            } else {
+              basePath = clonePath(addPath);
+              basePath.newPos++;
+              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
+            }
+
+            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
+
+            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
+              return basePath.components;
+            } else {
+              bestPath[diagonalPath] = basePath;
+            }
+          }
+        }
+      },
+
+      pushComponent: function(components, value, added, removed) {
+        var last = components[components.length-1];
+        if (last && last.added === added && last.removed === removed) {
+          // We need to clone here as the component clone operation is just
+          // as shallow array clone
+          components[components.length-1] =
+            {value: this.join(last.value, value), added: added, removed: removed };
+        } else {
+          components.push({value: value, added: added, removed: removed });
+        }
+      },
+      extractCommon: function(basePath, newString, oldString, diagonalPath) {
+        var newLen = newString.length,
+            oldLen = oldString.length,
+            newPos = basePath.newPos,
+            oldPos = newPos - diagonalPath;
+        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
+          newPos++;
+          oldPos++;
+
+          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
+        }
+        basePath.newPos = newPos;
+        return oldPos;
+      },
+
+      equals: function(left, right) {
+        var reWhitespace = /\S/;
+        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
+          return true;
+        } else {
+          return left == right;
+        }
+      },
+      join: function(left, right) {
+        return left + right;
+      },
+      tokenize: function(value) {
+        return value;
+      }
+  };
+
+  var CharDiff = new fbDiff();
+
+  var WordDiff = new fbDiff(true);
+  WordDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/(\s+|\b)/));
+  };
+
+  var CssDiff = new fbDiff(true);
+  CssDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/([{}:;,]|\s+)/));
+  };
+
+  var LineDiff = new fbDiff();
+  LineDiff.tokenize = function(value) {
+    return value.split(/^/m);
+  };
+
+  return {
+    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
+    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
+    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
+
+    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
+
+    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
+      var ret = [];
+
+      ret.push("Index: " + fileName);
+      ret.push("===================================================================");
+      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
+      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
+
+      var diff = LineDiff.diff(oldStr, newStr);
+      if (!diff[diff.length-1].value) {
+        diff.pop();   // Remove trailing newline add
+      }
+      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
+
+      function contextLines(lines) {
+        return lines.map(function(entry) { return ' ' + entry; });
+      }
+      function eofNL(curRange, i, current) {
+        var last = diff[diff.length-2],
+            isLast = i === diff.length-2,
+            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
+
+        // Figure out if this is the last line for the given file and missing NL
+        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
+          curRange.push('\\ No newline at end of file');
+        }
+      }
+
+      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
+          oldLine = 1, newLine = 1;
+      for (var i = 0; i < diff.length; i++) {
+        var current = diff[i],
+            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
+        current.lines = lines;
+
+        if (current.added || current.removed) {
+          if (!oldRangeStart) {
+            var prev = diff[i-1];
+            oldRangeStart = oldLine;
+            newRangeStart = newLine;
+
+            if (prev) {
+              curRange = contextLines(prev.lines.slice(-4));
+              oldRangeStart -= curRange.length;
+              newRangeStart -= curRange.length;
+            }
+          }
+          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
+          eofNL(curRange, i, current);
+
+          if (current.added) {
+            newLine += lines.length;
+          } else {
+            oldLine += lines.length;
+          }
+        } else {
+          if (oldRangeStart) {
+            // Close out any changes that have been output (or join overlapping)
+            if (lines.length <= 8 && i < diff.length-2) {
+              // Overlapping
+              curRange.push.apply(curRange, contextLines(lines));
+            } else {
+              // end the range and output
+              var contextSize = Math.min(lines.length, 4);
+              ret.push(
+                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
+                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
+                  + " @@");
+              ret.push.apply(ret, curRange);
+              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
+              if (lines.length <= 4) {
+                eofNL(ret, i, current);
+              }
+
+              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
+            }
+          }
+          oldLine += lines.length;
+          newLine += lines.length;
+        }
+      }
+
+      return ret.join('\n') + '\n';
+    },
+
+    applyPatch: function(oldStr, uniDiff) {
+      var diffstr = uniDiff.split("\n");
+      var diff = [];
+      var remEOFNL = false,
+          addEOFNL = false;
+
+      for (var i = (diffstr[0][0]=="I"?4:0); i < diffstr.length; i++) {
+        if(diffstr[i][0] == "@") {
+          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
+          diff.unshift({
+            start:meh[3],
+            oldlength:meh[2],
+            oldlines:[],
+            newlength:meh[4],
+            newlines:[]
+          });
+        } else if(diffstr[i][0] == '+') {
+          diff[0].newlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == '-') {
+          diff[0].oldlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == ' ') {
+          diff[0].newlines.push(diffstr[i].substr(1));
+          diff[0].oldlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == '\\') {
+          if (diffstr[i-1][0] == '+') {
+            remEOFNL = true;
+          } else if(diffstr[i-1][0] == '-') {
+            addEOFNL = true;
+          }
+        }
+      }
+
+      var str = oldStr.split("\n");
+      for (var i = diff.length - 1; i >= 0; i--) {
+        var d = diff[i];
+        for (var j = 0; j < d.oldlength; j++) {
+          if(str[d.start-1+j] != d.oldlines[j]) {
+            return false;
+          }
+        }
+        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
+      }
+
+      if (remEOFNL) {
+        while (!str[str.length-1]) {
+          str.pop();
+        }
+      } else if (addEOFNL) {
+        str.push('');
+      }
+      return str.join('\n');
+    },
+
+    convertChangesToXML: function(changes){
+      var ret = [];
+      for ( var i = 0; i < changes.length; i++) {
+        var change = changes[i];
+        if (change.added) {
+          ret.push("<ins>");
+        } else if (change.removed) {
+          ret.push("<del>");
+        }
+
+        ret.push(escapeHTML(change.value));
+
+        if (change.added) {
+          ret.push("</ins>");
+        } else if (change.removed) {
+          ret.push("</del>");
+        }
+      }
+      return ret.join("");
+    },
+
+    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
+    convertChangesToDMP: function(changes){
+      var ret = [], change;
+      for ( var i = 0; i < changes.length; i++) {
+        change = changes[i];
+        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
+      }
+      return ret;
+    }
+  };
+})();
+
+if (typeof module !== "undefined") {
+    module.exports = JsDiff;
+}
+
 },{}],17:[function(require,module,exports){
 // Github.js 0.7.0
 // (c) 2012 Michael Aufreiter, Development Seed
@@ -27009,1436 +28432,7 @@ var _ = require('underscore');
   module.exports = Github;
 }).call(this);
 
-},{"underscore":14}],24:[function(require,module,exports){
-/* See LICENSE file for terms of use */
-
-/*
- * Text diff implementation.
- * 
- * This library supports the following APIS:
- * JsDiff.diffChars: Character by character diff
- * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
- * JsDiff.diffLines: Line based diff
- * 
- * JsDiff.diffCss: Diff targeted at CSS content
- * 
- * These methods are based on the implementation proposed in
- * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
- * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
- */
-var JsDiff = (function() {
-  function clonePath(path) {
-    return { newPos: path.newPos, components: path.components.slice(0) };
-  }
-  function removeEmpty(array) {
-    var ret = [];
-    for (var i = 0; i < array.length; i++) {
-      if (array[i]) {
-        ret.push(array[i]);
-      }
-    }
-    return ret;
-  }
-  function escapeHTML(s) {
-    var n = s;
-    n = n.replace(/&/g, "&amp;");
-    n = n.replace(/</g, "&lt;");
-    n = n.replace(/>/g, "&gt;");
-    n = n.replace(/"/g, "&quot;");
-
-    return n;
-  }
-
-  var fbDiff = function(ignoreWhitespace) {
-    this.ignoreWhitespace = ignoreWhitespace;
-  };
-  fbDiff.prototype = {
-      diff: function(oldString, newString) {
-        // Handle the identity case (this is due to unrolling editLength == 0
-        if (newString == oldString) {
-          return [{ value: newString }];
-        }
-        if (!newString) {
-          return [{ value: oldString, removed: true }];
-        }
-        if (!oldString) {
-          return [{ value: newString, added: true }];
-        }
-
-        newString = this.tokenize(newString);
-        oldString = this.tokenize(oldString);
-
-        var newLen = newString.length, oldLen = oldString.length;
-        var maxEditLength = newLen + oldLen;
-        var bestPath = [{ newPos: -1, components: [] }];
-
-        // Seed editLength = 0
-        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
-        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
-          return bestPath[0].components;
-        }
-
-        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
-          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
-            var basePath;
-            var addPath = bestPath[diagonalPath-1],
-                removePath = bestPath[diagonalPath+1];
-            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
-            if (addPath) {
-              // No one else is going to attempt to use this value, clear it
-              bestPath[diagonalPath-1] = undefined;
-            }
-
-            var canAdd = addPath && addPath.newPos+1 < newLen;
-            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
-            if (!canAdd && !canRemove) {
-              bestPath[diagonalPath] = undefined;
-              continue;
-            }
-
-            // Select the diagonal that we want to branch from. We select the prior
-            // path whose position in the new string is the farthest from the origin
-            // and does not pass the bounds of the diff graph
-            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
-              basePath = clonePath(removePath);
-              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
-            } else {
-              basePath = clonePath(addPath);
-              basePath.newPos++;
-              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
-            }
-
-            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
-
-            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
-              return basePath.components;
-            } else {
-              bestPath[diagonalPath] = basePath;
-            }
-          }
-        }
-      },
-
-      pushComponent: function(components, value, added, removed) {
-        var last = components[components.length-1];
-        if (last && last.added === added && last.removed === removed) {
-          // We need to clone here as the component clone operation is just
-          // as shallow array clone
-          components[components.length-1] =
-            {value: this.join(last.value, value), added: added, removed: removed };
-        } else {
-          components.push({value: value, added: added, removed: removed });
-        }
-      },
-      extractCommon: function(basePath, newString, oldString, diagonalPath) {
-        var newLen = newString.length,
-            oldLen = oldString.length,
-            newPos = basePath.newPos,
-            oldPos = newPos - diagonalPath;
-        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
-          newPos++;
-          oldPos++;
-
-          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
-        }
-        basePath.newPos = newPos;
-        return oldPos;
-      },
-
-      equals: function(left, right) {
-        var reWhitespace = /\S/;
-        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
-          return true;
-        } else {
-          return left == right;
-        }
-      },
-      join: function(left, right) {
-        return left + right;
-      },
-      tokenize: function(value) {
-        return value;
-      }
-  };
-
-  var CharDiff = new fbDiff();
-
-  var WordDiff = new fbDiff(true);
-  WordDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/(\s+|\b)/));
-  };
-
-  var CssDiff = new fbDiff(true);
-  CssDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/([{}:;,]|\s+)/));
-  };
-
-  var LineDiff = new fbDiff();
-  LineDiff.tokenize = function(value) {
-    return value.split(/^/m);
-  };
-
-  return {
-    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
-    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
-    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
-
-    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
-
-    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
-      var ret = [];
-
-      ret.push("Index: " + fileName);
-      ret.push("===================================================================");
-      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
-      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
-
-      var diff = LineDiff.diff(oldStr, newStr);
-      if (!diff[diff.length-1].value) {
-        diff.pop();   // Remove trailing newline add
-      }
-      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
-
-      function contextLines(lines) {
-        return lines.map(function(entry) { return ' ' + entry; });
-      }
-      function eofNL(curRange, i, current) {
-        var last = diff[diff.length-2],
-            isLast = i === diff.length-2,
-            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
-
-        // Figure out if this is the last line for the given file and missing NL
-        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
-          curRange.push('\\ No newline at end of file');
-        }
-      }
-
-      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
-          oldLine = 1, newLine = 1;
-      for (var i = 0; i < diff.length; i++) {
-        var current = diff[i],
-            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
-        current.lines = lines;
-
-        if (current.added || current.removed) {
-          if (!oldRangeStart) {
-            var prev = diff[i-1];
-            oldRangeStart = oldLine;
-            newRangeStart = newLine;
-
-            if (prev) {
-              curRange = contextLines(prev.lines.slice(-4));
-              oldRangeStart -= curRange.length;
-              newRangeStart -= curRange.length;
-            }
-          }
-          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
-          eofNL(curRange, i, current);
-
-          if (current.added) {
-            newLine += lines.length;
-          } else {
-            oldLine += lines.length;
-          }
-        } else {
-          if (oldRangeStart) {
-            // Close out any changes that have been output (or join overlapping)
-            if (lines.length <= 8 && i < diff.length-2) {
-              // Overlapping
-              curRange.push.apply(curRange, contextLines(lines));
-            } else {
-              // end the range and output
-              var contextSize = Math.min(lines.length, 4);
-              ret.push(
-                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
-                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
-                  + " @@");
-              ret.push.apply(ret, curRange);
-              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
-              if (lines.length <= 4) {
-                eofNL(ret, i, current);
-              }
-
-              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
-            }
-          }
-          oldLine += lines.length;
-          newLine += lines.length;
-        }
-      }
-
-      return ret.join('\n') + '\n';
-    },
-
-    applyPatch: function(oldStr, uniDiff) {
-      var diffstr = uniDiff.split("\n");
-      var diff = [];
-      var remEOFNL = false,
-          addEOFNL = false;
-
-      for (var i = (diffstr[0][0]=="I"?4:0); i < diffstr.length; i++) {
-        if(diffstr[i][0] == "@") {
-          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
-          diff.unshift({
-            start:meh[3],
-            oldlength:meh[2],
-            oldlines:[],
-            newlength:meh[4],
-            newlines:[]
-          });
-        } else if(diffstr[i][0] == '+') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == '-') {
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == ' ') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == '\\') {
-          if (diffstr[i-1][0] == '+') {
-            remEOFNL = true;
-          } else if(diffstr[i-1][0] == '-') {
-            addEOFNL = true;
-          }
-        }
-      }
-
-      var str = oldStr.split("\n");
-      for (var i = diff.length - 1; i >= 0; i--) {
-        var d = diff[i];
-        for (var j = 0; j < d.oldlength; j++) {
-          if(str[d.start-1+j] != d.oldlines[j]) {
-            return false;
-          }
-        }
-        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
-      }
-
-      if (remEOFNL) {
-        while (!str[str.length-1]) {
-          str.pop();
-        }
-      } else if (addEOFNL) {
-        str.push('');
-      }
-      return str.join('\n');
-    },
-
-    convertChangesToXML: function(changes){
-      var ret = [];
-      for ( var i = 0; i < changes.length; i++) {
-        var change = changes[i];
-        if (change.added) {
-          ret.push("<ins>");
-        } else if (change.removed) {
-          ret.push("<del>");
-        }
-
-        ret.push(escapeHTML(change.value));
-
-        if (change.added) {
-          ret.push("</ins>");
-        } else if (change.removed) {
-          ret.push("</del>");
-        }
-      }
-      return ret.join("");
-    },
-
-    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
-    convertChangesToDMP: function(changes){
-      var ret = [], change;
-      for ( var i = 0; i < changes.length; i++) {
-        change = changes[i];
-        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
-      }
-      return ret;
-    }
-  };
-})();
-
-if (typeof module !== "undefined") {
-    module.exports = JsDiff;
-}
-
-},{}],23:[function(require,module,exports){
-(function() {
-  var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  AbstractChosen = (function() {
-    function AbstractChosen(form_field, options) {
-      this.form_field = form_field;
-      this.options = options != null ? options : {};
-      this.is_multiple = this.form_field.multiple;
-      this.set_default_text();
-      this.set_default_values();
-      this.setup();
-      this.set_up_html();
-      this.register_observers();
-      this.finish_setup();
-    }
-
-    AbstractChosen.prototype.set_default_values = function() {
-      var _this = this;
-
-      this.click_test_action = function(evt) {
-        return _this.test_active_click(evt);
-      };
-      this.activate_action = function(evt) {
-        return _this.activate_field(evt);
-      };
-      this.active_field = false;
-      this.mouse_on_container = false;
-      this.results_showing = false;
-      this.result_highlighted = null;
-      this.result_single_selected = null;
-      this.allow_single_deselect = (this.options.allow_single_deselect != null) && (this.form_field.options[0] != null) && this.form_field.options[0].text === "" ? this.options.allow_single_deselect : false;
-      this.disable_search_threshold = this.options.disable_search_threshold || 0;
-      this.disable_search = this.options.disable_search || false;
-      this.enable_split_word_search = this.options.enable_split_word_search != null ? this.options.enable_split_word_search : true;
-      this.search_contains = this.options.search_contains || false;
-      this.choices = 0;
-      this.single_backstroke_delete = this.options.single_backstroke_delete || false;
-      this.max_selected_options = this.options.max_selected_options || Infinity;
-      return this.inherit_select_classes = this.options.inherit_select_classes || false;
-    };
-
-    AbstractChosen.prototype.set_default_text = function() {
-      if (this.form_field.getAttribute("data-placeholder")) {
-        this.default_text = this.form_field.getAttribute("data-placeholder");
-      } else if (this.is_multiple) {
-        this.default_text = this.options.placeholder_text_multiple || this.options.placeholder_text || "Select Some Options";
-      } else {
-        this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || "Select an Option";
-      }
-      return this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || "No results match";
-    };
-
-    AbstractChosen.prototype.mouse_enter = function() {
-      return this.mouse_on_container = true;
-    };
-
-    AbstractChosen.prototype.mouse_leave = function() {
-      return this.mouse_on_container = false;
-    };
-
-    AbstractChosen.prototype.input_focus = function(evt) {
-      var _this = this;
-
-      if (this.is_multiple) {
-        if (!this.active_field) {
-          return setTimeout((function() {
-            return _this.container_mousedown();
-          }), 50);
-        }
-      } else {
-        if (!this.active_field) {
-          return this.activate_field();
-        }
-      }
-    };
-
-    AbstractChosen.prototype.input_blur = function(evt) {
-      var _this = this;
-
-      if (!this.mouse_on_container) {
-        this.active_field = false;
-        return setTimeout((function() {
-          return _this.blur_test();
-        }), 100);
-      }
-    };
-
-    AbstractChosen.prototype.result_add_option = function(option) {
-      var classes, style;
-
-      if (!option.disabled) {
-        option.dom_id = this.container_id + "_o_" + option.array_index;
-        classes = option.selected && this.is_multiple ? [] : ["active-result"];
-        if (option.selected) {
-          classes.push("result-selected");
-        }
-        if (option.group_array_index != null) {
-          classes.push("group-option");
-        }
-        if (option.classes !== "") {
-          classes.push(option.classes);
-        }
-        style = option.style.cssText !== "" ? " style=\"" + option.style + "\"" : "";
-        return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
-      } else {
-        return "";
-      }
-    };
-
-    AbstractChosen.prototype.results_update_field = function() {
-      if (!this.is_multiple) {
-        this.results_reset_cleanup();
-      }
-      this.result_clear_highlight();
-      this.result_single_selected = null;
-      return this.results_build();
-    };
-
-    AbstractChosen.prototype.results_toggle = function() {
-      if (this.results_showing) {
-        return this.results_hide();
-      } else {
-        return this.results_show();
-      }
-    };
-
-    AbstractChosen.prototype.results_search = function(evt) {
-      if (this.results_showing) {
-        return this.winnow_results();
-      } else {
-        return this.results_show();
-      }
-    };
-
-    AbstractChosen.prototype.keyup_checker = function(evt) {
-      var stroke, _ref;
-
-      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
-      this.search_field_scale();
-      switch (stroke) {
-        case 8:
-          if (this.is_multiple && this.backstroke_length < 1 && this.choices > 0) {
-            return this.keydown_backstroke();
-          } else if (!this.pending_backstroke) {
-            this.result_clear_highlight();
-            return this.results_search();
-          }
-          break;
-        case 13:
-          evt.preventDefault();
-          if (this.results_showing) {
-            return this.result_select(evt);
-          }
-          break;
-        case 27:
-          if (this.results_showing) {
-            this.results_hide();
-          }
-          return true;
-        case 9:
-        case 38:
-        case 40:
-        case 16:
-        case 91:
-        case 17:
-          break;
-        default:
-          return this.results_search();
-      }
-    };
-
-    AbstractChosen.prototype.generate_field_id = function() {
-      var new_id;
-
-      new_id = this.generate_random_id();
-      this.form_field.id = new_id;
-      return new_id;
-    };
-
-    AbstractChosen.prototype.generate_random_char = function() {
-      var chars, newchar, rand;
-
-      chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      rand = Math.floor(Math.random() * chars.length);
-      return newchar = chars.substring(rand, rand + 1);
-    };
-
-    return AbstractChosen;
-
-  })();
-
-  $ = window.jQuery;
-
-  get_side_border_padding = function(elmt) {
-    var side_border_padding;
-
-    return side_border_padding = elmt.outerWidth() - elmt.width();
-  };
-
-  $.fn.extend({
-    chosen: function(options) {
-      var browser, match, ua;
-
-      ua = window.navigator.userAgent.toLowerCase();
-      match = /(msie) ([\w.]+)/.exec(ua) || [];
-      browser = {
-        name: match[1] || "",
-        version: match[2] || "0"
-      };
-      if (browser.name === "msie" && (browser.version === "6.0" || (browser.version === "7.0" && document.documentMode === 7))) {
-        return this;
-      }
-      return this.each(function(input_field) {
-        var $this;
-
-        $this = $(this);
-        if (!$this.hasClass("chzn-done")) {
-          return $this.data('chosen', new Chosen(this, options));
-        }
-      });
-    }
-  });
-
-  Chosen = (function(_super) {
-    __extends(Chosen, _super);
-
-    function Chosen() {
-      _ref = Chosen.__super__.constructor.apply(this, arguments);
-      return _ref;
-    }
-
-    Chosen.prototype.setup = function() {
-      this.form_field_jq = $(this.form_field);
-      this.current_value = this.form_field_jq.val();
-      return this.is_rtl = this.form_field_jq.hasClass("chzn-rtl");
-    };
-
-    Chosen.prototype.finish_setup = function() {
-      return this.form_field_jq.addClass("chzn-done");
-    };
-
-    Chosen.prototype.set_up_html = function() {
-      var container_classes, container_div, container_props, dd_top, dd_width, sf_width;
-
-      this.container_id = this.form_field.id.length ? this.form_field.id.replace(/[^\w]/g, '_') : this.generate_field_id();
-      this.container_id += "_chzn";
-      container_classes = ["chzn-container"];
-      container_classes.push("chzn-container-" + (this.is_multiple ? "multi" : "single"));
-      if (this.inherit_select_classes && this.form_field.className) {
-        container_classes.push(this.form_field.className);
-      }
-      if (this.is_rtl) {
-        container_classes.push("chzn-rtl");
-      }
-      this.f_width = this.form_field_jq.outerWidth();
-      container_props = {
-        id: this.container_id,
-        "class": container_classes.join(' '),
-        style: 'width: ' + this.f_width + 'px;',
-        title: this.form_field.title
-      };
-      container_div = $("<div />", container_props);
-      if (this.is_multiple) {
-        container_div.html('<ul class="chzn-choices"><li class="search-field"><input type="text" value="' + this.default_text + '" class="default" autocomplete="off" style="width:25px;" /></li></ul><div class="chzn-drop" style="left:-9000px;"><ul class="chzn-results"></ul></div>');
-      } else {
-        container_div.html('<a href="javascript:void(0)" class="chzn-single chzn-default" tabindex="-1"><span>' + this.default_text + '</span><div><b></b></div></a><div class="chzn-drop" style="left:-9000px;"><div class="chzn-search"><input type="text" autocomplete="off" /></div><ul class="chzn-results"></ul></div>');
-      }
-      this.form_field_jq.hide().after(container_div);
-      this.container = $('#' + this.container_id);
-      this.dropdown = this.container.find('div.chzn-drop').first();
-      dd_top = this.container.height();
-      dd_width = this.f_width - get_side_border_padding(this.dropdown);
-      this.dropdown.css({
-        "width": dd_width + "px",
-        "top": dd_top + "px"
-      });
-      this.search_field = this.container.find('input').first();
-      this.search_results = this.container.find('ul.chzn-results').first();
-      this.search_field_scale();
-      this.search_no_results = this.container.find('li.no-results').first();
-      if (this.is_multiple) {
-        this.search_choices = this.container.find('ul.chzn-choices').first();
-        this.search_container = this.container.find('li.search-field').first();
-      } else {
-        this.search_container = this.container.find('div.chzn-search').first();
-        this.selected_item = this.container.find('.chzn-single').first();
-        sf_width = dd_width - get_side_border_padding(this.search_container) - get_side_border_padding(this.search_field);
-        this.search_field.css({
-          "width": sf_width + "px"
-        });
-      }
-      this.results_build();
-      this.set_tab_index();
-      return this.form_field_jq.trigger("liszt:ready", {
-        chosen: this
-      });
-    };
-
-    Chosen.prototype.register_observers = function() {
-      var _this = this;
-
-      this.container.mousedown(function(evt) {
-        return _this.container_mousedown(evt);
-      });
-      this.container.mouseup(function(evt) {
-        return _this.container_mouseup(evt);
-      });
-      this.container.mouseenter(function(evt) {
-        return _this.mouse_enter(evt);
-      });
-      this.container.mouseleave(function(evt) {
-        return _this.mouse_leave(evt);
-      });
-      this.search_results.mouseup(function(evt) {
-        return _this.search_results_mouseup(evt);
-      });
-      this.search_results.mouseover(function(evt) {
-        return _this.search_results_mouseover(evt);
-      });
-      this.search_results.mouseout(function(evt) {
-        return _this.search_results_mouseout(evt);
-      });
-      this.form_field_jq.bind("liszt:updated", function(evt) {
-        return _this.results_update_field(evt);
-      });
-      this.form_field_jq.bind("liszt:activate", function(evt) {
-        return _this.activate_field(evt);
-      });
-      this.form_field_jq.bind("liszt:open", function(evt) {
-        return _this.container_mousedown(evt);
-      });
-      this.search_field.blur(function(evt) {
-        return _this.input_blur(evt);
-      });
-      this.search_field.keyup(function(evt) {
-        return _this.keyup_checker(evt);
-      });
-      this.search_field.keydown(function(evt) {
-        return _this.keydown_checker(evt);
-      });
-      this.search_field.focus(function(evt) {
-        return _this.input_focus(evt);
-      });
-      if (this.is_multiple) {
-        return this.search_choices.click(function(evt) {
-          return _this.choices_click(evt);
-        });
-      } else {
-        return this.container.click(function(evt) {
-          return evt.preventDefault();
-        });
-      }
-    };
-
-    Chosen.prototype.search_field_disabled = function() {
-      this.is_disabled = this.form_field_jq[0].disabled;
-      if (this.is_disabled) {
-        this.container.addClass('chzn-disabled');
-        this.search_field[0].disabled = true;
-        if (!this.is_multiple) {
-          this.selected_item.unbind("focus", this.activate_action);
-        }
-        return this.close_field();
-      } else {
-        this.container.removeClass('chzn-disabled');
-        this.search_field[0].disabled = false;
-        if (!this.is_multiple) {
-          return this.selected_item.bind("focus", this.activate_action);
-        }
-      }
-    };
-
-    Chosen.prototype.container_mousedown = function(evt) {
-      var target_closelink;
-
-      if (!this.is_disabled) {
-        target_closelink = evt != null ? $(evt.target).hasClass("search-choice-close") : false;
-        if ((evt != null ? evt.type : void 0) === "mousedown" && !this.results_showing) {
-          evt.preventDefault();
-        }
-        if (!this.pending_destroy_click && !target_closelink) {
-          if (!this.active_field) {
-            if (this.is_multiple) {
-              this.search_field.val("");
-            }
-            $(document).click(this.click_test_action);
-            this.results_show();
-          } else if (!this.is_multiple && evt && (($(evt.target)[0] === this.selected_item[0]) || $(evt.target).parents("a.chzn-single").length)) {
-            evt.preventDefault();
-            this.results_toggle();
-          }
-          return this.activate_field();
-        } else {
-          return this.pending_destroy_click = false;
-        }
-      }
-    };
-
-    Chosen.prototype.container_mouseup = function(evt) {
-      if (evt.target.nodeName === "ABBR" && !this.is_disabled) {
-        return this.results_reset(evt);
-      }
-    };
-
-    Chosen.prototype.blur_test = function(evt) {
-      if (!this.active_field && this.container.hasClass("chzn-container-active")) {
-        return this.close_field();
-      }
-    };
-
-    Chosen.prototype.close_field = function() {
-      $(document).unbind("click", this.click_test_action);
-      this.active_field = false;
-      this.results_hide();
-      this.container.removeClass("chzn-container-active");
-      this.winnow_results_clear();
-      this.clear_backstroke();
-      this.show_search_field_default();
-      return this.search_field_scale();
-    };
-
-    Chosen.prototype.activate_field = function() {
-      this.container.addClass("chzn-container-active");
-      this.active_field = true;
-      this.search_field.val(this.search_field.val());
-      return this.search_field.focus();
-    };
-
-    Chosen.prototype.test_active_click = function(evt) {
-      if ($(evt.target).parents('#' + this.container_id).length) {
-        return this.active_field = true;
-      } else {
-        return this.close_field();
-      }
-    };
-
-    Chosen.prototype.results_build = function() {
-      var content, data, _i, _len, _ref1;
-
-      this.parsing = true;
-      this.results_data = SelectParser.select_to_array(this.form_field);
-      if (this.is_multiple && this.choices > 0) {
-        this.search_choices.find("li.search-choice").remove();
-        this.choices = 0;
-      } else if (!this.is_multiple) {
-        this.selected_item.addClass("chzn-default").find("span").text(this.default_text);
-        if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
-          this.container.addClass("chzn-container-single-nosearch");
-        } else {
-          this.container.removeClass("chzn-container-single-nosearch");
-        }
-      }
-      content = '';
-      _ref1 = this.results_data;
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        data = _ref1[_i];
-        if (data.group) {
-          content += this.result_add_group(data);
-        } else if (!data.empty) {
-          content += this.result_add_option(data);
-          if (data.selected && this.is_multiple) {
-            this.choice_build(data);
-          } else if (data.selected && !this.is_multiple) {
-            this.selected_item.removeClass("chzn-default").find("span").text(data.text);
-            if (this.allow_single_deselect) {
-              this.single_deselect_control_build();
-            }
-          }
-        }
-      }
-      this.search_field_disabled();
-      this.show_search_field_default();
-      this.search_field_scale();
-      this.search_results.html(content);
-      return this.parsing = false;
-    };
-
-    Chosen.prototype.result_add_group = function(group) {
-      if (!group.disabled) {
-        group.dom_id = this.container_id + "_g_" + group.array_index;
-        return '<li id="' + group.dom_id + '" class="group-result">' + $("<div />").text(group.label).html() + '</li>';
-      } else {
-        return "";
-      }
-    };
-
-    Chosen.prototype.result_do_highlight = function(el) {
-      var high_bottom, high_top, maxHeight, visible_bottom, visible_top;
-
-      if (el.length) {
-        this.result_clear_highlight();
-        this.result_highlight = el;
-        this.result_highlight.addClass("highlighted");
-        maxHeight = parseInt(this.search_results.css("maxHeight"), 10);
-        visible_top = this.search_results.scrollTop();
-        visible_bottom = maxHeight + visible_top;
-        high_top = this.result_highlight.position().top + this.search_results.scrollTop();
-        high_bottom = high_top + this.result_highlight.outerHeight();
-        if (high_bottom >= visible_bottom) {
-          return this.search_results.scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
-        } else if (high_top < visible_top) {
-          return this.search_results.scrollTop(high_top);
-        }
-      }
-    };
-
-    Chosen.prototype.result_clear_highlight = function() {
-      if (this.result_highlight) {
-        this.result_highlight.removeClass("highlighted");
-      }
-      return this.result_highlight = null;
-    };
-
-    Chosen.prototype.results_show = function() {
-      var dd_top;
-
-      if (!this.is_multiple) {
-        this.selected_item.addClass("chzn-single-with-drop");
-        if (this.result_single_selected) {
-          this.result_do_highlight(this.result_single_selected);
-        }
-      } else if (this.max_selected_options <= this.choices) {
-        this.form_field_jq.trigger("liszt:maxselected", {
-          chosen: this
-        });
-        false;
-      }
-      dd_top = this.is_multiple ? this.container.height() : this.container.height() - 1;
-      this.form_field_jq.trigger("liszt:showing_dropdown", {
-        chosen: this
-      });
-      this.dropdown.css({
-        "top": dd_top + "px",
-        "left": 0
-      });
-      this.results_showing = true;
-      this.search_field.focus();
-      this.search_field.val(this.search_field.val());
-      return this.winnow_results();
-    };
-
-    Chosen.prototype.results_hide = function() {
-      if (!this.is_multiple) {
-        this.selected_item.removeClass("chzn-single-with-drop");
-      }
-      this.result_clear_highlight();
-      this.form_field_jq.trigger("liszt:hiding_dropdown", {
-        chosen: this
-      });
-      this.dropdown.css({
-        left: "-9000px"
-      });
-      return this.results_showing = false;
-    };
-
-    Chosen.prototype.set_tab_index = function(el) {
-      var ti;
-
-      if (this.form_field_jq.attr("tabindex")) {
-        ti = this.form_field_jq.attr("tabindex");
-        this.form_field_jq.attr("tabindex", -1);
-        return this.search_field.attr("tabindex", ti);
-      }
-    };
-
-    Chosen.prototype.show_search_field_default = function() {
-      if (this.is_multiple && this.choices < 1 && !this.active_field) {
-        this.search_field.val(this.default_text);
-        return this.search_field.addClass("default");
-      } else {
-        this.search_field.val("");
-        return this.search_field.removeClass("default");
-      }
-    };
-
-    Chosen.prototype.search_results_mouseup = function(evt) {
-      var target;
-
-      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
-      if (target.length) {
-        this.result_highlight = target;
-        this.result_select(evt);
-        return this.search_field.focus();
-      }
-    };
-
-    Chosen.prototype.search_results_mouseover = function(evt) {
-      var target;
-
-      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
-      if (target) {
-        return this.result_do_highlight(target);
-      }
-    };
-
-    Chosen.prototype.search_results_mouseout = function(evt) {
-      if ($(evt.target).hasClass("active-result" || $(evt.target).parents('.active-result').first())) {
-        return this.result_clear_highlight();
-      }
-    };
-
-    Chosen.prototype.choices_click = function(evt) {
-      evt.preventDefault();
-      if (this.active_field && !($(evt.target).hasClass("search-choice" || $(evt.target).parents('.search-choice').first)) && !this.results_showing) {
-        return this.results_show();
-      }
-    };
-
-    Chosen.prototype.choice_build = function(item) {
-      var choice_id, html, link,
-        _this = this;
-
-      if (this.is_multiple && this.max_selected_options <= this.choices) {
-        this.form_field_jq.trigger("liszt:maxselected", {
-          chosen: this
-        });
-        false;
-      }
-      choice_id = this.container_id + "_c_" + item.array_index;
-      this.choices += 1;
-      if (item.disabled) {
-        html = '<li class="search-choice search-choice-disabled" id="' + choice_id + '"><span>' + item.html + '</span></li>';
-      } else {
-        html = '<li class="search-choice" id="' + choice_id + '"><span>' + item.html + '</span><a href="javascript:void(0)" class="search-choice-close" rel="' + item.array_index + '"></a></li>';
-      }
-      this.search_container.before(html);
-      link = $('#' + choice_id).find("a").first();
-      return link.click(function(evt) {
-        return _this.choice_destroy_link_click(evt);
-      });
-    };
-
-    Chosen.prototype.choice_destroy_link_click = function(evt) {
-      evt.preventDefault();
-      if (!this.is_disabled) {
-        this.pending_destroy_click = true;
-        return this.choice_destroy($(evt.target));
-      } else {
-        return evt.stopPropagation;
-      }
-    };
-
-    Chosen.prototype.choice_destroy = function(link) {
-      if (this.result_deselect(link.attr("rel"))) {
-        this.choices -= 1;
-        this.show_search_field_default();
-        if (this.is_multiple && this.choices > 0 && this.search_field.val().length < 1) {
-          this.results_hide();
-        }
-        link.parents('li').first().remove();
-        return this.search_field_scale();
-      }
-    };
-
-    Chosen.prototype.results_reset = function() {
-      this.form_field.options[0].selected = true;
-      this.selected_item.find("span").text(this.default_text);
-      if (!this.is_multiple) {
-        this.selected_item.addClass("chzn-default");
-      }
-      this.show_search_field_default();
-      this.results_reset_cleanup();
-      this.form_field_jq.trigger("change");
-      if (this.active_field) {
-        return this.results_hide();
-      }
-    };
-
-    Chosen.prototype.results_reset_cleanup = function() {
-      this.current_value = this.form_field_jq.val();
-      return this.selected_item.find("abbr").remove();
-    };
-
-    Chosen.prototype.result_select = function(evt) {
-      var high, high_id, item, position;
-
-      if (this.result_highlight) {
-        high = this.result_highlight;
-        high_id = high.attr("id");
-        this.result_clear_highlight();
-        if (this.is_multiple) {
-          this.result_deactivate(high);
-        } else {
-          this.search_results.find(".result-selected").removeClass("result-selected");
-          this.result_single_selected = high;
-          this.selected_item.removeClass("chzn-default");
-        }
-        high.addClass("result-selected");
-        position = high_id.substr(high_id.lastIndexOf("_") + 1);
-        item = this.results_data[position];
-        item.selected = true;
-        this.form_field.options[item.options_index].selected = true;
-        if (this.is_multiple) {
-          this.choice_build(item);
-        } else {
-          this.selected_item.find("span").first().text(item.text);
-          if (this.allow_single_deselect) {
-            this.single_deselect_control_build();
-          }
-        }
-        if (!((evt.metaKey || evt.ctrlKey) && this.is_multiple)) {
-          this.results_hide();
-        }
-        this.search_field.val("");
-        if (this.is_multiple || this.form_field_jq.val() !== this.current_value) {
-          this.form_field_jq.trigger("change", {
-            'selected': this.form_field.options[item.options_index].value
-          });
-        }
-        this.current_value = this.form_field_jq.val();
-        return this.search_field_scale();
-      }
-    };
-
-    Chosen.prototype.result_activate = function(el) {
-      return el.addClass("active-result");
-    };
-
-    Chosen.prototype.result_deactivate = function(el) {
-      return el.removeClass("active-result");
-    };
-
-    Chosen.prototype.result_deselect = function(pos) {
-      var result, result_data;
-
-      result_data = this.results_data[pos];
-      if (!this.form_field.options[result_data.options_index].disabled) {
-        result_data.selected = false;
-        this.form_field.options[result_data.options_index].selected = false;
-        result = $("#" + this.container_id + "_o_" + pos);
-        result.removeClass("result-selected").addClass("active-result").show();
-        this.result_clear_highlight();
-        this.winnow_results();
-        this.form_field_jq.trigger("change", {
-          deselected: this.form_field.options[result_data.options_index].value
-        });
-        this.search_field_scale();
-        return true;
-      } else {
-        return false;
-      }
-    };
-
-    Chosen.prototype.single_deselect_control_build = function() {
-      if (this.allow_single_deselect && this.selected_item.find("abbr").length < 1) {
-        return this.selected_item.find("span").first().after("<abbr class=\"search-choice-close\"></abbr>");
-      }
-    };
-
-    Chosen.prototype.winnow_results = function() {
-      var found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref1;
-
-      this.no_results_clear();
-      results = 0;
-      searchText = this.search_field.val() === this.default_text ? "" : $('<div/>').text($.trim(this.search_field.val())).html();
-      regexAnchor = this.search_contains ? "" : "^";
-      regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
-      zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
-      _ref1 = this.results_data;
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        option = _ref1[_i];
-        if (!option.disabled && !option.empty) {
-          if (option.group) {
-            $('#' + option.dom_id).css('display', 'none');
-          } else if (!(this.is_multiple && option.selected)) {
-            found = false;
-            result_id = option.dom_id;
-            result = $("#" + result_id);
-            if (regex.test(option.html)) {
-              found = true;
-              results += 1;
-            } else if (this.enable_split_word_search && (option.html.indexOf(" ") >= 0 || option.html.indexOf("[") === 0)) {
-              parts = option.html.replace(/\[|\]/g, "").split(" ");
-              if (parts.length) {
-                for (_j = 0, _len1 = parts.length; _j < _len1; _j++) {
-                  part = parts[_j];
-                  if (!(regex.test(part))) {
-                    continue;
-                  }
-                  found = true;
-                  results += 1;
-                }
-              }
-            }
-            if (found) {
-              if (searchText.length) {
-                startpos = option.html.search(zregex);
-                text = option.html.substr(0, startpos + searchText.length) + '</em>' + option.html.substr(startpos + searchText.length);
-                text = text.substr(0, startpos) + '<em>' + text.substr(startpos);
-              } else {
-                text = option.html;
-              }
-              result.html(text);
-              this.result_activate(result);
-              if (option.group_array_index != null) {
-                $("#" + this.results_data[option.group_array_index].dom_id).css('display', 'list-item');
-              }
-            } else {
-              if (this.result_highlight && result_id === this.result_highlight.attr('id')) {
-                this.result_clear_highlight();
-              }
-              this.result_deactivate(result);
-            }
-          }
-        }
-      }
-      if (results < 1 && searchText.length) {
-        return this.no_results(searchText);
-      } else {
-        return this.winnow_results_set_highlight();
-      }
-    };
-
-    Chosen.prototype.winnow_results_clear = function() {
-      var li, lis, _i, _len, _results;
-
-      this.search_field.val("");
-      lis = this.search_results.find("li");
-      _results = [];
-      for (_i = 0, _len = lis.length; _i < _len; _i++) {
-        li = lis[_i];
-        li = $(li);
-        if (li.hasClass("group-result")) {
-          _results.push(li.css('display', 'auto'));
-        } else if (!this.is_multiple || !li.hasClass("result-selected")) {
-          _results.push(this.result_activate(li));
-        } else {
-          _results.push(void 0);
-        }
-      }
-      return _results;
-    };
-
-    Chosen.prototype.winnow_results_set_highlight = function() {
-      var do_high, selected_results;
-
-      if (!this.result_highlight) {
-        selected_results = !this.is_multiple ? this.search_results.find(".result-selected.active-result") : [];
-        do_high = selected_results.length ? selected_results.first() : this.search_results.find(".active-result").first();
-        if (do_high != null) {
-          return this.result_do_highlight(do_high);
-        }
-      }
-    };
-
-    Chosen.prototype.no_results = function(terms) {
-      var no_results_html;
-
-      no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
-      no_results_html.find("span").first().html(terms);
-      return this.search_results.append(no_results_html);
-    };
-
-    Chosen.prototype.no_results_clear = function() {
-      return this.search_results.find(".no-results").remove();
-    };
-
-    Chosen.prototype.keydown_arrow = function() {
-      var first_active, next_sib;
-
-      if (!this.result_highlight) {
-        first_active = this.search_results.find("li.active-result").first();
-        if (first_active) {
-          this.result_do_highlight($(first_active));
-        }
-      } else if (this.results_showing) {
-        next_sib = this.result_highlight.nextAll("li.active-result").first();
-        if (next_sib) {
-          this.result_do_highlight(next_sib);
-        }
-      }
-      if (!this.results_showing) {
-        return this.results_show();
-      }
-    };
-
-    Chosen.prototype.keyup_arrow = function() {
-      var prev_sibs;
-
-      if (!this.results_showing && !this.is_multiple) {
-        return this.results_show();
-      } else if (this.result_highlight) {
-        prev_sibs = this.result_highlight.prevAll("li.active-result");
-        if (prev_sibs.length) {
-          return this.result_do_highlight(prev_sibs.first());
-        } else {
-          if (this.choices > 0) {
-            this.results_hide();
-          }
-          return this.result_clear_highlight();
-        }
-      }
-    };
-
-    Chosen.prototype.keydown_backstroke = function() {
-      var next_available_destroy;
-
-      if (this.pending_backstroke) {
-        this.choice_destroy(this.pending_backstroke.find("a").first());
-        return this.clear_backstroke();
-      } else {
-        next_available_destroy = this.search_container.siblings("li.search-choice").last();
-        if (next_available_destroy.length && !next_available_destroy.hasClass("search-choice-disabled")) {
-          this.pending_backstroke = next_available_destroy;
-          if (this.single_backstroke_delete) {
-            return this.keydown_backstroke();
-          } else {
-            return this.pending_backstroke.addClass("search-choice-focus");
-          }
-        }
-      }
-    };
-
-    Chosen.prototype.clear_backstroke = function() {
-      if (this.pending_backstroke) {
-        this.pending_backstroke.removeClass("search-choice-focus");
-      }
-      return this.pending_backstroke = null;
-    };
-
-    Chosen.prototype.keydown_checker = function(evt) {
-      var stroke, _ref1;
-
-      stroke = (_ref1 = evt.which) != null ? _ref1 : evt.keyCode;
-      this.search_field_scale();
-      if (stroke !== 8 && this.pending_backstroke) {
-        this.clear_backstroke();
-      }
-      switch (stroke) {
-        case 8:
-          return this.backstroke_length = this.search_field.val().length;
-        case 9:
-          if (this.results_showing && !this.is_multiple) {
-            this.result_select(evt);
-          }
-          return this.mouse_on_container = false;
-        case 13:
-          return evt.preventDefault();
-        case 38:
-          evt.preventDefault();
-          return this.keyup_arrow();
-        case 40:
-          return this.keydown_arrow();
-      }
-    };
-
-    Chosen.prototype.search_field_scale = function() {
-      var dd_top, div, h, style, style_block, styles, w, _i, _len;
-
-      if (this.is_multiple) {
-        h = 0;
-        w = 0;
-        style_block = "position:absolute; left: -1000px; top: -1000px; display:none;";
-        styles = ['font-size', 'font-style', 'font-weight', 'font-family', 'line-height', 'text-transform', 'letter-spacing'];
-        for (_i = 0, _len = styles.length; _i < _len; _i++) {
-          style = styles[_i];
-          style_block += style + ":" + this.search_field.css(style) + ";";
-        }
-        div = $('<div />', {
-          'style': style_block
-        });
-        div.text(this.search_field.val());
-        $('body').append(div);
-        w = div.width() + 25;
-        div.remove();
-        if (w > this.f_width - 10) {
-          w = this.f_width - 10;
-        }
-        this.search_field.css({
-          'width': w + 'px'
-        });
-        dd_top = this.container.height();
-        return this.dropdown.css({
-          "top": dd_top + "px"
-        });
-      }
-    };
-
-    Chosen.prototype.generate_random_id = function() {
-      var string;
-
-      string = "sel" + this.generate_random_char() + this.generate_random_char() + this.generate_random_char();
-      while ($("#" + string).length > 0) {
-        string += this.generate_random_char();
-      }
-      return string;
-    };
-
-    return Chosen;
-
-  })(AbstractChosen);
-
-  exports.Chosen = Chosen;
-
-  SelectParser = (function() {
-    function SelectParser() {
-      this.options_index = 0;
-      this.parsed = [];
-    }
-
-    SelectParser.prototype.add_node = function(child) {
-      if (child.nodeName.toUpperCase() === "OPTGROUP") {
-        return this.add_group(child);
-      } else {
-        return this.add_option(child);
-      }
-    };
-
-    SelectParser.prototype.add_group = function(group) {
-      var group_position, option, _i, _len, _ref1, _results;
-
-      group_position = this.parsed.length;
-      this.parsed.push({
-        array_index: group_position,
-        group: true,
-        label: group.label,
-        children: 0,
-        disabled: group.disabled
-      });
-      _ref1 = group.childNodes;
-      _results = [];
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        option = _ref1[_i];
-        _results.push(this.add_option(option, group_position, group.disabled));
-      }
-      return _results;
-    };
-
-    SelectParser.prototype.add_option = function(option, group_position, group_disabled) {
-      if (option.nodeName.toUpperCase() === "OPTION") {
-        if (option.text !== "") {
-          if (group_position != null) {
-            this.parsed[group_position].children += 1;
-          }
-          this.parsed.push({
-            array_index: this.parsed.length,
-            options_index: this.options_index,
-            value: option.value,
-            text: option.text,
-            html: option.innerHTML,
-            selected: option.selected,
-            disabled: group_disabled === true ? group_disabled : option.disabled,
-            group_array_index: group_position,
-            classes: option.className,
-            style: option.style.cssText
-          });
-        } else {
-          this.parsed.push({
-            array_index: this.parsed.length,
-            options_index: this.options_index,
-            empty: true
-          });
-        }
-        return this.options_index += 1;
-      }
-    };
-
-    return SelectParser;
-
-  })();
-
-  SelectParser.select_to_array = function(select) {
-    var child, parser, _i, _len, _ref1;
-
-    parser = new SelectParser();
-    _ref1 = select.childNodes;
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      child = _ref1[_i];
-      parser.add_node(child);
-    }
-    return parser.parsed;
-  };
-
-}).call(this);
-
-},{}],20:[function(require,module,exports){
+},{"underscore":13}],20:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -28882,7 +28876,7 @@ module.exports = {
   }
 };
 
-},{"jquery-browserify":13,"underscore":14,"js-yaml":18,"marked":22,"queue-async":19,"chrono":26}],25:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":13,"js-yaml":19,"marked":23,"queue-async":18,"chrono":26}],25:[function(require,module,exports){
 'use strict';
 
 
@@ -28917,10 +28911,10 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/dumper":27,"./js-yaml/type":28,"./js-yaml/schema":29,"./js-yaml/schema/safe":30,"./js-yaml/schema/default":31,"./js-yaml/exception":32,"./js-yaml/require":33,"./js-yaml/loader":34,"./js-yaml/schema/minimal":35}],26:[function(require,module,exports){
+},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/schema/minimal":31,"./js-yaml/schema/safe":32,"./js-yaml/schema/default":33,"./js-yaml/exception":34,"./js-yaml/require":35}],26:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
-},{"./lib/chrono":36}],32:[function(require,module,exports){
+},{"./lib/chrono":36}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -29357,704 +29351,6 @@ Date.prototype.setTimezone = function(val) {
 // nothing to see here... no file methods for the browser
 
 },{}],27:[function(require,module,exports){
-'use strict';
-
-
-var common         = require('./common');
-var NIL            = common.NIL;
-var YAMLException  = require('./exception');
-var DEFAULT_SCHEMA = require('./schema/default');
-var SAFE_SCHEMA    = require('./schema/safe');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-var CHAR_TAB                  = 0x09; /* Tab */
-var CHAR_LINE_FEED            = 0x0A; /* LF */
-var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
-var CHAR_SPACE                = 0x20; /* Space */
-var CHAR_EXCLAMATION          = 0x21; /* ! */
-var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
-var CHAR_SHARP                = 0x23; /* # */
-var CHAR_PERCENT              = 0x25; /* % */
-var CHAR_AMPERSAND            = 0x26; /* & */
-var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
-var CHAR_ASTERISK             = 0x2A; /* * */
-var CHAR_COMMA                = 0x2C; /* , */
-var CHAR_MINUS                = 0x2D; /* - */
-var CHAR_COLON                = 0x3A; /* : */
-var CHAR_GREATER_THAN         = 0x3E; /* > */
-var CHAR_QUESTION             = 0x3F; /* ? */
-var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
-var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
-var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
-var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
-var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
-var CHAR_VERTICAL_LINE        = 0x7C; /* | */
-var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
-
-
-var ESCAPE_SEQUENCES = {};
-
-ESCAPE_SEQUENCES[0x00]   = '\\0';
-ESCAPE_SEQUENCES[0x07]   = '\\a';
-ESCAPE_SEQUENCES[0x08]   = '\\b';
-ESCAPE_SEQUENCES[0x09]   = '\\t';
-ESCAPE_SEQUENCES[0x0A]   = '\\n';
-ESCAPE_SEQUENCES[0x0B]   = '\\v';
-ESCAPE_SEQUENCES[0x0C]   = '\\f';
-ESCAPE_SEQUENCES[0x0D]   = '\\r';
-ESCAPE_SEQUENCES[0x1B]   = '\\e';
-ESCAPE_SEQUENCES[0x22]   = '\\"';
-ESCAPE_SEQUENCES[0x5C]   = '\\\\';
-ESCAPE_SEQUENCES[0x85]   = '\\N';
-ESCAPE_SEQUENCES[0xA0]   = '\\_';
-ESCAPE_SEQUENCES[0x2028] = '\\L';
-ESCAPE_SEQUENCES[0x2029] = '\\P';
-
-
-function kindOf(object) {
-  var kind = typeof object;
-
-  if (null === object) {
-    return 'null';
-  } else if ('number' === kind) {
-    return 0 === object % 1 ? 'integer' : 'float';
-  } else if ('object' === kind && Array.isArray(object)) {
-    return 'array';
-  } else {
-    return kind;
-  }
-}
-
-
-function compileStyleMap(schema, map) {
-  var result, keys, index, length, tag, style, type;
-
-  if (null === map) {
-    return {};
-  }
-
-  result = {};
-  keys = Object.keys(map);
-
-  for (index = 0, length = keys.length; index < length; index += 1) {
-    tag = keys[index];
-    style = String(map[tag]);
-
-    if ('!!' === tag.slice(0, 2)) {
-      tag = 'tag:yaml.org,2002:' + tag.slice(2);
-    }
-
-    type = schema.compiledTypeMap[tag];
-
-    if (type && type.dumper) {
-      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
-        style = type.dumper.styleAliases[style];
-      }
-    }
-
-    result[tag] = style;
-  }
-
-  return result;
-}
-
-
-function encodeHex(character) {
-  var string, handle, length;
-
-  string = character.toString(16).toUpperCase();
-
-  if (character <= 0xFF) {
-    handle = 'x';
-    length = 2;
-  } else if (character <= 0xFFFF) {
-    handle = 'u';
-    length = 4;
-  } else if (character <= 0xFFFFFFFF) {
-    handle = 'U';
-    length = 8;
-  } else {
-    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
-  }
-
-  return '\\' + handle + common.repeat('0', length - string.length) + string;
-}
-
-
-function dump(input, options) {
-  options = options || {};
-
-  var schema    = options['schema'] || DEFAULT_SCHEMA,
-      indent    = Math.max(1, (options['indent'] || 2)),
-      flowLevel = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
-      styleMap  = compileStyleMap(schema, options['styles'] || null),
-
-      implicitTypes = schema.compiledImplicit,
-      explicitTypes = schema.compiledExplicit,
-
-      kind,
-      tag,
-      result;
-
-  function generateNextLine(level) {
-    return '\n' + common.repeat(' ', indent * level);
-  }
-
-  function testImplicitResolving(object) {
-    var index, length, type;
-
-    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
-      type = implicitTypes[index];
-
-      if (null !== type.loader &&
-          NIL !== type.loader.resolver(object, false)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeScalar(object) {
-    var isQuoted, checkpoint, position, length, character;
-
-    result = '';
-    isQuoted = false;
-    checkpoint = 0;
-
-    if (0          === object.length ||
-        CHAR_SPACE === object.charCodeAt(0) ||
-        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
-      isQuoted = true;
-    }
-
-    for (position = 0, length = object.length; position < length; position += 1) {
-      character = object.charCodeAt(position);
-
-      if (!isQuoted) {
-        if (CHAR_TAB                  === character ||
-            CHAR_LINE_FEED            === character ||
-            CHAR_CARRIAGE_RETURN      === character ||
-            CHAR_COMMA                === character ||
-            CHAR_LEFT_SQUARE_BRACKET  === character ||
-            CHAR_RIGHT_SQUARE_BRACKET === character ||
-            CHAR_LEFT_CURLY_BRACKET   === character ||
-            CHAR_RIGHT_CURLY_BRACKET  === character ||
-            CHAR_SHARP                === character ||
-            CHAR_AMPERSAND            === character ||
-            CHAR_ASTERISK             === character ||
-            CHAR_EXCLAMATION          === character ||
-            CHAR_VERTICAL_LINE        === character ||
-            CHAR_GREATER_THAN         === character ||
-            CHAR_SINGLE_QUOTE         === character ||
-            CHAR_DOUBLE_QUOTE         === character ||
-            CHAR_PERCENT              === character ||
-            CHAR_COMMERCIAL_AT        === character ||
-            CHAR_GRAVE_ACCENT         === character ||
-            CHAR_QUESTION             === character ||
-            CHAR_COLON                === character ||
-            CHAR_MINUS                === character) {
-          isQuoted = true;
-        }
-      }
-
-      if (ESCAPE_SEQUENCES[character] ||
-          !((0x00020 <= character && character <= 0x00007E) ||
-            (0x00085 === character)                         ||
-            (0x000A0 <= character && character <= 0x00D7FF) ||
-            (0x0E000 <= character && character <= 0x00FFFD) ||
-            (0x10000 <= character && character <= 0x10FFFF))) {
-        result += object.slice(checkpoint, position);
-        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
-        checkpoint = position + 1;
-        isQuoted = true;
-      }
-    }
-
-    if (checkpoint < position) {
-      result += object.slice(checkpoint, position);
-    }
-
-    if (!isQuoted && testImplicitResolving(result)) {
-      isQuoted = true;
-    }
-
-    if (isQuoted) {
-      result = '"' + result + '"';
-    }
-  }
-
-  function writeFlowSequence(level, object) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      if (0 !== index) {
-        _result += ', ';
-      }
-
-      writeNode(level, object[index], false, false);
-      _result += result;
-    }
-
-    tag = _tag;
-    result = '[' + _result + ']';
-  }
-
-  function writeBlockSequence(level, object, compact) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      if (!compact || 0 !== index) {
-        _result += generateNextLine(level);
-      }
-
-      writeNode(level + 1, object[index], true, true);
-      _result += '- ' + result;
-    }
-
-    tag = _tag;
-    result = _result;
-  }
-
-  function writeFlowMapping(level, object) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      if (0 !== index) {
-        _result += ', ';
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      writeNode(level, objectKey, false, false);
-
-      if (result.length > 1024) {
-        _result += '? ';
-      }
-
-      _result += result + ': ';
-      writeNode(level, objectValue, false, false);
-      _result += result;
-    }
-
-    tag = _tag;
-    result = '{' + _result + '}';
-  }
-
-  function writeBlockMapping(level, object, compact) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        explicitPair;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      if (!compact || 0 !== index) {
-        _result += generateNextLine(level);
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      writeNode(level + 1, objectKey, true, true);
-      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
-
-      if (explicitPair) {
-        _result += '? ';
-      }
-
-      _result += result;
-
-      if (explicitPair) {
-        _result += generateNextLine(level);
-      }
-
-      writeNode(level + 1, objectValue, true, explicitPair);
-      _result += ': ' + result;
-    }
-
-    tag = _tag;
-    result = _result;
-  }
-
-  function detectType(object, explicit) {
-    var _result, typeList, index, length, type, style;
-
-    typeList = explicit ? explicitTypes : implicitTypes;
-    kind = kindOf(object);
-
-    for (index = 0, length = typeList.length; index < length; index += 1) {
-      type = typeList[index];
-
-      if ((null !== type.dumper) &&
-          (null === type.dumper.kind       || kind === type.dumper.kind) &&
-          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
-          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
-        tag = explicit ? type.tag : '?';
-
-        if (null !== type.dumper.representer) {
-          style = styleMap[type.tag] || type.dumper.defaultStyle;
-
-          if ('function' === typeof type.dumper.representer) {
-            _result = type.dumper.representer(object, style);
-          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
-            _result = type.dumper.representer[style](object, style);
-          } else {
-            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
-          }
-
-          if (NIL !== _result) {
-            kind = kindOf(_result);
-            result = _result;
-          } else {
-            if (explicit) {
-              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
-            } else {
-              continue;
-            }
-          }
-        }
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeNode(level, object, block, compact) {
-    tag = null;
-    result = object;
-
-    if (!detectType(object, false)) {
-      detectType(object, true);
-    }
-
-    if (block) {
-      block = (0 > flowLevel || flowLevel > level);
-    }
-
-    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
-      compact = false;
-    }
-
-    if ('object' === kind) {
-      if (block && (0 !== Object.keys(result).length)) {
-        writeBlockMapping(level, result, compact);
-      } else {
-        writeFlowMapping(level, result);
-      }
-    } else if ('array' === kind) {
-      if (block && (0 !== result.length)) {
-        writeBlockSequence(level, result, compact);
-      } else {
-        writeFlowSequence(level, result);
-      }
-    } else if ('string' === kind) {
-      if ('?' !== tag) {
-        writeScalar(result);
-      }
-    } else {
-      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
-    }
-
-    if (null !== tag && '?' !== tag) {
-      result = '!<' + tag + '> ' + result;
-    }
-  }
-
-  writeNode(0, input, true, true);
-  return result + '\n';
-}
-
-
-function safeDump(input, options) {
-  return dump(input, common.extend({ schema: SAFE_SCHEMA }, options));
-}
-
-
-module.exports.dump     = dump;
-module.exports.safeDump = safeDump;
-
-},{"./common":38,"./exception":32,"./schema/default":31,"./schema/safe":30}],28:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":32}],29:[function(require,module,exports){
-'use strict';
-
-
-var common        = require('./common');
-var YAMLException = require('./exception');
-var Type          = require('./type');
-
-
-function compileList(schema, name, result) {
-  var exclude = [];
-
-  schema.include.forEach(function (includedSchema) {
-    result = compileList(includedSchema, name, result);
-  });
-
-  schema[name].forEach(function (currentType) {
-    result.forEach(function (previousType, previousIndex) {
-      if (previousType.tag === currentType.tag) {
-        exclude.push(previousIndex);
-      }
-    });
-
-    result.push(currentType);
-  });
-
-  return result.filter(function (type, index) {
-    return -1 === exclude.indexOf(index);
-  });
-}
-
-
-function compileMap(/* lists... */) {
-  var result = {}, index, length;
-
-  function collectType(type) {
-    result[type.tag] = type;
-  }
-
-  for (index = 0, length = arguments.length; index < length; index += 1) {
-    arguments[index].forEach(collectType);
-  }
-
-  return result;
-}
-
-
-function Schema(definition) {
-  this.include  = definition.include  || [];
-  this.implicit = definition.implicit || [];
-  this.explicit = definition.explicit || [];
-
-  this.implicit.forEach(function (type) {
-    if (null !== type.loader && 'string' !== type.loader.kind) {
-      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
-    }
-  });
-
-  this.compiledImplicit = compileList(this, 'implicit', []);
-  this.compiledExplicit = compileList(this, 'explicit', []);
-  this.compiledTypeMap  = compileMap(this.compiledImplicit, this.compiledExplicit);
-}
-
-
-Schema.DEFAULT = null;
-
-
-Schema.create = function createSchema() {
-  var schemas, types;
-
-  switch (arguments.length) {
-  case 1:
-    schemas = Schema.DEFAULT;
-    types = arguments[0];
-    break;
-
-  case 2:
-    schemas = arguments[0];
-    types = arguments[1];
-    break;
-
-  default:
-    throw new YAMLException('Wrong number of arguments for Schema.create function');
-  }
-
-  schemas = common.toArray(schemas);
-  types = common.toArray(types);
-
-  if (!schemas.every(function (schema) { return schema instanceof Schema; })) {
-    throw new YAMLException('Specified list of super schemas (or a single Schema object) contains a non-Schema object.');
-  }
-
-  if (!types.every(function (type) { return type instanceof Type; })) {
-    throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
-  }
-
-  return new Schema({
-    include: schemas,
-    explicit: types
-  });
-};
-
-
-module.exports = Schema;
-
-},{"./common":38,"./exception":32,"./type":28}],33:[function(require,module,exports){
-'use strict';
-
-
-var fs     = require('fs');
-var loader = require('./loader');
-
-
-function yamlRequireHandler(module, filename) {
-  var content = fs.readFileSync(filename, 'utf8');
-
-  // fill in documents
-  module.exports = loader.load(content, { filename: filename });
-}
-
-// register require extensions only if we're on node.js
-// hack for browserify
-if (undefined !== require.extensions) {
-  require.extensions['.yml']  = yamlRequireHandler;
-  require.extensions['.yaml'] = yamlRequireHandler;
-}
-
-
-module.exports = require;
-
-},{"fs":37,"./loader":34}],30:[function(require,module,exports){
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  include: [
-    require('./minimal')
-  ],
-  implicit: [
-    require('../type/null'),
-    require('../type/bool'),
-    require('../type/int'),
-    require('../type/float'),
-    require('../type/timestamp'),
-    require('../type/merge')
-  ],
-  explicit: [
-    require('../type/binary'),
-    require('../type/omap'),
-    require('../type/pairs'),
-    require('../type/set')
-  ]
-});
-
-},{"../schema":29,"./minimal":35,"../type/null":39,"../type/bool":40,"../type/int":41,"../type/float":42,"../type/timestamp":43,"../type/merge":44,"../type/binary":45,"../type/omap":46,"../type/pairs":47,"../type/set":48}],31:[function(require,module,exports){
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = Schema.DEFAULT = new Schema({
-  include: [
-    require('./safe')
-  ],
-  explicit: [
-    require('../type/js/undefined'),
-    require('../type/js/regexp'),
-    require('../type/js/function')
-  ]
-});
-
-},{"../schema":29,"./safe":30,"../type/js/undefined":49,"../type/js/regexp":50,"../type/js/function":51}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -31605,7 +30901,720 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":38,"./exception":32,"./mark":52,"./schema/safe":30,"./schema/default":31}],38:[function(require,module,exports){
+},{"./common":38,"./exception":34,"./mark":39,"./schema/safe":32,"./schema/default":33}],28:[function(require,module,exports){
+'use strict';
+
+
+var common         = require('./common');
+var NIL            = common.NIL;
+var YAMLException  = require('./exception');
+var DEFAULT_SCHEMA = require('./schema/default');
+var SAFE_SCHEMA    = require('./schema/safe');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+var CHAR_TAB                  = 0x09; /* Tab */
+var CHAR_LINE_FEED            = 0x0A; /* LF */
+var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
+var CHAR_SPACE                = 0x20; /* Space */
+var CHAR_EXCLAMATION          = 0x21; /* ! */
+var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
+var CHAR_SHARP                = 0x23; /* # */
+var CHAR_PERCENT              = 0x25; /* % */
+var CHAR_AMPERSAND            = 0x26; /* & */
+var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
+var CHAR_ASTERISK             = 0x2A; /* * */
+var CHAR_COMMA                = 0x2C; /* , */
+var CHAR_MINUS                = 0x2D; /* - */
+var CHAR_COLON                = 0x3A; /* : */
+var CHAR_GREATER_THAN         = 0x3E; /* > */
+var CHAR_QUESTION             = 0x3F; /* ? */
+var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
+var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
+var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
+var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
+var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
+var CHAR_VERTICAL_LINE        = 0x7C; /* | */
+var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
+
+
+var ESCAPE_SEQUENCES = {};
+
+ESCAPE_SEQUENCES[0x00]   = '\\0';
+ESCAPE_SEQUENCES[0x07]   = '\\a';
+ESCAPE_SEQUENCES[0x08]   = '\\b';
+ESCAPE_SEQUENCES[0x09]   = '\\t';
+ESCAPE_SEQUENCES[0x0A]   = '\\n';
+ESCAPE_SEQUENCES[0x0B]   = '\\v';
+ESCAPE_SEQUENCES[0x0C]   = '\\f';
+ESCAPE_SEQUENCES[0x0D]   = '\\r';
+ESCAPE_SEQUENCES[0x1B]   = '\\e';
+ESCAPE_SEQUENCES[0x22]   = '\\"';
+ESCAPE_SEQUENCES[0x5C]   = '\\\\';
+ESCAPE_SEQUENCES[0x85]   = '\\N';
+ESCAPE_SEQUENCES[0xA0]   = '\\_';
+ESCAPE_SEQUENCES[0x2028] = '\\L';
+ESCAPE_SEQUENCES[0x2029] = '\\P';
+
+
+function kindOf(object) {
+  var kind = typeof object;
+
+  if (null === object) {
+    return 'null';
+  } else if ('number' === kind) {
+    return 0 === object % 1 ? 'integer' : 'float';
+  } else if ('object' === kind && Array.isArray(object)) {
+    return 'array';
+  } else {
+    return kind;
+  }
+}
+
+
+function compileStyleMap(schema, map) {
+  var result, keys, index, length, tag, style, type;
+
+  if (null === map) {
+    return {};
+  }
+
+  result = {};
+  keys = Object.keys(map);
+
+  for (index = 0, length = keys.length; index < length; index += 1) {
+    tag = keys[index];
+    style = String(map[tag]);
+
+    if ('!!' === tag.slice(0, 2)) {
+      tag = 'tag:yaml.org,2002:' + tag.slice(2);
+    }
+
+    type = schema.compiledTypeMap[tag];
+
+    if (type && type.dumper) {
+      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
+        style = type.dumper.styleAliases[style];
+      }
+    }
+
+    result[tag] = style;
+  }
+
+  return result;
+}
+
+
+function encodeHex(character) {
+  var string, handle, length;
+
+  string = character.toString(16).toUpperCase();
+
+  if (character <= 0xFF) {
+    handle = 'x';
+    length = 2;
+  } else if (character <= 0xFFFF) {
+    handle = 'u';
+    length = 4;
+  } else if (character <= 0xFFFFFFFF) {
+    handle = 'U';
+    length = 8;
+  } else {
+    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
+  }
+
+  return '\\' + handle + common.repeat('0', length - string.length) + string;
+}
+
+
+function dump(input, options) {
+  options = options || {};
+
+  var schema    = options['schema'] || DEFAULT_SCHEMA,
+      indent    = Math.max(1, (options['indent'] || 2)),
+      flowLevel = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
+      styleMap  = compileStyleMap(schema, options['styles'] || null),
+
+      implicitTypes = schema.compiledImplicit,
+      explicitTypes = schema.compiledExplicit,
+
+      kind,
+      tag,
+      result;
+
+  function generateNextLine(level) {
+    return '\n' + common.repeat(' ', indent * level);
+  }
+
+  function testImplicitResolving(object) {
+    var index, length, type;
+
+    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
+      type = implicitTypes[index];
+
+      if (null !== type.loader &&
+          NIL !== type.loader.resolver(object, false)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeScalar(object) {
+    var isQuoted, checkpoint, position, length, character;
+
+    result = '';
+    isQuoted = false;
+    checkpoint = 0;
+
+    if (0          === object.length ||
+        CHAR_SPACE === object.charCodeAt(0) ||
+        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
+      isQuoted = true;
+    }
+
+    for (position = 0, length = object.length; position < length; position += 1) {
+      character = object.charCodeAt(position);
+
+      if (!isQuoted) {
+        if (CHAR_TAB                  === character ||
+            CHAR_LINE_FEED            === character ||
+            CHAR_CARRIAGE_RETURN      === character ||
+            CHAR_COMMA                === character ||
+            CHAR_LEFT_SQUARE_BRACKET  === character ||
+            CHAR_RIGHT_SQUARE_BRACKET === character ||
+            CHAR_LEFT_CURLY_BRACKET   === character ||
+            CHAR_RIGHT_CURLY_BRACKET  === character ||
+            CHAR_SHARP                === character ||
+            CHAR_AMPERSAND            === character ||
+            CHAR_ASTERISK             === character ||
+            CHAR_EXCLAMATION          === character ||
+            CHAR_VERTICAL_LINE        === character ||
+            CHAR_GREATER_THAN         === character ||
+            CHAR_SINGLE_QUOTE         === character ||
+            CHAR_DOUBLE_QUOTE         === character ||
+            CHAR_PERCENT              === character ||
+            CHAR_COMMERCIAL_AT        === character ||
+            CHAR_GRAVE_ACCENT         === character ||
+            CHAR_QUESTION             === character ||
+            CHAR_COLON                === character ||
+            CHAR_MINUS                === character) {
+          isQuoted = true;
+        }
+      }
+
+      if (ESCAPE_SEQUENCES[character] ||
+          !((0x00020 <= character && character <= 0x00007E) ||
+            (0x00085 === character)                         ||
+            (0x000A0 <= character && character <= 0x00D7FF) ||
+            (0x0E000 <= character && character <= 0x00FFFD) ||
+            (0x10000 <= character && character <= 0x10FFFF))) {
+        result += object.slice(checkpoint, position);
+        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
+        checkpoint = position + 1;
+        isQuoted = true;
+      }
+    }
+
+    if (checkpoint < position) {
+      result += object.slice(checkpoint, position);
+    }
+
+    if (!isQuoted && testImplicitResolving(result)) {
+      isQuoted = true;
+    }
+
+    if (isQuoted) {
+      result = '"' + result + '"';
+    }
+  }
+
+  function writeFlowSequence(level, object) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      if (0 !== index) {
+        _result += ', ';
+      }
+
+      writeNode(level, object[index], false, false);
+      _result += result;
+    }
+
+    tag = _tag;
+    result = '[' + _result + ']';
+  }
+
+  function writeBlockSequence(level, object, compact) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      if (!compact || 0 !== index) {
+        _result += generateNextLine(level);
+      }
+
+      writeNode(level + 1, object[index], true, true);
+      _result += '- ' + result;
+    }
+
+    tag = _tag;
+    result = _result;
+  }
+
+  function writeFlowMapping(level, object) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      if (0 !== index) {
+        _result += ', ';
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      writeNode(level, objectKey, false, false);
+
+      if (result.length > 1024) {
+        _result += '? ';
+      }
+
+      _result += result + ': ';
+      writeNode(level, objectValue, false, false);
+      _result += result;
+    }
+
+    tag = _tag;
+    result = '{' + _result + '}';
+  }
+
+  function writeBlockMapping(level, object, compact) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        explicitPair;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      if (!compact || 0 !== index) {
+        _result += generateNextLine(level);
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      writeNode(level + 1, objectKey, true, true);
+      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
+
+      if (explicitPair) {
+        _result += '? ';
+      }
+
+      _result += result;
+
+      if (explicitPair) {
+        _result += generateNextLine(level);
+      }
+
+      writeNode(level + 1, objectValue, true, explicitPair);
+      _result += ': ' + result;
+    }
+
+    tag = _tag;
+    result = _result;
+  }
+
+  function detectType(object, explicit) {
+    var _result, typeList, index, length, type, style;
+
+    typeList = explicit ? explicitTypes : implicitTypes;
+    kind = kindOf(object);
+
+    for (index = 0, length = typeList.length; index < length; index += 1) {
+      type = typeList[index];
+
+      if ((null !== type.dumper) &&
+          (null === type.dumper.kind       || kind === type.dumper.kind) &&
+          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
+          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
+        tag = explicit ? type.tag : '?';
+
+        if (null !== type.dumper.representer) {
+          style = styleMap[type.tag] || type.dumper.defaultStyle;
+
+          if ('function' === typeof type.dumper.representer) {
+            _result = type.dumper.representer(object, style);
+          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
+            _result = type.dumper.representer[style](object, style);
+          } else {
+            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
+          }
+
+          if (NIL !== _result) {
+            kind = kindOf(_result);
+            result = _result;
+          } else {
+            if (explicit) {
+              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
+            } else {
+              continue;
+            }
+          }
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeNode(level, object, block, compact) {
+    tag = null;
+    result = object;
+
+    if (!detectType(object, false)) {
+      detectType(object, true);
+    }
+
+    if (block) {
+      block = (0 > flowLevel || flowLevel > level);
+    }
+
+    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
+      compact = false;
+    }
+
+    if ('object' === kind) {
+      if (block && (0 !== Object.keys(result).length)) {
+        writeBlockMapping(level, result, compact);
+      } else {
+        writeFlowMapping(level, result);
+      }
+    } else if ('array' === kind) {
+      if (block && (0 !== result.length)) {
+        writeBlockSequence(level, result, compact);
+      } else {
+        writeFlowSequence(level, result);
+      }
+    } else if ('string' === kind) {
+      if ('?' !== tag) {
+        writeScalar(result);
+      }
+    } else {
+      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
+    }
+
+    if (null !== tag && '?' !== tag) {
+      result = '!<' + tag + '> ' + result;
+    }
+  }
+
+  writeNode(0, input, true, true);
+  return result + '\n';
+}
+
+
+function safeDump(input, options) {
+  return dump(input, common.extend({ schema: SAFE_SCHEMA }, options));
+}
+
+
+module.exports.dump     = dump;
+module.exports.safeDump = safeDump;
+
+},{"./common":38,"./exception":34,"./schema/default":33,"./schema/safe":32}],29:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":34}],30:[function(require,module,exports){
+'use strict';
+
+
+var common        = require('./common');
+var YAMLException = require('./exception');
+var Type          = require('./type');
+
+
+function compileList(schema, name, result) {
+  var exclude = [];
+
+  schema.include.forEach(function (includedSchema) {
+    result = compileList(includedSchema, name, result);
+  });
+
+  schema[name].forEach(function (currentType) {
+    result.forEach(function (previousType, previousIndex) {
+      if (previousType.tag === currentType.tag) {
+        exclude.push(previousIndex);
+      }
+    });
+
+    result.push(currentType);
+  });
+
+  return result.filter(function (type, index) {
+    return -1 === exclude.indexOf(index);
+  });
+}
+
+
+function compileMap(/* lists... */) {
+  var result = {}, index, length;
+
+  function collectType(type) {
+    result[type.tag] = type;
+  }
+
+  for (index = 0, length = arguments.length; index < length; index += 1) {
+    arguments[index].forEach(collectType);
+  }
+
+  return result;
+}
+
+
+function Schema(definition) {
+  this.include  = definition.include  || [];
+  this.implicit = definition.implicit || [];
+  this.explicit = definition.explicit || [];
+
+  this.implicit.forEach(function (type) {
+    if (null !== type.loader && 'string' !== type.loader.kind) {
+      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
+    }
+  });
+
+  this.compiledImplicit = compileList(this, 'implicit', []);
+  this.compiledExplicit = compileList(this, 'explicit', []);
+  this.compiledTypeMap  = compileMap(this.compiledImplicit, this.compiledExplicit);
+}
+
+
+Schema.DEFAULT = null;
+
+
+Schema.create = function createSchema() {
+  var schemas, types;
+
+  switch (arguments.length) {
+  case 1:
+    schemas = Schema.DEFAULT;
+    types = arguments[0];
+    break;
+
+  case 2:
+    schemas = arguments[0];
+    types = arguments[1];
+    break;
+
+  default:
+    throw new YAMLException('Wrong number of arguments for Schema.create function');
+  }
+
+  schemas = common.toArray(schemas);
+  types = common.toArray(types);
+
+  if (!schemas.every(function (schema) { return schema instanceof Schema; })) {
+    throw new YAMLException('Specified list of super schemas (or a single Schema object) contains a non-Schema object.');
+  }
+
+  if (!types.every(function (type) { return type instanceof Type; })) {
+    throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
+  }
+
+  return new Schema({
+    include: schemas,
+    explicit: types
+  });
+};
+
+
+module.exports = Schema;
+
+},{"./common":38,"./exception":34,"./type":29}],35:[function(require,module,exports){
+'use strict';
+
+
+var fs     = require('fs');
+var loader = require('./loader');
+
+
+function yamlRequireHandler(module, filename) {
+  var content = fs.readFileSync(filename, 'utf8');
+
+  // fill in documents
+  module.exports = loader.load(content, { filename: filename });
+}
+
+// register require extensions only if we're on node.js
+// hack for browserify
+if (undefined !== require.extensions) {
+  require.extensions['.yml']  = yamlRequireHandler;
+  require.extensions['.yaml'] = yamlRequireHandler;
+}
+
+
+module.exports = require;
+
+},{"fs":37,"./loader":27}],31:[function(require,module,exports){
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  explicit: [
+    require('../type/str'),
+    require('../type/seq'),
+    require('../type/map')
+  ]
+});
+
+},{"../schema":30,"../type/str":40,"../type/seq":41,"../type/map":42}],32:[function(require,module,exports){
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  include: [
+    require('./minimal')
+  ],
+  implicit: [
+    require('../type/null'),
+    require('../type/bool'),
+    require('../type/int'),
+    require('../type/float'),
+    require('../type/timestamp'),
+    require('../type/merge')
+  ],
+  explicit: [
+    require('../type/binary'),
+    require('../type/omap'),
+    require('../type/pairs'),
+    require('../type/set')
+  ]
+});
+
+},{"../schema":30,"./minimal":31,"../type/null":43,"../type/bool":44,"../type/int":45,"../type/float":46,"../type/timestamp":47,"../type/merge":48,"../type/binary":49,"../type/omap":50,"../type/pairs":51,"../type/set":52}],33:[function(require,module,exports){
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = Schema.DEFAULT = new Schema({
+  include: [
+    require('./safe')
+  ],
+  explicit: [
+    require('../type/js/undefined'),
+    require('../type/js/regexp'),
+    require('../type/js/function')
+  ]
+});
+
+},{"../schema":30,"./safe":32,"../type/js/undefined":53,"../type/js/regexp":54,"../type/js/function":55}],38:[function(require,module,exports){
 'use strict';
 
 
@@ -31667,22 +31676,7 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],35:[function(require,module,exports){
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  explicit: [
-    require('../type/str'),
-    require('../type/seq'),
-    require('../type/map')
-  ]
-});
-
-},{"../schema":29,"../type/str":53,"../type/seq":54,"../type/map":55}],52:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 
 
@@ -31762,766 +31756,7 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":38}],39:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
-};
-
-
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
-    }
-  }
-});
-
-},{"../common":38,"../type":28}],40:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
-  }
-});
-
-},{"../common":38,"../type":28}],41:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":38,"../type":28}],42:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
-  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
-  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  '|\\.(?:nan|NaN|NAN))$');
-
-
-function resolveYamlFloat(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_FLOAT_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '').toLowerCase();
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('.inf' === value) {
-    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if ('.nan' === value) {
-    return NaN;
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseFloat(v, 10));
-    });
-
-    value = 0.0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += d * base;
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseFloat(value, 10);
-  }
-}
-
-
-function representYamlFloat(object, style) {
-  if (isNaN(object)) {
-    switch (style) {
-    case 'lowercase':
-      return '.nan';
-    case 'uppercase':
-      return '.NAN';
-    case 'camelcase':
-      return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '.inf';
-    case 'uppercase':
-      return '.INF';
-    case 'camelcase':
-      return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '-.inf';
-    case 'uppercase':
-      return '-.INF';
-    case 'camelcase':
-      return '-.Inf';
-    }
-  } else {
-    return object.toString(10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlFloat
-  },
-  dumper: {
-    kind: 'float',
-    defaultStyle: 'lowercase',
-    representer: representYamlFloat
-  }
-});
-
-},{"../common":38,"../type":28}],43:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_TIMESTAMP_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9]?)'                   + // [2] month
-  '-([0-9][0-9]?)'                   + // [3] day
-  '(?:(?:[Tt]|[ \\t]+)'              + // ...
-  '([0-9][0-9]?)'                    + // [4] hour
-  ':([0-9][0-9])'                    + // [5] minute
-  ':([0-9][0-9])'                    + // [6] second
-  '(?:\\.([0-9]*))?'                 + // [7] fraction
-  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
-  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
-
-
-function resolveYamlTimestamp(object /*, explicit*/) {
-  var match, year, month, day, hour, minute, second, fraction = 0,
-      delta = null, tz_hour, tz_minute, data;
-
-  match = YAML_TIMESTAMP_REGEXP.exec(object);
-
-  if (null === match) {
-    return NIL;
-  }
-
-  // match: [1] year [2] month [3] day
-
-  year = +(match[1]);
-  month = +(match[2]) - 1; // JS month starts with 0
-  day = +(match[3]);
-
-  if (!match[4]) { // no hour
-    return new Date(Date.UTC(year, month, day));
-  }
-
-  // match: [4] hour [5] minute [6] second [7] fraction
-
-  hour = +(match[4]);
-  minute = +(match[5]);
-  second = +(match[6]);
-
-  if (match[7]) {
-    fraction = match[7].slice(0, 3);
-    while (fraction.length < 3) { // milli-seconds
-      fraction += '0';
-    }
-    fraction = +fraction;
-  }
-
-  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
-
-  if (match[9]) {
-    tz_hour = +(match[10]);
-    tz_minute = +(match[11] || 0);
-    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-    if ('-' === match[9]) {
-      delta = -delta;
-    }
-  }
-
-  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
-
-  if (delta) {
-    data.setTime(data.getTime() - delta);
-  }
-
-  return data;
-}
-
-
-function representYamlTimestamp(object /*, style*/) {
-  return object.toISOString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:timestamp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlTimestamp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: Date,
-    representer: representYamlTimestamp
-  }
-});
-
-},{"../common":38,"../type":28}],44:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":38,"../type":28}],45:[function(require,module,exports){
-(function(){// Modified from:
-// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
-
-'use strict';
-
-
-var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
-var common     = require('../common');
-var NIL        = common.NIL;
-var Type       = require('../type');
-
-
-
-var BASE64_PADDING = '=';
-
-var BASE64_BINTABLE = [
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
-  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
-];
-
-var BASE64_CHARTABLE =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
-
-
-function resolveYamlBinary(object /*, explicit*/) {
-  var value, code, idx = 0, result = [], leftbits, leftdata;
-
-  leftbits = 0; // number of bits decoded, but yet to be appended
-  leftdata = 0; // bits decoded, but yet to be appended
-
-  // Convert one by one.
-  for (idx = 0; idx < object.length; idx += 1) {
-    code = object.charCodeAt(idx);
-    value = BASE64_BINTABLE[code & 0x7F];
-
-    // Skip LF(NL) || CR
-    if (0x0A !== code && 0x0D !== code) {
-      // Fail on illegal characters
-      if (-1 === value) {
-        return NIL;
-      }
-
-      // Collect data into leftdata, update bitcount
-      leftdata = (leftdata << 6) | value;
-      leftbits += 6;
-
-      // If we have 8 or more bits, append 8 bits to the result
-      if (leftbits >= 8) {
-        leftbits -= 8;
-
-        // Append if not padding.
-        if (BASE64_PADDING !== object.charAt(idx)) {
-          result.push((leftdata >> leftbits) & 0xFF);
-        }
-
-        leftdata &= (1 << leftbits) - 1;
-      }
-    }
-  }
-
-  // If there are any bits left, the base64 string was corrupted
-  if (leftbits) {
-    return NIL;
-  } else {
-    return new NodeBuffer(result);
-  }
-}
-
-
-function representYamlBinary(object /*, style*/) {
-  var result = '', index, length, rest;
-
-  // Convert every three bytes to 4 ASCII characters.
-  for (index = 0, length = object.length - 2; index < length; index += 3) {
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
-    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
-  }
-
-  rest = object.length % 3;
-
-  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
-  if (0 !== rest) {
-    index = object.length - rest;
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-
-    if (2 === rest) {
-      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
-      result += BASE64_PADDING;
-    } else {
-      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
-      result += BASE64_PADDING + BASE64_PADDING;
-    }
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:binary', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBinary
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: NodeBuffer,
-    representer: representYamlBinary
-  }
-});
-
-})()
-},{"buffer":56,"../common":38,"../type":28}],46:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-
-function resolveYamlOmap(object /*, explicit*/) {
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) {
-          pairHasKey = true;
-        } else {
-          return NIL;
-        }
-      }
-    }
-
-    if (!pairHasKey) {
-      return NIL;
-    }
-
-    if (-1 === objectKeys.indexOf(pairKey)) {
-      objectKeys.push(pairKey);
-    } else {
-      return NIL;
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlOmap
-  }
-});
-
-},{"../common":38,"../type":28}],47:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
-  }
-});
-
-},{"../common":38,"../type":28}],48:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-function resolveYamlSet(object /*, explicit*/) {
-  var key;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (null !== object[key]) {
-        return NIL;
-      }
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  loader: {
-    kind: 'object',
-    resolver: resolveYamlSet
-  }
-});
-
-},{"../common":38,"../type":28}],49:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../../type');
-
-
-function resolveJavascriptUndefined(/*object, explicit*/) {
-  var undef;
-
-  return undef;
-}
-
-
-function representJavascriptUndefined(/*object, explicit*/) {
-  return '';
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/undefined', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptUndefined
-  },
-  dumper: {
-    kind: 'undefined',
-    representer: representJavascriptUndefined
-  }
-});
-
-},{"../../type":28}],50:[function(require,module,exports){
-(function(){'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptRegExp(object /*, explicit*/) {
-  var regexp = object,
-      tail   = /\/([gim]*)$/.exec(object),
-      modifiers;
-
-  // `/foo/gim` - tail can be maximum 4 chars
-  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
-    regexp = regexp.slice(1, regexp.length - tail[0].length);
-    modifiers = tail[1];
-  }
-
-  try {
-    return new RegExp(regexp, modifiers);
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptRegExp(object /*, style*/) {
-  var result = '/' + object.source + '/';
-
-  if (object.global) {
-    result += 'g';
-  }
-
-  if (object.multiline) {
-    result += 'm';
-  }
-
-  if (object.ignoreCase) {
-    result += 'i';
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/regexp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptRegExp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: RegExp,
-    representer: representJavascriptRegExp
-  }
-});
-
-})()
-},{"../../common":38,"../../type":28}],57:[function(require,module,exports){
+},{"./common":38}],56:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -32838,7 +32073,7 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":58,"buffer":56}],53:[function(require,module,exports){
+},{"util":57,"buffer":58}],40:[function(require,module,exports){
 'use strict';
 
 
@@ -32851,7 +32086,7 @@ module.exports = new Type('tag:yaml.org,2002:str', {
   }
 });
 
-},{"../type":28}],54:[function(require,module,exports){
+},{"../type":29}],41:[function(require,module,exports){
 'use strict';
 
 
@@ -32864,7 +32099,7 @@ module.exports = new Type('tag:yaml.org,2002:seq', {
   }
 });
 
-},{"../type":28}],55:[function(require,module,exports){
+},{"../type":29}],42:[function(require,module,exports){
 'use strict';
 
 
@@ -32877,7 +32112,766 @@ module.exports = new Type('tag:yaml.org,2002:map', {
   }
 });
 
-},{"../type":28}],58:[function(require,module,exports){
+},{"../type":29}],43:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
+    }
+  }
+});
+
+},{"../common":38,"../type":29}],45:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":38,"../type":29}],44:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
+},{"../common":38,"../type":29}],46:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_FLOAT_PATTERN = new RegExp(
+  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
+  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
+  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
+  '|[-+]?\\.(?:inf|Inf|INF)' +
+  '|\\.(?:nan|NaN|NAN))$');
+
+
+function resolveYamlFloat(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_FLOAT_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '').toLowerCase();
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('.inf' === value) {
+    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+
+  } else if ('.nan' === value) {
+    return NaN;
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseFloat(v, 10));
+    });
+
+    value = 0.0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += d * base;
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseFloat(value, 10);
+  }
+}
+
+
+function representYamlFloat(object, style) {
+  if (isNaN(object)) {
+    switch (style) {
+    case 'lowercase':
+      return '.nan';
+    case 'uppercase':
+      return '.NAN';
+    case 'camelcase':
+      return '.NaN';
+    }
+  } else if (Number.POSITIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '.inf';
+    case 'uppercase':
+      return '.INF';
+    case 'camelcase':
+      return '.Inf';
+    }
+  } else if (Number.NEGATIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '-.inf';
+    case 'uppercase':
+      return '-.INF';
+    case 'camelcase':
+      return '-.Inf';
+    }
+  } else {
+    return object.toString(10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:float', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlFloat
+  },
+  dumper: {
+    kind: 'float',
+    defaultStyle: 'lowercase',
+    representer: representYamlFloat
+  }
+});
+
+},{"../common":38,"../type":29}],48:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
+},{"../common":38,"../type":29}],47:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_TIMESTAMP_REGEXP = new RegExp(
+  '^([0-9][0-9][0-9][0-9])'          + // [1] year
+  '-([0-9][0-9]?)'                   + // [2] month
+  '-([0-9][0-9]?)'                   + // [3] day
+  '(?:(?:[Tt]|[ \\t]+)'              + // ...
+  '([0-9][0-9]?)'                    + // [4] hour
+  ':([0-9][0-9])'                    + // [5] minute
+  ':([0-9][0-9])'                    + // [6] second
+  '(?:\\.([0-9]*))?'                 + // [7] fraction
+  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
+  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
+
+
+function resolveYamlTimestamp(object /*, explicit*/) {
+  var match, year, month, day, hour, minute, second, fraction = 0,
+      delta = null, tz_hour, tz_minute, data;
+
+  match = YAML_TIMESTAMP_REGEXP.exec(object);
+
+  if (null === match) {
+    return NIL;
+  }
+
+  // match: [1] year [2] month [3] day
+
+  year = +(match[1]);
+  month = +(match[2]) - 1; // JS month starts with 0
+  day = +(match[3]);
+
+  if (!match[4]) { // no hour
+    return new Date(Date.UTC(year, month, day));
+  }
+
+  // match: [4] hour [5] minute [6] second [7] fraction
+
+  hour = +(match[4]);
+  minute = +(match[5]);
+  second = +(match[6]);
+
+  if (match[7]) {
+    fraction = match[7].slice(0, 3);
+    while (fraction.length < 3) { // milli-seconds
+      fraction += '0';
+    }
+    fraction = +fraction;
+  }
+
+  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
+
+  if (match[9]) {
+    tz_hour = +(match[10]);
+    tz_minute = +(match[11] || 0);
+    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
+    if ('-' === match[9]) {
+      delta = -delta;
+    }
+  }
+
+  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
+
+  if (delta) {
+    data.setTime(data.getTime() - delta);
+  }
+
+  return data;
+}
+
+
+function representYamlTimestamp(object /*, style*/) {
+  return object.toISOString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:timestamp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlTimestamp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: Date,
+    representer: representYamlTimestamp
+  }
+});
+
+},{"../common":38,"../type":29}],49:[function(require,module,exports){
+(function(){// Modified from:
+// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
+
+'use strict';
+
+
+var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
+var common     = require('../common');
+var NIL        = common.NIL;
+var Type       = require('../type');
+
+
+
+var BASE64_PADDING = '=';
+
+var BASE64_BINTABLE = [
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
+  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
+];
+
+var BASE64_CHARTABLE =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+
+
+function resolveYamlBinary(object /*, explicit*/) {
+  var value, code, idx = 0, result = [], leftbits, leftdata;
+
+  leftbits = 0; // number of bits decoded, but yet to be appended
+  leftdata = 0; // bits decoded, but yet to be appended
+
+  // Convert one by one.
+  for (idx = 0; idx < object.length; idx += 1) {
+    code = object.charCodeAt(idx);
+    value = BASE64_BINTABLE[code & 0x7F];
+
+    // Skip LF(NL) || CR
+    if (0x0A !== code && 0x0D !== code) {
+      // Fail on illegal characters
+      if (-1 === value) {
+        return NIL;
+      }
+
+      // Collect data into leftdata, update bitcount
+      leftdata = (leftdata << 6) | value;
+      leftbits += 6;
+
+      // If we have 8 or more bits, append 8 bits to the result
+      if (leftbits >= 8) {
+        leftbits -= 8;
+
+        // Append if not padding.
+        if (BASE64_PADDING !== object.charAt(idx)) {
+          result.push((leftdata >> leftbits) & 0xFF);
+        }
+
+        leftdata &= (1 << leftbits) - 1;
+      }
+    }
+  }
+
+  // If there are any bits left, the base64 string was corrupted
+  if (leftbits) {
+    return NIL;
+  } else {
+    return new NodeBuffer(result);
+  }
+}
+
+
+function representYamlBinary(object /*, style*/) {
+  var result = '', index, length, rest;
+
+  // Convert every three bytes to 4 ASCII characters.
+  for (index = 0, length = object.length - 2; index < length; index += 3) {
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
+    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
+  }
+
+  rest = object.length % 3;
+
+  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
+  if (0 !== rest) {
+    index = object.length - rest;
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+
+    if (2 === rest) {
+      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
+      result += BASE64_PADDING;
+    } else {
+      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
+      result += BASE64_PADDING + BASE64_PADDING;
+    }
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:binary', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBinary
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: NodeBuffer,
+    representer: representYamlBinary
+  }
+});
+
+})()
+},{"buffer":58,"../common":38,"../type":29}],50:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+
+function resolveYamlOmap(object /*, explicit*/) {
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) {
+          pairHasKey = true;
+        } else {
+          return NIL;
+        }
+      }
+    }
+
+    if (!pairHasKey) {
+      return NIL;
+    }
+
+    if (-1 === objectKeys.indexOf(pairKey)) {
+      objectKeys.push(pairKey);
+    } else {
+      return NIL;
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":38,"../type":29}],51:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
+  }
+});
+
+},{"../common":38,"../type":29}],52:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+function resolveYamlSet(object /*, explicit*/) {
+  var key;
+
+  for (key in object) {
+    if (_hasOwnProperty.call(object, key)) {
+      if (null !== object[key]) {
+        return NIL;
+      }
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:set', {
+  loader: {
+    kind: 'object',
+    resolver: resolveYamlSet
+  }
+});
+
+},{"../common":38,"../type":29}],53:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../../type');
+
+
+function resolveJavascriptUndefined(/*object, explicit*/) {
+  var undef;
+
+  return undef;
+}
+
+
+function representJavascriptUndefined(/*object, explicit*/) {
+  return '';
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/undefined', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptUndefined
+  },
+  dumper: {
+    kind: 'undefined',
+    representer: representJavascriptUndefined
+  }
+});
+
+},{"../../type":29}],54:[function(require,module,exports){
+(function(){'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptRegExp(object /*, explicit*/) {
+  var regexp = object,
+      tail   = /\/([gim]*)$/.exec(object),
+      modifiers;
+
+  // `/foo/gim` - tail can be maximum 4 chars
+  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
+    regexp = regexp.slice(1, regexp.length - tail[0].length);
+    modifiers = tail[1];
+  }
+
+  try {
+    return new RegExp(regexp, modifiers);
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptRegExp(object /*, style*/) {
+  var result = '/' + object.source + '/';
+
+  if (object.global) {
+    result += 'g';
+  }
+
+  if (object.multiline) {
+    result += 'm';
+  }
+
+  if (object.ignoreCase) {
+    result += 'i';
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/regexp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptRegExp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: RegExp,
+    representer: representJavascriptRegExp
+  }
+});
+
+})()
+},{"../../common":38,"../../type":29}],57:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -33316,247 +33310,7 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],61:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],59:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
-
-var EventEmitter = exports.EventEmitter = process.EventEmitter;
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
-
-// By default EventEmitters will print a warning if more than
-// 10 listeners are added to it. This is a useful default which
-// helps finding memory leaks.
-//
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-var defaultMaxListeners = 10;
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!this._events) this._events = {};
-  this._events.maxListeners = n;
-};
-
-
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
-      return false;
-    }
-  }
-
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
-
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-    return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
-    return false;
-  }
-};
-
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
-  }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-
-    // Check for listener leak
-    if (!this._events[type].warned) {
-      var m;
-      if (this._events.maxListeners !== undefined) {
-        m = this._events.maxListeners;
-      } else {
-        m = defaultMaxListeners;
-      }
-
-      if (m && m > 0 && this._events[type].length > m) {
-        this._events[type].warned = true;
-        console.error('(node) warning: possible EventEmitter memory ' +
-                      'leak detected. %d listeners added. ' +
-                      'Use emitter.setMaxListeners() to increase limit.',
-                      this._events[type].length);
-        console.trace();
-      }
-    }
-
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
-};
-
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
-
-})(require("__browserify_process"))
-},{"__browserify_process":61}],56:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -34876,7 +34630,333 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":57,"./buffer_ieee754":60,"base64-js":62}],51:[function(require,module,exports){
+},{"assert":56,"./buffer_ieee754":60,"base64-js":61}],62:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],59:[function(require,module,exports){
+(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
+
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
+//
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
+};
+
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
+    }
+  }
+
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
+
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
+
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
+
+  } else {
+    return false;
+  }
+};
+
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
+
+  if (!this._events) this._events = {};
+
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
+
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
+
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
+
+  return this;
+};
+
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
+};
+
+})(require("__browserify_process"))
+},{"__browserify_process":62}],61:[function(require,module,exports){
+(function (exports) {
+	'use strict';
+
+	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+	function b64ToByteArray(b64) {
+		var i, j, l, tmp, placeHolders, arr;
+	
+		if (b64.length % 4 > 0) {
+			throw 'Invalid string. Length must be a multiple of 4';
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		placeHolders = b64.indexOf('=');
+		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length;
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
+			arr.push((tmp & 0xFF0000) >> 16);
+			arr.push((tmp & 0xFF00) >> 8);
+			arr.push(tmp & 0xFF);
+		}
+
+		if (placeHolders === 2) {
+			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
+			arr.push(tmp & 0xFF);
+		} else if (placeHolders === 1) {
+			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
+			arr.push((tmp >> 8) & 0xFF);
+			arr.push(tmp & 0xFF);
+		}
+
+		return arr;
+	}
+
+	function uint8ToBase64(uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length;
+
+		function tripletToBase64 (num) {
+			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+		};
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+			output += tripletToBase64(temp);
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1];
+				output += lookup[temp >> 2];
+				output += lookup[(temp << 4) & 0x3F];
+				output += '==';
+				break;
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
+				output += lookup[temp >> 10];
+				output += lookup[(temp >> 4) & 0x3F];
+				output += lookup[(temp << 2) & 0x3F];
+				output += '=';
+				break;
+		}
+
+		return output;
+	}
+
+	module.exports.toByteArray = b64ToByteArray;
+	module.exports.fromByteArray = uint8ToBase64;
+}());
+
+},{}],55:[function(require,module,exports){
 'use strict';
 
 
@@ -34934,7 +35014,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":38,"../../type":28,"esprima":63}],63:[function(require,module,exports){
+},{"../../common":38,"../../type":29,"esprima":63}],63:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -38832,91 +38912,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}],62:[function(require,module,exports){
-(function (exports) {
-	'use strict';
-
-	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-	function b64ToByteArray(b64) {
-		var i, j, l, tmp, placeHolders, arr;
-	
-		if (b64.length % 4 > 0) {
-			throw 'Invalid string. Length must be a multiple of 4';
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		placeHolders = b64.indexOf('=');
-		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length;
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
-			arr.push((tmp & 0xFF0000) >> 16);
-			arr.push((tmp & 0xFF00) >> 8);
-			arr.push(tmp & 0xFF);
-		}
-
-		if (placeHolders === 2) {
-			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
-			arr.push(tmp & 0xFF);
-		} else if (placeHolders === 1) {
-			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
-			arr.push((tmp >> 8) & 0xFF);
-			arr.push(tmp & 0xFF);
-		}
-
-		return arr;
-	}
-
-	function uint8ToBase64(uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length;
-
-		function tripletToBase64 (num) {
-			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
-		};
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
-			output += tripletToBase64(temp);
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1];
-				output += lookup[temp >> 2];
-				output += lookup[(temp << 4) & 0x3F];
-				output += '==';
-				break;
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
-				output += lookup[temp >> 10];
-				output += lookup[(temp >> 4) & 0x3F];
-				output += lookup[(temp << 2) & 0x3F];
-				output += '=';
-				break;
-		}
-
-		return output;
-	}
-
-	module.exports.toByteArray = b64ToByteArray;
-	module.exports.fromByteArray = uint8ToBase64;
-}());
-
 },{}]},{},[2])
 ;
