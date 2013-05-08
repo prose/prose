@@ -9,6 +9,7 @@ var Backbone = require('backbone');
 var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
+  className: 'inner deep prose',
   render: function() {
     var view = this;
     $.get('about.md', function(d) {

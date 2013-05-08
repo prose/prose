@@ -9844,7 +9844,7 @@ Liquid.Block.prototype.unknownTag = function(tag, params, tokens) {
   }
 };
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-var templates = {"app":"<%\n  var editMode = false;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner'>\n    <a href='/' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown'>\n      <li><a target=\"_blank\" class='about' href='./#about'>About</a></li>\n      <li><a target=\"_blank\" class='help' href='https://github.com/prose/prose'>Developers</a></li>\n      <li class='divider'></li>\n      <li><a href='#'>Prose v1.0.0</a></li>\n    </ul>\n  </div>\n</div>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<% if (!error) { %>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<% if (!error) { %>\n  <div class='vert navigation<% if (editMode) { %> editing<% } %>'>\n    <ul class='project nav'>\n      <li>\n        <a href='#' class='ico round repos <% if (!mode) { %>active<% } %>'>\n          <span class='popup round arrow-right'>Explore Projects</span>\n        </a>\n      </li>\n      <% if (repo) { %>\n        <li>\n        <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='ico round folder <% if (mode === \"tree\") { %>active<% } %>'>\n            <span class='popup round arrow-right'><%= repo %></span>\n          </a>\n        </li>\n        <% if (window.authenticated) { %>\n          <li>\n            <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n              <span class='popup round arrow-right'>New File</span>\n            </a>\n          </li>\n        <% } %>\n      <% } %>\n    </ul>\n\n    <% if (editMode) { %>\n    <ul class='post-views nav'>\n      <li>\n        <a href='#' class='ico round pencil edit' data-state='edit'>\n          <span class='popup round arrow-right'>Edit</span>\n        </a>\n      </li>\n      <% if (markdown || mode === 'new') { %>\n        <li>\n          <a href='#' class='ico round eye preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n            <span class='popup round arrow-right'>Preview</span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (window.authenticated) { %>\n        <% if (jekyll) { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'>Meta Data</span>\n          </a>\n        </li>\n        <% } %>\n      <li>\n        <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n          <span class='popup round arrow-right'>Post Settings</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n    <% } %>\n\n    <ul class='auth nav'>\n      <% if (window.authenticated) { %>\n      <li>\n        <a href='#' class='ico round switch logout'>\n          <span class='popup round arrow-right'>Logout <%= app.username %></span>\n        </a>\n      </li>\n      <% } else { %>\n      <li>\n        <a class='ico round switch login' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n          <span class='popup round arrow-right'>Sign in using GitHub</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n  </div>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon fl round folder'></span>\n    <span class='details fl'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n  <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n    <span class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n  </a>\n  <% } %>\n\n  <div class='fl details'>\n    <% if (isBinary) { %>\n      <h3 class='title'><%= name %></h3>\n    <% } else { %>\n        <% if (extension === 'md') { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n\n  <div class='actions cleafix'>\n    <% if (!isBinary) { %>\n      <a class='clearfix'\n        title='Edit this File'\n        href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n        Edit\n      </a>\n    <% } %>\n    <% if (authenticated && writePermissions) { %>\n      <a\n        class='delete ico inline rubbish small'\n        title='Delete this File'\n        data-user='<%= user %>'\n        data-repo='<%= repo %>'\n        data-branch='<%= branch %>'\n        data-file='<%= name %>'\n        href='#'>\n        <span class='popup round arrow-right'>Delete this file?</span>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <a href='#' class='avatar save-action round fl'>\n    <span class='ico status'></span>\n    <span class='popup round arrow-left'>Ctrl&nbsp;+&nbsp;S</span>\n    <%= avatar %>\n  </a>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n    <input type='text' class='filepath' value='<%= title %>'>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","loading":"<div id='loader' class='loading clearfix'>\n  <div class='loading-icon fl'></div>\n  <span class='fl'><%= message %></span>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      Please login with your GitHub account to access that project.\n      <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if(pathFromFile) { %>\n        <p><a class='button round create' href='#'>Create it </a></p>\n      <% } %>\n      <p><a class='button round' href='#'>Go back </a></p>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='inner editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'></div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar toolbar round'>\n        <% if (jekyll && !metadata.published) { %>\n          <a href='#' class='fr flag unpublished-flag'><em>Unpublished</em></a>\n        <% } %>\n        <div class='options clearfix'>\n          <a href='#' class='save-action round fl'>\n            <span class='ico status'></span>\n            <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>\n            <%= avatar %>\n          </a>\n          <% if (markdown) { %>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"# Heading\\n\\n\") %>'>h1</a></li>\n              <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"## Sub Heading\\n\\n\") %>'>h2</a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a class='ico small link' title='Insert Link' href='#' data-key='link' data-snippet='<% print(\"[Google](http://google.com)\\n\\n\") %>'></a></li>\n              <li><a class='ico small picture' title='Insert Image' href='#' data-key='image' data-snippet='<% print(\"![picture alt](http://placekitten.com/200/300)\\n\\n\") %>'></a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a href='#' title='Bold' data-key='bold' data-snippet='**text**'>B</a></li>\n              <li><a class='ico small italic' data-key='italic' href='#' title='Italic' data-snippet='_text_'></a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a class='ico small quote' title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'></a></li>\n              <li><a class='ico small list' href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'></a></li>\n              <li><a class='ico small numbered-list' href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'></a></li>\n            </ul>\n            <ul class='group round clearfix'>\n              <li><a class='ico small round question' href='http://daringfireball.net/projects/markdown/syntax' target='_blank'>\n              <span class='popup round arrow-top'>More About Markdown</span>\n              </a></li>\n            </ul>\n          <% } %>\n        </div>\n      </div>\n    </div>\n    <div id='code'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter Files' />\n    </div>\n  </div>\n</div>\n\n<div class='listing'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar content-search'>\n    <span class='ico search inline fr'></span>\n    <input type='text' id='filter' placeholder='Filter projects' />\n  </div>\n</div>\n\n<ul id='projects' class='projects listing'></ul>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='fl icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='fl icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (fork && private) { %>\n        <span class='fl icon round repo private fork' title='Forked from another project'></span>\n      <% } else if (fork) { %>\n        <span class='fl icon round repo fork' title='Forked from another project'></span>\n      <% } else if (private) { %>\n        <span class='fl icon round repo private'></span>\n      <% } else { %>\n        <span class='fl icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details fl'>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n\n    <div class='fr actions clearfix'>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        View Project\n      </a>\n      <% if (homepage) { %>\n        <a href='//<%= homepage %>'>View Site</a>\n      <% } %>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Post Settings</h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder='Describe your Changes'></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-right'>Cancel</span>\n      </a>\n    </div>\n\n    <a class='save button round' href='#'>\n      <%= writeable ? 'Save' : 'Submit Change' %>\n      <span class='popup round arrow-right'>Ctrl&nbsp;+&nbsp;s</span>\n    </a>\n\n    <% if (app.state.config && app.state.config.languages) { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (app.state.mode !== 'new') { %>\n      <a class='delete button round' href='#'>Delete this File</a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"\n\n\n<% if (authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'>Switch Branch</h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n<% if (authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'>Your Recent History</h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username];\n          var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                Restore?\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n","start":"<% if (!authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='/about.html'>Learn more</a></p>\n      <a class='round button' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' />\n</div>\n"}; module.exports = templates;
+var templates = {"app":"<%\n  var editMode = false;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner'>\n    <a href='/' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown'>\n      <li><a class='about' href='./#about'>About</a></li>\n      <li><a class='help' href='https://github.com/prose/prose'>Developers</a></li>\n      <li class='divider'></li>\n      <li><a href='#'>Prose v1.0.0</a></li>\n    </ul>\n  </div>\n</div>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<% if (!error) { %>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<% if (!error) { %>\n  <div class='vert navigation<% if (editMode) { %> editing<% } %>'>\n    <ul class='project nav'>\n      <li>\n        <a href='#' class='ico round repos <% if (!mode) { %>active<% } %>'>\n          <span class='popup round arrow-right'>Explore Projects</span>\n        </a>\n      </li>\n      <% if (repo) { %>\n        <li>\n        <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='ico round folder <% if (mode === \"tree\") { %>active<% } %>'>\n            <span class='popup round arrow-right'><%= repo %></span>\n          </a>\n        </li>\n        <% if (window.authenticated) { %>\n          <li>\n            <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n              <span class='popup round arrow-right'>New File</span>\n            </a>\n          </li>\n        <% } %>\n      <% } %>\n    </ul>\n\n    <% if (editMode) { %>\n    <ul class='post-views nav'>\n      <li>\n        <a href='#' class='ico round pencil edit' data-state='edit'>\n          <span class='popup round arrow-right'>Edit</span>\n        </a>\n      </li>\n      <% if (markdown || mode === 'new') { %>\n        <li>\n          <a href='#' class='ico round eye preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n            <span class='popup round arrow-right'>Preview</span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (window.authenticated) { %>\n        <% if (jekyll) { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'>Meta Data</span>\n          </a>\n        </li>\n        <% } %>\n      <li>\n        <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n          <span class='popup round arrow-right'>Post Settings</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n    <% } %>\n\n    <ul class='auth nav'>\n      <% if (window.authenticated) { %>\n      <li>\n        <a href='#' class='ico round switch logout'>\n          <span class='popup round arrow-right'>Logout <%= app.username %></span>\n        </a>\n      </li>\n      <% } else { %>\n      <li>\n        <a class='ico round switch login' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n          <span class='popup round arrow-right'>Sign in using GitHub</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n  </div>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon fl round folder'></span>\n    <span class='details fl'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n  <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n    <span class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n  </a>\n  <% } %>\n\n  <div class='fl details'>\n    <% if (isBinary) { %>\n      <h3 class='title'><%= name %></h3>\n    <% } else { %>\n        <% if (extension === 'md') { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n\n  <div class='actions cleafix'>\n    <% if (!isBinary) { %>\n      <a class='clearfix'\n        title='Edit this File'\n        href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n        Edit\n      </a>\n    <% } %>\n    <% if (authenticated && writePermissions) { %>\n      <a\n        class='delete ico inline rubbish small'\n        title='Delete this File'\n        data-user='<%= user %>'\n        data-repo='<%= repo %>'\n        data-branch='<%= branch %>'\n        data-file='<%= name %>'\n        href='#'>\n        <span class='popup round arrow-right'>Delete this file?</span>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <a href='#' class='avatar save-action round fl'>\n    <span class='ico status'></span>\n    <span class='popup round arrow-left'>Ctrl&nbsp;+&nbsp;S</span>\n    <%= avatar %>\n  </a>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n    <input type='text' class='filepath' value='<%= title %>'>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","loading":"<div id='loader' class='loading clearfix'>\n  <div class='loading-icon fl'></div>\n  <span class='fl'><%= message %></span>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      Please login with your GitHub account to access that project.\n      <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if(pathFromFile) { %>\n        <p><a class='button round create' href='#'>Create it </a></p>\n      <% } %>\n      <p><a class='button round' href='#'>Go back </a></p>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='inner editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'></div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar toolbar round'>\n        <% if (jekyll && !metadata.published) { %>\n          <a href='#' class='fr flag unpublished-flag'><em>Unpublished</em></a>\n        <% } %>\n        <div class='options clearfix'>\n          <a href='#' class='save-action round fl'>\n            <span class='ico status'></span>\n            <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>\n            <%= avatar %>\n          </a>\n          <% if (markdown) { %>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"# Heading\\n\\n\") %>'>h1</a></li>\n              <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"## Sub Heading\\n\\n\") %>'>h2</a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a class='ico small link' title='Insert Link' href='#' data-key='link' data-snippet='<% print(\"[Google](http://google.com)\\n\\n\") %>'></a></li>\n              <li><a class='ico small picture' title='Insert Image' href='#' data-key='image' data-snippet='<% print(\"![picture alt](http://placekitten.com/200/300)\\n\\n\") %>'></a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a href='#' title='Bold' data-key='bold' data-snippet='**text**'>B</a></li>\n              <li><a class='ico small italic' data-key='italic' href='#' title='Italic' data-snippet='_text_'></a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a class='ico small quote' title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'></a></li>\n              <li><a class='ico small list' href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'></a></li>\n              <li><a class='ico small numbered-list' href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'></a></li>\n            </ul>\n            <ul class='group round clearfix'>\n              <li><a class='ico small round question' href='http://daringfireball.net/projects/markdown/syntax' target='_blank'>\n              <span class='popup round arrow-top'>More About Markdown</span>\n              </a></li>\n            </ul>\n          <% } %>\n        </div>\n      </div>\n    </div>\n    <div id='code'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter Files' />\n    </div>\n  </div>\n</div>\n\n<div class='listing'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar content-search'>\n    <span class='ico search inline fr'></span>\n    <input type='text' id='filter' placeholder='Filter projects' />\n  </div>\n</div>\n\n<ul id='projects' class='projects listing'></ul>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='fl icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='fl icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (fork && private) { %>\n        <span class='fl icon round repo private fork' title='Forked from another project'></span>\n      <% } else if (fork) { %>\n        <span class='fl icon round repo fork' title='Forked from another project'></span>\n      <% } else if (private) { %>\n        <span class='fl icon round repo private'></span>\n      <% } else { %>\n        <span class='fl icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details fl'>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n\n    <div class='fr actions clearfix'>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        View Project\n      </a>\n      <% if (homepage) { %>\n        <a href='//<%= homepage %>'>View Site</a>\n      <% } %>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Post Settings</h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder='Describe your Changes'></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-right'>Cancel</span>\n      </a>\n    </div>\n\n    <a class='save button round' href='#'>\n      <%= writeable ? 'Save' : 'Submit Change' %>\n      <span class='popup round arrow-right'>Ctrl&nbsp;+&nbsp;s</span>\n    </a>\n\n    <% if (app.state.config && app.state.config.languages) { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (app.state.mode !== 'new') { %>\n      <a class='delete button round' href='#'>Delete this File</a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"\n\n\n<% if (authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'>Switch Branch</h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n<% if (authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'>Your Recent History</h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username];\n          var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                Restore?\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n","start":"<% if (!authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='/about.html'>Learn more</a></p>\n      <a class='round button' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' />\n</div>\n"}; module.exports = templates;
 },{}],2:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
@@ -9916,7 +9916,7 @@ auth.done(function(res) {
   }
 });
 
-},{"./views/app":3,"./views/notification":4,"./models":5,"./views/start":6,"./views/preview":7,"./views/profile":8,"./views/posts":9,"./views/post":10,"./views/page":11,"../../dist/templates":1,"./router":12,"jquery-browserify":13,"underscore":14,"backbone":15}],16:[function(require,module,exports){
+},{"./models":3,"./views/app":4,"./views/notification":5,"./views/start":6,"./views/preview":7,"./views/profile":8,"./views/posts":9,"./views/post":10,"./views/page":11,"../../dist/templates":1,"./router":12,"jquery-browserify":13,"underscore":14,"backbone":15}],16:[function(require,module,exports){
 function tryParse(obj) {
   try {
     return JSON.parse(obj);
@@ -20552,7 +20552,7 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],5:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -21764,7 +21764,7 @@ module.exports = Backbone.Router.extend({
   function noop() {}
 })();
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22048,7 +22048,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":13,"underscore":14,"backbone":15}],4:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":13,"backbone":15,"underscore":14}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22605,7 +22605,8 @@ module.exports = Backbone.View.extend({
 
     preview: function(e) {
       $('#prose').toggleClass('open', false);
-      if (app.state.config.prose &&
+      if (app.state.config &&
+        app.state.config.prose &&
         app.state.config.prose.siteurl &&
         this.model.metadata &&
         this.model.metadata.layout
@@ -23461,7 +23462,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":13,"chosen-jquery-browserify":22,"underscore":14,"js-yaml":18,"keymaster":21,"marked":23,"backbone":15,"diff":24}],11:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":13,"underscore":14,"js-yaml":18,"keymaster":21,"marked":22,"backbone":15,"chosen-jquery-browserify":23,"diff":24}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -23473,6 +23474,7 @@ var Backbone = require('backbone');
 var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
+  className: 'inner deep prose',
   render: function() {
     var view = this;
     $.get('about.md', function(d) {
@@ -23484,7 +23486,7 @@ module.exports = Backbone.View.extend({
 
 
 
-},{".././util":20,"jquery-browserify":13,"chosen-jquery-browserify":22,"underscore":14,"js-yaml":18,"keymaster":21,"marked":23,"backbone":15,"diff":24}],15:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":13,"underscore":14,"js-yaml":18,"keymaster":21,"marked":22,"backbone":15,"chosen-jquery-browserify":23,"diff":24}],15:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -25352,7 +25354,7 @@ module.exports = require('./lib/js-yaml.js');
 })(this);
 
 })()
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -26431,7 +26433,934 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
-},{}],22:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
+// Github.js 0.7.0
+// (c) 2012 Michael Aufreiter, Development Seed
+// Github.js is freely distributable under the MIT license.
+// For all details and documentation:
+// http://substance.io/michael/github
+
+var _ = require('underscore');
+
+(function() {
+  var Github;
+  var API_URL = 'https://api.github.com';
+
+  Github = window.Github = function(options) {
+
+    // HTTP Request Abstraction
+    // =======
+    // 
+    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
+
+    function _request(method, path, data, cb, raw, sync, headers) {
+      function getURL() {
+        return url = API_URL + path;
+      }
+
+      var xhr = new XMLHttpRequest();
+      if (!raw) {xhr.dataType = "json";}
+
+      xhr.open(method, getURL(), !sync);
+      if (!sync) {
+        xhr.onreadystatechange = function () {
+          if (this.readyState == 4) {
+            if (this.status >= 200 && this.status < 300 || this.status === 304) {
+              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
+            } else {
+              cb({request: this, error: this.status});
+            }
+          }
+        };
+      }
+      xhr.setRequestHeader('Accept','application/vnd.github.raw');
+      xhr.setRequestHeader('Content-Type','application/json');
+
+      if (headers) {
+        for (var i = 0; i < headers.length; i++) {
+          header = headers[i];
+          xhr.setRequestHeader(header[0], header[1]);
+        }
+      }
+
+      if (
+         (options.auth == 'oauth' && options.token) ||
+         (options.auth == 'basic' && options.username && options.password)
+         ) {
+           xhr.setRequestHeader('Authorization',options.auth == 'oauth'
+             ? 'token '+ options.token
+             : 'Basic ' + Base64.encode(options.username + ':' + options.password)
+           );
+         }
+      data ? xhr.send(JSON.stringify(data)) : xhr.send();
+      if (sync) return xhr.response;
+    }
+
+    function _parseLinkHeader(err, response, xhr, cb) {
+      var link = xhr.getResponseHeader('link');
+
+      if (!err && link) {
+        var parts = link.split(',');
+        var length = parts.length;
+
+        var links = {};
+
+        var section;
+        var url;
+        var name;
+
+        for (var i = 0; i < length; i++) {
+          section = parts[i].split(';');
+
+          if (section.length !== 2) {
+            throw new Error("section could not be split on ';'");
+          }
+
+          url = section[0].replace(/<(.*)>/, '$1').trim();
+          name = section[1].replace(/rel="(.*)"/, '$1').trim();
+
+          links[name] = url;
+        }
+
+        if (links['next']) {
+          _request('GET', links['next'].split(API_URL)[1], null, function(err, res, xhr) {
+            if (typeof response.concat === 'function') {
+              response = response.concat(res);
+            } else if (typeof response === 'string') {
+              response += res;
+            }
+
+            _parseLinkHeader(err, response, xhr, cb);
+          });
+        } else {
+          cb(err, response);
+        }
+      } else {
+        cb(err, response);
+      }
+    }
+      
+    // User API
+    // =======
+
+    Github.User = function() {
+      this.repos = function(cb) {
+        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List user organizations
+      // -------
+
+      this.orgs = function(cb) {
+        _request("GET", "/user/orgs", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List authenticated user's gists
+      // -------
+
+      this.gists = function(cb) {
+        _request("GET", "/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // Show user information
+      // -------
+
+      this.show = function(username, cb) {
+        var command = username ? "/users/"+username : "/user";
+
+        _request("GET", command, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List user repositories
+      // -------
+
+      this.userRepos = function(username, cb) {
+        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List a user's gists
+      // -------
+
+      this.userGists = function(username, cb) {
+        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // List organization repositories
+      // -------
+
+      this.orgRepos = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
+          _parseLinkHeader(err, res, xhr, cb);
+        });
+      };
+
+      // Follow user
+      // -------
+
+      this.follow = function(username, cb) {
+        _request("PUT", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // Unfollow user
+      // -------
+
+      this.unfollow = function(username, cb) {
+        _request("DELETE", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+    };
+
+
+    // Repository API
+    // =======
+
+    Github.Repository = function(options) {
+      var repo = options.name;
+      var user = options.user;
+      
+      var that = this;
+      var repoPath = "/repos/" + user + "/" + repo;
+
+      var currentTree = {
+        "branch": null,
+        "sha": null
+      };
+
+      // Uses the cache if branch has not been changed
+      // -------
+
+      function updateTree(branch, cb) {
+        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
+        that.getRef("heads/"+branch, function(err, sha) {
+          currentTree.branch = branch;
+          currentTree.sha = sha;
+          cb(err, sha);
+        });
+      }
+
+      // Get a particular reference
+      // -------
+
+      this.getRef = function(ref, cb) {
+        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.object.sha);
+        });
+      };
+
+      // Create a new reference
+      // --------
+      //
+      // {
+      //   "ref": "refs/heads/my-new-branch-name",
+      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
+      // }
+
+      this.createRef = function(options, cb) {
+        _request("POST", repoPath + "/git/refs", options, cb);
+      };
+
+      // Delete a reference
+      // --------
+      // 
+      // repo.deleteRef('heads/gh-pages')
+      // repo.deleteRef('tags/v1.0')
+
+      this.deleteRef = function(ref, cb) {
+        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
+      };
+
+      // List all branches of a repository
+      // -------
+
+      this.listBranches = function(cb) {
+        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
+          if (err) return cb(err);
+          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
+        });
+      };
+
+      // Retrieve the contents of a blob
+      // -------
+
+      this.getBlob = function(sha, cb) {
+        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
+      };
+
+      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
+      // -------
+
+      this.getSha = function(branch, path, cb) {
+        // Just use head if path is empty
+        if (path === "") return that.getRef("heads/"+branch, cb);
+        that.getTree(branch+"?recursive=true", function(err, tree) {
+          var file = _.select(tree, function(file) {
+            return file.path === path;
+          })[0];
+          cb(null, file ? file.sha : null);
+        });
+      };
+
+      // Retrieve the tree a commit points to
+      // -------
+
+      this.getTree = function(tree, cb) {
+        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.tree);
+        });
+      };
+
+      // Post a new blob object, getting a blob SHA back
+      // -------
+
+      this.postBlob = function(content, cb) {
+        if (typeof(content) === "string") {
+          content = {
+            "content": content,
+            "encoding": "utf-8"
+          };
+        }
+
+        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Update an existing tree adding a new blob object getting a tree SHA back
+      // -------
+
+      this.updateTree = function(baseTree, path, blob, cb) {
+        var data = {
+          "base_tree": baseTree,
+          "tree": [
+            {
+              "path": path,
+              "mode": "100644",
+              "type": "blob",
+              "sha": blob
+            }
+          ]
+        };
+        _request("POST", repoPath + "/git/trees", data, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Post a new tree object having a file path pointer replaced
+      // with a new blob SHA getting a tree SHA back
+      // -------
+
+      this.postTree = function(tree, cb) {
+        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Create a new commit object with the current commit SHA as the parent
+      // and the new tree SHA, getting a commit SHA back
+      // -------
+
+      this.commit = function(parent, tree, message, cb) {
+        var data = {
+          "message": message,
+          "author": {
+            "name": options.username
+          },
+          "parents": [
+            parent
+          ],
+          "tree": tree
+        };
+
+        _request("POST", repoPath + "/git/commits", data, function(err, res) {
+          currentTree.sha = res.sha; // update latest commit
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Update the reference of your head to point to the new commit SHA
+      // -------
+
+      this.updateHead = function(head, commit, cb) {
+        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
+          cb(err);
+        });
+      };
+
+      // Show repository information
+      // -------
+
+      this.show = function(cb) {
+        _request("GET", repoPath, null, cb);
+      };
+
+      // Get commits
+      // --------
+
+      this.getCommit = function(sha, cb) {
+        _request("GET", repoPath + "/commits/" + sha, null, cb);
+      };
+
+      this.getCommits = function(branch, lastModified, cb) {
+        _request("GET", repoPath + "/commits" + "?sha=" + branch, null, cb, false, false, [
+          ['If-Modified-Since', lastModified]
+        ]);
+      };
+
+      // Get contents
+      // --------
+
+      this.contents = function(branch, path, cb) {
+        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
+      };
+
+      this.contentsSync = function(branch, path) {
+        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
+      };
+
+      // Fork repository
+      // -------
+
+      this.fork = function(cb) {
+        _request("POST", repoPath + "/forks", null, cb);
+      };
+
+      // Create pull request
+      // --------
+
+      this.createPullRequest = function(options, cb) {
+        _request("POST", repoPath + "/pulls", options, cb);
+      };
+
+      // Read file at given path
+      // -------
+
+      this.read = function(branch, path, cb) {
+        that.getSha(branch, path, function(err, sha) {
+          if (!sha) return cb("not found", null);
+          that.getBlob(sha, function(err, content) {
+            cb(err, content, sha);
+          });
+        });
+      };
+
+      // Remove a file from the tree
+      // -------
+
+      this.remove = function(branch, path, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
+            _.each(newTree, function(ref) {
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(newTree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Move a file to a new location
+      // -------
+
+      this.move = function(branch, path, newPath, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            _.each(tree, function(ref) {
+              if (ref.path === path) ref.path = newPath;
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(tree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Write file contents to a given branch and path
+      // -------
+
+      this.write = function(branch, path, content, message, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          if (err) return cb(err);
+          that.postBlob(content, function(err, blob) {
+            if (err) return cb(err);
+            that.updateTree(latestCommit, path, blob, function(err, tree) {
+              if (err) return cb(err);
+              that.commit(latestCommit, tree, message, function(err, commit) {
+                if (err) return cb(err);
+                that.updateHead(branch, commit, cb);
+              });
+            });
+          });
+        });
+      };
+    };
+
+    // Gists API
+    // =======
+
+    Github.Gist = function(options) {
+      var id = options.id;
+      var gistPath = "/gists/"+id;
+
+      // Read the gist
+      // --------
+
+      this.read = function(cb) {
+        _request("GET", gistPath, null, function(err, gist) {
+          cb(err, gist);
+        });
+      };
+
+      // Create the gist
+      // --------
+      // {
+      //  "description": "the description for this gist",
+      //    "public": true,
+      //    "files": {
+      //      "file1.txt": {
+      //        "content": "String file contents"
+      //      }
+      //    }
+      // }
+      
+      this.create = function(options, cb){
+        _request("POST","/gists", options, cb);
+      };
+
+      // Delete the gist
+      // --------
+
+      this.removeGist = function(cb) {
+        _request("DELETE", gistPath, null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Fork a gist
+      // --------
+
+      this.fork = function(cb) {
+        _request("POST", gistPath+"/fork", null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Update a gist with the new stuff
+      // --------
+
+      this.update = function(options, cb) {
+        _request("PATCH", gistPath, options, function(err,res) {
+          cb(err,res);
+        });
+      };
+    };
+
+    // Top Level API
+    // -------
+
+    this.getRepo = function(user, repo) {
+      return new Github.Repository({user: user, name: repo});
+    };
+
+    this.getUser = function() {
+      return new Github.User();
+    };
+
+    this.getGist = function(id) {
+      return new Github.Gist({id: id});
+    };
+  };
+
+  module.exports = Github;
+}).call(this);
+
+},{"underscore":14}],24:[function(require,module,exports){
+/* See LICENSE file for terms of use */
+
+/*
+ * Text diff implementation.
+ * 
+ * This library supports the following APIS:
+ * JsDiff.diffChars: Character by character diff
+ * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
+ * JsDiff.diffLines: Line based diff
+ * 
+ * JsDiff.diffCss: Diff targeted at CSS content
+ * 
+ * These methods are based on the implementation proposed in
+ * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
+ * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
+ */
+var JsDiff = (function() {
+  function clonePath(path) {
+    return { newPos: path.newPos, components: path.components.slice(0) };
+  }
+  function removeEmpty(array) {
+    var ret = [];
+    for (var i = 0; i < array.length; i++) {
+      if (array[i]) {
+        ret.push(array[i]);
+      }
+    }
+    return ret;
+  }
+  function escapeHTML(s) {
+    var n = s;
+    n = n.replace(/&/g, "&amp;");
+    n = n.replace(/</g, "&lt;");
+    n = n.replace(/>/g, "&gt;");
+    n = n.replace(/"/g, "&quot;");
+
+    return n;
+  }
+
+  var fbDiff = function(ignoreWhitespace) {
+    this.ignoreWhitespace = ignoreWhitespace;
+  };
+  fbDiff.prototype = {
+      diff: function(oldString, newString) {
+        // Handle the identity case (this is due to unrolling editLength == 0
+        if (newString == oldString) {
+          return [{ value: newString }];
+        }
+        if (!newString) {
+          return [{ value: oldString, removed: true }];
+        }
+        if (!oldString) {
+          return [{ value: newString, added: true }];
+        }
+
+        newString = this.tokenize(newString);
+        oldString = this.tokenize(oldString);
+
+        var newLen = newString.length, oldLen = oldString.length;
+        var maxEditLength = newLen + oldLen;
+        var bestPath = [{ newPos: -1, components: [] }];
+
+        // Seed editLength = 0
+        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
+        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
+          return bestPath[0].components;
+        }
+
+        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
+          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
+            var basePath;
+            var addPath = bestPath[diagonalPath-1],
+                removePath = bestPath[diagonalPath+1];
+            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
+            if (addPath) {
+              // No one else is going to attempt to use this value, clear it
+              bestPath[diagonalPath-1] = undefined;
+            }
+
+            var canAdd = addPath && addPath.newPos+1 < newLen;
+            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
+            if (!canAdd && !canRemove) {
+              bestPath[diagonalPath] = undefined;
+              continue;
+            }
+
+            // Select the diagonal that we want to branch from. We select the prior
+            // path whose position in the new string is the farthest from the origin
+            // and does not pass the bounds of the diff graph
+            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
+              basePath = clonePath(removePath);
+              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
+            } else {
+              basePath = clonePath(addPath);
+              basePath.newPos++;
+              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
+            }
+
+            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
+
+            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
+              return basePath.components;
+            } else {
+              bestPath[diagonalPath] = basePath;
+            }
+          }
+        }
+      },
+
+      pushComponent: function(components, value, added, removed) {
+        var last = components[components.length-1];
+        if (last && last.added === added && last.removed === removed) {
+          // We need to clone here as the component clone operation is just
+          // as shallow array clone
+          components[components.length-1] =
+            {value: this.join(last.value, value), added: added, removed: removed };
+        } else {
+          components.push({value: value, added: added, removed: removed });
+        }
+      },
+      extractCommon: function(basePath, newString, oldString, diagonalPath) {
+        var newLen = newString.length,
+            oldLen = oldString.length,
+            newPos = basePath.newPos,
+            oldPos = newPos - diagonalPath;
+        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
+          newPos++;
+          oldPos++;
+
+          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
+        }
+        basePath.newPos = newPos;
+        return oldPos;
+      },
+
+      equals: function(left, right) {
+        var reWhitespace = /\S/;
+        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
+          return true;
+        } else {
+          return left == right;
+        }
+      },
+      join: function(left, right) {
+        return left + right;
+      },
+      tokenize: function(value) {
+        return value;
+      }
+  };
+
+  var CharDiff = new fbDiff();
+
+  var WordDiff = new fbDiff(true);
+  WordDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/(\s+|\b)/));
+  };
+
+  var CssDiff = new fbDiff(true);
+  CssDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/([{}:;,]|\s+)/));
+  };
+
+  var LineDiff = new fbDiff();
+  LineDiff.tokenize = function(value) {
+    return value.split(/^/m);
+  };
+
+  return {
+    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
+    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
+    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
+
+    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
+
+    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
+      var ret = [];
+
+      ret.push("Index: " + fileName);
+      ret.push("===================================================================");
+      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
+      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
+
+      var diff = LineDiff.diff(oldStr, newStr);
+      if (!diff[diff.length-1].value) {
+        diff.pop();   // Remove trailing newline add
+      }
+      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
+
+      function contextLines(lines) {
+        return lines.map(function(entry) { return ' ' + entry; });
+      }
+      function eofNL(curRange, i, current) {
+        var last = diff[diff.length-2],
+            isLast = i === diff.length-2,
+            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
+
+        // Figure out if this is the last line for the given file and missing NL
+        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
+          curRange.push('\\ No newline at end of file');
+        }
+      }
+
+      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
+          oldLine = 1, newLine = 1;
+      for (var i = 0; i < diff.length; i++) {
+        var current = diff[i],
+            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
+        current.lines = lines;
+
+        if (current.added || current.removed) {
+          if (!oldRangeStart) {
+            var prev = diff[i-1];
+            oldRangeStart = oldLine;
+            newRangeStart = newLine;
+
+            if (prev) {
+              curRange = contextLines(prev.lines.slice(-4));
+              oldRangeStart -= curRange.length;
+              newRangeStart -= curRange.length;
+            }
+          }
+          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
+          eofNL(curRange, i, current);
+
+          if (current.added) {
+            newLine += lines.length;
+          } else {
+            oldLine += lines.length;
+          }
+        } else {
+          if (oldRangeStart) {
+            // Close out any changes that have been output (or join overlapping)
+            if (lines.length <= 8 && i < diff.length-2) {
+              // Overlapping
+              curRange.push.apply(curRange, contextLines(lines));
+            } else {
+              // end the range and output
+              var contextSize = Math.min(lines.length, 4);
+              ret.push(
+                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
+                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
+                  + " @@");
+              ret.push.apply(ret, curRange);
+              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
+              if (lines.length <= 4) {
+                eofNL(ret, i, current);
+              }
+
+              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
+            }
+          }
+          oldLine += lines.length;
+          newLine += lines.length;
+        }
+      }
+
+      return ret.join('\n') + '\n';
+    },
+
+    applyPatch: function(oldStr, uniDiff) {
+      var diffstr = uniDiff.split("\n");
+      var diff = [];
+      var remEOFNL = false,
+          addEOFNL = false;
+
+      for (var i = (diffstr[0][0]=="I"?4:0); i < diffstr.length; i++) {
+        if(diffstr[i][0] == "@") {
+          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
+          diff.unshift({
+            start:meh[3],
+            oldlength:meh[2],
+            oldlines:[],
+            newlength:meh[4],
+            newlines:[]
+          });
+        } else if(diffstr[i][0] == '+') {
+          diff[0].newlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == '-') {
+          diff[0].oldlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == ' ') {
+          diff[0].newlines.push(diffstr[i].substr(1));
+          diff[0].oldlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == '\\') {
+          if (diffstr[i-1][0] == '+') {
+            remEOFNL = true;
+          } else if(diffstr[i-1][0] == '-') {
+            addEOFNL = true;
+          }
+        }
+      }
+
+      var str = oldStr.split("\n");
+      for (var i = diff.length - 1; i >= 0; i--) {
+        var d = diff[i];
+        for (var j = 0; j < d.oldlength; j++) {
+          if(str[d.start-1+j] != d.oldlines[j]) {
+            return false;
+          }
+        }
+        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
+      }
+
+      if (remEOFNL) {
+        while (!str[str.length-1]) {
+          str.pop();
+        }
+      } else if (addEOFNL) {
+        str.push('');
+      }
+      return str.join('\n');
+    },
+
+    convertChangesToXML: function(changes){
+      var ret = [];
+      for ( var i = 0; i < changes.length; i++) {
+        var change = changes[i];
+        if (change.added) {
+          ret.push("<ins>");
+        } else if (change.removed) {
+          ret.push("<del>");
+        }
+
+        ret.push(escapeHTML(change.value));
+
+        if (change.added) {
+          ret.push("</ins>");
+        } else if (change.removed) {
+          ret.push("</del>");
+        }
+      }
+      return ret.join("");
+    },
+
+    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
+    convertChangesToDMP: function(changes){
+      var ret = [], change;
+      for ( var i = 0; i < changes.length; i++) {
+        change = changes[i];
+        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
+      }
+      return ret;
+    }
+  };
+})();
+
+if (typeof module !== "undefined") {
+    module.exports = JsDiff;
+}
+
+},{}],23:[function(require,module,exports){
 (function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -27509,934 +28438,7 @@ if (typeof exports === 'object') {
 
 }).call(this);
 
-},{}],24:[function(require,module,exports){
-/* See LICENSE file for terms of use */
-
-/*
- * Text diff implementation.
- * 
- * This library supports the following APIS:
- * JsDiff.diffChars: Character by character diff
- * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
- * JsDiff.diffLines: Line based diff
- * 
- * JsDiff.diffCss: Diff targeted at CSS content
- * 
- * These methods are based on the implementation proposed in
- * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
- * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
- */
-var JsDiff = (function() {
-  function clonePath(path) {
-    return { newPos: path.newPos, components: path.components.slice(0) };
-  }
-  function removeEmpty(array) {
-    var ret = [];
-    for (var i = 0; i < array.length; i++) {
-      if (array[i]) {
-        ret.push(array[i]);
-      }
-    }
-    return ret;
-  }
-  function escapeHTML(s) {
-    var n = s;
-    n = n.replace(/&/g, "&amp;");
-    n = n.replace(/</g, "&lt;");
-    n = n.replace(/>/g, "&gt;");
-    n = n.replace(/"/g, "&quot;");
-
-    return n;
-  }
-
-  var fbDiff = function(ignoreWhitespace) {
-    this.ignoreWhitespace = ignoreWhitespace;
-  };
-  fbDiff.prototype = {
-      diff: function(oldString, newString) {
-        // Handle the identity case (this is due to unrolling editLength == 0
-        if (newString == oldString) {
-          return [{ value: newString }];
-        }
-        if (!newString) {
-          return [{ value: oldString, removed: true }];
-        }
-        if (!oldString) {
-          return [{ value: newString, added: true }];
-        }
-
-        newString = this.tokenize(newString);
-        oldString = this.tokenize(oldString);
-
-        var newLen = newString.length, oldLen = oldString.length;
-        var maxEditLength = newLen + oldLen;
-        var bestPath = [{ newPos: -1, components: [] }];
-
-        // Seed editLength = 0
-        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
-        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
-          return bestPath[0].components;
-        }
-
-        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
-          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
-            var basePath;
-            var addPath = bestPath[diagonalPath-1],
-                removePath = bestPath[diagonalPath+1];
-            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
-            if (addPath) {
-              // No one else is going to attempt to use this value, clear it
-              bestPath[diagonalPath-1] = undefined;
-            }
-
-            var canAdd = addPath && addPath.newPos+1 < newLen;
-            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
-            if (!canAdd && !canRemove) {
-              bestPath[diagonalPath] = undefined;
-              continue;
-            }
-
-            // Select the diagonal that we want to branch from. We select the prior
-            // path whose position in the new string is the farthest from the origin
-            // and does not pass the bounds of the diff graph
-            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
-              basePath = clonePath(removePath);
-              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
-            } else {
-              basePath = clonePath(addPath);
-              basePath.newPos++;
-              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
-            }
-
-            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
-
-            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
-              return basePath.components;
-            } else {
-              bestPath[diagonalPath] = basePath;
-            }
-          }
-        }
-      },
-
-      pushComponent: function(components, value, added, removed) {
-        var last = components[components.length-1];
-        if (last && last.added === added && last.removed === removed) {
-          // We need to clone here as the component clone operation is just
-          // as shallow array clone
-          components[components.length-1] =
-            {value: this.join(last.value, value), added: added, removed: removed };
-        } else {
-          components.push({value: value, added: added, removed: removed });
-        }
-      },
-      extractCommon: function(basePath, newString, oldString, diagonalPath) {
-        var newLen = newString.length,
-            oldLen = oldString.length,
-            newPos = basePath.newPos,
-            oldPos = newPos - diagonalPath;
-        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
-          newPos++;
-          oldPos++;
-
-          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
-        }
-        basePath.newPos = newPos;
-        return oldPos;
-      },
-
-      equals: function(left, right) {
-        var reWhitespace = /\S/;
-        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
-          return true;
-        } else {
-          return left == right;
-        }
-      },
-      join: function(left, right) {
-        return left + right;
-      },
-      tokenize: function(value) {
-        return value;
-      }
-  };
-
-  var CharDiff = new fbDiff();
-
-  var WordDiff = new fbDiff(true);
-  WordDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/(\s+|\b)/));
-  };
-
-  var CssDiff = new fbDiff(true);
-  CssDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/([{}:;,]|\s+)/));
-  };
-
-  var LineDiff = new fbDiff();
-  LineDiff.tokenize = function(value) {
-    return value.split(/^/m);
-  };
-
-  return {
-    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
-    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
-    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
-
-    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
-
-    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
-      var ret = [];
-
-      ret.push("Index: " + fileName);
-      ret.push("===================================================================");
-      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
-      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
-
-      var diff = LineDiff.diff(oldStr, newStr);
-      if (!diff[diff.length-1].value) {
-        diff.pop();   // Remove trailing newline add
-      }
-      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
-
-      function contextLines(lines) {
-        return lines.map(function(entry) { return ' ' + entry; });
-      }
-      function eofNL(curRange, i, current) {
-        var last = diff[diff.length-2],
-            isLast = i === diff.length-2,
-            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
-
-        // Figure out if this is the last line for the given file and missing NL
-        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
-          curRange.push('\\ No newline at end of file');
-        }
-      }
-
-      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
-          oldLine = 1, newLine = 1;
-      for (var i = 0; i < diff.length; i++) {
-        var current = diff[i],
-            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
-        current.lines = lines;
-
-        if (current.added || current.removed) {
-          if (!oldRangeStart) {
-            var prev = diff[i-1];
-            oldRangeStart = oldLine;
-            newRangeStart = newLine;
-
-            if (prev) {
-              curRange = contextLines(prev.lines.slice(-4));
-              oldRangeStart -= curRange.length;
-              newRangeStart -= curRange.length;
-            }
-          }
-          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
-          eofNL(curRange, i, current);
-
-          if (current.added) {
-            newLine += lines.length;
-          } else {
-            oldLine += lines.length;
-          }
-        } else {
-          if (oldRangeStart) {
-            // Close out any changes that have been output (or join overlapping)
-            if (lines.length <= 8 && i < diff.length-2) {
-              // Overlapping
-              curRange.push.apply(curRange, contextLines(lines));
-            } else {
-              // end the range and output
-              var contextSize = Math.min(lines.length, 4);
-              ret.push(
-                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
-                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
-                  + " @@");
-              ret.push.apply(ret, curRange);
-              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
-              if (lines.length <= 4) {
-                eofNL(ret, i, current);
-              }
-
-              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
-            }
-          }
-          oldLine += lines.length;
-          newLine += lines.length;
-        }
-      }
-
-      return ret.join('\n') + '\n';
-    },
-
-    applyPatch: function(oldStr, uniDiff) {
-      var diffstr = uniDiff.split("\n");
-      var diff = [];
-      var remEOFNL = false,
-          addEOFNL = false;
-
-      for (var i = (diffstr[0][0]=="I"?4:0); i < diffstr.length; i++) {
-        if(diffstr[i][0] == "@") {
-          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
-          diff.unshift({
-            start:meh[3],
-            oldlength:meh[2],
-            oldlines:[],
-            newlength:meh[4],
-            newlines:[]
-          });
-        } else if(diffstr[i][0] == '+') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == '-') {
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == ' ') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == '\\') {
-          if (diffstr[i-1][0] == '+') {
-            remEOFNL = true;
-          } else if(diffstr[i-1][0] == '-') {
-            addEOFNL = true;
-          }
-        }
-      }
-
-      var str = oldStr.split("\n");
-      for (var i = diff.length - 1; i >= 0; i--) {
-        var d = diff[i];
-        for (var j = 0; j < d.oldlength; j++) {
-          if(str[d.start-1+j] != d.oldlines[j]) {
-            return false;
-          }
-        }
-        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
-      }
-
-      if (remEOFNL) {
-        while (!str[str.length-1]) {
-          str.pop();
-        }
-      } else if (addEOFNL) {
-        str.push('');
-      }
-      return str.join('\n');
-    },
-
-    convertChangesToXML: function(changes){
-      var ret = [];
-      for ( var i = 0; i < changes.length; i++) {
-        var change = changes[i];
-        if (change.added) {
-          ret.push("<ins>");
-        } else if (change.removed) {
-          ret.push("<del>");
-        }
-
-        ret.push(escapeHTML(change.value));
-
-        if (change.added) {
-          ret.push("</ins>");
-        } else if (change.removed) {
-          ret.push("</del>");
-        }
-      }
-      return ret.join("");
-    },
-
-    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
-    convertChangesToDMP: function(changes){
-      var ret = [], change;
-      for ( var i = 0; i < changes.length; i++) {
-        change = changes[i];
-        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
-      }
-      return ret;
-    }
-  };
-})();
-
-if (typeof module !== "undefined") {
-    module.exports = JsDiff;
-}
-
-},{}],17:[function(require,module,exports){
-// Github.js 0.7.0
-// (c) 2012 Michael Aufreiter, Development Seed
-// Github.js is freely distributable under the MIT license.
-// For all details and documentation:
-// http://substance.io/michael/github
-
-var _ = require('underscore');
-
-(function() {
-  var Github;
-  var API_URL = 'https://api.github.com';
-
-  Github = window.Github = function(options) {
-
-    // HTTP Request Abstraction
-    // =======
-    // 
-    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
-
-    function _request(method, path, data, cb, raw, sync, headers) {
-      function getURL() {
-        return url = API_URL + path;
-      }
-
-      var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
-
-      xhr.open(method, getURL(), !sync);
-      if (!sync) {
-        xhr.onreadystatechange = function () {
-          if (this.readyState == 4) {
-            if (this.status >= 200 && this.status < 300 || this.status === 304) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
-            } else {
-              cb({request: this, error: this.status});
-            }
-          }
-        };
-      }
-      xhr.setRequestHeader('Accept','application/vnd.github.raw');
-      xhr.setRequestHeader('Content-Type','application/json');
-
-      if (headers) {
-        for (var i = 0; i < headers.length; i++) {
-          header = headers[i];
-          xhr.setRequestHeader(header[0], header[1]);
-        }
-      }
-
-      if (
-         (options.auth == 'oauth' && options.token) ||
-         (options.auth == 'basic' && options.username && options.password)
-         ) {
-           xhr.setRequestHeader('Authorization',options.auth == 'oauth'
-             ? 'token '+ options.token
-             : 'Basic ' + Base64.encode(options.username + ':' + options.password)
-           );
-         }
-      data ? xhr.send(JSON.stringify(data)) : xhr.send();
-      if (sync) return xhr.response;
-    }
-
-    function _parseLinkHeader(err, response, xhr, cb) {
-      var link = xhr.getResponseHeader('link');
-
-      if (!err && link) {
-        var parts = link.split(',');
-        var length = parts.length;
-
-        var links = {};
-
-        var section;
-        var url;
-        var name;
-
-        for (var i = 0; i < length; i++) {
-          section = parts[i].split(';');
-
-          if (section.length !== 2) {
-            throw new Error("section could not be split on ';'");
-          }
-
-          url = section[0].replace(/<(.*)>/, '$1').trim();
-          name = section[1].replace(/rel="(.*)"/, '$1').trim();
-
-          links[name] = url;
-        }
-
-        if (links['next']) {
-          _request('GET', links['next'].split(API_URL)[1], null, function(err, res, xhr) {
-            if (typeof response.concat === 'function') {
-              response = response.concat(res);
-            } else if (typeof response === 'string') {
-              response += res;
-            }
-
-            _parseLinkHeader(err, response, xhr, cb);
-          });
-        } else {
-          cb(err, response);
-        }
-      } else {
-        cb(err, response);
-      }
-    }
-      
-    // User API
-    // =======
-
-    Github.User = function() {
-      this.repos = function(cb) {
-        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user organizations
-      // -------
-
-      this.orgs = function(cb) {
-        _request("GET", "/user/orgs", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List authenticated user's gists
-      // -------
-
-      this.gists = function(cb) {
-        _request("GET", "/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // Show user information
-      // -------
-
-      this.show = function(username, cb) {
-        var command = username ? "/users/"+username : "/user";
-
-        _request("GET", command, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user repositories
-      // -------
-
-      this.userRepos = function(username, cb) {
-        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List a user's gists
-      // -------
-
-      this.userGists = function(username, cb) {
-        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // List organization repositories
-      // -------
-
-      this.orgRepos = function(orgname, cb) {
-        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
-          _parseLinkHeader(err, res, xhr, cb);
-        });
-      };
-
-      // Follow user
-      // -------
-
-      this.follow = function(username, cb) {
-        _request("PUT", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // Unfollow user
-      // -------
-
-      this.unfollow = function(username, cb) {
-        _request("DELETE", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-    };
-
-
-    // Repository API
-    // =======
-
-    Github.Repository = function(options) {
-      var repo = options.name;
-      var user = options.user;
-      
-      var that = this;
-      var repoPath = "/repos/" + user + "/" + repo;
-
-      var currentTree = {
-        "branch": null,
-        "sha": null
-      };
-
-      // Uses the cache if branch has not been changed
-      // -------
-
-      function updateTree(branch, cb) {
-        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
-        that.getRef("heads/"+branch, function(err, sha) {
-          currentTree.branch = branch;
-          currentTree.sha = sha;
-          cb(err, sha);
-        });
-      }
-
-      // Get a particular reference
-      // -------
-
-      this.getRef = function(ref, cb) {
-        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.object.sha);
-        });
-      };
-
-      // Create a new reference
-      // --------
-      //
-      // {
-      //   "ref": "refs/heads/my-new-branch-name",
-      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
-      // }
-
-      this.createRef = function(options, cb) {
-        _request("POST", repoPath + "/git/refs", options, cb);
-      };
-
-      // Delete a reference
-      // --------
-      // 
-      // repo.deleteRef('heads/gh-pages')
-      // repo.deleteRef('tags/v1.0')
-
-      this.deleteRef = function(ref, cb) {
-        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
-      };
-
-      // List all branches of a repository
-      // -------
-
-      this.listBranches = function(cb) {
-        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
-          if (err) return cb(err);
-          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
-        });
-      };
-
-      // Retrieve the contents of a blob
-      // -------
-
-      this.getBlob = function(sha, cb) {
-        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
-      };
-
-      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
-      // -------
-
-      this.getSha = function(branch, path, cb) {
-        // Just use head if path is empty
-        if (path === "") return that.getRef("heads/"+branch, cb);
-        that.getTree(branch+"?recursive=true", function(err, tree) {
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
-          cb(null, file ? file.sha : null);
-        });
-      };
-
-      // Retrieve the tree a commit points to
-      // -------
-
-      this.getTree = function(tree, cb) {
-        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.tree);
-        });
-      };
-
-      // Post a new blob object, getting a blob SHA back
-      // -------
-
-      this.postBlob = function(content, cb) {
-        if (typeof(content) === "string") {
-          content = {
-            "content": content,
-            "encoding": "utf-8"
-          };
-        }
-
-        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update an existing tree adding a new blob object getting a tree SHA back
-      // -------
-
-      this.updateTree = function(baseTree, path, blob, cb) {
-        var data = {
-          "base_tree": baseTree,
-          "tree": [
-            {
-              "path": path,
-              "mode": "100644",
-              "type": "blob",
-              "sha": blob
-            }
-          ]
-        };
-        _request("POST", repoPath + "/git/trees", data, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Post a new tree object having a file path pointer replaced
-      // with a new blob SHA getting a tree SHA back
-      // -------
-
-      this.postTree = function(tree, cb) {
-        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Create a new commit object with the current commit SHA as the parent
-      // and the new tree SHA, getting a commit SHA back
-      // -------
-
-      this.commit = function(parent, tree, message, cb) {
-        var data = {
-          "message": message,
-          "author": {
-            "name": options.username
-          },
-          "parents": [
-            parent
-          ],
-          "tree": tree
-        };
-
-        _request("POST", repoPath + "/git/commits", data, function(err, res) {
-          currentTree.sha = res.sha; // update latest commit
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update the reference of your head to point to the new commit SHA
-      // -------
-
-      this.updateHead = function(head, commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
-          cb(err);
-        });
-      };
-
-      // Show repository information
-      // -------
-
-      this.show = function(cb) {
-        _request("GET", repoPath, null, cb);
-      };
-
-      // Get commits
-      // --------
-
-      this.getCommit = function(sha, cb) {
-        _request("GET", repoPath + "/commits/" + sha, null, cb);
-      };
-
-      this.getCommits = function(branch, lastModified, cb) {
-        _request("GET", repoPath + "/commits" + "?sha=" + branch, null, cb, false, false, [
-          ['If-Modified-Since', lastModified]
-        ]);
-      };
-
-      // Get contents
-      // --------
-
-      this.contents = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
-      };
-
-      this.contentsSync = function(branch, path) {
-        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
-      };
-
-      // Fork repository
-      // -------
-
-      this.fork = function(cb) {
-        _request("POST", repoPath + "/forks", null, cb);
-      };
-
-      // Create pull request
-      // --------
-
-      this.createPullRequest = function(options, cb) {
-        _request("POST", repoPath + "/pulls", options, cb);
-      };
-
-      // Read file at given path
-      // -------
-
-      this.read = function(branch, path, cb) {
-        that.getSha(branch, path, function(err, sha) {
-          if (!sha) return cb("not found", null);
-          that.getBlob(sha, function(err, content) {
-            cb(err, content, sha);
-          });
-        });
-      };
-
-      // Remove a file from the tree
-      // -------
-
-      this.remove = function(branch, path, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
-            _.each(newTree, function(ref) {
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(newTree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Move a file to a new location
-      // -------
-
-      this.move = function(branch, path, newPath, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            _.each(tree, function(ref) {
-              if (ref.path === path) ref.path = newPath;
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(tree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Write file contents to a given branch and path
-      // -------
-
-      this.write = function(branch, path, content, message, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          if (err) return cb(err);
-          that.postBlob(content, function(err, blob) {
-            if (err) return cb(err);
-            that.updateTree(latestCommit, path, blob, function(err, tree) {
-              if (err) return cb(err);
-              that.commit(latestCommit, tree, message, function(err, commit) {
-                if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
-              });
-            });
-          });
-        });
-      };
-    };
-
-    // Gists API
-    // =======
-
-    Github.Gist = function(options) {
-      var id = options.id;
-      var gistPath = "/gists/"+id;
-
-      // Read the gist
-      // --------
-
-      this.read = function(cb) {
-        _request("GET", gistPath, null, function(err, gist) {
-          cb(err, gist);
-        });
-      };
-
-      // Create the gist
-      // --------
-      // {
-      //  "description": "the description for this gist",
-      //    "public": true,
-      //    "files": {
-      //      "file1.txt": {
-      //        "content": "String file contents"
-      //      }
-      //    }
-      // }
-      
-      this.create = function(options, cb){
-        _request("POST","/gists", options, cb);
-      };
-
-      // Delete the gist
-      // --------
-
-      this.removeGist = function(cb) {
-        _request("DELETE", gistPath, null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Fork a gist
-      // --------
-
-      this.fork = function(cb) {
-        _request("POST", gistPath+"/fork", null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Update a gist with the new stuff
-      // --------
-
-      this.update = function(options, cb) {
-        _request("PATCH", gistPath, options, function(err,res) {
-          cb(err,res);
-        });
-      };
-    };
-
-    // Top Level API
-    // -------
-
-    this.getRepo = function(user, repo) {
-      return new Github.Repository({user: user, name: repo});
-    };
-
-    this.getUser = function() {
-      return new Github.User();
-    };
-
-    this.getGist = function(id) {
-      return new Github.Gist({id: id});
-    };
-  };
-
-  module.exports = Github;
-}).call(this);
-
-},{"underscore":14}],20:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -28880,7 +28882,7 @@ module.exports = {
   }
 };
 
-},{"jquery-browserify":13,"underscore":14,"js-yaml":18,"marked":23,"queue-async":19,"chrono":26}],25:[function(require,module,exports){
+},{"jquery-browserify":13,"underscore":14,"js-yaml":18,"marked":22,"queue-async":19,"chrono":26}],25:[function(require,module,exports){
 'use strict';
 
 
@@ -28915,10 +28917,10 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/schema/minimal":31,"./js-yaml/schema/safe":32,"./js-yaml/schema/default":33,"./js-yaml/exception":34,"./js-yaml/require":35}],26:[function(require,module,exports){
+},{"./js-yaml/dumper":27,"./js-yaml/type":28,"./js-yaml/schema":29,"./js-yaml/schema/safe":30,"./js-yaml/schema/default":31,"./js-yaml/exception":32,"./js-yaml/require":33,"./js-yaml/loader":34,"./js-yaml/schema/minimal":35}],26:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
-},{"./lib/chrono":36}],34:[function(require,module,exports){
+},{"./lib/chrono":36}],32:[function(require,module,exports){
 'use strict';
 
 
@@ -29355,6 +29357,704 @@ Date.prototype.setTimezone = function(val) {
 // nothing to see here... no file methods for the browser
 
 },{}],27:[function(require,module,exports){
+'use strict';
+
+
+var common         = require('./common');
+var NIL            = common.NIL;
+var YAMLException  = require('./exception');
+var DEFAULT_SCHEMA = require('./schema/default');
+var SAFE_SCHEMA    = require('./schema/safe');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+var CHAR_TAB                  = 0x09; /* Tab */
+var CHAR_LINE_FEED            = 0x0A; /* LF */
+var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
+var CHAR_SPACE                = 0x20; /* Space */
+var CHAR_EXCLAMATION          = 0x21; /* ! */
+var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
+var CHAR_SHARP                = 0x23; /* # */
+var CHAR_PERCENT              = 0x25; /* % */
+var CHAR_AMPERSAND            = 0x26; /* & */
+var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
+var CHAR_ASTERISK             = 0x2A; /* * */
+var CHAR_COMMA                = 0x2C; /* , */
+var CHAR_MINUS                = 0x2D; /* - */
+var CHAR_COLON                = 0x3A; /* : */
+var CHAR_GREATER_THAN         = 0x3E; /* > */
+var CHAR_QUESTION             = 0x3F; /* ? */
+var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
+var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
+var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
+var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
+var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
+var CHAR_VERTICAL_LINE        = 0x7C; /* | */
+var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
+
+
+var ESCAPE_SEQUENCES = {};
+
+ESCAPE_SEQUENCES[0x00]   = '\\0';
+ESCAPE_SEQUENCES[0x07]   = '\\a';
+ESCAPE_SEQUENCES[0x08]   = '\\b';
+ESCAPE_SEQUENCES[0x09]   = '\\t';
+ESCAPE_SEQUENCES[0x0A]   = '\\n';
+ESCAPE_SEQUENCES[0x0B]   = '\\v';
+ESCAPE_SEQUENCES[0x0C]   = '\\f';
+ESCAPE_SEQUENCES[0x0D]   = '\\r';
+ESCAPE_SEQUENCES[0x1B]   = '\\e';
+ESCAPE_SEQUENCES[0x22]   = '\\"';
+ESCAPE_SEQUENCES[0x5C]   = '\\\\';
+ESCAPE_SEQUENCES[0x85]   = '\\N';
+ESCAPE_SEQUENCES[0xA0]   = '\\_';
+ESCAPE_SEQUENCES[0x2028] = '\\L';
+ESCAPE_SEQUENCES[0x2029] = '\\P';
+
+
+function kindOf(object) {
+  var kind = typeof object;
+
+  if (null === object) {
+    return 'null';
+  } else if ('number' === kind) {
+    return 0 === object % 1 ? 'integer' : 'float';
+  } else if ('object' === kind && Array.isArray(object)) {
+    return 'array';
+  } else {
+    return kind;
+  }
+}
+
+
+function compileStyleMap(schema, map) {
+  var result, keys, index, length, tag, style, type;
+
+  if (null === map) {
+    return {};
+  }
+
+  result = {};
+  keys = Object.keys(map);
+
+  for (index = 0, length = keys.length; index < length; index += 1) {
+    tag = keys[index];
+    style = String(map[tag]);
+
+    if ('!!' === tag.slice(0, 2)) {
+      tag = 'tag:yaml.org,2002:' + tag.slice(2);
+    }
+
+    type = schema.compiledTypeMap[tag];
+
+    if (type && type.dumper) {
+      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
+        style = type.dumper.styleAliases[style];
+      }
+    }
+
+    result[tag] = style;
+  }
+
+  return result;
+}
+
+
+function encodeHex(character) {
+  var string, handle, length;
+
+  string = character.toString(16).toUpperCase();
+
+  if (character <= 0xFF) {
+    handle = 'x';
+    length = 2;
+  } else if (character <= 0xFFFF) {
+    handle = 'u';
+    length = 4;
+  } else if (character <= 0xFFFFFFFF) {
+    handle = 'U';
+    length = 8;
+  } else {
+    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
+  }
+
+  return '\\' + handle + common.repeat('0', length - string.length) + string;
+}
+
+
+function dump(input, options) {
+  options = options || {};
+
+  var schema    = options['schema'] || DEFAULT_SCHEMA,
+      indent    = Math.max(1, (options['indent'] || 2)),
+      flowLevel = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
+      styleMap  = compileStyleMap(schema, options['styles'] || null),
+
+      implicitTypes = schema.compiledImplicit,
+      explicitTypes = schema.compiledExplicit,
+
+      kind,
+      tag,
+      result;
+
+  function generateNextLine(level) {
+    return '\n' + common.repeat(' ', indent * level);
+  }
+
+  function testImplicitResolving(object) {
+    var index, length, type;
+
+    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
+      type = implicitTypes[index];
+
+      if (null !== type.loader &&
+          NIL !== type.loader.resolver(object, false)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeScalar(object) {
+    var isQuoted, checkpoint, position, length, character;
+
+    result = '';
+    isQuoted = false;
+    checkpoint = 0;
+
+    if (0          === object.length ||
+        CHAR_SPACE === object.charCodeAt(0) ||
+        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
+      isQuoted = true;
+    }
+
+    for (position = 0, length = object.length; position < length; position += 1) {
+      character = object.charCodeAt(position);
+
+      if (!isQuoted) {
+        if (CHAR_TAB                  === character ||
+            CHAR_LINE_FEED            === character ||
+            CHAR_CARRIAGE_RETURN      === character ||
+            CHAR_COMMA                === character ||
+            CHAR_LEFT_SQUARE_BRACKET  === character ||
+            CHAR_RIGHT_SQUARE_BRACKET === character ||
+            CHAR_LEFT_CURLY_BRACKET   === character ||
+            CHAR_RIGHT_CURLY_BRACKET  === character ||
+            CHAR_SHARP                === character ||
+            CHAR_AMPERSAND            === character ||
+            CHAR_ASTERISK             === character ||
+            CHAR_EXCLAMATION          === character ||
+            CHAR_VERTICAL_LINE        === character ||
+            CHAR_GREATER_THAN         === character ||
+            CHAR_SINGLE_QUOTE         === character ||
+            CHAR_DOUBLE_QUOTE         === character ||
+            CHAR_PERCENT              === character ||
+            CHAR_COMMERCIAL_AT        === character ||
+            CHAR_GRAVE_ACCENT         === character ||
+            CHAR_QUESTION             === character ||
+            CHAR_COLON                === character ||
+            CHAR_MINUS                === character) {
+          isQuoted = true;
+        }
+      }
+
+      if (ESCAPE_SEQUENCES[character] ||
+          !((0x00020 <= character && character <= 0x00007E) ||
+            (0x00085 === character)                         ||
+            (0x000A0 <= character && character <= 0x00D7FF) ||
+            (0x0E000 <= character && character <= 0x00FFFD) ||
+            (0x10000 <= character && character <= 0x10FFFF))) {
+        result += object.slice(checkpoint, position);
+        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
+        checkpoint = position + 1;
+        isQuoted = true;
+      }
+    }
+
+    if (checkpoint < position) {
+      result += object.slice(checkpoint, position);
+    }
+
+    if (!isQuoted && testImplicitResolving(result)) {
+      isQuoted = true;
+    }
+
+    if (isQuoted) {
+      result = '"' + result + '"';
+    }
+  }
+
+  function writeFlowSequence(level, object) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      if (0 !== index) {
+        _result += ', ';
+      }
+
+      writeNode(level, object[index], false, false);
+      _result += result;
+    }
+
+    tag = _tag;
+    result = '[' + _result + ']';
+  }
+
+  function writeBlockSequence(level, object, compact) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      if (!compact || 0 !== index) {
+        _result += generateNextLine(level);
+      }
+
+      writeNode(level + 1, object[index], true, true);
+      _result += '- ' + result;
+    }
+
+    tag = _tag;
+    result = _result;
+  }
+
+  function writeFlowMapping(level, object) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      if (0 !== index) {
+        _result += ', ';
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      writeNode(level, objectKey, false, false);
+
+      if (result.length > 1024) {
+        _result += '? ';
+      }
+
+      _result += result + ': ';
+      writeNode(level, objectValue, false, false);
+      _result += result;
+    }
+
+    tag = _tag;
+    result = '{' + _result + '}';
+  }
+
+  function writeBlockMapping(level, object, compact) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        explicitPair;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      if (!compact || 0 !== index) {
+        _result += generateNextLine(level);
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      writeNode(level + 1, objectKey, true, true);
+      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
+
+      if (explicitPair) {
+        _result += '? ';
+      }
+
+      _result += result;
+
+      if (explicitPair) {
+        _result += generateNextLine(level);
+      }
+
+      writeNode(level + 1, objectValue, true, explicitPair);
+      _result += ': ' + result;
+    }
+
+    tag = _tag;
+    result = _result;
+  }
+
+  function detectType(object, explicit) {
+    var _result, typeList, index, length, type, style;
+
+    typeList = explicit ? explicitTypes : implicitTypes;
+    kind = kindOf(object);
+
+    for (index = 0, length = typeList.length; index < length; index += 1) {
+      type = typeList[index];
+
+      if ((null !== type.dumper) &&
+          (null === type.dumper.kind       || kind === type.dumper.kind) &&
+          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
+          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
+        tag = explicit ? type.tag : '?';
+
+        if (null !== type.dumper.representer) {
+          style = styleMap[type.tag] || type.dumper.defaultStyle;
+
+          if ('function' === typeof type.dumper.representer) {
+            _result = type.dumper.representer(object, style);
+          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
+            _result = type.dumper.representer[style](object, style);
+          } else {
+            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
+          }
+
+          if (NIL !== _result) {
+            kind = kindOf(_result);
+            result = _result;
+          } else {
+            if (explicit) {
+              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
+            } else {
+              continue;
+            }
+          }
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeNode(level, object, block, compact) {
+    tag = null;
+    result = object;
+
+    if (!detectType(object, false)) {
+      detectType(object, true);
+    }
+
+    if (block) {
+      block = (0 > flowLevel || flowLevel > level);
+    }
+
+    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
+      compact = false;
+    }
+
+    if ('object' === kind) {
+      if (block && (0 !== Object.keys(result).length)) {
+        writeBlockMapping(level, result, compact);
+      } else {
+        writeFlowMapping(level, result);
+      }
+    } else if ('array' === kind) {
+      if (block && (0 !== result.length)) {
+        writeBlockSequence(level, result, compact);
+      } else {
+        writeFlowSequence(level, result);
+      }
+    } else if ('string' === kind) {
+      if ('?' !== tag) {
+        writeScalar(result);
+      }
+    } else {
+      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
+    }
+
+    if (null !== tag && '?' !== tag) {
+      result = '!<' + tag + '> ' + result;
+    }
+  }
+
+  writeNode(0, input, true, true);
+  return result + '\n';
+}
+
+
+function safeDump(input, options) {
+  return dump(input, common.extend({ schema: SAFE_SCHEMA }, options));
+}
+
+
+module.exports.dump     = dump;
+module.exports.safeDump = safeDump;
+
+},{"./common":38,"./exception":32,"./schema/default":31,"./schema/safe":30}],28:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":32}],29:[function(require,module,exports){
+'use strict';
+
+
+var common        = require('./common');
+var YAMLException = require('./exception');
+var Type          = require('./type');
+
+
+function compileList(schema, name, result) {
+  var exclude = [];
+
+  schema.include.forEach(function (includedSchema) {
+    result = compileList(includedSchema, name, result);
+  });
+
+  schema[name].forEach(function (currentType) {
+    result.forEach(function (previousType, previousIndex) {
+      if (previousType.tag === currentType.tag) {
+        exclude.push(previousIndex);
+      }
+    });
+
+    result.push(currentType);
+  });
+
+  return result.filter(function (type, index) {
+    return -1 === exclude.indexOf(index);
+  });
+}
+
+
+function compileMap(/* lists... */) {
+  var result = {}, index, length;
+
+  function collectType(type) {
+    result[type.tag] = type;
+  }
+
+  for (index = 0, length = arguments.length; index < length; index += 1) {
+    arguments[index].forEach(collectType);
+  }
+
+  return result;
+}
+
+
+function Schema(definition) {
+  this.include  = definition.include  || [];
+  this.implicit = definition.implicit || [];
+  this.explicit = definition.explicit || [];
+
+  this.implicit.forEach(function (type) {
+    if (null !== type.loader && 'string' !== type.loader.kind) {
+      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
+    }
+  });
+
+  this.compiledImplicit = compileList(this, 'implicit', []);
+  this.compiledExplicit = compileList(this, 'explicit', []);
+  this.compiledTypeMap  = compileMap(this.compiledImplicit, this.compiledExplicit);
+}
+
+
+Schema.DEFAULT = null;
+
+
+Schema.create = function createSchema() {
+  var schemas, types;
+
+  switch (arguments.length) {
+  case 1:
+    schemas = Schema.DEFAULT;
+    types = arguments[0];
+    break;
+
+  case 2:
+    schemas = arguments[0];
+    types = arguments[1];
+    break;
+
+  default:
+    throw new YAMLException('Wrong number of arguments for Schema.create function');
+  }
+
+  schemas = common.toArray(schemas);
+  types = common.toArray(types);
+
+  if (!schemas.every(function (schema) { return schema instanceof Schema; })) {
+    throw new YAMLException('Specified list of super schemas (or a single Schema object) contains a non-Schema object.');
+  }
+
+  if (!types.every(function (type) { return type instanceof Type; })) {
+    throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
+  }
+
+  return new Schema({
+    include: schemas,
+    explicit: types
+  });
+};
+
+
+module.exports = Schema;
+
+},{"./common":38,"./exception":32,"./type":28}],33:[function(require,module,exports){
+'use strict';
+
+
+var fs     = require('fs');
+var loader = require('./loader');
+
+
+function yamlRequireHandler(module, filename) {
+  var content = fs.readFileSync(filename, 'utf8');
+
+  // fill in documents
+  module.exports = loader.load(content, { filename: filename });
+}
+
+// register require extensions only if we're on node.js
+// hack for browserify
+if (undefined !== require.extensions) {
+  require.extensions['.yml']  = yamlRequireHandler;
+  require.extensions['.yaml'] = yamlRequireHandler;
+}
+
+
+module.exports = require;
+
+},{"fs":37,"./loader":34}],30:[function(require,module,exports){
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  include: [
+    require('./minimal')
+  ],
+  implicit: [
+    require('../type/null'),
+    require('../type/bool'),
+    require('../type/int'),
+    require('../type/float'),
+    require('../type/timestamp'),
+    require('../type/merge')
+  ],
+  explicit: [
+    require('../type/binary'),
+    require('../type/omap'),
+    require('../type/pairs'),
+    require('../type/set')
+  ]
+});
+
+},{"../schema":29,"./minimal":35,"../type/null":39,"../type/bool":40,"../type/int":41,"../type/float":42,"../type/timestamp":43,"../type/merge":44,"../type/binary":45,"../type/omap":46,"../type/pairs":47,"../type/set":48}],31:[function(require,module,exports){
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = Schema.DEFAULT = new Schema({
+  include: [
+    require('./safe')
+  ],
+  explicit: [
+    require('../type/js/undefined'),
+    require('../type/js/regexp'),
+    require('../type/js/function')
+  ]
+});
+
+},{"../schema":29,"./safe":30,"../type/js/undefined":49,"../type/js/regexp":50,"../type/js/function":51}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -30905,720 +31605,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":38,"./exception":34,"./mark":39,"./schema/safe":32,"./schema/default":33}],28:[function(require,module,exports){
-'use strict';
-
-
-var common         = require('./common');
-var NIL            = common.NIL;
-var YAMLException  = require('./exception');
-var DEFAULT_SCHEMA = require('./schema/default');
-var SAFE_SCHEMA    = require('./schema/safe');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-var CHAR_TAB                  = 0x09; /* Tab */
-var CHAR_LINE_FEED            = 0x0A; /* LF */
-var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
-var CHAR_SPACE                = 0x20; /* Space */
-var CHAR_EXCLAMATION          = 0x21; /* ! */
-var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
-var CHAR_SHARP                = 0x23; /* # */
-var CHAR_PERCENT              = 0x25; /* % */
-var CHAR_AMPERSAND            = 0x26; /* & */
-var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
-var CHAR_ASTERISK             = 0x2A; /* * */
-var CHAR_COMMA                = 0x2C; /* , */
-var CHAR_MINUS                = 0x2D; /* - */
-var CHAR_COLON                = 0x3A; /* : */
-var CHAR_GREATER_THAN         = 0x3E; /* > */
-var CHAR_QUESTION             = 0x3F; /* ? */
-var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
-var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
-var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
-var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
-var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
-var CHAR_VERTICAL_LINE        = 0x7C; /* | */
-var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
-
-
-var ESCAPE_SEQUENCES = {};
-
-ESCAPE_SEQUENCES[0x00]   = '\\0';
-ESCAPE_SEQUENCES[0x07]   = '\\a';
-ESCAPE_SEQUENCES[0x08]   = '\\b';
-ESCAPE_SEQUENCES[0x09]   = '\\t';
-ESCAPE_SEQUENCES[0x0A]   = '\\n';
-ESCAPE_SEQUENCES[0x0B]   = '\\v';
-ESCAPE_SEQUENCES[0x0C]   = '\\f';
-ESCAPE_SEQUENCES[0x0D]   = '\\r';
-ESCAPE_SEQUENCES[0x1B]   = '\\e';
-ESCAPE_SEQUENCES[0x22]   = '\\"';
-ESCAPE_SEQUENCES[0x5C]   = '\\\\';
-ESCAPE_SEQUENCES[0x85]   = '\\N';
-ESCAPE_SEQUENCES[0xA0]   = '\\_';
-ESCAPE_SEQUENCES[0x2028] = '\\L';
-ESCAPE_SEQUENCES[0x2029] = '\\P';
-
-
-function kindOf(object) {
-  var kind = typeof object;
-
-  if (null === object) {
-    return 'null';
-  } else if ('number' === kind) {
-    return 0 === object % 1 ? 'integer' : 'float';
-  } else if ('object' === kind && Array.isArray(object)) {
-    return 'array';
-  } else {
-    return kind;
-  }
-}
-
-
-function compileStyleMap(schema, map) {
-  var result, keys, index, length, tag, style, type;
-
-  if (null === map) {
-    return {};
-  }
-
-  result = {};
-  keys = Object.keys(map);
-
-  for (index = 0, length = keys.length; index < length; index += 1) {
-    tag = keys[index];
-    style = String(map[tag]);
-
-    if ('!!' === tag.slice(0, 2)) {
-      tag = 'tag:yaml.org,2002:' + tag.slice(2);
-    }
-
-    type = schema.compiledTypeMap[tag];
-
-    if (type && type.dumper) {
-      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
-        style = type.dumper.styleAliases[style];
-      }
-    }
-
-    result[tag] = style;
-  }
-
-  return result;
-}
-
-
-function encodeHex(character) {
-  var string, handle, length;
-
-  string = character.toString(16).toUpperCase();
-
-  if (character <= 0xFF) {
-    handle = 'x';
-    length = 2;
-  } else if (character <= 0xFFFF) {
-    handle = 'u';
-    length = 4;
-  } else if (character <= 0xFFFFFFFF) {
-    handle = 'U';
-    length = 8;
-  } else {
-    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
-  }
-
-  return '\\' + handle + common.repeat('0', length - string.length) + string;
-}
-
-
-function dump(input, options) {
-  options = options || {};
-
-  var schema    = options['schema'] || DEFAULT_SCHEMA,
-      indent    = Math.max(1, (options['indent'] || 2)),
-      flowLevel = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
-      styleMap  = compileStyleMap(schema, options['styles'] || null),
-
-      implicitTypes = schema.compiledImplicit,
-      explicitTypes = schema.compiledExplicit,
-
-      kind,
-      tag,
-      result;
-
-  function generateNextLine(level) {
-    return '\n' + common.repeat(' ', indent * level);
-  }
-
-  function testImplicitResolving(object) {
-    var index, length, type;
-
-    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
-      type = implicitTypes[index];
-
-      if (null !== type.loader &&
-          NIL !== type.loader.resolver(object, false)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeScalar(object) {
-    var isQuoted, checkpoint, position, length, character;
-
-    result = '';
-    isQuoted = false;
-    checkpoint = 0;
-
-    if (0          === object.length ||
-        CHAR_SPACE === object.charCodeAt(0) ||
-        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
-      isQuoted = true;
-    }
-
-    for (position = 0, length = object.length; position < length; position += 1) {
-      character = object.charCodeAt(position);
-
-      if (!isQuoted) {
-        if (CHAR_TAB                  === character ||
-            CHAR_LINE_FEED            === character ||
-            CHAR_CARRIAGE_RETURN      === character ||
-            CHAR_COMMA                === character ||
-            CHAR_LEFT_SQUARE_BRACKET  === character ||
-            CHAR_RIGHT_SQUARE_BRACKET === character ||
-            CHAR_LEFT_CURLY_BRACKET   === character ||
-            CHAR_RIGHT_CURLY_BRACKET  === character ||
-            CHAR_SHARP                === character ||
-            CHAR_AMPERSAND            === character ||
-            CHAR_ASTERISK             === character ||
-            CHAR_EXCLAMATION          === character ||
-            CHAR_VERTICAL_LINE        === character ||
-            CHAR_GREATER_THAN         === character ||
-            CHAR_SINGLE_QUOTE         === character ||
-            CHAR_DOUBLE_QUOTE         === character ||
-            CHAR_PERCENT              === character ||
-            CHAR_COMMERCIAL_AT        === character ||
-            CHAR_GRAVE_ACCENT         === character ||
-            CHAR_QUESTION             === character ||
-            CHAR_COLON                === character ||
-            CHAR_MINUS                === character) {
-          isQuoted = true;
-        }
-      }
-
-      if (ESCAPE_SEQUENCES[character] ||
-          !((0x00020 <= character && character <= 0x00007E) ||
-            (0x00085 === character)                         ||
-            (0x000A0 <= character && character <= 0x00D7FF) ||
-            (0x0E000 <= character && character <= 0x00FFFD) ||
-            (0x10000 <= character && character <= 0x10FFFF))) {
-        result += object.slice(checkpoint, position);
-        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
-        checkpoint = position + 1;
-        isQuoted = true;
-      }
-    }
-
-    if (checkpoint < position) {
-      result += object.slice(checkpoint, position);
-    }
-
-    if (!isQuoted && testImplicitResolving(result)) {
-      isQuoted = true;
-    }
-
-    if (isQuoted) {
-      result = '"' + result + '"';
-    }
-  }
-
-  function writeFlowSequence(level, object) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      if (0 !== index) {
-        _result += ', ';
-      }
-
-      writeNode(level, object[index], false, false);
-      _result += result;
-    }
-
-    tag = _tag;
-    result = '[' + _result + ']';
-  }
-
-  function writeBlockSequence(level, object, compact) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      if (!compact || 0 !== index) {
-        _result += generateNextLine(level);
-      }
-
-      writeNode(level + 1, object[index], true, true);
-      _result += '- ' + result;
-    }
-
-    tag = _tag;
-    result = _result;
-  }
-
-  function writeFlowMapping(level, object) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      if (0 !== index) {
-        _result += ', ';
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      writeNode(level, objectKey, false, false);
-
-      if (result.length > 1024) {
-        _result += '? ';
-      }
-
-      _result += result + ': ';
-      writeNode(level, objectValue, false, false);
-      _result += result;
-    }
-
-    tag = _tag;
-    result = '{' + _result + '}';
-  }
-
-  function writeBlockMapping(level, object, compact) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        explicitPair;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      if (!compact || 0 !== index) {
-        _result += generateNextLine(level);
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      writeNode(level + 1, objectKey, true, true);
-      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
-
-      if (explicitPair) {
-        _result += '? ';
-      }
-
-      _result += result;
-
-      if (explicitPair) {
-        _result += generateNextLine(level);
-      }
-
-      writeNode(level + 1, objectValue, true, explicitPair);
-      _result += ': ' + result;
-    }
-
-    tag = _tag;
-    result = _result;
-  }
-
-  function detectType(object, explicit) {
-    var _result, typeList, index, length, type, style;
-
-    typeList = explicit ? explicitTypes : implicitTypes;
-    kind = kindOf(object);
-
-    for (index = 0, length = typeList.length; index < length; index += 1) {
-      type = typeList[index];
-
-      if ((null !== type.dumper) &&
-          (null === type.dumper.kind       || kind === type.dumper.kind) &&
-          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
-          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
-        tag = explicit ? type.tag : '?';
-
-        if (null !== type.dumper.representer) {
-          style = styleMap[type.tag] || type.dumper.defaultStyle;
-
-          if ('function' === typeof type.dumper.representer) {
-            _result = type.dumper.representer(object, style);
-          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
-            _result = type.dumper.representer[style](object, style);
-          } else {
-            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
-          }
-
-          if (NIL !== _result) {
-            kind = kindOf(_result);
-            result = _result;
-          } else {
-            if (explicit) {
-              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
-            } else {
-              continue;
-            }
-          }
-        }
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeNode(level, object, block, compact) {
-    tag = null;
-    result = object;
-
-    if (!detectType(object, false)) {
-      detectType(object, true);
-    }
-
-    if (block) {
-      block = (0 > flowLevel || flowLevel > level);
-    }
-
-    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
-      compact = false;
-    }
-
-    if ('object' === kind) {
-      if (block && (0 !== Object.keys(result).length)) {
-        writeBlockMapping(level, result, compact);
-      } else {
-        writeFlowMapping(level, result);
-      }
-    } else if ('array' === kind) {
-      if (block && (0 !== result.length)) {
-        writeBlockSequence(level, result, compact);
-      } else {
-        writeFlowSequence(level, result);
-      }
-    } else if ('string' === kind) {
-      if ('?' !== tag) {
-        writeScalar(result);
-      }
-    } else {
-      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
-    }
-
-    if (null !== tag && '?' !== tag) {
-      result = '!<' + tag + '> ' + result;
-    }
-  }
-
-  writeNode(0, input, true, true);
-  return result + '\n';
-}
-
-
-function safeDump(input, options) {
-  return dump(input, common.extend({ schema: SAFE_SCHEMA }, options));
-}
-
-
-module.exports.dump     = dump;
-module.exports.safeDump = safeDump;
-
-},{"./common":38,"./exception":34,"./schema/default":33,"./schema/safe":32}],29:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":34}],30:[function(require,module,exports){
-'use strict';
-
-
-var common        = require('./common');
-var YAMLException = require('./exception');
-var Type          = require('./type');
-
-
-function compileList(schema, name, result) {
-  var exclude = [];
-
-  schema.include.forEach(function (includedSchema) {
-    result = compileList(includedSchema, name, result);
-  });
-
-  schema[name].forEach(function (currentType) {
-    result.forEach(function (previousType, previousIndex) {
-      if (previousType.tag === currentType.tag) {
-        exclude.push(previousIndex);
-      }
-    });
-
-    result.push(currentType);
-  });
-
-  return result.filter(function (type, index) {
-    return -1 === exclude.indexOf(index);
-  });
-}
-
-
-function compileMap(/* lists... */) {
-  var result = {}, index, length;
-
-  function collectType(type) {
-    result[type.tag] = type;
-  }
-
-  for (index = 0, length = arguments.length; index < length; index += 1) {
-    arguments[index].forEach(collectType);
-  }
-
-  return result;
-}
-
-
-function Schema(definition) {
-  this.include  = definition.include  || [];
-  this.implicit = definition.implicit || [];
-  this.explicit = definition.explicit || [];
-
-  this.implicit.forEach(function (type) {
-    if (null !== type.loader && 'string' !== type.loader.kind) {
-      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
-    }
-  });
-
-  this.compiledImplicit = compileList(this, 'implicit', []);
-  this.compiledExplicit = compileList(this, 'explicit', []);
-  this.compiledTypeMap  = compileMap(this.compiledImplicit, this.compiledExplicit);
-}
-
-
-Schema.DEFAULT = null;
-
-
-Schema.create = function createSchema() {
-  var schemas, types;
-
-  switch (arguments.length) {
-  case 1:
-    schemas = Schema.DEFAULT;
-    types = arguments[0];
-    break;
-
-  case 2:
-    schemas = arguments[0];
-    types = arguments[1];
-    break;
-
-  default:
-    throw new YAMLException('Wrong number of arguments for Schema.create function');
-  }
-
-  schemas = common.toArray(schemas);
-  types = common.toArray(types);
-
-  if (!schemas.every(function (schema) { return schema instanceof Schema; })) {
-    throw new YAMLException('Specified list of super schemas (or a single Schema object) contains a non-Schema object.');
-  }
-
-  if (!types.every(function (type) { return type instanceof Type; })) {
-    throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
-  }
-
-  return new Schema({
-    include: schemas,
-    explicit: types
-  });
-};
-
-
-module.exports = Schema;
-
-},{"./common":38,"./exception":34,"./type":29}],35:[function(require,module,exports){
-'use strict';
-
-
-var fs     = require('fs');
-var loader = require('./loader');
-
-
-function yamlRequireHandler(module, filename) {
-  var content = fs.readFileSync(filename, 'utf8');
-
-  // fill in documents
-  module.exports = loader.load(content, { filename: filename });
-}
-
-// register require extensions only if we're on node.js
-// hack for browserify
-if (undefined !== require.extensions) {
-  require.extensions['.yml']  = yamlRequireHandler;
-  require.extensions['.yaml'] = yamlRequireHandler;
-}
-
-
-module.exports = require;
-
-},{"fs":37,"./loader":27}],31:[function(require,module,exports){
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  explicit: [
-    require('../type/str'),
-    require('../type/seq'),
-    require('../type/map')
-  ]
-});
-
-},{"../schema":30,"../type/str":40,"../type/seq":41,"../type/map":42}],32:[function(require,module,exports){
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  include: [
-    require('./minimal')
-  ],
-  implicit: [
-    require('../type/null'),
-    require('../type/bool'),
-    require('../type/int'),
-    require('../type/float'),
-    require('../type/timestamp'),
-    require('../type/merge')
-  ],
-  explicit: [
-    require('../type/binary'),
-    require('../type/omap'),
-    require('../type/pairs'),
-    require('../type/set')
-  ]
-});
-
-},{"../schema":30,"./minimal":31,"../type/null":43,"../type/bool":44,"../type/int":45,"../type/float":46,"../type/timestamp":47,"../type/merge":48,"../type/binary":49,"../type/omap":50,"../type/pairs":51,"../type/set":52}],33:[function(require,module,exports){
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = Schema.DEFAULT = new Schema({
-  include: [
-    require('./safe')
-  ],
-  explicit: [
-    require('../type/js/undefined'),
-    require('../type/js/regexp'),
-    require('../type/js/function')
-  ]
-});
-
-},{"../schema":30,"./safe":32,"../type/js/undefined":53,"../type/js/regexp":54,"../type/js/function":55}],38:[function(require,module,exports){
+},{"./common":38,"./exception":32,"./mark":52,"./schema/safe":30,"./schema/default":31}],38:[function(require,module,exports){
 'use strict';
 
 
@@ -31680,7 +31667,22 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],39:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  explicit: [
+    require('../type/str'),
+    require('../type/seq'),
+    require('../type/map')
+  ]
+});
+
+},{"../schema":29,"../type/str":53,"../type/seq":54,"../type/map":55}],52:[function(require,module,exports){
 'use strict';
 
 
@@ -31760,7 +31762,766 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":38}],56:[function(require,module,exports){
+},{"./common":38}],39:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
+    }
+  }
+});
+
+},{"../common":38,"../type":28}],40:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
+},{"../common":38,"../type":28}],41:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":38,"../type":28}],42:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_FLOAT_PATTERN = new RegExp(
+  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
+  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
+  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
+  '|[-+]?\\.(?:inf|Inf|INF)' +
+  '|\\.(?:nan|NaN|NAN))$');
+
+
+function resolveYamlFloat(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_FLOAT_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '').toLowerCase();
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('.inf' === value) {
+    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+
+  } else if ('.nan' === value) {
+    return NaN;
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseFloat(v, 10));
+    });
+
+    value = 0.0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += d * base;
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseFloat(value, 10);
+  }
+}
+
+
+function representYamlFloat(object, style) {
+  if (isNaN(object)) {
+    switch (style) {
+    case 'lowercase':
+      return '.nan';
+    case 'uppercase':
+      return '.NAN';
+    case 'camelcase':
+      return '.NaN';
+    }
+  } else if (Number.POSITIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '.inf';
+    case 'uppercase':
+      return '.INF';
+    case 'camelcase':
+      return '.Inf';
+    }
+  } else if (Number.NEGATIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '-.inf';
+    case 'uppercase':
+      return '-.INF';
+    case 'camelcase':
+      return '-.Inf';
+    }
+  } else {
+    return object.toString(10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:float', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlFloat
+  },
+  dumper: {
+    kind: 'float',
+    defaultStyle: 'lowercase',
+    representer: representYamlFloat
+  }
+});
+
+},{"../common":38,"../type":28}],43:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_TIMESTAMP_REGEXP = new RegExp(
+  '^([0-9][0-9][0-9][0-9])'          + // [1] year
+  '-([0-9][0-9]?)'                   + // [2] month
+  '-([0-9][0-9]?)'                   + // [3] day
+  '(?:(?:[Tt]|[ \\t]+)'              + // ...
+  '([0-9][0-9]?)'                    + // [4] hour
+  ':([0-9][0-9])'                    + // [5] minute
+  ':([0-9][0-9])'                    + // [6] second
+  '(?:\\.([0-9]*))?'                 + // [7] fraction
+  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
+  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
+
+
+function resolveYamlTimestamp(object /*, explicit*/) {
+  var match, year, month, day, hour, minute, second, fraction = 0,
+      delta = null, tz_hour, tz_minute, data;
+
+  match = YAML_TIMESTAMP_REGEXP.exec(object);
+
+  if (null === match) {
+    return NIL;
+  }
+
+  // match: [1] year [2] month [3] day
+
+  year = +(match[1]);
+  month = +(match[2]) - 1; // JS month starts with 0
+  day = +(match[3]);
+
+  if (!match[4]) { // no hour
+    return new Date(Date.UTC(year, month, day));
+  }
+
+  // match: [4] hour [5] minute [6] second [7] fraction
+
+  hour = +(match[4]);
+  minute = +(match[5]);
+  second = +(match[6]);
+
+  if (match[7]) {
+    fraction = match[7].slice(0, 3);
+    while (fraction.length < 3) { // milli-seconds
+      fraction += '0';
+    }
+    fraction = +fraction;
+  }
+
+  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
+
+  if (match[9]) {
+    tz_hour = +(match[10]);
+    tz_minute = +(match[11] || 0);
+    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
+    if ('-' === match[9]) {
+      delta = -delta;
+    }
+  }
+
+  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
+
+  if (delta) {
+    data.setTime(data.getTime() - delta);
+  }
+
+  return data;
+}
+
+
+function representYamlTimestamp(object /*, style*/) {
+  return object.toISOString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:timestamp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlTimestamp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: Date,
+    representer: representYamlTimestamp
+  }
+});
+
+},{"../common":38,"../type":28}],44:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
+},{"../common":38,"../type":28}],45:[function(require,module,exports){
+(function(){// Modified from:
+// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
+
+'use strict';
+
+
+var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
+var common     = require('../common');
+var NIL        = common.NIL;
+var Type       = require('../type');
+
+
+
+var BASE64_PADDING = '=';
+
+var BASE64_BINTABLE = [
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
+  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
+];
+
+var BASE64_CHARTABLE =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+
+
+function resolveYamlBinary(object /*, explicit*/) {
+  var value, code, idx = 0, result = [], leftbits, leftdata;
+
+  leftbits = 0; // number of bits decoded, but yet to be appended
+  leftdata = 0; // bits decoded, but yet to be appended
+
+  // Convert one by one.
+  for (idx = 0; idx < object.length; idx += 1) {
+    code = object.charCodeAt(idx);
+    value = BASE64_BINTABLE[code & 0x7F];
+
+    // Skip LF(NL) || CR
+    if (0x0A !== code && 0x0D !== code) {
+      // Fail on illegal characters
+      if (-1 === value) {
+        return NIL;
+      }
+
+      // Collect data into leftdata, update bitcount
+      leftdata = (leftdata << 6) | value;
+      leftbits += 6;
+
+      // If we have 8 or more bits, append 8 bits to the result
+      if (leftbits >= 8) {
+        leftbits -= 8;
+
+        // Append if not padding.
+        if (BASE64_PADDING !== object.charAt(idx)) {
+          result.push((leftdata >> leftbits) & 0xFF);
+        }
+
+        leftdata &= (1 << leftbits) - 1;
+      }
+    }
+  }
+
+  // If there are any bits left, the base64 string was corrupted
+  if (leftbits) {
+    return NIL;
+  } else {
+    return new NodeBuffer(result);
+  }
+}
+
+
+function representYamlBinary(object /*, style*/) {
+  var result = '', index, length, rest;
+
+  // Convert every three bytes to 4 ASCII characters.
+  for (index = 0, length = object.length - 2; index < length; index += 3) {
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
+    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
+  }
+
+  rest = object.length % 3;
+
+  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
+  if (0 !== rest) {
+    index = object.length - rest;
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+
+    if (2 === rest) {
+      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
+      result += BASE64_PADDING;
+    } else {
+      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
+      result += BASE64_PADDING + BASE64_PADDING;
+    }
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:binary', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBinary
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: NodeBuffer,
+    representer: representYamlBinary
+  }
+});
+
+})()
+},{"buffer":56,"../common":38,"../type":28}],46:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+
+function resolveYamlOmap(object /*, explicit*/) {
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) {
+          pairHasKey = true;
+        } else {
+          return NIL;
+        }
+      }
+    }
+
+    if (!pairHasKey) {
+      return NIL;
+    }
+
+    if (-1 === objectKeys.indexOf(pairKey)) {
+      objectKeys.push(pairKey);
+    } else {
+      return NIL;
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":38,"../type":28}],47:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
+  }
+});
+
+},{"../common":38,"../type":28}],48:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+function resolveYamlSet(object /*, explicit*/) {
+  var key;
+
+  for (key in object) {
+    if (_hasOwnProperty.call(object, key)) {
+      if (null !== object[key]) {
+        return NIL;
+      }
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:set', {
+  loader: {
+    kind: 'object',
+    resolver: resolveYamlSet
+  }
+});
+
+},{"../common":38,"../type":28}],49:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../../type');
+
+
+function resolveJavascriptUndefined(/*object, explicit*/) {
+  var undef;
+
+  return undef;
+}
+
+
+function representJavascriptUndefined(/*object, explicit*/) {
+  return '';
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/undefined', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptUndefined
+  },
+  dumper: {
+    kind: 'undefined',
+    representer: representJavascriptUndefined
+  }
+});
+
+},{"../../type":28}],50:[function(require,module,exports){
+(function(){'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptRegExp(object /*, explicit*/) {
+  var regexp = object,
+      tail   = /\/([gim]*)$/.exec(object),
+      modifiers;
+
+  // `/foo/gim` - tail can be maximum 4 chars
+  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
+    regexp = regexp.slice(1, regexp.length - tail[0].length);
+    modifiers = tail[1];
+  }
+
+  try {
+    return new RegExp(regexp, modifiers);
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptRegExp(object /*, style*/) {
+  var result = '/' + object.source + '/';
+
+  if (object.global) {
+    result += 'g';
+  }
+
+  if (object.multiline) {
+    result += 'm';
+  }
+
+  if (object.ignoreCase) {
+    result += 'i';
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/regexp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptRegExp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: RegExp,
+    representer: representJavascriptRegExp
+  }
+});
+
+})()
+},{"../../common":38,"../../type":28}],57:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -32077,7 +32838,7 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":57,"buffer":58}],40:[function(require,module,exports){
+},{"util":58,"buffer":56}],53:[function(require,module,exports){
 'use strict';
 
 
@@ -32090,7 +32851,7 @@ module.exports = new Type('tag:yaml.org,2002:str', {
   }
 });
 
-},{"../type":29}],41:[function(require,module,exports){
+},{"../type":28}],54:[function(require,module,exports){
 'use strict';
 
 
@@ -32103,7 +32864,7 @@ module.exports = new Type('tag:yaml.org,2002:seq', {
   }
 });
 
-},{"../type":29}],42:[function(require,module,exports){
+},{"../type":28}],55:[function(require,module,exports){
 'use strict';
 
 
@@ -32116,766 +32877,7 @@ module.exports = new Type('tag:yaml.org,2002:map', {
   }
 });
 
-},{"../type":29}],43:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
-};
-
-
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
-    }
-  }
-});
-
-},{"../common":38,"../type":29}],44:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
-  }
-});
-
-},{"../common":38,"../type":29}],45:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":38,"../type":29}],46:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
-  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
-  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  '|\\.(?:nan|NaN|NAN))$');
-
-
-function resolveYamlFloat(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_FLOAT_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '').toLowerCase();
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('.inf' === value) {
-    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if ('.nan' === value) {
-    return NaN;
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseFloat(v, 10));
-    });
-
-    value = 0.0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += d * base;
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseFloat(value, 10);
-  }
-}
-
-
-function representYamlFloat(object, style) {
-  if (isNaN(object)) {
-    switch (style) {
-    case 'lowercase':
-      return '.nan';
-    case 'uppercase':
-      return '.NAN';
-    case 'camelcase':
-      return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '.inf';
-    case 'uppercase':
-      return '.INF';
-    case 'camelcase':
-      return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '-.inf';
-    case 'uppercase':
-      return '-.INF';
-    case 'camelcase':
-      return '-.Inf';
-    }
-  } else {
-    return object.toString(10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlFloat
-  },
-  dumper: {
-    kind: 'float',
-    defaultStyle: 'lowercase',
-    representer: representYamlFloat
-  }
-});
-
-},{"../common":38,"../type":29}],47:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_TIMESTAMP_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9]?)'                   + // [2] month
-  '-([0-9][0-9]?)'                   + // [3] day
-  '(?:(?:[Tt]|[ \\t]+)'              + // ...
-  '([0-9][0-9]?)'                    + // [4] hour
-  ':([0-9][0-9])'                    + // [5] minute
-  ':([0-9][0-9])'                    + // [6] second
-  '(?:\\.([0-9]*))?'                 + // [7] fraction
-  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
-  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
-
-
-function resolveYamlTimestamp(object /*, explicit*/) {
-  var match, year, month, day, hour, minute, second, fraction = 0,
-      delta = null, tz_hour, tz_minute, data;
-
-  match = YAML_TIMESTAMP_REGEXP.exec(object);
-
-  if (null === match) {
-    return NIL;
-  }
-
-  // match: [1] year [2] month [3] day
-
-  year = +(match[1]);
-  month = +(match[2]) - 1; // JS month starts with 0
-  day = +(match[3]);
-
-  if (!match[4]) { // no hour
-    return new Date(Date.UTC(year, month, day));
-  }
-
-  // match: [4] hour [5] minute [6] second [7] fraction
-
-  hour = +(match[4]);
-  minute = +(match[5]);
-  second = +(match[6]);
-
-  if (match[7]) {
-    fraction = match[7].slice(0, 3);
-    while (fraction.length < 3) { // milli-seconds
-      fraction += '0';
-    }
-    fraction = +fraction;
-  }
-
-  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
-
-  if (match[9]) {
-    tz_hour = +(match[10]);
-    tz_minute = +(match[11] || 0);
-    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-    if ('-' === match[9]) {
-      delta = -delta;
-    }
-  }
-
-  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
-
-  if (delta) {
-    data.setTime(data.getTime() - delta);
-  }
-
-  return data;
-}
-
-
-function representYamlTimestamp(object /*, style*/) {
-  return object.toISOString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:timestamp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlTimestamp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: Date,
-    representer: representYamlTimestamp
-  }
-});
-
-},{"../common":38,"../type":29}],48:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":38,"../type":29}],49:[function(require,module,exports){
-(function(){// Modified from:
-// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
-
-'use strict';
-
-
-var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
-var common     = require('../common');
-var NIL        = common.NIL;
-var Type       = require('../type');
-
-
-
-var BASE64_PADDING = '=';
-
-var BASE64_BINTABLE = [
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
-  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
-];
-
-var BASE64_CHARTABLE =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
-
-
-function resolveYamlBinary(object /*, explicit*/) {
-  var value, code, idx = 0, result = [], leftbits, leftdata;
-
-  leftbits = 0; // number of bits decoded, but yet to be appended
-  leftdata = 0; // bits decoded, but yet to be appended
-
-  // Convert one by one.
-  for (idx = 0; idx < object.length; idx += 1) {
-    code = object.charCodeAt(idx);
-    value = BASE64_BINTABLE[code & 0x7F];
-
-    // Skip LF(NL) || CR
-    if (0x0A !== code && 0x0D !== code) {
-      // Fail on illegal characters
-      if (-1 === value) {
-        return NIL;
-      }
-
-      // Collect data into leftdata, update bitcount
-      leftdata = (leftdata << 6) | value;
-      leftbits += 6;
-
-      // If we have 8 or more bits, append 8 bits to the result
-      if (leftbits >= 8) {
-        leftbits -= 8;
-
-        // Append if not padding.
-        if (BASE64_PADDING !== object.charAt(idx)) {
-          result.push((leftdata >> leftbits) & 0xFF);
-        }
-
-        leftdata &= (1 << leftbits) - 1;
-      }
-    }
-  }
-
-  // If there are any bits left, the base64 string was corrupted
-  if (leftbits) {
-    return NIL;
-  } else {
-    return new NodeBuffer(result);
-  }
-}
-
-
-function representYamlBinary(object /*, style*/) {
-  var result = '', index, length, rest;
-
-  // Convert every three bytes to 4 ASCII characters.
-  for (index = 0, length = object.length - 2; index < length; index += 3) {
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
-    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
-  }
-
-  rest = object.length % 3;
-
-  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
-  if (0 !== rest) {
-    index = object.length - rest;
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-
-    if (2 === rest) {
-      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
-      result += BASE64_PADDING;
-    } else {
-      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
-      result += BASE64_PADDING + BASE64_PADDING;
-    }
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:binary', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBinary
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: NodeBuffer,
-    representer: representYamlBinary
-  }
-});
-
-})()
-},{"buffer":58,"../common":38,"../type":29}],50:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-
-function resolveYamlOmap(object /*, explicit*/) {
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) {
-          pairHasKey = true;
-        } else {
-          return NIL;
-        }
-      }
-    }
-
-    if (!pairHasKey) {
-      return NIL;
-    }
-
-    if (-1 === objectKeys.indexOf(pairKey)) {
-      objectKeys.push(pairKey);
-    } else {
-      return NIL;
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlOmap
-  }
-});
-
-},{"../common":38,"../type":29}],51:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
-  }
-});
-
-},{"../common":38,"../type":29}],52:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-function resolveYamlSet(object /*, explicit*/) {
-  var key;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (null !== object[key]) {
-        return NIL;
-      }
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  loader: {
-    kind: 'object',
-    resolver: resolveYamlSet
-  }
-});
-
-},{"../common":38,"../type":29}],53:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../../type');
-
-
-function resolveJavascriptUndefined(/*object, explicit*/) {
-  var undef;
-
-  return undef;
-}
-
-
-function representJavascriptUndefined(/*object, explicit*/) {
-  return '';
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/undefined', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptUndefined
-  },
-  dumper: {
-    kind: 'undefined',
-    representer: representJavascriptUndefined
-  }
-});
-
-},{"../../type":29}],54:[function(require,module,exports){
-(function(){'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptRegExp(object /*, explicit*/) {
-  var regexp = object,
-      tail   = /\/([gim]*)$/.exec(object),
-      modifiers;
-
-  // `/foo/gim` - tail can be maximum 4 chars
-  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
-    regexp = regexp.slice(1, regexp.length - tail[0].length);
-    modifiers = tail[1];
-  }
-
-  try {
-    return new RegExp(regexp, modifiers);
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptRegExp(object /*, style*/) {
-  var result = '/' + object.source + '/';
-
-  if (object.global) {
-    result += 'g';
-  }
-
-  if (object.multiline) {
-    result += 'm';
-  }
-
-  if (object.ignoreCase) {
-    result += 'i';
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/regexp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptRegExp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: RegExp,
-    representer: representJavascriptRegExp
-  }
-});
-
-})()
-},{"../../common":38,"../../type":29}],57:[function(require,module,exports){
+},{"../type":28}],58:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -33314,7 +33316,247 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],58:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],59:[function(require,module,exports){
+(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
+
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
+//
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
+};
+
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
+    }
+  }
+
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
+
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
+
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
+
+  } else {
+    return false;
+  }
+};
+
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
+
+  if (!this._events) this._events = {};
+
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
+
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
+
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
+
+  return this;
+};
+
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
+};
+
+})(require("__browserify_process"))
+},{"__browserify_process":61}],56:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -34634,333 +34876,7 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":56,"./buffer_ieee754":60,"base64-js":61}],62:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],59:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
-
-var EventEmitter = exports.EventEmitter = process.EventEmitter;
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
-
-// By default EventEmitters will print a warning if more than
-// 10 listeners are added to it. This is a useful default which
-// helps finding memory leaks.
-//
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-var defaultMaxListeners = 10;
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!this._events) this._events = {};
-  this._events.maxListeners = n;
-};
-
-
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
-      return false;
-    }
-  }
-
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
-
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-    return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
-    return false;
-  }
-};
-
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
-  }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-
-    // Check for listener leak
-    if (!this._events[type].warned) {
-      var m;
-      if (this._events.maxListeners !== undefined) {
-        m = this._events.maxListeners;
-      } else {
-        m = defaultMaxListeners;
-      }
-
-      if (m && m > 0 && this._events[type].length > m) {
-        this._events[type].warned = true;
-        console.error('(node) warning: possible EventEmitter memory ' +
-                      'leak detected. %d listeners added. ' +
-                      'Use emitter.setMaxListeners() to increase limit.',
-                      this._events[type].length);
-        console.trace();
-      }
-    }
-
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
-};
-
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
-
-})(require("__browserify_process"))
-},{"__browserify_process":62}],61:[function(require,module,exports){
-(function (exports) {
-	'use strict';
-
-	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-	function b64ToByteArray(b64) {
-		var i, j, l, tmp, placeHolders, arr;
-	
-		if (b64.length % 4 > 0) {
-			throw 'Invalid string. Length must be a multiple of 4';
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		placeHolders = b64.indexOf('=');
-		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length;
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
-			arr.push((tmp & 0xFF0000) >> 16);
-			arr.push((tmp & 0xFF00) >> 8);
-			arr.push(tmp & 0xFF);
-		}
-
-		if (placeHolders === 2) {
-			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
-			arr.push(tmp & 0xFF);
-		} else if (placeHolders === 1) {
-			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
-			arr.push((tmp >> 8) & 0xFF);
-			arr.push(tmp & 0xFF);
-		}
-
-		return arr;
-	}
-
-	function uint8ToBase64(uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length;
-
-		function tripletToBase64 (num) {
-			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
-		};
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
-			output += tripletToBase64(temp);
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1];
-				output += lookup[temp >> 2];
-				output += lookup[(temp << 4) & 0x3F];
-				output += '==';
-				break;
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
-				output += lookup[temp >> 10];
-				output += lookup[(temp >> 4) & 0x3F];
-				output += lookup[(temp << 2) & 0x3F];
-				output += '=';
-				break;
-		}
-
-		return output;
-	}
-
-	module.exports.toByteArray = b64ToByteArray;
-	module.exports.fromByteArray = uint8ToBase64;
-}());
-
-},{}],55:[function(require,module,exports){
+},{"assert":57,"./buffer_ieee754":60,"base64-js":62}],51:[function(require,module,exports){
 'use strict';
 
 
@@ -35018,7 +34934,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":38,"../../type":29,"esprima":63}],63:[function(require,module,exports){
+},{"../../common":38,"../../type":28,"esprima":63}],63:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -38916,5 +38832,91 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
+},{}],62:[function(require,module,exports){
+(function (exports) {
+	'use strict';
+
+	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+	function b64ToByteArray(b64) {
+		var i, j, l, tmp, placeHolders, arr;
+	
+		if (b64.length % 4 > 0) {
+			throw 'Invalid string. Length must be a multiple of 4';
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		placeHolders = b64.indexOf('=');
+		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length;
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
+			arr.push((tmp & 0xFF0000) >> 16);
+			arr.push((tmp & 0xFF00) >> 8);
+			arr.push(tmp & 0xFF);
+		}
+
+		if (placeHolders === 2) {
+			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
+			arr.push(tmp & 0xFF);
+		} else if (placeHolders === 1) {
+			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
+			arr.push((tmp >> 8) & 0xFF);
+			arr.push(tmp & 0xFF);
+		}
+
+		return arr;
+	}
+
+	function uint8ToBase64(uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length;
+
+		function tripletToBase64 (num) {
+			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+		};
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+			output += tripletToBase64(temp);
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1];
+				output += lookup[temp >> 2];
+				output += lookup[(temp << 4) & 0x3F];
+				output += '==';
+				break;
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
+				output += lookup[temp >> 10];
+				output += lookup[(temp >> 4) & 0x3F];
+				output += lookup[(temp << 2) & 0x3F];
+				output += '=';
+				break;
+		}
+
+		return output;
+	}
+
+	module.exports.toByteArray = b64ToByteArray;
+	module.exports.fromByteArray = uint8ToBase64;
+}());
+
 },{}]},{},[2])
 ;

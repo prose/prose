@@ -127,7 +127,8 @@ module.exports = Backbone.View.extend({
 
     preview: function(e) {
       $('#prose').toggleClass('open', false);
-      if (app.state.config.prose &&
+      if (app.state.config &&
+        app.state.config.prose &&
         app.state.config.prose.siteurl &&
         this.model.metadata &&
         this.model.metadata.layout
