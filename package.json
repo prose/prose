@@ -1,0 +1,36 @@
+{
+  "name": "prose",
+  "version": "1.0.0",
+  "description": "[Prose](http://prose.io) is a web-based interface for managing text-based content in your GitHub repositories. Use it to create, edit, and delete files, and save your changes directly to GitHub.",
+  "dependencies": {
+    "jquery-browserify": "~1.8.1",
+    "chosen-jquery-browserify": "~0.9.15",
+    "js-yaml": "~2.0.4",
+    "backbone": "~1.0.0",
+    "underscore": "~1.4.4",
+    "chrono": "~1.0.4",
+    "js-base64": "~2.1.1",
+    "keymaster": "git://github.com/madrobby/keymaster.git#ddcb72eceb033db",
+    "marked": "~0.2.8",
+    "queue-async": "~1.0.3",
+    "diff": "~1.0.4"
+  },
+  "devDependencies": {
+    "mocha": "~1.9.0",
+    "glob": "~3.1.21",
+    "chai": "~1.5.0",
+    "uglify-js": "~2.2.5",
+    "browserify": "~2.12.0"
+  },
+  "scripts": {
+    "test": "mocha-phantomjs -R min test/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/prose/prose.git"
+  },
+  "author": "Development Seed",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "2f58c9a97bb76b21055fe76b4c97424068ad5386"
+}

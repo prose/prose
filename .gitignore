@@ -1,2 +1,4 @@
-_site/*
 .DS_Store
+node_modules/
+oauth.json
+dist/*

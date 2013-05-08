@@ -1,0 +1,16 @@
+<div class='form-item'>
+  <label for='<%= name %>'><%= label %></label>
+  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>
+    <% _(options).each(function(o) { %>
+      <% if (!o.lang || o.lang === lang) { %>
+        <% if (o.name) { %>
+         <option value='<%= o.value %>'><%= o.name %></option>
+        <% } else if (o.value) { %>
+         <option value='<%= o.value %>'><%= o.value %></option>
+        <% } else { %>
+         <option value='<%= o %>' selected='selected'><%= o %></option>
+        <% } %>
+      <% } %>
+    <% }); %>
+  </select>
+</div>

@@ -1,0 +1,101 @@
+<%
+  var editMode = false;
+  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;
+%>
+
+<div class='prose-menu dropdown-menu'>
+  <div class='inner'>
+    <a href='/' class='icon branding dropdown-hover' data-link=true>Prose</a>
+    <ul class='dropdown'>
+      <li><a target="_blank" class='about' href='./#about'>About</a></li>
+      <li><a target="_blank" class='help' href='https://github.com/prose/prose'>Developers</a></li>
+      <li class='divider'></li>
+      <li><a href='#'>Prose v1.0.0</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class='limiter'>
+  <div id='heading' class='heading clearfix'></div>
+</div>
+<div class='limiter'>
+  <div id='content' class='application content'></div>
+</div>
+
+<% if (!error) { %>
+  <div id='drawer' class='sidebar'></div>
+<% } %>
+
+<% if (!error) { %>
+  <div class='vert navigation<% if (editMode) { %> editing<% } %>'>
+    <ul class='project nav'>
+      <li>
+        <a href='#' class='ico round repos <% if (!mode) { %>active<% } %>'>
+          <span class='popup round arrow-right'>Explore Projects</span>
+        </a>
+      </li>
+      <% if (repo) { %>
+        <li>
+        <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='ico round folder <% if (mode === "tree") { %>active<% } %>'>
+            <span class='popup round arrow-right'><%= repo %></span>
+          </a>
+        </li>
+        <% if (window.authenticated) { %>
+          <li>
+            <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='ico round new new-file'>
+              <span class='popup round arrow-right'>New File</span>
+            </a>
+          </li>
+        <% } %>
+      <% } %>
+    </ul>
+
+    <% if (editMode) { %>
+    <ul class='post-views nav'>
+      <li>
+        <a href='#' class='ico round pencil edit' data-state='edit'>
+          <span class='popup round arrow-right'>Edit</span>
+        </a>
+      </li>
+      <% if (markdown || mode === 'new') { %>
+        <li>
+          <a href='#' class='ico round eye preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>
+            <span class='popup round arrow-right'>Preview</span>
+          </a>
+        </li>
+      <% } %>
+
+      <% if (window.authenticated) { %>
+        <% if (jekyll) { %>
+        <li>
+          <a href='#' class='ico round metadata meta' data-state='meta'>
+            <span class='popup round arrow-right'>Meta Data</span>
+          </a>
+        </li>
+        <% } %>
+      <li>
+        <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>
+          <span class='popup round arrow-right'>Post Settings</span>
+        </a>
+      </li>
+      <% } %>
+    </ul>
+    <% } %>
+
+    <ul class='auth nav'>
+      <% if (window.authenticated) { %>
+      <li>
+        <a href='#' class='ico round switch logout'>
+          <span class='popup round arrow-right'>Logout <%= app.username %></span>
+        </a>
+      </li>
+      <% } else { %>
+      <li>
+        <a class='ico round switch login' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>
+          <span class='popup round arrow-right'>Sign in using GitHub</span>
+        </a>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+<% } %>

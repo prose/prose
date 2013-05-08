@@ -1,0 +1,18 @@
+<% if (alterable) { %>
+  <a href='#' class='avatar save-action round fl'>
+    <span class='ico status'></span>
+    <span class='popup round arrow-left'>Ctrl&nbsp;+&nbsp;S</span>
+    <%= avatar %>
+  </a>
+  <div class='fl details'>
+    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
+    <input type='text' class='filepath' value='<%= title %>'>
+    <div class='mask'></div>
+  </div>
+<% } else { %>
+  <div class='avatar round fl'><%= avatar %></div>
+  <div class='fl details'>
+    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>
+    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>
+  </div>
+<% } %>
