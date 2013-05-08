@@ -884,41 +884,59 @@ module.exports = Backbone.View.extend({
     },
 
     markdownSnippet: function(e) {
-      var key = $(e.target, this.el).data('key');
-      var snippet = $(e.target, this.el).data('snippet');
+      var $target = $(e.target, this.el);
+      var key = $target.data('key');
+      var snippet = $target.data('snippet');
       var selection = _.trim(this.editor.getSelection());
 
-      if (this.editor.getSelection !== '') {
-        switch(key) {
-          case 'bold':
-            this.bold(selection);
-          break;
-          case 'italic':
-            this.italic(selection);
-          break;
-          case 'heading':
-            this.heading(selection);
-          break;
-          case 'sub-heading':
-            this.subHeading(selection);
-          break;
-          case 'quote':
-            this.quote(selection);
-          break;
-          default:
-            this.editor.replaceSelection(snippet);
-          break;
+      if (snippet) {
+        if (this.editor.getSelection !== '') {
+          switch(key) {
+            case 'bold':
+              this.bold(selection);
+            break;
+            case 'italic':
+              this.italic(selection);
+            break;
+            case 'heading':
+              this.heading(selection);
+            break;
+            case 'sub-heading':
+              this.subHeading(selection);
+            break;
+            case 'quote':
+              this.quote(selection);
+            break;
+            default:
+              this.editor.replaceSelection(snippet);
+            break;
+          }
+          this.editor.focus();
+        } else {
+          this.editor.replaceSelection(snippet);
+          this.editor.focus();
         }
-        this.editor.focus();
-      } else {
-        this.editor.replaceSelection(snippet);
-        this.editor.focus();
+      } else if ($target.data('dialog')) {
+        // This condition handles the link and media link in the toolbar.
+        var tmpl;
+        var $dialog = $('#dialog', this.el);
+
+        if ($target.hasClass('active')) {
+          $target.removeClass('active');
+          $dialog.empty();
+        } else {
+          $target.addClass('active');
+          if (key === 'link') {
+            tmpl = _(app.templates.linkDialog).template();
+            $dialog.empty().append(tmpl());
+          }
+        }
       }
 
       return false;
     },
 
-    heading: function(s) {
+    heading: function(){
       if (s.charAt(0) === '#' && s.charAt(1) !== '#') {
         this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
       } else {

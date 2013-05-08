@@ -990,9 +990,6 @@ ins {
     -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.5);
             box-shadow:0 1px 1px rgba(255,255,255,0.5);
     }
-  .toolbar .inner {
-    padding:10px 15px 0;
-    }
 
 .topbar.fixed {
   position:fixed;
@@ -1093,6 +1090,17 @@ ins {
   .fixed.toolbar .save-action {
     display:block;
     }
+
+.toolbar .dialog {
+  background:#f8f8f8;
+  border-top:1px solid #D4D7D9;
+  position:absolute;
+  top:40px;
+  width:100%;
+  -webkit-border-radius:0 0 4px 4px;
+          border-radius:0 0 4px 4px;
+  }
+
 
 .menu li {
   float:left;
@@ -1407,7 +1415,7 @@ ins {
   }
 .chzn-container-single .chzn-single {
   background-color:#fff;
-  border:1px solid #868f93;
+  border:1px solid #D4D7D9;
   display:block;
   overflow:hidden;
   white-space:nowrap;
@@ -1500,7 +1508,7 @@ ins {
 
 .chzn-container-multi .chzn-choices {
   background-color:#fff;
-  border:1px solid #868f93;
+  border:1px solid #D4D7D9;
   margin:0;
   padding:0;
   cursor:text;
