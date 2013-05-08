@@ -965,7 +965,9 @@ module.exports = Backbone.View.extend({
       }
     },
 
-    remove: function () {
+    remove: function() {
+      this.stashFile();
+
       this.eventRegister.unbind('edit', this.postViews);
       this.eventRegister.unbind('preview', this.preview);
       this.eventRegister.unbind('deleteFile', this.deleteFile);
@@ -979,7 +981,7 @@ module.exports = Backbone.View.extend({
       // Clear any file state classes in #prose
       this.eventRegister.trigger('updateSaveState', '', '');
 
-      $(window).unbind('pagehide');
+      $(window).off('pagehide');
       Backbone.View.prototype.remove.call(this);
     }
 });
