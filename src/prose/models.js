@@ -493,8 +493,8 @@ module.exports = {
     // Wait until contents are ready.
 
     function onceReady(cb) {
-      _.delay(function () {
-        forkedRepo.contents('', function (err, contents) {
+      _.delay(function() {
+        forkedRepo.contents(branch, '', function(err, contents) {
           if (contents) {
             cb();
           } else {
