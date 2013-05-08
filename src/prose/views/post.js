@@ -127,8 +127,11 @@ module.exports = Backbone.View.extend({
 
     preview: function(e) {
       $('#prose').toggleClass('open', false);
-
-      if (this.model.metadata && this.model.metadata.layout) {
+      if (app.state.config.prose &&
+        app.state.config.prose.siteurl &&
+        this.model.metadata &&
+        this.model.metadata.layout
+      ){
         var hash = window.location.hash.split('/');
         hash[2] = 'preview';
         if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
@@ -140,7 +143,9 @@ module.exports = Backbone.View.extend({
           target: '_blank',
           href: hash.join('/')
         });
+        return true;
       } else {
+        e.preventDefault();
         // Vertical Nav
         $('.post-views a').removeClass('active');
         $('.post-views .preview').addClass('active');
@@ -153,6 +158,7 @@ module.exports = Backbone.View.extend({
 
         app.state.mode = 'blob';
         this.updateURL();
+        return false;
       }
     },
 
