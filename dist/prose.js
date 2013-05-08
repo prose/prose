@@ -9910,7 +9910,7 @@ auth.done(function(res) {
   }
 });
 
-},{"./models":3,"./views/app":4,"./views/notification":5,"./views/start":6,"./views/preview":7,"./views/profile":8,"./views/posts":9,"./views/post":10,"./views/page":11,"../../dist/templates":1,"./router":12,"underscore":13,"jquery-browserify":14,"backbone":15}],16:[function(require,module,exports){
+},{"./models":3,"./views/app":4,"./views/notification":5,"./views/start":6,"./views/preview":7,"./views/profile":8,"./views/posts":9,"./views/post":10,"./views/page":11,"../../dist/templates":1,"./router":12,"jquery-browserify":13,"underscore":14,"backbone":15}],16:[function(require,module,exports){
 function tryParse(obj) {
   try {
     return JSON.parse(obj);
@@ -9982,7 +9982,7 @@ cookie.clear = function() {
 
 module.exports = cookie;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11211,7 +11211,7 @@ module.exports = cookie;
 }).call(this);
 
 })()
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -20994,8 +20994,10 @@ module.exports = {
                     }
                   }
 
-                  // TODO: temporary fix, break history sidebar into a discrete view
-                  app.eventRegister.trigger('sidebarContext', app.state, 'posts');
+                  if (app.state.mode === 'tree') {
+                    // TODO: temporary fix, break history sidebar into a discrete view
+                    app.eventRegister.trigger('sidebarContext', app.state);
+                  }
                 });
               }
             });
@@ -21042,8 +21044,8 @@ module.exports = {
     // Wait until contents are ready.
 
     function onceReady(cb) {
-      _.delay(function () {
-        forkedRepo.contents('', function (err, contents) {
+      _.delay(function() {
+        forkedRepo.contents(branch, '', function(err, contents) {
           if (contents) {
             cb();
           } else {
@@ -21390,7 +21392,7 @@ module.exports = {
   }
 };
 
-},{"./cookie":16,"../libs/github":17,"jquery-browserify":14,"underscore":13,"queue-async":18,"js-yaml":19}],12:[function(require,module,exports){
+},{"./cookie":16,"../libs/github":17,"jquery-browserify":13,"underscore":14,"js-yaml":18,"queue-async":19}],12:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21675,7 +21677,7 @@ module.exports = Backbone.Router.extend({
   }
 });
 
-},{"./util":20,"jquery-browserify":14,"underscore":13,"backbone":15}],18:[function(require,module,exports){
+},{"./util":20,"jquery-browserify":13,"underscore":14,"backbone":15}],19:[function(require,module,exports){
 (function() {
   if (typeof module === "undefined") self.queue = queue;
   else module.exports = queue;
@@ -21859,12 +21861,14 @@ module.exports = Backbone.View.extend({
       $('#heading').empty().append(heading(data));
     },
 
-    sidebarContext: function(data, context) {
+    sidebarContext: function(data) {
+
+      // debugger;
       var sidebarTmpl;
 
-      if (context === 'post') {
+      if (app.state.file) {
         sidebarTmpl = _(app.templates.settings).template();
-      } else if (context === 'posts') {
+      } else if (app.state.mode === 'tree') {
         sidebarTmpl = _(app.templates.sidebarProject).template();
       }
 
@@ -22042,54 +22046,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":14,"underscore":13,"backbone":15}],6:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  id: 'start',
-  className: 'start',
-
-  render: function() {
-    var tmpl = _(window.app.templates.start).template();
-    $(this.el).empty().append(tmpl(this.model));
-    return this;
-  }
-});
-
-},{"jquery-browserify":14,"underscore":13,"backbone":15}],7:[function(require,module,exports){
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  render: function() {
-    this.eventRegister = app.eventRegister;
-
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', 'Previewing ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    this.stashApply();
-    _.preview(this);
-    return this;
-  },
-
-  stashApply: function() {
-    if (!window.sessionStorage) return false;
-
-    var storage = window.sessionStorage,
-        filepath = window.location.hash.split('/').slice(4).join('/');
-
-    var stash = JSON.parse(storage.getItem(filepath));
-
-    if (stash) {
-      this.model.content = stash.content;
-      this.model.metadata = stash.metadata;
-    }
-  }
-});
-
-},{"underscore":13,"js-yaml":19,"backbone":15}],5:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":13,"underscore":14,"backbone":15}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22134,7 +22091,54 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{"jquery-browserify":14,"underscore":13,"backbone":15}],8:[function(require,module,exports){
+},{"jquery-browserify":13,"underscore":14,"backbone":15}],6:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  id: 'start',
+  className: 'start',
+
+  render: function() {
+    var tmpl = _(window.app.templates.start).template();
+    $(this.el).empty().append(tmpl(this.model));
+    return this;
+  }
+});
+
+},{"jquery-browserify":13,"underscore":14,"backbone":15}],7:[function(require,module,exports){
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  render: function() {
+    this.eventRegister = app.eventRegister;
+
+    var pathTitle = (app.state.path) ? app.state.path : '';
+    this.eventRegister.trigger('documentTitle', 'Previewing ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    this.stashApply();
+    _.preview(this);
+    return this;
+  },
+
+  stashApply: function() {
+    if (!window.sessionStorage) return false;
+
+    var storage = window.sessionStorage,
+        filepath = window.location.hash.split('/').slice(4).join('/');
+
+    var stash = JSON.parse(storage.getItem(filepath));
+
+    if (stash) {
+      this.model.content = stash.content;
+      this.model.metadata = stash.metadata;
+    }
+  }
+});
+
+},{"underscore":14,"js-yaml":18,"backbone":15}],8:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22257,7 +22261,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":14,"underscore":13,"backbone":15}],9:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":13,"underscore":14,"backbone":15}],9:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -22313,7 +22317,8 @@ module.exports = Backbone.View.extend({
 
     var pathTitle = (app.state.path) ? '/' + app.state.path : '';
     this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
-    this.eventRegister.trigger('sidebarContext', app.state, 'posts');
+
+    this.eventRegister.trigger('sidebarContext', app.state);
     this.eventRegister.trigger('headerContext', header);
 
     var tmpl = _(app.templates.posts).template();
@@ -22469,7 +22474,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././util":20,"jquery-browserify":14,"underscore":13,"js-yaml":19,"keymaster":21,"backbone":15}],10:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":13,"underscore":14,"js-yaml":18,"keymaster":21,"backbone":15}],10:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -22528,7 +22533,7 @@ module.exports = Backbone.View.extend({
       if (app.state.mode === 'blob') context = 'Previewing ';
 
       this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-      this.eventRegister.trigger('sidebarContext', this.data, 'post');
+      this.eventRegister.trigger('sidebarContext', this.data);
       this.renderHeading();
 
       var tmpl = _(window.app.templates.post).template();
@@ -23456,7 +23461,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":14,"chosen-jquery-browserify":22,"underscore":13,"js-yaml":19,"keymaster":21,"marked":23,"backbone":15,"diff":24}],11:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":13,"chosen-jquery-browserify":22,"underscore":14,"js-yaml":18,"keymaster":21,"marked":23,"backbone":15,"diff":24}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -23480,7 +23485,7 @@ module.exports = Backbone.View.extend({
 
 
 
-},{".././util":20,"jquery-browserify":14,"underscore":13,"chosen-jquery-browserify":22,"js-yaml":19,"keymaster":21,"marked":23,"backbone":15,"diff":24}],15:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":13,"chosen-jquery-browserify":22,"underscore":14,"js-yaml":18,"keymaster":21,"marked":23,"backbone":15,"diff":24}],15:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -25054,7 +25059,7 @@ module.exports = Backbone.View.extend({
 }).call(this);
 
 })()
-},{"underscore":13}],19:[function(require,module,exports){
+},{"underscore":14}],18:[function(require,module,exports){
 module.exports = require('./lib/js-yaml.js');
 
 },{"./lib/js-yaml.js":25}],21:[function(require,module,exports){
@@ -28432,7 +28437,7 @@ var _ = require('underscore');
   module.exports = Github;
 }).call(this);
 
-},{"underscore":13}],20:[function(require,module,exports){
+},{"underscore":14}],20:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -28876,7 +28881,7 @@ module.exports = {
   }
 };
 
-},{"jquery-browserify":14,"underscore":13,"js-yaml":19,"marked":23,"queue-async":18,"chrono":26}],25:[function(require,module,exports){
+},{"jquery-browserify":13,"underscore":14,"js-yaml":18,"marked":23,"queue-async":19,"chrono":26}],25:[function(require,module,exports){
 'use strict';
 
 
@@ -32150,6 +32155,82 @@ module.exports = new Type('tag:yaml.org,2002:null', {
   }
 });
 
+},{"../common":38,"../type":29}],44:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
 },{"../common":38,"../type":29}],45:[function(require,module,exports){
 'use strict';
 
@@ -32233,82 +32314,6 @@ module.exports = new Type('tag:yaml.org,2002:int', {
       octal:       [ 8,  'oct' ],
       decimal:     [ 10, 'dec' ],
       hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":38,"../type":29}],44:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
     }
   }
 });
@@ -32417,26 +32422,6 @@ module.exports = new Type('tag:yaml.org,2002:float', {
   }
 });
 
-},{"../common":38,"../type":29}],48:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
 },{"../common":38,"../type":29}],47:[function(require,module,exports){
 'use strict';
 
@@ -32527,6 +32512,26 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
     kind: 'object',
     instanceOf: Date,
     representer: representYamlTimestamp
+  }
+});
+
+},{"../common":38,"../type":29}],48:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
   }
 });
 

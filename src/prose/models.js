@@ -445,8 +445,10 @@ module.exports = {
                     }
                   }
 
-                  // TODO: temporary fix, break history sidebar into a discrete view
-                  app.eventRegister.trigger('sidebarContext', app.state, 'posts');
+                  if (app.state.mode === 'tree') {
+                    // TODO: temporary fix, break history sidebar into a discrete view
+                    app.eventRegister.trigger('sidebarContext', app.state);
+                  }
                 });
               }
             });
@@ -493,8 +495,8 @@ module.exports = {
     // Wait until contents are ready.
 
     function onceReady(cb) {
-      _.delay(function () {
-        forkedRepo.contents('', function (err, contents) {
+      _.delay(function() {
+        forkedRepo.contents(branch, '', function(err, contents) {
           if (contents) {
             cb();
           } else {
