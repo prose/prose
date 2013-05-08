@@ -418,7 +418,10 @@ module.exports = Backbone.View.extend({
       if (stash && stash.sha === window.app.state.sha) {
         // Restore from stash if file sha hasn't changed
         if (this.editor) this.editor.setValue(stash.content);
-        if (this.metadataEditor) this.metadataEditor.setValue(stash.metadata);
+        if (this.metadataEditor) {
+          this.rawEditor.setValue('');
+          this.metadataEditor.setValue(stash.metadata);
+        }
       } else if (item) {
         // Remove expired content
         store.removeItem(filepath);
@@ -570,6 +573,20 @@ module.exports = Backbone.View.extend({
             }));
           }
         });
+
+        $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>')
+          .prepend('<label for="raw">Raw Metadata</label>')
+          .appendTo($metadataEditor);
+
+        view.rawEditor = CodeMirror(document.getElementById('raw'), {
+          mode: 'yaml',
+          value: '',
+          lineWrapping: true,
+          extraKeys: view.keyMap(),
+          theme: 'prose-bright'
+        });
+
+        view.rawEditor.on('change', _.bind(view.makeDirty, view));
 
         setValue(model.metadata);
         $('.chzn-select').chosen();
@@ -727,20 +744,6 @@ module.exports = Backbone.View.extend({
 
             if (view.rawEditor) {
               view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
-            } else {
-              $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>')
-                .prepend('<label for="raw">Raw Metadata</label>')
-                .appendTo($metadataEditor);
-
-              view.rawEditor = CodeMirror(document.getElementById('raw'), {
-                  mode: 'yaml',
-                  value: jsyaml.dump(raw),
-                  lineWrapping: true,
-                  extraKeys: view.keyMap(),
-                  theme: 'prose-bright'
-              });
-
-              view.rawEditor.on('change', _.bind(view.makeDirty, view));
             }
           }
         });
