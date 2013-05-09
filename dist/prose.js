@@ -9844,8 +9844,16 @@ Liquid.Block.prototype.unknownTag = function(tag, params, tokens) {
   }
 };
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-var templates = {"app":"<div id='loader' class='loader'></div>\n\n<%\n  var editMode = false;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner'>\n    <a href='/' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown'>\n      <li><a class='about' href='./#about'>About</a></li>\n      <li><a class='help' href='https://github.com/prose/prose'>Developers</a></li>\n      <li class='divider'></li>\n      <li><a href='#'>Prose v1.0.0</a></li>\n    </ul>\n  </div>\n</div>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<% if (!error) { %>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<% if (!error) { %>\n  <div class='vert navigation<% if (editMode) { %> editing<% } %>'>\n    <ul class='project nav'>\n      <li>\n        <a href='#' class='ico round repos <% if (!mode) { %>active<% } %>'>\n          <span class='popup round arrow-right'>Explore Projects</span>\n        </a>\n      </li>\n      <% if (repo) { %>\n        <li>\n        <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='ico round folder <% if (mode === \"tree\") { %>active<% } %>'>\n            <span class='popup round arrow-right'><%= repo %></span>\n          </a>\n        </li>\n        <% if (window.authenticated) { %>\n          <li>\n            <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n              <span class='popup round arrow-right'>New File</span>\n            </a>\n          </li>\n        <% } %>\n      <% } %>\n    </ul>\n\n    <% if (editMode) { %>\n    <ul class='post-views nav'>\n      <li>\n        <a href='#' class='ico round pencil edit' data-state='edit'>\n          <span class='popup round arrow-right'>Edit</span>\n        </a>\n      </li>\n      <% if (markdown || mode === 'new') { %>\n        <li>\n          <a href='#' class='ico round eye preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n            <span class='popup round arrow-right'>Preview</span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (window.authenticated) { %>\n        <% if (jekyll) { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'>Meta Data</span>\n          </a>\n        </li>\n        <% } %>\n      <li>\n        <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n          <span class='popup round arrow-right'>Post Settings</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n    <% } %>\n\n    <ul class='auth nav'>\n      <% if (window.authenticated) { %>\n      <li>\n        <a href='#' class='ico round switch logout'>\n          <span class='popup round arrow-right'>Logout <%= app.username %></span>\n        </a>\n      </li>\n      <% } else { %>\n      <li>\n        <a class='ico round switch login' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n          <span class='popup round arrow-right'>Sign in using GitHub</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n  </div>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon fl round folder'></span>\n    <span class='details fl'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n  <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n    <span class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n  </a>\n  <% } %>\n\n  <div class='fl details'>\n    <% if (isBinary) { %>\n      <h3 class='title'><%= name %></h3>\n    <% } else { %>\n        <% if (extension === 'md') { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n\n  <div class='actions cleafix'>\n    <% if (!isBinary) { %>\n      <a class='clearfix'\n        title='Edit this File'\n        href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n        Edit\n      </a>\n    <% } %>\n    <% if (authenticated && writePermissions) { %>\n      <a\n        class='delete ico inline rubbish small'\n        title='Delete this File'\n        data-user='<%= user %>'\n        data-repo='<%= repo %>'\n        data-branch='<%= branch %>'\n        data-file='<%= name %>'\n        href='#'>\n        <span class='popup round arrow-right'>Delete this file?</span>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <a href='#' class='avatar save-action round fl'>\n    <span class='ico status'></span>\n\n    <% if (writeable) { %>\n      <span class='popup round arrow-left'>Ctrl&nbsp;+&nbsp;S</span>\n    <% } else { %>\n      <span class='popup round arrow-left'>Submit Change</span>\n    <% } %>\n\n    <%= avatar %>\n  </a>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n    <input type='text' class='filepath' value='<%= title %>'>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","loading":"<div class='loading clearfix'>\n  <div class='loading-icon fl'></div>\n  <span class='fl'><%= message %></span>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      Please login with your GitHub account to access that project.\n      <p><a class='button round' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Sign in</a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'>Create it </a></p>\n      <% } %>\n      <p><a class='button round' href='#'>Go back </a></p>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='inner editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'></div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar toolbar round'>\n        <% if (jekyll && !metadata.published) { %>\n          <a href='#' class='fr flag unpublished-flag'><em>Unpublished</em></a>\n        <% } %>\n        <div class='options clearfix'>\n          <a href='#' class='save-action round fl'>\n            <span class='ico status'></span>\n\n            <% if (writeable) { %>\n              <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>\n            <% } else { %>\n              <span class='popup round arrow-top'>Submit Change</span>\n            <% } %>\n\n            <%= avatar %>\n          </a>\n          <% if (markdown) { %>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"# Heading\\n\\n\") %>'>h1</a></li>\n              <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"## Sub Heading\\n\\n\") %>'>h2</a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a class='ico small link' title='Insert Link' href='#' data-key='link' data-snippet='<% print(\"[Google](http://google.com)\\n\\n\") %>'></a></li>\n              <li><a class='ico small picture' title='Insert Image' href='#' data-key='image' data-snippet='<% print(\"![picture alt](http://placekitten.com/200/300)\\n\\n\") %>'></a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a href='#' title='Bold' data-key='bold' data-snippet='**text**'>B</a></li>\n              <li><a class='ico small italic' data-key='italic' href='#' title='Italic' data-snippet='_text_'></a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a class='ico small quote' title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'></a></li>\n              <li><a class='ico small list' href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'></a></li>\n              <li><a class='ico small numbered-list' href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'></a></li>\n            </ul>\n            <ul class='group round clearfix'>\n              <li><a class='ico small round question' href='http://daringfireball.net/projects/markdown/syntax' target='_blank'>\n              <span class='popup round arrow-top'>More About Markdown</span>\n              </a></li>\n            </ul>\n          <% } %>\n        </div>\n      </div>\n    </div>\n    <div id='code'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter Files' />\n    </div>\n  </div>\n</div>\n\n<div class='listing'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar content-search'>\n    <span class='ico search inline fr'></span>\n    <input type='text' id='filter' placeholder='Filter projects' />\n  </div>\n</div>\n\n<ul id='projects' class='projects listing'></ul>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='fl icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='fl icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (fork && private) { %>\n        <span class='fl icon round repo private fork' title='Forked from another project'></span>\n      <% } else if (fork) { %>\n        <span class='fl icon round repo fork' title='Forked from another project'></span>\n      <% } else if (private) { %>\n        <span class='fl icon round repo private'></span>\n      <% } else { %>\n        <span class='fl icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details fl'>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n\n    <div class='fr actions clearfix'>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        View Project\n      </a>\n      <% if (homepage) { %>\n        <a href='//<%= homepage %>'>View Site</a>\n      <% } %>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Post Settings</h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder='Describe your Changes'></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-right'>Cancel</span>\n      </a>\n    </div>\n\n    <a class='save button round' href='#'>\n      <%= writeable ? 'Save' : 'Submit Change' %>\n      <span class='popup round arrow-right'>Ctrl&nbsp;+&nbsp;s</span>\n    </a>\n\n    <% if (app.state.config && app.state.config.languages) { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (app.state.mode !== 'new') { %>\n      <a class='delete button round' href='#'>Delete this File</a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"\n\n\n<% if (authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'>Switch Branch</h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n<% if (authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'>Your Recent History</h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username];\n          var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                Restore?\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n","start":"<% if (!authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='/about.html'>Learn more</a></p>\n      <a class='round button' href='https://github.com/login/oauth/authorize?client_id=<%= window.app.auth.id %>&scope=repo,user,gist'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' />\n</div>\n"}; module.exports = templates;
+var templates = {"app":"<div id='loader' class='loader'></div>\n\n<%\n  var editMode = false;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner'>\n    <a href='/' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown'>\n      <li><a class='about' href='./#about'>About</a></li>\n      <li><a class='help' href='https://github.com/prose/prose'>Developers</a></li>\n      <li class='divider'></li>\n      <li><a href='#'>Prose v1.0.0</a></li>\n    </ul>\n  </div>\n</div>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<% if (!error) { %>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<% if (!error) { %>\n  <div class='vert navigation<% if (editMode) { %> editing<% } %>'>\n    <ul class='project nav'>\n      <li>\n        <a href='#' class='ico round repos <% if (!mode) { %>active<% } %>'>\n          <span class='popup round arrow-right'>Explore Projects</span>\n        </a>\n      </li>\n      <% if (repo) { %>\n        <li>\n        <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='ico round folder <% if (mode === \"tree\") { %>active<% } %>'>\n            <span class='popup round arrow-right'><%= repo %></span>\n          </a>\n        </li>\n        <% if (window.authenticated) { %>\n          <li>\n            <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n              <span class='popup round arrow-right'>New File</span>\n            </a>\n          </li>\n        <% } %>\n      <% } %>\n    </ul>\n\n    <% if (editMode) { %>\n    <ul class='post-views nav'>\n      <li>\n        <a href='#' class='ico round pencil edit' data-state='edit'>\n          <span class='popup round arrow-right'>Edit</span>\n        </a>\n      </li>\n      <% if (markdown || mode === 'new') { %>\n        <li>\n          <a href='#' class='ico round eye preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n            <span class='popup round arrow-right'>Preview</span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (window.authenticated) { %>\n        <% if (jekyll) { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'>Meta Data</span>\n          </a>\n        </li>\n        <% } %>\n      <li>\n        <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n          <span class='popup round arrow-right'>Post Settings</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n    <% } %>\n\n    <ul class='auth nav'>\n      <% if (window.authenticated) { %>\n      <li>\n        <a href='#' class='ico round switch logout'>\n          <span class='popup round arrow-right'>Logout <%= app.username %></span>\n        </a>\n      </li>\n      <% } else { %>\n      <li>\n      <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n          <span class='popup round arrow-right'>Sign in using GitHub</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n  </div>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon fl round folder'></span>\n    <span class='details fl'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n  <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n    <span class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n  </a>\n  <% } %>\n\n  <div class='fl details'>\n    <% if (isBinary) { %>\n      <h3 class='title'><%= name %></h3>\n    <% } else { %>\n        <% if (extension === 'md') { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n\n  <div class='actions cleafix'>\n    <% if (!isBinary) { %>\n      <a class='clearfix'\n        title='Edit this File'\n        href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n        Edit\n      </a>\n    <% } %>\n    <% if (authenticated && writePermissions) { %>\n      <a\n        class='delete ico inline rubbish small'\n        title='Delete this File'\n        data-user='<%= user %>'\n        data-repo='<%= repo %>'\n        data-branch='<%= branch %>'\n        data-file='<%= name %>'\n        href='#'>\n        <span class='popup round arrow-right'>Delete this file?</span>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <a href='#' class='avatar save-action round fl'>\n    <span class='ico status'></span>\n\n    <% if (writeable) { %>\n      <span class='popup round arrow-left'>Ctrl&nbsp;+&nbsp;S</span>\n    <% } else { %>\n      <span class='popup round arrow-left'>Submit Change</span>\n    <% } %>\n\n    <%= avatar %>\n  </a>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n    <input type='text' class='filepath' value='<%= title %>'>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","loading":"<div class='loading clearfix'>\n  <div class='loading-icon fl'></div>\n  <span class='fl'><%= message %></span>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p>Please login with your GitHub account to access that project.</p>\n      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Authorize with GitHub</a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'>Create it </a></p>\n      <% } %>\n      <p><a class='button round' href='#'>Go back </a></p>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='inner editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'></div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar toolbar round'>\n        <% if (jekyll && !metadata.published) { %>\n          <a href='#' class='fr flag unpublished-flag'><em>Unpublished</em></a>\n        <% } %>\n        <div class='options clearfix'>\n          <a href='#' class='save-action round fl'>\n            <span class='ico status'></span>\n\n            <% if (writeable) { %>\n              <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>\n            <% } else { %>\n              <span class='popup round arrow-top'>Submit Change</span>\n            <% } %>\n\n            <%= avatar %>\n          </a>\n          <% if (markdown) { %>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"# Heading\\n\\n\") %>'>h1</a></li>\n              <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"## Sub Heading\\n\\n\") %>'>h2</a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a class='ico small link' title='Insert Link' href='#' data-key='link' data-snippet='<% print(\"[Google](http://google.com)\\n\\n\") %>'></a></li>\n              <li><a class='ico small picture' title='Insert Image' href='#' data-key='image' data-snippet='<% print(\"![picture alt](http://placekitten.com/200/300)\\n\\n\") %>'></a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a href='#' title='Bold' data-key='bold' data-snippet='**text**'>B</a></li>\n              <li><a class='ico small italic' data-key='italic' href='#' title='Italic' data-snippet='_text_'></a></li>\n            </ul>\n            <ul class='group round markdown-snippets clearfix'>\n              <li><a class='ico small quote' title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'></a></li>\n              <li><a class='ico small list' href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'></a></li>\n              <li><a class='ico small numbered-list' href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'></a></li>\n            </ul>\n            <ul class='group round clearfix'>\n              <li><a class='ico small round question' href='http://daringfireball.net/projects/markdown/syntax' target='_blank'>\n              <span class='popup round arrow-top'>More About Markdown</span>\n              </a></li>\n            </ul>\n          <% } %>\n        </div>\n      </div>\n    </div>\n    <div id='code'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter Files' />\n    </div>\n  </div>\n</div>\n\n<div class='listing'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar content-search'>\n    <span class='ico search inline fr'></span>\n    <input type='text' id='filter' placeholder='Filter projects' />\n  </div>\n</div>\n\n<ul id='projects' class='projects listing'></ul>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='fl icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='fl icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (fork && private) { %>\n        <span class='fl icon round repo private fork' title='Forked from another project'></span>\n      <% } else if (fork) { %>\n        <span class='fl icon round repo fork' title='Forked from another project'></span>\n      <% } else if (private) { %>\n        <span class='fl icon round repo private'></span>\n      <% } else { %>\n        <span class='fl icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details fl'>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n\n    <div class='fr actions clearfix'>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        View Project\n      </a>\n      <% if (homepage) { %>\n        <a href='//<%= homepage %>'>View Site</a>\n      <% } %>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Post Settings</h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder='Describe your Changes'></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-right'>Cancel</span>\n      </a>\n    </div>\n\n    <a class='save button round' href='#'>\n      <%= writeable ? 'Save' : 'Submit Change' %>\n      <span class='popup round arrow-right'>Ctrl&nbsp;+&nbsp;s</span>\n    </a>\n\n    <% if (app.state.config && app.state.config.languages) { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (app.state.mode !== 'new') { %>\n      <a class='delete button round' href='#'>Delete this File</a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"\n\n\n<% if (authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'>Switch Branch</h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n<% if (authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'>Your Recent History</h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username];\n          var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                Restore?\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n","start":"<% if (!authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='/about.html'>Learn more</a></p>\n      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo,user,gist'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' />\n</div>\n"}; module.exports = templates;
 },{}],2:[function(require,module,exports){
+module.exports={
+  "api": "https://api.github.com",
+  "site": "https://github.com",
+  "clientId": "c602a8bd54b1e774f864",
+  "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
+}
+
+},{}],3:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -9872,39 +9880,29 @@ window.app = {
 };
 
 // Bootup
-var auth = $.getJSON('oauth.json');
-auth.done(function(res) {
+if (app.models.authenticate()) {
+  app.models.loadApplication(function(err, data) {
+    if (err) {
+      var view = new window.app.views.Notification({
+        'type': 'eror',
+        'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
+      }).render();
 
-  var view;
-  window.app.auth = {
-    id: res.clientId,
-    url: res.gatekeeperUrl
-  };
+      $('#prose').empty().append(view.el);
+    } else {
 
-  if (window.app.models.authenticate()) {
-    window.app.models.loadApplication(function(err, data) {
-      if (err) {
-        view = new window.app.views.Notification({
-          'type': 'eror',
-          'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
-        }).render();
+      // Initialize router
+      window.router = new app.router({
+        model: data
+      });
 
-        $('#prose').empty().append(view.el);
-      } else {
+      // Start responding to routes
+      Backbone.history.start();
+    }
+  });
+}
 
-        // Initialize router
-        window.router = new app.router({
-          model: data
-        });
-
-        // Start responding to routes
-        Backbone.history.start();
-      }
-    });
-  }
-});
-
-},{"./models":3,"./views/app":4,"./views/notification":5,"./views/start":6,"./views/preview":7,"./views/profile":8,"./views/posts":9,"./views/post":10,"./views/page":11,"../../dist/templates":1,"./router":12,"jquery-browserify":13,"underscore":14,"backbone":15}],16:[function(require,module,exports){
+},{"./models":4,"./views/app":5,"./views/notification":6,"./views/start":7,"./views/preview":8,"./views/profile":9,"./views/posts":10,"./views/post":11,"./views/page":12,"../../dist/templates":1,"./router":13,"jquery-browserify":14,"underscore":15,"backbone":16}],17:[function(require,module,exports){
 function tryParse(obj) {
   try {
     return JSON.parse(obj);
@@ -9976,7 +9974,7 @@ cookie.clear = function() {
 
 module.exports = cookie;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11205,7 +11203,7 @@ module.exports = cookie;
 }).call(this);
 
 })()
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -20540,7 +20538,7 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -20548,12 +20546,20 @@ var queue = require('queue-async');
 var cookie = require('./cookie');
 var Github = require('../libs/github');
 var queue = require('queue-async');
+var oauth = require('../../oauth.json');
 
 // Set up a GitHub object
 // -------
+window.auth = {
+  api: oauth.api || 'http://api.github.com',
+  site: oauth.site || 'http://github.com',
+  id: oauth.clientId,
+  url: oauth.gatekeeperUrl
+};
 
 function github() {
   return new Github({
+    api: auth.api,
     token: cookie.get('oauth-token'),
     username: cookie.get('username'),
     auth: 'oauth'
@@ -20594,9 +20600,10 @@ module.exports = {
 
     // Handle Code
     if (match) {
-      $.getJSON(window.app.auth.url + '/authenticate/' + match[1], function (data) {
+      $.getJSON(auth.url + '/authenticate/' + match[1], function (data) {
         cookie.set('oauth-token', data.token);
         window.authenticated = true;
+
         // Adjust URL
         var regex = new RegExp("\\?code=" + match[1]);
         window.location.href = window.location.href.replace(regex, '').replace('&state=', '');
@@ -21387,7 +21394,7 @@ module.exports = {
   }
 };
 
-},{"./cookie":16,"../libs/github":17,"jquery-browserify":13,"underscore":14,"js-yaml":18,"queue-async":19}],12:[function(require,module,exports){
+},{"../../oauth.json":2,"./cookie":17,"../libs/github":18,"jquery-browserify":14,"underscore":15,"js-yaml":19,"queue-async":20}],13:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21568,7 +21575,7 @@ module.exports = Backbone.Router.extend({
         if (err) return this.notify('error', 'This file does not exist.');
 
         app.state.markdown = data.markdown;
-        data.jekyll = _.jekyll(path, data.file);
+        data.jekyll = !!data.metadata;
         data.lang = _.mode(file);
 
         this.application.render({
@@ -21672,7 +21679,7 @@ module.exports = Backbone.Router.extend({
   }
 });
 
-},{"./util":20,"jquery-browserify":13,"underscore":14,"backbone":15}],19:[function(require,module,exports){
+},{"./util":21,"jquery-browserify":14,"underscore":15,"backbone":16}],20:[function(require,module,exports){
 (function() {
   if (typeof module === "undefined") self.queue = queue;
   else module.exports = queue;
@@ -21755,7 +21762,7 @@ module.exports = Backbone.Router.extend({
   function noop() {}
 })();
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21769,8 +21776,8 @@ module.exports = Backbone.View.extend({
       'click .post-views .preview': 'preview',
       'click .post-views .settings': 'settings',
       'click .post-views .meta': 'meta',
+      'click .auth .logout': 'logout',
       'click a.item.removed': 'restoreFile',
-      'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
       'click a.save-action': 'updateFile',
@@ -22001,13 +22008,9 @@ module.exports = Backbone.View.extend({
       if (e.which === 13) this.eventRegister.trigger('updateFile', e);
     },
 
-    logout: function () {
-      window.app.models.logout();
-      if ($('#start').length > 0) {
-        router.navigate('/', true);
-      } else {
-        window.location.reload();
-      }
+    logout: function() {
+      app.models.logout();
+      window.location.reload();
       return false;
     },
 
@@ -22044,7 +22047,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":13,"underscore":14,"backbone":15}],5:[function(require,module,exports){
+},{".././util":21,"jquery-browserify":14,"underscore":15,"backbone":16}],6:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22086,7 +22089,7 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{"jquery-browserify":13,"underscore":14,"backbone":15}],6:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":15,"backbone":16}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22102,7 +22105,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":13,"underscore":14,"backbone":15}],7:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":15,"backbone":16}],8:[function(require,module,exports){
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
@@ -22133,7 +22136,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"underscore":14,"js-yaml":18,"backbone":15}],8:[function(require,module,exports){
+},{"underscore":15,"js-yaml":19,"backbone":16}],9:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22256,7 +22259,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":13,"underscore":14,"backbone":15}],9:[function(require,module,exports){
+},{".././util":21,"jquery-browserify":14,"underscore":15,"backbone":16}],10:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -22292,7 +22295,7 @@ module.exports = Backbone.View.extend({
 
     // If this repo is writable to the current user we use
     // this check to provide a deletion option to the user
-    this.writePermissions = this.model.permissions.push;
+    this.writePermissions = this.model.permissions && this.model.permissions.push;
 
     this.eventRegister = app.eventRegister;
 
@@ -22469,7 +22472,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././util":20,"jquery-browserify":13,"underscore":14,"js-yaml":18,"keymaster":21,"backbone":15}],10:[function(require,module,exports){
+},{".././util":21,"jquery-browserify":14,"underscore":15,"js-yaml":19,"keymaster":22,"backbone":16}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -22991,7 +22994,7 @@ module.exports = Backbone.View.extend({
           off: 'Publish'
         }));
 
-        _(model.default_metadata).each(function(data) {
+        _(model.default_metadata).each(function(data, key) {
           if (data && typeof data.field === 'object') {
             switch(data.field.element) {
               case 'button':
@@ -23467,7 +23470,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":13,"chosen-jquery-browserify":22,"js-yaml":18,"underscore":14,"keymaster":21,"marked":23,"backbone":15,"diff":24}],11:[function(require,module,exports){
+},{".././util":21,"jquery-browserify":14,"chosen-jquery-browserify":23,"underscore":15,"js-yaml":19,"keymaster":22,"marked":24,"backbone":16,"diff":25}],12:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -23491,7 +23494,7 @@ module.exports = Backbone.View.extend({
 
 
 
-},{".././util":20,"jquery-browserify":13,"chosen-jquery-browserify":22,"underscore":14,"js-yaml":18,"keymaster":21,"marked":23,"backbone":15,"diff":24}],15:[function(require,module,exports){
+},{".././util":21,"jquery-browserify":14,"chosen-jquery-browserify":23,"underscore":15,"js-yaml":19,"keymaster":22,"marked":24,"backbone":16,"diff":25}],16:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -25065,10 +25068,10 @@ module.exports = Backbone.View.extend({
 }).call(this);
 
 })()
-},{"underscore":14}],18:[function(require,module,exports){
+},{"underscore":15}],19:[function(require,module,exports){
 module.exports = require('./lib/js-yaml.js');
 
-},{"./lib/js-yaml.js":25}],21:[function(require,module,exports){
+},{"./lib/js-yaml.js":26}],22:[function(require,module,exports){
 (function(){//     keymaster.js
 //     (c) 2011-2012 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
@@ -25359,7 +25362,7 @@ module.exports = require('./lib/js-yaml.js');
 })(this);
 
 })()
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 (function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -26437,7 +26440,7 @@ module.exports = require('./lib/js-yaml.js');
 
 }).call(this);
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -27516,7 +27519,7 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /* See LICENSE file for terms of use */
 
 /*
@@ -27867,8 +27870,8 @@ if (typeof module !== "undefined") {
     module.exports = JsDiff;
 }
 
-},{}],17:[function(require,module,exports){
-// Github.js 0.7.0
+},{}],18:[function(require,module,exports){
+// Github.js (Modified for prose.io)
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -27878,13 +27881,14 @@ var _ = require('underscore');
 
 (function() {
   var Github;
-  var API_URL = 'https://api.github.com';
 
   Github = window.Github = function(options) {
 
+    var API_URL = options.api || 'https://api.github.com';
+
     // HTTP Request Abstraction
     // =======
-    // 
+    //
     // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
     function _request(method, path, data, cb, raw, sync, headers) {
@@ -27921,12 +27925,16 @@ var _ = require('underscore');
          (options.auth == 'oauth' && options.token) ||
          (options.auth == 'basic' && options.username && options.password)
          ) {
-           xhr.setRequestHeader('Authorization',options.auth == 'oauth'
-             ? 'token '+ options.token
-             : 'Basic ' + Base64.encode(options.username + ':' + options.password)
+           xhr.setRequestHeader('Authorization',options.auth == 'oauth' ?
+            'token '+ options.token :
+            'Basic ' + Base64.encode(options.username + ':' + options.password)
            );
          }
-      data ? xhr.send(JSON.stringify(data)) : xhr.send();
+      if (data) {
+        xhr.send(JSON.stringify(data));
+      } else {
+        xhr.send();
+      }
       if (sync) return xhr.response;
     }
 
@@ -27956,8 +27964,8 @@ var _ = require('underscore');
           links[name] = url;
         }
 
-        if (links['next']) {
-          _request('GET', links['next'].split(API_URL)[1], null, function(err, res, xhr) {
+        if (links.next) {
+          _request('GET', links.next.split(API_URL)[1], null, function(err, res, xhr) {
             if (typeof response.concat === 'function') {
               response = response.concat(res);
             } else if (typeof response === 'string') {
@@ -27973,7 +27981,7 @@ var _ = require('underscore');
         cb(err, response);
       }
     }
-      
+
     // User API
     // =======
 
@@ -28066,7 +28074,7 @@ var _ = require('underscore');
     Github.Repository = function(options) {
       var repo = options.name;
       var user = options.user;
-      
+
       var that = this;
       var repoPath = "/repos/" + user + "/" + repo;
 
@@ -28111,7 +28119,7 @@ var _ = require('underscore');
 
       // Delete a reference
       // --------
-      // 
+      //
       // repo.deleteRef('heads/gh-pages')
       // repo.deleteRef('tags/v1.0')
 
@@ -28391,7 +28399,7 @@ var _ = require('underscore');
       //      }
       //    }
       // }
-      
+
       this.create = function(options, cb){
         _request("POST","/gists", options, cb);
       };
@@ -28439,11 +28447,10 @@ var _ = require('underscore');
       return new Github.Gist({id: id});
     };
   };
-
   module.exports = Github;
 }).call(this);
 
-},{"underscore":14}],20:[function(require,module,exports){
+},{"underscore":15}],21:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -28550,6 +28557,7 @@ _.jekyll = function(path, file) {
 // -------
 
 _.hasMetadata = function(content) {
+  content = content.replace(/\r\n/g, '\n'); // normalize a little bit
   return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
 };
 
@@ -28887,7 +28895,7 @@ module.exports = {
   }
 };
 
-},{"jquery-browserify":13,"underscore":14,"js-yaml":18,"marked":23,"queue-async":19,"chrono":26}],25:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":15,"js-yaml":19,"marked":24,"queue-async":20,"chrono":27}],26:[function(require,module,exports){
 'use strict';
 
 
@@ -28922,10 +28930,10 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":27,"./js-yaml/dumper":28,"./js-yaml/type":29,"./js-yaml/schema":30,"./js-yaml/schema/minimal":31,"./js-yaml/schema/safe":32,"./js-yaml/schema/default":33,"./js-yaml/exception":34,"./js-yaml/require":35}],26:[function(require,module,exports){
+},{"./js-yaml/loader":28,"./js-yaml/dumper":29,"./js-yaml/type":30,"./js-yaml/schema":31,"./js-yaml/schema/minimal":32,"./js-yaml/schema/safe":33,"./js-yaml/schema/default":34,"./js-yaml/exception":35,"./js-yaml/require":36}],27:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
-},{"./lib/chrono":36}],34:[function(require,module,exports){
+},{"./lib/chrono":37}],35:[function(require,module,exports){
 'use strict';
 
 
@@ -28952,7 +28960,7 @@ YAMLException.prototype.toString = function toString(compact) {
 
 module.exports = YAMLException;
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function(){
 
 // CommonJS exports.
@@ -29358,10 +29366,10 @@ Date.prototype.setTimezone = function(val) {
 
 })();
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 // nothing to see here... no file methods for the browser
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 
@@ -30912,91 +30920,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./exception":34,"./common":38,"./mark":39,"./schema/safe":32,"./schema/default":33}],29:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":34}],28:[function(require,module,exports){
+},{"./common":39,"./exception":35,"./mark":40,"./schema/safe":33,"./schema/default":34}],29:[function(require,module,exports){
 'use strict';
 
 
@@ -31435,7 +31359,91 @@ function safeDump(input, options) {
 module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
-},{"./common":38,"./exception":34,"./schema/default":33,"./schema/safe":32}],30:[function(require,module,exports){
+},{"./common":39,"./exception":35,"./schema/default":34,"./schema/safe":33}],30:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":35}],31:[function(require,module,exports){
 'use strict';
 
 
@@ -31540,7 +31548,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":38,"./exception":34,"./type":29}],35:[function(require,module,exports){
+},{"./common":39,"./exception":35,"./type":30}],36:[function(require,module,exports){
 'use strict';
 
 
@@ -31565,7 +31573,7 @@ if (undefined !== require.extensions) {
 
 module.exports = require;
 
-},{"fs":37,"./loader":27}],31:[function(require,module,exports){
+},{"fs":38,"./loader":28}],32:[function(require,module,exports){
 'use strict';
 
 
@@ -31580,7 +31588,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":30,"../type/str":40,"../type/seq":41,"../type/map":42}],32:[function(require,module,exports){
+},{"../schema":31,"../type/str":41,"../type/seq":42,"../type/map":43}],33:[function(require,module,exports){
 'use strict';
 
 
@@ -31607,7 +31615,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":30,"./minimal":31,"../type/null":43,"../type/bool":44,"../type/int":45,"../type/float":46,"../type/timestamp":47,"../type/merge":48,"../type/binary":49,"../type/omap":50,"../type/pairs":51,"../type/set":52}],33:[function(require,module,exports){
+},{"../schema":31,"./minimal":32,"../type/null":44,"../type/bool":45,"../type/int":46,"../type/float":47,"../type/timestamp":48,"../type/merge":49,"../type/binary":50,"../type/omap":51,"../type/pairs":52,"../type/set":53}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -31625,7 +31633,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":30,"./safe":32,"../type/js/undefined":53,"../type/js/regexp":54,"../type/js/function":55}],38:[function(require,module,exports){
+},{"../schema":31,"./safe":33,"../type/js/undefined":54,"../type/js/regexp":55,"../type/js/function":56}],39:[function(require,module,exports){
 'use strict';
 
 
@@ -31687,7 +31695,7 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 
@@ -31767,7 +31775,7 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":38}],56:[function(require,module,exports){
+},{"./common":39}],57:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -32084,7 +32092,7 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":57,"buffer":58}],40:[function(require,module,exports){
+},{"util":58,"buffer":59}],41:[function(require,module,exports){
 'use strict';
 
 
@@ -32097,7 +32105,7 @@ module.exports = new Type('tag:yaml.org,2002:str', {
   }
 });
 
-},{"../type":29}],41:[function(require,module,exports){
+},{"../type":30}],42:[function(require,module,exports){
 'use strict';
 
 
@@ -32110,7 +32118,7 @@ module.exports = new Type('tag:yaml.org,2002:seq', {
   }
 });
 
-},{"../type":29}],42:[function(require,module,exports){
+},{"../type":30}],43:[function(require,module,exports){
 'use strict';
 
 
@@ -32123,7 +32131,7 @@ module.exports = new Type('tag:yaml.org,2002:map', {
   }
 });
 
-},{"../type":29}],43:[function(require,module,exports){
+},{"../type":30}],44:[function(require,module,exports){
 'use strict';
 
 
@@ -32161,7 +32169,7 @@ module.exports = new Type('tag:yaml.org,2002:null', {
   }
 });
 
-},{"../common":38,"../type":29}],44:[function(require,module,exports){
+},{"../common":39,"../type":30}],45:[function(require,module,exports){
 'use strict';
 
 
@@ -32237,7 +32245,7 @@ module.exports = new Type('tag:yaml.org,2002:bool', {
   }
 });
 
-},{"../common":38,"../type":29}],45:[function(require,module,exports){
+},{"../common":39,"../type":30}],46:[function(require,module,exports){
 'use strict';
 
 
@@ -32324,7 +32332,7 @@ module.exports = new Type('tag:yaml.org,2002:int', {
   }
 });
 
-},{"../common":38,"../type":29}],46:[function(require,module,exports){
+},{"../common":39,"../type":30}],47:[function(require,module,exports){
 'use strict';
 
 
@@ -32428,7 +32436,7 @@ module.exports = new Type('tag:yaml.org,2002:float', {
   }
 });
 
-},{"../common":38,"../type":29}],47:[function(require,module,exports){
+},{"../common":39,"../type":30}],48:[function(require,module,exports){
 'use strict';
 
 
@@ -32521,7 +32529,7 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
   }
 });
 
-},{"../common":38,"../type":29}],48:[function(require,module,exports){
+},{"../common":39,"../type":30}],49:[function(require,module,exports){
 'use strict';
 
 
@@ -32541,7 +32549,7 @@ module.exports = new Type('tag:yaml.org,2002:merge', {
   }
 });
 
-},{"../common":38,"../type":29}],49:[function(require,module,exports){
+},{"../common":39,"../type":30}],50:[function(require,module,exports){
 (function(){// Modified from:
 // https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
 
@@ -32662,7 +32670,7 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
 });
 
 })()
-},{"buffer":58,"../common":38,"../type":29}],50:[function(require,module,exports){
+},{"buffer":59,"../common":39,"../type":30}],51:[function(require,module,exports){
 'use strict';
 
 
@@ -32717,7 +32725,7 @@ module.exports = new Type('tag:yaml.org,2002:omap', {
   }
 });
 
-},{"../common":38,"../type":29}],51:[function(require,module,exports){
+},{"../common":39,"../type":30}],52:[function(require,module,exports){
 'use strict';
 
 
@@ -32760,7 +32768,7 @@ module.exports = new Type('tag:yaml.org,2002:pairs', {
   }
 });
 
-},{"../common":38,"../type":29}],52:[function(require,module,exports){
+},{"../common":39,"../type":30}],53:[function(require,module,exports){
 'use strict';
 
 
@@ -32793,7 +32801,7 @@ module.exports = new Type('tag:yaml.org,2002:set', {
   }
 });
 
-},{"../common":38,"../type":29}],53:[function(require,module,exports){
+},{"../common":39,"../type":30}],54:[function(require,module,exports){
 'use strict';
 
 
@@ -32823,7 +32831,7 @@ module.exports = new Type('tag:yaml.org,2002:js/undefined', {
   }
 });
 
-},{"../../type":29}],54:[function(require,module,exports){
+},{"../../type":30}],55:[function(require,module,exports){
 (function(){'use strict';
 
 
@@ -32882,7 +32890,7 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
 });
 
 })()
-},{"../../common":38,"../../type":29}],57:[function(require,module,exports){
+},{"../../common":39,"../../type":30}],58:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -33235,7 +33243,7 @@ exports.format = function(f) {
   return str;
 };
 
-},{"events":59}],60:[function(require,module,exports){
+},{"events":60}],61:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -33321,247 +33329,7 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],61:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
 },{}],59:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
-
-var EventEmitter = exports.EventEmitter = process.EventEmitter;
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
-
-// By default EventEmitters will print a warning if more than
-// 10 listeners are added to it. This is a useful default which
-// helps finding memory leaks.
-//
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-var defaultMaxListeners = 10;
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!this._events) this._events = {};
-  this._events.maxListeners = n;
-};
-
-
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
-      return false;
-    }
-  }
-
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
-
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-    return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
-    return false;
-  }
-};
-
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
-  }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-
-    // Check for listener leak
-    if (!this._events[type].warned) {
-      var m;
-      if (this._events.maxListeners !== undefined) {
-        m = this._events.maxListeners;
-      } else {
-        m = defaultMaxListeners;
-      }
-
-      if (m && m > 0 && this._events[type].length > m) {
-        this._events[type].warned = true;
-        console.error('(node) warning: possible EventEmitter memory ' +
-                      'leak detected. %d listeners added. ' +
-                      'Use emitter.setMaxListeners() to increase limit.',
-                      this._events[type].length);
-        console.trace();
-      }
-    }
-
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
-};
-
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
-
-})(require("__browserify_process"))
-},{"__browserify_process":61}],58:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -34881,7 +34649,247 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":56,"./buffer_ieee754":60,"base64-js":62}],62:[function(require,module,exports){
+},{"assert":57,"./buffer_ieee754":61,"base64-js":62}],63:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],60:[function(require,module,exports){
+(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
+
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
+//
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
+};
+
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
+    }
+  }
+
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
+
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
+
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
+
+  } else {
+    return false;
+  }
+};
+
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
+
+  if (!this._events) this._events = {};
+
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
+
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
+
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
+
+  return this;
+};
+
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
+};
+
+})(require("__browserify_process"))
+},{"__browserify_process":63}],62:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -34967,7 +34975,7 @@ SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 
@@ -35025,7 +35033,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":38,"../../type":29,"esprima":63}],63:[function(require,module,exports){
+},{"../../common":39,"../../type":30,"esprima":64}],64:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -38923,5 +38931,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}]},{},[2])
+},{}]},{},[3])
 ;
