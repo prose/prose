@@ -428,13 +428,13 @@ module.exports = {
   loader: {
     loading: function(message) {
       var tmpl = _(window.app.templates.loading).template();
-      $('body').append(tmpl({
+      $('#loader').empty().append(tmpl({
         message: message
       }));
     },
 
     loaded: function() {
-      $('#loader').fadeOut(150, function() {
+      $('#loader').find('.loading').fadeOut(150, function() {
         $(this).remove();
       });
     }

@@ -104,6 +104,7 @@ module.exports = Backbone.View.extend({
       if (app.state.mode === 'tree') {
         sidebarTmpl = _(app.templates.sidebarProject).template();
       } else if (data.file) {
+        this.writeable = data.writeable;
         sidebarTmpl = _(app.templates.settings).template();
       }
 
@@ -222,8 +223,12 @@ module.exports = Backbone.View.extend({
       $('.commit', this.el).toggleClass('active');
       $('.button.save', this.el).toggleClass('confirm');
 
-      // TODO Fix this this.model.writable should work as a boolean
-      $('.button.save', this.el).html($('.button.save', this.el).hasClass('confirm') ? 'Commit' : (this.model.writeable ? 'Save' : 'Save'));
+      $('.button.save', this.el)
+        .html($('.button.save', this.el)
+        .hasClass('confirm') ?
+          (this.writeable ? 'Commit' : 'Send Change Request') :
+          (this.writeable ? 'Save' : 'Submit Change'));
+
       $('.commit-message', this.el).focus();
       return false;
     },

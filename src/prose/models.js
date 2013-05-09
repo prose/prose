@@ -534,7 +534,8 @@ module.exports = {
 
   createPullRequest: function(user, repo, pull, cb) {
     repo = this.getRepo(user, repo);
-    repo.createPullRequest(pull, function (err) {
+    repo.createPullRequest(pull, function(err) {
+      if (err) return cb(err);
       cb();
     });
   },

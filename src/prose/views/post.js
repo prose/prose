@@ -101,6 +101,7 @@ module.exports = Backbone.View.extend({
         parentTrail: parentTrail,
         isPrivate: isPrivate,
         title: _.filepath(this.data.path, this.data.file),
+        writeable: this.model.writeable,
         alterable: true
       };
 
@@ -212,7 +213,9 @@ module.exports = Backbone.View.extend({
       this.eventRegister.trigger('updateSaveState', label, 'save');
 
       // Pass a popover span to the avatar icon
-      $('.save-action', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
+      $('.save-action', this.el)
+        .find('.popup')
+        .html(this.model.alterable ? 'Ctrl&nbsp;+&nbsp;S' : 'Submit Change');
     },
 
     toggleButton: function(e) {
@@ -328,29 +331,26 @@ module.exports = Backbone.View.extend({
           view.model.content = view.prevFile;
           view.editor.setValue(view.prevFile);
 
-          window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
-            if (err) {
-              _.delay(function () {
-                view.eventRegister.trigger('updateSaveState', 'Submit Change', '');
-              }, 3000);
+          app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
 
+            if (err) {
               view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
 
-            this.dirty = false;
+            view.dirty = false;
             view.model.persisted = true;
             view.model.file = filename;
             view.updateURL();
             view.prevFile = filecontent;
-            view.eventRegister.trigger('Change Submitted', 'saved');
+            view.eventRegister.trigger('updateSaveState', 'Request Submitted', 'saved');
           });
         } else {
-          view.eventRegister.trigger('! Metadata', 'error');
+          view.eventRegister.trigger('updateSaveState', 'Error Metadata not Found', 'error');
         }
       }
 
-      view.eventRegister.trigger('updateSaveState', 'Submitting Change', 'saving');
+      view.eventRegister.trigger('updateSaveState', 'Submitting Request', 'saving');
       patch();
 
       return false;
