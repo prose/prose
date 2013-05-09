@@ -463,7 +463,7 @@ ins {
   right:-220px;
   width:220px;
   height:100%;
-  overflow: scroll;
+  overflow: auto;
   -webkit-transition:right 150ms;
      -moz-transition:right 150ms;
        -o-transition:right 150ms;
