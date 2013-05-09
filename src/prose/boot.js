@@ -23,12 +23,6 @@ window.app = {
     eventRegister: _.extend({}, Backbone.Events)
 };
 
-// Prevent exit when there are unsaved changes
-window.onbeforeunload = function() {
-  if (app.state.file && app.state._dirty)
-    return 'You have unsaved changes. Are you sure you want to leave?';
-};
-
 // Bootup
 var auth = $.getJSON('oauth.json');
 auth.done(function(res) {
