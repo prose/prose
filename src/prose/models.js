@@ -10,8 +10,8 @@ var oauth = require('../../oauth.json');
 // Set up a GitHub object
 // -------
 window.auth = {
-  api: oauth.api || 'http://api.github.com',
-  site: oauth.site || 'http://github.com',
+  api: oauth.api || 'https://api.github.com',
+  site: oauth.site || 'https://github.com',
   id: oauth.clientId,
   url: oauth.gatekeeperUrl
 };
