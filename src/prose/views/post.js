@@ -82,6 +82,12 @@ module.exports = Backbone.View.extend({
         }, 1);
       }
 
+      // Prevent exit when there are unsaved changes
+      window.onbeforeunload = function() {
+        if (app.state.file && view.dirty)
+          return 'You have unsaved changes. Are you sure you want to leave?';
+      };
+
       return this;
     },
 
@@ -198,7 +204,7 @@ module.exports = Backbone.View.extend({
     },
 
     makeDirty: function(e) {
-      app.state._dirty = true;
+      this.dirty = true;
       if (this.editor) this.model.content = this.editor.getValue();
       if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
@@ -332,7 +338,7 @@ module.exports = Backbone.View.extend({
               return;
             }
 
-            app.state._dirty = false;
+            this.dirty = false;
             view.model.persisted = true;
             view.model.file = filename;
             view.updateURL();
@@ -360,7 +366,7 @@ module.exports = Backbone.View.extend({
               view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
-            app.state._dirty = false;
+            this.dirty = false;
             view.model.persisted = true;
             view.model.file = filename;
             view.updateURL();
@@ -418,7 +424,10 @@ module.exports = Backbone.View.extend({
       if (stash && stash.sha === window.app.state.sha) {
         // Restore from stash if file sha hasn't changed
         if (this.editor) this.editor.setValue(stash.content);
-        if (this.metadataEditor) this.metadataEditor.setValue(stash.metadata);
+        if (this.metadataEditor) {
+          this.rawEditor.setValue('');
+          this.metadataEditor.setValue(stash.metadata);
+        }
       } else if (item) {
         // Remove expired content
         store.removeItem(filepath);
@@ -570,6 +579,20 @@ module.exports = Backbone.View.extend({
             }));
           }
         });
+
+        $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>')
+          .prepend('<label for="raw">Raw Metadata</label>')
+          .appendTo($metadataEditor);
+
+        view.rawEditor = CodeMirror(document.getElementById('raw'), {
+          mode: 'yaml',
+          value: '',
+          lineWrapping: true,
+          extraKeys: view.keyMap(),
+          theme: 'prose-bright'
+        });
+
+        view.rawEditor.on('change', _.bind(view.makeDirty, view));
 
         setValue(model.metadata);
         $('.chzn-select').chosen();
@@ -727,20 +750,6 @@ module.exports = Backbone.View.extend({
 
             if (view.rawEditor) {
               view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
-            } else {
-              $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>')
-                .prepend('<label for="raw">Raw Metadata</label>')
-                .appendTo($metadataEditor);
-
-              view.rawEditor = CodeMirror(document.getElementById('raw'), {
-                  mode: 'yaml',
-                  value: jsyaml.dump(raw),
-                  lineWrapping: true,
-                  extraKeys: view.keyMap(),
-                  theme: 'prose-bright'
-              });
-
-              view.rawEditor.on('change', _.bind(view.makeDirty, view));
             }
           }
         });
@@ -965,7 +974,9 @@ module.exports = Backbone.View.extend({
       }
     },
 
-    remove: function () {
+    remove: function() {
+      this.stashFile();
+
       this.eventRegister.unbind('edit', this.postViews);
       this.eventRegister.unbind('preview', this.preview);
       this.eventRegister.unbind('deleteFile', this.deleteFile);
@@ -979,7 +990,7 @@ module.exports = Backbone.View.extend({
       // Clear any file state classes in #prose
       this.eventRegister.trigger('updateSaveState', '', '');
 
-      $(window).unbind('pagehide');
+      $(window).off('pagehide');
       Backbone.View.prototype.remove.call(this);
     }
 });
