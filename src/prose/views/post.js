@@ -519,7 +519,7 @@ module.exports = Backbone.View.extend({
           off: 'Publish'
         }));
 
-        _(model.default_metadata).each(function(data) {
+        _(model.default_metadata).each(function(data, key) {
           if (data && typeof data.field === 'object') {
             switch(data.field.element) {
               case 'button':
