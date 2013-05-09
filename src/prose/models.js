@@ -59,14 +59,12 @@ module.exports = {
 
     // Handle Code
     if (match) {
-
-      console.log(auth);
-
       $.getJSON(auth.url + '/authenticate/' + match[1], function (data) {
         cookie.set('oauth-token', data.token);
         window.authenticated = true;
+
         // Adjust URL
-        var regex = new RegExp('\\?code=' + match[1]);
+        var regex = new RegExp("\\?code=" + match[1]);
         window.location.href = window.location.href.replace(regex, '').replace('&state=', '');
       });
       return false;

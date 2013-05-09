@@ -245,11 +245,7 @@ module.exports = Backbone.View.extend({
 
     logout: function() {
       app.models.logout();
-      if ($('#start').length > 0) {
-        router.navigate('/', true);
-      } else {
-        window.location.reload();
-      }
+      window.location.reload();
       return false;
     },
 
