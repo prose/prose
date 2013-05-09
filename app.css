@@ -463,6 +463,7 @@ ins {
   right:-220px;
   width:220px;
   height:100%;
+  overflow: auto;
   -webkit-transition:right 150ms;
      -moz-transition:right 150ms;
        -o-transition:right 150ms;
@@ -614,7 +615,14 @@ ins {
 .icon.gfm,
 .icon.md           { background-position:-80px 0; }
 
+.vert .ico.login,
 .ico.login         { background-color:#90bb74; color:#fff; }
+
+.vert .ico.login:hover,
+.ico.login:hover {
+  background-color:#73955c;
+  }
+
 .ico.checkmark,
 .ico.added         { color:#90bb74; }
 
