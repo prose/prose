@@ -82,6 +82,12 @@ module.exports = Backbone.View.extend({
         }, 1);
       }
 
+      // Prevent exit when there are unsaved changes
+      window.onbeforeunload = function() {
+        if (app.state.file && view.dirty)
+          return 'You have unsaved changes. Are you sure you want to leave?';
+      };
+
       return this;
     },
 
@@ -198,7 +204,7 @@ module.exports = Backbone.View.extend({
     },
 
     makeDirty: function(e) {
-      app.state._dirty = true;
+      this.dirty = true;
       if (this.editor) this.model.content = this.editor.getValue();
       if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
@@ -332,7 +338,7 @@ module.exports = Backbone.View.extend({
               return;
             }
 
-            app.state._dirty = false;
+            this.dirty = false;
             view.model.persisted = true;
             view.model.file = filename;
             view.updateURL();
@@ -360,7 +366,7 @@ module.exports = Backbone.View.extend({
               view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
-            app.state._dirty = false;
+            this.dirty = false;
             view.model.persisted = true;
             view.model.file = filename;
             view.updateURL();
