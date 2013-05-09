@@ -101,6 +101,7 @@ module.exports = Backbone.View.extend({
         parentTrail: parentTrail,
         isPrivate: isPrivate,
         title: _.filepath(this.data.path, this.data.file),
+        writeable: this.model.writeable,
         alterable: true
       };
 
@@ -212,7 +213,9 @@ module.exports = Backbone.View.extend({
       this.eventRegister.trigger('updateSaveState', label, 'save');
 
       // Pass a popover span to the avatar icon
-      $('.save-action', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
+      $('.save-action', this.el)
+        .find('.popup')
+        .html(this.model.alterable ? 'Ctrl&nbsp;+&nbsp;S' : 'Submit Change');
     },
 
     toggleButton: function(e) {

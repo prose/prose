@@ -1,7 +1,13 @@
 <% if (alterable) { %>
   <a href='#' class='avatar save-action round fl'>
     <span class='ico status'></span>
-    <span class='popup round arrow-left'>Ctrl&nbsp;+&nbsp;S</span>
+
+    <% if (writeable) { %>
+      <span class='popup round arrow-left'>Ctrl&nbsp;+&nbsp;S</span>
+    <% } else { %>
+      <span class='popup round arrow-left'>Submit Change</span>
+    <% } %>
+
     <%= avatar %>
   </a>
   <div class='fl details'>
