@@ -11,8 +11,8 @@ module.exports = Backbone.View.extend({
       'click .post-views .preview': 'preview',
       'click .post-views .settings': 'settings',
       'click .post-views .meta': 'meta',
+      'click .auth .logout': 'logout',
       'click a.item.removed': 'restoreFile',
-      'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
       'click a.save-action': 'updateFile',
@@ -243,13 +243,9 @@ module.exports = Backbone.View.extend({
       if (e.which === 13) this.eventRegister.trigger('updateFile', e);
     },
 
-    logout: function () {
-      window.app.models.logout();
-      if ($('#start').length > 0) {
-        router.navigate('/', true);
-      } else {
-        window.location.reload();
-      }
+    logout: function() {
+      app.models.logout();
+      window.location.reload();
       return false;
     },
 

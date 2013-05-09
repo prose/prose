@@ -24,34 +24,24 @@ window.app = {
 };
 
 // Bootup
-var auth = $.getJSON('oauth.json');
-auth.done(function(res) {
+if (app.models.authenticate()) {
+  app.models.loadApplication(function(err, data) {
+    if (err) {
+      var view = new window.app.views.Notification({
+        'type': 'eror',
+        'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
+      }).render();
 
-  var view;
-  window.app.auth = {
-    id: res.clientId,
-    url: res.gatekeeperUrl
-  };
+      $('#prose').empty().append(view.el);
+    } else {
 
-  if (window.app.models.authenticate()) {
-    window.app.models.loadApplication(function(err, data) {
-      if (err) {
-        view = new window.app.views.Notification({
-          'type': 'eror',
-          'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
-        }).render();
+      // Initialize router
+      window.router = new app.router({
+        model: data
+      });
 
-        $('#prose').empty().append(view.el);
-      } else {
-
-        // Initialize router
-        window.router = new app.router({
-          model: data
-        });
-
-        // Start responding to routes
-        Backbone.history.start();
-      }
-    });
-  }
-});
+      // Start responding to routes
+      Backbone.history.start();
+    }
+  });
+}
