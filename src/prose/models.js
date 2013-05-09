@@ -5,12 +5,20 @@ var queue = require('queue-async');
 var cookie = require('./cookie');
 var Github = require('../libs/github');
 var queue = require('queue-async');
+var oauth = require('../../oauth.json');
 
 // Set up a GitHub object
 // -------
+window.auth = {
+  api: oauth.api || 'http://api.github.com',
+  site: oauth.site || 'http://github.com',
+  id: oauth.clientId,
+  url: oauth.gatekeeperUrl
+};
 
 function github() {
   return new Github({
+    api: auth.api,
     token: cookie.get('oauth-token'),
     username: cookie.get('username'),
     auth: 'oauth'
@@ -51,11 +59,14 @@ module.exports = {
 
     // Handle Code
     if (match) {
-      $.getJSON(window.app.auth.url + '/authenticate/' + match[1], function (data) {
+
+      console.log(auth);
+
+      $.getJSON(auth.url + '/authenticate/' + match[1], function (data) {
         cookie.set('oauth-token', data.token);
         window.authenticated = true;
         // Adjust URL
-        var regex = new RegExp("\\?code=" + match[1]);
+        var regex = new RegExp('\\?code=' + match[1]);
         window.location.href = window.location.href.replace(regex, '').replace('&state=', '');
       });
       return false;

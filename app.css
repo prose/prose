@@ -614,7 +614,14 @@ ins {
 .icon.gfm,
 .icon.md           { background-position:-80px 0; }
 
+.vert .ico.login,
 .ico.login         { background-color:#90bb74; color:#fff; }
+
+.vert .ico.login:hover,
+.ico.login:hover {
+  background-color:#73955c;
+  }
+
 .ico.checkmark,
 .ico.added         { color:#90bb74; }
 
