@@ -104,6 +104,7 @@ _.jekyll = function(path, file) {
 // -------
 
 _.hasMetadata = function(content) {
+  content = content.replace(/\r\n/g, '\n'); // normalize a little bit
   return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
 };
 

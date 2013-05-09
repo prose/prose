@@ -33,7 +33,7 @@ module.exports = Backbone.View.extend({
 
     // If this repo is writable to the current user we use
     // this check to provide a deletion option to the user
-    this.writePermissions = this.model.permissions.push;
+    this.writePermissions = this.model.permissions && this.model.permissions.push;
 
     this.eventRegister = app.eventRegister;
 

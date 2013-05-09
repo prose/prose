@@ -178,7 +178,7 @@ module.exports = Backbone.Router.extend({
         if (err) return this.notify('error', 'This file does not exist.');
 
         app.state.markdown = data.markdown;
-        data.jekyll = _.jekyll(path, data.file);
+        data.jekyll = !!data.metadata;
         data.lang = _.mode(file);
 
         this.application.render({
