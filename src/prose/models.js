@@ -359,21 +359,26 @@ module.exports = {
             });
 
             var store = window.sessionStorage;
+            var historyStore;
             var history;
             var lastModified;
 
             if (store) {
-              history = JSON.parse(store.getItem('history'));
+              historyStore = store.getItem('history');
 
-              if (history && history.user === user && history.repo === reponame && history.branch === branch) {
-                lastModified = history.modified;
+              if (historyStore) {
+                history = JSON.parse(historyStore);
 
-                history.recent[app.username] = _.filter(history.recent[app.username], function(value) {
-                  return history.commits[value][0].status === 'removed' ||
-                    _.pluck(tree, 'path').indexOf(value) > -1;
-                });
+                if (history && history.user === user && history.repo === reponame && history.branch === branch) {
+                  lastModified = history.modified;
 
-                app.state.history = history;
+                  history.recent[app.username] = _.filter(history.recent[app.username], function(value) {
+                    return history.commits[value][0].status === 'removed' ||
+                      _.pluck(tree, 'path').indexOf(value) > -1;
+                  });
+
+                  app.state.history = history;
+                }
               }
             }
 
@@ -389,6 +394,8 @@ module.exports = {
                 });
 
                 q.awaitAll(function(err, res) {
+                  if (err) return err;
+
                   var state = {};
                   var recent = {};
 
