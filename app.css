@@ -1102,15 +1102,35 @@ ins {
     }
 
 .toolbar .dialog {
-  background:#f8f8f8;
-  border-top:1px solid #D4D7D9;
+  background:#f0f0f0;
   position:absolute;
-  top:40px;
+  top:39px;
   width:100%;
+  margin:0 auto;
+  -webkit-box-shadow:0 4px 6px -4px rgba(0,0,0,0.50);
+          box-shadow:0 4px 6px -4px rgba(0,0,0,0.50);
   -webkit-border-radius:0 0 4px 4px;
           border-radius:0 0 4px 4px;
   }
-
+  .dialog.link {
+    width:35%;
+    left:8px;
+    }
+    .fixed .dialog.link {
+      left:63px;
+      }
+    .dialog.link:after {
+      content:'';
+      top:-5px;
+      left:50%;
+      border-width:0 5px 5px;
+      border-style:solid;
+      position:absolute;
+      border-color:#d4d7d9 transparent;
+      }
+  .dialog input {
+    margin-bottom:5px;
+    }
 
 .menu li {
   float:left;

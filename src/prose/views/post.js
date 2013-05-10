@@ -939,12 +939,18 @@ module.exports = Backbone.View.extend({
 
         if ($target.hasClass('active')) {
           $target.removeClass('active');
-          $dialog.empty();
+          $dialog
+            .removeClass()
+            .empty();
         } else {
           $target.addClass('active');
           if (key === 'link') {
             tmpl = _(app.templates.linkDialog).template();
-            $dialog.empty().append(tmpl());
+            $dialog
+              .removeClass()
+              .addClass('dialog ' + key)
+              .empty()
+              .append(tmpl());
           }
         }
       }
