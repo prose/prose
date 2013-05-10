@@ -26,6 +26,16 @@ module.exports = Backbone.Router.extend({
   },
 
   about: function() {
+
+    app.state = {
+      user: '',
+      repo: '',
+      mode: 'page',
+      branch: '',
+      path: '',
+      file: ''
+    };
+
     router.application.render();
     var view = new app.views.Page().render();
     $('#content').empty().append(view.el);

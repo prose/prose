@@ -422,7 +422,6 @@ ins {
   line-height:1.5em;
   font-weight:700;
   padding:0;
-  width:575px;
   }
   .heading .details {
     position:relative;
@@ -444,14 +443,12 @@ ins {
   padding:15px;
   }
   .inner.deep {
-    padding:60px;
+    padding:15px 60px;
     }
 
 .content {
-  background:#fff;
   position:relative;
   z-index:500;
-  width:680px;
   height:500px;
   height:auto!important;
   min-height:500px;
@@ -459,6 +456,7 @@ ins {
 
 .sidebar {
   position:fixed;
+  z-index:1000;
   top:0;
   right:-220px;
   width:220px;
@@ -471,7 +469,6 @@ ins {
   }
   .open .sidebar {
     right:60px;
-    z-index:1000;
     }
 
 /* ------------------------------------------
@@ -494,15 +491,19 @@ ins {
 .loading {
   position:fixed;
   z-index:5000;
-  top:15px;
-  left:15px;
-  line-height:35px;
+  top:0;
+  left:0;
+  width:100%;
+  padding:15px;
   }
   .loading .loading-icon {
     background:transparent url('img/loader@33x33.gif') no-repeat;
     width:33px;
     height:33px;
-    margin:0 5px 0 0;
+    margin:0 10px 0 0;
+    }
+  .loading span {
+    line-height:33px;
     }
 
 .sidebar {
@@ -863,6 +864,7 @@ ins {
   }
 
 .details {
+  width:75%;
   padding-right:15px;
   }
   .details .user,
@@ -875,9 +877,8 @@ ins {
       }
 
   .content .details {
-    width:580px;
-    margin:0 15px;
-    padding-right:150px;
+    margin:0 0 0 15px;
+    padding-right:20%;
     }
     .content .details a {
       display:block;
@@ -966,6 +967,7 @@ ins {
 .topbar-wrapper {
   position:absolute;
   z-index:1000;
+  width:100%;
   }
   .markdown .topbar-wrapper + div,
   .topbar-wrapper + .listing {
@@ -977,7 +979,6 @@ ins {
   background:#fff;
   background:rgba(255,255,255,0.95);
   border-bottom:1px solid #d4d7d9;
-  width:680px;
   height:60px;
   }
   .topbar.toolbar {
@@ -1004,6 +1005,7 @@ ins {
 
 .topbar.fixed {
   position:fixed;
+  width:680px;
   top:0;
   left:auto;
   -webkit-transform:translate3d(0,0,0);
@@ -1993,4 +1995,27 @@ ins {
 /* ------------------------------------------
   ios and small screen alterations
 ---------------------------------------------*/
- @media all and (max-width: 480px) {}
+@media all and (max-width: 1200px) {
+  .limiter {
+    margin:0 280px 0 50px;
+    float:right;
+    }
+  }
+
+@media all and (max-width: 1040px) {
+  .sidebar {
+    width:25%;
+    }
+  .topbar.fixed {
+    width:75%;
+    }
+  .limiter {
+    width:75%;
+    float:none;
+    margin:0;
+    padding-left:50px;
+    }
+  .loading {
+    background:rgba(255,255,255,0.9);
+    }
+  }
