@@ -961,9 +961,19 @@ module.exports = Backbone.View.extend({
               .append(tmpl());
 
             if (selection) {
-              // TODO parse this as a url and split the parts into
-              // their respective fields.
-              $('input[name=text]', $dialog).val(selection);
+              // test if this is a markdown link: [text](link)
+              var link = /\[([^\]]+)\]\(([^)]+)\)/;
+              var text = selection;
+              var href;
+
+              if (link.test(selection)) {
+                var parts = link.exec(selection)
+                text = parts[1];
+                href = parts[2];
+              }
+
+              $('input[name=text]', $dialog).val(text);
+              if (href) $('input[name=href]', $dialog).val(href);
             }
           }
         }
