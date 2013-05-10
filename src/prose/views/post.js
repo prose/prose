@@ -940,15 +940,16 @@ module.exports = Backbone.View.extend({
           this.editor.focus();
         }
       } else if ($target.data('dialog')) {
+
         // This condition handles the link and media link in the toolbar.
         var tmpl;
-        if ($target.hasClass('active')) {
-          $target.removeClass('active');
+        if ($target.hasClass('on')) {
+          $target.removeClass('on');
           $dialog
             .removeClass()
             .empty();
         } else {
-          $target.addClass('active');
+          $target.addClass('on');
           $dialog
             .removeClass()
             .empty();

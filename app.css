@@ -1076,6 +1076,7 @@ ins {
           -webkit-border-radius:4px;
                   border-radius:4px;
           }
+        .toolbar li a.on,
         .toolbar li a.active,
         .toolbar li a:active {
           background:#f0f0f0;
