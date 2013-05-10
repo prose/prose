@@ -31,6 +31,7 @@ LIBS = \
 	src/libs/liquid.patch.js
 
 APPLICATION = \
+	oauth.json \
 	src/prose/views/notification.js \
 	src/prose/views/page.js \
 	src/prose/views/post.js \

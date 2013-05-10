@@ -87,7 +87,7 @@ module.exports = {
     if (window.authenticated) {
       $.ajax({
         type: 'GET',
-        url: 'https://api.github.com/user',
+        url: oauth.api + '/user',
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',
         headers: {
