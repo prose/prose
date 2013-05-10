@@ -994,7 +994,9 @@ module.exports = Backbone.View.extend({
         this.editor.replaceSelection('[' + text + '](' + href + ')');
       }
 
-      // Empty out and remove the dialog now.
+      // Empty out and remove the dialog.
+      // Also kill the `on` class on links
+      $('.toolbar .on').removeClass('on');
       $dialog.removeClass().empty();
 
       return false;
