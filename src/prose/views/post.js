@@ -153,7 +153,8 @@ module.exports = Backbone.View.extend({
         });
         return true;
       } else {
-        e.preventDefault();
+        if (e) e.preventDefault();
+
         // Vertical Nav
         $('.post-views a').removeClass('active');
         $('.post-views .preview').addClass('active');
@@ -166,7 +167,6 @@ module.exports = Backbone.View.extend({
 
         app.state.mode = 'blob';
         this.updateURL();
-        return false;
       }
     },
 
