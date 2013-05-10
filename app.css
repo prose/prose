@@ -443,7 +443,7 @@ ins {
   padding:15px;
   }
   .inner.deep {
-    padding:60px;
+    padding:15px 60px;
     }
 
 .content {
