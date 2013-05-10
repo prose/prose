@@ -16,7 +16,7 @@ Prose is an open source project. We encourage you to contribute and help us impr
 
 ## Getting Help
 
-We do not offer support for Prose at this time, however if your a content editor using Prose, you should content the developer who gave you access to it. To report technical problems with Prose, please [file an issue on GitHub](https://github.com/prose/prose/issues).
+We do not offer support for Prose at this time. However, if you are a content editor using Prose, you should contact the developer who gave you access to it. To report technical problems with Prose, please [file an issue on GitHub](https://github.com/prose/prose/issues).
 
 ## Credits
 
