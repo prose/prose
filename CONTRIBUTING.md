@@ -17,6 +17,10 @@ Here's a quick list of things to consider before submitting an issue:
 
 And when in doubt, be over-descriptive of the bug and how you discovered it.
 
+## Submitting Pull Requests
+
+All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. the `gh-pages` branch manages rebuilds to the server.
+
 
 ## Building / Installing
 
@@ -53,11 +57,6 @@ code into a minified `prose.min.js` and see changes.
 
 __ProTip:__ You may want to install `watch` so you can run `watch make` without
 needing to execute `make` on every change.
-
-## Submitting Pull Requests
-
-All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch.
-the `gh-pages` branch manages rebuilds to the server.
 
 ## Code Style
 

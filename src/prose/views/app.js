@@ -150,6 +150,7 @@ module.exports = Backbone.View.extend({
 
     settings: function(e) {
       $navItems = $('.navigation a', this.el);
+      if (!this.viewing) this.viewing = app.state.mode;
 
       if ($(e.target, this.el).hasClass('active')) {
         $navItems.removeClass('active');
