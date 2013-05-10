@@ -412,16 +412,6 @@ ins {
   width:680px;
   margin:0 auto;
   }
-  .limiter {
-    -webkit-transition:right 150ms;
-       -moz-transition:right 150ms;
-         -o-transition:right 150ms;
-            transition:right 150ms;
-    }
-  .open .fixed .containment,
-  .open .limiter {
-    right:140px;
-    }
 
 /* Alterable filename input */
 .heading .filepath {
@@ -2014,12 +2004,7 @@ ins {
     }
   .open .fixed .containment,
   .open .limiter {
-    right:0;
     margin:0;
-    -webkit-transition:none;
-       -moz-transition:none;
-         -o-transition:none;
-            transition:none;
     }
   .containment {
     width:100%;
