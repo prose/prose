@@ -87,7 +87,7 @@ module.exports = {
     if (window.authenticated) {
       $.ajax({
         type: 'GET',
-        url: oauth.api + '/user',
+        url: auth.api + '/user',
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',
         headers: {
