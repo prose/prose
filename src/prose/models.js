@@ -10,8 +10,8 @@ var oauth = require('../../oauth.json');
 // Set up a GitHub object
 // -------
 window.auth = {
-  api: oauth.api || 'http://api.github.com',
-  site: oauth.site || 'http://github.com',
+  api: oauth.api || 'https://api.github.com',
+  site: oauth.site || 'https://github.com',
   id: oauth.clientId,
   url: oauth.gatekeeperUrl
 };
@@ -59,14 +59,12 @@ module.exports = {
 
     // Handle Code
     if (match) {
-
-      console.log(auth);
-
       $.getJSON(auth.url + '/authenticate/' + match[1], function (data) {
         cookie.set('oauth-token', data.token);
         window.authenticated = true;
+
         // Adjust URL
-        var regex = new RegExp('\\?code=' + match[1]);
+        var regex = new RegExp("\\?code=" + match[1]);
         window.location.href = window.location.href.replace(regex, '').replace('&state=', '');
       });
       return false;
@@ -89,7 +87,7 @@ module.exports = {
     if (window.authenticated) {
       $.ajax({
         type: 'GET',
-        url: 'https://api.github.com/user',
+        url: auth.api + '/user',
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',
         headers: {
@@ -361,21 +359,26 @@ module.exports = {
             });
 
             var store = window.sessionStorage;
+            var historyStore;
             var history;
             var lastModified;
 
             if (store) {
-              history = JSON.parse(store.getItem('history'));
+              historyStore = store.getItem('history');
 
-              if (history && history.user === user && history.repo === reponame && history.branch === branch) {
-                lastModified = history.modified;
+              if (historyStore) {
+                history = JSON.parse(historyStore);
 
-                history.recent[app.username] = _.filter(history.recent[app.username], function(value) {
-                  return history.commits[value][0].status === 'removed' ||
-                    _.pluck(tree, 'path').indexOf(value) > -1;
-                });
+                if (history && history.user === user && history.repo === reponame && history.branch === branch) {
+                  lastModified = history.modified;
 
-                app.state.history = history;
+                  history.recent[app.username] = _.filter(history.recent[app.username], function(value) {
+                    return history.commits[value][0].status === 'removed' ||
+                      _.pluck(tree, 'path').indexOf(value) > -1;
+                  });
+
+                  app.state.history = history;
+                }
               }
             }
 
@@ -391,6 +394,8 @@ module.exports = {
                 });
 
                 q.awaitAll(function(err, res) {
+                  if (err) return err;
+
                   var state = {};
                   var recent = {};
 

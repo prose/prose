@@ -24,8 +24,8 @@ window.app = {
 };
 
 // Bootup
-if (window.app.models.authenticate()) {
-  window.app.models.loadApplication(function(err, data) {
+if (app.models.authenticate()) {
+  app.models.loadApplication(function(err, data) {
     if (err) {
       var view = new window.app.views.Notification({
         'type': 'eror',
