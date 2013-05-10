@@ -541,7 +541,7 @@ module.exports = Backbone.View.extend({
                   checked: data.field.value
                 }));
                 break;
-              case 'input':
+              case 'text':
                 tmpl = _(window.app.templates.text).template();
                 $metadataEditor.append(tmpl({
                   name: data.name,
