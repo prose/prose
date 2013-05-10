@@ -5,6 +5,7 @@ issues or develop on the project the sections below provide
 outlines on how to get started.
 
 ## Reporting Issues
+
 Here's a quick list of things to consider before submitting an issue:
 
 * Please [search for your issue before filing it: many bugs and improvements have already been reported](https://github.com/prose/prose/issues/search?q=)
@@ -15,6 +16,10 @@ Here's a quick list of things to consider before submitting an issue:
   Javascript error message.
 
 And when in doubt, be over-descriptive of the bug and how you discovered it.
+
+## Submitting Pull Requests
+
+All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. the `gh-pages` branch manages rebuilds to the server.
 
 
 ## Building / Installing

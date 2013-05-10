@@ -5,12 +5,20 @@ var queue = require('queue-async');
 var cookie = require('./cookie');
 var Github = require('../libs/github');
 var queue = require('queue-async');
+var oauth = require('../../oauth.json');
 
 // Set up a GitHub object
 // -------
+window.auth = {
+  api: oauth.api || 'https://api.github.com',
+  site: oauth.site || 'https://github.com',
+  id: oauth.clientId,
+  url: oauth.gatekeeperUrl
+};
 
 function github() {
   return new Github({
+    api: auth.api,
     token: cookie.get('oauth-token'),
     username: cookie.get('username'),
     auth: 'oauth'
@@ -51,9 +59,10 @@ module.exports = {
 
     // Handle Code
     if (match) {
-      $.getJSON(window.app.auth.url + '/authenticate/' + match[1], function (data) {
+      $.getJSON(auth.url + '/authenticate/' + match[1], function (data) {
         cookie.set('oauth-token', data.token);
         window.authenticated = true;
+
         // Adjust URL
         var regex = new RegExp("\\?code=" + match[1]);
         window.location.href = window.location.href.replace(regex, '').replace('&state=', '');
@@ -78,7 +87,7 @@ module.exports = {
     if (window.authenticated) {
       $.ajax({
         type: 'GET',
-        url: 'https://api.github.com/user',
+        url: auth.api + '/user',
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',
         headers: {
@@ -350,21 +359,26 @@ module.exports = {
             });
 
             var store = window.sessionStorage;
+            var historyStore;
             var history;
             var lastModified;
 
             if (store) {
-              history = JSON.parse(store.getItem('history'));
+              historyStore = store.getItem('history');
 
-              if (history && history.user === user && history.repo === reponame && history.branch === branch) {
-                lastModified = history.modified;
+              if (historyStore) {
+                history = JSON.parse(historyStore);
 
-                history.recent[app.username] = _.filter(history.recent[app.username], function(value) {
-                  return history.commits[value][0].status === 'removed' ||
-                    _.pluck(tree, 'path').indexOf(value) > -1;
-                });
+                if (history && history.user === user && history.repo === reponame && history.branch === branch) {
+                  lastModified = history.modified;
 
-                app.state.history = history;
+                  history.recent[app.username] = _.filter(history.recent[app.username], function(value) {
+                    return history.commits[value][0].status === 'removed' ||
+                      _.pluck(tree, 'path').indexOf(value) > -1;
+                  });
+
+                  app.state.history = history;
+                }
               }
             }
 
@@ -380,6 +394,8 @@ module.exports = {
                 });
 
                 q.awaitAll(function(err, res) {
+                  if (err) return err;
+
                   var state = {};
                   var recent = {};
 
@@ -445,8 +461,10 @@ module.exports = {
                     }
                   }
 
-                  // TODO: temporary fix, break history sidebar into a discrete view
-                  app.eventRegister.trigger('sidebarContext', app.state, 'posts');
+                  if (app.state.mode === 'tree') {
+                    // TODO: temporary fix, break history sidebar into a discrete view
+                    app.eventRegister.trigger('sidebarContext', app.state);
+                  }
                 });
               }
             });
@@ -493,8 +511,8 @@ module.exports = {
     // Wait until contents are ready.
 
     function onceReady(cb) {
-      _.delay(function () {
-        forkedRepo.contents('', function (err, contents) {
+      _.delay(function() {
+        forkedRepo.contents(branch, '', function(err, contents) {
           if (contents) {
             cb();
           } else {
@@ -532,7 +550,8 @@ module.exports = {
 
   createPullRequest: function(user, repo, pull, cb) {
     repo = this.getRepo(user, repo);
-    repo.createPullRequest(pull, function (err) {
+    repo.createPullRequest(pull, function(err) {
+      if (err) return cb(err);
       cb();
     });
   },
@@ -673,7 +692,7 @@ module.exports = {
       cb(null, {
         'metadata': metadata,
         'default_metadata': defaultMetadata,
-        'content': '# How does it work?\n\nEnter Text in Markdown format.',
+        'content': '## A New Post\n\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.',
         'repo': repo,
         'path': path,
         'published': false,

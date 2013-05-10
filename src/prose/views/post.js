@@ -56,7 +56,7 @@ module.exports = Backbone.View.extend({
       if (app.state.mode === 'blob') context = 'Previewing ';
 
       this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-      this.eventRegister.trigger('sidebarContext', this.data, 'post');
+      this.eventRegister.trigger('sidebarContext', this.data);
       this.renderHeading();
 
       var tmpl = _(window.app.templates.post).template();
@@ -82,6 +82,12 @@ module.exports = Backbone.View.extend({
         }, 1);
       }
 
+      // Prevent exit when there are unsaved changes
+      window.onbeforeunload = function() {
+        if (app.state.file && view.dirty)
+          return 'You have unsaved changes. Are you sure you want to leave?';
+      };
+
       return this;
     },
 
@@ -95,6 +101,7 @@ module.exports = Backbone.View.extend({
         parentTrail: parentTrail,
         isPrivate: isPrivate,
         title: _.filepath(this.data.path, this.data.file),
+        writeable: this.model.writeable,
         alterable: true
       };
 
@@ -127,8 +134,12 @@ module.exports = Backbone.View.extend({
 
     preview: function(e) {
       $('#prose').toggleClass('open', false);
-
-      if (this.model.metadata && this.model.metadata.layout) {
+      if (app.state.config &&
+        app.state.config.prose &&
+        app.state.config.prose.siteurl &&
+        this.model.metadata &&
+        this.model.metadata.layout
+      ){
         var hash = window.location.hash.split('/');
         hash[2] = 'preview';
         if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
@@ -140,7 +151,9 @@ module.exports = Backbone.View.extend({
           target: '_blank',
           href: hash.join('/')
         });
+        return true;
       } else {
+        e.preventDefault();
         // Vertical Nav
         $('.post-views a').removeClass('active');
         $('.post-views .preview').addClass('active');
@@ -153,6 +166,7 @@ module.exports = Backbone.View.extend({
 
         app.state.mode = 'blob';
         this.updateURL();
+        return false;
       }
     },
 
@@ -199,7 +213,9 @@ module.exports = Backbone.View.extend({
       this.eventRegister.trigger('updateSaveState', label, 'save');
 
       // Pass a popover span to the avatar icon
-      $('.save-action', this.el).find('.popup').html('Ctrl&nbsp;+&nbsp;S');
+      $('.save-action', this.el)
+        .find('.popup')
+        .html(this.model.alterable ? 'Ctrl&nbsp;+&nbsp;S' : 'Submit Change');
     },
 
     toggleButton: function(e) {
@@ -315,12 +331,9 @@ module.exports = Backbone.View.extend({
           view.model.content = view.prevFile;
           view.editor.setValue(view.prevFile);
 
-          window.app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function (err) {
-            if (err) {
-              _.delay(function () {
-                view.eventRegister.trigger('updateSaveState', 'Submit Change', '');
-              }, 3000);
+          app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
 
+            if (err) {
               view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
@@ -330,14 +343,14 @@ module.exports = Backbone.View.extend({
             view.model.file = filename;
             view.updateURL();
             view.prevFile = filecontent;
-            view.eventRegister.trigger('Change Submitted', 'saved');
+            view.eventRegister.trigger('updateSaveState', 'Request Submitted', 'saved');
           });
         } else {
-          view.eventRegister.trigger('! Metadata', 'error');
+          view.eventRegister.trigger('updateSaveState', 'Error Metadata not Found', 'error');
         }
       }
 
-      view.eventRegister.trigger('updateSaveState', 'Submitting Change', 'saving');
+      view.eventRegister.trigger('updateSaveState', 'Submitting Request', 'saving');
       patch();
 
       return false;
@@ -353,7 +366,7 @@ module.exports = Backbone.View.extend({
               view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
               return;
             }
-            view.dirty = false;
+            this.dirty = false;
             view.model.persisted = true;
             view.model.file = filename;
             view.updateURL();
@@ -411,7 +424,10 @@ module.exports = Backbone.View.extend({
       if (stash && stash.sha === window.app.state.sha) {
         // Restore from stash if file sha hasn't changed
         if (this.editor) this.editor.setValue(stash.content);
-        if (this.metadataEditor) this.metadataEditor.setValue(stash.metadata);
+        if (this.metadataEditor) {
+          this.rawEditor.setValue('');
+          this.metadataEditor.setValue(stash.metadata);
+        }
       } else if (item) {
         // Remove expired content
         store.removeItem(filepath);
@@ -503,7 +519,7 @@ module.exports = Backbone.View.extend({
           off: 'Publish'
         }));
 
-        _(model.default_metadata).each(function(data) {
+        _(model.default_metadata).each(function(data, key) {
           if (data && typeof data.field === 'object') {
             switch(data.field.element) {
               case 'button':
@@ -563,6 +579,20 @@ module.exports = Backbone.View.extend({
             }));
           }
         });
+
+        $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>')
+          .prepend('<label for="raw">Raw Metadata</label>')
+          .appendTo($metadataEditor);
+
+        view.rawEditor = CodeMirror(document.getElementById('raw'), {
+          mode: 'yaml',
+          value: '',
+          lineWrapping: true,
+          extraKeys: view.keyMap(),
+          theme: 'prose-bright'
+        });
+
+        view.rawEditor.on('change', _.bind(view.makeDirty, view));
 
         setValue(model.metadata);
         $('.chzn-select').chosen();
@@ -720,20 +750,6 @@ module.exports = Backbone.View.extend({
 
             if (view.rawEditor) {
               view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
-            } else {
-              $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>')
-                .prepend('<label for="raw">Raw Metadata</label>')
-                .appendTo($metadataEditor);
-
-              view.rawEditor = CodeMirror(document.getElementById('raw'), {
-                  mode: 'yaml',
-                  value: jsyaml.dump(raw),
-                  lineWrapping: true,
-                  extraKeys: view.keyMap(),
-                  theme: 'prose-bright'
-              });
-
-              view.rawEditor.on('change', _.bind(view.makeDirty, view));
             }
           }
         });
@@ -976,7 +992,9 @@ module.exports = Backbone.View.extend({
       }
     },
 
-    remove: function () {
+    remove: function() {
+      this.stashFile();
+
       this.eventRegister.unbind('edit', this.postViews);
       this.eventRegister.unbind('preview', this.preview);
       this.eventRegister.unbind('deleteFile', this.deleteFile);
@@ -990,7 +1008,7 @@ module.exports = Backbone.View.extend({
       // Clear any file state classes in #prose
       this.eventRegister.trigger('updateSaveState', '', '');
 
-      $(window).unbind('pagehide');
+      $(window).off('pagehide');
       Backbone.View.prototype.remove.call(this);
     }
 });

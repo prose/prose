@@ -11,8 +11,8 @@ module.exports = Backbone.View.extend({
       'click .post-views .preview': 'preview',
       'click .post-views .settings': 'settings',
       'click .post-views .meta': 'meta',
+      'click .auth .logout': 'logout',
       'click a.item.removed': 'restoreFile',
-      'click a.logout': 'logout',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
       'click a.save-action': 'updateFile',
@@ -98,13 +98,14 @@ module.exports = Backbone.View.extend({
       $('#heading').empty().append(heading(data));
     },
 
-    sidebarContext: function(data, context) {
+    sidebarContext: function(data) {
       var sidebarTmpl;
 
-      if (context === 'post') {
-        sidebarTmpl = _(app.templates.settings).template();
-      } else if (context === 'posts') {
+      if (app.state.mode === 'tree') {
         sidebarTmpl = _(app.templates.sidebarProject).template();
+      } else if (data.file) {
+        this.writeable = data.writeable;
+        sidebarTmpl = _(app.templates.settings).template();
       }
 
       $('#drawer', this.el)
@@ -149,6 +150,7 @@ module.exports = Backbone.View.extend({
 
     settings: function(e) {
       $navItems = $('.navigation a', this.el);
+      if (!this.viewing) this.viewing = app.state.mode;
 
       if ($(e.target, this.el).hasClass('active')) {
         $navItems.removeClass('active');
@@ -222,8 +224,12 @@ module.exports = Backbone.View.extend({
       $('.commit', this.el).toggleClass('active');
       $('.button.save', this.el).toggleClass('confirm');
 
-      // TODO Fix this this.model.writable should work as a boolean
-      $('.button.save', this.el).html($('.button.save', this.el).hasClass('confirm') ? 'Commit' : (this.model.writeable ? 'Save' : 'Save'));
+      $('.button.save', this.el)
+        .html($('.button.save', this.el)
+        .hasClass('confirm') ?
+          (this.writeable ? 'Commit' : 'Send Change Request') :
+          (this.writeable ? 'Save' : 'Submit Change'));
+
       $('.commit-message', this.el).focus();
       return false;
     },
@@ -238,13 +244,9 @@ module.exports = Backbone.View.extend({
       if (e.which === 13) this.eventRegister.trigger('updateFile', e);
     },
 
-    logout: function () {
-      window.app.models.logout();
-      if ($('#start').length > 0) {
-        router.navigate('/', true);
-      } else {
-        window.location.reload();
-      }
+    logout: function() {
+      app.models.logout();
+      window.location.reload();
       return false;
     },
 

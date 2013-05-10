@@ -6,6 +6,7 @@ var utils = require('./util');
 module.exports = Backbone.Router.extend({
 
   routes: {
+    'about': 'about',
     'error/:code': 'error',
     ':user': 'profile',
     ':user/:repo': 'repo',
@@ -24,6 +25,22 @@ module.exports = Backbone.Router.extend({
     });
   },
 
+  about: function() {
+
+    app.state = {
+      user: '',
+      repo: '',
+      mode: 'page',
+      branch: '',
+      path: '',
+      file: ''
+    };
+
+    router.application.render();
+    var view = new app.views.Page().render();
+    $('#content').empty().append(view.el);
+  },
+
   // #example-user
   // #example-organization
   profile: function(user) {
@@ -33,27 +50,26 @@ module.exports = Backbone.Router.extend({
     // Clean any previous view
     this.eventRegister.trigger('remove');
 
-    if (confirmExit()) {
-      app.state = app.state || {};
-      app.state.user = user;
-      app.state.title = user;
-      app.state.repo = '';
-      app.state.mode = '';
-      app.state.branch = '';
-      app.state.path = '';
+    app.state = app.state || {};
+    app.state.user = user;
+    app.state.title = user;
+    app.state.repo = '';
+    app.state.mode = '';
+    app.state.branch = '';
+    app.state.path = '';
+    app.state.file = '';
 
-      app.models.loadRepos(user, function(err, data) {
-        data.authenticated = !! window.authenticated;
+    app.models.loadRepos(user, function(err, data) {
+      data.authenticated = !! window.authenticated;
 
-        router.application.render();
-        var view = new app.views.Profile({
-          model: _.extend(router.model, data)
-        }).render();
+      router.application.render();
+      var view = new app.views.Profile({
+        model: _.extend(router.model, data)
+      }).render();
 
-        utils.loader.loaded();
-        $('#content').empty().append(view.el);
-      });
-    }
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    });
   },
 
   // #example-user/example-repo
@@ -69,7 +85,8 @@ module.exports = Backbone.Router.extend({
       repo: repo,
       mode: 'tree',
       branch: '',
-      path: ''
+      path: '',
+      file: ''
     };
 
     app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
@@ -171,7 +188,7 @@ module.exports = Backbone.Router.extend({
         if (err) return this.notify('error', 'This file does not exist.');
 
         app.state.markdown = data.markdown;
-        data.jekyll = _.jekyll(path, data.file);
+        data.jekyll = !!data.metadata;
         data.lang = _.mode(file);
 
         this.application.render({

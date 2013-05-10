@@ -33,7 +33,7 @@ module.exports = Backbone.View.extend({
 
     // If this repo is writable to the current user we use
     // this check to provide a deletion option to the user
-    this.writePermissions = this.model.permissions.push;
+    this.writePermissions = this.model.permissions && this.model.permissions.push;
 
     this.eventRegister = app.eventRegister;
 
@@ -53,7 +53,8 @@ module.exports = Backbone.View.extend({
 
     var pathTitle = (app.state.path) ? '/' + app.state.path : '';
     this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
-    this.eventRegister.trigger('sidebarContext', app.state, 'posts');
+
+    this.eventRegister.trigger('sidebarContext', app.state);
     this.eventRegister.trigger('headerContext', header);
 
     var tmpl = _(app.templates.posts).template();

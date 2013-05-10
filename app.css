@@ -406,6 +406,7 @@ ins {
 /* ------------------------------------------
   Global Layout
 ---------------------------------------------*/
+.containment,
 .limiter {
   position:relative;
   width:680px;
@@ -422,7 +423,6 @@ ins {
   line-height:1.5em;
   font-weight:700;
   padding:0;
-  width:575px;
   }
   .heading .details {
     position:relative;
@@ -444,14 +444,12 @@ ins {
   padding:15px;
   }
   .inner.deep {
-    padding:60px;
+    padding:15px 60px;
     }
 
 .content {
-  background:#fff;
   position:relative;
   z-index:500;
-  width:680px;
   height:500px;
   height:auto!important;
   min-height:500px;
@@ -459,10 +457,12 @@ ins {
 
 .sidebar {
   position:fixed;
+  z-index:1000;
   top:0;
   right:-220px;
   width:220px;
   height:100%;
+  overflow: auto;
   -webkit-transition:right 150ms;
      -moz-transition:right 150ms;
        -o-transition:right 150ms;
@@ -470,7 +470,6 @@ ins {
   }
   .open .sidebar {
     right:60px;
-    z-index:1000;
     }
 
 /* ------------------------------------------
@@ -481,8 +480,9 @@ ins {
   }
 
 .dropdown-menu.prose-menu {
-  position:fixed;
   width:120px;
+  position:fixed;
+  z-index:5000;
   top:0;
   left:0;
   }
@@ -492,16 +492,21 @@ ins {
 
 .loading {
   position:fixed;
-  z-index:5000;
-  top:15px;
-  left:15px;
-  line-height:35px;
+  z-index:7000;
+  top:0;
+  left:0;
+  width:100%;
+  padding:15px;
   }
   .loading .loading-icon {
     background:transparent url('img/loader@33x33.gif') no-repeat;
     width:33px;
     height:33px;
-    margin:0 5px 0 0;
+    margin:0 10px 0 0;
+    }
+  .loading small {
+    display:block;
+    margin:5px 0 0;
     }
 
 .sidebar {
@@ -554,6 +559,7 @@ ins {
             box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
     }
     .vert .nav li a.active {
+      color:#3d494e;
       -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
               box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
       }
@@ -614,7 +620,14 @@ ins {
 .icon.gfm,
 .icon.md           { background-position:-80px 0; }
 
+.vert .ico.login,
 .ico.login         { background-color:#90bb74; color:#fff; }
+
+.vert .ico.login:hover,
+.ico.login:hover {
+  background-color:#73955c;
+  }
+
 .ico.checkmark,
 .ico.added         { color:#90bb74; }
 
@@ -851,10 +864,11 @@ ins {
 
 /* Top Branding/Navigation */
 .heading {
-  padding:30px 15px 10px;
+  padding:30px 0 10px;
   }
 
 .details {
+  width:75%;
   padding-right:15px;
   }
   .details .user,
@@ -867,9 +881,8 @@ ins {
       }
 
   .content .details {
-    width:580px;
-    margin:0 15px;
-    padding-right:150px;
+    margin:0 0 0 15px;
+    padding-right:20%;
     }
     .content .details a {
       display:block;
@@ -958,6 +971,7 @@ ins {
 .topbar-wrapper {
   position:absolute;
   z-index:1000;
+  width:100%;
   }
   .markdown .topbar-wrapper + div,
   .topbar-wrapper + .listing {
@@ -965,49 +979,45 @@ ins {
     top:60px;
     }
 
-.topbar {
-  background:#fff;
-  background:rgba(255,255,255,0.95);
-  border-bottom:1px solid #d4d7d9;
-  width:680px;
-  height:60px;
-  }
-  .topbar.toolbar {
-    height:0;
-    }
-  .fixed.topbar.toolbar,
-  .markdown .topbar.toolbar {
-    height:40px;
-    }
-
-  .topbar .dropdown-hover,
-  .topbar .inner > a {
-    display:block;
-    height:35px;
-    padding:0 15px;
-    border:1px solid #a8afb2;
-    line-height:34px;
-    -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.5);
-            box-shadow:0 1px 1px rgba(255,255,255,0.5);
-    }
-
-.topbar.fixed {
-  position:fixed;
-  top:0;
-  left:auto;
+.fixed .containment {
   -webkit-transform:translate3d(0,0,0);
           transform:translate3d(0,0,0);
-  -webkit-box-shadow:0 4px 6px -4px rgba(0,0,0,0.10);
-          box-shadow:0 4px 6px -4px rgba(0,0,0,0.10);
+  -webkit-box-shadow:0 4px 6px -4px rgba(0, 0, 0, 0.10);
+          box-shadow:0 4px 6px -4px rgba(0, 0, 0, 0.10);
   }
-  .markdown .toolbar.fixed,
-  .toolbar.fixed {
+  .fixed .containment.toolbar {
     background:#f8f8f8;
-    border-color:#D4D7D9;
+    border-bottom:1px solid #d4d7d9;
     -webkit-border-radius:0;
             border-radius:0;
     }
 
+  .topbar .containment.content-search {
+    background:#fff;
+    height:60px;
+    background:rgba(255,255,255,0.95);
+    border-bottom:1px solid #d4d7d9;
+    }
+
+  .topbar .toolbar {
+    height:0;
+    }
+  .fixed.topbar .toolbar,
+  .markdown .toolbar {
+    height:40px;
+    }
+  .topbar .inner > a {
+    display:block;
+    height:35px;
+    padding:0 15px;
+    line-height:34px;
+    }
+
+.topbar.fixed {
+  position:fixed;
+  width:100%;
+  top:0;left:0;
+  }
   .content-search input {
     background:transparent;
     border:none;
@@ -1087,7 +1097,7 @@ ins {
     font-size:16px;
     line-height:25px;
     }
-  .fixed.toolbar .save-action {
+  .fixed .toolbar .save-action {
     display:block;
     }
 
@@ -1275,6 +1285,10 @@ ins {
 /* ------------------------------------------
   File /:filename
 ---------------------------------------------*/
+.editor {
+  padding:15px 0 0;
+  }
+
 .flag {
   display:inline-block;
   margin:10px 15px;
@@ -1993,4 +2007,23 @@ ins {
 /* ------------------------------------------
   ios and small screen alterations
 ---------------------------------------------*/
- @media all and (max-width: 480px) {}
+@media all and (max-width: 1085px) {
+  .sidebar {
+    width:25%;
+    }
+  .open .containment {
+    width:100%;
+    }
+  .open .fixed .containment,
+  .open .limiter {
+    width:60%;
+    margin:0;
+    }
+  .limiter,
+  .topbar.fixed {
+    padding:0 0 0 65px;
+    }
+  .loading {
+    background:rgba(255,255,255,0.9);
+    }
+  }

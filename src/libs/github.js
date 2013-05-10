@@ -1,4 +1,4 @@
-// Github.js 0.7.0
+// Github.js (Modified for prose.io)
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -8,13 +8,14 @@ var _ = require('underscore');
 
 (function() {
   var Github;
-  var API_URL = 'https://api.github.com';
 
   Github = window.Github = function(options) {
 
+    var API_URL = options.api || 'https://api.github.com';
+
     // HTTP Request Abstraction
     // =======
-    // 
+    //
     // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
     function _request(method, path, data, cb, raw, sync, headers) {
@@ -51,12 +52,16 @@ var _ = require('underscore');
          (options.auth == 'oauth' && options.token) ||
          (options.auth == 'basic' && options.username && options.password)
          ) {
-           xhr.setRequestHeader('Authorization',options.auth == 'oauth'
-             ? 'token '+ options.token
-             : 'Basic ' + Base64.encode(options.username + ':' + options.password)
+           xhr.setRequestHeader('Authorization',options.auth == 'oauth' ?
+            'token '+ options.token :
+            'Basic ' + Base64.encode(options.username + ':' + options.password)
            );
          }
-      data ? xhr.send(JSON.stringify(data)) : xhr.send();
+      if (data) {
+        xhr.send(JSON.stringify(data));
+      } else {
+        xhr.send();
+      }
       if (sync) return xhr.response;
     }
 
@@ -86,8 +91,8 @@ var _ = require('underscore');
           links[name] = url;
         }
 
-        if (links['next']) {
-          _request('GET', links['next'].split(API_URL)[1], null, function(err, res, xhr) {
+        if (links.next) {
+          _request('GET', links.next.split(API_URL)[1], null, function(err, res, xhr) {
             if (typeof response.concat === 'function') {
               response = response.concat(res);
             } else if (typeof response === 'string') {
@@ -103,7 +108,7 @@ var _ = require('underscore');
         cb(err, response);
       }
     }
-      
+
     // User API
     // =======
 
@@ -196,7 +201,7 @@ var _ = require('underscore');
     Github.Repository = function(options) {
       var repo = options.name;
       var user = options.user;
-      
+
       var that = this;
       var repoPath = "/repos/" + user + "/" + repo;
 
@@ -241,7 +246,7 @@ var _ = require('underscore');
 
       // Delete a reference
       // --------
-      // 
+      //
       // repo.deleteRef('heads/gh-pages')
       // repo.deleteRef('tags/v1.0')
 
@@ -521,7 +526,7 @@ var _ = require('underscore');
       //      }
       //    }
       // }
-      
+
       this.create = function(options, cb){
         _request("POST","/gists", options, cb);
       };
@@ -569,6 +574,5 @@ var _ = require('underscore');
       return new Github.Gist({id: id});
     };
   };
-
   module.exports = Github;
 }).call(this);

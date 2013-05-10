@@ -15,6 +15,9 @@ TEMPLATES = $(shell find templates -type f -name '*.html')
 dist/templates.js: $(TEMPLATES)
 	node build.js
 
+oauth.json:
+	test -s oauth.json || curl 'https://raw.github.com/prose/prose/gh-pages/oauth.json' > oauth.json
+
 LIBS = \
 	src/libs/codemirror/codemirror.js \
 	src/libs/codemirror/overlay.js \
@@ -32,6 +35,7 @@ LIBS = \
 
 APPLICATION = \
 	src/prose/views/notification.js \
+	src/prose/views/page.js \
 	src/prose/views/post.js \
 	src/prose/views/posts.js \
 	src/prose/views/profile.js \
@@ -46,7 +50,7 @@ APPLICATION = \
 	src/prose/cookie.js \
 	src/libs/github.js
 
-dist/prose.js: $(APPLICATION) $(LIBS) dist/templates.js
+dist/prose.js: oauth.json $(APPLICATION) $(LIBS) dist/templates.js
 	cat $(LIBS) > dist/prose.js
 	$(BROWSERIFY) src/prose/boot.js >> dist/prose.js
 
