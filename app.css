@@ -2002,16 +2002,16 @@ ins {
   .sidebar {
     width:25%;
     }
+  .open .containment {
+    width:100%;
+    }
   .open .fixed .containment,
   .open .limiter {
+    width:60%;
     margin:0;
-    }
-  .containment {
-    width:100%;
     }
   .limiter,
   .topbar.fixed {
-    width:60%;
     padding:0 0 0 65px;
     }
   .loading {
