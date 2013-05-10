@@ -406,11 +406,22 @@ ins {
 /* ------------------------------------------
   Global Layout
 ---------------------------------------------*/
+.containment,
 .limiter {
   position:relative;
   width:680px;
   margin:0 auto;
   }
+  .limiter {
+    -webkit-transition:right 150ms;
+       -moz-transition:right 150ms;
+         -o-transition:right 150ms;
+            transition:right 150ms;
+    }
+  .open .fixed .containment,
+  .open .limiter {
+    right:140px;
+    }
 
 /* Alterable filename input */
 .heading .filepath {
@@ -479,8 +490,9 @@ ins {
   }
 
 .dropdown-menu.prose-menu {
-  position:fixed;
   width:120px;
+  position:fixed;
+  z-index:5000;
   top:0;
   left:0;
   }
@@ -490,7 +502,7 @@ ins {
 
 .loading {
   position:fixed;
-  z-index:5000;
+  z-index:7000;
   top:0;
   left:0;
   width:100%;
@@ -502,8 +514,9 @@ ins {
     height:33px;
     margin:0 10px 0 0;
     }
-  .loading span {
-    line-height:33px;
+  .loading small {
+    display:block;
+    margin:5px 0 0;
     }
 
 .sidebar {
@@ -860,7 +873,7 @@ ins {
 
 /* Top Branding/Navigation */
 .heading {
-  padding:30px 15px 10px;
+  padding:30px 0 10px;
   }
 
 .details {
@@ -975,29 +988,38 @@ ins {
     top:60px;
     }
 
-.topbar {
-  background:#fff;
-  background:rgba(255,255,255,0.95);
-  border-bottom:1px solid #d4d7d9;
-  height:60px;
+.fixed .containment {
+  -webkit-transform:translate3d(0,0,0);
+          transform:translate3d(0,0,0);
+  -webkit-box-shadow:0 4px 6px -4px rgba(0, 0, 0, 0.10);
+          box-shadow:0 4px 6px -4px rgba(0, 0, 0, 0.10);
   }
-  .topbar.toolbar {
-    height:0;
-    }
-  .fixed.topbar.toolbar,
-  .markdown .topbar.toolbar {
-    height:40px;
+  .fixed .containment.toolbar {
+    background:#f8f8f8;
+    border-bottom:1px solid #d4d7d9;
+    -webkit-border-radius:0;
+            border-radius:0;
     }
 
-  .topbar .dropdown-hover,
+  .topbar .containment.content-search {
+    background:#fff;
+    height:60px;
+    background:rgba(255,255,255,0.95);
+    border-bottom:1px solid #d4d7d9;
+    }
+
+  .topbar .toolbar {
+    height:0;
+    }
+  .fixed.topbar .toolbar,
+  .markdown .toolbar {
+    height:40px;
+    }
   .topbar .inner > a {
     display:block;
     height:35px;
     padding:0 15px;
-    border:1px solid #a8afb2;
     line-height:34px;
-    -webkit-box-shadow:0 1px 1px rgba(255,255,255,0.5);
-            box-shadow:0 1px 1px rgba(255,255,255,0.5);
     }
   .toolbar .inner {
     padding:10px 15px 0;
@@ -1005,22 +1027,9 @@ ins {
 
 .topbar.fixed {
   position:fixed;
-  width:680px;
-  top:0;
-  left:auto;
-  -webkit-transform:translate3d(0,0,0);
-          transform:translate3d(0,0,0);
-  -webkit-box-shadow:0 4px 6px -4px rgba(0,0,0,0.10);
-          box-shadow:0 4px 6px -4px rgba(0,0,0,0.10);
+  width:100%;
+  top:0;left:0;
   }
-  .markdown .toolbar.fixed,
-  .toolbar.fixed {
-    background:#f8f8f8;
-    border-color:#D4D7D9;
-    -webkit-border-radius:0;
-            border-radius:0;
-    }
-
   .content-search input {
     background:transparent;
     border:none;
@@ -1100,7 +1109,7 @@ ins {
     font-size:16px;
     line-height:25px;
     }
-  .fixed.toolbar .save-action {
+  .fixed .toolbar .save-action {
     display:block;
     }
 
@@ -1277,6 +1286,10 @@ ins {
 /* ------------------------------------------
   File /:filename
 ---------------------------------------------*/
+.editor {
+  padding:15px 0 0;
+  }
+
 .flag {
   display:inline-block;
   margin:10px 15px;
@@ -1995,25 +2008,26 @@ ins {
 /* ------------------------------------------
   ios and small screen alterations
 ---------------------------------------------*/
-@media all and (max-width: 1200px) {
-  .limiter {
-    margin:0 280px 0 50px;
-    float:right;
-    }
-  }
-
-@media all and (max-width: 1040px) {
+@media all and (max-width: 1085px) {
   .sidebar {
     width:25%;
     }
-  .topbar.fixed {
-    width:75%;
-    }
-  .limiter {
-    width:75%;
-    float:none;
+  .open .fixed .containment,
+  .open .limiter {
+    right:0;
     margin:0;
-    padding-left:50px;
+    -webkit-transition:none;
+       -moz-transition:none;
+         -o-transition:none;
+            transition:none;
+    }
+  .containment {
+    width:100%;
+    }
+  .limiter,
+  .topbar.fixed {
+    width:60%;
+    padding:0 0 0 65px;
     }
   .loading {
     background:rgba(255,255,255,0.9);
