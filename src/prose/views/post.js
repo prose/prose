@@ -15,6 +15,7 @@ module.exports = Backbone.View.extend({
 
     events: {
       'click .markdown-snippets a': 'markdownSnippet',
+      'click .dialog .insert': 'dialogInsert',
       'click .save-action': 'updateFile',
       'click button': 'toggleButton',
       'click .unpublished-flag': 'meta',
@@ -902,12 +903,17 @@ module.exports = Backbone.View.extend({
 
     markdownSnippet: function(e) {
       var $target = $(e.target, this.el);
+      var $dialog = $('#dialog', this.el);
       var key = $target.data('key');
       var snippet = $target.data('snippet');
       var selection = _.trim(this.editor.getSelection());
 
+      $dialog
+        .removeClass()
+        .empty();
+
       if (snippet) {
-        if (this.editor.getSelection !== '') {
+        if (selection) {
           switch(key) {
             case 'bold':
               this.bold(selection);
@@ -936,8 +942,6 @@ module.exports = Backbone.View.extend({
       } else if ($target.data('dialog')) {
         // This condition handles the link and media link in the toolbar.
         var tmpl;
-        var $dialog = $('#dialog', this.el);
-
         if ($target.hasClass('active')) {
           $target.removeClass('active');
           $dialog
@@ -945,16 +949,42 @@ module.exports = Backbone.View.extend({
             .empty();
         } else {
           $target.addClass('active');
+          $dialog
+            .removeClass()
+            .empty();
+
           if (key === 'link') {
             tmpl = _(app.templates.linkDialog).template();
             $dialog
-              .removeClass()
               .addClass('dialog ' + key)
-              .empty()
               .append(tmpl());
+
+            if (selection) {
+              // TODO parse this as a url and split the parts into
+              // their respective fields.
+              $('input[name=text]', $dialog).val(selection);
+            }
           }
         }
       }
+
+      return false;
+    },
+
+    dialogInsert: function(e) {
+      var $dialog = $('#dialog', this.el);
+      var $target = $(e.target, this.el);
+      var type = $target.data('type');
+
+      if (type === 'link') {
+        var href = $('input[name="href"]').val();
+        var text = $('input[name="text"]').val();
+        if (!text) text = href;
+        this.editor.replaceSelection('[' + text + '](' + href + ')');
+      }
+
+      // Empty out and remove the dialog now.
+      $dialog.removeClass().empty();
 
       return false;
     },
