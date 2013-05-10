@@ -161,6 +161,7 @@ module.exports = Backbone.View.extend({
 
         // Content Window
         $('.views .view', this.el).removeClass('active');
+
         $('#preview', this.el)
           .addClass('active')
           .html(marked(this.model.content));
