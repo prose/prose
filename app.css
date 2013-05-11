@@ -1114,11 +1114,11 @@ ins {
           border-radius:0 0 4px 4px;
   }
   .dialog.link {
-    width:35%;
-    left:8px;
+    width:210px;
+    left:20px;
     }
     .fixed .dialog.link {
-      left:63px;
+      left:75px;
       }
     .dialog.link:after {
       content:'';
@@ -1132,6 +1132,26 @@ ins {
   .dialog input {
     margin-bottom:5px;
     }
+  .collapsible {
+    margin-bottom:10px;
+    }
+    .collapsible .trigger {
+      display:block;
+      padding:10px 0 4px;
+      font-size:12px;
+      color:#868F93;
+      }
+      .collapsible.open .trigger,
+      .collapsible .trigger:hover {
+        color:#3d494e;
+        }
+    .collapse {
+      display:none;
+      margin-bottom:10px;
+      }
+      .collapsible.open .collapse {
+        display:block;
+        }
 
 .menu li {
   float:left;
@@ -1627,6 +1647,7 @@ ins {
   padding:8px 6px;
   margin:0;
   list-style:none;
+  width:165px;
   }
 .chzn-container .chzn-results .active-result {
   cursor:pointer;

@@ -16,6 +16,7 @@ module.exports = Backbone.View.extend({
     events: {
       'click .markdown-snippets a': 'markdownSnippet',
       'click .dialog .insert': 'dialogInsert',
+      'click .collapsible .trigger': 'toggleCollapse',
       'click .save-action': 'updateFile',
       'click button': 'toggleButton',
       'click .unpublished-flag': 'meta',
@@ -32,6 +33,20 @@ module.exports = Backbone.View.extend({
 
     render: function() {
       var view = this;
+
+      // Shorter access to the config object
+      if (app.state.config && app.state.config.prose) {
+        this.config = app.state.config.prose;
+      }
+
+      // Link Dialog
+      if (this.config && this.config.relativeLinks) {
+        var get = app.state;
+        app.models.loadPost(get.user, get.repo, get.branch, '', this.config.relativeLinks, function(err, data) {
+          view.relativeLinks = JSON.parse(data.content);
+        });
+      }
+
       this.data = _.extend(this.model, {
         mode: app.state.mode,
         preview: this.model.markdown ? marked(this.model.content) : '',
@@ -135,9 +150,8 @@ module.exports = Backbone.View.extend({
 
     preview: function(e) {
       $('#prose').toggleClass('open', false);
-      if (app.state.config &&
-        app.state.config.prose &&
-        app.state.config.prose.siteurl &&
+      if (this.config &&
+        this.config.siteurl &&
         this.model.metadata &&
         this.model.metadata.layout
       ){
@@ -902,6 +916,7 @@ module.exports = Backbone.View.extend({
     },
 
     markdownSnippet: function(e) {
+      var view = this;
       var $target = $(e.target, this.el);
       var $dialog = $('#dialog', this.el);
       var key = $target.data('key');
@@ -956,9 +971,20 @@ module.exports = Backbone.View.extend({
 
           if (key === 'link') {
             tmpl = _(app.templates.linkDialog).template();
+
             $dialog
               .addClass('dialog ' + key)
-              .append(tmpl());
+              .append(tmpl({
+                relativeLinks: view.relativeLinks
+              }));
+
+            if (view.relativeLinks) {
+              $('.chzn-select', $dialog).chosen().change(function() {
+                var parts = $(this).val().split(',');
+                $('input[name=href]', $dialog).val(parts[0]);
+                $('input[name=text]', $dialog).val(parts[1]);
+              });
+            }
 
             if (selection) {
               // test if this is a markdown link: [text](link)
@@ -999,10 +1025,16 @@ module.exports = Backbone.View.extend({
       $('.toolbar .on').removeClass('on');
       $dialog.removeClass().empty();
 
+      this.editor.focus();
       return false;
     },
 
-    heading: function(){
+    toggleCollapse: function() {
+      $('.collapsible', this.el).toggleClass('open');
+      return false;
+    },
+
+    heading: function(s){
       if (s.charAt(0) === '#' && s.charAt(1) !== '#') {
         this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
       } else {
