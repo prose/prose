@@ -288,7 +288,7 @@ module.exports = {
   // Load Config
   // -------
   //
-  // Load _config.yml or _prose.yml
+  // Load _config.yml or prose.yml
 
   loadConfig: function(user, reponame, branch, file, cb) {
     if (file) {
@@ -312,7 +312,7 @@ module.exports = {
   // -------
   //
   // List all postings for a given repo+branch+path
-  // plus load _config.yml or _prose.yml
+  // plus load _config.yml or prose.yml
 
   loadPosts: function(user, reponame, branch, path, cb) {
     var models = this;
@@ -325,9 +325,9 @@ module.exports = {
         // avoid the callback dependency and order when
         // we refacor models.
 
-        // Check for _prose.yml or _config.yml
+        // Check for prose.yml or _config.yml
         var configName = _(tree).find(function(t) {
-          if (t.path === '_prose.yml') {
+          if (t.path === 'prose.yml') {
             return t.path;
           } else if (t.path === '_config.yml') {
             return t.path;
