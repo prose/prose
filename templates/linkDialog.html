@@ -1,6 +1,7 @@
 <div class='inner'>
   <input type='text' name='href' placeholder='Link URL' />
-  <input type='text' name='text' placeholder='Title (optional)' />
+  <input type='text' name='text' placeholder='Link Name' />
+  <input type='text' name='title' placeholder='Title (optional)' />
 
   <% if (relativeLinks) { %>
     <div class='collapsible'>
@@ -9,7 +10,7 @@
         <select data-placeholder='Search post title' class='chzn-select'>
           <option value></option>
           <% _(relativeLinks).each(function(link) { %>
-          <option value='<%= link.href %>,<%= link.title %>'><%= link.title %></option>
+          <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>
           <% }); %>
         </select>
       </div>

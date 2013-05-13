@@ -979,17 +979,29 @@ module.exports = Backbone.View.extend({
           if (selection) {
             // test if this is a markdown link: [text](link)
             var link = /\[([^\]]+)\]\(([^)]+)\)/;
+            var quoted = /".*?"/;
+
             var text = selection;
             var href;
+            var title;
 
             if (link.test(selection)) {
               var parts = link.exec(selection)
               text = parts[1];
               href = parts[2];
+
+              // Search for a title attrbute within the url string
+              if (quoted.test(parts[2])) {
+                href = parts[2].split(quoted)[0];
+
+                // TODO could be improved
+                title = parts[2].match(quoted)[0].replace(/"/g, '');
+              }
             }
 
             $('input[name=text]', $dialog).val(text);
             if (href) $('input[name=href]', $dialog).val(href);
+            if (title) $('input[name=title]', $dialog).val(title);
           }
         }
       }
@@ -1006,8 +1018,15 @@ module.exports = Backbone.View.extend({
     if (type === 'link') {
       var href = $('input[name="href"]').val();
       var text = $('input[name="text"]').val();
+      var title = $('input[name="title"]').val();
+
       if (!text) text = href;
-      this.editor.replaceSelection('[' + text + '](' + href + ')');
+
+      if (title) {
+        this.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
+      } else {
+        this.editor.replaceSelection('[' + text + '](' + href + ')');
+      }
     }
 
     // Empty out and remove the dialog.
