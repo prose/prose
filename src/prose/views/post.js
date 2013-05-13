@@ -958,51 +958,61 @@ module.exports = Backbone.View.extend({
         $target.removeClass('on');
         $dialog.removeClass().empty();
       } else {
+        $('.markdown-snippets a', this.el).removeClass('on');    
         $target.addClass('on');
-        $dialog.removeClass().empty();
+        $dialog
+          .removeClass()
+          .addClass('dialog ' + key)
+          .empty();
 
-        if (key === 'link') {
-          tmpl = _(app.templates.linkDialog).template();
+        switch(key) {
+          case 'link':
+            tmpl = _(app.templates.linkDialog).template();
 
-          $dialog.addClass('dialog ' + key).append(tmpl({
-            relativeLinks: view.relativeLinks
-          }));
+            $dialog.append(tmpl({
+              relativeLinks: view.relativeLinks
+            }));
 
-          if (view.relativeLinks) {
-            $('.chzn-select', $dialog).chosen().change(function() {
-              var parts = $(this).val().split(',');
-              $('input[name=href]', $dialog).val(parts[0]);
-              $('input[name=text]', $dialog).val(parts[1]);
-            });
-          }
-
-          if (selection) {
-            // test if this is a markdown link: [text](link)
-            var link = /\[([^\]]+)\]\(([^)]+)\)/;
-            var quoted = /".*?"/;
-
-            var text = selection;
-            var href;
-            var title;
-
-            if (link.test(selection)) {
-              var parts = link.exec(selection)
-              text = parts[1];
-              href = parts[2];
-
-              // Search for a title attrbute within the url string
-              if (quoted.test(parts[2])) {
-                href = parts[2].split(quoted)[0];
-
-                // TODO could be improved
-                title = parts[2].match(quoted)[0].replace(/"/g, '');
-              }
+            if (view.relativeLinks) {
+              $('.chzn-select', $dialog).chosen().change(function() {
+                var parts = $(this).val().split(',');
+                $('input[name=href]', $dialog).val(parts[0]);
+                $('input[name=text]', $dialog).val(parts[1]);
+              });
             }
 
-            $('input[name=text]', $dialog).val(text);
-            if (href) $('input[name=href]', $dialog).val(href);
-            if (title) $('input[name=title]', $dialog).val(title);
-          }
+            if (selection) {
+              // test if this is a markdown link: [text](link)
+              var link = /\[([^\]]+)\]\(([^)]+)\)/;
+              var quoted = /".*?"/;
+
+              var text = selection;
+              var href;
+              var title;
+
+              if (link.test(selection)) {
+                var parts = link.exec(selection)
+                text = parts[1];
+                href = parts[2];
+
+                // Search for a title attrbute within the url string
+                if (quoted.test(parts[2])) {
+                  href = parts[2].split(quoted)[0];
+
+                  // TODO could be improved
+                  title = parts[2].match(quoted)[0].replace(/"/g, '');
+                }
+              }
+
+              $('input[name=text]', $dialog).val(text);
+              if (href) $('input[name=href]', $dialog).val(href);
+              if (title) $('input[name=title]', $dialog).val(title);
+            }
+          break;
+          case 'media':
+            tmpl = _(app.templates.mediaDialog).template();
+            $dialog.append(tmpl());
+          break;
         }
       }
     }
