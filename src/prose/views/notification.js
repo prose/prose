@@ -22,9 +22,19 @@ module.exports = Backbone.View.extend({
     this.eventRegister.trigger('documentTitle', 'Error ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
     var tmpl = _(window.app.templates.notification).template();
 
+    // Basically for any previous path we want to try
+    // and bring a user back to the directory tree.
+    var hash = document.location.hash.split('/');
+    var parts = hash.slice(0, hash.length -1);
+    if (parts[2]) parts[2] = 'tree';
+
+    var previous = parts.join('/');
+
     $(this.el).html(tmpl(_.extend(this.model, {
+      previous: previous,
       pathFromFile: (app.state.file) ? true : false
     })));
+
     return this;
   },
 
