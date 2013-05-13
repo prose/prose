@@ -227,7 +227,7 @@ input[type=text] {
   max-width:100%;
   border:1px solid #a8afb2;
   border-color:#a8afb2 #d4d7d9 #d4d7d9;
-  color:#868f93;
+  color:#516066;
   -webkit-box-sizing:border-box;
           box-sizing:border-box;
   -webkit-transition:border linear 150ms;
@@ -250,7 +250,6 @@ textarea#code {
   textarea:focus,
   input[type=text]:focus {
     outline:thin dotted\8; /* ie8 below */
-    color:#516066;
     border-color:#516066;
     border-width:1px;
     }
@@ -1012,9 +1011,6 @@ ins {
     padding:0 15px;
     line-height:34px;
     }
-  .toolbar .inner {
-    padding:10px 15px 0;
-    }
 
 .topbar.fixed {
   position:fixed;
@@ -1079,6 +1075,7 @@ ins {
           -webkit-border-radius:4px;
                   border-radius:4px;
           }
+        .toolbar li a.on,
         .toolbar li a.active,
         .toolbar li a:active {
           background:#f0f0f0;
@@ -1103,6 +1100,57 @@ ins {
   .fixed .toolbar .save-action {
     display:block;
     }
+
+.toolbar .dialog {
+  background:#f0f0f0;
+  position:absolute;
+  top:39px;
+  width:100%;
+  margin:0 auto;
+  -webkit-box-shadow:0 4px 6px -4px rgba(0,0,0,0.50);
+          box-shadow:0 4px 6px -4px rgba(0,0,0,0.50);
+  -webkit-border-radius:0 0 4px 4px;
+          border-radius:0 0 4px 4px;
+  }
+  .dialog.link {
+    width:210px;
+    left:20px;
+    }
+    .fixed .dialog.link {
+      left:75px;
+      }
+    .dialog.link:after {
+      content:'';
+      top:-5px;
+      left:50%;
+      border-width:0 5px 5px;
+      border-style:solid;
+      position:absolute;
+      border-color:#d4d7d9 transparent;
+      }
+  .dialog input {
+    margin-bottom:5px;
+    }
+  .collapsible {
+    margin-bottom:10px;
+    }
+    .collapsible .trigger {
+      display:block;
+      padding:10px 0 4px;
+      font-size:12px;
+      color:#868F93;
+      }
+      .collapsible.open .trigger,
+      .collapsible .trigger:hover {
+        color:#3d494e;
+        }
+    .collapse {
+      display:none;
+      margin-bottom:10px;
+      }
+      .collapsible.open .collapse {
+        display:block;
+        }
 
 .menu li {
   float:left;
@@ -1421,7 +1469,7 @@ ins {
   }
 .chzn-container-single .chzn-single {
   background-color:#fff;
-  border:1px solid #868f93;
+  border:1px solid #D4D7D9;
   display:block;
   overflow:hidden;
   white-space:nowrap;
@@ -1514,7 +1562,7 @@ ins {
 
 .chzn-container-multi .chzn-choices {
   background-color:#fff;
-  border:1px solid #868f93;
+  border:1px solid #D4D7D9;
   margin:0;
   padding:0;
   cursor:text;
@@ -1598,6 +1646,7 @@ ins {
   padding:8px 6px;
   margin:0;
   list-style:none;
+  width:165px;
   }
 .chzn-container .chzn-results .active-result {
   cursor:pointer;

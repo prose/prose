@@ -15,6 +15,8 @@ module.exports = Backbone.View.extend({
 
   events: {
     'click .markdown-snippets a': 'markdownSnippet',
+    'click .dialog .insert': 'dialogInsert',
+    'click .collapsible .trigger': 'toggleCollapse',
     'click .save-action': 'updateFile',
     'click button': 'toggleButton',
     'click .unpublished-flag': 'meta',
@@ -31,6 +33,26 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var view = this;
+
+    // Shorter access to the config object
+    if (app.state.config && app.state.config.prose) {
+      this.config = app.state.config.prose;
+    }
+
+    // Link Dialog
+    if (this.config && this.config.relativeLinks) {
+      $.ajax({
+        cache: true,
+        dataType: 'jsonp',
+        jsonp: false,
+        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
+        url: this.config.relativeLinks,
+        success: function(links) {
+          view.relativeLinks = links;
+        }
+      });
+    }
+
     this.data = _.extend(this.model, {
       mode: app.state.mode,
       preview: this.model.markdown ? marked(this.model.content) : '',
@@ -136,7 +158,7 @@ module.exports = Backbone.View.extend({
 
   preview: function(e) {
     $('#prose').toggleClass('open', false);
-    if (app.state.config && app.state.config.prose && app.state.config.prose.siteurl && this.model.metadata && this.model.metadata.layout) {
+    if (this.config && this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
       var hash = window.location.hash.split('/');
       hash[2] = 'preview';
       if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
@@ -151,12 +173,14 @@ module.exports = Backbone.View.extend({
       return true;
     } else {
       if (e) e.preventDefault();
+
       // Vertical Nav
       $('.post-views a').removeClass('active');
       $('.post-views .preview').addClass('active');
 
       // Content Window
       $('.views .view', this.el).removeClass('active');
+
       $('#preview', this.el).addClass('active').html(marked(this.model.content));
 
       app.state.mode = 'blob';
@@ -890,37 +914,132 @@ module.exports = Backbone.View.extend({
   },
 
   markdownSnippet: function(e) {
-    var key = $(e.target, this.el).data('key');
-    var snippet = $(e.target, this.el).data('snippet');
+    var view = this;
+    var $target = $(e.target, this.el);
+    var $dialog = $('#dialog', this.el);
+    var key = $target.data('key');
+    var snippet = $target.data('snippet');
     var selection = _.trim(this.editor.getSelection());
 
-    if (this.editor.getSelection !== '') {
-      switch (key) {
-      case 'bold':
-        this.bold(selection);
-        break;
-      case 'italic':
-        this.italic(selection);
-        break;
-      case 'heading':
-        this.heading(selection);
-        break;
-      case 'sub-heading':
-        this.subHeading(selection);
-        break;
-      case 'quote':
-        this.quote(selection);
-        break;
-      default:
+    $dialog.removeClass().empty();
+
+    if (snippet) {
+      if (selection) {
+        switch (key) {
+        case 'bold':
+          this.bold(selection);
+          break;
+        case 'italic':
+          this.italic(selection);
+          break;
+        case 'heading':
+          this.heading(selection);
+          break;
+        case 'sub-heading':
+          this.subHeading(selection);
+          break;
+        case 'quote':
+          this.quote(selection);
+          break;
+        default:
+          this.editor.replaceSelection(snippet);
+          break;
+        }
+        this.editor.focus();
+      } else {
         this.editor.replaceSelection(snippet);
-        break;
+        this.editor.focus();
       }
-      this.editor.focus();
-    } else {
-      this.editor.replaceSelection(snippet);
-      this.editor.focus();
+    } else if ($target.data('dialog')) {
+
+      // This condition handles the link and media link in the toolbar.
+      var tmpl;
+      if ($target.hasClass('on')) {
+        $target.removeClass('on');
+        $dialog.removeClass().empty();
+      } else {
+        $target.addClass('on');
+        $dialog.removeClass().empty();
+
+        if (key === 'link') {
+          tmpl = _(app.templates.linkDialog).template();
+
+          $dialog.addClass('dialog ' + key).append(tmpl({
+            relativeLinks: view.relativeLinks
+          }));
+
+          if (view.relativeLinks) {
+            $('.chzn-select', $dialog).chosen().change(function() {
+              var parts = $(this).val().split(',');
+              $('input[name=href]', $dialog).val(parts[0]);
+              $('input[name=text]', $dialog).val(parts[1]);
+            });
+          }
+
+          if (selection) {
+            // test if this is a markdown link: [text](link)
+            var link = /\[([^\]]+)\]\(([^)]+)\)/;
+            var quoted = /".*?"/;
+
+            var text = selection;
+            var href;
+            var title;
+
+            if (link.test(selection)) {
+              var parts = link.exec(selection)
+              text = parts[1];
+              href = parts[2];
+
+              // Search for a title attrbute within the url string
+              if (quoted.test(parts[2])) {
+                href = parts[2].split(quoted)[0];
+
+                // TODO could be improved
+                title = parts[2].match(quoted)[0].replace(/"/g, '');
+              }
+            }
+
+            $('input[name=text]', $dialog).val(text);
+            if (href) $('input[name=href]', $dialog).val(href);
+            if (title) $('input[name=title]', $dialog).val(title);
+          }
+        }
+      }
     }
 
+    return false;
+  },
+
+  dialogInsert: function(e) {
+    var $dialog = $('#dialog', this.el);
+    var $target = $(e.target, this.el);
+    var type = $target.data('type');
+
+    if (type === 'link') {
+      var href = $('input[name="href"]').val();
+      var text = $('input[name="text"]').val();
+      var title = $('input[name="title"]').val();
+
+      if (!text) text = href;
+
+      if (title) {
+        this.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
+      } else {
+        this.editor.replaceSelection('[' + text + '](' + href + ')');
+      }
+    }
+
+    // Empty out and remove the dialog.
+    // Also kill the `on` class on links
+    $('.toolbar .on').removeClass('on');
+    $dialog.removeClass().empty();
+
+    this.editor.focus();
+    return false;
+  },
+
+  toggleCollapse: function() {
+    $('.collapsible', this.el).toggleClass('open');
     return false;
   },
 
