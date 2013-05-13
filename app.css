@@ -227,7 +227,7 @@ input[type=text] {
   max-width:100%;
   border:1px solid #a8afb2;
   border-color:#a8afb2 #d4d7d9 #d4d7d9;
-  color:#868f93;
+  color:#516066;
   -webkit-box-sizing:border-box;
           box-sizing:border-box;
   -webkit-transition:border linear 150ms;
@@ -250,7 +250,6 @@ textarea#code {
   textarea:focus,
   input[type=text]:focus {
     outline:thin dotted\8; /* ie8 below */
-    color:#516066;
     border-color:#516066;
     border-width:1px;
     }
