@@ -13,7 +13,7 @@ window.app = {
       Profile: require('./views/profile'),
       Posts: require('./views/posts'),
       Post: require('./views/post'),
-      Page: require('./views/page')
+      Documentation: require('./views/documentation')
     },
     templates: require('../../dist/templates'),
     router: require('./router'),
