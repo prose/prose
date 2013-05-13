@@ -41,9 +41,15 @@ module.exports = Backbone.View.extend({
 
     // Link Dialog
     if (this.config && this.config.relativeLinks) {
-      var get = app.state;
-      app.models.loadPost(get.user, get.repo, get.branch, '', this.config.relativeLinks, function(err, data) {
-        view.relativeLinks = JSON.parse(data.content);
+      $.ajax({
+        cache: true,
+        dataType: 'jsonp',
+        jsonp: false,
+        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
+        url: this.config.relativeLinks,
+        success: function(links) {
+          view.relativeLinks = links;
+        }
       });
     }
 
