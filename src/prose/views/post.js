@@ -67,11 +67,6 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('meta', this.meta);
     this.eventRegister.bind('remove', this.remove);
 
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    var context = 'Editing ';
-    if (app.state.mode === 'blob') context = 'Previewing ';
-
-    this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
     this.eventRegister.trigger('sidebarContext', this.data);
     this.renderHeading();
 
@@ -96,12 +91,22 @@ module.exports = Backbone.View.extend({
       }, 1);
     }
 
+    this.updateDocumentTitle();
+
     // Prevent exit when there are unsaved changes
     window.onbeforeunload = function() {
       if (app.state.file && view.dirty) return 'You have unsaved changes. Are you sure you want to leave?';
     };
 
     return this;
+  },
+
+  updateDocumentTitle: function() {
+    var context = 'Editing ';
+    var pathTitle = (app.state.path) ? app.state.path : '';
+
+    if (app.state.mode === 'blob') context = 'Previewing ';
+    this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
   },
 
   renderHeading: function() {
@@ -205,6 +210,7 @@ module.exports = Backbone.View.extend({
 
   updateURL: function() {
     var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
+    this.updateDocumentTitle();
     router.navigate(url.join('/'), {
       trigger: false,
       replace: true
