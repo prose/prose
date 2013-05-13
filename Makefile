@@ -35,7 +35,7 @@ LIBS = \
 
 APPLICATION = \
 	src/prose/views/notification.js \
-	src/prose/views/page.js \
+	src/prose/views/documentation.js \
 	src/prose/views/post.js \
 	src/prose/views/posts.js \
 	src/prose/views/profile.js \
