@@ -55,7 +55,7 @@ module.exports = Backbone.View.extend({
 
     // Assets Listing for the Media Dialog
     if (app.state.markdown && this.config && this.config.media) {
-      this.assetsDirectory = true;
+      this.assetsDirectory = this.config.media;
       app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
         view.assets = data;
       });
@@ -871,7 +871,6 @@ module.exports = Backbone.View.extend({
           app.models.uploadFile(app.state.user, app.state.repo,  app.state.path, data, function() {
             // Success!
             var text = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
-            console.log(text);
           });
         });
       }
@@ -1056,7 +1055,7 @@ module.exports = Backbone.View.extend({
     return false;
   },
 
-  renderAssets: function(data) {
+  renderAssets: function(data, back) {
     var view = this;
     var $media = $('#media', this.el);
     var tmpl = _(app.templates.asset).template();
@@ -1064,6 +1063,12 @@ module.exports = Backbone.View.extend({
     // Reset some stuff
     $('.directory a', $media).off('click', this.assetDirectory);
     $media.empty();
+
+    if (back && (back.join() !== this.assetsDirectory)) {
+      var link = back.slice(0, back.length - 1);
+      if (link.length > 0) link.join('/');
+      $media.append('<li class="directory back"><a href="' + link + '">Back</a></li>')
+    }
 
     _(data).each(function(asset) {
       $media.append(tmpl({
@@ -1082,7 +1087,7 @@ module.exports = Backbone.View.extend({
   assetDirectory: function(dir, view) {
     var path = dir.attr('href');
     app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, path, function(err, data) {
-      view.renderAssets(data.files);
+      view.renderAssets(data.files, path.split('/'));
     });
   },
 

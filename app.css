@@ -1192,7 +1192,7 @@ ins {
 
 .dialog .media-listing {
   margin-right:30px;
-  max-height:200px;
+  height:200px;
   overflow:auto;
   }
   .dialog .media-listing li {
@@ -1217,6 +1217,11 @@ ins {
     bottom:0;
     right:0;
     }
+    .dialog .media-listing .back a {
+      background:#F8F8F8;
+      border-bottom:1px solid #D4D7D9;
+      font-weight:700;
+      }
     .dialog .media-listing .media {
       color:#a8afb2;
       }
