@@ -5,15 +5,12 @@
 
   <% if (relativeLinks) { %>
     <div class='collapsible'>
-      <a href='#' class='trigger'>Search Relative Links</a>
-      <div class='collapse'>
-        <select data-placeholder='Search post title' class='chzn-select'>
-          <option value></option>
-          <% _(relativeLinks).each(function(link) { %>
-          <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>
-          <% }); %>
-        </select>
-      </div>
+      <select data-placeholder='Insert a local link' class='chzn-select'>
+        <option value></option>
+        <% _(relativeLinks).each(function(link) { %>
+        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>
+        <% }); %>
+      </select>
     </div>
   <% } %>
 

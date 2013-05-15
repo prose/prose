@@ -7,6 +7,7 @@ var marked = require('marked');
 var diff = require('diff');
 var Backbone = require('backbone');
 var utils = require('.././util');
+var upload = require('.././upload');
 
 module.exports = Backbone.View.extend({
 
@@ -16,7 +17,6 @@ module.exports = Backbone.View.extend({
   events: {
     'click .markdown-snippets a': 'markdownSnippet',
     'click .dialog .insert': 'dialogInsert',
-    'click .collapsible .trigger': 'toggleCollapse',
     'click .save-action': 'updateFile',
     'click button': 'toggleButton',
     'click .unpublished-flag': 'meta',
@@ -40,7 +40,7 @@ module.exports = Backbone.View.extend({
     }
 
     // Link Dialog
-    if (this.config && this.config.relativeLinks) {
+    if (app.state.markdown && this.config && this.config.relativeLinks) {
       $.ajax({
         cache: true,
         dataType: 'jsonp',
@@ -843,8 +843,30 @@ module.exports = Backbone.View.extend({
         lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
         extraKeys: view.keyMap(),
         matchBrackets: true,
+        dragDrop: false,
         theme: 'prose-bright'
       });
+
+      // Bind Drag and Drop work on the editor
+      if (app.state.markdown && authenticated) {
+        upload.dragDrop($('body'), function(file) {
+
+          // Unique Filename
+          var uid  = [app.state.user, (new Date()).getTime(), 'raw'].join('-');
+          var data = new FormData();
+
+          data.append('path',  uid);
+          data.append('message', 'Uploaded ' + file.name);
+          data.append('content', file);
+          data.append('branch', app.state.branch);
+
+          app.models.uploadFile(app.state.user, app.state.repo,  app.state.path, data, function() {
+            // Success!
+            var text = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
+            console.log(text);
+          });
+        });
+      }
 
       // Monitor the current selection and apply
       // an active class to any snippet links
@@ -924,6 +946,8 @@ module.exports = Backbone.View.extend({
     $dialog.removeClass().empty();
 
     if (snippet) {
+      $('.markdown-snippets a', this.el).removeClass('on');
+
       if (selection) {
         switch (key) {
         case 'bold':
@@ -958,7 +982,7 @@ module.exports = Backbone.View.extend({
         $target.removeClass('on');
         $dialog.removeClass().empty();
       } else {
-        $('.markdown-snippets a', this.el).removeClass('on');    
+        $('.markdown-snippets a', this.el).removeClass('on');
         $target.addClass('on');
         $dialog
           .removeClass()
@@ -991,7 +1015,7 @@ module.exports = Backbone.View.extend({
               var title;
 
               if (link.test(selection)) {
-                var parts = link.exec(selection)
+                var parts = link.exec(selection);
                 text = parts[1];
                 href = parts[2];
 
@@ -1045,11 +1069,6 @@ module.exports = Backbone.View.extend({
     $dialog.removeClass().empty();
 
     this.editor.focus();
-    return false;
-  },
-
-  toggleCollapse: function() {
-    $('.collapsible', this.el).toggleClass('open');
     return false;
   },
 

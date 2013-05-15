@@ -133,6 +133,19 @@ module.exports = {
     }
   },
 
+  // Create a File
+  // -------
+  //
+  // Fired when uploading images via file selection or
+  // drag and drop
+  uploadFile: function(username, repo, path, data, cb) {
+    var file = github().getFile();
+    file.create(username, repo, path, data, function(err, res) {
+       if (err) // TODO Handle it
+       cb();
+    });
+  },
+
   // Load Repos
   // -------
   //

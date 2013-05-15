@@ -109,6 +109,28 @@ var _ = require('underscore');
       }
     }
 
+    // File API
+    // =======
+    Github.File = function() {
+      this.create = function(username, repo, path, data, cb) {
+        _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, data, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      this.update = function(username, repo, path, cb) {
+        _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      this.deleteFile = function(cb) {
+        _request('DELETE', '/repos/' + username + '/' + repo + '/contents/' + path, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+    };
+
     // User API
     // =======
 
@@ -568,6 +590,10 @@ var _ = require('underscore');
 
     this.getUser = function() {
       return new Github.User();
+    };
+
+    this.getFile = function() {
+      return new Github.File();
     };
 
     this.getGist = function(id) {
