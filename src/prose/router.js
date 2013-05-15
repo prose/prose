@@ -25,8 +25,7 @@ module.exports = Backbone.Router.extend({
     });
   },
 
-  about: function() {
-
+  resetState: function() {
     app.state = {
       user: '',
       repo: '',
@@ -35,9 +34,16 @@ module.exports = Backbone.Router.extend({
       path: '',
       file: ''
     };
+  },
+
+  about: function() {
+    this.resetState();
 
     router.application.render();
-    var view = new app.views.Page().render();
+    var view = new app.views.Documentation({
+      page: 'about'
+    }).render();
+
     $('#content').empty().append(view.el);
   },
 
