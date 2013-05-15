@@ -53,6 +53,14 @@ module.exports = Backbone.View.extend({
       });
     }
 
+    // Assets Listing for the Media Dialog
+    if (app.state.markdown && this.config && this.config.media) {
+      this.assetsDirectory = true;
+      app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
+        view.assets = data;
+      });
+    }
+
     this.data = _.extend(this.model, {
       mode: app.state.mode,
       preview: this.model.markdown ? marked(this.model.content) : '',
@@ -1035,13 +1043,47 @@ module.exports = Backbone.View.extend({
           break;
           case 'media':
             tmpl = _(app.templates.mediaDialog).template();
-            $dialog.append(tmpl());
+            $dialog.append(tmpl({
+              assetsDirectory: (view.assets) ? true : false
+            }));
+
+            if (view.assets) view.renderAssets(view.assets.files);
           break;
         }
       }
     }
 
     return false;
+  },
+
+  renderAssets: function(data) {
+    var view = this;
+    var $media = $('#media', this.el);
+    var tmpl = _(app.templates.asset).template();
+
+    // Reset some stuff
+    $('.directory a', $media).off('click', this.assetDirectory);
+    $media.empty();
+
+    _(data).each(function(asset) {
+      $media.append(tmpl({
+        name: asset.name,
+        type: asset.type,
+        path: asset.path
+      }));
+    });
+
+    $('.directory a', $media).on('click', function(e) {
+      view.assetDirectory($(e.target), view);
+      return false;
+    });
+  },
+
+  assetDirectory: function(dir, view) {
+    var path = dir.attr('href');
+    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, path, function(err, data) {
+      view.renderAssets(data.files);
+    });
   },
 
   dialogInsert: function(e) {

@@ -1,7 +1,14 @@
 <div class='inner clearfix'>
-  <div class='col fl'>
-    <label>Choose Existing</label>
-  </div>
+
+  <% if (assetsDirectory) { %>
+    <div class='col fl'>
+      <label>Choose Existing</label>
+      <div class='media-listing'>
+        <ul id='media'></ul>
+      </div>
+    </div>
+  <% } %>
+
   <div class='col fl'>
     <label>Insert Image</label>
     <div class='contain clearfix'>
