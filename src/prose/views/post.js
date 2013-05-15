@@ -7,6 +7,7 @@ var marked = require('marked');
 var diff = require('diff');
 var Backbone = require('backbone');
 var utils = require('.././util');
+var queue = require('queue-async');
 
 module.exports = Backbone.View.extend({
 
@@ -652,87 +653,103 @@ module.exports = Backbone.View.extend({
       var missing = {};
       var raw;
 
+      function matchValue(value, input) {
+        var q = queue();
+        var options;
+
+        if (_.isArray(value)) {
+
+          // iterate over values in array
+          for (var j = 0; j < value.length; j++) {
+            switch (input.type) {
+              case 'select-multiple':
+              case 'select-one':
+                options = $(input).find('option[value="' + value[j] + '"]');
+                if (options.length) {
+                  for (var k = 0; k < options.length; k++) {
+                    options[k].selected = 'selected';
+                  }
+
+                  return true;
+                }
+                break;
+              case 'text':
+                input.value = value;
+                return true;
+                break;
+              case 'checkbox':
+                if (input.value === value) {
+                  input.checked = 'checked';
+                  return true;
+                }
+                break;
+            }
+          }
+
+        } else if (_.isObject(value)) {
+
+          _.each(value, function(value, key) {
+            q.defer(parseValue, value, input.find('[name="' + key + '"]'));
+          });
+
+          q.awaitAll(function(res) {
+            console.log(res);
+            return false;
+          });
+
+        } else {
+
+          switch (input.type) {
+            case 'select-multiple':
+            case 'select-one':
+              options = $(input).find('option[value="' + value + '"]');
+              if (options.length) {
+                for (var m = 0; m < options.length; m++) {
+                  options[m].selected = 'selected';
+                }
+
+                return true;
+              }
+              break;
+            case 'text':
+              input.value = value;
+              return true;
+              break;
+            case 'checkbox':
+              input.checked = value ? 'checked' : false;
+              return true;
+              break;
+            case 'button':
+              input.value = value ? true : false;
+              input.innerHTML = value ? input.getAttribute('data-on') : input.getAttribute('data-off');
+              return true;
+              break;
+          }
+
+        }
+      }
+
       _(data).each(function(value, key) {
-        var matched = false;
         var input = $metadataEditor.find('[name="' + key + '"]');
         var length = input.length;
-        var options;
-        var tmpl;
+        var q = queue();
 
         if (length) {
 
           // iterate over matching fields
           for (var i = 0; i < length; i++) {
-
-            // if value is an array
-            if (value !== null && typeof value === 'object' && value.length) {
-
-              // iterate over values in array
-              for (var j = 0; j < value.length; j++) {
-                switch (input[i].type) {
-                case 'select-multiple':
-                case 'select-one':
-                  options = $(input[i]).find('option[value="' + value[j] + '"]');
-                  if (options.length) {
-                    for (var k = 0; k < options.length; k++) {
-                      options[k].selected = 'selected';
-                    }
-
-                    matched = true;
-                  }
-                  break;
-                case 'text':
-                  input[i].value = value;
-                  matched = true;
-                  break;
-                case 'checkbox':
-                  if (input[i].value === value) {
-                    input[i].checked = 'checked';
-                    matched = true;
-                  }
-                  break;
-                }
-              }
-
-            } else {
-
-              switch (input[i].type) {
-              case 'select-multiple':
-              case 'select-one':
-                options = $(input[i]).find('option[value="' + value + '"]');
-                if (options.length) {
-                  for (var m = 0; m < options.length; m++) {
-                    options[m].selected = 'selected';
-                  }
-
-                  matched = true;
-                }
-                break;
-              case 'text':
-                input[i].value = value;
-                matched = true;
-                break;
-              case 'checkbox':
-                input[i].checked = value ? 'checked' : false;
-                matched = true;
-                break;
-              case 'button':
-                input[i].value = value ? true : false;
-                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
-                matched = true;
-                break;
-              }
-
-            }
+            q.defer(matchValue, value, input[i]);
           }
 
-          if (!matched && value !== null) {
-            if (missing.hasOwnProperty(key)) {
-              missing[key] = _.union(missing[key], value);
-            } else {
-              missing[key] = value;
+          q.awaitAll(function(res) {
+            if (res.indexOf(true) === -1 && value !== null) {
+              if (missing.hasOwnProperty(key)) {
+                missing[key] = _.union(missing[key], value);
+              } else {
+                missing[key] = value;
+              }
             }
-          }
+          });
 
         } else {
           raw = {};
@@ -745,6 +762,8 @@ module.exports = Backbone.View.extend({
       });
 
       _.each(missing, function(value, key) {
+        var tmpl;
+
         if (value === null) return;
 
         switch (typeof value) {
