@@ -1233,8 +1233,9 @@ ins {
         color:#516066;
         }
 
-    .dialog .media-listing .media {
+    .dialog .media-listing .ico {
       color:#a8afb2;
+      font-size:17px;
       }
     .dialog .media-listing .folder {
       color:#deb400;

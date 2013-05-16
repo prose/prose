@@ -10,7 +10,11 @@
   <li class='asset'>
     <span class='mask'></span>
     <a class='clearfix item' href='#' title='<%= path %>' data-url='<%= path %>'>
-      <span class='ico fl small inline media'></span>
+      <% if (_.isMedia(path)) { %>
+        <span class='ico fl small inline media'></span>
+      <% } else { %>
+        <span class='ico fl small inline document'></span>
+      <% } %>
       <%= name %>
     </a>
   </li>
