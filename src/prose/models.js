@@ -612,6 +612,56 @@ module.exports = {
     var cfg = app.state.config;
     var q = queue();
 
+    function fetchLink(data, cb) {
+      $.ajax({
+        cache: true,
+        dataType: 'jsonp',
+        jsonp: false,
+        jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
+        url: data.field.options,
+        success: function(d) {
+          data.field.options = d;
+        },
+        error: function(xhr, textStatus, errorThrown) {
+          throw errorThrown;
+          data.field.options = null;
+        },
+        complete: cb
+      });
+    }
+
+    function parseValue(data, cb) {
+      var q = queue();
+
+      if (_.isObject(data) && _.isObject(data.field)) {
+        if (typeof data.field.options === 'string' && data.field.options.match(/^https?:\/\//)) {
+          q.defer(fetchLink, data);
+        }
+
+        switch(data.field.element) {
+          case 'boolean':
+          case 'text':
+            metadata[data.name] = data.field.value;
+            break;
+          case 'select':
+          case 'multiselect':
+            metadata[data.name] = data.field.selected ? data.field.selected : null;
+            break;
+        }
+      } else if (_.isObject(data) && _.isArray(data.fields)) {
+        for (var i = 0; i < data.fields.length; i++) {
+          q.defer(parseValue, data.fields[i]);
+        }
+      } else {
+        metadata[key] = data;
+      }
+
+      q.awaitAll(function(err, res) {
+        if (typeof cb !== "function") debugger;
+        cb();
+      });
+    }
+
     if (cfg && cfg.prose && cfg.prose.metadata) {
       // match nearest parent directory default metadata
       var nearestPath = path;
@@ -623,40 +673,11 @@ module.exports = {
       if (cfg.prose.metadata[nearestPath]) {
         defaultMetadata = cfg.prose.metadata[nearestPath];
 
-        if (typeof defaultMetadata === 'object') {
-          _.each(defaultMetadata, function(data, key) {
-            if (data && data.field) {
-              if (typeof data.field.options === 'string' && data.field.options.match(/^https?:\/\//)) {
+        if (_.isObject(defaultMetadata)) {
 
-                q.defer(function(cb){
-                  $.ajax({
-                    cache: true,
-                    dataType: 'jsonp',
-                    jsonp: false,
-                    jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
-                    url: data.field.options,
-                    success: function(d) {
-                      data.field.options = d;
-                      cb();
-                    }
-                  });
-                });
-              }
-
-              switch(data.field.element) {
-                case 'boolean':
-                case 'text':
-                  metadata[data.name] = data.field.value;
-                  break;
-                case 'select':
-                case 'multiselect':
-                  metadata[data.name] = data.field.selected ? data.field.selected : null;
-                  break;
-              }
-            } else {
-              metadata[key] = data;
-            }
-          });
+          for (var i = 0; i < defaultMetadata.length; i++) {
+            q.defer(parseValue, defaultMetadata[i]);
+          }
 
           rawMetadata = jsyaml.dump(metadata);
         } else if (typeof defaultMetadata === 'string') {
@@ -665,9 +686,13 @@ module.exports = {
           try {
             defaultMetadata = jsyaml.load(rawMetadata);
 
-            _.each(defaultMetadata, function(data, key) {
-              metadata[key] = data;
-            });
+            var keys = Object.keys(defaultMetadata);
+            var key;
+
+            for (var j = 0; j < keys.length; j++) {
+              key = keys[j];
+              metadata[keys] = defaultMetadata[key];
+            }
 
             if (metadata.date === 'CURRENT_DATETIME') {
               var current = (new Date()).format('Y-m-d H:i');
@@ -682,13 +707,15 @@ module.exports = {
       }
     }
 
-    q.await(function() {
+    q.awaitAll(function(err, res) {
+      console.log(err, res);
 
       // If ?file= in path, use it as file name
       if (path.indexOf('?file=') !== -1) {
         file = path.split('?file=')[1];
         path = path.split('?file=')[0].replace(/\/$/, '');
       }
+
       cb(null, {
         'metadata': metadata,
         'default_metadata': defaultMetadata,

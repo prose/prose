@@ -504,6 +504,7 @@ module.exports = Backbone.View.extend({
     function initialize(model) {
       var tmpl;
       tmpl = _(window.app.templates.button).template();
+
       $metadataEditor.append(tmpl({
         name: 'published',
         label: 'Publishing',
@@ -512,9 +513,10 @@ module.exports = Backbone.View.extend({
         off: 'Publish'
       }));
 
-      _(model.default_metadata).each(function(data, key) {
-        if (data && typeof data.field === 'object') {
-          switch (data.field.element) {
+      function buildTemplate(data) {
+        var tmpl;
+
+        switch (data.field.element) {
           case 'button':
             tmpl = _(window.app.templates.button).template();
             $metadataEditor.append(tmpl({
@@ -562,7 +564,14 @@ module.exports = Backbone.View.extend({
               lang: model.metadata.lang || 'en'
             }));
             break;
-          }
+        }
+      }
+
+      function parseData(data, key) {
+        if (_.isObject(data) && _.isObject(data.field)) {
+          buildTemplate(data);
+        } else if (_.isObject(data) && _.isArray(data.fields)) {
+          _.each(data.fields, parseData);
         } else {
           tmpl = _(window.app.templates.text).template();
           $metadataEditor.append(tmpl({
@@ -571,7 +580,10 @@ module.exports = Backbone.View.extend({
             value: data
           }));
         }
-      });
+      }
+
+      // iterate over default metadata
+      _.each(model.default_metadata, parseData);
 
       $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">Raw Metadata</label>').appendTo($metadataEditor);
 
@@ -655,6 +667,7 @@ module.exports = Backbone.View.extend({
 
       function matchValue(value, input) {
         var q = queue();
+        var matched = false;
         var options;
 
         if (_.isArray(value)) {
@@ -670,17 +683,17 @@ module.exports = Backbone.View.extend({
                     options[k].selected = 'selected';
                   }
 
-                  return true;
+                  matched = true;
                 }
                 break;
               case 'text':
                 input.value = value;
-                return true;
+                matched = true;
                 break;
               case 'checkbox':
                 if (input.value === value) {
                   input.checked = 'checked';
-                  return true;
+                  matched = true;
                 }
                 break;
             }
@@ -703,27 +716,26 @@ module.exports = Backbone.View.extend({
                   options[m].selected = 'selected';
                 }
 
-                return true;
+                matched = true;
               }
               break;
             case 'text':
               input.value = value;
-              return true;
+              matched = true;
               break;
             case 'checkbox':
               input.checked = value ? 'checked' : false;
-              return true;
+              matched = true;
               break;
             case 'button':
               input.value = value ? true : false;
               input.innerHTML = value ? input.getAttribute('data-on') : input.getAttribute('data-off');
-              return true;
+              matched = true;
               break;
           }
 
-          q.awaitAll(function(res) {
-            console.log(res);
-            return false;
+          q.awaitAll(function(err, res) {
+            if (err) console.log(err);
           });
 
         }
@@ -741,7 +753,7 @@ module.exports = Backbone.View.extend({
             q.defer(matchValue, value, input[i]);
           }
 
-          q.awaitAll(function(res) {
+          q.awaitAll(function(err, res) {
             if (res.indexOf(true) === -1 && value !== null) {
               if (missing.hasOwnProperty(key)) {
                 missing[key] = _.union(missing[key], value);
