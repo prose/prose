@@ -864,14 +864,12 @@ module.exports = Backbone.View.extend({
 
           // Unique Filename
           var uid  = [app.state.user, (new Date()).getTime(), 'raw'].join('-');
-          var data = new FormData();
+          var data = {};
+              data.path =  uid;
+              data.message = 'Uploaded ' + file.name;
+              data.content = content;
+              data.branch = app.state.branch;
 
-          data.append('path',  uid);
-          data.append('message', 'Uploaded ' + file.name);
-          data.append('content', content);
-          data.append('branch', app.state.branch);
-
-          //console.log(data);
           app.models.uploadFile(app.state.user, app.state.repo,  app.state.path, data, function() {
             // Success!
             var text = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
