@@ -1506,10 +1506,10 @@ ins {
       padding:15px 15px 0;
       }
       .form-item button[value='true'] {
-        background-color:#db6f6f;
+        background-color:#d4d7d9;
         }
         .form-item button[value='true']:hover {
-          background-color:#ba0000;
+          background-color:#868f93;
           }
       .form-item button[value='false'] {
         background-color:#90bb74;
