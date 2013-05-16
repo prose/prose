@@ -857,22 +857,25 @@ module.exports = Backbone.View.extend({
 
       // Bind Drag and Drop work on the editor
       if (app.state.markdown && authenticated) {
-        upload.dragDrop($('#code'), function(file) {
+        upload.dragDrop($('#code'), function(e, file, content) {
 
-          var reader = new FileReader();
-          var content = window.btoa(reader.readAsBinaryString(file))
+          // Base64 Encode the file content
+          content = window.btoa(content);
+          var extension = file.type.split('/').pop();
 
           // Unique Filename
-          var uid  = [app.state.user, (new Date()).getTime(), 'raw'].join('-');
+          var uid  = [encodeURIComponent(file.name.replace('.' + extension, '')), (new Date()).getTime()].join('-') + '.' + extension;
           var path = app.state.path ? app.state.path + '/' + uid : uid;
+
           var data = {};
-              data.message = 'Uploaded ' + file.name;
+              data.message = 'Uploaded: ' + file.name;
               data.content = content;
               data.branch = app.state.branch;
 
           app.models.uploadFile(app.state.user, app.state.repo, path, data, function() {
             // Success!
-            var text = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
+            var image = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
+            view.editor.replaceSelection(image);
           });
         });
       }

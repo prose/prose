@@ -1464,9 +1464,6 @@ ins {
     -webkit-box-shadow:0 0 8px #e6c740;
             box-shadow:0 0 8px #e6c740;
     }
-    .code > * {
-      pointer-events:none;
-      }
 
   .post .view.diff pre {
     background:#fff;

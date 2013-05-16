@@ -32,16 +32,24 @@ module.exports = {
 
   drop: function(e, cb) {
     e.preventDefault();
-    e = e.originalEvent
-
     $(e.target).removeClass('drag-over');
+
+    e = e.originalEvent
     var files = e.dataTransfer.files;
 
-    for (var i = 0; i < files.length; i++) {
+    for (var i = 0, f; f = files[i]; i++) {
       // Only upload images
-      if (/image/.test(files[i].type)) {
-        cb(files[i]);
+      if (/image/.test(f.type)) {
+        var reader = new FileReader();
+
+        reader.onload = (function(currentFile) {
+          return function(e) {
+            cb(e, currentFile, e.target.result);
+          };
+        })(f);
       }
+
+      reader.readAsBinaryString(f);
     };
   }
 }
