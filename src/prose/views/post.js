@@ -989,8 +989,14 @@ module.exports = Backbone.View.extend({
       }
     } else if ($target.data('dialog')) {
 
+      var tmpl, className;
+      if (key === 'media' && !this.assets) {
+          className = key + ' no-directory';
+      } else {
+          className = key;
+      }
+
       // This condition handles the link and media link in the toolbar.
-      var tmpl;
       if ($target.hasClass('on')) {
         $target.removeClass('on');
         $dialog.removeClass().empty();
@@ -999,7 +1005,7 @@ module.exports = Backbone.View.extend({
         $target.addClass('on');
         $dialog
           .removeClass()
-          .addClass('dialog ' + key)
+          .addClass('dialog ' + className)
           .empty();
 
         switch(key) {
@@ -1012,6 +1018,8 @@ module.exports = Backbone.View.extend({
 
             if (view.relativeLinks) {
               $('.chzn-select', $dialog).chosen().change(function() {
+                $('.chzn-single span').text('Insert a local link.');
+
                 var parts = $(this).val().split(',');
                 $('input[name=href]', $dialog).val(parts[0]);
                 $('input[name=text]', $dialog).val(parts[1]);
