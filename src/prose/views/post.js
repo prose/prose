@@ -1067,7 +1067,7 @@ module.exports = Backbone.View.extend({
     if (back && (back.join() !== this.assetsDirectory)) {
       var link = back.slice(0, back.length - 1);
       if (link.length > 0) link.join('/');
-      $media.append('<li class="directory back"><a href="' + link + '">Back</a></li>')
+      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>')
     }
 
     _(data).each(function(asset) {
