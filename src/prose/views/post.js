@@ -912,7 +912,7 @@ module.exports = Backbone.View.extend({
               break;
             case '!':
               if (selection.charAt(1) === '[' && selection.charAt(selection.length - 1) === ')') {
-                $('[data-key="image"]').addClass('active');
+                $('[data-key="media"]').addClass('active');
               }
               break;
             case '[':
@@ -1093,6 +1093,20 @@ module.exports = Backbone.View.extend({
       }));
     });
 
+    $('.asset a', $media).on('click', function(e) {
+      var href = $(this).attr('href');
+      var alt = _.trim($(this).text());
+
+      if (_.isImage(href)) {
+        $('input[name="url"]').val(href);
+        $('input[name="alt"]').val(alt);
+      } else {
+        view.editor.replaceSelection(href);
+        view.editor.focus();
+      }
+      return false;
+    });
+
     $('.directory a', $media).on('click', function(e) {
       view.assetDirectory($(e.target), view);
       return false;
@@ -1125,10 +1139,11 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    // Empty out and remove the dialog.
-    // Also kill the `on` class on links
-    $('.toolbar .on').removeClass('on');
-    $dialog.removeClass().empty();
+    if (type === 'media') {
+      var href = $('input[name="url"]').val();
+      var alt = $('input[name="alt"]').val();
+      this.editor.replaceSelection('![' + alt + '](' + href + ')');
+    }
 
     this.editor.focus();
     return false;
