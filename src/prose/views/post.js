@@ -692,11 +692,6 @@ module.exports = Backbone.View.extend({
             q.defer(parseValue, value, input.find('[name="' + key + '"]'));
           });
 
-          q.awaitAll(function(res) {
-            console.log(res);
-            return false;
-          });
-
         } else {
 
           switch (input.type) {
@@ -725,6 +720,11 @@ module.exports = Backbone.View.extend({
               return true;
               break;
           }
+
+          q.awaitAll(function(res) {
+            console.log(res);
+            return false;
+          });
 
         }
       }
