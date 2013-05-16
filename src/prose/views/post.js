@@ -934,6 +934,12 @@ module.exports = Backbone.View.extend({
       }
 
       view.editor.on('change', _.bind(view.makeDirty, view));
+      view.editor.on('focus', _.bind(function() {
+        // If a dialog window is open and the editor is in focus, close it.
+        $('.markdown-snippets a', this.el).removeClass('on');
+        $('#dialog', view.el).empty().removeClass();
+      }, view));
+
       view.refreshCodeMirror();
 
       // Check sessionStorage for existing stash
