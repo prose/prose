@@ -857,7 +857,7 @@ module.exports = Backbone.View.extend({
 
       // Bind Drag and Drop work on the editor
       if (app.state.markdown && authenticated) {
-        upload.dragDrop($('body'), function(file) {
+        upload.dragDrop($('#code'), function(file) {
 
           var reader = new FileReader();
           var content = window.btoa(reader.readAsBinaryString(file))

@@ -34,8 +34,8 @@
                 <li><a class='ico small picture' title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true></a></li>
               </ul>
               <ul class='group round markdown-snippets clearfix'>
-                <li><a href='#' title='Bold' data-key='bold' data-snippet='**text**'>B</a></li>
-                <li><a class='ico small italic' data-key='italic' href='#' title='Italic' data-snippet='_text_'></a></li>
+                <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>
+                <li><a class='ico small italic' data-key='italic' href='#' title='Italic' data-snippet='__'></a></li>
               </ul>
               <ul class='group round markdown-snippets clearfix'>
                 <li><a class='ico small quote' title='Blockquote' href='#' data-key='quote' data-snippet='<% print("> We loved with a love that was more than love\n\n"); %>'></a></li>
@@ -53,7 +53,7 @@
         </div>
       </div>
     </div>
-    <div id='code'></div>
+    <div id='code' class='code round inner'></div>
   </div>
   <% if (markdown) { %>
     <div id='preview' class='view preview prose'><%- preview %></div>

@@ -34,6 +34,7 @@ module.exports = {
     e.preventDefault();
     e = e.originalEvent
 
+    $(e.target).removeClass('drag-over');
     var files = e.dataTransfer.files;
 
     for (var i = 0; i < files.length; i++) {
