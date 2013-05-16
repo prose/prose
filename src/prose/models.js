@@ -610,7 +610,7 @@ module.exports = {
 
     // load default metadata
     var cfg = app.state.config;
-    var q = queue();
+    var q = queue(1);
 
     function fetchLink(data, cb) {
       $.ajax({
@@ -631,7 +631,7 @@ module.exports = {
     }
 
     function parseValue(data, cb) {
-      var q = queue();
+      var q = queue(1);
 
       if (_.isObject(data) && _.isObject(data.field)) {
         if (typeof data.field.options === 'string' && data.field.options.match(/^https?:\/\//)) {
@@ -708,7 +708,6 @@ module.exports = {
     }
 
     q.awaitAll(function(err, res) {
-      console.log(err, res);
 
       // If ?file= in path, use it as file name
       if (path.indexOf('?file=') !== -1) {
