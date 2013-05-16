@@ -859,15 +859,19 @@ module.exports = Backbone.View.extend({
       if (app.state.markdown && authenticated) {
         upload.dragDrop($('body'), function(file) {
 
+          var reader = new FileReader();
+          var content = window.btoa(reader.readAsBinaryString(file))
+
           // Unique Filename
           var uid  = [app.state.user, (new Date()).getTime(), 'raw'].join('-');
           var data = new FormData();
 
           data.append('path',  uid);
           data.append('message', 'Uploaded ' + file.name);
-          data.append('content', file);
+          data.append('content', content);
           data.append('branch', app.state.branch);
 
+          //console.log(data);
           app.models.uploadFile(app.state.user, app.state.repo,  app.state.path, data, function() {
             // Success!
             var text = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
