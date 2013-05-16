@@ -1063,6 +1063,23 @@ module.exports = Backbone.View.extend({
             }));
 
             if (view.assets) view.renderAssets(view.assets.files);
+
+            if (selection) {
+              var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
+
+              var href;
+              var alt;
+
+              if (image.test(selection)) {
+                var parts = image.exec(selection);
+                alt = parts[1];
+                href = parts[2];
+
+    console.log(parts);
+                $('input[name=url]', $dialog).val(href);
+                if (alt) $('input[name=alt]', $dialog).val(alt);
+              }
+            }
           break;
         }
       }
