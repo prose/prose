@@ -982,6 +982,10 @@ module.exports = Backbone.View.extend({
 
       view.editor.on('change', _.bind(view.makeDirty, view));
       view.editor.on('focus', _.bind(function() {
+
+        // If an upload queue is set, we want to clear it.
+        this.queue = undefined;
+
         // If a dialog window is open and the editor is in focus, close it.
         $('.markdown-snippets a', this.el).removeClass('on');
         $('#dialog', view.el).empty().removeClass();
@@ -1239,6 +1243,9 @@ module.exports = Backbone.View.extend({
     if (type === 'media') {
       if (this.queue) {
         this.createAndUpload(this.queue.e, this.queue.file, this.queue.content);
+
+        // Finally, clear the queue object
+        this.queue = undefined;
       } else {
         var src = $('input[name="url"]').val();
         var alt = $('input[name="alt"]').val();
