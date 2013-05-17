@@ -893,6 +893,9 @@ module.exports = Backbone.View.extend({
       if (app.state.markdown && authenticated) {
         upload.dragDrop($('#code'), function(e, file, content) {
 
+          // Loading State
+          view.eventRegister.trigger('updateSaveState', 'Uploading ' + file.name, 'saving');
+
           // Base64 Encode the file content
           content = window.btoa(content);
           var extension = file.type.split('/').pop();
@@ -906,10 +909,14 @@ module.exports = Backbone.View.extend({
               data.content = content;
               data.branch = app.state.branch;
 
-          app.models.uploadFile(app.state.user, app.state.repo, path, data, function() {
-            // Success!
-            var image = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
-            view.editor.replaceSelection(image);
+          app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
+            if (type === 'error') {
+              view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
+            } else {
+              view.eventRegister.trigger('updateSaveState', 'Saved!', 'saved');
+              var image = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
+              view.editor.replaceSelection(image);
+            }
           });
         });
       }
