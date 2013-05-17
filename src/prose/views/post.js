@@ -1030,9 +1030,9 @@ module.exports = Backbone.View.extend({
       if (type === 'error') {
         view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
       } else {
-        view.eventRegister.trigger('updateSaveState', 'Saved!', 'saved');
         var image = '![' + file.name + '](' + path + ')';
         view.editor.replaceSelection(image);
+        view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
       }
     });
   },
