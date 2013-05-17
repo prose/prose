@@ -877,12 +877,7 @@ module.exports = Backbone.View.extend({
 
   updateImageInsert: function(e, file, content) {
     var view = this;
-    var path;
-    if (this.assetsDirectory) {
-      path = this.config.media;
-    } else {
-      path = app.state.path;
-    }
+    var path = (this.assetsDirectory) ? this.assetsDirectory : this.model.path;
 
     var src = path + '/' + encodeURIComponent(file.name);
     $('input[name="url"]').val(src);
@@ -1027,7 +1022,7 @@ module.exports = Backbone.View.extend({
         view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
       } else {
         view.eventRegister.trigger('updateSaveState', 'Saved!', 'saved');
-        var image = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
+        var image = '![' + file.name + '](' + path + ')';
         view.editor.replaceSelection(image);
       }
     });
