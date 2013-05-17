@@ -999,7 +999,7 @@ module.exports = Backbone.View.extend({
     }, 100);
   },
 
-  createAndUpload: function(e, file, content) {
+  createAndUpload: function(e, file, content, userDefinedPath) {
     var view = this;
 
     // Loading State
@@ -1007,14 +1007,19 @@ module.exports = Backbone.View.extend({
 
     // Base64 Encode the file content
     var extension = file.type.split('/').pop();
+    var path;
 
-    // Unique Filename
-    var uid  = [encodeURIComponent(file.name.replace('.' + extension, '')), (new Date()).getTime()].join('-') + '.' + extension;
-    var path = this.assetsDirectory ?
-               this.assetsDirectory + '/' + uid :
-               (this.model.path) ?
-                 this.model.path + '/' + uid :
-                 uid;
+    if (userDefinedPath) {
+      // Unique Filename
+      path = userDefinedPath;
+    } else {
+      var uid  = [encodeURIComponent(file.name.replace('.' + extension, '')), (new Date()).getTime()].join('-') + '.' + extension;
+      path = this.assetsDirectory ?
+             this.assetsDirectory + '/' + uid :
+             (this.model.path) ?
+               this.model.path + '/' + uid :
+               uid;
+    }
 
     var data = {};
         data.message = 'Uploaded ' + file.name;
@@ -1242,7 +1247,8 @@ module.exports = Backbone.View.extend({
 
     if (type === 'media') {
       if (this.queue) {
-        this.createAndUpload(this.queue.e, this.queue.file, this.queue.content);
+        var userDefinedPath = $('input[name="url"]').val();
+        this.createAndUpload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
 
         // Finally, clear the queue object
         this.queue = undefined;
