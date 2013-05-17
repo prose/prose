@@ -1011,7 +1011,11 @@ module.exports = Backbone.View.extend({
 
     // Unique Filename
     var uid  = [encodeURIComponent(file.name.replace('.' + extension, '')), (new Date()).getTime()].join('-') + '.' + extension;
-    var path = app.state.path ? app.state.path + '/' + uid : uid;
+    var path = this.assetsDirectory ?
+               this.assetsDirectory + '/' + uid :
+               (this.model.path) ?
+                 this.model.path + '/' + uid :
+                 uid;
 
     var data = {};
         data.message = 'Uploaded ' + file.name;
