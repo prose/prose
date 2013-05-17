@@ -21,7 +21,8 @@ module.exports = Backbone.View.extend({
     'click .save-action': 'updateFile',
     'click button': 'toggleButton',
     'click .unpublished-flag': 'meta',
-    'change input': 'makeDirty'
+    'change #upload': 'fileInput',
+    'change .meta input': 'makeDirty'
   },
 
   initialize: function() {
@@ -217,7 +218,7 @@ module.exports = Backbone.View.extend({
             path = path.split(titleAttribute)[0];
           }
 
-          var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path
+          var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path;
           if (app.state.isPrivate) {
             // append auth param
             raw += '?login=' + cookie.get('username') + '&token' + cookie.get('oauth-token');
@@ -868,6 +869,30 @@ module.exports = Backbone.View.extend({
     };
   },
 
+  fileInput: function(e) {
+    var view = this;
+    upload.fileSelect(e, function(e, file, content) {
+      var path;
+      if (this.assetsDirectory) {
+        path = this.config.media;
+      } else {
+        path = app.state.path;
+      }
+
+      var src = path + '/' + encodeURIComponent(file.name);
+      $('input[name="url"]').val(src);
+      $('input[name="alt"]').val('');
+
+      view.queue = {
+        e: e,
+        file: file,
+        content: content
+      };
+    });
+
+    return false;
+  },
+
   initEditor: function() {
     var view = this;
 
@@ -891,33 +916,27 @@ module.exports = Backbone.View.extend({
 
       // Bind Drag and Drop work on the editor
       if (app.state.markdown && authenticated) {
-        upload.dragDrop($('#code'), function(e, file, content) {
-
-          // Loading State
-          view.eventRegister.trigger('updateSaveState', 'Uploading ' + file.name, 'saving');
-
-          // Base64 Encode the file content
-          content = window.btoa(content);
-          var extension = file.type.split('/').pop();
-
-          // Unique Filename
-          var uid  = [encodeURIComponent(file.name.replace('.' + extension, '')), (new Date()).getTime()].join('-') + '.' + extension;
-          var path = app.state.path ? app.state.path + '/' + uid : uid;
-
-          var data = {};
-              data.message = 'Uploaded: ' + file.name;
-              data.content = content;
-              data.branch = app.state.branch;
-
-          app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
-            if (type === 'error') {
-              view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
+        upload.dragDrop($('#edit'), function(e, file, content) {
+          if ($('#dialog').hasClass('dialog')) {
+            var path;
+            if (this.assetsDirectory) {
+              path = this.config.media;
             } else {
-              view.eventRegister.trigger('updateSaveState', 'Saved!', 'saved');
-              var image = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
-              view.editor.replaceSelection(image);
+              path = app.state.path;
             }
-          });
+
+            var src = path + '/' + encodeURIComponent(file.name);
+            $('input[name="url"]').val(src);
+            $('input[name="alt"]').val('');
+
+            view.queue = {
+              e: e,
+              file: file,
+              content: content
+            };
+          } else {
+            view.createAndUpload(e, file, content);
+          }
         });
       }
 
@@ -992,6 +1011,34 @@ module.exports = Backbone.View.extend({
       // Apply if stash exists and is current, remove if expired
       view.stashApply();
     }, 100);
+  },
+
+  createAndUpload: function(e, file, content) {
+    var view = this;
+    // Loading State
+    this.eventRegister.trigger('updateSaveState', 'Uploading ' + file.name, 'saving');
+
+    // Base64 Encode the file content
+    var extension = file.type.split('/').pop();
+
+    // Unique Filename
+    var uid  = [encodeURIComponent(file.name.replace('.' + extension, '')), (new Date()).getTime()].join('-') + '.' + extension;
+    var path = app.state.path ? app.state.path + '/' + uid : uid;
+
+    var data = {};
+        data.message = 'Uploaded: ' + file.name;
+        data.content = content;
+        data.branch = app.state.branch;
+
+    app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
+      if (type === 'error') {
+        view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
+      } else {
+        view.eventRegister.trigger('updateSaveState', 'Saved!', 'saved');
+        var image = '![' + file.name + '](/' + app.state.path + '/' + uid + ')';
+        view.editor.replaceSelection(image);
+      }
+    });
   },
 
   markdownSnippet: function(e) {
@@ -1110,16 +1157,15 @@ module.exports = Backbone.View.extend({
 
             if (selection) {
               var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
-
-              var href;
+              var src;
               var alt;
 
               if (image.test(selection)) {
-                var parts = image.exec(selection);
-                alt = parts[1];
-                href = parts[2];
+                var imageParts = image.exec(selection);
+                alt = imageParts[1];
+                src = imageParts[2];
 
-                $('input[name=url]', $dialog).val(href);
+                $('input[name=url]', $dialog).val(src);
                 if (alt) $('input[name=alt]', $dialog).val(alt);
               }
             }
@@ -1142,7 +1188,7 @@ module.exports = Backbone.View.extend({
 
     if (back && (back.join() !== this.assetsDirectory)) {
       var link = back.slice(0, back.length - 1).join('/');
-      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>')
+      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
     }
 
     _(data).each(function(asset) {
@@ -1203,9 +1249,13 @@ module.exports = Backbone.View.extend({
     }
 
     if (type === 'media') {
-      var href = $('input[name="url"]').val();
-      var alt = $('input[name="alt"]').val();
-      this.editor.replaceSelection('![' + alt + '](' + href + ')');
+      if (this.queue) {
+        this.createAndUpload(this.queue.e, this.queue.file, this.queue.content);
+      } else {
+        var src = $('input[name="url"]').val();
+        var alt = $('input[name="alt"]').val();
+        this.editor.replaceSelection('![' + alt + '](' + src + ')');
+      }
     }
 
     this.editor.focus();

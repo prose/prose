@@ -1,6 +1,6 @@
 module.exports = {
   dragEnter: function(e) {
-    $(e.target).addClass('drag-over');
+    $('body').addClass('drag-over');
     e.stopPropagation();
     e.preventDefault();
     return false;
@@ -14,7 +14,7 @@ module.exports = {
   },
 
   dragLeave: function(e) {
-    $(e.target).removeClass('drag-over');
+    $('body').removeClass('drag-over');
     e.stopPropagation();
     e.preventDefault();
     return false;
@@ -30,13 +30,21 @@ module.exports = {
         });
   },
 
+  fileSelect: function(e, cb) {
+    var files = e.target.files;
+    this.compileResult(files, cb);
+  },
+
   drop: function(e, cb) {
     e.preventDefault();
     $(e.target).removeClass('drag-over');
 
     e = e.originalEvent
     var files = e.dataTransfer.files;
+    this.compileResult(files, cb);
+  },
 
+  compileResult: function(files, cb) {
     for (var i = 0, f; f = files[i]; i++) {
       // Only upload images
       if (/image/.test(f.type)) {
@@ -44,7 +52,7 @@ module.exports = {
 
         reader.onload = (function(currentFile) {
           return function(e) {
-            cb(e, currentFile, e.target.result);
+            cb(e, currentFile, window.btoa(e.target.result));
           };
         })(f);
       }
