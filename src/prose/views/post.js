@@ -871,26 +871,28 @@ module.exports = Backbone.View.extend({
 
   fileInput: function(e) {
     var view = this;
-    upload.fileSelect(e, function(e, file, content) {
-      var path;
-      if (this.assetsDirectory) {
-        path = this.config.media;
-      } else {
-        path = app.state.path;
-      }
-
-      var src = path + '/' + encodeURIComponent(file.name);
-      $('input[name="url"]').val(src);
-      $('input[name="alt"]').val('');
-
-      view.queue = {
-        e: e,
-        file: file,
-        content: content
-      };
-    });
-
+    upload.fileSelect(e, view.updateImageInsert(e, file, content));
     return false;
+  },
+
+  updateImageInsert: function(e, file, content) {
+    var view = this;
+    var path;
+    if (this.assetsDirectory) {
+      path = this.config.media;
+    } else {
+      path = app.state.path;
+    }
+
+    var src = path + '/' + encodeURIComponent(file.name);
+    $('input[name="url"]').val(src);
+    $('input[name="alt"]').val('');
+
+    view.queue = {
+      e: e,
+      file: file,
+      content: content
+    };
   },
 
   initEditor: function() {
@@ -918,22 +920,7 @@ module.exports = Backbone.View.extend({
       if (app.state.markdown && view.model.writable) {
         upload.dragDrop($('#edit'), function(e, file, content) {
           if ($('#dialog').hasClass('dialog')) {
-            var path;
-            if (this.assetsDirectory) {
-              path = this.config.media;
-            } else {
-              path = app.state.path;
-            }
-
-            var src = path + '/' + encodeURIComponent(file.name);
-            $('input[name="url"]').val(src);
-            $('input[name="alt"]').val('');
-
-            view.queue = {
-              e: e,
-              file: file,
-              content: content
-            };
+            view.updateImageInsert(e, file, content);
           } else {
             view.createAndUpload(e, file, content);
           }
@@ -1015,6 +1002,7 @@ module.exports = Backbone.View.extend({
 
   createAndUpload: function(e, file, content) {
     var view = this;
+
     // Loading State
     this.eventRegister.trigger('updateSaveState', 'Uploading ' + file.name, 'saving');
 
