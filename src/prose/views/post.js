@@ -1140,7 +1140,7 @@ module.exports = Backbone.View.extend({
 
     _(data).each(function(asset) {
       var parts = asset.path.split('/');
-      var path = parts.slice(0, parts.length - 1);
+      var path = parts.slice(0, parts.length - 1).join('/');
 
       $media.append(tmpl({
         name: asset.name,
