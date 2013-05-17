@@ -1026,7 +1026,7 @@ module.exports = Backbone.View.extend({
     var path = app.state.path ? app.state.path + '/' + uid : uid;
 
     var data = {};
-        data.message = 'Uploaded: ' + file.name;
+        data.message = 'Uploaded ' + file.name;
         data.content = content;
         data.branch = app.state.branch;
 
