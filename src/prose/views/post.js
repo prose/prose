@@ -8,6 +8,7 @@ var diff = require('diff');
 var Backbone = require('backbone');
 var utils = require('.././util');
 var upload = require('.././upload');
+var cookie = require('.././cookie');
 
 module.exports = Backbone.View.extend({
 
@@ -63,7 +64,7 @@ module.exports = Backbone.View.extend({
 
     this.data = _.extend(this.model, {
       mode: app.state.mode,
-      preview: this.model.markdown ? marked(this.model.content) : '',
+      preview: this.model.markdown ? marked(this.compilePreview(this.model.content)) : '',
       metadata: this.model.metadata
     });
 
@@ -188,12 +189,43 @@ module.exports = Backbone.View.extend({
 
       // Content Window
       $('.views .view', this.el).removeClass('active');
-
-      $('#preview', this.el).addClass('active').html(marked(this.model.content));
+      $('#preview', this.el).addClass('active').html(marked(this.compilePreview(this.model.content)));
 
       app.state.mode = 'blob';
       this.updateURL();
     }
+  },
+
+  compilePreview: function(content) {
+    // Scan the content search for ![]()
+    // grab the path and file and form a RAW github aboslute request for it
+    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
+    var titleAttribute = /".*?"/;
+
+    // Build an array of found images
+    var result = content.match(image);
+
+    // Iterate over the results and replace
+    _(result).each(function(r) {
+        var parts = image.exec(r);
+        if (parts !== null) {
+          var path = parts[2];
+          // Remove any title attribute in the image tag is there is one.
+          if (titleAttribute.test(path)) {
+            path = path.split(titleAttribute)[0];
+          }
+
+          var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path
+          if (app.state.isPrivate) {
+            // append auth param
+            raw += '?login=' + cookie.get('username') + '&token' + cookie.get('oauth-token');
+          }
+
+          content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+        }
+    });
+
+    return content;
   },
 
   meta: function() {
@@ -1078,7 +1110,6 @@ module.exports = Backbone.View.extend({
                 alt = parts[1];
                 href = parts[2];
 
-    console.log(parts);
                 $('input[name=url]', $dialog).val(href);
                 if (alt) $('input[name=alt]', $dialog).val(alt);
               }
@@ -1106,10 +1137,13 @@ module.exports = Backbone.View.extend({
     }
 
     _(data).each(function(asset) {
+      var parts = asset.path.split('/');
+      var path = parts.slice(0, parts.length - 1);
+
       $media.append(tmpl({
         name: asset.name,
         type: asset.type,
-        path: asset.path
+        path: path + '/' + encodeURIComponent(asset.name)
       }));
     });
 
