@@ -104,7 +104,7 @@ module.exports = Backbone.View.extend({
       if (app.state.mode === 'tree') {
         sidebarTmpl = _(app.templates.sidebarProject).template();
       } else if (data.file) {
-        this.writeable = data.writeable;
+        this.writable = data.writable;
         sidebarTmpl = _(app.templates.settings).template();
       }
 
@@ -227,8 +227,8 @@ module.exports = Backbone.View.extend({
       $('.button.save', this.el)
         .html($('.button.save', this.el)
         .hasClass('confirm') ?
-          (this.writeable ? 'Commit' : 'Send Change Request') :
-          (this.writeable ? 'Save' : 'Submit Change'));
+          (this.writable ? 'Commit' : 'Send Change Request') :
+          (this.writable ? 'Save' : 'Submit Change'));
 
       $('.commit-message', this.el).focus();
       return false;

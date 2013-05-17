@@ -11,12 +11,15 @@
 
   <div <% if (assetsDirectory) { %>class='col fl'<% } %>>
     <label>Insert Image</label>
-    <div class='contain clearfix'>
-      <span class='ico picture-add fl'></span>
-      Upload images by dragging &amp; dropping, or<br />
-      <input id='upload' type='file' />
-      <a>selecting one</a>
-    </div>
+
+    <% if (writable) { %>
+      <div class='contain clearfix'>
+        <span class='ico picture-add fl'></span>
+        Upload images by dragging &amp; dropping, or<br />
+        <input id='upload' type='file' />
+        <a>selecting one</a>
+      </div>
+    <% } %>
 
     <input type='text' name='url' placeholder='Image URL' />
     <input type='text' name='alt' placeholder='Alt text (optional)' />

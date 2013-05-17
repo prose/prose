@@ -710,7 +710,7 @@ module.exports = {
         'path': path,
         'published': false,
         'persisted': false,
-        'writeable': true,
+        'writable': true,
         'file': file
       });
     });
@@ -730,7 +730,7 @@ module.exports = {
       // Extract YAML from a post, trims whitespace
       content = content.replace(/\r\n/g, '\n'); // normalize a little bit
 
-      function writeable() {
+      function writable() {
         return !!(app.state.permissions && app.state.permissions.push);
       }
 
@@ -739,12 +739,12 @@ module.exports = {
       if (!hasMetadata) return {
         content: content,
         published: true,
-        writeable: writeable(),
+        writable: writable(),
         jekyll: hasMetadata
       };
 
       var res = {
-        writeable: writeable(),
+        writable: writable(),
         jekyll: hasMetadata
       };
 

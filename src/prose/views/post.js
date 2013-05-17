@@ -135,7 +135,7 @@ module.exports = Backbone.View.extend({
       parentTrail: parentTrail,
       isPrivate: isPrivate,
       title: _.filepath(this.data.path, this.data.file),
-      writeable: this.model.writeable,
+      writable: this.model.writable,
       alterable: true
     };
 
@@ -271,7 +271,7 @@ module.exports = Backbone.View.extend({
     if (this.editor) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
-    var label = this.model.writeable ? 'Save' : 'Submit Change';
+    var label = this.model.writable ? 'Save' : 'Submit Change';
     this.eventRegister.trigger('updateSaveState', label, 'save');
 
     // Pass a popover span to the avatar icon
@@ -500,7 +500,7 @@ module.exports = Backbone.View.extend({
     var defaultMessage = 'Updated ' + filename;
     if (app.state.mode === 'new') defaultMessage = 'Created ' + filename;
     var message = $('.commit-message').val() || defaultMessage;
-    var method = this.model.writeable ? this.saveFile : this.sendPatch;
+    var method = this.model.writable ? this.saveFile : this.sendPatch;
     this.hideDiff();
 
     // Update content
@@ -915,7 +915,7 @@ module.exports = Backbone.View.extend({
       });
 
       // Bind Drag and Drop work on the editor
-      if (app.state.markdown && authenticated) {
+      if (app.state.markdown && view.model.writable) {
         upload.dragDrop($('#edit'), function(e, file, content) {
           if ($('#dialog').hasClass('dialog')) {
             var path;
@@ -1150,6 +1150,7 @@ module.exports = Backbone.View.extend({
           case 'media':
             tmpl = _(app.templates.mediaDialog).template();
             $dialog.append(tmpl({
+              writable: view.data.writable,
               assetsDirectory: (view.assets) ? true : false
             }));
 
