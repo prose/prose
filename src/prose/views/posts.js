@@ -186,7 +186,8 @@ module.exports = Backbone.View.extend({
           $file
             .removeClass('working rubbish')
             .addClass('error');
-          return
+
+          return;
         }
 
         // On Success
@@ -195,7 +196,7 @@ module.exports = Backbone.View.extend({
         // Capture the filename and make sure the enty
         // does not exist in the model object
         for (var i = 0; i < this.model.tree.length; i++) {
-          if (this.model.tree[i] && this.model.tree[i]['name'] === file.fileName) {
+          if (this.model.tree[i] && this.model.tree[i].name === file.fileName) {
             delete this.model.tree[i];
           }
         }
