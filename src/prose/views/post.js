@@ -199,15 +199,17 @@ module.exports = Backbone.View.extend({
   compilePreview: function(content) {
     // Scan the content search for ![]()
     // grab the path and file and form a RAW github aboslute request for it
-    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
+    var scan = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
+    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
     var titleAttribute = /".*?"/;
 
     // Build an array of found images
-    var result = content.match(image);
+    var result = content.match(scan);
 
     // Iterate over the results and replace
     _(result).each(function(r) {
-        var parts = image.exec(r);
+        var parts = (image).exec(r);
+
         if (parts !== null) {
           var path = parts[2];
           // Remove any title attribute in the image tag is there is one.
