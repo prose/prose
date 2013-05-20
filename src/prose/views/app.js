@@ -56,12 +56,13 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'filenameInput');
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('sidebarContext', this.sidebarContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
+      this.eventRegister.bind('filenameInput', this.filenameInput);
     },
 
     render: function(options) {
@@ -96,6 +97,10 @@ module.exports = Backbone.View.extend({
     headerContext: function(data) {
       var heading = _(window.app.templates.heading).template();
       $('#heading').empty().append(heading(data));
+    },
+
+    filenameInput: function() {
+      $('.filepath', this.el).focus();
     },
 
     sidebarContext: function(data) {
@@ -279,6 +284,7 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('headerContext', this.headerContext);
       this.eventRegister.unbind('recentFiles', this.recentFiles);
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
+      this.eventRegister.unbind('filenameInput', this.filenameInput);
       Backbone.View.prototype.remove.call(this);
     }
 });

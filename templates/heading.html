@@ -12,9 +12,16 @@
   </a>
   <div class='fl details'>
     <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
-    <input type='text' class='filepath' value='<%= title %>'>
+
+    <% if (app.state.mode === 'new') { %>
+      <input type='text' class='filepath' placeholder='<%= title %>'>
+    <% } else { %>
+      <input type='text' class='filepath' value='<%= title %>'>
+    <% } %>
+
     <div class='mask'></div>
   </div>
+
 <% } else { %>
   <div class='avatar round fl'><%= avatar %></div>
   <div class='fl details'>

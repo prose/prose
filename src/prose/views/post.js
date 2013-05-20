@@ -377,7 +377,8 @@ module.exports = Backbone.View.extend({
     // Move or create file
     this.updateFilename(filepath, function(err) {
       if (err) {
-        view.eventRegister.trigger('updateSaveState', '! Filename', 'error');
+        view.eventRegister.trigger('filenameInput');
+        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;Filename', 'error');
       } else {
         save();
       }
