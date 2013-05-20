@@ -59,7 +59,7 @@ module.exports = Backbone.View.extend({
     if (app.state.markdown && this.config && this.config.media) {
       this.assetsDirectory = this.config.media;
       app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
-        view.assets = data;
+        view.assets = data.files;
       });
     }
 
@@ -1053,6 +1053,16 @@ module.exports = Backbone.View.extend({
           view.editor.focus();
           view.editor.replaceSelection(image);
           view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
+
+          // Update the media directory with the
+          // newly uploaded image.
+          if (!data.sha && view.assets) {
+            view.assets.push({
+              name: file.name,
+              type: 'blob',
+              path: path
+            })
+          }
         }
       });
     });
@@ -1171,7 +1181,7 @@ module.exports = Backbone.View.extend({
               assetsDirectory: (view.assets) ? true : false
             }));
 
-            if (view.assets) view.renderAssets(view.assets.files);
+            if (view.assets) view.renderAssets(view.assets);
 
             if (selection) {
               var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
