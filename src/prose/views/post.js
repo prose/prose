@@ -575,7 +575,7 @@ module.exports = Backbone.View.extend({
 
       $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">Raw Metadata</label>').appendTo($metadataEditor);
 
-      var rawContainer = (view.model.lang === 'yaml') ? 'code' : raw;
+      var rawContainer = (view.model.lang === 'yaml') ? 'code' : 'raw';
       view.rawEditor = CodeMirror(document.getElementById(rawContainer), {
         mode: 'yaml',
         value: '',
