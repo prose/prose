@@ -201,7 +201,7 @@ module.exports = Backbone.View.extend({
 
   makeDirty: function(e) {
     this.dirty = true;
-    if (this.editor) this.model.content = this.editor.getValue();
+    if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
     var label = this.model.writeable ? 'Save' : 'Submit Change';
@@ -264,7 +264,7 @@ module.exports = Backbone.View.extend({
   },
 
   refreshCodeMirror: function() {
-    this.editor.refresh();
+    if (typeof this.editor.refresh === 'function') this.editor.refresh();
   },
 
   updateMetaData: function() {
@@ -416,7 +416,7 @@ module.exports = Backbone.View.extend({
 
     if (stash && stash.sha === window.app.state.sha) {
       // Restore from stash if file sha hasn't changed
-      if (this.editor) this.editor.setValue(stash.content);
+      if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
       if (this.metadataEditor) {
         this.rawEditor.setValue('');
         this.metadataEditor.setValue(stash.metadata);
@@ -438,7 +438,7 @@ module.exports = Backbone.View.extend({
     this.hideDiff();
 
     // Update content
-    this.model.content = this.editor.getValue();
+    this.model.content = (this.editor) ? this.editor.getValue() : '';
 
     // Delegate
     method.call(this, filepath, filename, filecontent, message);
@@ -575,7 +575,8 @@ module.exports = Backbone.View.extend({
 
       $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">Raw Metadata</label>').appendTo($metadataEditor);
 
-      view.rawEditor = CodeMirror(document.getElementById('raw'), {
+      var rawContainer = (view.model.lang === 'yaml') ? 'code' : raw;
+      view.rawEditor = CodeMirror(document.getElementById(rawContainer), {
         mode: 'yaml',
         value: '',
         lineWrapping: true,
@@ -810,6 +811,14 @@ module.exports = Backbone.View.extend({
     setTimeout(function() {
       if (view.model.jekyll) {
         view.metadataEditor = view.buildMeta();
+      }
+
+      // Don't set up content editor for yaml posts
+      if (view.model.lang === 'yaml') {
+        $('ul.nav a.metadata').parent().hide();
+        return;
+      } else {
+        $('ul.nav a.metadata').parent().show();
       }
 
       var lang = view.model.lang;
