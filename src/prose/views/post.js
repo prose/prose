@@ -284,9 +284,6 @@ module.exports = Backbone.View.extend({
     function finish() {
       view.model.path = app.state.path;
       view.model.file = app.state.file;
-      // re-render header to reflect the filename change
-      view.renderHeading();
-      view.updateURL();
     }
 
     if (this.model.persisted) {
@@ -361,6 +358,9 @@ module.exports = Backbone.View.extend({
           this.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
+          if (app.state.mode === 'new') app.state.mode = 'edit';
+
+          view.renderHeading();
           view.updateURL();
           view.prevFile = filecontent;
           view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
@@ -377,7 +377,8 @@ module.exports = Backbone.View.extend({
     // Move or create file
     this.updateFilename(filepath, function(err) {
       if (err) {
-        view.eventRegister.trigger('updateSaveState', '! Filename', 'error');
+        view.eventRegister.trigger('filenameInput');
+        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;Filename', 'error');
       } else {
         save();
       }

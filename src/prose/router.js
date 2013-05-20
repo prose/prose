@@ -273,6 +273,7 @@ module.exports = Backbone.Router.extend({
 
     var view = new app.views.Notification({
       'type': 'Error',
+      'key': 'error',
       'message': code
     }).render();
 
@@ -290,6 +291,7 @@ module.exports = Backbone.Router.extend({
 
     var view = new app.views.Notification({
       'type': type,
+      'key': 'notification',
       'message': message
     }).render();
 

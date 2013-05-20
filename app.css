@@ -70,6 +70,15 @@ table { border-collapse: collapse; border-spacing:0; }
   }
 
 @font-face {
+  font-family:'OpenSans';
+    src:url('fonts/OpenSans-BoldItalic.eot');
+    src:url('fonts/OpenSans-BoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('fonts/OpenSans-BoldItalic.woff') format('woff');
+  font-weight:700;
+  font-style:italic;
+  }
+
+@font-face {
   font-family:'Prose';
     src:url('fonts/prose-59bcf323187dde2bd2cacb380a44837c.eot');
     src:url('fonts/prose-59bcf323187dde2bd2cacb380a44837c.eot?#iefix') format('embedded-opentype'),
@@ -254,6 +263,17 @@ textarea#code {
     border-color:#516066;
     border-width:1px;
     }
+
+
+::-webkit-input-placeholder { color:#d4d7d9; }
+::-moz-placeholder          { color:#d4d7d9; }
+:-ms-input-placeholder      { color:#d4d7d9; }
+input:-moz-placeholder      { color:#d4d7d9; }
+
+.filepath::-webkit-input-placeholder { font-style:italic; }
+.filepath::-moz-placeholder          { font-style:italic; }
+.filepath:-ms-input-placeholder      { font-style:italic; }
+.filepath:-moz-placeholder           { font-style:italic; }
 
 strong  { font-weight:700; }
 em      { font-style:italic; }
@@ -882,7 +902,7 @@ ins {
 
   .content .details {
     margin:0 0 0 15px;
-    padding-right:20%;
+    padding-right:10%;
     }
     .content .details a {
       display:block;
@@ -895,6 +915,11 @@ ins {
       position:relative;
       top:8px;
       }
+      .content .item .details .title {
+        text-overflow:ellipsis;
+        white-space:nowrap;
+        overflow:hidden;
+        }
 
 .breadcrumb {
   background:#f8f8f8;
