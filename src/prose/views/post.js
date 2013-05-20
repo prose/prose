@@ -1045,7 +1045,12 @@ module.exports = Backbone.View.extend({
         if (type === 'error') {
           view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
         } else {
-          var image = '![' + file.name + '](' + path + ')';
+          var $alt = $('input[name="alt"]');
+          var image = ($alt.val) ?
+            '![' + $alt.val() + '](' + path + ')' :
+            '![' + file.name + '](' + path + ')';
+
+          view.editor.focus();
           view.editor.replaceSelection(image);
           view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
         }
@@ -1259,6 +1264,8 @@ module.exports = Backbone.View.extend({
       } else {
         this.editor.replaceSelection('[' + text + '](' + href + ')');
       }
+
+      this.editor.focus();
     }
 
     if (type === 'media') {
@@ -1272,10 +1279,10 @@ module.exports = Backbone.View.extend({
         var src = $('input[name="url"]').val();
         var alt = $('input[name="alt"]').val();
         this.editor.replaceSelection('![' + alt + '](/' + src + ')');
+        this.editor.focus();
       }
     }
 
-    this.editor.focus();
     return false;
   },
 
