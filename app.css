@@ -888,9 +888,10 @@ ins {
   }
 
 .details {
-  width:75%;
-  padding-right:15px;
+  margin-left:15px;
+  width:595px;
   }
+
   .details .user,
   .details .parent-trail,
   .details .parent-trail a {
@@ -900,17 +901,6 @@ ins {
       margin-left:5px;
       }
 
-  .content .details {
-    margin:0 0 0 15px;
-    padding-right:10%;
-    }
-    .content .details a {
-      display:block;
-      }
-      .content .details a strong {
-        color:#d4d7d9;
-        }
-
     .content .details .title {
       position:relative;
       top:8px;
@@ -919,6 +909,12 @@ ins {
         text-overflow:ellipsis;
         white-space:nowrap;
         overflow:hidden;
+        }
+    .content .details a {
+      display:block;
+      }
+      .content .details a strong {
+        color:#d4d7d9;
         }
 
 .breadcrumb {
@@ -1135,10 +1131,7 @@ ins {
   }
 
 .listing .actions {
-  position:absolute;
-  right:15px;
-  top:15px;
-  z-index:100;
+  margin-left:15px;
   }
   .listing .actions a {
     background:#f8f8f8;
@@ -2035,6 +2028,12 @@ ins {
   .open .limiter {
     width:60%;
     margin:0;
+    }
+  .open .item .avatar {
+    width:10%;
+    }
+  .open .details {
+    width:80%;
     }
   .limiter,
   .topbar.fixed {

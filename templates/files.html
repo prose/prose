@@ -5,12 +5,32 @@
   <% if (isBinary) { %>
     <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
   <% } else { %>
-  <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
-    <span class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>
-  </a>
+    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='fl'>
+      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>
+    </a>
   <% } %>
 
   <div class='fl details'>
+    <div class='actions fr cleafix'>
+      <% if (!isBinary) { %>
+        <a class='clearfix'
+          title='Edit this File'
+          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
+          Edit
+        </a>
+      <% } %>
+      <% if (authenticated && writePermissions) { %>
+        <a
+          class='delete ico inline rubbish small'
+          title='Delete this File'
+          data-user='<%= user %>'
+          data-repo='<%= repo %>'
+          data-branch='<%= branch %>'
+          data-file='<%= name %>'
+          href='#'>
+        </a>
+      <% } %>
+    </div>
     <% if (isBinary) { %>
       <h3 class='title' title='<%= name %>'><%= name %></h3>
     <% } else { %>
@@ -22,27 +42,6 @@
         <% } else { %>
           <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>
         <% } %>
-      </a>
-    <% } %>
-  </div>
-
-  <div class='actions cleafix'>
-    <% if (!isBinary) { %>
-      <a class='clearfix'
-        title='Edit this File'
-        href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
-        Edit
-      </a>
-    <% } %>
-    <% if (authenticated && writePermissions) { %>
-      <a
-        class='delete ico inline rubbish small'
-        title='Delete this File'
-        data-user='<%= user %>'
-        data-repo='<%= repo %>'
-        data-branch='<%= branch %>'
-        data-file='<%= name %>'
-        href='#'>
       </a>
     <% } %>
   </div>
