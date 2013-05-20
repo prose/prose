@@ -871,7 +871,10 @@ module.exports = Backbone.View.extend({
 
   fileInput: function(e) {
     var view = this;
-    upload.fileSelect(e, view.updateImageInsert(e, file, content));
+    upload.fileSelect(e, function(e, file, content) {
+      view.updateImageInsert(e, file, content);
+    });
+
     return false;
   },
 
