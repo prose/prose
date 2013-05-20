@@ -453,7 +453,7 @@ ins {
     width:60px;
     height:30px;
     bottom:0;
-    right:15px;
+    right:0;
     }
   .heading .filepath:focus,
   .heading .filepath:hover {
@@ -790,7 +790,6 @@ ins {
     }
   .heading .avatar {
     padding:5px;
-    margin:0 10px 0 0;
     height:50px;
     width:50px;
     position:relative;
