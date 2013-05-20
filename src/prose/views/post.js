@@ -814,12 +814,7 @@ module.exports = Backbone.View.extend({
       }
 
       // Don't set up content editor for yaml posts
-      if (view.model.lang === 'yaml') {
-        $('ul.nav a.metadata').parent().hide();
-        return;
-      } else {
-        $('ul.nav a.metadata').parent().show();
-      }
+      if (view.model.lang === 'yaml') return;
 
       var lang = view.model.lang;
       view.editor = CodeMirror(document.getElementById('code'), {

@@ -74,7 +74,8 @@ module.exports = Backbone.View.extend({
 
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
         jekyll: isJekyll,
-        error: errorPage
+        error: errorPage,
+        lang: (app.state.file) ? _.mode(app.state.file) : undefined
       })));
 
       // When the sidebar should be open.
