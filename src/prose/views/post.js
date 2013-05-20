@@ -572,7 +572,7 @@ module.exports = Backbone.View.extend({
           buildTemplate(data);
         } else if (_.isObject(data) && _.isArray(data.fields)) {
           _.each(data.fields, parseData);
-        } else {
+        } else if (typeof data === 'string') {
           tmpl = _(window.app.templates.text).template();
           $metadataEditor.append(tmpl({
             name: key,
