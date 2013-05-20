@@ -1271,7 +1271,7 @@ module.exports = Backbone.View.extend({
       } else {
         var src = $('input[name="url"]').val();
         var alt = $('input[name="alt"]').val();
-        this.editor.replaceSelection('![' + alt + '](' + src + ')');
+        this.editor.replaceSelection('![' + alt + '](/' + src + ')');
       }
     }
 
