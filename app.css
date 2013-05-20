@@ -70,6 +70,15 @@ table { border-collapse: collapse; border-spacing:0; }
   }
 
 @font-face {
+  font-family:'OpenSans';
+    src:url('fonts/OpenSans-BoldItalic.eot');
+    src:url('fonts/OpenSans-BoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('fonts/OpenSans-BoldItalic.woff') format('woff');
+  font-weight:700;
+  font-style:italic;
+  }
+
+@font-face {
   font-family:'Prose';
     src:url('fonts/prose-b205aee9b722edc920cef49063c107a2.eot');
     src:url('fonts/prose-b205aee9b722edc920cef49063c107a2.eot?#iefix') format('embedded-opentype'),
@@ -262,6 +271,16 @@ textarea#code {
   cursor:pointer;
   left:-30px;
   }
+
+::-webkit-input-placeholder { color:#d4d7d9; }
+::-moz-placeholder          { color:#d4d7d9; }
+:-ms-input-placeholder      { color:#d4d7d9; }
+input:-moz-placeholder      { color:#d4d7d9; }
+
+.filepath::-webkit-input-placeholder { font-style:italic; }
+.filepath::-moz-placeholder          { font-style:italic; }
+.filepath:-ms-input-placeholder      { font-style:italic; }
+.filepath:-moz-placeholder           { font-style:italic; }
 
 strong  { font-weight:700; }
 em      { font-style:italic; }
