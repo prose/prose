@@ -134,14 +134,14 @@ module.exports = {
     }
   },
 
-  // Create a File
+  // Creating or updating a File
   // -------
   //
   // Fired when uploading images via file selection or drag and drop
 
   uploadFile: function(username, repo, path, data, cb) {
     var file = github().getFile();
-    file.create(username, repo, path, data, function(err, res) {
+    file.uploadFile(username, repo, path, data, function(err, res) {
       (err) ? cb('error', err) : cb('sucess', res);
     });
   },
@@ -186,7 +186,7 @@ module.exports = {
   loadBranches: function(user, repo, cb) {
     repo = this.getRepo(user, repo);
 
-    repo.listBranches(function (err, branches) {
+    repo.listBranches(function(err, branches) {
       cb(err, branches);
     });
   },

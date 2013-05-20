@@ -112,14 +112,9 @@ var _ = require('underscore');
     // File API
     // =======
     Github.File = function() {
-      this.create = function(username, repo, path, data, cb) {
+      // Manages file creation or updating depending on the data obnect passed.
+      this.uploadFile = function(username, repo, path, data, cb) {
         _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, data, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      this.update = function(username, repo, path, cb) {
-        _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, null, function(err, res) {
           cb(err, res);
         });
       };

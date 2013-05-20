@@ -1017,7 +1017,7 @@ module.exports = Backbone.View.extend({
       // Unique Filename
       path = userDefinedPath;
     } else {
-      var uid  = [encodeURIComponent(file.name.replace('.' + extension, '')), (new Date()).getTime()].join('-') + '.' + extension;
+      var uid = encodeURIComponent(file.name);
       path = this.assetsDirectory ?
              this.assetsDirectory + '/' + uid :
              (this.model.path) ?
@@ -1030,14 +1030,26 @@ module.exports = Backbone.View.extend({
         data.content = content;
         data.branch = app.state.branch;
 
-    app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
-      if (type === 'error') {
-        view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
-      } else {
-        var image = '![' + file.name + '](' + path + ')';
-        view.editor.replaceSelection(image);
-        view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
-      }
+    // Read through the filenames of path. If there is a filename that
+    // exists, we want to pass data.sha to update the existing one.
+    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, _.extractFilename(path)[0], function(err, res) {
+      if (err) return view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
+
+        _(res.files).each(function(f) {
+          if (f.path === path) {
+            data.sha = f.sha;
+          }
+        });
+
+      app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
+        if (type === 'error') {
+          view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
+        } else {
+          var image = '![' + file.name + '](' + path + ')';
+          view.editor.replaceSelection(image);
+          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
+        }
+      });
     });
   },
 
