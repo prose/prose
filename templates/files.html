@@ -12,7 +12,7 @@
 
   <div class='fl details'>
     <% if (isBinary) { %>
-      <h3 class='title'><%= name %></h3>
+      <h3 class='title' title='<%= name %>'><%= name %></h3>
     <% } else { %>
         <% if (extension === 'md') { %>
           <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
@@ -20,7 +20,7 @@
             <span class='deemphasize'><%= name %></span>
           </a>
         <% } else { %>
-          <h3 class='title'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>
+          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>
         <% } %>
       </a>
     <% } %>
@@ -43,7 +43,6 @@
         data-branch='<%= branch %>'
         data-file='<%= name %>'
         href='#'>
-        <span class='popup round arrow-right'>Delete this file?</span>
       </a>
     <% } %>
   </div>
