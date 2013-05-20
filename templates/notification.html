@@ -7,14 +7,19 @@
     </div>
   </div>
 <% } else { %>
-  <div class='notify <%= type %>'>
+  <div class='notify <%= key %>'>
     <h2 class='icon landing error'>Prose</h2>
     <div class='inner'>
       <p><%= message %></p>
       <% if (pathFromFile) { %>
         <p><a class='button round create' href='#'>Create it </a></p>
       <% } %>
-      <p><a class='button round' href='<%= previous %>'>Go back </a></p>
+
+      <% if (key === 'error') { %>
+        <p><a class='button round' href='#'>Back to Main Page</a></p>
+      <% } else { %>
+        <p><a class='button round' href='<%= previous %>'>Go back </a></p>
+      <% } %>
     </div>
   </div>
 <% } %>
