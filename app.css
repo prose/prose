@@ -265,10 +265,15 @@ textarea#code {
     }
 
 
-::-webkit-input-placeholder { color:#d4d7d9; font-style:italic; }
-::-moz-placeholder          { color:#d4d7d9; font-style:italic; }
-:-ms-input-placeholder      { color:#d4d7d9; font-style:italic; }
-input:-moz-placeholder      { color:#d4d7d9; font-style:italic; }
+::-webkit-input-placeholder { color:#d4d7d9; }
+::-moz-placeholder          { color:#d4d7d9; }
+:-ms-input-placeholder      { color:#d4d7d9; }
+input:-moz-placeholder      { color:#d4d7d9; }
+
+.filepath::-webkit-input-placeholder { font-style:italic; }
+.filepath::-moz-placeholder          { font-style:italic; }
+.filepath:-ms-input-placeholder      { font-style:italic; }
+.filepath:-moz-placeholder           { font-style:italic; }
 
 strong  { font-weight:700; }
 em      { font-style:italic; }
