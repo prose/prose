@@ -460,7 +460,7 @@ ins {
     width:60px;
     height:30px;
     bottom:0;
-    right:15px;
+    right:0;
     }
   .heading .filepath:focus,
   .heading .filepath:hover {
@@ -797,7 +797,6 @@ ins {
     }
   .heading .avatar {
     padding:5px;
-    margin:0 10px 0 0;
     height:50px;
     width:50px;
     position:relative;
@@ -895,9 +894,10 @@ ins {
   }
 
 .details {
-  width:75%;
-  padding-right:15px;
+  margin-left:15px;
+  width:595px;
   }
+
   .details .user,
   .details .parent-trail,
   .details .parent-trail a {
@@ -907,17 +907,6 @@ ins {
       margin-left:5px;
       }
 
-  .content .details {
-    margin:0 0 0 15px;
-    padding-right:10%;
-    }
-    .content .details a {
-      display:block;
-      }
-      .content .details a strong {
-        color:#d4d7d9;
-        }
-
     .content .details .title {
       position:relative;
       top:8px;
@@ -926,6 +915,12 @@ ins {
         text-overflow:ellipsis;
         white-space:nowrap;
         overflow:hidden;
+        }
+    .content .details a {
+      display:block;
+      }
+      .content .details a strong {
+        color:#d4d7d9;
         }
 
 .breadcrumb {
@@ -1064,7 +1059,9 @@ ins {
     height:40px;
     }
   .content-search .ico {
-    margin:25px 15px 0 0;
+    position:absolute;
+    top:25px;
+    right:15px;
     }
 
 .toolbar {
@@ -1298,19 +1295,16 @@ ins {
   }
 
 .listing .actions {
-  position:absolute;
-  right:15px;
-  top:15px;
-  z-index:100;
+  margin-left:15px;
   }
   .listing .actions a {
     background:#f8f8f8;
     display:block;
     position:relative;
     border:1px solid #a8afb2;
-    padding:0 10px;
+    padding:0 8px;
     font-weight:400;
-    margin:5px -1px 0;
+    margin:0 -1px -1px;
     height:30px;
     line-height:28px;
     float:left;
@@ -2191,7 +2185,7 @@ ins {
 /* ------------------------------------------
   ios and small screen alterations
 ---------------------------------------------*/
-@media all and (max-width: 1085px) {
+@media all and (max-width: 1200px) {
   .sidebar {
     width:25%;
     }
@@ -2203,11 +2197,35 @@ ins {
     width:60%;
     margin:0;
     }
+  .open .item .avatar {
+    width:10%;
+    }
+  .open .details {
+    width:80%;
+    margin:0 15px;
+    }
+  .open .content li.item .details .title {
+    position:static;
+    }
   .limiter,
   .topbar.fixed {
     padding:0 0 0 65px;
     }
   .loading {
     background:rgba(255,255,255,0.9);
+    }
+  }
+
+@media all and (max-width: 720px) {
+  .open .listing .actions {
+    width:100%;
+    float:none;
+    margin:0 0 8px;
+
+    display:none;
+    }
+  .open .details {
+    width:100%;
+    margin:15px 0;
     }
   }

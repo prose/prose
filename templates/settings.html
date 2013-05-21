@@ -14,7 +14,7 @@
       <%= writable ? 'Save' : 'Submit Change' %>
     </a>
 
-    <% if (app.state.config && app.state.config.languages) { %>
+    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>
       <% _(app.state.config.languages).each(function(lang) { %>
         <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>
           <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>
@@ -25,5 +25,12 @@
     <% if (app.state.mode !== 'new' && writable) { %>
       <a class='delete button round' href='#'>Delete this File</a>
     <% } %>
+  </div>
+<% } %>
+
+<% if (permalink) { %>
+  <div class='inner'>
+    <h2 class='label'>Permalink</h2>
+    <input class='permalink' type='text' value='<%= permalink %>' readonly />
   </div>
 <% } %>

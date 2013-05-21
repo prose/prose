@@ -27,6 +27,13 @@ module.exports = Backbone.View.extend({
 
   initialize: function() {
     this.prevFile = this.serialize();
+    this.config = {};
+
+    if (app.state.config && app.state.config.prose) {
+      this.config.siteurl = app.state.config.prose.siteurl || false;
+      this.config.relativeLinks = app.state.config.prose.relativeLinks || false;
+      this.config.media = app.state.config.prose.media || false;
+    }
 
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
     // Always run stashFile in context of view
@@ -36,13 +43,8 @@ module.exports = Backbone.View.extend({
   render: function() {
     var view = this;
 
-    // Shorter access to the config object
-    if (app.state.config && app.state.config.prose) {
-      this.config = app.state.config.prose;
-    }
-
     // Link Dialog
-    if (app.state.markdown && this.config && this.config.relativeLinks) {
+    if (app.state.markdown && this.config.relativeLinks) {
       $.ajax({
         cache: true,
         dataType: 'jsonp',
@@ -56,7 +58,7 @@ module.exports = Backbone.View.extend({
     }
 
     // Assets Listing for the Media Dialog
-    if (app.state.markdown && this.config && this.config.media) {
+    if (app.state.markdown && this.config.media) {
       this.assetsDirectory = this.config.media;
       app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
         view.assets = data.files;
@@ -82,6 +84,12 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('translate', this.translate);
     this.eventRegister.bind('meta', this.meta);
     this.eventRegister.bind('remove', this.remove);
+
+    // Add a permalink to the sidebar is `siteurl` exists in configuration.
+    this.data.permalink = false;
+    if (this.config.siteurl) {
+        this.data.permalink = this.config.siteurl + '/' + this.data.path + '/' + this.data.file;
+    }
 
     this.eventRegister.trigger('sidebarContext', this.data);
     this.renderHeading();
@@ -168,7 +176,7 @@ module.exports = Backbone.View.extend({
 
   preview: function(e) {
     $('#prose').toggleClass('open', false);
-    if (this.config && this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
+    if (this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
       var hash = window.location.hash.split('/');
       hash[2] = 'preview';
       if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
@@ -268,7 +276,7 @@ module.exports = Backbone.View.extend({
 
   makeDirty: function(e) {
     this.dirty = true;
-    if (this.editor) this.model.content = this.editor.getValue();
+    if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
     var label = this.model.writable ? 'Save' : 'Submit Change';
@@ -331,7 +339,7 @@ module.exports = Backbone.View.extend({
   },
 
   refreshCodeMirror: function() {
-    this.editor.refresh();
+    if (typeof this.editor.refresh === 'function') this.editor.refresh();
   },
 
   updateMetaData: function() {
@@ -483,7 +491,7 @@ module.exports = Backbone.View.extend({
 
     if (stash && stash.sha === window.app.state.sha) {
       // Restore from stash if file sha hasn't changed
-      if (this.editor) this.editor.setValue(stash.content);
+      if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
       if (this.metadataEditor) {
         this.rawEditor.setValue('');
         this.metadataEditor.setValue(stash.metadata);
@@ -505,7 +513,13 @@ module.exports = Backbone.View.extend({
     this.hideDiff();
 
     // Update content
-    this.model.content = this.editor.getValue();
+    this.model.content = (this.editor) ? this.editor.getValue() : '';
+
+    // If a permalink exists, update the path
+    if (this.data.permalink) {
+      this.data.permalink = this.config.siteurl + '/' + filepath;
+      this.eventRegister.trigger('sidebarContext', this.data);
+    }
 
     // Delegate
     method.call(this, filepath, filename, filecontent, message);
@@ -642,7 +656,8 @@ module.exports = Backbone.View.extend({
 
       $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">Raw Metadata</label>').appendTo($metadataEditor);
 
-      view.rawEditor = CodeMirror(document.getElementById('raw'), {
+      var rawContainer = (view.model.lang === 'yaml') ? 'code' : 'raw';
+      view.rawEditor = CodeMirror(document.getElementById(rawContainer), {
         mode: 'yaml',
         value: '',
         lineWrapping: true,
@@ -902,6 +917,9 @@ module.exports = Backbone.View.extend({
       if (view.model.jekyll) {
         view.metadataEditor = view.buildMeta();
       }
+
+      // Don't set up content editor for yaml posts
+      if (view.model.lang === 'yaml') return;
 
       var lang = view.model.lang;
       view.editor = CodeMirror(document.getElementById('code'), {
