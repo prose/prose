@@ -164,8 +164,6 @@ module.exports = Backbone.View.extend({
 
   deleteFile: function(e) {
     var $file = $(e.target, this.el);
-    var $message = $file.find('.popup');
-
     var file = {
       user: $file.data('user'),
       repo: $file.data('repo'),
@@ -174,17 +172,15 @@ module.exports = Backbone.View.extend({
     };
 
     if (confirm('Are you sure you want to delete this file?')) {
-
-      $message.html('Working');
       $file.addClass('working');
 
       // Change the icon to a spinning one
       app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
 
         if (err) {
-          $message.html('Error Try&nbsp;again&nbsp;in 30&nbsp;Seconds');
           $file
-            .removeClass('working rubbish')
+            .removeClass('rubbish working')
+            .attr('title', 'Error. Try again in 30 Seconds')
             .addClass('error');
 
           return;
