@@ -80,13 +80,12 @@ _.extractURL = function(url) {
 
 _.mode = function(file) {
   if (_.markdown(file)) return 'gfm';
-
   var extension = _.extension(file);
 
   if (_.include(['js', 'json'], extension)) return 'javascript';
   if (extension === 'html') return 'htmlmixed';
   if (extension === 'rb') return 'ruby';
-  if (extension === 'yml') return 'yaml';
+  if (/(yml|yaml)/.test(extension)) return 'yaml';
   if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
 
   return extension;
