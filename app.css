@@ -1053,7 +1053,9 @@ ins {
     height:40px;
     }
   .content-search .ico {
-    margin:25px 15px 0 0;
+    position:absolute;
+    top:25px;
+    right:15px;
     }
 
 .toolbar {
@@ -1137,9 +1139,9 @@ ins {
     display:block;
     position:relative;
     border:1px solid #a8afb2;
-    padding:0 10px;
+    padding:0 8px;
     font-weight:400;
-    margin:5px -1px 0;
+    margin:0 -1px -1px;
     height:30px;
     line-height:28px;
     float:left;
@@ -2032,7 +2034,13 @@ ins {
     width:10%;
     }
   .open .details {
-    width:80%;
+    width:100%;
+    margin:15px 0;
+    }
+  .open .listing .actions {
+    width:100%;
+    float:none;
+    margin:0 0 8px;
     }
   .limiter,
   .topbar.fixed {
