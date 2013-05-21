@@ -291,7 +291,7 @@ module.exports = Backbone.Router.extend({
 
     var view = new app.views.Notification({
       'type': type,
-      'key': 'notification',
+      'key': 'page-error',
       'message': message
     }).render();
 
