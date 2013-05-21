@@ -2018,7 +2018,7 @@ ins {
 /* ------------------------------------------
   ios and small screen alterations
 ---------------------------------------------*/
-@media all and (max-width: 1085px) {
+@media all and (max-width: 1200px) {
   .sidebar {
     width:25%;
     }
@@ -2034,13 +2034,11 @@ ins {
     width:10%;
     }
   .open .details {
-    width:100%;
-    margin:15px 0;
+    width:80%;
+    margin:0 15px;
     }
-  .open .listing .actions {
-    width:100%;
-    float:none;
-    margin:0 0 8px;
+  .open .content li.item .details .title {
+    position:static;
     }
   .limiter,
   .topbar.fixed {
@@ -2048,5 +2046,19 @@ ins {
     }
   .loading {
     background:rgba(255,255,255,0.9);
+    }
+  }
+
+@media all and (max-width: 720px) {
+  .open .listing .actions {
+    width:100%;
+    float:none;
+    margin:0 0 8px;
+
+    display:none;
+    }
+  .open .details {
+    width:100%;
+    margin:15px 0;
     }
   }
