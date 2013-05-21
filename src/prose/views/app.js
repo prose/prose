@@ -276,7 +276,7 @@ module.exports = Backbone.View.extend({
       if (kill) {
         _.delay(function() {
           $(view.el).removeClass(classes);
-        }, 2000);
+        }, 1000);
       }
     },
 
