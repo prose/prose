@@ -23,6 +23,11 @@ module.exports = Backbone.View.extend({
 
   initialize: function() {
     this.prevFile = this.serialize();
+    this.config = {};
+
+    if (app.state.config && app.state.config.prose) {
+      this.config.siteurl = app.state.config.prose.siteurl || false;
+    }
 
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
     // Always run stashFile in context of view
@@ -53,8 +58,8 @@ module.exports = Backbone.View.extend({
 
     // Add a permalink to the sidebar is `siteurl` exists in configuration.
     this.data.permalink = false;
-    if (app.state.config && app.state.config.prose && app.state.config.prose.siteurl) {
-        this.data.permalink = app.state.config.prose.siteurl + '/' + this.data.path + '/' + this.data.file;
+    if (this.config.siteurl) {
+        this.data.permalink = this.config.siteurl + '/' + this.data.path + '/' + this.data.file;
     }
 
     this.eventRegister.trigger('sidebarContext', this.data);
@@ -142,7 +147,7 @@ module.exports = Backbone.View.extend({
 
   preview: function(e) {
     $('#prose').toggleClass('open', false);
-    if (app.state.config && app.state.config.prose && app.state.config.prose.siteurl && this.model.metadata && this.model.metadata.layout) {
+    if (this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
       var hash = window.location.hash.split('/');
       hash[2] = 'preview';
       if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
@@ -448,7 +453,7 @@ module.exports = Backbone.View.extend({
 
     // If a permalink exists, update the path
     if (this.data.permalink) {
-      this.data.permalink = app.state.config.prose.siteurl + '/' + filepath;
+      this.data.permalink = this.config.siteurl + '/' + filepath;
       this.eventRegister.trigger('sidebarContext', this.data);
     }
 
