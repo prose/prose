@@ -51,6 +51,12 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('meta', this.meta);
     this.eventRegister.bind('remove', this.remove);
 
+    // Add a permalink to the sidebar is `siteurl` exists in configuration.
+    this.data.permalink = false;
+    if (app.state.config && app.state.config.prose && app.state.config.prose.siteurl) {
+        this.data.permalink = app.state.config.prose.siteurl + '/' + this.data.path + '/' + this.data.file;
+    }
+
     this.eventRegister.trigger('sidebarContext', this.data);
     this.renderHeading();
 
@@ -439,6 +445,12 @@ module.exports = Backbone.View.extend({
 
     // Update content
     this.model.content = this.editor.getValue();
+
+    // If a permalink exists, update the path
+    if (this.data.permalink) {
+      this.data.permalink = app.state.config.prose.siteurl + '/' + filepath;
+      this.eventRegister.trigger('sidebarContext', this.data);
+    }
 
     // Delegate
     method.call(this, filepath, filename, filecontent, message);

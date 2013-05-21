@@ -117,6 +117,8 @@ module.exports = Backbone.View.extend({
         .empty()
         .append(sidebarTmpl(data));
 
+      if (data.permalink) utils.autoSelect($('.permalink'));
+
       // Branch Switching
       $('.chzn-select').chosen().change(function() {
           router.navigate($(this).val(), true);
