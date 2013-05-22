@@ -290,10 +290,6 @@ ins {
 /* ------------------------------------------
   Styled Content
 ---------------------------------------------*/
-.bright,
-.prose {
-  background:#fff;
-  }
 .prose h1 {
   font-size:26px;
   margin:15px 0;
@@ -443,6 +439,7 @@ ins {
   }
   .heading .details {
     position:relative;
+    margin-left:65px;
     }
   .heading .details .mask {
     background:transparent url(img/filepath-mask.png) no-repeat top right;
@@ -476,7 +473,7 @@ ins {
   position:fixed;
   z-index:1000;
   top:0;
-  right:-220px;
+  right:-280px;
   width:220px;
   height:100%;
   overflow:auto;
@@ -815,10 +812,10 @@ ins {
     color:#516066;
     }
   .heading .avatar {
+    position:absolute;
     padding:5px;
     height:50px;
     width:50px;
-    position:relative;
     }
 
 @-webkit-keyframes spin {
@@ -1280,7 +1277,7 @@ ins {
 
 .dialog .media-listing {
   margin-right:30px;
-  height:190px;
+  height:180px;
   overflow:auto;
   border-right:1px solid #d4d7d9;
   padding-right:8px;
@@ -2304,7 +2301,7 @@ ins {
   .open .item .avatar {
     width:10%;
     }
-  .open .details {
+  .open .content .details {
     width:80%;
     margin:0 15px;
     }
@@ -2328,7 +2325,7 @@ ins {
 
     display:none;
     }
-  .open .details {
+  .open .content .details {
     width:100%;
     margin:15px 0;
     }
