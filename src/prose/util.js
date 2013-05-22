@@ -353,6 +353,14 @@ _.preview = function(view) {
   }
 };
 
+// Strip out whitespace and replace 
+// whitespace with hyphens for a nice class name.
+// -------
+
+_.formattedClass = function(str) {
+  return str.toLowerCase().replace(/\s/g, '-').replace('&amp;', '');
+};
+
 // UI Stuff
 // -------
 module.exports = {
