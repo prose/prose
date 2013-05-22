@@ -12,6 +12,7 @@ var oauth = require('../../oauth.json');
 window.auth = {
   api: oauth.api || 'https://api.github.com',
   site: oauth.site || 'https://github.com',
+  raw: oauth.raw || 'https://raw.github.com',
   id: oauth.clientId,
   url: oauth.gatekeeperUrl
 };
@@ -133,6 +134,18 @@ module.exports = {
     }
   },
 
+  // Creating or updating a File
+  // -------
+  //
+  // Fired when uploading images via file selection or drag and drop
+
+  uploadFile: function(username, repo, path, data, cb) {
+    var file = github().getFile();
+    file.uploadFile(username, repo, path, data, function(err, res) {
+      (err) ? cb('error', err) : cb('sucess', res);
+    });
+  },
+
   // Load Repos
   // -------
   //
@@ -173,7 +186,7 @@ module.exports = {
   loadBranches: function(user, repo, cb) {
     repo = this.getRepo(user, repo);
 
-    repo.listBranches(function (err, branches) {
+    repo.listBranches(function(err, branches) {
       cb(err, branches);
     });
   },
@@ -697,7 +710,7 @@ module.exports = {
         'path': path,
         'published': false,
         'persisted': false,
-        'writeable': true,
+        'writable': true,
         'file': file
       });
     });
@@ -717,7 +730,7 @@ module.exports = {
       // Extract YAML from a post, trims whitespace
       content = content.replace(/\r\n/g, '\n'); // normalize a little bit
 
-      function writeable() {
+      function writable() {
         return !!(app.state.permissions && app.state.permissions.push);
       }
 
@@ -726,12 +739,12 @@ module.exports = {
       if (!hasMetadata) return {
         content: content,
         published: true,
-        writeable: writeable(),
+        writable: writable(),
         jekyll: hasMetadata
       };
 
       var res = {
-        writeable: writeable(),
+        writable: writable(),
         jekyll: hasMetadata
       };
 
