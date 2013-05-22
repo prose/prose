@@ -1120,7 +1120,7 @@ module.exports = Backbone.View.extend({
 
   markdownSnippet: function(e) {
     var view = this;
-    var $target = $(e.target, this.el);
+    var $target = $(e.target, this.el).closest('a');
     var $dialog = $('#dialog', this.el);
     var $snippets = $('.toolbar .group a', this.el);
     var key = $target.data('key');
