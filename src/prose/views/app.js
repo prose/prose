@@ -19,6 +19,7 @@ module.exports = Backbone.View.extend({
       'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
+      'focus input.filepath': 'checkPlaceholder',
       'keypress input.filepath': 'saveFilePath'
     },
 
@@ -250,6 +251,13 @@ module.exports = Backbone.View.extend({
     saveFilePath: function(e) {
       // Trigger updateFile when a return button has been pressed.
       if (e.which === 13) this.eventRegister.trigger('updateFile', e);
+    },
+
+    checkPlaceholder: function(e) {
+      if (app.state.mode === 'new') {
+        var $target = $(e.target, this.el);
+        $target.val($target.attr('placeholder'));
+      }
     },
 
     logout: function() {
