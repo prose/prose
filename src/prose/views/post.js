@@ -22,7 +22,7 @@ module.exports = Backbone.View.extend({
     'click .save-action': 'updateFile',
     'click button': 'toggleButton',
     'click .unpublished-flag': 'meta',
-    'change #upload': 'fileinput',
+    'change #upload': 'fileInput',
     'change .meta input': 'makeDirty'
   },
 
