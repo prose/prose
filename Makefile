@@ -48,6 +48,8 @@ APPLICATION = \
 	dist/templates.js \
 	src/prose/models.js \
 	src/prose/cookie.js \
+	src/prose/upload.js \
+	src/prose/toolbar/markdown.js \
 	src/libs/github.js
 
 dist/prose.js: oauth.json $(APPLICATION) $(LIBS) dist/templates.js
