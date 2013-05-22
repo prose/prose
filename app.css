@@ -263,14 +263,6 @@ textarea#code {
     border-width:1px;
     }
 
-#upload {
-  position:absolute;
-  width:180px;
-  opacity:0.0001;
-  cursor:pointer;
-  left:-30px;
-  }
-
 ::-webkit-input-placeholder { color:#d4d7d9; }
 ::-moz-placeholder          { color:#d4d7d9; }
 :-ms-input-placeholder      { color:#d4d7d9; }
@@ -302,10 +294,6 @@ ins {
 .prose {
   background:#fff;
   }
-.prose * {
-	line-height:1.4em;
-  }
-
 .prose h1 {
   font-size:26px;
   margin:15px 0;
@@ -348,7 +336,10 @@ ins {
   font-size:16px;
 	line-height:1.5em;
   }
-
+.prose.small p {
+  font-size:13px;
+	line-height:20px;
+  }
 .prose ol,
 .prose ul {
   margin:0 0 15px 30px;
@@ -1202,6 +1193,9 @@ ins {
   width:100%;
   margin:0 auto;
   border:1px solid #a8afb2;
+  height:240px;
+  height:auto!important;
+  min-height:240px;
   box-shadow:0 1px 0 rgba(255, 255, 255, 0),
              0 0 10px rgba(0, 0, 0, 0.1);
   -webkit-border-radius:0 0 4px 4px;
@@ -1214,6 +1208,7 @@ ins {
     color:#90BB74;
     text-decoration:underline;
     }
+    .dialog a.active,
     .dialog a:hover {
       color:#73955C;
       }
@@ -1326,6 +1321,13 @@ ins {
         color:#516066;
         }
 
+    .dialog .upload {
+      position:absolute;
+      width:180px;
+      opacity:0.0001;
+      cursor:pointer;
+      left:-30px;
+      }
     .dialog .media-listing .ico {
       color:#a8afb2;
       font-size:17px;
@@ -1341,12 +1343,25 @@ ins {
 /* Help Dialog */
 .help .help-content,
 .help .sub-menu {
-  display:none; 
+  display:none;
   }
   .help .help-content.active,
   .help .sub-menu.active {
     display:block;
     }
+  .help .col25 {
+    padding:15px 0;
+    height:240px;
+    border-right:1px solid #d4d7d9;
+    }
+    .help .col25 a {
+      color:#3d494e;
+      font-weight:400;
+      text-decoration:none;
+      }
+      .help .col25 a:hover {
+        color:#202020;
+        }
 
 .help .help-content {
   height:240px;
@@ -1354,13 +1369,19 @@ ins {
   }
 .help .col li a {
   display:block;
-  border-bottom:1px solid #f0f0f0;
+  border-top:1px solid #f0f0f0;
   padding:4px 15px;
   }
+  .help .col li:last-child a {
+    border-bottom:1px solid #f0f0f0;
+    }
   .help .col li a:hover,
   .help .col li a.active {
     background-color:#f8f8f8;
     }
+    .help .col li a.active {
+      font-weight:700;
+      }
 
 .menu li {
   float:left;

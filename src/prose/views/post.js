@@ -1252,10 +1252,13 @@ module.exports = Backbone.View.extend({
                 var parent = $(this).data('id');
                 $('.' + parent).addClass('active');
 
-                // Add an active class to the first list item
-                $('.' + parent + ' a:first')
-                  .addClass('active')
-                  .trigger('click');
+                // Add an active class and populate the
+                // content of the first list item.
+                var $firstSubElement = $('.' + parent + ' a:first', this.el);
+                $firstSubElement.addClass('active');
+
+                var subParent = $firstSubElement.data('id');
+                $('.help-' + subParent).addClass('active');
               }
               return false;
             });
@@ -1269,7 +1272,7 @@ module.exports = Backbone.View.extend({
 
                 // Add the relavent content section
                 var parent = $(this).data('id');
-                $('.' + parent).addClass('active');
+                $('.help-' + parent).addClass('active');
               }
 
               return false;
