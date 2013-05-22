@@ -1072,8 +1072,8 @@ module.exports = Backbone.View.extend({
         } else {
           var $alt = $('input[name="alt"]');
           var image = ($alt.val) ?
-            '![' + $alt.val() + '](' + path + ')' :
-            '![' + file.name + '](' + path + ')';
+            '![' + $alt.val() + '](/' + path + ')' :
+            '![' + file.name + '](/' + path + ')';
 
           view.editor.focus();
           view.editor.replaceSelection(image);
