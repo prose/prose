@@ -853,48 +853,55 @@ module.exports = Backbone.View.extend({
           var selection = _.trim(view.editor.getSelection());
           $snippetLinks.removeClass('active');
 
-          var isNumber = parseInt(selection.charAt(0), 10);
+          var match = {
+            lineBreak: /\n/,
+            h1: /^#{1}/,
+            h2: /^#{2,2}/,
+            h3: /^#{3,3}/,
+            strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+            italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+            isNumber: parseInt(selection.charAt(0), 10)
+          };
 
-          if (!isNumber) {
+          if (!match.isNumber) {
             switch (selection.charAt(0)) {
-            case '#':
-              if (selection.charAt(1) === '#' && selection.charAt(2) !== '#') { // Subheading Check
-                $('[data-key="sub-heading"]').addClass('active');
-              } else if (selection.charAt(1) !== '#') {
-                $('[data-key="heading"]').addClass('active');
-              }
-              break;
-            case '>':
-              $('[data-key="quote"]').addClass('active');
-              break;
-            case '*':
-              if (selection.charAt(selection.length - 1) === '*') {
-                $('[data-key="bold"]').addClass('active');
-              }
-              break;
-            case '_':
-              if (selection.charAt(selection.length - 1) === '_') {
-                $('[data-key="italic"]').addClass('active');
-              }
-              break;
-            case '!':
-              if (selection.charAt(1) === '[' && selection.charAt(selection.length - 1) === ')') {
-                $('[data-key="image"]').addClass('active');
-              }
-              break;
-            case '[':
-              if (selection.charAt(selection.length - 1) === ')') {
-                $('[data-key="link"]').addClass('active');
-              }
-              break;
-            case '-':
-              if (selection.charAt(1) === ' ') {
-                $('[data-key="list"]').addClass('active');
-              }
+              case '#':
+                if (!match.lineBreak.test(selection)) {
+                  if (match.h2.test(selection) && !match.h3.test(selection)) {
+                    $('[data-key="sub-heading"]').addClass('active');
+                  } else if (!match.h2.test(selection)) {
+                    $('[data-key="heading"]').addClass('active');
+                  }
+                }
+                break;
+              case '>':
+                $('[data-key="quote"]').addClass('active');
+                break;
+              case '*':
+              case '_':
+                if (match.strong.test(selection)) {
+                  $('[data-key="bold"]').addClass('active');
+                } else if (match.italic.test(selection)) {
+                  $('[data-key="italic"]').addClass('active');
+                }
+                break;
+              case '!':
+                if (selection.charAt(1) === '[' && selection.charAt(selection.length - 1) === ')') {
+                  $('[data-key="image"]').addClass('active');
+                }
+                break;
+              case '[':
+                if (selection.charAt(selection.length - 1) === ')') {
+                  $('[data-key="link"]').addClass('active');
+                }
+                break;
+              case '-':
+                if (selection.charAt(1) === ' ') {
+                  $('[data-key="list"]').addClass('active');
+                }
               break;
             }
           } else {
-
             if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
               $('[data-key="numbered-list"]').addClass('active');
             }

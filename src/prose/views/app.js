@@ -19,6 +19,7 @@ module.exports = Backbone.View.extend({
       'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
+      'focus input.filepath': 'checkPlaceholder',
       'keypress input.filepath': 'saveFilePath'
     },
 
@@ -252,6 +253,13 @@ module.exports = Backbone.View.extend({
       if (e.which === 13) this.eventRegister.trigger('updateFile', e);
     },
 
+    checkPlaceholder: function(e) {
+      if (app.state.mode === 'new') {
+        var $target = $(e.target, this.el);
+        $target.val($target.attr('placeholder'));
+      }
+    },
+
     logout: function() {
       app.models.logout();
       window.location.reload();
@@ -276,7 +284,7 @@ module.exports = Backbone.View.extend({
       if (kill) {
         _.delay(function() {
           $(view.el).removeClass(classes);
-        }, 2000);
+        }, 1000);
       }
     },
 

@@ -154,11 +154,10 @@ button,
     }
   .button:hover        { background:#3d494e; color:#fff; }
   .button.delete       { background-color:#db6f6f; }
-
   .button.delete:hover   { background-color:#d35252; }
 
-  .listing .actions .working,
-  .actions .delete:hover { border-color:#d35252; }
+  .listing .actions .delete:active,
+  .listing .actions .delete:hover { border-color:#d35252; }
 
   p > a {font-weight:700;}
 
@@ -297,7 +296,7 @@ ins {
   background:#fff;
   }
 .prose * {
-	line-height:1.2em;
+	line-height:1.4em;
   }
 
 .prose h1 {
@@ -482,7 +481,8 @@ ins {
   right:-220px;
   width:220px;
   height:100%;
-  overflow: auto;
+  overflow:auto;
+  overflow-x:hidden;
   -webkit-transition:right 150ms;
      -moz-transition:right 150ms;
        -o-transition:right 150ms;
@@ -709,7 +709,6 @@ ins {
 /* Custom Class Names for ico's */
 .ico.gfm:before       { content:'\f10b'; }
 .ico.htmlmixed:before { content:'\f107'; }
-
 .listing .saving,
 .saving .save-action .status:before {
   content:'\f11a';
@@ -734,7 +733,27 @@ ins {
   .saved .heading .save-action .status {
     background:#f8f8f8;
     }
-  .listing .saving,
+  .listing .actions .working {
+    border-color:#D35252;
+    -webkit-box-shadow:0 0 2px rgb(211,82,82);
+            box-shadow:0 0 2px rgb(211,82,82);
+    -webkit-animation-duration:1000ms;
+       -moz-animation-duration:1000ms;
+         -o-animation-duration:1000ms;
+            animation-duration:1000ms;
+    -webkit-animation-timing-function:linear;
+       -moz-animation-timing-function:linear;
+         -o-animation-timing-function:linear;
+            animation-timing-function:linear;
+    -webkit-animation-iteration-count:infinite;
+       -moz-animation-iteration-count:infinite;
+         -o-animation-iteration-count:infinite;
+            animation-iteration-count:infinite;
+    -webkit-animation-name:pulsate;
+       -moz-animation-name:pulsate;
+         -o-animation-name:pulsate;
+            animation-name:pulsate;
+    }
   .saving .save-action .status {
     -webkit-animation-duration:1000ms;
        -moz-animation-duration:1000ms;
@@ -827,6 +846,27 @@ ins {
 @keyframes saved {
 	0%    { transform:scale(1); opacity:1; }	
 	100%  { transform:scale(1.5); opacity:0; }
+  }
+
+@-webkit-keyframes pulsate {
+	0%    { -webkit-box-shadow:0 0 2px rgb(211,82,82); }	
+	50%   { -webkit-box-shadow:0 0 6px rgba(211,82,82,0.5); }	
+	100%  { -webkit-box-shadow:0 0 2px rgb(211,82,82); }
+  }
+@-moz-keyframes pulsate {
+	0%    { box-shadow:0 0 2px rgb(211,82,82); }	
+	50%   { box-shadow:0 0 6px rgba(211,82,82,0.5); }	
+	100%  { box-shadow:0 0 2px rgb(211,82,82); }
+  }
+@-o-keyframes pulsate {
+	0%    { box-shadow:0 0 2px rgb(211,82,82); }	
+	50%   { box-shadow:0 0 6px rgba(211,82,82,0.5); }	
+	100%  { box-shadow:0 0 2px rgb(211,82,82); }
+  }
+@keyframes pulsate {
+	0%    { box-shadow:0 0 2px rgb(211,82,82); }	
+	50%   { box-shadow:0 0 6px rgba(211,82,82,0.5); }	
+	100%  { box-shadow:0 0 2px rgb(211,82,82); }
   }
 
 /* Saving States */
