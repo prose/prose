@@ -9,6 +9,7 @@ var Backbone = require('backbone');
 var utils = require('.././util');
 var upload = require('.././upload');
 var cookie = require('.././cookie');
+var toolbar = require('.././toolbar/markdown.js');
 
 module.exports = Backbone.View.extend({
 
@@ -16,12 +17,12 @@ module.exports = Backbone.View.extend({
   className: 'post',
 
   events: {
-    'click .markdown-snippets a': 'markdownSnippet',
+    'click .group a': 'markdownSnippet',
     'click .dialog .insert': 'dialogInsert',
     'click .save-action': 'updateFile',
     'click button': 'toggleButton',
     'click .unpublished-flag': 'meta',
-    'change #upload': 'fileInput',
+    'change #upload': 'fileinput',
     'change .meta input': 'makeDirty'
   },
 
@@ -948,7 +949,7 @@ module.exports = Backbone.View.extend({
       // Monitor the current selection and apply
       // an active class to any snippet links
       if (view.model.lang === 'gfm') {
-        var $snippetLinks = $('.markdown-snippets a', view.el);
+        var $snippetLinks = $('.toolbar .group a', view.el);
         view.editor.on('cursorActivity', _.bind(function() {
 
           var selection = _.trim(view.editor.getSelection());
@@ -1017,7 +1018,7 @@ module.exports = Backbone.View.extend({
         this.queue = undefined;
 
         // If a dialog window is open and the editor is in focus, close it.
-        $('.markdown-snippets a', this.el).removeClass('on');
+        $('.toolbar .group a', this.el).removeClass('on');
         $('#dialog', view.el).empty().removeClass();
       }, view));
 
@@ -1119,8 +1120,9 @@ module.exports = Backbone.View.extend({
 
   markdownSnippet: function(e) {
     var view = this;
-    var $target = $(e.target, this.el);
+    var $target = $(e.target, this.el).closest('a');
     var $dialog = $('#dialog', this.el);
+    var $snippets = $('.toolbar .group a', this.el);
     var key = $target.data('key');
     var snippet = $target.data('snippet');
     var selection = _.trim(this.editor.getSelection());
@@ -1128,7 +1130,7 @@ module.exports = Backbone.View.extend({
     $dialog.removeClass().empty();
 
     if (snippet) {
-      $('.markdown-snippets a', this.el).removeClass('on');
+      $snippets.removeClass('on');
 
       if (selection) {
         switch (key) {
@@ -1170,7 +1172,7 @@ module.exports = Backbone.View.extend({
         $target.removeClass('on');
         $dialog.removeClass().empty();
       } else {
-        $('.markdown-snippets a', this.el).removeClass('on');
+        $snippets.removeClass('on');
         $target.addClass('on');
         $dialog
           .removeClass()
@@ -1246,6 +1248,60 @@ module.exports = Backbone.View.extend({
                 if (alt) $('input[name=alt]', $dialog).val(alt);
               }
             }
+          break;
+          case 'help':
+            tmpl = _(app.templates.helpDialog).template();
+            $dialog.append(tmpl({
+              help: toolbar.help
+            }));
+
+            // Page through different help sections
+            var $mainMenu = $('.main-menu a', this.el);
+            var $subMenu = $('.sub-menu', this.el);
+            var $content = $('.help-content', this.el);
+
+            $mainMenu.on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $mainMenu.removeClass('active');
+                $content.removeClass('active');
+                $subMenu
+                    .removeClass('active')
+                    .find('a')
+                    .removeClass('active');
+
+                $(this).addClass('active');
+
+                // Add the relavent sub menu
+                var parent = $(this).data('id');
+                $('.' + parent).addClass('active');
+
+                // Add an active class and populate the
+                // content of the first list item.
+                var $firstSubElement = $('.' + parent + ' a:first', this.el);
+                $firstSubElement.addClass('active');
+
+                var subParent = $firstSubElement.data('id');
+                $('.help-' + subParent).addClass('active');
+              }
+              return false;
+            });
+
+            $subMenu.find('a').on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $subMenu.find('a').removeClass('active');
+                $content.removeClass('active');
+                $(this).addClass('active');
+
+                // Add the relavent content section
+                var parent = $(this).data('id');
+                $('.help-' + parent).addClass('active');
+              }
+
+              return false;
+            });
+
           break;
         }
       }

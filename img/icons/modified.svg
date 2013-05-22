@@ -24,7 +24,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.53417969"
+     inkscape:zoom="1.1413918"
      inkscape:cx="539.20579"
      inkscape:cy="500.77182"
      inkscape:document-units="px"
@@ -66,8 +66,8 @@
      transform="translate(0,-52.3622)">
     <path
        style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="M 500 0 C 251.47187 0 50 201.47185 50 450 C 50 698.52815 251.47187 900 500 900 C 748.52814 900 950 698.52815 950 450 C 950 201.47185 748.52814 0 500 0 z M 300 260 L 400 260 L 500 360 L 600 260 L 700 260 L 750 310 L 750 610 L 700 660 L 650 660 L 600 610 L 600 460 L 500 560 L 400 460 L 400 610 L 350 660 L 300 660 L 250 610 L 250 310 L 300 260 z "
-       transform="translate(0,52.3622)"
-       id="path24459" />
+       d="m 500,112.3622 c -248.52813,0 -450,201.47185 -450,450 0,248.52815 201.47187,450 450,450 248.52814,0 450,-201.47185 450,-450 0,-248.52815 -201.47186,-450 -450,-450 z m -200,260 100,0 100,100 100,-100 100,0 50,50 0,300 -50,50 -50,0 -50,-50 0,-150 -100,100 -100,-100 0,150 -50,50 -50,0 -50,-50 0,-300 50,-50 z"
+       id="path24459"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
