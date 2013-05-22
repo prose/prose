@@ -499,6 +499,14 @@ ins {
     right:60px;
     }
 
+.col {
+  float:left;
+  width:50%;
+  }
+  .col25 {
+    width:25%;
+    }
+
 /* ------------------------------------------
   Global Styles
 ---------------------------------------------*/
@@ -1271,13 +1279,13 @@ ins {
   border-right:1px solid #d4d7d9;
   padding-right:8px;
   }
-  .dialog .media-listing::-webkit-scrollbar {
+  .dialog ::-webkit-scrollbar {
     background:#fff;
     width:15px;
     -webkit-border-radius:15px;
             border-radius:15px;
     }
-  .dialog .media-listing::-webkit-scrollbar-thumb {
+  .dialog ::-webkit-scrollbar-thumb {
     background:#d4d7d9;
     border:5px #fff solid;
     -webkit-border-radius:15px;
@@ -1329,6 +1337,30 @@ ins {
       background:#f8f8f8;
       color:#202020;
       }
+
+/* Help Dialog */
+.help .help-content,
+.help .sub-menu {
+  display:none; 
+  }
+  .help .help-content.active,
+  .help .sub-menu.active {
+    display:block;
+    }
+
+.help .help-content {
+  height:240px;
+  overflow:auto;
+  }
+.help .col li a {
+  display:block;
+  border-bottom:1px solid #f0f0f0;
+  padding:4px 15px;
+  }
+  .help .col li a:hover,
+  .help .col li a.active {
+    background-color:#f8f8f8;
+    }
 
 .menu li {
   float:left;
@@ -1925,7 +1957,6 @@ ins {
 .fl    { float:left; }
 .fr    { float:right; }
 
-.col          { width:50%; }
 .hidden       { display:none; }
 .centered     { text-align:center; }
 .scrolling    { overflow:auto; }

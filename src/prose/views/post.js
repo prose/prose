@@ -22,7 +22,7 @@ module.exports = Backbone.View.extend({
     'click .save-action': 'updateFile',
     'click button': 'toggleButton',
     'click .unpublished-flag': 'meta',
-    'change #upload': 'fileInput',
+    'change #upload': 'fileinput',
     'change .meta input': 'makeDirty'
   },
 
@@ -1230,6 +1230,51 @@ module.exports = Backbone.View.extend({
             $dialog.append(tmpl({
               help: toolbar.help
             }));
+
+            // Page through different help sections
+            var $mainMenu = $('.main-menu a', this.el);
+            var $subMenu = $('.sub-menu', this.el);
+            var $content = $('.help-content', this.el);
+
+            $mainMenu.on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $mainMenu.removeClass('active');
+                $content.removeClass('active');
+                $subMenu
+                    .removeClass('active')
+                    .find('a')
+                    .removeClass('active');
+
+                $(this).addClass('active');
+
+                // Add the relavent sub menu
+                var parent = $(this).data('id');
+                $('.' + parent).addClass('active');
+
+                // Add an active class to the first list item
+                $('.' + parent + ' a:first')
+                  .addClass('active')
+                  .trigger('click');
+              }
+              return false;
+            });
+
+            $subMenu.find('a').on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $subMenu.find('a').removeClass('active');
+                $content.removeClass('active');
+                $(this).addClass('active');
+
+                // Add the relavent content section
+                var parent = $(this).data('id');
+                $('.' + parent).addClass('active');
+              }
+
+              return false;
+            });
+
           break;
         }
       }
