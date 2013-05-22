@@ -31,10 +31,10 @@ LIBS = \
 	vendor/codemirror/css.js \
 	vendor/codemirror/gfm.js \
 	vendor/liquid.js \
-	vendor/liquid.patch.js \
-	vendor/github.js
+	vendor/liquid.patch.js
 
 APPLICATION = \
+	app/models/user.js \
 	app/views/notification.js \
 	app/views/documentation.js \
 	app/views/post.js \
@@ -48,7 +48,8 @@ APPLICATION = \
 	app/boot.js \
 	dist/templates.js \
 	app/models.js \
-	app/cookie.js
+	app/cookie.js \
+	vendor/github.js
 
 dist/prose.js: oauth.json $(APPLICATION) $(LIBS) dist/templates.js
 	cat $(LIBS) > dist/prose.js

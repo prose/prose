@@ -3,9 +3,9 @@ var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var queue = require('queue-async');
 var cookie = require('./cookie');
-var Github = require('../libs/github');
+var Github = require('../vendor/github');
 var queue = require('queue-async');
-var oauth = require('../../oauth.json');
+var oauth = require('../oauth.json');
 
 // Set up a GitHub object
 // -------
