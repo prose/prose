@@ -28,6 +28,7 @@ module.exports = Backbone.View.extend({
   initialize: function() {
     this.prevFile = this.serialize();
     this.config = {};
+    this.recentlyUploadedFiles = [];
 
     if (app.state.config && app.state.config.prose) {
       this.config.siteurl = app.state.config.prose.siteurl || false;
@@ -1060,15 +1061,29 @@ module.exports = Backbone.View.extend({
     app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, _.extractFilename(path)[0], function(err, res) {
       if (err) return view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
 
-        _(res.files).each(function(f) {
-          if (f.path === path) {
-            data.sha = f.sha;
-          }
-        });
+      // Check whether the current (or media) directory
+      // contains the same filename as the one a user wishes
+      // to upload. we want to update the file by passing the sha
+      // to the data object in this case.
+      _(res.files).each(function(f) {
+        var parts = _.extractFilename(f.path);
+        var structuredPath = [parts[0], encodeURIComponent(parts[1])].join('/');
+        if (structuredPath === path) {
+          data.sha = f.sha;
+        }
+      });
+
+      // Stored in memory to test as GitHub may have not
+      // picked up on the change fast enough.
+      _(view.recentlyUploadedFiles).each(function(f) {
+        if (f.path === path) {
+          data.sha = f.sha;
+        }
+      });
 
       app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
         if (type === 'error') {
-          view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
+          view.eventRegister.trigger('updateSaveState', 'Error&nbsp;Uploading try again in 30 Seconds!', 'error');
         } else {
           var $alt = $('input[name="alt"]');
           var image = ($alt.val) ?
@@ -1086,8 +1101,17 @@ module.exports = Backbone.View.extend({
               name: file.name,
               type: 'blob',
               path: path
-            })
+            });
           }
+
+          // Store a record of recently uploaded files in memory
+          var fileParts = _.extractFilename(res.content.path);
+          var structuredPath = [fileParts[0], encodeURIComponent(fileParts[1])].join('/');
+
+          view.recentlyUploadedFiles.push({
+            path: structuredPath,
+            sha: res.content.sha
+          });
         }
       });
     });
