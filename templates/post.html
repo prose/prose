@@ -16,7 +16,7 @@
             <a href='#' class='save-action round fl'>
               <span class='ico status'></span>
 
-              <% if (writeable) { %>
+              <% if (writable) { %>
                 <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>
               <% } else { %>
                 <span class='popup round arrow-top'>Submit Change</span>
@@ -30,12 +30,12 @@
                 <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print("## Sub Heading\n\n") %>'>h2</a></li>
               </ul>
               <ul class='group round markdown-snippets clearfix'>
-                <li><a class='ico small link' title='Insert Link' href='#' data-key='link' data-snippet='<% print("[Google](http://google.com)\n\n") %>'></a></li>
-                <li><a class='ico small picture' title='Insert Image' href='#' data-key='image' data-snippet='<% print("![picture alt](http://placekitten.com/200/300)\n\n") %>'></a></li>
+                <li><a class='ico small link' title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true></a></li>
+                <li><a class='ico small picture' title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true></a></li>
               </ul>
               <ul class='group round markdown-snippets clearfix'>
-                <li><a href='#' title='Bold' data-key='bold' data-snippet='**text**'>B</a></li>
-                <li><a class='ico small italic' data-key='italic' href='#' title='Italic' data-snippet='_text_'></a></li>
+                <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>
+                <li><a class='ico small italic' data-key='italic' href='#' title='Italic' data-snippet='__'></a></li>
               </ul>
               <ul class='group round markdown-snippets clearfix'>
                 <li><a class='ico small quote' title='Blockquote' href='#' data-key='quote' data-snippet='<% print("> We loved with a love that was more than love\n\n"); %>'></a></li>
@@ -49,10 +49,11 @@
               </ul>
             <% } %>
           </div>
+          <div id='dialog'></div>
         </div>
       </div>
     </div>
-    <div id='code'></div>
+    <div id='code' class='code round inner'></div>
   </div>
   <% if (markdown) { %>
     <div id='preview' class='view preview prose'><%- preview %></div>

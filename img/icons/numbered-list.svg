@@ -24,12 +24,12 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.62245275"
-     inkscape:cx="616.44051"
-     inkscape:cy="417.26713"
+     inkscape:zoom="0.5"
+     inkscape:cx="255.54001"
+     inkscape:cy="493.78703"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="true"
+     showgrid="false"
      inkscape:window-width="1010"
      inkscape:window-height="745"
      inkscape:window-x="47"
@@ -68,7 +68,7 @@
        transform="translate(355,2034)"
        id="g16256" />
     <rect
-       y="592.36218"
+       y="587.36218"
        x="300"
        height="60.000046"
        width="640"
@@ -90,13 +90,13 @@
        y="793.36218" />
     <path
        style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 60,292.3622 0,40 60,0 0,180 40,0 0,-180 0,-40 z"
+       d="m 80,207.3622 0,40 60,0 0,265 40,0 0,-265 0,-40 z"
        id="rect13314"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccc" />
     <path
        style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 60,632.3622 100,0 0,80 -80,0 -20,40 0,120 140,0 0,-40 -100,0 0,-80 80,0 20,-40 0,-100 -20,-20 -120,0 z"
+       d="m 50,617.3622 130,0 0,100 -110,0 -20,40 0,140 170,0 0,-40 -130,0 0,-100 110,0 20,-40 0,-120 -20,-20 -150,0 z"
        id="rect13322"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccccccccccc" />

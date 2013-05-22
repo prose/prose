@@ -120,20 +120,24 @@ _.extension = function(file) {
 // -------
 
 _.markdown = function(file) {
-  var regex = new RegExp('.(md|mkdn?|mdown|markdown)$');
+  var regex = new RegExp(/.(md|mkdn?|mdown|markdown)$/);
   return !!(regex.test(file));
 };
 
 _.isBinary = function(file) {
-  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx)$');
+  var regex = new RegExp(/(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx)$/);
   return regex.test(file);
 };
 
 _.isMedia = function(file) {
-  var regex = new RegExp('(jpeg|jpg|gif|png|swf|mov)$');
+  var regex = new RegExp(/(jpeg|jpg|gif|png|swf|mov)$/);
   return regex.test(file);
 };
 
+_.isImage = function(file) {
+  var regex = new RegExp(/(jpeg|jpg|gif|png)$/);
+  return regex.test(file);
+};
 
 // Returns a filename without the file extension
 // -------
@@ -141,7 +145,6 @@ _.isMedia = function(file) {
 _.filename = function(file) {
   return file.replace(/\.[^\/.]+$/, '');
 };
-
 
 // String Manipulations
 // -------
