@@ -231,7 +231,7 @@ module.exports = Backbone.View.extend({
           var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path;
           if (app.state.isPrivate) {
             // append auth param
-            raw += '?login=' + cookie.get('username') + '&token' + cookie.get('oauth-token');
+            raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
           }
 
           content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
