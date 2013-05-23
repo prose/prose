@@ -80,9 +80,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-b53ca4a599d68e4b80d7bb4946d36882.eot');
-    src:url('fonts/prose-b53ca4a599d68e4b80d7bb4946d36882.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-b53ca4a599d68e4b80d7bb4946d36882.woff') format('woff');
+    src:url('fonts/prose-95b7c84cf96ffecbbaac2a8019e17469.eot');
+    src:url('fonts/prose-95b7c84cf96ffecbbaac2a8019e17469.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-95b7c84cf96ffecbbaac2a8019e17469.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -1412,9 +1412,6 @@ ins {
     line-height:28px;
     float:left;
     }
-    .listing .actions .ico {
-      font-size:18px;
-      }
     .listing .actions a:active {
       position:relative;
       border-color:#516066;
