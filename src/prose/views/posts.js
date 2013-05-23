@@ -163,7 +163,9 @@ module.exports = Backbone.View.extend({
   },
 
   deleteFile: function(e) {
-    var $file = $(e.target, this.el);
+    var $file = $(e.target, this.el).closest('a');
+    var $ico = $file.find('.ico');
+
     var file = {
       user: $file.data('user'),
       repo: $file.data('repo'),
@@ -173,16 +175,18 @@ module.exports = Backbone.View.extend({
 
     if (confirm('Are you sure you want to delete this file?')) {
       $file.addClass('working');
+      $ico.addClass('saving');
 
       // Change the icon to a spinning one
       app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
 
         if (err) {
           $file
-            .removeClass('rubbish working')
+            .removeClass('working')
             .attr('title', 'Error. Try again in 30 Seconds')
             .addClass('error');
 
+          $ico.removeClass('rubbish saving');
           return;
         }
 

@@ -21,13 +21,14 @@
       <% } %>
       <% if (authenticated && writePermissions) { %>
         <a
-          class='delete ico inline rubbish small'
+          class='delete'
           title='Delete this File'
           data-user='<%= user %>'
           data-repo='<%= repo %>'
           data-branch='<%= branch %>'
           data-file='<%= name %>'
           href='#'>
+          <span class='ico rubbish small'></span>
         </a>
       <% } %>
     </div>

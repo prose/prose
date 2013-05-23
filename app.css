@@ -758,6 +758,7 @@ ins {
          -o-animation-name:pulsate;
             animation-name:pulsate;
     }
+  .listing .actions .saving,
   .saving .save-action .status {
     -webkit-animation-duration:1000ms;
        -moz-animation-duration:1000ms;
