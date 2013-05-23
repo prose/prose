@@ -223,18 +223,21 @@ module.exports = Backbone.View.extend({
 
         if (parts !== null) {
           var path = parts[2];
-          // Remove any title attribute in the image tag is there is one.
-          if (titleAttribute.test(path)) {
-            path = path.split(titleAttribute)[0];
-          }
 
-          var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path;
-          if (app.state.isPrivate) {
-            // append auth param
-            raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
-          }
+          if (!_.absolutePath(path)) {
+            // Remove any title attribute in the image tag is there is one.
+            if (titleAttribute.test(path)) {
+              path = path.split(titleAttribute)[0];
+            }
 
-          content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+            var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path;
+            if (app.state.isPrivate) {
+              // append auth param
+              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
+            }
+
+            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+          }
         }
     });
 
