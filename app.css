@@ -1618,11 +1618,15 @@ ins {
 .meta .inner {
   background:#fff;
   }
+.meta .finish {
+  -webkit-border-radius:0 0 4px 4px;
+          border-radius:0 0 4px 4px;
+  }
 .meta .form {
   padding:15px 15px 30px;
   }
   .meta .form-item {
-    padding:0 15px;
+    padding:4px 15px;
     }
     .meta .form-item.link {
       margin:15px 0 0;
@@ -1630,9 +1634,10 @@ ins {
       }
       .form-item button[value='true'] {
         background-color:#d4d7d9;
+        color:#3D494E;
         }
         .form-item button[value='true']:hover {
-          background-color:#868f93;
+          background-color:#a8afb2;
           }
       .form-item button[value='false'] {
         background-color:#90bb74;
@@ -1643,6 +1648,7 @@ ins {
 
 .sidebar .commit {
   position:relative;
+  bottom:-4px;
   display:none;
   }
   .sidebar .commit .cancel {

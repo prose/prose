@@ -22,6 +22,7 @@ module.exports = Backbone.View.extend({
     'click .save-action': 'updateFile',
     'click button': 'toggleButton',
     'click .unpublished-flag': 'meta',
+    'click .meta .finish': 'backToMode',
     'change #upload': 'fileInput',
     'change .meta input': 'makeDirty'
   },
@@ -257,6 +258,16 @@ module.exports = Backbone.View.extend({
 
     // Refresh CodeMirror
     if (this.rawEditor) this.rawEditor.refresh();
+    return false;
+  },
+
+  backToMode: function() {
+    if (app.state.mode === 'preview') {
+      this.preview();
+    } else {
+      this.edit();
+    }
+
     return false;
   },
 
