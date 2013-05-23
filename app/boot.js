@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var User = require('./models/user');
 
 window.app = {
     config: {},
@@ -25,7 +26,7 @@ window.app = {
 
 // Bootup
 if (app.models.authenticate()) {
-  app.models.loadApplication(function(err, data) {
+  var user = new User(function(err, data) {
     if (err) {
       var view = new window.app.views.Notification({
         'type': 'eror',
