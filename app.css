@@ -550,8 +550,8 @@ ins {
   height:100%;
   }
 .vert .nav.project {
-  margin:10px 0 0;
-  padding-bottom:20px;
+  margin:15px 0 0;
+  padding-bottom:15px;
   }
 
 .vert .nav.auth {
@@ -758,6 +758,7 @@ ins {
          -o-animation-name:pulsate;
             animation-name:pulsate;
     }
+  .listing .actions .saving,
   .saving .save-action .status {
     -webkit-animation-duration:1000ms;
        -moz-animation-duration:1000ms;
@@ -1584,12 +1585,10 @@ ins {
     display:block;
     }
 
-  /*
-  .drag-over .code {
-    -webkit-box-shadow:0 0 8px #e6c740;
-            box-shadow:0 0 8px #e6c740;
-    }
-  */
+  /*.drag-over .code {*/
+    /*-webkit-box-shadow:0 0 8px #e6c740;*/
+            /*box-shadow:0 0 8px #e6c740;*/
+    /*}*/
 
   .post .view.diff pre {
     background:#fff;
@@ -1618,11 +1617,15 @@ ins {
 .meta .inner {
   background:#fff;
   }
+.meta .finish {
+  -webkit-border-radius:0 0 4px 4px;
+          border-radius:0 0 4px 4px;
+  }
 .meta .form {
   padding:15px 15px 30px;
   }
   .meta .form-item {
-    padding:0 15px;
+    padding:4px 15px;
     }
     .meta .form-item.link {
       margin:15px 0 0;
@@ -1630,9 +1633,10 @@ ins {
       }
       .form-item button[value='true'] {
         background-color:#d4d7d9;
+        color:#3D494E;
         }
         .form-item button[value='true']:hover {
-          background-color:#868f93;
+          background-color:#a8afb2;
           }
       .form-item button[value='false'] {
         background-color:#90bb74;
@@ -1643,6 +1647,7 @@ ins {
 
 .sidebar .commit {
   position:relative;
+  bottom:-4px;
   display:none;
   }
   .sidebar .commit .cancel {
@@ -2159,6 +2164,7 @@ ins {
   margin-bottom: -30px; margin-right: -30px;
   padding-bottom: 30px; padding-right: 30px;
   height: 100%;
+  min-height:360px;
   outline: none; /* Prevent dragging from highlighting the element */
   position: relative;
 }

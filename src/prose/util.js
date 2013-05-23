@@ -168,6 +168,14 @@ _.filepath = function(path, file) {
 };
 
 
+// Return a true or false boolean if a path
+// a absolute or not.
+// -------
+
+_.absolutePath = function(path) {
+  return /^https?:\/\//i.test(path);
+};
+
 // Converts a javascript object to YAML
 // Does not support nested objects
 // Multiline values are serialized as Blocks
