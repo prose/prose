@@ -1,6 +1,6 @@
 module.exports = {
-  dragEnter: function(e) {
-    $('body').addClass('drag-over');
+  dragEnter: function(e, $el) {
+    $el.addClass('drag-over');
     e.stopPropagation();
     e.preventDefault();
     return false;
@@ -13,8 +13,8 @@ module.exports = {
     return false;
   },
 
-  dragLeave: function(e) {
-    $('body').removeClass('drag-over');
+  dragLeave: function(e, $el) {
+    $el.removeClass('drag-over');
     e.stopPropagation();
     e.preventDefault();
     return false;
@@ -22,9 +22,13 @@ module.exports = {
 
   dragDrop: function($el, cb) {
     var that = this;
-    $el.on('dragenter', this.dragEnter).
-        on('dragover',  this.dragOver).
-        on('dragleave', this.dragLeave).
+    $el.on('dragenter', function(e) {
+          that.dragEnter(e, $el);
+        }).
+        on('dragover', that.dragOver).
+        on('dragleave', function(e) {
+          that.dragLeave(e, $el);
+        }).
         on('drop', function(e) {
           that.drop(e, cb);
         });
