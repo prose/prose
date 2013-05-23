@@ -396,7 +396,7 @@ ins {
   background:#f8f8f8;
   font:13px/1.4em Menlo, monospace;
   -webkit-font-smoothing:subpixel-antialiased;
-  padding:4px;
+  padding:2px 4px;
   margin:0 2px;
   font-size:12px;
   -webkit-border-radius:3px;
@@ -1890,8 +1890,7 @@ ins {
   display:list-item;
   }
 .chzn-container .chzn-results .highlighted {
-  background-color:#2d9faf;
-  color:#fff;
+  background-color:#eff3f5;
   -webkit-font-smoothing:subpixel-antialiased;
   }
 .chzn-container .chzn-results li em {
