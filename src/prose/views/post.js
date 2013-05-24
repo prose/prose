@@ -449,7 +449,11 @@ module.exports = Backbone.View.extend({
           this.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
-          if (app.state.mode === 'new') app.state.mode = 'edit';
+
+          if (app.state.mode === 'new') {
+            app.state.mode = 'edit';
+            view.eventRegister.trigger('sidebarContext', view.data);
+          }
 
           view.renderHeading();
           view.updateURL();
@@ -469,7 +473,7 @@ module.exports = Backbone.View.extend({
     this.updateFilename(filepath, function(err) {
       if (err) {
         view.eventRegister.trigger('filenameInput');
-        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;Filename', 'error');
+        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;filename', 'error');
       } else {
         save();
       }
