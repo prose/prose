@@ -450,7 +450,11 @@ module.exports = Backbone.View.extend({
           this.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
-          if (app.state.mode === 'new') app.state.mode = 'edit';
+
+          if (app.state.mode === 'new') {
+            app.state.mode = 'edit';
+            view.eventRegister.trigger('sidebarContext', view.data);
+          }
 
           view.renderHeading();
           view.updateURL();
@@ -470,7 +474,7 @@ module.exports = Backbone.View.extend({
     this.updateFilename(filepath, function(err) {
       if (err) {
         view.eventRegister.trigger('filenameInput');
-        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;Filename', 'error');
+        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;filename', 'error');
       } else {
         save();
       }
@@ -523,9 +527,9 @@ module.exports = Backbone.View.extend({
     var filepath = $('input.filepath').val();
     var filename = _.extractFilename(filepath)[1];
     var filecontent = this.serialize();
-    var defaultMessage = 'Updated ' + filename;
-    if (app.state.mode === 'new') defaultMessage = 'Created ' + filename;
-    var message = $('.commit-message').val() || defaultMessage;
+    var $message = $('.commit-message');
+
+    var message = $message.val() || $message.attr('placeholder');
     var method = this.model.writable ? this.saveFile : this.sendPatch;
     this.hideDiff();
 
