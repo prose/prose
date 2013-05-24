@@ -616,53 +616,60 @@ module.exports = Backbone.View.extend({
       _(model.default_metadata).each(function(data, key) {
         if (data && typeof data.field === 'object') {
           switch (data.field.element) {
-          case 'button':
-            tmpl = _(window.app.templates.button).template();
-            $metadataEditor.append(tmpl({
-              name: data.name,
-              label: data.field.label,
-              value: data.field.value,
-              on: data.field.on,
-              off: data.field.off
-            }));
-            break;
-          case 'checkbox':
-            tmpl = _(window.app.templates.checkbox).template();
-            $metadataEditor.append(tmpl({
-              name: data.name,
-              label: data.field.label,
-              value: data.name,
-              checked: data.field.value
-            }));
-            break;
-          case 'text':
-            tmpl = _(window.app.templates.text).template();
-            $metadataEditor.append(tmpl({
-              name: data.name,
-              label: data.field.label,
-              value: data.field.value
-            }));
-            break;
-          case 'select':
-            tmpl = _(window.app.templates.select).template();
-            $metadataEditor.append(tmpl({
-              name: data.name,
-              label: data.field.label,
-              placeholder: data.field.placeholder,
-              options: data.field.options,
-              lang: model.metadata.lang || 'en'
-            }));
-            break;
-          case 'multiselect':
-            tmpl = _(window.app.templates.multiselect).template();
-            $metadataEditor.append(tmpl({
-              name: data.name,
-              label: data.field.label,
-              placeholder: data.field.placeholder,
-              options: data.field.options,
-              lang: model.metadata.lang || 'en'
-            }));
-            break;
+            case 'button':
+              tmpl = _(window.app.templates.button).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                on: data.field.on,
+                off: data.field.off
+              }));
+              break;
+            case 'checkbox':
+              tmpl = _(window.app.templates.checkbox).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.name,
+                checked: data.field.value
+              }));
+              break;
+            case 'text':
+              tmpl = _(window.app.templates.text).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value
+              }));
+              break;
+            case 'select':
+              tmpl = _(window.app.templates.select).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: model.metadata.lang || 'en'
+              }));
+              break;
+            case 'multiselect':
+              tmpl = _(window.app.templates.multiselect).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: model.metadata.lang || 'en'
+              }));
+              break;
+            case 'hidden':
+              tmpl = _(window.app.templates.hidden).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                value: JSON.stringify(data.field.value).replace(/"/g, '&quot;').replace(/'/g, '&apos;')
+              }));
+              break;
           }
         } else {
           tmpl = _(window.app.templates.text).template();
@@ -698,41 +705,48 @@ module.exports = Backbone.View.extend({
         var value = $(item).val();
 
         switch (item.type) {
-        case 'select-multiple':
-        case 'select-one':
-        case 'text':
-          if (value) {
-            if (metadata.hasOwnProperty(item.name)) {
-              metadata[item.name] = _.union(metadata[item.name], value);
-            } else {
-              metadata[item.name] = value;
+          case 'select-multiple':
+          case 'select-one':
+          case 'text':
+            if (value) {
+              if (metadata.hasOwnProperty(item.name)) {
+                metadata[item.name] = _.union(metadata[item.name], value);
+              } else {
+                metadata[item.name] = value;
+              }
             }
-          }
-          break;
-        case 'checkbox':
-          if (item.checked) {
+            break;
+          case 'checkbox':
+            if (item.checked) {
 
-            if (metadata.hasOwnProperty(item.name)) {
-              metadata[item.name] = _.union(metadata[item.name], item.value);
-            } else if (item.value === item.name) {
+              if (metadata.hasOwnProperty(item.name)) {
+                metadata[item.name] = _.union(metadata[item.name], item.value);
+              } else if (item.value === item.name) {
+                metadata[item.name] = item.checked;
+              } else {
+                metadata[item.name] = item.value;
+              }
+
+            } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
               metadata[item.name] = item.checked;
             } else {
-              metadata[item.name] = item.value;
+              metadata[item.name] = item.checked;
             }
-
-          } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
-            metadata[item.name] = item.checked;
-          } else {
-            metadata[item.name] = item.checked;
-          }
-          break;
-        case 'button':
-          if (value === 'true') {
-            metadata[item.name] = true;
-          } else if (value === 'false') {
-            metadata[item.name] = false;
-          }
-          break;
+            break;
+          case 'button':
+            if (value === 'true') {
+              metadata[item.name] = true;
+            } else if (value === 'false') {
+              metadata[item.name] = false;
+            }
+            break;
+          case 'hidden':
+            if (metadata.hasOwnProperty(item.name)) {
+              metadata[item.name] = _.union(metadata[item.name], JSON.parse(value));
+            } else {
+              metadata[item.name] = JSON.parse(value);
+            }
+            break;
         }
       });
 
