@@ -20,8 +20,7 @@ module.exports = Backbone.View.extend({
     'click .group a': 'markdownSnippet',
     'click .dialog .insert': 'dialogInsert',
     'click .save-action': 'updateFile',
-    'click button': 'toggleButton',
-    'click .unpublished-flag': 'meta',
+    'click .publish-flag': 'togglePublishing',
     'click .meta .finish': 'backToMode',
     'change #upload': 'fileInput',
     'change .meta input': 'makeDirty'
@@ -37,6 +36,8 @@ module.exports = Backbone.View.extend({
       this.config.relativeLinks = app.state.config.prose.relativeLinks || false;
       this.config.media = app.state.config.prose.media || false;
     }
+
+    this.newFile = (app.state.mode === 'new') ? true : false;
 
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
     // Always run stashFile in context of view
@@ -164,7 +165,7 @@ module.exports = Backbone.View.extend({
       }, 1);
     }
 
-    app.state.mode = 'edit';
+    app.state.mode = this.newFile ? 'new' : 'edit';
     this.updateURL();
 
     $('.post-views a').removeClass('active');
@@ -302,7 +303,7 @@ module.exports = Backbone.View.extend({
     $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Ctrl&nbsp;+&nbsp;S' : 'Submit Change');
   },
 
-  toggleButton: function(e) {
+  togglePublishing: function(e) {
     // Check whether this.model.metadata.published exists
     // if it does unpublish and vice versa
     var $target = $(e.target);
@@ -604,14 +605,6 @@ module.exports = Backbone.View.extend({
 
     function initialize(model) {
       var tmpl;
-      tmpl = _(window.app.templates.button).template();
-      $metadataEditor.append(tmpl({
-        name: 'published',
-        label: 'Publishing',
-        value: model.metadata.published,
-        on: 'Unpublish',
-        off: 'Publish'
-      }));
 
       _(model.default_metadata).each(function(data, key) {
         if (data && typeof data.field === 'object') {
