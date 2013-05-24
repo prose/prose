@@ -2108,7 +2108,6 @@ ins {
 .cm-s-prose-bright span.cm-qualifier  { color:#868f93; }
 
 /* Dark Blue/Green */
-.cm-s-prose-bright span.cm-atom       { color:#197987; }
 .cm-s-prose-bright span.cm-number     { color:#197987; }
 .cm-s-prose-bright span.cm-variable   { color:#197987; }
 .cm-s-prose-bright span.cm-builtin    { color:#197987; }
@@ -2117,6 +2116,7 @@ ins {
 .cm-s-prose-bright span.cm-string     { color:#2099aa; }
 .cm-s-prose-bright span.cm-string-2   { color:#2099aa; }
 .cm-s-prose-bright span.cm-quote      { color:#2099aa;}
+.cm-s-prose-bright span.cm-atom       { color:#2099aa; }
 
 /* Light Blue/Green */
 /*.cm-s-prose-bright .CodeMirror-selected { background:#90d5df; }*/
