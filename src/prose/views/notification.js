@@ -41,7 +41,14 @@ module.exports = Backbone.View.extend({
   createPost: function (e) {
     var hash = window.location.hash.split('/');
     hash[2] = 'new';
-    hash[hash.length - 1] = '?file=' + hash[hash.length - 1];
+
+    var path = hash[hash.length - 1].split('?');
+    hash[hash.length - 1] = path[0] + '?file=' + path[0];
+
+    // append query string
+    if (path.length > 1) {
+      hash[hash.length - 1]  += '&' + path[1];
+    }
 
     router.navigate(_(hash).compact().join('/'), true);
     return false;

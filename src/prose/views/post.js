@@ -588,7 +588,7 @@ module.exports = Backbone.View.extend({
       hash.splice(-2, 2, href, hash[hash.length - 1]);
     }
 
-    router.navigate(_(hash).compact().join('/'), true);
+    router.navigate(_(hash).compact().join('/') + '?lang=' + href, true);
 
     return false;
   },

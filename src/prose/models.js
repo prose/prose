@@ -696,12 +696,24 @@ module.exports = {
     }
 
     q.await(function() {
+      var file;
+      var lang;
 
-      // If ?file= in path, use it as file name
-      if (path.indexOf('?file=') !== -1) {
-        file = path.split('?file=')[1];
-        path = path.split('?file=')[0].replace(/\/$/, '');
+      // If file= in path, use it as file name
+      if (path.indexOf('file=') !== -1) {
+        file = path.match(/file=([^&]*)/)[1];
       }
+
+      // If lang= in path, set lang and add to categories
+      if (path.indexOf('lang=') !== -1) {
+        lang = path.match(/lang=([^&]*)/)[1];
+        metadata.lang = lang;
+        metadata.categories = _.isArray(metadata.categories) ? _.union(metadata.categories, lang) : [lang];
+      }
+
+      // remove query string and trailing slash
+      path = path.split('?')[0].replace(/\/$/, '');
+
       cb(null, {
         'metadata': metadata,
         'default_metadata': defaultMetadata,
