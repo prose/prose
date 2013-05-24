@@ -230,6 +230,12 @@ module.exports = Backbone.View.extend({
     },
 
     toggleCommit: function() {
+      var $message = $('.commit-message', this.el);
+      var filepath = $('input.filepath').val();
+      var filename = _.extractFilename(filepath)[1];
+      var placeholder = 'Updated ' + filename;
+      if (app.state.mode === 'new') placeholder = 'Created ' + filename;
+
       $('.commit', this.el).toggleClass('active');
       $('.button.save', this.el).toggleClass('confirm');
 
@@ -239,7 +245,7 @@ module.exports = Backbone.View.extend({
           (this.writable ? 'Commit' : 'Send Change Request') :
           (this.writable ? 'Save' : 'Submit Change'));
 
-      $('.commit-message', this.el).focus();
+      $message.attr('placeholder', placeholder).focus();
       return false;
     },
 
