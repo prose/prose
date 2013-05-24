@@ -147,7 +147,8 @@ module.exports = Backbone.View.extend({
       isPrivate: isPrivate,
       title: _.filepath(this.data.path, this.data.file),
       writable: this.model.writable,
-      alterable: true
+      alterable: true,
+      translate: this.data.translate
     };
 
     this.eventRegister.trigger('headerContext', this.header);
@@ -588,7 +589,7 @@ module.exports = Backbone.View.extend({
       hash.splice(-2, 2, href, hash[hash.length - 1]);
     }
 
-    router.navigate(_(hash).compact().join('/') + '?lang=' + href, true);
+    router.navigate(_(hash).compact().join('/') + '?lang=' + href + '&translate=true', true);
 
     return false;
   },

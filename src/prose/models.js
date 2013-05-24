@@ -696,23 +696,31 @@ module.exports = {
     }
 
     q.await(function() {
-      var file;
+      var query = path.split('?')[1];
+      var translate = false;
       var lang;
-
-      // If file= in path, use it as file name
-      if (path.indexOf('file=') !== -1) {
-        file = path.match(/file=([^&]*)/)[1];
-      }
-
-      // If lang= in path, set lang and add to categories
-      if (path.indexOf('lang=') !== -1) {
-        lang = path.match(/lang=([^&]*)/)[1];
-        metadata.lang = lang;
-        metadata.categories = _.isArray(metadata.categories) ? _.union(metadata.categories, lang) : [lang];
-      }
 
       // remove query string and trailing slash
       path = path.split('?')[0].replace(/\/$/, '');
+
+      if (query) {
+        // If file= in path, use it as file name
+        if (query.indexOf('file=') !== -1) {
+          file = query.match(/file=([^&]*)/)[1];
+
+          // remove filename and trailing slash
+          path = path.split(file)[0].replace(/\/$/, '');
+        }
+
+        // If lang= in path, set lang and add to categories
+        if (query.indexOf('lang=') !== -1) {
+          lang = query.match(/lang=([^&]*)/)[1];
+          metadata.lang = lang;
+          metadata.categories = _.isArray(metadata.categories) ? _.union(metadata.categories, lang) : [lang];
+        }
+
+        translate = query.indexOf('translate=true') !== -1 ? true : false;
+      }
 
       cb(null, {
         'metadata': metadata,
@@ -723,7 +731,8 @@ module.exports = {
         'published': false,
         'persisted': false,
         'writable': true,
-        'file': file
+        'file': file,
+        'translate': translate
       });
     });
   },
@@ -837,7 +846,7 @@ module.exports = {
         'markdown': _.markdown(file),
         'repo': repo,
         'path': path,
-        'file': file,
+        'file': file.split('?')[0],
         'persisted': true
       }));
     }).bind(this));
