@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.15348773"
-     inkscape:cx="-48.198811"
-     inkscape:cy="622.77532"
+     inkscape:zoom="0.46974099"
+     inkscape:cx="433.86538"
+     inkscape:cy="532.4566"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -68,7 +68,7 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccccccccccccccccccccc"
        id="rect2439-7"
-       d="m 445,307.3622 -55,55 -110,0 -55,55 0,55 550,0 0,-55 -55,-55 -110,0 -55,-55 z m -165,220 0,330 94.2854,55 235.7146,0 110,-55 0,-330 -110,0 0,220 -55,0 0,-220 -110,0 0,220 -55,0 0,-220 z"
+       d="m 440,212.3622 -60,60 -140.25,0 -60,65 0,55 640.5,0 0,-60 -60,-60 -140.25,0 -60,-60 z m -199.75,260 0,360 120,100 280,0 120,-100 0,-360 -120,0 0,240 -80,0 0,-240 -120,0 0,240 -80,0 0,-240 z"
        style="color:#000000;fill:#434350;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999994;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
   </g>
 </svg>

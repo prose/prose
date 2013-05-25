@@ -6,11 +6,11 @@ var utils = require('./util');
 module.exports = Backbone.Router.extend({
 
   routes: {
-    'about': 'about',
+    'about(/)': 'about',
     'error/:code': 'error',
-    ':user': 'profile',
-    ':user/:repo': 'repo',
-    ':user/:repo/*path': 'path',
+    ':user(/)': 'profile',
+    ':user/:repo(/)': 'repo',
+    ':user/:repo/*path(/)': 'path',
     '*default': 'start'
   },
 

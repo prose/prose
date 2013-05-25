@@ -20,8 +20,7 @@ module.exports = Backbone.View.extend({
     'click .group a': 'markdownSnippet',
     'click .dialog .insert': 'dialogInsert',
     'click .save-action': 'updateFile',
-    'click button': 'toggleButton',
-    'click .unpublished-flag': 'meta',
+    'click .publish-flag': 'togglePublishing',
     'click .meta .finish': 'backToMode',
     'change #upload': 'fileInput',
     'change .meta input': 'makeDirty'
@@ -37,6 +36,8 @@ module.exports = Backbone.View.extend({
       this.config.relativeLinks = app.state.config.prose.relativeLinks || false;
       this.config.media = app.state.config.prose.media || false;
     }
+
+    this.newFile = (app.state.mode === 'new') ? true : false;
 
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
     // Always run stashFile in context of view
@@ -164,7 +165,7 @@ module.exports = Backbone.View.extend({
       }, 1);
     }
 
-    app.state.mode = 'edit';
+    app.state.mode = this.newFile ? 'new' : 'edit';
     this.updateURL();
 
     $('.post-views a').removeClass('active');
@@ -302,16 +303,19 @@ module.exports = Backbone.View.extend({
     $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Ctrl&nbsp;+&nbsp;S' : 'Submit Change');
   },
 
-  toggleButton: function(e) {
-    // Check whether this.model.metadata.published exists
-    // if it does unpublish and vice versa
+  togglePublishing: function(e) {
     var $target = $(e.target);
-    var value = $target.val();
 
-    if (value === 'true') {
-      $target.val(false).html($target.data('off'));
-    } else if (value === 'false') {
-      $target.val(true).html($target.data('on'));
+    if ($target.hasClass('published')) {
+      $target
+        .html('Unpublish<span class="ico checkmark"></span>')
+        .removeClass('published')
+        .attr('data-state', false);
+    } else {
+      $target
+        .html('Publish<span class="ico checkmark"></span>')
+        .addClass('published')
+        .attr('data-state', true);
     }
 
     this.makeDirty();
@@ -449,7 +453,11 @@ module.exports = Backbone.View.extend({
           this.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
-          if (app.state.mode === 'new') app.state.mode = 'edit';
+
+          if (app.state.mode === 'new') {
+            app.state.mode = 'edit';
+            view.eventRegister.trigger('sidebarContext', view.data);
+          }
 
           view.renderHeading();
           view.updateURL();
@@ -469,7 +477,7 @@ module.exports = Backbone.View.extend({
     this.updateFilename(filepath, function(err) {
       if (err) {
         view.eventRegister.trigger('filenameInput');
-        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;Filename', 'error');
+        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;filename', 'error');
       } else {
         save();
       }
@@ -522,9 +530,9 @@ module.exports = Backbone.View.extend({
     var filepath = $('input.filepath').val();
     var filename = _.extractFilename(filepath)[1];
     var filecontent = this.serialize();
-    var defaultMessage = 'Updated ' + filename;
-    if (app.state.mode === 'new') defaultMessage = 'Created ' + filename;
-    var message = $('.commit-message').val() || defaultMessage;
+    var $message = $('.commit-message');
+
+    var message = $message.val() || $message.attr('placeholder');
     var method = this.model.writable ? this.saveFile : this.sendPatch;
     this.hideDiff();
 
@@ -600,14 +608,6 @@ module.exports = Backbone.View.extend({
 
     function initialize(model) {
       var tmpl;
-      tmpl = _(window.app.templates.button).template();
-      $metadataEditor.append(tmpl({
-        name: 'published',
-        label: 'Publishing',
-        value: model.metadata.published,
-        on: 'Unpublish',
-        off: 'Publish'
-      }));
 
       _(model.default_metadata).each(function(data, key) {
         if (data && typeof data.field === 'object') {
@@ -689,6 +689,7 @@ module.exports = Backbone.View.extend({
 
     function getValue() {
       var metadata = {};
+      metadata.published = $('.publish-flag').attr('data-state');
 
       _.each($metadataEditor.find('[name]'), function(item) {
         var value = $(item).val();
@@ -834,11 +835,15 @@ module.exports = Backbone.View.extend({
           }
 
         } else {
-          raw = {};
-          raw[key] = value;
+          // Don't render the 'publish?ed' field as
+          // this somewhere else in the interface.
+          if (key !== 'published') {
+            raw = {};
+            raw[key] = value;
 
-          if (view.rawEditor) {
-            view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
+            if (view.rawEditor) {
+              view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
+            }
           }
         }
       });
