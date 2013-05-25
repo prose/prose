@@ -304,15 +304,18 @@ module.exports = Backbone.View.extend({
   },
 
   togglePublishing: function(e) {
-    // Check whether this.model.metadata.published exists
-    // if it does unpublish and vice versa
     var $target = $(e.target);
-    var value = $target.val();
 
-    if (value === 'true') {
-      $target.val(false).html($target.data('off'));
-    } else if (value === 'false') {
-      $target.val(true).html($target.data('on'));
+    if ($target.hasClass('published')) {
+      $target
+        .html('Unpublish<span class="ico checkmark"></span>')
+        .removeClass('published')
+        .attr('data-state', false);
+    } else {
+      $target
+        .html('Publish<span class="ico checkmark"></span>')
+        .addClass('published')
+        .attr('data-state', true);
     }
 
     this.makeDirty();
@@ -686,6 +689,7 @@ module.exports = Backbone.View.extend({
 
     function getValue() {
       var metadata = {};
+      metadata.published = $('.publish-flag').attr('data-state');
 
       _.each($metadataEditor.find('[name]'), function(item) {
         var value = $(item).val();
@@ -831,11 +835,15 @@ module.exports = Backbone.View.extend({
           }
 
         } else {
-          raw = {};
-          raw[key] = value;
+          // Don't render the 'publish?ed' field as
+          // this somewhere else in the interface.
+          if (key !== 'published') {
+            raw = {};
+            raw[key] = value;
 
-          if (view.rawEditor) {
-            view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
+            if (view.rawEditor) {
+              view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
+            }
           }
         }
       });

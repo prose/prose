@@ -647,6 +647,7 @@ ins {
   background-color:#73955c;
   }
 
+.published .ico.checkmark,
 .ico.checkmark,
 .ico.added         { color:#90bb74; }
 
@@ -1570,19 +1571,16 @@ ins {
   top:0;
   height:40px;
   line-height:38px;
-  padding:0 15px;
+  padding:0 10px 0 15px;
   -webkit-border-radius:0 4px 4px 0;
           border-radius:0 4px 4px 0;
   }
   .publish-flag .ico {
-    margin-left:5px;
+    margin-left:8px;
     color:#d4d7d9;
     }
   .publish-flag:hover {
     color:#a8afb2;
-    }
-  .publish-flag:active {
-    background:#f8f8f8;
     }
 
 .post .view {
