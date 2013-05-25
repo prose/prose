@@ -80,9 +80,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-95b7c84cf96ffecbbaac2a8019e17469.eot');
-    src:url('fonts/prose-95b7c84cf96ffecbbaac2a8019e17469.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-95b7c84cf96ffecbbaac2a8019e17469.woff') format('woff');
+    src:url('fonts/prose-cb9f9d60d23034b71ff3d8359434fb31.eot');
+    src:url('fonts/prose-cb9f9d60d23034b71ff3d8359434fb31.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-cb9f9d60d23034b71ff3d8359434fb31.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -451,7 +451,7 @@ ins {
     }
   .heading .filepath:focus,
   .heading .filepath:hover {
-    background-color:#f0f0f0;
+    background-color:#f8f8f8;
     }
 
 .inner {
@@ -647,6 +647,7 @@ ins {
   background-color:#73955c;
   }
 
+.published .ico.checkmark,
 .ico.checkmark,
 .ico.added         { color:#90bb74; }
 
@@ -695,15 +696,15 @@ ins {
 .ico.picture-add:before { content: "\f113"; }
 .ico.picture:before { content: "\f114"; }
 .ico.private:before { content: "\f115"; }
-.ico.question:before { content: "\f116"; }
-.ico.quote:before { content: "\f117"; }
-.ico.removed:before { content: "\f118"; }
-.ico.renamed:before { content: "\f119"; }
-.ico.repos:before { content: "\f11a"; }
-.ico.rubbish:before { content: "\f11b"; }
-.ico.saving:before { content: "\f11c"; }
-.ico.search:before { content: "\f11d"; }
-.ico.settings:before { content: "\f11e"; }
+.ico.publish:before { content: "\f116"; }
+.ico.question:before { content: "\f117"; }
+.ico.quote:before { content: "\f118"; }
+.ico.removed:before { content: "\f119"; }
+.ico.renamed:before { content: "\f11a"; }
+.ico.repos:before { content: "\f11b"; }
+.ico.rubbish:before { content: "\f11c"; }
+.ico.saving:before { content: "\f11d"; }
+.ico.search:before { content: "\f11e"; }
 .ico.sprocket:before { content: "\f11f"; }
 .ico.switch:before { content: "\f120"; }
 
@@ -713,7 +714,7 @@ ins {
 
 .listing .saving,
 .saving .save-action .status:before {
-  content:'\f11c';
+  content:'\f11d';
   color:#d4d7d9;
   }
 .error .save-action .status:before {
@@ -1339,7 +1340,7 @@ ins {
       }
     .dialog .media-listing .ico {
       color:#a8afb2;
-      font-size:17px;
+      font-size:16px;
       }
     .dialog .media-listing .folder {
       color:#deb400;
@@ -1563,17 +1564,24 @@ ins {
   padding:15px 0 0;
   }
 
-.flag {
-  display:inline-block;
-  margin:10px 15px;
+.publish-flag {
+  color:#a8afb2;
+  position:absolute;
+  right:0;
+  top:0;
+  height:40px;
+  line-height:38px;
+  padding:0 10px 0 15px;
+  -webkit-border-radius:0 4px 4px 0;
+          border-radius:0 4px 4px 0;
   }
-  .flag.unpublished-flag {
-    font-weight:400;
-    color:#bb9f1a;
+  .publish-flag .ico {
+    margin-left:8px;
+    color:#d4d7d9;
     }
-    .flag.unpublished-flag:hover {
-      color:#deb400;
-      }
+  .publish-flag:hover {
+    color:#a8afb2;
+    }
 
 .post .view {
   display:none;
@@ -2040,6 +2048,9 @@ ins {
   line-height:1.4em;
   -webkit-font-smoothing:subpixel-antialiased;
   }
+.code .CodeMirror-scroll {
+  min-height:360px;
+  }
   .markdown .CodeMirror {
     font-size:14px;
     line-height:1.75em
@@ -2108,7 +2119,6 @@ ins {
 .cm-s-prose-bright span.cm-qualifier  { color:#868f93; }
 
 /* Dark Blue/Green */
-.cm-s-prose-bright span.cm-atom       { color:#197987; }
 .cm-s-prose-bright span.cm-number     { color:#197987; }
 .cm-s-prose-bright span.cm-variable   { color:#197987; }
 .cm-s-prose-bright span.cm-builtin    { color:#197987; }
@@ -2117,6 +2127,7 @@ ins {
 .cm-s-prose-bright span.cm-string     { color:#2099aa; }
 .cm-s-prose-bright span.cm-string-2   { color:#2099aa; }
 .cm-s-prose-bright span.cm-quote      { color:#2099aa;}
+.cm-s-prose-bright span.cm-atom       { color:#2099aa; }
 
 /* Light Blue/Green */
 /*.cm-s-prose-bright .CodeMirror-selected { background:#90d5df; }*/
@@ -2160,7 +2171,6 @@ ins {
   margin-bottom: -30px; margin-right: -30px;
   padding-bottom: 30px; padding-right: 30px;
   height: 100%;
-  min-height:360px;
   outline: none; /* Prevent dragging from highlighting the element */
   position: relative;
 }
