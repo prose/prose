@@ -242,7 +242,10 @@ module.exports = Backbone.Router.extend({
       // Redirect
       router.navigate(app.username, {trigger: true});
     } else {
-      this.application.render();
+      this.application.render({
+        hideInterface: true
+      });
+
       var view = new app.views.Start({
         model: _.extend(this.model, {
           authenticated: !! window.authenticated

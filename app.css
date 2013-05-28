@@ -478,6 +478,7 @@ ins {
   width:220px;
   height:100%;
   overflow:auto;
+  opacity:0;
   overflow-x:hidden;
   -webkit-transition:right 150ms;
      -moz-transition:right 150ms;
@@ -485,6 +486,7 @@ ins {
           transition:right 150ms;
   }
   .open .sidebar {
+    opacity:1;
     right:60px;
     }
 
@@ -1016,20 +1018,26 @@ ins {
 /* ------------------------------------------
   Unauthenticated Landing & Notifications
 ---------------------------------------------*/
+.disable-interface .sidebar,
+.disable-interface .limiter,
+.disable-interface .navigation,
+.disable-interface .prose-menu {
+  display:none;
+  }
+
 .start {
-  background:#fff;
-  position:fixed;
+  position:absolute;
   top:0;bottom:0;left:0;right:0;
   width:100%;
   height:100%;
-  z-index:5000;
+  z-index:100;
   }
   .notification,
   .start .splash {
     background:#fff;
     text-align:center;
-    margin:60px auto 0;
-    width:340px;
+    margin:45px auto;
+    width:300px;
     border:1px solid #a8afb2;
     box-shadow:0 1px 0 rgba(255, 255, 255, 0),
                0 0 10px rgba(0, 0, 0, 0.1);
@@ -1408,7 +1416,6 @@ ins {
   .listing .actions a {
     background:#f8f8f8;
     display:block;
-    position:relative;
     border:1px solid #a8afb2;
     padding:0 8px;
     font-weight:400;
@@ -1417,6 +1424,7 @@ ins {
     line-height:28px;
     float:left;
     }
+    .listing .actions a:hover,
     .listing .actions a:active {
       position:relative;
       border-color:#516066;
