@@ -4,20 +4,21 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 Backbone.sync = require('../backbone-github');
 
-var Repo = require('../models/repo');
+var Branch = require('../models/branch');
 var cookie = require('../cookie');
 
 module.exports = Backbone.Collection.extend({
-  model: Repo,
+  model: Branch,
 
   constructor: function(models, options) {
-    this.name = 'repos';
+    this.name = 'branches';
     Backbone.Collection.apply(this, arguments);
   },
 
   initialize: function(models, options) {
     this.fetch({
-      'user': options.user
+      'user': options.user,
+      'repo': options.repo
     });
   }
 });

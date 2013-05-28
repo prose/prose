@@ -67,6 +67,12 @@ var github = {
 
   'user': function user(method, model, options) {
     switch(method) {
+      case 'read':
+        _request('GET', '/user', null, function(err, res, xhr) {
+          model.set(res);
+          if (_.isFunction(options.success)) options.success(model, res, options);
+        });
+        break;
       default:
         throw('Method not found: ' + method);
         break;
