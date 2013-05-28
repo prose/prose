@@ -79,7 +79,11 @@ module.exports = Backbone.View.extend({
         if (options.error) errorPage = options.error;
       }
 
-      if (hideInterface) $(this.el).addClass('disable-interface');
+      if (hideInterface) {
+        $(this.el).toggleClass('disable-interface', true);
+      } else {
+        $(this.el).toggleClass('disable-interface', false);
+      }
 
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
         jekyll: isJekyll,
