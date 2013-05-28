@@ -29,7 +29,7 @@ if ('withCredentials' in new XMLHttpRequest() && app.models.authenticate()) {
   app.models.loadApplication(function(err, data) {
     if (err) {
       var view = new window.app.views.Notification({
-        'type': 'eror',
+        'type': 'error',
         'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
       }).render();
 

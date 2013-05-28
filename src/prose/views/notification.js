@@ -16,6 +16,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
+    var view = this;
     this.eventRegister = app.eventRegister;
 
     var pathTitle = (app.state.path) ? app.state.path : '';
@@ -31,6 +32,8 @@ module.exports = Backbone.View.extend({
     var previous = parts.join('/');
 
     $(this.el).html(tmpl(_.extend(this.model, {
+      key: view.model.key,
+      message: view.model.message,
       previous: previous,
       pathFromFile: (app.state.file) ? true : false
     })));
