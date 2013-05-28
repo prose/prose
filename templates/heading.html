@@ -13,7 +13,7 @@
   <div class='fl details'>
     <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
 
-    <% if (app.state.mode === 'new') { %>
+    <% if (app.state.mode === 'new' && !translate) { %>
       <input type='text' class='filepath' placeholder='<%= title %>'>
     <% } else { %>
       <input type='text' class='filepath' value='<%= title %>'>
