@@ -1665,9 +1665,8 @@ ins {
   .sidebar .commit .cancel {
     position:absolute;
     z-index:10;
-    top:25px;
-    right:4px;
-    font-size:13px;
+    top:30px;
+    right:5px;
     display:block;
     }
     .cancel:hover {
@@ -1675,11 +1674,11 @@ ins {
       }
     .sidebar .commit textarea {
       padding-right:25px;
-      margin:0 0 -2px;
+      margin:8px 0 -2px;
       display:block;
       position:relative;
       z-index:1;
-      height:80px;
+      height:90px;
       resize:none;
       -webkit-border-radius:4px 4px 0 0;
               border-radius:4px 4px 0 0;

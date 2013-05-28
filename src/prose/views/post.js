@@ -78,12 +78,11 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'hideDiff', 'translate', 'updateFile', 'meta', 'remove');
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove');
     this.eventRegister.bind('edit', this.edit);
     this.eventRegister.bind('preview', this.preview);
     this.eventRegister.bind('deleteFile', this.deleteFile);
     this.eventRegister.bind('save', this.save);
-    this.eventRegister.bind('hideDiff', this.hideDiff);
     this.eventRegister.bind('updateFile', this.updateFile);
     this.eventRegister.bind('translate', this.translate);
     this.eventRegister.bind('meta', this.meta);
@@ -345,17 +344,16 @@ module.exports = Backbone.View.extend({
     $diff.addClass('active');
   },
 
-  hideDiff: function() {
+  closeSettings: function() {
     $('.views .view', this.el).removeClass('active');
-    $('.post-views a').removeClass('active');
 
     if (app.state.mode === 'blob') {
       $('#preview', this.el).addClass('active');
-      $('.post-views .preview').addClass('active');
     } else {
       $('#edit', this.el).addClass('active');
-      $('.post-views .edit').addClass('active');
     }
+
+    this.eventRegister.trigger('closeSettings');
   },
 
   save: function() {
@@ -429,8 +427,11 @@ module.exports = Backbone.View.extend({
           view.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
+
           view.updateURL();
           view.prevFile = filecontent;
+          view.closeSettings();
+          view.updatePublishState();
           view.eventRegister.trigger('updateSaveState', 'Request Submitted', 'saved');
         });
       } else {
@@ -454,7 +455,8 @@ module.exports = Backbone.View.extend({
             view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
             return;
           }
-          this.dirty = false;
+
+          view.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
 
@@ -466,17 +468,8 @@ module.exports = Backbone.View.extend({
           view.renderHeading();
           view.updateURL();
           view.prevFile = filecontent;
-
-          // Update the publish key wording depening on what was saved
-          var $publishKey = $('.publish-flag', this.el);
-          var key = $publishKey.attr('data-state');
-
-          if (key === 'true') {
-            $publishKey.empty().html('Published<span class="ico checkmark"></span>');
-          } else {
-            $publishKey.empty().html('Unpublished<span class="ico checkmark"></span>');
-          }
-
+          view.closeSettings();
+          view.updatePublishState();
           view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
         });
       } else {
@@ -497,6 +490,18 @@ module.exports = Backbone.View.extend({
         save();
       }
     });
+  },
+
+  updatePublishState: function() {
+    // Update the publish key wording depening on what was saved
+    var $publishKey = $('.publish-flag', this.el);
+    var key = $publishKey.attr('data-state');
+
+    if (key === 'true') {
+      $publishKey.empty().html('Published<span class="ico checkmark"></span>');
+    } else {
+      $publishKey.empty().html('Unpublished<span class="ico checkmark"></span>');
+    }
   },
 
   stashFile: function(e) {
@@ -549,7 +554,6 @@ module.exports = Backbone.View.extend({
 
     var message = $message.val() || $message.attr('placeholder');
     var method = this.model.writable ? this.saveFile : this.sendPatch;
-    this.hideDiff();
 
     // Update content
     this.model.content = (this.editor) ? this.editor.getValue() : '';
@@ -1496,7 +1500,6 @@ module.exports = Backbone.View.extend({
     this.eventRegister.unbind('preview', this.preview);
     this.eventRegister.unbind('deleteFile', this.deleteFile);
     this.eventRegister.unbind('save', this.save);
-    this.eventRegister.unbind('hideDiff', this.hideDiff);
     this.eventRegister.unbind('translate', this.translate);
     this.eventRegister.unbind('updateFile', this.updateFile);
     this.eventRegister.unbind('meta', this.updateFile);
