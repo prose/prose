@@ -1,4 +1,4 @@
-var cookie = require('../cookie');
+var cookie = require('./cookie');
 var oauth = require('../oauth.json');
 
 module.exports = {
