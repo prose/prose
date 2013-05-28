@@ -466,6 +466,17 @@ module.exports = Backbone.View.extend({
           view.renderHeading();
           view.updateURL();
           view.prevFile = filecontent;
+
+          // Update the publish key wording depening on what was saved
+          var $publishKey = $('.publish-flag', this.el);
+          var key = $publishKey.attr('data-state');
+
+          if (key === 'true') {
+            $publishKey.empty().html('Published<span class="ico checkmark"></span>');
+          } else {
+            $publishKey.empty().html('Unpublished<span class="ico checkmark"></span>');
+          }
+
           view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
         });
       } else {
