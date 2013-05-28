@@ -279,6 +279,7 @@ em      { font-style:italic; }
 /* For Diff Viewing */
 del {
   color:#a8afb2;
+  padding:1px 0;
   }
 ins {
   background:#D4ECB6;
@@ -1588,6 +1589,9 @@ ins {
   .post .view.active {
     display:block;
     }
+  .post .view .code {
+    padding:15px 0;
+    }
 
   /*.drag-over .code {*/
     /*-webkit-box-shadow:0 0 8px #e6c740;*/
@@ -1604,7 +1608,8 @@ ins {
     }
     .post .markdown .view.diff pre {
       font-size:14px;
-      line-height:1.75em
+      line-height:1.75em;
+      color:#a8afb2;
       }
 
   .post .view.meta {
