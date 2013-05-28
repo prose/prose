@@ -279,6 +279,7 @@ em      { font-style:italic; }
 /* For Diff Viewing */
 del {
   color:#a8afb2;
+  padding:1px 0;
   }
 ins {
   background:#D4ECB6;
@@ -477,6 +478,7 @@ ins {
   width:220px;
   height:100%;
   overflow:auto;
+  opacity:0;
   overflow-x:hidden;
   -webkit-transition:right 150ms;
      -moz-transition:right 150ms;
@@ -484,6 +486,7 @@ ins {
           transition:right 150ms;
   }
   .open .sidebar {
+    opacity:1;
     right:60px;
     }
 
@@ -970,6 +973,9 @@ ins {
   padding:0 15px;
   height:40px;
   line-height:40px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
   }
 
 .popup {
@@ -1012,20 +1018,26 @@ ins {
 /* ------------------------------------------
   Unauthenticated Landing & Notifications
 ---------------------------------------------*/
+.disable-interface .sidebar,
+.disable-interface .limiter,
+.disable-interface .navigation,
+.disable-interface .prose-menu {
+  display:none;
+  }
+
 .start {
-  background:#fff;
-  position:fixed;
+  position:absolute;
   top:0;bottom:0;left:0;right:0;
   width:100%;
   height:100%;
-  z-index:5000;
+  z-index:100;
   }
   .notification,
   .start .splash {
     background:#fff;
     text-align:center;
-    margin:60px auto 0;
-    width:340px;
+    margin:45px auto;
+    width:300px;
     border:1px solid #a8afb2;
     box-shadow:0 1px 0 rgba(255, 255, 255, 0),
                0 0 10px rgba(0, 0, 0, 0.1);
@@ -1404,7 +1416,6 @@ ins {
   .listing .actions a {
     background:#f8f8f8;
     display:block;
-    position:relative;
     border:1px solid #a8afb2;
     padding:0 8px;
     font-weight:400;
@@ -1413,6 +1424,7 @@ ins {
     line-height:28px;
     float:left;
     }
+    .listing .actions a:hover,
     .listing .actions a:active {
       position:relative;
       border-color:#516066;
@@ -1569,17 +1581,16 @@ ins {
   position:absolute;
   right:0;
   top:0;
-  height:40px;
-  line-height:38px;
+  height:39px;
+  line-height:37px;
   padding:0 10px 0 15px;
-  -webkit-border-radius:0 4px 4px 0;
-          border-radius:0 4px 4px 0;
   }
   .publish-flag .ico {
     margin-left:8px;
     color:#d4d7d9;
     }
   .publish-flag:hover {
+    background:#f8f8f8;
     color:#a8afb2;
     }
 
@@ -1588,6 +1599,9 @@ ins {
   }
   .post .view.active {
     display:block;
+    }
+  .post .view .code {
+    padding:15px 0;
     }
 
   /*.drag-over .code {*/
@@ -1605,7 +1619,8 @@ ins {
     }
     .post .markdown .view.diff pre {
       font-size:14px;
-      line-height:1.75em
+      line-height:1.75em;
+      color:#a8afb2;
       }
 
   .post .view.meta {
@@ -1658,9 +1673,8 @@ ins {
   .sidebar .commit .cancel {
     position:absolute;
     z-index:10;
-    top:25px;
-    right:4px;
-    font-size:13px;
+    top:30px;
+    right:5px;
     display:block;
     }
     .cancel:hover {
@@ -1668,11 +1682,11 @@ ins {
       }
     .sidebar .commit textarea {
       padding-right:25px;
-      margin:0 0 -2px;
+      margin:8px 0 -2px;
       display:block;
       position:relative;
       z-index:1;
-      height:80px;
+      height:90px;
       resize:none;
       -webkit-border-radius:4px 4px 0 0;
               border-radius:4px 4px 0 0;

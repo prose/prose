@@ -78,12 +78,11 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'hideDiff', 'translate', 'updateFile', 'meta', 'remove');
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove');
     this.eventRegister.bind('edit', this.edit);
     this.eventRegister.bind('preview', this.preview);
     this.eventRegister.bind('deleteFile', this.deleteFile);
     this.eventRegister.bind('save', this.save);
-    this.eventRegister.bind('hideDiff', this.hideDiff);
     this.eventRegister.bind('updateFile', this.updateFile);
     this.eventRegister.bind('translate', this.translate);
     this.eventRegister.bind('meta', this.meta);
@@ -345,13 +344,16 @@ module.exports = Backbone.View.extend({
     $diff.addClass('active');
   },
 
-  hideDiff: function() {
+  closeSettings: function() {
     $('.views .view', this.el).removeClass('active');
+
     if (app.state.mode === 'blob') {
       $('#preview', this.el).addClass('active');
     } else {
       $('#edit', this.el).addClass('active');
     }
+
+    this.eventRegister.trigger('closeSettings');
   },
 
   save: function() {
@@ -425,8 +427,11 @@ module.exports = Backbone.View.extend({
           view.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
+
           view.updateURL();
           view.prevFile = filecontent;
+          view.closeSettings();
+          view.updatePublishState();
           view.eventRegister.trigger('updateSaveState', 'Request Submitted', 'saved');
         });
       } else {
@@ -450,7 +455,8 @@ module.exports = Backbone.View.extend({
             view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
             return;
           }
-          this.dirty = false;
+
+          view.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
 
@@ -462,6 +468,8 @@ module.exports = Backbone.View.extend({
           view.renderHeading();
           view.updateURL();
           view.prevFile = filecontent;
+          view.closeSettings();
+          view.updatePublishState();
           view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
         });
       } else {
@@ -482,6 +490,18 @@ module.exports = Backbone.View.extend({
         save();
       }
     });
+  },
+
+  updatePublishState: function() {
+    // Update the publish key wording depening on what was saved
+    var $publishKey = $('.publish-flag', this.el);
+    var key = $publishKey.attr('data-state');
+
+    if (key === 'true') {
+      $publishKey.empty().html('Published<span class="ico checkmark"></span>');
+    } else {
+      $publishKey.empty().html('Unpublished<span class="ico checkmark"></span>');
+    }
   },
 
   stashFile: function(e) {
@@ -534,7 +554,6 @@ module.exports = Backbone.View.extend({
 
     var message = $message.val() || $message.attr('placeholder');
     var method = this.model.writable ? this.saveFile : this.sendPatch;
-    this.hideDiff();
 
     // Update content
     this.model.content = (this.editor) ? this.editor.getValue() : '';
@@ -612,53 +631,60 @@ module.exports = Backbone.View.extend({
       _(model.default_metadata).each(function(data, key) {
         if (data && typeof data.field === 'object') {
           switch (data.field.element) {
-          case 'button':
-            tmpl = _(window.app.templates.button).template();
-            $metadataEditor.append(tmpl({
-              name: data.name,
-              label: data.field.label,
-              value: data.field.value,
-              on: data.field.on,
-              off: data.field.off
-            }));
-            break;
-          case 'checkbox':
-            tmpl = _(window.app.templates.checkbox).template();
-            $metadataEditor.append(tmpl({
-              name: data.name,
-              label: data.field.label,
-              value: data.name,
-              checked: data.field.value
-            }));
-            break;
-          case 'text':
-            tmpl = _(window.app.templates.text).template();
-            $metadataEditor.append(tmpl({
-              name: data.name,
-              label: data.field.label,
-              value: data.field.value
-            }));
-            break;
-          case 'select':
-            tmpl = _(window.app.templates.select).template();
-            $metadataEditor.append(tmpl({
-              name: data.name,
-              label: data.field.label,
-              placeholder: data.field.placeholder,
-              options: data.field.options,
-              lang: model.metadata.lang || 'en'
-            }));
-            break;
-          case 'multiselect':
-            tmpl = _(window.app.templates.multiselect).template();
-            $metadataEditor.append(tmpl({
-              name: data.name,
-              label: data.field.label,
-              placeholder: data.field.placeholder,
-              options: data.field.options,
-              lang: model.metadata.lang || 'en'
-            }));
-            break;
+            case 'button':
+              tmpl = _(window.app.templates.button).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                on: data.field.on,
+                off: data.field.off
+              }));
+              break;
+            case 'checkbox':
+              tmpl = _(window.app.templates.checkbox).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.name,
+                checked: data.field.value
+              }));
+              break;
+            case 'text':
+              tmpl = _(window.app.templates.text).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value
+              }));
+              break;
+            case 'select':
+              tmpl = _(window.app.templates.select).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: model.metadata.lang || 'en'
+              }));
+              break;
+            case 'multiselect':
+              tmpl = _(window.app.templates.multiselect).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: model.metadata.lang || 'en'
+              }));
+              break;
+            case 'hidden':
+              tmpl = _(window.app.templates.hidden).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                value: JSON.stringify(data.field.value).replace(/"/g, '&quot;').replace(/'/g, '&apos;')
+              }));
+              break;
           }
         } else {
           tmpl = _(window.app.templates.text).template();
@@ -695,41 +721,48 @@ module.exports = Backbone.View.extend({
         var value = $(item).val();
 
         switch (item.type) {
-        case 'select-multiple':
-        case 'select-one':
-        case 'text':
-          if (value) {
-            if (metadata.hasOwnProperty(item.name)) {
-              metadata[item.name] = _.union(metadata[item.name], value);
-            } else {
-              metadata[item.name] = value;
+          case 'select-multiple':
+          case 'select-one':
+          case 'text':
+            if (value) {
+              if (metadata.hasOwnProperty(item.name)) {
+                metadata[item.name] = _.union(metadata[item.name], value);
+              } else {
+                metadata[item.name] = value;
+              }
             }
-          }
-          break;
-        case 'checkbox':
-          if (item.checked) {
+            break;
+          case 'checkbox':
+            if (item.checked) {
 
-            if (metadata.hasOwnProperty(item.name)) {
-              metadata[item.name] = _.union(metadata[item.name], item.value);
-            } else if (item.value === item.name) {
+              if (metadata.hasOwnProperty(item.name)) {
+                metadata[item.name] = _.union(metadata[item.name], item.value);
+              } else if (item.value === item.name) {
+                metadata[item.name] = item.checked;
+              } else {
+                metadata[item.name] = item.value;
+              }
+
+            } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
               metadata[item.name] = item.checked;
             } else {
-              metadata[item.name] = item.value;
+              metadata[item.name] = item.checked;
             }
-
-          } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
-            metadata[item.name] = item.checked;
-          } else {
-            metadata[item.name] = item.checked;
-          }
-          break;
-        case 'button':
-          if (value === 'true') {
-            metadata[item.name] = true;
-          } else if (value === 'false') {
-            metadata[item.name] = false;
-          }
-          break;
+            break;
+          case 'button':
+            if (value === 'true') {
+              metadata[item.name] = true;
+            } else if (value === 'false') {
+              metadata[item.name] = false;
+            }
+            break;
+          case 'hidden':
+            if (metadata.hasOwnProperty(item.name)) {
+              metadata[item.name] = _.union(metadata[item.name], JSON.parse(value));
+            } else {
+              metadata[item.name] = JSON.parse(value);
+            }
+            break;
         }
       });
 
@@ -1000,19 +1033,24 @@ module.exports = Backbone.View.extend({
                 break;
               case '*':
               case '_':
-                if (match.strong.test(selection)) {
-                  $('[data-key="bold"]').addClass('active');
-                } else if (match.italic.test(selection)) {
-                  $('[data-key="italic"]').addClass('active');
+                if (!match.lineBreak.test(selection)) {
+                  if (match.strong.test(selection)) {
+                    $('[data-key="bold"]').addClass('active');
+                  } else if (match.italic.test(selection)) {
+                    $('[data-key="italic"]').addClass('active');
+                  }
                 }
                 break;
               case '!':
-                if (selection.charAt(1) === '[' && selection.charAt(selection.length - 1) === ')') {
+                if (!match.lineBreak.test(selection) &&
+                    selection.charAt(1) === '[' &&
+                    selection.charAt(selection.length - 1) === ')') {
                   $('[data-key="media"]').addClass('active');
                 }
                 break;
               case '[':
-                if (selection.charAt(selection.length - 1) === ')') {
+                if (!match.lineBreak.test(selection) &&
+                    selection.charAt(selection.length - 1) === ')') {
                   $('[data-key="link"]').addClass('active');
                 }
                 break;
@@ -1467,7 +1505,6 @@ module.exports = Backbone.View.extend({
     this.eventRegister.unbind('preview', this.preview);
     this.eventRegister.unbind('deleteFile', this.deleteFile);
     this.eventRegister.unbind('save', this.save);
-    this.eventRegister.unbind('hideDiff', this.hideDiff);
     this.eventRegister.unbind('translate', this.translate);
     this.eventRegister.unbind('updateFile', this.updateFile);
     this.eventRegister.unbind('meta', this.updateFile);

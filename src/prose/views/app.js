@@ -57,21 +57,33 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'filenameInput');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput');
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('sidebarContext', this.sidebarContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
       this.eventRegister.bind('filenameInput', this.filenameInput);
+      this.eventRegister.bind('closeSettings', this.closeSettings);
     },
 
     render: function(options) {
       var tmpl = _(window.app.templates.app).template();
       var isJekyll = false;
       var errorPage = false;
-      if (options && options.jekyll) isJekyll = options.jekyll;
-      if (options && options.error) errorPage = options.error;
+      var hideInterface = false;
+
+      if (options) {
+        if (options.hideInterface) hideInterface = options.hideInterface;
+        if (options.jekyll) isJekyll = options.jekyll;
+        if (options.error) errorPage = options.error;
+      }
+
+      if (hideInterface) {
+        $(this.el).toggleClass('disable-interface', true);
+      } else {
+        $(this.el).toggleClass('disable-interface', false);
+      }
 
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
         jekyll: isJekyll,
@@ -164,13 +176,26 @@ module.exports = Backbone.View.extend({
       if ($(e.target, this.el).hasClass('active')) {
         $navItems.removeClass('active');
         $('.navigation .' + this.viewing, this.el).addClass('active');
+        $('#prose').toggleClass('open', false);
       } else {
         $navItems.removeClass('active');
         $(e.target, this.el).addClass('active');
+        $('#prose').toggleClass('open', true);
       }
 
-      $('#prose').toggleClass('open');
       return false;
+    },
+
+    closeSettings: function() {
+      $('.post-views a', this.el).removeClass('active');
+
+      if (app.state.mode === 'blob') {
+        $('.post-views .preview', this.el).addClass('active');
+      } else {
+        $('.post-views .edit', this.el).addClass('active');
+      }
+
+      $('#prose').toggleClass('open', false);
     },
 
     restoreFile: function(e) {
@@ -224,7 +249,6 @@ module.exports = Backbone.View.extend({
     },
 
     cancelSave: function(e) {
-      this.eventRegister.trigger('hideDiff', e);
       this.toggleCommit();
       return false;
     },
@@ -262,7 +286,9 @@ module.exports = Backbone.View.extend({
     checkPlaceholder: function(e) {
       if (app.state.mode === 'new') {
         var $target = $(e.target, this.el);
-        $target.val($target.attr('placeholder'));
+        if (!$target.val()) {
+          $target.val($target.attr('placeholder'));
+        }
       }
     },
 
@@ -302,6 +328,7 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('recentFiles', this.recentFiles);
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
       this.eventRegister.unbind('filenameInput', this.filenameInput);
+      this.eventRegister.unbind('closeSettings', this.closeSettings);
       Backbone.View.prototype.remove.call(this);
     }
 });
