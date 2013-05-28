@@ -1033,19 +1033,24 @@ module.exports = Backbone.View.extend({
                 break;
               case '*':
               case '_':
-                if (match.strong.test(selection)) {
-                  $('[data-key="bold"]').addClass('active');
-                } else if (match.italic.test(selection)) {
-                  $('[data-key="italic"]').addClass('active');
+                if (!match.lineBreak.test(selection)) {
+                  if (match.strong.test(selection)) {
+                    $('[data-key="bold"]').addClass('active');
+                  } else if (match.italic.test(selection)) {
+                    $('[data-key="italic"]').addClass('active');
+                  }
                 }
                 break;
               case '!':
-                if (selection.charAt(1) === '[' && selection.charAt(selection.length - 1) === ')') {
+                if (!match.lineBreak.test(selection) &&
+                    selection.charAt(1) === '[' &&
+                    selection.charAt(selection.length - 1) === ')') {
                   $('[data-key="media"]').addClass('active');
                 }
                 break;
               case '[':
-                if (selection.charAt(selection.length - 1) === ')') {
+                if (!match.lineBreak.test(selection) &&
+                    selection.charAt(selection.length - 1) === ')') {
                   $('[data-key="link"]').addClass('active');
                 }
                 break;
