@@ -347,10 +347,14 @@ module.exports = Backbone.View.extend({
 
   hideDiff: function() {
     $('.views .view', this.el).removeClass('active');
+    $('.post-views a').removeClass('active');
+
     if (app.state.mode === 'blob') {
       $('#preview', this.el).addClass('active');
+      $('.post-views .preview').addClass('active');
     } else {
       $('#edit', this.el).addClass('active');
+      $('.post-views .edit').addClass('active');
     }
   },
 

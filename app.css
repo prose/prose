@@ -1565,6 +1565,7 @@ ins {
   }
 
 .publish-flag {
+  background:#f8f8f8;
   color:#a8afb2;
   position:absolute;
   right:0;
@@ -1578,7 +1579,6 @@ ins {
     color:#d4d7d9;
     }
   .publish-flag:hover {
-    background:#f8f8f8;
     color:#a8afb2;
     }
 
