@@ -69,12 +69,14 @@ module.exports = Backbone.Router.extend({
       data.authenticated = !! window.authenticated;
 
       router.application.render();
+      /*
       var view = new app.views.Profile({
-        model: _.extend(router.model, data)
+        model: router.model
       }).render();
 
       utils.loader.loaded();
       $('#content').empty().append(view.el);
+      */
     });
   },
 
@@ -105,6 +107,10 @@ module.exports = Backbone.Router.extend({
 
       utils.loader.loaded();
       $('#content').empty().append(view.el);
+
+      router.model.set('repo', router.model.get('repos').find(function(repo) {
+        return repo.get('name') === data.repo && repo.get('owner').login === data.user;
+      }));
     }, this));
   },
 

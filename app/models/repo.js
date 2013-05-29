@@ -8,6 +8,10 @@ module.exports = Backbone.Model.extend({
     Backbone.Model.call(this, {
       id: attributes.id,
       name: attributes.name,
+      owner: {
+        id: attributes.owner.id,
+        login: attributes.owner.login
+      },
       permissions: attributes.permissions,
       private: attributes.private
     });

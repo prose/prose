@@ -12,6 +12,6 @@ module.exports = Backbone.Collection.extend({
   },
 
   initialize: function(models, options) {
-    this.fetch();
+    this.fetch({ reset: true });
   }
 });

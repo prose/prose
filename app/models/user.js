@@ -25,13 +25,7 @@ module.exports = Backbone.Model.extend({
           }));
 
           // Initialize router
-          window.router = new app.router({
-            // TODO: pass full user model
-            model: {
-              'repos': model.get('repos'),
-              'organizations': [] // TODO: switch to 'orgs', handle correctly in template
-            }
-          });
+          window.router = new app.router({ model: model });
 
           // Start responding to routes
           Backbone.history.start();
@@ -81,5 +75,14 @@ module.exports = Backbone.Model.extend({
   logout: function() {
     window.authenticated = false;
     cookie.unset('oauth-token');
+  },
+
+  loadRepos: function() {
+    model.set('repos', new Repos([], {
+      user: user,
+      success: function() {
+        debugger;
+      }
+    }));
   }
 });
