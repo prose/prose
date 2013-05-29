@@ -1,5 +1,4 @@
 var $ = require('jquery-browserify');
-var _ = require('underscore');
 var cookie = require('../cookie');
 
 var Backbone = require('backbone');

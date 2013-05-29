@@ -2,7 +2,7 @@ var Backbone = require('backbone');
 
 module.exports = Backbone.Model.extend({
   constructor: function(attributes, options) {
-    this.name = 'branch';
+    this.name = 'file';
     Backbone.Model.apply(this, arguments);
   },
 

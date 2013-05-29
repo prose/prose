@@ -1,20 +1,21 @@
 var Backbone = require('backbone');
 Backbone.sync = require('../backbone-github');
 
-var Branch = require('../models/branch');
+var File = require('../models/file');
 
 module.exports = Backbone.Collection.extend({
-  model: Branch,
+  model: File,
 
   constructor: function(models, options) {
-    this.name = 'branches';
+    this.name = 'files';
     Backbone.Collection.apply(this, arguments);
   },
 
   initialize: function(models, options) {
     this.fetch({
       'user': options.user,
-      'repo': options.repo
+      'repo': options.repo,
+      'branch': options.branch
     });
   }
 });
