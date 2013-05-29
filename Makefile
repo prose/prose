@@ -36,8 +36,12 @@ LIBS = \
 APPLICATION = \
 	app/backbone-github.js \
 	app/collections/branches.js \
+	app/collections/commits.js \
+	app/collections/files.js \
 	app/collections/repos.js \
 	app/models/branch.js \
+	app/models/commit.js \
+	app/models/file.js \
 	app/models/repo.js \
 	app/models/user.js \
 	app/views/notification.js \
