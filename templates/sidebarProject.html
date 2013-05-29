@@ -9,7 +9,7 @@
     </select>
   <% } %>
 </div>
-<% if (authenticated) { %>
+<% if (window.authenticated) { %>
 <% if (history &&
         history.user === user &&
         history.repo === repo &&
@@ -18,7 +18,7 @@
         history.recent[app.username]) { %>
     <div class='history'>
       <div class='inner'>
-        <h2 class='label inner'>Your Recent History</h2>
+        <h2 class='label inner'>Most Recent History</h2>
       </div>
       <ul id='recent' class='listing'>
         <%

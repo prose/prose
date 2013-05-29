@@ -13,7 +13,7 @@ window.app = {
       Profile: require('./views/profile'),
       Posts: require('./views/posts'),
       Post: require('./views/post'),
-      Page: require('./views/page')
+      Documentation: require('./views/documentation')
     },
     templates: require('../../dist/templates'),
     router: require('./router'),
@@ -24,11 +24,12 @@ window.app = {
 };
 
 // Bootup
-if (app.models.authenticate()) {
+// test the browser supports CORS and return a boolean for an oauth token.
+if ('withCredentials' in new XMLHttpRequest() && app.models.authenticate()) {
   app.models.loadApplication(function(err, data) {
     if (err) {
       var view = new window.app.views.Notification({
-        'type': 'eror',
+        'type': 'error',
         'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
       }).render();
 
@@ -43,5 +44,12 @@ if (app.models.authenticate()) {
       // Start responding to routes
       Backbone.history.start();
     }
+  });
+} else {
+  // Display an upgrade notice.
+  var tmpl = _(window.app.templates.upgrade).template();
+
+  _.defer(function() {
+    $('#prose').empty().append(tmpl);
   });
 }

@@ -6,11 +6,11 @@ var utils = require('./util');
 module.exports = Backbone.Router.extend({
 
   routes: {
-    'about': 'about',
+    'about(/)': 'about',
     'error/:code': 'error',
-    ':user': 'profile',
-    ':user/:repo': 'repo',
-    ':user/:repo/*path': 'path',
+    ':user(/)': 'profile',
+    ':user/:repo(/)': 'repo',
+    ':user/:repo/*path(/)': 'path',
     '*default': 'start'
   },
 
@@ -25,8 +25,7 @@ module.exports = Backbone.Router.extend({
     });
   },
 
-  about: function() {
-
+  resetState: function() {
     app.state = {
       user: '',
       repo: '',
@@ -35,9 +34,16 @@ module.exports = Backbone.Router.extend({
       path: '',
       file: ''
     };
+  },
+
+  about: function() {
+    this.resetState();
 
     router.application.render();
-    var view = new app.views.Page().render();
+    var view = new app.views.Documentation({
+      page: 'about'
+    }).render();
+
     $('#content').empty().append(view.el);
   },
 
@@ -236,7 +242,10 @@ module.exports = Backbone.Router.extend({
       // Redirect
       router.navigate(app.username, {trigger: true});
     } else {
-      this.application.render();
+      this.application.render({
+        hideInterface: true
+      });
+
       var view = new app.views.Start({
         model: _.extend(this.model, {
           authenticated: !! window.authenticated
@@ -267,6 +276,7 @@ module.exports = Backbone.Router.extend({
 
     var view = new app.views.Notification({
       'type': 'Error',
+      'key': 'error',
       'message': code
     }).render();
 
@@ -284,6 +294,7 @@ module.exports = Backbone.Router.extend({
 
     var view = new app.views.Notification({
       'type': type,
+      'key': 'page-error',
       'message': message
     }).render();
 

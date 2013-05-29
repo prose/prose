@@ -80,13 +80,12 @@ _.extractURL = function(url) {
 
 _.mode = function(file) {
   if (_.markdown(file)) return 'gfm';
-
   var extension = _.extension(file);
 
   if (_.include(['js', 'json'], extension)) return 'javascript';
   if (extension === 'html') return 'htmlmixed';
   if (extension === 'rb') return 'ruby';
-  if (extension === 'yml') return 'yaml';
+  if (/(yml|yaml)/.test(extension)) return 'yaml';
   if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
 
   return extension;
@@ -121,20 +120,24 @@ _.extension = function(file) {
 // -------
 
 _.markdown = function(file) {
-  var regex = new RegExp('.(md|mkdn?|mdown|markdown)$');
+  var regex = new RegExp(/.(md|mkdn?|mdown|markdown)$/);
   return !!(regex.test(file));
 };
 
 _.isBinary = function(file) {
-  var regex = new RegExp('(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store)$');
+  var regex = new RegExp(/(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$/);
   return regex.test(file);
 };
 
 _.isMedia = function(file) {
-  var regex = new RegExp('(jpeg|jpg|gif|png|swf|mov)$');
+  var regex = new RegExp(/(jpeg|jpg|gif|png|swf|mov)$/);
   return regex.test(file);
 };
 
+_.isImage = function(file) {
+  var regex = new RegExp(/(jpeg|jpg|gif|png)$/);
+  return regex.test(file);
+};
 
 // Returns a filename without the file extension
 // -------
@@ -142,7 +145,6 @@ _.isMedia = function(file) {
 _.filename = function(file) {
   return file.replace(/\.[^\/.]+$/, '');
 };
-
 
 // String Manipulations
 // -------
@@ -165,6 +167,14 @@ _.filepath = function(path, file) {
   return (path ? path + '/' : '') + file;
 };
 
+
+// Return a true or false boolean if a path
+// a absolute or not.
+// -------
+
+_.absolutePath = function(path) {
+  return /^https?:\/\//i.test(path);
+};
 
 // Converts a javascript object to YAML
 // Does not support nested objects
@@ -351,6 +361,14 @@ _.preview = function(view) {
   }
 };
 
+// Strip out whitespace and replace 
+// whitespace with hyphens for a nice class name.
+// -------
+
+_.formattedClass = function(str) {
+  return str.toLowerCase().replace(/\s/g, '-').replace('&amp;', '');
+};
+
 // UI Stuff
 // -------
 module.exports = {
@@ -370,6 +388,8 @@ module.exports = {
   pageListing: function(handler) {
     if ($('.item').hasClass('active')) {
       var index = parseInt($('.item.active').data('index'), 10);
+      var offset;
+
       $('.item.active').removeClass('active');
 
       function inView(el) {
@@ -387,7 +407,7 @@ module.exports = {
         if (!inView($prev)) {
           // Offset is the list height minus the difference between the
           // height and .content-search (60) that is fixed down the page
-          var offset = $prev.height() + 60;
+          offset = $prev.height() + 60;
 
           $('html, body').animate({
             scrollTop: $prev.offset().top + ($prev.height() - offset)
@@ -405,7 +425,7 @@ module.exports = {
         if (index < $('#content li').length - 1) ++index;
         var $next = $('.item[data-index=' + index + ']');
         var nextTop = $next.offset().top + $next.height();
-        var offset = $next.height() + 60;
+        offset = $next.height() + 60;
 
         if (!inView($next)) {
           $('html, body').animate({
@@ -439,5 +459,11 @@ module.exports = {
         $(this).remove();
       });
     }
+  },
+
+  autoSelect: function($el) {
+    $el.on('click', function() {
+      $el.select();
+    });
   }
 };

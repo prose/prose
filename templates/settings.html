@@ -4,18 +4,18 @@
   </div>
   <div class='inner authoring'>
     <div class='commit'>
-      <textarea class='commit-message' placeholder='Describe your Changes'></textarea>
+      <h2 class='label'>Describe you changes</h2>
+      <textarea class='commit-message' placeholder></textarea>
       <a class='ico small cancel round' href='#'>
         <span class='popup round arrow-right'>Cancel</span>
       </a>
     </div>
 
     <a class='save button round' href='#'>
-      <%= writeable ? 'Save' : 'Submit Change' %>
-      <span class='popup round arrow-right'>Ctrl&nbsp;+&nbsp;s</span>
+      <%= writable ? 'Save' : 'Submit Change' %>
     </a>
 
-    <% if (app.state.config && app.state.config.languages) { %>
+    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>
       <% _(app.state.config.languages).each(function(lang) { %>
         <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>
           <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>
@@ -23,8 +23,15 @@
       <% }); %>
     <% } %>
 
-    <% if (app.state.mode !== 'new') { %>
+    <% if (app.state.mode !== 'new' && writable) { %>
       <a class='delete button round' href='#'>Delete this File</a>
     <% } %>
+  </div>
+<% } %>
+
+<% if (permalink) { %>
+  <div class='inner'>
+    <h2 class='label'>Permalink</h2>
+    <input class='permalink' type='text' value='<%= permalink %>' readonly />
   </div>
 <% } %>

@@ -8,7 +8,7 @@ Developers can configure Jekyll sites to take advantage of these and many more f
 
 ## Configuring
 
-Prose can be configured per repository with additional metadata in a Jekyll site's `_config.yml` file or a separate `prose.yml` file. We offer Prose.io as a hosted service for the latest version, or you can download the source code and host it on your own. For for developer documentation, see [Prose on GitHub](https://github.com/prose/prose).
+Prose can be configured per repository with additional metadata in a Jekyll site's `_config.yml` file or a separate `prose.yml` file. We offer Prose.io as a hosted service for the latest version, or you can download the source code and host it on your own. For for developer documentation, see [the wiki page on GitHub](https://github.com/prose/prose/wiki).
 
 ## Developing
 
@@ -16,7 +16,7 @@ Prose is an open source project. We encourage you to contribute and help us impr
 
 ## Getting Help
 
-We do not offer support for Prose at this time, however if your a content editor using Prose, you should content the developer who gave you access to it. To report technical problems with Prose, please [file an issue on GitHub](https://github.com/prose/prose/issues).
+We do not offer support for Prose at this time, however if you are a content editor using Prose, you should contact the developer who gave you access to it. To report technical problems with Prose, please [file an issue on GitHub](https://github.com/prose/prose/issues).
 
 ## Credits
 

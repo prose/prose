@@ -12,6 +12,7 @@ var oauth = require('../../oauth.json');
 window.auth = {
   api: oauth.api || 'https://api.github.com',
   site: oauth.site || 'https://github.com',
+  raw: oauth.raw || 'https://raw.github.com',
   id: oauth.clientId,
   url: oauth.gatekeeperUrl
 };
@@ -133,6 +134,18 @@ module.exports = {
     }
   },
 
+  // Creating or updating a File
+  // -------
+  //
+  // Fired when uploading images via file selection or drag and drop
+
+  uploadFile: function(username, repo, path, data, cb) {
+    var file = github().getFile();
+    file.uploadFile(username, repo, path, data, function(err, res) {
+      (err) ? cb('error', err) : cb('sucess', res);
+    });
+  },
+
   // Load Repos
   // -------
   //
@@ -173,7 +186,7 @@ module.exports = {
   loadBranches: function(user, repo, cb) {
     repo = this.getRepo(user, repo);
 
-    repo.listBranches(function (err, branches) {
+    repo.listBranches(function(err, branches) {
       cb(err, branches);
     });
   },
@@ -288,7 +301,7 @@ module.exports = {
   // Load Config
   // -------
   //
-  // Load _config.yml or _prose.yml
+  // Load _config.yml or prose.yml
 
   loadConfig: function(user, reponame, branch, file, cb) {
     if (file) {
@@ -312,7 +325,7 @@ module.exports = {
   // -------
   //
   // List all postings for a given repo+branch+path
-  // plus load _config.yml or _prose.yml
+  // plus load _config.yml or prose.yml
 
   loadPosts: function(user, reponame, branch, path, cb) {
     var models = this;
@@ -325,9 +338,9 @@ module.exports = {
         // avoid the callback dependency and order when
         // we refacor models.
 
-        // Check for _prose.yml or _config.yml
+        // Check for prose.yml or _config.yml
         var configName = _(tree).find(function(t) {
-          if (t.path === '_prose.yml') {
+          if (t.path === 'prose.yml') {
             return t.path;
           } else if (t.path === '_config.yml') {
             return t.path;
@@ -608,6 +621,8 @@ module.exports = {
       'published': false
     };
 
+    repo = this.getRepo(user, repo);
+
     // load default metadata
     var cfg = app.state.config;
     var q = queue();
@@ -683,12 +698,32 @@ module.exports = {
     }
 
     q.await(function() {
+      var query = path.split('?')[1];
+      var translate = false;
+      var lang;
 
-      // If ?file= in path, use it as file name
-      if (path.indexOf('?file=') !== -1) {
-        file = path.split('?file=')[1];
-        path = path.split('?file=')[0].replace(/\/$/, '');
+      // remove query string and trailing slash
+      path = path.split('?')[0].replace(/\/$/, '');
+
+      if (query) {
+        // If file= in path, use it as file name
+        if (query.indexOf('file=') !== -1) {
+          file = query.match(/file=([^&]*)/)[1];
+
+          // remove filename and trailing slash
+          path = path.split(file)[0].replace(/\/$/, '');
+        }
+
+        // If lang= in path, set lang and add to categories
+        if (query.indexOf('lang=') !== -1) {
+          lang = query.match(/lang=([^&]*)/)[1];
+          metadata.lang = lang;
+          metadata.categories = _.isArray(metadata.categories) ? _.union(metadata.categories, lang) : [lang];
+        }
+
+        translate = query.indexOf('translate=true') !== -1 ? true : false;
       }
+
       cb(null, {
         'metadata': metadata,
         'default_metadata': defaultMetadata,
@@ -697,8 +732,9 @@ module.exports = {
         'path': path,
         'published': false,
         'persisted': false,
-        'writeable': true,
-        'file': file
+        'writable': true,
+        'file': file,
+        'translate': translate
       });
     });
   },
@@ -717,7 +753,7 @@ module.exports = {
       // Extract YAML from a post, trims whitespace
       content = content.replace(/\r\n/g, '\n'); // normalize a little bit
 
-      function writeable() {
+      function writable() {
         return !!(app.state.permissions && app.state.permissions.push);
       }
 
@@ -726,12 +762,12 @@ module.exports = {
       if (!hasMetadata) return {
         content: content,
         published: true,
-        writeable: writeable(),
+        writable: writable(),
         jekyll: hasMetadata
       };
 
       var res = {
-        writeable: writeable(),
+        writable: writable(),
         jekyll: hasMetadata
       };
 
@@ -812,7 +848,7 @@ module.exports = {
         'markdown': _.markdown(file),
         'repo': repo,
         'path': path,
-        'file': file,
+        'file': file.split('?')[0],
         'persisted': true
       }));
     }).bind(this));

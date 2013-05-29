@@ -17,10 +17,14 @@ Here's a quick list of things to consider before submitting an issue:
 
 And when in doubt, be over-descriptive of the bug and how you discovered it.
 
+## Submitting Pull Requests
+
+All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. the `gh-pages` branch manages rebuilds to the server.
+
 
 ## Building / Installing
 
-prose uses [Browserify](browserify.org) with [Make](http://www.gnu.org/software/make/)
+prose uses [Browserify](http://browserify.org) with [Make](http://www.gnu.org/software/make/)
 to manage dependencies and build. Development also requires you
 have [node.js](http://nodejs.org) installed.
 
@@ -31,17 +35,10 @@ your OS.
 2. Go to the directory where you have checked out `prose`
 3. Run `npm install`
 4. Run `make`
-5. To run prose with authentication you'll need to add an `oauth.json` file
-to the root directory with the following contents:
+5. To run prose with authentication locally, a `oauth.json` file is required to the
+to the root directory. when you run `make` this file is created automatically. 
 
-``` js
-{
-  "clientId": "c602a8bd54b1e774f864",
-  "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
-}
-```
-
-Note that you should not commit this file to a remote repo or along with a pull
+__Note__ You should not commit the `oauth.json` file to a remote repo or along with a pull
 request.
 
 Finally, If you have python handy, from the project root run `python -m SimpleHTTPServer`
@@ -53,11 +50,6 @@ code into a minified `prose.min.js` and see changes.
 
 __ProTip:__ You may want to install `watch` so you can run `watch make` without
 needing to execute `make` on every change.
-
-## Submitting Pull Requests
-
-All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch.
-the `gh-pages` branch manages rebuilds to the server.
 
 ## Code Style
 
