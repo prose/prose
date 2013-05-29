@@ -1,23 +1,16 @@
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-
 var Backbone = require('backbone');
-Backbone.sync = require('../backbone-github');
-
 var Repo = require('../models/repo');
-var cookie = require('../cookie');
+var config = require('../config');
 
 module.exports = Backbone.Collection.extend({
   model: Repo,
 
   constructor: function(models, options) {
-    this.name = 'repos';
+    this.url = config.api + '/users/' + options.user + '/repos';
     Backbone.Collection.apply(this, arguments);
   },
 
   initialize: function(models, options) {
-    this.fetch({
-      'user': options.user
-    });
+    this.fetch();
   }
 });

@@ -1,22 +1,17 @@
 var Backbone = require('backbone');
-Backbone.sync = require('../backbone-github');
-
 var Commit = require('../models/commit');
+var config = require('../config');
 
 module.exports = Backbone.Collection.extend({
   model: Commit,
 
   constructor: function(models, options) {
-    this.name = 'commits';
+    this.url = config.api + '/users/' + options.owner + '/' + 
+      options.repo + '/commits';
     Backbone.Collection.apply(this, arguments);
   },
 
   initialize: function(models, options) {
-    this.fetch({
-      'user': options.user,
-      'repo': options.repo,
-      'branch': options.branch,
-      'path': options.path
-    });
+    this.fetch();
   }
 });

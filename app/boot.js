@@ -1,6 +1,5 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
-var cookie = require('./cookie');
 var config = require('./config');
 
 var Backbone = require('backbone');
@@ -27,7 +26,13 @@ window.app = {
     eventRegister: _.extend({}, Backbone.Events)
 };
 
-// Bootup
-if (app.models.authenticate()) {
-  var user = new User();
-}
+$.ajaxSetup({
+  headers: {
+    'Accept': 'application/vnd.github.raw',
+    'Authorization': config.auth === 'oauth' ? 
+      'token '+ config.token :
+      'Basic ' + Base64.encode(config.username + ':' + config.password)
+  }
+});
+
+var user = new User();

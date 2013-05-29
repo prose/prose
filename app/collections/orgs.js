@@ -1,13 +1,12 @@
 var Backbone = require('backbone');
-var Branch = require('../models/branch');
+var Org = require('../models/org');
 var config = require('../config');
 
 module.exports = Backbone.Collection.extend({
-  model: Branch,
+  model: Org,
 
   constructor: function(models, options) {
-    this.url = config.api + '/repos/' + options.owner + '/' +
-      options.repo + '/branches';
+    this.url = config.api + '/users/' + options.user + '/orgs';
     Backbone.Collection.apply(this, arguments);
   },
 
