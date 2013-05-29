@@ -1,7 +1,8 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('.././util');
+var utils = require('../util');
+var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
     id: 'profile',

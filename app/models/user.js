@@ -17,7 +17,7 @@ module.exports = Backbone.Model.extend({
       this.fetch({
         success: function(model, res, options) {
           // Initialize router
-          window.router = new app.router({ model: model });
+          window.router = new app.router({ user: model });
 
           // Start responding to routes
           Backbone.history.start();
@@ -35,7 +35,7 @@ module.exports = Backbone.Model.extend({
     } else {
       // TODO: emit notification event
       // Display an upgrade notice.
-      var tmpl = _(window.app.templates.upgrade).template();
+      var tmpl = _.template(window.app.templates.upgrade);
 
       _.defer(function() {
         $('#prose').empty().append(tmpl);

@@ -1,0 +1,19 @@
+<div class='inner'>
+  <h2 class='label'>Groups</h2>
+</div>
+<ul class='listing'>
+  <li>
+    <a href='#<%= user.login %>' title='<%= user.login %>' data-id='<%= user.id %>'>
+      <span class='ico repos inline small'></span>
+      <%= user.login %>
+    </a>
+  </li>
+  <% orgs.each(function(org) {  %>
+  <li>
+    <a href='#<%= org.login %>' title='<%= org.login %>' data-id='<%= org.id %>'>
+      <span class='ico repos inline small'></span>
+      <%= org.login %>
+    </a>
+  </li>
+  <% }); %>
+</ul>

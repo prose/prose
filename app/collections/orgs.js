@@ -6,11 +6,12 @@ module.exports = Backbone.Collection.extend({
   model: Org,
 
   load: function(options) {
+    this.user = options.model;
     this.url = config.api + '/users/' + options.user + '/orgs';
     this.fetch({
       reset: true,
       success: function(model, res, options) {
-        console.log(model);
+        Backbone.trigger('orgs:reset', model);
       }
     });
   }

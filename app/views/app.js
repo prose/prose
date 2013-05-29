@@ -67,7 +67,7 @@ module.exports = Backbone.View.extend({
     },
 
     render: function(options) {
-      var tmpl = _(window.app.templates.app).template();
+      var tmpl = _.template(window.app.templates.app);
       var isJekyll = false;
       var errorPage = false;
       if (options && options.jekyll) isJekyll = options.jekyll;
@@ -97,7 +97,7 @@ module.exports = Backbone.View.extend({
     },
 
     headerContext: function(data) {
-      var heading = _(window.app.templates.heading).template();
+      var heading = _.template(window.app.templates.heading);
       $('#heading').empty().append(heading(data));
     },
 
@@ -109,10 +109,10 @@ module.exports = Backbone.View.extend({
       var sidebarTmpl;
 
       if (app.state.mode === 'tree') {
-        sidebarTmpl = _(app.templates.sidebarProject).template();
+        sidebarTmpl = _.template(app.templates.sidebarProject);
       } else if (data.file) {
         this.writeable = data.writeable;
-        sidebarTmpl = _(app.templates.settings).template();
+        sidebarTmpl = _.template(app.templates.settings);
       }
 
       $('#drawer', this.el)
@@ -128,7 +128,7 @@ module.exports = Backbone.View.extend({
     },
 
     recentFiles: function(data) {
-      var sidebarTmpl = _(window.app.templates.recentFiles).template();
+      var sidebarTmpl = _.template(window.app.templates.recentFiles);
       $('#drawer', this.el).empty().append(sidebarTmpl(data));
     },
 

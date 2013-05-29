@@ -3,7 +3,8 @@ var fs = require('fs'),
     glob = require('glob'),
     _ = require('underscore');
 
-var templates = glob.sync('templates/*.html').reduce(function(memo, file) {
+// TODO: map subdirectory templates to proper namespace
+var templates = glob.sync('templates/**/*.html').reduce(function(memo, file) {
   var val = fs.readFileSync(file, 'utf8'),
       id = path.basename(file, '.html');
 

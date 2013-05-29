@@ -36,4 +36,10 @@ $.ajaxSetup({
   }
 });
 
+/*
+Backbone.on('all', function() {
+  console.log('Event', arguments);
+});
+*/
+
 var user = new User();

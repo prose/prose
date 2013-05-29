@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var OrgsView = require('./views/orgs');
 var utils = require('./util');
 
 module.exports = Backbone.Router.extend({
@@ -15,13 +16,13 @@ module.exports = Backbone.Router.extend({
   },
 
   initialize: function(options) {
-    this.model = options.model;
+    this.user = options.user;
     this.eventRegister = app.eventRegister;
 
     // Load up the main layout
     this.application = new app.views.App({
       el: '#prose',
-      model: this.model
+      model: {}
     });
   },
 
@@ -67,6 +68,8 @@ module.exports = Backbone.Router.extend({
 
     router.application.render();
 
+    var orgs = new OrgsView({ model: this.user.orgs });
+
     /*
     var view = new app.views.Profile({
       model: router.model
@@ -76,8 +79,8 @@ module.exports = Backbone.Router.extend({
     $('#content').empty().append(view.el);
     */
 
-    this.model.repos.load({ user: user });
-    this.model.orgs.load({ user: user });
+    this.user.repos.load({ user: user, model: this.user });
+    this.user.orgs.load({ user: user, model: this.user });
   },
 
   // #example-user/example-repo
