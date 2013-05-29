@@ -4,6 +4,7 @@ var config = require('./config');
 
 var Backbone = require('backbone');
 var User = require('./models/user');
+var state = require('./models/state');
 
 window.app = {
     config: {},

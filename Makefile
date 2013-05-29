@@ -44,6 +44,7 @@ APPLICATION = \
 	app/models/file.js \
 	app/models/org.js \
 	app/models/repo.js \
+	app/models/state.js \
 	app/models/user.js \
 	app/views/notification.js \
 	app/views/documentation.js \

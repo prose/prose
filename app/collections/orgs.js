@@ -5,12 +5,13 @@ var config = require('../config');
 module.exports = Backbone.Collection.extend({
   model: Org,
 
-  constructor: function(models, options) {
+  load: function(options) {
     this.url = config.api + '/users/' + options.user + '/orgs';
-    Backbone.Collection.apply(this, arguments);
-  },
-
-  initialize: function(models, options) {
-    this.fetch({ reset: true });
+    this.fetch({
+      reset: true,
+      success: function(model, res, options) {
+        console.log(model);
+      }
+    });
   }
 });

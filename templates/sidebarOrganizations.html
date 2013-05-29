@@ -1,21 +1,18 @@
-
-
-
 <% if (authenticated) { %>
   <div class='inner'>
     <h2 class='label'>Groups</h2>
   </div>
   <ul class='listing'>
-  <% if (organizations && organizations.length) { %>
+  <% if (orgs) { %>
     <li>
-      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>
+      <a href='#<%= user.login %>' title='<%= user.login %>'<% if (user.repo.owner.id === user.id) { %> class='active'<% } %>>
         <span class='ico repos inline small'></span>
-        <%= app.username %>
+        <%= user.login %>
       </a>
     </li>
-    <% _.each(organizations, function(org) { %>
+    <% orgs.each(function(org) { debugger;  %>
     <li>
-    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>
+      <a href='#<%= org.login %>' title='<%= org.login %>'<% if (user.repo.owner.id === org.id) { %> class='active'<% } %>>
         <span class='ico repos inline small'></span>
         <%= org.login %>
       </a>

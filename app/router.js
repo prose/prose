@@ -65,19 +65,19 @@ module.exports = Backbone.Router.extend({
     app.state.path = '';
     app.state.file = '';
 
-    app.models.loadRepos(user, function(err, data) {
-      data.authenticated = !! window.authenticated;
+    router.application.render();
 
-      router.application.render();
-      /*
-      var view = new app.views.Profile({
-        model: router.model
-      }).render();
+    /*
+    var view = new app.views.Profile({
+      model: router.model
+    }).render();
 
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-      */
-    });
+    utils.loader.loaded();
+    $('#content').empty().append(view.el);
+    */
+
+    this.model.repos.load({ user: user });
+    this.model.orgs.load({ user: user });
   },
 
   // #example-user/example-repo
