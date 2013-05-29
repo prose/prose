@@ -69,6 +69,7 @@ module.exports = Backbone.Router.extend({
     router.application.render();
 
     var orgs = new OrgsView({ model: this.user.orgs });
+    $('#drawer').html(orgs.el);
 
     /*
     var view = new app.views.Profile({
