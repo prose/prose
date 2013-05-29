@@ -621,6 +621,8 @@ module.exports = {
       'published': false
     };
 
+    repo = this.getRepo(user, repo);
+
     // load default metadata
     var cfg = app.state.config;
     var q = queue();
