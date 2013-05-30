@@ -308,11 +308,13 @@ module.exports = Backbone.View.extend({
 
     if ($target.hasClass('published')) {
       $target
+        .empty()
         .html('Unpublish<span class="ico checkmark"></span>')
         .removeClass('published')
         .attr('data-state', false);
     } else {
       $target
+        .empty()
         .html('Publish<span class="ico checkmark"></span>')
         .addClass('published')
         .attr('data-state', true);
