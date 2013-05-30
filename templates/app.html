@@ -5,25 +5,21 @@
 
 <% if (!error) { %>
   <div class='vert clearfix navigation<% if (editMode) { %> editing<% } %>'>
-    <ul class='project nav clearfix'>
-      <li>
-        <a href='#' class='ico round repos <% if (!mode) { %>active<% } %>'>
-          <span class='popup round arrow-right'>Explore Projects</span>
-        </a>
-      </li>
-      <% if (repo) { %>
+
+    <% if (!noMenu) { %>
+      <ul class='mobile-menu nav clearfix'>
         <li>
-        <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='ico round folder <% if (mode === "tree") { %>active<% } %>'>
-            <span class='popup round arrow-right'><%= repo %></span>
+          <a href='#' class='toggle ico menu round'></a>
+        </li>
+      </ul>
+    <% } %>
+    <ul class='project nav clearfix'>
+      <% if (repo && window.authenticated) { %>
+        <li>
+          <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='ico round new new-file'>
+            <span class='popup round arrow-right'>New File</span>
           </a>
         </li>
-        <% if (window.authenticated) { %>
-          <li>
-            <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='ico round new new-file'>
-              <span class='popup round arrow-right'>New File</span>
-            </a>
-          </li>
-        <% } %>
       <% } %>
     </ul>
 
@@ -95,7 +91,7 @@
       <li><a class='about' href='./#about'>About</a></li>
       <li><a class='help' href='https://github.com/prose/prose'>Developers</a></li>
       <li class='divider'></li>
-      <li><a href='#'>Prose v1.0.0</a></li>
+      <li><a href='#'>Prose v1</a></li>
     </ul>
   </div>
 </div>

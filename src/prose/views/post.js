@@ -151,7 +151,7 @@ module.exports = Backbone.View.extend({
       translate: this.data.translate
     };
 
-    this.eventRegister.trigger('headerContext', this.header);
+    this.eventRegister.trigger('headerContext', this.header, true);
   },
 
   edit: function(e) {

@@ -19,8 +19,7 @@ module.exports = Backbone.View.extend({
       'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
-      'click a.mobile-menu': 'toggleMobileClass',
-      'click a.toggle.close': 'toggleMobileClass',
+      'click .mobile-menu .toggle': 'toggleMobileClass',
       'focus input.filepath': 'checkPlaceholder',
       'keypress input.filepath': 'saveFilePath'
     },
@@ -70,14 +69,18 @@ module.exports = Backbone.View.extend({
     },
 
     render: function(options) {
+      var view = this;
       var tmpl = _(window.app.templates.app).template();
+
       var isJekyll = false;
       var errorPage = false;
-      var hideInterface = false;
+      var hideInterface = false; // Flag for unauthenticated landing
+      this.noMenu = false; // Prevents a mobile toggle from appearing when nto required.
 
       if (options) {
         if (options.hideInterface) hideInterface = options.hideInterface;
         if (options.jekyll) isJekyll = options.jekyll;
+        if (options.noMenu) this.noMenu = options.noMenu;
         if (options.error) errorPage = options.error;
       }
 
@@ -90,6 +93,7 @@ module.exports = Backbone.View.extend({
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
         jekyll: isJekyll,
         error: errorPage,
+        noMenu: view.noMenu,
         lang: (app.state.file) ? _.mode(app.state.file) : undefined
       })));
 
@@ -108,8 +112,9 @@ module.exports = Backbone.View.extend({
       return this;
     },
 
-    toggleMobileClass: function() {
-      $('#prose').toggleClass('mobile');
+    toggleMobileClass: function(e) {
+      $(e.target).toggleClass('active');
+      $(this.el).toggleClass('mobile');
       return false;
     },
 
@@ -117,9 +122,12 @@ module.exports = Backbone.View.extend({
       document.title = title + ' · Prose';
     },
 
-    headerContext: function(data) {
+    headerContext: function(data, alterable) {
+      var view = this;
       var heading = _(window.app.templates.heading).template();
-      $('#heading').empty().append(heading(data));
+      $('#heading').empty().append(heading(_.extend(data, {
+        alterable: alterable ? true : false
+      })));
     },
 
     filenameInput: function() {

@@ -25,8 +25,7 @@ module.exports = Backbone.View.extend({
           parent: data.user.name || data.user.login,
           parentUrl: data.user.login,
           title: 'Explore Projects',
-          titleUrl: data.user.login,
-          alterable: false
+          titleUrl: data.user.login
       };
 
       this.eventRegister.trigger('documentTitle', app.state.user);
