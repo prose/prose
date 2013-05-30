@@ -2410,23 +2410,21 @@ ins {
     width:100%;
     margin:0;
     }
+    .fixed .containment,
+    .limiter {
+      padding-right:60px;
+      }
     .open .fixed .containment,
     .open .limiter {
       width:60%;
       margin:0;
+      padding:0;
       }
 
       /* Some right alignment adjustments
        * to account for the fixed vertical menu */
-      .fixed .containment,
-      .limiter {
-        padding-right:60px;
-        }
       .fixed .col-last {
         padding-right:60px;
-        }
-      .fixed .containment.content-search .ico {
-        right:75px;
         }
       .post .view .code {
         padding:15px;
