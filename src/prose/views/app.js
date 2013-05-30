@@ -19,6 +19,8 @@ module.exports = Backbone.View.extend({
       'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
+      'click a.mobile-menu': 'toggleMobileClass',
+      'click a.toggle.close': 'toggleMobileClass',
       'focus input.filepath': 'checkPlaceholder',
       'keypress input.filepath': 'saveFilePath'
     },
@@ -95,13 +97,20 @@ module.exports = Backbone.View.extend({
       // Fix this in re-factor, could be much tighter
       if (app.state.mode === 'tree') {
         $('#prose').toggleClass('open', true);
+        $('#prose').toggleClass('mobile', false);
       } else if (app.state.mode === '' && window.authenticated && app.state.user !== '') {
         $('#prose').toggleClass('open', true);
+        $('#prose').toggleClass('mobile', false);
       } else {
-        $('#prose').toggleClass('open', false);
+        $('#prose').toggleClass('open mobile', false);
       }
 
       return this;
+    },
+
+    toggleMobileClass: function() {
+      $('#prose').toggleClass('mobile');
+      return false;
     },
 
     documentTitle: function(title) {
@@ -176,11 +185,11 @@ module.exports = Backbone.View.extend({
       if ($(e.target, this.el).hasClass('active')) {
         $navItems.removeClass('active');
         $('.navigation .' + this.viewing, this.el).addClass('active');
-        $('#prose').toggleClass('open', false);
+        $('#prose').toggleClass('open mobile', false);
       } else {
         $navItems.removeClass('active');
         $(e.target, this.el).addClass('active');
-        $('#prose').toggleClass('open', true);
+        $('#prose').toggleClass('open mobile', true);
       }
 
       return false;
@@ -195,7 +204,7 @@ module.exports = Backbone.View.extend({
         $('.post-views .edit', this.el).addClass('active');
       }
 
-      $('#prose').toggleClass('open', false);
+      $('#prose').toggleClass('open mobile', false);
     },
 
     restoreFile: function(e) {
