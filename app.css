@@ -2347,6 +2347,23 @@ ins {
 ---------------------------------------------*/
 @media all and (max-width:1200px) {
 
+  .loading {
+    background:rgba(255,255,255,0.9);
+    border:1px solid #d4d7d9;
+    position:absolute;
+    top:20%;
+    left:50%;
+    width:140px;
+    margin-left:-70px;
+    padding:30px 0;
+    text-align:center;
+    box-shadow:0 1px 0 rgba(255, 255, 255, 0),
+               0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .loading .loading-icon {
+      margin:0 auto 5px;
+      }
+
   /* Display the Prose Menu in the footer */
   .dropdown-menu.prose-menu {
     width:100%;
@@ -2380,8 +2397,6 @@ ins {
           background:transparent;
           }
 
-  .popup,
-  .open .listing .actions,
   .toolbar .group li .on:before,
   .toolbar .group li .on:after {
     display:none!important;
@@ -2390,8 +2405,35 @@ ins {
   .heading {
     padding:30px 15px 10px;
     }
+  .containment,
+  .limiter {
+    width:100%;
+    margin:0;
+    }
+    .open .fixed .containment,
+    .open .limiter {
+      width:60%;
+      margin:0;
+      }
+
+      /* Some right alignment adjustments
+       * to account for the fixed vertical menu */
+      .fixed .containment,
+      .limiter {
+        padding-right:60px;
+        }
+      .fixed .col-last {
+        padding-right:60px;
+        }
+      .fixed .containment.content-search .ico {
+        right:75px;
+        }
+      .post .view .code {
+        padding:15px;
+        }
+
   .sidebar {
-    width:25%;
+    width:40%;
     }
   }
 
@@ -2400,23 +2442,10 @@ ins {
 and (min-device-width:320px)
 and (max-device-width:480px) {
 
-    .loading {
-      background:rgba(255,255,255,0.9);
-      border:1px solid #d4d7d9;
-      position:absolute;
-      top:20%;
-      left:50%;
-      width:140px;
-      margin-left:-70px;
-      padding:30px 0;
-      text-align:center;
-      box-shadow:0 1px 0 rgba(255, 255, 255, 0),
-                 0 0 10px rgba(0, 0, 0, 0.1);
+    .popup,
+    .open .listing .actions {
+      display:none!important;
       }
-      .loading .loading-icon {
-        margin:0 auto 5px;
-        }
-
   .sidebar {
     width:100%;
     height:100%;
@@ -2441,20 +2470,6 @@ and (max-device-width:480px) {
     width:100%;
     margin:0;
     }
-    .fixed .containment,
-    .limiter {
-      padding-right:60px;
-      }
-    .fixed .col-last {
-      padding-right:60px;
-      }
-    .fixed .containment.content-search .ico {
-      right:75px;
-      }
-    .post .view .code {
-      padding:15px;
-      }
-
     .sidebar .toggle.close,
     .toggle.mobile-menu {
       position:absolute;
