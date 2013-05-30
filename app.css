@@ -574,13 +574,13 @@ ins {
   height:100%;
   }
 .vert .nav.project {
-  margin:10px 0 0;
+  margin:15px 0 0;
   padding-bottom:15px;
   }
 
 .vert .nav.auth {
   position:absolute;
-  bottom:0;
+  bottom:5px;
   }
 .vert .nav li a {
   background-color:#f8f8f8;
