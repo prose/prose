@@ -310,6 +310,9 @@ ins {
 /* ------------------------------------------
   Styled Content
 ---------------------------------------------*/
+.prose {
+  word-wrap:break-word;
+  }
 .prose h1 {
   font-size:26px;
   margin:15px 0;
@@ -461,6 +464,13 @@ ins {
     position:relative;
     padding-left:70px;
     }
+    .heading .details h4 {
+      position:relative;
+      top:2px;
+      }
+    .heading .details h2 {
+      padding:0;
+      }
   .heading .details .mask {
     background:transparent url(img/filepath-mask.png) no-repeat top right;
     position:absolute;
@@ -962,7 +972,7 @@ ins {
 
 /* Top Branding/Navigation */
 .heading {
-  padding:30px 0 10px;
+  padding:20px 0;
   }
   .details .user,
   .details .parent-trail,
@@ -1118,17 +1128,17 @@ ins {
   .content-search input {
     background:transparent;
     border:none;
-    margin-top:8px;
-    padding:10px 15px;
-    margin-top:10px;
+    padding:8px 15px;
+    margin:8px 0;
     font-size:16px;
     line-height:24px;
-    width:90%;
+    width:100%;
     height:40px;
+    padding-right:60px;
     }
   .content-search .ico {
     position:absolute;
-    top:25px;
+    top:20px;
     right:15px;
     }
 
@@ -2343,11 +2353,10 @@ ins {
   .loading {
     background:rgba(255,255,255,0.9);
     border:1px solid #d4d7d9;
-    position:absolute;
-    top:20%;
+    top:50%;
     left:50%;
     width:140px;
-    margin-left:-70px;
+    margin:-120px 0 0 -70px;
     padding:30px 0;
     text-align:center;
     box-shadow:0 1px 0 rgba(255, 255, 255, 0),
@@ -2396,7 +2405,7 @@ ins {
     }
 
   .heading {
-    padding:30px 15px 10px;
+    padding:20px 15px;
     }
   .containment,
   .limiter {
@@ -2414,12 +2423,16 @@ ins {
       padding:0;
       }
 
+  .content-search {
+    border-top:1px solid #d4d7d9;
+    }
+
       /* Some right alignment adjustments
        * to account for the fixed vertical menu */
       .fixed .col-last {
         padding-right:60px;
         }
-      .post .view .code {
+      .post .view {
         padding:15px;
         }
 
@@ -2428,14 +2441,25 @@ ins {
     }
   }
 
-/* Smartphones (portrait and landscape) ----------- */
-/*@media only screen*/
-/*and (min-device-width:320px)*/
-/*and (max-device-width:480px) {*/
-
-  .popup,
-  .listing .actions {
+@media all and (max-width:800px) {
+  .listing .actions /* Extraneous links in the listings */ {
     display:none!important;
+    }
+  }
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen
+and (min-device-width:320px)
+and (max-device-width:480px) {
+
+  .edit .topbar-wrapper, /* wysiwyg toolbar */
+  .popup { /* tip messages served on mouse hover */
+    display:none!important;
+    }
+
+  /* Disable fixed positioning of the topbar as its wacky on mobile */
+  .topbar.fixed {
+    position:relative;
     }
 
   .inner.deep {
@@ -2443,9 +2467,9 @@ ins {
     }
   .containment,
   .limiter,
-  .open .fixed .containment,
   .open .limiter {
     width:100%;
+    padding-right:60px;
     }
   .sidebar {
     width:100%;
@@ -2484,7 +2508,13 @@ ins {
   .mobile-menu {
     display:block;
     }
-/*}*/
+  .post .view.meta {
+    width:80%;
+    }
+    .meta .form {
+      padding:0;
+      }
+}
 
 @media
 only screen and (-webkit-min-device-pixel-ratio : 2),
