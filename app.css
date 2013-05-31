@@ -80,9 +80,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-d499f58f744f615900be8c469f1ba731.eot');
-    src:url('fonts/prose-d499f58f744f615900be8c469f1ba731.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-d499f58f744f615900be8c469f1ba731.woff') format('woff');
+    src:url('fonts/prose-5aacfd032a6bafc3a47cad344dbf4454.eot');
+    src:url('fonts/prose-5aacfd032a6bafc3a47cad344dbf4454.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-5aacfd032a6bafc3a47cad344dbf4454.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -735,25 +735,26 @@ ins {
 .ico.renamed:before { content: "\f11b"; }
 .ico.repos:before { content: "\f11c"; }
 .ico.rubbish:before { content: "\f11d"; }
-.ico.saving:before { content: "\f11e"; }
-.ico.search:before { content: "\f11f"; }
-.ico.sprocket:before { content: "\f120"; }
-.ico.switch:before { content: "\f121"; }
+.ico.save:before { content: "\f11e"; }
+.ico.saving:before { content: "\f11f"; }
+.ico.search:before { content: "\f120"; }
+.ico.sprocket:before { content: "\f121"; }
+.ico.switch:before { content: "\f122"; }
 
 /* Custom Class Names for ico's */
 .ico.gfm:before       { content:'\f10d'; }
 .ico.htmlmixed:before { content:'\f109'; }
 
 .listing .saving,
-.saving .save-action .status:before {
+.saving .action .status:before {
   content:'\f11e';
   color:#d4d7d9;
   }
-.error .save-action .status:before {
+.error .action .status:before {
   content:'\f106';
   color:#db6f6f;
   }
-.saved .save-action .status:before {
+.saved .action .status:before {
   content:'\f103';
   color:#90bb74;
   }
@@ -765,9 +766,9 @@ ins {
   margin:0 10px 15px 0;
   }
 
-  .saving .save-action .status,
-  .error .save-action .status,
-  .saved .save-action .status {
+  .saving .action .status,
+  .error .action .status,
+  .saved .action .status {
     background:#f8f8f8;
     }
   .listing .actions .working {
@@ -792,7 +793,7 @@ ins {
             animation-name:pulsate;
     }
   .listing .actions .saving,
-  .saving .save-action .status {
+  .saving .action .status {
     -webkit-animation-duration:1000ms;
        -moz-animation-duration:1000ms;
          -o-animation-duration:1000ms;
@@ -810,7 +811,7 @@ ins {
          -o-animation-name:spin;
             animation-name:spin;
     }
-  .saved .save-action .status {
+  .saved .action .status {
     -webkit-animation-duration:500ms;
        -moz-animation-duration:500ms;
          -o-animation-duration:500ms;
@@ -828,7 +829,7 @@ ins {
          -o-animation-name:saved;
             animation-name:saved;
     }
-    .saved .save-action .status {
+    .saved .action .status {
       -webkit-animation-fill-mode:both;
          -moz-animation-fill-mode:both;
               animation-fill-mode:both;
@@ -916,7 +917,7 @@ ins {
   }
 
 /* Saving States */
-.save-action .status {
+.action .status {
   background:transparent;
   width:25px;
   height:25px;
@@ -927,7 +928,7 @@ ins {
   -webkit-border-radius:50%;
           border-radius:50%;
   }
-  .heading .save-action .status {
+  .heading .action .status {
     width:30px;
     height:30px;
     line-height:32px;
@@ -935,7 +936,7 @@ ins {
     top:10px;
     left:12px;
     }
-  .save .save-action .status {
+  .save .action .status {
     background:#d4d7d9;
     width:7px;
     height:7px;
@@ -946,16 +947,16 @@ ins {
     -webkit-border-radius:0 4px 0 4px;
             border-radius:0 4px 0 4px;
     }
-    .save .heading .save-action .status {
+    .save .heading .action .status {
       width:10px;
       height:10px;
       }
-    .save .save-action:hover {
+    .save .action:hover {
       -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.25);
               box-shadow:0 1px 1px rgba(0,0,0,0.25);
       }
-      .save .heading .save-action:active .ico,
-      .save .save-action:active {
+      .save .heading .action:active .ico,
+      .save .action:active {
         -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
                 box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
         }
@@ -1222,7 +1223,7 @@ ins {
           border-color:#fff transparent;
           }
 
-.toolbar .save-action {
+.toolbar .action {
   background:#f8f8f8;
   display:block;
   width:40px;
@@ -1232,11 +1233,11 @@ ins {
   display:none;
   position:relative;
   }
-  .toolbar .save-action .ico {
+  .toolbar .action .ico {
     font-size:16px;
     line-height:25px;
     }
-  .fixed .toolbar .save-action {
+  .fixed .toolbar .action {
     display:block;
     }
 
