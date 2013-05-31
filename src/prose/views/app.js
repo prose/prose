@@ -15,7 +15,7 @@ module.exports = Backbone.View.extend({
       'click a.item.removed': 'restoreFile',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
-      'click a.save-action': 'updateFile',
+      'click a.quick-save': 'updateFile',
       'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
@@ -71,7 +71,6 @@ module.exports = Backbone.View.extend({
     render: function(options) {
       var view = this;
       var tmpl = _(window.app.templates.app).template();
-
       var isJekyll = false;
       var errorPage = false;
       var hideInterface = false; // Flag for unauthenticated landing
@@ -324,7 +323,7 @@ module.exports = Backbone.View.extend({
 
       // Pass a popover span to the avatar icon
       $('#heading', this.el).find('.popup').html(label);
-      $('.save-action').find('.popup').html(label);
+      $('.action').find('.popup').html(label);
 
       $(this.el)
         .removeClass('error saving saved save')

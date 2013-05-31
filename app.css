@@ -80,9 +80,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-5aacfd032a6bafc3a47cad344dbf4454.eot');
-    src:url('fonts/prose-5aacfd032a6bafc3a47cad344dbf4454.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-5aacfd032a6bafc3a47cad344dbf4454.woff') format('woff');
+    src:url('fonts/prose-dd889ad62c541ade9eb4cdf92aa0267b.eot');
+    src:url('fonts/prose-dd889ad62c541ade9eb4cdf92aa0267b.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-dd889ad62c541ade9eb4cdf92aa0267b.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -730,12 +730,12 @@ ins {
 .ico.picture:before { content: "\f116"; }
 .ico.private:before { content: "\f117"; }
 .ico.question:before { content: "\f118"; }
-.ico.quote:before { content: "\f119"; }
-.ico.removed:before { content: "\f11a"; }
-.ico.renamed:before { content: "\f11b"; }
-.ico.repos:before { content: "\f11c"; }
-.ico.rubbish:before { content: "\f11d"; }
-.ico.save:before { content: "\f11e"; }
+.ico.quick-save:before { content: "\f119"; }
+.ico.quote:before { content: "\f11a"; }
+.ico.removed:before { content: "\f11b"; }
+.ico.renamed:before { content: "\f11c"; }
+.ico.repos:before { content: "\f11d"; }
+.ico.rubbish:before { content: "\f11e"; }
 .ico.saving:before { content: "\f11f"; }
 .ico.search:before { content: "\f120"; }
 .ico.sprocket:before { content: "\f121"; }
@@ -747,7 +747,7 @@ ins {
 
 .listing .saving,
 .saving .action .status:before {
-  content:'\f11e';
+  content:'\f11f';
   color:#d4d7d9;
   }
 .error .action .status:before {
@@ -951,16 +951,6 @@ ins {
       width:10px;
       height:10px;
       }
-    .save .action:hover {
-      -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.25);
-              box-shadow:0 1px 1px rgba(0,0,0,0.25);
-      }
-      .save .heading .action:active .ico,
-      .save .action:active {
-        -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
-                box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
-        }
-
 
 .heading .icon,
 .listing .icon {

@@ -1,15 +1,15 @@
 <% if (alterable) { %>
-  <a href='#' class='save-action round avatar'>
-    <span class='ico round status'></span>
-
-    <% if (writable) { %>
-      <span class='popup round arrow-left'>Ctrl&nbsp;+&nbsp;S</span>
-    <% } else { %>
-      <span class='popup round arrow-left'>Submit Change</span>
-    <% } %>
-
-    <%= avatar %>
-  </a>
+  <div class='action round avatar'>
+    <div class='popup-hover'>
+      <span class='ico round status'></span>
+      <% if (writable) { %>
+        <span class='popup round arrow-left'>No Changes</span>
+      <% } else { %>
+        <span class='popup round arrow-left'>Changes to Submit</span>
+      <% } %>
+      <%= avatar %>
+    </div>
+  </div>
   <div class='fl details'>
     <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
 

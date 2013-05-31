@@ -300,7 +300,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.trigger('updateSaveState', label, 'save');
 
     // Pass a popover span to the avatar icon
-    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Ctrl&nbsp;+&nbsp;S' : 'Submit Change');
+    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Save' : 'Submit Change');
   },
 
   togglePublishing: function(e) {
@@ -553,8 +553,8 @@ module.exports = Backbone.View.extend({
     var filepath = $('input.filepath').val();
     var filename = _.extractFilename(filepath)[1];
     var filecontent = this.serialize();
-    var $message = $('.commit-message');
 
+    var $message = $('.commit-message');
     var message = $message.val() || $message.attr('placeholder');
     var method = this.model.writable ? this.saveFile : this.sendPatch;
 
