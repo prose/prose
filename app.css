@@ -406,6 +406,8 @@ ins {
 
 .prose img {
   max-width:100%;
+  display:block;
+  margin:0 auto;
   }
 
 .prose a {
@@ -466,7 +468,8 @@ ins {
     }
     .heading .details h4 {
       position:relative;
-      top:2px;
+      top:1px;
+      color:#d4d7d9;
       }
     .heading .details h2 {
       padding:0;
@@ -926,8 +929,8 @@ ins {
     height:30px;
     line-height:32px;
     font-size:27px;
-    top:5px;
-    left:20px;
+    top:10px;
+    left:12px;
     }
   .save .save-action .status {
     background:#d4d7d9;
@@ -2346,8 +2349,10 @@ ins {
   }
 
 /* ------------------------------------------
-  ios and small screen alterations
+  Media Queries
 ---------------------------------------------*/
+
+/* Screen sizes < 1200px --------------------- */
 @media all and (max-width:1200px) {
   .loading {
     background:rgb(255,255,255);
@@ -2404,11 +2409,6 @@ ins {
           background:transparent;
           }
 
-  .toolbar .group li .on:before,
-  .toolbar .group li .on:after {
-    display:none!important;
-    }
-
   .heading {
     padding:20px 15px;
     }
@@ -2423,13 +2423,17 @@ ins {
       }
     .open .fixed .containment,
     .open .limiter {
-      width:60%;
+      width:70%;
       margin:0;
       padding:0;
       }
 
   .content-search {
     border-top:1px solid #d4d7d9;
+    }
+  .meta .finish {
+    -webkit-border-radius:4px;
+            border-radius:4px;
     }
 
       /* Some right alignment adjustments
@@ -2442,15 +2446,38 @@ ins {
         }
 
   .sidebar {
-    width:40%;
+    width:30%;
     }
   }
 
+/* Screen sizes < 800px --------------------- */
 @media all and (max-width:800px) {
   .listing .actions /* Extraneous links in the listings */ {
     display:none!important;
     }
+  .toolbar .group li .on:before,
+  .toolbar .group li .on:after {
+    display:none!important;
+    }
   }
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen
+and (min-device-width:768px)
+and (max-device-width:1024px) {
+
+  /* Disable fixed positioning of the topbar as its wacky for touch */
+  .topbar.fixed {
+    position:relative;
+    }
+  .fixed .containment,
+  .open .fixed .containment {
+    width:100%;
+    }
+  .popup { /* tip messages served on mouse hover */
+    display:none!important;
+    }
+}
 
 /* Smartphones (portrait and landscape) ----------- */
 @media only screen
@@ -2462,7 +2489,7 @@ and (max-device-width:480px) {
     display:none!important;
     }
 
-  /* Disable fixed positioning of the topbar as its wacky on mobile */
+  /* Disable fixed positioning of the topbar as its wacky for touch */
   .topbar.fixed {
     position:relative;
     }
