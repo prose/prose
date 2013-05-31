@@ -554,8 +554,10 @@ module.exports = Backbone.View.extend({
     var filename = _.extractFilename(filepath)[1];
     var filecontent = this.serialize();
     var $message = $('.commit-message');
+    var noVal = 'Updated ' + filename;
+    if (app.state.mode === 'new') noVal = 'Created ' + noVal;
 
-    var message = $message.val() || $message.attr('placeholder');
+    var message = $message.val() || noVal;
     var method = this.model.writable ? this.saveFile : this.sendPatch;
 
     // Update content
