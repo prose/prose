@@ -80,9 +80,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-dd889ad62c541ade9eb4cdf92aa0267b.eot');
-    src:url('fonts/prose-dd889ad62c541ade9eb4cdf92aa0267b.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-dd889ad62c541ade9eb4cdf92aa0267b.woff') format('woff');
+    src:url('fonts/prose-7f6078de0143b45a9fb5f48f0068fa1b.eot');
+    src:url('fonts/prose-7f6078de0143b45a9fb5f48f0068fa1b.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-7f6078de0143b45a9fb5f48f0068fa1b.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -2570,10 +2570,15 @@ and (max-device-width:480px) {
     .heading .details {
       padding-left:55px;
       }
+    .heading .save-action .status {
+      top:5px;
+      left:5px;
+      }
 
   .post .view.meta {
     width:80%;
     }
+    .meta .form-item,
     .meta .form {
       padding:0;
       }
