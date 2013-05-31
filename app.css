@@ -96,10 +96,13 @@ table { border-collapse: collapse; border-spacing:0; }
           box-sizing:border-box;
   }
 
+html,
 body,
 textarea,
 button,
-input { font:13px/20px 'OpenSans', sans-serif; }
+input {
+  font:13px/20px 'OpenSans', sans-serif;
+  }
 
 html, body {
   background:#fff;
@@ -2496,10 +2499,18 @@ and (orientation:portrait) {
 @media only screen
 and (min-device-width:320px)
 and (max-device-width:480px) {
+  html, body {
+  -webkit-text-size-adjust:none;
+          text-size-adjust:none;
+    }
 
   .edit .topbar-wrapper, /* wysiwyg toolbar */
   .popup { /* tip messages served on mouse hover */
     display:none!important;
+    }
+  .post .view .code,
+  .editor {
+    padding:0;
     }
 
   /* Disable fixed positioning of the topbar as its wacky for touch */
