@@ -152,10 +152,11 @@ module.exports = Backbone.View.extend({
     },
 
     preview: function(e) {
+      this.viewing = 'preview';
+
       if ($(e.target).data('jekyll')) {
         this.eventRegister.trigger('preview', e);
       } else {
-        this.viewing = 'preview';
         this.eventRegister.trigger('preview', e);
         // Cancel propagation
         return false;
