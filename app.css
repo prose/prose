@@ -2427,6 +2427,9 @@ ins {
       margin:0;
       padding:0;
       }
+    .sidebar {
+      width:30%;
+      }
 
   .content-search {
     border-top:1px solid #d4d7d9;
@@ -2444,10 +2447,6 @@ ins {
       .post .view {
         padding:15px;
         }
-
-  .sidebar {
-    width:30%;
-    }
   }
 
 /* Screen sizes < 800px --------------------- */
@@ -2476,6 +2475,20 @@ and (max-device-width:1024px) {
     }
   .popup { /* tip messages served on mouse hover */
     display:none!important;
+    }
+}
+
+/* iPads (portrait) ----------- */
+@media only screen
+and (min-device-width:768px)
+and (max-device-width:1024px)
+and (orientation:portrait) {
+  .open .fixed .containment,
+  .open .limiter {
+    width:60%;
+    }
+  .sidebar {
+    width:40%;
     }
 }
 
