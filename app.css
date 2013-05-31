@@ -2348,6 +2348,10 @@ ins {
 
 .mobile-menu {
   margin:15px 0 -15px;
+  }
+
+.mobile-new-file,
+.mobile-menu {
   display:none;
   }
 
@@ -2509,10 +2513,16 @@ and (max-device-width:480px) {
           text-size-adjust:none;
     }
 
+  .vert .nav.project,
   .edit .topbar-wrapper, /* wysiwyg toolbar */
   .popup { /* tip messages served on mouse hover */
     display:none!important;
     }
+  .mobile-new-file,
+  .mobile-menu {
+    display:block;
+    }
+
   .post .view .code,
   .editor {
     padding:0;
@@ -2570,9 +2580,6 @@ and (max-device-width:480px) {
       padding-left:55px;
       }
 
-  .mobile-menu {
-    display:block;
-    }
   .post .view.meta {
     width:80%;
     }
