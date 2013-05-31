@@ -2463,11 +2463,16 @@ ins {
     }
   }
 
-/* iPads (portrait and landscape) ----------- */
+/* iPad (portrait and landscape) ----------- */
 @media only screen
 and (min-device-width:768px)
 and (max-device-width:1024px) {
 
+.markdown .CodeMirror,
+.code .CodeMirror-scroll {
+  font-size:16px;
+  line-height:1.9em
+  }
   /* Disable fixed positioning of the topbar as its wacky for touch */
   .topbar.fixed {
     position:relative;
@@ -2481,7 +2486,7 @@ and (max-device-width:1024px) {
     }
 }
 
-/* iPads (portrait) ----------- */
+/* iPad (portrait) ----------- */
 @media only screen
 and (min-device-width:768px)
 and (max-device-width:1024px)
@@ -2495,7 +2500,7 @@ and (orientation:portrait) {
     }
 }
 
-/* Smartphones (portrait and landscape) ----------- */
+/* Smartphone (portrait and landscape) ----------- */
 @media only screen
 and (min-device-width:320px)
 and (max-device-width:480px) {
@@ -2576,9 +2581,10 @@ and (max-device-width:480px) {
       }
 }
 
+/* Retina Rules ----------------------- */
 @media
-only screen and (-webkit-min-device-pixel-ratio : 2),
-only screen and (min-device-pixel-ratio : 2) {
+only screen and (-webkit-min-device-pixel-ratio:2),
+only screen and (min-device-pixel-ratio:2) {
 
   .icon,
   .chzn-container-single .chzn-single abbr,
