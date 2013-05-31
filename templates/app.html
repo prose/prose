@@ -6,7 +6,7 @@
 <% if (!error) { %>
   <div class='vert clearfix navigation<% if (editMode) { %> editing<% } %>'>
 
-    <% if (!noMenu) { %>
+    <% if (!noMenu && window.authenticated) { %>
       <ul class='mobile-menu nav clearfix'>
         <li>
           <a href='#' class='toggle ico menu round'></a>
