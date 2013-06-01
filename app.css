@@ -573,27 +573,32 @@ ins {
   background:#fff;
   border-left:1px solid #D4D7D9;
   -webkit-box-shadow:0 1px 0 rgba(255,255,255,0),
-                     0 0 10px rgba(0,0,0,0.1);
+                     -10px 0 10px -10px rgba(0,0,0,0.1);
           box-shadow:0 1px 0 rgba(255,255,255,0),
-                     0 0 10px rgba(0,0,0,0.1);
+                     -10px 0 10px -10px rgba(0,0,0,0.1);
   }
 
 .vert {
   background:#fff;
-  border-left:1px solid #d4d7d9;
   position:fixed;
   right:0;top:0;
   z-index:5000;
   width:60px;
   height:100%;
   }
-.vert .nav.project {
+  .open .vert {
+    border-left:1px solid #d4d7d9;
+    }
+
+.vert ul {
   margin:15px 0 0;
-  padding-bottom:15px;
+  padding-bottom:10px;
   }
 
 .vert .nav.auth {
   position:absolute;
+  margin:0
+  padding:0;
   bottom:5px;
   }
 .vert .nav li a {
@@ -1567,7 +1572,7 @@ ins {
     right:0;
     z-index:1000;
     min-width:120px;
-    padding:8px 0;
+    padding:0 0 15px;
     text-align:left;
     display:none;
     }
@@ -2392,9 +2397,10 @@ ins {
       position:static;
       width:auto;
       float:left;
+      padding:8px 0;
       }
       .prose-menu .dropdown li {
-        float:right;
+        float:left;
         }
       .prose-menu .dropdown .divider {
         display:none;
@@ -2544,6 +2550,9 @@ and (max-device-width:480px) {
     -webkit-box-shadow:none;
             box-shadow:none;
     }
+    .vert {
+      border-left:1px solid #D4D7D9;
+      }
     .open .sidebar {
       right:-100%;
       }

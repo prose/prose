@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
       'click .post-views .preview': 'preview',
       'click .post-views .settings': 'settings',
       'click .post-views .meta': 'meta',
-      'click .auth .logout': 'logout',
+      'click .logout': 'logout',
       'click a.item.removed': 'restoreFile',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',

@@ -13,15 +13,15 @@
         </li>
       </ul>
     <% } %>
-    <ul class='project nav clearfix'>
-      <% if (repo && window.authenticated) { %>
+    <% if (repo && window.authenticated) { %>
+      <ul class='project nav clearfix'>
         <li>
           <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='ico round new new-file'>
             <span class='popup round arrow-right'>New File</span>
           </a>
         </li>
-      <% } %>
-    </ul>
+      </ul>
+    <% } %>
 
     <% if (editMode) { %>
     <ul class='post-views nav clearfix'>
@@ -61,13 +61,7 @@
     <% } %>
 
     <ul class='auth nav clearfix'>
-      <% if (window.authenticated) { %>
-      <li>
-        <a href='#' class='ico round switch logout'>
-          <span class='popup round arrow-right'>Logout <%= app.username %></span>
-        </a>
-      </li>
-      <% } else { %>
+      <% if (!window.authenticated) { %>
       <li>
       <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>
           <span class='popup round arrow-right'>Authorize with GitHub</span>
@@ -93,10 +87,13 @@
   <div class='inner clearfix'>
     <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>
     <ul class='dropdown clearfix'>
+      <li><a href='#'>Prose v1</a></li>
       <li><a class='about' href='./#about'>About</a></li>
       <li><a class='help' href='https://github.com/prose/prose'>Developers</a></li>
-      <li class='divider'></li>
-      <li><a href='#'>Prose v1</a></li>
+      <% if (window.authenticated) { %>
+        <li class='divider'></li>
+        <li><a href='#' class='logout'>Logout</a></li>
+      <% } %>
     </ul>
   </div>
 </div>
