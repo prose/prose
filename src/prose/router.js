@@ -165,6 +165,26 @@ module.exports = Backbone.Router.extend({
         data.markdown = _.markdown(data.file);
         data.lang = _.mode(data.file);
 
+        var url = require('url');
+        var url_parts = url.parse(path, true);
+        var query = url_parts.query;
+
+        if(query.filename){
+          data.file = query.filename;
+        }else if(query.metadata && query.metadata.title){
+          var file = new Date().format('Y-m-d-');
+          file += query.metadata.title.replace(/\W/ig, "-").replace(/--+/g, "/").substring(0,100);
+          if(!file.match(/\.\w+$/))
+            file += ".md"
+          data.file = file;
+        }
+
+        if(query.content)
+          data.content = query.content;
+
+        if(query.metadata)
+          data.metadata = query.metadata
+
         this.application.render({
           jekyll: data.jekyll
         });

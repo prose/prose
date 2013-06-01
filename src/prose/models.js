@@ -55,6 +55,8 @@ module.exports = {
   // -------
 
   authenticate: function() {
+    if(oauth.token)
+      cookie.set("oauth-token", oauth.token);
     if (cookie.get('oauth-token')) return window.authenticated = true;
     var match = window.location.href.match(/\?code=([a-z0-9]*)/);
 
