@@ -80,9 +80,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-7f6078de0143b45a9fb5f48f0068fa1b.eot');
-    src:url('fonts/prose-7f6078de0143b45a9fb5f48f0068fa1b.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-7f6078de0143b45a9fb5f48f0068fa1b.woff') format('woff');
+    src:url('fonts/prose-80081ddd6bb627b0784ec9094fabb857.eot');
+    src:url('fonts/prose-80081ddd6bb627b0784ec9094fabb857.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-80081ddd6bb627b0784ec9094fabb857.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
