@@ -165,10 +165,15 @@ module.exports = Backbone.Router.extend({
         data.markdown = _.markdown(data.file);
         data.lang = _.mode(data.file);
 
-        var url = require('url');
-        var url_parts = url.parse(path, true);
-        var query = url_parts.query;
 
+        // node's url library is full of fail
+        var href = window.location.href;
+        var query = href.slice(href.indexOf("?") + 1);
+        
+        var querystring = require('querystring');
+        querystring.unescape = function(qs, ds){ return decodeUri(qs); };
+        query = querystring.parse(query);
+        
         if(query.filename){
           data.file = query.filename;
         }else if(query.metadata && query.metadata.title){
@@ -178,10 +183,10 @@ module.exports = Backbone.Router.extend({
             file += ".md"
           data.file = file;
         }
-
+        
         if(query.content)
           data.content = query.content;
-
+        
         if(query.metadata)
           data.metadata = query.metadata
 
