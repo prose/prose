@@ -151,7 +151,7 @@ module.exports = Backbone.View.extend({
       translate: this.data.translate
     };
 
-    this.eventRegister.trigger('headerContext', this.header);
+    this.eventRegister.trigger('headerContext', this.header, true);
   },
 
   edit: function(e) {
@@ -300,7 +300,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.trigger('updateSaveState', label, 'save');
 
     // Pass a popover span to the avatar icon
-    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Ctrl&nbsp;+&nbsp;S' : 'Submit Change');
+    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Save' : 'Submit Change');
   },
 
   togglePublishing: function(e) {
@@ -555,7 +555,7 @@ module.exports = Backbone.View.extend({
     var filecontent = this.serialize();
     var $message = $('.commit-message');
     var noVal = 'Updated ' + filename;
-    if (app.state.mode === 'new') noVal = 'Created ' + noVal;
+    if (app.state.mode === 'new') noVal = 'Created ' + filename;
 
     var message = $message.val() || noVal;
     var method = this.model.writable ? this.saveFile : this.sendPatch;

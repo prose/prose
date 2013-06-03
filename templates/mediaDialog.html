@@ -1,14 +1,5 @@
 <div class='inner clearfix'>
 
-  <% if (assetsDirectory) { %>
-    <div class='col fl'>
-      <label>Choose Existing</label>
-      <div class='media-listing'>
-        <ul id='media'></ul>
-      </div>
-    </div>
-  <% } %>
-
   <div <% if (assetsDirectory) { %>class='col fl'<% } %>>
     <label>Insert Image</label>
 
@@ -25,4 +16,11 @@
     <input type='text' name='alt' placeholder='Alt text (optional)' />
     <a href='#' class='button round insert' data-type='media'>Insert</a>
   </div>
+
+  <% if (assetsDirectory) { %>
+    <div class='col col-last fl media-listing'>
+      <label>Choose Existing</label>
+      <ul id='media'></ul>
+    </div>
+  <% } %>
 </div>
