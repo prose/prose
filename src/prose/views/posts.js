@@ -120,6 +120,7 @@ module.exports = Backbone.View.extend({
           branch: data.branch,
           path: f.path,
           filename: _.filename(f.name) || 'Untitled',
+          file: f.path.match(/[^\/]*$/)[0],
           name: f.name,
           user: data.user
         }));
