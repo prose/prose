@@ -402,7 +402,8 @@ module.exports = Backbone.View.extend({
   },
 
   serialize: function() {
-    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata);
+    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata).trim();
+    debugger;
 
     if (this.model.jekyll) {
       return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
@@ -795,7 +796,7 @@ module.exports = Backbone.View.extend({
     }
 
     function getRaw() {
-      return jsyaml.dump(getValue());
+      return jsyaml.dump(getValue()).trim();
     }
 
     function setValue(data) {
