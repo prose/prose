@@ -660,7 +660,17 @@ module.exports = Backbone.View.extend({
               $metadataEditor.append(tmpl({
                 name: data.name,
                 label: data.field.label,
-                value: data.field.value
+                value: data.field.value,
+                type: 'text'
+              }));
+              break;
+            case 'number':
+              tmpl = _(window.app.templates.text).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                type: 'number'
               }));
               break;
             case 'select':
@@ -723,13 +733,15 @@ module.exports = Backbone.View.extend({
       metadata.published = $('.publish-flag').attr('data-state');
 
       _.each($metadataEditor.find('[name]'), function(item) {
-        var value = $(item).val();
+        var $item = $(item);
+        var value = $item.val();
 
         switch (item.type) {
           case 'select-multiple':
           case 'select-one':
           case 'text':
             if (value) {
+              value = $item.data('type') === 'number' ? Number(value) : value;
               if (metadata.hasOwnProperty(item.name)) {
                 metadata[item.name] = _.union(metadata[item.name], value);
               } else {
