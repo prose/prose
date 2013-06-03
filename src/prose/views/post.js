@@ -308,11 +308,13 @@ module.exports = Backbone.View.extend({
 
     if ($target.hasClass('published')) {
       $target
+        .empty()
         .html('Unpublish<span class="ico checkmark"></span>')
         .removeClass('published')
         .attr('data-state', false);
     } else {
       $target
+        .empty()
         .html('Publish<span class="ico checkmark"></span>')
         .addClass('published')
         .attr('data-state', true);
@@ -552,8 +554,10 @@ module.exports = Backbone.View.extend({
     var filename = _.extractFilename(filepath)[1];
     var filecontent = this.serialize();
     var $message = $('.commit-message');
+    var noVal = 'Updated ' + filename;
+    if (app.state.mode === 'new') noVal = 'Created ' + noVal;
 
-    var message = $message.val() || $message.attr('placeholder');
+    var message = $message.val() || noVal;
     var method = this.model.writable ? this.saveFile : this.sendPatch;
 
     // Update content
