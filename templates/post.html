@@ -18,7 +18,7 @@
             <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico checkmark'></span></a>
           <% } %>
           <div class='options clearfix'>
-            <a href='#' class='save-action round fl'>
+            <span href='#' class='action round fl'>
               <span class='ico status'></span>
 
               <% if (writable) { %>
@@ -28,7 +28,7 @@
               <% } %>
 
               <%= avatar %>
-            </a>
+            </span>
             <% if (markdown) { %>
               <ul class='group round clearfix'>
                 <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print("# Heading\n\n") %>'>h1</a></li>

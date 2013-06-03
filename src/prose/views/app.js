@@ -11,14 +11,15 @@ module.exports = Backbone.View.extend({
       'click .post-views .preview': 'preview',
       'click .post-views .settings': 'settings',
       'click .post-views .meta': 'meta',
-      'click .auth .logout': 'logout',
+      'click .logout': 'logout',
       'click a.item.removed': 'restoreFile',
       'click a.save': 'save',
       'click a.save.confirm': 'updateFile',
-      'click a.save-action': 'updateFile',
+      'click a.quick-save': 'updateFile',
       'click a.cancel': 'cancelSave',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
+      'click .mobile-menu .toggle': 'toggleMobileClass',
       'focus input.filepath': 'checkPlaceholder',
       'keypress input.filepath': 'saveFilePath'
     },
@@ -68,14 +69,17 @@ module.exports = Backbone.View.extend({
     },
 
     render: function(options) {
+      var view = this;
       var tmpl = _(window.app.templates.app).template();
       var isJekyll = false;
       var errorPage = false;
-      var hideInterface = false;
+      var hideInterface = false; // Flag for unauthenticated landing
+      this.noMenu = false; // Prevents a mobile toggle from appearing when nto required.
 
       if (options) {
         if (options.hideInterface) hideInterface = options.hideInterface;
         if (options.jekyll) isJekyll = options.jekyll;
+        if (options.noMenu) this.noMenu = options.noMenu;
         if (options.error) errorPage = options.error;
       }
 
@@ -88,6 +92,7 @@ module.exports = Backbone.View.extend({
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
         jekyll: isJekyll,
         error: errorPage,
+        noMenu: view.noMenu,
         lang: (app.state.file) ? _.mode(app.state.file) : undefined
       })));
 
@@ -95,22 +100,33 @@ module.exports = Backbone.View.extend({
       // Fix this in re-factor, could be much tighter
       if (app.state.mode === 'tree') {
         $('#prose').toggleClass('open', true);
+        $('#prose').toggleClass('mobile', false);
       } else if (app.state.mode === '' && window.authenticated && app.state.user !== '') {
         $('#prose').toggleClass('open', true);
+        $('#prose').toggleClass('mobile', false);
       } else {
-        $('#prose').toggleClass('open', false);
+        $('#prose').toggleClass('open mobile', false);
       }
 
       return this;
+    },
+
+    toggleMobileClass: function(e) {
+      $(e.target).toggleClass('active');
+      $(this.el).toggleClass('mobile');
+      return false;
     },
 
     documentTitle: function(title) {
       document.title = title + ' · Prose';
     },
 
-    headerContext: function(data) {
+    headerContext: function(data, alterable) {
+      var view = this;
       var heading = _(window.app.templates.heading).template();
-      $('#heading').empty().append(heading(data));
+      $('#heading').empty().append(heading(_.extend(data, {
+        alterable: alterable ? true : false
+      })));
     },
 
     filenameInput: function() {
@@ -177,11 +193,11 @@ module.exports = Backbone.View.extend({
       if ($(e.target, this.el).hasClass('active')) {
         $navItems.removeClass('active');
         $('.navigation .' + this.viewing, this.el).addClass('active');
-        $('#prose').toggleClass('open', false);
+        $('#prose').toggleClass('open mobile', false);
       } else {
         $navItems.removeClass('active');
         $(e.target, this.el).addClass('active');
-        $('#prose').toggleClass('open', true);
+        $('#prose').toggleClass('open mobile', true);
       }
 
       return false;
@@ -196,7 +212,7 @@ module.exports = Backbone.View.extend({
         $('.post-views .edit', this.el).addClass('active');
       }
 
-      $('#prose').toggleClass('open', false);
+      $('#prose').toggleClass('open mobile', false);
     },
 
     restoreFile: function(e) {
@@ -308,7 +324,7 @@ module.exports = Backbone.View.extend({
 
       // Pass a popover span to the avatar icon
       $('#heading', this.el).find('.popup').html(label);
-      $('.save-action').find('.popup').html(label);
+      $('.action').find('.popup').html(label);
 
       $(this.el)
         .removeClass('error saving saved save')
