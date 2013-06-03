@@ -16,7 +16,7 @@
   <% }); %>
 </div>
 
-<div class='col prose small'>
+<div class='col col-last prose small'>
   <% _(help).each(function(mainMenu, index) { %>
     <% _(mainMenu.content).each(function(d, i) { %>
     <div class='help-content inner help-<%= _.formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>
