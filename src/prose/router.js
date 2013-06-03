@@ -190,7 +190,7 @@ module.exports = Backbone.Router.extend({
           data.content = query.content;
         
         if(query.metadata)
-          data.metadata = query.metadata
+          data.metadata = query.metadata;
 
         this.application.render({
           jekyll: data.jekyll
