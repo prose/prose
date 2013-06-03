@@ -2482,6 +2482,7 @@ and (max-device-width:1024px) {
   .open .fixed .containment {
     width:100%;
     }
+  .details .mask,
   .popup { /* tip messages served on mouse hover */
     display:none!important;
     }
@@ -2510,6 +2511,7 @@ and (max-device-width:480px) {
           text-size-adjust:none;
     }
 
+  .details .mask,
   .vert .nav.project,
   .edit .topbar-wrapper, /* wysiwyg toolbar */
   .popup { /* tip messages served on mouse hover */
