@@ -2579,7 +2579,7 @@ and (max-device-width:480px) {
     .heading .details {
       padding-left:55px;
       }
-    .heading .save-action .status {
+    .heading .action .status {
       top:5px;
       left:5px;
       }
