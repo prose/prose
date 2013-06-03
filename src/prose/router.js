@@ -137,7 +137,7 @@ module.exports = Backbone.Router.extend({
     url = _.extractURL(path);
 
     // path should not have querystring
-    var trimmed_path = url.path.slice(0, url.path.indexOf("?"));
+    var trimmed_path = url.path.indexOf("?") > 0 ? url.path.slice(0, url.path.indexOf("?")) : url.path;
     if (url.mode === 'tree') {
       this.repoBranch(user, repo, url.branch, trimmed_path);
     } else if (url.mode === 'new') {
