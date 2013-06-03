@@ -706,7 +706,8 @@ module.exports = Backbone.View.extend({
           $metadataEditor.append(tmpl({
             name: key,
             label: key,
-            value: data
+            value: data,
+            type: 'text'
           }));
         }
       });
@@ -916,7 +917,8 @@ module.exports = Backbone.View.extend({
           $metadataEditor.append(tmpl({
             name: key,
             label: value,
-            value: value
+            value: value,
+            type: 'text'
           }));
           break;
         case 'object':
