@@ -771,7 +771,7 @@ module.exports = {
         jekyll: hasMetadata
       };
 
-      res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
+      res.content = content.replace(/^(---\n)((.|\n)*?)---\n?/, function (match, dashes, frontmatter) {
         try {
           res.metadata = jsyaml.load(frontmatter);
           res.metadata.published = published(frontmatter);
