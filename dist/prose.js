@@ -9811,7 +9811,7 @@ Liquid.Block.prototype.renderAll = function(list, context) {
     try { // hmmm... feels a little heavy
       output = ( token['render'] ) ? token.render(context) : token;
     } catch(e) {
-      return context.handleError(e);
+      
       console.log(context.handleError(e));
     }
     return output;
@@ -9844,7 +9844,7 @@ Liquid.Block.prototype.unknownTag = function(tag, params, tokens) {
   }
 };
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-var templates = {"app":"<%\n  var editMode = false;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner'>\n    <a href='/' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown'>\n      <li><a class='about' href='./#about'>About</a></li>\n      <li><a class='help' href='https://github.com/prose/prose'>Developers</a></li>\n      <li class='divider'></li>\n      <li><a href='#'>Prose v1.0.0</a></li>\n    </ul>\n  </div>\n</div>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<% if (!error) { %>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<% if (!error) { %>\n  <div class='vert navigation<% if (editMode) { %> editing<% } %>'>\n    <ul class='project nav'>\n      <li>\n        <a href='#' class='ico round repos <% if (!mode) { %>active<% } %>'>\n          <span class='popup round arrow-right'>Explore Projects</span>\n        </a>\n      </li>\n      <% if (repo) { %>\n        <li>\n        <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='ico round folder <% if (mode === \"tree\") { %>active<% } %>'>\n            <span class='popup round arrow-right'><%= repo %></span>\n          </a>\n        </li>\n        <% if (window.authenticated) { %>\n          <li>\n            <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n              <span class='popup round arrow-right'>New File</span>\n            </a>\n          </li>\n        <% } %>\n      <% } %>\n    </ul>\n\n    <% if (editMode) { %>\n    <ul class='post-views nav'>\n      <li>\n        <a href='#' class='ico round pencil edit' data-state='edit'>\n          <span class='popup round arrow-right'>Edit</span>\n        </a>\n      </li>\n      <% if (markdown || mode === 'new') { %>\n        <li>\n          <a href='#' class='ico round eye preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n            <span class='popup round arrow-right'>Preview</span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (window.authenticated) { %>\n        <% if (jekyll && lang !== 'yaml') { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'>Meta Data</span>\n          </a>\n        </li>\n        <% } %>\n      <li>\n        <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n          <span class='popup round arrow-right'>Post Settings</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n    <% } %>\n\n    <ul class='auth nav'>\n      <% if (window.authenticated) { %>\n      <li>\n        <a href='#' class='ico round switch logout'>\n          <span class='popup round arrow-right'>Logout <%= app.username %></span>\n        </a>\n      </li>\n      <% } else { %>\n      <li>\n      <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n          <span class='popup round arrow-right'>Authorize with GitHub</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n  </div>\n<% } %>\n","asset":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (_.isMedia(path)) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon fl round folder'></span>\n    <span class='details fl'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='fl'>\n      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n    </a>\n  <% } %>\n\n  <div class='fl details'>\n    <div class='actions fr clearfix'>\n      <% if (!isBinary) { %>\n        <a class='clearfix'\n          title='Edit this File'\n          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n          Edit\n        </a>\n      <% } %>\n      <% if (window.authenticated && writePermissions) { %>\n        <a\n          class='delete'\n          title='Delete this File'\n          data-user='<%= user %>'\n          data-repo='<%= repo %>'\n          data-branch='<%= branch %>'\n          data-file='<%= name %>'\n          href='#'>\n          <span class='ico rubbish small'></span>\n        </a>\n      <% } %>\n    </div>\n    <% if (isBinary) { %>\n      <h3 class='title' title='<%= name %>'><%= name %></h3>\n    <% } else { %>\n        <% if (extension === 'md') { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <a href='#' class='avatar save-action round fl'>\n    <span class='ico status'></span>\n\n    <% if (writable) { %>\n      <span class='popup round arrow-left'>Ctrl&nbsp;+&nbsp;S</span>\n    <% } else { %>\n      <span class='popup round arrow-left'>Submit Change</span>\n    <% } %>\n\n    <%= avatar %>\n  </a>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n\n    <% if (app.state.mode === 'new' && !translate) { %>\n      <input type='text' class='filepath' placeholder='<%= title %>'>\n    <% } else { %>\n      <input type='text' class='filepath' value='<%= title %>'>\n    <% } %>\n\n    <div class='mask'></div>\n  </div>\n\n<% } else { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","helpDialog":"<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= _.formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= _.formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= _.formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","hidden":"<input type='hidden' name='<%= name %>' value='<%= value %>' />\n","linkDialog":"<div class='inner'>\n  <label>Insert Link</label>\n  <input type='text' name='href' placeholder='Link URL' />\n  <input type='text' name='text' placeholder='Link Name' />\n  <input type='text' name='title' placeholder='Title (optional)' />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder='Insert a local link' class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'>Insert Link</a>\n</div>\n","loading":"<div class='loading clearfix'>\n  <div class='loading-icon'></div>\n  <small><%= message %></small>\n</div>\n","mediaDialog":"<div class='inner clearfix'>\n\n  <% if (assetsDirectory) { %>\n    <div class='col fl'>\n      <label>Choose Existing</label>\n      <div class='media-listing'>\n        <ul id='media'></ul>\n      </div>\n    </div>\n  <% } %>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label>Insert Image</label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        Upload images by dragging &amp; dropping, or<br />\n        <input id='upload' class='upload' type='file' />\n        <a>selecting one</a>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder='Image URL' />\n    <input type='text' name='alt' placeholder='Alt text (optional)' />\n    <a href='#' class='button round insert' data-type='media'>Insert</a>\n  </div>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p>Please login with your GitHub account to access that project.</p>\n      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Authorize with GitHub</a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= key %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'>Create it</a></p>\n      <% } %>\n\n      <% if (key === 'error') { %>\n        <p><a class='button round' href='#'>Back to Main Page</a></p>\n      <% } else { %>\n        <p><a class='button round' href='<%= previous %>'>Go back</a></p>\n      <% } %>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'></div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n      <a href='#' class='button round finish'>\n        Back to <% if (app.state.mode === 'new') { %>New Post<% } else { %><%= app.state.mode %><% } %>\n      </a>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar'>\n        <div class='containment toolbar round'>\n          <% if (jekyll && metadata.published) { %>\n            <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico checkmark'></span></a>\n          <% } else if (jekyll && !metadata.published) { %>\n            <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico checkmark'></span></a>\n          <% } %>\n          <div class='options clearfix'>\n            <a href='#' class='save-action round fl'>\n              <span class='ico status'></span>\n\n              <% if (writable) { %>\n                <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>\n              <% } else { %>\n                <span class='popup round arrow-top'>Submit Change</span>\n              <% } %>\n\n              <%= avatar %>\n            </a>\n            <% if (markdown) { %>\n              <ul class='group round clearfix'>\n                <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"# Heading\\n\\n\") %>'>h1</a></li>\n                <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"## Sub Heading\\n\\n\") %>'>h2</a></li>\n              </ul>\n              <ul class='group round clearfix'>\n                <li>\n                  <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>\n                    <span class='ico small link'></span>\n                  </a>\n                </li>\n                <li>\n                  <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>\n                    <span class='ico small picture'></span>\n                  </a>\n                </li>\n              </ul>\n              <ul class='group round clearfix'>\n                <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>\n                <li>\n                  <a data-key='italic' href='#' title='Italic' data-snippet='__'>\n                    <span class='ico small italic'></span>\n                  </a>\n                </li>\n              </ul>\n              <ul class='group round clearfix'>\n                <li>\n                  <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n                    <span class='ico small quote'></span>\n                  </a>\n                </li>\n                <li>\n                  <a href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n                    <span class='ico small list'></span>\n                  </a>\n                </li>\n                <li>\n                  <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n                    <span class='ico small numbered-list'></span>\n                  </a>\n                </li>\n              </ul>\n              <ul class='group round clearfix'>\n                <li>\n                  <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>\n                    <span class='ico small question'></span>\n                  </a>\n                </li>\n              </ul>\n            <% } %>\n          </div>\n          <div id='dialog'></div>\n        </div>\n      </div>\n    </div>\n    <div id='code' class='code round inner'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter Files' />\n    </div>\n  </div>\n</div>\n\n<div class='listing'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter projects' />\n    </div>\n  </div>\n</div>\n\n<ul id='projects' class='projects listing'></ul>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      class='fl'\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (fork && private) { %>\n        <span class='icon round repo private fork' title='Forked from another project'></span>\n      <% } else if (fork) { %>\n        <span class='icon round repo fork' title='Forked from another project'></span>\n      <% } else if (private) { %>\n        <span class='icon round repo private'></span>\n      <% } else { %>\n        <span class='icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details fl'>\n      <div class='actions fr clearfix'>\n        <a\n          data-user='<%= owner.login %>'\n          data-repo='<%= name %>'\n          href='#<%= owner.login %>/<%= name %>'>\n          View Project\n        </a>\n        <% if (homepage) { %>\n          <a href='<%= homepage %>'>View Site</a>\n        <% } %>\n      </div>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Post Settings</h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <h2 class='label'>Describe you changes</h2>\n      <textarea class='commit-message' placeholder></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-right'>Cancel</span>\n      </a>\n    </div>\n\n    <a class='save button round' href='#'>\n      <%= writable ? 'Save' : 'Submit Change' %>\n    </a>\n\n    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (app.state.mode !== 'new' && writable) { %>\n      <a class='delete button round' href='#'>Delete this File</a>\n    <% } %>\n  </div>\n<% } %>\n\n<% if (permalink) { %>\n  <div class='inner'>\n    <h2 class='label'>Permalink</h2>\n    <input class='permalink' type='text' value='<%= permalink %>' readonly />\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'>Switch Branch</h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n<% if (window.authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'>Most Recent History</h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username];\n          var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                Restore?\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n","start":"<% if (!window.authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='#about'>Learn more</a></p>\n      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo,user,gist'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' />\n</div>\n","upgrade":"<div class='start'>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose requires features not available to your browser</p>\n      <a class='round button' href='https://www.google.com/intl/en/chrome/browser'>Download a Modern Browser</a>\n    </div>\n  </div>\n</div>\n"}; module.exports = templates;
+var templates = {"app":"<%\n  var editMode = false;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner'>\n    <a href='/' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown'>\n      <li><a class='about' href='./#about'>About</a></li>\n      <li><a class='help' href='https://github.com/prose/prose'>Developers</a></li>\n      <li class='divider'></li>\n      <li><a href='#'>Prose v1.0.0</a></li>\n    </ul>\n  </div>\n</div>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<% if (!error) { %>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<% if (!error) { %>\n  <div class='vert navigation<% if (editMode) { %> editing<% } %>'>\n    <ul class='project nav'>\n      <li>\n        <a href='#' class='ico round repos <% if (!mode) { %>active<% } %>'>\n          <span class='popup round arrow-right'>Explore Projects</span>\n        </a>\n      </li>\n      <% if (repo) { %>\n        <li>\n        <a href='#<%= user %>/<%= repo %>/tree/<%= branch %>' class='ico round folder <% if (mode === \"tree\") { %>active<% } %>'>\n            <span class='popup round arrow-right'><%= repo %></span>\n          </a>\n        </li>\n        <% if (window.authenticated) { %>\n          <li>\n            <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n              <span class='popup round arrow-right'>New File</span>\n            </a>\n          </li>\n        <% } %>\n      <% } %>\n    </ul>\n\n    <% if (editMode) { %>\n    <ul class='post-views nav'>\n      <li>\n        <a href='#' class='ico round pencil edit' data-state='edit'>\n          <span class='popup round arrow-right'>Edit</span>\n        </a>\n      </li>\n      <% if (markdown || mode === 'new') { %>\n        <li>\n          <a href='#' class='ico round eye preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n            <span class='popup round arrow-right'>Preview</span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (window.authenticated) { %>\n        <% if (jekyll && lang !== 'yaml') { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'>Meta Data</span>\n          </a>\n        </li>\n        <% } %>\n      <li>\n        <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n          <span class='popup round arrow-right'>Post Settings</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n    <% } %>\n\n    <ul class='auth nav'>\n      <% if (window.authenticated) { %>\n      <li>\n        <a href='#' class='ico round switch logout'>\n          <span class='popup round arrow-right'>Logout <%= app.username %></span>\n        </a>\n      </li>\n      <% } else { %>\n      <li>\n      <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo,user,gist&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n          <span class='popup round arrow-right'>Authorize with GitHub</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n  </div>\n<% } %>\n","asset":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (_.isMedia(path)) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon fl round folder'></span>\n    <span class='details fl'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='fl'>\n      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n    </a>\n  <% } %>\n\n  <div class='fl details'>\n    <div class='actions fr clearfix'>\n      <% if (!isBinary) { %>\n        <a class='clearfix'\n          title='Edit this File'\n          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n          Edit\n        </a>\n      <% } %>\n      <% if (window.authenticated && writePermissions) { %>\n        <a\n          class='delete'\n          title='Delete this File'\n          data-user='<%= user %>'\n          data-repo='<%= repo %>'\n          data-branch='<%= branch %>'\n          data-file='<%= path %>'\n          href='#'>\n          <span class='ico rubbish small'></span>\n        </a>\n      <% } %>\n    </div>\n    <% if (isBinary) { %>\n      <h3 class='title' title='<%= name %>'><%= name %></h3>\n    <% } else { %>\n        <% if (extension === 'md') { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <a href='#' class='avatar save-action round fl'>\n    <span class='ico status'></span>\n\n    <% if (writable) { %>\n      <span class='popup round arrow-left'>Ctrl&nbsp;+&nbsp;S</span>\n    <% } else { %>\n      <span class='popup round arrow-left'>Submit Change</span>\n    <% } %>\n\n    <%= avatar %>\n  </a>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n\n    <% if (app.state.mode === 'new' && !translate) { %>\n      <input type='text' class='filepath' placeholder='<%= title %>'>\n    <% } else { %>\n      <input type='text' class='filepath' value='<%= title %>'>\n    <% } %>\n\n    <div class='mask'></div>\n  </div>\n\n<% } else { %>\n  <div class='avatar round fl'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","helpDialog":"<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= _.formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= _.formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= _.formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","hidden":"<input type='hidden' name='<%= name %>' value='<%= value %>' />\n","linkDialog":"<div class='inner'>\n  <label>Insert Link</label>\n  <input type='text' name='href' placeholder='Link URL' />\n  <input type='text' name='text' placeholder='Link Name' />\n  <input type='text' name='title' placeholder='Title (optional)' />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder='Insert a local link' class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'>Insert Link</a>\n</div>\n","loading":"<div class='loading clearfix'>\n  <div class='loading-icon'></div>\n  <small><%= message %></small>\n</div>\n","mediaDialog":"<div class='inner clearfix'>\n\n  <% if (assetsDirectory) { %>\n    <div class='col fl'>\n      <label>Choose Existing</label>\n      <div class='media-listing'>\n        <ul id='media'></ul>\n      </div>\n    </div>\n  <% } %>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label>Insert Image</label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        Upload images by dragging &amp; dropping, or<br />\n        <input id='upload' class='upload' type='file' />\n        <a>selecting one</a>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder='Image URL' />\n    <input type='text' name='alt' placeholder='Alt text (optional)' />\n    <a href='#' class='button round insert' data-type='media'>Insert</a>\n  </div>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p>Please login with your GitHub account to access that project.</p>\n      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Authorize with GitHub</a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= key %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'>Create it</a></p>\n      <% } %>\n\n      <% if (key === 'error') { %>\n        <p><a class='button round' href='#'>Back to Main Page</a></p>\n      <% } else { %>\n        <p><a class='button round' href='<%= previous %>'>Go back</a></p>\n      <% } %>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'></div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n      <a href='#' class='button round finish'>\n        Back to <% if (app.state.mode === 'new') { %>New Post<% } else { %><%= app.state.mode %><% } %>\n      </a>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar'>\n        <div class='containment toolbar round'>\n          <% if (jekyll && metadata.published) { %>\n            <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico checkmark'></span></a>\n          <% } else if (jekyll && !metadata.published) { %>\n            <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico checkmark'></span></a>\n          <% } %>\n          <div class='options clearfix'>\n            <a href='#' class='save-action round fl'>\n              <span class='ico status'></span>\n\n              <% if (writable) { %>\n                <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>\n              <% } else { %>\n                <span class='popup round arrow-top'>Submit Change</span>\n              <% } %>\n\n              <%= avatar %>\n            </a>\n            <% if (markdown) { %>\n              <ul class='group round clearfix'>\n                <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"# Heading\\n\\n\") %>'>h1</a></li>\n                <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"## Sub Heading\\n\\n\") %>'>h2</a></li>\n              </ul>\n              <ul class='group round clearfix'>\n                <li>\n                  <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>\n                    <span class='ico small link'></span>\n                  </a>\n                </li>\n                <li>\n                  <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>\n                    <span class='ico small picture'></span>\n                  </a>\n                </li>\n              </ul>\n              <ul class='group round clearfix'>\n                <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>\n                <li>\n                  <a data-key='italic' href='#' title='Italic' data-snippet='__'>\n                    <span class='ico small italic'></span>\n                  </a>\n                </li>\n              </ul>\n              <ul class='group round clearfix'>\n                <li>\n                  <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n                    <span class='ico small quote'></span>\n                  </a>\n                </li>\n                <li>\n                  <a href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n                    <span class='ico small list'></span>\n                  </a>\n                </li>\n                <li>\n                  <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n                    <span class='ico small numbered-list'></span>\n                  </a>\n                </li>\n              </ul>\n              <ul class='group round clearfix'>\n                <li>\n                  <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>\n                    <span class='ico small question'></span>\n                  </a>\n                </li>\n              </ul>\n            <% } %>\n          </div>\n          <div id='dialog'></div>\n        </div>\n      </div>\n    </div>\n    <div id='code' class='code round inner'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter Files' />\n    </div>\n  </div>\n</div>\n\n<div class='listing'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter projects' />\n    </div>\n  </div>\n</div>\n\n<ul id='projects' class='projects listing'></ul>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      class='fl'\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (fork && private) { %>\n        <span class='icon round repo private fork' title='Forked from another project'></span>\n      <% } else if (fork) { %>\n        <span class='icon round repo fork' title='Forked from another project'></span>\n      <% } else if (private) { %>\n        <span class='icon round repo private'></span>\n      <% } else { %>\n        <span class='icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details fl'>\n      <div class='actions fr clearfix'>\n        <a\n          data-user='<%= owner.login %>'\n          data-repo='<%= name %>'\n          href='#<%= owner.login %>/<%= name %>'>\n          View Project\n        </a>\n        <% if (homepage) { %>\n          <a href='<%= homepage %>'>View Site</a>\n        <% } %>\n      </div>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Post Settings</h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <h2 class='label'>Describe you changes</h2>\n      <textarea class='commit-message' placeholder></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-right'>Cancel</span>\n      </a>\n    </div>\n\n    <a class='save button round' href='#'>\n      <%= writable ? 'Save' : 'Submit Change' %>\n    </a>\n\n    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (app.state.mode !== 'new' && writable) { %>\n      <a class='delete button round' href='#'>Delete this File</a>\n    <% } %>\n  </div>\n<% } %>\n\n<% if (permalink) { %>\n  <div class='inner'>\n    <h2 class='label'>Permalink</h2>\n    <input class='permalink' type='text' value='<%= permalink %>' readonly />\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'>Switch Branch</h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n<% if (window.authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'>Most Recent History</h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username];\n          var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                Restore?\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n","start":"<% if (!window.authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='#about'>Learn more</a></p>\n      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo,user,gist'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' />\n</div>\n","upgrade":"<div class='start'>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose requires features not available to your browser</p>\n      <a class='round button' href='https://www.google.com/intl/en/chrome/browser'>Download a Modern Browser</a>\n    </div>\n  </div>\n</div>\n"}; module.exports = templates;
 },{}],2:[function(require,module,exports){
 module.exports={
   "api": "https://api.github.com",
@@ -9854,135 +9854,6 @@ module.exports={
 }
 
 },{}],3:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-window.app = {
-    config: {},
-    models: require('./models'),
-    views: {
-      App: require('./views/app'),
-      Notification: require('./views/notification'),
-      Start: require('./views/start'),
-      Preview: require('./views/preview'),
-      Profile: require('./views/profile'),
-      Posts: require('./views/posts'),
-      Post: require('./views/post'),
-      Documentation: require('./views/documentation')
-    },
-    templates: require('../../dist/templates'),
-    router: require('./router'),
-    utils: {},
-    state: {'repo': ''},
-    instance: {},
-    eventRegister: _.extend({}, Backbone.Events)
-};
-
-// Bootup
-// test the browser supports CORS and return a boolean for an oauth token.
-if ('withCredentials' in new XMLHttpRequest() && app.models.authenticate()) {
-  app.models.loadApplication(function(err, data) {
-    if (err) {
-      var view = new window.app.views.Notification({
-        'type': 'error',
-        'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
-      }).render();
-
-      $('#prose').empty().append(view.el);
-    } else {
-
-      // Initialize router
-      window.router = new app.router({
-        model: data
-      });
-
-      // Start responding to routes
-      Backbone.history.start();
-    }
-  });
-} else {
-  // Display an upgrade notice.
-  var tmpl = _(window.app.templates.upgrade).template();
-
-  _.defer(function() {
-    $('#prose').empty().append(tmpl);
-  });
-}
-
-},{"./models":4,"./views/app":5,"./views/notification":6,"./views/start":7,"./views/preview":8,"./views/profile":9,"./views/posts":10,"./views/post":11,"./views/documentation":12,"../../dist/templates":1,"./router":13,"jquery-browserify":14,"underscore":15,"backbone":16}],17:[function(require,module,exports){
-function tryParse(obj) {
-  try {
-    return JSON.parse(obj);
-  } catch(e) {}
-
-  return obj;
-}
-
-function tryStringify(obj) {
-  if (typeof obj !== 'object' || !JSON.stringify) return obj;
-  return JSON.stringify(obj);
-}
-
-var cookie = {};
-
-cookie.set = function(name, value, expires, path, domain) {
-  var pair = escape(name) + '=' + escape(tryStringify(value));
-
-  if (!!expires) {
-    if (expires.constructor === Number) pair += ';max-age=' + expires;
-    else if (expires.constructor === String) pair += ';expires=' + expires;
-    else if (expires.constructor === Date)  pair += ';expires=' + expires.toUTCString();
-  }
-
-  pair += ';path=' + ((!!path) ? path : '/');
-  if(!!domain) pair += ';domain=' + domain;
-
-  document.cookie = pair;
-  return cookie;
-};
-
-cookie.setObject = function(object, expire, path, domain) {
-  for(var key in object) cookie.set(key, object[key], expires, path, domain);
-  return cookie;
-};
-
-cookie.get = function(name) {
-  var obj = cookie.getObject();
-  return obj[name];
-};
-
-cookie.getObject = function() {
-  var pairs = document.cookie.split(/;\s?/i);
-  var object = {};
-  var pair;
-
-  for (var i in pairs) {
-    if (typeof pairs[i] === 'string') {
-      pair = pairs[i].split('=');
-      if (pair.length <= 1) continue;
-      object[unescape(pair[0])] = tryParse(unescape(pair[1]));
-    }
-  }
-
-  return object;
-};
-
-cookie.unset = function(name) {
-  var date = new Date(0);
-  document.cookie = name + '=; expires=' + date.toUTCString();
-  return cookie;
-};
-
-cookie.clear = function() {
-  var obj = cookie.getObject();
-  for(var key in obj) cookie.unset(key);
-  return object;
-};
-
-module.exports = cookie;
-
-},{}],18:[function(require,module,exports){
 module.exports = {
   help: [
     {
@@ -10049,7 +9920,64 @@ module.exports = {
   ]
 }
 
-},{}],19:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+window.app = {
+    config: {},
+    models: require('./models'),
+    views: {
+      App: require('./views/app'),
+      Notification: require('./views/notification'),
+      Start: require('./views/start'),
+      Preview: require('./views/preview'),
+      Profile: require('./views/profile'),
+      Posts: require('./views/posts'),
+      Post: require('./views/post'),
+      Documentation: require('./views/documentation')
+    },
+    templates: require('../../dist/templates'),
+    router: require('./router'),
+    utils: {},
+    state: {'repo': ''},
+    instance: {},
+    eventRegister: _.extend({}, Backbone.Events)
+};
+
+// Bootup
+// test the browser supports CORS and return a boolean for an oauth token.
+if ('withCredentials' in new XMLHttpRequest() && app.models.authenticate()) {
+  app.models.loadApplication(function(err, data) {
+    if (err) {
+      var view = new window.app.views.Notification({
+        'type': 'error',
+        'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
+      }).render();
+
+      $('#prose').empty().append(view.el);
+    } else {
+
+      // Initialize router
+      window.router = new app.router({
+        model: data
+      });
+
+      // Start responding to routes
+      Backbone.history.start();
+    }
+  });
+} else {
+  // Display an upgrade notice.
+  var tmpl = _(window.app.templates.upgrade).template();
+
+  _.defer(function() {
+    $('#prose').empty().append(tmpl);
+  });
+}
+
+},{"./models":5,"./views/app":6,"./views/notification":7,"./views/start":8,"./views/preview":9,"./views/profile":10,"./views/posts":11,"./views/post":12,"./views/documentation":13,"../../dist/templates":1,"./router":14,"underscore":15,"backbone":16,"jquery-browserify":17}],18:[function(require,module,exports){
 module.exports = {
   dragEnter: function(e, $el) {
     $el.addClass('drag-over');
@@ -11347,7 +11275,79 @@ module.exports = {
 }).call(this);
 
 })()
-},{}],14:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
+function tryParse(obj) {
+  try {
+    return JSON.parse(obj);
+  } catch(e) {}
+
+  return obj;
+}
+
+function tryStringify(obj) {
+  if (typeof obj !== 'object' || !JSON.stringify) return obj;
+  return JSON.stringify(obj);
+}
+
+var cookie = {};
+
+cookie.set = function(name, value, expires, path, domain) {
+  var pair = escape(name) + '=' + escape(tryStringify(value));
+
+  if (!!expires) {
+    if (expires.constructor === Number) pair += ';max-age=' + expires;
+    else if (expires.constructor === String) pair += ';expires=' + expires;
+    else if (expires.constructor === Date)  pair += ';expires=' + expires.toUTCString();
+  }
+
+  pair += ';path=' + ((!!path) ? path : '/');
+  if(!!domain) pair += ';domain=' + domain;
+
+  document.cookie = pair;
+  return cookie;
+};
+
+cookie.setObject = function(object, expire, path, domain) {
+  for(var key in object) cookie.set(key, object[key], expires, path, domain);
+  return cookie;
+};
+
+cookie.get = function(name) {
+  var obj = cookie.getObject();
+  return obj[name];
+};
+
+cookie.getObject = function() {
+  var pairs = document.cookie.split(/;\s?/i);
+  var object = {};
+  var pair;
+
+  for (var i in pairs) {
+    if (typeof pairs[i] === 'string') {
+      pair = pairs[i].split('=');
+      if (pair.length <= 1) continue;
+      object[unescape(pair[0])] = tryParse(unescape(pair[1]));
+    }
+  }
+
+  return object;
+};
+
+cookie.unset = function(name) {
+  var date = new Date(0);
+  document.cookie = name + '=; expires=' + date.toUTCString();
+  return cookie;
+};
+
+cookie.clear = function() {
+  var obj = cookie.getObject();
+  for(var key in obj) cookie.unset(key);
+  return object;
+};
+
+module.exports = cookie;
+
+},{}],17:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -20682,7 +20682,7 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -20988,7 +20988,7 @@ module.exports = Backbone.Router.extend({
   }
 });
 
-},{"./util":20,"jquery-browserify":14,"underscore":15,"backbone":16}],5:[function(require,module,exports){
+},{"./util":20,"jquery-browserify":17,"underscore":15,"backbone":16}],6:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21143,10 +21143,11 @@ module.exports = Backbone.View.extend({
     },
 
     preview: function(e) {
+      this.viewing = 'preview';
+
       if ($(e.target).data('jekyll')) {
         this.eventRegister.trigger('preview', e);
       } else {
-        this.viewing = 'preview';
         this.eventRegister.trigger('preview', e);
         // Cancel propagation
         return false;
@@ -21324,7 +21325,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":14,"underscore":15,"backbone":16}],6:[function(require,module,exports){
+},{".././util":20,"jquery-browserify":17,"underscore":15,"backbone":16}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21386,146 +21387,7 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{"jquery-browserify":14,"underscore":15,"backbone":16}],7:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  id: 'start',
-  className: 'start',
-
-  render: function() {
-    var tmpl = _(window.app.templates.start).template();
-    $(this.el).empty().append(tmpl(this.model));
-    return this;
-  }
-});
-
-},{"jquery-browserify":14,"underscore":15,"backbone":16}],9:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-    id: 'profile',
-
-    events: {
-      'mouseover .item': 'activeListing',
-      'mouseover .item a': 'parentActiveListing',
-      'keyup #filter': 'search'
-    },
-
-    render: function () {
-      var data = this.model;
-      this.eventRegister = app.eventRegister;
-
-      // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'remove');
-      this.eventRegister.bind('remove', this.remove);
-
-      var header = {
-          avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
-          parent: data.user.name || data.user.login,
-          parentUrl: data.user.login,
-          title: 'Explore Projects',
-          titleUrl: data.user.login,
-          alterable: false
-      };
-
-      this.eventRegister.trigger('documentTitle', app.state.user);
-      this.eventRegister.trigger('headerContext', header);
-
-      var tmpl = _(window.app.templates.profile).template();
-      var sidebar = _(window.app.templates.sidebarOrganizations).template();
-
-      $(this.el).empty().append(tmpl(data));
-      this.renderResults();
-
-      $('#drawer')
-        .empty()
-        .append(sidebar(data));
-
-      _.delay(function () {
-        utils.fixedScroll($('.topbar'));
-        $('#filter').focus();
-      }, 1);
-
-      // Cache to perform autocompletion on it
-      this.cache = this.model;
-
-      return this;
-    },
-
-    search: function(e) {
-      // If this is the ESC key
-      if (e.which === 27) {
-        _.delay(_.bind(function () {
-          $('#filter', this.el).val('');
-          this.model = window.app.models.filterProjects(this.cache, '');
-          this.renderResults();
-        }, this), 10);
-      } else if (e.which === 40 && $('.item').length > 0) {
-          utils.pageListing('down'); // Arrow Down
-          e.preventDefault();
-          e.stopPropagation();
-          $('#filter').blur();
-      } else {
-        _.delay(_.bind(function () {
-          var searchstr = $('#filter', this.el).val();
-          this.model = window.app.models.filterProjects(this.cache, searchstr);
-          this.renderResults();
-        }, this), 10);
-      }
-    },
-
-    activeListing: function (e) {
-      if ($(e.target, this.el).hasClass('item')) {
-        $listings = $('.item', this.el);
-        $listing = $(e.target, this.el);
-
-        $listings.removeClass('active');
-        $listing.addClass('active');
-
-        // Blur out search if its selected
-        $('#filter').blur();
-      }
-    },
-
-    parentActiveListing: function (e) {
-      $listings = $('.item', this.el);
-      $listing = $(e.target, this.el).closest('li');
-
-      $listings.removeClass('active');
-      $listing.addClass('active');
-
-      // Blur out search if its selected
-      $('#filter').blur();
-    },
-
-    renderResults: function () {
-      var tmpl = _(window.app.templates.projects).template();
-      var repos;
-      var $projects = $('#projects', this.el);
-          $projects.empty();
-
-      // Flatten the listing if app.username === state.user
-      if (this.model.title === app.username) {
-        repos = _(this.model.owners).flatten();
-      } else {
-        repos = this.model.repos;
-      }
-
-      _(repos).each(function(r, i) {
-        $projects.append(tmpl(_.extend(r, {
-          index: i
-        })));
-      });
-    }
-});
-
-},{".././util":20,"jquery-browserify":14,"underscore":15,"backbone":16}],8:[function(require,module,exports){
+},{"jquery-browserify":17,"underscore":15,"backbone":16}],9:[function(require,module,exports){
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
@@ -21555,221 +21417,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"underscore":15,"backbone":16,"js-yaml":21}],10:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-
-  id: 'posts',
-
-  events: {
-    'mouseover .item': 'activeListing',
-    'mouseover .item a': 'parentActiveListing',
-    'click .delete': 'deleteFile',
-    'keyup #filter': 'search'
-  },
-
-  render: function () {
-    var that = this;
-    var jailed;
-
-    // Pass a check to template whether we should
-    // stagger the output of a breadcrumb trail
-    if (app.state.config && app.state.config.prose && app.state.config.prose.rooturl) {
-      jailed = app.state.config.prose.rooturl;
-    }
-
-    var data = _.extend(this.model, app.state, {
-      currentPath: app.state.path,
-      jailed: jailed
-    });
-
-    // If this repo is writable to the current user we use
-    // this check to provide a deletion option to the user
-    this.writePermissions = this.model.permissions && this.model.permissions.push;
-
-    this.eventRegister = app.eventRegister;
-
-    // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'remove');
-    this.eventRegister.bind('remove', this.remove);
-
-    var isPrivate = app.state.isPrivate ? ' private' : '';
-    var header = {
-      avatar: '<span class="icon round repo' + isPrivate +  '"></span>',
-      parent: data.user,
-      parentUrl: data.user,
-      title: data.repo,
-      titleUrl: data.user + '/' + data.repo,
-      alterable: false
-    };
-
-    var pathTitle = (app.state.path) ? '/' + app.state.path : '';
-    this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
-
-    this.eventRegister.trigger('sidebarContext', app.state);
-    this.eventRegister.trigger('headerContext', header);
-
-    var tmpl = _(app.templates.posts).template();
-    $(this.el).empty().append(tmpl(data));
-
-    _.delay(function () {
-      that.renderResults();
-      $('#filter').focus();
-      utils.fixedScroll($('.topbar'));
-    }, 1);
-
-    return this;
-  },
-
-  search: function (e) {
-    if (e.which === 27) { // ESC
-      _.delay(_.bind(function () {
-        $('#filter', this.el).val('');
-        this.model = app.models.getFiles(this.model.tree, app.state.path, '');
-        this.renderResults();
-      }, this), 10);
-    } else if (e.which === 40 && $('.item').length > 0) {
-        utils.pageListing('down'); // Arrow Down
-        e.preventDefault();
-        e.stopPropagation();
-        $('#filter').blur();
-    } else {
-      _.delay(_.bind(function () {
-        var searchstr = $('#filter', this.el).val();
-        this.model = app.models.getFiles(this.model.tree, app.state.path, searchstr);
-        this.renderResults();
-      }, this), 10);
-    }
-  },
-
-  renderResults: function () {
-    var view = this;
-    var files = _(app.templates.files).template();
-    var directories = _(app.templates.directories).template();
-    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
-    var $files = $('#files', this.el);
-    $files.empty();
-
-    _(this.model.files).each(function(f, i) {
-      // Directories ..
-      if (f.type === 'tree') {
-        $files.append(directories({
-          index: i,
-          user: data.user,
-          repo: data.repo,
-          path: (f.path) ? '/' + f.path : '',
-          branch: data.branch,
-          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
-        }));
-      } else {
-        // Files ..
-        $files.append(files({
-          index: i,
-          extension: _.extension(f.path),
-          isBinary: _.isBinary(_.extension(f.path)),
-          isMedia: _.isMedia(_.extension(f.path)),
-          writePermissions: view.writePermissions,
-          repo: data.repo,
-          branch: data.branch,
-          path: f.path,
-          filename: _.filename(f.name) || 'Untitled',
-          name: f.name,
-          user: data.user
-        }));
-      }
-    });
-  },
-
-  // Creates human readable versions of _posts/paths
-  semantifyPaths: function (paths) {
-    return _.map(paths, function (path) {
-      return {
-        path: path,
-        name: path
-      };
-    });
-  },
-
-  activeListing: function (e) {
-    if ($(e.target, this.el).hasClass('item')) {
-      $listings = $('.item', this.el);
-      $listing = $(e.target, this.el);
-
-      $listings.removeClass('active');
-      $listing.addClass('active');
-
-      // Blur out search if its selected
-      $('#filter').blur();
-    }
-  },
-
-  parentActiveListing: function (e) {
-    $listings = $('.item', this.el);
-    $listing = $(e.target, this.el).closest('li');
-
-    $listings.removeClass('active');
-    $listing.addClass('active');
-
-    // Blur out search if its selected
-    $('#filter').blur();
-  },
-
-  deleteFile: function(e) {
-    var $file = $(e.target, this.el).closest('a');
-    var $ico = $file.find('.ico');
-
-    var file = {
-      user: $file.data('user'),
-      repo: $file.data('repo'),
-      branch: $file.data('branch'),
-      fileName: $file.data('file')
-    };
-
-    if (confirm('Are you sure you want to delete this file?')) {
-      $file.addClass('working');
-      $ico.addClass('saving');
-
-      // Change the icon to a spinning one
-      app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
-
-        if (err) {
-          $file
-            .removeClass('working')
-            .attr('title', 'Error. Try again in 30 Seconds')
-            .addClass('error');
-
-          $ico.removeClass('rubbish saving');
-          return;
-        }
-
-        // On Success
-        $file.closest('.item').fadeOut('fast');
-
-        // Capture the filename and make sure the enty
-        // does not exist in the model object
-        for (var i = 0; i < this.model.tree.length; i++) {
-          if (this.model.tree[i] && this.model.tree[i].name === file.fileName) {
-            delete this.model.tree[i];
-          }
-        }
-
-        // TODO Bring this back in. Currently hitting githubs api this fast
-        // does not return an updated file listing.
-        // router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
-      }, this));
-    }
-
-    return false;
-  }
-});
-
-},{".././util":20,"jquery-browserify":14,"underscore":15,"js-yaml":21,"backbone":16,"keymaster":22}],4:[function(require,module,exports){
+},{"underscore":15,"js-yaml":21,"backbone":16}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -22668,7 +22316,360 @@ module.exports = {
   }
 };
 
-},{"../../oauth.json":2,"./cookie":17,"../libs/github":23,"jquery-browserify":14,"underscore":15,"js-yaml":21,"queue-async":24}],16:[function(require,module,exports){
+},{"../../oauth.json":2,"./cookie":19,"../libs/github":22,"jquery-browserify":17,"underscore":15,"js-yaml":21,"queue-async":23}],11:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+
+  id: 'posts',
+
+  events: {
+    'mouseover .item': 'activeListing',
+    'mouseover .item a': 'parentActiveListing',
+    'click .delete': 'deleteFile',
+    'keyup #filter': 'search'
+  },
+
+  render: function () {
+    var that = this;
+    var jailed;
+
+    // Pass a check to template whether we should
+    // stagger the output of a breadcrumb trail
+    if (app.state.config && app.state.config.prose && app.state.config.prose.rooturl) {
+      jailed = app.state.config.prose.rooturl;
+    }
+
+    var data = _.extend(this.model, app.state, {
+      currentPath: app.state.path,
+      jailed: jailed
+    });
+
+    // If this repo is writable to the current user we use
+    // this check to provide a deletion option to the user
+    this.writePermissions = this.model.permissions && this.model.permissions.push;
+
+    this.eventRegister = app.eventRegister;
+
+    // Listen for button clicks from the vertical nav
+    _.bindAll(this, 'remove');
+    this.eventRegister.bind('remove', this.remove);
+
+    var isPrivate = app.state.isPrivate ? ' private' : '';
+    var header = {
+      avatar: '<span class="icon round repo' + isPrivate +  '"></span>',
+      parent: data.user,
+      parentUrl: data.user,
+      title: data.repo,
+      titleUrl: data.user + '/' + data.repo,
+      alterable: false
+    };
+
+    var pathTitle = (app.state.path) ? '/' + app.state.path : '';
+    this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
+
+    this.eventRegister.trigger('sidebarContext', app.state);
+    this.eventRegister.trigger('headerContext', header);
+
+    var tmpl = _(app.templates.posts).template();
+    $(this.el).empty().append(tmpl(data));
+
+    _.delay(function () {
+      that.renderResults();
+      $('#filter').focus();
+      utils.fixedScroll($('.topbar'));
+    }, 1);
+
+    return this;
+  },
+
+  search: function (e) {
+    if (e.which === 27) { // ESC
+      _.delay(_.bind(function () {
+        $('#filter', this.el).val('');
+        this.model = app.models.getFiles(this.model.tree, app.state.path, '');
+        this.renderResults();
+      }, this), 10);
+    } else if (e.which === 40 && $('.item').length > 0) {
+        utils.pageListing('down'); // Arrow Down
+        e.preventDefault();
+        e.stopPropagation();
+        $('#filter').blur();
+    } else {
+      _.delay(_.bind(function () {
+        var searchstr = $('#filter', this.el).val();
+        this.model = app.models.getFiles(this.model.tree, app.state.path, searchstr);
+        this.renderResults();
+      }, this), 10);
+    }
+  },
+
+  renderResults: function () {
+    var view = this;
+    var files = _(app.templates.files).template();
+    var directories = _(app.templates.directories).template();
+    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
+    var $files = $('#files', this.el);
+    $files.empty();
+
+    _(this.model.files).each(function(f, i) {
+      // Directories ..
+      if (f.type === 'tree') {
+        $files.append(directories({
+          index: i,
+          user: data.user,
+          repo: data.repo,
+          path: (f.path) ? '/' + f.path : '',
+          branch: data.branch,
+          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
+        }));
+      } else {
+        // Files ..
+        $files.append(files({
+          index: i,
+          extension: _.extension(f.path),
+          isBinary: _.isBinary(_.extension(f.path)),
+          isMedia: _.isMedia(_.extension(f.path)),
+          writePermissions: view.writePermissions,
+          repo: data.repo,
+          branch: data.branch,
+          path: f.path,
+          filename: _.filename(f.name) || 'Untitled',
+          name: f.name,
+          user: data.user
+        }));
+      }
+    });
+  },
+
+  // Creates human readable versions of _posts/paths
+  semantifyPaths: function (paths) {
+    return _.map(paths, function (path) {
+      return {
+        path: path,
+        name: path
+      };
+    });
+  },
+
+  activeListing: function (e) {
+    if ($(e.target, this.el).hasClass('item')) {
+      $listings = $('.item', this.el);
+      $listing = $(e.target, this.el);
+
+      $listings.removeClass('active');
+      $listing.addClass('active');
+
+      // Blur out search if its selected
+      $('#filter').blur();
+    }
+  },
+
+  parentActiveListing: function (e) {
+    $listings = $('.item', this.el);
+    $listing = $(e.target, this.el).closest('li');
+
+    $listings.removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    $('#filter').blur();
+  },
+
+  deleteFile: function(e) {
+    var $file = $(e.target, this.el).closest('a');
+    var $ico = $file.find('.ico');
+
+    var file = {
+      user: $file.data('user'),
+      repo: $file.data('repo'),
+      branch: $file.data('branch'),
+      fileName: $file.data('file')
+    };
+
+    if (confirm('Are you sure you want to delete this file?')) {
+      $file.addClass('working');
+      $ico.addClass('saving');
+
+      // Change the icon to a spinning one
+      app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
+
+        if (err) {
+          $file
+            .removeClass('working')
+            .attr('title', 'Error. Try again in 30 Seconds')
+            .addClass('error');
+
+          $ico.removeClass('rubbish saving');
+          return;
+        }
+
+        // On Success
+        $file.closest('.item').fadeOut('fast');
+
+        // Capture the filename and make sure the enty
+        // does not exist in the model object
+        for (var i = 0; i < this.model.tree.length; i++) {
+          if (this.model.tree[i] && this.model.tree[i].name === file.fileName) {
+            delete this.model.tree[i];
+          }
+        }
+
+        // TODO Bring this back in. Currently hitting githubs api this fast
+        // does not return an updated file listing.
+        // router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
+      }, this));
+    }
+
+    return false;
+  }
+});
+
+},{".././util":20,"jquery-browserify":17,"underscore":15,"js-yaml":21,"keymaster":24,"backbone":16}],10:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+    id: 'profile',
+
+    events: {
+      'mouseover .item': 'activeListing',
+      'mouseover .item a': 'parentActiveListing',
+      'keyup #filter': 'search'
+    },
+
+    render: function () {
+      var data = this.model;
+      this.eventRegister = app.eventRegister;
+
+      // Listen for button clicks from the vertical nav
+       _.bindAll(this, 'remove');
+      this.eventRegister.bind('remove', this.remove);
+
+      var header = {
+          avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
+          parent: data.user.name || data.user.login,
+          parentUrl: data.user.login,
+          title: 'Explore Projects',
+          titleUrl: data.user.login,
+          alterable: false
+      };
+
+      this.eventRegister.trigger('documentTitle', app.state.user);
+      this.eventRegister.trigger('headerContext', header);
+
+      var tmpl = _(window.app.templates.profile).template();
+      var sidebar = _(window.app.templates.sidebarOrganizations).template();
+
+      $(this.el).empty().append(tmpl(data));
+      this.renderResults();
+
+      $('#drawer')
+        .empty()
+        .append(sidebar(data));
+
+      _.delay(function () {
+        utils.fixedScroll($('.topbar'));
+        $('#filter').focus();
+      }, 1);
+
+      // Cache to perform autocompletion on it
+      this.cache = this.model;
+
+      return this;
+    },
+
+    search: function(e) {
+      // If this is the ESC key
+      if (e.which === 27) {
+        _.delay(_.bind(function () {
+          $('#filter', this.el).val('');
+          this.model = window.app.models.filterProjects(this.cache, '');
+          this.renderResults();
+        }, this), 10);
+      } else if (e.which === 40 && $('.item').length > 0) {
+          utils.pageListing('down'); // Arrow Down
+          e.preventDefault();
+          e.stopPropagation();
+          $('#filter').blur();
+      } else {
+        _.delay(_.bind(function () {
+          var searchstr = $('#filter', this.el).val();
+          this.model = window.app.models.filterProjects(this.cache, searchstr);
+          this.renderResults();
+        }, this), 10);
+      }
+    },
+
+    activeListing: function (e) {
+      if ($(e.target, this.el).hasClass('item')) {
+        $listings = $('.item', this.el);
+        $listing = $(e.target, this.el);
+
+        $listings.removeClass('active');
+        $listing.addClass('active');
+
+        // Blur out search if its selected
+        $('#filter').blur();
+      }
+    },
+
+    parentActiveListing: function (e) {
+      $listings = $('.item', this.el);
+      $listing = $(e.target, this.el).closest('li');
+
+      $listings.removeClass('active');
+      $listing.addClass('active');
+
+      // Blur out search if its selected
+      $('#filter').blur();
+    },
+
+    renderResults: function () {
+      var tmpl = _(window.app.templates.projects).template();
+      var repos;
+      var $projects = $('#projects', this.el);
+          $projects.empty();
+
+      // Flatten the listing if app.username === state.user
+      if (this.model.title === app.username) {
+        repos = _(this.model.owners).flatten();
+      } else {
+        repos = this.model.repos;
+      }
+
+      _(repos).each(function(r, i) {
+        $projects.append(tmpl(_.extend(r, {
+          index: i
+        })));
+      });
+    }
+});
+
+},{".././util":20,"underscore":15,"jquery-browserify":17,"backbone":16}],8:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  id: 'start',
+  className: 'start',
+
+  render: function() {
+    var tmpl = _(window.app.templates.start).template();
+    $(this.el).empty().append(tmpl(this.model));
+    return this;
+  }
+});
+
+},{"jquery-browserify":17,"underscore":15,"backbone":16}],16:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -24242,7 +24243,1552 @@ module.exports = {
 }).call(this);
 
 })()
-},{"underscore":15}],22:[function(require,module,exports){
+},{"underscore":15}],12:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var marked = require('marked');
+var diff = require('diff');
+var Backbone = require('backbone');
+var utils = require('.././util');
+var upload = require('.././upload');
+var cookie = require('.././cookie');
+var toolbar = require('.././toolbar/markdown.js');
+
+module.exports = Backbone.View.extend({
+
+  id: 'post',
+  className: 'post',
+
+  events: {
+    'click .group a': 'markdownSnippet',
+    'click .dialog .insert': 'dialogInsert',
+    'click .save-action': 'updateFile',
+    'click .publish-flag': 'togglePublishing',
+    'click .meta .finish': 'backToMode',
+    'change #upload': 'fileInput',
+    'change .meta input': 'makeDirty'
+  },
+
+  initialize: function() {
+    this.prevFile = this.serialize();
+    this.config = {};
+    this.recentlyUploadedFiles = [];
+
+    if (app.state.config && app.state.config.prose) {
+      this.config.siteurl = app.state.config.prose.siteurl || false;
+      this.config.relativeLinks = app.state.config.prose.relativeLinks || false;
+      this.config.media = app.state.config.prose.media || false;
+    }
+
+    this.newFile = (app.state.mode === 'new') ? true : false;
+
+    // Stash editor and metadataEditor content to sessionStorage on pagehide event
+    // Always run stashFile in context of view
+    $(window).on('pagehide', _.bind(this.stashFile, this));
+  },
+
+  render: function() {
+    var view = this;
+
+    // Link Dialog
+    if (app.state.markdown && this.config.relativeLinks) {
+      $.ajax({
+        cache: true,
+        dataType: 'jsonp',
+        jsonp: false,
+        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
+        url: this.config.relativeLinks,
+        success: function(links) {
+          view.relativeLinks = links;
+        }
+      });
+    }
+
+    // Assets Listing for the Media Dialog
+    if (app.state.markdown && this.config.media) {
+      this.assetsDirectory = this.config.media;
+      app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
+        view.assets = data.files;
+      });
+    }
+
+    this.data = _.extend(this.model, {
+      mode: app.state.mode,
+      preview: this.model.markdown ? marked(this.compilePreview(this.model.content)) : '',
+      metadata: this.model.metadata
+    });
+
+    this.eventRegister = app.eventRegister;
+
+    // Listen for button clicks from the vertical nav
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove');
+    this.eventRegister.bind('edit', this.edit);
+    this.eventRegister.bind('preview', this.preview);
+    this.eventRegister.bind('deleteFile', this.deleteFile);
+    this.eventRegister.bind('save', this.save);
+    this.eventRegister.bind('updateFile', this.updateFile);
+    this.eventRegister.bind('translate', this.translate);
+    this.eventRegister.bind('meta', this.meta);
+    this.eventRegister.bind('remove', this.remove);
+
+    // Add a permalink to the sidebar is `siteurl` exists in configuration.
+    this.data.permalink = false;
+    if (this.config.siteurl) {
+        this.data.permalink = this.config.siteurl + '/' + this.data.path + '/' + this.data.file;
+    }
+
+    this.eventRegister.trigger('sidebarContext', this.data);
+    this.renderHeading();
+
+    var tmpl = _(window.app.templates.post).template();
+
+    $(this.el).empty().append(tmpl(_.extend(this.model, {
+      mode: app.state.mode,
+      metadata: this.model.metadata,
+      avatar: this.header.avatar
+    })));
+
+    if (this.model.markdown && app.state.mode === 'blob') {
+      this.preview();
+    } else {
+      // Editor is first up so trigger an active class for it
+      $('#edit', this.el).toggleClass('active', true);
+      $('.post-views .edit').addClass('active');
+
+      this.initEditor();
+      _.delay(function() {
+        utils.fixedScroll($('.topbar', view.el));
+      }, 1);
+    }
+
+    this.updateDocumentTitle();
+
+    // Prevent exit when there are unsaved changes
+    window.onbeforeunload = function() {
+      if (app.state.file && view.dirty) return 'You have unsaved changes. Are you sure you want to leave?';
+    };
+
+    return this;
+  },
+
+  updateDocumentTitle: function() {
+    var context = 'Editing ';
+    var pathTitle = (app.state.path) ? app.state.path : '';
+
+    if (app.state.mode === 'blob') context = 'Previewing ';
+    this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+  },
+
+  renderHeading: function() {
+    // Render heading
+    var isPrivate = app.state.isPrivate ? true : false;
+    var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
+
+    this.header = {
+      avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
+      parentTrail: parentTrail,
+      isPrivate: isPrivate,
+      title: _.filepath(this.data.path, this.data.file),
+      writable: this.model.writable,
+      alterable: true,
+      translate: this.data.translate
+    };
+
+    this.eventRegister.trigger('headerContext', this.header);
+  },
+
+  edit: function(e) {
+    var view = this;
+    // If preview was hit on load this.editor
+    // was not initialized.
+    if (!this.editor) {
+      this.initEditor();
+      _.delay(function() {
+        utils.fixedScroll($('.topbar', view.el));
+      }, 1);
+    }
+
+    app.state.mode = this.newFile ? 'new' : 'edit';
+    this.updateURL();
+
+    $('.post-views a').removeClass('active');
+    $('.post-views .edit').addClass('active');
+    $('#prose').toggleClass('open', false);
+
+    $('.views .view', this.el).removeClass('active');
+    $('#edit', this.el).addClass('active');
+
+    return false;
+  },
+
+  preview: function(e) {
+    $('#prose').toggleClass('open', false);
+    if (this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
+      var hash = window.location.hash.split('/');
+      hash[2] = 'preview';
+      if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
+        hash.push(_($('input.filepath').val().split('/')).last());
+      }
+      this.stashFile();
+
+      $(e.currentTarget).attr({
+        target: '_blank',
+        href: hash.join('/')
+      });
+      return true;
+    } else {
+      if (e) e.preventDefault();
+
+      // Vertical Nav
+      $('.post-views a').removeClass('active');
+      $('.post-views .preview').addClass('active');
+
+      // Content Window
+      $('.views .view', this.el).removeClass('active');
+      $('#preview', this.el).addClass('active').html(marked(this.compilePreview(this.model.content)));
+
+      app.state.mode = 'blob';
+      this.updateURL();
+    }
+  },
+
+  compilePreview: function(content) {
+    // Scan the content search for ![]()
+    // grab the path and file and form a RAW github aboslute request for it
+    var scan = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
+    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
+    var titleAttribute = /".*?"/;
+
+    // Build an array of found images
+    var result = content.match(scan);
+
+    // Iterate over the results and replace
+    _(result).each(function(r) {
+        var parts = (image).exec(r);
+
+        if (parts !== null) {
+          var path = parts[2];
+
+          if (!_.absolutePath(path)) {
+            // Remove any title attribute in the image tag is there is one.
+            if (titleAttribute.test(path)) {
+              path = path.split(titleAttribute)[0];
+            }
+
+            var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path;
+            if (app.state.isPrivate) {
+              // append auth param
+              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
+            }
+
+            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+          }
+        }
+    });
+
+    return content;
+  },
+
+  meta: function() {
+    $('#prose').toggleClass('open', false);
+
+    // Vertical Nav
+    $('.post-views a').removeClass('active');
+    $('.post-views .meta').addClass('active');
+
+    // Content Window
+    $('.views .view', this.el).removeClass('active');
+    $('#meta', this.el).addClass('active');
+
+    // Refresh CodeMirror
+    if (this.rawEditor) this.rawEditor.refresh();
+    return false;
+  },
+
+  backToMode: function() {
+    if (app.state.mode === 'preview') {
+      this.preview();
+    } else {
+      this.edit();
+    }
+
+    return false;
+  },
+
+  deleteFile: function() {
+    if (confirm('Are you sure you want to delete this file?')) {
+      window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
+        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+        router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
+      }, this));
+    }
+    return false;
+  },
+
+  updateURL: function() {
+    var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
+    this.updateDocumentTitle();
+    router.navigate(url.join('/'), {
+      trigger: false,
+      replace: true
+    });
+  },
+
+  makeDirty: function(e) {
+    this.dirty = true;
+    if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
+    if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
+
+    var label = this.model.writable ? 'Save' : 'Submit Change';
+    this.eventRegister.trigger('updateSaveState', label, 'save');
+
+    // Pass a popover span to the avatar icon
+    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Ctrl&nbsp;+&nbsp;S' : 'Submit Change');
+  },
+
+  togglePublishing: function(e) {
+    var $target = $(e.target);
+
+    if ($target.hasClass('published')) {
+      $target
+        .empty()
+        .html('Unpublish<span class="ico checkmark"></span>')
+        .removeClass('published')
+        .attr('data-state', false);
+    } else {
+      $target
+        .empty()
+        .html('Publish<span class="ico checkmark"></span>')
+        .addClass('published')
+        .attr('data-state', true);
+    }
+
+    this.makeDirty();
+    return false;
+  },
+
+  showDiff: function() {
+    var $diff = $('#diff', this.el);
+    var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
+    var text2 = _.escape(this.serialize());
+    var d = diff.diffWords(text1, text2);
+    var compare = '';
+
+    for (var i = 0; i < d.length; i++) {
+      if (d[i].removed) {
+        compare += '<del>' + d[i].value + '</del>';
+      } else if (d[i].added) {
+        compare += '<ins>' + d[i].value + '</ins>';
+      } else {
+        compare += d[i].value;
+      }
+    }
+
+    // Content Window
+    $('.views .view', this.el).removeClass('active');
+    $diff.html('<pre>' + compare + '</pre>');
+    $diff.addClass('active');
+  },
+
+  closeSettings: function() {
+    $('.views .view', this.el).removeClass('active');
+
+    if (app.state.mode === 'blob') {
+      $('#preview', this.el).addClass('active');
+    } else {
+      $('#edit', this.el).addClass('active');
+    }
+
+    this.eventRegister.trigger('closeSettings');
+  },
+
+  save: function() {
+    this.showDiff();
+  },
+
+  refreshCodeMirror: function() {
+    if (typeof this.editor.refresh === 'function') this.editor.refresh();
+  },
+
+  updateMetaData: function() {
+    if (!this.model.jekyll) return true; // metadata -> skip
+    this.model.metadata = this.metadataEditor.getValue();
+    return true;
+  },
+
+  updateFilename: function(filepath, cb) {
+    var view = this;
+
+    if (!_.validPathname(filepath)) return cb('error');
+    app.state.path = this.model.path; // ?
+    app.state.file = _.extractFilename(filepath)[1];
+    app.state.path = _.extractFilename(filepath)[0];
+
+    function finish() {
+      view.model.path = app.state.path;
+      view.model.file = app.state.file;
+    }
+
+    if (this.model.persisted) {
+      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
+        if (!err) finish();
+        if (err) {
+          cb('error');
+        } else {
+          cb(null);
+        }
+      }, this));
+    } else {
+      finish();
+      cb(null);
+    }
+  },
+
+  serialize: function() {
+    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata);
+
+    if (this.model.jekyll) {
+      return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
+    } else {
+      return this.model.content;
+    }
+  },
+
+  sendPatch: function(filepath, filename, filecontent, message) {
+    // Submits a patch (fork + pull request workflow)
+    var view = this;
+
+    function patch() {
+      if (view.updateMetaData()) {
+        view.model.content = view.prevFile;
+        view.editor.setValue(view.prevFile);
+
+        app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+
+          if (err) {
+            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+            return;
+          }
+
+          view.dirty = false;
+          view.model.persisted = true;
+          view.model.file = filename;
+
+          view.updateURL();
+          view.prevFile = filecontent;
+          view.closeSettings();
+          view.updatePublishState();
+          view.eventRegister.trigger('updateSaveState', 'Request Submitted', 'saved');
+        });
+      } else {
+        view.eventRegister.trigger('updateSaveState', 'Error Metadata not Found', 'error');
+      }
+    }
+
+    view.eventRegister.trigger('updateSaveState', 'Submitting Request', 'saving');
+    patch();
+
+    return false;
+  },
+
+  saveFile: function(filepath, filename, filecontent, message) {
+    var view = this;
+
+    function save() {
+      if (view.updateMetaData()) {
+        window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+          if (err) {
+            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+            return;
+          }
+
+          view.dirty = false;
+          view.model.persisted = true;
+          view.model.file = filename;
+
+          if (app.state.mode === 'new') {
+            app.state.mode = 'edit';
+            view.eventRegister.trigger('sidebarContext', view.data);
+          }
+
+          view.renderHeading();
+          view.updateURL();
+          view.prevFile = filecontent;
+          view.closeSettings();
+          view.updatePublishState();
+          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
+        });
+      } else {
+        view.eventRegister.trigger('updateSaveState', '!Metadata', 'error');
+      }
+    }
+
+    view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
+
+    if (filepath === _.filepath(this.model.path, this.model.file)) return save();
+
+    // Move or create file
+    this.updateFilename(filepath, function(err) {
+      if (err) {
+        view.eventRegister.trigger('filenameInput');
+        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;filename', 'error');
+      } else {
+        save();
+      }
+    });
+  },
+
+  updatePublishState: function() {
+    // Update the publish key wording depening on what was saved
+    var $publishKey = $('.publish-flag', this.el);
+    var key = $publishKey.attr('data-state');
+
+    if (key === 'true') {
+      $publishKey.empty().html('Published<span class="ico checkmark"></span>');
+    } else {
+      $publishKey.empty().html('Unpublished<span class="ico checkmark"></span>');
+    }
+  },
+
+  stashFile: function(e) {
+    if (e) e.preventDefault();
+    if (!window.sessionStorage) return false;
+
+    var store = window.sessionStorage;
+    var filepath = $('input.filepath').val();
+
+    // Don't stash if filepath is undefined
+    if (filepath) {
+      try {
+        store.setItem(filepath, JSON.stringify({
+          sha: app.state.sha,
+          content: this.editor ? this.editor.getValue() : null,
+          metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+        }));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  },
+
+  stashApply: function() {
+    if (!window.sessionStorage) return false;
+
+    var store = window.sessionStorage;
+    var filepath = $('input.filepath').val();
+    var item = store.getItem(filepath);
+    var stash = JSON.parse(item);
+
+    if (stash && stash.sha === window.app.state.sha) {
+      // Restore from stash if file sha hasn't changed
+      if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
+      if (this.metadataEditor) {
+        this.rawEditor.setValue('');
+        this.metadataEditor.setValue(stash.metadata);
+      }
+    } else if (item) {
+      // Remove expired content
+      store.removeItem(filepath);
+    }
+  },
+
+  updateFile: function() {
+    var filepath = $('input.filepath').val();
+    var filename = _.extractFilename(filepath)[1];
+    var filecontent = this.serialize();
+    var $message = $('.commit-message');
+    var noVal = 'Updated ' + filename;
+    if (app.state.mode === 'new') noVal = 'Created ' + noVal;
+
+    var message = $message.val() || noVal;
+    var method = this.model.writable ? this.saveFile : this.sendPatch;
+
+    // Update content
+    this.model.content = (this.editor) ? this.editor.getValue() : '';
+
+    // If a permalink exists, update the path
+    if (this.data.permalink) {
+      this.data.permalink = this.config.siteurl + '/' + filepath;
+      this.eventRegister.trigger('sidebarContext', this.data);
+    }
+
+    // Delegate
+    method.call(this, filepath, filename, filecontent, message);
+    return false;
+  },
+
+  keyMap: function() {
+    var view = this;
+
+    if (this.model.markdown) {
+      return {
+        'Ctrl-S': function(codemirror) {
+          view.updateFile();
+        },
+        'Cmd-B': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
+        },
+        'Ctrl-B': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
+        },
+        'Cmd-I': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
+        },
+        'Ctrl-I': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
+        }
+      };
+    } else {
+      return {
+        'Ctrl-S': function(codemirror) {
+          view.updateFile();
+        }
+      };
+    }
+  },
+
+  translate: function(e) {
+    // TODO Drop the 'EN' requirement.
+    var hash = window.location.hash.split('/'),
+      href = $(e.currentTarget).attr('href').substr(1);
+
+    // If current page is not english and target page is english
+    if (href === 'en') {
+      hash.splice(-2, 2, hash[hash.length - 1]);
+      // If current page is english and target page is not english
+    } else if (this.model.metadata.lang === 'en') {
+      hash.splice(-1, 1, href, hash[hash.length - 1]);
+      // If current page is not english and target page is not english
+    } else {
+      hash.splice(-2, 2, href, hash[hash.length - 1]);
+    }
+
+    router.navigate(_(hash).compact().join('/') + '?lang=' + href + '&translate=true', true);
+
+    return false;
+  },
+
+  buildMeta: function() {
+    var view = this;
+    var $metadataEditor = $('#meta', this.el).find('.form');
+    $metadataEditor.empty();
+
+    function initialize(model) {
+      var tmpl;
+
+      _(model.default_metadata).each(function(data, key) {
+        if (data && typeof data.field === 'object') {
+          switch (data.field.element) {
+            case 'button':
+              tmpl = _(window.app.templates.button).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                on: data.field.on,
+                off: data.field.off
+              }));
+              break;
+            case 'checkbox':
+              tmpl = _(window.app.templates.checkbox).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.name,
+                checked: data.field.value
+              }));
+              break;
+            case 'text':
+              tmpl = _(window.app.templates.text).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value
+              }));
+              break;
+            case 'select':
+              tmpl = _(window.app.templates.select).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: model.metadata.lang || 'en'
+              }));
+              break;
+            case 'multiselect':
+              tmpl = _(window.app.templates.multiselect).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: model.metadata.lang || 'en'
+              }));
+              break;
+            case 'hidden':
+              tmpl = _(window.app.templates.hidden).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                value: JSON.stringify(data.field.value).replace(/"/g, '&quot;').replace(/'/g, '&apos;')
+              }));
+              break;
+          }
+        } else {
+          tmpl = _(window.app.templates.text).template();
+          $metadataEditor.append(tmpl({
+            name: key,
+            label: key,
+            value: data
+          }));
+        }
+      });
+
+      $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">Raw Metadata</label>').appendTo($metadataEditor);
+
+      var rawContainer = (view.model.lang === 'yaml') ? 'code' : 'raw';
+      view.rawEditor = CodeMirror(document.getElementById(rawContainer), {
+        mode: 'yaml',
+        value: '',
+        lineWrapping: true,
+        extraKeys: view.keyMap(),
+        theme: 'prose-bright'
+      });
+
+      view.rawEditor.on('change', _.bind(view.makeDirty, view));
+
+      setValue(model.metadata);
+      $('.chzn-select').chosen();
+    }
+
+    function getValue() {
+      var metadata = {};
+      metadata.published = $('.publish-flag').attr('data-state');
+
+      _.each($metadataEditor.find('[name]'), function(item) {
+        var value = $(item).val();
+
+        switch (item.type) {
+          case 'select-multiple':
+          case 'select-one':
+          case 'text':
+            if (value) {
+              if (metadata.hasOwnProperty(item.name)) {
+                metadata[item.name] = _.union(metadata[item.name], value);
+              } else {
+                metadata[item.name] = value;
+              }
+            }
+            break;
+          case 'checkbox':
+            if (item.checked) {
+
+              if (metadata.hasOwnProperty(item.name)) {
+                metadata[item.name] = _.union(metadata[item.name], item.value);
+              } else if (item.value === item.name) {
+                metadata[item.name] = item.checked;
+              } else {
+                metadata[item.name] = item.value;
+              }
+
+            } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
+              metadata[item.name] = item.checked;
+            } else {
+              metadata[item.name] = item.checked;
+            }
+            break;
+          case 'button':
+            if (value === 'true') {
+              metadata[item.name] = true;
+            } else if (value === 'false') {
+              metadata[item.name] = false;
+            }
+            break;
+          case 'hidden':
+            if (metadata.hasOwnProperty(item.name)) {
+              metadata[item.name] = _.union(metadata[item.name], JSON.parse(value));
+            } else {
+              metadata[item.name] = JSON.parse(value);
+            }
+            break;
+        }
+      });
+
+      if (view.rawEditor) {
+        try {
+          metadata = $.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      return metadata;
+    }
+
+    function getRaw() {
+      return jsyaml.dump(getValue());
+    }
+
+    function setValue(data) {
+      var missing = {};
+      var raw;
+
+      _(data).each(function(value, key) {
+        var matched = false;
+        var input = $metadataEditor.find('[name="' + key + '"]');
+        var length = input.length;
+        var options;
+        var tmpl;
+
+        if (length) {
+
+          // iterate over matching fields
+          for (var i = 0; i < length; i++) {
+
+            // if value is an array
+            if (value !== null && typeof value === 'object' && value.length) {
+
+              // iterate over values in array
+              for (var j = 0; j < value.length; j++) {
+                switch (input[i].type) {
+                case 'select-multiple':
+                case 'select-one':
+                  options = $(input[i]).find('option[value="' + value[j] + '"]');
+                  if (options.length) {
+                    for (var k = 0; k < options.length; k++) {
+                      options[k].selected = 'selected';
+                    }
+
+                    matched = true;
+                  }
+                  break;
+                case 'text':
+                  input[i].value = value;
+                  matched = true;
+                  break;
+                case 'checkbox':
+                  if (input[i].value === value) {
+                    input[i].checked = 'checked';
+                    matched = true;
+                  }
+                  break;
+                }
+              }
+
+            } else {
+
+              switch (input[i].type) {
+              case 'select-multiple':
+              case 'select-one':
+                options = $(input[i]).find('option[value="' + value + '"]');
+                if (options.length) {
+                  for (var m = 0; m < options.length; m++) {
+                    options[m].selected = 'selected';
+                  }
+
+                  matched = true;
+                }
+                break;
+              case 'text':
+                input[i].value = value;
+                matched = true;
+                break;
+              case 'checkbox':
+                input[i].checked = value ? 'checked' : false;
+                matched = true;
+                break;
+              case 'button':
+                input[i].value = value ? true : false;
+                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
+                matched = true;
+                break;
+              }
+
+            }
+          }
+
+          if (!matched && value !== null) {
+            if (missing.hasOwnProperty(key)) {
+              missing[key] = _.union(missing[key], value);
+            } else {
+              missing[key] = value;
+            }
+          }
+
+        } else {
+          // Don't render the 'publish?ed' field as
+          // this somewhere else in the interface.
+          if (key !== 'published') {
+            raw = {};
+            raw[key] = value;
+
+            if (view.rawEditor) {
+              view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
+            }
+          }
+        }
+      });
+
+      _.each(missing, function(value, key) {
+        if (value === null) return;
+
+        switch (typeof value) {
+        case 'boolean':
+          tmpl = _(window.app.templates.checkbox).template();
+          $metadataEditor.append(tmpl({
+            name: key,
+            label: value,
+            value: value,
+            checked: value ? 'checked' : false
+          }));
+          break;
+        case 'string':
+          tmpl = _(window.app.templates.text).template();
+          $metadataEditor.append(tmpl({
+            name: key,
+            label: value,
+            value: value
+          }));
+          break;
+        case 'object':
+          tmpl = _(window.app.templates.multiselect).template();
+          $metadataEditor.append(tmpl({
+            name: key,
+            label: key,
+            placeholder: key,
+            options: value,
+            lang: data.lang || 'en'
+          }));
+          break;
+        default:
+          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
+          break;
+        }
+      });
+    }
+
+    function setRaw(data) {
+      try {
+        setValue(jsyaml.load(data));
+      } catch (err) {
+        console.log('ERROR encoding YAML');
+        // No-op
+      }
+    }
+
+    initialize(this.model);
+
+    return {
+      el: $metadataEditor,
+      getRaw: getRaw,
+      setRaw: setRaw,
+      getValue: getValue,
+      setValue: setValue
+    };
+  },
+
+  fileInput: function(e) {
+    var view = this;
+    upload.fileSelect(e, function(e, file, content) {
+      view.updateImageInsert(e, file, content);
+    });
+
+    return false;
+  },
+
+  updateImageInsert: function(e, file, content) {
+    var view = this;
+    var path = (this.assetsDirectory) ? this.assetsDirectory : this.model.path;
+
+    var src = path + '/' + encodeURIComponent(file.name);
+    $('input[name="url"]').val(src);
+    $('input[name="alt"]').val('');
+
+    view.queue = {
+      e: e,
+      file: file,
+      content: content
+    };
+  },
+
+  initEditor: function() {
+    var view = this;
+
+    // TODO Remove setTimeout
+    setTimeout(function() {
+      if (view.model.jekyll) {
+        view.metadataEditor = view.buildMeta();
+      }
+
+      // Don't set up content editor for yaml posts
+      if (view.model.lang === 'yaml') return;
+
+      var lang = view.model.lang;
+      view.editor = CodeMirror(document.getElementById('code'), {
+        mode: view.model.lang,
+        value: view.model.content,
+        lineWrapping: true,
+        lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
+        extraKeys: view.keyMap(),
+        matchBrackets: true,
+        dragDrop: false,
+        theme: 'prose-bright'
+      });
+
+      // Bind Drag and Drop work on the editor
+      if (app.state.markdown && view.model.writable) {
+        upload.dragDrop($('#edit'), function(e, file, content) {
+          if ($('#dialog').hasClass('dialog')) {
+            view.updateImageInsert(e, file, content);
+          } else {
+            view.createAndUpload(e, file, content);
+          }
+        });
+      }
+
+      // Monitor the current selection and apply
+      // an active class to any snippet links
+      if (view.model.lang === 'gfm') {
+        var $snippetLinks = $('.toolbar .group a', view.el);
+        view.editor.on('cursorActivity', _.bind(function() {
+
+          var selection = _.trim(view.editor.getSelection());
+          $snippetLinks.removeClass('active');
+
+          var match = {
+            lineBreak: /\n/,
+            h1: /^#{1}/,
+            h2: /^#{2,2}/,
+            h3: /^#{3,3}/,
+            strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+            italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+            isNumber: parseInt(selection.charAt(0), 10)
+          };
+
+          if (!match.isNumber) {
+            switch (selection.charAt(0)) {
+              case '#':
+                if (!match.lineBreak.test(selection)) {
+                  if (match.h2.test(selection) && !match.h3.test(selection)) {
+                    $('[data-key="sub-heading"]').addClass('active');
+                  } else if (!match.h2.test(selection)) {
+                    $('[data-key="heading"]').addClass('active');
+                  }
+                }
+                break;
+              case '>':
+                $('[data-key="quote"]').addClass('active');
+                break;
+              case '*':
+              case '_':
+                if (!match.lineBreak.test(selection)) {
+                  if (match.strong.test(selection)) {
+                    $('[data-key="bold"]').addClass('active');
+                  } else if (match.italic.test(selection)) {
+                    $('[data-key="italic"]').addClass('active');
+                  }
+                }
+                break;
+              case '!':
+                if (!match.lineBreak.test(selection) &&
+                    selection.charAt(1) === '[' &&
+                    selection.charAt(selection.length - 1) === ')') {
+                  $('[data-key="media"]').addClass('active');
+                }
+                break;
+              case '[':
+                if (!match.lineBreak.test(selection) &&
+                    selection.charAt(selection.length - 1) === ')') {
+                  $('[data-key="link"]').addClass('active');
+                }
+                break;
+              case '-':
+                if (selection.charAt(1) === ' ') {
+                  $('[data-key="list"]').addClass('active');
+                }
+              break;
+            }
+          } else {
+            if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
+              $('[data-key="numbered-list"]').addClass('active');
+            }
+          }
+        }, view));
+      }
+
+      view.editor.on('change', _.bind(view.makeDirty, view));
+      view.editor.on('focus', _.bind(function() {
+
+        // If an upload queue is set, we want to clear it.
+        this.queue = undefined;
+
+        // If a dialog window is open and the editor is in focus, close it.
+        $('.toolbar .group a', this.el).removeClass('on');
+        $('#dialog', view.el).empty().removeClass();
+      }, view));
+
+      view.refreshCodeMirror();
+
+      // Check sessionStorage for existing stash
+      // Apply if stash exists and is current, remove if expired
+      view.stashApply();
+    }, 100);
+  },
+
+  createAndUpload: function(e, file, content, userDefinedPath) {
+    var view = this;
+
+    // Loading State
+    this.eventRegister.trigger('updateSaveState', 'Uploading ' + file.name, 'saving');
+
+    // Base64 Encode the file content
+    var extension = file.type.split('/').pop();
+    var path;
+
+    if (userDefinedPath) {
+      // Unique Filename
+      path = userDefinedPath;
+    } else {
+      var uid = encodeURIComponent(file.name);
+      path = this.assetsDirectory ?
+             this.assetsDirectory + '/' + uid :
+             (this.model.path) ?
+               this.model.path + '/' + uid :
+               uid;
+    }
+
+    var data = {};
+        data.message = 'Uploaded ' + file.name;
+        data.content = content;
+        data.branch = app.state.branch;
+
+    // Read through the filenames of path. If there is a filename that
+    // exists, we want to pass data.sha to update the existing one.
+    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, _.extractFilename(path)[0], function(err, res) {
+      if (err) return view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
+
+      // Check whether the current (or media) directory
+      // contains the same filename as the one a user wishes
+      // to upload. we want to update the file by passing the sha
+      // to the data object in this case.
+      _(res.files).each(function(f) {
+        var parts = _.extractFilename(f.path);
+        var structuredPath = [parts[0], encodeURIComponent(parts[1])].join('/');
+        if (structuredPath === path) {
+          data.sha = f.sha;
+        }
+      });
+
+      // Stored in memory to test as GitHub may have not
+      // picked up on the change fast enough.
+      _(view.recentlyUploadedFiles).each(function(f) {
+        if (f.path === path) {
+          data.sha = f.sha;
+        }
+      });
+
+      app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
+        if (type === 'error') {
+          view.eventRegister.trigger('updateSaveState', 'Error&nbsp;Uploading try again in 30 Seconds!', 'error');
+        } else {
+          var $alt = $('input[name="alt"]');
+          var image = ($alt.val) ?
+            '![' + $alt.val() + '](/' + path + ')' :
+            '![' + file.name + '](/' + path + ')';
+
+          view.editor.focus();
+          view.editor.replaceSelection(image);
+          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
+
+          // Update the media directory with the
+          // newly uploaded image.
+          if (!data.sha && view.assets) {
+            view.assets.push({
+              name: file.name,
+              type: 'blob',
+              path: path
+            });
+          }
+
+          // Store a record of recently uploaded files in memory
+          var fileParts = _.extractFilename(res.content.path);
+          var structuredPath = [fileParts[0], encodeURIComponent(fileParts[1])].join('/');
+
+          view.recentlyUploadedFiles.push({
+            path: structuredPath,
+            sha: res.content.sha
+          });
+        }
+      });
+    });
+  },
+
+  markdownSnippet: function(e) {
+    var view = this;
+    var $target = $(e.target, this.el).closest('a');
+    var $dialog = $('#dialog', this.el);
+    var $snippets = $('.toolbar .group a', this.el);
+    var key = $target.data('key');
+    var snippet = $target.data('snippet');
+    var selection = _.trim(this.editor.getSelection());
+
+    $dialog.removeClass().empty();
+
+    if (snippet) {
+      $snippets.removeClass('on');
+
+      if (selection) {
+        switch (key) {
+        case 'bold':
+          this.bold(selection);
+          break;
+        case 'italic':
+          this.italic(selection);
+          break;
+        case 'heading':
+          this.heading(selection);
+          break;
+        case 'sub-heading':
+          this.subHeading(selection);
+          break;
+        case 'quote':
+          this.quote(selection);
+          break;
+        default:
+          this.editor.replaceSelection(snippet);
+          break;
+        }
+        this.editor.focus();
+      } else {
+        this.editor.replaceSelection(snippet);
+        this.editor.focus();
+      }
+    } else if ($target.data('dialog')) {
+
+      var tmpl, className;
+      if (key === 'media' && !this.assets) {
+          className = key + ' no-directory';
+      } else {
+          className = key;
+      }
+
+      // This condition handles the link and media link in the toolbar.
+      if ($target.hasClass('on')) {
+        $target.removeClass('on');
+        $dialog.removeClass().empty();
+      } else {
+        $snippets.removeClass('on');
+        $target.addClass('on');
+        $dialog
+          .removeClass()
+          .addClass('dialog ' + className)
+          .empty();
+
+        switch(key) {
+          case 'link':
+            tmpl = _(app.templates.linkDialog).template();
+
+            $dialog.append(tmpl({
+              relativeLinks: view.relativeLinks
+            }));
+
+            if (view.relativeLinks) {
+              $('.chzn-select', $dialog).chosen().change(function() {
+                $('.chzn-single span').text('Insert a local link.');
+
+                var parts = $(this).val().split(',');
+                $('input[name=href]', $dialog).val(parts[0]);
+                $('input[name=text]', $dialog).val(parts[1]);
+              });
+            }
+
+            if (selection) {
+              // test if this is a markdown link: [text](link)
+              var link = /\[([^\]]+)\]\(([^)]+)\)/;
+              var quoted = /".*?"/;
+
+              var text = selection;
+              var href;
+              var title;
+
+              if (link.test(selection)) {
+                var parts = link.exec(selection);
+                text = parts[1];
+                href = parts[2];
+
+                // Search for a title attrbute within the url string
+                if (quoted.test(parts[2])) {
+                  href = parts[2].split(quoted)[0];
+
+                  // TODO could be improved
+                  title = parts[2].match(quoted)[0].replace(/"/g, '');
+                }
+              }
+
+              $('input[name=text]', $dialog).val(text);
+              if (href) $('input[name=href]', $dialog).val(href);
+              if (title) $('input[name=title]', $dialog).val(title);
+            }
+          break;
+          case 'media':
+            tmpl = _(app.templates.mediaDialog).template();
+            $dialog.append(tmpl({
+              writable: view.data.writable,
+              assetsDirectory: (view.assets) ? true : false
+            }));
+
+            if (view.assets) view.renderAssets(view.assets);
+
+            if (selection) {
+              var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
+              var src;
+              var alt;
+
+              if (image.test(selection)) {
+                var imageParts = image.exec(selection);
+                alt = imageParts[1];
+                src = imageParts[2];
+
+                $('input[name=url]', $dialog).val(src);
+                if (alt) $('input[name=alt]', $dialog).val(alt);
+              }
+            }
+          break;
+          case 'help':
+            tmpl = _(app.templates.helpDialog).template();
+            $dialog.append(tmpl({
+              help: toolbar.help
+            }));
+
+            // Page through different help sections
+            var $mainMenu = $('.main-menu a', this.el);
+            var $subMenu = $('.sub-menu', this.el);
+            var $content = $('.help-content', this.el);
+
+            $mainMenu.on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $mainMenu.removeClass('active');
+                $content.removeClass('active');
+                $subMenu
+                    .removeClass('active')
+                    .find('a')
+                    .removeClass('active');
+
+                $(this).addClass('active');
+
+                // Add the relavent sub menu
+                var parent = $(this).data('id');
+                $('.' + parent).addClass('active');
+
+                // Add an active class and populate the
+                // content of the first list item.
+                var $firstSubElement = $('.' + parent + ' a:first', this.el);
+                $firstSubElement.addClass('active');
+
+                var subParent = $firstSubElement.data('id');
+                $('.help-' + subParent).addClass('active');
+              }
+              return false;
+            });
+
+            $subMenu.find('a').on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $subMenu.find('a').removeClass('active');
+                $content.removeClass('active');
+                $(this).addClass('active');
+
+                // Add the relavent content section
+                var parent = $(this).data('id');
+                $('.help-' + parent).addClass('active');
+              }
+
+              return false;
+            });
+
+          break;
+        }
+      }
+    }
+
+    return false;
+  },
+
+  renderAssets: function(data, back) {
+    var view = this;
+    var $media = $('#media', this.el);
+    var tmpl = _(app.templates.asset).template();
+
+    // Reset some stuff
+    $('.directory a', $media).off('click', this.assetDirectory);
+    $media.empty();
+
+    if (back && (back.join() !== this.assetsDirectory)) {
+      var link = back.slice(0, back.length - 1).join('/');
+      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
+    }
+
+    _(data).each(function(asset) {
+      var parts = asset.path.split('/');
+      var path = parts.slice(0, parts.length - 1).join('/');
+
+      $media.append(tmpl({
+        name: asset.name,
+        type: asset.type,
+        path: path + '/' + encodeURIComponent(asset.name)
+      }));
+    });
+
+    $('.asset a', $media).on('click', function(e) {
+      var href = $(this).attr('href');
+      var alt = _.trim($(this).text());
+
+      if (_.isImage(href)) {
+        $('input[name="url"]').val(href);
+        $('input[name="alt"]').val(alt);
+      } else {
+        view.editor.replaceSelection(href);
+        view.editor.focus();
+      }
+      return false;
+    });
+
+    $('.directory a', $media).on('click', function(e) {
+      view.assetDirectory($(e.target), view);
+      return false;
+    });
+  },
+
+  assetDirectory: function(dir, view) {
+    var path = dir.attr('href');
+    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, path, function(err, data) {
+      view.renderAssets(data.files, path.split('/'));
+    });
+  },
+
+  dialogInsert: function(e) {
+    var $dialog = $('#dialog', this.el);
+    var $target = $(e.target, this.el);
+    var type = $target.data('type');
+
+    if (type === 'link') {
+      var href = $('input[name="href"]').val();
+      var text = $('input[name="text"]').val();
+      var title = $('input[name="title"]').val();
+
+      if (!text) text = href;
+
+      if (title) {
+        this.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
+      } else {
+        this.editor.replaceSelection('[' + text + '](' + href + ')');
+      }
+
+      this.editor.focus();
+    }
+
+    if (type === 'media') {
+      if (this.queue) {
+        var userDefinedPath = $('input[name="url"]').val();
+        this.createAndUpload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
+
+        // Finally, clear the queue object
+        this.queue = undefined;
+      } else {
+        var src = $('input[name="url"]').val();
+        var alt = $('input[name="alt"]').val();
+        this.editor.replaceSelection('![' + alt + '](/' + src + ')');
+        this.editor.focus();
+      }
+    }
+
+    return false;
+  },
+
+  heading: function(s) {
+    if (s.charAt(0) === '#' && s.charAt(1) !== '#') {
+      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
+    } else {
+      this.editor.replaceSelection('# ' + s.replace(/#/g, ''));
+    }
+  },
+
+  subHeading: function(s) {
+    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
+      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
+    } else {
+      this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
+    }
+  },
+
+  italic: function(s) {
+    if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
+      this.editor.replaceSelection(s.replace(/_/g, ''));
+    } else {
+      this.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
+    }
+  },
+
+  bold: function(s) {
+    if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
+      this.editor.replaceSelection(s.replace(/\*/g, ''));
+    } else {
+      this.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
+    }
+  },
+
+  quote: function(s) {
+    if (s.charAt(0) === '>') {
+      this.editor.replaceSelection(_.lTrim(s.replace(/\>/g, '')));
+    } else {
+      this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
+    }
+  },
+
+  remove: function() {
+    this.stashFile();
+
+    this.eventRegister.unbind('edit', this.postViews);
+    this.eventRegister.unbind('preview', this.preview);
+    this.eventRegister.unbind('deleteFile', this.deleteFile);
+    this.eventRegister.unbind('save', this.save);
+    this.eventRegister.unbind('translate', this.translate);
+    this.eventRegister.unbind('updateFile', this.updateFile);
+    this.eventRegister.unbind('meta', this.updateFile);
+    this.eventRegister.unbind('remove', this.remove);
+
+    // Clear any file state classes in #prose
+    this.eventRegister.trigger('updateSaveState', '', '');
+
+    $(window).off('pagehide');
+    Backbone.View.prototype.remove.call(this);
+  }
+});
+
+},{".././toolbar/markdown.js":3,".././util":20,".././upload":18,".././cookie":19,"jquery-browserify":17,"underscore":15,"js-yaml":21,"chosen-jquery-browserify":25,"backbone":16,"keymaster":24,"diff":26,"marked":27}],13:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var marked = require('marked');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  className: 'inner deep prose',
+
+  render: function() {
+    var view = this;
+    $.get('about.md', function(d) {
+      view.$el.html(marked(d));
+    });
+    return this;
+  }
+});
+
+
+
+},{"jquery-browserify":17,"backbone":16,"marked":27}],24:[function(require,module,exports){
 (function(){//     keymaster.js
 //     (c) 2011-2012 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
@@ -24533,6 +26079,89 @@ module.exports = {
 })(this);
 
 })()
+},{}],23:[function(require,module,exports){
+(function() {
+  if (typeof module === "undefined") self.queue = queue;
+  else module.exports = queue;
+  queue.version = "1.0.3";
+
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var queue = {},
+        deferrals = [],
+        started = 0, // number of deferrals that have been started (and perhaps finished)
+        active = 0, // number of deferrals currently being executed (started but not finished)
+        remaining = 0, // number of deferrals not yet finished
+        popping, // inside a synchronous deferral callback?
+        error,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    queue.defer = function() {
+      if (!error) {
+        deferrals.push(arguments);
+        ++remaining;
+        pop();
+      }
+      return queue;
+    };
+
+    queue.await = function(f) {
+      await = f;
+      all = false;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    queue.awaitAll = function(f) {
+      await = f;
+      all = true;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    function pop() {
+      while (popping = started < deferrals.length && active < parallelism) {
+        var i = started++,
+            d = deferrals[i],
+            a = slice.call(d, 1);
+        a.push(callback(i));
+        ++active;
+        d[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new deferrals and squelch active callbacks
+          started = remaining = NaN; // stop queued deferrals from starting
+          notify();
+        } else {
+          deferrals[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(null, deferrals);
+      else await.apply(null, [null].concat(deferrals));
+    }
+
+    return queue;
+  }
+
+  function noop() {}
+})();
+
 },{}],25:[function(require,module,exports){
 (function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
@@ -25611,441 +27240,7 @@ module.exports = {
 
 }).call(this);
 
-},{}],24:[function(require,module,exports){
-(function() {
-  if (typeof module === "undefined") self.queue = queue;
-  else module.exports = queue;
-  queue.version = "1.0.3";
-
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var queue = {},
-        deferrals = [],
-        started = 0, // number of deferrals that have been started (and perhaps finished)
-        active = 0, // number of deferrals currently being executed (started but not finished)
-        remaining = 0, // number of deferrals not yet finished
-        popping, // inside a synchronous deferral callback?
-        error,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    queue.defer = function() {
-      if (!error) {
-        deferrals.push(arguments);
-        ++remaining;
-        pop();
-      }
-      return queue;
-    };
-
-    queue.await = function(f) {
-      await = f;
-      all = false;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    queue.awaitAll = function(f) {
-      await = f;
-      all = true;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    function pop() {
-      while (popping = started < deferrals.length && active < parallelism) {
-        var i = started++,
-            d = deferrals[i],
-            a = slice.call(d, 1);
-        a.push(callback(i));
-        ++active;
-        d[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new deferrals and squelch active callbacks
-          started = remaining = NaN; // stop queued deferrals from starting
-          notify();
-        } else {
-          deferrals[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(null, deferrals);
-      else await.apply(null, [null].concat(deferrals));
-    }
-
-    return queue;
-  }
-
-  function noop() {}
-})();
-
-},{}],26:[function(require,module,exports){
-/* See LICENSE file for terms of use */
-
-/*
- * Text diff implementation.
- * 
- * This library supports the following APIS:
- * JsDiff.diffChars: Character by character diff
- * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
- * JsDiff.diffLines: Line based diff
- * 
- * JsDiff.diffCss: Diff targeted at CSS content
- * 
- * These methods are based on the implementation proposed in
- * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
- * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
- */
-var JsDiff = (function() {
-  function clonePath(path) {
-    return { newPos: path.newPos, components: path.components.slice(0) };
-  }
-  function removeEmpty(array) {
-    var ret = [];
-    for (var i = 0; i < array.length; i++) {
-      if (array[i]) {
-        ret.push(array[i]);
-      }
-    }
-    return ret;
-  }
-  function escapeHTML(s) {
-    var n = s;
-    n = n.replace(/&/g, "&amp;");
-    n = n.replace(/</g, "&lt;");
-    n = n.replace(/>/g, "&gt;");
-    n = n.replace(/"/g, "&quot;");
-
-    return n;
-  }
-
-  var fbDiff = function(ignoreWhitespace) {
-    this.ignoreWhitespace = ignoreWhitespace;
-  };
-  fbDiff.prototype = {
-      diff: function(oldString, newString) {
-        // Handle the identity case (this is due to unrolling editLength == 0
-        if (newString == oldString) {
-          return [{ value: newString }];
-        }
-        if (!newString) {
-          return [{ value: oldString, removed: true }];
-        }
-        if (!oldString) {
-          return [{ value: newString, added: true }];
-        }
-
-        newString = this.tokenize(newString);
-        oldString = this.tokenize(oldString);
-
-        var newLen = newString.length, oldLen = oldString.length;
-        var maxEditLength = newLen + oldLen;
-        var bestPath = [{ newPos: -1, components: [] }];
-
-        // Seed editLength = 0
-        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
-        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
-          return bestPath[0].components;
-        }
-
-        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
-          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
-            var basePath;
-            var addPath = bestPath[diagonalPath-1],
-                removePath = bestPath[diagonalPath+1];
-            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
-            if (addPath) {
-              // No one else is going to attempt to use this value, clear it
-              bestPath[diagonalPath-1] = undefined;
-            }
-
-            var canAdd = addPath && addPath.newPos+1 < newLen;
-            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
-            if (!canAdd && !canRemove) {
-              bestPath[diagonalPath] = undefined;
-              continue;
-            }
-
-            // Select the diagonal that we want to branch from. We select the prior
-            // path whose position in the new string is the farthest from the origin
-            // and does not pass the bounds of the diff graph
-            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
-              basePath = clonePath(removePath);
-              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
-            } else {
-              basePath = clonePath(addPath);
-              basePath.newPos++;
-              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
-            }
-
-            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
-
-            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
-              return basePath.components;
-            } else {
-              bestPath[diagonalPath] = basePath;
-            }
-          }
-        }
-      },
-
-      pushComponent: function(components, value, added, removed) {
-        var last = components[components.length-1];
-        if (last && last.added === added && last.removed === removed) {
-          // We need to clone here as the component clone operation is just
-          // as shallow array clone
-          components[components.length-1] =
-            {value: this.join(last.value, value), added: added, removed: removed };
-        } else {
-          components.push({value: value, added: added, removed: removed });
-        }
-      },
-      extractCommon: function(basePath, newString, oldString, diagonalPath) {
-        var newLen = newString.length,
-            oldLen = oldString.length,
-            newPos = basePath.newPos,
-            oldPos = newPos - diagonalPath;
-        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
-          newPos++;
-          oldPos++;
-
-          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
-        }
-        basePath.newPos = newPos;
-        return oldPos;
-      },
-
-      equals: function(left, right) {
-        var reWhitespace = /\S/;
-        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
-          return true;
-        } else {
-          return left == right;
-        }
-      },
-      join: function(left, right) {
-        return left + right;
-      },
-      tokenize: function(value) {
-        return value;
-      }
-  };
-
-  var CharDiff = new fbDiff();
-
-  var WordDiff = new fbDiff(true);
-  WordDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/(\s+|\b)/));
-  };
-
-  var CssDiff = new fbDiff(true);
-  CssDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/([{}:;,]|\s+)/));
-  };
-
-  var LineDiff = new fbDiff();
-  LineDiff.tokenize = function(value) {
-    return value.split(/^/m);
-  };
-
-  return {
-    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
-    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
-    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
-
-    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
-
-    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
-      var ret = [];
-
-      ret.push("Index: " + fileName);
-      ret.push("===================================================================");
-      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
-      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
-
-      var diff = LineDiff.diff(oldStr, newStr);
-      if (!diff[diff.length-1].value) {
-        diff.pop();   // Remove trailing newline add
-      }
-      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
-
-      function contextLines(lines) {
-        return lines.map(function(entry) { return ' ' + entry; });
-      }
-      function eofNL(curRange, i, current) {
-        var last = diff[diff.length-2],
-            isLast = i === diff.length-2,
-            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
-
-        // Figure out if this is the last line for the given file and missing NL
-        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
-          curRange.push('\\ No newline at end of file');
-        }
-      }
-
-      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
-          oldLine = 1, newLine = 1;
-      for (var i = 0; i < diff.length; i++) {
-        var current = diff[i],
-            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
-        current.lines = lines;
-
-        if (current.added || current.removed) {
-          if (!oldRangeStart) {
-            var prev = diff[i-1];
-            oldRangeStart = oldLine;
-            newRangeStart = newLine;
-
-            if (prev) {
-              curRange = contextLines(prev.lines.slice(-4));
-              oldRangeStart -= curRange.length;
-              newRangeStart -= curRange.length;
-            }
-          }
-          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
-          eofNL(curRange, i, current);
-
-          if (current.added) {
-            newLine += lines.length;
-          } else {
-            oldLine += lines.length;
-          }
-        } else {
-          if (oldRangeStart) {
-            // Close out any changes that have been output (or join overlapping)
-            if (lines.length <= 8 && i < diff.length-2) {
-              // Overlapping
-              curRange.push.apply(curRange, contextLines(lines));
-            } else {
-              // end the range and output
-              var contextSize = Math.min(lines.length, 4);
-              ret.push(
-                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
-                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
-                  + " @@");
-              ret.push.apply(ret, curRange);
-              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
-              if (lines.length <= 4) {
-                eofNL(ret, i, current);
-              }
-
-              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
-            }
-          }
-          oldLine += lines.length;
-          newLine += lines.length;
-        }
-      }
-
-      return ret.join('\n') + '\n';
-    },
-
-    applyPatch: function(oldStr, uniDiff) {
-      var diffstr = uniDiff.split("\n");
-      var diff = [];
-      var remEOFNL = false,
-          addEOFNL = false;
-
-      for (var i = (diffstr[0][0]=="I"?4:0); i < diffstr.length; i++) {
-        if(diffstr[i][0] == "@") {
-          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
-          diff.unshift({
-            start:meh[3],
-            oldlength:meh[2],
-            oldlines:[],
-            newlength:meh[4],
-            newlines:[]
-          });
-        } else if(diffstr[i][0] == '+') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == '-') {
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == ' ') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == '\\') {
-          if (diffstr[i-1][0] == '+') {
-            remEOFNL = true;
-          } else if(diffstr[i-1][0] == '-') {
-            addEOFNL = true;
-          }
-        }
-      }
-
-      var str = oldStr.split("\n");
-      for (var i = diff.length - 1; i >= 0; i--) {
-        var d = diff[i];
-        for (var j = 0; j < d.oldlength; j++) {
-          if(str[d.start-1+j] != d.oldlines[j]) {
-            return false;
-          }
-        }
-        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
-      }
-
-      if (remEOFNL) {
-        while (!str[str.length-1]) {
-          str.pop();
-        }
-      } else if (addEOFNL) {
-        str.push('');
-      }
-      return str.join('\n');
-    },
-
-    convertChangesToXML: function(changes){
-      var ret = [];
-      for ( var i = 0; i < changes.length; i++) {
-        var change = changes[i];
-        if (change.added) {
-          ret.push("<ins>");
-        } else if (change.removed) {
-          ret.push("<del>");
-        }
-
-        ret.push(escapeHTML(change.value));
-
-        if (change.added) {
-          ret.push("</ins>");
-        } else if (change.removed) {
-          ret.push("</del>");
-        }
-      }
-      return ret.join("");
-    },
-
-    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
-    convertChangesToDMP: function(changes){
-      var ret = [], change;
-      for ( var i = 0; i < changes.length; i++) {
-        change = changes[i];
-        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
-      }
-      return ret;
-    }
-  };
-})();
-
-if (typeof module !== "undefined") {
-    module.exports = JsDiff;
-}
-
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 // Github.js (Modified for prose.io)
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
@@ -26646,1548 +27841,358 @@ var _ = require('underscore');
   module.exports = Github;
 }).call(this);
 
-},{"underscore":15}],11:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var chosen = require('chosen-jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var marked = require('marked');
-var diff = require('diff');
-var Backbone = require('backbone');
-var utils = require('.././util');
-var upload = require('.././upload');
-var cookie = require('.././cookie');
-var toolbar = require('.././toolbar/markdown.js');
+},{"underscore":15}],26:[function(require,module,exports){
+/* See LICENSE file for terms of use */
 
-module.exports = Backbone.View.extend({
-
-  id: 'post',
-  className: 'post',
-
-  events: {
-    'click .group a': 'markdownSnippet',
-    'click .dialog .insert': 'dialogInsert',
-    'click .save-action': 'updateFile',
-    'click .publish-flag': 'togglePublishing',
-    'click .meta .finish': 'backToMode',
-    'change #upload': 'fileInput',
-    'change .meta input': 'makeDirty'
-  },
-
-  initialize: function() {
-    this.prevFile = this.serialize();
-    this.config = {};
-    this.recentlyUploadedFiles = [];
-
-    if (app.state.config && app.state.config.prose) {
-      this.config.siteurl = app.state.config.prose.siteurl || false;
-      this.config.relativeLinks = app.state.config.prose.relativeLinks || false;
-      this.config.media = app.state.config.prose.media || false;
-    }
-
-    this.newFile = (app.state.mode === 'new') ? true : false;
-
-    // Stash editor and metadataEditor content to sessionStorage on pagehide event
-    // Always run stashFile in context of view
-    $(window).on('pagehide', _.bind(this.stashFile, this));
-  },
-
-  render: function() {
-    var view = this;
-
-    // Link Dialog
-    if (app.state.markdown && this.config.relativeLinks) {
-      $.ajax({
-        cache: true,
-        dataType: 'jsonp',
-        jsonp: false,
-        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
-        url: this.config.relativeLinks,
-        success: function(links) {
-          view.relativeLinks = links;
-        }
-      });
-    }
-
-    // Assets Listing for the Media Dialog
-    if (app.state.markdown && this.config.media) {
-      this.assetsDirectory = this.config.media;
-      app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
-        view.assets = data.files;
-      });
-    }
-
-    this.data = _.extend(this.model, {
-      mode: app.state.mode,
-      preview: this.model.markdown ? marked(this.compilePreview(this.model.content)) : '',
-      metadata: this.model.metadata
-    });
-
-    this.eventRegister = app.eventRegister;
-
-    // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove');
-    this.eventRegister.bind('edit', this.edit);
-    this.eventRegister.bind('preview', this.preview);
-    this.eventRegister.bind('deleteFile', this.deleteFile);
-    this.eventRegister.bind('save', this.save);
-    this.eventRegister.bind('updateFile', this.updateFile);
-    this.eventRegister.bind('translate', this.translate);
-    this.eventRegister.bind('meta', this.meta);
-    this.eventRegister.bind('remove', this.remove);
-
-    // Add a permalink to the sidebar is `siteurl` exists in configuration.
-    this.data.permalink = false;
-    if (this.config.siteurl) {
-        this.data.permalink = this.config.siteurl + '/' + this.data.path + '/' + this.data.file;
-    }
-
-    this.eventRegister.trigger('sidebarContext', this.data);
-    this.renderHeading();
-
-    var tmpl = _(window.app.templates.post).template();
-
-    $(this.el).empty().append(tmpl(_.extend(this.model, {
-      mode: app.state.mode,
-      metadata: this.model.metadata,
-      avatar: this.header.avatar
-    })));
-
-    if (this.model.markdown && app.state.mode === 'blob') {
-      this.preview();
-    } else {
-      // Editor is first up so trigger an active class for it
-      $('#edit', this.el).toggleClass('active', true);
-      $('.post-views .edit').addClass('active');
-
-      this.initEditor();
-      _.delay(function() {
-        utils.fixedScroll($('.topbar', view.el));
-      }, 1);
-    }
-
-    this.updateDocumentTitle();
-
-    // Prevent exit when there are unsaved changes
-    window.onbeforeunload = function() {
-      if (app.state.file && view.dirty) return 'You have unsaved changes. Are you sure you want to leave?';
-    };
-
-    return this;
-  },
-
-  updateDocumentTitle: function() {
-    var context = 'Editing ';
-    var pathTitle = (app.state.path) ? app.state.path : '';
-
-    if (app.state.mode === 'blob') context = 'Previewing ';
-    this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-  },
-
-  renderHeading: function() {
-    // Render heading
-    var isPrivate = app.state.isPrivate ? true : false;
-    var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
-
-    this.header = {
-      avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
-      parentTrail: parentTrail,
-      isPrivate: isPrivate,
-      title: _.filepath(this.data.path, this.data.file),
-      writable: this.model.writable,
-      alterable: true,
-      translate: this.data.translate
-    };
-
-    this.eventRegister.trigger('headerContext', this.header);
-  },
-
-  edit: function(e) {
-    var view = this;
-    // If preview was hit on load this.editor
-    // was not initialized.
-    if (!this.editor) {
-      this.initEditor();
-      _.delay(function() {
-        utils.fixedScroll($('.topbar', view.el));
-      }, 1);
-    }
-
-    app.state.mode = this.newFile ? 'new' : 'edit';
-    this.updateURL();
-
-    $('.post-views a').removeClass('active');
-    $('.post-views .edit').addClass('active');
-    $('#prose').toggleClass('open', false);
-
-    $('.views .view', this.el).removeClass('active');
-    $('#edit', this.el).addClass('active');
-
-    return false;
-  },
-
-  preview: function(e) {
-    $('#prose').toggleClass('open', false);
-    if (this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
-      var hash = window.location.hash.split('/');
-      hash[2] = 'preview';
-      if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
-        hash.push(_($('input.filepath').val().split('/')).last());
+/*
+ * Text diff implementation.
+ * 
+ * This library supports the following APIS:
+ * JsDiff.diffChars: Character by character diff
+ * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
+ * JsDiff.diffLines: Line based diff
+ * 
+ * JsDiff.diffCss: Diff targeted at CSS content
+ * 
+ * These methods are based on the implementation proposed in
+ * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
+ * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
+ */
+var JsDiff = (function() {
+  function clonePath(path) {
+    return { newPos: path.newPos, components: path.components.slice(0) };
+  }
+  function removeEmpty(array) {
+    var ret = [];
+    for (var i = 0; i < array.length; i++) {
+      if (array[i]) {
+        ret.push(array[i]);
       }
-      this.stashFile();
-
-      $(e.currentTarget).attr({
-        target: '_blank',
-        href: hash.join('/')
-      });
-      return true;
-    } else {
-      if (e) e.preventDefault();
-
-      // Vertical Nav
-      $('.post-views a').removeClass('active');
-      $('.post-views .preview').addClass('active');
-
-      // Content Window
-      $('.views .view', this.el).removeClass('active');
-      $('#preview', this.el).addClass('active').html(marked(this.compilePreview(this.model.content)));
-
-      app.state.mode = 'blob';
-      this.updateURL();
     }
-  },
+    return ret;
+  }
+  function escapeHTML(s) {
+    var n = s;
+    n = n.replace(/&/g, "&amp;");
+    n = n.replace(/</g, "&lt;");
+    n = n.replace(/>/g, "&gt;");
+    n = n.replace(/"/g, "&quot;");
 
-  compilePreview: function(content) {
-    // Scan the content search for ![]()
-    // grab the path and file and form a RAW github aboslute request for it
-    var scan = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
-    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
-    var titleAttribute = /".*?"/;
+    return n;
+  }
 
-    // Build an array of found images
-    var result = content.match(scan);
+  var fbDiff = function(ignoreWhitespace) {
+    this.ignoreWhitespace = ignoreWhitespace;
+  };
+  fbDiff.prototype = {
+      diff: function(oldString, newString) {
+        // Handle the identity case (this is due to unrolling editLength == 0
+        if (newString == oldString) {
+          return [{ value: newString }];
+        }
+        if (!newString) {
+          return [{ value: oldString, removed: true }];
+        }
+        if (!oldString) {
+          return [{ value: newString, added: true }];
+        }
 
-    // Iterate over the results and replace
-    _(result).each(function(r) {
-        var parts = (image).exec(r);
+        newString = this.tokenize(newString);
+        oldString = this.tokenize(oldString);
 
-        if (parts !== null) {
-          var path = parts[2];
+        var newLen = newString.length, oldLen = oldString.length;
+        var maxEditLength = newLen + oldLen;
+        var bestPath = [{ newPos: -1, components: [] }];
 
-          if (!_.absolutePath(path)) {
-            // Remove any title attribute in the image tag is there is one.
-            if (titleAttribute.test(path)) {
-              path = path.split(titleAttribute)[0];
+        // Seed editLength = 0
+        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
+        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
+          return bestPath[0].components;
+        }
+
+        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
+          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
+            var basePath;
+            var addPath = bestPath[diagonalPath-1],
+                removePath = bestPath[diagonalPath+1];
+            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
+            if (addPath) {
+              // No one else is going to attempt to use this value, clear it
+              bestPath[diagonalPath-1] = undefined;
             }
 
-            var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path;
-            if (app.state.isPrivate) {
-              // append auth param
-              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
+            var canAdd = addPath && addPath.newPos+1 < newLen;
+            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
+            if (!canAdd && !canRemove) {
+              bestPath[diagonalPath] = undefined;
+              continue;
             }
 
-            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+            // Select the diagonal that we want to branch from. We select the prior
+            // path whose position in the new string is the farthest from the origin
+            // and does not pass the bounds of the diff graph
+            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
+              basePath = clonePath(removePath);
+              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
+            } else {
+              basePath = clonePath(addPath);
+              basePath.newPos++;
+              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
+            }
+
+            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
+
+            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
+              return basePath.components;
+            } else {
+              bestPath[diagonalPath] = basePath;
+            }
           }
         }
-    });
+      },
 
-    return content;
-  },
-
-  meta: function() {
-    $('#prose').toggleClass('open', false);
-
-    // Vertical Nav
-    $('.post-views a').removeClass('active');
-    $('.post-views .meta').addClass('active');
-
-    // Content Window
-    $('.views .view', this.el).removeClass('active');
-    $('#meta', this.el).addClass('active');
-
-    // Refresh CodeMirror
-    if (this.rawEditor) this.rawEditor.refresh();
-    return false;
-  },
-
-  backToMode: function() {
-    if (app.state.mode === 'preview') {
-      this.preview();
-    } else {
-      this.edit();
-    }
-
-    return false;
-  },
-
-  deleteFile: function() {
-    if (confirm('Are you sure you want to delete this file?')) {
-      window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
-        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
-        router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
-      }, this));
-    }
-    return false;
-  },
-
-  updateURL: function() {
-    var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
-    this.updateDocumentTitle();
-    router.navigate(url.join('/'), {
-      trigger: false,
-      replace: true
-    });
-  },
-
-  makeDirty: function(e) {
-    this.dirty = true;
-    if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
-    if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
-
-    var label = this.model.writable ? 'Save' : 'Submit Change';
-    this.eventRegister.trigger('updateSaveState', label, 'save');
-
-    // Pass a popover span to the avatar icon
-    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Ctrl&nbsp;+&nbsp;S' : 'Submit Change');
-  },
-
-  togglePublishing: function(e) {
-    var $target = $(e.target);
-
-    if ($target.hasClass('published')) {
-      $target
-        .html('Unpublish<span class="ico checkmark"></span>')
-        .removeClass('published')
-        .attr('data-state', false);
-    } else {
-      $target
-        .html('Publish<span class="ico checkmark"></span>')
-        .addClass('published')
-        .attr('data-state', true);
-    }
-
-    this.makeDirty();
-    return false;
-  },
-
-  showDiff: function() {
-    var $diff = $('#diff', this.el);
-    var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
-    var text2 = _.escape(this.serialize());
-    var d = diff.diffWords(text1, text2);
-    var compare = '';
-
-    for (var i = 0; i < d.length; i++) {
-      if (d[i].removed) {
-        compare += '<del>' + d[i].value + '</del>';
-      } else if (d[i].added) {
-        compare += '<ins>' + d[i].value + '</ins>';
-      } else {
-        compare += d[i].value;
-      }
-    }
-
-    // Content Window
-    $('.views .view', this.el).removeClass('active');
-    $diff.html('<pre>' + compare + '</pre>');
-    $diff.addClass('active');
-  },
-
-  closeSettings: function() {
-    $('.views .view', this.el).removeClass('active');
-
-    if (app.state.mode === 'blob') {
-      $('#preview', this.el).addClass('active');
-    } else {
-      $('#edit', this.el).addClass('active');
-    }
-
-    this.eventRegister.trigger('closeSettings');
-  },
-
-  save: function() {
-    this.showDiff();
-  },
-
-  refreshCodeMirror: function() {
-    if (typeof this.editor.refresh === 'function') this.editor.refresh();
-  },
-
-  updateMetaData: function() {
-    if (!this.model.jekyll) return true; // metadata -> skip
-    this.model.metadata = this.metadataEditor.getValue();
-    return true;
-  },
-
-  updateFilename: function(filepath, cb) {
-    var view = this;
-
-    if (!_.validPathname(filepath)) return cb('error');
-    app.state.path = this.model.path; // ?
-    app.state.file = _.extractFilename(filepath)[1];
-    app.state.path = _.extractFilename(filepath)[0];
-
-    function finish() {
-      view.model.path = app.state.path;
-      view.model.file = app.state.file;
-    }
-
-    if (this.model.persisted) {
-      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
-        if (!err) finish();
-        if (err) {
-          cb('error');
+      pushComponent: function(components, value, added, removed) {
+        var last = components[components.length-1];
+        if (last && last.added === added && last.removed === removed) {
+          // We need to clone here as the component clone operation is just
+          // as shallow array clone
+          components[components.length-1] =
+            {value: this.join(last.value, value), added: added, removed: removed };
         } else {
-          cb(null);
+          components.push({value: value, added: added, removed: removed });
         }
-      }, this));
-    } else {
-      finish();
-      cb(null);
-    }
-  },
+      },
+      extractCommon: function(basePath, newString, oldString, diagonalPath) {
+        var newLen = newString.length,
+            oldLen = oldString.length,
+            newPos = basePath.newPos,
+            oldPos = newPos - diagonalPath;
+        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
+          newPos++;
+          oldPos++;
 
-  serialize: function() {
-    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata);
-
-    if (this.model.jekyll) {
-      return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
-    } else {
-      return this.model.content;
-    }
-  },
-
-  sendPatch: function(filepath, filename, filecontent, message) {
-    // Submits a patch (fork + pull request workflow)
-    var view = this;
-
-    function patch() {
-      if (view.updateMetaData()) {
-        view.model.content = view.prevFile;
-        view.editor.setValue(view.prevFile);
-
-        app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-
-          if (err) {
-            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
-            return;
-          }
-
-          view.dirty = false;
-          view.model.persisted = true;
-          view.model.file = filename;
-
-          view.updateURL();
-          view.prevFile = filecontent;
-          view.closeSettings();
-          view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', 'Request Submitted', 'saved');
-        });
-      } else {
-        view.eventRegister.trigger('updateSaveState', 'Error Metadata not Found', 'error');
-      }
-    }
-
-    view.eventRegister.trigger('updateSaveState', 'Submitting Request', 'saving');
-    patch();
-
-    return false;
-  },
-
-  saveFile: function(filepath, filename, filecontent, message) {
-    var view = this;
-
-    function save() {
-      if (view.updateMetaData()) {
-        window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-          if (err) {
-            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
-            return;
-          }
-
-          view.dirty = false;
-          view.model.persisted = true;
-          view.model.file = filename;
-
-          if (app.state.mode === 'new') {
-            app.state.mode = 'edit';
-            view.eventRegister.trigger('sidebarContext', view.data);
-          }
-
-          view.renderHeading();
-          view.updateURL();
-          view.prevFile = filecontent;
-          view.closeSettings();
-          view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
-        });
-      } else {
-        view.eventRegister.trigger('updateSaveState', '!Metadata', 'error');
-      }
-    }
-
-    view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
-
-    if (filepath === _.filepath(this.model.path, this.model.file)) return save();
-
-    // Move or create file
-    this.updateFilename(filepath, function(err) {
-      if (err) {
-        view.eventRegister.trigger('filenameInput');
-        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;filename', 'error');
-      } else {
-        save();
-      }
-    });
-  },
-
-  updatePublishState: function() {
-    // Update the publish key wording depening on what was saved
-    var $publishKey = $('.publish-flag', this.el);
-    var key = $publishKey.attr('data-state');
-
-    if (key === 'true') {
-      $publishKey.empty().html('Published<span class="ico checkmark"></span>');
-    } else {
-      $publishKey.empty().html('Unpublished<span class="ico checkmark"></span>');
-    }
-  },
-
-  stashFile: function(e) {
-    if (e) e.preventDefault();
-    if (!window.sessionStorage) return false;
-
-    var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
-
-    // Don't stash if filepath is undefined
-    if (filepath) {
-      try {
-        store.setItem(filepath, JSON.stringify({
-          sha: app.state.sha,
-          content: this.editor ? this.editor.getValue() : null,
-          metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
-        }));
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  },
-
-  stashApply: function() {
-    if (!window.sessionStorage) return false;
-
-    var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
-    var item = store.getItem(filepath);
-    var stash = JSON.parse(item);
-
-    if (stash && stash.sha === window.app.state.sha) {
-      // Restore from stash if file sha hasn't changed
-      if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
-      if (this.metadataEditor) {
-        this.rawEditor.setValue('');
-        this.metadataEditor.setValue(stash.metadata);
-      }
-    } else if (item) {
-      // Remove expired content
-      store.removeItem(filepath);
-    }
-  },
-
-  updateFile: function() {
-    var filepath = $('input.filepath').val();
-    var filename = _.extractFilename(filepath)[1];
-    var filecontent = this.serialize();
-    var $message = $('.commit-message');
-
-    var message = $message.val() || $message.attr('placeholder');
-    var method = this.model.writable ? this.saveFile : this.sendPatch;
-
-    // Update content
-    this.model.content = (this.editor) ? this.editor.getValue() : '';
-
-    // If a permalink exists, update the path
-    if (this.data.permalink) {
-      this.data.permalink = this.config.siteurl + '/' + filepath;
-      this.eventRegister.trigger('sidebarContext', this.data);
-    }
-
-    // Delegate
-    method.call(this, filepath, filename, filecontent, message);
-    return false;
-  },
-
-  keyMap: function() {
-    var view = this;
-
-    if (this.model.markdown) {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.updateFile();
-        },
-        'Cmd-B': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
-        },
-        'Ctrl-B': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
-        },
-        'Cmd-I': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
-        },
-        'Ctrl-I': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
+          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
         }
-      };
-    } else {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.updateFile();
-        }
-      };
-    }
-  },
+        basePath.newPos = newPos;
+        return oldPos;
+      },
 
-  translate: function(e) {
-    // TODO Drop the 'EN' requirement.
-    var hash = window.location.hash.split('/'),
-      href = $(e.currentTarget).attr('href').substr(1);
-
-    // If current page is not english and target page is english
-    if (href === 'en') {
-      hash.splice(-2, 2, hash[hash.length - 1]);
-      // If current page is english and target page is not english
-    } else if (this.model.metadata.lang === 'en') {
-      hash.splice(-1, 1, href, hash[hash.length - 1]);
-      // If current page is not english and target page is not english
-    } else {
-      hash.splice(-2, 2, href, hash[hash.length - 1]);
-    }
-
-    router.navigate(_(hash).compact().join('/') + '?lang=' + href + '&translate=true', true);
-
-    return false;
-  },
-
-  buildMeta: function() {
-    var view = this;
-    var $metadataEditor = $('#meta', this.el).find('.form');
-    $metadataEditor.empty();
-
-    function initialize(model) {
-      var tmpl;
-
-      _(model.default_metadata).each(function(data, key) {
-        if (data && typeof data.field === 'object') {
-          switch (data.field.element) {
-            case 'button':
-              tmpl = _(window.app.templates.button).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value,
-                on: data.field.on,
-                off: data.field.off
-              }));
-              break;
-            case 'checkbox':
-              tmpl = _(window.app.templates.checkbox).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.name,
-                checked: data.field.value
-              }));
-              break;
-            case 'text':
-              tmpl = _(window.app.templates.text).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value
-              }));
-              break;
-            case 'select':
-              tmpl = _(window.app.templates.select).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: model.metadata.lang || 'en'
-              }));
-              break;
-            case 'multiselect':
-              tmpl = _(window.app.templates.multiselect).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: model.metadata.lang || 'en'
-              }));
-              break;
-            case 'hidden':
-              tmpl = _(window.app.templates.hidden).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                value: JSON.stringify(data.field.value).replace(/"/g, '&quot;').replace(/'/g, '&apos;')
-              }));
-              break;
-          }
+      equals: function(left, right) {
+        var reWhitespace = /\S/;
+        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
+          return true;
         } else {
-          tmpl = _(window.app.templates.text).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: key,
-            value: data
-          }));
+          return left == right;
         }
-      });
+      },
+      join: function(left, right) {
+        return left + right;
+      },
+      tokenize: function(value) {
+        return value;
+      }
+  };
 
-      $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">Raw Metadata</label>').appendTo($metadataEditor);
+  var CharDiff = new fbDiff();
 
-      var rawContainer = (view.model.lang === 'yaml') ? 'code' : 'raw';
-      view.rawEditor = CodeMirror(document.getElementById(rawContainer), {
-        mode: 'yaml',
-        value: '',
-        lineWrapping: true,
-        extraKeys: view.keyMap(),
-        theme: 'prose-bright'
-      });
+  var WordDiff = new fbDiff(true);
+  WordDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/(\s+|\b)/));
+  };
 
-      view.rawEditor.on('change', _.bind(view.makeDirty, view));
+  var CssDiff = new fbDiff(true);
+  CssDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/([{}:;,]|\s+)/));
+  };
 
-      setValue(model.metadata);
-      $('.chzn-select').chosen();
-    }
+  var LineDiff = new fbDiff();
+  LineDiff.tokenize = function(value) {
+    return value.split(/^/m);
+  };
 
-    function getValue() {
-      var metadata = {};
-      metadata.published = $('.publish-flag').attr('data-state');
+  return {
+    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
+    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
+    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
 
-      _.each($metadataEditor.find('[name]'), function(item) {
-        var value = $(item).val();
+    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
 
-        switch (item.type) {
-          case 'select-multiple':
-          case 'select-one':
-          case 'text':
-            if (value) {
-              if (metadata.hasOwnProperty(item.name)) {
-                metadata[item.name] = _.union(metadata[item.name], value);
-              } else {
-                metadata[item.name] = value;
-              }
-            }
-            break;
-          case 'checkbox':
-            if (item.checked) {
+    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
+      var ret = [];
 
-              if (metadata.hasOwnProperty(item.name)) {
-                metadata[item.name] = _.union(metadata[item.name], item.value);
-              } else if (item.value === item.name) {
-                metadata[item.name] = item.checked;
-              } else {
-                metadata[item.name] = item.value;
-              }
+      ret.push("Index: " + fileName);
+      ret.push("===================================================================");
+      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
+      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
 
-            } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
-              metadata[item.name] = item.checked;
-            } else {
-              metadata[item.name] = item.checked;
-            }
-            break;
-          case 'button':
-            if (value === 'true') {
-              metadata[item.name] = true;
-            } else if (value === 'false') {
-              metadata[item.name] = false;
-            }
-            break;
-          case 'hidden':
-            if (metadata.hasOwnProperty(item.name)) {
-              metadata[item.name] = _.union(metadata[item.name], JSON.parse(value));
-            } else {
-              metadata[item.name] = JSON.parse(value);
-            }
-            break;
-        }
-      });
+      var diff = LineDiff.diff(oldStr, newStr);
+      if (!diff[diff.length-1].value) {
+        diff.pop();   // Remove trailing newline add
+      }
+      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
 
-      if (view.rawEditor) {
-        try {
-          metadata = $.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
-        } catch (err) {
-          console.log(err);
+      function contextLines(lines) {
+        return lines.map(function(entry) { return ' ' + entry; });
+      }
+      function eofNL(curRange, i, current) {
+        var last = diff[diff.length-2],
+            isLast = i === diff.length-2,
+            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
+
+        // Figure out if this is the last line for the given file and missing NL
+        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
+          curRange.push('\\ No newline at end of file');
         }
       }
 
-      return metadata;
-    }
+      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
+          oldLine = 1, newLine = 1;
+      for (var i = 0; i < diff.length; i++) {
+        var current = diff[i],
+            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
+        current.lines = lines;
 
-    function getRaw() {
-      return jsyaml.dump(getValue());
-    }
+        if (current.added || current.removed) {
+          if (!oldRangeStart) {
+            var prev = diff[i-1];
+            oldRangeStart = oldLine;
+            newRangeStart = newLine;
 
-    function setValue(data) {
-      var missing = {};
-      var raw;
-
-      _(data).each(function(value, key) {
-        var matched = false;
-        var input = $metadataEditor.find('[name="' + key + '"]');
-        var length = input.length;
-        var options;
-        var tmpl;
-
-        if (length) {
-
-          // iterate over matching fields
-          for (var i = 0; i < length; i++) {
-
-            // if value is an array
-            if (value !== null && typeof value === 'object' && value.length) {
-
-              // iterate over values in array
-              for (var j = 0; j < value.length; j++) {
-                switch (input[i].type) {
-                case 'select-multiple':
-                case 'select-one':
-                  options = $(input[i]).find('option[value="' + value[j] + '"]');
-                  if (options.length) {
-                    for (var k = 0; k < options.length; k++) {
-                      options[k].selected = 'selected';
-                    }
-
-                    matched = true;
-                  }
-                  break;
-                case 'text':
-                  input[i].value = value;
-                  matched = true;
-                  break;
-                case 'checkbox':
-                  if (input[i].value === value) {
-                    input[i].checked = 'checked';
-                    matched = true;
-                  }
-                  break;
-                }
-              }
-
-            } else {
-
-              switch (input[i].type) {
-              case 'select-multiple':
-              case 'select-one':
-                options = $(input[i]).find('option[value="' + value + '"]');
-                if (options.length) {
-                  for (var m = 0; m < options.length; m++) {
-                    options[m].selected = 'selected';
-                  }
-
-                  matched = true;
-                }
-                break;
-              case 'text':
-                input[i].value = value;
-                matched = true;
-                break;
-              case 'checkbox':
-                input[i].checked = value ? 'checked' : false;
-                matched = true;
-                break;
-              case 'button':
-                input[i].value = value ? true : false;
-                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
-                matched = true;
-                break;
-              }
-
+            if (prev) {
+              curRange = contextLines(prev.lines.slice(-4));
+              oldRangeStart -= curRange.length;
+              newRangeStart -= curRange.length;
             }
           }
+          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
+          eofNL(curRange, i, current);
 
-          if (!matched && value !== null) {
-            if (missing.hasOwnProperty(key)) {
-              missing[key] = _.union(missing[key], value);
-            } else {
-              missing[key] = value;
-            }
-          }
-
-        } else {
-          // Don't render the 'publish?ed' field as
-          // this somewhere else in the interface.
-          if (key !== 'published') {
-            raw = {};
-            raw[key] = value;
-
-            if (view.rawEditor) {
-              view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
-            }
-          }
-        }
-      });
-
-      _.each(missing, function(value, key) {
-        if (value === null) return;
-
-        switch (typeof value) {
-        case 'boolean':
-          tmpl = _(window.app.templates.checkbox).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: value,
-            value: value,
-            checked: value ? 'checked' : false
-          }));
-          break;
-        case 'string':
-          tmpl = _(window.app.templates.text).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: value,
-            value: value
-          }));
-          break;
-        case 'object':
-          tmpl = _(window.app.templates.multiselect).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: key,
-            placeholder: key,
-            options: value,
-            lang: data.lang || 'en'
-          }));
-          break;
-        default:
-          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
-          break;
-        }
-      });
-    }
-
-    function setRaw(data) {
-      try {
-        setValue(jsyaml.load(data));
-      } catch (err) {
-        console.log('ERROR encoding YAML');
-        // No-op
-      }
-    }
-
-    initialize(this.model);
-
-    return {
-      el: $metadataEditor,
-      getRaw: getRaw,
-      setRaw: setRaw,
-      getValue: getValue,
-      setValue: setValue
-    };
-  },
-
-  fileInput: function(e) {
-    var view = this;
-    upload.fileSelect(e, function(e, file, content) {
-      view.updateImageInsert(e, file, content);
-    });
-
-    return false;
-  },
-
-  updateImageInsert: function(e, file, content) {
-    var view = this;
-    var path = (this.assetsDirectory) ? this.assetsDirectory : this.model.path;
-
-    var src = path + '/' + encodeURIComponent(file.name);
-    $('input[name="url"]').val(src);
-    $('input[name="alt"]').val('');
-
-    view.queue = {
-      e: e,
-      file: file,
-      content: content
-    };
-  },
-
-  initEditor: function() {
-    var view = this;
-
-    // TODO Remove setTimeout
-    setTimeout(function() {
-      if (view.model.jekyll) {
-        view.metadataEditor = view.buildMeta();
-      }
-
-      // Don't set up content editor for yaml posts
-      if (view.model.lang === 'yaml') return;
-
-      var lang = view.model.lang;
-      view.editor = CodeMirror(document.getElementById('code'), {
-        mode: view.model.lang,
-        value: view.model.content,
-        lineWrapping: true,
-        lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
-        extraKeys: view.keyMap(),
-        matchBrackets: true,
-        dragDrop: false,
-        theme: 'prose-bright'
-      });
-
-      // Bind Drag and Drop work on the editor
-      if (app.state.markdown && view.model.writable) {
-        upload.dragDrop($('#edit'), function(e, file, content) {
-          if ($('#dialog').hasClass('dialog')) {
-            view.updateImageInsert(e, file, content);
+          if (current.added) {
+            newLine += lines.length;
           } else {
-            view.createAndUpload(e, file, content);
+            oldLine += lines.length;
           }
-        });
-      }
-
-      // Monitor the current selection and apply
-      // an active class to any snippet links
-      if (view.model.lang === 'gfm') {
-        var $snippetLinks = $('.toolbar .group a', view.el);
-        view.editor.on('cursorActivity', _.bind(function() {
-
-          var selection = _.trim(view.editor.getSelection());
-          $snippetLinks.removeClass('active');
-
-          var match = {
-            lineBreak: /\n/,
-            h1: /^#{1}/,
-            h2: /^#{2,2}/,
-            h3: /^#{3,3}/,
-            strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-            italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-            isNumber: parseInt(selection.charAt(0), 10)
-          };
-
-          if (!match.isNumber) {
-            switch (selection.charAt(0)) {
-              case '#':
-                if (!match.lineBreak.test(selection)) {
-                  if (match.h2.test(selection) && !match.h3.test(selection)) {
-                    $('[data-key="sub-heading"]').addClass('active');
-                  } else if (!match.h2.test(selection)) {
-                    $('[data-key="heading"]').addClass('active');
-                  }
-                }
-                break;
-              case '>':
-                $('[data-key="quote"]').addClass('active');
-                break;
-              case '*':
-              case '_':
-                if (!match.lineBreak.test(selection)) {
-                  if (match.strong.test(selection)) {
-                    $('[data-key="bold"]').addClass('active');
-                  } else if (match.italic.test(selection)) {
-                    $('[data-key="italic"]').addClass('active');
-                  }
-                }
-                break;
-              case '!':
-                if (!match.lineBreak.test(selection) &&
-                    selection.charAt(1) === '[' &&
-                    selection.charAt(selection.length - 1) === ')') {
-                  $('[data-key="media"]').addClass('active');
-                }
-                break;
-              case '[':
-                if (!match.lineBreak.test(selection) &&
-                    selection.charAt(selection.length - 1) === ')') {
-                  $('[data-key="link"]').addClass('active');
-                }
-                break;
-              case '-':
-                if (selection.charAt(1) === ' ') {
-                  $('[data-key="list"]').addClass('active');
-                }
-              break;
-            }
-          } else {
-            if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
-              $('[data-key="numbered-list"]').addClass('active');
-            }
-          }
-        }, view));
-      }
-
-      view.editor.on('change', _.bind(view.makeDirty, view));
-      view.editor.on('focus', _.bind(function() {
-
-        // If an upload queue is set, we want to clear it.
-        this.queue = undefined;
-
-        // If a dialog window is open and the editor is in focus, close it.
-        $('.toolbar .group a', this.el).removeClass('on');
-        $('#dialog', view.el).empty().removeClass();
-      }, view));
-
-      view.refreshCodeMirror();
-
-      // Check sessionStorage for existing stash
-      // Apply if stash exists and is current, remove if expired
-      view.stashApply();
-    }, 100);
-  },
-
-  createAndUpload: function(e, file, content, userDefinedPath) {
-    var view = this;
-
-    // Loading State
-    this.eventRegister.trigger('updateSaveState', 'Uploading ' + file.name, 'saving');
-
-    // Base64 Encode the file content
-    var extension = file.type.split('/').pop();
-    var path;
-
-    if (userDefinedPath) {
-      // Unique Filename
-      path = userDefinedPath;
-    } else {
-      var uid = encodeURIComponent(file.name);
-      path = this.assetsDirectory ?
-             this.assetsDirectory + '/' + uid :
-             (this.model.path) ?
-               this.model.path + '/' + uid :
-               uid;
-    }
-
-    var data = {};
-        data.message = 'Uploaded ' + file.name;
-        data.content = content;
-        data.branch = app.state.branch;
-
-    // Read through the filenames of path. If there is a filename that
-    // exists, we want to pass data.sha to update the existing one.
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, _.extractFilename(path)[0], function(err, res) {
-      if (err) return view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
-
-      // Check whether the current (or media) directory
-      // contains the same filename as the one a user wishes
-      // to upload. we want to update the file by passing the sha
-      // to the data object in this case.
-      _(res.files).each(function(f) {
-        var parts = _.extractFilename(f.path);
-        var structuredPath = [parts[0], encodeURIComponent(parts[1])].join('/');
-        if (structuredPath === path) {
-          data.sha = f.sha;
-        }
-      });
-
-      // Stored in memory to test as GitHub may have not
-      // picked up on the change fast enough.
-      _(view.recentlyUploadedFiles).each(function(f) {
-        if (f.path === path) {
-          data.sha = f.sha;
-        }
-      });
-
-      app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
-        if (type === 'error') {
-          view.eventRegister.trigger('updateSaveState', 'Error&nbsp;Uploading try again in 30 Seconds!', 'error');
         } else {
-          var $alt = $('input[name="alt"]');
-          var image = ($alt.val) ?
-            '![' + $alt.val() + '](/' + path + ')' :
-            '![' + file.name + '](/' + path + ')';
+          if (oldRangeStart) {
+            // Close out any changes that have been output (or join overlapping)
+            if (lines.length <= 8 && i < diff.length-2) {
+              // Overlapping
+              curRange.push.apply(curRange, contextLines(lines));
+            } else {
+              // end the range and output
+              var contextSize = Math.min(lines.length, 4);
+              ret.push(
+                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
+                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
+                  + " @@");
+              ret.push.apply(ret, curRange);
+              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
+              if (lines.length <= 4) {
+                eofNL(ret, i, current);
+              }
 
-          view.editor.focus();
-          view.editor.replaceSelection(image);
-          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
-
-          // Update the media directory with the
-          // newly uploaded image.
-          if (!data.sha && view.assets) {
-            view.assets.push({
-              name: file.name,
-              type: 'blob',
-              path: path
-            });
+              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
+            }
           }
+          oldLine += lines.length;
+          newLine += lines.length;
+        }
+      }
 
-          // Store a record of recently uploaded files in memory
-          var fileParts = _.extractFilename(res.content.path);
-          var structuredPath = [fileParts[0], encodeURIComponent(fileParts[1])].join('/');
+      return ret.join('\n') + '\n';
+    },
 
-          view.recentlyUploadedFiles.push({
-            path: structuredPath,
-            sha: res.content.sha
+    applyPatch: function(oldStr, uniDiff) {
+      var diffstr = uniDiff.split("\n");
+      var diff = [];
+      var remEOFNL = false,
+          addEOFNL = false;
+
+      for (var i = (diffstr[0][0]=="I"?4:0); i < diffstr.length; i++) {
+        if(diffstr[i][0] == "@") {
+          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
+          diff.unshift({
+            start:meh[3],
+            oldlength:meh[2],
+            oldlines:[],
+            newlength:meh[4],
+            newlines:[]
           });
-        }
-      });
-    });
-  },
-
-  markdownSnippet: function(e) {
-    var view = this;
-    var $target = $(e.target, this.el).closest('a');
-    var $dialog = $('#dialog', this.el);
-    var $snippets = $('.toolbar .group a', this.el);
-    var key = $target.data('key');
-    var snippet = $target.data('snippet');
-    var selection = _.trim(this.editor.getSelection());
-
-    $dialog.removeClass().empty();
-
-    if (snippet) {
-      $snippets.removeClass('on');
-
-      if (selection) {
-        switch (key) {
-        case 'bold':
-          this.bold(selection);
-          break;
-        case 'italic':
-          this.italic(selection);
-          break;
-        case 'heading':
-          this.heading(selection);
-          break;
-        case 'sub-heading':
-          this.subHeading(selection);
-          break;
-        case 'quote':
-          this.quote(selection);
-          break;
-        default:
-          this.editor.replaceSelection(snippet);
-          break;
-        }
-        this.editor.focus();
-      } else {
-        this.editor.replaceSelection(snippet);
-        this.editor.focus();
-      }
-    } else if ($target.data('dialog')) {
-
-      var tmpl, className;
-      if (key === 'media' && !this.assets) {
-          className = key + ' no-directory';
-      } else {
-          className = key;
-      }
-
-      // This condition handles the link and media link in the toolbar.
-      if ($target.hasClass('on')) {
-        $target.removeClass('on');
-        $dialog.removeClass().empty();
-      } else {
-        $snippets.removeClass('on');
-        $target.addClass('on');
-        $dialog
-          .removeClass()
-          .addClass('dialog ' + className)
-          .empty();
-
-        switch(key) {
-          case 'link':
-            tmpl = _(app.templates.linkDialog).template();
-
-            $dialog.append(tmpl({
-              relativeLinks: view.relativeLinks
-            }));
-
-            if (view.relativeLinks) {
-              $('.chzn-select', $dialog).chosen().change(function() {
-                $('.chzn-single span').text('Insert a local link.');
-
-                var parts = $(this).val().split(',');
-                $('input[name=href]', $dialog).val(parts[0]);
-                $('input[name=text]', $dialog).val(parts[1]);
-              });
-            }
-
-            if (selection) {
-              // test if this is a markdown link: [text](link)
-              var link = /\[([^\]]+)\]\(([^)]+)\)/;
-              var quoted = /".*?"/;
-
-              var text = selection;
-              var href;
-              var title;
-
-              if (link.test(selection)) {
-                var parts = link.exec(selection);
-                text = parts[1];
-                href = parts[2];
-
-                // Search for a title attrbute within the url string
-                if (quoted.test(parts[2])) {
-                  href = parts[2].split(quoted)[0];
-
-                  // TODO could be improved
-                  title = parts[2].match(quoted)[0].replace(/"/g, '');
-                }
-              }
-
-              $('input[name=text]', $dialog).val(text);
-              if (href) $('input[name=href]', $dialog).val(href);
-              if (title) $('input[name=title]', $dialog).val(title);
-            }
-          break;
-          case 'media':
-            tmpl = _(app.templates.mediaDialog).template();
-            $dialog.append(tmpl({
-              writable: view.data.writable,
-              assetsDirectory: (view.assets) ? true : false
-            }));
-
-            if (view.assets) view.renderAssets(view.assets);
-
-            if (selection) {
-              var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
-              var src;
-              var alt;
-
-              if (image.test(selection)) {
-                var imageParts = image.exec(selection);
-                alt = imageParts[1];
-                src = imageParts[2];
-
-                $('input[name=url]', $dialog).val(src);
-                if (alt) $('input[name=alt]', $dialog).val(alt);
-              }
-            }
-          break;
-          case 'help':
-            tmpl = _(app.templates.helpDialog).template();
-            $dialog.append(tmpl({
-              help: toolbar.help
-            }));
-
-            // Page through different help sections
-            var $mainMenu = $('.main-menu a', this.el);
-            var $subMenu = $('.sub-menu', this.el);
-            var $content = $('.help-content', this.el);
-
-            $mainMenu.on('click', function() {
-              if (!$(this).hasClass('active')) {
-
-                $mainMenu.removeClass('active');
-                $content.removeClass('active');
-                $subMenu
-                    .removeClass('active')
-                    .find('a')
-                    .removeClass('active');
-
-                $(this).addClass('active');
-
-                // Add the relavent sub menu
-                var parent = $(this).data('id');
-                $('.' + parent).addClass('active');
-
-                // Add an active class and populate the
-                // content of the first list item.
-                var $firstSubElement = $('.' + parent + ' a:first', this.el);
-                $firstSubElement.addClass('active');
-
-                var subParent = $firstSubElement.data('id');
-                $('.help-' + subParent).addClass('active');
-              }
-              return false;
-            });
-
-            $subMenu.find('a').on('click', function() {
-              if (!$(this).hasClass('active')) {
-
-                $subMenu.find('a').removeClass('active');
-                $content.removeClass('active');
-                $(this).addClass('active');
-
-                // Add the relavent content section
-                var parent = $(this).data('id');
-                $('.help-' + parent).addClass('active');
-              }
-
-              return false;
-            });
-
-          break;
+        } else if(diffstr[i][0] == '+') {
+          diff[0].newlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == '-') {
+          diff[0].oldlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == ' ') {
+          diff[0].newlines.push(diffstr[i].substr(1));
+          diff[0].oldlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == '\\') {
+          if (diffstr[i-1][0] == '+') {
+            remEOFNL = true;
+          } else if(diffstr[i-1][0] == '-') {
+            addEOFNL = true;
+          }
         }
       }
-    }
 
-    return false;
-  },
-
-  renderAssets: function(data, back) {
-    var view = this;
-    var $media = $('#media', this.el);
-    var tmpl = _(app.templates.asset).template();
-
-    // Reset some stuff
-    $('.directory a', $media).off('click', this.assetDirectory);
-    $media.empty();
-
-    if (back && (back.join() !== this.assetsDirectory)) {
-      var link = back.slice(0, back.length - 1).join('/');
-      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
-    }
-
-    _(data).each(function(asset) {
-      var parts = asset.path.split('/');
-      var path = parts.slice(0, parts.length - 1).join('/');
-
-      $media.append(tmpl({
-        name: asset.name,
-        type: asset.type,
-        path: path + '/' + encodeURIComponent(asset.name)
-      }));
-    });
-
-    $('.asset a', $media).on('click', function(e) {
-      var href = $(this).attr('href');
-      var alt = _.trim($(this).text());
-
-      if (_.isImage(href)) {
-        $('input[name="url"]').val(href);
-        $('input[name="alt"]').val(alt);
-      } else {
-        view.editor.replaceSelection(href);
-        view.editor.focus();
-      }
-      return false;
-    });
-
-    $('.directory a', $media).on('click', function(e) {
-      view.assetDirectory($(e.target), view);
-      return false;
-    });
-  },
-
-  assetDirectory: function(dir, view) {
-    var path = dir.attr('href');
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, path, function(err, data) {
-      view.renderAssets(data.files, path.split('/'));
-    });
-  },
-
-  dialogInsert: function(e) {
-    var $dialog = $('#dialog', this.el);
-    var $target = $(e.target, this.el);
-    var type = $target.data('type');
-
-    if (type === 'link') {
-      var href = $('input[name="href"]').val();
-      var text = $('input[name="text"]').val();
-      var title = $('input[name="title"]').val();
-
-      if (!text) text = href;
-
-      if (title) {
-        this.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
-      } else {
-        this.editor.replaceSelection('[' + text + '](' + href + ')');
+      var str = oldStr.split("\n");
+      for (var i = diff.length - 1; i >= 0; i--) {
+        var d = diff[i];
+        for (var j = 0; j < d.oldlength; j++) {
+          if(str[d.start-1+j] != d.oldlines[j]) {
+            return false;
+          }
+        }
+        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
       }
 
-      this.editor.focus();
-    }
-
-    if (type === 'media') {
-      if (this.queue) {
-        var userDefinedPath = $('input[name="url"]').val();
-        this.createAndUpload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
-
-        // Finally, clear the queue object
-        this.queue = undefined;
-      } else {
-        var src = $('input[name="url"]').val();
-        var alt = $('input[name="alt"]').val();
-        this.editor.replaceSelection('![' + alt + '](/' + src + ')');
-        this.editor.focus();
+      if (remEOFNL) {
+        while (!str[str.length-1]) {
+          str.pop();
+        }
+      } else if (addEOFNL) {
+        str.push('');
       }
+      return str.join('\n');
+    },
+
+    convertChangesToXML: function(changes){
+      var ret = [];
+      for ( var i = 0; i < changes.length; i++) {
+        var change = changes[i];
+        if (change.added) {
+          ret.push("<ins>");
+        } else if (change.removed) {
+          ret.push("<del>");
+        }
+
+        ret.push(escapeHTML(change.value));
+
+        if (change.added) {
+          ret.push("</ins>");
+        } else if (change.removed) {
+          ret.push("</del>");
+        }
+      }
+      return ret.join("");
+    },
+
+    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
+    convertChangesToDMP: function(changes){
+      var ret = [], change;
+      for ( var i = 0; i < changes.length; i++) {
+        change = changes[i];
+        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
+      }
+      return ret;
     }
+  };
+})();
 
-    return false;
-  },
+if (typeof module !== "undefined") {
+    module.exports = JsDiff;
+}
 
-  heading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(1) !== '#') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
-    } else {
-      this.editor.replaceSelection('# ' + s.replace(/#/g, ''));
-    }
-  },
-
-  subHeading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
-    } else {
-      this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
-    }
-  },
-
-  italic: function(s) {
-    if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
-      this.editor.replaceSelection(s.replace(/_/g, ''));
-    } else {
-      this.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
-    }
-  },
-
-  bold: function(s) {
-    if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
-      this.editor.replaceSelection(s.replace(/\*/g, ''));
-    } else {
-      this.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
-    }
-  },
-
-  quote: function(s) {
-    if (s.charAt(0) === '>') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/\>/g, '')));
-    } else {
-      this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
-    }
-  },
-
-  remove: function() {
-    this.stashFile();
-
-    this.eventRegister.unbind('edit', this.postViews);
-    this.eventRegister.unbind('preview', this.preview);
-    this.eventRegister.unbind('deleteFile', this.deleteFile);
-    this.eventRegister.unbind('save', this.save);
-    this.eventRegister.unbind('translate', this.translate);
-    this.eventRegister.unbind('updateFile', this.updateFile);
-    this.eventRegister.unbind('meta', this.updateFile);
-    this.eventRegister.unbind('remove', this.remove);
-
-    // Clear any file state classes in #prose
-    this.eventRegister.trigger('updateSaveState', '', '');
-
-    $(window).off('pagehide');
-    Backbone.View.prototype.remove.call(this);
-  }
-});
-
-},{".././toolbar/markdown.js":18,".././util":20,".././upload":19,".././cookie":17,"jquery-browserify":14,"underscore":15,"js-yaml":21,"keymaster":22,"chosen-jquery-browserify":25,"backbone":16,"diff":26,"marked":27}],12:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var marked = require('marked');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  className: 'inner deep prose',
-
-  render: function() {
-    var view = this;
-    $.get('about.md', function(d) {
-      view.$el.html(marked(d));
-    });
-    return this;
-  }
-});
-
-
-
-},{"jquery-browserify":14,"backbone":16,"marked":27}],20:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -28658,7 +28663,7 @@ module.exports = {
   }
 };
 
-},{"jquery-browserify":14,"underscore":15,"js-yaml":21,"marked":27,"queue-async":24,"chrono":28}],21:[function(require,module,exports){
+},{"jquery-browserify":17,"underscore":15,"js-yaml":21,"marked":27,"queue-async":23,"chrono":28}],21:[function(require,module,exports){
 module.exports = require('./lib/js-yaml.js');
 
 },{"./lib/js-yaml.js":29}],27:[function(require,module,exports){
@@ -29740,10 +29745,7 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
-},{}],28:[function(require,module,exports){
-module.exports = require('./lib/chrono');
-
-},{"./lib/chrono":30}],29:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 
@@ -29778,413 +29780,7 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":31,"./js-yaml/dumper":32,"./js-yaml/type":33,"./js-yaml/schema":34,"./js-yaml/schema/minimal":35,"./js-yaml/schema/safe":36,"./js-yaml/schema/default":37,"./js-yaml/exception":38,"./js-yaml/require":39}],30:[function(require,module,exports){
-(function(){
-
-// CommonJS exports.
-var data = (typeof exports !== 'undefined') ? exports : {};
-
-data.tzToOffset = {
-  'ACDT': -630,
-  'ACST': -570,
-  'ACT': -480,
-  'ADT': +180,
-  'AEDT': -660,
-  'AEST': -600,
-  'AFT': -270,
-  'AKDT': +480,
-  'AKST': +540,
-  'AMST': -300,
-  'AMT': -240,
-  'ART': +180,
-  'AST': -240, // Arab Standard Time
-  'AWDT': -540,
-  'AWST': -480,
-  'AZOST': +60,
-  'AZT': -240,
-  'BDT': -480,
-  'BIOT': -360,
-  'BIT': +720,
-  'BOT': +240,
-  'BRT': +180,
-  'BST': -60, // British Summer Time
-  'BTT': -360,
-  'CAT': -120,
-  'CCT': -390,
-  'CDT': +300,
-  'CEDT': -120,
-  'CEST': -120,
-  'CET': -60,
-  'CHAST': -765,
-  'ChST': -600,
-  'CIST': +480,
-  'CKT': +600,
-  'CLST': +180,
-  'CLT': +240,
-  'COST': +240,
-  'COT': +300,
-  'CST': -480,
-  'CST': +360,
-  'CVT': +60,
-  'CXT': -420,
-  'DFT': -60,
-  'EAST': +360,
-  'EAT': -180,
-  'ECT': +240,
-  'ECT': +300,
-  'EDT': +240,
-  'EEDT': -180,
-  'EEST': -180,
-  'EET': -120,
-  'EST': +300,
-  'FJT': -720,
-  'FKST': +240,
-  'GALT': +360,
-  'GET': -240,
-  'GFT': +180,
-  'GILT': -720,
-  'GIT': +540,
-  'GMT': 0,
-  'GST': +120,
-  'GYT': +240,
-  'HADT': +540,
-  'HAST': +600,
-  'HKT': -480,
-  'HMT': -300,
-  'HST': +600,
-  'IRKT': -480,
-  'IRST': -210,
-  'IST': -120,
-  'IST': -330,
-  'IST': -60,
-  'JST': -540,
-  'KRAT': -420,
-  'KST': -540,
-  'LHST': -630,
-  'LINT': -840,
-  'MAGT': -660,
-  'MDT': +360,
-  'MIT': +570,
-  'MSD': -240,
-  'MSK': -180,
-  'MST': -390,
-  'MST': -480,
-  'MST': +420,
-  'MUT': -240,
-  'NDT': +150,
-  'NFT': -690,
-  'NPT': -345,
-  'NST': +210,
-  'NT': +210,
-  'NZST': -720,
-  'NZDT': -780,
-  'OMST': -360,
-  'PDT': +420,
-  'PETT': -720,
-  'PHOT': -780,
-  'PKT': -300,
-  'PST': -480,
-  'PST': +480,
-  'RET': -240,
-  'SAMT': -240,
-  'SAST': -120,
-  'SBT': -660,
-  'SCT': -240,
-  'SLT': -330,
-  'SST': -480,
-  'SST': +660,
-  'TAHT': +600,
-  'THA': -420,
-  'UTC': 0,
-  'UYST': +120,
-  'UYT': +180,
-  'VET': +270,
-  'VLAT': -600,
-  'WAT': -60,
-  'WEDT': -60,
-  'WEST': -60,
-  'YAKT': -540,
-  'YEKT': -300
-};
-
-// While indices are strings here, numbers work fine too when retrieving.
-data.offsetToTz = {
-  '720':  ['BIT'],
-  '660':  ['SST'],
-  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
-  '570':  ['MIT'],
-  '540':  ['AKST', 'GIT', 'HADT'],
-  '480':  ['PST', 'AKDT', 'CIST'],
-  '420':  ['MST', 'PDT'],
-  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
-  '300':  ['EST', 'CDT', 'COT', 'ECT'],
-  '270':  ['VET'],
-  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
-  '210':  ['NT', 'NST'],
-  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
-  '150':  ['NDT'],
-  '120':  ['GST', 'UYST'],
-  '60':   ['AZOST', 'CVT'],
-  '0':    ['UTC', 'GMT'],
-  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
-  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
-  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
-  '-210': ['IRST'],
-  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
-  '-270': ['AFT'],
-  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
-  '-330': ['IST', 'SLT'],
-  '-345': ['NPT'],
-  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
-  '-390': ['CCT', 'MST'],
-  '-420': ['CXT', 'KRAT', 'THA'],
-  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
-  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
-  '-570': ['ACST'],
-  '-600': ['AEST', 'ChST', 'VLAT'],
-  '-630': ['ACDT', 'LHST'],
-  '-660': ['AEDT', 'MAGT', 'SBT'],
-  '-690': ['NFT'],
-  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
-  '-765': ['CHAST'],
-  '-780': ['PHOT', 'NZDT'],
-  '-840': ['LINT']
-};
-
-data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
-
-data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
-
-data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
-
-data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
-
-data.intervals = [
-    function(n) { return n !== 1 ? 'years' : 'year'; },
-    function(n) { return n !== 1 ? 'months' : 'month'; },
-    function(n) { return n !== 1 ? 'weeks' : 'week'; },
-    function(n) { return n !== 1 ? 'days' : 'day'; },
-    function(n) { return n !== 1 ? 'hours' : 'hour'; },
-    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
-    function(n) { return n !== 1 ? 'seconds' : 'second'; }
-];
-
-data.intervalFormats = {
-    'ago': '% ago',
-    'in': 'in %'
-};
-
-data.ordinals = function(number) {
-  switch (number % 10) {
-    case 1: return (number % 100 !== 11) ? 'st' : 'th';
-    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
-    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
-    default: return 'th';
-  }
-};
-
-function pad2(i) {
-  return i < 10 ? '0' + i : i;
-};
-
-function pad2sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '0' + i : i);
-};
-
-function pad3(i) {
-  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
-};
-
-function pad4sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
-}
-
-Date.prototype.interval = function(other) {
-    var self = this, inverse = self > other;
-    if (inverse) {
-        self = other;
-        other = this;
-    }
-
-    var parts = [
-        other.getUTCFullYear() - self.getUTCFullYear(),
-        other.getUTCMonth() - self.getUTCMonth(),
-        0, // weeks
-        other.getUTCDate() - self.getUTCDate(),
-        other.getUTCHours() - self.getUTCHours(),
-        other.getUTCMinutes() - self.getUTCMinutes(),
-        other.getUTCSeconds() - self.getUTCSeconds()
-    ];
-    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
-    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
-    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
-    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
-    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
-    parts[2] = (parts[3] / 7) | 0;
-    parts[3] -= parts[2] * 7;
-
-    var fragments = [];
-    for (var i = 0; i < parts.length; i++) {
-        if (parts[i]) {
-            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
-        }
-    }
-    return fragments;
-};
-
-Date.prototype.format = function(format, tz) {
-  var time = this.getTime();
-
-  if (tz === undefined) {
-    tz = this.getTimezone();
-    tzName = this.getTimezoneName();
-  }
-  else {
-    var tzData = parseTimezone(tz);
-    tz = tzData[0];
-    var tzName = tzData[1];
-  }
-
-  // Use correct timezone.
-  this.setTime(time - tz * 60000);
-
-  var result = '';
-  for (var i = 0; i < format.length; i++) {
-    switch (format.charAt(i)) {
-      // Day
-      case 'd': result += pad2(this.getUTCDate()); break;
-      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
-      case 'j': result += this.getUTCDate(); break;
-      case 'l': result += data.weekdays[this.getUTCDay()]; break;
-      case 'N': result += this.getUTCDay() || 7; break;
-      case 'S': result += data.ordinals(this.getUTCDate()); break;
-      case 'w': result += this.getUTCDay(); break;
-      case 'z': result += this.getUTCDayOfYear(); break;
-
-      // Week
-      case 'W': result += pad2(this.getUTCISOWeek()); break;
-
-      // Month
-      case 'F': result += data.months[this.getUTCMonth()]; break;
-      case 'm': result += pad2(this.getUTCMonth() + 1); break;
-      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
-      case 'n': result += this.getUTCMonth() + 1; break;
-      case 't': result += this.getUTCDaysOfMonth(); break;
-
-      // Year
-      case 'L': result += this.isLeapYear() ? 1 : 0; break;
-      case 'o': result += this.getUTCISOFullYear(); break;
-      case 'Y': result += this.getUTCFullYear(); break;
-      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
-
-      // Time
-      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
-      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
-      case 'g': result += this.getUTCHours() % 12 || 12; break;
-      case 'G': result += this.getUTCHours(); break;
-      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
-      case 'H': result += pad2(this.getUTCHours()); break;
-      case 'i': result += pad2(this.getUTCMinutes()); break;
-      case 's': result += pad2(this.getUTCSeconds()); break;
-      case 'u': result += pad3(this.getUTCMilliseconds()); break;
-
-      // Timezone
-      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
-      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
-      case 'T': result += tzName; break;
-      case 'Z': result += -tz * 60; break;
-
-      // Full Date/Time
-      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
-      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
-      case 'U': result += Math.floor(this.getTime() / 1000); break;
-
-      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
-
-      default: result += format.charAt(i); break;
-    }
-  }
-
-  this.setTime(time);
-
-  return result;
-};
-
-function parseTimezone(tz) {
-  if (typeof tz === 'number') {
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-  var number = parseInt(tz, 10);
-  if (isNaN(number)) {
-    return [data.tzToOffset[tz], tz];
-  }
-  else {
-    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-}
-
-Date.prototype.isLeapYear = function() {
-  var y = this.getUTCFullYear();
-  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
-};
-
-Date.prototype.getUTCISOWeek = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
-};
-
-Date.prototype.getUTCISOFullYear = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return d.getUTCFullYear();
-};
-
-Date.prototype.getUTCDaysOfMonth = function() {
-  var d = new Date(this);
-  d.setUTCDate(1);
-  d.setUTCMonth(d.getUTCMonth() + 1);
-  d.setUTCDate(0);
-  return d.getUTCDate();
-};
-
-Date.prototype.getUTCDayOfYear = function() {
-  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
-};
-
-Date.prototype.getTimezone = function() {
-  if (!('_tz' in this)) {
-    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
-    if (matches && matches[1]) {
-        this.setTimezone(matches[1]);
-    } else {
-        this.setTimezone(new Date().getTimezoneOffset());
-    }
-  }
-  return this._tz;
-};
-
-Date.prototype.getTimezoneName = function() {
-  this.getTimezone(); // Make sure the tz data is populated.
-  return this._tzName;
-};
-
-Date.prototype.setTimezone = function(val) {
-  var tzData = parseTimezone(val);
-  this._tz = tzData[0];
-  this._tzName = tzData[1];
-};
-
-})();
-
-},{}],38:[function(require,module,exports){
+},{"./js-yaml/loader":30,"./js-yaml/dumper":31,"./js-yaml/type":32,"./js-yaml/schema/safe":33,"./js-yaml/schema":34,"./js-yaml/schema/default":35,"./js-yaml/exception":36,"./js-yaml/require":37,"./js-yaml/schema/minimal":38}],36:[function(require,module,exports){
 'use strict';
 
 
@@ -30211,10 +29807,10 @@ YAMLException.prototype.toString = function toString(compact) {
 
 module.exports = YAMLException;
 
-},{}],40:[function(require,module,exports){
-// nothing to see here... no file methods for the browser
+},{}],28:[function(require,module,exports){
+module.exports = require('./lib/chrono');
 
-},{}],31:[function(require,module,exports){
+},{"./lib/chrono":39}],30:[function(require,module,exports){
 'use strict';
 
 
@@ -31765,7 +31361,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":41,"./exception":38,"./mark":42,"./schema/safe":36,"./schema/default":37}],33:[function(require,module,exports){
+},{"./exception":36,"./common":40,"./schema/safe":33,"./mark":41,"./schema/default":35}],32:[function(require,module,exports){
 'use strict';
 
 
@@ -31849,7 +31445,573 @@ Type.Dumper = function TypeDumper(options) {
 
 module.exports = Type;
 
-},{"./exception":38}],32:[function(require,module,exports){
+},{"./exception":36}],34:[function(require,module,exports){
+'use strict';
+
+
+var common        = require('./common');
+var YAMLException = require('./exception');
+var Type          = require('./type');
+
+
+function compileList(schema, name, result) {
+  var exclude = [];
+
+  schema.include.forEach(function (includedSchema) {
+    result = compileList(includedSchema, name, result);
+  });
+
+  schema[name].forEach(function (currentType) {
+    result.forEach(function (previousType, previousIndex) {
+      if (previousType.tag === currentType.tag) {
+        exclude.push(previousIndex);
+      }
+    });
+
+    result.push(currentType);
+  });
+
+  return result.filter(function (type, index) {
+    return -1 === exclude.indexOf(index);
+  });
+}
+
+
+function compileMap(/* lists... */) {
+  var result = {}, index, length;
+
+  function collectType(type) {
+    result[type.tag] = type;
+  }
+
+  for (index = 0, length = arguments.length; index < length; index += 1) {
+    arguments[index].forEach(collectType);
+  }
+
+  return result;
+}
+
+
+function Schema(definition) {
+  this.include  = definition.include  || [];
+  this.implicit = definition.implicit || [];
+  this.explicit = definition.explicit || [];
+
+  this.implicit.forEach(function (type) {
+    if (null !== type.loader && 'string' !== type.loader.kind) {
+      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
+    }
+  });
+
+  this.compiledImplicit = compileList(this, 'implicit', []);
+  this.compiledExplicit = compileList(this, 'explicit', []);
+  this.compiledTypeMap  = compileMap(this.compiledImplicit, this.compiledExplicit);
+}
+
+
+Schema.DEFAULT = null;
+
+
+Schema.create = function createSchema() {
+  var schemas, types;
+
+  switch (arguments.length) {
+  case 1:
+    schemas = Schema.DEFAULT;
+    types = arguments[0];
+    break;
+
+  case 2:
+    schemas = arguments[0];
+    types = arguments[1];
+    break;
+
+  default:
+    throw new YAMLException('Wrong number of arguments for Schema.create function');
+  }
+
+  schemas = common.toArray(schemas);
+  types = common.toArray(types);
+
+  if (!schemas.every(function (schema) { return schema instanceof Schema; })) {
+    throw new YAMLException('Specified list of super schemas (or a single Schema object) contains a non-Schema object.');
+  }
+
+  if (!types.every(function (type) { return type instanceof Type; })) {
+    throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
+  }
+
+  return new Schema({
+    include: schemas,
+    explicit: types
+  });
+};
+
+
+module.exports = Schema;
+
+},{"./common":40,"./exception":36,"./type":32}],37:[function(require,module,exports){
+'use strict';
+
+
+var fs     = require('fs');
+var loader = require('./loader');
+
+
+function yamlRequireHandler(module, filename) {
+  var content = fs.readFileSync(filename, 'utf8');
+
+  // fill in documents
+  module.exports = loader.load(content, { filename: filename });
+}
+
+// register require extensions only if we're on node.js
+// hack for browserify
+if (undefined !== require.extensions) {
+  require.extensions['.yml']  = yamlRequireHandler;
+  require.extensions['.yaml'] = yamlRequireHandler;
+}
+
+
+module.exports = require;
+
+},{"fs":42,"./loader":30}],39:[function(require,module,exports){
+(function(){
+
+// CommonJS exports.
+var data = (typeof exports !== 'undefined') ? exports : {};
+
+data.tzToOffset = {
+  'ACDT': -630,
+  'ACST': -570,
+  'ACT': -480,
+  'ADT': +180,
+  'AEDT': -660,
+  'AEST': -600,
+  'AFT': -270,
+  'AKDT': +480,
+  'AKST': +540,
+  'AMST': -300,
+  'AMT': -240,
+  'ART': +180,
+  'AST': -240, // Arab Standard Time
+  'AWDT': -540,
+  'AWST': -480,
+  'AZOST': +60,
+  'AZT': -240,
+  'BDT': -480,
+  'BIOT': -360,
+  'BIT': +720,
+  'BOT': +240,
+  'BRT': +180,
+  'BST': -60, // British Summer Time
+  'BTT': -360,
+  'CAT': -120,
+  'CCT': -390,
+  'CDT': +300,
+  'CEDT': -120,
+  'CEST': -120,
+  'CET': -60,
+  'CHAST': -765,
+  'ChST': -600,
+  'CIST': +480,
+  'CKT': +600,
+  'CLST': +180,
+  'CLT': +240,
+  'COST': +240,
+  'COT': +300,
+  'CST': -480,
+  'CST': +360,
+  'CVT': +60,
+  'CXT': -420,
+  'DFT': -60,
+  'EAST': +360,
+  'EAT': -180,
+  'ECT': +240,
+  'ECT': +300,
+  'EDT': +240,
+  'EEDT': -180,
+  'EEST': -180,
+  'EET': -120,
+  'EST': +300,
+  'FJT': -720,
+  'FKST': +240,
+  'GALT': +360,
+  'GET': -240,
+  'GFT': +180,
+  'GILT': -720,
+  'GIT': +540,
+  'GMT': 0,
+  'GST': +120,
+  'GYT': +240,
+  'HADT': +540,
+  'HAST': +600,
+  'HKT': -480,
+  'HMT': -300,
+  'HST': +600,
+  'IRKT': -480,
+  'IRST': -210,
+  'IST': -120,
+  'IST': -330,
+  'IST': -60,
+  'JST': -540,
+  'KRAT': -420,
+  'KST': -540,
+  'LHST': -630,
+  'LINT': -840,
+  'MAGT': -660,
+  'MDT': +360,
+  'MIT': +570,
+  'MSD': -240,
+  'MSK': -180,
+  'MST': -390,
+  'MST': -480,
+  'MST': +420,
+  'MUT': -240,
+  'NDT': +150,
+  'NFT': -690,
+  'NPT': -345,
+  'NST': +210,
+  'NT': +210,
+  'NZST': -720,
+  'NZDT': -780,
+  'OMST': -360,
+  'PDT': +420,
+  'PETT': -720,
+  'PHOT': -780,
+  'PKT': -300,
+  'PST': -480,
+  'PST': +480,
+  'RET': -240,
+  'SAMT': -240,
+  'SAST': -120,
+  'SBT': -660,
+  'SCT': -240,
+  'SLT': -330,
+  'SST': -480,
+  'SST': +660,
+  'TAHT': +600,
+  'THA': -420,
+  'UTC': 0,
+  'UYST': +120,
+  'UYT': +180,
+  'VET': +270,
+  'VLAT': -600,
+  'WAT': -60,
+  'WEDT': -60,
+  'WEST': -60,
+  'YAKT': -540,
+  'YEKT': -300
+};
+
+// While indices are strings here, numbers work fine too when retrieving.
+data.offsetToTz = {
+  '720':  ['BIT'],
+  '660':  ['SST'],
+  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
+  '570':  ['MIT'],
+  '540':  ['AKST', 'GIT', 'HADT'],
+  '480':  ['PST', 'AKDT', 'CIST'],
+  '420':  ['MST', 'PDT'],
+  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
+  '300':  ['EST', 'CDT', 'COT', 'ECT'],
+  '270':  ['VET'],
+  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
+  '210':  ['NT', 'NST'],
+  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
+  '150':  ['NDT'],
+  '120':  ['GST', 'UYST'],
+  '60':   ['AZOST', 'CVT'],
+  '0':    ['UTC', 'GMT'],
+  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
+  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
+  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
+  '-210': ['IRST'],
+  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
+  '-270': ['AFT'],
+  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
+  '-330': ['IST', 'SLT'],
+  '-345': ['NPT'],
+  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
+  '-390': ['CCT', 'MST'],
+  '-420': ['CXT', 'KRAT', 'THA'],
+  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
+  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
+  '-570': ['ACST'],
+  '-600': ['AEST', 'ChST', 'VLAT'],
+  '-630': ['ACDT', 'LHST'],
+  '-660': ['AEDT', 'MAGT', 'SBT'],
+  '-690': ['NFT'],
+  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
+  '-765': ['CHAST'],
+  '-780': ['PHOT', 'NZDT'],
+  '-840': ['LINT']
+};
+
+data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
+
+data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
+
+data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+
+data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+
+data.intervals = [
+    function(n) { return n !== 1 ? 'years' : 'year'; },
+    function(n) { return n !== 1 ? 'months' : 'month'; },
+    function(n) { return n !== 1 ? 'weeks' : 'week'; },
+    function(n) { return n !== 1 ? 'days' : 'day'; },
+    function(n) { return n !== 1 ? 'hours' : 'hour'; },
+    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
+    function(n) { return n !== 1 ? 'seconds' : 'second'; }
+];
+
+data.intervalFormats = {
+    'ago': '% ago',
+    'in': 'in %'
+};
+
+data.ordinals = function(number) {
+  switch (number % 10) {
+    case 1: return (number % 100 !== 11) ? 'st' : 'th';
+    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
+    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
+    default: return 'th';
+  }
+};
+
+function pad2(i) {
+  return i < 10 ? '0' + i : i;
+};
+
+function pad2sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '0' + i : i);
+};
+
+function pad3(i) {
+  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
+};
+
+function pad4sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
+}
+
+Date.prototype.interval = function(other) {
+    var self = this, inverse = self > other;
+    if (inverse) {
+        self = other;
+        other = this;
+    }
+
+    var parts = [
+        other.getUTCFullYear() - self.getUTCFullYear(),
+        other.getUTCMonth() - self.getUTCMonth(),
+        0, // weeks
+        other.getUTCDate() - self.getUTCDate(),
+        other.getUTCHours() - self.getUTCHours(),
+        other.getUTCMinutes() - self.getUTCMinutes(),
+        other.getUTCSeconds() - self.getUTCSeconds()
+    ];
+    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
+    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
+    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
+    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
+    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
+    parts[2] = (parts[3] / 7) | 0;
+    parts[3] -= parts[2] * 7;
+
+    var fragments = [];
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i]) {
+            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
+        }
+    }
+    return fragments;
+};
+
+Date.prototype.format = function(format, tz) {
+  var time = this.getTime();
+
+  if (tz === undefined) {
+    tz = this.getTimezone();
+    tzName = this.getTimezoneName();
+  }
+  else {
+    var tzData = parseTimezone(tz);
+    tz = tzData[0];
+    var tzName = tzData[1];
+  }
+
+  // Use correct timezone.
+  this.setTime(time - tz * 60000);
+
+  var result = '';
+  for (var i = 0; i < format.length; i++) {
+    switch (format.charAt(i)) {
+      // Day
+      case 'd': result += pad2(this.getUTCDate()); break;
+      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
+      case 'j': result += this.getUTCDate(); break;
+      case 'l': result += data.weekdays[this.getUTCDay()]; break;
+      case 'N': result += this.getUTCDay() || 7; break;
+      case 'S': result += data.ordinals(this.getUTCDate()); break;
+      case 'w': result += this.getUTCDay(); break;
+      case 'z': result += this.getUTCDayOfYear(); break;
+
+      // Week
+      case 'W': result += pad2(this.getUTCISOWeek()); break;
+
+      // Month
+      case 'F': result += data.months[this.getUTCMonth()]; break;
+      case 'm': result += pad2(this.getUTCMonth() + 1); break;
+      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
+      case 'n': result += this.getUTCMonth() + 1; break;
+      case 't': result += this.getUTCDaysOfMonth(); break;
+
+      // Year
+      case 'L': result += this.isLeapYear() ? 1 : 0; break;
+      case 'o': result += this.getUTCISOFullYear(); break;
+      case 'Y': result += this.getUTCFullYear(); break;
+      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
+
+      // Time
+      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
+      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
+      case 'g': result += this.getUTCHours() % 12 || 12; break;
+      case 'G': result += this.getUTCHours(); break;
+      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
+      case 'H': result += pad2(this.getUTCHours()); break;
+      case 'i': result += pad2(this.getUTCMinutes()); break;
+      case 's': result += pad2(this.getUTCSeconds()); break;
+      case 'u': result += pad3(this.getUTCMilliseconds()); break;
+
+      // Timezone
+      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
+      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
+      case 'T': result += tzName; break;
+      case 'Z': result += -tz * 60; break;
+
+      // Full Date/Time
+      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
+      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
+      case 'U': result += Math.floor(this.getTime() / 1000); break;
+
+      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
+
+      default: result += format.charAt(i); break;
+    }
+  }
+
+  this.setTime(time);
+
+  return result;
+};
+
+function parseTimezone(tz) {
+  if (typeof tz === 'number') {
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+  var number = parseInt(tz, 10);
+  if (isNaN(number)) {
+    return [data.tzToOffset[tz], tz];
+  }
+  else {
+    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+}
+
+Date.prototype.isLeapYear = function() {
+  var y = this.getUTCFullYear();
+  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
+};
+
+Date.prototype.getUTCISOWeek = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
+};
+
+Date.prototype.getUTCISOFullYear = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return d.getUTCFullYear();
+};
+
+Date.prototype.getUTCDaysOfMonth = function() {
+  var d = new Date(this);
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() + 1);
+  d.setUTCDate(0);
+  return d.getUTCDate();
+};
+
+Date.prototype.getUTCDayOfYear = function() {
+  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
+};
+
+Date.prototype.getTimezone = function() {
+  if (!('_tz' in this)) {
+    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
+    if (matches && matches[1]) {
+        this.setTimezone(matches[1]);
+    } else {
+        this.setTimezone(new Date().getTimezoneOffset());
+    }
+  }
+  return this._tz;
+};
+
+Date.prototype.getTimezoneName = function() {
+  this.getTimezone(); // Make sure the tz data is populated.
+  return this._tzName;
+};
+
+Date.prototype.setTimezone = function(val) {
+  var tzData = parseTimezone(val);
+  this._tz = tzData[0];
+  this._tzName = tzData[1];
+};
+
+})();
+
+},{}],33:[function(require,module,exports){
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  include: [
+    require('./minimal')
+  ],
+  implicit: [
+    require('../type/null'),
+    require('../type/bool'),
+    require('../type/int'),
+    require('../type/float'),
+    require('../type/timestamp'),
+    require('../type/merge')
+  ],
+  explicit: [
+    require('../type/binary'),
+    require('../type/omap'),
+    require('../type/pairs'),
+    require('../type/set')
+  ]
+});
+
+},{"../schema":34,"./minimal":38,"../type/null":43,"../type/bool":44,"../type/int":45,"../type/float":46,"../type/timestamp":47,"../type/merge":48,"../type/binary":49,"../type/omap":50,"../type/pairs":51,"../type/set":52}],42:[function(require,module,exports){
+// nothing to see here... no file methods for the browser
+
+},{}],31:[function(require,module,exports){
 'use strict';
 
 
@@ -32288,179 +32450,7 @@ function safeDump(input, options) {
 module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
-},{"./common":41,"./exception":38,"./schema/default":37,"./schema/safe":36}],34:[function(require,module,exports){
-'use strict';
-
-
-var common        = require('./common');
-var YAMLException = require('./exception');
-var Type          = require('./type');
-
-
-function compileList(schema, name, result) {
-  var exclude = [];
-
-  schema.include.forEach(function (includedSchema) {
-    result = compileList(includedSchema, name, result);
-  });
-
-  schema[name].forEach(function (currentType) {
-    result.forEach(function (previousType, previousIndex) {
-      if (previousType.tag === currentType.tag) {
-        exclude.push(previousIndex);
-      }
-    });
-
-    result.push(currentType);
-  });
-
-  return result.filter(function (type, index) {
-    return -1 === exclude.indexOf(index);
-  });
-}
-
-
-function compileMap(/* lists... */) {
-  var result = {}, index, length;
-
-  function collectType(type) {
-    result[type.tag] = type;
-  }
-
-  for (index = 0, length = arguments.length; index < length; index += 1) {
-    arguments[index].forEach(collectType);
-  }
-
-  return result;
-}
-
-
-function Schema(definition) {
-  this.include  = definition.include  || [];
-  this.implicit = definition.implicit || [];
-  this.explicit = definition.explicit || [];
-
-  this.implicit.forEach(function (type) {
-    if (null !== type.loader && 'string' !== type.loader.kind) {
-      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
-    }
-  });
-
-  this.compiledImplicit = compileList(this, 'implicit', []);
-  this.compiledExplicit = compileList(this, 'explicit', []);
-  this.compiledTypeMap  = compileMap(this.compiledImplicit, this.compiledExplicit);
-}
-
-
-Schema.DEFAULT = null;
-
-
-Schema.create = function createSchema() {
-  var schemas, types;
-
-  switch (arguments.length) {
-  case 1:
-    schemas = Schema.DEFAULT;
-    types = arguments[0];
-    break;
-
-  case 2:
-    schemas = arguments[0];
-    types = arguments[1];
-    break;
-
-  default:
-    throw new YAMLException('Wrong number of arguments for Schema.create function');
-  }
-
-  schemas = common.toArray(schemas);
-  types = common.toArray(types);
-
-  if (!schemas.every(function (schema) { return schema instanceof Schema; })) {
-    throw new YAMLException('Specified list of super schemas (or a single Schema object) contains a non-Schema object.');
-  }
-
-  if (!types.every(function (type) { return type instanceof Type; })) {
-    throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
-  }
-
-  return new Schema({
-    include: schemas,
-    explicit: types
-  });
-};
-
-
-module.exports = Schema;
-
-},{"./common":41,"./exception":38,"./type":33}],39:[function(require,module,exports){
-'use strict';
-
-
-var fs     = require('fs');
-var loader = require('./loader');
-
-
-function yamlRequireHandler(module, filename) {
-  var content = fs.readFileSync(filename, 'utf8');
-
-  // fill in documents
-  module.exports = loader.load(content, { filename: filename });
-}
-
-// register require extensions only if we're on node.js
-// hack for browserify
-if (undefined !== require.extensions) {
-  require.extensions['.yml']  = yamlRequireHandler;
-  require.extensions['.yaml'] = yamlRequireHandler;
-}
-
-
-module.exports = require;
-
-},{"fs":40,"./loader":31}],35:[function(require,module,exports){
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  explicit: [
-    require('../type/str'),
-    require('../type/seq'),
-    require('../type/map')
-  ]
-});
-
-},{"../schema":34,"../type/str":43,"../type/seq":44,"../type/map":45}],36:[function(require,module,exports){
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  include: [
-    require('./minimal')
-  ],
-  implicit: [
-    require('../type/null'),
-    require('../type/bool'),
-    require('../type/int'),
-    require('../type/float'),
-    require('../type/timestamp'),
-    require('../type/merge')
-  ],
-  explicit: [
-    require('../type/binary'),
-    require('../type/omap'),
-    require('../type/pairs'),
-    require('../type/set')
-  ]
-});
-
-},{"../schema":34,"./minimal":35,"../type/null":46,"../type/bool":47,"../type/int":48,"../type/float":49,"../type/timestamp":50,"../type/merge":51,"../type/binary":52,"../type/omap":53,"../type/pairs":54,"../type/set":55}],37:[function(require,module,exports){
+},{"./common":40,"./exception":36,"./schema/default":35,"./schema/safe":33}],35:[function(require,module,exports){
 'use strict';
 
 
@@ -32478,7 +32468,22 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":34,"./safe":36,"../type/js/undefined":56,"../type/js/regexp":57,"../type/js/function":58}],41:[function(require,module,exports){
+},{"../schema":34,"./safe":33,"../type/js/undefined":53,"../type/js/regexp":54,"../type/js/function":55}],38:[function(require,module,exports){
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  explicit: [
+    require('../type/str'),
+    require('../type/seq'),
+    require('../type/map')
+  ]
+});
+
+},{"../schema":34,"../type/str":56,"../type/seq":57,"../type/map":58}],40:[function(require,module,exports){
 'use strict';
 
 
@@ -32540,7 +32545,7 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],42:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 'use strict';
 
 
@@ -32620,7 +32625,805 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":41}],59:[function(require,module,exports){
+},{"./common":40}],44:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
+},{"../common":40,"../type":32}],43:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
+    }
+  }
+});
+
+},{"../common":40,"../type":32}],47:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_TIMESTAMP_REGEXP = new RegExp(
+  '^([0-9][0-9][0-9][0-9])'          + // [1] year
+  '-([0-9][0-9]?)'                   + // [2] month
+  '-([0-9][0-9]?)'                   + // [3] day
+  '(?:(?:[Tt]|[ \\t]+)'              + // ...
+  '([0-9][0-9]?)'                    + // [4] hour
+  ':([0-9][0-9])'                    + // [5] minute
+  ':([0-9][0-9])'                    + // [6] second
+  '(?:\\.([0-9]*))?'                 + // [7] fraction
+  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
+  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
+
+
+function resolveYamlTimestamp(object /*, explicit*/) {
+  var match, year, month, day, hour, minute, second, fraction = 0,
+      delta = null, tz_hour, tz_minute, data;
+
+  match = YAML_TIMESTAMP_REGEXP.exec(object);
+
+  if (null === match) {
+    return NIL;
+  }
+
+  // match: [1] year [2] month [3] day
+
+  year = +(match[1]);
+  month = +(match[2]) - 1; // JS month starts with 0
+  day = +(match[3]);
+
+  if (!match[4]) { // no hour
+    return new Date(Date.UTC(year, month, day));
+  }
+
+  // match: [4] hour [5] minute [6] second [7] fraction
+
+  hour = +(match[4]);
+  minute = +(match[5]);
+  second = +(match[6]);
+
+  if (match[7]) {
+    fraction = match[7].slice(0, 3);
+    while (fraction.length < 3) { // milli-seconds
+      fraction += '0';
+    }
+    fraction = +fraction;
+  }
+
+  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
+
+  if (match[9]) {
+    tz_hour = +(match[10]);
+    tz_minute = +(match[11] || 0);
+    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
+    if ('-' === match[9]) {
+      delta = -delta;
+    }
+  }
+
+  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
+
+  if (delta) {
+    data.setTime(data.getTime() - delta);
+  }
+
+  return data;
+}
+
+
+function representYamlTimestamp(object /*, style*/) {
+  return object.toISOString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:timestamp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlTimestamp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: Date,
+    representer: representYamlTimestamp
+  }
+});
+
+},{"../common":40,"../type":32}],48:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
+},{"../common":40,"../type":32}],50:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+
+function resolveYamlOmap(object /*, explicit*/) {
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) {
+          pairHasKey = true;
+        } else {
+          return NIL;
+        }
+      }
+    }
+
+    if (!pairHasKey) {
+      return NIL;
+    }
+
+    if (-1 === objectKeys.indexOf(pairKey)) {
+      objectKeys.push(pairKey);
+    } else {
+      return NIL;
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":40,"../type":32}],51:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
+  }
+});
+
+},{"../common":40,"../type":32}],52:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+function resolveYamlSet(object /*, explicit*/) {
+  var key;
+
+  for (key in object) {
+    if (_hasOwnProperty.call(object, key)) {
+      if (null !== object[key]) {
+        return NIL;
+      }
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:set', {
+  loader: {
+    kind: 'object',
+    resolver: resolveYamlSet
+  }
+});
+
+},{"../common":40,"../type":32}],45:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":40,"../type":32}],46:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_FLOAT_PATTERN = new RegExp(
+  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
+  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
+  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
+  '|[-+]?\\.(?:inf|Inf|INF)' +
+  '|\\.(?:nan|NaN|NAN))$');
+
+
+function resolveYamlFloat(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_FLOAT_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '').toLowerCase();
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('.inf' === value) {
+    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+
+  } else if ('.nan' === value) {
+    return NaN;
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseFloat(v, 10));
+    });
+
+    value = 0.0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += d * base;
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseFloat(value, 10);
+  }
+}
+
+
+function representYamlFloat(object, style) {
+  if (isNaN(object)) {
+    switch (style) {
+    case 'lowercase':
+      return '.nan';
+    case 'uppercase':
+      return '.NAN';
+    case 'camelcase':
+      return '.NaN';
+    }
+  } else if (Number.POSITIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '.inf';
+    case 'uppercase':
+      return '.INF';
+    case 'camelcase':
+      return '.Inf';
+    }
+  } else if (Number.NEGATIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '-.inf';
+    case 'uppercase':
+      return '-.INF';
+    case 'camelcase':
+      return '-.Inf';
+    }
+  } else {
+    return object.toString(10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:float', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlFloat
+  },
+  dumper: {
+    kind: 'float',
+    defaultStyle: 'lowercase',
+    representer: representYamlFloat
+  }
+});
+
+},{"../common":40,"../type":32}],57:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:seq', {
+  loader: {
+    kind: 'array'
+  }
+});
+
+},{"../type":32}],56:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:str', {
+  loader: {
+    kind: 'string'
+  }
+});
+
+},{"../type":32}],54:[function(require,module,exports){
+(function(){'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptRegExp(object /*, explicit*/) {
+  var regexp = object,
+      tail   = /\/([gim]*)$/.exec(object),
+      modifiers;
+
+  // `/foo/gim` - tail can be maximum 4 chars
+  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
+    regexp = regexp.slice(1, regexp.length - tail[0].length);
+    modifiers = tail[1];
+  }
+
+  try {
+    return new RegExp(regexp, modifiers);
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptRegExp(object /*, style*/) {
+  var result = '/' + object.source + '/';
+
+  if (object.global) {
+    result += 'g';
+  }
+
+  if (object.multiline) {
+    result += 'm';
+  }
+
+  if (object.ignoreCase) {
+    result += 'i';
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/regexp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptRegExp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: RegExp,
+    representer: representJavascriptRegExp
+  }
+});
+
+})()
+},{"../../common":40,"../../type":32}],58:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:map', {
+  loader: {
+    kind: 'object'
+  }
+});
+
+},{"../type":32}],49:[function(require,module,exports){
+(function(){// Modified from:
+// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
+
+'use strict';
+
+
+var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
+var common     = require('../common');
+var NIL        = common.NIL;
+var Type       = require('../type');
+
+
+
+var BASE64_PADDING = '=';
+
+var BASE64_BINTABLE = [
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
+  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
+];
+
+var BASE64_CHARTABLE =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+
+
+function resolveYamlBinary(object /*, explicit*/) {
+  var value, code, idx = 0, result = [], leftbits, leftdata;
+
+  leftbits = 0; // number of bits decoded, but yet to be appended
+  leftdata = 0; // bits decoded, but yet to be appended
+
+  // Convert one by one.
+  for (idx = 0; idx < object.length; idx += 1) {
+    code = object.charCodeAt(idx);
+    value = BASE64_BINTABLE[code & 0x7F];
+
+    // Skip LF(NL) || CR
+    if (0x0A !== code && 0x0D !== code) {
+      // Fail on illegal characters
+      if (-1 === value) {
+        return NIL;
+      }
+
+      // Collect data into leftdata, update bitcount
+      leftdata = (leftdata << 6) | value;
+      leftbits += 6;
+
+      // If we have 8 or more bits, append 8 bits to the result
+      if (leftbits >= 8) {
+        leftbits -= 8;
+
+        // Append if not padding.
+        if (BASE64_PADDING !== object.charAt(idx)) {
+          result.push((leftdata >> leftbits) & 0xFF);
+        }
+
+        leftdata &= (1 << leftbits) - 1;
+      }
+    }
+  }
+
+  // If there are any bits left, the base64 string was corrupted
+  if (leftbits) {
+    return NIL;
+  } else {
+    return new NodeBuffer(result);
+  }
+}
+
+
+function representYamlBinary(object /*, style*/) {
+  var result = '', index, length, rest;
+
+  // Convert every three bytes to 4 ASCII characters.
+  for (index = 0, length = object.length - 2; index < length; index += 3) {
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
+    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
+  }
+
+  rest = object.length % 3;
+
+  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
+  if (0 !== rest) {
+    index = object.length - rest;
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+
+    if (2 === rest) {
+      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
+      result += BASE64_PADDING;
+    } else {
+      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
+      result += BASE64_PADDING + BASE64_PADDING;
+    }
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:binary', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBinary
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: NodeBuffer,
+    representer: representYamlBinary
+  }
+});
+
+})()
+},{"buffer":59,"../common":40,"../type":32}],53:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../../type');
+
+
+function resolveJavascriptUndefined(/*object, explicit*/) {
+  var undef;
+
+  return undef;
+}
+
+
+function representJavascriptUndefined(/*object, explicit*/) {
+  return '';
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/undefined', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptUndefined
+  },
+  dumper: {
+    kind: 'undefined',
+    representer: representJavascriptUndefined
+  }
+});
+
+},{"../../type":32}],60:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -32937,805 +33740,93 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":60,"buffer":61}],43:[function(require,module,exports){
-'use strict';
+},{"util":61,"buffer":59}],62:[function(require,module,exports){
+exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
+  var e, m,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      nBits = -7,
+      i = isBE ? 0 : (nBytes - 1),
+      d = isBE ? 1 : -1,
+      s = buffer[offset + i];
 
+  i += d;
 
-var Type = require('../type');
+  e = s & ((1 << (-nBits)) - 1);
+  s >>= (-nBits);
+  nBits += eLen;
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
 
+  m = e & ((1 << (-nBits)) - 1);
+  e >>= (-nBits);
+  nBits += mLen;
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
 
-module.exports = new Type('tag:yaml.org,2002:str', {
-  loader: {
-    kind: 'string'
+  if (e === 0) {
+    e = 1 - eBias;
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity);
+  } else {
+    m = m + Math.pow(2, mLen);
+    e = e - eBias;
   }
-});
-
-},{"../type":33}],44:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:seq', {
-  loader: {
-    kind: 'array'
-  }
-});
-
-},{"../type":33}],45:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:map', {
-  loader: {
-    kind: 'object'
-  }
-});
-
-},{"../type":33}],46:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
 };
 
+exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
+  var e, m, c,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
+      i = isBE ? (nBytes - 1) : 0,
+      d = isBE ? -1 : 1,
+      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
 
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
+  value = Math.abs(value);
 
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0;
+    e = eMax;
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2);
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--;
+      c *= 2;
+    }
+    if (e + eBias >= 1) {
+      value += rt / c;
+    } else {
+      value += rt * Math.pow(2, 1 - eBias);
+    }
+    if (value * c >= 2) {
+      e++;
+      c /= 2;
+    }
 
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
+    if (e + eBias >= eMax) {
+      m = 0;
+      e = eMax;
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen);
+      e = e + eBias;
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+      e = 0;
     }
   }
-});
 
-},{"../common":41,"../type":33}],47:[function(require,module,exports){
-'use strict';
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
 
+  e = (e << mLen) | m;
+  eLen += mLen;
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
 
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
+  buffer[offset + i - d] |= s * 128;
 };
 
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
-  }
-});
-
-},{"../common":41,"../type":33}],48:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":41,"../type":33}],49:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
-  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
-  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  '|\\.(?:nan|NaN|NAN))$');
-
-
-function resolveYamlFloat(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_FLOAT_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '').toLowerCase();
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('.inf' === value) {
-    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if ('.nan' === value) {
-    return NaN;
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseFloat(v, 10));
-    });
-
-    value = 0.0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += d * base;
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseFloat(value, 10);
-  }
-}
-
-
-function representYamlFloat(object, style) {
-  if (isNaN(object)) {
-    switch (style) {
-    case 'lowercase':
-      return '.nan';
-    case 'uppercase':
-      return '.NAN';
-    case 'camelcase':
-      return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '.inf';
-    case 'uppercase':
-      return '.INF';
-    case 'camelcase':
-      return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '-.inf';
-    case 'uppercase':
-      return '-.INF';
-    case 'camelcase':
-      return '-.Inf';
-    }
-  } else {
-    return object.toString(10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlFloat
-  },
-  dumper: {
-    kind: 'float',
-    defaultStyle: 'lowercase',
-    representer: representYamlFloat
-  }
-});
-
-},{"../common":41,"../type":33}],50:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_TIMESTAMP_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9]?)'                   + // [2] month
-  '-([0-9][0-9]?)'                   + // [3] day
-  '(?:(?:[Tt]|[ \\t]+)'              + // ...
-  '([0-9][0-9]?)'                    + // [4] hour
-  ':([0-9][0-9])'                    + // [5] minute
-  ':([0-9][0-9])'                    + // [6] second
-  '(?:\\.([0-9]*))?'                 + // [7] fraction
-  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
-  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
-
-
-function resolveYamlTimestamp(object /*, explicit*/) {
-  var match, year, month, day, hour, minute, second, fraction = 0,
-      delta = null, tz_hour, tz_minute, data;
-
-  match = YAML_TIMESTAMP_REGEXP.exec(object);
-
-  if (null === match) {
-    return NIL;
-  }
-
-  // match: [1] year [2] month [3] day
-
-  year = +(match[1]);
-  month = +(match[2]) - 1; // JS month starts with 0
-  day = +(match[3]);
-
-  if (!match[4]) { // no hour
-    return new Date(Date.UTC(year, month, day));
-  }
-
-  // match: [4] hour [5] minute [6] second [7] fraction
-
-  hour = +(match[4]);
-  minute = +(match[5]);
-  second = +(match[6]);
-
-  if (match[7]) {
-    fraction = match[7].slice(0, 3);
-    while (fraction.length < 3) { // milli-seconds
-      fraction += '0';
-    }
-    fraction = +fraction;
-  }
-
-  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
-
-  if (match[9]) {
-    tz_hour = +(match[10]);
-    tz_minute = +(match[11] || 0);
-    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-    if ('-' === match[9]) {
-      delta = -delta;
-    }
-  }
-
-  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
-
-  if (delta) {
-    data.setTime(data.getTime() - delta);
-  }
-
-  return data;
-}
-
-
-function representYamlTimestamp(object /*, style*/) {
-  return object.toISOString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:timestamp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlTimestamp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: Date,
-    representer: representYamlTimestamp
-  }
-});
-
-},{"../common":41,"../type":33}],51:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":41,"../type":33}],52:[function(require,module,exports){
-(function(){// Modified from:
-// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
-
-'use strict';
-
-
-var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
-var common     = require('../common');
-var NIL        = common.NIL;
-var Type       = require('../type');
-
-
-
-var BASE64_PADDING = '=';
-
-var BASE64_BINTABLE = [
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
-  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
-];
-
-var BASE64_CHARTABLE =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
-
-
-function resolveYamlBinary(object /*, explicit*/) {
-  var value, code, idx = 0, result = [], leftbits, leftdata;
-
-  leftbits = 0; // number of bits decoded, but yet to be appended
-  leftdata = 0; // bits decoded, but yet to be appended
-
-  // Convert one by one.
-  for (idx = 0; idx < object.length; idx += 1) {
-    code = object.charCodeAt(idx);
-    value = BASE64_BINTABLE[code & 0x7F];
-
-    // Skip LF(NL) || CR
-    if (0x0A !== code && 0x0D !== code) {
-      // Fail on illegal characters
-      if (-1 === value) {
-        return NIL;
-      }
-
-      // Collect data into leftdata, update bitcount
-      leftdata = (leftdata << 6) | value;
-      leftbits += 6;
-
-      // If we have 8 or more bits, append 8 bits to the result
-      if (leftbits >= 8) {
-        leftbits -= 8;
-
-        // Append if not padding.
-        if (BASE64_PADDING !== object.charAt(idx)) {
-          result.push((leftdata >> leftbits) & 0xFF);
-        }
-
-        leftdata &= (1 << leftbits) - 1;
-      }
-    }
-  }
-
-  // If there are any bits left, the base64 string was corrupted
-  if (leftbits) {
-    return NIL;
-  } else {
-    return new NodeBuffer(result);
-  }
-}
-
-
-function representYamlBinary(object /*, style*/) {
-  var result = '', index, length, rest;
-
-  // Convert every three bytes to 4 ASCII characters.
-  for (index = 0, length = object.length - 2; index < length; index += 3) {
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
-    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
-  }
-
-  rest = object.length % 3;
-
-  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
-  if (0 !== rest) {
-    index = object.length - rest;
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-
-    if (2 === rest) {
-      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
-      result += BASE64_PADDING;
-    } else {
-      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
-      result += BASE64_PADDING + BASE64_PADDING;
-    }
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:binary', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBinary
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: NodeBuffer,
-    representer: representYamlBinary
-  }
-});
-
-})()
-},{"buffer":61,"../common":41,"../type":33}],53:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-
-function resolveYamlOmap(object /*, explicit*/) {
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) {
-          pairHasKey = true;
-        } else {
-          return NIL;
-        }
-      }
-    }
-
-    if (!pairHasKey) {
-      return NIL;
-    }
-
-    if (-1 === objectKeys.indexOf(pairKey)) {
-      objectKeys.push(pairKey);
-    } else {
-      return NIL;
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlOmap
-  }
-});
-
-},{"../common":41,"../type":33}],54:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
-  }
-});
-
-},{"../common":41,"../type":33}],55:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-function resolveYamlSet(object /*, explicit*/) {
-  var key;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (null !== object[key]) {
-        return NIL;
-      }
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  loader: {
-    kind: 'object',
-    resolver: resolveYamlSet
-  }
-});
-
-},{"../common":41,"../type":33}],56:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../../type');
-
-
-function resolveJavascriptUndefined(/*object, explicit*/) {
-  var undef;
-
-  return undef;
-}
-
-
-function representJavascriptUndefined(/*object, explicit*/) {
-  return '';
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/undefined', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptUndefined
-  },
-  dumper: {
-    kind: 'undefined',
-    representer: representJavascriptUndefined
-  }
-});
-
-},{"../../type":33}],57:[function(require,module,exports){
-(function(){'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptRegExp(object /*, explicit*/) {
-  var regexp = object,
-      tail   = /\/([gim]*)$/.exec(object),
-      modifiers;
-
-  // `/foo/gim` - tail can be maximum 4 chars
-  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
-    regexp = regexp.slice(1, regexp.length - tail[0].length);
-    modifiers = tail[1];
-  }
-
-  try {
-    return new RegExp(regexp, modifiers);
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptRegExp(object /*, style*/) {
-  var result = '/' + object.source + '/';
-
-  if (object.global) {
-    result += 'g';
-  }
-
-  if (object.multiline) {
-    result += 'm';
-  }
-
-  if (object.ignoreCase) {
-    result += 'i';
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/regexp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptRegExp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: RegExp,
-    representer: representJavascriptRegExp
-  }
-});
-
-})()
-},{"../../common":41,"../../type":33}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -34088,333 +34179,7 @@ exports.format = function(f) {
   return str;
 };
 
-},{"events":62}],63:[function(require,module,exports){
-exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
-  var e, m,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      nBits = -7,
-      i = isBE ? 0 : (nBytes - 1),
-      d = isBE ? 1 : -1,
-      s = buffer[offset + i];
-
-  i += d;
-
-  e = s & ((1 << (-nBits)) - 1);
-  s >>= (-nBits);
-  nBits += eLen;
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-  m = e & ((1 << (-nBits)) - 1);
-  e >>= (-nBits);
-  nBits += mLen;
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-  if (e === 0) {
-    e = 1 - eBias;
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity);
-  } else {
-    m = m + Math.pow(2, mLen);
-    e = e - eBias;
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-};
-
-exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
-  var e, m, c,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
-      i = isBE ? (nBytes - 1) : 0,
-      d = isBE ? -1 : 1,
-      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
-
-  value = Math.abs(value);
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0;
-    e = eMax;
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2);
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--;
-      c *= 2;
-    }
-    if (e + eBias >= 1) {
-      value += rt / c;
-    } else {
-      value += rt * Math.pow(2, 1 - eBias);
-    }
-    if (value * c >= 2) {
-      e++;
-      c /= 2;
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0;
-      e = eMax;
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen);
-      e = e + eBias;
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-      e = 0;
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
-
-  e = (e << mLen) | m;
-  eLen += mLen;
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
-
-  buffer[offset + i - d] |= s * 128;
-};
-
-},{}],64:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],62:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
-
-var EventEmitter = exports.EventEmitter = process.EventEmitter;
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
-
-// By default EventEmitters will print a warning if more than
-// 10 listeners are added to it. This is a useful default which
-// helps finding memory leaks.
-//
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-var defaultMaxListeners = 10;
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!this._events) this._events = {};
-  this._events.maxListeners = n;
-};
-
-
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
-      return false;
-    }
-  }
-
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
-
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-    return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
-    return false;
-  }
-};
-
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
-  }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-
-    // Check for listener leak
-    if (!this._events[type].warned) {
-      var m;
-      if (this._events.maxListeners !== undefined) {
-        m = this._events.maxListeners;
-      } else {
-        m = defaultMaxListeners;
-      }
-
-      if (m && m > 0 && this._events[type].length > m) {
-        this._events[type].warned = true;
-        console.error('(node) warning: possible EventEmitter memory ' +
-                      'leak detected. %d listeners added. ' +
-                      'Use emitter.setMaxListeners() to increase limit.',
-                      this._events[type].length);
-        console.trace();
-      }
-    }
-
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
-};
-
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
-
-})(require("__browserify_process"))
-},{"__browserify_process":64}],61:[function(require,module,exports){
+},{"events":63}],59:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -35734,7 +35499,247 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":59,"./buffer_ieee754":63,"base64-js":65}],65:[function(require,module,exports){
+},{"assert":60,"./buffer_ieee754":62,"base64-js":64}],65:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],63:[function(require,module,exports){
+(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
+
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
+//
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
+};
+
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
+    }
+  }
+
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
+
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
+
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
+
+  } else {
+    return false;
+  }
+};
+
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
+
+  if (!this._events) this._events = {};
+
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
+
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
+
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
+
+  return this;
+};
+
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
+};
+
+})(require("__browserify_process"))
+},{"__browserify_process":65}],64:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -35820,7 +35825,7 @@ SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],58:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 
@@ -35878,7 +35883,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":41,"../../type":33,"esprima":66}],66:[function(require,module,exports){
+},{"../../common":40,"../../type":32,"esprima":66}],66:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -39776,5 +39781,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}]},{},[3])
+},{}]},{},[4])
 ;
