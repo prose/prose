@@ -136,16 +136,18 @@ module.exports = Backbone.Router.extend({
     this.eventRegister.trigger('remove');
     url = _.extractURL(path);
 
+    // path should not have querystring
+    var trimmed_path = url.path.slice(0, url.path.indexOf("?"));
     if (url.mode === 'tree') {
-      this.repoBranch(user, repo, url.branch, url.path);
+      this.repoBranch(user, repo, url.branch, trimmed_path);
     } else if (url.mode === 'new') {
-      this.newPost(user, repo, url.branch, url.path);
+      this.newPost(user, repo, url.branch, trimmed_path);
     } else if (url.mode === 'preview') {
-      parts = _.extractFilename(url.path);
+      parts = _.extractFilename(trimmed_path);
       app.state.file = parts[1];
       this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
     } else { // blob or edit ..
-      parts = _.extractFilename(url.path);
+      parts = _.extractFilename(trimmed_path);
       app.state.file = parts[1];
       this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
     }
@@ -178,7 +180,7 @@ module.exports = Backbone.Router.extend({
           data.file = query.filename;
         }else if(query.metadata && query.metadata.title){
           var file = new Date().format('Y-m-d-');
-          file += query.metadata.title.replace(/\W/ig, "-").replace(/--+/g, "/").substring(0,100);
+          file += query.metadata.title.replace(/\W/ig, "-").replace(/--+/g, "-").substring(0,100);
           if(!file.match(/\.\w+$/))
             file += ".md"
           data.file = file;
