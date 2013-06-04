@@ -47,8 +47,7 @@ module.exports = Backbone.View.extend({
       parent: data.user,
       parentUrl: data.user,
       title: data.repo,
-      titleUrl: data.user + '/' + data.repo,
-      alterable: false
+      titleUrl: data.user + '/' + data.repo
     };
 
     var pathTitle = (app.state.path) ? '/' + app.state.path : '';
@@ -121,6 +120,7 @@ module.exports = Backbone.View.extend({
           branch: data.branch,
           path: f.path,
           filename: _.filename(f.name) || 'Untitled',
+          file: f.path.match(/[^\/]*$/)[0],
           name: f.name,
           user: data.user
         }));

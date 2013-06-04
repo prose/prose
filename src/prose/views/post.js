@@ -78,7 +78,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove');
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove', 'cancelSave');
     this.eventRegister.bind('edit', this.edit);
     this.eventRegister.bind('preview', this.preview);
     this.eventRegister.bind('deleteFile', this.deleteFile);
@@ -87,12 +87,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('translate', this.translate);
     this.eventRegister.bind('meta', this.meta);
     this.eventRegister.bind('remove', this.remove);
-
-    // Add a permalink to the sidebar is `siteurl` exists in configuration.
-    this.data.permalink = false;
-    if (this.config.siteurl) {
-        this.data.permalink = this.config.siteurl + '/' + this.data.path + '/' + this.data.file;
-    }
+    this.eventRegister.bind('cancelSave', this.cancelSave);
 
     this.eventRegister.trigger('sidebarContext', this.data);
     this.renderHeading();
@@ -151,7 +146,7 @@ module.exports = Backbone.View.extend({
       translate: this.data.translate
     };
 
-    this.eventRegister.trigger('headerContext', this.header);
+    this.eventRegister.trigger('headerContext', this.header, true);
   },
 
   edit: function(e) {
@@ -289,6 +284,8 @@ module.exports = Backbone.View.extend({
       trigger: false,
       replace: true
     });
+
+    $('.chzn-select', this.el).trigger('liszt:updated');
   },
 
   makeDirty: function(e) {
@@ -300,7 +297,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.trigger('updateSaveState', label, 'save');
 
     // Pass a popover span to the avatar icon
-    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Ctrl&nbsp;+&nbsp;S' : 'Submit Change');
+    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Save' : 'Submit Change');
   },
 
   togglePublishing: function(e) {
@@ -357,6 +354,16 @@ module.exports = Backbone.View.extend({
     }
 
     this.eventRegister.trigger('closeSettings');
+  },
+
+  cancelSave: function() {
+    $('.views .view', this.el).removeClass('active');
+
+    if (app.state.mode === 'blob') {
+      $('#preview', this.el).addClass('active');
+    } else {
+      $('#edit', this.el).addClass('active');
+    }
   },
 
   save: function() {
@@ -555,19 +562,13 @@ module.exports = Backbone.View.extend({
     var filecontent = this.serialize();
     var $message = $('.commit-message');
     var noVal = 'Updated ' + filename;
-    if (app.state.mode === 'new') noVal = 'Created ' + noVal;
+    if (app.state.mode === 'new') noVal = 'Created ' + filename;
 
     var message = $message.val() || noVal;
     var method = this.model.writable ? this.saveFile : this.sendPatch;
 
     // Update content
     this.model.content = (this.editor) ? this.editor.getValue() : '';
-
-    // If a permalink exists, update the path
-    if (this.data.permalink) {
-      this.data.permalink = this.config.siteurl + '/' + filepath;
-      this.eventRegister.trigger('sidebarContext', this.data);
-    }
 
     // Delegate
     method.call(this, filepath, filename, filecontent, message);
@@ -1528,6 +1529,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.unbind('updateFile', this.updateFile);
     this.eventRegister.unbind('meta', this.updateFile);
     this.eventRegister.unbind('remove', this.remove);
+    this.eventRegister.unbind('cancelSave', this.cancelSave);
 
     // Clear any file state classes in #prose
     this.eventRegister.trigger('updateSaveState', '', '');

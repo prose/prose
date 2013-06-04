@@ -38,8 +38,10 @@ module.exports = Backbone.Router.extend({
 
   about: function() {
     this.resetState();
+    router.application.render({
+      noMenu: true
+    });
 
-    router.application.render();
     var view = new app.views.Documentation({
       page: 'about'
     }).render();
@@ -166,7 +168,8 @@ module.exports = Backbone.Router.extend({
         data.lang = _.mode(data.file);
 
         this.application.render({
-          jekyll: data.jekyll
+          jekyll: data.jekyll,
+          noMenu: true
         });
 
         var view = new app.views.Post({
@@ -198,7 +201,8 @@ module.exports = Backbone.Router.extend({
         data.lang = _.mode(file);
 
         this.application.render({
-          jekyll: data.jekyll
+          jekyll: data.jekyll,
+          noMenu: true
         });
 
         var view = new app.views.Post({

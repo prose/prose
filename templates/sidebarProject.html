@@ -48,3 +48,9 @@
     </div>
   <% } %>
 <% } %>
+
+<% if (repo && window.authenticated) { %>
+<div class='inner'>
+  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='round button mobile-new-file'>Create a New File</a>
+</div>
+<% } %>

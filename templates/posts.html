@@ -7,7 +7,7 @@
   </div>
 </div>
 
-<div class='listing'>
+<div class='listings'>
   <% if (path.length && path !== jailed) { %>
     <div class='breadcrumb'>
       <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'>..</a>
@@ -20,5 +20,5 @@
     </div>
   <% } %>
 
-  <ul id='files'></ul>
+  <ul id='files' class='listing'></ul>
 </div>
