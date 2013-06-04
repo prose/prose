@@ -300,7 +300,7 @@ em      { font-style:italic; }
 
 /* For Diff Viewing */
 del {
-  color:#a8afb2;
+  color:#d4d7d9;
   padding:1px 0;
   }
 ins {
@@ -2585,6 +2585,11 @@ and (max-device-width:480px) {
       top:5px;
       left:5px;
       }
+      .save .heading .action .status {
+        top:0;
+        right:0;
+        left:auto;
+        }
 
   .post .view.meta {
     width:80%;
