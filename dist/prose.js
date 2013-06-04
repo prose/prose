@@ -9854,6 +9854,63 @@ module.exports={
 }
 
 },{}],3:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+window.app = {
+    config: {},
+    models: require('./models'),
+    views: {
+      App: require('./views/app'),
+      Notification: require('./views/notification'),
+      Start: require('./views/start'),
+      Preview: require('./views/preview'),
+      Profile: require('./views/profile'),
+      Posts: require('./views/posts'),
+      Post: require('./views/post'),
+      Documentation: require('./views/documentation')
+    },
+    templates: require('../../dist/templates'),
+    router: require('./router'),
+    utils: {},
+    state: {'repo': ''},
+    instance: {},
+    eventRegister: _.extend({}, Backbone.Events)
+};
+
+// Bootup
+// test the browser supports CORS and return a boolean for an oauth token.
+if ('withCredentials' in new XMLHttpRequest() && app.models.authenticate()) {
+  app.models.loadApplication(function(err, data) {
+    if (err) {
+      var view = new window.app.views.Notification({
+        'type': 'error',
+        'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
+      }).render();
+
+      $('#prose').empty().append(view.el);
+    } else {
+
+      // Initialize router
+      window.router = new app.router({
+        model: data
+      });
+
+      // Start responding to routes
+      Backbone.history.start();
+    }
+  });
+} else {
+  // Display an upgrade notice.
+  var tmpl = _(window.app.templates.upgrade).template();
+
+  _.defer(function() {
+    $('#prose').empty().append(tmpl);
+  });
+}
+
+},{"./models":4,"./views/app":5,"./views/notification":6,"./views/start":7,"./views/preview":8,"./views/profile":9,"./views/posts":10,"./views/post":11,"./views/documentation":12,"../../dist/templates":1,"./router":13,"jquery-browserify":14,"underscore":15,"backbone":16}],17:[function(require,module,exports){
 function tryParse(obj) {
   try {
     return JSON.parse(obj);
@@ -9925,64 +9982,7 @@ cookie.clear = function() {
 
 module.exports = cookie;
 
-},{}],4:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-window.app = {
-    config: {},
-    models: require('./models'),
-    views: {
-      App: require('./views/app'),
-      Notification: require('./views/notification'),
-      Start: require('./views/start'),
-      Preview: require('./views/preview'),
-      Profile: require('./views/profile'),
-      Posts: require('./views/posts'),
-      Post: require('./views/post'),
-      Documentation: require('./views/documentation')
-    },
-    templates: require('../../dist/templates'),
-    router: require('./router'),
-    utils: {},
-    state: {'repo': ''},
-    instance: {},
-    eventRegister: _.extend({}, Backbone.Events)
-};
-
-// Bootup
-// test the browser supports CORS and return a boolean for an oauth token.
-if ('withCredentials' in new XMLHttpRequest() && app.models.authenticate()) {
-  app.models.loadApplication(function(err, data) {
-    if (err) {
-      var view = new window.app.views.Notification({
-        'type': 'error',
-        'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
-      }).render();
-
-      $('#prose').empty().append(view.el);
-    } else {
-
-      // Initialize router
-      window.router = new app.router({
-        model: data
-      });
-
-      // Start responding to routes
-      Backbone.history.start();
-    }
-  });
-} else {
-  // Display an upgrade notice.
-  var tmpl = _(window.app.templates.upgrade).template();
-
-  _.defer(function() {
-    $('#prose').empty().append(tmpl);
-  });
-}
-
-},{"./models":5,"./views/app":6,"./views/notification":7,"./views/start":8,"./views/preview":9,"./views/profile":10,"./views/posts":11,"./views/post":12,"./views/documentation":13,"../../dist/templates":1,"./router":14,"underscore":15,"backbone":16,"jquery-browserify":17}],18:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = {
   help: [
     {
@@ -11347,7 +11347,7 @@ module.exports = {
 }).call(this);
 
 })()
-},{}],17:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -20682,7 +20682,7 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -21456,7 +21456,7 @@ module.exports = {
         jekyll: hasMetadata
       };
 
-      res.content = content.replace(/^(---\n)((.|\n)*?)\n---\n?/, function (match, dashes, frontmatter) {
+      res.content = content.replace(/^(---\n)((.|\n)*?)---\n?/, function (match, dashes, frontmatter) {
         try {
           res.metadata = jsyaml.load(frontmatter);
           res.metadata.published = published(frontmatter);
@@ -21581,7 +21581,7 @@ module.exports = {
   }
 };
 
-},{"../../oauth.json":2,"./cookie":3,"../libs/github":20,"jquery-browserify":17,"underscore":15,"js-yaml":21,"queue-async":22}],14:[function(require,module,exports){
+},{"../../oauth.json":2,"./cookie":17,"../libs/github":20,"jquery-browserify":14,"underscore":15,"js-yaml":21,"queue-async":22}],13:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21891,7 +21891,7 @@ module.exports = Backbone.Router.extend({
   }
 });
 
-},{"./util":23,"jquery-browserify":17,"underscore":15,"backbone":16}],22:[function(require,module,exports){
+},{"./util":23,"jquery-browserify":14,"underscore":15,"backbone":16}],22:[function(require,module,exports){
 (function() {
   if (typeof module === "undefined") self.queue = queue;
   else module.exports = queue;
@@ -21974,69 +21974,7 @@ module.exports = Backbone.Router.extend({
   function noop() {}
 })();
 
-},{}],7:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-
-  id: 'notification',
-  className: 'notification round',
-
-  events: {
-    'click .create': 'createPost'
-  },
-
-  initialize: function() {
-    this.model = this.options;
-  },
-
-  render: function() {
-    var view = this;
-    this.eventRegister = app.eventRegister;
-
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', 'Error ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    var tmpl = _(window.app.templates.notification).template();
-
-    // Basically for any previous path we want to try
-    // and bring a user back to the directory tree.
-    var hash = document.location.hash.split('/');
-    var parts = hash.slice(0, hash.length -1);
-    if (parts[2]) parts[2] = 'tree';
-
-    var previous = parts.join('/');
-
-    $(this.el).html(tmpl(_.extend(this.model, {
-      key: view.model.key,
-      message: view.model.message,
-      previous: previous,
-      pathFromFile: (app.state.file) ? true : false
-    })));
-
-    return this;
-  },
-
-  createPost: function (e) {
-    var hash = window.location.hash.split('/');
-    hash[2] = 'new';
-
-    var path = hash[hash.length - 1].split('?');
-    hash[hash.length - 1] = path[0] + '?file=' + path[0];
-
-    // append query string
-    if (path.length > 1) {
-      hash[hash.length - 1]  += '&' + path[1];
-    }
-
-    router.navigate(_(hash).compact().join('/'), true);
-    return false;
-  }
-
-});
-
-},{"jquery-browserify":17,"underscore":15,"backbone":16}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22389,7 +22327,69 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":23,"underscore":15,"backbone":16,"jquery-browserify":17}],8:[function(require,module,exports){
+},{".././util":23,"jquery-browserify":14,"underscore":15,"backbone":16}],6:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+
+  id: 'notification',
+  className: 'notification round',
+
+  events: {
+    'click .create': 'createPost'
+  },
+
+  initialize: function() {
+    this.model = this.options;
+  },
+
+  render: function() {
+    var view = this;
+    this.eventRegister = app.eventRegister;
+
+    var pathTitle = (app.state.path) ? app.state.path : '';
+    this.eventRegister.trigger('documentTitle', 'Error ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    var tmpl = _(window.app.templates.notification).template();
+
+    // Basically for any previous path we want to try
+    // and bring a user back to the directory tree.
+    var hash = document.location.hash.split('/');
+    var parts = hash.slice(0, hash.length -1);
+    if (parts[2]) parts[2] = 'tree';
+
+    var previous = parts.join('/');
+
+    $(this.el).html(tmpl(_.extend(this.model, {
+      key: view.model.key,
+      message: view.model.message,
+      previous: previous,
+      pathFromFile: (app.state.file) ? true : false
+    })));
+
+    return this;
+  },
+
+  createPost: function (e) {
+    var hash = window.location.hash.split('/');
+    hash[2] = 'new';
+
+    var path = hash[hash.length - 1].split('?');
+    hash[hash.length - 1] = path[0] + '?file=' + path[0];
+
+    // append query string
+    if (path.length > 1) {
+      hash[hash.length - 1]  += '&' + path[1];
+    }
+
+    router.navigate(_(hash).compact().join('/'), true);
+    return false;
+  }
+
+});
+
+},{"jquery-browserify":14,"underscore":15,"backbone":16}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22405,7 +22405,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":17,"backbone":16,"underscore":15}],9:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":15,"backbone":16}],8:[function(require,module,exports){
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
@@ -22435,7 +22435,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"underscore":15,"js-yaml":21,"backbone":16}],10:[function(require,module,exports){
+},{"underscore":15,"js-yaml":21,"backbone":16}],9:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22557,7 +22557,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":23,"jquery-browserify":17,"underscore":15,"backbone":16}],11:[function(require,module,exports){
+},{".././util":23,"jquery-browserify":14,"underscore":15,"backbone":16}],10:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -22770,7 +22770,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././util":23,"jquery-browserify":17,"underscore":15,"js-yaml":21,"keymaster":24,"backbone":16}],13:[function(require,module,exports){
+},{".././util":23,"jquery-browserify":14,"underscore":15,"js-yaml":21,"keymaster":24,"backbone":16}],12:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -22789,7 +22789,7 @@ module.exports = Backbone.View.extend({
 
 
 
-},{"jquery-browserify":17,"marked":25,"backbone":16}],12:[function(require,module,exports){
+},{"jquery-browserify":14,"marked":25,"backbone":16}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -24315,7 +24315,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././toolbar/markdown.js":18,".././util":23,".././upload":19,".././cookie":3,"jquery-browserify":17,"chosen-jquery-browserify":26,"underscore":15,"js-yaml":21,"keymaster":24,"marked":25,"backbone":16,"diff":27}],16:[function(require,module,exports){
+},{".././toolbar/markdown.js":18,".././util":23,".././upload":19,".././cookie":17,"jquery-browserify":14,"chosen-jquery-browserify":26,"underscore":15,"js-yaml":21,"keymaster":24,"marked":25,"backbone":16,"diff":27}],16:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -25889,10 +25889,7 @@ module.exports = Backbone.View.extend({
 }).call(this);
 
 })()
-},{"underscore":15}],21:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
-
-},{"./lib/js-yaml.js":28}],24:[function(require,module,exports){
+},{"underscore":15}],24:[function(require,module,exports){
 (function(){//     keymaster.js
 //     (c) 2011-2012 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
@@ -29763,7 +29760,13 @@ module.exports = {
   }
 };
 
-},{"jquery-browserify":17,"underscore":15,"js-yaml":21,"marked":25,"queue-async":22,"chrono":29}],28:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":15,"js-yaml":21,"marked":25,"queue-async":22,"chrono":28}],21:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
+
+},{"./lib/js-yaml.js":29}],28:[function(require,module,exports){
+module.exports = require('./lib/chrono');
+
+},{"./lib/chrono":30}],29:[function(require,module,exports){
 'use strict';
 
 
@@ -29798,37 +29801,7 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":30,"./js-yaml/dumper":31,"./js-yaml/type":32,"./js-yaml/schema":33,"./js-yaml/schema/minimal":34,"./js-yaml/schema/safe":35,"./js-yaml/schema/default":36,"./js-yaml/exception":37,"./js-yaml/require":38}],29:[function(require,module,exports){
-module.exports = require('./lib/chrono');
-
-},{"./lib/chrono":39}],37:[function(require,module,exports){
-'use strict';
-
-
-function YAMLException(reason, mark) {
-  this.name    = 'YAMLException';
-  this.reason  = reason;
-  this.mark    = mark;
-  this.message = this.toString(false);
-}
-
-
-YAMLException.prototype.toString = function toString(compact) {
-  var result;
-
-  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
-
-  if (!compact && this.mark) {
-    result += ' ' + this.mark.toString();
-  }
-
-  return result;
-};
-
-
-module.exports = YAMLException;
-
-},{}],39:[function(require,module,exports){
+},{"./js-yaml/loader":31,"./js-yaml/dumper":32,"./js-yaml/type":33,"./js-yaml/schema":34,"./js-yaml/schema/minimal":35,"./js-yaml/schema/safe":36,"./js-yaml/schema/default":37,"./js-yaml/require":38,"./js-yaml/exception":39}],30:[function(require,module,exports){
 (function(){
 
 // CommonJS exports.
@@ -30234,10 +30207,37 @@ Date.prototype.setTimezone = function(val) {
 
 })();
 
+},{}],39:[function(require,module,exports){
+'use strict';
+
+
+function YAMLException(reason, mark) {
+  this.name    = 'YAMLException';
+  this.reason  = reason;
+  this.mark    = mark;
+  this.message = this.toString(false);
+}
+
+
+YAMLException.prototype.toString = function toString(compact) {
+  var result;
+
+  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
+
+  if (!compact && this.mark) {
+    result += ' ' + this.mark.toString();
+  }
+
+  return result;
+};
+
+
+module.exports = YAMLException;
+
 },{}],40:[function(require,module,exports){
 // nothing to see here... no file methods for the browser
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 
@@ -31788,7 +31788,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":41,"./exception":37,"./mark":42,"./schema/safe":35,"./schema/default":36}],31:[function(require,module,exports){
+},{"./common":41,"./exception":39,"./mark":42,"./schema/safe":36,"./schema/default":37}],32:[function(require,module,exports){
 'use strict';
 
 
@@ -32227,7 +32227,7 @@ function safeDump(input, options) {
 module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
-},{"./common":41,"./exception":37,"./schema/default":36,"./schema/safe":35}],32:[function(require,module,exports){
+},{"./common":41,"./exception":39,"./schema/default":37,"./schema/safe":36}],33:[function(require,module,exports){
 'use strict';
 
 
@@ -32311,7 +32311,7 @@ Type.Dumper = function TypeDumper(options) {
 
 module.exports = Type;
 
-},{"./exception":37}],33:[function(require,module,exports){
+},{"./exception":39}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -32416,7 +32416,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":41,"./exception":37,"./type":32}],38:[function(require,module,exports){
+},{"./common":41,"./exception":39,"./type":33}],38:[function(require,module,exports){
 'use strict';
 
 
@@ -32441,7 +32441,7 @@ if (undefined !== require.extensions) {
 
 module.exports = require;
 
-},{"fs":40,"./loader":30}],34:[function(require,module,exports){
+},{"fs":40,"./loader":31}],35:[function(require,module,exports){
 'use strict';
 
 
@@ -32456,7 +32456,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":33,"../type/str":43,"../type/seq":44,"../type/map":45}],35:[function(require,module,exports){
+},{"../schema":34,"../type/str":43,"../type/seq":44,"../type/map":45}],36:[function(require,module,exports){
 'use strict';
 
 
@@ -32483,7 +32483,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":33,"./minimal":34,"../type/null":46,"../type/bool":47,"../type/int":48,"../type/float":49,"../type/timestamp":50,"../type/merge":51,"../type/binary":52,"../type/omap":53,"../type/pairs":54,"../type/set":55}],36:[function(require,module,exports){
+},{"../schema":34,"./minimal":35,"../type/null":46,"../type/bool":47,"../type/int":48,"../type/float":49,"../type/timestamp":50,"../type/merge":51,"../type/binary":52,"../type/omap":53,"../type/pairs":54,"../type/set":55}],37:[function(require,module,exports){
 'use strict';
 
 
@@ -32501,7 +32501,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":33,"./safe":35,"../type/js/undefined":56,"../type/js/regexp":57,"../type/js/function":58}],41:[function(require,module,exports){
+},{"../schema":34,"./safe":36,"../type/js/undefined":56,"../type/js/regexp":57,"../type/js/function":58}],41:[function(require,module,exports){
 'use strict';
 
 
@@ -32973,7 +32973,7 @@ module.exports = new Type('tag:yaml.org,2002:str', {
   }
 });
 
-},{"../type":32}],44:[function(require,module,exports){
+},{"../type":33}],44:[function(require,module,exports){
 'use strict';
 
 
@@ -32986,7 +32986,7 @@ module.exports = new Type('tag:yaml.org,2002:seq', {
   }
 });
 
-},{"../type":32}],45:[function(require,module,exports){
+},{"../type":33}],45:[function(require,module,exports){
 'use strict';
 
 
@@ -32999,7 +32999,7 @@ module.exports = new Type('tag:yaml.org,2002:map', {
   }
 });
 
-},{"../type":32}],46:[function(require,module,exports){
+},{"../type":33}],46:[function(require,module,exports){
 'use strict';
 
 
@@ -33037,7 +33037,7 @@ module.exports = new Type('tag:yaml.org,2002:null', {
   }
 });
 
-},{"../common":41,"../type":32}],47:[function(require,module,exports){
+},{"../common":41,"../type":33}],47:[function(require,module,exports){
 'use strict';
 
 
@@ -33113,7 +33113,7 @@ module.exports = new Type('tag:yaml.org,2002:bool', {
   }
 });
 
-},{"../common":41,"../type":32}],48:[function(require,module,exports){
+},{"../common":41,"../type":33}],48:[function(require,module,exports){
 'use strict';
 
 
@@ -33200,7 +33200,7 @@ module.exports = new Type('tag:yaml.org,2002:int', {
   }
 });
 
-},{"../common":41,"../type":32}],49:[function(require,module,exports){
+},{"../common":41,"../type":33}],49:[function(require,module,exports){
 'use strict';
 
 
@@ -33304,7 +33304,7 @@ module.exports = new Type('tag:yaml.org,2002:float', {
   }
 });
 
-},{"../common":41,"../type":32}],50:[function(require,module,exports){
+},{"../common":41,"../type":33}],50:[function(require,module,exports){
 'use strict';
 
 
@@ -33397,7 +33397,7 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
   }
 });
 
-},{"../common":41,"../type":32}],51:[function(require,module,exports){
+},{"../common":41,"../type":33}],51:[function(require,module,exports){
 'use strict';
 
 
@@ -33417,7 +33417,7 @@ module.exports = new Type('tag:yaml.org,2002:merge', {
   }
 });
 
-},{"../common":41,"../type":32}],52:[function(require,module,exports){
+},{"../common":41,"../type":33}],52:[function(require,module,exports){
 (function(){// Modified from:
 // https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
 
@@ -33538,7 +33538,7 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
 });
 
 })()
-},{"buffer":61,"../common":41,"../type":32}],53:[function(require,module,exports){
+},{"buffer":61,"../common":41,"../type":33}],53:[function(require,module,exports){
 'use strict';
 
 
@@ -33593,7 +33593,7 @@ module.exports = new Type('tag:yaml.org,2002:omap', {
   }
 });
 
-},{"../common":41,"../type":32}],54:[function(require,module,exports){
+},{"../common":41,"../type":33}],54:[function(require,module,exports){
 'use strict';
 
 
@@ -33636,7 +33636,7 @@ module.exports = new Type('tag:yaml.org,2002:pairs', {
   }
 });
 
-},{"../common":41,"../type":32}],55:[function(require,module,exports){
+},{"../common":41,"../type":33}],55:[function(require,module,exports){
 'use strict';
 
 
@@ -33669,7 +33669,7 @@ module.exports = new Type('tag:yaml.org,2002:set', {
   }
 });
 
-},{"../common":41,"../type":32}],56:[function(require,module,exports){
+},{"../common":41,"../type":33}],56:[function(require,module,exports){
 'use strict';
 
 
@@ -33699,7 +33699,7 @@ module.exports = new Type('tag:yaml.org,2002:js/undefined', {
   }
 });
 
-},{"../../type":32}],57:[function(require,module,exports){
+},{"../../type":33}],57:[function(require,module,exports){
 (function(){'use strict';
 
 
@@ -33758,7 +33758,7 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
 });
 
 })()
-},{"../../common":41,"../../type":32}],60:[function(require,module,exports){
+},{"../../common":41,"../../type":33}],60:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -35901,7 +35901,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":41,"../../type":32,"esprima":66}],66:[function(require,module,exports){
+},{"../../common":41,"../../type":33,"esprima":66}],66:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -39799,5 +39799,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}]},{},[4])
+},{}]},{},[3])
 ;
