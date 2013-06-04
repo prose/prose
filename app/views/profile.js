@@ -22,12 +22,12 @@ module.exports = Backbone.View.extend({
       this.eventRegister.bind('remove', this.remove);
 
       var header = {
-          avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
-          parent: data.user.name || data.user.login,
-          parentUrl: data.user.login,
-          title: 'Explore Projects',
-          titleUrl: data.user.login,
-          alterable: false
+        avatar: '<img src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
+        parent: data.user.name || data.user.login,
+        parentUrl: data.user.login,
+        title: 'Explore Projects',
+        titleUrl: data.user.login,
+        alterable: false
       };
 
       this.eventRegister.trigger('documentTitle', app.state.user);

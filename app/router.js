@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var ReposView = require('./views/repos');
 var OrgsView = require('./views/orgs');
 var utils = require('./util');
 
@@ -68,20 +69,17 @@ module.exports = Backbone.Router.extend({
 
     router.application.render();
 
+    var repos = new ReposView({ model: this.user.repos });
+    $('#content').html(repos.el);
+
     var orgs = new OrgsView({ model: this.user.orgs });
     $('#drawer').html(orgs.el);
 
-    /*
-    var view = new app.views.Profile({
-      model: router.model
-    }).render();
-
-    utils.loader.loaded();
-    $('#content').empty().append(view.el);
-    */
-
     this.user.repos.load({ user: user, model: this.user });
     this.user.orgs.load({ user: user, model: this.user });
+
+    // TODO: build event-driven loader queue
+    utils.loader.loaded();
   },
 
   // #example-user/example-repo
