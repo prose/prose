@@ -78,7 +78,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove');
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove', 'cancelSave');
     this.eventRegister.bind('edit', this.edit);
     this.eventRegister.bind('preview', this.preview);
     this.eventRegister.bind('deleteFile', this.deleteFile);
@@ -87,6 +87,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('translate', this.translate);
     this.eventRegister.bind('meta', this.meta);
     this.eventRegister.bind('remove', this.remove);
+    this.eventRegister.bind('cancelSave', this.cancelSave);
 
     // Add a permalink to the sidebar is `siteurl` exists in configuration.
     this.data.permalink = false;
@@ -357,6 +358,16 @@ module.exports = Backbone.View.extend({
     }
 
     this.eventRegister.trigger('closeSettings');
+  },
+
+  cancelSave: function() {
+    $('.views .view', this.el).removeClass('active');
+
+    if (app.state.mode === 'blob') {
+      $('#preview', this.el).addClass('active');
+    } else {
+      $('#edit', this.el).addClass('active');
+    }
   },
 
   save: function() {
@@ -1514,6 +1525,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.unbind('updateFile', this.updateFile);
     this.eventRegister.unbind('meta', this.updateFile);
     this.eventRegister.unbind('remove', this.remove);
+    this.eventRegister.unbind('cancelSave', this.cancelSave);
 
     // Clear any file state classes in #prose
     this.eventRegister.trigger('updateSaveState', '', '');

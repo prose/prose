@@ -261,24 +261,15 @@ module.exports = Backbone.View.extend({
 
     save: function(e) {
       this.eventRegister.trigger('save', e);
-      this.toggleCommit();
-      return false;
-    },
 
-    cancelSave: function(e) {
-      this.toggleCommit();
-      return false;
-    },
-
-    toggleCommit: function() {
       var $message = $('.commit-message', this.el);
       var filepath = $('input.filepath').val();
       var filename = _.extractFilename(filepath)[1];
       var placeholder = 'Updated ' + filename;
       if (app.state.mode === 'new') placeholder = 'Created ' + filename;
 
-      $('.commit', this.el).toggleClass('active');
-      $('.button.save', this.el).toggleClass('confirm');
+      $('.commit', this.el).toggleClass('active', true);
+      $('.button.save', this.el).toggleClass('confirm', true);
 
       $('.button.save', this.el)
         .html($('.button.save', this.el)
@@ -287,6 +278,14 @@ module.exports = Backbone.View.extend({
           (this.writable ? 'Save' : 'Submit Change'));
 
       $message.attr('placeholder', placeholder).focus();
+
+      return false;
+    },
+
+    cancelSave: function(e) {
+      $('.commit', this.el).toggleClass('active', false);
+      $('.button.save', this.el).toggleClass('confirm', false);
+      this.eventRegister.trigger('cancelSave', e);
       return false;
     },
 
