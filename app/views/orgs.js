@@ -8,15 +8,9 @@ module.exports = Backbone.View.extend({
 
   template: _.template(templates.orgs),
 
-  events: {
-  },
-
   initialize: function(options) {
     this.model = options.model;
     this.listenTo(this.model, 'reset', this.render, this);
-
-    // DEBUG
-    this.listenTo(this.model, 'all', function() { console.log(arguments); }, this);
   },
 
   render: function() {
