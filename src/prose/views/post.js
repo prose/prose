@@ -89,12 +89,6 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('remove', this.remove);
     this.eventRegister.bind('cancelSave', this.cancelSave);
 
-    // Add a permalink to the sidebar is `siteurl` exists in configuration.
-    this.data.permalink = false;
-    if (this.config.siteurl) {
-        this.data.permalink = this.config.siteurl + '/' + this.data.path + '/' + this.data.file;
-    }
-
     this.eventRegister.trigger('sidebarContext', this.data);
     this.renderHeading();
 
@@ -290,6 +284,8 @@ module.exports = Backbone.View.extend({
       trigger: false,
       replace: true
     });
+
+    $('.chzn-select', this.el).trigger('liszt:updated');
   },
 
   makeDirty: function(e) {
@@ -573,12 +569,6 @@ module.exports = Backbone.View.extend({
 
     // Update content
     this.model.content = (this.editor) ? this.editor.getValue() : '';
-
-    // If a permalink exists, update the path
-    if (this.data.permalink) {
-      this.data.permalink = this.config.siteurl + '/' + filepath;
-      this.eventRegister.trigger('sidebarContext', this.data);
-    }
 
     // Delegate
     method.call(this, filepath, filename, filecontent, message);

@@ -592,7 +592,7 @@ ins {
 
 .vert ul {
   margin:15px 0 0;
-  padding-bottom:10px;
+  padding-bottom:5px;
   }
 
 .vert .nav.auth {
@@ -1736,6 +1736,7 @@ ins {
 /* ------------------------------------------
   Chosen Plugin for fancy selects
 ---------------------------------------------*/
+.chzn-container.chzn-container-multi .chzn-results li,
 .chzn-container,
 .chzn-drop {
   /*TODO Fix this upstream*/
@@ -1755,7 +1756,7 @@ ins {
   }
 .chzn-container .chzn-drop {
   background:#fff;
-  border:1px solid #868f93;
+  border:1px solid #adb4b6;
   border-top:0;
   position:absolute;
   z-index:1010;
@@ -1924,7 +1925,7 @@ ins {
   text-indent:-999em;
   }
 .chzn-container .chzn-results {
-  margin:0 4px 4px 0;
+  margin:0 0 10px 5px;
   max-height:240px;
   padding:0 0 0 4px;
   position:relative;
@@ -1934,6 +1935,7 @@ ins {
   }
 .chzn-container-multi .chzn-results {
   padding:0 0 0 4px;
+  margin:10px 0 10px 5px;
   }
 .chzn-container .chzn-results li {
   display:none;
