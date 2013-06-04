@@ -15,12 +15,12 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     this.model = options.model;
     this.view = options.view;
-    this.input = this.$el.find('input');
     this.listenTo(this.model, 'reset', this.search, this);
   },
 
   render: function() {
     this.$el.html(this.template());
+    this.input = this.$el.find('input');
     this.input.focus();
 
     /*
