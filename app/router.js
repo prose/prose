@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var ProfileView = require('./views/profile');
 var ReposView = require('./views/repos');
 var SearchView = require('./views/search');
 var OrgsView = require('./views/orgs');
@@ -70,10 +71,13 @@ module.exports = Backbone.Router.extend({
 
     router.application.render();
 
-    var repos = new ReposView({ model: this.user.repos });
-    $('#content').html(repos.el);
+    var profile = new ProfileView({ model: this.user });
+    $('#content').html(profile.render().el);
 
-    $('#search').html(new SearchView({ model: this.user.repos, view: repos }).el);
+    var repos = new ReposView({ model: this.user.repos });
+    profile.$el.find('#projects').html(repos.el);
+
+    profile.$el.find('#search').html(new SearchView({ model: this.user.repos, view: repos }).render().el);
     $('#drawer').html(new OrgsView({ model: this.user.orgs }).el);
 
     this.user.repos.load();
