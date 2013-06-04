@@ -75,8 +75,8 @@ module.exports = Backbone.Router.extend({
     var orgs = new OrgsView({ model: this.user.orgs });
     $('#drawer').html(orgs.el);
 
-    this.user.repos.load({ user: user, model: this.user });
-    this.user.orgs.load({ user: user, model: this.user });
+    this.user.repos.load();
+    this.user.orgs.load();
 
     // TODO: build event-driven loader queue
     utils.loader.loaded();

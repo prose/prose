@@ -7,8 +7,8 @@ var config = require('../config');
 module.exports = Backbone.Model.extend({
   constructor: function(attributes, options) {
     this.url = config.api + '/user';
-    this.repos = new Repos();
-    this.orgs = new Orgs();
+    this.repos = new Repos([], { user: this });
+    this.orgs = new Orgs([], { user: this });
     Backbone.Model.apply(this, arguments);
   },
 

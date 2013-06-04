@@ -5,14 +5,12 @@ var config = require('../config');
 module.exports = Backbone.Collection.extend({
   model: Repo,
 
+  initialize: function(models, options) {
+    this.url = config.api + (options.username ? '/users/' + options.username + '/repos' : '/user/repos');
+    this.user = options.user;
+  },
+
   load: function(options) {
-    this.user = options.model;
-    this.url = config.api + '/users/' + options.user + '/repos';
-    this.fetch({
-      reset: true,
-      success: function(model, res, options) {
-        Backbone.trigger('repos:reset', model);
-      }
-    });
+    this.fetch({ reset: true });
   }
 });

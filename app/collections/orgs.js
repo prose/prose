@@ -5,9 +5,12 @@ var config = require('../config');
 module.exports = Backbone.Collection.extend({
   model: Org,
 
+  initialize: function(models, options) {
+    this.url = config.api + (options.username ? '/users/' + options.username + '/orgs' : '/user/orgs');
+    this.user = options.user;
+  },
+
   load: function(options) {
-    this.user = options.model;
-    this.url = config.api + '/users/' + options.user + '/orgs';
     this.fetch({ reset: true });
   }
 });
