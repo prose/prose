@@ -2,6 +2,7 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var ReposView = require('./views/repos');
+var SearchView = require('./views/search');
 var OrgsView = require('./views/orgs');
 var utils = require('./util');
 
@@ -72,8 +73,8 @@ module.exports = Backbone.Router.extend({
     var repos = new ReposView({ model: this.user.repos });
     $('#content').html(repos.el);
 
-    var orgs = new OrgsView({ model: this.user.orgs });
-    $('#drawer').html(orgs.el);
+    $('#search').html(new SearchView({ model: this.user.repos, view: repos }).el);
+    $('#drawer').html(new OrgsView({ model: this.user.orgs }).el);
 
     this.user.repos.load();
     this.user.orgs.load();

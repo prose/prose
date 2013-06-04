@@ -48,6 +48,7 @@ APPLICATION = \
 	app/models/user.js \
 	app/views/orgs.js \
 	app/views/repos.js \
+	app/views/search.js \
 	app/views/notification.js \
 	app/views/documentation.js \
 	app/views/post.js \
