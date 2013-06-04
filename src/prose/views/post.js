@@ -508,9 +508,9 @@ module.exports = Backbone.View.extend({
     var key = $publishKey.attr('data-state');
 
     if (key === 'true') {
-      $publishKey.empty().html('Published<span class="ico checkmark"></span>');
+      $publishKey.html('Published<span class="ico checkmark"></span>');
     } else {
-      $publishKey.empty().html('Unpublished<span class="ico checkmark"></span>');
+      $publishKey.html('Unpublished<span class="ico checkmark"></span>');
     }
   },
 
@@ -732,7 +732,12 @@ module.exports = Backbone.View.extend({
 
     function getValue() {
       var metadata = {};
-      metadata.published = $('.publish-flag').attr('data-state');
+
+      if ($('publish-flag').attr('data-state') === 'true') {
+        metadata.published = true;
+      } else {
+        metadata.published = false;
+      }
 
       _.each($metadataEditor.find('[name]'), function(item) {
         var $item = $(item);
