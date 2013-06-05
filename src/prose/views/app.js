@@ -14,9 +14,7 @@ module.exports = Backbone.View.extend({
       'click .logout': 'logout',
       'click a.item.removed': 'restoreFile',
       'click a.save': 'save',
-      'click a.save.confirm': 'updateFile',
-      'click a.quick-save': 'updateFile',
-      'click a.cancel': 'cancelSave',
+      'click a.confirm': 'updateFile',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
       'click .mobile-menu .toggle': 'toggleMobileClass',
@@ -75,6 +73,7 @@ module.exports = Backbone.View.extend({
       var errorPage = false;
       var hideInterface = false; // Flag for unauthenticated landing
       this.noMenu = false; // Prevents a mobile toggle from appearing when nto required.
+      this.viewing = app.state.mode;
 
       if (options) {
         if (options.hideInterface) hideInterface = options.hideInterface;
@@ -98,10 +97,8 @@ module.exports = Backbone.View.extend({
 
       // When the sidebar should be open.
       // Fix this in re-factor, could be much tighter
-      if (app.state.mode === 'tree') {
-        $('#prose').toggleClass('open', true);
-        $('#prose').toggleClass('mobile', false);
-      } else if (app.state.mode === '' && window.authenticated && app.state.user !== '') {
+      if (app.state.mode === 'tree' ||
+          app.state.mode === '' && window.authenticated && app.state.user) {
         $('#prose').toggleClass('open', true);
         $('#prose').toggleClass('mobile', false);
       } else {
@@ -122,8 +119,12 @@ module.exports = Backbone.View.extend({
     },
 
     headerContext: function(data, alterable) {
-      var view = this;
       var heading = _(window.app.templates.heading).template();
+
+      if (data.writable) this.writable = true;
+      if (data.lang) this.lang = data.lang;
+      if (data.metadata) this.metadata = data.metadata;
+
       $('#heading').empty().append(heading(_.extend(data, {
         alterable: alterable ? true : false
       })));
@@ -134,25 +135,20 @@ module.exports = Backbone.View.extend({
     },
 
     sidebarContext: function(data) {
-      var sidebarTmpl;
-
       if (app.state.mode === 'tree') {
-        sidebarTmpl = _(app.templates.sidebarProject).template();
-      } else if (data.file) {
-        this.writable = data.writable;
-        sidebarTmpl = _(app.templates.settings).template();
+        var tmpl = _(app.templates.sidebarProject).template();
+
+        // Branch Switching
+        _.defer(function() {
+          $('.chzn-select', this.el).chosen().change(function() {
+              router.navigate($(this).val(), true);
+          });
+        });
+
+        $('#drawer', this.el)
+          .empty()
+          .append(tmpl(data));
       }
-
-      $('#drawer', this.el)
-        .empty()
-        .append(sidebarTmpl(data));
-
-      if (data.permalink) utils.autoSelect($('.permalink'));
-
-      // Branch Switching
-      $('.chzn-select').chosen().change(function() {
-          router.navigate($(this).val(), true);
-      });
     },
 
     recentFiles: function(data) {
@@ -187,8 +183,9 @@ module.exports = Backbone.View.extend({
     },
 
     settings: function(e) {
-      $navItems = $('.navigation a', this.el);
-      if (!this.viewing) this.viewing = app.state.mode;
+      var tmpl = _(app.templates.settings).template();
+      var $navItems = $('.navigation a', this.el);
+      this.cancelSave();
 
       if ($(e.target, this.el).hasClass('active')) {
         $navItems.removeClass('active');
@@ -197,6 +194,15 @@ module.exports = Backbone.View.extend({
       } else {
         $navItems.removeClass('active');
         $(e.target, this.el).addClass('active');
+
+        $('#drawer', this.el)
+          .empty()
+          .append(tmpl({
+            lang: this.lang,
+            writable: this.writable,
+            metadata: this.metadata
+          }));
+
         $('#prose').toggleClass('open mobile', true);
       }
 
@@ -260,33 +266,40 @@ module.exports = Backbone.View.extend({
     },
 
     save: function(e) {
+      var tmpl = _(app.templates.sidebarSave).template();
       this.eventRegister.trigger('save', e);
-      this.toggleCommit();
+      $navItems = $('.navigation a', this.el);
+
+      if ($(e.target, this.el).hasClass('active')) {
+        $navItems.removeClass('active');
+        $('.navigation .' + this.viewing, this.el).addClass('active');
+        $('#prose').toggleClass('open mobile', false);
+        this.cancelSave();
+      } else {
+        $navItems.removeClass('active');
+        $(e.target, this.el).addClass('active');
+
+        $('#drawer', this.el)
+          .empty()
+          .append(tmpl({
+            writable: this.writable
+        }));
+
+        $('#prose').toggleClass('open mobile', true);
+
+        var $message = $('.commit-message', this.el);
+        var filepath = $('input.filepath').val();
+        var filename = _.extractFilename(filepath)[1];
+        var placeholder = 'Updated ' + filename;
+        if (app.state.mode === 'new') placeholder = 'Created ' + filename;
+        $message.attr('placeholder', placeholder).focus();
+      }
+
       return false;
     },
 
     cancelSave: function(e) {
-      this.toggleCommit();
-      return false;
-    },
-
-    toggleCommit: function() {
-      var $message = $('.commit-message', this.el);
-      var filepath = $('input.filepath').val();
-      var filename = _.extractFilename(filepath)[1];
-      var placeholder = 'Updated ' + filename;
-      if (app.state.mode === 'new') placeholder = 'Created ' + filename;
-
-      $('.commit', this.el).toggleClass('active');
-      $('.button.save', this.el).toggleClass('confirm');
-
-      $('.button.save', this.el)
-        .html($('.button.save', this.el)
-        .hasClass('confirm') ?
-          (this.writable ? 'Commit' : 'Send Change Request') :
-          (this.writable ? 'Save' : 'Submit Change'));
-
-      $message.attr('placeholder', placeholder).focus();
+      this.eventRegister.trigger('cancelSave', e);
       return false;
     },
 

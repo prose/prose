@@ -292,9 +292,9 @@ _.chunkedPath = function(path) {
 // -------
 
 _.preview = function(view) {
-  var model = view.model,
-      q = queue(1),
-      p = {
+  var model = view.model;
+  var q = queue(1);
+  var p = {
         site: app.state.config,
         post: model.metadata,
         page: model.metadata,
@@ -304,6 +304,16 @@ _.preview = function(view) {
           page: model.metadata
         }) || ''
       };
+
+  // Grab a date from the filename
+  // and add this post to be evaluated as {{post.date}}
+  var parts = app.state.file.split('-');
+  var year = parts[0];
+  var month = parts[1];
+  var day = parts[2];
+  var date = [year, month, day].join('-');
+
+  p.post.date = jsyaml.load(date).toDateString();
 
   if (p.site.prose && p.site.prose.site) {
     _(p.site.prose.site).each(function(file, key) {
@@ -343,9 +353,11 @@ _.preview = function(view) {
 
     model.repo.read(app.state.branch, '_layouts/' + file + '.html', function(err, d) {
       if (err) return cb(err);
-      var meta = (d.split('---')[1]) ? jsyaml.load(d.split('---')[1]) : {},
-        content = (d.split('---')[2]) ? d.split('---')[2] : d,
-        template = Liquid.parse(content);
+
+      var meta = (d.split('---')[1]) ? jsyaml.load(d.split('---')[1]) : {};
+      var content = (d.split('---')[2]) ? d.split('---')[2] : d;
+      var template = Liquid.parse(content);
+
       p.page = _(p.page).extend(meta);
       p.content = template.render({
         site: p.site,

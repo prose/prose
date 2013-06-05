@@ -1,0 +1,17 @@
+<% if (window.authenticated) { %>
+  <div class='inner'>
+    <h2 class='label'>Describe your Changes</h2>
+  </div>
+  <div class='inner authoring'>
+    <div class='commit'>
+      <textarea class='commit-message' placeholder></textarea>
+    </div>
+
+    <% if (writable) { %>
+      <a class='confirm button round' href='#'>Commit</a>
+    <% } else { %>
+      <a class='confirm button round' href='#'>Submit Change Request</a>
+    <% } %>
+
+  </div>
+<% } %>
