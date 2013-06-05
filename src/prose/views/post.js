@@ -730,7 +730,7 @@ module.exports = Backbone.View.extend({
     function getValue() {
       var metadata = {};
 
-      if ($('publish-flag').attr('data-state') === 'true') {
+      if ($('.publish-flag').attr('data-state') === 'true') {
         metadata.published = true;
       } else {
         metadata.published = false;
