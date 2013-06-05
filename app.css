@@ -80,9 +80,9 @@ table { border-collapse: collapse; border-spacing:0; }
 
 @font-face {
   font-family:'Prose';
-    src:url('fonts/prose-80081ddd6bb627b0784ec9094fabb857.eot');
-    src:url('fonts/prose-80081ddd6bb627b0784ec9094fabb857.eot?#iefix') format('embedded-opentype'),
-        url('fonts/prose-80081ddd6bb627b0784ec9094fabb857.woff') format('woff');
+    src:url('fonts/prose-129b77953cd92a716f7e5224f4de015e.eot');
+    src:url('fonts/prose-129b77953cd92a716f7e5224f4de015e.eot?#iefix') format('embedded-opentype'),
+        url('fonts/prose-129b77953cd92a716f7e5224f4de015e.woff') format('woff');
   font-weight:700;
   font-style:normal;
   }
@@ -285,22 +285,22 @@ textarea#code {
     border-width:1px;
     }
 
-::-webkit-input-placeholder { color:#d4d7d9; }
-::-moz-placeholder          { color:#d4d7d9; }
-:-ms-input-placeholder      { color:#d4d7d9; }
-input:-moz-placeholder      { color:#d4d7d9; }
+::-webkit-input-placeholder { color:#a8afb2; }
+::-moz-placeholder          { color:#a8afb2; }
+:-ms-input-placeholder      { color:#a8afb2; }
+input:-moz-placeholder      { color:#a8afb2; }
 
-.filepath::-webkit-input-placeholder { font-style:italic; }
-.filepath::-moz-placeholder          { font-style:italic; }
-.filepath:-ms-input-placeholder      { font-style:italic; }
-.filepath:-moz-placeholder           { font-style:italic; }
+.filepath::-webkit-input-placeholder { color:#d4d7d9; font-style:italic; }
+.filepath::-moz-placeholder          { color:#d4d7d9; font-style:italic; }
+.filepath:-ms-input-placeholder      { color:#d4d7d9; font-style:italic; }
+.filepath:-moz-placeholder           { color:#d4d7d9; font-style:italic; }
 
 strong  { font-weight:700; }
 em      { font-style:italic; }
 
 /* For Diff Viewing */
 del {
-  color:#d4d7d9;
+  color:#516066;
   padding:1px 0;
   }
 ins {
@@ -483,7 +483,7 @@ ins {
     width:60px;
     height:30px;
     bottom:0;
-    right:0;
+    right:-30px;
     }
   .heading .filepath:focus,
   .heading .filepath:hover {
@@ -557,6 +557,7 @@ ins {
   left:0;
   width:100%;
   padding:15px;
+  color:#3d494e;
   }
   .loading .loading-icon {
     background:transparent url('img/loader@33x33.gif') no-repeat;
@@ -585,9 +586,10 @@ ins {
   z-index:5000;
   width:60px;
   height:100%;
+  border-left:1px solid #fff;
   }
   .open .vert {
-    border-left:1px solid #d4d7d9;
+    border-color:#d4d7d9;
     }
 
 .vert ul {
@@ -690,17 +692,11 @@ ins {
 .published .ico.checkmark,
 .ico.checkmark,
 .ico.added         { color:#90bb74; }
-
-.vert .ico.logout  { color:#db6f6f; }
-
 .ico.modified      { color:#2099aa; }
 .ico.removed       { color:#d35252; }
-
 .ico.error         { color:#db6f6f; }
 .ico.renamed       { color:#bb9f1a; }
 .ico.private       { color:#deb400; }
-
-.vert .ico.logout:hover  { background-color:#db6f6f; color:#fff; }
 
 .ico {
   font-family:'Prose';
@@ -735,12 +731,12 @@ ins {
 .ico.picture:before { content: "\f116"; }
 .ico.private:before { content: "\f117"; }
 .ico.question:before { content: "\f118"; }
-.ico.quick-save:before { content: "\f119"; }
-.ico.quote:before { content: "\f11a"; }
-.ico.removed:before { content: "\f11b"; }
-.ico.renamed:before { content: "\f11c"; }
-.ico.repos:before { content: "\f11d"; }
-.ico.rubbish:before { content: "\f11e"; }
+.ico.quote:before { content: "\f119"; }
+.ico.removed:before { content: "\f11a"; }
+.ico.renamed:before { content: "\f11b"; }
+.ico.repos:before { content: "\f11c"; }
+.ico.rubbish:before { content: "\f11d"; }
+.ico.save:before { content: "\f11e"; }
 .ico.saving:before { content: "\f11f"; }
 .ico.search:before { content: "\f120"; }
 .ico.sprocket:before { content: "\f121"; }
@@ -1706,31 +1702,17 @@ ins {
 .sidebar .commit {
   position:relative;
   bottom:-4px;
-  display:none;
   }
-  .sidebar .commit .cancel {
-    position:absolute;
-    z-index:10;
-    top:30px;
-    right:5px;
+  .sidebar .commit textarea {
+    padding-right:25px;
+    margin:8px 0 -2px;
     display:block;
-    }
-    .cancel:hover {
-      color:#DB6F6F;
-      }
-    .sidebar .commit textarea {
-      padding-right:25px;
-      margin:8px 0 -2px;
-      display:block;
-      position:relative;
-      z-index:1;
-      height:90px;
-      resize:none;
-      -webkit-border-radius:4px 4px 0 0;
-              border-radius:4px 4px 0 0;
-      }
-  .sidebar .commit.active {
-    display:block;
+    position:relative;
+    z-index:1;
+    height:115px;
+    resize:none;
+    -webkit-border-radius:4px 4px 0 0;
+            border-radius:4px 4px 0 0;
     }
 
 /* ------------------------------------------
