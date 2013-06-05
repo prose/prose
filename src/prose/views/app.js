@@ -185,13 +185,12 @@ module.exports = Backbone.View.extend({
     settings: function(e) {
       var tmpl = _(app.templates.settings).template();
       var $navItems = $('.navigation a', this.el);
+      this.cancelSave();
 
       if ($(e.target, this.el).hasClass('active')) {
         $navItems.removeClass('active');
         $('.navigation .' + this.viewing, this.el).addClass('active');
         $('#prose').toggleClass('open mobile', false);
-
-        this.cancelSave();
       } else {
         $navItems.removeClass('active');
         $(e.target, this.el).addClass('active');
