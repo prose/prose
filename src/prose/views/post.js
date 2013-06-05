@@ -471,6 +471,7 @@ module.exports = Backbone.View.extend({
           view.model.persisted = true;
           view.model.file = filename;
 
+          if (app.state.mode === 'new') app.state.mode = 'edit';
           view.renderHeading();
           view.updateURL();
           view.prevFile = filecontent;
