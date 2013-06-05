@@ -46,6 +46,7 @@ APPLICATION = \
 	app/models/repo.js \
 	app/models/state.js \
 	app/models/user.js \
+	app/views/header.js \
 	app/views/orgs.js \
 	app/views/repos.js \
 	app/views/search.js \

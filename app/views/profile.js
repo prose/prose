@@ -17,6 +17,9 @@ module.exports = Backbone.View.extend({
     this.$el.html(this.template(this.model.attributes));
 
     /*
+    var heading = _.template(window.app.templates.heading);
+    $('#heading').empty().append(heading(data));
+
     var data = this.model;
     this.eventRegister = app.eventRegister;
 

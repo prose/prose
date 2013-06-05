@@ -2,6 +2,7 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var ProfileView = require('./views/profile');
+var HeaderView = require('./views/header');
 var ReposView = require('./views/repos');
 var SearchView = require('./views/search');
 var OrgsView = require('./views/orgs');
@@ -74,6 +75,9 @@ module.exports = Backbone.Router.extend({
     var profile = new ProfileView({ model: this.user });
     $('#content').html(profile.render().el);
 
+    var header = new HeaderView({ model: this.user, alterable: false });
+    $('#heading').html(header.render().el);
+
     var repos = new ReposView({ model: this.user.repos });
     profile.$el.find('#projects').html(repos.el);
 
@@ -115,9 +119,11 @@ module.exports = Backbone.Router.extend({
       utils.loader.loaded();
       $('#content').empty().append(view.el);
 
+      /*
       router.model.set('repo', router.model.get('repos').find(function(repo) {
         return repo.get('name') === data.repo && repo.get('owner').login === data.user;
       }));
+      */
     }, this));
   },
 
