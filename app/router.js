@@ -259,7 +259,7 @@ module.exports = Backbone.Router.extend({
       $('#start').remove();
 
       // Redirect
-      router.navigate(app.username, {trigger: true});
+      router.navigate(this.user.get('login'), {trigger: true});
     } else {
       this.application.render();
       var view = new app.views.Start({
