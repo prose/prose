@@ -89,7 +89,6 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('remove', this.remove);
     this.eventRegister.bind('cancelSave', this.cancelSave);
 
-    this.eventRegister.trigger('sidebarContext', this.data);
     this.renderHeading();
 
     var tmpl = _(window.app.templates.post).template();
@@ -143,7 +142,9 @@ module.exports = Backbone.View.extend({
       title: _.filepath(this.data.path, this.data.file),
       writable: this.model.writable,
       alterable: true,
-      translate: this.data.translate
+      translate: this.data.translate,
+      lang: this.data.lang,
+      metadata: this.data.metadata
     };
 
     this.eventRegister.trigger('headerContext', this.header, true);
@@ -469,11 +470,6 @@ module.exports = Backbone.View.extend({
           view.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
-
-          if (app.state.mode === 'new') {
-            app.state.mode = 'edit';
-            view.eventRegister.trigger('sidebarContext', view.data);
-          }
 
           view.renderHeading();
           view.updateURL();
