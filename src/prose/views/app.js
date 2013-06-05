@@ -293,13 +293,6 @@ module.exports = Backbone.View.extend({
         var filename = _.extractFilename(filepath)[1];
         var placeholder = 'Updated ' + filename;
         if (app.state.mode === 'new') placeholder = 'Created ' + filename;
-
-        $('.confirm', this.el)
-          .html($('.button.save', this.el)
-          .hasClass('confirm') ?
-            (this.writable ? 'Commit' : 'Send Change Request') :
-            (this.writable ? 'Save' : 'Submit Change'));
-
         $message.attr('placeholder', placeholder).focus();
       }
 
