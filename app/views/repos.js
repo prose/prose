@@ -4,7 +4,11 @@ var Backbone = require('backbone');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  id: 'repos',
+  tagName: 'ul',
+
+  id: 'projects',
+
+  className: 'projects listing',
 
   template: _.template(templates.repo),
 

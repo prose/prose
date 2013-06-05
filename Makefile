@@ -64,6 +64,8 @@ APPLICATION = \
 	dist/templates.js \
 	app/models.js \
 	app/cookie.js \
+	app/upload.js \
+	app/toolbar/markdown.js \
 	vendor/github.js
 
 dist/prose.js: oauth.json $(APPLICATION) $(LIBS) dist/templates.js

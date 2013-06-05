@@ -9,7 +9,7 @@
     </select>
   <% } %>
 </div>
-<% if (authenticated) { %>
+<% if (window.authenticated) { %>
 <% if (history &&
         history.user === user &&
         history.repo === repo &&
@@ -47,4 +47,10 @@
       </ul>
     </div>
   <% } %>
+<% } %>
+
+<% if (repo && window.authenticated) { %>
+<div class='inner'>
+  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='round button mobile-new-file'>Create a New File</a>
+</div>
 <% } %>

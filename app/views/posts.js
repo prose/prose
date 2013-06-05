@@ -47,8 +47,7 @@ module.exports = Backbone.View.extend({
       parent: data.user,
       parentUrl: data.user,
       title: data.repo,
-      titleUrl: data.user + '/' + data.repo,
-      alterable: false
+      titleUrl: data.user + '/' + data.repo
     };
 
     var pathTitle = (app.state.path) ? '/' + app.state.path : '';
@@ -121,6 +120,7 @@ module.exports = Backbone.View.extend({
           branch: data.branch,
           path: f.path,
           filename: _.filename(f.name) || 'Untitled',
+          file: f.path.match(/[^\/]*$/)[0],
           name: f.name,
           user: data.user
         }));
@@ -163,7 +163,9 @@ module.exports = Backbone.View.extend({
   },
 
   deleteFile: function(e) {
-    var $file = $(e.target, this.el);
+    var $file = $(e.target, this.el).closest('a');
+    var $ico = $file.find('.ico');
+
     var file = {
       user: $file.data('user'),
       repo: $file.data('repo'),
@@ -173,16 +175,19 @@ module.exports = Backbone.View.extend({
 
     if (confirm('Are you sure you want to delete this file?')) {
       $file.addClass('working');
+      $ico.addClass('saving');
 
       // Change the icon to a spinning one
       app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
 
         if (err) {
           $file
-            .removeClass('rubbish working')
+            .removeClass('working')
             .attr('title', 'Error. Try again in 30 Seconds')
             .addClass('error');
-          return
+
+          $ico.removeClass('rubbish saving');
+          return;
         }
 
         // On Success
@@ -191,7 +196,7 @@ module.exports = Backbone.View.extend({
         // Capture the filename and make sure the enty
         // does not exist in the model object
         for (var i = 0; i < this.model.tree.length; i++) {
-          if (this.model.tree[i] && this.model.tree[i]['name'] === file.fileName) {
+          if (this.model.tree[i] && this.model.tree[i].name === file.fileName) {
             delete this.model.tree[i];
           }
         }

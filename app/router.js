@@ -6,16 +6,17 @@ var HeaderView = require('./views/header');
 var ReposView = require('./views/repos');
 var SearchView = require('./views/search');
 var OrgsView = require('./views/orgs');
+var templates = require('../dist/templates');
 var utils = require('./util');
 
 module.exports = Backbone.Router.extend({
 
   routes: {
-    'about': 'about',
+    'about(/)': 'about',
     'error/:code': 'error',
-    ':user': 'profile',
-    ':user/:repo': 'repo',
-    ':user/:repo/*path': 'path',
+    ':user(/)': 'profile',
+    ':user/:repo(/)': 'repo',
+    ':user/:repo/*path(/)': 'path',
     '*default': 'start'
   },
 
@@ -43,8 +44,10 @@ module.exports = Backbone.Router.extend({
 
   about: function() {
     this.resetState();
+    router.application.render({
+      noMenu: true
+    });
 
-    router.application.render();
     var view = new app.views.Documentation({
       page: 'about'
     }).render();
@@ -72,16 +75,16 @@ module.exports = Backbone.Router.extend({
 
     router.application.render();
 
-    var profile = new ProfileView({ model: this.user });
-    $('#content').html(profile.render().el);
+    var $profile = $(_.template(templates.profile)());
+    $('#content').html($profile);
 
     var header = new HeaderView({ model: this.user, alterable: false });
     $('#heading').html(header.render().el);
 
     var repos = new ReposView({ model: this.user.repos });
-    profile.$el.find('#projects').html(repos.el);
+    $profile.find('#repos').html(repos.el);
 
-    profile.$el.find('#search').html(new SearchView({ model: this.user.repos, view: repos }).render().el);
+    $profile.find('#search').html(new SearchView({ model: this.user.repos, view: repos }).render().el);
     $('#drawer').html(new OrgsView({ model: this.user.orgs }).el);
 
     this.user.repos.load();
@@ -185,7 +188,8 @@ module.exports = Backbone.Router.extend({
         data.lang = _.mode(data.file);
 
         this.application.render({
-          jekyll: data.jekyll
+          jekyll: data.jekyll,
+          noMenu: true
         });
 
         var view = new app.views.Post({
@@ -217,7 +221,8 @@ module.exports = Backbone.Router.extend({
         data.lang = _.mode(file);
 
         this.application.render({
-          jekyll: data.jekyll
+          jekyll: data.jekyll,
+          noMenu: true
         });
 
         var view = new app.views.Post({
@@ -261,7 +266,10 @@ module.exports = Backbone.Router.extend({
       // Redirect
       router.navigate(this.user.get('login'), {trigger: true});
     } else {
-      this.application.render();
+      this.application.render({
+        hideInterface: true
+      });
+
       var view = new app.views.Start({
         model: _.extend(this.model, {
           authenticated: !! window.authenticated

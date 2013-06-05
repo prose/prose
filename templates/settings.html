@@ -4,14 +4,15 @@
   </div>
   <div class='inner authoring'>
     <div class='commit'>
-      <textarea class='commit-message' placeholder='Describe your Changes'></textarea>
+      <h2 class='label'>Describe you changes</h2>
+      <textarea class='commit-message' placeholder></textarea>
       <a class='ico small cancel round' href='#'>
         <span class='popup round arrow-right'>Cancel</span>
       </a>
     </div>
 
     <a class='save button round' href='#'>
-      <%= writeable ? 'Save' : 'Submit Change' %>
+      <%= writable ? 'Save' : 'Submit Change' %>
     </a>
 
     <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>
@@ -22,7 +23,7 @@
       <% }); %>
     <% } %>
 
-    <% if (app.state.mode !== 'new' && writeable) { %>
+    <% if (app.state.mode !== 'new' && writable) { %>
       <a class='delete button round' href='#'>Delete this File</a>
     <% } %>
   </div>

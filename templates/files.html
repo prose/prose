@@ -3,14 +3,14 @@
     data-index='<%= index %>'>
 
   <% if (isBinary) { %>
-    <div class='fl icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
+    <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
   <% } else { %>
-    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='fl'>
+    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>
       <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>
     </a>
   <% } %>
 
-  <div class='fl details'>
+  <div class='details'>
     <div class='actions fr clearfix'>
       <% if (!isBinary) { %>
         <a class='clearfix'
@@ -19,15 +19,16 @@
           Edit
         </a>
       <% } %>
-      <% if (authenticated && writePermissions) { %>
+      <% if (window.authenticated && writePermissions) { %>
         <a
-          class='delete ico inline rubbish small'
+          class='delete'
           title='Delete this File'
           data-user='<%= user %>'
           data-repo='<%= repo %>'
           data-branch='<%= branch %>'
-          data-file='<%= name %>'
+          data-file='<%= file %>'
           href='#'>
+          <span class='ico rubbish small'></span>
         </a>
       <% } %>
     </div>
