@@ -845,7 +845,7 @@ module.exports = {
     q.await((function() {
       cb(err, _.extend(post, {
         'default_metadata': defaultMetadata,
-        'markdown': _.markdown(file),
+        'markdown': _.markdown(file.split('?')[0]),
         'repo': repo,
         'path': path,
         'file': file.split('?')[0],
