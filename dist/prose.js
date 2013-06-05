@@ -9854,6 +9854,135 @@ module.exports={
 }
 
 },{}],3:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+window.app = {
+    config: {},
+    models: require('./models'),
+    views: {
+      App: require('./views/app'),
+      Notification: require('./views/notification'),
+      Start: require('./views/start'),
+      Preview: require('./views/preview'),
+      Profile: require('./views/profile'),
+      Posts: require('./views/posts'),
+      Post: require('./views/post'),
+      Documentation: require('./views/documentation')
+    },
+    templates: require('../../dist/templates'),
+    router: require('./router'),
+    utils: {},
+    state: {'repo': ''},
+    instance: {},
+    eventRegister: _.extend({}, Backbone.Events)
+};
+
+// Bootup
+// test the browser supports CORS and return a boolean for an oauth token.
+if ('withCredentials' in new XMLHttpRequest() && app.models.authenticate()) {
+  app.models.loadApplication(function(err, data) {
+    if (err) {
+      var view = new window.app.views.Notification({
+        'type': 'error',
+        'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
+      }).render();
+
+      $('#prose').empty().append(view.el);
+    } else {
+
+      // Initialize router
+      window.router = new app.router({
+        model: data
+      });
+
+      // Start responding to routes
+      Backbone.history.start();
+    }
+  });
+} else {
+  // Display an upgrade notice.
+  var tmpl = _(window.app.templates.upgrade).template();
+
+  _.defer(function() {
+    $('#prose').empty().append(tmpl);
+  });
+}
+
+},{"./models":4,"./views/app":5,"./views/notification":6,"./views/start":7,"./views/preview":8,"./views/profile":9,"./views/posts":10,"./views/post":11,"./views/documentation":12,"../../dist/templates":1,"./router":13,"jquery-browserify":14,"underscore":15,"backbone":16}],17:[function(require,module,exports){
+function tryParse(obj) {
+  try {
+    return JSON.parse(obj);
+  } catch(e) {}
+
+  return obj;
+}
+
+function tryStringify(obj) {
+  if (typeof obj !== 'object' || !JSON.stringify) return obj;
+  return JSON.stringify(obj);
+}
+
+var cookie = {};
+
+cookie.set = function(name, value, expires, path, domain) {
+  var pair = escape(name) + '=' + escape(tryStringify(value));
+
+  if (!!expires) {
+    if (expires.constructor === Number) pair += ';max-age=' + expires;
+    else if (expires.constructor === String) pair += ';expires=' + expires;
+    else if (expires.constructor === Date)  pair += ';expires=' + expires.toUTCString();
+  }
+
+  pair += ';path=' + ((!!path) ? path : '/');
+  if(!!domain) pair += ';domain=' + domain;
+
+  document.cookie = pair;
+  return cookie;
+};
+
+cookie.setObject = function(object, expire, path, domain) {
+  for(var key in object) cookie.set(key, object[key], expires, path, domain);
+  return cookie;
+};
+
+cookie.get = function(name) {
+  var obj = cookie.getObject();
+  return obj[name];
+};
+
+cookie.getObject = function() {
+  var pairs = document.cookie.split(/;\s?/i);
+  var object = {};
+  var pair;
+
+  for (var i in pairs) {
+    if (typeof pairs[i] === 'string') {
+      pair = pairs[i].split('=');
+      if (pair.length <= 1) continue;
+      object[unescape(pair[0])] = tryParse(unescape(pair[1]));
+    }
+  }
+
+  return object;
+};
+
+cookie.unset = function(name) {
+  var date = new Date(0);
+  document.cookie = name + '=; expires=' + date.toUTCString();
+  return cookie;
+};
+
+cookie.clear = function() {
+  var obj = cookie.getObject();
+  for(var key in obj) cookie.unset(key);
+  return object;
+};
+
+module.exports = cookie;
+
+},{}],18:[function(require,module,exports){
 module.exports = {
   help: [
     {
@@ -9920,7 +10049,7 @@ module.exports = {
   ]
 }
 
-},{}],4:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = {
   dragEnter: function(e, $el) {
     $el.addClass('drag-over');
@@ -9989,64 +10118,7 @@ module.exports = {
   }
 }
 
-},{}],5:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-window.app = {
-    config: {},
-    models: require('./models'),
-    views: {
-      App: require('./views/app'),
-      Notification: require('./views/notification'),
-      Start: require('./views/start'),
-      Preview: require('./views/preview'),
-      Profile: require('./views/profile'),
-      Posts: require('./views/posts'),
-      Post: require('./views/post'),
-      Documentation: require('./views/documentation')
-    },
-    templates: require('../../dist/templates'),
-    router: require('./router'),
-    utils: {},
-    state: {'repo': ''},
-    instance: {},
-    eventRegister: _.extend({}, Backbone.Events)
-};
-
-// Bootup
-// test the browser supports CORS and return a boolean for an oauth token.
-if ('withCredentials' in new XMLHttpRequest() && app.models.authenticate()) {
-  app.models.loadApplication(function(err, data) {
-    if (err) {
-      var view = new window.app.views.Notification({
-        'type': 'error',
-        'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
-      }).render();
-
-      $('#prose').empty().append(view.el);
-    } else {
-
-      // Initialize router
-      window.router = new app.router({
-        model: data
-      });
-
-      // Start responding to routes
-      Backbone.history.start();
-    }
-  });
-} else {
-  // Display an upgrade notice.
-  var tmpl = _(window.app.templates.upgrade).template();
-
-  _.defer(function() {
-    $('#prose').empty().append(tmpl);
-  });
-}
-
-},{"./models":6,"./views/app":7,"./views/notification":8,"./views/start":9,"./views/preview":10,"./views/profile":11,"./views/posts":12,"./views/post":13,"./views/documentation":14,"../../dist/templates":1,"./router":15,"underscore":16,"backbone":17,"jquery-browserify":18}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11275,79 +11347,7 @@ if ('withCredentials' in new XMLHttpRequest() && app.models.authenticate()) {
 }).call(this);
 
 })()
-},{}],19:[function(require,module,exports){
-function tryParse(obj) {
-  try {
-    return JSON.parse(obj);
-  } catch(e) {}
-
-  return obj;
-}
-
-function tryStringify(obj) {
-  if (typeof obj !== 'object' || !JSON.stringify) return obj;
-  return JSON.stringify(obj);
-}
-
-var cookie = {};
-
-cookie.set = function(name, value, expires, path, domain) {
-  var pair = escape(name) + '=' + escape(tryStringify(value));
-
-  if (!!expires) {
-    if (expires.constructor === Number) pair += ';max-age=' + expires;
-    else if (expires.constructor === String) pair += ';expires=' + expires;
-    else if (expires.constructor === Date)  pair += ';expires=' + expires.toUTCString();
-  }
-
-  pair += ';path=' + ((!!path) ? path : '/');
-  if(!!domain) pair += ';domain=' + domain;
-
-  document.cookie = pair;
-  return cookie;
-};
-
-cookie.setObject = function(object, expire, path, domain) {
-  for(var key in object) cookie.set(key, object[key], expires, path, domain);
-  return cookie;
-};
-
-cookie.get = function(name) {
-  var obj = cookie.getObject();
-  return obj[name];
-};
-
-cookie.getObject = function() {
-  var pairs = document.cookie.split(/;\s?/i);
-  var object = {};
-  var pair;
-
-  for (var i in pairs) {
-    if (typeof pairs[i] === 'string') {
-      pair = pairs[i].split('=');
-      if (pair.length <= 1) continue;
-      object[unescape(pair[0])] = tryParse(unescape(pair[1]));
-    }
-  }
-
-  return object;
-};
-
-cookie.unset = function(name) {
-  var date = new Date(0);
-  document.cookie = name + '=; expires=' + date.toUTCString();
-  return cookie;
-};
-
-cookie.clear = function() {
-  var obj = cookie.getObject();
-  for(var key in obj) cookie.unset(key);
-  return object;
-};
-
-module.exports = cookie;
-
-},{}],18:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -20682,317 +20682,7 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],15:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('./util');
-
-module.exports = Backbone.Router.extend({
-
-  routes: {
-    'about(/)': 'about',
-    'error/:code': 'error',
-    ':user(/)': 'profile',
-    ':user/:repo(/)': 'repo',
-    ':user/:repo/*path(/)': 'path',
-    '*default': 'start'
-  },
-
-  initialize: function(options) {
-    this.model = options.model;
-    this.eventRegister = app.eventRegister;
-
-    // Load up the main layout
-    this.application = new app.views.App({
-      el: '#prose',
-      model: this.model
-    });
-  },
-
-  resetState: function() {
-    app.state = {
-      user: '',
-      repo: '',
-      mode: 'page',
-      branch: '',
-      path: '',
-      file: ''
-    };
-  },
-
-  about: function() {
-    this.resetState();
-    router.application.render({
-      noMenu: true
-    });
-
-    var view = new app.views.Documentation({
-      page: 'about'
-    }).render();
-
-    $('#content').empty().append(view.el);
-  },
-
-  // #example-user
-  // #example-organization
-  profile: function(user) {
-    var router = this;
-    utils.loader.loading('Loading Profile');
-
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-
-    app.state = app.state || {};
-    app.state.user = user;
-    app.state.title = user;
-    app.state.repo = '';
-    app.state.mode = '';
-    app.state.branch = '';
-    app.state.path = '';
-    app.state.file = '';
-
-    app.models.loadRepos(user, function(err, data) {
-      data.authenticated = !! window.authenticated;
-
-      router.application.render();
-      var view = new app.views.Profile({
-        model: _.extend(router.model, data)
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    });
-  },
-
-  // #example-user/example-repo
-  repo: function(user, repo) {
-    var router = this;
-    utils.loader.loading('Loading Posts');
-
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-
-    app.state = {
-      user: user,
-      repo: repo,
-      mode: 'tree',
-      branch: '',
-      path: '',
-      file: ''
-    };
-
-    app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
-
-      router.application.render();
-      var view = new app.views.Posts({
-        model: data
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    }, this));
-  },
-
-  // #example-user/example-repo/tree/BRANCH
-  repoBranch: function(user, repo, branch, path) {
-
-    var router = this;
-    utils.loader.loading('Loading Posts');
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
-      router.application.render();
-
-      var view = new app.views.Posts({
-        model: data
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    }, this));
-  },
-
-  path: function(user, repo, path) {
-    var parts;
-    app.state.user = user;
-    app.state.repo = repo;
-
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-    url = _.extractURL(path);
-
-    if (url.mode === 'tree') {
-      this.repoBranch(user, repo, url.branch, url.path);
-    } else if (url.mode === 'new') {
-      this.newPost(user, repo, url.branch, url.path);
-    } else if (url.mode === 'preview') {
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
-    } else { // blob or edit ..
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
-    }
-  },
-
-  newPost: function (user, repo, branch, path) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-    app.state.markdown = true;
-
-    utils.loader.loading('Creating a new post');
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
-
-        data.jekyll = _.jekyll(path, data.file);
-        data.preview = false;
-        data.markdown = _.markdown(data.file);
-        data.lang = _.mode(data.file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        utils.loader.loaded();
-        $('#content').empty().append(view.el);
-        app.state.file = data.file;
-
-      }, this));
-    }, this));
-  },
-
-  post: function(user, repo, branch, path, file, mode) {
-    if (mode === 'edit') {
-      utils.loader.loading('Loading Post');
-    } else {
-      utils.loader.loading('Previewing Post');
-    }
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', 'This file does not exist.');
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) return this.notify('error', 'This file does not exist.');
-
-        app.state.markdown = data.markdown;
-        data.jekyll = !!data.metadata;
-        data.lang = _.mode(file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        utils.loader.loaded();
-        $('#content').empty().html(view.el);
-      }, this));
-    }, this));
-  },
-
-  preview: function(user, repo, branch, path, file, mode) {
-    var router = this;
-    utils.loader.loading('Previewing Post');
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) {
-          app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
-        } else {
-          cb(err, data);
-        }
-
-        function cb(err, data) {
-          var view = new app.views.Preview({
-            model: data
-          }).render();
-
-          utils.loader.loaded();
-        }
-      }, this));
-    }, this));
-  },
-
-  start: function() {
-    if (window.authenticated) {
-      $('#start').remove();
-
-      // Redirect
-      router.navigate(app.username, {trigger: true});
-    } else {
-      this.application.render({
-        hideInterface: true
-      });
-
-      var view = new app.views.Start({
-        model: _.extend(this.model, {
-          authenticated: !! window.authenticated
-        })
-      }).render();
-
-      $('#content').empty();
-      $('#prose').append(view.el);
-    }
-  },
-
-  // if the application after routing
-  // hits an error code router.navigate('error' + err.error)
-  // sends the route here.
-  error: function(code) {
-    switch (code) {
-      case '404':
-        code = 'Page not Found'
-      break;
-      default:
-        code = 'Error'
-      break;
-    }
-
-    this.application.render({
-      error: true
-    });
-
-    var view = new app.views.Notification({
-      'type': 'Error',
-      'key': 'error',
-      'message': code
-    }).render();
-
-    utils.loader.loaded();
-    $('#content').empty().append(view.el);
-  },
-
-  notify: function(type, message) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-    app.state.markdown = false;
-    this.application.render({
-      error: true
-    });
-
-    var view = new app.views.Notification({
-      'type': type,
-      'key': 'page-error',
-      'message': message
-    }).render();
-
-    utils.loader.loaded();
-    $('#content').empty().append(view.el);
-  }
-});
-
-},{"./util":20,"jquery-browserify":18,"underscore":16,"backbone":17}],6:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -21891,7 +21581,400 @@ module.exports = {
   }
 };
 
-},{"../../oauth.json":2,"./cookie":19,"../libs/github":21,"jquery-browserify":18,"underscore":16,"js-yaml":22,"queue-async":23}],7:[function(require,module,exports){
+},{"../../oauth.json":2,"./cookie":17,"../libs/github":20,"jquery-browserify":14,"underscore":15,"js-yaml":21,"queue-async":22}],13:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var utils = require('./util');
+
+module.exports = Backbone.Router.extend({
+
+  routes: {
+    'about(/)': 'about',
+    'error/:code': 'error',
+    ':user(/)': 'profile',
+    ':user/:repo(/)': 'repo',
+    ':user/:repo/*path(/)': 'path',
+    '*default': 'start'
+  },
+
+  initialize: function(options) {
+    this.model = options.model;
+    this.eventRegister = app.eventRegister;
+
+    // Load up the main layout
+    this.application = new app.views.App({
+      el: '#prose',
+      model: this.model
+    });
+  },
+
+  resetState: function() {
+    app.state = {
+      user: '',
+      repo: '',
+      mode: 'page',
+      branch: '',
+      path: '',
+      file: ''
+    };
+  },
+
+  about: function() {
+    this.resetState();
+    router.application.render({
+      noMenu: true
+    });
+
+    var view = new app.views.Documentation({
+      page: 'about'
+    }).render();
+
+    $('#content').empty().append(view.el);
+  },
+
+  // #example-user
+  // #example-organization
+  profile: function(user) {
+    var router = this;
+    utils.loader.loading('Loading Profile');
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
+
+    app.state = app.state || {};
+    app.state.user = user;
+    app.state.title = user;
+    app.state.repo = '';
+    app.state.mode = '';
+    app.state.branch = '';
+    app.state.path = '';
+    app.state.file = '';
+
+    app.models.loadRepos(user, function(err, data) {
+      data.authenticated = !! window.authenticated;
+
+      router.application.render();
+      var view = new app.views.Profile({
+        model: _.extend(router.model, data)
+      }).render();
+
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    });
+  },
+
+  // #example-user/example-repo
+  repo: function(user, repo) {
+    var router = this;
+    utils.loader.loading('Loading Posts');
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
+
+    app.state = {
+      user: user,
+      repo: repo,
+      mode: 'tree',
+      branch: '',
+      path: '',
+      file: ''
+    };
+
+    app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
+      if (err) return router.notify('error', 'This post does not exist.');
+
+      router.application.render();
+      var view = new app.views.Posts({
+        model: data
+      }).render();
+
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    }, this));
+  },
+
+  // #example-user/example-repo/tree/BRANCH
+  repoBranch: function(user, repo, branch, path) {
+
+    var router = this;
+    utils.loader.loading('Loading Posts');
+
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      if (err) return router.notify('error', 'This post does not exist.');
+      router.application.render();
+
+      var view = new app.views.Posts({
+        model: data
+      }).render();
+
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    }, this));
+  },
+
+  path: function(user, repo, path) {
+    var parts;
+    app.state.user = user;
+    app.state.repo = repo;
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
+    url = _.extractURL(path);
+
+    if (url.mode === 'tree') {
+      this.repoBranch(user, repo, url.branch, url.path);
+    } else if (url.mode === 'new') {
+      this.newPost(user, repo, url.branch, url.path);
+    } else if (url.mode === 'preview') {
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
+    } else { // blob or edit ..
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
+    }
+  },
+
+  newPost: function (user, repo, branch, path) {
+    // TODO Fix this, shouldn't have to pass
+    // something like this here.
+    app.state.markdown = true;
+
+    utils.loader.loading('Creating a new post');
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
+
+        data.jekyll = _.jekyll(path, data.file);
+        data.preview = false;
+        data.markdown = _.markdown(data.file);
+        data.lang = _.mode(data.file);
+
+        this.application.render({
+          jekyll: data.jekyll,
+          noMenu: true
+        });
+
+        var view = new app.views.Post({
+          model: data
+        }).render();
+
+        utils.loader.loaded();
+        $('#content').empty().append(view.el);
+        app.state.file = data.file;
+
+      }, this));
+    }, this));
+  },
+
+  post: function(user, repo, branch, path, file, mode) {
+    if (mode === 'edit') {
+      utils.loader.loading('Loading Post');
+    } else {
+      utils.loader.loading('Previewing Post');
+    }
+
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
+      if (err) return this.notify('error', 'This file does not exist.');
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
+        if (err) return this.notify('error', 'This file does not exist.');
+
+        app.state.markdown = data.markdown;
+        data.jekyll = !!data.metadata;
+        data.lang = _.mode(file);
+
+        this.application.render({
+          jekyll: data.jekyll,
+          noMenu: true
+        });
+
+        var view = new app.views.Post({
+          model: data
+        }).render();
+
+        utils.loader.loaded();
+        $('#content').empty().html(view.el);
+      }, this));
+    }, this));
+  },
+
+  preview: function(user, repo, branch, path, file, mode) {
+    var router = this;
+    utils.loader.loading('Previewing Post');
+
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      if (err) return router.notify('error', 'This post does not exist.');
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        if (err) {
+          app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
+        } else {
+          cb(err, data);
+        }
+
+        function cb(err, data) {
+          var view = new app.views.Preview({
+            model: data
+          }).render();
+
+          utils.loader.loaded();
+        }
+      }, this));
+    }, this));
+  },
+
+  start: function() {
+    if (window.authenticated) {
+      $('#start').remove();
+
+      // Redirect
+      router.navigate(app.username, {trigger: true});
+    } else {
+      this.application.render({
+        hideInterface: true
+      });
+
+      var view = new app.views.Start({
+        model: _.extend(this.model, {
+          authenticated: !! window.authenticated
+        })
+      }).render();
+
+      $('#content').empty();
+      $('#prose').append(view.el);
+    }
+  },
+
+  // if the application after routing
+  // hits an error code router.navigate('error' + err.error)
+  // sends the route here.
+  error: function(code) {
+    switch (code) {
+      case '404':
+        code = 'Page not Found'
+      break;
+      default:
+        code = 'Error'
+      break;
+    }
+
+    this.application.render({
+      error: true
+    });
+
+    var view = new app.views.Notification({
+      'type': 'Error',
+      'key': 'error',
+      'message': code
+    }).render();
+
+    utils.loader.loaded();
+    $('#content').empty().append(view.el);
+  },
+
+  notify: function(type, message) {
+    // TODO Fix this, shouldn't have to pass
+    // something like this here.
+    app.state.markdown = false;
+    this.application.render({
+      error: true
+    });
+
+    var view = new app.views.Notification({
+      'type': type,
+      'key': 'page-error',
+      'message': message
+    }).render();
+
+    utils.loader.loaded();
+    $('#content').empty().append(view.el);
+  }
+});
+
+},{"./util":23,"jquery-browserify":14,"underscore":15,"backbone":16}],22:[function(require,module,exports){
+(function() {
+  if (typeof module === "undefined") self.queue = queue;
+  else module.exports = queue;
+  queue.version = "1.0.3";
+
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var queue = {},
+        deferrals = [],
+        started = 0, // number of deferrals that have been started (and perhaps finished)
+        active = 0, // number of deferrals currently being executed (started but not finished)
+        remaining = 0, // number of deferrals not yet finished
+        popping, // inside a synchronous deferral callback?
+        error,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    queue.defer = function() {
+      if (!error) {
+        deferrals.push(arguments);
+        ++remaining;
+        pop();
+      }
+      return queue;
+    };
+
+    queue.await = function(f) {
+      await = f;
+      all = false;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    queue.awaitAll = function(f) {
+      await = f;
+      all = true;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    function pop() {
+      while (popping = started < deferrals.length && active < parallelism) {
+        var i = started++,
+            d = deferrals[i],
+            a = slice.call(d, 1);
+        a.push(callback(i));
+        ++active;
+        d[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new deferrals and squelch active callbacks
+          started = remaining = NaN; // stop queued deferrals from starting
+          notify();
+        } else {
+          deferrals[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(null, deferrals);
+      else await.apply(null, [null].concat(deferrals));
+    }
+
+    return queue;
+  }
+
+  function noop() {}
+})();
+
+},{}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22244,7 +22327,115 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":18,"underscore":16,"backbone":17}],11:[function(require,module,exports){
+},{".././util":23,"jquery-browserify":14,"underscore":15,"backbone":16}],6:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+
+  id: 'notification',
+  className: 'notification round',
+
+  events: {
+    'click .create': 'createPost'
+  },
+
+  initialize: function() {
+    this.model = this.options;
+  },
+
+  render: function() {
+    var view = this;
+    this.eventRegister = app.eventRegister;
+
+    var pathTitle = (app.state.path) ? app.state.path : '';
+    this.eventRegister.trigger('documentTitle', 'Error ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    var tmpl = _(window.app.templates.notification).template();
+
+    // Basically for any previous path we want to try
+    // and bring a user back to the directory tree.
+    var hash = document.location.hash.split('/');
+    var parts = hash.slice(0, hash.length -1);
+    if (parts[2]) parts[2] = 'tree';
+
+    var previous = parts.join('/');
+
+    $(this.el).html(tmpl(_.extend(this.model, {
+      key: view.model.key,
+      message: view.model.message,
+      previous: previous,
+      pathFromFile: (app.state.file) ? true : false
+    })));
+
+    return this;
+  },
+
+  createPost: function (e) {
+    var hash = window.location.hash.split('/');
+    hash[2] = 'new';
+
+    var path = hash[hash.length - 1].split('?');
+    hash[hash.length - 1] = path[0] + '?file=' + path[0];
+
+    // append query string
+    if (path.length > 1) {
+      hash[hash.length - 1]  += '&' + path[1];
+    }
+
+    router.navigate(_(hash).compact().join('/'), true);
+    return false;
+  }
+
+});
+
+},{"jquery-browserify":14,"underscore":15,"backbone":16}],7:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  id: 'start',
+  className: 'start',
+
+  render: function() {
+    var tmpl = _(window.app.templates.start).template();
+    $(this.el).empty().append(tmpl(this.model));
+    return this;
+  }
+});
+
+},{"jquery-browserify":14,"underscore":15,"backbone":16}],8:[function(require,module,exports){
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  render: function() {
+    this.eventRegister = app.eventRegister;
+
+    var pathTitle = (app.state.path) ? app.state.path : '';
+    this.eventRegister.trigger('documentTitle', 'Previewing ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    this.stashApply();
+    _.preview(this);
+    return this;
+  },
+
+  stashApply: function() {
+    if (!window.sessionStorage) return false;
+
+    var storage = window.sessionStorage;
+    var filepath = window.location.hash.split('/').slice(4).join('/');
+    var stash = JSON.parse(storage.getItem(filepath));
+
+    if (stash) {
+      this.model.content = stash.content;
+      this.model.metadata = stash.metadata;
+    }
+  }
+});
+
+},{"underscore":15,"js-yaml":21,"backbone":16}],9:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22366,7 +22557,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":20,"jquery-browserify":18,"underscore":16,"backbone":17}],12:[function(require,module,exports){
+},{".././util":23,"jquery-browserify":14,"underscore":15,"backbone":16}],10:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -22579,115 +22770,26 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././util":20,"jquery-browserify":18,"underscore":16,"js-yaml":22,"backbone":17,"keymaster":24}],9:[function(require,module,exports){
+},{".././util":23,"jquery-browserify":14,"underscore":15,"js-yaml":21,"keymaster":24,"backbone":16}],12:[function(require,module,exports){
 var $ = require('jquery-browserify');
-var _ = require('underscore');
+var marked = require('marked');
 var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
-  id: 'start',
-  className: 'start',
-
-  render: function() {
-    var tmpl = _(window.app.templates.start).template();
-    $(this.el).empty().append(tmpl(this.model));
-    return this;
-  }
-});
-
-},{"underscore":16,"jquery-browserify":18,"backbone":17}],8:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-
-  id: 'notification',
-  className: 'notification round',
-
-  events: {
-    'click .create': 'createPost'
-  },
-
-  initialize: function() {
-    this.model = this.options;
-  },
+  className: 'inner deep prose',
 
   render: function() {
     var view = this;
-    this.eventRegister = app.eventRegister;
-
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', 'Error ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    var tmpl = _(window.app.templates.notification).template();
-
-    // Basically for any previous path we want to try
-    // and bring a user back to the directory tree.
-    var hash = document.location.hash.split('/');
-    var parts = hash.slice(0, hash.length -1);
-    if (parts[2]) parts[2] = 'tree';
-
-    var previous = parts.join('/');
-
-    $(this.el).html(tmpl(_.extend(this.model, {
-      key: view.model.key,
-      message: view.model.message,
-      previous: previous,
-      pathFromFile: (app.state.file) ? true : false
-    })));
-
+    $.get('about.md', function(d) {
+      view.$el.html(marked(d));
+    });
     return this;
-  },
-
-  createPost: function (e) {
-    var hash = window.location.hash.split('/');
-    hash[2] = 'new';
-
-    var path = hash[hash.length - 1].split('?');
-    hash[hash.length - 1] = path[0] + '?file=' + path[0];
-
-    // append query string
-    if (path.length > 1) {
-      hash[hash.length - 1]  += '&' + path[1];
-    }
-
-    router.navigate(_(hash).compact().join('/'), true);
-    return false;
-  }
-
-});
-
-},{"jquery-browserify":18,"underscore":16,"backbone":17}],10:[function(require,module,exports){
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  render: function() {
-    this.eventRegister = app.eventRegister;
-
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', 'Previewing ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    this.stashApply();
-    _.preview(this);
-    return this;
-  },
-
-  stashApply: function() {
-    if (!window.sessionStorage) return false;
-
-    var storage = window.sessionStorage;
-    var filepath = window.location.hash.split('/').slice(4).join('/');
-    var stash = JSON.parse(storage.getItem(filepath));
-
-    if (stash) {
-      this.model.content = stash.content;
-      this.model.metadata = stash.metadata;
-    }
   }
 });
 
-},{"underscore":16,"js-yaml":22,"backbone":17}],13:[function(require,module,exports){
+
+
+},{"jquery-browserify":14,"marked":25,"backbone":16}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -24213,627 +24315,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././toolbar/markdown.js":3,".././util":20,".././upload":4,".././cookie":19,"jquery-browserify":18,"underscore":16,"js-yaml":22,"keymaster":24,"backbone":17,"chosen-jquery-browserify":25,"diff":26,"marked":27}],14:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var marked = require('marked');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  className: 'inner deep prose',
-
-  render: function() {
-    var view = this;
-    $.get('about.md', function(d) {
-      view.$el.html(marked(d));
-    });
-    return this;
-  }
-});
-
-
-
-},{"jquery-browserify":18,"backbone":17,"marked":27}],21:[function(require,module,exports){
-// Github.js (Modified for prose.io)
-// (c) 2012 Michael Aufreiter, Development Seed
-// Github.js is freely distributable under the MIT license.
-// For all details and documentation:
-// http://substance.io/michael/github
-
-var _ = require('underscore');
-
-(function() {
-  var Github;
-
-  Github = window.Github = function(options) {
-
-    var API_URL = options.api || 'https://api.github.com';
-
-    // HTTP Request Abstraction
-    // =======
-    //
-    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
-
-    function _request(method, path, data, cb, raw, sync, headers) {
-      function getURL() {
-        return url = API_URL + path;
-      }
-
-      var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
-
-      xhr.open(method, getURL(), !sync);
-      if (!sync) {
-        xhr.onreadystatechange = function () {
-          if (this.readyState == 4) {
-            if (this.status >= 200 && this.status < 300 || this.status === 304) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
-            } else {
-              cb({request: this, error: this.status});
-            }
-          }
-        };
-      }
-      xhr.setRequestHeader('Accept','application/vnd.github.raw');
-      xhr.setRequestHeader('Content-Type','application/json');
-
-      if (headers) {
-        for (var i = 0; i < headers.length; i++) {
-          header = headers[i];
-          xhr.setRequestHeader(header[0], header[1]);
-        }
-      }
-
-      if (
-         (options.auth == 'oauth' && options.token) ||
-         (options.auth == 'basic' && options.username && options.password)
-         ) {
-           xhr.setRequestHeader('Authorization',options.auth == 'oauth' ?
-            'token '+ options.token :
-            'Basic ' + Base64.encode(options.username + ':' + options.password)
-           );
-         }
-      if (data) {
-        xhr.send(JSON.stringify(data));
-      } else {
-        xhr.send();
-      }
-      if (sync) return xhr.response;
-    }
-
-    function _parseLinkHeader(err, response, xhr, cb) {
-      var link = xhr.getResponseHeader('link');
-
-      if (!err && link) {
-        var parts = link.split(',');
-        var length = parts.length;
-
-        var links = {};
-
-        var section;
-        var url;
-        var name;
-
-        for (var i = 0; i < length; i++) {
-          section = parts[i].split(';');
-
-          if (section.length !== 2) {
-            throw new Error("section could not be split on ';'");
-          }
-
-          url = section[0].replace(/<(.*)>/, '$1').trim();
-          name = section[1].replace(/rel="(.*)"/, '$1').trim();
-
-          links[name] = url;
-        }
-
-        if (links.next) {
-          _request('GET', links.next.split(API_URL)[1], null, function(err, res, xhr) {
-            if (typeof response.concat === 'function') {
-              response = response.concat(res);
-            } else if (typeof response === 'string') {
-              response += res;
-            }
-
-            _parseLinkHeader(err, response, xhr, cb);
-          });
-        } else {
-          cb(err, response);
-        }
-      } else {
-        cb(err, response);
-      }
-    }
-
-    // File API
-    // =======
-    Github.File = function() {
-      // Manages file creation or updating depending on the data obnect passed.
-      this.uploadFile = function(username, repo, path, data, cb) {
-        _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, data, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      this.deleteFile = function(cb) {
-        _request('DELETE', '/repos/' + username + '/' + repo + '/contents/' + path, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-    };
-
-    // User API
-    // =======
-
-    Github.User = function() {
-      this.repos = function(cb) {
-        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user organizations
-      // -------
-
-      this.orgs = function(cb) {
-        _request("GET", "/user/orgs", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List authenticated user's gists
-      // -------
-
-      this.gists = function(cb) {
-        _request("GET", "/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // Show user information
-      // -------
-
-      this.show = function(username, cb) {
-        var command = username ? "/users/"+username : "/user";
-
-        _request("GET", command, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user repositories
-      // -------
-
-      this.userRepos = function(username, cb) {
-        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List a user's gists
-      // -------
-
-      this.userGists = function(username, cb) {
-        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // List organization repositories
-      // -------
-
-      this.orgRepos = function(orgname, cb) {
-        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
-          _parseLinkHeader(err, res, xhr, cb);
-        });
-      };
-
-      // Follow user
-      // -------
-
-      this.follow = function(username, cb) {
-        _request("PUT", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // Unfollow user
-      // -------
-
-      this.unfollow = function(username, cb) {
-        _request("DELETE", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-    };
-
-
-    // Repository API
-    // =======
-
-    Github.Repository = function(options) {
-      var repo = options.name;
-      var user = options.user;
-
-      var that = this;
-      var repoPath = "/repos/" + user + "/" + repo;
-
-      var currentTree = {
-        "branch": null,
-        "sha": null
-      };
-
-      // Uses the cache if branch has not been changed
-      // -------
-
-      function updateTree(branch, cb) {
-        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
-        that.getRef("heads/"+branch, function(err, sha) {
-          currentTree.branch = branch;
-          currentTree.sha = sha;
-          cb(err, sha);
-        });
-      }
-
-      // Get a particular reference
-      // -------
-
-      this.getRef = function(ref, cb) {
-        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.object.sha);
-        });
-      };
-
-      // Create a new reference
-      // --------
-      //
-      // {
-      //   "ref": "refs/heads/my-new-branch-name",
-      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
-      // }
-
-      this.createRef = function(options, cb) {
-        _request("POST", repoPath + "/git/refs", options, cb);
-      };
-
-      // Delete a reference
-      // --------
-      //
-      // repo.deleteRef('heads/gh-pages')
-      // repo.deleteRef('tags/v1.0')
-
-      this.deleteRef = function(ref, cb) {
-        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
-      };
-
-      // List all branches of a repository
-      // -------
-
-      this.listBranches = function(cb) {
-        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
-          if (err) return cb(err);
-          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
-        });
-      };
-
-      // Retrieve the contents of a blob
-      // -------
-
-      this.getBlob = function(sha, cb) {
-        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
-      };
-
-      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
-      // -------
-
-      this.getSha = function(branch, path, cb) {
-        // Just use head if path is empty
-        if (path === "") return that.getRef("heads/"+branch, cb);
-        that.getTree(branch+"?recursive=true", function(err, tree) {
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
-          cb(null, file ? file.sha : null);
-        });
-      };
-
-      // Retrieve the tree a commit points to
-      // -------
-
-      this.getTree = function(tree, cb) {
-        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.tree);
-        });
-      };
-
-      // Post a new blob object, getting a blob SHA back
-      // -------
-
-      this.postBlob = function(content, cb) {
-        if (typeof(content) === "string") {
-          content = {
-            "content": content,
-            "encoding": "utf-8"
-          };
-        }
-
-        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update an existing tree adding a new blob object getting a tree SHA back
-      // -------
-
-      this.updateTree = function(baseTree, path, blob, cb) {
-        var data = {
-          "base_tree": baseTree,
-          "tree": [
-            {
-              "path": path,
-              "mode": "100644",
-              "type": "blob",
-              "sha": blob
-            }
-          ]
-        };
-        _request("POST", repoPath + "/git/trees", data, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Post a new tree object having a file path pointer replaced
-      // with a new blob SHA getting a tree SHA back
-      // -------
-
-      this.postTree = function(tree, cb) {
-        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Create a new commit object with the current commit SHA as the parent
-      // and the new tree SHA, getting a commit SHA back
-      // -------
-
-      this.commit = function(parent, tree, message, cb) {
-        var data = {
-          "message": message,
-          "author": {
-            "name": options.username
-          },
-          "parents": [
-            parent
-          ],
-          "tree": tree
-        };
-
-        _request("POST", repoPath + "/git/commits", data, function(err, res) {
-          currentTree.sha = res.sha; // update latest commit
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update the reference of your head to point to the new commit SHA
-      // -------
-
-      this.updateHead = function(head, commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
-          cb(err);
-        });
-      };
-
-      // Show repository information
-      // -------
-
-      this.show = function(cb) {
-        _request("GET", repoPath, null, cb);
-      };
-
-      // Get commits
-      // --------
-
-      this.getCommit = function(sha, cb) {
-        _request("GET", repoPath + "/commits/" + sha, null, cb);
-      };
-
-      this.getCommits = function(branch, lastModified, cb) {
-        _request("GET", repoPath + "/commits" + "?sha=" + branch, null, cb, false, false, [
-          ['If-Modified-Since', lastModified]
-        ]);
-      };
-
-      // Get contents
-      // --------
-
-      this.contents = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
-      };
-
-      this.contentsSync = function(branch, path) {
-        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
-      };
-
-      // Fork repository
-      // -------
-
-      this.fork = function(cb) {
-        _request("POST", repoPath + "/forks", null, cb);
-      };
-
-      // Create pull request
-      // --------
-
-      this.createPullRequest = function(options, cb) {
-        _request("POST", repoPath + "/pulls", options, cb);
-      };
-
-      // Read file at given path
-      // -------
-
-      this.read = function(branch, path, cb) {
-        that.getSha(branch, path, function(err, sha) {
-          if (!sha) return cb("not found", null);
-          that.getBlob(sha, function(err, content) {
-            cb(err, content, sha);
-          });
-        });
-      };
-
-      // Remove a file from the tree
-      // -------
-
-      this.remove = function(branch, path, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
-            _.each(newTree, function(ref) {
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(newTree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Move a file to a new location
-      // -------
-
-      this.move = function(branch, path, newPath, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            _.each(tree, function(ref) {
-              if (ref.path === path) ref.path = newPath;
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(tree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Write file contents to a given branch and path
-      // -------
-
-      this.write = function(branch, path, content, message, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          if (err) return cb(err);
-          that.postBlob(content, function(err, blob) {
-            if (err) return cb(err);
-            that.updateTree(latestCommit, path, blob, function(err, tree) {
-              if (err) return cb(err);
-              that.commit(latestCommit, tree, message, function(err, commit) {
-                if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
-              });
-            });
-          });
-        });
-      };
-    };
-
-    // Gists API
-    // =======
-
-    Github.Gist = function(options) {
-      var id = options.id;
-      var gistPath = "/gists/"+id;
-
-      // Read the gist
-      // --------
-
-      this.read = function(cb) {
-        _request("GET", gistPath, null, function(err, gist) {
-          cb(err, gist);
-        });
-      };
-
-      // Create the gist
-      // --------
-      // {
-      //  "description": "the description for this gist",
-      //    "public": true,
-      //    "files": {
-      //      "file1.txt": {
-      //        "content": "String file contents"
-      //      }
-      //    }
-      // }
-
-      this.create = function(options, cb){
-        _request("POST","/gists", options, cb);
-      };
-
-      // Delete the gist
-      // --------
-
-      this.removeGist = function(cb) {
-        _request("DELETE", gistPath, null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Fork a gist
-      // --------
-
-      this.fork = function(cb) {
-        _request("POST", gistPath+"/fork", null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Update a gist with the new stuff
-      // --------
-
-      this.update = function(options, cb) {
-        _request("PATCH", gistPath, options, function(err,res) {
-          cb(err,res);
-        });
-      };
-    };
-
-    // Top Level API
-    // -------
-
-    this.getRepo = function(user, repo) {
-      return new Github.Repository({user: user, name: repo});
-    };
-
-    this.getUser = function() {
-      return new Github.User();
-    };
-
-    this.getFile = function() {
-      return new Github.File();
-    };
-
-    this.getGist = function(id) {
-      return new Github.Gist({id: id});
-    };
-  };
-  module.exports = Github;
-}).call(this);
-
-},{"underscore":16}],17:[function(require,module,exports){
+},{".././toolbar/markdown.js":18,".././util":23,".././upload":19,".././cookie":17,"jquery-browserify":14,"chosen-jquery-browserify":26,"underscore":15,"js-yaml":21,"keymaster":24,"marked":25,"backbone":16,"diff":27}],16:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -26407,7 +25889,10 @@ var _ = require('underscore');
 }).call(this);
 
 })()
-},{"underscore":16}],24:[function(require,module,exports){
+},{"underscore":15}],21:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
+
+},{"./lib/js-yaml.js":28}],24:[function(require,module,exports){
 (function(){//     keymaster.js
 //     (c) 2011-2012 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
@@ -26698,7 +26183,7 @@ var _ = require('underscore');
 })(this);
 
 })()
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 (function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -27776,444 +27261,7 @@ var _ = require('underscore');
 
 }).call(this);
 
-},{}],23:[function(require,module,exports){
-(function() {
-  if (typeof module === "undefined") self.queue = queue;
-  else module.exports = queue;
-  queue.version = "1.0.3";
-
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var queue = {},
-        deferrals = [],
-        started = 0, // number of deferrals that have been started (and perhaps finished)
-        active = 0, // number of deferrals currently being executed (started but not finished)
-        remaining = 0, // number of deferrals not yet finished
-        popping, // inside a synchronous deferral callback?
-        error,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    queue.defer = function() {
-      if (!error) {
-        deferrals.push(arguments);
-        ++remaining;
-        pop();
-      }
-      return queue;
-    };
-
-    queue.await = function(f) {
-      await = f;
-      all = false;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    queue.awaitAll = function(f) {
-      await = f;
-      all = true;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    function pop() {
-      while (popping = started < deferrals.length && active < parallelism) {
-        var i = started++,
-            d = deferrals[i],
-            a = slice.call(d, 1);
-        a.push(callback(i));
-        ++active;
-        d[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new deferrals and squelch active callbacks
-          started = remaining = NaN; // stop queued deferrals from starting
-          notify();
-        } else {
-          deferrals[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(null, deferrals);
-      else await.apply(null, [null].concat(deferrals));
-    }
-
-    return queue;
-  }
-
-  function noop() {}
-})();
-
-},{}],26:[function(require,module,exports){
-/* See LICENSE file for terms of use */
-
-/*
- * Text diff implementation.
- * 
- * This library supports the following APIS:
- * JsDiff.diffChars: Character by character diff
- * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
- * JsDiff.diffLines: Line based diff
- * 
- * JsDiff.diffCss: Diff targeted at CSS content
- * 
- * These methods are based on the implementation proposed in
- * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
- * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
- */
-var JsDiff = (function() {
-  function clonePath(path) {
-    return { newPos: path.newPos, components: path.components.slice(0) };
-  }
-  function removeEmpty(array) {
-    var ret = [];
-    for (var i = 0; i < array.length; i++) {
-      if (array[i]) {
-        ret.push(array[i]);
-      }
-    }
-    return ret;
-  }
-  function escapeHTML(s) {
-    var n = s;
-    n = n.replace(/&/g, "&amp;");
-    n = n.replace(/</g, "&lt;");
-    n = n.replace(/>/g, "&gt;");
-    n = n.replace(/"/g, "&quot;");
-
-    return n;
-  }
-
-  var fbDiff = function(ignoreWhitespace) {
-    this.ignoreWhitespace = ignoreWhitespace;
-  };
-  fbDiff.prototype = {
-      diff: function(oldString, newString) {
-        // Handle the identity case (this is due to unrolling editLength == 0
-        if (newString == oldString) {
-          return [{ value: newString }];
-        }
-        if (!newString) {
-          return [{ value: oldString, removed: true }];
-        }
-        if (!oldString) {
-          return [{ value: newString, added: true }];
-        }
-
-        newString = this.tokenize(newString);
-        oldString = this.tokenize(oldString);
-
-        var newLen = newString.length, oldLen = oldString.length;
-        var maxEditLength = newLen + oldLen;
-        var bestPath = [{ newPos: -1, components: [] }];
-
-        // Seed editLength = 0
-        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
-        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
-          return bestPath[0].components;
-        }
-
-        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
-          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
-            var basePath;
-            var addPath = bestPath[diagonalPath-1],
-                removePath = bestPath[diagonalPath+1];
-            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
-            if (addPath) {
-              // No one else is going to attempt to use this value, clear it
-              bestPath[diagonalPath-1] = undefined;
-            }
-
-            var canAdd = addPath && addPath.newPos+1 < newLen;
-            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
-            if (!canAdd && !canRemove) {
-              bestPath[diagonalPath] = undefined;
-              continue;
-            }
-
-            // Select the diagonal that we want to branch from. We select the prior
-            // path whose position in the new string is the farthest from the origin
-            // and does not pass the bounds of the diff graph
-            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
-              basePath = clonePath(removePath);
-              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
-            } else {
-              basePath = clonePath(addPath);
-              basePath.newPos++;
-              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
-            }
-
-            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
-
-            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
-              return basePath.components;
-            } else {
-              bestPath[diagonalPath] = basePath;
-            }
-          }
-        }
-      },
-
-      pushComponent: function(components, value, added, removed) {
-        var last = components[components.length-1];
-        if (last && last.added === added && last.removed === removed) {
-          // We need to clone here as the component clone operation is just
-          // as shallow array clone
-          components[components.length-1] =
-            {value: this.join(last.value, value), added: added, removed: removed };
-        } else {
-          components.push({value: value, added: added, removed: removed });
-        }
-      },
-      extractCommon: function(basePath, newString, oldString, diagonalPath) {
-        var newLen = newString.length,
-            oldLen = oldString.length,
-            newPos = basePath.newPos,
-            oldPos = newPos - diagonalPath;
-        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
-          newPos++;
-          oldPos++;
-
-          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
-        }
-        basePath.newPos = newPos;
-        return oldPos;
-      },
-
-      equals: function(left, right) {
-        var reWhitespace = /\S/;
-        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
-          return true;
-        } else {
-          return left == right;
-        }
-      },
-      join: function(left, right) {
-        return left + right;
-      },
-      tokenize: function(value) {
-        return value;
-      }
-  };
-
-  var CharDiff = new fbDiff();
-
-  var WordDiff = new fbDiff(true);
-  WordDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/(\s+|\b)/));
-  };
-
-  var CssDiff = new fbDiff(true);
-  CssDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/([{}:;,]|\s+)/));
-  };
-
-  var LineDiff = new fbDiff();
-  LineDiff.tokenize = function(value) {
-    return value.split(/^/m);
-  };
-
-  return {
-    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
-    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
-    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
-
-    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
-
-    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
-      var ret = [];
-
-      ret.push("Index: " + fileName);
-      ret.push("===================================================================");
-      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
-      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
-
-      var diff = LineDiff.diff(oldStr, newStr);
-      if (!diff[diff.length-1].value) {
-        diff.pop();   // Remove trailing newline add
-      }
-      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
-
-      function contextLines(lines) {
-        return lines.map(function(entry) { return ' ' + entry; });
-      }
-      function eofNL(curRange, i, current) {
-        var last = diff[diff.length-2],
-            isLast = i === diff.length-2,
-            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
-
-        // Figure out if this is the last line for the given file and missing NL
-        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
-          curRange.push('\\ No newline at end of file');
-        }
-      }
-
-      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
-          oldLine = 1, newLine = 1;
-      for (var i = 0; i < diff.length; i++) {
-        var current = diff[i],
-            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
-        current.lines = lines;
-
-        if (current.added || current.removed) {
-          if (!oldRangeStart) {
-            var prev = diff[i-1];
-            oldRangeStart = oldLine;
-            newRangeStart = newLine;
-
-            if (prev) {
-              curRange = contextLines(prev.lines.slice(-4));
-              oldRangeStart -= curRange.length;
-              newRangeStart -= curRange.length;
-            }
-          }
-          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
-          eofNL(curRange, i, current);
-
-          if (current.added) {
-            newLine += lines.length;
-          } else {
-            oldLine += lines.length;
-          }
-        } else {
-          if (oldRangeStart) {
-            // Close out any changes that have been output (or join overlapping)
-            if (lines.length <= 8 && i < diff.length-2) {
-              // Overlapping
-              curRange.push.apply(curRange, contextLines(lines));
-            } else {
-              // end the range and output
-              var contextSize = Math.min(lines.length, 4);
-              ret.push(
-                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
-                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
-                  + " @@");
-              ret.push.apply(ret, curRange);
-              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
-              if (lines.length <= 4) {
-                eofNL(ret, i, current);
-              }
-
-              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
-            }
-          }
-          oldLine += lines.length;
-          newLine += lines.length;
-        }
-      }
-
-      return ret.join('\n') + '\n';
-    },
-
-    applyPatch: function(oldStr, uniDiff) {
-      var diffstr = uniDiff.split("\n");
-      var diff = [];
-      var remEOFNL = false,
-          addEOFNL = false;
-
-      for (var i = (diffstr[0][0]=="I"?4:0); i < diffstr.length; i++) {
-        if(diffstr[i][0] == "@") {
-          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
-          diff.unshift({
-            start:meh[3],
-            oldlength:meh[2],
-            oldlines:[],
-            newlength:meh[4],
-            newlines:[]
-          });
-        } else if(diffstr[i][0] == '+') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == '-') {
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == ' ') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == '\\') {
-          if (diffstr[i-1][0] == '+') {
-            remEOFNL = true;
-          } else if(diffstr[i-1][0] == '-') {
-            addEOFNL = true;
-          }
-        }
-      }
-
-      var str = oldStr.split("\n");
-      for (var i = diff.length - 1; i >= 0; i--) {
-        var d = diff[i];
-        for (var j = 0; j < d.oldlength; j++) {
-          if(str[d.start-1+j] != d.oldlines[j]) {
-            return false;
-          }
-        }
-        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
-      }
-
-      if (remEOFNL) {
-        while (!str[str.length-1]) {
-          str.pop();
-        }
-      } else if (addEOFNL) {
-        str.push('');
-      }
-      return str.join('\n');
-    },
-
-    convertChangesToXML: function(changes){
-      var ret = [];
-      for ( var i = 0; i < changes.length; i++) {
-        var change = changes[i];
-        if (change.added) {
-          ret.push("<ins>");
-        } else if (change.removed) {
-          ret.push("<del>");
-        }
-
-        ret.push(escapeHTML(change.value));
-
-        if (change.added) {
-          ret.push("</ins>");
-        } else if (change.removed) {
-          ret.push("</del>");
-        }
-      }
-      return ret.join("");
-    },
-
-    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
-    convertChangesToDMP: function(changes){
-      var ret = [], change;
-      for ( var i = 0; i < changes.length; i++) {
-        change = changes[i];
-        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
-      }
-      return ret;
-    }
-  };
-})();
-
-if (typeof module !== "undefined") {
-    module.exports = JsDiff;
-}
-
-},{}],22:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
-
-},{"./lib/js-yaml.js":28}],27:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -29292,7 +28340,959 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
+},{}],27:[function(require,module,exports){
+/* See LICENSE file for terms of use */
+
+/*
+ * Text diff implementation.
+ * 
+ * This library supports the following APIS:
+ * JsDiff.diffChars: Character by character diff
+ * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
+ * JsDiff.diffLines: Line based diff
+ * 
+ * JsDiff.diffCss: Diff targeted at CSS content
+ * 
+ * These methods are based on the implementation proposed in
+ * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
+ * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
+ */
+var JsDiff = (function() {
+  function clonePath(path) {
+    return { newPos: path.newPos, components: path.components.slice(0) };
+  }
+  function removeEmpty(array) {
+    var ret = [];
+    for (var i = 0; i < array.length; i++) {
+      if (array[i]) {
+        ret.push(array[i]);
+      }
+    }
+    return ret;
+  }
+  function escapeHTML(s) {
+    var n = s;
+    n = n.replace(/&/g, "&amp;");
+    n = n.replace(/</g, "&lt;");
+    n = n.replace(/>/g, "&gt;");
+    n = n.replace(/"/g, "&quot;");
+
+    return n;
+  }
+
+  var fbDiff = function(ignoreWhitespace) {
+    this.ignoreWhitespace = ignoreWhitespace;
+  };
+  fbDiff.prototype = {
+      diff: function(oldString, newString) {
+        // Handle the identity case (this is due to unrolling editLength == 0
+        if (newString == oldString) {
+          return [{ value: newString }];
+        }
+        if (!newString) {
+          return [{ value: oldString, removed: true }];
+        }
+        if (!oldString) {
+          return [{ value: newString, added: true }];
+        }
+
+        newString = this.tokenize(newString);
+        oldString = this.tokenize(oldString);
+
+        var newLen = newString.length, oldLen = oldString.length;
+        var maxEditLength = newLen + oldLen;
+        var bestPath = [{ newPos: -1, components: [] }];
+
+        // Seed editLength = 0
+        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
+        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
+          return bestPath[0].components;
+        }
+
+        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
+          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
+            var basePath;
+            var addPath = bestPath[diagonalPath-1],
+                removePath = bestPath[diagonalPath+1];
+            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
+            if (addPath) {
+              // No one else is going to attempt to use this value, clear it
+              bestPath[diagonalPath-1] = undefined;
+            }
+
+            var canAdd = addPath && addPath.newPos+1 < newLen;
+            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
+            if (!canAdd && !canRemove) {
+              bestPath[diagonalPath] = undefined;
+              continue;
+            }
+
+            // Select the diagonal that we want to branch from. We select the prior
+            // path whose position in the new string is the farthest from the origin
+            // and does not pass the bounds of the diff graph
+            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
+              basePath = clonePath(removePath);
+              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
+            } else {
+              basePath = clonePath(addPath);
+              basePath.newPos++;
+              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
+            }
+
+            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
+
+            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
+              return basePath.components;
+            } else {
+              bestPath[diagonalPath] = basePath;
+            }
+          }
+        }
+      },
+
+      pushComponent: function(components, value, added, removed) {
+        var last = components[components.length-1];
+        if (last && last.added === added && last.removed === removed) {
+          // We need to clone here as the component clone operation is just
+          // as shallow array clone
+          components[components.length-1] =
+            {value: this.join(last.value, value), added: added, removed: removed };
+        } else {
+          components.push({value: value, added: added, removed: removed });
+        }
+      },
+      extractCommon: function(basePath, newString, oldString, diagonalPath) {
+        var newLen = newString.length,
+            oldLen = oldString.length,
+            newPos = basePath.newPos,
+            oldPos = newPos - diagonalPath;
+        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
+          newPos++;
+          oldPos++;
+
+          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
+        }
+        basePath.newPos = newPos;
+        return oldPos;
+      },
+
+      equals: function(left, right) {
+        var reWhitespace = /\S/;
+        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
+          return true;
+        } else {
+          return left == right;
+        }
+      },
+      join: function(left, right) {
+        return left + right;
+      },
+      tokenize: function(value) {
+        return value;
+      }
+  };
+
+  var CharDiff = new fbDiff();
+
+  var WordDiff = new fbDiff(true);
+  WordDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/(\s+|\b)/));
+  };
+
+  var CssDiff = new fbDiff(true);
+  CssDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/([{}:;,]|\s+)/));
+  };
+
+  var LineDiff = new fbDiff();
+  LineDiff.tokenize = function(value) {
+    return value.split(/^/m);
+  };
+
+  return {
+    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
+    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
+    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
+
+    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
+
+    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
+      var ret = [];
+
+      ret.push("Index: " + fileName);
+      ret.push("===================================================================");
+      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
+      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
+
+      var diff = LineDiff.diff(oldStr, newStr);
+      if (!diff[diff.length-1].value) {
+        diff.pop();   // Remove trailing newline add
+      }
+      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
+
+      function contextLines(lines) {
+        return lines.map(function(entry) { return ' ' + entry; });
+      }
+      function eofNL(curRange, i, current) {
+        var last = diff[diff.length-2],
+            isLast = i === diff.length-2,
+            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
+
+        // Figure out if this is the last line for the given file and missing NL
+        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
+          curRange.push('\\ No newline at end of file');
+        }
+      }
+
+      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
+          oldLine = 1, newLine = 1;
+      for (var i = 0; i < diff.length; i++) {
+        var current = diff[i],
+            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
+        current.lines = lines;
+
+        if (current.added || current.removed) {
+          if (!oldRangeStart) {
+            var prev = diff[i-1];
+            oldRangeStart = oldLine;
+            newRangeStart = newLine;
+
+            if (prev) {
+              curRange = contextLines(prev.lines.slice(-4));
+              oldRangeStart -= curRange.length;
+              newRangeStart -= curRange.length;
+            }
+          }
+          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
+          eofNL(curRange, i, current);
+
+          if (current.added) {
+            newLine += lines.length;
+          } else {
+            oldLine += lines.length;
+          }
+        } else {
+          if (oldRangeStart) {
+            // Close out any changes that have been output (or join overlapping)
+            if (lines.length <= 8 && i < diff.length-2) {
+              // Overlapping
+              curRange.push.apply(curRange, contextLines(lines));
+            } else {
+              // end the range and output
+              var contextSize = Math.min(lines.length, 4);
+              ret.push(
+                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
+                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
+                  + " @@");
+              ret.push.apply(ret, curRange);
+              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
+              if (lines.length <= 4) {
+                eofNL(ret, i, current);
+              }
+
+              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
+            }
+          }
+          oldLine += lines.length;
+          newLine += lines.length;
+        }
+      }
+
+      return ret.join('\n') + '\n';
+    },
+
+    applyPatch: function(oldStr, uniDiff) {
+      var diffstr = uniDiff.split("\n");
+      var diff = [];
+      var remEOFNL = false,
+          addEOFNL = false;
+
+      for (var i = (diffstr[0][0]=="I"?4:0); i < diffstr.length; i++) {
+        if(diffstr[i][0] == "@") {
+          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
+          diff.unshift({
+            start:meh[3],
+            oldlength:meh[2],
+            oldlines:[],
+            newlength:meh[4],
+            newlines:[]
+          });
+        } else if(diffstr[i][0] == '+') {
+          diff[0].newlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == '-') {
+          diff[0].oldlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == ' ') {
+          diff[0].newlines.push(diffstr[i].substr(1));
+          diff[0].oldlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == '\\') {
+          if (diffstr[i-1][0] == '+') {
+            remEOFNL = true;
+          } else if(diffstr[i-1][0] == '-') {
+            addEOFNL = true;
+          }
+        }
+      }
+
+      var str = oldStr.split("\n");
+      for (var i = diff.length - 1; i >= 0; i--) {
+        var d = diff[i];
+        for (var j = 0; j < d.oldlength; j++) {
+          if(str[d.start-1+j] != d.oldlines[j]) {
+            return false;
+          }
+        }
+        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
+      }
+
+      if (remEOFNL) {
+        while (!str[str.length-1]) {
+          str.pop();
+        }
+      } else if (addEOFNL) {
+        str.push('');
+      }
+      return str.join('\n');
+    },
+
+    convertChangesToXML: function(changes){
+      var ret = [];
+      for ( var i = 0; i < changes.length; i++) {
+        var change = changes[i];
+        if (change.added) {
+          ret.push("<ins>");
+        } else if (change.removed) {
+          ret.push("<del>");
+        }
+
+        ret.push(escapeHTML(change.value));
+
+        if (change.added) {
+          ret.push("</ins>");
+        } else if (change.removed) {
+          ret.push("</del>");
+        }
+      }
+      return ret.join("");
+    },
+
+    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
+    convertChangesToDMP: function(changes){
+      var ret = [], change;
+      for ( var i = 0; i < changes.length; i++) {
+        change = changes[i];
+        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
+      }
+      return ret;
+    }
+  };
+})();
+
+if (typeof module !== "undefined") {
+    module.exports = JsDiff;
+}
+
 },{}],20:[function(require,module,exports){
+// Github.js (Modified for prose.io)
+// (c) 2012 Michael Aufreiter, Development Seed
+// Github.js is freely distributable under the MIT license.
+// For all details and documentation:
+// http://substance.io/michael/github
+
+var _ = require('underscore');
+
+(function() {
+  var Github;
+
+  Github = window.Github = function(options) {
+
+    var API_URL = options.api || 'https://api.github.com';
+
+    // HTTP Request Abstraction
+    // =======
+    //
+    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
+
+    function _request(method, path, data, cb, raw, sync, headers) {
+      function getURL() {
+        return url = API_URL + path;
+      }
+
+      var xhr = new XMLHttpRequest();
+      if (!raw) {xhr.dataType = "json";}
+
+      xhr.open(method, getURL(), !sync);
+      if (!sync) {
+        xhr.onreadystatechange = function () {
+          if (this.readyState == 4) {
+            if (this.status >= 200 && this.status < 300 || this.status === 304) {
+              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
+            } else {
+              cb({request: this, error: this.status});
+            }
+          }
+        };
+      }
+      xhr.setRequestHeader('Accept','application/vnd.github.raw');
+      xhr.setRequestHeader('Content-Type','application/json');
+
+      if (headers) {
+        for (var i = 0; i < headers.length; i++) {
+          header = headers[i];
+          xhr.setRequestHeader(header[0], header[1]);
+        }
+      }
+
+      if (
+         (options.auth == 'oauth' && options.token) ||
+         (options.auth == 'basic' && options.username && options.password)
+         ) {
+           xhr.setRequestHeader('Authorization',options.auth == 'oauth' ?
+            'token '+ options.token :
+            'Basic ' + Base64.encode(options.username + ':' + options.password)
+           );
+         }
+      if (data) {
+        xhr.send(JSON.stringify(data));
+      } else {
+        xhr.send();
+      }
+      if (sync) return xhr.response;
+    }
+
+    function _parseLinkHeader(err, response, xhr, cb) {
+      var link = xhr.getResponseHeader('link');
+
+      if (!err && link) {
+        var parts = link.split(',');
+        var length = parts.length;
+
+        var links = {};
+
+        var section;
+        var url;
+        var name;
+
+        for (var i = 0; i < length; i++) {
+          section = parts[i].split(';');
+
+          if (section.length !== 2) {
+            throw new Error("section could not be split on ';'");
+          }
+
+          url = section[0].replace(/<(.*)>/, '$1').trim();
+          name = section[1].replace(/rel="(.*)"/, '$1').trim();
+
+          links[name] = url;
+        }
+
+        if (links.next) {
+          _request('GET', links.next.split(API_URL)[1], null, function(err, res, xhr) {
+            if (typeof response.concat === 'function') {
+              response = response.concat(res);
+            } else if (typeof response === 'string') {
+              response += res;
+            }
+
+            _parseLinkHeader(err, response, xhr, cb);
+          });
+        } else {
+          cb(err, response);
+        }
+      } else {
+        cb(err, response);
+      }
+    }
+
+    // File API
+    // =======
+    Github.File = function() {
+      // Manages file creation or updating depending on the data obnect passed.
+      this.uploadFile = function(username, repo, path, data, cb) {
+        _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, data, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      this.deleteFile = function(cb) {
+        _request('DELETE', '/repos/' + username + '/' + repo + '/contents/' + path, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+    };
+
+    // User API
+    // =======
+
+    Github.User = function() {
+      this.repos = function(cb) {
+        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List user organizations
+      // -------
+
+      this.orgs = function(cb) {
+        _request("GET", "/user/orgs", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List authenticated user's gists
+      // -------
+
+      this.gists = function(cb) {
+        _request("GET", "/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // Show user information
+      // -------
+
+      this.show = function(username, cb) {
+        var command = username ? "/users/"+username : "/user";
+
+        _request("GET", command, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List user repositories
+      // -------
+
+      this.userRepos = function(username, cb) {
+        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List a user's gists
+      // -------
+
+      this.userGists = function(username, cb) {
+        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // List organization repositories
+      // -------
+
+      this.orgRepos = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
+          _parseLinkHeader(err, res, xhr, cb);
+        });
+      };
+
+      // Follow user
+      // -------
+
+      this.follow = function(username, cb) {
+        _request("PUT", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // Unfollow user
+      // -------
+
+      this.unfollow = function(username, cb) {
+        _request("DELETE", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+    };
+
+
+    // Repository API
+    // =======
+
+    Github.Repository = function(options) {
+      var repo = options.name;
+      var user = options.user;
+
+      var that = this;
+      var repoPath = "/repos/" + user + "/" + repo;
+
+      var currentTree = {
+        "branch": null,
+        "sha": null
+      };
+
+      // Uses the cache if branch has not been changed
+      // -------
+
+      function updateTree(branch, cb) {
+        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
+        that.getRef("heads/"+branch, function(err, sha) {
+          currentTree.branch = branch;
+          currentTree.sha = sha;
+          cb(err, sha);
+        });
+      }
+
+      // Get a particular reference
+      // -------
+
+      this.getRef = function(ref, cb) {
+        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.object.sha);
+        });
+      };
+
+      // Create a new reference
+      // --------
+      //
+      // {
+      //   "ref": "refs/heads/my-new-branch-name",
+      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
+      // }
+
+      this.createRef = function(options, cb) {
+        _request("POST", repoPath + "/git/refs", options, cb);
+      };
+
+      // Delete a reference
+      // --------
+      //
+      // repo.deleteRef('heads/gh-pages')
+      // repo.deleteRef('tags/v1.0')
+
+      this.deleteRef = function(ref, cb) {
+        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
+      };
+
+      // List all branches of a repository
+      // -------
+
+      this.listBranches = function(cb) {
+        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
+          if (err) return cb(err);
+          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
+        });
+      };
+
+      // Retrieve the contents of a blob
+      // -------
+
+      this.getBlob = function(sha, cb) {
+        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
+      };
+
+      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
+      // -------
+
+      this.getSha = function(branch, path, cb) {
+        // Just use head if path is empty
+        if (path === "") return that.getRef("heads/"+branch, cb);
+        that.getTree(branch+"?recursive=true", function(err, tree) {
+          var file = _.select(tree, function(file) {
+            return file.path === path;
+          })[0];
+          cb(null, file ? file.sha : null);
+        });
+      };
+
+      // Retrieve the tree a commit points to
+      // -------
+
+      this.getTree = function(tree, cb) {
+        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.tree);
+        });
+      };
+
+      // Post a new blob object, getting a blob SHA back
+      // -------
+
+      this.postBlob = function(content, cb) {
+        if (typeof(content) === "string") {
+          content = {
+            "content": content,
+            "encoding": "utf-8"
+          };
+        }
+
+        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Update an existing tree adding a new blob object getting a tree SHA back
+      // -------
+
+      this.updateTree = function(baseTree, path, blob, cb) {
+        var data = {
+          "base_tree": baseTree,
+          "tree": [
+            {
+              "path": path,
+              "mode": "100644",
+              "type": "blob",
+              "sha": blob
+            }
+          ]
+        };
+        _request("POST", repoPath + "/git/trees", data, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Post a new tree object having a file path pointer replaced
+      // with a new blob SHA getting a tree SHA back
+      // -------
+
+      this.postTree = function(tree, cb) {
+        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Create a new commit object with the current commit SHA as the parent
+      // and the new tree SHA, getting a commit SHA back
+      // -------
+
+      this.commit = function(parent, tree, message, cb) {
+        var data = {
+          "message": message,
+          "author": {
+            "name": options.username
+          },
+          "parents": [
+            parent
+          ],
+          "tree": tree
+        };
+
+        _request("POST", repoPath + "/git/commits", data, function(err, res) {
+          currentTree.sha = res.sha; // update latest commit
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Update the reference of your head to point to the new commit SHA
+      // -------
+
+      this.updateHead = function(head, commit, cb) {
+        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
+          cb(err);
+        });
+      };
+
+      // Show repository information
+      // -------
+
+      this.show = function(cb) {
+        _request("GET", repoPath, null, cb);
+      };
+
+      // Get commits
+      // --------
+
+      this.getCommit = function(sha, cb) {
+        _request("GET", repoPath + "/commits/" + sha, null, cb);
+      };
+
+      this.getCommits = function(branch, lastModified, cb) {
+        _request("GET", repoPath + "/commits" + "?sha=" + branch, null, cb, false, false, [
+          ['If-Modified-Since', lastModified]
+        ]);
+      };
+
+      // Get contents
+      // --------
+
+      this.contents = function(branch, path, cb) {
+        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
+      };
+
+      this.contentsSync = function(branch, path) {
+        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
+      };
+
+      // Fork repository
+      // -------
+
+      this.fork = function(cb) {
+        _request("POST", repoPath + "/forks", null, cb);
+      };
+
+      // Create pull request
+      // --------
+
+      this.createPullRequest = function(options, cb) {
+        _request("POST", repoPath + "/pulls", options, cb);
+      };
+
+      // Read file at given path
+      // -------
+
+      this.read = function(branch, path, cb) {
+        that.getSha(branch, path, function(err, sha) {
+          if (!sha) return cb("not found", null);
+          that.getBlob(sha, function(err, content) {
+            cb(err, content, sha);
+          });
+        });
+      };
+
+      // Remove a file from the tree
+      // -------
+
+      this.remove = function(branch, path, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
+            _.each(newTree, function(ref) {
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(newTree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Move a file to a new location
+      // -------
+
+      this.move = function(branch, path, newPath, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            _.each(tree, function(ref) {
+              if (ref.path === path) ref.path = newPath;
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(tree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Write file contents to a given branch and path
+      // -------
+
+      this.write = function(branch, path, content, message, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          if (err) return cb(err);
+          that.postBlob(content, function(err, blob) {
+            if (err) return cb(err);
+            that.updateTree(latestCommit, path, blob, function(err, tree) {
+              if (err) return cb(err);
+              that.commit(latestCommit, tree, message, function(err, commit) {
+                if (err) return cb(err);
+                that.updateHead(branch, commit, cb);
+              });
+            });
+          });
+        });
+      };
+    };
+
+    // Gists API
+    // =======
+
+    Github.Gist = function(options) {
+      var id = options.id;
+      var gistPath = "/gists/"+id;
+
+      // Read the gist
+      // --------
+
+      this.read = function(cb) {
+        _request("GET", gistPath, null, function(err, gist) {
+          cb(err, gist);
+        });
+      };
+
+      // Create the gist
+      // --------
+      // {
+      //  "description": "the description for this gist",
+      //    "public": true,
+      //    "files": {
+      //      "file1.txt": {
+      //        "content": "String file contents"
+      //      }
+      //    }
+      // }
+
+      this.create = function(options, cb){
+        _request("POST","/gists", options, cb);
+      };
+
+      // Delete the gist
+      // --------
+
+      this.removeGist = function(cb) {
+        _request("DELETE", gistPath, null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Fork a gist
+      // --------
+
+      this.fork = function(cb) {
+        _request("POST", gistPath+"/fork", null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Update a gist with the new stuff
+      // --------
+
+      this.update = function(options, cb) {
+        _request("PATCH", gistPath, options, function(err,res) {
+          cb(err,res);
+        });
+      };
+    };
+
+    // Top Level API
+    // -------
+
+    this.getRepo = function(user, repo) {
+      return new Github.Repository({user: user, name: repo});
+    };
+
+    this.getUser = function() {
+      return new Github.User();
+    };
+
+    this.getFile = function() {
+      return new Github.File();
+    };
+
+    this.getGist = function(id) {
+      return new Github.Gist({id: id});
+    };
+  };
+  module.exports = Github;
+}).call(this);
+
+},{"underscore":15}],23:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -29763,10 +29763,7 @@ module.exports = {
   }
 };
 
-},{"jquery-browserify":18,"underscore":16,"js-yaml":22,"marked":27,"queue-async":23,"chrono":29}],29:[function(require,module,exports){
-module.exports = require('./lib/chrono');
-
-},{"./lib/chrono":30}],28:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":15,"js-yaml":21,"marked":25,"queue-async":22,"chrono":29}],28:[function(require,module,exports){
 'use strict';
 
 
@@ -29801,7 +29798,37 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":31,"./js-yaml/type":32,"./js-yaml/dumper":33,"./js-yaml/schema":34,"./js-yaml/schema/minimal":35,"./js-yaml/exception":36,"./js-yaml/schema/safe":37,"./js-yaml/schema/default":38,"./js-yaml/require":39}],30:[function(require,module,exports){
+},{"./js-yaml/loader":30,"./js-yaml/dumper":31,"./js-yaml/type":32,"./js-yaml/schema":33,"./js-yaml/schema/minimal":34,"./js-yaml/schema/safe":35,"./js-yaml/schema/default":36,"./js-yaml/exception":37,"./js-yaml/require":38}],29:[function(require,module,exports){
+module.exports = require('./lib/chrono');
+
+},{"./lib/chrono":39}],37:[function(require,module,exports){
+'use strict';
+
+
+function YAMLException(reason, mark) {
+  this.name    = 'YAMLException';
+  this.reason  = reason;
+  this.mark    = mark;
+  this.message = this.toString(false);
+}
+
+
+YAMLException.prototype.toString = function toString(compact) {
+  var result;
+
+  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
+
+  if (!compact && this.mark) {
+    result += ' ' + this.mark.toString();
+  }
+
+  return result;
+};
+
+
+module.exports = YAMLException;
+
+},{}],39:[function(require,module,exports){
 (function(){
 
 // CommonJS exports.
@@ -30207,473 +30234,10 @@ Date.prototype.setTimezone = function(val) {
 
 })();
 
-},{}],36:[function(require,module,exports){
-'use strict';
+},{}],40:[function(require,module,exports){
+// nothing to see here... no file methods for the browser
 
-
-function YAMLException(reason, mark) {
-  this.name    = 'YAMLException';
-  this.reason  = reason;
-  this.mark    = mark;
-  this.message = this.toString(false);
-}
-
-
-YAMLException.prototype.toString = function toString(compact) {
-  var result;
-
-  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
-
-  if (!compact && this.mark) {
-    result += ' ' + this.mark.toString();
-  }
-
-  return result;
-};
-
-
-module.exports = YAMLException;
-
-},{}],33:[function(require,module,exports){
-'use strict';
-
-
-var common         = require('./common');
-var NIL            = common.NIL;
-var YAMLException  = require('./exception');
-var DEFAULT_SCHEMA = require('./schema/default');
-var SAFE_SCHEMA    = require('./schema/safe');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-var CHAR_TAB                  = 0x09; /* Tab */
-var CHAR_LINE_FEED            = 0x0A; /* LF */
-var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
-var CHAR_SPACE                = 0x20; /* Space */
-var CHAR_EXCLAMATION          = 0x21; /* ! */
-var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
-var CHAR_SHARP                = 0x23; /* # */
-var CHAR_PERCENT              = 0x25; /* % */
-var CHAR_AMPERSAND            = 0x26; /* & */
-var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
-var CHAR_ASTERISK             = 0x2A; /* * */
-var CHAR_COMMA                = 0x2C; /* , */
-var CHAR_MINUS                = 0x2D; /* - */
-var CHAR_COLON                = 0x3A; /* : */
-var CHAR_GREATER_THAN         = 0x3E; /* > */
-var CHAR_QUESTION             = 0x3F; /* ? */
-var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
-var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
-var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
-var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
-var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
-var CHAR_VERTICAL_LINE        = 0x7C; /* | */
-var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
-
-
-var ESCAPE_SEQUENCES = {};
-
-ESCAPE_SEQUENCES[0x00]   = '\\0';
-ESCAPE_SEQUENCES[0x07]   = '\\a';
-ESCAPE_SEQUENCES[0x08]   = '\\b';
-ESCAPE_SEQUENCES[0x09]   = '\\t';
-ESCAPE_SEQUENCES[0x0A]   = '\\n';
-ESCAPE_SEQUENCES[0x0B]   = '\\v';
-ESCAPE_SEQUENCES[0x0C]   = '\\f';
-ESCAPE_SEQUENCES[0x0D]   = '\\r';
-ESCAPE_SEQUENCES[0x1B]   = '\\e';
-ESCAPE_SEQUENCES[0x22]   = '\\"';
-ESCAPE_SEQUENCES[0x5C]   = '\\\\';
-ESCAPE_SEQUENCES[0x85]   = '\\N';
-ESCAPE_SEQUENCES[0xA0]   = '\\_';
-ESCAPE_SEQUENCES[0x2028] = '\\L';
-ESCAPE_SEQUENCES[0x2029] = '\\P';
-
-
-function kindOf(object) {
-  var kind = typeof object;
-
-  if (null === object) {
-    return 'null';
-  } else if ('number' === kind) {
-    return 0 === object % 1 ? 'integer' : 'float';
-  } else if ('object' === kind && Array.isArray(object)) {
-    return 'array';
-  } else {
-    return kind;
-  }
-}
-
-
-function compileStyleMap(schema, map) {
-  var result, keys, index, length, tag, style, type;
-
-  if (null === map) {
-    return {};
-  }
-
-  result = {};
-  keys = Object.keys(map);
-
-  for (index = 0, length = keys.length; index < length; index += 1) {
-    tag = keys[index];
-    style = String(map[tag]);
-
-    if ('!!' === tag.slice(0, 2)) {
-      tag = 'tag:yaml.org,2002:' + tag.slice(2);
-    }
-
-    type = schema.compiledTypeMap[tag];
-
-    if (type && type.dumper) {
-      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
-        style = type.dumper.styleAliases[style];
-      }
-    }
-
-    result[tag] = style;
-  }
-
-  return result;
-}
-
-
-function encodeHex(character) {
-  var string, handle, length;
-
-  string = character.toString(16).toUpperCase();
-
-  if (character <= 0xFF) {
-    handle = 'x';
-    length = 2;
-  } else if (character <= 0xFFFF) {
-    handle = 'u';
-    length = 4;
-  } else if (character <= 0xFFFFFFFF) {
-    handle = 'U';
-    length = 8;
-  } else {
-    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
-  }
-
-  return '\\' + handle + common.repeat('0', length - string.length) + string;
-}
-
-
-function dump(input, options) {
-  options = options || {};
-
-  var schema    = options['schema'] || DEFAULT_SCHEMA,
-      indent    = Math.max(1, (options['indent'] || 2)),
-      flowLevel = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
-      styleMap  = compileStyleMap(schema, options['styles'] || null),
-
-      implicitTypes = schema.compiledImplicit,
-      explicitTypes = schema.compiledExplicit,
-
-      kind,
-      tag,
-      result;
-
-  function generateNextLine(level) {
-    return '\n' + common.repeat(' ', indent * level);
-  }
-
-  function testImplicitResolving(object) {
-    var index, length, type;
-
-    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
-      type = implicitTypes[index];
-
-      if (null !== type.loader &&
-          NIL !== type.loader.resolver(object, false)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeScalar(object) {
-    var isQuoted, checkpoint, position, length, character;
-
-    result = '';
-    isQuoted = false;
-    checkpoint = 0;
-
-    if (0          === object.length ||
-        CHAR_SPACE === object.charCodeAt(0) ||
-        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
-      isQuoted = true;
-    }
-
-    for (position = 0, length = object.length; position < length; position += 1) {
-      character = object.charCodeAt(position);
-
-      if (!isQuoted) {
-        if (CHAR_TAB                  === character ||
-            CHAR_LINE_FEED            === character ||
-            CHAR_CARRIAGE_RETURN      === character ||
-            CHAR_COMMA                === character ||
-            CHAR_LEFT_SQUARE_BRACKET  === character ||
-            CHAR_RIGHT_SQUARE_BRACKET === character ||
-            CHAR_LEFT_CURLY_BRACKET   === character ||
-            CHAR_RIGHT_CURLY_BRACKET  === character ||
-            CHAR_SHARP                === character ||
-            CHAR_AMPERSAND            === character ||
-            CHAR_ASTERISK             === character ||
-            CHAR_EXCLAMATION          === character ||
-            CHAR_VERTICAL_LINE        === character ||
-            CHAR_GREATER_THAN         === character ||
-            CHAR_SINGLE_QUOTE         === character ||
-            CHAR_DOUBLE_QUOTE         === character ||
-            CHAR_PERCENT              === character ||
-            CHAR_COMMERCIAL_AT        === character ||
-            CHAR_GRAVE_ACCENT         === character ||
-            CHAR_QUESTION             === character ||
-            CHAR_COLON                === character ||
-            CHAR_MINUS                === character) {
-          isQuoted = true;
-        }
-      }
-
-      if (ESCAPE_SEQUENCES[character] ||
-          !((0x00020 <= character && character <= 0x00007E) ||
-            (0x00085 === character)                         ||
-            (0x000A0 <= character && character <= 0x00D7FF) ||
-            (0x0E000 <= character && character <= 0x00FFFD) ||
-            (0x10000 <= character && character <= 0x10FFFF))) {
-        result += object.slice(checkpoint, position);
-        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
-        checkpoint = position + 1;
-        isQuoted = true;
-      }
-    }
-
-    if (checkpoint < position) {
-      result += object.slice(checkpoint, position);
-    }
-
-    if (!isQuoted && testImplicitResolving(result)) {
-      isQuoted = true;
-    }
-
-    if (isQuoted) {
-      result = '"' + result + '"';
-    }
-  }
-
-  function writeFlowSequence(level, object) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      if (0 !== index) {
-        _result += ', ';
-      }
-
-      writeNode(level, object[index], false, false);
-      _result += result;
-    }
-
-    tag = _tag;
-    result = '[' + _result + ']';
-  }
-
-  function writeBlockSequence(level, object, compact) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      if (!compact || 0 !== index) {
-        _result += generateNextLine(level);
-      }
-
-      writeNode(level + 1, object[index], true, true);
-      _result += '- ' + result;
-    }
-
-    tag = _tag;
-    result = _result;
-  }
-
-  function writeFlowMapping(level, object) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      if (0 !== index) {
-        _result += ', ';
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      writeNode(level, objectKey, false, false);
-
-      if (result.length > 1024) {
-        _result += '? ';
-      }
-
-      _result += result + ': ';
-      writeNode(level, objectValue, false, false);
-      _result += result;
-    }
-
-    tag = _tag;
-    result = '{' + _result + '}';
-  }
-
-  function writeBlockMapping(level, object, compact) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        explicitPair;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      if (!compact || 0 !== index) {
-        _result += generateNextLine(level);
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      writeNode(level + 1, objectKey, true, true);
-      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
-
-      if (explicitPair) {
-        _result += '? ';
-      }
-
-      _result += result;
-
-      if (explicitPair) {
-        _result += generateNextLine(level);
-      }
-
-      writeNode(level + 1, objectValue, true, explicitPair);
-      _result += ': ' + result;
-    }
-
-    tag = _tag;
-    result = _result;
-  }
-
-  function detectType(object, explicit) {
-    var _result, typeList, index, length, type, style;
-
-    typeList = explicit ? explicitTypes : implicitTypes;
-    kind = kindOf(object);
-
-    for (index = 0, length = typeList.length; index < length; index += 1) {
-      type = typeList[index];
-
-      if ((null !== type.dumper) &&
-          (null === type.dumper.kind       || kind === type.dumper.kind) &&
-          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
-          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
-        tag = explicit ? type.tag : '?';
-
-        if (null !== type.dumper.representer) {
-          style = styleMap[type.tag] || type.dumper.defaultStyle;
-
-          if ('function' === typeof type.dumper.representer) {
-            _result = type.dumper.representer(object, style);
-          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
-            _result = type.dumper.representer[style](object, style);
-          } else {
-            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
-          }
-
-          if (NIL !== _result) {
-            kind = kindOf(_result);
-            result = _result;
-          } else {
-            if (explicit) {
-              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
-            } else {
-              continue;
-            }
-          }
-        }
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeNode(level, object, block, compact) {
-    tag = null;
-    result = object;
-
-    if (!detectType(object, false)) {
-      detectType(object, true);
-    }
-
-    if (block) {
-      block = (0 > flowLevel || flowLevel > level);
-    }
-
-    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
-      compact = false;
-    }
-
-    if ('object' === kind) {
-      if (block && (0 !== Object.keys(result).length)) {
-        writeBlockMapping(level, result, compact);
-      } else {
-        writeFlowMapping(level, result);
-      }
-    } else if ('array' === kind) {
-      if (block && (0 !== result.length)) {
-        writeBlockSequence(level, result, compact);
-      } else {
-        writeFlowSequence(level, result);
-      }
-    } else if ('string' === kind) {
-      if ('?' !== tag) {
-        writeScalar(result);
-      }
-    } else {
-      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
-    }
-
-    if (null !== tag && '?' !== tag) {
-      result = '!<' + tag + '> ' + result;
-    }
-  }
-
-  writeNode(0, input, true, true);
-  return result + '\n';
-}
-
-
-function safeDump(input, options) {
-  return dump(input, common.extend({ schema: SAFE_SCHEMA }, options));
-}
-
-
-module.exports.dump     = dump;
-module.exports.safeDump = safeDump;
-
-},{"./exception":36,"./common":40,"./schema/default":38,"./schema/safe":37}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 
@@ -32224,7 +31788,530 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":40,"./exception":36,"./schema/safe":37,"./mark":41,"./schema/default":38}],34:[function(require,module,exports){
+},{"./common":41,"./exception":37,"./mark":42,"./schema/safe":35,"./schema/default":36}],31:[function(require,module,exports){
+'use strict';
+
+
+var common         = require('./common');
+var NIL            = common.NIL;
+var YAMLException  = require('./exception');
+var DEFAULT_SCHEMA = require('./schema/default');
+var SAFE_SCHEMA    = require('./schema/safe');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+var CHAR_TAB                  = 0x09; /* Tab */
+var CHAR_LINE_FEED            = 0x0A; /* LF */
+var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
+var CHAR_SPACE                = 0x20; /* Space */
+var CHAR_EXCLAMATION          = 0x21; /* ! */
+var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
+var CHAR_SHARP                = 0x23; /* # */
+var CHAR_PERCENT              = 0x25; /* % */
+var CHAR_AMPERSAND            = 0x26; /* & */
+var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
+var CHAR_ASTERISK             = 0x2A; /* * */
+var CHAR_COMMA                = 0x2C; /* , */
+var CHAR_MINUS                = 0x2D; /* - */
+var CHAR_COLON                = 0x3A; /* : */
+var CHAR_GREATER_THAN         = 0x3E; /* > */
+var CHAR_QUESTION             = 0x3F; /* ? */
+var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
+var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
+var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
+var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
+var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
+var CHAR_VERTICAL_LINE        = 0x7C; /* | */
+var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
+
+
+var ESCAPE_SEQUENCES = {};
+
+ESCAPE_SEQUENCES[0x00]   = '\\0';
+ESCAPE_SEQUENCES[0x07]   = '\\a';
+ESCAPE_SEQUENCES[0x08]   = '\\b';
+ESCAPE_SEQUENCES[0x09]   = '\\t';
+ESCAPE_SEQUENCES[0x0A]   = '\\n';
+ESCAPE_SEQUENCES[0x0B]   = '\\v';
+ESCAPE_SEQUENCES[0x0C]   = '\\f';
+ESCAPE_SEQUENCES[0x0D]   = '\\r';
+ESCAPE_SEQUENCES[0x1B]   = '\\e';
+ESCAPE_SEQUENCES[0x22]   = '\\"';
+ESCAPE_SEQUENCES[0x5C]   = '\\\\';
+ESCAPE_SEQUENCES[0x85]   = '\\N';
+ESCAPE_SEQUENCES[0xA0]   = '\\_';
+ESCAPE_SEQUENCES[0x2028] = '\\L';
+ESCAPE_SEQUENCES[0x2029] = '\\P';
+
+
+function kindOf(object) {
+  var kind = typeof object;
+
+  if (null === object) {
+    return 'null';
+  } else if ('number' === kind) {
+    return 0 === object % 1 ? 'integer' : 'float';
+  } else if ('object' === kind && Array.isArray(object)) {
+    return 'array';
+  } else {
+    return kind;
+  }
+}
+
+
+function compileStyleMap(schema, map) {
+  var result, keys, index, length, tag, style, type;
+
+  if (null === map) {
+    return {};
+  }
+
+  result = {};
+  keys = Object.keys(map);
+
+  for (index = 0, length = keys.length; index < length; index += 1) {
+    tag = keys[index];
+    style = String(map[tag]);
+
+    if ('!!' === tag.slice(0, 2)) {
+      tag = 'tag:yaml.org,2002:' + tag.slice(2);
+    }
+
+    type = schema.compiledTypeMap[tag];
+
+    if (type && type.dumper) {
+      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
+        style = type.dumper.styleAliases[style];
+      }
+    }
+
+    result[tag] = style;
+  }
+
+  return result;
+}
+
+
+function encodeHex(character) {
+  var string, handle, length;
+
+  string = character.toString(16).toUpperCase();
+
+  if (character <= 0xFF) {
+    handle = 'x';
+    length = 2;
+  } else if (character <= 0xFFFF) {
+    handle = 'u';
+    length = 4;
+  } else if (character <= 0xFFFFFFFF) {
+    handle = 'U';
+    length = 8;
+  } else {
+    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
+  }
+
+  return '\\' + handle + common.repeat('0', length - string.length) + string;
+}
+
+
+function dump(input, options) {
+  options = options || {};
+
+  var schema    = options['schema'] || DEFAULT_SCHEMA,
+      indent    = Math.max(1, (options['indent'] || 2)),
+      flowLevel = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
+      styleMap  = compileStyleMap(schema, options['styles'] || null),
+
+      implicitTypes = schema.compiledImplicit,
+      explicitTypes = schema.compiledExplicit,
+
+      kind,
+      tag,
+      result;
+
+  function generateNextLine(level) {
+    return '\n' + common.repeat(' ', indent * level);
+  }
+
+  function testImplicitResolving(object) {
+    var index, length, type;
+
+    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
+      type = implicitTypes[index];
+
+      if (null !== type.loader &&
+          NIL !== type.loader.resolver(object, false)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeScalar(object) {
+    var isQuoted, checkpoint, position, length, character;
+
+    result = '';
+    isQuoted = false;
+    checkpoint = 0;
+
+    if (0          === object.length ||
+        CHAR_SPACE === object.charCodeAt(0) ||
+        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
+      isQuoted = true;
+    }
+
+    for (position = 0, length = object.length; position < length; position += 1) {
+      character = object.charCodeAt(position);
+
+      if (!isQuoted) {
+        if (CHAR_TAB                  === character ||
+            CHAR_LINE_FEED            === character ||
+            CHAR_CARRIAGE_RETURN      === character ||
+            CHAR_COMMA                === character ||
+            CHAR_LEFT_SQUARE_BRACKET  === character ||
+            CHAR_RIGHT_SQUARE_BRACKET === character ||
+            CHAR_LEFT_CURLY_BRACKET   === character ||
+            CHAR_RIGHT_CURLY_BRACKET  === character ||
+            CHAR_SHARP                === character ||
+            CHAR_AMPERSAND            === character ||
+            CHAR_ASTERISK             === character ||
+            CHAR_EXCLAMATION          === character ||
+            CHAR_VERTICAL_LINE        === character ||
+            CHAR_GREATER_THAN         === character ||
+            CHAR_SINGLE_QUOTE         === character ||
+            CHAR_DOUBLE_QUOTE         === character ||
+            CHAR_PERCENT              === character ||
+            CHAR_COMMERCIAL_AT        === character ||
+            CHAR_GRAVE_ACCENT         === character ||
+            CHAR_QUESTION             === character ||
+            CHAR_COLON                === character ||
+            CHAR_MINUS                === character) {
+          isQuoted = true;
+        }
+      }
+
+      if (ESCAPE_SEQUENCES[character] ||
+          !((0x00020 <= character && character <= 0x00007E) ||
+            (0x00085 === character)                         ||
+            (0x000A0 <= character && character <= 0x00D7FF) ||
+            (0x0E000 <= character && character <= 0x00FFFD) ||
+            (0x10000 <= character && character <= 0x10FFFF))) {
+        result += object.slice(checkpoint, position);
+        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
+        checkpoint = position + 1;
+        isQuoted = true;
+      }
+    }
+
+    if (checkpoint < position) {
+      result += object.slice(checkpoint, position);
+    }
+
+    if (!isQuoted && testImplicitResolving(result)) {
+      isQuoted = true;
+    }
+
+    if (isQuoted) {
+      result = '"' + result + '"';
+    }
+  }
+
+  function writeFlowSequence(level, object) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      if (0 !== index) {
+        _result += ', ';
+      }
+
+      writeNode(level, object[index], false, false);
+      _result += result;
+    }
+
+    tag = _tag;
+    result = '[' + _result + ']';
+  }
+
+  function writeBlockSequence(level, object, compact) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      if (!compact || 0 !== index) {
+        _result += generateNextLine(level);
+      }
+
+      writeNode(level + 1, object[index], true, true);
+      _result += '- ' + result;
+    }
+
+    tag = _tag;
+    result = _result;
+  }
+
+  function writeFlowMapping(level, object) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      if (0 !== index) {
+        _result += ', ';
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      writeNode(level, objectKey, false, false);
+
+      if (result.length > 1024) {
+        _result += '? ';
+      }
+
+      _result += result + ': ';
+      writeNode(level, objectValue, false, false);
+      _result += result;
+    }
+
+    tag = _tag;
+    result = '{' + _result + '}';
+  }
+
+  function writeBlockMapping(level, object, compact) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        explicitPair;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      if (!compact || 0 !== index) {
+        _result += generateNextLine(level);
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      writeNode(level + 1, objectKey, true, true);
+      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
+
+      if (explicitPair) {
+        _result += '? ';
+      }
+
+      _result += result;
+
+      if (explicitPair) {
+        _result += generateNextLine(level);
+      }
+
+      writeNode(level + 1, objectValue, true, explicitPair);
+      _result += ': ' + result;
+    }
+
+    tag = _tag;
+    result = _result;
+  }
+
+  function detectType(object, explicit) {
+    var _result, typeList, index, length, type, style;
+
+    typeList = explicit ? explicitTypes : implicitTypes;
+    kind = kindOf(object);
+
+    for (index = 0, length = typeList.length; index < length; index += 1) {
+      type = typeList[index];
+
+      if ((null !== type.dumper) &&
+          (null === type.dumper.kind       || kind === type.dumper.kind) &&
+          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
+          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
+        tag = explicit ? type.tag : '?';
+
+        if (null !== type.dumper.representer) {
+          style = styleMap[type.tag] || type.dumper.defaultStyle;
+
+          if ('function' === typeof type.dumper.representer) {
+            _result = type.dumper.representer(object, style);
+          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
+            _result = type.dumper.representer[style](object, style);
+          } else {
+            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
+          }
+
+          if (NIL !== _result) {
+            kind = kindOf(_result);
+            result = _result;
+          } else {
+            if (explicit) {
+              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
+            } else {
+              continue;
+            }
+          }
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeNode(level, object, block, compact) {
+    tag = null;
+    result = object;
+
+    if (!detectType(object, false)) {
+      detectType(object, true);
+    }
+
+    if (block) {
+      block = (0 > flowLevel || flowLevel > level);
+    }
+
+    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
+      compact = false;
+    }
+
+    if ('object' === kind) {
+      if (block && (0 !== Object.keys(result).length)) {
+        writeBlockMapping(level, result, compact);
+      } else {
+        writeFlowMapping(level, result);
+      }
+    } else if ('array' === kind) {
+      if (block && (0 !== result.length)) {
+        writeBlockSequence(level, result, compact);
+      } else {
+        writeFlowSequence(level, result);
+      }
+    } else if ('string' === kind) {
+      if ('?' !== tag) {
+        writeScalar(result);
+      }
+    } else {
+      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
+    }
+
+    if (null !== tag && '?' !== tag) {
+      result = '!<' + tag + '> ' + result;
+    }
+  }
+
+  writeNode(0, input, true, true);
+  return result + '\n';
+}
+
+
+function safeDump(input, options) {
+  return dump(input, common.extend({ schema: SAFE_SCHEMA }, options));
+}
+
+
+module.exports.dump     = dump;
+module.exports.safeDump = safeDump;
+
+},{"./common":41,"./exception":37,"./schema/default":36,"./schema/safe":35}],32:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":37}],33:[function(require,module,exports){
 'use strict';
 
 
@@ -32329,106 +32416,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":40,"./exception":36,"./type":32}],32:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":36}],35:[function(require,module,exports){
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  explicit: [
-    require('../type/str'),
-    require('../type/seq'),
-    require('../type/map')
-  ]
-});
-
-},{"../schema":34,"../type/str":42,"../type/seq":43,"../type/map":44}],39:[function(require,module,exports){
+},{"./common":41,"./exception":37,"./type":32}],38:[function(require,module,exports){
 'use strict';
 
 
@@ -32453,7 +32441,22 @@ if (undefined !== require.extensions) {
 
 module.exports = require;
 
-},{"fs":45,"./loader":31}],37:[function(require,module,exports){
+},{"fs":40,"./loader":30}],34:[function(require,module,exports){
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  explicit: [
+    require('../type/str'),
+    require('../type/seq'),
+    require('../type/map')
+  ]
+});
+
+},{"../schema":33,"../type/str":43,"../type/seq":44,"../type/map":45}],35:[function(require,module,exports){
 'use strict';
 
 
@@ -32480,7 +32483,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":34,"./minimal":35,"../type/null":46,"../type/bool":47,"../type/int":48,"../type/float":49,"../type/timestamp":50,"../type/merge":51,"../type/binary":52,"../type/pairs":53,"../type/omap":54,"../type/set":55}],38:[function(require,module,exports){
+},{"../schema":33,"./minimal":34,"../type/null":46,"../type/bool":47,"../type/int":48,"../type/float":49,"../type/timestamp":50,"../type/merge":51,"../type/binary":52,"../type/omap":53,"../type/pairs":54,"../type/set":55}],36:[function(require,module,exports){
 'use strict';
 
 
@@ -32498,10 +32501,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":34,"./safe":37,"../type/js/undefined":56,"../type/js/regexp":57,"../type/js/function":58}],45:[function(require,module,exports){
-// nothing to see here... no file methods for the browser
-
-},{}],40:[function(require,module,exports){
+},{"../schema":33,"./safe":35,"../type/js/undefined":56,"../type/js/regexp":57,"../type/js/function":58}],41:[function(require,module,exports){
 'use strict';
 
 
@@ -32563,7 +32563,7 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 'use strict';
 
 
@@ -32643,805 +32643,7 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":40}],42:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:str', {
-  loader: {
-    kind: 'string'
-  }
-});
-
-},{"../type":32}],44:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:map', {
-  loader: {
-    kind: 'object'
-  }
-});
-
-},{"../type":32}],43:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:seq', {
-  loader: {
-    kind: 'array'
-  }
-});
-
-},{"../type":32}],46:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
-};
-
-
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
-    }
-  }
-});
-
-},{"../common":40,"../type":32}],47:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
-  }
-});
-
-},{"../common":40,"../type":32}],49:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
-  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
-  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  '|\\.(?:nan|NaN|NAN))$');
-
-
-function resolveYamlFloat(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_FLOAT_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '').toLowerCase();
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('.inf' === value) {
-    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if ('.nan' === value) {
-    return NaN;
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseFloat(v, 10));
-    });
-
-    value = 0.0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += d * base;
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseFloat(value, 10);
-  }
-}
-
-
-function representYamlFloat(object, style) {
-  if (isNaN(object)) {
-    switch (style) {
-    case 'lowercase':
-      return '.nan';
-    case 'uppercase':
-      return '.NAN';
-    case 'camelcase':
-      return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '.inf';
-    case 'uppercase':
-      return '.INF';
-    case 'camelcase':
-      return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '-.inf';
-    case 'uppercase':
-      return '-.INF';
-    case 'camelcase':
-      return '-.Inf';
-    }
-  } else {
-    return object.toString(10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlFloat
-  },
-  dumper: {
-    kind: 'float',
-    defaultStyle: 'lowercase',
-    representer: representYamlFloat
-  }
-});
-
-},{"../common":40,"../type":32}],50:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_TIMESTAMP_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9]?)'                   + // [2] month
-  '-([0-9][0-9]?)'                   + // [3] day
-  '(?:(?:[Tt]|[ \\t]+)'              + // ...
-  '([0-9][0-9]?)'                    + // [4] hour
-  ':([0-9][0-9])'                    + // [5] minute
-  ':([0-9][0-9])'                    + // [6] second
-  '(?:\\.([0-9]*))?'                 + // [7] fraction
-  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
-  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
-
-
-function resolveYamlTimestamp(object /*, explicit*/) {
-  var match, year, month, day, hour, minute, second, fraction = 0,
-      delta = null, tz_hour, tz_minute, data;
-
-  match = YAML_TIMESTAMP_REGEXP.exec(object);
-
-  if (null === match) {
-    return NIL;
-  }
-
-  // match: [1] year [2] month [3] day
-
-  year = +(match[1]);
-  month = +(match[2]) - 1; // JS month starts with 0
-  day = +(match[3]);
-
-  if (!match[4]) { // no hour
-    return new Date(Date.UTC(year, month, day));
-  }
-
-  // match: [4] hour [5] minute [6] second [7] fraction
-
-  hour = +(match[4]);
-  minute = +(match[5]);
-  second = +(match[6]);
-
-  if (match[7]) {
-    fraction = match[7].slice(0, 3);
-    while (fraction.length < 3) { // milli-seconds
-      fraction += '0';
-    }
-    fraction = +fraction;
-  }
-
-  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
-
-  if (match[9]) {
-    tz_hour = +(match[10]);
-    tz_minute = +(match[11] || 0);
-    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-    if ('-' === match[9]) {
-      delta = -delta;
-    }
-  }
-
-  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
-
-  if (delta) {
-    data.setTime(data.getTime() - delta);
-  }
-
-  return data;
-}
-
-
-function representYamlTimestamp(object /*, style*/) {
-  return object.toISOString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:timestamp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlTimestamp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: Date,
-    representer: representYamlTimestamp
-  }
-});
-
-},{"../common":40,"../type":32}],51:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":40,"../type":32}],53:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
-  }
-});
-
-},{"../common":40,"../type":32}],54:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-
-function resolveYamlOmap(object /*, explicit*/) {
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) {
-          pairHasKey = true;
-        } else {
-          return NIL;
-        }
-      }
-    }
-
-    if (!pairHasKey) {
-      return NIL;
-    }
-
-    if (-1 === objectKeys.indexOf(pairKey)) {
-      objectKeys.push(pairKey);
-    } else {
-      return NIL;
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlOmap
-  }
-});
-
-},{"../common":40,"../type":32}],55:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-function resolveYamlSet(object /*, explicit*/) {
-  var key;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (null !== object[key]) {
-        return NIL;
-      }
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  loader: {
-    kind: 'object',
-    resolver: resolveYamlSet
-  }
-});
-
-},{"../common":40,"../type":32}],52:[function(require,module,exports){
-(function(){// Modified from:
-// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
-
-'use strict';
-
-
-var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
-var common     = require('../common');
-var NIL        = common.NIL;
-var Type       = require('../type');
-
-
-
-var BASE64_PADDING = '=';
-
-var BASE64_BINTABLE = [
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
-  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
-];
-
-var BASE64_CHARTABLE =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
-
-
-function resolveYamlBinary(object /*, explicit*/) {
-  var value, code, idx = 0, result = [], leftbits, leftdata;
-
-  leftbits = 0; // number of bits decoded, but yet to be appended
-  leftdata = 0; // bits decoded, but yet to be appended
-
-  // Convert one by one.
-  for (idx = 0; idx < object.length; idx += 1) {
-    code = object.charCodeAt(idx);
-    value = BASE64_BINTABLE[code & 0x7F];
-
-    // Skip LF(NL) || CR
-    if (0x0A !== code && 0x0D !== code) {
-      // Fail on illegal characters
-      if (-1 === value) {
-        return NIL;
-      }
-
-      // Collect data into leftdata, update bitcount
-      leftdata = (leftdata << 6) | value;
-      leftbits += 6;
-
-      // If we have 8 or more bits, append 8 bits to the result
-      if (leftbits >= 8) {
-        leftbits -= 8;
-
-        // Append if not padding.
-        if (BASE64_PADDING !== object.charAt(idx)) {
-          result.push((leftdata >> leftbits) & 0xFF);
-        }
-
-        leftdata &= (1 << leftbits) - 1;
-      }
-    }
-  }
-
-  // If there are any bits left, the base64 string was corrupted
-  if (leftbits) {
-    return NIL;
-  } else {
-    return new NodeBuffer(result);
-  }
-}
-
-
-function representYamlBinary(object /*, style*/) {
-  var result = '', index, length, rest;
-
-  // Convert every three bytes to 4 ASCII characters.
-  for (index = 0, length = object.length - 2; index < length; index += 3) {
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
-    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
-  }
-
-  rest = object.length % 3;
-
-  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
-  if (0 !== rest) {
-    index = object.length - rest;
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-
-    if (2 === rest) {
-      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
-      result += BASE64_PADDING;
-    } else {
-      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
-      result += BASE64_PADDING + BASE64_PADDING;
-    }
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:binary', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBinary
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: NodeBuffer,
-    representer: representYamlBinary
-  }
-});
-
-})()
-},{"buffer":59,"../common":40,"../type":32}],48:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":40,"../type":32}],57:[function(require,module,exports){
-(function(){'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptRegExp(object /*, explicit*/) {
-  var regexp = object,
-      tail   = /\/([gim]*)$/.exec(object),
-      modifiers;
-
-  // `/foo/gim` - tail can be maximum 4 chars
-  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
-    regexp = regexp.slice(1, regexp.length - tail[0].length);
-    modifiers = tail[1];
-  }
-
-  try {
-    return new RegExp(regexp, modifiers);
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptRegExp(object /*, style*/) {
-  var result = '/' + object.source + '/';
-
-  if (object.global) {
-    result += 'g';
-  }
-
-  if (object.multiline) {
-    result += 'm';
-  }
-
-  if (object.ignoreCase) {
-    result += 'i';
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/regexp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptRegExp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: RegExp,
-    representer: representJavascriptRegExp
-  }
-});
-
-})()
-},{"../../common":40,"../../type":32}],56:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../../type');
-
-
-function resolveJavascriptUndefined(/*object, explicit*/) {
-  var undef;
-
-  return undef;
-}
-
-
-function representJavascriptUndefined(/*object, explicit*/) {
-  return '';
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/undefined', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptUndefined
-  },
-  dumper: {
-    kind: 'undefined',
-    representer: representJavascriptUndefined
-  }
-});
-
-},{"../../type":32}],60:[function(require,module,exports){
+},{"./common":41}],59:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -33758,7 +32960,1158 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":61,"buffer":59}],62:[function(require,module,exports){
+},{"util":60,"buffer":61}],43:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:str', {
+  loader: {
+    kind: 'string'
+  }
+});
+
+},{"../type":32}],44:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:seq', {
+  loader: {
+    kind: 'array'
+  }
+});
+
+},{"../type":32}],45:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:map', {
+  loader: {
+    kind: 'object'
+  }
+});
+
+},{"../type":32}],46:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
+    }
+  }
+});
+
+},{"../common":41,"../type":32}],47:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
+},{"../common":41,"../type":32}],48:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":41,"../type":32}],49:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_FLOAT_PATTERN = new RegExp(
+  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
+  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
+  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
+  '|[-+]?\\.(?:inf|Inf|INF)' +
+  '|\\.(?:nan|NaN|NAN))$');
+
+
+function resolveYamlFloat(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_FLOAT_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '').toLowerCase();
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('.inf' === value) {
+    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+
+  } else if ('.nan' === value) {
+    return NaN;
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseFloat(v, 10));
+    });
+
+    value = 0.0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += d * base;
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseFloat(value, 10);
+  }
+}
+
+
+function representYamlFloat(object, style) {
+  if (isNaN(object)) {
+    switch (style) {
+    case 'lowercase':
+      return '.nan';
+    case 'uppercase':
+      return '.NAN';
+    case 'camelcase':
+      return '.NaN';
+    }
+  } else if (Number.POSITIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '.inf';
+    case 'uppercase':
+      return '.INF';
+    case 'camelcase':
+      return '.Inf';
+    }
+  } else if (Number.NEGATIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '-.inf';
+    case 'uppercase':
+      return '-.INF';
+    case 'camelcase':
+      return '-.Inf';
+    }
+  } else {
+    return object.toString(10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:float', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlFloat
+  },
+  dumper: {
+    kind: 'float',
+    defaultStyle: 'lowercase',
+    representer: representYamlFloat
+  }
+});
+
+},{"../common":41,"../type":32}],50:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_TIMESTAMP_REGEXP = new RegExp(
+  '^([0-9][0-9][0-9][0-9])'          + // [1] year
+  '-([0-9][0-9]?)'                   + // [2] month
+  '-([0-9][0-9]?)'                   + // [3] day
+  '(?:(?:[Tt]|[ \\t]+)'              + // ...
+  '([0-9][0-9]?)'                    + // [4] hour
+  ':([0-9][0-9])'                    + // [5] minute
+  ':([0-9][0-9])'                    + // [6] second
+  '(?:\\.([0-9]*))?'                 + // [7] fraction
+  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
+  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
+
+
+function resolveYamlTimestamp(object /*, explicit*/) {
+  var match, year, month, day, hour, minute, second, fraction = 0,
+      delta = null, tz_hour, tz_minute, data;
+
+  match = YAML_TIMESTAMP_REGEXP.exec(object);
+
+  if (null === match) {
+    return NIL;
+  }
+
+  // match: [1] year [2] month [3] day
+
+  year = +(match[1]);
+  month = +(match[2]) - 1; // JS month starts with 0
+  day = +(match[3]);
+
+  if (!match[4]) { // no hour
+    return new Date(Date.UTC(year, month, day));
+  }
+
+  // match: [4] hour [5] minute [6] second [7] fraction
+
+  hour = +(match[4]);
+  minute = +(match[5]);
+  second = +(match[6]);
+
+  if (match[7]) {
+    fraction = match[7].slice(0, 3);
+    while (fraction.length < 3) { // milli-seconds
+      fraction += '0';
+    }
+    fraction = +fraction;
+  }
+
+  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
+
+  if (match[9]) {
+    tz_hour = +(match[10]);
+    tz_minute = +(match[11] || 0);
+    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
+    if ('-' === match[9]) {
+      delta = -delta;
+    }
+  }
+
+  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
+
+  if (delta) {
+    data.setTime(data.getTime() - delta);
+  }
+
+  return data;
+}
+
+
+function representYamlTimestamp(object /*, style*/) {
+  return object.toISOString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:timestamp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlTimestamp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: Date,
+    representer: representYamlTimestamp
+  }
+});
+
+},{"../common":41,"../type":32}],51:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
+},{"../common":41,"../type":32}],52:[function(require,module,exports){
+(function(){// Modified from:
+// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
+
+'use strict';
+
+
+var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
+var common     = require('../common');
+var NIL        = common.NIL;
+var Type       = require('../type');
+
+
+
+var BASE64_PADDING = '=';
+
+var BASE64_BINTABLE = [
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
+  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
+];
+
+var BASE64_CHARTABLE =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+
+
+function resolveYamlBinary(object /*, explicit*/) {
+  var value, code, idx = 0, result = [], leftbits, leftdata;
+
+  leftbits = 0; // number of bits decoded, but yet to be appended
+  leftdata = 0; // bits decoded, but yet to be appended
+
+  // Convert one by one.
+  for (idx = 0; idx < object.length; idx += 1) {
+    code = object.charCodeAt(idx);
+    value = BASE64_BINTABLE[code & 0x7F];
+
+    // Skip LF(NL) || CR
+    if (0x0A !== code && 0x0D !== code) {
+      // Fail on illegal characters
+      if (-1 === value) {
+        return NIL;
+      }
+
+      // Collect data into leftdata, update bitcount
+      leftdata = (leftdata << 6) | value;
+      leftbits += 6;
+
+      // If we have 8 or more bits, append 8 bits to the result
+      if (leftbits >= 8) {
+        leftbits -= 8;
+
+        // Append if not padding.
+        if (BASE64_PADDING !== object.charAt(idx)) {
+          result.push((leftdata >> leftbits) & 0xFF);
+        }
+
+        leftdata &= (1 << leftbits) - 1;
+      }
+    }
+  }
+
+  // If there are any bits left, the base64 string was corrupted
+  if (leftbits) {
+    return NIL;
+  } else {
+    return new NodeBuffer(result);
+  }
+}
+
+
+function representYamlBinary(object /*, style*/) {
+  var result = '', index, length, rest;
+
+  // Convert every three bytes to 4 ASCII characters.
+  for (index = 0, length = object.length - 2; index < length; index += 3) {
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
+    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
+  }
+
+  rest = object.length % 3;
+
+  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
+  if (0 !== rest) {
+    index = object.length - rest;
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+
+    if (2 === rest) {
+      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
+      result += BASE64_PADDING;
+    } else {
+      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
+      result += BASE64_PADDING + BASE64_PADDING;
+    }
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:binary', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBinary
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: NodeBuffer,
+    representer: representYamlBinary
+  }
+});
+
+})()
+},{"buffer":61,"../common":41,"../type":32}],53:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+
+function resolveYamlOmap(object /*, explicit*/) {
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) {
+          pairHasKey = true;
+        } else {
+          return NIL;
+        }
+      }
+    }
+
+    if (!pairHasKey) {
+      return NIL;
+    }
+
+    if (-1 === objectKeys.indexOf(pairKey)) {
+      objectKeys.push(pairKey);
+    } else {
+      return NIL;
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":41,"../type":32}],54:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
+  }
+});
+
+},{"../common":41,"../type":32}],55:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+function resolveYamlSet(object /*, explicit*/) {
+  var key;
+
+  for (key in object) {
+    if (_hasOwnProperty.call(object, key)) {
+      if (null !== object[key]) {
+        return NIL;
+      }
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:set', {
+  loader: {
+    kind: 'object',
+    resolver: resolveYamlSet
+  }
+});
+
+},{"../common":41,"../type":32}],56:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../../type');
+
+
+function resolveJavascriptUndefined(/*object, explicit*/) {
+  var undef;
+
+  return undef;
+}
+
+
+function representJavascriptUndefined(/*object, explicit*/) {
+  return '';
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/undefined', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptUndefined
+  },
+  dumper: {
+    kind: 'undefined',
+    representer: representJavascriptUndefined
+  }
+});
+
+},{"../../type":32}],57:[function(require,module,exports){
+(function(){'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptRegExp(object /*, explicit*/) {
+  var regexp = object,
+      tail   = /\/([gim]*)$/.exec(object),
+      modifiers;
+
+  // `/foo/gim` - tail can be maximum 4 chars
+  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
+    regexp = regexp.slice(1, regexp.length - tail[0].length);
+    modifiers = tail[1];
+  }
+
+  try {
+    return new RegExp(regexp, modifiers);
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptRegExp(object /*, style*/) {
+  var result = '/' + object.source + '/';
+
+  if (object.global) {
+    result += 'g';
+  }
+
+  if (object.multiline) {
+    result += 'm';
+  }
+
+  if (object.ignoreCase) {
+    result += 'i';
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/regexp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptRegExp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: RegExp,
+    representer: representJavascriptRegExp
+  }
+});
+
+})()
+},{"../../common":41,"../../type":32}],60:[function(require,module,exports){
+var events = require('events');
+
+exports.isArray = isArray;
+exports.isDate = function(obj){return Object.prototype.toString.call(obj) === '[object Date]'};
+exports.isRegExp = function(obj){return Object.prototype.toString.call(obj) === '[object RegExp]'};
+
+
+exports.print = function () {};
+exports.puts = function () {};
+exports.debug = function() {};
+
+exports.inspect = function(obj, showHidden, depth, colors) {
+  var seen = [];
+
+  var stylize = function(str, styleType) {
+    // http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+    var styles =
+        { 'bold' : [1, 22],
+          'italic' : [3, 23],
+          'underline' : [4, 24],
+          'inverse' : [7, 27],
+          'white' : [37, 39],
+          'grey' : [90, 39],
+          'black' : [30, 39],
+          'blue' : [34, 39],
+          'cyan' : [36, 39],
+          'green' : [32, 39],
+          'magenta' : [35, 39],
+          'red' : [31, 39],
+          'yellow' : [33, 39] };
+
+    var style =
+        { 'special': 'cyan',
+          'number': 'blue',
+          'boolean': 'yellow',
+          'undefined': 'grey',
+          'null': 'bold',
+          'string': 'green',
+          'date': 'magenta',
+          // "name": intentionally not styling
+          'regexp': 'red' }[styleType];
+
+    if (style) {
+      return '\033[' + styles[style][0] + 'm' + str +
+             '\033[' + styles[style][1] + 'm';
+    } else {
+      return str;
+    }
+  };
+  if (! colors) {
+    stylize = function(str, styleType) { return str; };
+  }
+
+  function format(value, recurseTimes) {
+    // Provide a hook for user-specified inspect functions.
+    // Check that value is an object with an inspect function on it
+    if (value && typeof value.inspect === 'function' &&
+        // Filter out the util module, it's inspect function is special
+        value !== exports &&
+        // Also filter out any prototype objects using the circular check.
+        !(value.constructor && value.constructor.prototype === value)) {
+      return value.inspect(recurseTimes);
+    }
+
+    // Primitive types cannot have properties
+    switch (typeof value) {
+      case 'undefined':
+        return stylize('undefined', 'undefined');
+
+      case 'string':
+        var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                                 .replace(/'/g, "\\'")
+                                                 .replace(/\\"/g, '"') + '\'';
+        return stylize(simple, 'string');
+
+      case 'number':
+        return stylize('' + value, 'number');
+
+      case 'boolean':
+        return stylize('' + value, 'boolean');
+    }
+    // For some reason typeof null is "object", so special case here.
+    if (value === null) {
+      return stylize('null', 'null');
+    }
+
+    // Look up the keys of the object.
+    var visible_keys = Object_keys(value);
+    var keys = showHidden ? Object_getOwnPropertyNames(value) : visible_keys;
+
+    // Functions without properties can be shortcutted.
+    if (typeof value === 'function' && keys.length === 0) {
+      if (isRegExp(value)) {
+        return stylize('' + value, 'regexp');
+      } else {
+        var name = value.name ? ': ' + value.name : '';
+        return stylize('[Function' + name + ']', 'special');
+      }
+    }
+
+    // Dates without properties can be shortcutted
+    if (isDate(value) && keys.length === 0) {
+      return stylize(value.toUTCString(), 'date');
+    }
+
+    var base, type, braces;
+    // Determine the object type
+    if (isArray(value)) {
+      type = 'Array';
+      braces = ['[', ']'];
+    } else {
+      type = 'Object';
+      braces = ['{', '}'];
+    }
+
+    // Make functions say that they are functions
+    if (typeof value === 'function') {
+      var n = value.name ? ': ' + value.name : '';
+      base = (isRegExp(value)) ? ' ' + value : ' [Function' + n + ']';
+    } else {
+      base = '';
+    }
+
+    // Make dates with properties first say the date
+    if (isDate(value)) {
+      base = ' ' + value.toUTCString();
+    }
+
+    if (keys.length === 0) {
+      return braces[0] + base + braces[1];
+    }
+
+    if (recurseTimes < 0) {
+      if (isRegExp(value)) {
+        return stylize('' + value, 'regexp');
+      } else {
+        return stylize('[Object]', 'special');
+      }
+    }
+
+    seen.push(value);
+
+    var output = keys.map(function(key) {
+      var name, str;
+      if (value.__lookupGetter__) {
+        if (value.__lookupGetter__(key)) {
+          if (value.__lookupSetter__(key)) {
+            str = stylize('[Getter/Setter]', 'special');
+          } else {
+            str = stylize('[Getter]', 'special');
+          }
+        } else {
+          if (value.__lookupSetter__(key)) {
+            str = stylize('[Setter]', 'special');
+          }
+        }
+      }
+      if (visible_keys.indexOf(key) < 0) {
+        name = '[' + key + ']';
+      }
+      if (!str) {
+        if (seen.indexOf(value[key]) < 0) {
+          if (recurseTimes === null) {
+            str = format(value[key]);
+          } else {
+            str = format(value[key], recurseTimes - 1);
+          }
+          if (str.indexOf('\n') > -1) {
+            if (isArray(value)) {
+              str = str.split('\n').map(function(line) {
+                return '  ' + line;
+              }).join('\n').substr(2);
+            } else {
+              str = '\n' + str.split('\n').map(function(line) {
+                return '   ' + line;
+              }).join('\n');
+            }
+          }
+        } else {
+          str = stylize('[Circular]', 'special');
+        }
+      }
+      if (typeof name === 'undefined') {
+        if (type === 'Array' && key.match(/^\d+$/)) {
+          return str;
+        }
+        name = JSON.stringify('' + key);
+        if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+          name = name.substr(1, name.length - 2);
+          name = stylize(name, 'name');
+        } else {
+          name = name.replace(/'/g, "\\'")
+                     .replace(/\\"/g, '"')
+                     .replace(/(^"|"$)/g, "'");
+          name = stylize(name, 'string');
+        }
+      }
+
+      return name + ': ' + str;
+    });
+
+    seen.pop();
+
+    var numLinesEst = 0;
+    var length = output.reduce(function(prev, cur) {
+      numLinesEst++;
+      if (cur.indexOf('\n') >= 0) numLinesEst++;
+      return prev + cur.length + 1;
+    }, 0);
+
+    if (length > 50) {
+      output = braces[0] +
+               (base === '' ? '' : base + '\n ') +
+               ' ' +
+               output.join(',\n  ') +
+               ' ' +
+               braces[1];
+
+    } else {
+      output = braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+    }
+
+    return output;
+  }
+  return format(obj, (typeof depth === 'undefined' ? 2 : depth));
+};
+
+
+function isArray(ar) {
+  return ar instanceof Array ||
+         Array.isArray(ar) ||
+         (ar && ar !== Object.prototype && isArray(ar.__proto__));
+}
+
+
+function isRegExp(re) {
+  return re instanceof RegExp ||
+    (typeof re === 'object' && Object.prototype.toString.call(re) === '[object RegExp]');
+}
+
+
+function isDate(d) {
+  if (d instanceof Date) return true;
+  if (typeof d !== 'object') return false;
+  var properties = Date.prototype && Object_getOwnPropertyNames(Date.prototype);
+  var proto = d.__proto__ && Object_getOwnPropertyNames(d.__proto__);
+  return JSON.stringify(proto) === JSON.stringify(properties);
+}
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+exports.log = function (msg) {};
+
+exports.pump = null;
+
+var Object_keys = Object.keys || function (obj) {
+    var res = [];
+    for (var key in obj) res.push(key);
+    return res;
+};
+
+var Object_getOwnPropertyNames = Object.getOwnPropertyNames || function (obj) {
+    var res = [];
+    for (var key in obj) {
+        if (Object.hasOwnProperty.call(obj, key)) res.push(key);
+    }
+    return res;
+};
+
+var Object_create = Object.create || function (prototype, properties) {
+    // from es5-shim
+    var object;
+    if (prototype === null) {
+        object = { '__proto__' : null };
+    }
+    else {
+        if (typeof prototype !== 'object') {
+            throw new TypeError(
+                'typeof prototype[' + (typeof prototype) + '] != \'object\''
+            );
+        }
+        var Type = function () {};
+        Type.prototype = prototype;
+        object = new Type();
+        object.__proto__ = prototype;
+    }
+    if (typeof properties !== 'undefined' && Object.defineProperties) {
+        Object.defineProperties(object, properties);
+    }
+    return object;
+};
+
+exports.inherits = function(ctor, superCtor) {
+  ctor.super_ = superCtor;
+  ctor.prototype = Object_create(superCtor.prototype, {
+    constructor: {
+      value: ctor,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+};
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (typeof f !== 'string') {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(exports.inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j': return JSON.stringify(args[i++]);
+      default:
+        return x;
+    }
+  });
+  for(var x = args[i]; i < len; x = args[++i]){
+    if (x === null || typeof x !== 'object') {
+      str += ' ' + x;
+    } else {
+      str += ' ' + exports.inspect(x);
+    }
+  }
+  return str;
+};
+
+},{"events":62}],63:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -33844,7 +34197,247 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],59:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],62:[function(require,module,exports){
+(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
+
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
+//
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
+};
+
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
+    }
+  }
+
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
+
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
+
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
+
+  } else {
+    return false;
+  }
+};
+
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
+
+  if (!this._events) this._events = {};
+
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
+
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
+
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
+
+  return this;
+};
+
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
+};
+
+})(require("__browserify_process"))
+},{"__browserify_process":64}],61:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -35164,360 +35757,7 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":60,"./buffer_ieee754":62,"base64-js":63}],61:[function(require,module,exports){
-var events = require('events');
-
-exports.isArray = isArray;
-exports.isDate = function(obj){return Object.prototype.toString.call(obj) === '[object Date]'};
-exports.isRegExp = function(obj){return Object.prototype.toString.call(obj) === '[object RegExp]'};
-
-
-exports.print = function () {};
-exports.puts = function () {};
-exports.debug = function() {};
-
-exports.inspect = function(obj, showHidden, depth, colors) {
-  var seen = [];
-
-  var stylize = function(str, styleType) {
-    // http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
-    var styles =
-        { 'bold' : [1, 22],
-          'italic' : [3, 23],
-          'underline' : [4, 24],
-          'inverse' : [7, 27],
-          'white' : [37, 39],
-          'grey' : [90, 39],
-          'black' : [30, 39],
-          'blue' : [34, 39],
-          'cyan' : [36, 39],
-          'green' : [32, 39],
-          'magenta' : [35, 39],
-          'red' : [31, 39],
-          'yellow' : [33, 39] };
-
-    var style =
-        { 'special': 'cyan',
-          'number': 'blue',
-          'boolean': 'yellow',
-          'undefined': 'grey',
-          'null': 'bold',
-          'string': 'green',
-          'date': 'magenta',
-          // "name": intentionally not styling
-          'regexp': 'red' }[styleType];
-
-    if (style) {
-      return '\033[' + styles[style][0] + 'm' + str +
-             '\033[' + styles[style][1] + 'm';
-    } else {
-      return str;
-    }
-  };
-  if (! colors) {
-    stylize = function(str, styleType) { return str; };
-  }
-
-  function format(value, recurseTimes) {
-    // Provide a hook for user-specified inspect functions.
-    // Check that value is an object with an inspect function on it
-    if (value && typeof value.inspect === 'function' &&
-        // Filter out the util module, it's inspect function is special
-        value !== exports &&
-        // Also filter out any prototype objects using the circular check.
-        !(value.constructor && value.constructor.prototype === value)) {
-      return value.inspect(recurseTimes);
-    }
-
-    // Primitive types cannot have properties
-    switch (typeof value) {
-      case 'undefined':
-        return stylize('undefined', 'undefined');
-
-      case 'string':
-        var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                                 .replace(/'/g, "\\'")
-                                                 .replace(/\\"/g, '"') + '\'';
-        return stylize(simple, 'string');
-
-      case 'number':
-        return stylize('' + value, 'number');
-
-      case 'boolean':
-        return stylize('' + value, 'boolean');
-    }
-    // For some reason typeof null is "object", so special case here.
-    if (value === null) {
-      return stylize('null', 'null');
-    }
-
-    // Look up the keys of the object.
-    var visible_keys = Object_keys(value);
-    var keys = showHidden ? Object_getOwnPropertyNames(value) : visible_keys;
-
-    // Functions without properties can be shortcutted.
-    if (typeof value === 'function' && keys.length === 0) {
-      if (isRegExp(value)) {
-        return stylize('' + value, 'regexp');
-      } else {
-        var name = value.name ? ': ' + value.name : '';
-        return stylize('[Function' + name + ']', 'special');
-      }
-    }
-
-    // Dates without properties can be shortcutted
-    if (isDate(value) && keys.length === 0) {
-      return stylize(value.toUTCString(), 'date');
-    }
-
-    var base, type, braces;
-    // Determine the object type
-    if (isArray(value)) {
-      type = 'Array';
-      braces = ['[', ']'];
-    } else {
-      type = 'Object';
-      braces = ['{', '}'];
-    }
-
-    // Make functions say that they are functions
-    if (typeof value === 'function') {
-      var n = value.name ? ': ' + value.name : '';
-      base = (isRegExp(value)) ? ' ' + value : ' [Function' + n + ']';
-    } else {
-      base = '';
-    }
-
-    // Make dates with properties first say the date
-    if (isDate(value)) {
-      base = ' ' + value.toUTCString();
-    }
-
-    if (keys.length === 0) {
-      return braces[0] + base + braces[1];
-    }
-
-    if (recurseTimes < 0) {
-      if (isRegExp(value)) {
-        return stylize('' + value, 'regexp');
-      } else {
-        return stylize('[Object]', 'special');
-      }
-    }
-
-    seen.push(value);
-
-    var output = keys.map(function(key) {
-      var name, str;
-      if (value.__lookupGetter__) {
-        if (value.__lookupGetter__(key)) {
-          if (value.__lookupSetter__(key)) {
-            str = stylize('[Getter/Setter]', 'special');
-          } else {
-            str = stylize('[Getter]', 'special');
-          }
-        } else {
-          if (value.__lookupSetter__(key)) {
-            str = stylize('[Setter]', 'special');
-          }
-        }
-      }
-      if (visible_keys.indexOf(key) < 0) {
-        name = '[' + key + ']';
-      }
-      if (!str) {
-        if (seen.indexOf(value[key]) < 0) {
-          if (recurseTimes === null) {
-            str = format(value[key]);
-          } else {
-            str = format(value[key], recurseTimes - 1);
-          }
-          if (str.indexOf('\n') > -1) {
-            if (isArray(value)) {
-              str = str.split('\n').map(function(line) {
-                return '  ' + line;
-              }).join('\n').substr(2);
-            } else {
-              str = '\n' + str.split('\n').map(function(line) {
-                return '   ' + line;
-              }).join('\n');
-            }
-          }
-        } else {
-          str = stylize('[Circular]', 'special');
-        }
-      }
-      if (typeof name === 'undefined') {
-        if (type === 'Array' && key.match(/^\d+$/)) {
-          return str;
-        }
-        name = JSON.stringify('' + key);
-        if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-          name = name.substr(1, name.length - 2);
-          name = stylize(name, 'name');
-        } else {
-          name = name.replace(/'/g, "\\'")
-                     .replace(/\\"/g, '"')
-                     .replace(/(^"|"$)/g, "'");
-          name = stylize(name, 'string');
-        }
-      }
-
-      return name + ': ' + str;
-    });
-
-    seen.pop();
-
-    var numLinesEst = 0;
-    var length = output.reduce(function(prev, cur) {
-      numLinesEst++;
-      if (cur.indexOf('\n') >= 0) numLinesEst++;
-      return prev + cur.length + 1;
-    }, 0);
-
-    if (length > 50) {
-      output = braces[0] +
-               (base === '' ? '' : base + '\n ') +
-               ' ' +
-               output.join(',\n  ') +
-               ' ' +
-               braces[1];
-
-    } else {
-      output = braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
-    }
-
-    return output;
-  }
-  return format(obj, (typeof depth === 'undefined' ? 2 : depth));
-};
-
-
-function isArray(ar) {
-  return ar instanceof Array ||
-         Array.isArray(ar) ||
-         (ar && ar !== Object.prototype && isArray(ar.__proto__));
-}
-
-
-function isRegExp(re) {
-  return re instanceof RegExp ||
-    (typeof re === 'object' && Object.prototype.toString.call(re) === '[object RegExp]');
-}
-
-
-function isDate(d) {
-  if (d instanceof Date) return true;
-  if (typeof d !== 'object') return false;
-  var properties = Date.prototype && Object_getOwnPropertyNames(Date.prototype);
-  var proto = d.__proto__ && Object_getOwnPropertyNames(d.__proto__);
-  return JSON.stringify(proto) === JSON.stringify(properties);
-}
-
-function pad(n) {
-  return n < 10 ? '0' + n.toString(10) : n.toString(10);
-}
-
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-              'Oct', 'Nov', 'Dec'];
-
-// 26 Feb 16:19:34
-function timestamp() {
-  var d = new Date();
-  var time = [pad(d.getHours()),
-              pad(d.getMinutes()),
-              pad(d.getSeconds())].join(':');
-  return [d.getDate(), months[d.getMonth()], time].join(' ');
-}
-
-exports.log = function (msg) {};
-
-exports.pump = null;
-
-var Object_keys = Object.keys || function (obj) {
-    var res = [];
-    for (var key in obj) res.push(key);
-    return res;
-};
-
-var Object_getOwnPropertyNames = Object.getOwnPropertyNames || function (obj) {
-    var res = [];
-    for (var key in obj) {
-        if (Object.hasOwnProperty.call(obj, key)) res.push(key);
-    }
-    return res;
-};
-
-var Object_create = Object.create || function (prototype, properties) {
-    // from es5-shim
-    var object;
-    if (prototype === null) {
-        object = { '__proto__' : null };
-    }
-    else {
-        if (typeof prototype !== 'object') {
-            throw new TypeError(
-                'typeof prototype[' + (typeof prototype) + '] != \'object\''
-            );
-        }
-        var Type = function () {};
-        Type.prototype = prototype;
-        object = new Type();
-        object.__proto__ = prototype;
-    }
-    if (typeof properties !== 'undefined' && Object.defineProperties) {
-        Object.defineProperties(object, properties);
-    }
-    return object;
-};
-
-exports.inherits = function(ctor, superCtor) {
-  ctor.super_ = superCtor;
-  ctor.prototype = Object_create(superCtor.prototype, {
-    constructor: {
-      value: ctor,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-};
-
-var formatRegExp = /%[sdj%]/g;
-exports.format = function(f) {
-  if (typeof f !== 'string') {
-    var objects = [];
-    for (var i = 0; i < arguments.length; i++) {
-      objects.push(exports.inspect(arguments[i]));
-    }
-    return objects.join(' ');
-  }
-
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  var str = String(f).replace(formatRegExp, function(x) {
-    if (x === '%%') return '%';
-    if (i >= len) return x;
-    switch (x) {
-      case '%s': return String(args[i++]);
-      case '%d': return Number(args[i++]);
-      case '%j': return JSON.stringify(args[i++]);
-      default:
-        return x;
-    }
-  });
-  for(var x = args[i]; i < len; x = args[++i]){
-    if (x === null || typeof x !== 'object') {
-      str += ' ' + x;
-    } else {
-      str += ' ' + exports.inspect(x);
-    }
-  }
-  return str;
-};
-
-},{"events":64}],63:[function(require,module,exports){
+},{"assert":59,"./buffer_ieee754":63,"base64-js":65}],65:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -35603,247 +35843,7 @@ exports.format = function(f) {
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],65:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],64:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
-
-var EventEmitter = exports.EventEmitter = process.EventEmitter;
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
-
-// By default EventEmitters will print a warning if more than
-// 10 listeners are added to it. This is a useful default which
-// helps finding memory leaks.
-//
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-var defaultMaxListeners = 10;
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!this._events) this._events = {};
-  this._events.maxListeners = n;
-};
-
-
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
-      return false;
-    }
-  }
-
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
-
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-    return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
-    return false;
-  }
-};
-
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
-  }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-
-    // Check for listener leak
-    if (!this._events[type].warned) {
-      var m;
-      if (this._events.maxListeners !== undefined) {
-        m = this._events.maxListeners;
-      } else {
-        m = defaultMaxListeners;
-      }
-
-      if (m && m > 0 && this._events[type].length > m) {
-        this._events[type].warned = true;
-        console.error('(node) warning: possible EventEmitter memory ' +
-                      'leak detected. %d listeners added. ' +
-                      'Use emitter.setMaxListeners() to increase limit.',
-                      this._events[type].length);
-        console.trace();
-      }
-    }
-
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
-};
-
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
-
-})(require("__browserify_process"))
-},{"__browserify_process":65}],58:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict';
 
 
@@ -35901,7 +35901,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":40,"../../type":32,"esprima":66}],66:[function(require,module,exports){
+},{"../../common":41,"../../type":32,"esprima":66}],66:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -39799,5 +39799,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}]},{},[5])
+},{}]},{},[3])
 ;
