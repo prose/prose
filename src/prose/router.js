@@ -137,7 +137,7 @@ module.exports = Backbone.Router.extend({
     url = _.extractURL(path);
 
     // path should not have querystring
-    var trimmed_path = url.path.indexOf("?") > 0 ? url.path.slice(0, url.path.indexOf("?")) : url.path;
+    var trimmed_path = url.path.indexOf('?') > 0 ? url.path.slice(0, url.path.indexOf('?')) : url.path;
     if (url.mode === 'tree') {
       this.repoBranch(user, repo, url.branch, trimmed_path);
     } else if (url.mode === 'new') {
@@ -170,7 +170,7 @@ module.exports = Backbone.Router.extend({
 
         // node's url library is full of fail
         var href = window.location.href;
-        var query = href.slice(href.indexOf("?") + 1);
+        var query = href.slice(href.indexOf('?') + 1);
 
         var querystring = require('querystring');
         querystring.unescape = function(qs, ds){ return decodeUri(qs); };
@@ -180,9 +180,9 @@ module.exports = Backbone.Router.extend({
           data.file = query.filename;
         }else if(query.metadata && query.metadata.title){
           var file = new Date().format('Y-m-d-');
-          file += query.metadata.title.replace(/\W/ig, "-").replace(/--+/g, "-").substring(0,100);
+          file += query.metadata.title.replace(/\W/ig, '-').replace(/--+/g, '-').substring(0,100);
           if(!file.match(/\.\w+$/))
-            file += ".md"
+            file += '.md'
           data.file = file;
         }
 
