@@ -6,7 +6,7 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.View.extend({
   id: 'orgs',
 
-  template: _.template(templates.orgs),
+  template: _.template(templates.sidebar.orgs),
 
   initialize: function(options) {
     this.model = options.model;
