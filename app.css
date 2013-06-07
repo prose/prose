@@ -1112,9 +1112,7 @@ ins {
     }
   .fixed.topbar .toolbar,
   .markdown .toolbar {
-    height:40px;
-    height:auto!important;
-    min-height:40px;
+    min-height:43px;
     }
   .topbar .inner > a {
     display:block;
@@ -2028,15 +2026,15 @@ ins {
   Class Helpers
 ---------------------------------------------*/
 .clearfix:after {
-  content: '.';
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
+  content:'.';
+  display:block;
+  height:0;
+  clear:both;
+  visibility:hidden;
   }
 
-* html .clearfix { height: 1%; } /* IE6 */
-*:first-child + html .clearfix { min-height: 1%; } /* IE7 */
+* html .clearfix { height:1%; } /* IE6 */
+*:first-child + html .clearfix { min-height:1%; } /* IE7 */
 
 .fl    { float:left; }
 .fr    { float:right; }
