@@ -7,7 +7,7 @@ var templates = glob.sync('templates/**/*.html').reduce(function(memo, file) {
 
   var val = fs.readFileSync(file, 'utf8');
   var dir = path.dirname(file.replace(/templates\//, '')).split('/');
-  var id = '';
+  var id = path.basename(file, '.html');
 
   if (dir[0].length > 1) {
     function assign(obj, arr, value) {
@@ -19,17 +19,13 @@ var templates = glob.sync('templates/**/*.html').reduce(function(memo, file) {
           obj = obj[key];
         }
       }
-
       obj[arr[lastIndex]] = value;
     }
 
-    id = path.basename(file, '.html');
     dir.push(id);
-
     assign(memo, dir, val);
   } else {
     // This file is contained in the root dir
-    id = path.basename(file, '.html');
     memo[id] = val;
   }
 
