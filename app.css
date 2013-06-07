@@ -1035,6 +1035,11 @@ ins {
     right:auto;
     bottom:auto;
     }
+  .popup.arrow-bottom {
+    top:auto;
+    bottom:100%;
+    right:-18px;
+    }
     .popup.arrow-top:after {
       left:15px;
       }
@@ -1703,6 +1708,16 @@ ins {
   position:relative;
   bottom:-4px;
   }
+  .sidebar .commit .cancel {
+    position:absolute;
+    z-index:10;
+    top:5px;
+    right:5px;
+    display:block;
+    }
+    .cancel:hover {
+      color:#DB6F6F;
+      }
   .sidebar .commit textarea {
     padding-right:25px;
     margin:8px 0 -2px;
@@ -2056,11 +2071,14 @@ ins {
   .arrow-bottom:after {
     border-width:5px 5px 0;
     bottom:-5px;
-    left:5px;
+    left:50%;
+    margin-left:-5px;
     }
   .arrow-left:after,
   .arrow-right:after {
     border-color:transparent #202020;
+    bottom:50%;
+    margin-bottom:-5px;
     }
   .arrow-left:after {
     border-width:5px 5px 5px 0;

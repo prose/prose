@@ -14,6 +14,7 @@ module.exports = Backbone.View.extend({
       'click .logout': 'logout',
       'click a.item.removed': 'restoreFile',
       'click a.save': 'save',
+      'click a.cancel': 'cancel',
       'click a.confirm': 'updateFile',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
@@ -185,12 +186,9 @@ module.exports = Backbone.View.extend({
     settings: function(e) {
       var tmpl = _(app.templates.settings).template();
       var $navItems = $('.navigation a', this.el);
-      this.cancelSave();
 
       if ($(e.target, this.el).hasClass('active')) {
-        $navItems.removeClass('active');
-        $('.navigation .' + this.viewing, this.el).addClass('active');
-        $('#prose').toggleClass('open mobile', false);
+        this.cancel();
       } else {
         $navItems.removeClass('active');
         $(e.target, this.el).addClass('active');
@@ -268,15 +266,12 @@ module.exports = Backbone.View.extend({
     save: function(e) {
       var tmpl = _(app.templates.sidebarSave).template();
       this.eventRegister.trigger('save', e);
-      $navItems = $('.navigation a', this.el);
 
       if ($(e.target, this.el).hasClass('active')) {
-        $navItems.removeClass('active');
-        $('.navigation .' + this.viewing, this.el).addClass('active');
-        $('#prose').toggleClass('open mobile', false);
-        this.cancelSave();
+        this.cancel();
       } else {
-        $navItems.removeClass('active');
+        this.cancel();
+        $('.navigation a', this.el).removeClass('active');
         $(e.target, this.el).addClass('active');
 
         $('#drawer', this.el)
@@ -298,7 +293,10 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
-    cancelSave: function(e) {
+    cancel: function(e) {
+      $('.navigation a', this.el).removeClass('active');
+      $('.navigation .' + this.viewing, this.el).addClass('active');
+      $('#prose').toggleClass('open mobile', false);
       this.eventRegister.trigger('cancelSave', e);
       return false;
     },
