@@ -65,6 +65,25 @@ module.exports = Backbone.View.extend({
       utils.fixedScroll($('.topbar'));
     }, 1);
 
+    // Render breadcrumbs
+    var $breadcrumb = $('#breadcrumb', this.el);
+        $breadcrumb.empty();
+    var crumb = _(app.templates.breadcrumb).template();
+    var trail = [data.user, data.repo, 'tree', data.branch].join('/');
+
+    // Append the root to the breadcrumb first
+    $breadcrumb.append('<a href="#' + trail + '">..</a>');
+
+    _(utils.chunkedPath(data.path)).each(function(p) {
+      if (p.name !== jailed) {
+        $breadcrumb.append(crumb({
+          trail: trail,
+          url: p.url,
+          name: p.name
+        }));
+      }
+    });
+
     return this;
   },
 
@@ -106,20 +125,20 @@ module.exports = Backbone.View.extend({
           repo: data.repo,
           path: (f.path) ? '/' + f.path : '',
           branch: data.branch,
-          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
+          name: (f.path === utils.parentPath(data.currentPath) ? '..' : f.name)
         }));
       } else {
         // Files ..
         $files.append(files({
           index: i,
-          extension: _.extension(f.path),
-          isBinary: _.isBinary(_.extension(f.path)),
-          isMedia: _.isMedia(_.extension(f.path)),
+          extension: utils.extension(f.path),
+          isBinary: utils.isBinary(utils.extension(f.path)),
+          isMedia: utils.isMedia(utils.extension(f.path)),
           writePermissions: view.writePermissions,
           repo: data.repo,
           branch: data.branch,
           path: f.path,
-          filename: _.filename(f.name) || 'Untitled',
+          filename: utils.filename(f.name) || 'Untitled',
           file: f.path.match(/[^\/]*$/)[0],
           name: f.name,
           user: data.user

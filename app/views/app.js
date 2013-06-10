@@ -93,7 +93,7 @@ module.exports = Backbone.View.extend({
         jekyll: isJekyll,
         error: errorPage,
         noMenu: view.noMenu,
-        lang: (app.state.file) ? _.mode(app.state.file) : undefined
+        lang: (app.state.file) ? utils.mode(app.state.file) : undefined
       })));
 
       // When the sidebar should be open.
@@ -264,7 +264,7 @@ module.exports = Backbone.View.extend({
 
       var $message = $('.commit-message', this.el);
       var filepath = $('input.filepath').val();
-      var filename = _.extractFilename(filepath)[1];
+      var filename = utils.extractFilename(filepath)[1];
       var placeholder = 'Updated ' + filename;
       if (app.state.mode === 'new') placeholder = 'Created ' + filename;
 

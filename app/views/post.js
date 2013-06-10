@@ -146,7 +146,7 @@ module.exports = Backbone.View.extend({
       avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
       parentTrail: parentTrail,
       isPrivate: isPrivate,
-      title: _.filepath(this.data.path, this.data.file),
+      title: utils.filepath(this.data.path, this.data.file),
       writable: this.model.writable,
       alterable: true,
       translate: this.data.translate
@@ -227,7 +227,7 @@ module.exports = Backbone.View.extend({
         if (parts !== null) {
           var path = parts[2];
 
-          if (!_.absolutePath(path)) {
+          if (!utils.absolutePath(path)) {
             // Remove any title attribute in the image tag is there is one.
             if (titleAttribute.test(path)) {
               path = path.split(titleAttribute)[0];
@@ -387,10 +387,10 @@ module.exports = Backbone.View.extend({
   updateFilename: function(filepath, cb) {
     var view = this;
 
-    if (!_.validPathname(filepath)) return cb('error');
+    if (!utils.validPathname(filepath)) return cb('error');
     app.state.path = this.model.path; // ?
-    app.state.file = _.extractFilename(filepath)[1];
-    app.state.path = _.extractFilename(filepath)[0];
+    app.state.file = utils.extractFilename(filepath)[1];
+    app.state.path = utils.extractFilename(filepath)[0];
 
     function finish() {
       view.model.path = app.state.path;
@@ -398,7 +398,7 @@ module.exports = Backbone.View.extend({
     }
 
     if (this.model.persisted) {
-      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
+      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, utils.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
         if (!err) finish();
         if (err) {
           cb('error');
@@ -493,7 +493,7 @@ module.exports = Backbone.View.extend({
 
     view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
 
-    if (filepath === _.filepath(this.model.path, this.model.file)) return save();
+    if (filepath === utils.filepath(this.model.path, this.model.file)) return save();
 
     // Move or create file
     this.updateFilename(filepath, function(err) {
@@ -562,7 +562,7 @@ module.exports = Backbone.View.extend({
 
   updateFile: function() {
     var filepath = $('input.filepath').val();
-    var filename = _.extractFilename(filepath)[1];
+    var filename = utils.extractFilename(filepath)[1];
     var filecontent = this.serialize();
     var $message = $('.commit-message');
     var noVal = 'Updated ' + filename;
@@ -1020,7 +1020,7 @@ module.exports = Backbone.View.extend({
         var $snippetLinks = $('.toolbar .group a', view.el);
         view.editor.on('cursorActivity', _.bind(function() {
 
-          var selection = _.trim(view.editor.getSelection());
+          var selection = utils.trim(view.editor.getSelection());
           $snippetLinks.removeClass('active');
 
           var match = {
@@ -1132,7 +1132,7 @@ module.exports = Backbone.View.extend({
 
     // Read through the filenames of path. If there is a filename that
     // exists, we want to pass data.sha to update the existing one.
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, _.extractFilename(path)[0], function(err, res) {
+    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, utils.extractFilename(path)[0], function(err, res) {
       if (err) return view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
 
       // Check whether the current (or media) directory
@@ -1140,7 +1140,7 @@ module.exports = Backbone.View.extend({
       // to upload. we want to update the file by passing the sha
       // to the data object in this case.
       _(res.files).each(function(f) {
-        var parts = _.extractFilename(f.path);
+        var parts = utils.extractFilename(f.path);
         var structuredPath = [parts[0], encodeURIComponent(parts[1])].join('/');
         if (structuredPath === path) {
           data.sha = f.sha;
@@ -1179,7 +1179,7 @@ module.exports = Backbone.View.extend({
           }
 
           // Store a record of recently uploaded files in memory
-          var fileParts = _.extractFilename(res.content.path);
+          var fileParts = utils.extractFilename(res.content.path);
           var structuredPath = [fileParts[0], encodeURIComponent(fileParts[1])].join('/');
 
           view.recentlyUploadedFiles.push({
@@ -1198,7 +1198,7 @@ module.exports = Backbone.View.extend({
     var $snippets = $('.toolbar .group a', this.el);
     var key = $target.data('key');
     var snippet = $target.data('snippet');
-    var selection = _.trim(this.editor.getSelection());
+    var selection = utils.trim(this.editor.getSelection());
 
     $dialog.removeClass().empty();
 
@@ -1404,15 +1404,16 @@ module.exports = Backbone.View.extend({
       $media.append(tmpl({
         name: asset.name,
         type: asset.type,
-        path: path + '/' + encodeURIComponent(asset.name)
+        path: path + '/' + encodeURIComponent(asset.name),
+        isMedia: utils.isMedia(path)
       }));
     });
 
     $('.asset a', $media).on('click', function(e) {
       var href = $(this).attr('href');
-      var alt = _.trim($(this).text());
+      var alt = utils.trim($(this).text());
 
-      if (_.isImage(href)) {
+      if (utils.isImage(href)) {
         $('input[name="url"]').val(href);
         $('input[name="alt"]').val(alt);
       } else {
@@ -1476,7 +1477,7 @@ module.exports = Backbone.View.extend({
 
   heading: function(s) {
     if (s.charAt(0) === '#' && s.charAt(1) !== '#') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
+      this.editor.replaceSelection(utils.lTrim(s.replace(/#/g, '')));
     } else {
       this.editor.replaceSelection('# ' + s.replace(/#/g, ''));
     }
@@ -1484,7 +1485,7 @@ module.exports = Backbone.View.extend({
 
   subHeading: function(s) {
     if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
+      this.editor.replaceSelection(utils.lTrim(s.replace(/#/g, '')));
     } else {
       this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
     }
@@ -1508,7 +1509,7 @@ module.exports = Backbone.View.extend({
 
   quote: function(s) {
     if (s.charAt(0) === '>') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/\>/g, '')));
+      this.editor.replaceSelection(utils.lTrim(s.replace(/\>/g, '')));
     } else {
       this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
     }
