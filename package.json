@@ -5,7 +5,7 @@
   "dependencies": {
     "jquery-browserify": "~1.8.1",
     "chosen-jquery-browserify": "~0.9.15",
-    "js-yaml": "~2.0.4",
+    "js-yaml": "git://github.com/prose/js-yaml.git",
     "backbone": "~1.0.0",
     "underscore": "~1.4.4",
     "chrono": "~1.0.4",
