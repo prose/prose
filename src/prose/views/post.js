@@ -89,7 +89,6 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('remove', this.remove);
     this.eventRegister.bind('cancelSave', this.cancelSave);
 
-    this.eventRegister.trigger('sidebarContext', this.data);
     this.renderHeading();
 
     var tmpl = _(window.app.templates.post).template();
@@ -143,7 +142,9 @@ module.exports = Backbone.View.extend({
       title: _.filepath(this.data.path, this.data.file),
       writable: this.model.writable,
       alterable: true,
-      translate: this.data.translate
+      translate: this.data.translate,
+      lang: this.data.lang,
+      metadata: this.data.metadata
     };
 
     this.eventRegister.trigger('headerContext', this.header, true);
@@ -293,7 +294,7 @@ module.exports = Backbone.View.extend({
     if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
-    var label = this.model.writable ? 'Save' : 'Submit Change';
+    var label = this.model.writable ? 'Unsaved Changes' : 'Submit Change';
     this.eventRegister.trigger('updateSaveState', label, 'save');
 
     // Pass a popover span to the avatar icon
@@ -409,7 +410,7 @@ module.exports = Backbone.View.extend({
   },
 
   serialize: function() {
-    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata);
+    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata).trim();
 
     if (this.model.jekyll) {
       return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
@@ -470,11 +471,7 @@ module.exports = Backbone.View.extend({
           view.model.persisted = true;
           view.model.file = filename;
 
-          if (app.state.mode === 'new') {
-            app.state.mode = 'edit';
-            view.eventRegister.trigger('sidebarContext', view.data);
-          }
-
+          if (app.state.mode === 'new') app.state.mode = 'edit';
           view.renderHeading();
           view.updateURL();
           view.prevFile = filecontent;
@@ -508,9 +505,9 @@ module.exports = Backbone.View.extend({
     var key = $publishKey.attr('data-state');
 
     if (key === 'true') {
-      $publishKey.empty().html('Published<span class="ico checkmark"></span>');
+      $publishKey.html('Published<span class="ico checkmark"></span>');
     } else {
-      $publishKey.empty().html('Unpublished<span class="ico checkmark"></span>');
+      $publishKey.html('Unpublished<span class="ico checkmark"></span>');
     }
   },
 
@@ -661,7 +658,17 @@ module.exports = Backbone.View.extend({
               $metadataEditor.append(tmpl({
                 name: data.name,
                 label: data.field.label,
-                value: data.field.value
+                value: data.field.value,
+                type: 'text'
+              }));
+              break;
+            case 'number':
+              tmpl = _(window.app.templates.text).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                type: 'number'
               }));
               break;
             case 'select':
@@ -697,7 +704,8 @@ module.exports = Backbone.View.extend({
           $metadataEditor.append(tmpl({
             name: key,
             label: key,
-            value: data
+            value: data,
+            type: 'text'
           }));
         }
       });
@@ -721,16 +729,23 @@ module.exports = Backbone.View.extend({
 
     function getValue() {
       var metadata = {};
-      metadata.published = $('.publish-flag').attr('data-state');
+
+      if ($('.publish-flag').attr('data-state') === 'true') {
+        metadata.published = true;
+      } else {
+        metadata.published = false;
+      }
 
       _.each($metadataEditor.find('[name]'), function(item) {
-        var value = $(item).val();
+        var $item = $(item);
+        var value = $item.val();
 
         switch (item.type) {
           case 'select-multiple':
           case 'select-one':
           case 'text':
             if (value) {
+              value = $item.data('type') === 'number' ? Number(value) : value;
               if (metadata.hasOwnProperty(item.name)) {
                 metadata[item.name] = _.union(metadata[item.name], value);
               } else {
@@ -784,7 +799,7 @@ module.exports = Backbone.View.extend({
     }
 
     function getRaw() {
-      return jsyaml.dump(getValue());
+      return jsyaml.dump(getValue()).trim();
     }
 
     function setValue(data) {
@@ -905,7 +920,8 @@ module.exports = Backbone.View.extend({
           $metadataEditor.append(tmpl({
             name: key,
             label: value,
-            value: value
+            value: value,
+            type: 'text'
           }));
           break;
         case 'object':
