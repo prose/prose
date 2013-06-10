@@ -294,7 +294,7 @@ module.exports = Backbone.View.extend({
     if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
-    var label = this.model.writable ? 'Save' : 'Submit Change';
+    var label = this.model.writable ? 'Unsaved Changes' : 'Submit Change';
     this.eventRegister.trigger('updateSaveState', label, 'save');
 
     // Pass a popover span to the avatar icon

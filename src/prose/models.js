@@ -718,7 +718,7 @@ module.exports = {
         if (query.indexOf('lang=') !== -1) {
           lang = query.match(/lang=([^&]*)/)[1];
           metadata.lang = lang;
-          metadata.categories = _.isArray(metadata.categories) ? _.union(metadata.categories, lang) : [lang];
+          metadata.categories = !_.isUndefined(metadata.categories) && !_.isNull(metadata.categories) ? _.union(metadata.categories, lang) : [lang];
         }
 
         translate = query.indexOf('translate=true') !== -1 ? true : false;

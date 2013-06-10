@@ -1035,6 +1035,11 @@ ins {
     right:auto;
     bottom:auto;
     }
+  .popup.arrow-bottom {
+    top:auto;
+    bottom:100%;
+    right:-18px;
+    }
     .popup.arrow-top:after {
       left:15px;
       }
@@ -1107,9 +1112,7 @@ ins {
     }
   .fixed.topbar .toolbar,
   .markdown .toolbar {
-    height:40px;
-    height:auto!important;
-    min-height:40px;
+    min-height:43px;
     }
   .topbar .inner > a {
     display:block;
@@ -1703,6 +1706,16 @@ ins {
   position:relative;
   bottom:-4px;
   }
+  .sidebar .commit .cancel {
+    position:absolute;
+    z-index:10;
+    top:5px;
+    right:5px;
+    display:block;
+    }
+    .cancel:hover {
+      color:#DB6F6F;
+      }
   .sidebar .commit textarea {
     padding-right:25px;
     margin:8px 0 -2px;
@@ -2013,15 +2026,15 @@ ins {
   Class Helpers
 ---------------------------------------------*/
 .clearfix:after {
-  content: '.';
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
+  content:'.';
+  display:block;
+  height:0;
+  clear:both;
+  visibility:hidden;
   }
 
-* html .clearfix { height: 1%; } /* IE6 */
-*:first-child + html .clearfix { min-height: 1%; } /* IE7 */
+* html .clearfix { height:1%; } /* IE6 */
+*:first-child + html .clearfix { min-height:1%; } /* IE7 */
 
 .fl    { float:left; }
 .fr    { float:right; }
@@ -2056,11 +2069,14 @@ ins {
   .arrow-bottom:after {
     border-width:5px 5px 0;
     bottom:-5px;
-    left:5px;
+    left:50%;
+    margin-left:-5px;
     }
   .arrow-left:after,
   .arrow-right:after {
     border-color:transparent #202020;
+    bottom:50%;
+    margin-bottom:-5px;
     }
   .arrow-left:after {
     border-width:5px 5px 5px 0;
@@ -2453,6 +2469,7 @@ ins {
 and (min-device-width:768px)
 and (max-device-width:1024px) {
 
+.post .markdown .view.diff pre,
 .markdown .CodeMirror,
 .code .CodeMirror-scroll {
   font-size:16px;
@@ -2469,6 +2486,9 @@ and (max-device-width:1024px) {
   .details .mask,
   .popup { /* tip messages served on mouse hover */
     display:none!important;
+    }
+  .vert {
+    border-color:#D4D7D9;
     }
 }
 
@@ -2537,7 +2557,7 @@ and (max-device-width:480px) {
             box-shadow:none;
     }
     .vert {
-      border-left:1px solid #D4D7D9;
+      border-color:#D4D7D9;
       }
     .open .sidebar {
       right:-100%;
