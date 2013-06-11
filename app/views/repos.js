@@ -4,12 +4,6 @@ var Backbone = require('backbone');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  tagName: 'ul',
-
-  id: 'projects',
-
-  className: 'projects listing',
-
   template: _.template(templates.repo),
 
   initialize: function(options) {
@@ -17,8 +11,8 @@ module.exports = Backbone.View.extend({
   },
 
   render: function(collection, options) {
-    // this.$el.html(this.template({ user: this.model.user.toJSON(), orgs: this.model.toJSON() }));
     this.$el.empty();
+
     collection.each((function(repo, index) {
       this.$el.append(this.template(repo.attributes));
     }).bind(this));

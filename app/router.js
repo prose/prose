@@ -1,11 +1,15 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var User = require('./models/user');
+var Users = require('./collections/users');
+
 var ProfileView = require('./views/profile');
 var HeaderView = require('./views/header');
 var ReposView = require('./views/repos');
 var SearchView = require('./views/search');
 var OrgsView = require('./views/orgs');
+
 var templates = require('../dist/templates');
 var utils = require('./util');
 
@@ -22,13 +26,19 @@ module.exports = Backbone.Router.extend({
 
   initialize: function(options) {
     this.user = options.user;
+
+    this.users = new Users();
+    this.users.add(this.user);
+
     this.eventRegister = app.eventRegister;
 
     // Load up the main layout
-    this.application = new app.views.App({
+    this.app = new app.views.App({
       el: '#prose',
       model: {}
     });
+
+    this.app.render();
   },
 
   resetState: function() {
@@ -57,35 +67,27 @@ module.exports = Backbone.Router.extend({
 
   // #example-user
   // #example-organization
-  profile: function(user) {
-    var router = this;
+  profile: function(login) {
     utils.loader.loading('Loading Profile');
 
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
+    var user = this.users.findWhere({ login: login }) ||
+      this.users.add(new User({ login: login })).findWhere({ login: login });
 
-    app.state = app.state || {};
-    app.state.user = user;
-    app.state.title = user;
-    app.state.repo = '';
-    app.state.mode = '';
-    app.state.branch = '';
-    app.state.path = '';
-    app.state.file = '';
+    var header = new HeaderView({ model: user, alterable: false });
+    header.setElement(this.app.$el.find('#heading')).render();
 
-    router.application.render();
+    var sidebar = new OrgsView({ model: this.user.orgs });
+    sidebar.setElement(this.app.$el.find('#drawer'));
+    this.app.$el.addClass('open');
 
-    var $profile = $(_.template(templates.profile)());
-    $('#content').html($profile);
+    var repos = new ReposView({ model: user.repos });
 
-    var header = new HeaderView({ model: this.user, alterable: false });
-    $('#heading').html(header.render().el);
+    var content = new ProfileView({
+      search: new SearchView({ model: user.repos, view: repos }),
+      repos: repos
+    });
 
-    var repos = new ReposView({ model: this.user.repos });
-    $profile.find('#repos').html(repos.el);
-
-    $profile.find('#search').html(new SearchView({ model: this.user.repos, view: repos }).render().el);
-    $('#drawer').html(new OrgsView({ model: this.user.orgs }).el);
+    content.setElement(this.app.$el.find('#content')).render();
 
     this.user.repos.load();
     this.user.orgs.load();

@@ -20,19 +20,16 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     this.$el.html(this.template());
+
     this.input = this.$el.find('input');
     this.input.focus();
-
-    /*
-    _.delay(function () {
-      utils.fixedScroll($('.topbar'));
-    }, 1);
-    */
 
     return this;
   },
 
   search: function(e) {
+    if (!this.input) return this.view.render(this.model);
+
     // If this is the ESC key
     if (e.which === 27) {
       _.delay(_.bind(function() {

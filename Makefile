@@ -39,6 +39,7 @@ APPLICATION = \
 	app/collections/files.js \
 	app/collections/orgs.js \
 	app/collections/repos.js \
+	app/collections/users.js \
 	app/models/branch.js \
 	app/models/commit.js \
 	app/models/file.js \

@@ -2,7 +2,9 @@ var Backbone = require('backbone');
 var State = require('./state');
 var Repos = require('../collections/repos');
 var Orgs = require('../collections/orgs');
+var NotificationView = require('../views/notification');
 var config = require('../config');
+var templates = require('../../dist/templates');
 
 module.exports = Backbone.Model.extend({
   constructor: function(attributes, options) {
@@ -24,7 +26,7 @@ module.exports = Backbone.Model.extend({
         },
         error: function() {
           // TODO: emit notification event
-          var view = new window.app.views.Notification({
+          var view = new NotificationView({
             'type': 'error',
             'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
           }).render();
@@ -35,7 +37,7 @@ module.exports = Backbone.Model.extend({
     } else {
       // TODO: emit notification event
       // Display an upgrade notice.
-      var tmpl = _.template(window.app.templates.upgrade);
+      var tmpl = _.template(templates.upgrade);
 
       _.defer(function() {
         $('#prose').empty().append(tmpl);

@@ -1,10 +1,13 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var templates = require('../../dist/templates');
 var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
     className: 'application',
+
+    template: _.template(templates.app),
 
     events: {
       'click .post-views .edit': 'edit',
@@ -70,7 +73,6 @@ module.exports = Backbone.View.extend({
 
     render: function(options) {
       var view = this;
-      var tmpl = _.template(window.app.templates.app);
       var isJekyll = false;
       var errorPage = false;
       var hideInterface = false; // Flag for unauthenticated landing
@@ -89,7 +91,7 @@ module.exports = Backbone.View.extend({
         $(this.el).toggleClass('disable-interface', false);
       }
 
-      $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
+      $(this.el).empty().append(this.template(_.extend(this.model, app.state, {
         jekyll: isJekyll,
         error: errorPage,
         noMenu: view.noMenu,
