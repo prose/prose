@@ -4,7 +4,7 @@ var Backbone = require('backbone');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.li.repo),
+  template: _.template(templates.li.file),
 
   initialize: function(options) {
     this.model = options.model;
@@ -13,8 +13,8 @@ module.exports = Backbone.View.extend({
   render: function(collection, options) {
     this.$el.empty();
 
-    collection.each((function(repo, index) {
-      this.$el.append(this.template(repo.attributes));
+    collection.each((function(file, index) {
+      this.$el.append(this.template(file.attributes));
     }).bind(this));
 
     return this;
