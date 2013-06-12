@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var BranchView = require('./sidebar/branch');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
@@ -11,6 +12,7 @@ module.exports = Backbone.View.extend({
     this.repo = options.repo;
     this.router = options.router;
     this.branch = options.branch || this.repo.get('master_branch');
+    this.subviews = [];
 
     this.listenTo(this.model, 'sync', this.render, this);
   },
@@ -19,14 +21,22 @@ module.exports = Backbone.View.extend({
     // only render branches selector if two or more branches
     if (this.model.length < 2) return;
 
+    this.subviews = [];
     this.$el.html(this.template());
+    var frag = document.createDocumentFragment();
 
-    var tmpl = _.template(templates.sidebar.branch);
     this.model.each((function(branch, index) {
-      this.$el.find('select').append(tmpl(_.extend(branch.attributes, {
-        selected: this.branch && this.branch === branch.get('name')
-      })));
+      var view = new BranchView({
+        model: branch,
+        repo: this.repo,
+        branch: this.branch
+      });
+
+      frag.appendChild(view.render().el);
+      this.subviews.push(view);
     }).bind(this));
+
+    this.$el.find('select').html(frag);
 
     // TODO: why does this causes object undefined errors on navigation events?
     this.$el.find('.chzn-select').chosen().change(function() {
@@ -39,7 +49,7 @@ module.exports = Backbone.View.extend({
   },
 
   remove: function() {
-    console.log('Branches.remove()');
+    this.subviews.each(function(subview) { subview.remove(); });
     Backbone.View.prototype.remove.call(this);
   }
 });

@@ -16,6 +16,7 @@ module.exports = Backbone.View.extend({
     this.model = options.model;
     this.router = options.router;
     this.branches = this.model.branches;
+    this.subviews = [];
 
     this.listenTo(this.model, 'sync', this.render, this);
   },
@@ -54,6 +55,13 @@ module.exports = Backbone.View.extend({
 
     utils.fixedScroll($('.topbar'));
 
+    this.subviews = [search, files, sidebar];
+
     return this;
+  },
+
+  remove: function() {
+    this.subviews.each(function(subview) { subview.remove(); });
+    Backbone.View.prototype.remove.call(this);
   }
 });

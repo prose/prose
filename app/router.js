@@ -28,9 +28,7 @@ module.exports = Backbone.Router.extend({
 
   initialize: function(options) {
     this.user = options.user;
-
-    this.users = new Users();
-    this.users.add(this.user);
+    this.users = new Users([this.user]);
 
     this.eventRegister = app.eventRegister;
 
@@ -71,6 +69,7 @@ module.exports = Backbone.Router.extend({
   // #example-organization
   profile: function(login) {
     utils.loader.loading('Loading Profile');
+    if (this.view) this.view.remove();
 
     var user = this.users.findWhere({ login: login }) ||
       this.users.add(new User({ login: login })).findWhere({ login: login });
@@ -89,7 +88,8 @@ module.exports = Backbone.Router.extend({
       repos: repos
     });
 
-    content.setElement(this.app.$el.find('#main')).render();
+    this.view = content;
+    this.app.$el.find('#main').html(this.view.render().el);
 
     this.user.repos.fetch();
     this.user.orgs.fetch();
@@ -100,8 +100,8 @@ module.exports = Backbone.Router.extend({
 
   // #example-user/example-repo
   repo: function(login, repoName) {
-    var router = this;
     utils.loader.loading('Loading Posts');
+    if (this.view) this.view.remove();
 
     var user = this.users.findWhere({ login: login }) ||
       this.users.add(new User({ login: login })).findWhere({ login: login });
@@ -118,7 +118,8 @@ module.exports = Backbone.Router.extend({
       router: this
     });
 
-    content.setElement(this.app.$el.find('#main'));
+    this.view = content;
+    this.app.$el.find('#main').html(this.view.el);
     repo.fetch();
 
     utils.loader.loaded();

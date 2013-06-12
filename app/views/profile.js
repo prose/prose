@@ -14,6 +14,7 @@ module.exports = Backbone.View.extend({
     this.user = options.user;
     this.search = options.search;
     this.repos = options.repos;
+    this.subviews = [];
   },
 
   render: function() {
@@ -28,8 +29,15 @@ module.exports = Backbone.View.extend({
     var sidebar = new OrgsView({ model: this.auth.orgs });
     sidebar.setElement(this.$el.find('#drawer'));
 
-    utils.fixedScroll($('.topbar'));
+    utils.fixedScroll(this.$el.find('.topbar'));
+
+    this.subviews = [header, sidebar];
 
     return this;
+  },
+
+  remove: function() {
+    this.subviews.each(function(subview) { subview.remove(); });
+    Backbone.View.prototype.remove.call(this);
   }
 });
