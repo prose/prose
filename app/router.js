@@ -7,12 +7,10 @@ var Users = require('./collections/users');
 
 var Repo = require('./models/repo');
 
-var HeaderView = require('./views/header');
 var ProfileView = require('./views/profile');
 var ReposView = require('./views/repos');
 var RepoView = require('./views/repo');
 var SearchView = require('./views/search');
-var OrgsView = require('./views/orgs');
 
 var templates = require('../dist/templates');
 var utils = require('./util');
@@ -76,13 +74,6 @@ module.exports = Backbone.Router.extend({
 
     var user = this.users.findWhere({ login: login }) ||
       this.users.add(new User({ login: login })).findWhere({ login: login });
-
-    var header = new HeaderView({ model: user, alterable: false });
-    header.setElement(this.app.$el.find('#heading')).render();
-
-    var sidebar = new OrgsView({ model: this.user.orgs });
-    sidebar.setElement(this.app.$el.find('#drawer'));
-    this.app.$el.addClass('open');
 
     var search = new SearchView({ model: user.repos });
     var repos = new ReposView({ model: user.repos, search: search });
