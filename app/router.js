@@ -1,11 +1,15 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+
 var ProfileView = require('./views/profile');
 var HeaderView = require('./views/header');
 var ReposView = require('./views/repos');
+var RepoView = require('./views/repo');
+var RepoOptionsView = require('./views/repo-options');
 var SearchView = require('./views/search');
 var OrgsView = require('./views/orgs');
+
 var templates = require('../dist/templates');
 var utils = require('./util');
 
@@ -111,23 +115,35 @@ module.exports = Backbone.Router.extend({
       file: ''
     };
 
-    app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
+    router.application.render();
 
-      router.application.render();
-      var view = new app.views.Posts({
-        model: data
-      }).render();
+    var container = $(_.template(templates.project)());
+    $('#content').empty().append(container);
 
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
+    var header = new HeaderView({
+      model: this.user,
+      alterable: false
+    });
 
-      /*
-      router.model.set('repo', router.model.get('repos').find(function(repo) {
-        return repo.get('name') === data.repo && repo.get('owner').login === data.user;
-      }));
-      */
-    }, this));
+    $('#heading').empty().append(header.render().el);
+
+    var repo = new RepoView({
+      model: this.user.repos
+    });
+
+    container.find('#repo').html(repo.el);
+
+    //container.find('#search').html(new SearchView({
+      //model: '',
+      //view: repos
+    //}).render().el);
+
+    $('#drawer').html(new RepoOptionsView({
+      model: this.user.orgs
+    }).el);
+
+    // TODO: build event-driven loader queue
+    utils.loader.loaded();
   },
 
   // #example-user/example-repo/tree/BRANCH

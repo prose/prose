@@ -1,6 +1,5 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
-var jsyaml = require('js-yaml');
 var chrono = require('chrono');
 
 module.exports = {
