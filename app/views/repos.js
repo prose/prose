@@ -11,6 +11,7 @@ module.exports = Backbone.View.extend({
     this.search = options.search;
 
     this.listenTo(this.model, 'sync', this.render, this);
+    this.listenTo(this.search, 'search', this.render, this);
   },
 
   render: function() {

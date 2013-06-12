@@ -13,6 +13,7 @@ module.exports = Backbone.View.extend({
     this.branch = options.branch || this.repo.get('master_branch');
 
     this.listenTo(this.branches, 'sync', this.setModel, this);
+    this.listenTo(this.search, 'search', this.render, this);
   },
 
   setModel: function() {

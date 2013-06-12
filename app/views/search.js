@@ -7,7 +7,9 @@ module.exports = Backbone.View.extend({
   template: _.template(templates.search),
 
   events: {
-    'keyup input': 'search'
+    'keyup input': function() {
+      this.trigger('search');
+    }
   },
 
   initialize: function(options) {
