@@ -18,10 +18,7 @@ module.exports = Backbone.View.extend({
     this.search.setElement(this.$el.find('#search')).render();
     this.repos.setElement(this.$el.find('#repos'));
 
-    _.delay(function () {
-      utils.fixedScroll($('.topbar'));
-      $('#filter').focus();
-    }, 1);
+    utils.fixedScroll($('.topbar'));
 
     return this;
   }

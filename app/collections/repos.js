@@ -8,9 +8,5 @@ module.exports = Backbone.Collection.extend({
   initialize: function(models, options) {
     this.url = config.api + (options.username ? '/users/' + options.username + '/repos' : '/user/repos');
     this.user = options.user;
-  },
-
-  load: function(options) {
-    this.fetch({ reset: true });
   }
 });

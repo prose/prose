@@ -8,9 +8,13 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     this.model = options.model;
+    this.search = options.search;
+    this.listenTo(this.model, 'sync', this.render, this);
   },
 
-  render: function(collection, options) {
+  render: function() {
+    var collection = this.search ? this.search.search() : this.model;
+
     this.$el.empty();
 
     collection.each((function(repo, index) {

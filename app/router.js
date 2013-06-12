@@ -1,12 +1,16 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+
 var User = require('./models/user');
 var Users = require('./collections/users');
 
-var ProfileView = require('./views/profile');
+var Repo = require('./models/repo');
+
 var HeaderView = require('./views/header');
+var ProfileView = require('./views/profile');
 var ReposView = require('./views/repos');
+var RepoView = require('./views/repo');
 var SearchView = require('./views/search');
 var OrgsView = require('./views/orgs');
 
@@ -54,7 +58,7 @@ module.exports = Backbone.Router.extend({
 
   about: function() {
     this.resetState();
-    router.application.render({
+    router.app.render({
       noMenu: true
     });
 
@@ -62,7 +66,7 @@ module.exports = Backbone.Router.extend({
       page: 'about'
     }).render();
 
-    $('#content').empty().append(view.el);
+    $('#main').empty().append(view.el);
   },
 
   // #example-user
@@ -80,56 +84,45 @@ module.exports = Backbone.Router.extend({
     sidebar.setElement(this.app.$el.find('#drawer'));
     this.app.$el.addClass('open');
 
-    var repos = new ReposView({ model: user.repos });
+    var search = new SearchView({ model: user.repos });
+    var repos = new ReposView({ model: user.repos, search: search });
 
     var content = new ProfileView({
-      search: new SearchView({ model: user.repos, view: repos }),
+      search: search,
       repos: repos
     });
 
-    content.setElement(this.app.$el.find('#content')).render();
+    content.setElement(this.app.$el.find('#main')).render();
 
-    this.user.repos.load();
-    this.user.orgs.load();
+    this.user.repos.fetch();
+    this.user.orgs.fetch();
 
     // TODO: build event-driven loader queue
     utils.loader.loaded();
   },
 
   // #example-user/example-repo
-  repo: function(user, repo) {
+  repo: function(login, repoName) {
     var router = this;
     utils.loader.loading('Loading Posts');
 
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
+    var user = this.users.findWhere({ login: login }) ||
+      this.users.add(new User({ login: login })).findWhere({ login: login });
+    
+    var repo = user.repos.findWhere({ name: repoName }) ||
+      user.repos.add(new Repo({
+        name: repoName,
+        owner: { login: login }
+      })).findWhere({ name: repoName });
 
-    app.state = {
-      user: user,
-      repo: repo,
-      mode: 'tree',
-      branch: '',
-      path: '',
-      file: ''
-    };
+    var content = new RepoView({
+      model: repo
+    });
 
-    app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
+    content.setElement(this.app.$el.find('#main'));
+    repo.fetch();
 
-      router.application.render();
-      var view = new app.views.Posts({
-        model: data
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-
-      /*
-      router.model.set('repo', router.model.get('repos').find(function(repo) {
-        return repo.get('name') === data.repo && repo.get('owner').login === data.user;
-      }));
-      */
-    }, this));
+    utils.loader.loaded();
   },
 
   // #example-user/example-repo/tree/BRANCH
@@ -140,7 +133,7 @@ module.exports = Backbone.Router.extend({
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return router.notify('error', 'This post does not exist.');
-      router.application.render();
+      router.app.render();
 
       var view = new app.views.Posts({
         model: data

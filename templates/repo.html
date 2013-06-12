@@ -1,45 +1,31 @@
-<li class='item clearfix'
-    data-navigate='#<%= owner.login %>/<%= name %>'
-    data-id='<%= id %>'>
+<div id='drawer' class='sidebar'></div>
 
-    <a
-      class='listing-icon'
-      data-user='<%= owner.login %>'
-      data-repo='<%= name %>'
-      href='#<%= owner.login %>/<%= name %>'>
-      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>
-        <span class='icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>
-      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>
-        <span class='icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>
-      <% } else if (fork && private) { %>
-        <span class='icon round repo private fork' title='Forked from another project'></span>
-      <% } else if (fork) { %>
-        <span class='icon round repo fork' title='Forked from another project'></span>
-      <% } else if (private) { %>
-        <span class='icon round repo private'></span>
-      <% } else { %>
-        <span class='icon round repo'></span>
-      <% } %>
-    </a>
+<div class='limiter'>
+  <header id='heading' class='heading clearfix'></header>
+</div>
 
-    <div class='details'>
-      <div class='actions fr clearfix'>
-        <a
-          data-user='<%= owner.login %>'
-          data-repo='<%= name %>'
-          href='#<%= owner.login %>/<%= name %>'>
-          View Project
-        </a>
-        <% if (homepage) { %>
-          <a href='<%= homepage %>'>View Site</a>
-        <% } %>
+<div class='limiter'>
+  <div id='content' class='application content'>
+    <div class='topbar-wrapper'>
+      <div class='topbar'>
+        <div id='search' class='containment content-search'></div>
       </div>
-      <a
-        data-user='<%= owner.login %>'
-        data-repo='<%= name %>'
-        href='#<%= owner.login %>/<%= name %>'>
-        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>
-        <span class='deemphasize'><%= description %></span>
-      </a>
     </div>
-</li>
+
+    <div class='listings'>
+      <% if (path.length && path !== jailed) { %>
+        <div class='breadcrumb'>
+          <a class='branch' href='#<%= [owner.login, repo, "tree", branch].join("/") %>'>..</a>
+          <% _.each(_.chunkedPath(path), function(p) { %>
+            <% if (p.name !== jailed) { %>
+              <span class='slash'>/</span>
+              <a class='path' href='#<%= [owner.login, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
+            <% } %>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <ul id='files' class='listing'></ul>
+    </div>
+  </div>
+</div>
