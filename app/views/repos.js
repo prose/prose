@@ -1,11 +1,9 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var templates = require('../../dist/templates');
+var RepoView = require('./li/repo');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.li.repo),
-
   initialize: function(options) {
     this.model = options.model;
     this.search = options.search;
@@ -16,12 +14,14 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var collection = this.search ? this.search.search() : this.model;
-
-    this.$el.empty();
+    var frag = document.createDocumentFragment();
 
     collection.each((function(repo, index) {
-      this.$el.append(this.template(repo.attributes));
+      var view = new RepoView({ model: repo });
+      frag.appendChild(view.render().el);
     }).bind(this));
+
+    this.$el.html(frag);
 
     return this;
   }

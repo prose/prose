@@ -1,11 +1,9 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var templates = require('../../dist/templates');
+var FileView = require('./li/file');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.li.file),
-
   initialize: function(options) {
     this.repo = options.repo;
     this.search = options.search;
@@ -27,14 +25,19 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var collection = this.search ? this.search.search() : this.model;
-
-    this.$el.empty();
+    var frag = document.createDocumentFragment();
 
     collection.each((function(file, index) {
-      this.$el.append(this.template(_.extend(file.attributes, {
-        permissions: this.repo.get('permissions')
-      })));
+      var view = new FileView({
+        model: file,
+        repo: this.repo,
+        branch: this.branch
+      });
+
+      frag.appendChild(view.render().el);
     }).bind(this));
+
+    this.$el.html(frag);
 
     return this;
   }

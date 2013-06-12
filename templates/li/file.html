@@ -1,48 +1,44 @@
-<li class='clearfix item'
-    <% if (!isBinary) { %>data-navigate='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>>
+<% if (isBinary) { %>
+  <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
+<% } else { %>
+  <a href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>
+    <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>
+  </a>
+<% } %>
 
-  <% if (isBinary) { %>
-    <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
-  <% } else { %>
-    <a href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>
-      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>
-    </a>
-  <% } %>
-
-  <div class='details'>
-    <div class='actions fr clearfix'>
-      <% if (!isBinary) { %>
-        <a class='clearfix'
-          title='Edit this File'
-          href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
-          Edit
-        </a>
-      <% } %>
-      <% if (permissions.push) { %>
-        <a
-          class='delete'
-          title='Delete this File'
-          data-user='<%= owner.login %>'
-          data-repo='<%= repo %>'
-          data-branch='<%= branch %>'
-          data-file='<%= name %>'
-          href='#'>
-          <span class='ico rubbish small'></span>
-        </a>
-      <% } %>
-    </div>
-    <% if (isBinary) { %>
-      <h3 class='title' title='<%= name %>'><%= name %></h3>
-    <% } else { %>
-        <% if (extension === 'md') { %>
-          <a class='clearfix' href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
-            <h3><%= name %></h3>
-            <span class='deemphasize'><%= name %></span>
-          </a>
-        <% } else { %>
-          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>
-        <% } %>
+<div class='details'>
+  <div class='actions fr clearfix'>
+    <% if (!isBinary) { %>
+      <a class='clearfix'
+        title='Edit this File'
+        href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
+        Edit
+      </a>
+    <% } %>
+    <% if (permissions.push) { %>
+      <a
+        class='delete'
+        title='Delete this File'
+        data-user='<%= owner.login %>'
+        data-repo='<%= repo %>'
+        data-branch='<%= branch %>'
+        data-file='<%= name %>'
+        href='#'>
+        <span class='ico rubbish small'></span>
       </a>
     <% } %>
   </div>
-</li>
+  <% if (isBinary) { %>
+    <h3 class='title' title='<%= name %>'><%= name %></h3>
+  <% } else { %>
+      <% if (extension === 'md') { %>
+        <a class='clearfix' href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
+          <h3><%= name %></h3>
+          <span class='deemphasize'><%= name %></span>
+        </a>
+      <% } else { %>
+        <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>
+      <% } %>
+    </a>
+  <% } %>
+</div>
