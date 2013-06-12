@@ -2,6 +2,7 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var templates = require('../../dist/templates');
+var util = require('../util');
 
 module.exports = Backbone.View.extend({
   template: _.template(templates.search),
@@ -24,12 +25,13 @@ module.exports = Backbone.View.extend({
   },
 
   keyup: function(e) {
-    // If this is the ESC key
     if (e && e.which === 27) {
+      // ESC key
       this.input.val('');
       this.trigger('search');
-    } else if (e && e.which === 40 && $('.item').length > 0) {
-      utils.pageListing('down'); // Arrow Down
+    } else if (e && e.which === 40) {
+      // Down Arrow
+      util.pageListing('down');
       e.preventDefault();
       e.stopPropagation();
       this.input.blur();
