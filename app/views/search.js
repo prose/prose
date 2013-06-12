@@ -28,7 +28,7 @@ module.exports = Backbone.View.extend({
   search: function(e) {
     if (!this.model) return e;
 
-    if (!this.input) return this.view.render(this.model);
+    if (!this.input) return this.model;
 
     // If this is the ESC key
     if (e && e.which === 27) {
