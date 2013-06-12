@@ -10,6 +10,7 @@ module.exports = Backbone.View.extend({
   template: _.template(templates.profile),
 
   initialize: function(options) {
+    this.user = user;
     this.search = options.search;
     this.repos = options.repos;
   },

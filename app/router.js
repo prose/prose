@@ -79,6 +79,7 @@ module.exports = Backbone.Router.extend({
     var repos = new ReposView({ model: user.repos, search: search });
 
     var content = new ProfileView({
+      user: user,
       search: search,
       repos: repos
     });
