@@ -28,8 +28,6 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    console.log(this.branch);
-
     var collection = this.search ? this.search.search() : this.model.filter((function(file) {
       return file.get('name').indexOf(this.path) > -1;
     }).bind(this));
