@@ -2,13 +2,15 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 
+var User = require('./models/user');
+var Users = require('./collections/users');
+
+var Repo = require('./models/repo');
+
 var ProfileView = require('./views/profile');
-var HeaderView = require('./views/header');
 var ReposView = require('./views/repos');
 var RepoView = require('./views/repo');
-var RepoOptionsView = require('./views/repo-options');
 var SearchView = require('./views/search');
-var OrgsView = require('./views/orgs');
 
 var templates = require('../dist/templates');
 var utils = require('./util');
@@ -26,13 +28,19 @@ module.exports = Backbone.Router.extend({
 
   initialize: function(options) {
     this.user = options.user;
+
+    this.users = new Users();
+    this.users.add(this.user);
+
     this.eventRegister = app.eventRegister;
 
     // Load up the main layout
-    this.application = new app.views.App({
+    this.app = new app.views.App({
       el: '#prose',
       model: {}
     });
+
+    this.app.render();
   },
 
   resetState: function() {
@@ -48,7 +56,7 @@ module.exports = Backbone.Router.extend({
 
   about: function() {
     this.resetState();
-    router.application.render({
+    router.app.render({
       noMenu: true
     });
 
@@ -56,93 +64,80 @@ module.exports = Backbone.Router.extend({
       page: 'about'
     }).render();
 
-    $('#content').empty().append(view.el);
+    $('#main').empty().append(view.el);
   },
 
   // #example-user
   // #example-organization
-  profile: function(user) {
-    var router = this;
+  profile: function(login) {
     utils.loader.loading('Loading Profile');
 
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
+    var user = this.users.findWhere({
+      login: login
+    }) || this.users.add(new User({
+      login: login
+    })).findWhere({
+      login: login
+    });
 
-    app.state = app.state || {};
-    app.state.user = user;
-    app.state.title = user;
-    app.state.repo = '';
-    app.state.mode = '';
-    app.state.branch = '';
-    app.state.path = '';
-    app.state.file = '';
+    var search = new SearchView({
+      model: user.repos
+    });
 
-    router.application.render();
+    var repos = new ReposView({
+      model: user.repos,
+      search: search
+    });
 
-    var $profile = $(_.template(templates.profile)());
-    $('#content').html($profile);
+    var content = new ProfileView({
+      auth: this.user,
+      user: user,
+      search: search,
+      repos: repos
+    });
 
-    var header = new HeaderView({ model: this.user, alterable: false });
-    $('#heading').html(header.render().el);
+    content.setElement(this.app.$el.find('#main')).render();
 
-    var repos = new ReposView({ model: this.user.repos });
-    $profile.find('#repos').html(repos.el);
-
-    $profile.find('#search').html(new SearchView({ model: this.user.repos, view: repos }).render().el);
-    $('#drawer').html(new OrgsView({ model: this.user.orgs }).el);
-
-    this.user.repos.load();
-    this.user.orgs.load();
+    this.user.repos.fetch();
+    this.user.orgs.fetch();
 
     // TODO: build event-driven loader queue
     utils.loader.loaded();
   },
 
   // #example-user/example-repo
-  repo: function(user, repo) {
+  repo: function(login, repoName) {
     var router = this;
     utils.loader.loading('Loading Posts');
 
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
+    var user = this.users.findWhere({
+      login: login
+    }) || this.users.add(new User({
+      login: login
+    })).findWhere({
+      login: login
+    });
 
-    app.state = {
+    var repo = user.repos.findWhere({
+      name: repoName
+    }) || user.repos.add(new Repo({
+      name: repoName,
+      owner: {
+        login: login
+      }
+    })).findWhere({
+      name: repoName
+    });
+
+    var content = new RepoView({
       user: user,
-      repo: repo,
-      mode: 'tree',
-      branch: '',
-      path: '',
-      file: ''
-    };
-
-    router.application.render();
-
-    var container = $(_.template(templates.project)());
-    $('#content').empty().append(container);
-
-    var header = new HeaderView({
-      model: this.user,
-      alterable: false
+      model: repo,
+      router: this
     });
 
-    $('#heading').empty().append(header.render().el);
+    content.setElement(this.app.$el.find('#main'));
+    repo.fetch();
 
-    var repo = new RepoView({
-      model: this.user.repos
-    });
-
-    container.find('#repo').html(repo.el);
-
-    //container.find('#search').html(new SearchView({
-      //model: '',
-      //view: repos
-    //}).render().el);
-
-    $('#drawer').html(new RepoOptionsView({
-      model: this.user.orgs
-    }).el);
-
-    // TODO: build event-driven loader queue
     utils.loader.loaded();
   },
 
@@ -152,9 +147,9 @@ module.exports = Backbone.Router.extend({
     var router = this;
     utils.loader.loading('Loading Posts');
 
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
       if (err) return router.notify('error', 'This post does not exist.');
-      router.application.render();
+      router.app.render();
 
       var view = new app.views.Posts({
         model: data
@@ -189,14 +184,14 @@ module.exports = Backbone.Router.extend({
     }
   },
 
-  newPost: function (user, repo, branch, path) {
+  newPost: function(user, repo, branch, path) {
     // TODO Fix this, shouldn't have to pass
     // something like this here.
     app.state.markdown = true;
 
     utils.loader.loading('Creating a new post');
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
+      app.models.emptyPost(user, repo, branch, path, _.bind(function(err, data) {
 
         data.jekyll = utils.jekyll(path, data.file);
         data.preview = false;
@@ -233,7 +228,7 @@ module.exports = Backbone.Router.extend({
         if (err) return this.notify('error', 'This file does not exist.');
 
         app.state.markdown = data.markdown;
-        data.jekyll = !!data.metadata;
+        data.jekyll = !! data.metadata;
         data.lang = utils.mode(file);
 
         this.application.render({
@@ -255,9 +250,9 @@ module.exports = Backbone.Router.extend({
     var router = this;
     utils.loader.loading('Previewing Post');
 
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
       if (err) return router.notify('error', 'This post does not exist.');
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
         if (err) {
           app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
         } else {
@@ -280,7 +275,9 @@ module.exports = Backbone.Router.extend({
       $('#start').remove();
 
       // Redirect
-      router.navigate(this.user.get('login'), {trigger: true});
+      router.navigate(this.user.get('login'), {
+        trigger: true
+      });
     } else {
       this.application.render({
         hideInterface: true
@@ -302,11 +299,11 @@ module.exports = Backbone.Router.extend({
   // sends the route here.
   error: function(code) {
     switch (code) {
-      case '404':
-        code = 'Page not Found'
+    case '404':
+      code = 'Page not Found'
       break;
-      default:
-        code = 'Error'
+    default:
+      code = 'Error'
       break;
     }
 

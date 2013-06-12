@@ -16,8 +16,8 @@ var templates = glob.sync('templates/**/*.html').reduce(function(memo, file) {
         var key = arr[i];
         if (!(key in obj)) {
           obj[key] = {}
-          obj = obj[key];
         }
+        obj = obj[key];
       }
       obj[arr[lastIndex]] = value;
     }

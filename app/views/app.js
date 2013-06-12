@@ -1,10 +1,13 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var templates = require('../../dist/templates');
 var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
     className: 'application',
+
+    template: _.template(templates.app),
 
     events: {
       'click .post-views .edit': 'edit',
@@ -57,10 +60,9 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput');
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
-      this.eventRegister.bind('sidebarContext', this.sidebarContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
       this.eventRegister.bind('filenameInput', this.filenameInput);
@@ -69,7 +71,6 @@ module.exports = Backbone.View.extend({
 
     render: function(options) {
       var view = this;
-      var tmpl = _.template(window.app.templates.app);
       var isJekyll = false;
       var errorPage = false;
       var hideInterface = false; // Flag for unauthenticated landing
@@ -89,7 +90,7 @@ module.exports = Backbone.View.extend({
         $(this.el).toggleClass('disable-interface', false);
       }
 
-      $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
+      $(this.el).empty().append(this.template(_.extend(this.model, app.state, {
         jekyll: isJekyll,
         error: errorPage,
         noMenu: view.noMenu,
@@ -133,23 +134,6 @@ module.exports = Backbone.View.extend({
 
     filenameInput: function() {
       $('.filepath', this.el).focus();
-    },
-
-    sidebarContext: function(data) {
-      if (app.state.mode === 'tree') {
-        var tmpl = _(app.templates.sidebarProject).template();
-
-        // Branch Switching
-        _.defer(function() {
-          $('.chzn-select', this.el).chosen().change(function() {
-              router.navigate($(this).val(), true);
-          });
-        });
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl(data));
-      }
     },
 
     recentFiles: function(data) {
@@ -351,7 +335,6 @@ module.exports = Backbone.View.extend({
     remove: function() {
       // Unbind pagehide event handler when View is removed
       this.eventRegister.unbind('documentTitle', this.documentTitle);
-      this.eventRegister.unbind('sidebarContext', this.sidebarContext);
       this.eventRegister.unbind('headerContext', this.headerContext);
       this.eventRegister.unbind('recentFiles', this.recentFiles);
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);

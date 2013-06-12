@@ -39,6 +39,7 @@ APPLICATION = \
 	app/collections/files.js \
 	app/collections/orgs.js \
 	app/collections/repos.js \
+	app/collections/users.js \
 	app/models/branch.js \
 	app/models/commit.js \
 	app/models/file.js \
@@ -46,8 +47,12 @@ APPLICATION = \
 	app/models/repo.js \
 	app/models/state.js \
 	app/models/user.js \
+	app/views/app.js \
+	app/views/branches.js \
 	app/views/header.js \
+	app/views/files.js \
 	app/views/orgs.js \
+	app/views/repo.js \
 	app/views/repos.js \
 	app/views/search.js \
 	app/views/notification.js \
@@ -57,7 +62,6 @@ APPLICATION = \
 	app/views/profile.js \
 	app/views/preview.js \
 	app/views/start.js \
-	app/views/app.js \
 	app/router.js \
 	app/util.js \
 	app/boot.js \
