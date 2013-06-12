@@ -16,7 +16,8 @@ module.exports = Backbone.Model.extend({
         login: attributes.owner.login
       },
       permissions: attributes.permissions,
-      private: attributes.private
+      private: attributes.private,
+      updated_at: Date(attributes.updated_at)
     });
   },
 
