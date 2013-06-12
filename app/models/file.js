@@ -14,6 +14,8 @@ module.exports = Backbone.Model.extend({
   },
 
   initialize: function(attributes, options) {
+    this.url = attributes.url;
+
     var url = attributes.url.match(/repos\/(.*)\/(.*)\/contents\/(.*)ref?=(.*)/);
 
     var owner = { login: url[1] };

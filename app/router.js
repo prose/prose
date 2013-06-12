@@ -8,9 +8,10 @@ var Users = require('./collections/users');
 var Repo = require('./models/repo');
 
 var ProfileView = require('./views/profile');
+var SearchView = require('./views/search');
 var ReposView = require('./views/repos');
 var RepoView = require('./views/repo');
-var SearchView = require('./views/search');
+var FileView = require('./views/file');
 
 var templates = require('../dist/templates');
 var util = require('./util');
@@ -71,13 +72,11 @@ module.exports = Backbone.Router.extend({
     util.loader.loading('Loading Profile');
     if (this.view) this.view.remove();
 
-    var user = this.users.findWhere({
-      login: login
-    }) || this.users.add(new User({
-      login: login
-    })).findWhere({
-      login: login
-    });
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
 
     var search = new SearchView({
       model: user.repos
@@ -95,6 +94,8 @@ module.exports = Backbone.Router.extend({
       repos: repos
     });
 
+    user.fetch();
+
     this.view = content;
     this.app.$el.find('#main').html(this.view.render().el);
 
@@ -111,24 +112,22 @@ module.exports = Backbone.Router.extend({
     util.loader.loading('Loading Posts');
     if (this.view) this.view.remove();
 
-    var user = this.users.findWhere({
-      login: login
-    }) || this.users.add(new User({
-      login: login
-    })).findWhere({
-      login: login
-    });
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
 
-    var repo = user.repos.findWhere({
-      name: repoName
-    }) || user.repos.add(new Repo({
-      name: repoName,
-      owner: {
-        login: login
-      }
-    })).findWhere({
-      name: repoName
-    });
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
+        }
+      });
+      user.repos.add(repo);
+    }
 
     var content = new RepoView({
       user: user,
@@ -138,9 +137,11 @@ module.exports = Backbone.Router.extend({
       router: this
     });
 
+    user.fetch();
+    repo.fetch();
+
     this.view = content;
     this.app.$el.find('#main').html(this.view.el);
-    repo.fetch();
 
     util.loader.loaded();
   },
@@ -158,17 +159,93 @@ module.exports = Backbone.Router.extend({
         break;
       case 'preview':
         parts = util.extractFilename(url.path);
-        this.preview(login, repoName, url.branch, parts[0], parts[1], url.mode);
+        this.preview(login, repoName, url.mode, url.branch, parts[0], parts[1]);
         break;
       case 'blob':
       case 'edit':
         parts = util.extractFilename(url.path);
-        this.post(login, repoName, url.branch, parts[0], parts[1], url.mode);
+        this.post(login, repoName, url.mode, url.branch, parts[0], parts[1]);
         break;
       default:
         // TODO: throw error
         break;
     }
+  },
+
+  post: function(login, repoName, mode, branch, path, filename) {
+    switch(mode) {
+      case 'new':
+        util.loader.loading('Creating a new post');
+        break;
+      case 'edit':
+        util.loader.loading('Loading Post');
+        break;
+      case 'preview':
+        util.loader.loading('Previewing Post');
+        break;
+    }
+
+    if (this.view) this.view.remove();
+
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
+
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
+        }
+      });
+      user.repos.add(repo);
+    }
+
+    var content = new FileView({
+      repo: repo,
+      mode: mode,
+      branch: branch,
+      branches: repo.branches,
+      path: path,
+      filename: filename
+    });
+
+    user.fetch();
+    repo.fetch();
+    repo.branches.fetch();
+
+    this.view = content;
+    this.app.$el.find('#main').html(this.view.el);
+
+    util.loader.loaded();
+
+    /*
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
+      if (err) return this.notify('error', 'This file does not exist.');
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
+        if (err) return this.notify('error', 'This file does not exist.');
+
+        app.state.markdown = data.markdown;
+        data.jekyll = !! data.metadata;
+        data.lang = util.mode(file);
+
+        this.application.render({
+          jekyll: data.jekyll,
+          noMenu: true
+        });
+
+        var view = new app.views.Post({
+          model: data
+        }).render();
+
+        util.loader.loaded();
+        $('#content').empty().html(view.el);
+      }, this));
+    }, this));
+    */
   },
 
   newPost: function(user, repo, branch, path) {
@@ -198,37 +275,6 @@ module.exports = Backbone.Router.extend({
         $('#content').empty().append(view.el);
         app.state.file = data.file;
 
-      }, this));
-    }, this));
-  },
-
-  post: function(user, repo, branch, path, file, mode) {
-    if (mode === 'edit') {
-      util.loader.loading('Loading Post');
-    } else {
-      util.loader.loading('Previewing Post');
-    }
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', 'This file does not exist.');
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) return this.notify('error', 'This file does not exist.');
-
-        app.state.markdown = data.markdown;
-        data.jekyll = !! data.metadata;
-        data.lang = util.mode(file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        util.loader.loaded();
-        $('#content').empty().html(view.el);
       }, this));
     }, this));
   },
