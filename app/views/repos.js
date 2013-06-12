@@ -9,6 +9,7 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     this.model = options.model;
     this.search = options.search;
+
     this.listenTo(this.model, 'sync', this.render, this);
   },
 

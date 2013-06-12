@@ -76,7 +76,11 @@ module.exports = Backbone.Router.extend({
       this.users.add(new User({ login: login })).findWhere({ login: login });
 
     var search = new SearchView({ model: user.repos });
-    var repos = new ReposView({ model: user.repos, search: search });
+
+    var repos = new ReposView({
+      model: user.repos,
+      search: search
+    });
 
     var content = new ProfileView({
       auth: this.user,
@@ -109,6 +113,7 @@ module.exports = Backbone.Router.extend({
       })).findWhere({ name: repoName });
 
     var content = new RepoView({
+      user: user,
       model: repo,
       router: this
     });
