@@ -1,20 +1,8 @@
 <% if (window.authenticated) { %>
   <div class='inner'>
-    <h2 class='label'>Post Settings</h2>
+    <h2 class='label'>Options</h2>
   </div>
   <div class='inner authoring'>
-    <div class='commit'>
-      <h2 class='label'>Describe you changes</h2>
-      <textarea class='commit-message' placeholder></textarea>
-      <a class='ico small cancel round' href='#'>
-        <span class='popup round arrow-right'>Cancel</span>
-      </a>
-    </div>
-
-    <a class='save button round' href='#'>
-      <%= writable ? 'Save' : 'Submit Change' %>
-    </a>
-
     <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>
       <% _(app.state.config.languages).each(function(lang) { %>
         <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>
@@ -26,12 +14,5 @@
     <% if (app.state.mode !== 'new' && writable) { %>
       <a class='delete button round' href='#'>Delete this File</a>
     <% } %>
-  </div>
-<% } %>
-
-<% if (permalink) { %>
-  <div class='inner'>
-    <h2 class='label'>Permalink</h2>
-    <input class='permalink' type='text' value='<%= permalink %>' readonly />
   </div>
 <% } %>

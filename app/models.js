@@ -1,7 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
-var queue = require('queue-async');
+var utils = require('./util');
 var cookie = require('./cookie');
 var Github = require('../vendor/github');
 var queue = require('queue-async');
@@ -265,7 +265,7 @@ module.exports = {
       var matchSearch = new RegExp('(' + searchstr + ')', 'i');
 
       // Depending on search use full path or filename
-      file.name = searchstr ? file.path : _.extractFilename(file.path)[1];
+      file.name = searchstr ? file.path : utils.extractFilename(file.path)[1];
 
       // Scope name to current path
       file.name = file.name.replace(new RegExp('^' + path + '/?'), '');
@@ -596,7 +596,7 @@ module.exports = {
 
   deletePost: function(user, repo, branch, path, file, cb) {
     repo = this.getRepo(user, repo);
-    repo.remove(branch, _.filepath(path, file), cb);
+    repo.remove(branch, utils.filepath(path, file), cb);
   },
 
   // Move Post
@@ -718,7 +718,7 @@ module.exports = {
         if (query.indexOf('lang=') !== -1) {
           lang = query.match(/lang=([^&]*)/)[1];
           metadata.lang = lang;
-          metadata.categories = _.isArray(metadata.categories) ? _.union(metadata.categories, lang) : [lang];
+          metadata.categories = !_.isUndefined(metadata.categories) && !_.isNull(metadata.categories) ? _.union(metadata.categories, lang) : [lang];
         }
 
         translate = query.indexOf('translate=true') !== -1 ? true : false;
@@ -757,7 +757,7 @@ module.exports = {
         return !!(app.state.permissions && app.state.permissions.push);
       }
 
-      var hasMetadata = !!_.hasMetadata(content);
+      var hasMetadata = !!utils.hasMetadata(content);
 
       if (!hasMetadata) return {
         content: content,
@@ -845,7 +845,7 @@ module.exports = {
     q.await((function() {
       cb(err, _.extend(post, {
         'default_metadata': defaultMetadata,
-        'markdown': _.markdown(file),
+        'markdown': utils.markdown(file),
         'repo': repo,
         'path': path,
         'file': file.split('?')[0],

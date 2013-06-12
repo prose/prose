@@ -9,15 +9,7 @@
 
 <div class='listings'>
   <% if (path.length && path !== jailed) { %>
-    <div class='breadcrumb'>
-      <a class='branch' href='#<%= [user, repo, "tree", branch].join("/") %>'>..</a>
-      <% _.each(_.chunkedPath(path), function(p) { %>
-        <% if (p.name !== jailed) { %>
-          <span class='slash'>/</span>
-          <a class='path' href='#<%= [user, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
-        <% } %>
-      <% }); %>
-    </div>
+    <div id='breadcrumb' class='breadcrumb'></div>
   <% } %>
 
   <ul id='files' class='listing'></ul>

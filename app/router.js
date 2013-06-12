@@ -150,18 +150,18 @@ module.exports = Backbone.Router.extend({
 
     // Clean any previous view
     this.eventRegister.trigger('remove');
-    url = _.extractURL(path);
+    url = utils.extractURL(path);
 
     if (url.mode === 'tree') {
       this.repoBranch(user, repo, url.branch, url.path);
     } else if (url.mode === 'new') {
       this.newPost(user, repo, url.branch, url.path);
     } else if (url.mode === 'preview') {
-      parts = _.extractFilename(url.path);
+      parts = utils.extractFilename(url.path);
       app.state.file = parts[1];
       this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
     } else { // blob or edit ..
-      parts = _.extractFilename(url.path);
+      parts = utils.extractFilename(url.path);
       app.state.file = parts[1];
       this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
     }
@@ -176,10 +176,10 @@ module.exports = Backbone.Router.extend({
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
 
-        data.jekyll = _.jekyll(path, data.file);
+        data.jekyll = utils.jekyll(path, data.file);
         data.preview = false;
-        data.markdown = _.markdown(data.file);
-        data.lang = _.mode(data.file);
+        data.markdown = utils.markdown(data.file);
+        data.lang = utils.mode(data.file);
 
         this.application.render({
           jekyll: data.jekyll,
@@ -212,7 +212,7 @@ module.exports = Backbone.Router.extend({
 
         app.state.markdown = data.markdown;
         data.jekyll = !!data.metadata;
-        data.lang = _.mode(file);
+        data.lang = utils.mode(file);
 
         this.application.render({
           jekyll: data.jekyll,
