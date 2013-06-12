@@ -4,6 +4,8 @@ var Backbone = require('backbone');
 var FileView = require('./li/file');
 
 module.exports = Backbone.View.extend({
+  subviews: [],
+
   initialize: function(options) {
     this.repo = options.repo;
     this.search = options.search;
@@ -28,8 +30,6 @@ module.exports = Backbone.View.extend({
     var collection = this.search ? this.search.search() : this.model;
     var frag = document.createDocumentFragment();
 
-    this.subviews = [];
-
     collection.each((function(file, index) {
       var view = new FileView({
         model: file,
@@ -47,7 +47,9 @@ module.exports = Backbone.View.extend({
   },
 
   remove: function() {
-    this.subviews.each(function(subview) { subview.remove(); });
+    _.invoke(this.subviews, 'remove');
+    this.subviews = [];
+
     Backbone.View.prototype.remove.call(this);
   }
 });

@@ -4,6 +4,8 @@ var Backbone = require('backbone');
 var RepoView = require('./li/repo');
 
 module.exports = Backbone.View.extend({
+  subviews: [],
+
   initialize: function(options) {
     this.model = options.model;
     this.search = options.search;
@@ -17,9 +19,6 @@ module.exports = Backbone.View.extend({
     var collection = this.search ? this.search.search() : this.model;
     var frag = document.createDocumentFragment();
 
-    this.subviews.each(function(subview) { subview.remove(); });
-    this.subviews = [];
-
     collection.each((function(repo, index) {
       var view = new RepoView({ model: repo });
       frag.appendChild(view.render().el);
@@ -29,5 +28,12 @@ module.exports = Backbone.View.extend({
     this.$el.html(frag);
 
     return this;
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = [];
+
+    Backbone.View.prototype.remove.call(this);
   }
 });

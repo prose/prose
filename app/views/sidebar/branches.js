@@ -7,12 +7,13 @@ var templates = require('../../../dist/templates');
 module.exports = Backbone.View.extend({
   template: _.template(templates.sidebar.branches),
 
+  subviews: [],
+
   initialize: function(options) {
     this.model = options.model;
     this.repo = options.repo;
     this.router = options.router;
     this.branch = options.branch || this.repo.get('master_branch');
-    this.subviews = [];
 
     this.listenTo(this.model, 'sync', this.render, this);
   },
@@ -23,8 +24,6 @@ module.exports = Backbone.View.extend({
 
     this.$el.html(this.template());
     var frag = document.createDocumentFragment();
-
-    this.subviews = [];
 
     this.model.each((function(branch, index) {
       var view = new BranchView({
@@ -50,7 +49,9 @@ module.exports = Backbone.View.extend({
   },
 
   remove: function() {
-    this.subviews.each(function(subview) { subview.remove(); });
+    _.invoke(this.subviews, 'remove');
+    this.subviews = [];
+
     Backbone.View.prototype.remove.call(this);
   }
 });

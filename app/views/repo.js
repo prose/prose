@@ -11,12 +11,13 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.View.extend({
   template: _.template(templates.repo),
 
+  subviews: [],
+
   initialize: function(options) {
     this.user = options.user;
     this.model = options.model;
     this.router = options.router;
     this.branches = this.model.branches;
-    this.subviews = [];
 
     this.listenTo(this.model, 'sync', this.render, this);
   },
@@ -37,6 +38,7 @@ module.exports = Backbone.View.extend({
 
     var search = new SearchView({});
     search.setElement(this.$el.find('#search')).render();
+    this.subviews.push(search);
 
     var files = new FilesView({
       search: search,
@@ -45,6 +47,7 @@ module.exports = Backbone.View.extend({
     });
 
     files.setElement(this.$el.find('#files'));
+    this.subviews.push(files);
 
     var sidebar = new BranchesView({
       model: this.branches,
@@ -53,18 +56,19 @@ module.exports = Backbone.View.extend({
     });
 
     sidebar.setElement(this.$el.find('#drawer'));
+    this.subviews.push(sidebar);
 
     this.branches.fetch();
 
     utils.fixedScroll(this.$el.find('.topbar'));
 
-    this.subviews = [search, files, sidebar];
-
     return this;
   },
 
   remove: function() {
-    this.subviews.each(function(subview) { subview.remove(); });
+    _.invoke(this.subviews, 'remove');
+    this.subviews = [];
+
     Backbone.View.prototype.remove.call(this);
   }
 });
