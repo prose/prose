@@ -29,7 +29,10 @@ module.exports = Backbone.View.extend({
       path: ''
     }));
 
-    var header = new HeaderView({ model: this.user, alterable: false });
+    var header = new HeaderView({
+      model: this.user,
+      alterable: false
+    });
     header.setElement(this.$el.find('#heading')).render();
 
     var search = new SearchView({});
@@ -48,7 +51,7 @@ module.exports = Backbone.View.extend({
       repo: this.model,
       router: this.router
     });
-    
+
     sidebar.setElement(this.$el.find('#drawer'));
 
     this.branches.fetch();

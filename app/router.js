@@ -71,10 +71,17 @@ module.exports = Backbone.Router.extend({
     utils.loader.loading('Loading Profile');
     if (this.view) this.view.remove();
 
-    var user = this.users.findWhere({ login: login }) ||
-      this.users.add(new User({ login: login })).findWhere({ login: login });
+    var user = this.users.findWhere({
+      login: login
+    }) || this.users.add(new User({
+      login: login
+    })).findWhere({
+      login: login
+    });
 
-    var search = new SearchView({ model: user.repos });
+    var search = new SearchView({
+      model: user.repos
+    });
 
     var repos = new ReposView({
       model: user.repos,
@@ -103,14 +110,24 @@ module.exports = Backbone.Router.extend({
     utils.loader.loading('Loading Posts');
     if (this.view) this.view.remove();
 
-    var user = this.users.findWhere({ login: login }) ||
-      this.users.add(new User({ login: login })).findWhere({ login: login });
-    
-    var repo = user.repos.findWhere({ name: repoName }) ||
-      user.repos.add(new Repo({
-        name: repoName,
-        owner: { login: login }
-      })).findWhere({ name: repoName });
+    var user = this.users.findWhere({
+      login: login
+    }) || this.users.add(new User({
+      login: login
+    })).findWhere({
+      login: login
+    });
+
+    var repo = user.repos.findWhere({
+      name: repoName
+    }) || user.repos.add(new Repo({
+      name: repoName,
+      owner: {
+        login: login
+      }
+    })).findWhere({
+      name: repoName
+    });
 
     var content = new RepoView({
       user: user,
@@ -131,7 +148,7 @@ module.exports = Backbone.Router.extend({
     var router = this;
     utils.loader.loading('Loading Posts');
 
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
       if (err) return router.notify('error', 'This post does not exist.');
       router.app.render();
 
@@ -168,14 +185,14 @@ module.exports = Backbone.Router.extend({
     }
   },
 
-  newPost: function (user, repo, branch, path) {
+  newPost: function(user, repo, branch, path) {
     // TODO Fix this, shouldn't have to pass
     // something like this here.
     app.state.markdown = true;
 
     utils.loader.loading('Creating a new post');
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
+      app.models.emptyPost(user, repo, branch, path, _.bind(function(err, data) {
 
         data.jekyll = utils.jekyll(path, data.file);
         data.preview = false;
@@ -212,7 +229,7 @@ module.exports = Backbone.Router.extend({
         if (err) return this.notify('error', 'This file does not exist.');
 
         app.state.markdown = data.markdown;
-        data.jekyll = !!data.metadata;
+        data.jekyll = !! data.metadata;
         data.lang = utils.mode(file);
 
         this.application.render({
@@ -234,9 +251,9 @@ module.exports = Backbone.Router.extend({
     var router = this;
     utils.loader.loading('Previewing Post');
 
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
       if (err) return router.notify('error', 'This post does not exist.');
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
         if (err) {
           app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
         } else {
@@ -259,7 +276,9 @@ module.exports = Backbone.Router.extend({
       $('#start').remove();
 
       // Redirect
-      router.navigate(this.user.get('login'), {trigger: true});
+      router.navigate(this.user.get('login'), {
+        trigger: true
+      });
     } else {
       this.application.render({
         hideInterface: true
@@ -281,11 +300,11 @@ module.exports = Backbone.Router.extend({
   // sends the route here.
   error: function(code) {
     switch (code) {
-      case '404':
-        code = 'Page not Found'
+    case '404':
+      code = 'Page not Found'
       break;
-      default:
-        code = 'Error'
+    default:
+      code = 'Error'
       break;
     }
 
