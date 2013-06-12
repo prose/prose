@@ -60,10 +60,9 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput');
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
-      this.eventRegister.bind('sidebarContext', this.sidebarContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
       this.eventRegister.bind('filenameInput', this.filenameInput);
@@ -135,23 +134,6 @@ module.exports = Backbone.View.extend({
 
     filenameInput: function() {
       $('.filepath', this.el).focus();
-    },
-
-    sidebarContext: function(data) {
-      if (app.state.mode === 'tree') {
-        var tmpl = _(app.templates.sidebarProject).template();
-
-        // Branch Switching
-        _.defer(function() {
-          $('.chzn-select', this.el).chosen().change(function() {
-              router.navigate($(this).val(), true);
-          });
-        });
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl(data));
-      }
     },
 
     recentFiles: function(data) {
@@ -353,7 +335,6 @@ module.exports = Backbone.View.extend({
     remove: function() {
       // Unbind pagehide event handler when View is removed
       this.eventRegister.unbind('documentTitle', this.documentTitle);
-      this.eventRegister.unbind('sidebarContext', this.sidebarContext);
       this.eventRegister.unbind('headerContext', this.headerContext);
       this.eventRegister.unbind('recentFiles', this.recentFiles);
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);

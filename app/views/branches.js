@@ -28,6 +28,7 @@ module.exports = Backbone.View.extend({
       })));
     }).bind(this));
 
+    // TODO: why does this causes object undefined errors on navigation events?
     this.$el.find('.chzn-select').chosen().change(function() {
       this.router.navigate($(this).val(), true);
     });
