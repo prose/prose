@@ -12,7 +12,6 @@ module.exports = Backbone.View.extend({
     this.branches = options.branches;
     this.branch = options.branch || this.repo.get('master_branch');
     this.path = options.path || '';
-    this.subviews = [];
 
     this.listenTo(this.branches, 'sync', this.setModel, this);
   },
@@ -29,7 +28,7 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var collection = this.search ? this.search.search() : this.model.filter((function(file) {
-      return file.get('name').indexOf(this.path) > -1;
+      return file.get('path').indexOf(this.path) > -1;
     }).bind(this));
     
     var frag = document.createDocumentFragment();
