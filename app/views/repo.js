@@ -53,7 +53,7 @@ module.exports = Backbone.View.extend({
 
     this.branches.fetch();
 
-    utils.fixedScroll($('.topbar'));
+    utils.fixedScroll(this.$el.find('.topbar'));
 
     this.subviews = [search, files, sidebar];
 

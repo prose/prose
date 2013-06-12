@@ -27,6 +27,7 @@ module.exports = Backbone.View.extend({
   render: function() {
     var collection = this.search ? this.search.search() : this.model;
     var frag = document.createDocumentFragment();
+
     this.subviews = [];
 
     collection.each((function(file, index) {

@@ -16,6 +16,8 @@ module.exports = Backbone.View.extend({
   render: function() {
     var collection = this.search ? this.search.search() : this.model;
     var frag = document.createDocumentFragment();
+
+    this.subviews.each(function(subview) { subview.remove(); });
     this.subviews = [];
 
     collection.each((function(repo, index) {
@@ -27,10 +29,5 @@ module.exports = Backbone.View.extend({
     this.$el.html(frag);
 
     return this;
-  },
-
-  remove: function() {
-    this.subviews.each(function(subview) { subview.remove(); });
-    Backbone.View.prototype.remove.call(this);
   }
 });

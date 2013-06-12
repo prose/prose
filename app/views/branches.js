@@ -21,9 +21,10 @@ module.exports = Backbone.View.extend({
     // only render branches selector if two or more branches
     if (this.model.length < 2) return;
 
-    this.subviews = [];
     this.$el.html(this.template());
     var frag = document.createDocumentFragment();
+
+    this.subviews = [];
 
     this.model.each((function(branch, index) {
       var view = new BranchView({
@@ -38,9 +39,9 @@ module.exports = Backbone.View.extend({
 
     this.$el.find('select').html(frag);
 
-    // TODO: why does this causes object undefined errors on navigation events?
+    var router = this.router;
     this.$el.find('.chzn-select').chosen().change(function() {
-      this.router.navigate($(this).val(), true);
+      router.navigate($(this).val(), true);
     });
 
     this.$el.addClass('open');
