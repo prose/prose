@@ -12,8 +12,8 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     this.model = options.model;
     this.repo = options.repo;
-    this.router = options.router;
     this.branch = options.branch || this.repo.get('master_branch');
+    this.router = options.router;
 
     this.listenTo(this.model, 'sync', this.render, this);
   },

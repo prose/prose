@@ -15,7 +15,7 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     this.$el.val('#' + [ this.model.get('owner').login, this.repo.get('name'), 'tree', this.model.get('name') ].join('/'));
-    this.$el.selected = this.branch && this.branch === this.model.get('name');
+    this.el.selected = this.branch && this.branch === this.model.get('name');
 
     this.$el.html(this.model.get('name'));
 

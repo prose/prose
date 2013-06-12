@@ -16,8 +16,10 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     this.user = options.user;
     this.model = options.model;
-    this.router = options.router;
+    this.branch = options.branch || this.model.get('master_branch');
     this.branches = this.model.branches;
+    this.path = options.path || '';
+    this.router = options.router;
 
     this.listenTo(this.model, 'sync', this.render, this);
   },
@@ -26,8 +28,8 @@ module.exports = Backbone.View.extend({
     this.$el.html(this.template({
       owner: this.model.get('owner'),
       repo: this.model.get('name'),
-      branch: this.model.get('master_branch'),
-      path: ''
+      branch: this.branch,
+      path: this.path
     }));
 
     var header = new HeaderView({
@@ -43,7 +45,9 @@ module.exports = Backbone.View.extend({
     var files = new FilesView({
       search: search,
       repo: this.model,
-      branches: this.branches
+      branch: this.branch,
+      branches: this.branches,
+      path: this.path
     });
 
     files.setElement(this.$el.find('#files'));
@@ -52,6 +56,7 @@ module.exports = Backbone.View.extend({
     var sidebar = new BranchesView({
       model: this.branches,
       repo: this.model,
+      branch: this.branch,
       router: this.router
     });
 

@@ -13,7 +13,7 @@ var RepoView = require('./views/repo');
 var SearchView = require('./views/search');
 
 var templates = require('../dist/templates');
-var utils = require('./util');
+var util = require('./util');
 
 module.exports = Backbone.Router.extend({
 
@@ -68,7 +68,7 @@ module.exports = Backbone.Router.extend({
   // #example-user
   // #example-organization
   profile: function(login) {
-    utils.loader.loading('Loading Profile');
+    util.loader.loading('Loading Profile');
     if (this.view) this.view.remove();
 
     var user = this.users.findWhere({
@@ -102,12 +102,13 @@ module.exports = Backbone.Router.extend({
     this.user.orgs.fetch();
 
     // TODO: build event-driven loader queue
-    utils.loader.loaded();
+    util.loader.loaded();
   },
 
   // #example-user/example-repo
-  repo: function(login, repoName) {
-    utils.loader.loading('Loading Posts');
+  // #example-user/example-repo/tree/example-branch/example-path
+  repo: function(login, repoName, branch, path) {
+    util.loader.loading('Loading Posts');
     if (this.view) this.view.remove();
 
     var user = this.users.findWhere({
@@ -132,6 +133,8 @@ module.exports = Backbone.Router.extend({
     var content = new RepoView({
       user: user,
       model: repo,
+      branch: branch,
+      path: path,
       router: this
     });
 
@@ -139,49 +142,32 @@ module.exports = Backbone.Router.extend({
     this.app.$el.find('#main').html(this.view.el);
     repo.fetch();
 
-    utils.loader.loaded();
+    util.loader.loaded();
   },
 
-  // #example-user/example-repo/tree/BRANCH
-  repoBranch: function(user, repo, branch, path) {
-
-    var router = this;
-    utils.loader.loading('Loading Posts');
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
-      router.app.render();
-
-      var view = new app.views.Posts({
-        model: data
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    }, this));
-  },
-
-  path: function(user, repo, path) {
+  path: function(login, repoName, path) {
+    var url = util.extractURL(path);
     var parts;
-    app.state.user = user;
-    app.state.repo = repo;
 
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-    url = utils.extractURL(path);
-
-    if (url.mode === 'tree') {
-      this.repoBranch(user, repo, url.branch, url.path);
-    } else if (url.mode === 'new') {
-      this.newPost(user, repo, url.branch, url.path);
-    } else if (url.mode === 'preview') {
-      parts = utils.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
-    } else { // blob or edit ..
-      parts = utils.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
+    switch(url.mode) {
+      case 'tree':
+        this.repo(login, repoName, url.branch, url.path);
+        break;
+      case 'new':
+        this.newPost(login, repoName, url.branch, url.path);
+        break;
+      case 'preview':
+        parts = util.extractFilename(url.path);
+        this.preview(login, repoName, url.branch, parts[0], parts[1], url.mode);
+        break;
+      case 'blob':
+      case 'edit':
+        parts = util.extractFilename(url.path);
+        this.post(login, repoName, url.branch, parts[0], parts[1], url.mode);
+        break;
+      default:
+        // TODO: throw error
+        break;
     }
   },
 
@@ -190,14 +176,14 @@ module.exports = Backbone.Router.extend({
     // something like this here.
     app.state.markdown = true;
 
-    utils.loader.loading('Creating a new post');
+    util.loader.loading('Creating a new post');
     app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
       app.models.emptyPost(user, repo, branch, path, _.bind(function(err, data) {
 
-        data.jekyll = utils.jekyll(path, data.file);
+        data.jekyll = util.jekyll(path, data.file);
         data.preview = false;
-        data.markdown = utils.markdown(data.file);
-        data.lang = utils.mode(data.file);
+        data.markdown = util.markdown(data.file);
+        data.lang = util.mode(data.file);
 
         this.application.render({
           jekyll: data.jekyll,
@@ -208,7 +194,7 @@ module.exports = Backbone.Router.extend({
           model: data
         }).render();
 
-        utils.loader.loaded();
+        util.loader.loaded();
         $('#content').empty().append(view.el);
         app.state.file = data.file;
 
@@ -218,9 +204,9 @@ module.exports = Backbone.Router.extend({
 
   post: function(user, repo, branch, path, file, mode) {
     if (mode === 'edit') {
-      utils.loader.loading('Loading Post');
+      util.loader.loading('Loading Post');
     } else {
-      utils.loader.loading('Previewing Post');
+      util.loader.loading('Previewing Post');
     }
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
@@ -230,7 +216,7 @@ module.exports = Backbone.Router.extend({
 
         app.state.markdown = data.markdown;
         data.jekyll = !! data.metadata;
-        data.lang = utils.mode(file);
+        data.lang = util.mode(file);
 
         this.application.render({
           jekyll: data.jekyll,
@@ -241,7 +227,7 @@ module.exports = Backbone.Router.extend({
           model: data
         }).render();
 
-        utils.loader.loaded();
+        util.loader.loaded();
         $('#content').empty().html(view.el);
       }, this));
     }, this));
@@ -249,7 +235,7 @@ module.exports = Backbone.Router.extend({
 
   preview: function(user, repo, branch, path, file, mode) {
     var router = this;
-    utils.loader.loading('Previewing Post');
+    util.loader.loading('Previewing Post');
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
       if (err) return router.notify('error', 'This post does not exist.');
@@ -265,7 +251,7 @@ module.exports = Backbone.Router.extend({
             model: data
           }).render();
 
-          utils.loader.loaded();
+          util.loader.loaded();
         }
       }, this));
     }, this));
@@ -318,7 +304,7 @@ module.exports = Backbone.Router.extend({
       'message': code
     }).render();
 
-    utils.loader.loaded();
+    util.loader.loaded();
     $('#content').empty().append(view.el);
   },
 
@@ -336,7 +322,7 @@ module.exports = Backbone.Router.extend({
       'message': message
     }).render();
 
-    utils.loader.loaded();
+    util.loader.loaded();
     $('#content').empty().append(view.el);
   }
 });
