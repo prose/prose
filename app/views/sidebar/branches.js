@@ -1,8 +1,8 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var BranchView = require('./sidebar/branch');
-var templates = require('../../dist/templates');
+var BranchView = require('./branch');
+var templates = require('../../../dist/templates');
 
 module.exports = Backbone.View.extend({
   template: _.template(templates.sidebar.branches),

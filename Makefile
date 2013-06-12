@@ -48,20 +48,24 @@ APPLICATION = \
 	app/models/state.js \
 	app/models/user.js \
 	app/views/app.js \
-	app/views/branches.js \
-	app/views/header.js \
+	app/views/documentation.js \
 	app/views/files.js \
+	app/views/header.js \
+	app/views/notification.js \
 	app/views/orgs.js \
+	app/views/post.js \
+	app/views/posts.js \
+	app/views/preview.js \
+	app/views/profile.js \
+	app/views/repo-options.js \
 	app/views/repo.js \
 	app/views/repos.js \
 	app/views/search.js \
-	app/views/notification.js \
-	app/views/documentation.js \
-	app/views/post.js \
-	app/views/posts.js \
-	app/views/profile.js \
-	app/views/preview.js \
 	app/views/start.js \
+	app/views/li/file.js \
+	app/views/li/repo.js \
+	app/views/sidebar/branch.js \
+	app/views/sidebar/branches.js \
 	app/router.js \
 	app/util.js \
 	app/boot.js \
