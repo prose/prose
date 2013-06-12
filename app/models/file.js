@@ -1,4 +1,3 @@
-var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('../config');
 var utils = require('.././util');
@@ -23,10 +22,10 @@ module.exports = Backbone.Model.extend({
     this.set('repo', url[2]);
     this.set('branch', url[4]);
 
-    var extension =  _.extension(attributes.path);
+    var extension =  utils.extension(attributes.path);
 
     this.set('extension', extension);
-    this.set('isBinary', _.isBinary(extension));
-    this.set('isMedia', _.isMedia(extension));
+    this.set('isBinary', utils.isBinary(extension));
+    this.set('isMedia', utils.isMedia(extension));
   }
 });
