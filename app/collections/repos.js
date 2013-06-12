@@ -7,7 +7,7 @@ module.exports = Backbone.Collection.extend({
 
   initialize: function(models, options) {
     this.comparator = function(repo) {
-      return repo.get('updated_at');
+      return -(new Date(repo.get('updated_at')).getTime());
     };
 
     this.url = config.api + (options.username ? '/users/' + options.username + '/repos' : '/user/repos');
