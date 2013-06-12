@@ -2,6 +2,7 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var BranchesView = require('./branches');
+var FilesView = require('./files');
 var utils = require('.././util');
 var templates = require('../../dist/templates');
 
@@ -11,6 +12,7 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     this.model = options.model;
     this.branches = this.model.branches;
+    this.router = options.router;
     this.listenTo(this.model, 'sync', this.render, this);
   },
 
@@ -22,8 +24,19 @@ module.exports = Backbone.View.extend({
       path: ''
     }));
 
-    // render sidebar
-    var sidebar = new BranchesView({ model: this.branches, repo: this.model });
+    debugger;
+
+    var files = new FilesView({
+      model: this.branches,
+      repo: this.model
+    });
+
+    var sidebar = new BranchesView({
+      model: this.branches,
+      repo: this.model,
+      router: this.router
+    });
+    
     sidebar.setElement(this.$el.find('#drawer'));
     this.branches.fetch();
 

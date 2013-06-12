@@ -109,7 +109,8 @@ module.exports = Backbone.Router.extend({
       })).findWhere({ name: repoName });
 
     var content = new RepoView({
-      model: repo
+      model: repo,
+      router: this
     });
 
     content.setElement(this.app.$el.find('#main'));
