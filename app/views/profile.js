@@ -10,7 +10,8 @@ module.exports = Backbone.View.extend({
   template: _.template(templates.profile),
 
   initialize: function(options) {
-    this.user = user;
+    this.auth = options.auth;
+    this.user = options.user;
     this.search = options.search;
     this.repos = options.repos;
   },
@@ -21,10 +22,10 @@ module.exports = Backbone.View.extend({
     this.search.setElement(this.$el.find('#search')).render();
     this.repos.setElement(this.$el.find('#repos'));
 
-    var header = new HeaderView({ model: user, alterable: false });
+    var header = new HeaderView({ model: this.user, alterable: false });
     header.setElement(this.$el.find('#heading')).render();
 
-    var sidebar = new OrgsView({ model: this.user.orgs });
+    var sidebar = new OrgsView({ model: this.auth.orgs });
     sidebar.setElement(this.$el.find('#drawer'));
 
     utils.fixedScroll($('.topbar'));

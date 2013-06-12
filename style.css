@@ -520,7 +520,7 @@ ins {
        -o-transition:right 150ms ease-out;
           transition:right 150ms ease-out;
   }
-  .open .sidebar {
+  .sidebar.open {
     right:0;
     }
 
@@ -2555,10 +2555,10 @@ and (max-device-width:480px) {
     .vert {
       border-left:1px solid #D4D7D9;
       }
-    .open .sidebar {
+    .sidebar.open {
       right:-100%;
       }
-    .open.mobile .sidebar {
+    .sidebar.open.mobile {
       right:0;
       }
     .sidebar .listing li a {

@@ -10,12 +10,13 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     this.model = options.model;
-    this.listenTo(this.model, 'reset', this.render, this);
+    this.listenTo(this.model, 'sync', this.render, this);
   },
 
   render: function() {
     this.$el.html(this.template({ user: this.model.user.toJSON(), orgs: this.model.toJSON() }));
 
+    
     this.$el.addClass('open');
 
     return this;
