@@ -36,5 +36,10 @@ module.exports = Backbone.View.extend({
     this.$el.addClass('open');
 
     return this;
+  },
+
+  remove: function() {
+    console.log('Branches.remove()');
+    Backbone.View.prototype.remove.call(this);
   }
 });
