@@ -12,6 +12,8 @@ module.exports = Backbone.Collection.extend({
 
     this.url = config.api + '/repos/' + options.owner.login + '/' + 
       options.repo + '/git/trees/' + options.sha + '?recursive=1';
+
+    this.branch = options.branch;
   },
 
   parse: function(resp, options) {

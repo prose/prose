@@ -26,6 +26,7 @@ module.exports = Backbone.View.extend({
     }
 
     this.$el.html(this.template(_.extend(this.model.attributes, {
+      branch: this.branch,
       permissions: this.repo.get('permissions')
     })));
 
