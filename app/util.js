@@ -42,10 +42,8 @@ module.exports = {
   // Determine mode for CodeMirror
   // -------
 
-  mode: function(file) {
-    if (this.markdown(file)) return 'gfm';
-    var extension = this.extension(file);
-
+  mode: function(extension) {
+    if (this.isMarkdown(extension)) return 'gfm';
     if (_.include(['js', 'json'], extension)) return 'javascript';
     if (extension === 'html') return 'htmlmixed';
     if (extension === 'rb') return 'ruby';
@@ -111,19 +109,24 @@ module.exports = {
     });
   },
 
-  isBinary: function(file) {
-    var regex = new RegExp(/(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$/);
-    return regex.test(file);
+  isBinary: function(extension) {
+    var regex = new RegExp(/^(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$/);
+    return !!(regex.test(extension));
   },
 
-  isMedia: function(file) {
-    var regex = new RegExp(/(jpeg|jpg|gif|png|swf|mov)$/);
-    return regex.test(file);
+  isMarkdown: function(extension) {
+    var regex = new RegExp(/^(md|mkdn?|mdown|markdown)$/);
+    return !!(regex.test(extension));
   },
 
-  isImage: function(file) {
-    var regex = new RegExp(/(jpeg|jpg|gif|png)$/);
-    return regex.test(file);
+  isMedia: function(extension) {
+    var regex = new RegExp(/^(jpeg|jpg|gif|png|swf|mov)$/);
+    return !!(regex.test(extension));
+  },
+
+  isImage: function(extension) {
+    var regex = new RegExp(/^(jpeg|jpg|gif|png)$/);
+    return !!(regex.test(extension));
   },
 
   // Return a true or false boolean if a path

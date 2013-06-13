@@ -1,10 +1,10 @@
 <div class='editor views<% if (markdown) { %> markdown<% } %>'>
   <div id='diff' class='view prose diff'></div>
-  <% if (jekyll) { %>
+  <% if (metadata) { %>
     <div id='meta' class='view round meta'>
       <div class='form'></div>
       <a href='#' class='button round finish'>
-        Back to <% if (app.state.mode === 'new') { %>New Post<% } else { %><%= app.state.mode %><% } %>
+        Back to <% if (mode === 'new') { %>New Post<% } else { %><%= mode %><% } %>
       </a>
     </div>
   <% } %>
@@ -12,9 +12,9 @@
     <div class='topbar-wrapper'>
       <div class='topbar'>
         <div class='containment toolbar round'>
-          <% if (jekyll && metadata.published) { %>
+          <% if (metadata && metadata.published) { %>
             <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico checkmark'></span></a>
-          <% } else if (jekyll && !metadata.published) { %>
+          <% } else if (metadata && !metadata.published) { %>
             <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico checkmark'></span></a>
           <% } %>
           <div class='options clearfix'>
@@ -27,7 +27,7 @@
                 <span class='popup round arrow-top'>Submit Change</span>
               <% } %>
 
-              <%= avatar %>
+              <span class='ico round document <%= lang %>'></span>
             </span>
             <% if (markdown) { %>
               <ul class='group round clearfix'>

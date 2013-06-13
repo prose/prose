@@ -26,7 +26,9 @@ module.exports = Backbone.Model.extend({
 
     this.set('extension', extension);
     this.set('binary', util.isBinary(extension));
+    this.set('lang', util.mode(extension));
     this.set('media', util.isMedia(extension));
+    this.set('markdown', util.isMarkdown(extension));
   },
 
   parse: function(resp, options) {
@@ -38,6 +40,8 @@ module.exports = Backbone.Model.extend({
 
     if (!hasMetadata) return {
       content: resp,
+      markdown: markdown,
+      metadata: false,
       published: true,
       writable: writable
     };
@@ -63,6 +67,8 @@ module.exports = Backbone.Model.extend({
   },
 
   fetch: function(options) {
+    debugger;
+    // TODO: change events triggering Backbone.model.save?
     options = options ? _.clone(options) : {};
     Backbone.Model.prototype.fetch.call(this, _.extend(options, {
       dataType: 'text'

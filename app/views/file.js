@@ -6,7 +6,7 @@ var key = require('keymaster');
 var marked = require('marked');
 var diff = require('diff');
 var Backbone = require('backbone');
-var utils = require('../util');
+var util = require('../util');
 var upload = require('../upload');
 var cookie = require('../cookie');
 var toolbar = require('../toolbar/markdown.js');
@@ -35,6 +35,17 @@ module.exports = Backbone.View.extend({
 
     this.listenTo(this.branches, 'sync', this.setCollection, this);
 
+    // Cache jQuery window object
+    var $window = $(window);
+
+    // Stash editor and metadataEditor content to sessionStorage on pagehide event
+    this.listenTo($window, 'pagehide', this.stashFile, this);
+
+    // Prevent exit when there are unsaved changes
+    this.listenTo($window, 'beforeunload', function() {
+      if (this.dirty) return 'You have unsaved changes. Are you sure you want to leave?';
+    }, this);
+
     /*
     this.prevFile = this.serialize();
     this.config = {};
@@ -48,29 +59,209 @@ module.exports = Backbone.View.extend({
 
     // TODO: switch this flag to use Backbone.model.isNew()
     this.newFile = (app.state.mode === 'new') ? true : false;
-
-    // Stash editor and metadataEditor content to sessionStorage on pagehide event
-    // Always run stashFile in context of view
-    $(window).on('pagehide', _.bind(this.stashFile, this));
     */
   },
 
   setCollection: function() {
     this.collection = this.branches.findWhere({ name: this.branch }).files;
+
+    this.listenTo(this.collection, 'all', function() {
+      console.log(arguments);
+    }, this);
+
     this.listenTo(this.collection, 'sync', this.setModel, this);
     this.collection.fetch();
   },
 
   setModel: function() {
-    this.model = this.collection.findWhere({ name: this.filename });
-    this.listenTo(this.model, 'sync', this.render, this);
+    this.model = this.collection.findWhere({ name: this.filename, path: this.path });
+
+    this.listenTo(this.model, 'all', function() {
+      console.log('model', arguments);
+    }, this);
+
+    // this.listenTo(this.model, 'sync', this.render, this);
     this.model.fetch();
   },
 
-  render: function() {
+  compilePreview: function(content) {
+    // Scan the content search for ![]()
+    // grab the path and file and form a RAW github aboslute request for it
+    var scan = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
+    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
+    var titleAttribute = /".*?"/;
+
+    // Build an array of found images
+    var result = content.match(scan);
+
+    // Iterate over the results and replace
+    _(result).each(function(r) {
+        var parts = (image).exec(r);
+
+        if (parts !== null) {
+          var path = parts[2];
+
+          if (!util.absolutePath(path)) {
+            // Remove any title attribute in the image tag is there is one.
+            if (titleAttribute.test(path)) {
+              path = path.split(titleAttribute)[0];
+            }
+
+            var path = this.model.get('path');
+            var raw = auth.raw + '/' + this.repo.get('owner').login + '/' + this.repo.get('name') + '/' + this.branch + '/' + (path ? path  + '/' : '') + this.model.get('name');
+
+            if (this.repo.get('private')) {
+              // append auth param
+              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
+            }
+
+            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+          }
+        }
+    });
+
+    return content;
+  },
+
+  initEditor: function() {
     var view = this;
 
+    if (view.model.get('metadata')) {
+      // view.metadataEditor = view.buildMeta();
+    }
+
+    var lang = view.model.get('lang');
+
+    // Don't set up content editor for yaml posts
+    if (lang === 'yaml') return;
+
+    view.editor = CodeMirror(document.getElementById('code'), {
+      mode: lang,
+      value: view.model.get('content'),
+      lineWrapping: true,
+      lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
+      extraKeys: view.keyMap(),
+      matchBrackets: true,
+      dragDrop: false,
+      theme: 'prose-bright'
+    });
+
+    // Bind Drag and Drop work on the editor
+    if (view.model.get('markdown') && view.model.get('writable')) {
+      upload.dragDrop(view.$el.find('#edit'), function(e, file, content) {
+        if (view.$el.find('#dialog').hasClass('dialog')) {
+          view.updateImageInsert(e, file, content);
+        } else {
+          view.createAndUpload(e, file, content);
+        }
+      });
+    }
+
+    // Monitor the current selection and apply
+    // an active class to any snippet links
+    if (lang === 'gfm') {
+      var $snippetLinks = view.$el.find('.toolbar .group a');
+      view.listenTo(view.editor, 'cursorActivity', function() {
+
+        var selection = util.trim(view.editor.getSelection());
+        $snippetLinks.removeClass('active');
+
+        var match = {
+          lineBreak: /\n/,
+          h1: /^#{1}/,
+          h2: /^#{2,2}/,
+          h3: /^#{3,3}/,
+          strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+          italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+          isNumber: parseInt(selection.charAt(0), 10)
+        };
+
+        if (!match.isNumber) {
+          switch (selection.charAt(0)) {
+            case '#':
+              if (!match.lineBreak.test(selection)) {
+                if (match.h2.test(selection) && !match.h3.test(selection)) {
+                  view.$el.find('[data-key="sub-heading"]').addClass('active');
+                } else if (!match.h2.test(selection)) {
+                  view.$el.find('[data-key="heading"]').addClass('active');
+                }
+              }
+              break;
+            case '>':
+              view.$el.find('[data-key="quote"]').addClass('active');
+              break;
+            case '*':
+            case '_':
+              if (!match.lineBreak.test(selection)) {
+                if (match.strong.test(selection)) {
+                  view.$el.find('[data-key="bold"]').addClass('active');
+                } else if (match.italic.test(selection)) {
+                  view.$el.find('[data-key="italic"]').addClass('active');
+                }
+              }
+              break;
+            case '!':
+              if (!match.lineBreak.test(selection) &&
+                  selection.charAt(1) === '[' &&
+                  selection.charAt(selection.length - 1) === ')') {
+                view.$el.find('[data-key="media"]').addClass('active');
+              }
+              break;
+            case '[':
+              if (!match.lineBreak.test(selection) &&
+                  selection.charAt(selection.length - 1) === ')') {
+                view.$el.find('[data-key="link"]').addClass('active');
+              }
+              break;
+            case '-':
+              if (selection.charAt(1) === ' ') {
+                view.$el.find('[data-key="list"]').addClass('active');
+              }
+            break;
+          }
+        } else {
+          if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
+            view.$el.find('[data-key="numbered-list"]').addClass('active');
+          }
+        }
+      }, view);
+    }
+
+    view.listenTo(view.editor, 'change', view.makeDirty, view);
+
+    view.listenTo(view.editor, 'focus', function() {
+      // If an upload queue is set, we want to clear it.
+      this.queue = undefined;
+
+      // If a dialog window is open and the editor is in focus, close it.
+      view.$el.find('.toolbar .group a').removeClass('on');
+      view.$el.find('#dialog').empty().removeClass();
+    }, view);
+
+    view.refreshCodeMirror();
+
+    // Check sessionStorage for existing stash
+    // Apply if stash exists and is current, remove if expired
+    view.stashApply();
+  },
+
+
+  render: function() {
     /*
+    // Link Dialog
+    if (app.state.markdown && this.config.relativeLinks) {
+      $.ajax({
+        cache: true,
+        dataType: 'jsonp',
+        jsonp: false,
+        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
+        url: this.config.relativeLinks,
+        success: function(links) {
+          view.relativeLinks = links;
+        }
+      });
+    }
+
     // Assets Listing for the Media Dialog
     if (app.state.markdown && this.config.media) {
       this.assetsDirectory = this.config.media;
@@ -81,69 +272,57 @@ module.exports = Backbone.View.extend({
     */
 
     if (this.model.get('markdown')) {
-      this.set('preview', marked(this.compilePreview(this.model.content)));
+      this.model.set('preview', marked(this.compilePreview(this.model.get('content'))));
     }
 
     this.renderHeading();
 
-    $(this.el).empty().append(this.template(_.extend(this.model, {
-      metadata: this.model.metadata,
-      avatar: this.header.avatar
+    this.$el.html(this.template(_.extend(this.model.attributes, {
+      mode: this.mode
     })));
 
-    debugger;
-
-    if (this.model.markdown && app.state.mode === 'blob') {
+    if (this.model.get('markdown') && this.mode === 'blob') {
       this.preview();
     } else {
       // Editor is first up so trigger an active class for it
-      $('#edit', this.el).toggleClass('active', true);
-      $('.post-views .edit').addClass('active');
+      this.$el.find('#edit').toggleClass('active', true);
+      this.$el.find('.post-views .edit').addClass('active');
 
       this.initEditor();
-      _.delay(function() {
-        utils.fixedScroll($('.topbar', view.el));
-      }, 1);
+
+      util.fixedScroll(this.$el.find('.topbar'));
     }
 
     this.updateDocumentTitle();
-
-    // Prevent exit when there are unsaved changes
-    window.onbeforeunload = function() {
-      if (app.state.file && view.dirty) return 'You have unsaved changes. Are you sure you want to leave?';
-    };
 
     return this;
   },
 
   updateDocumentTitle: function() {
-    var context = 'Editing ';
-    var pathTitle = (app.state.path) ? app.state.path : '';
+    var context = this.mode === 'blob' ? 'Previewing ' : 'Editing ';
+    var path = this.model.get('path');
+    var pathTitle = path ? path : '';
 
-    if (app.state.mode === 'blob') context = 'Previewing ';
-    this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    // this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
   },
 
   renderHeading: function() {
-    // Render heading
-    var isPrivate = app.state.isPrivate ? true : false;
-    var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
+    var user = this.repo.get('owner').login;
+    var repo = this.repo.get('name');
 
-    debugger;
+    var parentTrail = '<a href="#' + user + '">' + user + '</a> / <a href="#' + user + '/' + repo + '">' + repo + '</a>';
 
     this.header = {
       avatar: '<span class="ico round document ' + this.model.get('lang') + '"></span>',
       parentTrail: parentTrail,
-      isPrivate: isPrivate,
-      title: utils.filepath(this.model.get('path'), this.model.get('name')),
-      writable: this.model.repo.get('permissions').push,
+      private: this.repo.get('private') ? true : false,
+      title: util.filepath(this.model.get('path'), this.model.get('name')),
+      writable: this.repo.get('permissions').push,
       alterable: true,
-      translate: this.model.translate,
-      lang: this.model.lang,
-      metadata: this.model.metadata
+      translate: this.model.get('translate'),
+      lang: this.model.get('lang'),
+      metadata: this.model.get('metadata')
     };
-
-    this.eventRegister.trigger('headerContext', this.header, true);
   },
 
   edit: function(e) {
@@ -153,7 +332,7 @@ module.exports = Backbone.View.extend({
     if (!this.editor) {
       this.initEditor();
       _.delay(function() {
-        utils.fixedScroll($('.topbar', view.el));
+        util.fixedScroll($('.topbar', view.el));
       }, 1);
     }
 
@@ -199,43 +378,6 @@ module.exports = Backbone.View.extend({
       app.state.mode = 'blob';
       this.updateURL();
     }
-  },
-
-  compilePreview: function(content) {
-    // Scan the content search for ![]()
-    // grab the path and file and form a RAW github aboslute request for it
-    var scan = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
-    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
-    var titleAttribute = /".*?"/;
-
-    // Build an array of found images
-    var result = content.match(scan);
-
-    // Iterate over the results and replace
-    _(result).each(function(r) {
-        var parts = (image).exec(r);
-
-        if (parts !== null) {
-          var path = parts[2];
-
-          if (!utils.absolutePath(path)) {
-            // Remove any title attribute in the image tag is there is one.
-            if (titleAttribute.test(path)) {
-              path = path.split(titleAttribute)[0];
-            }
-
-            var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path;
-            if (app.state.isPrivate) {
-              // append auth param
-              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
-            }
-
-            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
-          }
-        }
-    });
-
-    return content;
   },
 
   meta: function() {
@@ -380,10 +522,10 @@ module.exports = Backbone.View.extend({
   updateFilename: function(filepath, cb) {
     var view = this;
 
-    if (!utils.validPathname(filepath)) return cb('error');
+    if (!util.validPathname(filepath)) return cb('error');
     app.state.path = this.model.path; // ?
-    app.state.file = utils.extractFilename(filepath)[1];
-    app.state.path = utils.extractFilename(filepath)[0];
+    app.state.file = util.extractFilename(filepath)[1];
+    app.state.path = util.extractFilename(filepath)[0];
 
     function finish() {
       view.model.path = app.state.path;
@@ -391,7 +533,7 @@ module.exports = Backbone.View.extend({
     }
 
     if (this.model.persisted) {
-      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, utils.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
+      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, util.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
         if (!err) finish();
         if (err) {
           cb('error');
@@ -482,7 +624,7 @@ module.exports = Backbone.View.extend({
 
     view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
 
-    if (filepath === utils.filepath(this.model.path, this.model.file)) return save();
+    if (filepath === util.filepath(this.model.path, this.model.file)) return save();
 
     // Move or create file
     this.updateFilename(filepath, function(err) {
@@ -551,7 +693,7 @@ module.exports = Backbone.View.extend({
 
   updateFile: function() {
     var filepath = $('input.filepath').val();
-    var filename = utils.extractFilename(filepath)[1];
+    var filename = util.extractFilename(filepath)[1];
     var filecontent = this.serialize();
     var $message = $('.commit-message');
     var noVal = 'Updated ' + filename;
@@ -981,130 +1123,6 @@ module.exports = Backbone.View.extend({
     };
   },
 
-  initEditor: function() {
-    var view = this;
-
-    // TODO Remove setTimeout
-    setTimeout(function() {
-      if (view.model.jekyll) {
-        view.metadataEditor = view.buildMeta();
-      }
-
-      // Don't set up content editor for yaml posts
-      if (view.model.lang === 'yaml') return;
-
-      var lang = view.model.lang;
-      view.editor = CodeMirror(document.getElementById('code'), {
-        mode: view.model.lang,
-        value: view.model.content,
-        lineWrapping: true,
-        lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
-        extraKeys: view.keyMap(),
-        matchBrackets: true,
-        dragDrop: false,
-        theme: 'prose-bright'
-      });
-
-      // Bind Drag and Drop work on the editor
-      if (app.state.markdown && view.model.writable) {
-        upload.dragDrop($('#edit'), function(e, file, content) {
-          if ($('#dialog').hasClass('dialog')) {
-            view.updateImageInsert(e, file, content);
-          } else {
-            view.createAndUpload(e, file, content);
-          }
-        });
-      }
-
-      // Monitor the current selection and apply
-      // an active class to any snippet links
-      if (view.model.lang === 'gfm') {
-        var $snippetLinks = $('.toolbar .group a', view.el);
-        view.editor.on('cursorActivity', _.bind(function() {
-
-          var selection = utils.trim(view.editor.getSelection());
-          $snippetLinks.removeClass('active');
-
-          var match = {
-            lineBreak: /\n/,
-            h1: /^#{1}/,
-            h2: /^#{2,2}/,
-            h3: /^#{3,3}/,
-            strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-            italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-            isNumber: parseInt(selection.charAt(0), 10)
-          };
-
-          if (!match.isNumber) {
-            switch (selection.charAt(0)) {
-              case '#':
-                if (!match.lineBreak.test(selection)) {
-                  if (match.h2.test(selection) && !match.h3.test(selection)) {
-                    $('[data-key="sub-heading"]').addClass('active');
-                  } else if (!match.h2.test(selection)) {
-                    $('[data-key="heading"]').addClass('active');
-                  }
-                }
-                break;
-              case '>':
-                $('[data-key="quote"]').addClass('active');
-                break;
-              case '*':
-              case '_':
-                if (!match.lineBreak.test(selection)) {
-                  if (match.strong.test(selection)) {
-                    $('[data-key="bold"]').addClass('active');
-                  } else if (match.italic.test(selection)) {
-                    $('[data-key="italic"]').addClass('active');
-                  }
-                }
-                break;
-              case '!':
-                if (!match.lineBreak.test(selection) &&
-                    selection.charAt(1) === '[' &&
-                    selection.charAt(selection.length - 1) === ')') {
-                  $('[data-key="media"]').addClass('active');
-                }
-                break;
-              case '[':
-                if (!match.lineBreak.test(selection) &&
-                    selection.charAt(selection.length - 1) === ')') {
-                  $('[data-key="link"]').addClass('active');
-                }
-                break;
-              case '-':
-                if (selection.charAt(1) === ' ') {
-                  $('[data-key="list"]').addClass('active');
-                }
-              break;
-            }
-          } else {
-            if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
-              $('[data-key="numbered-list"]').addClass('active');
-            }
-          }
-        }, view));
-      }
-
-      view.editor.on('change', _.bind(view.makeDirty, view));
-      view.editor.on('focus', _.bind(function() {
-
-        // If an upload queue is set, we want to clear it.
-        this.queue = undefined;
-
-        // If a dialog window is open and the editor is in focus, close it.
-        $('.toolbar .group a', this.el).removeClass('on');
-        $('#dialog', view.el).empty().removeClass();
-      }, view));
-
-      view.refreshCodeMirror();
-
-      // Check sessionStorage for existing stash
-      // Apply if stash exists and is current, remove if expired
-      view.stashApply();
-    }, 100);
-  },
-
   createAndUpload: function(e, file, content, userDefinedPath) {
     var view = this;
 
@@ -1134,7 +1152,7 @@ module.exports = Backbone.View.extend({
 
     // Read through the filenames of path. If there is a filename that
     // exists, we want to pass data.sha to update the existing one.
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, utils.extractFilename(path)[0], function(err, res) {
+    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, util.extractFilename(path)[0], function(err, res) {
       if (err) return view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
 
       // Check whether the current (or media) directory
@@ -1142,7 +1160,7 @@ module.exports = Backbone.View.extend({
       // to upload. we want to update the file by passing the sha
       // to the data object in this case.
       _(res.files).each(function(f) {
-        var parts = utils.extractFilename(f.path);
+        var parts = util.extractFilename(f.path);
         var structuredPath = [parts[0], encodeURIComponent(parts[1])].join('/');
         if (structuredPath === path) {
           data.sha = f.sha;
@@ -1181,7 +1199,7 @@ module.exports = Backbone.View.extend({
           }
 
           // Store a record of recently uploaded files in memory
-          var fileParts = utils.extractFilename(res.content.path);
+          var fileParts = util.extractFilename(res.content.path);
           var structuredPath = [fileParts[0], encodeURIComponent(fileParts[1])].join('/');
 
           view.recentlyUploadedFiles.push({
@@ -1200,7 +1218,7 @@ module.exports = Backbone.View.extend({
     var $snippets = $('.toolbar .group a', this.el);
     var key = $target.data('key');
     var snippet = $target.data('snippet');
-    var selection = utils.trim(this.editor.getSelection());
+    var selection = util.trim(this.editor.getSelection());
 
     $dialog.removeClass().empty();
 
@@ -1407,15 +1425,15 @@ module.exports = Backbone.View.extend({
         name: asset.name,
         type: asset.type,
         path: path + '/' + encodeURIComponent(asset.name),
-        isMedia: utils.isMedia(path)
+        isMedia: util.isMedia(path)
       }));
     });
 
     $('.asset a', $media).on('click', function(e) {
       var href = $(this).attr('href');
-      var alt = utils.trim($(this).text());
+      var alt = util.trim($(this).text());
 
-      if (utils.isImage(href)) {
+      if (util.isImage(href)) {
         $('input[name="url"]').val(href);
         $('input[name="alt"]').val(alt);
       } else {
@@ -1479,7 +1497,7 @@ module.exports = Backbone.View.extend({
 
   heading: function(s) {
     if (s.charAt(0) === '#' && s.charAt(1) !== '#') {
-      this.editor.replaceSelection(utils.lTrim(s.replace(/#/g, '')));
+      this.editor.replaceSelection(util.lTrim(s.replace(/#/g, '')));
     } else {
       this.editor.replaceSelection('# ' + s.replace(/#/g, ''));
     }
@@ -1487,7 +1505,7 @@ module.exports = Backbone.View.extend({
 
   subHeading: function(s) {
     if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
-      this.editor.replaceSelection(utils.lTrim(s.replace(/#/g, '')));
+      this.editor.replaceSelection(util.lTrim(s.replace(/#/g, '')));
     } else {
       this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
     }
@@ -1511,7 +1529,7 @@ module.exports = Backbone.View.extend({
 
   quote: function(s) {
     if (s.charAt(0) === '>') {
-      this.editor.replaceSelection(utils.lTrim(s.replace(/\>/g, '')));
+      this.editor.replaceSelection(util.lTrim(s.replace(/\>/g, '')));
     } else {
       this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
     }
