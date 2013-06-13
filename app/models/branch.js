@@ -4,25 +4,18 @@ var config = require('../config');
 
 module.exports = Backbone.Model.extend({
   initialize: function(attributes, options) {
-    var url = this.get('commit').url.match(/repos\/(.*)\/(.*)\/commits/);
-
-    var owner = { login: url[1] };
-    this.set('owner', owner);
-
-    var repo = url[2];
-    this.set('repo', repo);
+    this.repo = attributes.repo;
 
     var name = attributes.name;
-    this.set('name', name);
+    this.set('name', attributes.name);
 
     var sha = attributes.commit.sha;
     this.set('sha', sha);
 
-    this.url = '/repos/' + owner.login + '/' + repo + '/branches/' + name;
+    this.url = '/repos/' + this.repo.get('owner').login + '/' + this.repo.get('name') + '/branches/' + name;
 
     this.files = new Files([], {
-      owner: owner,
-      repo: repo,
+      repo: this.repo,
       branch: name,
       sha: sha
     });

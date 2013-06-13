@@ -23,6 +23,6 @@ module.exports = Backbone.Model.extend({
 
   initialize: function(attributes, options) {
     this.url = config.api + '/repos/' + attributes.owner.login + '/' + attributes.name;
-    this.branches = new Branches([], { owner: this.get('owner'), repo: this.get('name') });
+    this.branches = new Branches([], { repo: this });
   }
 });
