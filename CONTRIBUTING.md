@@ -26,7 +26,7 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 
 prose uses [Browserify](http://browserify.org) with [Make](http://www.gnu.org/software/make/)
 to manage dependencies and build. Development also requires you
-have [node.js](http://nodejs.org) installed.
+have [node.js](http://nodejs.org) >= v0.8 installed.
 
 To get started:
 
