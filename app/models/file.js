@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('../config');
 var utils = require('.././util');
@@ -29,5 +30,16 @@ module.exports = Backbone.Model.extend({
     this.set('extension', extension);
     this.set('isBinary', utils.isBinary(extension));
     this.set('isMedia', utils.isMedia(extension));
+  },
+
+  parse: function(resp, options) {
+    return { content: resp };
+  },
+
+  fetch: function(options) {
+    options = options ? _.clone(options) : {};
+    Backbone.Model.prototype.fetch.call(this, _.extend(options, {
+      dataType: 'text'
+    }));
   }
 });

@@ -62,7 +62,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.model, 'sync', this.render, this);
 
     // TODO: why is this a 200 but triggers an error event?
-    this.listenTo(this.model, 'all', function(e) { console.log(e); }, this);
+    this.listenTo(this.model, 'all', function(e) { console.log(arguments); }, this);
 
     this.model.fetch();
   },
