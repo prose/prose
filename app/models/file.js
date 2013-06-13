@@ -33,7 +33,41 @@ module.exports = Backbone.Model.extend({
   },
 
   parse: function(resp, options) {
-    return { content: resp };
+    // Extract YAML from a post, trims whitespace
+    resp = resp.replace(/\r\n/g, '\n'); // normalize a little bit
+
+    function writable() {
+      return !!(app.state.permissions && app.state.permissions.push);
+    }
+
+    var hasMetadata = !!utils.hasMetadata(resp);
+
+    debugger;
+
+    if (!hasMetadata) return {
+      content: resp,
+      published: true,
+      writable: writable(),
+      jekyll: hasMetadata
+    };
+
+    var res = {
+      writable: writable(),
+      jekyll: hasMetadata
+    };
+
+    res.content = resp.replace(/^(---\n)((.|\n)*?)---\n?/, function(match, dashes, frontmatter) {
+      try {
+        res.metadata = jsyaml.load(frontmatter);
+        res.metadata.published = published(frontmatter);
+      } catch(err) {
+        console.log('ERROR encoding YAML');
+      }
+
+      return '';
+    }).trim();
+
+    return res;
   },
 
   fetch: function(options) {

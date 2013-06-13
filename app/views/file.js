@@ -6,12 +6,15 @@ var key = require('keymaster');
 var marked = require('marked');
 var diff = require('diff');
 var Backbone = require('backbone');
-var utils = require('.././util');
-var upload = require('.././upload');
-var cookie = require('.././cookie');
-var toolbar = require('.././toolbar/markdown.js');
+var utils = require('../util');
+var upload = require('../upload');
+var cookie = require('../cookie');
+var toolbar = require('../toolbar/markdown.js');
+var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
+  template: _.template(templates.file),
+
   events: {
     'click .group a': 'markdownSnippet',
     'click .dialog .insert': 'dialogInsert',
@@ -24,6 +27,7 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     this.repo = options.repo;
+    this.mode = options.mode;
     this.branch = options.branch || this.repo.get('master_branch');
     this.branches = options.branches;
     this.path = options.path || '';
@@ -60,32 +64,13 @@ module.exports = Backbone.View.extend({
   setModel: function() {
     this.model = this.collection.findWhere({ name: this.filename });
     this.listenTo(this.model, 'sync', this.render, this);
-
-    // TODO: why is this a 200 but triggers an error event?
-    this.listenTo(this.model, 'all', function(e) { console.log(arguments); }, this);
-
     this.model.fetch();
   },
 
   render: function() {
-    debugger;
-
     var view = this;
 
-    // Link Dialog
-    if (app.state.markdown && this.config.relativeLinks) {
-      $.ajax({
-        cache: true,
-        dataType: 'jsonp',
-        jsonp: false,
-        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
-        url: this.config.relativeLinks,
-        success: function(links) {
-          view.relativeLinks = links;
-        }
-      });
-    }
-
+    /*
     // Assets Listing for the Media Dialog
     if (app.state.markdown && this.config.media) {
       this.assetsDirectory = this.config.media;
@@ -93,36 +78,20 @@ module.exports = Backbone.View.extend({
         view.assets = data.files;
       });
     }
+    */
 
-    this.data = _.extend(this.model, {
-      mode: app.state.mode,
-      preview: this.model.markdown ? marked(this.compilePreview(this.model.content)) : '',
-      metadata: this.model.metadata
-    });
-
-    this.eventRegister = app.eventRegister;
-
-    // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove', 'cancelSave');
-    this.eventRegister.bind('edit', this.edit);
-    this.eventRegister.bind('preview', this.preview);
-    this.eventRegister.bind('deleteFile', this.deleteFile);
-    this.eventRegister.bind('save', this.save);
-    this.eventRegister.bind('updateFile', this.updateFile);
-    this.eventRegister.bind('translate', this.translate);
-    this.eventRegister.bind('meta', this.meta);
-    this.eventRegister.bind('remove', this.remove);
-    this.eventRegister.bind('cancelSave', this.cancelSave);
+    if (this.model.get('markdown')) {
+      this.set('preview', marked(this.compilePreview(this.model.content)));
+    }
 
     this.renderHeading();
 
-    var tmpl = _(window.app.templates.post).template();
-
-    $(this.el).empty().append(tmpl(_.extend(this.model, {
-      mode: app.state.mode,
+    $(this.el).empty().append(this.template(_.extend(this.model, {
       metadata: this.model.metadata,
       avatar: this.header.avatar
     })));
+
+    debugger;
 
     if (this.model.markdown && app.state.mode === 'blob') {
       this.preview();
@@ -160,16 +129,18 @@ module.exports = Backbone.View.extend({
     var isPrivate = app.state.isPrivate ? true : false;
     var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
 
+    debugger;
+
     this.header = {
-      avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
+      avatar: '<span class="ico round document ' + this.model.get('lang') + '"></span>',
       parentTrail: parentTrail,
       isPrivate: isPrivate,
-      title: utils.filepath(this.data.path, this.data.file),
-      writable: this.model.writable,
+      title: utils.filepath(this.model.get('path'), this.model.get('name')),
+      writable: this.model.repo.get('permissions').push,
       alterable: true,
-      translate: this.data.translate,
-      lang: this.data.lang,
-      metadata: this.data.metadata
+      translate: this.model.translate,
+      lang: this.model.lang,
+      metadata: this.model.metadata
     };
 
     this.eventRegister.trigger('headerContext', this.header, true);
