@@ -13,8 +13,18 @@ module.exports = Backbone.Model.extend({
     this.set('repo', repo);
 
     var name = attributes.name;
+    this.set('name', name);
+
+    var sha = attributes.commit.sha;
+    this.set('sha', sha);
 
     this.url = '/repos/' + owner.login + '/' + repo + '/branches/' + name;
-    this.files = new Files([], { owner: owner, repo: repo, branch: name });
+
+    this.files = new Files([], {
+      owner: owner,
+      repo: repo,
+      branch: name,
+      sha: sha
+    });
   }
 });

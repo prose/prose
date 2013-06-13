@@ -1,13 +1,15 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('../config');
-var utils = require('.././util');
+var util = require('.././util');
 
 module.exports = Backbone.Model.extend({
   constructor: function(attributes, options) {
+    var path = util.extractFilename(attributes.path);
+
     Backbone.Model.call(this, {
-      name: attributes.name,
-      path: attributes.path,
+      name: path[1],
+      path: path[0],
       sha: attributes.sha,
       type: attributes.type,
       url: attributes.url
@@ -17,19 +19,18 @@ module.exports = Backbone.Model.extend({
   initialize: function(attributes, options) {
     this.url = attributes.url;
 
-    var url = attributes.url.match(/repos\/(.*)\/(.*)\/contents\/(.*)ref?=(.*)/);
+    var url = attributes.url.match(/repos\/(.*)\/(.*)\/git.*/);
 
     var owner = { login: url[1] };
     this.set('owner', owner);
 
     this.set('repo', url[2]);
-    this.set('branch', url[4]);
 
-    var extension =  utils.extension(attributes.path);
+    var extension =  util.extension(attributes.path);
 
     this.set('extension', extension);
-    this.set('isBinary', utils.isBinary(extension));
-    this.set('isMedia', utils.isMedia(extension));
+    this.set('isBinary', util.isBinary(extension));
+    this.set('isMedia', util.isMedia(extension));
   },
 
   parse: function(resp, options) {
@@ -40,9 +41,7 @@ module.exports = Backbone.Model.extend({
       return !!(app.state.permissions && app.state.permissions.push);
     }
 
-    var hasMetadata = !!utils.hasMetadata(resp);
-
-    debugger;
+    var hasMetadata = !!util.hasMetadata(resp);
 
     if (!hasMetadata) return {
       content: resp,

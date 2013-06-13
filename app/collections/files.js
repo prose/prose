@@ -11,6 +11,10 @@ module.exports = Backbone.Collection.extend({
     };
 
     this.url = config.api + '/repos/' + options.owner.login + '/' + 
-      options.repo + '/contents?ref=' + options.branch;
+      options.repo + '/git/trees/' + options.sha + '?recursive=1';
+  },
+
+  parse: function(resp, options) {
+    return resp.tree;
   }
 });
