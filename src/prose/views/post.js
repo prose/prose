@@ -835,6 +835,7 @@ module.exports = Backbone.View.extend({
                     matched = true;
                   }
                   break;
+                case 'hidden':
                 case 'text':
                   input[i].value = value;
                   matched = true;
@@ -849,7 +850,6 @@ module.exports = Backbone.View.extend({
               }
 
             } else {
-
               switch (input[i].type) {
               case 'select-multiple':
               case 'select-one':
@@ -862,6 +862,7 @@ module.exports = Backbone.View.extend({
                   matched = true;
                 }
                 break;
+              case 'hidden':
               case 'text':
                 input[i].value = value;
                 matched = true;
