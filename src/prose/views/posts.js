@@ -115,6 +115,7 @@ module.exports = Backbone.View.extend({
           extension: _.extension(f.path),
           isBinary: _.isBinary(_.extension(f.path)),
           isMedia: _.isMedia(_.extension(f.path)),
+          isMarkdown: _.markdown(_.extension(f.path)),
           writePermissions: view.writePermissions,
           repo: data.repo,
           branch: data.branch,

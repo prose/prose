@@ -91,16 +91,14 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('remove', this.remove);
     this.eventRegister.bind('cancelSave', this.cancelSave);
 
-    this.renderHeading();
-
     var tmpl = _(window.app.templates.post).template();
 
     $(this.el).empty().append(tmpl(_.extend(this.model, {
-      mode: app.state.mode,
-      metadata: this.model.metadata,
-      avatar: this.header.avatar,
-      draft: (this.model.path.split('/')[0] === '_drafts') ? true : false
+      mode: app.state.mode
     })));
+
+    this.renderHeading();
+    this.renderToolbar();
 
     if (this.model.markdown && app.state.mode === 'blob') {
       this.preview();
@@ -151,6 +149,16 @@ module.exports = Backbone.View.extend({
     };
 
     this.eventRegister.trigger('headerContext', this.header, true);
+  },
+
+  renderToolbar: function() {
+    var tmpl = _(window.app.templates.toolbar).template();
+
+    this.$el.find('#toolbar').empty().append(tmpl(_.extend(this.model, {
+      metadata: this.model.metadata,
+      avatar: this.model.lang,
+      draft: (this.model.path.split('/')[0] === '_drafts') ? true : false
+    })));
   },
 
   edit: function(e) {
@@ -500,12 +508,10 @@ module.exports = Backbone.View.extend({
       }
     });
   },
-  
+
   saveDraft: function(filepath, filename, filecontent, message) {
     var view = this;
-    
     view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
-    
     window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
       if (err) {
         view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
@@ -597,35 +603,29 @@ module.exports = Backbone.View.extend({
     method.call(this, filepath, filename, filecontent, message);
     return false;
   },
-  
+
   draft: function() {
-    var filepath = _.extractFilename($('input.filepath').val()),
-      basepath = filepath[0].split('/'),
-      filename = filepath[1],
-      postType = basepath[0],
-      filecontent = this.serialize();
-    
+    var filepath = _.extractFilename($('input.filepath').val());
+    var basepath = filepath[0].split('/');
+    var filename = filepath[1];
+    var postType = basepath[0];
+    var filecontent = this.serialize();
+    var message = 'Created draft of ' + filename;
+
     if (postType === '_posts') {
       basepath.splice(0, 1, '_drafts');
       filepath.splice(0, 1, basepath.join('/'));
-      var message = 'Create draft of ' + filename;
-      
       this.saveDraft(filepath.join('/'), filename, filecontent, message);
-
       app.state.path = this.model.path = filepath[0];
-      $('a.draft-to-post').show();
-      $('a.publish-flag').hide();
     } else {
       basepath.splice(0, 1, '_posts');
       filepath.splice(0, 1, basepath.join('/'));
-      var message = 'Create post from draft of ' + filename;
-      
+      message = 'Create post from draft of ' + filename;
       this.saveFile(filepath.join('/'), filename, filecontent, message);
-      
       app.state.path = this.model.path = filepath[0];
-      $('a.draft-to-post').hide();
-      $('a.publish-flag').show();
     }
+
+    this.renderToolbar();
     return false;
   },
 
