@@ -35,7 +35,7 @@
     <% if (isBinary) { %>
       <h3 class='title' title='<%= name %>'><%= name %></h3>
     <% } else { %>
-        <% if (extension === 'md') { %>
+        <% if (isMarkdown) { %>
           <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
             <h3><%= filename %></h3>
             <span class='deemphasize'><%= name %></span>
