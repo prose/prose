@@ -12,10 +12,11 @@
     <div class='topbar-wrapper'>
       <div class='topbar'>
         <div class='containment toolbar round'>
+          <a href='#' class='draft-to-post'<% if (!draft) { %> style='display:none;' <% } %>>Draft to Post<span class='ico checkmark'></span></a>
           <% if (jekyll && metadata.published) { %>
-            <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico checkmark'></span></a>
+            <a href='#' class='publish-flag published round' data-state='true'<% if (draft) { %> style='display:none;' <% } %>>Published<span class='ico checkmark'></span></a>
           <% } else if (jekyll && !metadata.published) { %>
-            <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico checkmark'></span></a>
+            <a href='#' class='publish-flag' data-state='false'<% if (draft) { %> style='display:none;' <% } %>>Unpublished<span class='ico checkmark'></span></a>
           <% } %>
           <div class='options clearfix'>
             <span href='#' class='action round fl'>

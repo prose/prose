@@ -18,6 +18,7 @@ module.exports = Backbone.View.extend({
       'click a.confirm': 'updateFile',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
+      'click a.draft': 'draft',
       'click .mobile-menu .toggle': 'toggleMobileClass',
       'focus input.filepath': 'checkPlaceholder',
       'keypress input.filepath': 'saveFilePath'
@@ -260,6 +261,11 @@ module.exports = Backbone.View.extend({
 
     translate: function(e) {
       this.eventRegister.trigger('translate', e);
+      return false;
+    },
+    
+    draft: function(e) {
+      this.eventRegister.trigger('draft', e);
       return false;
     },
 
