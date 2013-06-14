@@ -18,6 +18,7 @@ module.exports = Backbone.View.extend({
       'click a.confirm': 'updateFile',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
+      'click a.draft': 'draft',
       'click .mobile-menu .toggle': 'toggleMobileClass',
       'focus input.filepath': 'checkPlaceholder',
       'keypress input.filepath': 'saveFilePath'
@@ -198,7 +199,9 @@ module.exports = Backbone.View.extend({
           .append(tmpl({
             lang: this.lang,
             writable: this.writable,
-            metadata: this.metadata
+            metadata: this.metadata,
+            jekyll: this.model.jekyll,
+            draft: (app.state.path.split('/')[0] === '_drafts') ? true : false
           }));
 
         $('#prose').toggleClass('open mobile', true);
@@ -260,6 +263,11 @@ module.exports = Backbone.View.extend({
 
     translate: function(e) {
       this.eventRegister.trigger('translate', e);
+      return false;
+    },
+    
+    draft: function(e) {
+      this.eventRegister.trigger('draft', e);
       return false;
     },
 

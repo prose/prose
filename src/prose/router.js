@@ -265,14 +265,7 @@ module.exports = Backbone.Router.extend({
   // hits an error code router.navigate('error' + err.error)
   // sends the route here.
   error: function(code) {
-    switch (code) {
-      case '404':
-        code = 'Page not Found'
-      break;
-      default:
-        code = 'Error'
-      break;
-    }
+    code = (code && code === '404') ? 'Page not Found.' : 'Error';
 
     this.application.render({
       error: true
