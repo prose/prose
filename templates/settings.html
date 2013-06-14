@@ -4,7 +4,7 @@
   </div>
   <div class='inner authoring'>
 
-    <% if (app.state.path != '_drafts') { %>
+    <% if (jekyll && !draft) { %>
       <a class='draft button round' href='#'>Save as a Draft</a>
     <% } %>
     

@@ -199,7 +199,9 @@ module.exports = Backbone.View.extend({
           .append(tmpl({
             lang: this.lang,
             writable: this.writable,
-            metadata: this.metadata
+            metadata: this.metadata,
+            jekyll: this.model.jekyll,
+            draft: (app.state.path.split('/')[0] === '_drafts') ? true : false
           }));
 
         $('#prose').toggleClass('open mobile', true);

@@ -99,7 +99,7 @@ module.exports = Backbone.View.extend({
       mode: app.state.mode,
       metadata: this.model.metadata,
       avatar: this.header.avatar,
-      draft: (this.model.path === '_drafts') ? true : false
+      draft: (this.model.path.split('/')[0] === '_drafts') ? true : false
     })));
 
     if (this.model.markdown && app.state.mode === 'blob') {
@@ -600,26 +600,29 @@ module.exports = Backbone.View.extend({
   
   draft: function() {
     var filepath = _.extractFilename($('input.filepath').val()),
-      postType = filepath[0],
+      basepath = filepath[0].split('/'),
       filename = filepath[1],
+      postType = basepath[0],
       filecontent = this.serialize();
     
     if (postType === '_posts') {
-      filepath.splice(0, 1, '_drafts');
+      basepath.splice(0, 1, '_drafts');
+      filepath.splice(0, 1, basepath.join('/'));
       var message = 'Create draft of ' + filename;
       
       this.saveDraft(filepath.join('/'), filename, filecontent, message);
-      
-      app.state.path = this.model.path = '_drafts';
+
+      app.state.path = this.model.path = filepath[0];
       $('a.draft-to-post').show();
       $('a.publish-flag').hide();
     } else {
-      filepath.splice(0, 1, '_posts');
+      basepath.splice(0, 1, '_posts');
+      filepath.splice(0, 1, basepath.join('/'));
       var message = 'Create post from draft of ' + filename;
       
       this.saveFile(filepath.join('/'), filename, filecontent, message);
       
-      app.state.path = this.model.path = '_posts';
+      app.state.path = this.model.path = filepath[0];
       $('a.draft-to-post').hide();
       $('a.publish-flag').show();
     }
