@@ -1615,18 +1615,18 @@ ins {
   padding:15px 0 0;
   }
 
-.publish-flag {
+.publish-flag, .draft-to-post {
   color:#a8afb2;
   height:43px;
   line-height:43px;
   padding:0 10px 0 15px;
   float:right;
   }
-  .publish-flag .ico {
+  .publish-flag .ico, .draft-to-post .ico {
     margin-left:8px;
     color:#d4d7d9;
     }
-  .publish-flag:hover {
+  .publish-flag:hover, .draft-to-post:hover {
     background:#f8f8f8;
     color:#a8afb2;
     }

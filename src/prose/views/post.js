@@ -21,6 +21,7 @@ module.exports = Backbone.View.extend({
     'click .dialog .insert': 'dialogInsert',
     'click .save-action': 'updateFile',
     'click .publish-flag': 'togglePublishing',
+    'click .draft-to-post': 'draft',
     'click .meta .finish': 'backToMode',
     'change #upload': 'fileInput',
     'change .meta input': 'makeDirty'
@@ -78,26 +79,26 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove', 'cancelSave');
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancelSave');
     this.eventRegister.bind('edit', this.edit);
     this.eventRegister.bind('preview', this.preview);
     this.eventRegister.bind('deleteFile', this.deleteFile);
     this.eventRegister.bind('save', this.save);
     this.eventRegister.bind('updateFile', this.updateFile);
     this.eventRegister.bind('translate', this.translate);
+    this.eventRegister.bind('draft', this.draft);
     this.eventRegister.bind('meta', this.meta);
     this.eventRegister.bind('remove', this.remove);
     this.eventRegister.bind('cancelSave', this.cancelSave);
 
-    this.renderHeading();
-
     var tmpl = _(window.app.templates.post).template();
 
     $(this.el).empty().append(tmpl(_.extend(this.model, {
-      mode: app.state.mode,
-      metadata: this.model.metadata,
-      avatar: this.header.avatar
+      mode: app.state.mode
     })));
+
+    this.renderHeading();
+    this.renderToolbar();
 
     if (this.model.markdown && app.state.mode === 'blob') {
       this.preview();
@@ -148,6 +149,16 @@ module.exports = Backbone.View.extend({
     };
 
     this.eventRegister.trigger('headerContext', this.header, true);
+  },
+
+  renderToolbar: function() {
+    var tmpl = _(window.app.templates.toolbar).template();
+
+    this.$el.find('#toolbar').empty().append(tmpl(_.extend(this.model, {
+      metadata: this.model.metadata,
+      avatar: this.model.lang,
+      draft: (this.model.path.split('/')[0] === '_drafts') ? true : false
+    })));
   },
 
   edit: function(e) {
@@ -466,7 +477,6 @@ module.exports = Backbone.View.extend({
             view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
             return;
           }
-
           view.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
@@ -496,6 +506,28 @@ module.exports = Backbone.View.extend({
       } else {
         save();
       }
+    });
+  },
+
+  saveDraft: function(filepath, filename, filecontent, message) {
+    var view = this;
+    view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
+    window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+      if (err) {
+        view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+        return;
+      }
+      view.dirty = false;
+      view.model.persisted = true;
+      view.model.file = filename;
+
+      if (app.state.mode === 'new') app.state.mode = 'edit';
+      view.renderHeading();
+      view.updateURL();
+      view.prevFile = filecontent;
+      view.closeSettings();
+      view.updatePublishState();
+      view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
     });
   },
 
@@ -569,6 +601,31 @@ module.exports = Backbone.View.extend({
 
     // Delegate
     method.call(this, filepath, filename, filecontent, message);
+    return false;
+  },
+
+  draft: function() {
+    var filepath = _.extractFilename($('input.filepath').val());
+    var basepath = filepath[0].split('/');
+    var filename = filepath[1];
+    var postType = basepath[0];
+    var filecontent = this.serialize();
+    var message = 'Created draft of ' + filename;
+
+    if (postType === '_posts') {
+      basepath.splice(0, 1, '_drafts');
+      filepath.splice(0, 1, basepath.join('/'));
+      this.saveDraft(filepath.join('/'), filename, filecontent, message);
+      app.state.path = this.model.path = filepath[0];
+    } else {
+      basepath.splice(0, 1, '_posts');
+      filepath.splice(0, 1, basepath.join('/'));
+      message = 'Create post from draft of ' + filename;
+      this.saveFile(filepath.join('/'), filename, filecontent, message);
+      app.state.path = this.model.path = filepath[0];
+    }
+
+    this.renderToolbar();
     return false;
   },
 
@@ -1523,6 +1580,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.unbind('deleteFile', this.deleteFile);
     this.eventRegister.unbind('save', this.save);
     this.eventRegister.unbind('translate', this.translate);
+    this.eventRegister.unbind('draft', this.draft);
     this.eventRegister.unbind('updateFile', this.updateFile);
     this.eventRegister.unbind('meta', this.updateFile);
     this.eventRegister.unbind('remove', this.remove);
