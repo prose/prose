@@ -923,6 +923,7 @@ ins {
   width:25px;
   height:25px;
   position:absolute;
+  top:0;
   left:8px;
   display:block;
   text-align:center;
@@ -1222,6 +1223,7 @@ ins {
   display:block;
   width:40px;
   height:25px;
+  line-height:25px;
   text-align:center;
   margin:8px 0 8px 15px;
   display:none;
