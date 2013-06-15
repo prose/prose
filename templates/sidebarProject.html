@@ -9,6 +9,14 @@
     </select>
   <% } %>
 </div>
+
+<% var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; %>
+<% if (rooturl && path != '_drafts') { %>
+  <div class='inner'>
+    <a class='button' href='#<%= [user, repo, "tree", branch, "_drafts"].join("/") %>'>Drafts</a>
+  </div>
+<% } %>
+
 <% if (window.authenticated) { %>
 <% if (history &&
         history.user === user &&
@@ -22,8 +30,7 @@
       </div>
       <ul id='recent' class='listing'>
         <%
-          var recent = history.recent[app.username];
-          var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; 
+          var recent = history.recent[app.username]; 
           if (rooturl) {
             recent = recent.filter(function(item) {
               return item.indexOf(rooturl) > -1;
