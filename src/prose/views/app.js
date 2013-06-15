@@ -182,10 +182,9 @@ module.exports = Backbone.View.extend({
     settings: function(e) {
       var tmpl = _(app.templates.settings).template();
       var $navItems = $('.navigation a', this.el);
+      this.cancel();
 
-      if ($(e.target, this.el).hasClass('active')) {
-        this.cancel();
-      } else {
+      if (!$(e.target, this.el).hasClass('active')) {
         $navItems.removeClass('active');
         $(e.target, this.el).addClass('active');
 
@@ -268,12 +267,11 @@ module.exports = Backbone.View.extend({
 
     save: function(e) {
       var tmpl = _(app.templates.sidebarSave).template();
-      this.eventRegister.trigger('save', e);
+      this.eventRegister.trigger('showDiff', e);
 
       if ($(e.target, this.el).hasClass('active')) {
         this.cancel();
       } else {
-        this.cancel();
         $('.navigation a', this.el).removeClass('active');
         $(e.target, this.el).addClass('active');
 

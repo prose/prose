@@ -79,11 +79,11 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancelSave');
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'showDiff', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancelSave');
     this.eventRegister.bind('edit', this.edit);
     this.eventRegister.bind('preview', this.preview);
     this.eventRegister.bind('deleteFile', this.deleteFile);
-    this.eventRegister.bind('save', this.save);
+    this.eventRegister.bind('showDiff', this.showDiff);
     this.eventRegister.bind('updateFile', this.updateFile);
     this.eventRegister.bind('translate', this.translate);
     this.eventRegister.bind('draft', this.draft);
@@ -334,7 +334,7 @@ module.exports = Backbone.View.extend({
   },
 
   showDiff: function() {
-    var $diff = $('#diff', this.el);
+    var $diff = this.$el.find('#diff');
     var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
     var text2 = _.escape(this.serialize());
     var d = diff.diffWords(text1, text2);
@@ -351,7 +351,7 @@ module.exports = Backbone.View.extend({
     }
 
     // Content Window
-    $('.views .view', this.el).removeClass('active');
+    this.$el.find('.views .view').removeClass('active');
     $diff.html('<pre>' + compare + '</pre>');
     $diff.addClass('active');
   },
@@ -369,17 +369,8 @@ module.exports = Backbone.View.extend({
   },
 
   cancelSave: function() {
-    $('.views .view', this.el).removeClass('active');
-
-    if (app.state.mode === 'blob') {
-      $('#preview', this.el).addClass('active');
-    } else {
-      $('#edit', this.el).addClass('active');
-    }
-  },
-
-  save: function() {
-    this.showDiff();
+    this.$el.find('.views .view').removeClass('active');
+    this.$el.find('.' + app.state.mode).addClass('active');
   },
 
   refreshCodeMirror: function() {
@@ -1578,7 +1569,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.unbind('edit', this.postViews);
     this.eventRegister.unbind('preview', this.preview);
     this.eventRegister.unbind('deleteFile', this.deleteFile);
-    this.eventRegister.unbind('save', this.save);
+    this.eventRegister.unbind('showDiff', this.showDiff);
     this.eventRegister.unbind('translate', this.translate);
     this.eventRegister.unbind('draft', this.draft);
     this.eventRegister.unbind('updateFile', this.updateFile);
