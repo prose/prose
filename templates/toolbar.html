@@ -2,7 +2,7 @@
   <a href='#' class='draft-to-post'>Draft to Post<span class='ico checkmark'></span></a>
 <% } else { %>
   <% if (jekyll && metadata.published) { %>
-    <a href='#' class='publish-flag published round' data-state='true'>>Published<span class='ico checkmark'></span></a>
+    <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico checkmark'></span></a>
   <% } else if (jekyll && !metadata.published) { %>
     <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico checkmark'></span></a>
   <% } %>
