@@ -8,8 +8,8 @@
   <% } %>
 <% } %>
 <div class='options clearfix'>
-  <span href='#' class='action round fl'>
-    <span class='ico status'></span>
+  <span href='#' class='action round fl ico small <%= avatar %>'>
+    <span class='status'></span>
 
     <% if (writable) { %>
       <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>
@@ -17,7 +17,6 @@
       <span class='popup round arrow-top'>Submit Change</span>
     <% } %>
 
-    <%= avatar %>
   </span>
   <% if (markdown) { %>
     <ul class='group round clearfix'>
