@@ -75,7 +75,6 @@ module.exports = Backbone.View.extend({
       var errorPage = false;
       var hideInterface = false; // Flag for unauthenticated landing
       this.noMenu = false; // Prevents a mobile toggle from appearing when nto required.
-      this.viewing = app.state.mode;
 
       if (options) {
         if (options.hideInterface) hideInterface = options.hideInterface;
@@ -160,14 +159,11 @@ module.exports = Backbone.View.extend({
 
     // Event Triggering to other files
     edit: function(e) {
-      this.viewing = 'edit';
       this.eventRegister.trigger('edit', e);
       return false;
     },
 
     preview: function(e) {
-      this.viewing = 'preview';
-
       if ($(e.target).data('jekyll')) {
         this.eventRegister.trigger('preview', e);
       } else {
@@ -179,7 +175,6 @@ module.exports = Backbone.View.extend({
 
     // Event Triggering to other files
     meta: function(e) {
-      this.viewing = 'meta';
       this.eventRegister.trigger('meta', e);
       return false;
     },
@@ -303,7 +298,7 @@ module.exports = Backbone.View.extend({
 
     cancel: function(e) {
       $('.navigation a', this.el).removeClass('active');
-      $('.navigation .' + this.viewing, this.el).addClass('active');
+      $('.navigation .' + app.state.mode, this.el).addClass('active');
       $('#prose').toggleClass('open mobile', false);
       this.eventRegister.trigger('cancelSave', e);
       return false;
