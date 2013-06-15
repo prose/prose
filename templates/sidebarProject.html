@@ -13,7 +13,7 @@
 <% var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; %>
 <% if (rooturl && path != '_drafts') { %>
   <div class='inner'>
-    <a class='button' href='#<%= [user, repo, "tree", branch, "_drafts"].join("/") %>'>Drafts</a>
+    <a class='button round' href='#<%= [user, repo, "tree", branch, "_drafts"].join("/") %>'>View Drafts</a>
   </div>
 <% } %>
 
