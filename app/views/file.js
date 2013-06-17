@@ -64,9 +64,7 @@ module.exports = Backbone.View.extend({
 
   setCollection: function() {
     this.collection = this.branches.findWhere({ name: this.branch }).files;
-
-    this.listenTo(this.collection, 'sync', this.setModel, this);
-    this.collection.fetch();
+    this.collection.fetch({ success: _.bind(this.setModel, this) });
   },
 
   setModel: function() {
@@ -76,8 +74,7 @@ module.exports = Backbone.View.extend({
       console.log(arguments);
     }, this);
 
-    this.listenTo(this.model, 'sync', this.render, this);
-    this.model.getContent();
+    this.model.getContent({ success: _.bind(this.render, this) });
   },
 
   compilePreview: function(content) {

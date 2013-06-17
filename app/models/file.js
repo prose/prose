@@ -40,7 +40,7 @@ module.exports = Backbone.Model.extend({
 
     if (!hasMetadata) return {
       content: resp,
-      markdown: markdown,
+      markdown: markdown, // TODO: determine if resp is markdown
       metadata: false,
       published: true,
       writable: writable
@@ -67,14 +67,9 @@ module.exports = Backbone.Model.extend({
   },
 
   getContent: function(options) {
-    // TODO: change events triggering Backbone.model.save?
     options = options ? _.clone(options) : {};
     Backbone.Model.prototype.fetch.call(this, _.extend(options, {
       dataType: 'text'
     }));
-  },
-
-  sync: function(options) {
-    debugger;
   }
 });

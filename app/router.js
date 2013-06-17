@@ -213,6 +213,7 @@ module.exports = Backbone.Router.extend({
       filename: filename
     });
 
+    // TODO: is relying on 'sync' events acceptable here?
     user.fetch();
     repo.fetch();
     repo.branches.fetch();

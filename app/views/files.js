@@ -20,10 +20,9 @@ module.exports = Backbone.View.extend({
     this.model = this.branches.findWhere({ name: this.branch }).files;
     this.search.model = this.model;
 
-    this.listenTo(this.model, 'sync', this.render, this);
     this.listenTo(this.search, 'search', this.render, this);
 
-    this.model.fetch();
+    this.model.fetch({ success: _.bind(this.render, this) });
   },
 
   render: function() {
