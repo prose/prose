@@ -20,6 +20,9 @@ asyncMap(['application'], getResource, function(err, locales) {
     if (err) return console.log(err);
     var locale = yaml.load(fs.readFileSync('./translations/application.yaml', 'utf8'));
 
+    // Write to english first
+    fs.writeFileSync('./dist/locales/en.json', JSON.stringify(locale, null, 4));
+
     locales.forEach(function(l) {
         locale = _.extend(locale, l);
     });
