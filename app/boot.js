@@ -27,7 +27,6 @@ window.app = {
 
 $.ajaxSetup({
   headers: {
-    'Accept': 'application/vnd.github.raw',
     'Authorization': config.auth === 'oauth' ? 
       'token '+ config.token :
       'Basic ' + Base64.encode(config.username + ':' + config.password)

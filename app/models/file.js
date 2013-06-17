@@ -19,8 +19,12 @@ module.exports = Backbone.Model.extend({
   },
 
   initialize: function(attributes, options) {
-    this.url = attributes.url;
+    var path = attributes.path ? attributes.path + '/' : '';
+
     this.repo = attributes.repo;
+    this.url = config.api + '/repos/' + this.repo.get('owner').login + '/' +
+      this.repo.get('name') + '/contents/' + path + attributes.name;
+    this.contentUrl = attributes.url;
 
     var extension =  util.extension(attributes.name);
 
@@ -32,6 +36,15 @@ module.exports = Backbone.Model.extend({
   },
 
   parse: function(resp, options) {
+    if (typeof resp === 'string') {
+      return this.parseContent(resp);
+    } else if (typeof resp === 'object') {
+      // TODO: whitelist resp JSON
+      return _.omit(resp, 'content');
+    }
+  },
+
+  parseContent: function(resp, options) {
     // Extract YAML from a post, trims whitespace
     resp = resp.replace(/\r\n/g, '\n'); // normalize a little bit
 
@@ -72,7 +85,14 @@ module.exports = Backbone.Model.extend({
       dataType: 'text',
       headers: {
         'Accept': 'application/vnd.github.raw'
-      }
+      },
+      url: this.contentUrl
     }));
+  },
+
+  fetch: function(options) {
+    // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
+    Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success'));
+    this.getContent.apply(this, arguments);
   }
 });

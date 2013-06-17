@@ -69,12 +69,7 @@ module.exports = Backbone.View.extend({
 
   setModel: function() {
     this.model = this.collection.findWhere({ name: this.filename, path: this.path });
-
-    this.listenTo(this.model, 'all', function() {
-      console.log(arguments);
-    }, this);
-
-    this.model.getContent({ success: _.bind(this.render, this) });
+    this.model.fetch({ success: _.bind(this.render, this) });
   },
 
   compilePreview: function(content) {
