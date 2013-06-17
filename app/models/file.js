@@ -69,7 +69,10 @@ module.exports = Backbone.Model.extend({
   getContent: function(options) {
     options = options ? _.clone(options) : {};
     Backbone.Model.prototype.fetch.call(this, _.extend(options, {
-      dataType: 'text'
+      dataType: 'text',
+      headers: {
+        'Accept': 'application/vnd.github.raw'
+      }
     }));
   }
 });
