@@ -7,6 +7,9 @@ all: \
 	dist/prose.js \
 	dist/prose.min.js
 
+translations:
+	node translations/update_locales
+
 clean:
 	rm -f dist/*
 

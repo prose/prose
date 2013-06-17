@@ -15,10 +15,15 @@
     "queue-async": "~1.0.3",
     "diff": "~1.0.4"
   },
+  "keywords": [
+    "editor",
+    "github"
+  ],
   "devDependencies": {
     "mocha": "~1.9.0",
     "glob": "~3.1.21",
     "chai": "~1.5.0",
+    "request": "~2.16.2",
     "uglify-js": "~2.2.5",
     "browserify": "~2.12.0"
   },
