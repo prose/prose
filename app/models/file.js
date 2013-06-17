@@ -66,12 +66,15 @@ module.exports = Backbone.Model.extend({
     return res;
   },
 
-  fetch: function(options) {
-    debugger;
+  getContent: function(options) {
     // TODO: change events triggering Backbone.model.save?
     options = options ? _.clone(options) : {};
     Backbone.Model.prototype.fetch.call(this, _.extend(options, {
       dataType: 'text'
     }));
+  },
+
+  sync: function(options) {
+    debugger;
   }
 });
