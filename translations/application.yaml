@@ -3,18 +3,16 @@ en:
     editing: "Editing"
     preview: "Previewing"
   navigation:
-    vertical:
-      newFile: "New File" 
-      edit: "Edit" 
-      preview: "Preview" 
-      settings: "Settings" 
-      meta: "Meta Data" 
-      save: "Save" 
-      login: "Authorize with GitHub" 
-    footer:
-      about: "About"
-      develop: "Developers"
-      logout: "Logout"
+    newFile: "New File"
+    edit: "Edit"
+    preview: "Preview"
+    settings: "Settings"
+    meta: "Meta Data"
+    save: "Save"
+    login: "Authorize with GitHub"
+    about: "About"
+    develop: "Developers"
+    logout: "Logout"
   actions:
     unsaved: "You have unsaved Changes. Are you sure you want to leave?"
     publishing:
@@ -155,12 +153,12 @@ en:
           links:
             title: "Links"
             content: |
-              <p>Markdown has two types of links: <strong>inline</strong> and <strong>reference</strong>. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text &ldquo;GitHub&rdquo;, you write <code>[GitHub]</code>.</p><p>To create an inline link, create a set of parentheses immediately after the brackets and write your URL within the parentheses. (e.g., <code>[GitHub](http://github.com/)</code>). Relative paths are allowed in inline links.</p><p>To create a reference link, use two sets of square brackets. <code>[my internal link][internal-ref]</code> will link to the internal reference <code>internal-ref</code>.</p> 
+              <p>Markdown has two types of links: <strong>inline</strong> and <strong>reference</strong>. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text &ldquo;GitHub&rdquo;, you write <code>[GitHub]</code>.</p><p>To create an inline link, create a set of parentheses immediately after the brackets and write your URL within the parentheses. (e.g., <code>[GitHub](http://github.com/)</code>). Relative paths are allowed in inline links.</p><p>To create a reference link, use two sets of square brackets. <code>[my internal link][internal-ref]</code> will link to the internal reference <code>internal-ref</code>.</p>
           emphasis:
             title: "Emphasis"
             content: |
               <p>Asterisks (<code>*</code>) and underscores (<code>_</code>) are treated as emphasis and are wrapped with an <code>&lt;em&gt;</code> tag, which usually displays as italics in most browsers. Double asterisks (<code>**</code>) or double underscores (<code>__</code>) are treated as bold using the <code>&lt;strong&gt;</code> tag. To create italic or bold text, simply wrap your words in single/double asterisks/underscores. For example, <code>**My double emphasis text**</code> becomes <strong>My double emphasis text</strong>, and <code>*My single emphasis text*</code> becomes <em>My single emphasis text</em>.</p>
-          code: 
+          code:
             title: "Code"
             content: |
               <p>To create inline spans of code, simply wrap the code in backticks (<code>`</code>). Markdown will turn <code>`myFunction`</code> into <code>myFunction</code>.</p>
@@ -184,10 +182,10 @@ en:
       # About
       Prose provides a beatifully simple content authoring environment for
       [CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).
-      It's a web-based interface for managing content on 
-      [GitHub](http://github.com). Use it to create, edit, and delete files, 
-      and save your changes directly to GitHub. Host your website on 
-      [GitHub Pages](http://pages.github.com) for free, or set up your own 
+      It's a web-based interface for managing content on
+      [GitHub](http://github.com). Use it to create, edit, and delete files,
+      and save your changes directly to GitHub. Host your website on
+      [GitHub Pages](http://pages.github.com) for free, or set up your own
       [GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).
 
       Prose has advanced support for [Jekyll](http://jekyllrb.com/) sites and
@@ -196,7 +194,7 @@ en:
       highlighting, a formatting toolbar, and draft previews in the site's
       full layout.
 
-      Developers can configure Jekyll sites to take advantage of these and 
+      Developers can configure Jekyll sites to take advantage of these and
       many more features that customize the content editing experience.
 
       ## Configuring

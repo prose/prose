@@ -4,20 +4,16 @@
         "preview": "Previewing"
     },
     "navigation": {
-        "vertical": {
-            "newFile": "New File",
-            "edit": "Edit",
-            "preview": "Preview",
-            "settings": "Settings",
-            "meta": "Meta Data",
-            "save": "Save",
-            "login": "Authorize with GitHub"
-        },
-        "footer": {
-            "about": "About",
-            "develop": "Developers",
-            "logout": "Logout"
-        }
+        "newFile": "New File",
+        "edit": "Edit",
+        "preview": "Preview",
+        "settings": "Settings",
+        "meta": "Meta Data",
+        "save": "Save",
+        "login": "Authorize with GitHub",
+        "about": "About",
+        "develop": "Developers",
+        "logout": "Logout"
     },
     "actions": {
         "unsaved": "You have unsaved Changes. Are you sure you want to leave?",
