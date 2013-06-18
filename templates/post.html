@@ -1,5 +1,8 @@
 <div class='editor views<% if (markdown) { %> markdown<% } %>'>
-  <div id='diff' class='view prose diff'></div>
+  <div id='diff' class='view prose diff'>
+    <h2>Review your changes:<br /><span class='deemphasize small'>Additions are highlighted in green. Deletions are crossed out.</span></h2>
+    <div class='diff-content inner'></div>
+  </div>
   <% if (jekyll) { %>
     <div id='meta' class='view round meta'>
       <div class='form'></div>

@@ -15,12 +15,18 @@
     <input type='text' name='url' placeholder='Image URL' />
     <input type='text' name='alt' placeholder='Alt text (optional)' />
     <a href='#' class='button round insert' data-type='media'>Insert</a>
+      <% if (!assetsDirectory) { %>
+        <small class='deemphasize'>Images uploaded are added to the current
+          directory or one specified in the Image URL path above.</small>
+      <% } %>
   </div>
 
   <% if (assetsDirectory) { %>
     <div class='col col-last fl media-listing'>
       <label>Choose Existing</label>
       <ul id='media'></ul>
+      <small class='deemphasize'>Images uploaded are added to the
+        "Choose Existing" directory or one specified in the Image URL field.</small>
     </div>
   <% } %>
 </div>

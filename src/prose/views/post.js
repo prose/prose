@@ -352,8 +352,8 @@ module.exports = Backbone.View.extend({
 
     // Content Window
     this.$el.find('.views .view').removeClass('active');
-    $diff.html('<pre>' + compare + '</pre>');
     $diff.addClass('active');
+    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
   },
 
   closeSettings: function() {
@@ -1209,7 +1209,7 @@ module.exports = Backbone.View.extend({
           view.eventRegister.trigger('updateSaveState', 'Error&nbsp;Uploading try again in 30 Seconds!', 'error');
         } else {
           var $alt = $('input[name="alt"]');
-          var image = ($alt.val) ?
+          var image = ($alt.val() && $alt.val() !== undefined) ?
             '![' + $alt.val() + '](/' + path + ')' :
             '![' + file.name + '](/' + path + ')';
 
