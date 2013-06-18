@@ -225,6 +225,10 @@ p {
   line-height:1.5em;
 	margin:0 0 20px;
   }
+small {
+  font-size:11px;
+  line-height:18px;
+  }
 label {
   color:#434C50;
   font-size:13px;
@@ -611,7 +615,7 @@ ins {
   height:40px;
   line-height:40px;
   text-align:center;
-  margin:8px 10px;
+  margin:10px;
   position:relative;
   z-index:10;
   }
