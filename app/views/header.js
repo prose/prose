@@ -26,14 +26,12 @@ module.exports = Backbone.View.extend({
       metadata: this.file ? this.file.get('metadata') : undefined,
       path: login,
       private: this.repo && this.repo.get('private') ? true : false,
-               repo: this.repo ? this.repo.attributes : undefined,
+      repo: this.repo ? this.repo.attributes : undefined,
       title: this.file ? this.file.get('path') : 'Explore Projects',
       translate: this.file ? this.file.get('translate') : undefined,
       user: this.user ? this.user.attributes : undefined,
       writable: this.repo ? this.repo.get('permissions').push : undefined
     }));
-
-    console.log(this.$el);
 
     return this;
   }

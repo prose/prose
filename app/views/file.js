@@ -18,6 +18,8 @@ module.exports = Backbone.View.extend({
 
   template: _.template(templates.file),
 
+  subviews: [],
+
   events: {
     'click .group a': 'markdownSnippet',
     'click .dialog .insert': 'dialogInsert',
@@ -593,6 +595,7 @@ module.exports = Backbone.View.extend({
     });
 
     header.setElement(this.$el.find('#heading')).render();
+    this.subviews.push(header);
   },
 
   render: function() {
@@ -624,11 +627,13 @@ module.exports = Backbone.View.extend({
       this.model.set('preview', marked(this.compilePreview(this.model.get('content'))));
     }
 
-    this.renderHeading();
-
     this.$el.html(this.template(_.extend(this.model.attributes, {
       mode: this.mode
     })));
+
+    // Render subviews
+    this.renderHeading();
+    this.updateDocumentTitle();
 
     if (this.model.get('markdown') && this.mode === 'blob') {
       this.preview();
@@ -641,8 +646,6 @@ module.exports = Backbone.View.extend({
 
       util.fixedScroll(this.$el.find('.topbar'));
     }
-
-    this.updateDocumentTitle();
 
     return this;
   },
@@ -1520,6 +1523,9 @@ module.exports = Backbone.View.extend({
 
   remove: function() {
     this.stashFile();
+
+    _.invoke(this.subviews, 'remove');
+    this.subviews = [];
 
     // Clear any file state classes in #prose
     // this.eventRegister.trigger('updateSaveState', '', '');

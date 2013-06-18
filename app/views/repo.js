@@ -37,6 +37,7 @@ module.exports = Backbone.View.extend({
       alterable: false
     });
     header.setElement(this.$el.find('#heading')).render();
+    this.subviews.push(header);
 
     var search = new SearchView({});
     search.setElement(this.$el.find('#search')).render();
