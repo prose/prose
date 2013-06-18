@@ -36,12 +36,10 @@ if (LOCALES.indexOf(browserLang) != -1) app.locale = browserLang;
 
 if (app.locale && app.locale !== 'en') {
     $.getJSON(localePath, function(err, result) {
-        app.locale[locale] = result;
+        window.locale[locale] = result;
         window.locale.current(locale);
     });
 }
-
-//console.log(t('notification.error.github'));
 
 // Bootup
 // test the browser supports CORS and return a boolean for an oauth token.

@@ -145,6 +145,10 @@ en:
             title: "Code Blocks"
             content: |
               <p>Markdown wraps code blocks in pre-formatted tags to preserve indentation in your code blocks. To create a code block, indent the entire block by at least 4 spaces or one tab. Markdown will strip the extra indentation you&rsquo;ve added to the code block.</p>
+          horizontalRules:
+            title: "Horizontal Rules"
+            content: |
+              <p>Horizontal rules are created by placing three or more hyphens, asterisks or underscores on a line by themselves. Spaces are allowed between the hyphens, asterisks or underscores.</p>
       spanElements:
         title: "Span Elements"
         content:
@@ -176,8 +180,8 @@ en:
             content: |
               <p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\</code>). Markdown will ignore the character directly after a backslash.
   about:
-    title: "About"
-    help: |
+    content: |
+      # About
       Prose provides a beatifully simple content authoring environment for
       [CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).
       It's a web-based interface for managing content on 
