@@ -1209,7 +1209,7 @@ module.exports = Backbone.View.extend({
           view.eventRegister.trigger('updateSaveState', 'Error&nbsp;Uploading try again in 30 Seconds!', 'error');
         } else {
           var $alt = $('input[name="alt"]');
-          var image = ($alt.val) ?
+          var image = ($alt.val() && $alt.val() !== undefined) ?
             '![' + $alt.val() + '](/' + path + ')' :
             '![' + file.name + '](/' + path + ')';
 
