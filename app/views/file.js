@@ -13,6 +13,10 @@ var toolbar = require('../toolbar/markdown.js');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
+  id: 'post',
+
+  className: 'post limiter',
+
   template: _.template(templates.file),
 
   events: {
