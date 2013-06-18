@@ -7,16 +7,17 @@ all: \
 	dist/prose.js \
 	dist/prose.min.js
 
-translations:
-	node translations/update_locales
-
 clean:
-	rm -f dist/*
+	rm -f dist/prose*.js
 
 TEMPLATES = $(shell find templates -type f -name '*.html')
+LOCALES = $(shell find dist/locales -type f -name '*.json')
+
+translations: $(LOCALES)
+	node translations/update_locales
 
 dist/templates.js: $(TEMPLATES)
-	node build.js
+	node build
 
 oauth.json:
 	test -s oauth.json || curl 'https://raw.github.com/prose/prose/gh-pages/oauth.json' > oauth.json
@@ -62,4 +63,4 @@ dist/prose.js: oauth.json $(APPLICATION) $(LIBS) dist/templates.js
 dist/prose.min.js: dist/prose.js
 	$(UGLIFY) dist/prose.js > dist/prose.min.js
 
-.PHONY: clean
+.PHONY: clean translations

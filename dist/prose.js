@@ -9844,7 +9844,7 @@ Liquid.Block.prototype.unknownTag = function(tag, params, tokens) {
   }
 };
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-var templates = {"app":"<%\n  var editMode = false;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<% if (!error) { %>\n  <div class='vert clearfix navigation<% if (editMode) { %> editing<% } %>'>\n\n    <% if (!noMenu && window.authenticated) { %>\n      <ul class='mobile-menu nav clearfix'>\n        <li>\n          <a href='#' class='toggle ico menu round'></a>\n        </li>\n      </ul>\n    <% } %>\n    <% if (repo && window.authenticated) { %>\n      <ul class='project nav clearfix'>\n        <li>\n          <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n            <span class='popup round arrow-right'>New File</span>\n          </a>\n        </li>\n      </ul>\n    <% } %>\n\n    <% if (editMode) { %>\n    <ul class='post-views nav clearfix'>\n      <li>\n        <a href='#' class='ico round pencil edit' data-state='edit'>\n          <span class='popup round arrow-right'>Edit</span>\n        </a>\n      </li>\n      <% if (markdown || mode === 'new') { %>\n        <li>\n          <a href='#' class='ico round eye blob preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n            <span class='popup round arrow-right'>Preview</span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (window.authenticated) { %>\n        <% if (jekyll && lang !== 'yaml') { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'>Meta Data</span>\n          </a>\n        </li>\n        <% } %>\n      <li>\n        <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n          <span class='popup round arrow-right'>Post Settings</span>\n        </a>\n      </li>\n      <li>\n        <a href='#' class='ico round save'>\n          <span class='popup round arrow-right'>Save</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n    <% } %>\n\n    <ul class='auth nav clearfix'>\n      <% if (!window.authenticated) { %>\n      <li>\n      <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n          <span class='popup round arrow-right'>Authorize with GitHub</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n  </div>\n<% } %>\n\n<% if (!error) { %>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose v1</a></li>\n      <li><a class='about' href='./#about'>About</a></li>\n      <li><a class='help' href='https://github.com/prose/prose'>Developers</a></li>\n      <% if (window.authenticated) { %>\n        <li class='divider'></li>\n        <li><a href='#' class='logout'>Logout</a></li>\n      <% } %>\n    </ul>\n  </div>\n</div>\n","asset":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (_.isMedia(path)) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon listing-icon round folder'></span>\n    <span class='details'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>\n      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n    </a>\n  <% } %>\n\n  <div class='details'>\n    <div class='actions fr clearfix'>\n      <% if (!isBinary) { %>\n        <a class='clearfix'\n          title='Edit this File'\n          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n          Edit\n        </a>\n      <% } %>\n      <% if (window.authenticated && writePermissions) { %>\n        <a\n          class='delete'\n          title='Delete this File'\n          data-user='<%= user %>'\n          data-repo='<%= repo %>'\n          data-branch='<%= branch %>'\n          data-file='<%= file %>'\n          href='#'>\n          <span class='ico rubbish small'></span>\n        </a>\n      <% } %>\n    </div>\n    <% if (isBinary) { %>\n      <h3 class='title' title='<%= name %>'><%= name %></h3>\n    <% } else { %>\n        <% if (isMarkdown) { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <div class='action round avatar'>\n    <div class='popup-hover'>\n      <span class='ico round status'></span>\n      <% if (writable) { %>\n        <span class='popup round arrow-left'>No Changes</span>\n      <% } else { %>\n        <span class='popup round arrow-left'>Changes to Submit</span>\n      <% } %>\n      <%= avatar %>\n    </div>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n\n    <% if (app.state.mode === 'new' && !translate) { %>\n      <input type='text' class='filepath' placeholder='<%= title %>'>\n    <% } else { %>\n      <input type='text' class='filepath' value='<%= title %>'>\n    <% } %>\n\n    <div class='mask'></div>\n  </div>\n\n<% } else { %>\n  <div class='avatar round'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","helpDialog":"<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= _.formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= _.formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= _.formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","hidden":"<input type='hidden' name='<%= name %>' value='<%= value %>' />\n","linkDialog":"<div class='inner'>\n  <label>Insert Link</label>\n  <input type='text' name='href' placeholder='Link URL' />\n  <input type='text' name='text' placeholder='Link Name' />\n  <input type='text' name='title' placeholder='Title (optional)' />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder='Insert a local link' class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'>Insert Link</a>\n</div>\n","loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <small><%= message %></small>\n</div>\n","mediaDialog":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label>Insert Image</label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        Upload images by dragging &amp; dropping, or<br />\n        <input id='upload' class='upload' type='file' />\n        <a>selecting one</a>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder='Image URL' />\n    <input type='text' name='alt' placeholder='Alt text (optional)' />\n    <a href='#' class='button round insert' data-type='media'>Insert</a>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label>Choose Existing</label>\n      <ul id='media'></ul>\n    </div>\n  <% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p>Please login with your GitHub account to access that project.</p>\n      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Authorize with GitHub</a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= key %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'>Create it</a></p>\n      <% } %>\n\n      <% if (key === 'error') { %>\n        <p><a class='button round' href='#'>Back to Main Page</a></p>\n      <% } else { %>\n        <p><a class='button round' href='<%= previous %>'>Go back</a></p>\n      <% } %>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'></div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n      <a href='#' class='button round finish'>\n        Back to <% if (app.state.mode === 'new') { %>New Post<% } else { %><%= app.state.mode %><% } %>\n      </a>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar'>\n        <div id='toolbar' class='containment toolbar round'></div>\n      </div>\n    </div>\n    <div id='code' class='code round inner'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter Files' />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files' class='listing'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter projects' />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <ul id='projects' class='projects listing'></ul>\n</div>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      class='listing-icon'\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (fork && private) { %>\n        <span class='icon round repo private fork' title='Forked from another project'></span>\n      <% } else if (fork) { %>\n        <span class='icon round repo fork' title='Forked from another project'></span>\n      <% } else if (private) { %>\n        <span class='icon round repo private'></span>\n      <% } else { %>\n        <span class='icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details'>\n      <div class='actions fr clearfix'>\n        <a\n          data-user='<%= owner.login %>'\n          data-repo='<%= name %>'\n          href='#<%= owner.login %>/<%= name %>'>\n          View Project\n        </a>\n        <% if (homepage) { %>\n          <a href='<%= homepage %>'>View Site</a>\n        <% } %>\n      </div>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Options</h2>\n  </div>\n  <div class='inner authoring'>\n\n    <% if (jekyll && !draft) { %>\n      <a class='draft button round' href='#'>Create Draft</a>\n    <% } %>\n    \n    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (app.state.mode !== 'new' && writable) { %>\n      <a class='delete button round' href='#'>Delete this File</a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'>Switch Branch</h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n\n<% var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; %>\n<% if (rooturl && path != '_drafts') { %>\n  <div class='inner'>\n    <a class='button round' href='#<%= [user, repo, \"tree\", branch, \"_drafts\"].join(\"/\") %>'>View Drafts</a>\n  </div>\n<% } %>\n\n<% if (window.authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'>Most Recent History</h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username]; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                Restore?\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n<div class='inner'>\n  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='round button mobile-new-file'>Create a New File</a>\n</div>\n<% } %>\n","sidebarSave":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Describe your Changes</h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-bottom'>Cancel</span>\n      </a>\n    </div>\n\n    <% if (writable) { %>\n      <a class='confirm button round' href='#'>Commit</a>\n    <% } else { %>\n      <a class='confirm button round' href='#'>Submit Change Request</a>\n    <% } %>\n\n  </div>\n<% } %>\n","start":"<% if (!window.authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='#about'>Learn more</a></p>\n      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' data-type='<%= type %>' />\n</div>\n","toolbar":"<% if (draft) { %>\n  <a href='#' class='draft-to-post'>Draft to Post<span class='ico checkmark'></span></a>\n<% } else { %>\n  <% if (jekyll && metadata.published) { %>\n    <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico small checkmark'></span></a>\n  <% } else if (jekyll && !metadata.published) { %>\n    <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico small checkmark'></span></a>\n  <% } %>\n<% } %>\n<div class='options clearfix'>\n  <span href='#' class='action round fl ico small <%= avatar %>'>\n    <span class='status'></span>\n\n    <% if (writable) { %>\n      <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>\n    <% } else { %>\n      <span class='popup round arrow-top'>Submit Change</span>\n    <% } %>\n\n  </span>\n  <% if (markdown) { %>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"# Heading\\n\\n\") %>'>h1</a></li>\n      <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"## Sub Heading\\n\\n\") %>'>h2</a></li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>\n          <span class='ico small link'></span>\n        </a>\n      </li>\n      <li>\n        <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>\n          <span class='ico small picture'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>\n      <li>\n        <a data-key='italic' href='#' title='Italic' data-snippet='__'>\n          <span class='ico small italic'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n          <span class='ico small quote'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n          <span class='ico small list'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n          <span class='ico small numbered-list'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>\n          <span class='ico small question'></span>\n        </a>\n      </li>\n    </ul>\n  <% } %>\n</div>\n<div id='dialog'></div>\n","upgrade":"<div class='start'>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose requires features not available to your browser</p>\n      <a class='round button' href='https://www.google.com/intl/en/chrome/browser'>Download a Modern Browser</a>\n    </div>\n  </div>\n</div>\n"}; module.exports = templates;
+var templates = {"app":"<%\n  var editMode = false;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<% if (!error) { %>\n  <div class='vert clearfix navigation<% if (editMode) { %> editing<% } %>'>\n\n    <% if (!noMenu && window.authenticated) { %>\n      <ul class='mobile-menu nav clearfix'>\n        <li>\n          <a href='#' class='toggle ico menu round'></a>\n        </li>\n      </ul>\n    <% } %>\n    <% if (repo && window.authenticated) { %>\n      <ul class='project nav clearfix'>\n        <li>\n          <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n            <span class='popup round arrow-right'>New File</span>\n          </a>\n        </li>\n      </ul>\n    <% } %>\n\n    <% if (editMode) { %>\n    <ul class='post-views nav clearfix'>\n      <li>\n        <a href='#' class='ico round pencil edit' data-state='edit'>\n          <span class='popup round arrow-right'>Edit</span>\n        </a>\n      </li>\n      <% if (markdown || mode === 'new') { %>\n        <li>\n          <a href='#' class='ico round eye blob preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n            <span class='popup round arrow-right'>Preview</span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (window.authenticated) { %>\n        <% if (jekyll && lang !== 'yaml') { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'>Meta Data</span>\n          </a>\n        </li>\n        <% } %>\n      <li>\n        <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n          <span class='popup round arrow-right'>Settings</span>\n        </a>\n      </li>\n      <li>\n        <a href='#' class='ico round save'>\n          <span class='popup round arrow-right'>Save</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n    <% } %>\n\n    <ul class='auth nav clearfix'>\n      <% if (!window.authenticated) { %>\n      <li>\n      <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n          <span class='popup round arrow-right'>Authorize with GitHub</span>\n        </a>\n      </li>\n      <% } %>\n    </ul>\n  </div>\n<% } %>\n\n<% if (!error) { %>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose v1</a></li>\n      <li><a class='about' href='./#about'>About</a></li>\n      <li><a class='help' href='https://github.com/prose/prose'>Developers</a></li>\n      <% if (window.authenticated) { %>\n        <li class='divider'></li>\n        <li><a href='#' class='logout'>Logout</a></li>\n      <% } %>\n    </ul>\n  </div>\n</div>\n","asset":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (_.isMedia(path)) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon listing-icon round folder'></span>\n    <span class='details'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>\n      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n    </a>\n  <% } %>\n\n  <div class='details'>\n    <div class='actions fr clearfix'>\n      <% if (!isBinary) { %>\n        <a class='clearfix'\n          title='Edit this File'\n          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n          Edit\n        </a>\n      <% } %>\n      <% if (window.authenticated && writePermissions) { %>\n        <a\n          class='delete'\n          title='Delete this File'\n          data-user='<%= user %>'\n          data-repo='<%= repo %>'\n          data-branch='<%= branch %>'\n          data-file='<%= file %>'\n          href='#'>\n          <span class='ico rubbish small'></span>\n        </a>\n      <% } %>\n    </div>\n    <% if (isBinary) { %>\n      <h3 class='title' title='<%= name %>'><%= name %></h3>\n    <% } else { %>\n        <% if (isMarkdown) { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <div class='action round avatar'>\n    <div class='popup-hover'>\n      <span class='ico round status'></span>\n      <% if (writable) { %>\n        <span class='popup round arrow-left'>No Changes</span>\n      <% } else { %>\n        <span class='popup round arrow-left'>Changes to Submit</span>\n      <% } %>\n      <%= avatar %>\n    </div>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n\n    <% if (app.state.mode === 'new' && !translate) { %>\n      <input type='text' class='filepath' placeholder='<%= title %>'>\n    <% } else { %>\n      <input type='text' class='filepath' value='<%= title %>'>\n    <% } %>\n\n    <div class='mask'></div>\n  </div>\n\n<% } else { %>\n  <div class='avatar round'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","helpDialog":"<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= _.formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= _.formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= _.formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","hidden":"<input type='hidden' name='<%= name %>' value='<%= value %>' />\n","linkDialog":"<div class='inner'>\n  <label>Insert Link</label>\n  <input type='text' name='href' placeholder='Link URL' />\n  <input type='text' name='text' placeholder='Link Name' />\n  <input type='text' name='title' placeholder='Title (optional)' />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder='Insert a local link' class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'>Insert Link</a>\n</div>\n","loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <small><%= message %></small>\n</div>\n","mediaDialog":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label>Insert Image</label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        Upload images by dragging &amp; dropping, or<br />\n        <input id='upload' class='upload' type='file' />\n        <a>selecting one</a>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder='Image URL' />\n    <input type='text' name='alt' placeholder='Alt text (optional)' />\n    <a href='#' class='button round insert' data-type='media'>Insert</a>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label>Choose Existing</label>\n      <ul id='media'></ul>\n    </div>\n  <% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p>Please login with your GitHub account to access that project.</p>\n      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Authorize with GitHub</a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= key %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'>Create it</a></p>\n      <% } %>\n\n      <% if (key === 'error') { %>\n        <p><a class='button round' href='#'>Back to Main Page</a></p>\n      <% } else { %>\n        <p><a class='button round' href='<%= previous %>'>Go back</a></p>\n      <% } %>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'></div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n      <a href='#' class='button round finish'>Done</a>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar'>\n        <div id='toolbar' class='containment toolbar round'></div>\n      </div>\n    </div>\n    <div id='code' class='code round inner'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter Files' />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files' class='listing'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder='Filter projects' />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <ul id='projects' class='projects listing'></ul>\n</div>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      class='listing-icon'\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>\n      <% } else if (fork && private) { %>\n        <span class='icon round repo private fork' title='Forked from another project'></span>\n      <% } else if (fork) { %>\n        <span class='icon round repo fork' title='Forked from another project'></span>\n      <% } else if (private) { %>\n        <span class='icon round repo private'></span>\n      <% } else { %>\n        <span class='icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details'>\n      <div class='actions fr clearfix'>\n        <a\n          data-user='<%= owner.login %>'\n          data-repo='<%= name %>'\n          href='#<%= owner.login %>/<%= name %>'>\n          View Project\n        </a>\n        <% if (homepage) { %>\n          <a href='<%= homepage %>'>View Site</a>\n        <% } %>\n      </div>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Options</h2>\n  </div>\n  <div class='inner authoring'>\n\n    <% if (jekyll && !draft) { %>\n      <a class='draft button round' href='#'>Create Draft</a>\n    <% } %>\n    \n    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (app.state.mode !== 'new' && writable) { %>\n      <a class='delete button round' href='#'>Delete this File</a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Groups</h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'>Switch Branch</h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n\n<% var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; %>\n<% if (rooturl && path != '_drafts') { %>\n  <div class='inner'>\n    <a class='button round' href='#<%= [user, repo, \"tree\", branch, \"_drafts\"].join(\"/\") %>'>View Drafts</a>\n  </div>\n<% } %>\n\n<% if (window.authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'>Most Recent History</h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username]; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                Restore?\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n<div class='inner'>\n  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='round button mobile-new-file'>Create a New File</a>\n</div>\n<% } %>\n","sidebarSave":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'>Describe your Changes</h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-bottom'>Cancel</span>\n      </a>\n    </div>\n\n    <% if (writable) { %>\n      <a class='confirm button round' href='#'>Commit</a>\n    <% } else { %>\n      <a class='confirm button round' href='#'>Submit Change Request</a>\n    <% } %>\n\n  </div>\n<% } %>\n","start":"<% if (!window.authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose is a content editor for GitHub designed for managing websites.</p>\n      <p><a href='#about'>Learn more</a></p>\n      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'>Authorize with GitHub</a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' data-type='<%= type %>' />\n</div>\n","toolbar":"<% if (draft) { %>\n  <a href='#' class='draft-to-post'>Draft to Post<span class='ico checkmark'></span></a>\n<% } else { %>\n  <% if (jekyll && metadata.published) { %>\n    <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico small checkmark'></span></a>\n  <% } else if (jekyll && !metadata.published) { %>\n    <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico small checkmark'></span></a>\n  <% } %>\n<% } %>\n<div class='options clearfix'>\n  <span href='#' class='action round fl ico small <%= avatar %>'>\n    <span class='status'></span>\n\n    <% if (writable) { %>\n      <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>\n    <% } else { %>\n      <span class='popup round arrow-top'>Submit Change</span>\n    <% } %>\n\n  </span>\n  <% if (markdown) { %>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"# Heading\\n\\n\") %>'>h1</a></li>\n      <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"## Sub Heading\\n\\n\") %>'>h2</a></li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>\n          <span class='ico small link'></span>\n        </a>\n      </li>\n      <li>\n        <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>\n          <span class='ico small picture'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>\n      <li>\n        <a data-key='italic' href='#' title='Italic' data-snippet='__'>\n          <span class='ico small italic'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n          <span class='ico small quote'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n          <span class='ico small list'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n          <span class='ico small numbered-list'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>\n          <span class='ico small question'></span>\n        </a>\n      </li>\n    </ul>\n  <% } %>\n</div>\n<div id='dialog'></div>\n","upgrade":"<div class='start'>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p>Prose requires features not available to your browser</p>\n      <a class='round button' href='https://www.google.com/intl/en/chrome/browser'>Download a Modern Browser</a>\n    </div>\n  </div>\n</div>\n"}; module.exports = templates;
 },{}],2:[function(require,module,exports){
 module.exports={
   "api": "https://api.github.com",
@@ -9912,7 +9912,7 @@ if ('withCredentials' in new XMLHttpRequest()) {
   });
 }
 
-},{"./models":4,"./views/app":5,"./views/notification":6,"./views/start":7,"./views/preview":8,"./views/profile":9,"./views/posts":10,"./views/post":11,"./views/documentation":12,"../../dist/templates":1,"./router":13,"jquery-browserify":14,"underscore":15,"backbone":16}],17:[function(require,module,exports){
+},{"./models":4,"./views/app":5,"./views/notification":6,"./views/start":7,"./views/preview":8,"./views/profile":9,"./views/posts":10,"./views/post":11,"./views/documentation":12,"../../dist/templates":1,"./router":13,"jquery-browserify":14,"backbone":15,"underscore":16}],17:[function(require,module,exports){
 function tryParse(obj) {
   try {
     return JSON.parse(obj);
@@ -10120,7 +10120,7 @@ module.exports = {
   }
 }
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -21583,7 +21583,7 @@ module.exports = {
   }
 };
 
-},{"../../oauth.json":2,"./cookie":17,"../libs/github":20,"jquery-browserify":14,"underscore":15,"js-yaml":21,"queue-async":22}],13:[function(require,module,exports){
+},{"../../oauth.json":2,"./cookie":17,"../libs/github":20,"jquery-browserify":14,"underscore":16,"js-yaml":21,"queue-async":22}],13:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21886,90 +21886,7 @@ module.exports = Backbone.Router.extend({
   }
 });
 
-},{"./util":23,"jquery-browserify":14,"underscore":15,"backbone":16}],22:[function(require,module,exports){
-(function() {
-  if (typeof module === "undefined") self.queue = queue;
-  else module.exports = queue;
-  queue.version = "1.0.3";
-
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var queue = {},
-        deferrals = [],
-        started = 0, // number of deferrals that have been started (and perhaps finished)
-        active = 0, // number of deferrals currently being executed (started but not finished)
-        remaining = 0, // number of deferrals not yet finished
-        popping, // inside a synchronous deferral callback?
-        error,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    queue.defer = function() {
-      if (!error) {
-        deferrals.push(arguments);
-        ++remaining;
-        pop();
-      }
-      return queue;
-    };
-
-    queue.await = function(f) {
-      await = f;
-      all = false;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    queue.awaitAll = function(f) {
-      await = f;
-      all = true;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    function pop() {
-      while (popping = started < deferrals.length && active < parallelism) {
-        var i = started++,
-            d = deferrals[i],
-            a = slice.call(d, 1);
-        a.push(callback(i));
-        ++active;
-        d[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new deferrals and squelch active callbacks
-          started = remaining = NaN; // stop queued deferrals from starting
-          notify();
-        } else {
-          deferrals[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(null, deferrals);
-      else await.apply(null, [null].concat(deferrals));
-    }
-
-    return queue;
-  }
-
-  function noop() {}
-})();
-
-},{}],5:[function(require,module,exports){
+},{"./util":23,"jquery-browserify":14,"underscore":16,"backbone":15}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22334,7 +22251,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":23,"jquery-browserify":14,"underscore":15,"backbone":16}],6:[function(require,module,exports){
+},{".././util":23,"jquery-browserify":14,"underscore":16,"backbone":15}],6:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22396,23 +22313,7 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{"underscore":15,"jquery-browserify":14,"backbone":16}],7:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  id: 'start',
-  className: 'start',
-
-  render: function() {
-    var tmpl = _(window.app.templates.start).template();
-    $(this.el).empty().append(tmpl(this.model));
-    return this;
-  }
-});
-
-},{"jquery-browserify":14,"underscore":15,"backbone":16}],8:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":16,"backbone":15}],8:[function(require,module,exports){
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
@@ -22442,7 +22343,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"underscore":15,"js-yaml":21,"backbone":16}],9:[function(require,module,exports){
+},{"underscore":16,"js-yaml":21,"backbone":15}],9:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22564,222 +22465,23 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":23,"jquery-browserify":14,"underscore":15,"backbone":16}],10:[function(require,module,exports){
+},{".././util":23,"jquery-browserify":14,"underscore":16,"backbone":15}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
 var Backbone = require('backbone');
-var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
+  id: 'start',
+  className: 'start',
 
-  id: 'posts',
-
-  events: {
-    'mouseover .item': 'activeListing',
-    'mouseover .item a': 'parentActiveListing',
-    'click .delete': 'deleteFile',
-    'keyup #filter': 'search'
-  },
-
-  render: function () {
-    var that = this;
-    var jailed;
-
-    // Pass a check to template whether we should
-    // stagger the output of a breadcrumb trail
-    if (app.state.config && app.state.config.prose && app.state.config.prose.rooturl) {
-      jailed = app.state.config.prose.rooturl;
-    }
-
-    var data = _.extend(this.model, app.state, {
-      currentPath: app.state.path,
-      jailed: jailed
-    });
-
-    // If this repo is writable to the current user we use
-    // this check to provide a deletion option to the user
-    this.writePermissions = this.model.permissions && this.model.permissions.push;
-
-    this.eventRegister = app.eventRegister;
-
-    // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'remove');
-    this.eventRegister.bind('remove', this.remove);
-
-    var isPrivate = app.state.isPrivate ? ' private' : '';
-    var header = {
-      avatar: '<span class="icon round repo' + isPrivate +  '"></span>',
-      parent: data.user,
-      parentUrl: data.user,
-      title: data.repo,
-      titleUrl: data.user + '/' + data.repo
-    };
-
-    var pathTitle = (app.state.path) ? '/' + app.state.path : '';
-    this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
-
-    this.eventRegister.trigger('sidebarContext', app.state);
-    this.eventRegister.trigger('headerContext', header);
-
-    var tmpl = _(app.templates.posts).template();
-    $(this.el).empty().append(tmpl(data));
-
-    _.delay(function () {
-      that.renderResults();
-      $('#filter').focus();
-      utils.fixedScroll($('.topbar'));
-    }, 1);
-
+  render: function() {
+    var tmpl = _(window.app.templates.start).template();
+    $(this.el).empty().append(tmpl(this.model));
     return this;
-  },
-
-  search: function (e) {
-    if (e.which === 27) { // ESC
-      _.delay(_.bind(function () {
-        $('#filter', this.el).val('');
-        this.model = app.models.getFiles(this.model.tree, app.state.path, '');
-        this.renderResults();
-      }, this), 10);
-    } else if (e.which === 40 && $('.item').length > 0) {
-        utils.pageListing('down'); // Arrow Down
-        e.preventDefault();
-        e.stopPropagation();
-        $('#filter').blur();
-    } else {
-      _.delay(_.bind(function () {
-        var searchstr = $('#filter', this.el).val();
-        this.model = app.models.getFiles(this.model.tree, app.state.path, searchstr);
-        this.renderResults();
-      }, this), 10);
-    }
-  },
-
-  renderResults: function () {
-    var view = this;
-    var files = _(app.templates.files).template();
-    var directories = _(app.templates.directories).template();
-    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
-    var $files = $('#files', this.el);
-    $files.empty();
-
-    _(this.model.files).each(function(f, i) {
-      // Directories ..
-      if (f.type === 'tree') {
-        $files.append(directories({
-          index: i,
-          user: data.user,
-          repo: data.repo,
-          path: (f.path) ? '/' + f.path : '',
-          branch: data.branch,
-          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
-        }));
-      } else {
-        // Files ..
-        $files.append(files({
-          index: i,
-          extension: _.extension(f.path),
-          isBinary: _.isBinary(_.extension(f.path)),
-          isMedia: _.isMedia(_.extension(f.path)),
-          isMarkdown: _.markdown(_.extension(f.path)),
-          writePermissions: view.writePermissions,
-          repo: data.repo,
-          branch: data.branch,
-          path: f.path,
-          filename: _.filename(f.name) || 'Untitled',
-          file: f.path.match(/[^\/]*$/)[0],
-          name: f.name,
-          user: data.user
-        }));
-      }
-    });
-  },
-
-  // Creates human readable versions of _posts/paths
-  semantifyPaths: function (paths) {
-    return _.map(paths, function (path) {
-      return {
-        path: path,
-        name: path
-      };
-    });
-  },
-
-  activeListing: function (e) {
-    if ($(e.target, this.el).hasClass('item')) {
-      $listings = $('.item', this.el);
-      $listing = $(e.target, this.el);
-
-      $listings.removeClass('active');
-      $listing.addClass('active');
-
-      // Blur out search if its selected
-      $('#filter').blur();
-    }
-  },
-
-  parentActiveListing: function (e) {
-    $listings = $('.item', this.el);
-    $listing = $(e.target, this.el).closest('li');
-
-    $listings.removeClass('active');
-    $listing.addClass('active');
-
-    // Blur out search if its selected
-    $('#filter').blur();
-  },
-
-  deleteFile: function(e) {
-    var $file = $(e.target, this.el).closest('a');
-    var $ico = $file.find('.ico');
-
-    var file = {
-      user: $file.data('user'),
-      repo: $file.data('repo'),
-      branch: $file.data('branch'),
-      fileName: $file.data('file')
-    };
-
-    if (confirm('Are you sure you want to delete this file?')) {
-      $file.addClass('working');
-      $ico.addClass('saving');
-
-      // Change the icon to a spinning one
-      app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
-
-        if (err) {
-          $file
-            .removeClass('working')
-            .attr('title', 'Error. Try again in 30 Seconds')
-            .addClass('error');
-
-          $ico.removeClass('rubbish saving');
-          return;
-        }
-
-        // On Success
-        $file.closest('.item').fadeOut('fast');
-
-        // Capture the filename and make sure the enty
-        // does not exist in the model object
-        for (var i = 0; i < this.model.tree.length; i++) {
-          if (this.model.tree[i] && this.model.tree[i].name === file.fileName) {
-            delete this.model.tree[i];
-          }
-        }
-
-        // TODO Bring this back in. Currently hitting githubs api this fast
-        // does not return an updated file listing.
-        // router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
-      }, this));
-    }
-
-    return false;
   }
 });
 
-},{".././util":23,"jquery-browserify":14,"underscore":15,"js-yaml":21,"keymaster":24,"backbone":16}],12:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":16,"backbone":15}],12:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -22798,7 +22500,7 @@ module.exports = Backbone.View.extend({
 
 
 
-},{"jquery-browserify":14,"marked":25,"backbone":16}],11:[function(require,module,exports){
+},{"jquery-browserify":14,"marked":24,"backbone":15}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -24386,7 +24088,308 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././toolbar/markdown.js":18,".././util":23,".././upload":19,".././cookie":17,"jquery-browserify":14,"chosen-jquery-browserify":26,"underscore":15,"js-yaml":21,"keymaster":24,"marked":25,"backbone":16,"diff":27}],16:[function(require,module,exports){
+},{".././toolbar/markdown.js":18,".././util":23,".././upload":19,".././cookie":17,"jquery-browserify":14,"underscore":16,"chosen-jquery-browserify":25,"js-yaml":21,"keymaster":26,"marked":24,"backbone":15,"diff":27}],10:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+
+  id: 'posts',
+
+  events: {
+    'mouseover .item': 'activeListing',
+    'mouseover .item a': 'parentActiveListing',
+    'click .delete': 'deleteFile',
+    'keyup #filter': 'search'
+  },
+
+  render: function () {
+    var that = this;
+    var jailed;
+
+    // Pass a check to template whether we should
+    // stagger the output of a breadcrumb trail
+    if (app.state.config && app.state.config.prose && app.state.config.prose.rooturl) {
+      jailed = app.state.config.prose.rooturl;
+    }
+
+    var data = _.extend(this.model, app.state, {
+      currentPath: app.state.path,
+      jailed: jailed
+    });
+
+    // If this repo is writable to the current user we use
+    // this check to provide a deletion option to the user
+    this.writePermissions = this.model.permissions && this.model.permissions.push;
+
+    this.eventRegister = app.eventRegister;
+
+    // Listen for button clicks from the vertical nav
+    _.bindAll(this, 'remove');
+    this.eventRegister.bind('remove', this.remove);
+
+    var isPrivate = app.state.isPrivate ? ' private' : '';
+    var header = {
+      avatar: '<span class="icon round repo' + isPrivate +  '"></span>',
+      parent: data.user,
+      parentUrl: data.user,
+      title: data.repo,
+      titleUrl: data.user + '/' + data.repo
+    };
+
+    var pathTitle = (app.state.path) ? '/' + app.state.path : '';
+    this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
+
+    this.eventRegister.trigger('sidebarContext', app.state);
+    this.eventRegister.trigger('headerContext', header);
+
+    var tmpl = _(app.templates.posts).template();
+    $(this.el).empty().append(tmpl(data));
+
+    _.delay(function () {
+      that.renderResults();
+      $('#filter').focus();
+      utils.fixedScroll($('.topbar'));
+    }, 1);
+
+    return this;
+  },
+
+  search: function (e) {
+    if (e.which === 27) { // ESC
+      _.delay(_.bind(function () {
+        $('#filter', this.el).val('');
+        this.model = app.models.getFiles(this.model.tree, app.state.path, '');
+        this.renderResults();
+      }, this), 10);
+    } else if (e.which === 40 && $('.item').length > 0) {
+        utils.pageListing('down'); // Arrow Down
+        e.preventDefault();
+        e.stopPropagation();
+        $('#filter').blur();
+    } else {
+      _.delay(_.bind(function () {
+        var searchstr = $('#filter', this.el).val();
+        this.model = app.models.getFiles(this.model.tree, app.state.path, searchstr);
+        this.renderResults();
+      }, this), 10);
+    }
+  },
+
+  renderResults: function () {
+    var view = this;
+    var files = _(app.templates.files).template();
+    var directories = _(app.templates.directories).template();
+    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
+    var $files = $('#files', this.el);
+    $files.empty();
+
+    _(this.model.files).each(function(f, i) {
+      // Directories ..
+      if (f.type === 'tree') {
+        $files.append(directories({
+          index: i,
+          user: data.user,
+          repo: data.repo,
+          path: (f.path) ? '/' + f.path : '',
+          branch: data.branch,
+          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
+        }));
+      } else {
+        // Files ..
+        $files.append(files({
+          index: i,
+          extension: _.extension(f.path),
+          isBinary: _.isBinary(_.extension(f.path)),
+          isMedia: _.isMedia(_.extension(f.path)),
+          isMarkdown: _.markdown(_.extension(f.path)),
+          writePermissions: view.writePermissions,
+          repo: data.repo,
+          branch: data.branch,
+          path: f.path,
+          filename: _.filename(f.name) || 'Untitled',
+          file: f.path.match(/[^\/]*$/)[0],
+          name: f.name,
+          user: data.user
+        }));
+      }
+    });
+  },
+
+  // Creates human readable versions of _posts/paths
+  semantifyPaths: function (paths) {
+    return _.map(paths, function (path) {
+      return {
+        path: path,
+        name: path
+      };
+    });
+  },
+
+  activeListing: function (e) {
+    if ($(e.target, this.el).hasClass('item')) {
+      $listings = $('.item', this.el);
+      $listing = $(e.target, this.el);
+
+      $listings.removeClass('active');
+      $listing.addClass('active');
+
+      // Blur out search if its selected
+      $('#filter').blur();
+    }
+  },
+
+  parentActiveListing: function (e) {
+    $listings = $('.item', this.el);
+    $listing = $(e.target, this.el).closest('li');
+
+    $listings.removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    $('#filter').blur();
+  },
+
+  deleteFile: function(e) {
+    var $file = $(e.target, this.el).closest('a');
+    var $ico = $file.find('.ico');
+
+    var file = {
+      user: $file.data('user'),
+      repo: $file.data('repo'),
+      branch: $file.data('branch'),
+      fileName: $file.data('file')
+    };
+
+    if (confirm('Are you sure you want to delete this file?')) {
+      $file.addClass('working');
+      $ico.addClass('saving');
+
+      // Change the icon to a spinning one
+      app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
+
+        if (err) {
+          $file
+            .removeClass('working')
+            .attr('title', 'Error. Try again in 30 Seconds')
+            .addClass('error');
+
+          $ico.removeClass('rubbish saving');
+          return;
+        }
+
+        // On Success
+        $file.closest('.item').fadeOut('fast');
+
+        // Capture the filename and make sure the enty
+        // does not exist in the model object
+        for (var i = 0; i < this.model.tree.length; i++) {
+          if (this.model.tree[i] && this.model.tree[i].name === file.fileName) {
+            delete this.model.tree[i];
+          }
+        }
+
+        // TODO Bring this back in. Currently hitting githubs api this fast
+        // does not return an updated file listing.
+        // router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
+      }, this));
+    }
+
+    return false;
+  }
+});
+
+},{".././util":23,"underscore":16,"jquery-browserify":14,"js-yaml":21,"keymaster":26,"backbone":15}],21:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
+
+},{"./lib/js-yaml.js":28}],22:[function(require,module,exports){
+(function() {
+  if (typeof module === "undefined") self.queue = queue;
+  else module.exports = queue;
+  queue.version = "1.0.3";
+
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var queue = {},
+        deferrals = [],
+        started = 0, // number of deferrals that have been started (and perhaps finished)
+        active = 0, // number of deferrals currently being executed (started but not finished)
+        remaining = 0, // number of deferrals not yet finished
+        popping, // inside a synchronous deferral callback?
+        error,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    queue.defer = function() {
+      if (!error) {
+        deferrals.push(arguments);
+        ++remaining;
+        pop();
+      }
+      return queue;
+    };
+
+    queue.await = function(f) {
+      await = f;
+      all = false;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    queue.awaitAll = function(f) {
+      await = f;
+      all = true;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    function pop() {
+      while (popping = started < deferrals.length && active < parallelism) {
+        var i = started++,
+            d = deferrals[i],
+            a = slice.call(d, 1);
+        a.push(callback(i));
+        ++active;
+        d[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new deferrals and squelch active callbacks
+          started = remaining = NaN; // stop queued deferrals from starting
+          notify();
+        } else {
+          deferrals[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(null, deferrals);
+      else await.apply(null, [null].concat(deferrals));
+    }
+
+    return queue;
+  }
+
+  function noop() {}
+})();
+
+},{}],15:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -25960,10 +25963,7 @@ module.exports = Backbone.View.extend({
 }).call(this);
 
 })()
-},{"underscore":15}],21:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
-
-},{"./lib/js-yaml.js":28}],24:[function(require,module,exports){
+},{"underscore":16}],26:[function(require,module,exports){
 (function(){//     keymaster.js
 //     (c) 2011-2012 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
@@ -26254,7 +26254,608 @@ module.exports = require('./lib/js-yaml.js');
 })(this);
 
 })()
-},{}],25:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
+// Github.js (Modified for prose.io)
+// (c) 2012 Michael Aufreiter, Development Seed
+// Github.js is freely distributable under the MIT license.
+// For all details and documentation:
+// http://substance.io/michael/github
+
+var _ = require('underscore');
+
+(function() {
+  var Github;
+
+  Github = window.Github = function(options) {
+
+    var API_URL = options.api || 'https://api.github.com';
+
+    // HTTP Request Abstraction
+    // =======
+    //
+    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
+
+    function _request(method, path, data, cb, raw, sync, headers) {
+      function getURL() {
+        return url = API_URL + path;
+      }
+
+      var xhr = new XMLHttpRequest();
+      if (!raw) {xhr.dataType = "json";}
+
+      xhr.open(method, getURL(), !sync);
+      if (!sync) {
+        xhr.onreadystatechange = function () {
+          if (this.readyState == 4) {
+            if (this.status >= 200 && this.status < 300 || this.status === 304) {
+              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
+            } else {
+              cb({request: this, error: this.status});
+            }
+          }
+        };
+      }
+      xhr.setRequestHeader('Accept','application/vnd.github.raw');
+      xhr.setRequestHeader('Content-Type','application/json');
+
+      if (headers) {
+        for (var i = 0; i < headers.length; i++) {
+          header = headers[i];
+          xhr.setRequestHeader(header[0], header[1]);
+        }
+      }
+
+      if (
+         (options.auth == 'oauth' && options.token) ||
+         (options.auth == 'basic' && options.username && options.password)
+         ) {
+           xhr.setRequestHeader('Authorization',options.auth == 'oauth' ?
+            'token '+ options.token :
+            'Basic ' + Base64.encode(options.username + ':' + options.password)
+           );
+         }
+      if (data) {
+        xhr.send(JSON.stringify(data));
+      } else {
+        xhr.send();
+      }
+      if (sync) return xhr.response;
+    }
+
+    function _parseLinkHeader(err, response, xhr, cb) {
+      var link = xhr.getResponseHeader('link');
+
+      if (!err && link) {
+        var parts = link.split(',');
+        var length = parts.length;
+
+        var links = {};
+
+        var section;
+        var url;
+        var name;
+
+        for (var i = 0; i < length; i++) {
+          section = parts[i].split(';');
+
+          if (section.length !== 2) {
+            throw new Error("section could not be split on ';'");
+          }
+
+          url = section[0].replace(/<(.*)>/, '$1').trim();
+          name = section[1].replace(/rel="(.*)"/, '$1').trim();
+
+          links[name] = url;
+        }
+
+        if (links.next) {
+          _request('GET', links.next.split(API_URL)[1], null, function(err, res, xhr) {
+            if (typeof response.concat === 'function') {
+              response = response.concat(res);
+            } else if (typeof response === 'string') {
+              response += res;
+            }
+
+            _parseLinkHeader(err, response, xhr, cb);
+          });
+        } else {
+          cb(err, response);
+        }
+      } else {
+        cb(err, response);
+      }
+    }
+
+    // File API
+    // =======
+    Github.File = function() {
+      // Manages file creation or updating depending on the data obnect passed.
+      this.uploadFile = function(username, repo, path, data, cb) {
+        _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, data, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      this.deleteFile = function(cb) {
+        _request('DELETE', '/repos/' + username + '/' + repo + '/contents/' + path, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+    };
+
+    // User API
+    // =======
+
+    Github.User = function() {
+      this.repos = function(cb) {
+        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List user organizations
+      // -------
+
+      this.orgs = function(cb) {
+        _request("GET", "/user/orgs", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List authenticated user's gists
+      // -------
+
+      this.gists = function(cb) {
+        _request("GET", "/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // Show user information
+      // -------
+
+      this.show = function(username, cb) {
+        var command = username ? "/users/"+username : "/user";
+
+        _request("GET", command, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List user repositories
+      // -------
+
+      this.userRepos = function(username, cb) {
+        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List a user's gists
+      // -------
+
+      this.userGists = function(username, cb) {
+        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // List organization repositories
+      // -------
+
+      this.orgRepos = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
+          _parseLinkHeader(err, res, xhr, cb);
+        });
+      };
+
+      // Follow user
+      // -------
+
+      this.follow = function(username, cb) {
+        _request("PUT", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // Unfollow user
+      // -------
+
+      this.unfollow = function(username, cb) {
+        _request("DELETE", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+    };
+
+
+    // Repository API
+    // =======
+
+    Github.Repository = function(options) {
+      var repo = options.name;
+      var user = options.user;
+
+      var that = this;
+      var repoPath = "/repos/" + user + "/" + repo;
+
+      var currentTree = {
+        "branch": null,
+        "sha": null
+      };
+
+      // Uses the cache if branch has not been changed
+      // -------
+
+      function updateTree(branch, cb) {
+        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
+        that.getRef("heads/"+branch, function(err, sha) {
+          currentTree.branch = branch;
+          currentTree.sha = sha;
+          cb(err, sha);
+        });
+      }
+
+      // Get a particular reference
+      // -------
+
+      this.getRef = function(ref, cb) {
+        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.object.sha);
+        });
+      };
+
+      // Create a new reference
+      // --------
+      //
+      // {
+      //   "ref": "refs/heads/my-new-branch-name",
+      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
+      // }
+
+      this.createRef = function(options, cb) {
+        _request("POST", repoPath + "/git/refs", options, cb);
+      };
+
+      // Delete a reference
+      // --------
+      //
+      // repo.deleteRef('heads/gh-pages')
+      // repo.deleteRef('tags/v1.0')
+
+      this.deleteRef = function(ref, cb) {
+        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
+      };
+
+      // List all branches of a repository
+      // -------
+
+      this.listBranches = function(cb) {
+        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
+          if (err) return cb(err);
+          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
+        });
+      };
+
+      // Retrieve the contents of a blob
+      // -------
+
+      this.getBlob = function(sha, cb) {
+        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
+      };
+
+      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
+      // -------
+
+      this.getSha = function(branch, path, cb) {
+        // Just use head if path is empty
+        if (path === "") return that.getRef("heads/"+branch, cb);
+        that.getTree(branch+"?recursive=true", function(err, tree) {
+          var file = _.select(tree, function(file) {
+            return file.path === path;
+          })[0];
+          cb(null, file ? file.sha : null);
+        });
+      };
+
+      // Retrieve the tree a commit points to
+      // -------
+
+      this.getTree = function(tree, cb) {
+        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.tree);
+        });
+      };
+
+      // Post a new blob object, getting a blob SHA back
+      // -------
+
+      this.postBlob = function(content, cb) {
+        if (typeof(content) === "string") {
+          content = {
+            "content": content,
+            "encoding": "utf-8"
+          };
+        }
+
+        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Update an existing tree adding a new blob object getting a tree SHA back
+      // -------
+
+      this.updateTree = function(baseTree, path, blob, cb) {
+        var data = {
+          "base_tree": baseTree,
+          "tree": [
+            {
+              "path": path,
+              "mode": "100644",
+              "type": "blob",
+              "sha": blob
+            }
+          ]
+        };
+        _request("POST", repoPath + "/git/trees", data, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Post a new tree object having a file path pointer replaced
+      // with a new blob SHA getting a tree SHA back
+      // -------
+
+      this.postTree = function(tree, cb) {
+        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Create a new commit object with the current commit SHA as the parent
+      // and the new tree SHA, getting a commit SHA back
+      // -------
+
+      this.commit = function(parent, tree, message, cb) {
+        var data = {
+          "message": message,
+          "author": {
+            "name": options.username
+          },
+          "parents": [
+            parent
+          ],
+          "tree": tree
+        };
+
+        _request("POST", repoPath + "/git/commits", data, function(err, res) {
+          currentTree.sha = res.sha; // update latest commit
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Update the reference of your head to point to the new commit SHA
+      // -------
+
+      this.updateHead = function(head, commit, cb) {
+        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
+          cb(err);
+        });
+      };
+
+      // Show repository information
+      // -------
+
+      this.show = function(cb) {
+        _request("GET", repoPath, null, cb);
+      };
+
+      // Get commits
+      // --------
+
+      this.getCommit = function(sha, cb) {
+        _request("GET", repoPath + "/commits/" + sha, null, cb);
+      };
+
+      this.getCommits = function(branch, lastModified, cb) {
+        _request("GET", repoPath + "/commits" + "?sha=" + branch, null, cb, false, false, [
+          ['If-Modified-Since', lastModified]
+        ]);
+      };
+
+      // Get contents
+      // --------
+
+      this.contents = function(branch, path, cb) {
+        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
+      };
+
+      this.contentsSync = function(branch, path) {
+        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
+      };
+
+      // Fork repository
+      // -------
+
+      this.fork = function(cb) {
+        _request("POST", repoPath + "/forks", null, cb);
+      };
+
+      // Create pull request
+      // --------
+
+      this.createPullRequest = function(options, cb) {
+        _request("POST", repoPath + "/pulls", options, cb);
+      };
+
+      // Read file at given path
+      // -------
+
+      this.read = function(branch, path, cb) {
+        that.getSha(branch, path, function(err, sha) {
+          if (!sha) return cb("not found", null);
+          that.getBlob(sha, function(err, content) {
+            cb(err, content, sha);
+          });
+        });
+      };
+
+      // Remove a file from the tree
+      // -------
+
+      this.remove = function(branch, path, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
+            _.each(newTree, function(ref) {
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(newTree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Move a file to a new location
+      // -------
+
+      this.move = function(branch, path, newPath, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            _.each(tree, function(ref) {
+              if (ref.path === path) ref.path = newPath;
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(tree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Write file contents to a given branch and path
+      // -------
+
+      this.write = function(branch, path, content, message, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          if (err) return cb(err);
+          that.postBlob(content, function(err, blob) {
+            if (err) return cb(err);
+            that.updateTree(latestCommit, path, blob, function(err, tree) {
+              if (err) return cb(err);
+              that.commit(latestCommit, tree, message, function(err, commit) {
+                if (err) return cb(err);
+                that.updateHead(branch, commit, cb);
+              });
+            });
+          });
+        });
+      };
+    };
+
+    // Gists API
+    // =======
+
+    Github.Gist = function(options) {
+      var id = options.id;
+      var gistPath = "/gists/"+id;
+
+      // Read the gist
+      // --------
+
+      this.read = function(cb) {
+        _request("GET", gistPath, null, function(err, gist) {
+          cb(err, gist);
+        });
+      };
+
+      // Create the gist
+      // --------
+      // {
+      //  "description": "the description for this gist",
+      //    "public": true,
+      //    "files": {
+      //      "file1.txt": {
+      //        "content": "String file contents"
+      //      }
+      //    }
+      // }
+
+      this.create = function(options, cb){
+        _request("POST","/gists", options, cb);
+      };
+
+      // Delete the gist
+      // --------
+
+      this.removeGist = function(cb) {
+        _request("DELETE", gistPath, null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Fork a gist
+      // --------
+
+      this.fork = function(cb) {
+        _request("POST", gistPath+"/fork", null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Update a gist with the new stuff
+      // --------
+
+      this.update = function(options, cb) {
+        _request("PATCH", gistPath, options, function(err,res) {
+          cb(err,res);
+        });
+      };
+    };
+
+    // Top Level API
+    // -------
+
+    this.getRepo = function(user, repo) {
+      return new Github.Repository({user: user, name: repo});
+    };
+
+    this.getUser = function() {
+      return new Github.User();
+    };
+
+    this.getFile = function() {
+      return new Github.File();
+    };
+
+    this.getGist = function(id) {
+      return new Github.Gist({id: id});
+    };
+  };
+  module.exports = Github;
+}).call(this);
+
+},{"underscore":16}],24:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -27759,608 +28360,7 @@ if (typeof module !== "undefined") {
     module.exports = JsDiff;
 }
 
-},{}],20:[function(require,module,exports){
-// Github.js (Modified for prose.io)
-// (c) 2012 Michael Aufreiter, Development Seed
-// Github.js is freely distributable under the MIT license.
-// For all details and documentation:
-// http://substance.io/michael/github
-
-var _ = require('underscore');
-
-(function() {
-  var Github;
-
-  Github = window.Github = function(options) {
-
-    var API_URL = options.api || 'https://api.github.com';
-
-    // HTTP Request Abstraction
-    // =======
-    //
-    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
-
-    function _request(method, path, data, cb, raw, sync, headers) {
-      function getURL() {
-        return url = API_URL + path;
-      }
-
-      var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
-
-      xhr.open(method, getURL(), !sync);
-      if (!sync) {
-        xhr.onreadystatechange = function () {
-          if (this.readyState == 4) {
-            if (this.status >= 200 && this.status < 300 || this.status === 304) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
-            } else {
-              cb({request: this, error: this.status});
-            }
-          }
-        };
-      }
-      xhr.setRequestHeader('Accept','application/vnd.github.raw');
-      xhr.setRequestHeader('Content-Type','application/json');
-
-      if (headers) {
-        for (var i = 0; i < headers.length; i++) {
-          header = headers[i];
-          xhr.setRequestHeader(header[0], header[1]);
-        }
-      }
-
-      if (
-         (options.auth == 'oauth' && options.token) ||
-         (options.auth == 'basic' && options.username && options.password)
-         ) {
-           xhr.setRequestHeader('Authorization',options.auth == 'oauth' ?
-            'token '+ options.token :
-            'Basic ' + Base64.encode(options.username + ':' + options.password)
-           );
-         }
-      if (data) {
-        xhr.send(JSON.stringify(data));
-      } else {
-        xhr.send();
-      }
-      if (sync) return xhr.response;
-    }
-
-    function _parseLinkHeader(err, response, xhr, cb) {
-      var link = xhr.getResponseHeader('link');
-
-      if (!err && link) {
-        var parts = link.split(',');
-        var length = parts.length;
-
-        var links = {};
-
-        var section;
-        var url;
-        var name;
-
-        for (var i = 0; i < length; i++) {
-          section = parts[i].split(';');
-
-          if (section.length !== 2) {
-            throw new Error("section could not be split on ';'");
-          }
-
-          url = section[0].replace(/<(.*)>/, '$1').trim();
-          name = section[1].replace(/rel="(.*)"/, '$1').trim();
-
-          links[name] = url;
-        }
-
-        if (links.next) {
-          _request('GET', links.next.split(API_URL)[1], null, function(err, res, xhr) {
-            if (typeof response.concat === 'function') {
-              response = response.concat(res);
-            } else if (typeof response === 'string') {
-              response += res;
-            }
-
-            _parseLinkHeader(err, response, xhr, cb);
-          });
-        } else {
-          cb(err, response);
-        }
-      } else {
-        cb(err, response);
-      }
-    }
-
-    // File API
-    // =======
-    Github.File = function() {
-      // Manages file creation or updating depending on the data obnect passed.
-      this.uploadFile = function(username, repo, path, data, cb) {
-        _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, data, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      this.deleteFile = function(cb) {
-        _request('DELETE', '/repos/' + username + '/' + repo + '/contents/' + path, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-    };
-
-    // User API
-    // =======
-
-    Github.User = function() {
-      this.repos = function(cb) {
-        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user organizations
-      // -------
-
-      this.orgs = function(cb) {
-        _request("GET", "/user/orgs", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List authenticated user's gists
-      // -------
-
-      this.gists = function(cb) {
-        _request("GET", "/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // Show user information
-      // -------
-
-      this.show = function(username, cb) {
-        var command = username ? "/users/"+username : "/user";
-
-        _request("GET", command, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user repositories
-      // -------
-
-      this.userRepos = function(username, cb) {
-        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List a user's gists
-      // -------
-
-      this.userGists = function(username, cb) {
-        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // List organization repositories
-      // -------
-
-      this.orgRepos = function(orgname, cb) {
-        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
-          _parseLinkHeader(err, res, xhr, cb);
-        });
-      };
-
-      // Follow user
-      // -------
-
-      this.follow = function(username, cb) {
-        _request("PUT", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // Unfollow user
-      // -------
-
-      this.unfollow = function(username, cb) {
-        _request("DELETE", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-    };
-
-
-    // Repository API
-    // =======
-
-    Github.Repository = function(options) {
-      var repo = options.name;
-      var user = options.user;
-
-      var that = this;
-      var repoPath = "/repos/" + user + "/" + repo;
-
-      var currentTree = {
-        "branch": null,
-        "sha": null
-      };
-
-      // Uses the cache if branch has not been changed
-      // -------
-
-      function updateTree(branch, cb) {
-        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
-        that.getRef("heads/"+branch, function(err, sha) {
-          currentTree.branch = branch;
-          currentTree.sha = sha;
-          cb(err, sha);
-        });
-      }
-
-      // Get a particular reference
-      // -------
-
-      this.getRef = function(ref, cb) {
-        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.object.sha);
-        });
-      };
-
-      // Create a new reference
-      // --------
-      //
-      // {
-      //   "ref": "refs/heads/my-new-branch-name",
-      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
-      // }
-
-      this.createRef = function(options, cb) {
-        _request("POST", repoPath + "/git/refs", options, cb);
-      };
-
-      // Delete a reference
-      // --------
-      //
-      // repo.deleteRef('heads/gh-pages')
-      // repo.deleteRef('tags/v1.0')
-
-      this.deleteRef = function(ref, cb) {
-        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
-      };
-
-      // List all branches of a repository
-      // -------
-
-      this.listBranches = function(cb) {
-        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
-          if (err) return cb(err);
-          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
-        });
-      };
-
-      // Retrieve the contents of a blob
-      // -------
-
-      this.getBlob = function(sha, cb) {
-        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
-      };
-
-      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
-      // -------
-
-      this.getSha = function(branch, path, cb) {
-        // Just use head if path is empty
-        if (path === "") return that.getRef("heads/"+branch, cb);
-        that.getTree(branch+"?recursive=true", function(err, tree) {
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
-          cb(null, file ? file.sha : null);
-        });
-      };
-
-      // Retrieve the tree a commit points to
-      // -------
-
-      this.getTree = function(tree, cb) {
-        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.tree);
-        });
-      };
-
-      // Post a new blob object, getting a blob SHA back
-      // -------
-
-      this.postBlob = function(content, cb) {
-        if (typeof(content) === "string") {
-          content = {
-            "content": content,
-            "encoding": "utf-8"
-          };
-        }
-
-        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update an existing tree adding a new blob object getting a tree SHA back
-      // -------
-
-      this.updateTree = function(baseTree, path, blob, cb) {
-        var data = {
-          "base_tree": baseTree,
-          "tree": [
-            {
-              "path": path,
-              "mode": "100644",
-              "type": "blob",
-              "sha": blob
-            }
-          ]
-        };
-        _request("POST", repoPath + "/git/trees", data, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Post a new tree object having a file path pointer replaced
-      // with a new blob SHA getting a tree SHA back
-      // -------
-
-      this.postTree = function(tree, cb) {
-        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Create a new commit object with the current commit SHA as the parent
-      // and the new tree SHA, getting a commit SHA back
-      // -------
-
-      this.commit = function(parent, tree, message, cb) {
-        var data = {
-          "message": message,
-          "author": {
-            "name": options.username
-          },
-          "parents": [
-            parent
-          ],
-          "tree": tree
-        };
-
-        _request("POST", repoPath + "/git/commits", data, function(err, res) {
-          currentTree.sha = res.sha; // update latest commit
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update the reference of your head to point to the new commit SHA
-      // -------
-
-      this.updateHead = function(head, commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
-          cb(err);
-        });
-      };
-
-      // Show repository information
-      // -------
-
-      this.show = function(cb) {
-        _request("GET", repoPath, null, cb);
-      };
-
-      // Get commits
-      // --------
-
-      this.getCommit = function(sha, cb) {
-        _request("GET", repoPath + "/commits/" + sha, null, cb);
-      };
-
-      this.getCommits = function(branch, lastModified, cb) {
-        _request("GET", repoPath + "/commits" + "?sha=" + branch, null, cb, false, false, [
-          ['If-Modified-Since', lastModified]
-        ]);
-      };
-
-      // Get contents
-      // --------
-
-      this.contents = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
-      };
-
-      this.contentsSync = function(branch, path) {
-        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
-      };
-
-      // Fork repository
-      // -------
-
-      this.fork = function(cb) {
-        _request("POST", repoPath + "/forks", null, cb);
-      };
-
-      // Create pull request
-      // --------
-
-      this.createPullRequest = function(options, cb) {
-        _request("POST", repoPath + "/pulls", options, cb);
-      };
-
-      // Read file at given path
-      // -------
-
-      this.read = function(branch, path, cb) {
-        that.getSha(branch, path, function(err, sha) {
-          if (!sha) return cb("not found", null);
-          that.getBlob(sha, function(err, content) {
-            cb(err, content, sha);
-          });
-        });
-      };
-
-      // Remove a file from the tree
-      // -------
-
-      this.remove = function(branch, path, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
-            _.each(newTree, function(ref) {
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(newTree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Move a file to a new location
-      // -------
-
-      this.move = function(branch, path, newPath, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            _.each(tree, function(ref) {
-              if (ref.path === path) ref.path = newPath;
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(tree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Write file contents to a given branch and path
-      // -------
-
-      this.write = function(branch, path, content, message, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          if (err) return cb(err);
-          that.postBlob(content, function(err, blob) {
-            if (err) return cb(err);
-            that.updateTree(latestCommit, path, blob, function(err, tree) {
-              if (err) return cb(err);
-              that.commit(latestCommit, tree, message, function(err, commit) {
-                if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
-              });
-            });
-          });
-        });
-      };
-    };
-
-    // Gists API
-    // =======
-
-    Github.Gist = function(options) {
-      var id = options.id;
-      var gistPath = "/gists/"+id;
-
-      // Read the gist
-      // --------
-
-      this.read = function(cb) {
-        _request("GET", gistPath, null, function(err, gist) {
-          cb(err, gist);
-        });
-      };
-
-      // Create the gist
-      // --------
-      // {
-      //  "description": "the description for this gist",
-      //    "public": true,
-      //    "files": {
-      //      "file1.txt": {
-      //        "content": "String file contents"
-      //      }
-      //    }
-      // }
-
-      this.create = function(options, cb){
-        _request("POST","/gists", options, cb);
-      };
-
-      // Delete the gist
-      // --------
-
-      this.removeGist = function(cb) {
-        _request("DELETE", gistPath, null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Fork a gist
-      // --------
-
-      this.fork = function(cb) {
-        _request("POST", gistPath+"/fork", null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Update a gist with the new stuff
-      // --------
-
-      this.update = function(options, cb) {
-        _request("PATCH", gistPath, options, function(err,res) {
-          cb(err,res);
-        });
-      };
-    };
-
-    // Top Level API
-    // -------
-
-    this.getRepo = function(user, repo) {
-      return new Github.Repository({user: user, name: repo});
-    };
-
-    this.getUser = function() {
-      return new Github.User();
-    };
-
-    this.getFile = function() {
-      return new Github.File();
-    };
-
-    this.getGist = function(id) {
-      return new Github.Gist({id: id});
-    };
-  };
-  module.exports = Github;
-}).call(this);
-
-},{"underscore":15}],23:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -28843,7 +28843,7 @@ module.exports = {
   }
 };
 
-},{"jquery-browserify":14,"underscore":15,"js-yaml":21,"marked":25,"queue-async":22,"chrono":29}],28:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":16,"js-yaml":21,"marked":24,"queue-async":22,"chrono":29}],28:[function(require,module,exports){
 'use strict';
 
 
@@ -28888,10 +28888,7 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":30,"./js-yaml/common":31,"./js-yaml/dumper":32,"./js-yaml/type":33,"./js-yaml/schema":34,"./js-yaml/schema/failsafe":35,"./js-yaml/schema/json":36,"./js-yaml/schema/core":37,"./js-yaml/schema/default_safe":38,"./js-yaml/schema/default_full":39,"./js-yaml/exception":40,"./js-yaml/require":41}],29:[function(require,module,exports){
-module.exports = require('./lib/chrono');
-
-},{"./lib/chrono":42}],31:[function(require,module,exports){
+},{"./js-yaml/loader":30,"./js-yaml/dumper":31,"./js-yaml/common":32,"./js-yaml/type":33,"./js-yaml/schema":34,"./js-yaml/schema/failsafe":35,"./js-yaml/schema/json":36,"./js-yaml/schema/core":37,"./js-yaml/schema/default_safe":38,"./js-yaml/schema/default_full":39,"./js-yaml/exception":40,"./js-yaml/require":41}],32:[function(require,module,exports){
 'use strict';
 
 
@@ -28980,7 +28977,7 @@ YAMLException.prototype.toString = function toString(compact) {
 
 module.exports = YAMLException;
 
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function(global){(function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -30062,412 +30059,6 @@ module.exports = YAMLException;
 
 })(window)
 },{"jquery-browserify":14}],42:[function(require,module,exports){
-(function(){
-
-// CommonJS exports.
-var data = (typeof exports !== 'undefined') ? exports : {};
-
-data.tzToOffset = {
-  'ACDT': -630,
-  'ACST': -570,
-  'ACT': -480,
-  'ADT': +180,
-  'AEDT': -660,
-  'AEST': -600,
-  'AFT': -270,
-  'AKDT': +480,
-  'AKST': +540,
-  'AMST': -300,
-  'AMT': -240,
-  'ART': +180,
-  'AST': -240, // Arab Standard Time
-  'AWDT': -540,
-  'AWST': -480,
-  'AZOST': +60,
-  'AZT': -240,
-  'BDT': -480,
-  'BIOT': -360,
-  'BIT': +720,
-  'BOT': +240,
-  'BRT': +180,
-  'BST': -60, // British Summer Time
-  'BTT': -360,
-  'CAT': -120,
-  'CCT': -390,
-  'CDT': +300,
-  'CEDT': -120,
-  'CEST': -120,
-  'CET': -60,
-  'CHAST': -765,
-  'ChST': -600,
-  'CIST': +480,
-  'CKT': +600,
-  'CLST': +180,
-  'CLT': +240,
-  'COST': +240,
-  'COT': +300,
-  'CST': -480,
-  'CST': +360,
-  'CVT': +60,
-  'CXT': -420,
-  'DFT': -60,
-  'EAST': +360,
-  'EAT': -180,
-  'ECT': +240,
-  'ECT': +300,
-  'EDT': +240,
-  'EEDT': -180,
-  'EEST': -180,
-  'EET': -120,
-  'EST': +300,
-  'FJT': -720,
-  'FKST': +240,
-  'GALT': +360,
-  'GET': -240,
-  'GFT': +180,
-  'GILT': -720,
-  'GIT': +540,
-  'GMT': 0,
-  'GST': +120,
-  'GYT': +240,
-  'HADT': +540,
-  'HAST': +600,
-  'HKT': -480,
-  'HMT': -300,
-  'HST': +600,
-  'IRKT': -480,
-  'IRST': -210,
-  'IST': -120,
-  'IST': -330,
-  'IST': -60,
-  'JST': -540,
-  'KRAT': -420,
-  'KST': -540,
-  'LHST': -630,
-  'LINT': -840,
-  'MAGT': -660,
-  'MDT': +360,
-  'MIT': +570,
-  'MSD': -240,
-  'MSK': -180,
-  'MST': -390,
-  'MST': -480,
-  'MST': +420,
-  'MUT': -240,
-  'NDT': +150,
-  'NFT': -690,
-  'NPT': -345,
-  'NST': +210,
-  'NT': +210,
-  'NZST': -720,
-  'NZDT': -780,
-  'OMST': -360,
-  'PDT': +420,
-  'PETT': -720,
-  'PHOT': -780,
-  'PKT': -300,
-  'PST': -480,
-  'PST': +480,
-  'RET': -240,
-  'SAMT': -240,
-  'SAST': -120,
-  'SBT': -660,
-  'SCT': -240,
-  'SLT': -330,
-  'SST': -480,
-  'SST': +660,
-  'TAHT': +600,
-  'THA': -420,
-  'UTC': 0,
-  'UYST': +120,
-  'UYT': +180,
-  'VET': +270,
-  'VLAT': -600,
-  'WAT': -60,
-  'WEDT': -60,
-  'WEST': -60,
-  'YAKT': -540,
-  'YEKT': -300
-};
-
-// While indices are strings here, numbers work fine too when retrieving.
-data.offsetToTz = {
-  '720':  ['BIT'],
-  '660':  ['SST'],
-  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
-  '570':  ['MIT'],
-  '540':  ['AKST', 'GIT', 'HADT'],
-  '480':  ['PST', 'AKDT', 'CIST'],
-  '420':  ['MST', 'PDT'],
-  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
-  '300':  ['EST', 'CDT', 'COT', 'ECT'],
-  '270':  ['VET'],
-  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
-  '210':  ['NT', 'NST'],
-  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
-  '150':  ['NDT'],
-  '120':  ['GST', 'UYST'],
-  '60':   ['AZOST', 'CVT'],
-  '0':    ['UTC', 'GMT'],
-  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
-  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
-  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
-  '-210': ['IRST'],
-  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
-  '-270': ['AFT'],
-  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
-  '-330': ['IST', 'SLT'],
-  '-345': ['NPT'],
-  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
-  '-390': ['CCT', 'MST'],
-  '-420': ['CXT', 'KRAT', 'THA'],
-  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
-  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
-  '-570': ['ACST'],
-  '-600': ['AEST', 'ChST', 'VLAT'],
-  '-630': ['ACDT', 'LHST'],
-  '-660': ['AEDT', 'MAGT', 'SBT'],
-  '-690': ['NFT'],
-  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
-  '-765': ['CHAST'],
-  '-780': ['PHOT', 'NZDT'],
-  '-840': ['LINT']
-};
-
-data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
-
-data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
-
-data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
-
-data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
-
-data.intervals = [
-    function(n) { return n !== 1 ? 'years' : 'year'; },
-    function(n) { return n !== 1 ? 'months' : 'month'; },
-    function(n) { return n !== 1 ? 'weeks' : 'week'; },
-    function(n) { return n !== 1 ? 'days' : 'day'; },
-    function(n) { return n !== 1 ? 'hours' : 'hour'; },
-    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
-    function(n) { return n !== 1 ? 'seconds' : 'second'; }
-];
-
-data.intervalFormats = {
-    'ago': '% ago',
-    'in': 'in %'
-};
-
-data.ordinals = function(number) {
-  switch (number % 10) {
-    case 1: return (number % 100 !== 11) ? 'st' : 'th';
-    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
-    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
-    default: return 'th';
-  }
-};
-
-function pad2(i) {
-  return i < 10 ? '0' + i : i;
-};
-
-function pad2sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '0' + i : i);
-};
-
-function pad3(i) {
-  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
-};
-
-function pad4sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
-}
-
-Date.prototype.interval = function(other) {
-    var self = this, inverse = self > other;
-    if (inverse) {
-        self = other;
-        other = this;
-    }
-
-    var parts = [
-        other.getUTCFullYear() - self.getUTCFullYear(),
-        other.getUTCMonth() - self.getUTCMonth(),
-        0, // weeks
-        other.getUTCDate() - self.getUTCDate(),
-        other.getUTCHours() - self.getUTCHours(),
-        other.getUTCMinutes() - self.getUTCMinutes(),
-        other.getUTCSeconds() - self.getUTCSeconds()
-    ];
-    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
-    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
-    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
-    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
-    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
-    parts[2] = (parts[3] / 7) | 0;
-    parts[3] -= parts[2] * 7;
-
-    var fragments = [];
-    for (var i = 0; i < parts.length; i++) {
-        if (parts[i]) {
-            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
-        }
-    }
-    return fragments;
-};
-
-Date.prototype.format = function(format, tz) {
-  var time = this.getTime();
-
-  if (tz === undefined) {
-    tz = this.getTimezone();
-    tzName = this.getTimezoneName();
-  }
-  else {
-    var tzData = parseTimezone(tz);
-    tz = tzData[0];
-    var tzName = tzData[1];
-  }
-
-  // Use correct timezone.
-  this.setTime(time - tz * 60000);
-
-  var result = '';
-  for (var i = 0; i < format.length; i++) {
-    switch (format.charAt(i)) {
-      // Day
-      case 'd': result += pad2(this.getUTCDate()); break;
-      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
-      case 'j': result += this.getUTCDate(); break;
-      case 'l': result += data.weekdays[this.getUTCDay()]; break;
-      case 'N': result += this.getUTCDay() || 7; break;
-      case 'S': result += data.ordinals(this.getUTCDate()); break;
-      case 'w': result += this.getUTCDay(); break;
-      case 'z': result += this.getUTCDayOfYear(); break;
-
-      // Week
-      case 'W': result += pad2(this.getUTCISOWeek()); break;
-
-      // Month
-      case 'F': result += data.months[this.getUTCMonth()]; break;
-      case 'm': result += pad2(this.getUTCMonth() + 1); break;
-      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
-      case 'n': result += this.getUTCMonth() + 1; break;
-      case 't': result += this.getUTCDaysOfMonth(); break;
-
-      // Year
-      case 'L': result += this.isLeapYear() ? 1 : 0; break;
-      case 'o': result += this.getUTCISOFullYear(); break;
-      case 'Y': result += this.getUTCFullYear(); break;
-      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
-
-      // Time
-      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
-      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
-      case 'g': result += this.getUTCHours() % 12 || 12; break;
-      case 'G': result += this.getUTCHours(); break;
-      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
-      case 'H': result += pad2(this.getUTCHours()); break;
-      case 'i': result += pad2(this.getUTCMinutes()); break;
-      case 's': result += pad2(this.getUTCSeconds()); break;
-      case 'u': result += pad3(this.getUTCMilliseconds()); break;
-
-      // Timezone
-      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
-      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
-      case 'T': result += tzName; break;
-      case 'Z': result += -tz * 60; break;
-
-      // Full Date/Time
-      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
-      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
-      case 'U': result += Math.floor(this.getTime() / 1000); break;
-
-      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
-
-      default: result += format.charAt(i); break;
-    }
-  }
-
-  this.setTime(time);
-
-  return result;
-};
-
-function parseTimezone(tz) {
-  if (typeof tz === 'number') {
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-  var number = parseInt(tz, 10);
-  if (isNaN(number)) {
-    return [data.tzToOffset[tz], tz];
-  }
-  else {
-    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-}
-
-Date.prototype.isLeapYear = function() {
-  var y = this.getUTCFullYear();
-  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
-};
-
-Date.prototype.getUTCISOWeek = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
-};
-
-Date.prototype.getUTCISOFullYear = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return d.getUTCFullYear();
-};
-
-Date.prototype.getUTCDaysOfMonth = function() {
-  var d = new Date(this);
-  d.setUTCDate(1);
-  d.setUTCMonth(d.getUTCMonth() + 1);
-  d.setUTCDate(0);
-  return d.getUTCDate();
-};
-
-Date.prototype.getUTCDayOfYear = function() {
-  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
-};
-
-Date.prototype.getTimezone = function() {
-  if (!('_tz' in this)) {
-    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
-    if (matches && matches[1]) {
-        this.setTimezone(matches[1]);
-    } else {
-        this.setTimezone(new Date().getTimezoneOffset());
-    }
-  }
-  return this._tz;
-};
-
-Date.prototype.getTimezoneName = function() {
-  this.getTimezone(); // Make sure the tz data is populated.
-  return this._tzName;
-};
-
-Date.prototype.setTimezone = function(val) {
-  var tzData = parseTimezone(val);
-  this._tz = tzData[0];
-  this._tzName = tzData[1];
-};
-
-})();
-
-},{}],43:[function(require,module,exports){
 // nothing to see here... no file methods for the browser
 
 },{}],30:[function(require,module,exports){
@@ -32021,7 +31612,10 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":31,"./exception":40,"./mark":44,"./schema/default_safe":38,"./schema/default_full":39}],32:[function(require,module,exports){
+},{"./common":32,"./exception":40,"./mark":43,"./schema/default_safe":38,"./schema/default_full":39}],29:[function(require,module,exports){
+module.exports = require('./lib/chrono');
+
+},{"./lib/chrono":44}],31:[function(require,module,exports){
 (function(){'use strict';
 
 
@@ -32502,7 +32096,7 @@ module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
 })()
-},{"./common":31,"./exception":40,"./schema/default_full":39,"./schema/default_safe":38}],33:[function(require,module,exports){
+},{"./common":32,"./exception":40,"./schema/default_full":39,"./schema/default_safe":38}],33:[function(require,module,exports){
 'use strict';
 
 
@@ -32691,7 +32285,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":31,"./exception":40,"./type":33}],41:[function(require,module,exports){
+},{"./common":32,"./exception":40,"./type":33}],41:[function(require,module,exports){
 'use strict';
 
 
@@ -32716,7 +32310,7 @@ if (undefined !== require.extensions) {
 
 module.exports = require;
 
-},{"fs":43,"./loader":30}],35:[function(require,module,exports){
+},{"fs":42,"./loader":30}],35:[function(require,module,exports){
 // Standard YAML's Failsafe schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2802346
 
@@ -32840,6 +32434,412 @@ module.exports = Schema.DEFAULT = new Schema({
 });
 
 },{"../schema":34,"./default_safe":38,"../type/js/undefined":58,"../type/js/regexp":59,"../type/js/function":60}],44:[function(require,module,exports){
+(function(){
+
+// CommonJS exports.
+var data = (typeof exports !== 'undefined') ? exports : {};
+
+data.tzToOffset = {
+  'ACDT': -630,
+  'ACST': -570,
+  'ACT': -480,
+  'ADT': +180,
+  'AEDT': -660,
+  'AEST': -600,
+  'AFT': -270,
+  'AKDT': +480,
+  'AKST': +540,
+  'AMST': -300,
+  'AMT': -240,
+  'ART': +180,
+  'AST': -240, // Arab Standard Time
+  'AWDT': -540,
+  'AWST': -480,
+  'AZOST': +60,
+  'AZT': -240,
+  'BDT': -480,
+  'BIOT': -360,
+  'BIT': +720,
+  'BOT': +240,
+  'BRT': +180,
+  'BST': -60, // British Summer Time
+  'BTT': -360,
+  'CAT': -120,
+  'CCT': -390,
+  'CDT': +300,
+  'CEDT': -120,
+  'CEST': -120,
+  'CET': -60,
+  'CHAST': -765,
+  'ChST': -600,
+  'CIST': +480,
+  'CKT': +600,
+  'CLST': +180,
+  'CLT': +240,
+  'COST': +240,
+  'COT': +300,
+  'CST': -480,
+  'CST': +360,
+  'CVT': +60,
+  'CXT': -420,
+  'DFT': -60,
+  'EAST': +360,
+  'EAT': -180,
+  'ECT': +240,
+  'ECT': +300,
+  'EDT': +240,
+  'EEDT': -180,
+  'EEST': -180,
+  'EET': -120,
+  'EST': +300,
+  'FJT': -720,
+  'FKST': +240,
+  'GALT': +360,
+  'GET': -240,
+  'GFT': +180,
+  'GILT': -720,
+  'GIT': +540,
+  'GMT': 0,
+  'GST': +120,
+  'GYT': +240,
+  'HADT': +540,
+  'HAST': +600,
+  'HKT': -480,
+  'HMT': -300,
+  'HST': +600,
+  'IRKT': -480,
+  'IRST': -210,
+  'IST': -120,
+  'IST': -330,
+  'IST': -60,
+  'JST': -540,
+  'KRAT': -420,
+  'KST': -540,
+  'LHST': -630,
+  'LINT': -840,
+  'MAGT': -660,
+  'MDT': +360,
+  'MIT': +570,
+  'MSD': -240,
+  'MSK': -180,
+  'MST': -390,
+  'MST': -480,
+  'MST': +420,
+  'MUT': -240,
+  'NDT': +150,
+  'NFT': -690,
+  'NPT': -345,
+  'NST': +210,
+  'NT': +210,
+  'NZST': -720,
+  'NZDT': -780,
+  'OMST': -360,
+  'PDT': +420,
+  'PETT': -720,
+  'PHOT': -780,
+  'PKT': -300,
+  'PST': -480,
+  'PST': +480,
+  'RET': -240,
+  'SAMT': -240,
+  'SAST': -120,
+  'SBT': -660,
+  'SCT': -240,
+  'SLT': -330,
+  'SST': -480,
+  'SST': +660,
+  'TAHT': +600,
+  'THA': -420,
+  'UTC': 0,
+  'UYST': +120,
+  'UYT': +180,
+  'VET': +270,
+  'VLAT': -600,
+  'WAT': -60,
+  'WEDT': -60,
+  'WEST': -60,
+  'YAKT': -540,
+  'YEKT': -300
+};
+
+// While indices are strings here, numbers work fine too when retrieving.
+data.offsetToTz = {
+  '720':  ['BIT'],
+  '660':  ['SST'],
+  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
+  '570':  ['MIT'],
+  '540':  ['AKST', 'GIT', 'HADT'],
+  '480':  ['PST', 'AKDT', 'CIST'],
+  '420':  ['MST', 'PDT'],
+  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
+  '300':  ['EST', 'CDT', 'COT', 'ECT'],
+  '270':  ['VET'],
+  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
+  '210':  ['NT', 'NST'],
+  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
+  '150':  ['NDT'],
+  '120':  ['GST', 'UYST'],
+  '60':   ['AZOST', 'CVT'],
+  '0':    ['UTC', 'GMT'],
+  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
+  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
+  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
+  '-210': ['IRST'],
+  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
+  '-270': ['AFT'],
+  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
+  '-330': ['IST', 'SLT'],
+  '-345': ['NPT'],
+  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
+  '-390': ['CCT', 'MST'],
+  '-420': ['CXT', 'KRAT', 'THA'],
+  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
+  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
+  '-570': ['ACST'],
+  '-600': ['AEST', 'ChST', 'VLAT'],
+  '-630': ['ACDT', 'LHST'],
+  '-660': ['AEDT', 'MAGT', 'SBT'],
+  '-690': ['NFT'],
+  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
+  '-765': ['CHAST'],
+  '-780': ['PHOT', 'NZDT'],
+  '-840': ['LINT']
+};
+
+data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
+
+data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
+
+data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+
+data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+
+data.intervals = [
+    function(n) { return n !== 1 ? 'years' : 'year'; },
+    function(n) { return n !== 1 ? 'months' : 'month'; },
+    function(n) { return n !== 1 ? 'weeks' : 'week'; },
+    function(n) { return n !== 1 ? 'days' : 'day'; },
+    function(n) { return n !== 1 ? 'hours' : 'hour'; },
+    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
+    function(n) { return n !== 1 ? 'seconds' : 'second'; }
+];
+
+data.intervalFormats = {
+    'ago': '% ago',
+    'in': 'in %'
+};
+
+data.ordinals = function(number) {
+  switch (number % 10) {
+    case 1: return (number % 100 !== 11) ? 'st' : 'th';
+    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
+    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
+    default: return 'th';
+  }
+};
+
+function pad2(i) {
+  return i < 10 ? '0' + i : i;
+};
+
+function pad2sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '0' + i : i);
+};
+
+function pad3(i) {
+  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
+};
+
+function pad4sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
+}
+
+Date.prototype.interval = function(other) {
+    var self = this, inverse = self > other;
+    if (inverse) {
+        self = other;
+        other = this;
+    }
+
+    var parts = [
+        other.getUTCFullYear() - self.getUTCFullYear(),
+        other.getUTCMonth() - self.getUTCMonth(),
+        0, // weeks
+        other.getUTCDate() - self.getUTCDate(),
+        other.getUTCHours() - self.getUTCHours(),
+        other.getUTCMinutes() - self.getUTCMinutes(),
+        other.getUTCSeconds() - self.getUTCSeconds()
+    ];
+    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
+    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
+    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
+    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
+    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
+    parts[2] = (parts[3] / 7) | 0;
+    parts[3] -= parts[2] * 7;
+
+    var fragments = [];
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i]) {
+            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
+        }
+    }
+    return fragments;
+};
+
+Date.prototype.format = function(format, tz) {
+  var time = this.getTime();
+
+  if (tz === undefined) {
+    tz = this.getTimezone();
+    tzName = this.getTimezoneName();
+  }
+  else {
+    var tzData = parseTimezone(tz);
+    tz = tzData[0];
+    var tzName = tzData[1];
+  }
+
+  // Use correct timezone.
+  this.setTime(time - tz * 60000);
+
+  var result = '';
+  for (var i = 0; i < format.length; i++) {
+    switch (format.charAt(i)) {
+      // Day
+      case 'd': result += pad2(this.getUTCDate()); break;
+      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
+      case 'j': result += this.getUTCDate(); break;
+      case 'l': result += data.weekdays[this.getUTCDay()]; break;
+      case 'N': result += this.getUTCDay() || 7; break;
+      case 'S': result += data.ordinals(this.getUTCDate()); break;
+      case 'w': result += this.getUTCDay(); break;
+      case 'z': result += this.getUTCDayOfYear(); break;
+
+      // Week
+      case 'W': result += pad2(this.getUTCISOWeek()); break;
+
+      // Month
+      case 'F': result += data.months[this.getUTCMonth()]; break;
+      case 'm': result += pad2(this.getUTCMonth() + 1); break;
+      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
+      case 'n': result += this.getUTCMonth() + 1; break;
+      case 't': result += this.getUTCDaysOfMonth(); break;
+
+      // Year
+      case 'L': result += this.isLeapYear() ? 1 : 0; break;
+      case 'o': result += this.getUTCISOFullYear(); break;
+      case 'Y': result += this.getUTCFullYear(); break;
+      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
+
+      // Time
+      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
+      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
+      case 'g': result += this.getUTCHours() % 12 || 12; break;
+      case 'G': result += this.getUTCHours(); break;
+      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
+      case 'H': result += pad2(this.getUTCHours()); break;
+      case 'i': result += pad2(this.getUTCMinutes()); break;
+      case 's': result += pad2(this.getUTCSeconds()); break;
+      case 'u': result += pad3(this.getUTCMilliseconds()); break;
+
+      // Timezone
+      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
+      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
+      case 'T': result += tzName; break;
+      case 'Z': result += -tz * 60; break;
+
+      // Full Date/Time
+      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
+      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
+      case 'U': result += Math.floor(this.getTime() / 1000); break;
+
+      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
+
+      default: result += format.charAt(i); break;
+    }
+  }
+
+  this.setTime(time);
+
+  return result;
+};
+
+function parseTimezone(tz) {
+  if (typeof tz === 'number') {
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+  var number = parseInt(tz, 10);
+  if (isNaN(number)) {
+    return [data.tzToOffset[tz], tz];
+  }
+  else {
+    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+}
+
+Date.prototype.isLeapYear = function() {
+  var y = this.getUTCFullYear();
+  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
+};
+
+Date.prototype.getUTCISOWeek = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
+};
+
+Date.prototype.getUTCISOFullYear = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return d.getUTCFullYear();
+};
+
+Date.prototype.getUTCDaysOfMonth = function() {
+  var d = new Date(this);
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() + 1);
+  d.setUTCDate(0);
+  return d.getUTCDate();
+};
+
+Date.prototype.getUTCDayOfYear = function() {
+  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
+};
+
+Date.prototype.getTimezone = function() {
+  if (!('_tz' in this)) {
+    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
+    if (matches && matches[1]) {
+        this.setTimezone(matches[1]);
+    } else {
+        this.setTimezone(new Date().getTimezoneOffset());
+    }
+  }
+  return this._tz;
+};
+
+Date.prototype.getTimezoneName = function() {
+  this.getTimezone(); // Make sure the tz data is populated.
+  return this._tzName;
+};
+
+Date.prototype.setTimezone = function(val) {
+  var tzData = parseTimezone(val);
+  this._tz = tzData[0];
+  this._tzName = tzData[1];
+};
+
+})();
+
+},{}],43:[function(require,module,exports){
 'use strict';
 
 
@@ -32919,324 +32919,7 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":31}],61:[function(require,module,exports){
-(function(){// UTILITY
-var util = require('util');
-var Buffer = require("buffer").Buffer;
-var pSlice = Array.prototype.slice;
-
-function objectKeys(object) {
-  if (Object.keys) return Object.keys(object);
-  var result = [];
-  for (var name in object) {
-    if (Object.prototype.hasOwnProperty.call(object, name)) {
-      result.push(name);
-    }
-  }
-  return result;
-}
-
-// 1. The assert module provides functions that throw
-// AssertionError's when particular conditions are not met. The
-// assert module must conform to the following interface.
-
-var assert = module.exports = ok;
-
-// 2. The AssertionError is defined in assert.
-// new assert.AssertionError({ message: message,
-//                             actual: actual,
-//                             expected: expected })
-
-assert.AssertionError = function AssertionError(options) {
-  this.name = 'AssertionError';
-  this.message = options.message;
-  this.actual = options.actual;
-  this.expected = options.expected;
-  this.operator = options.operator;
-  var stackStartFunction = options.stackStartFunction || fail;
-
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(this, stackStartFunction);
-  }
-};
-util.inherits(assert.AssertionError, Error);
-
-function replacer(key, value) {
-  if (value === undefined) {
-    return '' + value;
-  }
-  if (typeof value === 'number' && (isNaN(value) || !isFinite(value))) {
-    return value.toString();
-  }
-  if (typeof value === 'function' || value instanceof RegExp) {
-    return value.toString();
-  }
-  return value;
-}
-
-function truncate(s, n) {
-  if (typeof s == 'string') {
-    return s.length < n ? s : s.slice(0, n);
-  } else {
-    return s;
-  }
-}
-
-assert.AssertionError.prototype.toString = function() {
-  if (this.message) {
-    return [this.name + ':', this.message].join(' ');
-  } else {
-    return [
-      this.name + ':',
-      truncate(JSON.stringify(this.actual, replacer), 128),
-      this.operator,
-      truncate(JSON.stringify(this.expected, replacer), 128)
-    ].join(' ');
-  }
-};
-
-// assert.AssertionError instanceof Error
-
-assert.AssertionError.__proto__ = Error.prototype;
-
-// At present only the three keys mentioned above are used and
-// understood by the spec. Implementations or sub modules can pass
-// other keys to the AssertionError's constructor - they will be
-// ignored.
-
-// 3. All of the following functions must throw an AssertionError
-// when a corresponding condition is not met, with a message that
-// may be undefined if not provided.  All assertion methods provide
-// both the actual and expected values to the assertion error for
-// display purposes.
-
-function fail(actual, expected, message, operator, stackStartFunction) {
-  throw new assert.AssertionError({
-    message: message,
-    actual: actual,
-    expected: expected,
-    operator: operator,
-    stackStartFunction: stackStartFunction
-  });
-}
-
-// EXTENSION! allows for well behaved errors defined elsewhere.
-assert.fail = fail;
-
-// 4. Pure assertion tests whether a value is truthy, as determined
-// by !!guard.
-// assert.ok(guard, message_opt);
-// This statement is equivalent to assert.equal(true, guard,
-// message_opt);. To test strictly for the value true, use
-// assert.strictEqual(true, guard, message_opt);.
-
-function ok(value, message) {
-  if (!!!value) fail(value, true, message, '==', assert.ok);
-}
-assert.ok = ok;
-
-// 5. The equality assertion tests shallow, coercive equality with
-// ==.
-// assert.equal(actual, expected, message_opt);
-
-assert.equal = function equal(actual, expected, message) {
-  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
-};
-
-// 6. The non-equality assertion tests for whether two objects are not equal
-// with != assert.notEqual(actual, expected, message_opt);
-
-assert.notEqual = function notEqual(actual, expected, message) {
-  if (actual == expected) {
-    fail(actual, expected, message, '!=', assert.notEqual);
-  }
-};
-
-// 7. The equivalence assertion tests a deep equality relation.
-// assert.deepEqual(actual, expected, message_opt);
-
-assert.deepEqual = function deepEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected)) {
-    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
-  }
-};
-
-function _deepEqual(actual, expected) {
-  // 7.1. All identical values are equivalent, as determined by ===.
-  if (actual === expected) {
-    return true;
-
-  } else if (Buffer.isBuffer(actual) && Buffer.isBuffer(expected)) {
-    if (actual.length != expected.length) return false;
-
-    for (var i = 0; i < actual.length; i++) {
-      if (actual[i] !== expected[i]) return false;
-    }
-
-    return true;
-
-  // 7.2. If the expected value is a Date object, the actual value is
-  // equivalent if it is also a Date object that refers to the same time.
-  } else if (actual instanceof Date && expected instanceof Date) {
-    return actual.getTime() === expected.getTime();
-
-  // 7.3. Other pairs that do not both pass typeof value == 'object',
-  // equivalence is determined by ==.
-  } else if (typeof actual != 'object' && typeof expected != 'object') {
-    return actual == expected;
-
-  // 7.4. For all other Object pairs, including Array objects, equivalence is
-  // determined by having the same number of owned properties (as verified
-  // with Object.prototype.hasOwnProperty.call), the same set of keys
-  // (although not necessarily the same order), equivalent values for every
-  // corresponding key, and an identical 'prototype' property. Note: this
-  // accounts for both named and indexed properties on Arrays.
-  } else {
-    return objEquiv(actual, expected);
-  }
-}
-
-function isUndefinedOrNull(value) {
-  return value === null || value === undefined;
-}
-
-function isArguments(object) {
-  return Object.prototype.toString.call(object) == '[object Arguments]';
-}
-
-function objEquiv(a, b) {
-  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
-    return false;
-  // an identical 'prototype' property.
-  if (a.prototype !== b.prototype) return false;
-  //~~~I've managed to break Object.keys through screwy arguments passing.
-  //   Converting to array solves the problem.
-  if (isArguments(a)) {
-    if (!isArguments(b)) {
-      return false;
-    }
-    a = pSlice.call(a);
-    b = pSlice.call(b);
-    return _deepEqual(a, b);
-  }
-  try {
-    var ka = objectKeys(a),
-        kb = objectKeys(b),
-        key, i;
-  } catch (e) {//happens when one is a string literal and the other isn't
-    return false;
-  }
-  // having the same number of owned properties (keys incorporates
-  // hasOwnProperty)
-  if (ka.length != kb.length)
-    return false;
-  //the same set of keys (although not necessarily the same order),
-  ka.sort();
-  kb.sort();
-  //~~~cheap key test
-  for (i = ka.length - 1; i >= 0; i--) {
-    if (ka[i] != kb[i])
-      return false;
-  }
-  //equivalent values for every corresponding key, and
-  //~~~possibly expensive deep test
-  for (i = ka.length - 1; i >= 0; i--) {
-    key = ka[i];
-    if (!_deepEqual(a[key], b[key])) return false;
-  }
-  return true;
-}
-
-// 8. The non-equivalence assertion tests for any deep inequality.
-// assert.notDeepEqual(actual, expected, message_opt);
-
-assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected)) {
-    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
-  }
-};
-
-// 9. The strict equality assertion tests strict equality, as determined by ===.
-// assert.strictEqual(actual, expected, message_opt);
-
-assert.strictEqual = function strictEqual(actual, expected, message) {
-  if (actual !== expected) {
-    fail(actual, expected, message, '===', assert.strictEqual);
-  }
-};
-
-// 10. The strict non-equality assertion tests for strict inequality, as
-// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
-
-assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
-  if (actual === expected) {
-    fail(actual, expected, message, '!==', assert.notStrictEqual);
-  }
-};
-
-function expectedException(actual, expected) {
-  if (!actual || !expected) {
-    return false;
-  }
-
-  if (expected instanceof RegExp) {
-    return expected.test(actual);
-  } else if (actual instanceof expected) {
-    return true;
-  } else if (expected.call({}, actual) === true) {
-    return true;
-  }
-
-  return false;
-}
-
-function _throws(shouldThrow, block, expected, message) {
-  var actual;
-
-  if (typeof expected === 'string') {
-    message = expected;
-    expected = null;
-  }
-
-  try {
-    block();
-  } catch (e) {
-    actual = e;
-  }
-
-  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
-            (message ? ' ' + message : '.');
-
-  if (shouldThrow && !actual) {
-    fail('Missing expected exception' + message);
-  }
-
-  if (!shouldThrow && expectedException(actual, expected)) {
-    fail('Got unwanted exception' + message);
-  }
-
-  if ((shouldThrow && actual && expected &&
-      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
-    throw actual;
-  }
-}
-
-// 11. Expected to throw an error:
-// assert.throws(block, Error_opt, message_opt);
-
-assert.throws = function(block, /*optional*/error, /*optional*/message) {
-  _throws.apply(this, [true].concat(pSlice.call(arguments)));
-};
-
-// EXTENSION! This is annoying to write outside this module.
-assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
-  _throws.apply(this, [false].concat(pSlice.call(arguments)));
-};
-
-assert.ifError = function(err) { if (err) {throw err;}};
-
-})()
-},{"util":62,"buffer":63}],45:[function(require,module,exports){
+},{"./common":32}],45:[function(require,module,exports){
 'use strict';
 
 
@@ -33313,7 +32996,7 @@ module.exports = new Type('tag:yaml.org,2002:null', {
   }
 });
 
-},{"../common":31,"../type":33}],49:[function(require,module,exports){
+},{"../common":32,"../type":33}],49:[function(require,module,exports){
 'use strict';
 
 
@@ -33389,7 +33072,7 @@ module.exports = new Type('tag:yaml.org,2002:bool', {
   }
 });
 
-},{"../common":31,"../type":33}],50:[function(require,module,exports){
+},{"../common":32,"../type":33}],50:[function(require,module,exports){
 'use strict';
 
 
@@ -33476,7 +33159,7 @@ module.exports = new Type('tag:yaml.org,2002:int', {
   }
 });
 
-},{"../common":31,"../type":33}],51:[function(require,module,exports){
+},{"../common":32,"../type":33}],51:[function(require,module,exports){
 'use strict';
 
 
@@ -33580,7 +33263,7 @@ module.exports = new Type('tag:yaml.org,2002:float', {
   }
 });
 
-},{"../common":31,"../type":33}],52:[function(require,module,exports){
+},{"../common":32,"../type":33}],52:[function(require,module,exports){
 'use strict';
 
 
@@ -33673,7 +33356,7 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
   }
 });
 
-},{"../common":31,"../type":33}],53:[function(require,module,exports){
+},{"../common":32,"../type":33}],53:[function(require,module,exports){
 'use strict';
 
 
@@ -33693,7 +33376,7 @@ module.exports = new Type('tag:yaml.org,2002:merge', {
   }
 });
 
-},{"../common":31,"../type":33}],54:[function(require,module,exports){
+},{"../common":32,"../type":33}],54:[function(require,module,exports){
 (function(){// Modified from:
 // https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
 
@@ -33814,7 +33497,7 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
 });
 
 })()
-},{"buffer":63,"../common":31,"../type":33}],55:[function(require,module,exports){
+},{"buffer":61,"../common":32,"../type":33}],55:[function(require,module,exports){
 'use strict';
 
 
@@ -33869,7 +33552,7 @@ module.exports = new Type('tag:yaml.org,2002:omap', {
   }
 });
 
-},{"../common":31,"../type":33}],56:[function(require,module,exports){
+},{"../common":32,"../type":33}],56:[function(require,module,exports){
 'use strict';
 
 
@@ -33912,7 +33595,7 @@ module.exports = new Type('tag:yaml.org,2002:pairs', {
   }
 });
 
-},{"../common":31,"../type":33}],57:[function(require,module,exports){
+},{"../common":32,"../type":33}],57:[function(require,module,exports){
 'use strict';
 
 
@@ -33945,7 +33628,7 @@ module.exports = new Type('tag:yaml.org,2002:set', {
   }
 });
 
-},{"../common":31,"../type":33}],58:[function(require,module,exports){
+},{"../common":32,"../type":33}],58:[function(require,module,exports){
 'use strict';
 
 
@@ -34034,446 +33717,7 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
 });
 
 })()
-},{"../../common":31,"../../type":33}],62:[function(require,module,exports){
-var events = require('events');
-
-exports.isArray = isArray;
-exports.isDate = function(obj){return Object.prototype.toString.call(obj) === '[object Date]'};
-exports.isRegExp = function(obj){return Object.prototype.toString.call(obj) === '[object RegExp]'};
-
-
-exports.print = function () {};
-exports.puts = function () {};
-exports.debug = function() {};
-
-exports.inspect = function(obj, showHidden, depth, colors) {
-  var seen = [];
-
-  var stylize = function(str, styleType) {
-    // http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
-    var styles =
-        { 'bold' : [1, 22],
-          'italic' : [3, 23],
-          'underline' : [4, 24],
-          'inverse' : [7, 27],
-          'white' : [37, 39],
-          'grey' : [90, 39],
-          'black' : [30, 39],
-          'blue' : [34, 39],
-          'cyan' : [36, 39],
-          'green' : [32, 39],
-          'magenta' : [35, 39],
-          'red' : [31, 39],
-          'yellow' : [33, 39] };
-
-    var style =
-        { 'special': 'cyan',
-          'number': 'blue',
-          'boolean': 'yellow',
-          'undefined': 'grey',
-          'null': 'bold',
-          'string': 'green',
-          'date': 'magenta',
-          // "name": intentionally not styling
-          'regexp': 'red' }[styleType];
-
-    if (style) {
-      return '\033[' + styles[style][0] + 'm' + str +
-             '\033[' + styles[style][1] + 'm';
-    } else {
-      return str;
-    }
-  };
-  if (! colors) {
-    stylize = function(str, styleType) { return str; };
-  }
-
-  function format(value, recurseTimes) {
-    // Provide a hook for user-specified inspect functions.
-    // Check that value is an object with an inspect function on it
-    if (value && typeof value.inspect === 'function' &&
-        // Filter out the util module, it's inspect function is special
-        value !== exports &&
-        // Also filter out any prototype objects using the circular check.
-        !(value.constructor && value.constructor.prototype === value)) {
-      return value.inspect(recurseTimes);
-    }
-
-    // Primitive types cannot have properties
-    switch (typeof value) {
-      case 'undefined':
-        return stylize('undefined', 'undefined');
-
-      case 'string':
-        var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                                 .replace(/'/g, "\\'")
-                                                 .replace(/\\"/g, '"') + '\'';
-        return stylize(simple, 'string');
-
-      case 'number':
-        return stylize('' + value, 'number');
-
-      case 'boolean':
-        return stylize('' + value, 'boolean');
-    }
-    // For some reason typeof null is "object", so special case here.
-    if (value === null) {
-      return stylize('null', 'null');
-    }
-
-    // Look up the keys of the object.
-    var visible_keys = Object_keys(value);
-    var keys = showHidden ? Object_getOwnPropertyNames(value) : visible_keys;
-
-    // Functions without properties can be shortcutted.
-    if (typeof value === 'function' && keys.length === 0) {
-      if (isRegExp(value)) {
-        return stylize('' + value, 'regexp');
-      } else {
-        var name = value.name ? ': ' + value.name : '';
-        return stylize('[Function' + name + ']', 'special');
-      }
-    }
-
-    // Dates without properties can be shortcutted
-    if (isDate(value) && keys.length === 0) {
-      return stylize(value.toUTCString(), 'date');
-    }
-
-    var base, type, braces;
-    // Determine the object type
-    if (isArray(value)) {
-      type = 'Array';
-      braces = ['[', ']'];
-    } else {
-      type = 'Object';
-      braces = ['{', '}'];
-    }
-
-    // Make functions say that they are functions
-    if (typeof value === 'function') {
-      var n = value.name ? ': ' + value.name : '';
-      base = (isRegExp(value)) ? ' ' + value : ' [Function' + n + ']';
-    } else {
-      base = '';
-    }
-
-    // Make dates with properties first say the date
-    if (isDate(value)) {
-      base = ' ' + value.toUTCString();
-    }
-
-    if (keys.length === 0) {
-      return braces[0] + base + braces[1];
-    }
-
-    if (recurseTimes < 0) {
-      if (isRegExp(value)) {
-        return stylize('' + value, 'regexp');
-      } else {
-        return stylize('[Object]', 'special');
-      }
-    }
-
-    seen.push(value);
-
-    var output = keys.map(function(key) {
-      var name, str;
-      if (value.__lookupGetter__) {
-        if (value.__lookupGetter__(key)) {
-          if (value.__lookupSetter__(key)) {
-            str = stylize('[Getter/Setter]', 'special');
-          } else {
-            str = stylize('[Getter]', 'special');
-          }
-        } else {
-          if (value.__lookupSetter__(key)) {
-            str = stylize('[Setter]', 'special');
-          }
-        }
-      }
-      if (visible_keys.indexOf(key) < 0) {
-        name = '[' + key + ']';
-      }
-      if (!str) {
-        if (seen.indexOf(value[key]) < 0) {
-          if (recurseTimes === null) {
-            str = format(value[key]);
-          } else {
-            str = format(value[key], recurseTimes - 1);
-          }
-          if (str.indexOf('\n') > -1) {
-            if (isArray(value)) {
-              str = str.split('\n').map(function(line) {
-                return '  ' + line;
-              }).join('\n').substr(2);
-            } else {
-              str = '\n' + str.split('\n').map(function(line) {
-                return '   ' + line;
-              }).join('\n');
-            }
-          }
-        } else {
-          str = stylize('[Circular]', 'special');
-        }
-      }
-      if (typeof name === 'undefined') {
-        if (type === 'Array' && key.match(/^\d+$/)) {
-          return str;
-        }
-        name = JSON.stringify('' + key);
-        if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-          name = name.substr(1, name.length - 2);
-          name = stylize(name, 'name');
-        } else {
-          name = name.replace(/'/g, "\\'")
-                     .replace(/\\"/g, '"')
-                     .replace(/(^"|"$)/g, "'");
-          name = stylize(name, 'string');
-        }
-      }
-
-      return name + ': ' + str;
-    });
-
-    seen.pop();
-
-    var numLinesEst = 0;
-    var length = output.reduce(function(prev, cur) {
-      numLinesEst++;
-      if (cur.indexOf('\n') >= 0) numLinesEst++;
-      return prev + cur.length + 1;
-    }, 0);
-
-    if (length > 50) {
-      output = braces[0] +
-               (base === '' ? '' : base + '\n ') +
-               ' ' +
-               output.join(',\n  ') +
-               ' ' +
-               braces[1];
-
-    } else {
-      output = braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
-    }
-
-    return output;
-  }
-  return format(obj, (typeof depth === 'undefined' ? 2 : depth));
-};
-
-
-function isArray(ar) {
-  return ar instanceof Array ||
-         Array.isArray(ar) ||
-         (ar && ar !== Object.prototype && isArray(ar.__proto__));
-}
-
-
-function isRegExp(re) {
-  return re instanceof RegExp ||
-    (typeof re === 'object' && Object.prototype.toString.call(re) === '[object RegExp]');
-}
-
-
-function isDate(d) {
-  if (d instanceof Date) return true;
-  if (typeof d !== 'object') return false;
-  var properties = Date.prototype && Object_getOwnPropertyNames(Date.prototype);
-  var proto = d.__proto__ && Object_getOwnPropertyNames(d.__proto__);
-  return JSON.stringify(proto) === JSON.stringify(properties);
-}
-
-function pad(n) {
-  return n < 10 ? '0' + n.toString(10) : n.toString(10);
-}
-
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-              'Oct', 'Nov', 'Dec'];
-
-// 26 Feb 16:19:34
-function timestamp() {
-  var d = new Date();
-  var time = [pad(d.getHours()),
-              pad(d.getMinutes()),
-              pad(d.getSeconds())].join(':');
-  return [d.getDate(), months[d.getMonth()], time].join(' ');
-}
-
-exports.log = function (msg) {};
-
-exports.pump = null;
-
-var Object_keys = Object.keys || function (obj) {
-    var res = [];
-    for (var key in obj) res.push(key);
-    return res;
-};
-
-var Object_getOwnPropertyNames = Object.getOwnPropertyNames || function (obj) {
-    var res = [];
-    for (var key in obj) {
-        if (Object.hasOwnProperty.call(obj, key)) res.push(key);
-    }
-    return res;
-};
-
-var Object_create = Object.create || function (prototype, properties) {
-    // from es5-shim
-    var object;
-    if (prototype === null) {
-        object = { '__proto__' : null };
-    }
-    else {
-        if (typeof prototype !== 'object') {
-            throw new TypeError(
-                'typeof prototype[' + (typeof prototype) + '] != \'object\''
-            );
-        }
-        var Type = function () {};
-        Type.prototype = prototype;
-        object = new Type();
-        object.__proto__ = prototype;
-    }
-    if (typeof properties !== 'undefined' && Object.defineProperties) {
-        Object.defineProperties(object, properties);
-    }
-    return object;
-};
-
-exports.inherits = function(ctor, superCtor) {
-  ctor.super_ = superCtor;
-  ctor.prototype = Object_create(superCtor.prototype, {
-    constructor: {
-      value: ctor,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-};
-
-var formatRegExp = /%[sdj%]/g;
-exports.format = function(f) {
-  if (typeof f !== 'string') {
-    var objects = [];
-    for (var i = 0; i < arguments.length; i++) {
-      objects.push(exports.inspect(arguments[i]));
-    }
-    return objects.join(' ');
-  }
-
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  var str = String(f).replace(formatRegExp, function(x) {
-    if (x === '%%') return '%';
-    if (i >= len) return x;
-    switch (x) {
-      case '%s': return String(args[i++]);
-      case '%d': return Number(args[i++]);
-      case '%j': return JSON.stringify(args[i++]);
-      default:
-        return x;
-    }
-  });
-  for(var x = args[i]; i < len; x = args[++i]){
-    if (x === null || typeof x !== 'object') {
-      str += ' ' + x;
-    } else {
-      str += ' ' + exports.inspect(x);
-    }
-  }
-  return str;
-};
-
-},{"events":64}],65:[function(require,module,exports){
-exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
-  var e, m,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      nBits = -7,
-      i = isBE ? 0 : (nBytes - 1),
-      d = isBE ? 1 : -1,
-      s = buffer[offset + i];
-
-  i += d;
-
-  e = s & ((1 << (-nBits)) - 1);
-  s >>= (-nBits);
-  nBits += eLen;
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-  m = e & ((1 << (-nBits)) - 1);
-  e >>= (-nBits);
-  nBits += mLen;
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-  if (e === 0) {
-    e = 1 - eBias;
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity);
-  } else {
-    m = m + Math.pow(2, mLen);
-    e = e - eBias;
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-};
-
-exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
-  var e, m, c,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
-      i = isBE ? (nBytes - 1) : 0,
-      d = isBE ? -1 : 1,
-      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
-
-  value = Math.abs(value);
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0;
-    e = eMax;
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2);
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--;
-      c *= 2;
-    }
-    if (e + eBias >= 1) {
-      value += rt / c;
-    } else {
-      value += rt * Math.pow(2, 1 - eBias);
-    }
-    if (value * c >= 2) {
-      e++;
-      c /= 2;
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0;
-      e = eMax;
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen);
-      e = e + eBias;
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-      e = 0;
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
-
-  e = (e << mLen) | m;
-  eLen += mLen;
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
-
-  buffer[offset + i - d] |= s * 128;
-};
-
-},{}],63:[function(require,module,exports){
+},{"../../common":32,"../../type":33}],61:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -35793,333 +35037,410 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":61,"./buffer_ieee754":65,"base64-js":66}],67:[function(require,module,exports){
-// shim for using process in browser
+},{"assert":62,"./buffer_ieee754":63,"base64-js":64}],63:[function(require,module,exports){
+exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
+  var e, m,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      nBits = -7,
+      i = isBE ? 0 : (nBytes - 1),
+      d = isBE ? 1 : -1,
+      s = buffer[offset + i];
 
-var process = module.exports = {};
+  i += d;
 
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
+  e = s & ((1 << (-nBits)) - 1);
+  s >>= (-nBits);
+  nBits += eLen;
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
 
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
+  m = e & ((1 << (-nBits)) - 1);
+  e >>= (-nBits);
+  nBits += mLen;
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
 
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
+  if (e === 0) {
+    e = 1 - eBias;
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity);
+  } else {
+    m = m + Math.pow(2, mLen);
+    e = e - eBias;
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
 };
 
-},{}],64:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
+  var e, m, c,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
+      i = isBE ? (nBytes - 1) : 0,
+      d = isBE ? -1 : 1,
+      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
 
-var EventEmitter = exports.EventEmitter = process.EventEmitter;
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
+  value = Math.abs(value);
 
-// By default EventEmitters will print a warning if more than
-// 10 listeners are added to it. This is a useful default which
-// helps finding memory leaks.
-//
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-var defaultMaxListeners = 10;
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!this._events) this._events = {};
-  this._events.maxListeners = n;
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0;
+    e = eMax;
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2);
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--;
+      c *= 2;
+    }
+    if (e + eBias >= 1) {
+      value += rt / c;
+    } else {
+      value += rt * Math.pow(2, 1 - eBias);
+    }
+    if (value * c >= 2) {
+      e++;
+      c /= 2;
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0;
+      e = eMax;
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen);
+      e = e + eBias;
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+      e = 0;
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
+
+  e = (e << mLen) | m;
+  eLen += mLen;
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
+
+  buffer[offset + i - d] |= s * 128;
 };
 
+},{}],62:[function(require,module,exports){
+(function(){// UTILITY
+var util = require('util');
+var Buffer = require("buffer").Buffer;
+var pSlice = Array.prototype.slice;
 
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
+function objectKeys(object) {
+  if (Object.keys) return Object.keys(object);
+  var result = [];
+  for (var name in object) {
+    if (Object.prototype.hasOwnProperty.call(object, name)) {
+      result.push(name);
+    }
+  }
+  return result;
+}
+
+// 1. The assert module provides functions that throw
+// AssertionError's when particular conditions are not met. The
+// assert module must conform to the following interface.
+
+var assert = module.exports = ok;
+
+// 2. The AssertionError is defined in assert.
+// new assert.AssertionError({ message: message,
+//                             actual: actual,
+//                             expected: expected })
+
+assert.AssertionError = function AssertionError(options) {
+  this.name = 'AssertionError';
+  this.message = options.message;
+  this.actual = options.actual;
+  this.expected = options.expected;
+  this.operator = options.operator;
+  var stackStartFunction = options.stackStartFunction || fail;
+
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, stackStartFunction);
+  }
+};
+util.inherits(assert.AssertionError, Error);
+
+function replacer(key, value) {
+  if (value === undefined) {
+    return '' + value;
+  }
+  if (typeof value === 'number' && (isNaN(value) || !isFinite(value))) {
+    return value.toString();
+  }
+  if (typeof value === 'function' || value instanceof RegExp) {
+    return value.toString();
+  }
+  return value;
+}
+
+function truncate(s, n) {
+  if (typeof s == 'string') {
+    return s.length < n ? s : s.slice(0, n);
+  } else {
+    return s;
+  }
+}
+
+assert.AssertionError.prototype.toString = function() {
+  if (this.message) {
+    return [this.name + ':', this.message].join(' ');
+  } else {
+    return [
+      this.name + ':',
+      truncate(JSON.stringify(this.actual, replacer), 128),
+      this.operator,
+      truncate(JSON.stringify(this.expected, replacer), 128)
+    ].join(' ');
+  }
+};
+
+// assert.AssertionError instanceof Error
+
+assert.AssertionError.__proto__ = Error.prototype;
+
+// At present only the three keys mentioned above are used and
+// understood by the spec. Implementations or sub modules can pass
+// other keys to the AssertionError's constructor - they will be
+// ignored.
+
+// 3. All of the following functions must throw an AssertionError
+// when a corresponding condition is not met, with a message that
+// may be undefined if not provided.  All assertion methods provide
+// both the actual and expected values to the assertion error for
+// display purposes.
+
+function fail(actual, expected, message, operator, stackStartFunction) {
+  throw new assert.AssertionError({
+    message: message,
+    actual: actual,
+    expected: expected,
+    operator: operator,
+    stackStartFunction: stackStartFunction
+  });
+}
+
+// EXTENSION! allows for well behaved errors defined elsewhere.
+assert.fail = fail;
+
+// 4. Pure assertion tests whether a value is truthy, as determined
+// by !!guard.
+// assert.ok(guard, message_opt);
+// This statement is equivalent to assert.equal(true, guard,
+// message_opt);. To test strictly for the value true, use
+// assert.strictEqual(true, guard, message_opt);.
+
+function ok(value, message) {
+  if (!!!value) fail(value, true, message, '==', assert.ok);
+}
+assert.ok = ok;
+
+// 5. The equality assertion tests shallow, coercive equality with
+// ==.
+// assert.equal(actual, expected, message_opt);
+
+assert.equal = function equal(actual, expected, message) {
+  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
+};
+
+// 6. The non-equality assertion tests for whether two objects are not equal
+// with != assert.notEqual(actual, expected, message_opt);
+
+assert.notEqual = function notEqual(actual, expected, message) {
+  if (actual == expected) {
+    fail(actual, expected, message, '!=', assert.notEqual);
+  }
+};
+
+// 7. The equivalence assertion tests a deep equality relation.
+// assert.deepEqual(actual, expected, message_opt);
+
+assert.deepEqual = function deepEqual(actual, expected, message) {
+  if (!_deepEqual(actual, expected)) {
+    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
+  }
+};
+
+function _deepEqual(actual, expected) {
+  // 7.1. All identical values are equivalent, as determined by ===.
+  if (actual === expected) {
+    return true;
+
+  } else if (Buffer.isBuffer(actual) && Buffer.isBuffer(expected)) {
+    if (actual.length != expected.length) return false;
+
+    for (var i = 0; i < actual.length; i++) {
+      if (actual[i] !== expected[i]) return false;
+    }
+
+    return true;
+
+  // 7.2. If the expected value is a Date object, the actual value is
+  // equivalent if it is also a Date object that refers to the same time.
+  } else if (actual instanceof Date && expected instanceof Date) {
+    return actual.getTime() === expected.getTime();
+
+  // 7.3. Other pairs that do not both pass typeof value == 'object',
+  // equivalence is determined by ==.
+  } else if (typeof actual != 'object' && typeof expected != 'object') {
+    return actual == expected;
+
+  // 7.4. For all other Object pairs, including Array objects, equivalence is
+  // determined by having the same number of owned properties (as verified
+  // with Object.prototype.hasOwnProperty.call), the same set of keys
+  // (although not necessarily the same order), equivalent values for every
+  // corresponding key, and an identical 'prototype' property. Note: this
+  // accounts for both named and indexed properties on Arrays.
+  } else {
+    return objEquiv(actual, expected);
+  }
+}
+
+function isUndefinedOrNull(value) {
+  return value === null || value === undefined;
+}
+
+function isArguments(object) {
+  return Object.prototype.toString.call(object) == '[object Arguments]';
+}
+
+function objEquiv(a, b) {
+  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
+    return false;
+  // an identical 'prototype' property.
+  if (a.prototype !== b.prototype) return false;
+  //~~~I've managed to break Object.keys through screwy arguments passing.
+  //   Converting to array solves the problem.
+  if (isArguments(a)) {
+    if (!isArguments(b)) {
       return false;
     }
+    a = pSlice.call(a);
+    b = pSlice.call(b);
+    return _deepEqual(a, b);
   }
-
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
-
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-    return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
+  try {
+    var ka = objectKeys(a),
+        kb = objectKeys(b),
+        key, i;
+  } catch (e) {//happens when one is a string literal and the other isn't
     return false;
   }
+  // having the same number of owned properties (keys incorporates
+  // hasOwnProperty)
+  if (ka.length != kb.length)
+    return false;
+  //the same set of keys (although not necessarily the same order),
+  ka.sort();
+  kb.sort();
+  //~~~cheap key test
+  for (i = ka.length - 1; i >= 0; i--) {
+    if (ka[i] != kb[i])
+      return false;
+  }
+  //equivalent values for every corresponding key, and
+  //~~~possibly expensive deep test
+  for (i = ka.length - 1; i >= 0; i--) {
+    key = ka[i];
+    if (!_deepEqual(a[key], b[key])) return false;
+  }
+  return true;
+}
+
+// 8. The non-equivalence assertion tests for any deep inequality.
+// assert.notDeepEqual(actual, expected, message_opt);
+
+assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
+  if (_deepEqual(actual, expected)) {
+    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
+  }
 };
 
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
+// 9. The strict equality assertion tests strict equality, as determined by ===.
+// assert.strictEqual(actual, expected, message_opt);
+
+assert.strictEqual = function strictEqual(actual, expected, message) {
+  if (actual !== expected) {
+    fail(actual, expected, message, '===', assert.strictEqual);
   }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-
-    // Check for listener leak
-    if (!this._events[type].warned) {
-      var m;
-      if (this._events.maxListeners !== undefined) {
-        m = this._events.maxListeners;
-      } else {
-        m = defaultMaxListeners;
-      }
-
-      if (m && m > 0 && this._events[type].length > m) {
-        this._events[type].warned = true;
-        console.error('(node) warning: possible EventEmitter memory ' +
-                      'leak detected. %d listeners added. ' +
-                      'Use emitter.setMaxListeners() to increase limit.',
-                      this._events[type].length);
-        console.trace();
-      }
-    }
-
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
 };
 
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+// 10. The strict non-equality assertion tests for strict inequality, as
+// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
 
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
+assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
+  if (actual === expected) {
+    fail(actual, expected, message, '!==', assert.notStrictEqual);
+  }
 };
 
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
+function expectedException(actual, expected) {
+  if (!actual || !expected) {
+    return false;
   }
 
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
+  if (expected instanceof RegExp) {
+    return expected.test(actual);
+  } else if (actual instanceof expected) {
+    return true;
+  } else if (expected.call({}, actual) === true) {
+    return true;
   }
 
-  return this;
+  return false;
+}
+
+function _throws(shouldThrow, block, expected, message) {
+  var actual;
+
+  if (typeof expected === 'string') {
+    message = expected;
+    expected = null;
+  }
+
+  try {
+    block();
+  } catch (e) {
+    actual = e;
+  }
+
+  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
+            (message ? ' ' + message : '.');
+
+  if (shouldThrow && !actual) {
+    fail('Missing expected exception' + message);
+  }
+
+  if (!shouldThrow && expectedException(actual, expected)) {
+    fail('Got unwanted exception' + message);
+  }
+
+  if ((shouldThrow && actual && expected &&
+      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
+    throw actual;
+  }
+}
+
+// 11. Expected to throw an error:
+// assert.throws(block, Error_opt, message_opt);
+
+assert.throws = function(block, /*optional*/error, /*optional*/message) {
+  _throws.apply(this, [true].concat(pSlice.call(arguments)));
 };
 
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
+// EXTENSION! This is annoying to write outside this module.
+assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
+  _throws.apply(this, [false].concat(pSlice.call(arguments)));
 };
 
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
+assert.ifError = function(err) { if (err) {throw err;}};
 
-})(require("__browserify_process"))
-},{"__browserify_process":67}],66:[function(require,module,exports){
-(function (exports) {
-	'use strict';
-
-	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-	function b64ToByteArray(b64) {
-		var i, j, l, tmp, placeHolders, arr;
-	
-		if (b64.length % 4 > 0) {
-			throw 'Invalid string. Length must be a multiple of 4';
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		placeHolders = b64.indexOf('=');
-		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length;
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
-			arr.push((tmp & 0xFF0000) >> 16);
-			arr.push((tmp & 0xFF00) >> 8);
-			arr.push(tmp & 0xFF);
-		}
-
-		if (placeHolders === 2) {
-			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
-			arr.push(tmp & 0xFF);
-		} else if (placeHolders === 1) {
-			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
-			arr.push((tmp >> 8) & 0xFF);
-			arr.push(tmp & 0xFF);
-		}
-
-		return arr;
-	}
-
-	function uint8ToBase64(uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length;
-
-		function tripletToBase64 (num) {
-			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
-		};
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
-			output += tripletToBase64(temp);
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1];
-				output += lookup[temp >> 2];
-				output += lookup[(temp << 4) & 0x3F];
-				output += '==';
-				break;
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
-				output += lookup[temp >> 10];
-				output += lookup[(temp >> 4) & 0x3F];
-				output += lookup[(temp << 2) & 0x3F];
-				output += '=';
-				break;
-		}
-
-		return output;
-	}
-
-	module.exports.toByteArray = b64ToByteArray;
-	module.exports.fromByteArray = uint8ToBase64;
-}());
-
-},{}],60:[function(require,module,exports){
+})()
+},{"util":65,"buffer":61}],60:[function(require,module,exports){
 'use strict';
 
 
@@ -36177,7 +35498,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":31,"../../type":33,"esprima":68}],68:[function(require,module,exports){
+},{"../../common":32,"../../type":33,"esprima":66}],66:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -40088,5 +39409,684 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}]},{},[3])
+},{}],64:[function(require,module,exports){
+(function (exports) {
+	'use strict';
+
+	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+	function b64ToByteArray(b64) {
+		var i, j, l, tmp, placeHolders, arr;
+	
+		if (b64.length % 4 > 0) {
+			throw 'Invalid string. Length must be a multiple of 4';
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		placeHolders = b64.indexOf('=');
+		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length;
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
+			arr.push((tmp & 0xFF0000) >> 16);
+			arr.push((tmp & 0xFF00) >> 8);
+			arr.push(tmp & 0xFF);
+		}
+
+		if (placeHolders === 2) {
+			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
+			arr.push(tmp & 0xFF);
+		} else if (placeHolders === 1) {
+			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
+			arr.push((tmp >> 8) & 0xFF);
+			arr.push(tmp & 0xFF);
+		}
+
+		return arr;
+	}
+
+	function uint8ToBase64(uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length;
+
+		function tripletToBase64 (num) {
+			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+		};
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+			output += tripletToBase64(temp);
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1];
+				output += lookup[temp >> 2];
+				output += lookup[(temp << 4) & 0x3F];
+				output += '==';
+				break;
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
+				output += lookup[temp >> 10];
+				output += lookup[(temp >> 4) & 0x3F];
+				output += lookup[(temp << 2) & 0x3F];
+				output += '=';
+				break;
+		}
+
+		return output;
+	}
+
+	module.exports.toByteArray = b64ToByteArray;
+	module.exports.fromByteArray = uint8ToBase64;
+}());
+
+},{}],65:[function(require,module,exports){
+var events = require('events');
+
+exports.isArray = isArray;
+exports.isDate = function(obj){return Object.prototype.toString.call(obj) === '[object Date]'};
+exports.isRegExp = function(obj){return Object.prototype.toString.call(obj) === '[object RegExp]'};
+
+
+exports.print = function () {};
+exports.puts = function () {};
+exports.debug = function() {};
+
+exports.inspect = function(obj, showHidden, depth, colors) {
+  var seen = [];
+
+  var stylize = function(str, styleType) {
+    // http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+    var styles =
+        { 'bold' : [1, 22],
+          'italic' : [3, 23],
+          'underline' : [4, 24],
+          'inverse' : [7, 27],
+          'white' : [37, 39],
+          'grey' : [90, 39],
+          'black' : [30, 39],
+          'blue' : [34, 39],
+          'cyan' : [36, 39],
+          'green' : [32, 39],
+          'magenta' : [35, 39],
+          'red' : [31, 39],
+          'yellow' : [33, 39] };
+
+    var style =
+        { 'special': 'cyan',
+          'number': 'blue',
+          'boolean': 'yellow',
+          'undefined': 'grey',
+          'null': 'bold',
+          'string': 'green',
+          'date': 'magenta',
+          // "name": intentionally not styling
+          'regexp': 'red' }[styleType];
+
+    if (style) {
+      return '\033[' + styles[style][0] + 'm' + str +
+             '\033[' + styles[style][1] + 'm';
+    } else {
+      return str;
+    }
+  };
+  if (! colors) {
+    stylize = function(str, styleType) { return str; };
+  }
+
+  function format(value, recurseTimes) {
+    // Provide a hook for user-specified inspect functions.
+    // Check that value is an object with an inspect function on it
+    if (value && typeof value.inspect === 'function' &&
+        // Filter out the util module, it's inspect function is special
+        value !== exports &&
+        // Also filter out any prototype objects using the circular check.
+        !(value.constructor && value.constructor.prototype === value)) {
+      return value.inspect(recurseTimes);
+    }
+
+    // Primitive types cannot have properties
+    switch (typeof value) {
+      case 'undefined':
+        return stylize('undefined', 'undefined');
+
+      case 'string':
+        var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                                 .replace(/'/g, "\\'")
+                                                 .replace(/\\"/g, '"') + '\'';
+        return stylize(simple, 'string');
+
+      case 'number':
+        return stylize('' + value, 'number');
+
+      case 'boolean':
+        return stylize('' + value, 'boolean');
+    }
+    // For some reason typeof null is "object", so special case here.
+    if (value === null) {
+      return stylize('null', 'null');
+    }
+
+    // Look up the keys of the object.
+    var visible_keys = Object_keys(value);
+    var keys = showHidden ? Object_getOwnPropertyNames(value) : visible_keys;
+
+    // Functions without properties can be shortcutted.
+    if (typeof value === 'function' && keys.length === 0) {
+      if (isRegExp(value)) {
+        return stylize('' + value, 'regexp');
+      } else {
+        var name = value.name ? ': ' + value.name : '';
+        return stylize('[Function' + name + ']', 'special');
+      }
+    }
+
+    // Dates without properties can be shortcutted
+    if (isDate(value) && keys.length === 0) {
+      return stylize(value.toUTCString(), 'date');
+    }
+
+    var base, type, braces;
+    // Determine the object type
+    if (isArray(value)) {
+      type = 'Array';
+      braces = ['[', ']'];
+    } else {
+      type = 'Object';
+      braces = ['{', '}'];
+    }
+
+    // Make functions say that they are functions
+    if (typeof value === 'function') {
+      var n = value.name ? ': ' + value.name : '';
+      base = (isRegExp(value)) ? ' ' + value : ' [Function' + n + ']';
+    } else {
+      base = '';
+    }
+
+    // Make dates with properties first say the date
+    if (isDate(value)) {
+      base = ' ' + value.toUTCString();
+    }
+
+    if (keys.length === 0) {
+      return braces[0] + base + braces[1];
+    }
+
+    if (recurseTimes < 0) {
+      if (isRegExp(value)) {
+        return stylize('' + value, 'regexp');
+      } else {
+        return stylize('[Object]', 'special');
+      }
+    }
+
+    seen.push(value);
+
+    var output = keys.map(function(key) {
+      var name, str;
+      if (value.__lookupGetter__) {
+        if (value.__lookupGetter__(key)) {
+          if (value.__lookupSetter__(key)) {
+            str = stylize('[Getter/Setter]', 'special');
+          } else {
+            str = stylize('[Getter]', 'special');
+          }
+        } else {
+          if (value.__lookupSetter__(key)) {
+            str = stylize('[Setter]', 'special');
+          }
+        }
+      }
+      if (visible_keys.indexOf(key) < 0) {
+        name = '[' + key + ']';
+      }
+      if (!str) {
+        if (seen.indexOf(value[key]) < 0) {
+          if (recurseTimes === null) {
+            str = format(value[key]);
+          } else {
+            str = format(value[key], recurseTimes - 1);
+          }
+          if (str.indexOf('\n') > -1) {
+            if (isArray(value)) {
+              str = str.split('\n').map(function(line) {
+                return '  ' + line;
+              }).join('\n').substr(2);
+            } else {
+              str = '\n' + str.split('\n').map(function(line) {
+                return '   ' + line;
+              }).join('\n');
+            }
+          }
+        } else {
+          str = stylize('[Circular]', 'special');
+        }
+      }
+      if (typeof name === 'undefined') {
+        if (type === 'Array' && key.match(/^\d+$/)) {
+          return str;
+        }
+        name = JSON.stringify('' + key);
+        if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+          name = name.substr(1, name.length - 2);
+          name = stylize(name, 'name');
+        } else {
+          name = name.replace(/'/g, "\\'")
+                     .replace(/\\"/g, '"')
+                     .replace(/(^"|"$)/g, "'");
+          name = stylize(name, 'string');
+        }
+      }
+
+      return name + ': ' + str;
+    });
+
+    seen.pop();
+
+    var numLinesEst = 0;
+    var length = output.reduce(function(prev, cur) {
+      numLinesEst++;
+      if (cur.indexOf('\n') >= 0) numLinesEst++;
+      return prev + cur.length + 1;
+    }, 0);
+
+    if (length > 50) {
+      output = braces[0] +
+               (base === '' ? '' : base + '\n ') +
+               ' ' +
+               output.join(',\n  ') +
+               ' ' +
+               braces[1];
+
+    } else {
+      output = braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+    }
+
+    return output;
+  }
+  return format(obj, (typeof depth === 'undefined' ? 2 : depth));
+};
+
+
+function isArray(ar) {
+  return ar instanceof Array ||
+         Array.isArray(ar) ||
+         (ar && ar !== Object.prototype && isArray(ar.__proto__));
+}
+
+
+function isRegExp(re) {
+  return re instanceof RegExp ||
+    (typeof re === 'object' && Object.prototype.toString.call(re) === '[object RegExp]');
+}
+
+
+function isDate(d) {
+  if (d instanceof Date) return true;
+  if (typeof d !== 'object') return false;
+  var properties = Date.prototype && Object_getOwnPropertyNames(Date.prototype);
+  var proto = d.__proto__ && Object_getOwnPropertyNames(d.__proto__);
+  return JSON.stringify(proto) === JSON.stringify(properties);
+}
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+exports.log = function (msg) {};
+
+exports.pump = null;
+
+var Object_keys = Object.keys || function (obj) {
+    var res = [];
+    for (var key in obj) res.push(key);
+    return res;
+};
+
+var Object_getOwnPropertyNames = Object.getOwnPropertyNames || function (obj) {
+    var res = [];
+    for (var key in obj) {
+        if (Object.hasOwnProperty.call(obj, key)) res.push(key);
+    }
+    return res;
+};
+
+var Object_create = Object.create || function (prototype, properties) {
+    // from es5-shim
+    var object;
+    if (prototype === null) {
+        object = { '__proto__' : null };
+    }
+    else {
+        if (typeof prototype !== 'object') {
+            throw new TypeError(
+                'typeof prototype[' + (typeof prototype) + '] != \'object\''
+            );
+        }
+        var Type = function () {};
+        Type.prototype = prototype;
+        object = new Type();
+        object.__proto__ = prototype;
+    }
+    if (typeof properties !== 'undefined' && Object.defineProperties) {
+        Object.defineProperties(object, properties);
+    }
+    return object;
+};
+
+exports.inherits = function(ctor, superCtor) {
+  ctor.super_ = superCtor;
+  ctor.prototype = Object_create(superCtor.prototype, {
+    constructor: {
+      value: ctor,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+};
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (typeof f !== 'string') {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(exports.inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j': return JSON.stringify(args[i++]);
+      default:
+        return x;
+    }
+  });
+  for(var x = args[i]; i < len; x = args[++i]){
+    if (x === null || typeof x !== 'object') {
+      str += ' ' + x;
+    } else {
+      str += ' ' + exports.inspect(x);
+    }
+  }
+  return str;
+};
+
+},{"events":67}],68:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],67:[function(require,module,exports){
+(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
+
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
+//
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
+};
+
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
+    }
+  }
+
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
+
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
+
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
+
+  } else {
+    return false;
+  }
+};
+
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
+
+  if (!this._events) this._events = {};
+
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
+
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
+
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
+
+  return this;
+};
+
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
+};
+
+})(require("__browserify_process"))
+},{"__browserify_process":68}]},{},[3])
 ;

@@ -12,3 +12,7 @@ var templates = glob.sync('templates/*.html').reduce(function(memo, file) {
 }, {});
 
 fs.writeFileSync('dist/templates.js', 'var templates = ' + JSON.stringify(templates) + '; module.exports = templates;');
+
+// Build out the default english script for locales
+// or if one is not specified.
+fs.writeFileSync('data/data.js', 'Prose.data = ' + JSON.stringify(locales: JSON.parse('translations/locales.json'), null, 4) + ';');
