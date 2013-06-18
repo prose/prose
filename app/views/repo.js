@@ -33,7 +33,7 @@ module.exports = Backbone.View.extend({
     }));
 
     var header = new HeaderView({
-      model: this.user,
+      user: this.user,
       alterable: false
     });
     header.setElement(this.$el.find('#heading')).render();

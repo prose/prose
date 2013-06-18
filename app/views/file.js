@@ -6,6 +6,7 @@ var key = require('keymaster');
 var marked = require('marked');
 var diff = require('diff');
 var Backbone = require('backbone');
+var HeaderView = require('./header');
 var util = require('../util');
 var upload = require('../upload');
 var cookie = require('../cookie');
@@ -14,8 +15,6 @@ var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
   id: 'post',
-
-  className: 'post limiter',
 
   template: _.template(templates.file),
 
@@ -110,7 +109,7 @@ module.exports = Backbone.View.extend({
     return content;
   },
 
-  buildMeta: function(model) {
+  buildMeta: function() {
     var view = this;
     var $metadataEditor = this.$el.find('#meta .form');
     $metadataEditor.empty();
@@ -119,8 +118,10 @@ module.exports = Backbone.View.extend({
       var tmpl;
 
       // TODO: prefetch _config.yml content
+      /*
       var config = view.model.collection.findWhere({ path: '_prose.yml' }) ||
         view.model.collection.findWhere({ path: '_config.yml' });
+      */
 
       _(model.default_metadata).each(function(data, key) {
         if (data && typeof data.field === 'object') {
@@ -441,7 +442,7 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    init(model);
+    init(this.model);
 
     return {
       el: $metadataEditor,
@@ -454,7 +455,7 @@ module.exports = Backbone.View.extend({
 
   initEditor: function() {
     if (this.model.get('metadata')) {
-      this.metadataEditor = this.buildMeta(this.model);
+      this.metadataEditor = this.buildMeta();
     }
 
     var lang = this.model.get('lang');
@@ -584,6 +585,16 @@ module.exports = Backbone.View.extend({
     }
   },
 
+  renderHeading: function() {
+    var header = new HeaderView({
+      file: this.model,
+      repo: this.repo,
+      alterable: true
+    });
+
+    header.setElement(this.$el.find('#heading')).render();
+  },
+
   render: function() {
     /*
     // Link Dialog
@@ -642,25 +653,6 @@ module.exports = Backbone.View.extend({
     var pathTitle = path ? path : '';
 
     // this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
-  },
-
-  renderHeading: function() {
-    var user = this.repo.get('owner').login;
-    var repo = this.repo.get('name');
-
-    var parentTrail = '<a href="#' + user + '">' + user + '</a> / <a href="#' + user + '/' + repo + '">' + repo + '</a>';
-
-    this.header = {
-      avatar: '<span class="ico round document ' + this.model.get('lang') + '"></span>',
-      parentTrail: parentTrail,
-      private: this.repo.get('private') ? true : false,
-      title: util.filepath(this.model.get('path'), this.model.get('name')),
-      writable: this.repo.get('permissions').push,
-      alterable: true,
-      translate: this.model.get('translate'),
-      lang: this.model.get('lang'),
-      metadata: this.model.get('metadata')
-    };
   },
 
   edit: function(e) {
@@ -1529,20 +1521,9 @@ module.exports = Backbone.View.extend({
   remove: function() {
     this.stashFile();
 
-    this.eventRegister.unbind('edit', this.postViews);
-    this.eventRegister.unbind('preview', this.preview);
-    this.eventRegister.unbind('deleteFile', this.deleteFile);
-    this.eventRegister.unbind('save', this.save);
-    this.eventRegister.unbind('translate', this.translate);
-    this.eventRegister.unbind('updateFile', this.updateFile);
-    this.eventRegister.unbind('meta', this.updateFile);
-    this.eventRegister.unbind('remove', this.remove);
-    this.eventRegister.unbind('cancelSave', this.cancelSave);
-
     // Clear any file state classes in #prose
-    this.eventRegister.trigger('updateSaveState', '', '');
+    // this.eventRegister.trigger('updateSaveState', '', '');
 
-    $(window).off('pagehide');
-    Backbone.View.prototype.remove.call(this);
+    Backbone.View.prototype.remove.apply(this, arguments);
   }
 });

@@ -11,7 +11,7 @@
     </div>
   </div>
   <div class='fl details'>
-    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
+    <h4 class='parent-trail'><a href="#<%= login %>"><%= login %></a> / <a href="#<%= login %>/<%= repo.name %>"><%= repo.name %></a><% if (private) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
 
     <% if (app.state.mode === 'new' && !translate) { %>
       <input type='text' class='filepath' placeholder='<%= title %>'>
@@ -21,11 +21,10 @@
 
     <div class='mask'></div>
   </div>
-
 <% } else { %>
   <div class='avatar round'><%= avatar %></div>
   <div class='fl details'>
-    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>
-    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>
+    <h4><a class='user' href='#<%= login %>'><%= login %></a></h4>
+    <h2><a class='repo' href='#<%= path %>'><%= title %></a></h2>
   </div>
 <% } %>

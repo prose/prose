@@ -1,26 +1,26 @@
-<% if (isBinary) { %>
-  <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
+<% if (binary) { %>
+  <div class='listing-icon icon round <%= extension %> <% if (media) { %>media<% } %>'></div>
 <% } else { %>
-  <a href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>
-    <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>
+  <a href='#<%= repo.owner.login %>/<%= repo.name %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>
+    <span class='icon round <%= extension %> <% if (media) { %>media<% } %>'></span>
   </a>
 <% } %>
 
 <div class='details'>
   <div class='actions fr clearfix'>
-    <% if (!isBinary) { %>
+    <% if (!binary) { %>
       <a class='clearfix'
         title='Edit this File'
-        href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
+        href='#<%= repo.owner.login %>/<%= repo.name %>/edit/<%= branch %>/<%= path %>'>
         Edit
       </a>
     <% } %>
-    <% if (permissions.push) { %>
+    <% if (repo.permissions.push) { %>
       <a
         class='delete'
         title='Delete this File'
-        data-user='<%= owner.login %>'
-        data-repo='<%= repo %>'
+        data-user='<%= repo.owner.login %>'
+        data-repo='<%= repo.name %>'
         data-branch='<%= branch %>'
         data-file='<%= name %>'
         href='#'>
@@ -28,16 +28,16 @@
       </a>
     <% } %>
   </div>
-  <% if (isBinary) { %>
+  <% if (binary) { %>
     <h3 class='title' title='<%= name %>'><%= name %></h3>
   <% } else { %>
       <% if (extension === 'md') { %>
-        <a class='clearfix' href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
+        <a class='clearfix' href='#<%= repo.owner.login %>/<%= repo.name %>/edit/<%= branch %>/<%= path %>'>
           <h3><%= name %></h3>
           <span class='deemphasize'><%= name %></span>
         </a>
       <% } else { %>
-        <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= owner.login %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>
+        <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= repo.owner.login %>/<%= repo.name %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>
       <% } %>
     </a>
   <% } %>

@@ -19,15 +19,15 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    if (!this.model.get('isBinary')) {
-      this.$el.data('navigate', '#' + this.model.get('owner').login + '/' +
+    if (!this.model.get('binary')) {
+      this.$el.data('navigate', '#' + this.model.repo.get('owner').login + '/' +
         this.repo.get('name') + '/edit/' + this.branch + '/' +
         this.model.get('path'));
     }
 
     this.$el.html(this.template(_.extend(this.model.attributes, {
       branch: this.branch,
-      permissions: this.repo.get('permissions')
+      repo: this.repo.attributes
     })));
 
     return this;

@@ -24,7 +24,7 @@ module.exports = Backbone.View.extend({
     this.search.setElement(this.$el.find('#search')).render();
     this.repos.setElement(this.$el.find('#repos'));
 
-    var header = new HeaderView({ model: this.user, alterable: false });
+    var header = new HeaderView({ user: this.user, alterable: false });
     header.setElement(this.$el.find('#heading')).render();
     this.subviews.push(header);
 

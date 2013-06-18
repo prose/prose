@@ -1,92 +1,98 @@
-<div class='editor views<% if (markdown) { %> markdown<% } %>'>
-  <div id='diff' class='view prose diff'></div>
-  <% if (metadata) { %>
-    <div id='meta' class='view round meta'>
-      <div class='form'></div>
-      <a href='#' class='button round finish'>
-        Back to <% if (mode === 'new') { %>New Post<% } else { %><%= mode %><% } %>
-      </a>
-    </div>
-  <% } %>
-  <div id='edit' class='view active edit'>
-    <div class='topbar-wrapper'>
-      <div class='topbar'>
-        <div class='containment toolbar round'>
-          <% if (metadata && metadata.published) { %>
-            <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico checkmark'></span></a>
-          <% } else if (metadata && !metadata.published) { %>
-            <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico checkmark'></span></a>
-          <% } %>
-          <div class='options clearfix'>
-            <span href='#' class='action round fl'>
-              <span class='ico status'></span>
+<div id='drawer' class='sidebar'></div>
 
-              <% if (writable) { %>
-                <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>
-              <% } else { %>
-                <span class='popup round arrow-top'>Submit Change</span>
-              <% } %>
+<header id='heading' class='heading limiter clearfix'></header>
 
-              <span class='ico round document <%= lang %>'></span>
-            </span>
-            <% if (markdown) { %>
-              <ul class='group round clearfix'>
-                <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print("# Heading\n\n") %>'>h1</a></li>
-                <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print("## Sub Heading\n\n") %>'>h2</a></li>
-              </ul>
-              <ul class='group round clearfix'>
-                <li>
-                  <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>
-                    <span class='ico small link'></span>
-                  </a>
-                </li>
-                <li>
-                  <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>
-                    <span class='ico small picture'></span>
-                  </a>
-                </li>
-              </ul>
-              <ul class='group round clearfix'>
-                <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>
-                <li>
-                  <a data-key='italic' href='#' title='Italic' data-snippet='__'>
-                    <span class='ico small italic'></span>
-                  </a>
-                </li>
-              </ul>
-              <ul class='group round clearfix'>
-                <li>
-                  <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print("> We loved with a love that was more than love\n\n"); %>'>
-                    <span class='ico small quote'></span>
-                  </a>
-                </li>
-                <li>
-                  <a href='#' title='List' data-key='list' data-snippet='<% print("- item\n- item\n- item\n\n"); %>'>
-                    <span class='ico small list'></span>
-                  </a>
-                </li>
-                <li>
-                  <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print("1. item\n2. item\n3. item\n\n"); %>'>
-                    <span class='ico small numbered-list'></span>
-                  </a>
-                </li>
-              </ul>
-              <ul class='group round clearfix'>
-                <li>
-                  <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>
-                    <span class='ico small question'></span>
-                  </a>
-                </li>
-              </ul>
+<div id='post' class='post limiter'>
+  <div class='editor views<% if (markdown) { %> markdown<% } %>'>
+    <div id='diff' class='view prose diff'></div>
+    <% if (metadata) { %>
+      <div id='meta' class='view round meta'>
+        <div class='form'></div>
+        <a href='#' class='button round finish'>
+          Back to <% if (mode === 'new') { %>New Post<% } else { %><%= mode %><% } %>
+        </a>
+      </div>
+    <% } %>
+    <div id='edit' class='view active edit'>
+      <div class='topbar-wrapper'>
+        <div class='topbar'>
+          <div class='containment toolbar round'>
+            <% if (metadata && metadata.published) { %>
+              <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico checkmark'></span></a>
+            <% } else if (metadata && !metadata.published) { %>
+              <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico checkmark'></span></a>
             <% } %>
+            <div class='options clearfix'>
+              <span href='#' class='action round fl'>
+                <span class='ico status'></span>
+
+                <% if (writable) { %>
+                  <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>
+                <% } else { %>
+                  <span class='popup round arrow-top'>Submit Change</span>
+                <% } %>
+
+                <span class='ico round document <%= lang %>'></span>
+              </span>
+              <% if (markdown) { %>
+                <ul class='group round clearfix'>
+                  <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print("# Heading\n\n") %>'>h1</a></li>
+                  <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print("## Sub Heading\n\n") %>'>h2</a></li>
+                </ul>
+                <ul class='group round clearfix'>
+                  <li>
+                    <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>
+                      <span class='ico small link'></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>
+                      <span class='ico small picture'></span>
+                    </a>
+                  </li>
+                </ul>
+                <ul class='group round clearfix'>
+                  <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>
+                  <li>
+                    <a data-key='italic' href='#' title='Italic' data-snippet='__'>
+                      <span class='ico small italic'></span>
+                    </a>
+                  </li>
+                </ul>
+                <ul class='group round clearfix'>
+                  <li>
+                    <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print("> We loved with a love that was more than love\n\n"); %>'>
+                      <span class='ico small quote'></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href='#' title='List' data-key='list' data-snippet='<% print("- item\n- item\n- item\n\n"); %>'>
+                      <span class='ico small list'></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print("1. item\n2. item\n3. item\n\n"); %>'>
+                      <span class='ico small numbered-list'></span>
+                    </a>
+                  </li>
+                </ul>
+                <ul class='group round clearfix'>
+                  <li>
+                    <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>
+                      <span class='ico small question'></span>
+                    </a>
+                  </li>
+                </ul>
+              <% } %>
+            </div>
+            <div id='dialog'></div>
           </div>
-          <div id='dialog'></div>
         </div>
       </div>
+      <div id='code' class='code round inner'></div>
     </div>
-    <div id='code' class='code round inner'></div>
+    <% if (markdown) { %>
+      <div id='preview' class='view preview prose'><%- preview %></div>
+    <% } %>
   </div>
-  <% if (markdown) { %>
-    <div id='preview' class='view preview prose'><%- preview %></div>
-  <% } %>
 </div>

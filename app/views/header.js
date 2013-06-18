@@ -5,27 +5,35 @@ var utils = require('../util');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  id: 'header',
-
   template: _.template(templates.heading),
 
   initialize: function(options) {
-    this.model = options.model;
+    this.user = options.user;
+    this.repo = options.repo;
+    this.file = options.file;
     this.alterable = options.alterable;
   },
 
   render: function() {
-    var login = this.model.get('login');
+    var login = this.user ? this.user.get('login') : this.repo.get('owner').login;
 
     this.$el.html(this.template({
-      avatar: '<img src="' + this.model.get('avatar_url') + '" width="40" height="40" alt="Avatar" />',
-      user: this.model.attributes,
-      parent: this.model.get('name') || login,
-      parentUrl: login,
       alterable: this.alterable,
-      title: 'Explore Projects',
-      titleUrl: login
+      avatar: this.file ?  '<span class="ico round document ' + this.file.get('lang') + '"></span>' :
+        '<img src="' + this.user.get('avatar_url') + '" width="40" height="40" alt="Avatar" />',
+      lang: this.file ? this.file.get('lang') : undefined,
+      login: this.user ? this.user.get('login') : this.repo.get('owner').login,
+      metadata: this.file ? this.file.get('metadata') : undefined,
+      path: login,
+      private: this.repo && this.repo.get('private') ? true : false,
+               repo: this.repo ? this.repo.attributes : undefined,
+      title: this.file ? this.file.get('path') : 'Explore Projects',
+      translate: this.file ? this.file.get('translate') : undefined,
+      user: this.user ? this.user.attributes : undefined,
+      writable: this.repo ? this.repo.get('permissions').push : undefined
     }));
+
+    console.log(this.$el);
 
     return this;
   }
