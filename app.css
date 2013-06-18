@@ -323,8 +323,8 @@ ins {
 
 .prose h2 {
   font-size:22px;
-  margin:15px 0;
   font-weight:700;
+  margin:0 0 15px;
   padding:0;
   }
 
@@ -1657,10 +1657,14 @@ ins {
     padding:0;
     }
     .post .markdown .view.diff pre {
+      background:transparent;
+      color:#a8afb2;
       font-size:14px;
       line-height:1.75em;
-      color:#a8afb2;
       }
+      .view.diff .diff-content {
+        background:#f8f8f8;
+        }
 
   .post .view.meta {
     background:#f8f8f8;

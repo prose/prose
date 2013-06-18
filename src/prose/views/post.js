@@ -352,8 +352,8 @@ module.exports = Backbone.View.extend({
 
     // Content Window
     this.$el.find('.views .view').removeClass('active');
-    $diff.html('<pre>' + compare + '</pre>');
     $diff.addClass('active');
+    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
   },
 
   closeSettings: function() {
