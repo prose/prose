@@ -15,6 +15,7 @@ en:
     logout: "Logout"
   actions:
     unsaved: "You have unsaved Changes. Are you sure you want to leave?"
+    draft: "Draft to Post"
     publishing:
       publish: "Publish"
       published: "Published"
@@ -104,7 +105,7 @@ en:
     settings:
       title: "Options"
       delete: "Delete This File"
-      translate: "Translate to {lang}"
+      translate: "Translate to"
       draft: "Create Draft"
   dialogs:
     link:
