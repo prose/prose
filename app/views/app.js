@@ -10,18 +10,10 @@ module.exports = Backbone.View.extend({
     template: _.template(templates.app),
 
     events: {
-      'click .post-views .edit': 'edit',
-      'click .post-views .preview': 'preview',
-      'click .post-views .settings': 'settings',
-      'click .post-views .meta': 'meta',
-      'click .logout': 'logout',
-      'click a.item.removed': 'restoreFile',
-      'click a.save': 'save',
       'click a.cancel': 'cancel',
       'click a.confirm': 'updateFile',
       'click a.delete': 'deleteFile',
       'click a.translate': 'translate',
-      'click .mobile-menu .toggle': 'toggleMobileClass',
       'focus input.filepath': 'checkPlaceholder',
       'keypress input.filepath': 'saveFilePath'
     },
@@ -60,13 +52,12 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'documentTitle', 'headerContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'recentFiles', 'updateSaveState', 'filenameInput');
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
       this.eventRegister.bind('filenameInput', this.filenameInput);
-      this.eventRegister.bind('closeSettings', this.closeSettings);
     },
 
     render: function(options) {
@@ -141,68 +132,6 @@ module.exports = Backbone.View.extend({
       $('#drawer', this.el).empty().append(sidebarTmpl(data));
     },
 
-    // Event Triggering to other files
-    edit: function(e) {
-      this.viewing = 'edit';
-      this.eventRegister.trigger('edit', e);
-      return false;
-    },
-
-    preview: function(e) {
-      this.viewing = 'preview';
-
-      if ($(e.target).data('jekyll')) {
-        this.eventRegister.trigger('preview', e);
-      } else {
-        this.eventRegister.trigger('preview', e);
-        // Cancel propagation
-        return false;
-      }
-    },
-
-    // Event Triggering to other files
-    meta: function(e) {
-      this.viewing = 'meta';
-      this.eventRegister.trigger('meta', e);
-      return false;
-    },
-
-    settings: function(e) {
-      var tmpl = _(app.templates.settings).template();
-      var $navItems = $('.navigation a', this.el);
-
-      if ($(e.target, this.el).hasClass('active')) {
-        this.cancel();
-      } else {
-        $navItems.removeClass('active');
-        $(e.target, this.el).addClass('active');
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl({
-            lang: this.lang,
-            writable: this.writable,
-            metadata: this.metadata
-          }));
-
-        $('#prose').toggleClass('open mobile', true);
-      }
-
-      return false;
-    },
-
-    closeSettings: function() {
-      $('.post-views a', this.el).removeClass('active');
-
-      if (app.state.mode === 'blob') {
-        $('.post-views .preview', this.el).addClass('active');
-      } else {
-        $('.post-views .edit', this.el).addClass('active');
-      }
-
-      $('#prose').toggleClass('open mobile', false);
-    },
-
     restoreFile: function(e) {
       var $target = $(e.currentTarget);
       var $overlay = $(e.currentTarget).find('.overlay');
@@ -247,36 +176,6 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
-    save: function(e) {
-      var tmpl = _(app.templates.sidebarSave).template();
-      this.eventRegister.trigger('save', e);
-
-      if ($(e.target, this.el).hasClass('active')) {
-        this.cancel();
-      } else {
-        this.cancel();
-        $('.navigation a', this.el).removeClass('active');
-        $(e.target, this.el).addClass('active');
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl({
-            writable: this.writable
-        }));
-
-        $('#prose').toggleClass('open mobile', true);
-
-        var $message = $('.commit-message', this.el);
-        var filepath = $('input.filepath').val();
-        var filename = _.extractFilename(filepath)[1];
-        var placeholder = 'Updated ' + filename;
-        if (app.state.mode === 'new') placeholder = 'Created ' + filename;
-        $message.attr('placeholder', placeholder).focus();
-      }
-
-      return false;
-    },
-
     cancel: function(e) {
       $('.navigation a', this.el).removeClass('active');
       $('.navigation .' + this.viewing, this.el).addClass('active');
@@ -302,12 +201,6 @@ module.exports = Backbone.View.extend({
           $target.val($target.attr('placeholder'));
         }
       }
-    },
-
-    logout: function() {
-      app.models.logout();
-      window.location.reload();
-      return false;
     },
 
     updateSaveState: function(label, classes, kill) {
@@ -339,7 +232,6 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('recentFiles', this.recentFiles);
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
       this.eventRegister.unbind('filenameInput', this.filenameInput);
-      this.eventRegister.unbind('closeSettings', this.closeSettings);
       Backbone.View.prototype.remove.call(this);
     }
 });

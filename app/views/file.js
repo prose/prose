@@ -33,12 +33,26 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     this.repo = options.repo;
     this.mode = options.mode;
+    this.nav = options.nav;
     this.branch = options.branch || this.repo.get('master_branch');
     this.branches = options.branches;
     this.path = options.path || '';
     this.filename = options.filename;
 
     this.listenTo(this.branches, 'sync', this.setCollection, this);
+
+    // Listen for button clicks from the vertical nav
+    /*
+    this.listenTo(this.nav, 'edit', this.edit, this);
+    this.listenTo(this.nav, 'preview', this.preview, this);
+    this.listenTo(this.nav, 'deleteFile', this.deleteFile, this);
+    this.listenTo(this.nav, 'save', this.save, this);
+    this.listenTo(this.nav, 'updateFile', this.updateFile, this);
+    this.listenTo(this.nav, 'translate', this.translate, this);
+    this.listenTo(this.nav, 'meta', this.meta, this);
+    this.listenTo(this.nav, 'remove', this.remove, this);
+    this.listenTo(this.nav, 'cancelSave', this.cancelSave, this);
+    */
 
     // Cache jQuery window object
     var $window = $(window);

@@ -207,6 +207,7 @@ module.exports = Backbone.Router.extend({
     var content = new FileView({
       repo: repo,
       mode: mode,
+      nav: this.app.nav,
       branch: branch,
       branches: repo.branches,
       path: (path ? path + '/' : '') + filename,
@@ -222,7 +223,7 @@ module.exports = Backbone.Router.extend({
     this.app.$el.find('#main').html(this.view.el);
 
     // Set data-mode attribute to toggle nav buttons in CSS
-    this.app.$el.find('.navigation').attr('data-mode', 'post');
+    // this.app.nav.$el.attr('data-mode', 'post');
 
     util.loader.loaded();
 
