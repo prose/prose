@@ -1,6 +1,7 @@
 # See the README for installation instructions.
 UGLIFY = node_modules/.bin/uglifyjs
 BROWSERIFY = node_modules/.bin/browserify
+TEMPLATES = $(shell find templates -type f -name '*.html')
 
 all: \
 	$(shell npm install && mkdir -p dist) \
@@ -8,12 +9,9 @@ all: \
 	dist/prose.min.js
 
 clean:
-	rm -f dist/prose*.js
+	rm -f dist/*
 
-TEMPLATES = $(shell find templates -type f -name '*.html')
-LOCALES = $(shell find dist/locales -type f -name '*.json')
-
-translations: $(LOCALES)
+translations:
 	node translations/update_locales
 
 dist/templates.js: $(TEMPLATES)
@@ -54,7 +52,9 @@ APPLICATION = \
 	src/prose/cookie.js \
 	src/prose/upload.js \
 	src/prose/toolbar/markdown.js \
-	src/libs/github.js
+	src/libs/github.js \
+	translations/locales.js \
+	locale.js
 
 dist/prose.js: oauth.json $(APPLICATION) $(LIBS) dist/templates.js
 	cat $(LIBS) > dist/prose.js

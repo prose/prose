@@ -8,6 +8,7 @@ locale.current = function(_) {
 };
 
 function t(s, o, loc) {
+    if (!arguments.length) return;
     loc = loc || locale._current;
 
     var path = s.split(".").reverse(),

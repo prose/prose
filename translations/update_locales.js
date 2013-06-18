@@ -25,7 +25,7 @@ asyncMap(['application'], getResource, function(err, locales) {
     });
 
     for (var i in locale) {
-        fs.writeFileSync('./dist/locales/' + i + '.json', JSON.stringify(locale[i], null, 4));
+        fs.writeFileSync('./translations/locales/' + i + '.json', JSON.stringify(locale[i], null, 4));
     }
 });
 
@@ -45,7 +45,7 @@ function getResource(resource, callback) {
             callback(null, locale);
         });
 
-        fs.writeFileSync('translations/locales.json', JSON.stringify(codes, null, 4));
+        fs.writeFileSync('translations/locales.js', '// Automatically Generated\n\nmodule.exports = ' + JSON.stringify(codes) + ';');
     });
 }
 

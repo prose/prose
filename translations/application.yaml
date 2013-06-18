@@ -79,6 +79,7 @@ en:
       home: "Back to Main Page"
       back: "Go Back"
       error:
+        github: "Error while loading data from Github. This might be a temporary issue. Please try again later."
         exists: "This file does not exist"
         404: "Page not Found"
     upgrade:
@@ -116,6 +117,8 @@ en:
         description: |
           Upload images by dragging &amp; Dropping or </br>
           {input} <a>selecting one</a>
+        help: "Images uploaded are added to the current directory or one specified in the Image URL path above."
+        helpMedia: "Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field."
       choose:
         title: "Choose Existing"
     help:
