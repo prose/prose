@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
+_.merge = require('deepmerge');
 var jsyaml = require('js-yaml');
 var key = require('keymaster');
 var marked = require('marked');
@@ -352,8 +353,8 @@ module.exports = Backbone.View.extend({
 
     // Content Window
     this.$el.find('.views .view').removeClass('active');
-    $diff.html('<pre>' + compare + '</pre>');
     $diff.addClass('active');
+    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
   },
 
   closeSettings: function() {
@@ -740,11 +741,9 @@ module.exports = Backbone.View.extend({
               }));
               break;
             case 'hidden':
-              tmpl = _(window.app.templates.hidden).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                value: JSON.stringify(data.field.value).replace(/"/g, '&quot;').replace(/'/g, '&apos;')
-              }));
+              tmpl = {};
+              tmpl[data.name] = data.field.value;
+              view.model.metadata = _.merge(tmpl, view.model.metadata);
               break;
           }
         } else {
@@ -791,7 +790,6 @@ module.exports = Backbone.View.extend({
         switch (item.type) {
           case 'select-multiple':
           case 'select-one':
-          case 'hidden':
           case 'text':
             if (value) {
               value = $item.data('type') === 'number' ? Number(value) : value;
@@ -831,13 +829,13 @@ module.exports = Backbone.View.extend({
 
       if (view.rawEditor) {
         try {
-          metadata = $.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
+          metadata = _.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
         } catch (err) {
           console.log(err);
         }
       }
 
-      return metadata;
+      return _.extend(view.model.metadata, metadata);
     }
 
     function getRaw() {
@@ -877,7 +875,6 @@ module.exports = Backbone.View.extend({
                     matched = true;
                   }
                   break;
-                case 'hidden':
                 case 'text':
                   input[i].value = value;
                   matched = true;
@@ -904,7 +901,6 @@ module.exports = Backbone.View.extend({
                   matched = true;
                 }
                 break;
-              case 'hidden':
               case 'text':
                 input[i].value = value;
                 matched = true;
@@ -932,9 +928,11 @@ module.exports = Backbone.View.extend({
           }
 
         } else {
-          // Don't render the 'publish?ed' field as
-          // this somewhere else in the interface.
-          if (key !== 'published') {
+          // Don't render the 'publish?ed' field or hidden metadata
+          var defaults = _.find(view.model.default_metadata, function(data) { return data.name === key; });
+          var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
+
+          if (key !== 'published' && !defaults) {
             raw = {};
             raw[key] = value;
 
@@ -1209,7 +1207,7 @@ module.exports = Backbone.View.extend({
           view.eventRegister.trigger('updateSaveState', 'Error&nbsp;Uploading try again in 30 Seconds!', 'error');
         } else {
           var $alt = $('input[name="alt"]');
-          var image = ($alt.val) ?
+          var image = ($alt.val() && $alt.val() !== undefined) ?
             '![' + $alt.val() + '](/' + path + ')' :
             '![' + file.name + '](/' + path + ')';
 

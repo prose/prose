@@ -225,6 +225,10 @@ p {
   line-height:1.5em;
 	margin:0 0 20px;
   }
+small {
+  font-size:11px;
+  line-height:18px;
+  }
 label {
   color:#434C50;
   font-size:13px;
@@ -323,8 +327,8 @@ ins {
 
 .prose h2 {
   font-size:22px;
-  margin:15px 0;
   font-weight:700;
+  margin:0 0 15px;
   padding:0;
   }
 
@@ -611,7 +615,7 @@ ins {
   height:40px;
   line-height:40px;
   text-align:center;
-  margin:8px 10px;
+  margin:10px;
   position:relative;
   z-index:10;
   }
@@ -1657,10 +1661,14 @@ ins {
     padding:0;
     }
     .post .markdown .view.diff pre {
+      background:transparent;
+      color:#a8afb2;
       font-size:14px;
       line-height:1.75em;
-      color:#a8afb2;
       }
+      .view.diff .diff-content {
+        background:#f8f8f8;
+        }
 
   .post .view.meta {
     background:#f8f8f8;
@@ -2172,20 +2180,22 @@ ins {
 .cm-s-prose-bright span.cm-number     { color:#197987; }
 .cm-s-prose-bright span.cm-variable   { color:#197987; }
 .cm-s-prose-bright span.cm-builtin    { color:#197987; }
+.cm-s-prose-bright span.cm-link       { color:#197987; text-decoration:underline;}
+.cm-s-prose-bright span.cm-tag        { color:#197987; }
 
 /* Medium Blue/Green */
-.cm-s-prose-bright span.cm-string     { color:#2099aa; }
-.cm-s-prose-bright span.cm-string-2   { color:#2099aa; }
-.cm-s-prose-bright span.cm-quote      { color:#2099aa;}
-.cm-s-prose-bright span.cm-atom       { color:#2099aa; }
+.cm-s-prose-bright span.cm-string     { color:#48abb9; }
+.cm-s-prose-bright span.cm-string-2   { color:#48abb9; }
+.cm-s-prose-bright span.cm-quote      { color:#48abb9;}
+.cm-s-prose-bright span.cm-atom       { color:#48abb9; }
 
 /* Light Blue/Green */
 /*.cm-s-prose-bright .CodeMirror-selected { background:#90d5df; }*/
 
 /* Turtle Green */
-.cm-s-prose-bright span.cm-property   { color:#73955c; }
-.cm-s-prose-bright span.cm-operator   { color:#73955c; }
-.cm-s-prose-bright span.cm-variable-3 { color:#73955c; }
+.cm-s-prose-bright span.cm-property   { color:#82a367; }
+.cm-s-prose-bright span.cm-operator   { color:#82a367; }
+.cm-s-prose-bright span.cm-variable-3 { color:#82a367; }
 
 /* Light Turtle Green */
 .cm-s-prose-bright span.cm-attribute  { color:#90bb74; }
@@ -2194,8 +2204,6 @@ ins {
 /* Brick */
 .cm-s-prose-bright span.cm-keyword    { color:#ec6c45; }
 .cm-s-prose-bright span.cm-bracket    { color:#ec6c45; }
-.cm-s-prose-bright span.cm-link       { color:#ec6c45; text-decoration:underline;}
-.cm-s-prose-bright span.cm-tag        { color:#ec6c45; }
 
 /* Darker Brick */
 .cm-s-prose-bright span.cm-error      { color:#e45346; }
