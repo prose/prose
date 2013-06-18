@@ -91,6 +91,7 @@ module.exports = Backbone.View.extend({
 
       $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
         jekyll: isJekyll,
+        version: 'v1',
         error: errorPage,
         noMenu: view.noMenu,
         lang: (app.state.file) ? _.mode(app.state.file) : undefined

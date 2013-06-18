@@ -18,8 +18,8 @@ module.exports = {
           menuName: t('dialogs.help.blockElements.content.codeBlocks.title'),
           data: t('dialogs.help.blockElements.content.codeBlocks.content')
         }, {
-          menuName: 'Horizontal Rules',
-          data: 'Horizontal rules are created by placing three or more hyphens, asterisks or underscores on a line by themselves. Spaces are allowed between the hyphens, asterisks or underscores.'
+          menuName: t('dialogs.help.blockElements.content.horizontalRules.title'),
+          data: t('dialogs.help.blockElements.content.horizontalRules.content')
         }
       ]
     },

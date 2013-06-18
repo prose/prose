@@ -67,8 +67,9 @@ en:
       body: |
         ## A New Post\n\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.
     file:
-      meta:
-        back: "Done"
+      metaTitle: "Review your changes:"
+      metaDescription: "Additions are highlighted in green. Deletions are crossed out."
+      back: "Done"
     notification:
       login:
         title: "Authorize with GitHub"
