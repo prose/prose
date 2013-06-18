@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
+_.merge = require('deepmerge');
 var jsyaml = require('js-yaml');
 var key = require('keymaster');
 var marked = require('marked');
@@ -742,7 +743,7 @@ module.exports = Backbone.View.extend({
             case 'hidden':
               tmpl = {};
               tmpl[data.name] = data.field.value;
-              view.model.metadata = _.defaults(view.model.metadata, tmpl);
+              view.model.metadata = _.merge(tmpl, view.model.metadata);
               break;
           }
         } else {
