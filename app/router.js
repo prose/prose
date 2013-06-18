@@ -221,6 +221,9 @@ module.exports = Backbone.Router.extend({
     this.view = content;
     this.app.$el.find('#main').html(this.view.el);
 
+    // Set data-mode attribute to toggle nav buttons in CSS
+    this.app.$el.find('.navigation').attr('data-mode', 'post');
+
     util.loader.loaded();
 
     /*

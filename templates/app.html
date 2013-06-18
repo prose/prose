@@ -3,7 +3,7 @@
   if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;
 %>
 
-<div class='vert clearfix navigation'>
+<nav id='navigation' class='vert clearfix navigation'>
 
   <% if (!noMenu && window.authenticated) { %>
     <ul class='mobile-menu nav clearfix'>
@@ -64,7 +64,7 @@
     </li>
   </ul>
   <% } %>
-</div>
+</nav>
 
 <div id='main'></div>
 
