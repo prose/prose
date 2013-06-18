@@ -47,18 +47,13 @@ module.exports = Backbone.View.extend({
     }, this);
 
     /*
-    this.prevFile = this.serialize();
     this.config = {};
-    this.recentlyUploadedFiles = [];
 
     if (app.state.config && app.state.config.prose) {
       this.config.siteurl = app.state.config.prose.siteurl || false;
       this.config.relativeLinks = app.state.config.prose.relativeLinks || false;
       this.config.media = app.state.config.prose.media || false;
     }
-
-    // TODO: switch this flag to use Backbone.model.isNew()
-    this.newFile = (app.state.mode === 'new') ? true : false;
     */
   },
 
@@ -111,651 +106,17 @@ module.exports = Backbone.View.extend({
     return content;
   },
 
-  initEditor: function() {
+  buildMeta: function(model) {
     var view = this;
-
-    if (view.model.get('metadata')) {
-      // view.metadataEditor = view.buildMeta();
-    }
-
-    var lang = view.model.get('lang');
-
-    // Don't set up content editor for yaml posts
-    if (lang === 'yaml') return;
-
-    view.editor = CodeMirror(document.getElementById('code'), {
-      mode: lang,
-      value: view.model.get('content'),
-      lineWrapping: true,
-      lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
-      extraKeys: view.keyMap(),
-      matchBrackets: true,
-      dragDrop: false,
-      theme: 'prose-bright'
-    });
-
-    // Bind Drag and Drop work on the editor
-    if (view.model.get('markdown') && view.model.get('writable')) {
-      upload.dragDrop(view.$el.find('#edit'), function(e, file, content) {
-        if (view.$el.find('#dialog').hasClass('dialog')) {
-          view.updateImageInsert(e, file, content);
-        } else {
-          view.createAndUpload(e, file, content);
-        }
-      });
-    }
-
-    // Monitor the current selection and apply
-    // an active class to any snippet links
-    if (lang === 'gfm') {
-      var $snippetLinks = view.$el.find('.toolbar .group a');
-      view.listenTo(view.editor, 'cursorActivity', function() {
-
-        var selection = util.trim(view.editor.getSelection());
-        $snippetLinks.removeClass('active');
-
-        var match = {
-          lineBreak: /\n/,
-          h1: /^#{1}/,
-          h2: /^#{2,2}/,
-          h3: /^#{3,3}/,
-          strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-          italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-          isNumber: parseInt(selection.charAt(0), 10)
-        };
-
-        if (!match.isNumber) {
-          switch (selection.charAt(0)) {
-            case '#':
-              if (!match.lineBreak.test(selection)) {
-                if (match.h2.test(selection) && !match.h3.test(selection)) {
-                  view.$el.find('[data-key="sub-heading"]').addClass('active');
-                } else if (!match.h2.test(selection)) {
-                  view.$el.find('[data-key="heading"]').addClass('active');
-                }
-              }
-              break;
-            case '>':
-              view.$el.find('[data-key="quote"]').addClass('active');
-              break;
-            case '*':
-            case '_':
-              if (!match.lineBreak.test(selection)) {
-                if (match.strong.test(selection)) {
-                  view.$el.find('[data-key="bold"]').addClass('active');
-                } else if (match.italic.test(selection)) {
-                  view.$el.find('[data-key="italic"]').addClass('active');
-                }
-              }
-              break;
-            case '!':
-              if (!match.lineBreak.test(selection) &&
-                  selection.charAt(1) === '[' &&
-                  selection.charAt(selection.length - 1) === ')') {
-                view.$el.find('[data-key="media"]').addClass('active');
-              }
-              break;
-            case '[':
-              if (!match.lineBreak.test(selection) &&
-                  selection.charAt(selection.length - 1) === ')') {
-                view.$el.find('[data-key="link"]').addClass('active');
-              }
-              break;
-            case '-':
-              if (selection.charAt(1) === ' ') {
-                view.$el.find('[data-key="list"]').addClass('active');
-              }
-            break;
-          }
-        } else {
-          if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
-            view.$el.find('[data-key="numbered-list"]').addClass('active');
-          }
-        }
-      }, view);
-    }
-
-    view.listenTo(view.editor, 'change', view.makeDirty, view);
-
-    view.listenTo(view.editor, 'focus', function() {
-      // If an upload queue is set, we want to clear it.
-      this.queue = undefined;
-
-      // If a dialog window is open and the editor is in focus, close it.
-      view.$el.find('.toolbar .group a').removeClass('on');
-      view.$el.find('#dialog').empty().removeClass();
-    }, view);
-
-    view.refreshCodeMirror();
-
-    // Check sessionStorage for existing stash
-    // Apply if stash exists and is current, remove if expired
-    view.stashApply();
-  },
-
-
-  render: function() {
-    /*
-    // Link Dialog
-    if (app.state.markdown && this.config.relativeLinks) {
-      $.ajax({
-        cache: true,
-        dataType: 'jsonp',
-        jsonp: false,
-        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
-        url: this.config.relativeLinks,
-        success: function(links) {
-          view.relativeLinks = links;
-        }
-      });
-    }
-
-    // Assets Listing for the Media Dialog
-    if (app.state.markdown && this.config.media) {
-      this.assetsDirectory = this.config.media;
-      app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
-        view.assets = data.files;
-      });
-    }
-    */
-
-    if (this.model.get('markdown')) {
-      this.model.set('preview', marked(this.compilePreview(this.model.get('content'))));
-    }
-
-    this.renderHeading();
-
-    this.$el.html(this.template(_.extend(this.model.attributes, {
-      mode: this.mode
-    })));
-
-    if (this.model.get('markdown') && this.mode === 'blob') {
-      this.preview();
-    } else {
-      // Editor is first up so trigger an active class for it
-      this.$el.find('#edit').toggleClass('active', true);
-      this.$el.find('.post-views .edit').addClass('active');
-
-      this.initEditor();
-
-      util.fixedScroll(this.$el.find('.topbar'));
-    }
-
-    this.updateDocumentTitle();
-
-    return this;
-  },
-
-  updateDocumentTitle: function() {
-    var context = this.mode === 'blob' ? 'Previewing ' : 'Editing ';
-    var path = this.model.get('path');
-    var pathTitle = path ? path : '';
-
-    // this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
-  },
-
-  renderHeading: function() {
-    var user = this.repo.get('owner').login;
-    var repo = this.repo.get('name');
-
-    var parentTrail = '<a href="#' + user + '">' + user + '</a> / <a href="#' + user + '/' + repo + '">' + repo + '</a>';
-
-    this.header = {
-      avatar: '<span class="ico round document ' + this.model.get('lang') + '"></span>',
-      parentTrail: parentTrail,
-      private: this.repo.get('private') ? true : false,
-      title: util.filepath(this.model.get('path'), this.model.get('name')),
-      writable: this.repo.get('permissions').push,
-      alterable: true,
-      translate: this.model.get('translate'),
-      lang: this.model.get('lang'),
-      metadata: this.model.get('metadata')
-    };
-  },
-
-  edit: function(e) {
-    var view = this;
-    // If preview was hit on load this.editor
-    // was not initialized.
-    if (!this.editor) {
-      this.initEditor();
-      _.delay(function() {
-        util.fixedScroll($('.topbar', view.el));
-      }, 1);
-    }
-
-    app.state.mode = this.newFile ? 'new' : 'edit';
-    this.updateURL();
-
-    $('.post-views a').removeClass('active');
-    $('.post-views .edit').addClass('active');
-    $('#prose').toggleClass('open', false);
-
-    $('.views .view', this.el).removeClass('active');
-    $('#edit', this.el).addClass('active');
-
-    return false;
-  },
-
-  preview: function(e) {
-    $('#prose').toggleClass('open', false);
-    if (this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
-      var hash = window.location.hash.split('/');
-      hash[2] = 'preview';
-      if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
-        hash.push(_($('input.filepath').val().split('/')).last());
-      }
-      this.stashFile();
-
-      $(e.currentTarget).attr({
-        target: '_blank',
-        href: hash.join('/')
-      });
-      return true;
-    } else {
-      if (e) e.preventDefault();
-
-      // Vertical Nav
-      $('.post-views a').removeClass('active');
-      $('.post-views .preview').addClass('active');
-
-      // Content Window
-      $('.views .view', this.el).removeClass('active');
-      $('#preview', this.el).addClass('active').html(marked(this.compilePreview(this.model.content)));
-
-      app.state.mode = 'blob';
-      this.updateURL();
-    }
-  },
-
-  meta: function() {
-    $('#prose').toggleClass('open', false);
-
-    // Vertical Nav
-    $('.post-views a').removeClass('active');
-    $('.post-views .meta').addClass('active');
-
-    // Content Window
-    $('.views .view', this.el).removeClass('active');
-    $('#meta', this.el).addClass('active');
-
-    // Refresh CodeMirror
-    if (this.rawEditor) this.rawEditor.refresh();
-    return false;
-  },
-
-  backToMode: function() {
-    if (app.state.mode === 'preview') {
-      this.preview();
-    } else {
-      this.edit();
-    }
-
-    return false;
-  },
-
-  deleteFile: function() {
-    if (confirm('Are you sure you want to delete this file?')) {
-      window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
-        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
-        router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
-      }, this));
-    }
-    return false;
-  },
-
-  updateURL: function() {
-    var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
-    this.updateDocumentTitle();
-    router.navigate(url.join('/'), {
-      trigger: false,
-      replace: true
-    });
-
-    $('.chzn-select', this.el).trigger('liszt:updated');
-  },
-
-  makeDirty: function(e) {
-    this.dirty = true;
-    if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
-    if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
-
-    var label = this.model.writable ? 'Unsaved Changes' : 'Submit Change';
-    this.eventRegister.trigger('updateSaveState', label, 'save');
-
-    // Pass a popover span to the avatar icon
-    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Save' : 'Submit Change');
-  },
-
-  togglePublishing: function(e) {
-    var $target = $(e.target);
-
-    if ($target.hasClass('published')) {
-      $target
-        .empty()
-        .html('Unpublish<span class="ico checkmark"></span>')
-        .removeClass('published')
-        .attr('data-state', false);
-    } else {
-      $target
-        .empty()
-        .html('Publish<span class="ico checkmark"></span>')
-        .addClass('published')
-        .attr('data-state', true);
-    }
-
-    this.makeDirty();
-    return false;
-  },
-
-  showDiff: function() {
-    var $diff = $('#diff', this.el);
-    var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
-    var text2 = _.escape(this.serialize());
-    var d = diff.diffWords(text1, text2);
-    var compare = '';
-
-    for (var i = 0; i < d.length; i++) {
-      if (d[i].removed) {
-        compare += '<del>' + d[i].value + '</del>';
-      } else if (d[i].added) {
-        compare += '<ins>' + d[i].value + '</ins>';
-      } else {
-        compare += d[i].value;
-      }
-    }
-
-    // Content Window
-    $('.views .view', this.el).removeClass('active');
-    $diff.html('<pre>' + compare + '</pre>');
-    $diff.addClass('active');
-  },
-
-  closeSettings: function() {
-    $('.views .view', this.el).removeClass('active');
-
-    if (app.state.mode === 'blob') {
-      $('#preview', this.el).addClass('active');
-    } else {
-      $('#edit', this.el).addClass('active');
-    }
-
-    this.eventRegister.trigger('closeSettings');
-  },
-
-  cancelSave: function() {
-    $('.views .view', this.el).removeClass('active');
-
-    if (app.state.mode === 'blob') {
-      $('#preview', this.el).addClass('active');
-    } else {
-      $('#edit', this.el).addClass('active');
-    }
-  },
-
-  save: function() {
-    this.showDiff();
-  },
-
-  refreshCodeMirror: function() {
-    if (typeof this.editor.refresh === 'function') this.editor.refresh();
-  },
-
-  updateMetaData: function() {
-    if (!this.model.jekyll) return true; // metadata -> skip
-    this.model.metadata = this.metadataEditor.getValue();
-    return true;
-  },
-
-  updateFilename: function(filepath, cb) {
-    var view = this;
-
-    if (!util.validPathname(filepath)) return cb('error');
-    app.state.path = this.model.path; // ?
-    app.state.file = util.extractFilename(filepath)[1];
-    app.state.path = util.extractFilename(filepath)[0];
-
-    function finish() {
-      view.model.path = app.state.path;
-      view.model.file = app.state.file;
-    }
-
-    if (this.model.persisted) {
-      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, util.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
-        if (!err) finish();
-        if (err) {
-          cb('error');
-        } else {
-          cb(null);
-        }
-      }, this));
-    } else {
-      finish();
-      cb(null);
-    }
-  },
-
-  serialize: function() {
-    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata).trim();
-
-    if (this.model.jekyll) {
-      return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
-    } else {
-      return this.model.content;
-    }
-  },
-
-  sendPatch: function(filepath, filename, filecontent, message) {
-    // Submits a patch (fork + pull request workflow)
-    var view = this;
-
-    function patch() {
-      if (view.updateMetaData()) {
-        view.model.content = view.prevFile;
-        view.editor.setValue(view.prevFile);
-
-        app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-
-          if (err) {
-            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
-            return;
-          }
-
-          view.dirty = false;
-          view.model.persisted = true;
-          view.model.file = filename;
-
-          view.updateURL();
-          view.prevFile = filecontent;
-          view.closeSettings();
-          view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', 'Request Submitted', 'saved');
-        });
-      } else {
-        view.eventRegister.trigger('updateSaveState', 'Error Metadata not Found', 'error');
-      }
-    }
-
-    view.eventRegister.trigger('updateSaveState', 'Submitting Request', 'saving');
-    patch();
-
-    return false;
-  },
-
-  saveFile: function(filepath, filename, filecontent, message) {
-    var view = this;
-
-    function save() {
-      if (view.updateMetaData()) {
-        window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-          if (err) {
-            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
-            return;
-          }
-
-          view.dirty = false;
-          view.model.persisted = true;
-          view.model.file = filename;
-
-          if (app.state.mode === 'new') app.state.mode = 'edit';
-          view.renderHeading();
-          view.updateURL();
-          view.prevFile = filecontent;
-          view.closeSettings();
-          view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
-        });
-      } else {
-        view.eventRegister.trigger('updateSaveState', '!Metadata', 'error');
-      }
-    }
-
-    view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
-
-    if (filepath === util.filepath(this.model.path, this.model.file)) return save();
-
-    // Move or create file
-    this.updateFilename(filepath, function(err) {
-      if (err) {
-        view.eventRegister.trigger('filenameInput');
-        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;filename', 'error');
-      } else {
-        save();
-      }
-    });
-  },
-
-  updatePublishState: function() {
-    // Update the publish key wording depening on what was saved
-    var $publishKey = $('.publish-flag', this.el);
-    var key = $publishKey.attr('data-state');
-
-    if (key === 'true') {
-      $publishKey.html('Published<span class="ico checkmark"></span>');
-    } else {
-      $publishKey.html('Unpublished<span class="ico checkmark"></span>');
-    }
-  },
-
-  stashFile: function(e) {
-    if (e) e.preventDefault();
-    if (!window.sessionStorage) return false;
-
-    var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
-
-    // Don't stash if filepath is undefined
-    if (filepath) {
-      try {
-        store.setItem(filepath, JSON.stringify({
-          sha: app.state.sha,
-          content: this.editor ? this.editor.getValue() : null,
-          metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
-        }));
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  },
-
-  stashApply: function() {
-    if (!window.sessionStorage) return false;
-
-    var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
-    var item = store.getItem(filepath);
-    var stash = JSON.parse(item);
-
-    if (stash && stash.sha === window.app.state.sha) {
-      // Restore from stash if file sha hasn't changed
-      if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
-      if (this.metadataEditor) {
-        this.rawEditor.setValue('');
-        this.metadataEditor.setValue(stash.metadata);
-      }
-    } else if (item) {
-      // Remove expired content
-      store.removeItem(filepath);
-    }
-  },
-
-  updateFile: function() {
-    var filepath = $('input.filepath').val();
-    var filename = util.extractFilename(filepath)[1];
-    var filecontent = this.serialize();
-    var $message = $('.commit-message');
-    var noVal = 'Updated ' + filename;
-    if (app.state.mode === 'new') noVal = 'Created ' + filename;
-
-    var message = $message.val() || noVal;
-    var method = this.model.writable ? this.saveFile : this.sendPatch;
-
-    // Update content
-    this.model.content = (this.editor) ? this.editor.getValue() : '';
-
-    // Delegate
-    method.call(this, filepath, filename, filecontent, message);
-    return false;
-  },
-
-  keyMap: function() {
-    var view = this;
-
-    if (this.model.markdown) {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.updateFile();
-        },
-        'Cmd-B': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
-        },
-        'Ctrl-B': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
-        },
-        'Cmd-I': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
-        },
-        'Ctrl-I': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
-        }
-      };
-    } else {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.updateFile();
-        }
-      };
-    }
-  },
-
-  translate: function(e) {
-    // TODO Drop the 'EN' requirement.
-    var hash = window.location.hash.split('/'),
-      href = $(e.currentTarget).attr('href').substr(1);
-
-    // If current page is not english and target page is english
-    if (href === 'en') {
-      hash.splice(-2, 2, hash[hash.length - 1]);
-      // If current page is english and target page is not english
-    } else if (this.model.metadata.lang === 'en') {
-      hash.splice(-1, 1, href, hash[hash.length - 1]);
-      // If current page is not english and target page is not english
-    } else {
-      hash.splice(-2, 2, href, hash[hash.length - 1]);
-    }
-
-    router.navigate(_(hash).compact().join('/') + '?lang=' + href + '&translate=true', true);
-
-    return false;
-  },
-
-  buildMeta: function() {
-    var view = this;
-    var $metadataEditor = $('#meta', this.el).find('.form');
+    var $metadataEditor = this.$el.find('#meta .form');
     $metadataEditor.empty();
 
-    function initialize(model) {
+    function init(model) {
       var tmpl;
+
+      // TODO: prefetch _config.yml content
+      var config = view.model.collection.findWhere({ path: '_prose.yml' }) ||
+        view.model.collection.findWhere({ path: '_config.yml' });
 
       _(model.default_metadata).each(function(data, key) {
         if (data && typeof data.field === 'object') {
@@ -1076,7 +437,7 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    initialize(this.model);
+    init(model);
 
     return {
       el: $metadataEditor,
@@ -1085,6 +446,644 @@ module.exports = Backbone.View.extend({
       getValue: getValue,
       setValue: setValue
     };
+  },
+
+  initEditor: function() {
+    if (this.model.get('metadata')) {
+      this.metadataEditor = this.buildMeta(this.model);
+    }
+
+    var lang = this.model.get('lang');
+
+    // Don't set up content editor for yaml posts
+    if (lang === 'yaml') return;
+
+    this.editor = CodeMirror(document.getElementById('code'), {
+      mode: lang,
+      value: this.model.get('content'),
+      lineWrapping: true,
+      lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
+      extraKeys: this.keyMap(),
+      matchBrackets: true,
+      dragDrop: false,
+      theme: 'prose-bright'
+    });
+
+    // Bind Drag and Drop work on the editor
+    if (this.model.get('markdown') && this.model.get('writable')) {
+      upload.dragDrop(this.$el.find('#edit'), (function(e, file, content) {
+        if (this.$el.find('#dialog').hasClass('dialog')) {
+          this.updateImageInsert(e, file, content);
+        } else {
+          this.createAndUpload(e, file, content);
+        }
+      }).bind(this));
+    }
+
+    // Monitor the current selection and apply
+    // an active class to any snippet links
+    if (lang === 'gfm') {
+      var $snippetLinks = this.$el.find('.toolbar .group a');
+      this.listenTo(this.editor, 'cursorActivity', function() {
+
+        var selection = util.trim(this.editor.getSelection());
+        $snippetLinks.removeClass('active');
+
+        var match = {
+          lineBreak: /\n/,
+          h1: /^#{1}/,
+          h2: /^#{2,2}/,
+          h3: /^#{3,3}/,
+          strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+          italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+          isNumber: parseInt(selection.charAt(0), 10)
+        };
+
+        if (!match.isNumber) {
+          switch (selection.charAt(0)) {
+            case '#':
+              if (!match.lineBreak.test(selection)) {
+                if (match.h2.test(selection) && !match.h3.test(selection)) {
+                  this.$el.find('[data-key="sub-heading"]').addClass('active');
+                } else if (!match.h2.test(selection)) {
+                  this.$el.find('[data-key="heading"]').addClass('active');
+                }
+              }
+              break;
+            case '>':
+              this.$el.find('[data-key="quote"]').addClass('active');
+              break;
+            case '*':
+            case '_':
+              if (!match.lineBreak.test(selection)) {
+                if (match.strong.test(selection)) {
+                  this.$el.find('[data-key="bold"]').addClass('active');
+                } else if (match.italic.test(selection)) {
+                  this.$el.find('[data-key="italic"]').addClass('active');
+                }
+              }
+              break;
+            case '!':
+              if (!match.lineBreak.test(selection) &&
+                  selection.charAt(1) === '[' &&
+                  selection.charAt(selection.length - 1) === ')') {
+                this.$el.find('[data-key="media"]').addClass('active');
+              }
+              break;
+            case '[':
+              if (!match.lineBreak.test(selection) &&
+                  selection.charAt(selection.length - 1) === ')') {
+                this.$el.find('[data-key="link"]').addClass('active');
+              }
+              break;
+            case '-':
+              if (selection.charAt(1) === ' ') {
+                this.$el.find('[data-key="list"]').addClass('active');
+              }
+            break;
+          }
+        } else {
+          if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
+            this.$el.find('[data-key="numbered-list"]').addClass('active');
+          }
+        }
+      }, this);
+    }
+
+    this.listenTo(this.editor, 'change', this.makeDirty, this);
+
+    this.listenTo(this.editor, 'focus', function() {
+      // If an upload queue is set, we want to clear it.
+      this.queue = undefined;
+
+      // If a dialog window is open and the editor is in focus, close it.
+      this.$el.find('.toolbar .group a').removeClass('on');
+      this.$el.find('#dialog').empty().removeClass();
+    }, this);
+
+    this.refreshCodeMirror();
+
+    // Check sessionStorage for existing stash
+    // Apply if stash exists and is current, remove if expired
+    this.stashApply();
+  },
+
+  serialize: function() {
+    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata).trim();
+    var content = this.model.get('content');
+
+    // TOOD: clean up metadata check
+    if (this.model.get('metadata')) {
+      return ['---', metadata, '---'].join('\n') + '\n\n' + content;
+    } else {
+      return content;
+    }
+  },
+
+  render: function() {
+    /*
+    // Link Dialog
+    if (app.state.markdown && this.config.relativeLinks) {
+      $.ajax({
+        cache: true,
+        dataType: 'jsonp',
+        jsonp: false,
+        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
+        url: this.config.relativeLinks,
+        success: function(links) {
+          view.relativeLinks = links;
+        }
+      });
+    }
+
+    // Assets Listing for the Media Dialog
+    if (app.state.markdown && this.config.media) {
+      this.assetsDirectory = this.config.media;
+      app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
+        view.assets = data.files;
+      });
+    }
+    */
+
+    if (this.model.get('markdown')) {
+      this.model.set('preview', marked(this.compilePreview(this.model.get('content'))));
+    }
+
+    this.renderHeading();
+
+    this.$el.html(this.template(_.extend(this.model.attributes, {
+      mode: this.mode
+    })));
+
+    if (this.model.get('markdown') && this.mode === 'blob') {
+      this.preview();
+    } else {
+      // Editor is first up so trigger an active class for it
+      this.$el.find('#edit').toggleClass('active', true);
+      this.$el.find('.post-views .edit').addClass('active');
+
+      this.initEditor();
+
+      util.fixedScroll(this.$el.find('.topbar'));
+    }
+
+    this.updateDocumentTitle();
+
+    return this;
+  },
+
+  updateDocumentTitle: function() {
+    var context = this.mode === 'blob' ? 'Previewing ' : 'Editing ';
+    var path = this.model.get('path');
+    var pathTitle = path ? path : '';
+
+    // this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
+  },
+
+  renderHeading: function() {
+    var user = this.repo.get('owner').login;
+    var repo = this.repo.get('name');
+
+    var parentTrail = '<a href="#' + user + '">' + user + '</a> / <a href="#' + user + '/' + repo + '">' + repo + '</a>';
+
+    this.header = {
+      avatar: '<span class="ico round document ' + this.model.get('lang') + '"></span>',
+      parentTrail: parentTrail,
+      private: this.repo.get('private') ? true : false,
+      title: util.filepath(this.model.get('path'), this.model.get('name')),
+      writable: this.repo.get('permissions').push,
+      alterable: true,
+      translate: this.model.get('translate'),
+      lang: this.model.get('lang'),
+      metadata: this.model.get('metadata')
+    };
+  },
+
+  edit: function(e) {
+    var view = this;
+    // If preview was hit on load this.editor
+    // was not initialized.
+    if (!this.editor) {
+      this.initEditor();
+      _.delay(function() {
+        util.fixedScroll($('.topbar', view.el));
+      }, 1);
+    }
+
+    app.state.mode = this.model.isNew() ? 'new' : 'edit';
+    this.updateURL();
+
+    $('.post-views a').removeClass('active');
+    $('.post-views .edit').addClass('active');
+    $('#prose').toggleClass('open', false);
+
+    $('.views .view', this.el).removeClass('active');
+    $('#edit', this.el).addClass('active');
+
+    return false;
+  },
+
+  preview: function(e) {
+    $('#prose').toggleClass('open', false);
+    if (this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
+      var hash = window.location.hash.split('/');
+      hash[2] = 'preview';
+      if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
+        hash.push(_($('input.filepath').val().split('/')).last());
+      }
+      this.stashFile();
+
+      $(e.currentTarget).attr({
+        target: '_blank',
+        href: hash.join('/')
+      });
+      return true;
+    } else {
+      if (e) e.preventDefault();
+
+      // Vertical Nav
+      $('.post-views a').removeClass('active');
+      $('.post-views .preview').addClass('active');
+
+      // Content Window
+      $('.views .view', this.el).removeClass('active');
+      $('#preview', this.el).addClass('active').html(marked(this.compilePreview(this.model.content)));
+
+      app.state.mode = 'blob';
+      this.updateURL();
+    }
+  },
+
+  meta: function() {
+    $('#prose').toggleClass('open', false);
+
+    // Vertical Nav
+    $('.post-views a').removeClass('active');
+    $('.post-views .meta').addClass('active');
+
+    // Content Window
+    $('.views .view', this.el).removeClass('active');
+    $('#meta', this.el).addClass('active');
+
+    // Refresh CodeMirror
+    if (this.rawEditor) this.rawEditor.refresh();
+    return false;
+  },
+
+  backToMode: function() {
+    if (app.state.mode === 'preview') {
+      this.preview();
+    } else {
+      this.edit();
+    }
+
+    return false;
+  },
+
+  deleteFile: function() {
+    if (confirm('Are you sure you want to delete this file?')) {
+      window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
+        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+        router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
+      }, this));
+    }
+    return false;
+  },
+
+  updateURL: function() {
+    var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
+    this.updateDocumentTitle();
+    router.navigate(url.join('/'), {
+      trigger: false,
+      replace: true
+    });
+
+    $('.chzn-select', this.el).trigger('liszt:updated');
+  },
+
+  makeDirty: function(e) {
+    this.dirty = true;
+    if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
+    if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
+
+    var label = this.model.writable ? 'Unsaved Changes' : 'Submit Change';
+    this.eventRegister.trigger('updateSaveState', label, 'save');
+
+    // Pass a popover span to the avatar icon
+    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Save' : 'Submit Change');
+  },
+
+  togglePublishing: function(e) {
+    var $target = $(e.target);
+
+    if ($target.hasClass('published')) {
+      $target
+        .empty()
+        .html('Unpublish<span class="ico checkmark"></span>')
+        .removeClass('published')
+        .attr('data-state', false);
+    } else {
+      $target
+        .empty()
+        .html('Publish<span class="ico checkmark"></span>')
+        .addClass('published')
+        .attr('data-state', true);
+    }
+
+    this.makeDirty();
+    return false;
+  },
+
+  showDiff: function() {
+    var $diff = $('#diff', this.el);
+    var text1 = this.model.persisted ? _.escape(this.model.get('previous')) : '';
+    var text2 = _.escape(this.serialize());
+    var d = diff.diffWords(text1, text2);
+    var compare = '';
+
+    for (var i = 0; i < d.length; i++) {
+      if (d[i].removed) {
+        compare += '<del>' + d[i].value + '</del>';
+      } else if (d[i].added) {
+        compare += '<ins>' + d[i].value + '</ins>';
+      } else {
+        compare += d[i].value;
+      }
+    }
+
+    // Content Window
+    $('.views .view', this.el).removeClass('active');
+    $diff.html('<pre>' + compare + '</pre>');
+    $diff.addClass('active');
+  },
+
+  closeSettings: function() {
+    $('.views .view', this.el).removeClass('active');
+
+    if (app.state.mode === 'blob') {
+      $('#preview', this.el).addClass('active');
+    } else {
+      $('#edit', this.el).addClass('active');
+    }
+
+    this.eventRegister.trigger('closeSettings');
+  },
+
+  cancelSave: function() {
+    $('.views .view', this.el).removeClass('active');
+
+    if (app.state.mode === 'blob') {
+      $('#preview', this.el).addClass('active');
+    } else {
+      $('#edit', this.el).addClass('active');
+    }
+  },
+
+  save: function() {
+    this.showDiff();
+  },
+
+  refreshCodeMirror: function() {
+    if (typeof this.editor.refresh === 'function') this.editor.refresh();
+  },
+
+  updateMetaData: function() {
+    if (!this.model.jekyll) return true; // metadata -> skip
+    this.model.metadata = this.metadataEditor.getValue();
+    return true;
+  },
+
+  updateFilename: function(filepath, cb) {
+    var view = this;
+
+    if (!util.validPathname(filepath)) return cb('error');
+    app.state.path = this.model.path; // ?
+    app.state.file = util.extractFilename(filepath)[1];
+    app.state.path = util.extractFilename(filepath)[0];
+
+    function finish() {
+      view.model.path = app.state.path;
+      view.model.file = app.state.file;
+    }
+
+    if (this.model.persisted) {
+      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, util.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
+        if (!err) finish();
+        if (err) {
+          cb('error');
+        } else {
+          cb(null);
+        }
+      }, this));
+    } else {
+      finish();
+      cb(null);
+    }
+  },
+
+  sendPatch: function(filepath, filename, filecontent, message) {
+    // Submits a patch (fork + pull request workflow)
+    var view = this;
+
+    function patch() {
+      var previous = view.model.get('previous');
+      if (view.updateMetaData()) {
+        view.model.content = previous;
+        view.editor.setValue(previous);
+
+        app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+
+          if (err) {
+            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+            return;
+          }
+
+          view.dirty = false;
+          view.model.persisted = true;
+          view.model.file = filename;
+
+          view.updateURL();
+          view.model.set('previous', filecontent);
+          view.closeSettings();
+          view.updatePublishState();
+          view.eventRegister.trigger('updateSaveState', 'Request Submitted', 'saved');
+        });
+      } else {
+        view.eventRegister.trigger('updateSaveState', 'Error Metadata not Found', 'error');
+      }
+    }
+
+    view.eventRegister.trigger('updateSaveState', 'Submitting Request', 'saving');
+    patch();
+
+    return false;
+  },
+
+  saveFile: function(filepath, filename, filecontent, message) {
+    var view = this;
+
+    function save() {
+      if (view.updateMetaData()) {
+        window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+          if (err) {
+            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+            return;
+          }
+
+          view.dirty = false;
+          view.model.persisted = true;
+          view.model.file = filename;
+
+          if (app.state.mode === 'new') app.state.mode = 'edit';
+          view.renderHeading();
+          view.updateURL();
+          view.model.set('previous', filecontent);
+          view.closeSettings();
+          view.updatePublishState();
+          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
+        });
+      } else {
+        view.eventRegister.trigger('updateSaveState', '!Metadata', 'error');
+      }
+    }
+
+    view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
+
+    if (filepath === util.filepath(this.model.path, this.model.file)) return save();
+
+    // Move or create file
+    this.updateFilename(filepath, function(err) {
+      if (err) {
+        view.eventRegister.trigger('filenameInput');
+        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;filename', 'error');
+      } else {
+        save();
+      }
+    });
+  },
+
+  updatePublishState: function() {
+    // Update the publish key wording depening on what was saved
+    var $publishKey = $('.publish-flag', this.el);
+    var key = $publishKey.attr('data-state');
+
+    if (key === 'true') {
+      $publishKey.html('Published<span class="ico checkmark"></span>');
+    } else {
+      $publishKey.html('Unpublished<span class="ico checkmark"></span>');
+    }
+  },
+
+  stashFile: function(e) {
+    if (e) e.preventDefault();
+    if (!window.sessionStorage) return false;
+
+    var store = window.sessionStorage;
+    var filepath = $('input.filepath').val();
+
+    // Don't stash if filepath is undefined
+    if (filepath) {
+      try {
+        store.setItem(filepath, JSON.stringify({
+          sha: app.state.sha,
+          content: this.editor ? this.editor.getValue() : null,
+          metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+        }));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  },
+
+  stashApply: function() {
+    if (!window.sessionStorage) return false;
+
+    var store = window.sessionStorage;
+    var filepath = $('input.filepath').val();
+    var item = store.getItem(filepath);
+    var stash = JSON.parse(item);
+
+    if (stash && stash.sha === window.app.state.sha) {
+      // Restore from stash if file sha hasn't changed
+      if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
+      if (this.metadataEditor) {
+        this.rawEditor.setValue('');
+        this.metadataEditor.setValue(stash.metadata);
+      }
+    } else if (item) {
+      // Remove expired content
+      store.removeItem(filepath);
+    }
+  },
+
+  updateFile: function() {
+    var filepath = $('input.filepath').val();
+    var filename = util.extractFilename(filepath)[1];
+    var filecontent = this.serialize();
+    var $message = $('.commit-message');
+    var noVal = 'Updated ' + filename;
+    if (app.state.mode === 'new') noVal = 'Created ' + filename;
+
+    var message = $message.val() || noVal;
+    var method = this.model.writable ? this.saveFile : this.sendPatch;
+
+    // Update content
+    this.model.content = (this.editor) ? this.editor.getValue() : '';
+
+    // Delegate
+    method.call(this, filepath, filename, filecontent, message);
+    return false;
+  },
+
+  keyMap: function() {
+    var view = this;
+
+    if (this.model.markdown) {
+      return {
+        'Ctrl-S': function(codemirror) {
+          view.updateFile();
+        },
+        'Cmd-B': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
+        },
+        'Ctrl-B': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
+        },
+        'Cmd-I': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
+        },
+        'Ctrl-I': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
+        }
+      };
+    } else {
+      return {
+        'Ctrl-S': function(codemirror) {
+          view.updateFile();
+        }
+      };
+    }
+  },
+
+  translate: function(e) {
+    // TODO Drop the 'EN' requirement.
+    var hash = window.location.hash.split('/'),
+      href = $(e.currentTarget).attr('href').substr(1);
+
+    // If current page is not english and target page is english
+    if (href === 'en') {
+      hash.splice(-2, 2, hash[hash.length - 1]);
+      // If current page is english and target page is not english
+    } else if (this.model.metadata.lang === 'en') {
+      hash.splice(-1, 1, href, hash[hash.length - 1]);
+      // If current page is not english and target page is not english
+    } else {
+      hash.splice(-2, 2, href, hash[hash.length - 1]);
+    }
+
+    router.navigate(_(hash).compact().join('/') + '?lang=' + href + '&translate=true', true);
+
+    return false;
   },
 
   fileInput: function(e) {

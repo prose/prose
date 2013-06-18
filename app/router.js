@@ -209,7 +209,7 @@ module.exports = Backbone.Router.extend({
       mode: mode,
       branch: branch,
       branches: repo.branches,
-      path: path,
+      path: (path ? path + '/' : '') + filename,
       filename: filename
     });
 

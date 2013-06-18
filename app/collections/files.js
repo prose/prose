@@ -20,8 +20,10 @@ module.exports = Backbone.Collection.extend({
   },
 
   parse: function(resp, options) {
-    return _.map(resp.tree, (function(branch) {
-     return  _.extend(branch, {
+    return _.map(resp.tree, (function(file) {
+      return  _.extend(file, {
+        branch: this.branch,
+        collection: this,
         repo: this.repo
       })
     }).bind(this));

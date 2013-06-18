@@ -5,12 +5,16 @@ var config = require('../config');
 var util = require('.././util');
 
 module.exports = Backbone.Model.extend({
-  constructor: function(attributes, options) {
-    var path = util.extractFilename(attributes.path);
+  idAttribute: 'sha',
 
+  uploads: [],
+
+  constructor: function(attributes, options) {
     Backbone.Model.call(this, {
-      name: path[1],
-      path: path[0],
+      branch: attributes.branch,
+      collection: attributes.collection,
+      name: util.extractFilename(attributes.path)[1],
+      path: attributes.path,
       repo: attributes.repo,
       sha: attributes.sha,
       type: attributes.type,
@@ -19,14 +23,16 @@ module.exports = Backbone.Model.extend({
   },
 
   initialize: function(attributes, options) {
-    var path = attributes.path ? attributes.path + '/' : '';
+    var extension =  util.extension(attributes.name);
 
+    this.branch = attributes.branch;
+    this.collection = attributes.collection;
     this.repo = attributes.repo;
+
     this.url = config.api + '/repos/' + this.repo.get('owner').login + '/' +
-      this.repo.get('name') + '/contents/' + path + attributes.name;
+      this.repo.get('name') + '/contents/' + attributes.path;
     this.contentUrl = attributes.url;
 
-    var extension =  util.extension(attributes.name);
 
     this.set('extension', extension);
     this.set('binary', util.isBinary(extension));
@@ -55,6 +61,7 @@ module.exports = Backbone.Model.extend({
       content: resp,
       markdown: markdown, // TODO: determine if resp is markdown
       metadata: false,
+      previous: resp,
       published: true,
       writable: writable
     };
@@ -63,8 +70,9 @@ module.exports = Backbone.Model.extend({
       writable: writable
     };
 
-    res.content = resp.replace(/^(---\n)((.|\n)*?)---\n?/, function(match, dashes, frontmatter) {
+    res.content = res.previous = resp.replace(/^(---\n)((.|\n)*?)---\n?/, function(match, dashes, frontmatter) {
       try {
+        // TODO: _.defaults for each key
         res.metadata = jsyaml.load(frontmatter);
 
         // Default to published unless explicitly set to false
@@ -94,5 +102,10 @@ module.exports = Backbone.Model.extend({
     // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
     Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success'));
     this.getContent.apply(this, arguments);
+  },
+
+  getConfig: function() {
+    return this.collection.findWhere({ name: '_prose.yml' }) ||
+      this.collection.findWhere({ name: '_config.yml' });
   }
 });

@@ -16,7 +16,7 @@ module.exports = Backbone.Model.extend({
 
     this.files = new Files([], {
       repo: this.repo,
-      branch: name,
+      branch: this,
       sha: sha
     });
   }
