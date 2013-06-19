@@ -28,12 +28,15 @@ module.exports = Backbone.View.extend({
     // render view once config content has loaded
     if (this.model.get('defaults')) {
       this.render();
-    } else if (this.config.get('content')) {
-      this.setDefaults();
     } else {
-      this.listenTo(this.config, 'change:content', this.setDefaults);
-      this.config.fetch();
+      this.config.fetch({ success: this.setDefaults });
     }
+  },
+
+  rawKeyMap: function() {
+    return {
+      'Ctrl-S': this.view.updateFile
+    };
   },
 
   nearestPath: function(metadata) {
@@ -121,19 +124,36 @@ module.exports = Backbone.View.extend({
     this.render();
   },
 
+  renderRaw: function() {
+    var selector = this.model.get('lang') === 'yaml' ? 'code' : 'raw';
+
+    if (selector === 'raw') {
+      this.$el.find('.form').append(_.template(templates.meta.raw));
+    }
+
+    this.raw = CodeMirror(document.getElementById(selector), {
+      mode: 'yaml',
+      value: '',
+      lineWrapping: true,
+      extraKeys: this.rawKeyMap(),
+      theme: 'prose-bright'
+    });
+
+    this.listenTo(this.raw, 'change', this.view.makeDirty);
+  },
+
   render: function() {
     this.$el.html(this.template({}));
 
     var form = this.$el.find('.form');
+    var lang = this.model.get('metadata').lang || 'en';
     var tmpl;
 
-    return this;
-
-    _(model.default_metadata).each(function(data, key) {
-      if (data && typeof data.field === 'object') {
+    _.each(this.model.get('defaults'), (function(data, key) {
+      if (data && data.field) {
         switch (data.field.element) {
           case 'button':
-            tmpl = _.template(templates.metadata.button);
+            tmpl = _.template(templates.meta.button);
             form.append(tmpl({
               name: data.name,
               label: data.field.label,
@@ -143,7 +163,7 @@ module.exports = Backbone.View.extend({
             }));
             break;
           case 'checkbox':
-            tmpl = _.template(templates.metadata.checkbox);
+            tmpl = _.template(templates.meta.checkbox);
             form.append(tmpl({
               name: data.name,
               label: data.field.label,
@@ -152,7 +172,7 @@ module.exports = Backbone.View.extend({
             }));
             break;
           case 'text':
-            tmpl = _.template(templates.metadata.text);
+            tmpl = _.template(templates.meta.text);
             form.append(tmpl({
               name: data.name,
               label: data.field.label,
@@ -161,7 +181,7 @@ module.exports = Backbone.View.extend({
             }));
             break;
           case 'number':
-            tmpl = _.template(templates.metadata.text);
+            tmpl = _.template(templates.meta.text);
             form.append(tmpl({
               name: data.name,
               label: data.field.label,
@@ -170,23 +190,23 @@ module.exports = Backbone.View.extend({
             }));
             break;
           case 'select':
-            tmpl = _.template(templates.metadata.select);
+            tmpl = _.template(templates.meta.select);
             form.append(tmpl({
               name: data.name,
               label: data.field.label,
               placeholder: data.field.placeholder,
               options: data.field.options,
-              lang: model.metadata.lang || 'en'
+              lang: lang
             }));
             break;
           case 'multiselect':
-            tmpl = _.template(templates.metadata.multiselect);
+            tmpl = _.template(templates.meta.multiselect);
             form.append(tmpl({
               name: data.name,
               label: data.field.label,
               placeholder: data.field.placeholder,
               options: data.field.options,
-              lang: model.metadata.lang || 'en'
+              lang: lang
             }));
             break;
           case 'hidden':
@@ -196,8 +216,7 @@ module.exports = Backbone.View.extend({
             break;
         }
       } else {
-        tmpl = _.template(templates.metadata.text);
-        tmpl = _(window.app.templates.text).template();
+        tmpl = _.template(templates.meta.text);
         form.append(tmpl({
           name: key,
           label: key,
@@ -205,23 +224,13 @@ module.exports = Backbone.View.extend({
           type: 'text'
         }));
       }
-    });
+    }).bind(this));
 
-    $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">Raw Metadata</label>').appendTo(form);
-
-    var rawContainer = (view.model.lang === 'yaml') ? 'code' : 'raw';
-    this.rawEditor = CodeMirror(document.getElementById(rawContainer), {
-      mode: 'yaml',
-      value: '',
-      lineWrapping: true,
-      extraKeys: view.keyMap(),
-      theme: 'prose-bright'
-    });
-
-    view.listenTo(this.rawEditor, 'change', view.makeDirty, view);
-
-    setValue(model.metadata);
     $('.chzn-select').chosen();
+
+    this.renderRaw();
+
+    // this.setValue(this.model.get('metadata'));
     
     return this;
   },
@@ -447,7 +456,7 @@ module.exports = Backbone.View.extend({
 
   refresh: function() {
     // Refresh CodeMirror
-    if (this.rawEditor) this.rawEditor.refresh();
+    if (this.raw) this.raw.refresh();
   },
 
   exit: function() {
