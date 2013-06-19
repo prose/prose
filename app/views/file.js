@@ -133,7 +133,7 @@ module.exports = Backbone.View.extend({
 
   renderMetadata: function() {
     this.metadataEditor = new MetadataView({ model: this.model, view: this });
-    this.metadataEditor.setElement(this.$el.find('#meta')).render();
+    this.metadataEditor.setElement(this.$el.find('#meta'));
     this.subviews.push(this.metadataEditor);
   },
 

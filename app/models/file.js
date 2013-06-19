@@ -33,12 +33,12 @@ module.exports = Backbone.Model.extend({
       this.repo.get('name') + '/contents/' + attributes.path;
     this.contentUrl = attributes.url;
 
-
     this.set('extension', extension);
     this.set('binary', util.isBinary(extension));
     this.set('lang', util.mode(extension));
     this.set('media', util.isMedia(extension));
     this.set('markdown', util.isMarkdown(extension));
+    this.set('writable', this.repo.get('permissions').push);
   },
 
   parse: function(resp, options) {
@@ -54,21 +54,15 @@ module.exports = Backbone.Model.extend({
     // Extract YAML from a post, trims whitespace
     resp = resp.replace(/\r\n/g, '\n'); // normalize a little bit
 
-    var writable = this.repo.get('permissions').push;
     var hasMetadata = !!util.hasMetadata(resp);
 
     if (!hasMetadata) return {
       content: resp,
-      markdown: markdown, // TODO: determine if resp is markdown
       metadata: false,
-      previous: resp,
-      published: true,
-      writable: writable
+      previous: resp
     };
 
-    var res = {
-      writable: writable
-    };
+    var res = {};
 
     res.content = res.previous = resp.replace(/^(---\n)((.|\n)*?)---\n?/, function(match, dashes, frontmatter) {
       try {
@@ -102,10 +96,5 @@ module.exports = Backbone.Model.extend({
     // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
     Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success'));
     this.getContent.apply(this, arguments);
-  },
-
-  getConfig: function() {
-    return this.collection.findWhere({ name: '_prose.yml' }) ||
-      this.collection.findWhere({ name: '_config.yml' });
   }
 });
