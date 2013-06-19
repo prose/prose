@@ -1214,8 +1214,8 @@ module.exports = Backbone.View.extend({
         } else {
           var $alt = $('input[name="alt"]');
           var image = ($alt.val() && $alt.val() !== undefined) ?
-            '![' + $alt.val() + '](/' + path + ')' :
-            '![' + file.name + '](/' + path + ')';
+            '\n![' + $alt.val() + '](/' + path + ')' :
+            '\n![' + file.name + '](/' + path + ')';
 
           view.editor.focus();
           view.editor.replaceSelection(image);
@@ -1519,7 +1519,7 @@ module.exports = Backbone.View.extend({
       } else {
         var src = $('input[name="url"]').val();
         var alt = $('input[name="alt"]').val();
-        this.editor.replaceSelection('![' + alt + '](/' + src + ')');
+        this.editor.replaceSelection('\n![' + alt + '](/' + src + ')');
         this.editor.focus();
       }
     }
