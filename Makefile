@@ -52,6 +52,7 @@ APPLICATION = \
 	app/views/file.js \
 	app/views/files.js \
 	app/views/header.js \
+	app/views/nav.js \
 	app/views/notification.js \
 	app/views/orgs.js \
 	app/views/post.js \

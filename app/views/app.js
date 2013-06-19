@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var NavView = require('./nav');
 var templates = require('../../dist/templates');
 var utils = require('.././util');
 
@@ -8,6 +9,8 @@ module.exports = Backbone.View.extend({
     className: 'application',
 
     template: _.template(templates.app),
+
+    subviews: [],
 
     events: {
       'click a.cancel': 'cancel',
@@ -19,6 +22,7 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function(options) {
+      this.user = options.user;
 
       // Key Binding support accross the application.
       if (!window.shortcutsRegistered) {
@@ -97,6 +101,14 @@ module.exports = Backbone.View.extend({
       } else {
         $('#prose').toggleClass('open mobile', false);
       }
+
+      this.nav = new NavView({
+        app: this,
+        user: this.user
+      });
+
+      this.nav.setElement(this.$el.find('nav')).render();
+      this.subviews.push(this.nav);
 
       return this;
     },
@@ -226,12 +238,16 @@ module.exports = Backbone.View.extend({
     },
 
     remove: function() {
+      _.invoke(this.subviews, 'remove');
+      this.subviews = [];
+
       // Unbind pagehide event handler when View is removed
       this.eventRegister.unbind('documentTitle', this.documentTitle);
       this.eventRegister.unbind('headerContext', this.headerContext);
       this.eventRegister.unbind('recentFiles', this.recentFiles);
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
       this.eventRegister.unbind('filenameInput', this.filenameInput);
-      Backbone.View.prototype.remove.call(this);
+
+      Backbone.View.prototype.remove.apply(this, arguments);
     }
 });

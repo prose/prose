@@ -36,7 +36,8 @@ module.exports = Backbone.Router.extend({
     // Load up the main layout
     this.app = new app.views.App({
       el: '#prose',
-      model: {}
+      model: {},
+      user: this.user
     });
 
     this.app.render();

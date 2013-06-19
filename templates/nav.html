@@ -1,62 +1,61 @@
-<nav id='navigation' class='vert clearfix navigation'>
-
-  <% if (!noMenu && window.authenticated) { %>
-    <ul class='mobile-menu nav clearfix'>
-      <li>
-        <a href='#' class='toggle ico menu round'></a>
-      </li>
-    </ul>
-  <% } %>
-
-  <!-- if repo and authenticated -->
-  <ul class='project nav clearfix'>
+<% if (!noMenu && window.authenticated) { %>
+  <ul class='mobile-menu nav clearfix'>
     <li>
-      <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='ico round new new-file'>
-        <span class='popup round arrow-right'>New File</span>
-      </a>
+      <a href='#' class='toggle ico menu round'></a>
     </li>
   </ul>
+<% } %>
 
-  <ul class='post-views nav clearfix'>
-    <li>
-      <a href='#' class='ico round pencil edit' data-state='edit'>
-        <span class='popup round arrow-right'>Edit</span>
-      </a>
-    </li>
+<!-- if repo and authenticated -->
+<ul class='project nav clearfix'>
+  <li>
+    <!-- #user/repo/new/branch/path -->
+    <a href='#' class='ico round new new-file'>
+      <span class='popup round arrow-right'>New File</span>
+    </a>
+  </li>
+</ul>
 
-    <!-- if markdown or new -->
-    <li>
-      <a href='#' class='ico round eye blob preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>
-        <span class='popup round arrow-right'>Preview</span>
-      </a>
-    </li>
+<ul class='post-views nav clearfix'>
+  <li>
+    <a href='#' class='ico round pencil edit' data-state='edit'>
+      <span class='popup round arrow-right'>Edit</span>
+    </a>
+  </li>
 
-    <!-- if authenticated -->
-    <!-- if lang == yaml -->
-    <li>
-      <a href='#' class='ico round metadata meta' data-state='meta'>
-        <span class='popup round arrow-right'>Meta Data</span>
-      </a>
-    </li>
-    <li>
-      <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>
-        <span class='popup round arrow-right'>Post Settings</span>
-      </a>
-    </li>
-    <li>
-      <a href='#' class='ico round save quick-save'>
-        <span class='popup round arrow-right'>Save</span>
-      </a>
-    </li>
-  </ul>
+  <!-- if markdown or new -->
+  <li>
+  <!-- if (jekyll) { data-jekyll=true } -->
+    <a href='#' class='ico round eye blob preview' data-state='preview'>
+      <span class='popup round arrow-right'>Preview</span>
+    </a>
+  </li>
 
-  <ul class='auth nav clearfix'>
-    <% if (!window.authenticated) { %>
-    <li>
-    <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>
-        <span class='popup round arrow-right'>Authorize with GitHub</span>
-      </a>
-    </li>
-  </ul>
-  <% } %>
-</nav>
+  <!-- if authenticated -->
+  <!-- if lang == yaml -->
+  <li>
+    <a href='#' class='ico round metadata meta' data-state='meta'>
+      <span class='popup round arrow-right'>Meta Data</span>
+    </a>
+  </li>
+  <li>
+    <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>
+      <span class='popup round arrow-right'>Post Settings</span>
+    </a>
+  </li>
+  <li>
+    <a href='#' class='ico round save quick-save'>
+      <span class='popup round arrow-right'>Save</span>
+    </a>
+  </li>
+</ul>
+
+<ul class='auth nav clearfix'>
+  <% if (!window.authenticated) { %>
+  <li>
+  <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>
+      <span class='popup round arrow-right'>Authorize with GitHub</span>
+    </a>
+  </li>
+</ul>
+<% } %>
