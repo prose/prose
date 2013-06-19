@@ -140,6 +140,8 @@ module.exports = Backbone.View.extend({
     });
 
     this.listenTo(this.raw, 'change', this.view.makeDirty);
+
+    this.setValue(this.model.get('metadata'));
   },
 
   render: function() {
@@ -229,8 +231,6 @@ module.exports = Backbone.View.extend({
     $('.chzn-select').chosen();
 
     this.renderRaw();
-
-    // this.setValue(this.model.get('metadata'));
     
     return this;
   },
@@ -300,12 +300,14 @@ module.exports = Backbone.View.extend({
   },
 
   setValue: function(data) {
+    console.log(data);
+
     var form = this.$el.find('.form');
 
     var missing = {};
     var raw;
 
-    _(data).each(function(value, key) {
+    _.each(data, (function(value, key) {
       var matched = false;
       var input = this.$el.find('[name="' + key + '"]');
       var length = input.length;
@@ -323,12 +325,39 @@ module.exports = Backbone.View.extend({
             // iterate over values in array
             for (var j = 0; j < value.length; j++) {
               switch (input[i].type) {
+                case 'select-multiple':
+                case 'select-one':
+                  options = $(input[i]).find('option[value="' + value[j] + '"]');
+                  if (options.length) {
+                    for (var k = 0; k < options.length; k++) {
+                      options[k].selected = 'selected';
+                    }
+
+                    matched = true;
+                  }
+                  break;
+                case 'text':
+                  input[i].value = value;
+                  matched = true;
+                  break;
+                case 'checkbox':
+                  if (input[i].value === value) {
+                    input[i].checked = 'checked';
+                    matched = true;
+                  }
+                  break;
+              }
+            }
+
+          } else {
+
+            switch (input[i].type) {
               case 'select-multiple':
               case 'select-one':
-                options = $(input[i]).find('option[value="' + value[j] + '"]');
+                options = $(input[i]).find('option[value="' + value + '"]');
                 if (options.length) {
-                  for (var k = 0; k < options.length; k++) {
-                    options[k].selected = 'selected';
+                  for (var m = 0; m < options.length; m++) {
+                    options[m].selected = 'selected';
                   }
 
                   matched = true;
@@ -339,41 +368,14 @@ module.exports = Backbone.View.extend({
                 matched = true;
                 break;
               case 'checkbox':
-                if (input[i].value === value) {
-                  input[i].checked = 'checked';
-                  matched = true;
-                }
-                break;
-              }
-            }
-
-          } else {
-
-            switch (input[i].type) {
-            case 'select-multiple':
-            case 'select-one':
-              options = $(input[i]).find('option[value="' + value + '"]');
-              if (options.length) {
-                for (var m = 0; m < options.length; m++) {
-                  options[m].selected = 'selected';
-                }
-
+                input[i].checked = value ? 'checked' : false;
                 matched = true;
-              }
-              break;
-            case 'text':
-              input[i].value = value;
-              matched = true;
-              break;
-            case 'checkbox':
-              input[i].checked = value ? 'checked' : false;
-              matched = true;
-              break;
-            case 'button':
-              input[i].value = value ? true : false;
-              input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
-              matched = true;
-              break;
+                break;
+              case 'button':
+                input[i].value = value ? true : false;
+                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
+                matched = true;
+                break;
             }
 
           }
@@ -389,57 +391,60 @@ module.exports = Backbone.View.extend({
 
       } else {
         // Don't render the 'published' field or hidden metadata
-        var defaults = _.find(view.model.default_metadata, function(data) { return data.name === key; });
+        // TODO: render metadata values that share a key with a hidden value
+        var defaults = _.find(this.model.get('defaults'), function(data) { return data.name === key; });
         var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
 
         if (key !== 'published' && !defaults) {
           raw = {};
           raw[key] = value;
 
-          if (this.rawEditor) {
-            this.rawEditor.setValue(this.rawEditor.getValue() + jsyaml.dump(raw));
+          if (this.raw) {
+            this.raw.setValue(this.raw.getValue() + jsyaml.dump(raw));
           }
         }
       }
-    });
+    }).bind(this));
 
-    _.each(missing, function(value, key) {
+    _.each(missing, (function(value, key) {
       if (value === null) return;
 
       switch (typeof value) {
-      case 'boolean':
-        tmpl = _(window.app.templates.checkbox).template();
-        form.append(tmpl({
-          name: key,
-          label: value,
-          value: value,
-          checked: value ? 'checked' : false
-        }));
-        break;
-      case 'string':
-        tmpl = _(window.app.templates.text).template();
-        form.append(tmpl({
-          name: key,
-          label: value,
-          value: value,
-          type: 'text'
-        }));
-        break;
-      case 'object':
-        tmpl = _(window.app.templates.multiselect).template();
-        form.append(tmpl({
-          name: key,
-          label: key,
-          placeholder: key,
-          options: value,
-          lang: data.lang || 'en'
-        }));
-        break;
-      default:
-        console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
-        break;
+        case 'boolean':
+          tmpl = _.template(templates.meta.checkbox);
+          form.append(tmpl({
+            name: key,
+            label: value,
+            value: value,
+            checked: value ? 'checked' : false
+          }));
+          break;
+        case 'string':
+          tmpl = _.template(templates.meta.text);
+          form.append(tmpl({
+            name: key,
+            label: value,
+            value: value,
+            type: 'text'
+          }));
+          break;
+        case 'object':
+          tmpl = _.template(templates.meta.multiselect);
+          form.append(tmpl({
+            name: key,
+            label: key,
+            placeholder: key,
+            options: value,
+            lang: data.lang || 'en'
+          }));
+          break;
+        default:
+          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
+          break;
       }
-    });
+    }).bind(this));
+
+    $('.chzn-select').chosen();
   },
 
   getRaw: function() {
