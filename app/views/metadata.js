@@ -80,6 +80,7 @@ module.exports = Backbone.View.extend({
         if (_.isObject(raw)) {
           defaults = raw;
 
+          // TODO: iterate over these to add to queue synchronously
           _.each(defaults, function(value, key) {
 
             // Parse JSON URL values
@@ -119,9 +120,10 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    this.model.set('defaults', defaults);
-
-    this.render();
+    q.awaitAll((function() {
+      this.model.set('defaults', defaults);
+      this.render();
+    }).bind(this));
   },
 
   renderRaw: function() {
@@ -288,11 +290,11 @@ module.exports = Backbone.View.extend({
       }
     });
 
-    if (this.rawEditor) {
+    if (this.raw) {
       try {
-        metadata = $.extend(metadata, jsyaml.load(this.rawEditor.getValue()));
+        metadata = $.extend(metadata, jsyaml.load(this.raw.getValue()));
       } catch (err) {
-        console.log(err);
+        throw err;
       }
     }
 
@@ -300,8 +302,6 @@ module.exports = Backbone.View.extend({
   },
 
   setValue: function(data) {
-    console.log(data);
-
     var form = this.$el.find('.form');
 
     var missing = {};
@@ -320,7 +320,7 @@ module.exports = Backbone.View.extend({
         for (var i = 0; i < length; i++) {
 
           // if value is an array
-          if (value !== null && typeof value === 'object' && value.length) {
+          if (_.isArray(value)) {
 
             // iterate over values in array
             for (var j = 0; j < value.length; j++) {
@@ -444,7 +444,8 @@ module.exports = Backbone.View.extend({
       }
     }).bind(this));
 
-    $('.chzn-select').chosen();
+    // TODO: why are JSON HTTP multiselect fields not updating on .chosen()?
+    this.$el.find('.chzn-select').chosen();
   },
 
   getRaw: function() {
