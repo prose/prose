@@ -229,7 +229,7 @@ module.exports = Backbone.View.extend({
         theme: 'prose-bright'
       });
 
-      view.rawEditor.on('change', _.bind(view.makeDirty, view));
+      view.listenTo(view.rawEditor, 'change', view.makeDirty, view);
 
       setValue(model.metadata);
       $('.chzn-select').chosen();
@@ -505,7 +505,7 @@ module.exports = Backbone.View.extend({
     // an active class to any snippet links
     if (lang === 'gfm') {
       var $snippetLinks = this.$el.find('.toolbar .group a');
-      this.listenTo(this.editor, 'cursorActivity', function() {
+      this.listenTo(this.editor, 'cursorActivity', _.bind(function() {
 
         var selection = util.trim(this.editor.getSelection());
         $snippetLinks.removeClass('active');
@@ -568,25 +568,26 @@ module.exports = Backbone.View.extend({
             this.$el.find('[data-key="numbered-list"]').addClass('active');
           }
         }
-      }, this);
+      }, this), this);
     }
 
-    this.listenTo(this.editor, 'change', this.makeDirty, this);
-
-    this.listenTo(this.editor, 'focus', function() {
-      // If an upload queue is set, we want to clear it.
-      this.queue = undefined;
-
-      // If a dialog window is open and the editor is in focus, close it.
-      this.$el.find('.toolbar .group a').removeClass('on');
-      this.$el.find('#dialog').empty().removeClass();
-    }, this);
+    this.listenTo(this.editor, 'change', _.bind(this.makeDirty, this), this);
+    this.listenTo(this.editor, 'focus', _.bind(this.focus, this), this);
 
     this.refreshCodeMirror();
 
     // Check sessionStorage for existing stash
     // Apply if stash exists and is current, remove if expired
     this.stashApply();
+  },
+
+  focus: function() {
+    // If an upload queue is set, we want to clear it.
+    this.queue = undefined;
+
+    // If a dialog window is open and the editor is in focus, close it.
+    this.$el.find('.toolbar .group a').removeClass('on');
+    this.$el.find('#dialog').empty().removeClass();
   },
 
   serialize: function() {
@@ -776,14 +777,14 @@ module.exports = Backbone.View.extend({
 
   makeDirty: function(e) {
     this.dirty = true;
-    if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
-    if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
+    if (this.editor && this.editor.getValue) this.model.set('content', this.editor.getValue());
+    if (this.metadataEditor) this.model.set('metadata', this.metadataEditor.getValue());
 
-    var label = this.model.writable ? 'Unsaved Changes' : 'Submit Change';
-    this.eventRegister.trigger('updateSaveState', label, 'save');
+    var label = this.model.get('writable') ? 'Unsaved Changes' : 'Submit Change';
+    // this.eventRegister.trigger('updateSaveState', label, 'save');
 
     // Pass a popover span to the avatar icon
-    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Save' : 'Submit Change');
+    this.$el.find('.save-action .popup').html(this.model.get('alterable') ? 'Save' : 'Submit Change');
   },
 
   togglePublishing: function(e) {
@@ -1038,7 +1039,7 @@ module.exports = Backbone.View.extend({
     if (app.state.mode === 'new') noVal = 'Created ' + filename;
 
     var message = $message.val() || noVal;
-    var method = this.model.writable ? this.saveFile : this.sendPatch;
+    var method = this.model.get('writable') ? this.saveFile : this.sendPatch;
 
     // Update content
     this.model.content = (this.editor) ? this.editor.getValue() : '';

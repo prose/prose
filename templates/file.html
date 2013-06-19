@@ -1,5 +1,3 @@
-<div id='drawer' class='sidebar'></div>
-
 <header id='heading' class='heading limiter clearfix'></header>
 
 <div id='post' class='post limiter'>
@@ -16,9 +14,9 @@
     <div id='edit' class='view active edit'>
       <div class='topbar-wrapper'>
         <div class='topbar'>
-          <div class='containment toolbar round'>
+          <div id='toolbar' class='containment toolbar round'>
             <% if (metadata && metadata.published) { %>
-              <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico checkmark'></span></a>
+              <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico small checkmark'></span></a>
             <% } else if (metadata && !metadata.published) { %>
               <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico checkmark'></span></a>
             <% } %>
