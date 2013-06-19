@@ -7,6 +7,7 @@ var marked = require('marked');
 var diff = require('diff');
 var Backbone = require('backbone');
 var HeaderView = require('./header');
+var MetadataView = require('./metadata');
 var util = require('../util');
 var upload = require('../upload');
 var cookie = require('../cookie');
@@ -31,8 +32,14 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    this.repo = options.repo;
+    _.bindAll(this);
+
+    this.router = options.router;
+
+    // Track view mode
     this.mode = options.mode;
+
+    this.repo = options.repo;
     this.nav = options.nav;
     this.branch = options.branch || this.repo.get('master_branch');
     this.branches = options.branches;
@@ -42,14 +49,15 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.branches, 'sync', this.setCollection, this);
 
     // Listen for button clicks from the vertical nav
-    /*
     this.listenTo(this.nav, 'edit', this.edit, this);
     this.listenTo(this.nav, 'preview', this.preview, this);
+    this.listenTo(this.nav, 'meta', this.meta, this);
+
+    /*
     this.listenTo(this.nav, 'deleteFile', this.deleteFile, this);
     this.listenTo(this.nav, 'save', this.save, this);
     this.listenTo(this.nav, 'updateFile', this.updateFile, this);
     this.listenTo(this.nav, 'translate', this.translate, this);
-    this.listenTo(this.nav, 'meta', this.meta, this);
     this.listenTo(this.nav, 'remove', this.remove, this);
     this.listenTo(this.nav, 'cancelSave', this.cancelSave, this);
     */
@@ -78,12 +86,12 @@ module.exports = Backbone.View.extend({
 
   setCollection: function() {
     this.collection = this.branches.findWhere({ name: this.branch }).files;
-    this.collection.fetch({ success: _.bind(this.setModel, this) });
+    this.collection.fetch({ success: this.setModel });
   },
 
   setModel: function() {
     this.model = this.collection.findWhere({ name: this.filename, path: this.path });
-    this.model.fetch({ success: _.bind(this.render, this) });
+    this.model.fetch({ success: this.render });
   },
 
   compilePreview: function(content) {
@@ -125,353 +133,79 @@ module.exports = Backbone.View.extend({
     return content;
   },
 
-  buildMeta: function() {
-    var view = this;
-    var $metadataEditor = this.$el.find('#meta .form');
-    $metadataEditor.empty();
+  renderMetadata: function() {
+    this.metadataEditor = new MetadataView({ model: this.model });
+    this.metadataEditor.setElement(this.$el.find('#meta .form')).render();
+    this.subviews.push(this.metadataEditor);
+  },
 
-    function init(model) {
-      var tmpl;
+  cursor: function() {
+    var selection = util.trim(this.editor.getSelection());
+    this.$el.find('.toolbar .group a').removeClass('active');
 
-      // TODO: prefetch _config.yml content
-      /*
-      var config = view.model.collection.findWhere({ path: '_prose.yml' }) ||
-        view.model.collection.findWhere({ path: '_config.yml' });
-      */
-
-      _(model.default_metadata).each(function(data, key) {
-        if (data && typeof data.field === 'object') {
-          switch (data.field.element) {
-            case 'button':
-              tmpl = _(window.app.templates.button).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value,
-                on: data.field.on,
-                off: data.field.off
-              }));
-              break;
-            case 'checkbox':
-              tmpl = _(window.app.templates.checkbox).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.name,
-                checked: data.field.value
-              }));
-              break;
-            case 'text':
-              tmpl = _(window.app.templates.text).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value,
-                type: 'text'
-              }));
-              break;
-            case 'number':
-              tmpl = _(window.app.templates.text).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value,
-                type: 'number'
-              }));
-              break;
-            case 'select':
-              tmpl = _(window.app.templates.select).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: model.metadata.lang || 'en'
-              }));
-              break;
-            case 'multiselect':
-              tmpl = _(window.app.templates.multiselect).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: model.metadata.lang || 'en'
-              }));
-              break;
-            case 'hidden':
-              tmpl = _(window.app.templates.hidden).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                value: JSON.stringify(data.field.value).replace(/"/g, '&quot;').replace(/'/g, '&apos;')
-              }));
-              break;
-          }
-        } else {
-          tmpl = _(window.app.templates.text).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: key,
-            value: data,
-            type: 'text'
-          }));
-        }
-      });
-
-      $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">Raw Metadata</label>').appendTo($metadataEditor);
-
-      var rawContainer = (view.model.lang === 'yaml') ? 'code' : 'raw';
-      view.rawEditor = CodeMirror(document.getElementById(rawContainer), {
-        mode: 'yaml',
-        value: '',
-        lineWrapping: true,
-        extraKeys: view.keyMap(),
-        theme: 'prose-bright'
-      });
-
-      view.listenTo(view.rawEditor, 'change', view.makeDirty, view);
-
-      setValue(model.metadata);
-      $('.chzn-select').chosen();
-    }
-
-    function getValue() {
-      var metadata = {};
-
-      if ($('.publish-flag').attr('data-state') === 'true') {
-        metadata.published = true;
-      } else {
-        metadata.published = false;
-      }
-
-      _.each($metadataEditor.find('[name]'), function(item) {
-        var $item = $(item);
-        var value = $item.val();
-
-        switch (item.type) {
-          case 'select-multiple':
-          case 'select-one':
-          case 'text':
-            if (value) {
-              value = $item.data('type') === 'number' ? Number(value) : value;
-              if (metadata.hasOwnProperty(item.name)) {
-                metadata[item.name] = _.union(metadata[item.name], value);
-              } else {
-                metadata[item.name] = value;
-              }
-            }
-            break;
-          case 'checkbox':
-            if (item.checked) {
-
-              if (metadata.hasOwnProperty(item.name)) {
-                metadata[item.name] = _.union(metadata[item.name], item.value);
-              } else if (item.value === item.name) {
-                metadata[item.name] = item.checked;
-              } else {
-                metadata[item.name] = item.value;
-              }
-
-            } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
-              metadata[item.name] = item.checked;
-            } else {
-              metadata[item.name] = item.checked;
-            }
-            break;
-          case 'button':
-            if (value === 'true') {
-              metadata[item.name] = true;
-            } else if (value === 'false') {
-              metadata[item.name] = false;
-            }
-            break;
-          case 'hidden':
-            if (metadata.hasOwnProperty(item.name)) {
-              metadata[item.name] = _.union(metadata[item.name], JSON.parse(value));
-            } else {
-              metadata[item.name] = JSON.parse(value);
-            }
-            break;
-        }
-      });
-
-      if (view.rawEditor) {
-        try {
-          metadata = $.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
-        } catch (err) {
-          console.log(err);
-        }
-      }
-
-      return metadata;
-    }
-
-    function getRaw() {
-      return jsyaml.dump(getValue()).trim();
-    }
-
-    function setValue(data) {
-      var missing = {};
-      var raw;
-
-      _(data).each(function(value, key) {
-        var matched = false;
-        var input = $metadataEditor.find('[name="' + key + '"]');
-        var length = input.length;
-        var options;
-        var tmpl;
-
-        if (length) {
-
-          // iterate over matching fields
-          for (var i = 0; i < length; i++) {
-
-            // if value is an array
-            if (value !== null && typeof value === 'object' && value.length) {
-
-              // iterate over values in array
-              for (var j = 0; j < value.length; j++) {
-                switch (input[i].type) {
-                case 'select-multiple':
-                case 'select-one':
-                  options = $(input[i]).find('option[value="' + value[j] + '"]');
-                  if (options.length) {
-                    for (var k = 0; k < options.length; k++) {
-                      options[k].selected = 'selected';
-                    }
-
-                    matched = true;
-                  }
-                  break;
-                case 'text':
-                  input[i].value = value;
-                  matched = true;
-                  break;
-                case 'checkbox':
-                  if (input[i].value === value) {
-                    input[i].checked = 'checked';
-                    matched = true;
-                  }
-                  break;
-                }
-              }
-
-            } else {
-
-              switch (input[i].type) {
-              case 'select-multiple':
-              case 'select-one':
-                options = $(input[i]).find('option[value="' + value + '"]');
-                if (options.length) {
-                  for (var m = 0; m < options.length; m++) {
-                    options[m].selected = 'selected';
-                  }
-
-                  matched = true;
-                }
-                break;
-              case 'text':
-                input[i].value = value;
-                matched = true;
-                break;
-              case 'checkbox':
-                input[i].checked = value ? 'checked' : false;
-                matched = true;
-                break;
-              case 'button':
-                input[i].value = value ? true : false;
-                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
-                matched = true;
-                break;
-              }
-
-            }
-          }
-
-          if (!matched && value !== null) {
-            if (missing.hasOwnProperty(key)) {
-              missing[key] = _.union(missing[key], value);
-            } else {
-              missing[key] = value;
-            }
-          }
-
-        } else {
-          // Don't render the 'publish?ed' field as
-          // this somewhere else in the interface.
-          if (key !== 'published') {
-            raw = {};
-            raw[key] = value;
-
-            if (view.rawEditor) {
-              view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
-            }
-          }
-        }
-      });
-
-      _.each(missing, function(value, key) {
-        if (value === null) return;
-
-        switch (typeof value) {
-        case 'boolean':
-          tmpl = _(window.app.templates.checkbox).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: value,
-            value: value,
-            checked: value ? 'checked' : false
-          }));
-          break;
-        case 'string':
-          tmpl = _(window.app.templates.text).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: value,
-            value: value,
-            type: 'text'
-          }));
-          break;
-        case 'object':
-          tmpl = _(window.app.templates.multiselect).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: key,
-            placeholder: key,
-            options: value,
-            lang: data.lang || 'en'
-          }));
-          break;
-        default:
-          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
-          break;
-        }
-      });
-    }
-
-    function setRaw(data) {
-      try {
-        setValue(jsyaml.load(data));
-      } catch (err) {
-        console.log('ERROR encoding YAML');
-        // No-op
-      }
-    }
-
-    init(this.model);
-
-    return {
-      el: $metadataEditor,
-      getRaw: getRaw,
-      setRaw: setRaw,
-      getValue: getValue,
-      setValue: setValue
+    var match = {
+      lineBreak: /\n/,
+      h1: /^#{1}/,
+      h2: /^#{2,2}/,
+      h3: /^#{3,3}/,
+      strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+      italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+      isNumber: parseInt(selection.charAt(0), 10)
     };
+
+    if (!match.isNumber) {
+      switch (selection.charAt(0)) {
+        case '#':
+          if (!match.lineBreak.test(selection)) {
+            if (match.h2.test(selection) && !match.h3.test(selection)) {
+              this.$el.find('[data-key="sub-heading"]').addClass('active');
+            } else if (!match.h2.test(selection)) {
+              this.$el.find('[data-key="heading"]').addClass('active');
+            }
+          }
+          break;
+        case '>':
+          this.$el.find('[data-key="quote"]').addClass('active');
+          break;
+        case '*':
+        case '_':
+          if (!match.lineBreak.test(selection)) {
+            if (match.strong.test(selection)) {
+              this.$el.find('[data-key="bold"]').addClass('active');
+            } else if (match.italic.test(selection)) {
+              this.$el.find('[data-key="italic"]').addClass('active');
+            }
+          }
+          break;
+        case '!':
+          if (!match.lineBreak.test(selection) &&
+              selection.charAt(1) === '[' &&
+              selection.charAt(selection.length - 1) === ')') {
+            this.$el.find('[data-key="media"]').addClass('active');
+          }
+          break;
+        case '[':
+          if (!match.lineBreak.test(selection) &&
+              selection.charAt(selection.length - 1) === ')') {
+            this.$el.find('[data-key="link"]').addClass('active');
+          }
+          break;
+        case '-':
+          if (selection.charAt(1) === ' ') {
+            this.$el.find('[data-key="list"]').addClass('active');
+          }
+        break;
+      }
+    } else {
+      if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
+        this.$el.find('[data-key="numbered-list"]').addClass('active');
+      }
+    }
   },
 
   initEditor: function() {
     if (this.model.get('metadata')) {
-      this.metadataEditor = this.buildMeta();
+      this.renderMetadata();
     }
 
     var lang = this.model.get('lang');
@@ -504,75 +238,11 @@ module.exports = Backbone.View.extend({
     // Monitor the current selection and apply
     // an active class to any snippet links
     if (lang === 'gfm') {
-      var $snippetLinks = this.$el.find('.toolbar .group a');
-      this.listenTo(this.editor, 'cursorActivity', _.bind(function() {
-
-        var selection = util.trim(this.editor.getSelection());
-        $snippetLinks.removeClass('active');
-
-        var match = {
-          lineBreak: /\n/,
-          h1: /^#{1}/,
-          h2: /^#{2,2}/,
-          h3: /^#{3,3}/,
-          strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-          italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-          isNumber: parseInt(selection.charAt(0), 10)
-        };
-
-        if (!match.isNumber) {
-          switch (selection.charAt(0)) {
-            case '#':
-              if (!match.lineBreak.test(selection)) {
-                if (match.h2.test(selection) && !match.h3.test(selection)) {
-                  this.$el.find('[data-key="sub-heading"]').addClass('active');
-                } else if (!match.h2.test(selection)) {
-                  this.$el.find('[data-key="heading"]').addClass('active');
-                }
-              }
-              break;
-            case '>':
-              this.$el.find('[data-key="quote"]').addClass('active');
-              break;
-            case '*':
-            case '_':
-              if (!match.lineBreak.test(selection)) {
-                if (match.strong.test(selection)) {
-                  this.$el.find('[data-key="bold"]').addClass('active');
-                } else if (match.italic.test(selection)) {
-                  this.$el.find('[data-key="italic"]').addClass('active');
-                }
-              }
-              break;
-            case '!':
-              if (!match.lineBreak.test(selection) &&
-                  selection.charAt(1) === '[' &&
-                  selection.charAt(selection.length - 1) === ')') {
-                this.$el.find('[data-key="media"]').addClass('active');
-              }
-              break;
-            case '[':
-              if (!match.lineBreak.test(selection) &&
-                  selection.charAt(selection.length - 1) === ')') {
-                this.$el.find('[data-key="link"]').addClass('active');
-              }
-              break;
-            case '-':
-              if (selection.charAt(1) === ' ') {
-                this.$el.find('[data-key="list"]').addClass('active');
-              }
-            break;
-          }
-        } else {
-          if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
-            this.$el.find('[data-key="numbered-list"]').addClass('active');
-          }
-        }
-      }, this), this);
+      this.listenTo(this.editor, 'cursorActivity', this.cursor, this);
     }
 
-    this.listenTo(this.editor, 'change', _.bind(this.makeDirty, this), this);
-    this.listenTo(this.editor, 'focus', _.bind(this.focus, this), this);
+    this.listenTo(this.editor, 'change', this.makeDirty, this);
+    this.listenTo(this.editor, 'focus', this.focus, this);
 
     this.refreshCodeMirror();
 
@@ -666,7 +336,8 @@ module.exports = Backbone.View.extend({
   },
 
   updateDocumentTitle: function() {
-    var context = this.mode === 'blob' ? 'Previewing ' : 'Editing ';
+    var context = (this.mode === 'blob' ? 'Previewing ' : 'Editing ');
+
     var path = this.model.get('path');
     var pathTitle = path ? path : '';
 
@@ -675,6 +346,7 @@ module.exports = Backbone.View.extend({
 
   edit: function(e) {
     var view = this;
+
     // If preview was hit on load this.editor
     // was not initialized.
     if (!this.editor) {
@@ -684,68 +356,67 @@ module.exports = Backbone.View.extend({
       }, 1);
     }
 
-    app.state.mode = this.model.isNew() ? 'new' : 'edit';
-    this.updateURL();
-
-    $('.post-views a').removeClass('active');
-    $('.post-views .edit').addClass('active');
     $('#prose').toggleClass('open', false);
 
-    $('.views .view', this.el).removeClass('active');
-    $('#edit', this.el).addClass('active');
+    // Content Window
+    this.$el.find('.views .view').removeClass('active');
+    this.$el.find('#edit').addClass('active');
+
+    this.mode = this.model.isNew() ? 'new' : 'edit';
+    this.updateURL();
 
     return false;
   },
 
   preview: function(e) {
     $('#prose').toggleClass('open', false);
-    if (this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
+
+    var metadata = this.model.get('metadata');
+    var jekyll = this.config && this.config.siteurl && metadata && metadata.layout;
+
+    if (jekyll) {
       var hash = window.location.hash.split('/');
       hash[2] = 'preview';
-      if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
-        hash.push(_($('input.filepath').val().split('/')).last());
+
+      // if last item in hash array does not begin with Jekyll YYYY-MM-DD format,
+      // append filename from input
+      if (!_.last(hash).match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
+        hash.push(_.last($('input.filepath').val().split('/')));
       }
+
       this.stashFile();
 
       $(e.currentTarget).attr({
         target: '_blank',
         href: hash.join('/')
       });
-      return true;
     } else {
-      if (e) e.preventDefault();
-
-      // Vertical Nav
-      $('.post-views a').removeClass('active');
-      $('.post-views .preview').addClass('active');
-
       // Content Window
-      $('.views .view', this.el).removeClass('active');
-      $('#preview', this.el).addClass('active').html(marked(this.compilePreview(this.model.content)));
+      this.$el.find('.views .view').removeClass('active');
+      this.$el.find('#preview').addClass('active').html(marked(this.compilePreview(this.model.get('content'))));
 
-      app.state.mode = 'blob';
+      this.mode = 'blob';
       this.updateURL();
     }
+
+    return jekyll;
   },
 
   meta: function() {
+    // TODO: what is this toggling? emit an event instead?
     $('#prose').toggleClass('open', false);
 
-    // Vertical Nav
-    $('.post-views a').removeClass('active');
-    $('.post-views .meta').addClass('active');
-
     // Content Window
-    $('.views .view', this.el).removeClass('active');
-    $('#meta', this.el).addClass('active');
+    this.$el.find('.views .view').removeClass('active');
+    this.$el.find('#meta').addClass('active');
 
-    // Refresh CodeMirror
-    if (this.rawEditor) this.rawEditor.refresh();
+    this.metadataEditor.refresh();
+
     return false;
   },
 
   backToMode: function() {
-    if (app.state.mode === 'preview') {
+    if (this.mode === 'blob') {
       this.preview();
     } else {
       this.edit();
@@ -765,14 +436,23 @@ module.exports = Backbone.View.extend({
   },
 
   updateURL: function() {
-    var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
-    this.updateDocumentTitle();
-    router.navigate(url.join('/'), {
+    var url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
       trigger: false,
       replace: true
     });
 
-    $('.chzn-select', this.el).trigger('liszt:updated');
+    this.updateDocumentTitle();
+
+    // TODO: what is this updating?
+    this.$el.find('.chzn-select').trigger('liszt:updated');
   },
 
   makeDirty: function(e) {
@@ -788,23 +468,25 @@ module.exports = Backbone.View.extend({
   },
 
   togglePublishing: function(e) {
-    var $target = $(e.target);
+    var $target = $(e.currentTarget);
 
+    // TODO: remove HTML from view
     if ($target.hasClass('published')) {
       $target
         .empty()
-        .html('Unpublish<span class="ico checkmark"></span>')
+        .html('Unpublish<span class="ico small checkmark"></span>')
         .removeClass('published')
         .attr('data-state', false);
     } else {
       $target
         .empty()
-        .html('Publish<span class="ico checkmark"></span>')
+        .html('Publish<span class="ico small checkmark"></span>')
         .addClass('published')
         .attr('data-state', true);
     }
 
     this.makeDirty();
+
     return false;
   },
 
@@ -1021,7 +703,7 @@ module.exports = Backbone.View.extend({
       // Restore from stash if file sha hasn't changed
       if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
       if (this.metadataEditor) {
-        this.rawEditor.setValue('');
+        // this.rawEditor.setValue('');
         this.metadataEditor.setValue(stash.metadata);
       }
     } else if (item) {

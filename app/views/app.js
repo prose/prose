@@ -13,6 +13,7 @@ module.exports = Backbone.View.extend({
     subviews: [],
 
     events: {
+      'click a.save': 'save',
       'click a.cancel': 'cancel',
       'click a.confirm': 'updateFile',
       'click a.delete': 'deleteFile',
@@ -190,6 +191,35 @@ module.exports = Backbone.View.extend({
     
     draft: function(e) {
       this.eventRegister.trigger('draft', e);
+      return false;
+    },
+
+    save: function(e) {
+      var tmpl = _(app.templates.sidebarSave).template();
+      this.eventRegister.trigger('showDiff', e);
+
+      if ($(e.target, this.el).hasClass('active')) {
+        this.cancel();
+      } else {
+        $('.navigation a', this.el).removeClass('active');
+        $(e.target, this.el).addClass('active');
+
+        $('#drawer', this.el)
+          .empty()
+          .append(tmpl({
+            writable: this.writable
+        }));
+
+        $('#prose').toggleClass('open mobile', true);
+
+        var $message = $('.commit-message', this.el);
+        var filepath = $('input.filepath').val();
+        var filename = _.extractFilename(filepath)[1];
+        var placeholder = 'Updated ' + filename;
+        if (app.state.mode === 'new') placeholder = 'Created ' + filename;
+        $message.attr('placeholder', placeholder).focus();
+      }
+
       return false;
     },
 

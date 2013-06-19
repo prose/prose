@@ -206,13 +206,14 @@ module.exports = Backbone.Router.extend({
     }
 
     var content = new FileView({
-      repo: repo,
-      mode: mode,
-      nav: this.app.nav,
       branch: branch,
       branches: repo.branches,
+      filename: filename,
+      mode: mode,
+      nav: this.app.nav,
       path: (path ? path + '/' : '') + filename,
-      filename: filename
+      repo: repo,
+      router: this
     });
 
     // TODO: is relying on 'sync' events acceptable here?

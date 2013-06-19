@@ -3,14 +3,7 @@
 <div id='post' class='post limiter'>
   <div class='editor views<% if (markdown) { %> markdown<% } %>'>
     <div id='diff' class='view prose diff'></div>
-    <% if (metadata) { %>
-      <div id='meta' class='view round meta'>
-        <div class='form'></div>
-        <a href='#' class='button round finish'>
-          Back to <% if (mode === 'new') { %>New Post<% } else { %><%= mode %><% } %>
-        </a>
-      </div>
-    <% } %>
+    <div id='meta' class='view round meta'></div>
     <div id='edit' class='view active edit'>
       <div class='topbar-wrapper'>
         <div class='topbar'>
@@ -90,7 +83,7 @@
       <div id='code' class='code round inner'></div>
     </div>
     <% if (markdown) { %>
-      <div id='preview' class='view preview prose'><%- preview %></div>
+      <div id='preview' class='view preview prose'><%= preview %></div>
     <% } %>
   </div>
 </div>

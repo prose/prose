@@ -8,12 +8,12 @@ module.exports = Backbone.View.extend({
   template: _.template(templates.nav),
 
   events: {
-    'click .edit': 'edit',
-    'click .preview': 'preview',
-    'click .meta': 'meta',
-    'click .settings': 'settings',
-    'click a.save': 'save',
-    'click .logout': 'logout',
+    'click a.edit': 'emit',
+    'click a.preview': 'emit',
+    'click a.meta': 'emit',
+    'click a.settings': 'settings',
+    'click a.save': 'emit',
+    'click a.logout': 'logout',
     'click .mobile-menu .toggle': 'toggleMobileClass'
   },
 
@@ -22,25 +22,13 @@ module.exports = Backbone.View.extend({
     this.user = options.user;
   },
 
-  // Event Triggering to other files
-  edit: function(e) {
-    this.eventRegister.trigger('edit', e);
-    return false;
-  },
+  emit: function(e) {
+    var target = $(e.target);
+    var state = target.data('state');
 
-  preview: function(e) {
-    if ($(e.target).data('jekyll')) {
-      this.eventRegister.trigger('preview', e);
-    } else {
-      this.eventRegister.trigger('preview', e);
-      // Cancel propagation
-      return false;
-    }
-  },
+    this.active(state);
+    this.trigger(state, e);
 
-  // Event Triggering to other files
-  meta: function(e) {
-    this.eventRegister.trigger('meta', e);
     return false;
   },
 
@@ -81,39 +69,20 @@ module.exports = Backbone.View.extend({
     $('#prose').toggleClass('open mobile', false);
   },
 
-  save: function(e) {
-    var tmpl = _(app.templates.sidebarSave).template();
-    this.eventRegister.trigger('showDiff', e);
-
-    if ($(e.target, this.el).hasClass('active')) {
-      this.cancel();
-    } else {
-      $('.navigation a', this.el).removeClass('active');
-      $(e.target, this.el).addClass('active');
-
-      $('#drawer', this.el)
-        .empty()
-        .append(tmpl({
-          writable: this.writable
-      }));
-
-      $('#prose').toggleClass('open mobile', true);
-
-      var $message = $('.commit-message', this.el);
-      var filepath = $('input.filepath').val();
-      var filename = _.extractFilename(filepath)[1];
-      var placeholder = 'Updated ' + filename;
-      if (app.state.mode === 'new') placeholder = 'Created ' + filename;
-      $message.attr('placeholder', placeholder).focus();
-    }
-
-    return false;
-  },
-
   logout: function() {
     app.models.logout();
     window.location.reload();
     return false;
+  },
+
+  mode: function(mode) {
+    // Set data-mode attribute to toggle nav buttons in CSS
+    this.$el.attr('data-mode', mode);
+  },
+
+  active: function(state) {
+    this.$el.find('.post-views a').removeClass('active');
+    this.$el.find('.post-views a[data-state=' + state + ']').addClass('active');
   },
 
   render: function() {
@@ -122,10 +91,5 @@ module.exports = Backbone.View.extend({
     })));
 
     return this;
-  },
-
-  mode: function(mode) {
-    // Set data-mode attribute to toggle nav buttons in CSS
-    this.$el.attr('data-mode', mode);
   }
 });
