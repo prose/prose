@@ -131,9 +131,16 @@ module.exports = Backbone.View.extend({
         // Files ..
         $files.append(files({
           index: i,
+<<<<<<< HEAD:app/views/posts.js
           extension: utils.extension(f.path),
           isBinary: utils.isBinary(utils.extension(f.path)),
           isMedia: utils.isMedia(utils.extension(f.path)),
+=======
+          extension: _.extension(f.path),
+          isBinary: _.isBinary(_.extension(f.path)),
+          isMedia: _.isMedia(_.extension(f.path)),
+          isMarkdown: _.markdown(_.extension(f.path)),
+>>>>>>> 86b44745b26094460faa4ea017ffd84880e444d1:src/prose/views/posts.js
           writePermissions: view.writePermissions,
           repo: data.repo,
           branch: data.branch,

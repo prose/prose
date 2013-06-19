@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
+_.merge = require('deepmerge');
 var jsyaml = require('js-yaml');
 var key = require('keymaster');
 var marked = require('marked');
@@ -21,6 +22,7 @@ module.exports = Backbone.View.extend({
     'click .dialog .insert': 'dialogInsert',
     'click .save-action': 'updateFile',
     'click .publish-flag': 'togglePublishing',
+    'click .draft-to-post': 'draft',
     'click .meta .finish': 'backToMode',
     'change #upload': 'fileInput',
     'change .meta input': 'makeDirty'
@@ -78,26 +80,26 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'save', 'translate', 'updateFile', 'meta', 'remove', 'cancelSave');
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'showDiff', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancelSave');
     this.eventRegister.bind('edit', this.edit);
     this.eventRegister.bind('preview', this.preview);
     this.eventRegister.bind('deleteFile', this.deleteFile);
-    this.eventRegister.bind('save', this.save);
+    this.eventRegister.bind('showDiff', this.showDiff);
     this.eventRegister.bind('updateFile', this.updateFile);
     this.eventRegister.bind('translate', this.translate);
+    this.eventRegister.bind('draft', this.draft);
     this.eventRegister.bind('meta', this.meta);
     this.eventRegister.bind('remove', this.remove);
     this.eventRegister.bind('cancelSave', this.cancelSave);
 
-    this.renderHeading();
-
     var tmpl = _(window.app.templates.post).template();
 
     $(this.el).empty().append(tmpl(_.extend(this.model, {
-      mode: app.state.mode,
-      metadata: this.model.metadata,
-      avatar: this.header.avatar
+      mode: app.state.mode
     })));
+
+    this.renderHeading();
+    this.renderToolbar();
 
     if (this.model.markdown && app.state.mode === 'blob') {
       this.preview();
@@ -148,6 +150,16 @@ module.exports = Backbone.View.extend({
     };
 
     this.eventRegister.trigger('headerContext', this.header, true);
+  },
+
+  renderToolbar: function() {
+    var tmpl = _(window.app.templates.toolbar).template();
+
+    this.$el.find('#toolbar').empty().append(tmpl(_.extend(this.model, {
+      metadata: this.model.metadata,
+      avatar: this.model.lang,
+      draft: (this.model.path.split('/')[0] === '_drafts') ? true : false
+    })));
   },
 
   edit: function(e) {
@@ -323,7 +335,7 @@ module.exports = Backbone.View.extend({
   },
 
   showDiff: function() {
-    var $diff = $('#diff', this.el);
+    var $diff = this.$el.find('#diff');
     var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
     var text2 = _.escape(this.serialize());
     var d = diff.diffWords(text1, text2);
@@ -340,9 +352,9 @@ module.exports = Backbone.View.extend({
     }
 
     // Content Window
-    $('.views .view', this.el).removeClass('active');
-    $diff.html('<pre>' + compare + '</pre>');
+    this.$el.find('.views .view').removeClass('active');
     $diff.addClass('active');
+    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
   },
 
   closeSettings: function() {
@@ -358,17 +370,8 @@ module.exports = Backbone.View.extend({
   },
 
   cancelSave: function() {
-    $('.views .view', this.el).removeClass('active');
-
-    if (app.state.mode === 'blob') {
-      $('#preview', this.el).addClass('active');
-    } else {
-      $('#edit', this.el).addClass('active');
-    }
-  },
-
-  save: function() {
-    this.showDiff();
+    this.$el.find('.views .view').removeClass('active');
+    this.$el.find('.' + app.state.mode).addClass('active');
   },
 
   refreshCodeMirror: function() {
@@ -466,7 +469,6 @@ module.exports = Backbone.View.extend({
             view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
             return;
           }
-
           view.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
@@ -496,6 +498,28 @@ module.exports = Backbone.View.extend({
       } else {
         save();
       }
+    });
+  },
+
+  saveDraft: function(filepath, filename, filecontent, message) {
+    var view = this;
+    view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
+    window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+      if (err) {
+        view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+        return;
+      }
+      view.dirty = false;
+      view.model.persisted = true;
+      view.model.file = filename;
+
+      if (app.state.mode === 'new') app.state.mode = 'edit';
+      view.renderHeading();
+      view.updateURL();
+      view.prevFile = filecontent;
+      view.closeSettings();
+      view.updatePublishState();
+      view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
     });
   },
 
@@ -569,6 +593,31 @@ module.exports = Backbone.View.extend({
 
     // Delegate
     method.call(this, filepath, filename, filecontent, message);
+    return false;
+  },
+
+  draft: function() {
+    var filepath = _.extractFilename($('input.filepath').val());
+    var basepath = filepath[0].split('/');
+    var filename = filepath[1];
+    var postType = basepath[0];
+    var filecontent = this.serialize();
+    var message = 'Created draft of ' + filename;
+
+    if (postType === '_posts') {
+      basepath.splice(0, 1, '_drafts');
+      filepath.splice(0, 1, basepath.join('/'));
+      this.saveDraft(filepath.join('/'), filename, filecontent, message);
+      app.state.path = this.model.path = filepath[0];
+    } else {
+      basepath.splice(0, 1, '_posts');
+      filepath.splice(0, 1, basepath.join('/'));
+      message = 'Create post from draft of ' + filename;
+      this.saveFile(filepath.join('/'), filename, filecontent, message);
+      app.state.path = this.model.path = filepath[0];
+    }
+
+    this.renderToolbar();
     return false;
   },
 
@@ -692,11 +741,9 @@ module.exports = Backbone.View.extend({
               }));
               break;
             case 'hidden':
-              tmpl = _(window.app.templates.hidden).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                value: JSON.stringify(data.field.value).replace(/"/g, '&quot;').replace(/'/g, '&apos;')
-              }));
+              tmpl = {};
+              tmpl[data.name] = data.field.value;
+              view.model.metadata = _.merge(tmpl, view.model.metadata);
               break;
           }
         } else {
@@ -777,25 +824,18 @@ module.exports = Backbone.View.extend({
               metadata[item.name] = false;
             }
             break;
-          case 'hidden':
-            if (metadata.hasOwnProperty(item.name)) {
-              metadata[item.name] = _.union(metadata[item.name], JSON.parse(value));
-            } else {
-              metadata[item.name] = JSON.parse(value);
-            }
-            break;
         }
       });
 
       if (view.rawEditor) {
         try {
-          metadata = $.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
+          metadata = _.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
         } catch (err) {
           console.log(err);
         }
       }
 
-      return metadata;
+      return _.extend(view.model.metadata, metadata);
     }
 
     function getRaw() {
@@ -849,7 +889,6 @@ module.exports = Backbone.View.extend({
               }
 
             } else {
-
               switch (input[i].type) {
               case 'select-multiple':
               case 'select-one':
@@ -889,9 +928,11 @@ module.exports = Backbone.View.extend({
           }
 
         } else {
-          // Don't render the 'publish?ed' field as
-          // this somewhere else in the interface.
-          if (key !== 'published') {
+          // Don't render the 'publish?ed' field or hidden metadata
+          var defaults = _.find(view.model.default_metadata, function(data) { return data.name === key; });
+          var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
+
+          if (key !== 'published' && !defaults) {
             raw = {};
             raw[key] = value;
 
@@ -1166,7 +1207,7 @@ module.exports = Backbone.View.extend({
           view.eventRegister.trigger('updateSaveState', 'Error&nbsp;Uploading try again in 30 Seconds!', 'error');
         } else {
           var $alt = $('input[name="alt"]');
-          var image = ($alt.val) ?
+          var image = ($alt.val() && $alt.val() !== undefined) ?
             '![' + $alt.val() + '](/' + path + ')' :
             '![' + file.name + '](/' + path + ')';
 
@@ -1527,8 +1568,9 @@ module.exports = Backbone.View.extend({
     this.eventRegister.unbind('edit', this.postViews);
     this.eventRegister.unbind('preview', this.preview);
     this.eventRegister.unbind('deleteFile', this.deleteFile);
-    this.eventRegister.unbind('save', this.save);
+    this.eventRegister.unbind('showDiff', this.showDiff);
     this.eventRegister.unbind('translate', this.translate);
+    this.eventRegister.unbind('draft', this.draft);
     this.eventRegister.unbind('updateFile', this.updateFile);
     this.eventRegister.unbind('meta', this.updateFile);
     this.eventRegister.unbind('remove', this.remove);

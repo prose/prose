@@ -24,14 +24,11 @@ module.exports = Backbone.View.extend({
 
   // Event Triggering to other files
   edit: function(e) {
-    this.viewing = 'edit';
     this.eventRegister.trigger('edit', e);
     return false;
   },
 
   preview: function(e) {
-    this.viewing = 'preview';
-
     if ($(e.target).data('jekyll')) {
       this.eventRegister.trigger('preview', e);
     } else {
@@ -43,7 +40,6 @@ module.exports = Backbone.View.extend({
 
   // Event Triggering to other files
   meta: function(e) {
-    this.viewing = 'meta';
     this.eventRegister.trigger('meta', e);
     return false;
   },
@@ -51,10 +47,9 @@ module.exports = Backbone.View.extend({
   settings: function(e) {
     var tmpl = _(app.templates.settings).template();
     var $navItems = $('.navigation a', this.el);
+    this.cancel();
 
-    if ($(e.target, this.el).hasClass('active')) {
-      this.cancel();
-    } else {
+    if (!$(e.target, this.el).hasClass('active')) {
       $navItems.removeClass('active');
       $(e.target, this.el).addClass('active');
 
@@ -63,7 +58,9 @@ module.exports = Backbone.View.extend({
         .append(tmpl({
           lang: this.lang,
           writable: this.writable,
-          metadata: this.metadata
+          metadata: this.metadata,
+          jekyll: this.model.jekyll,
+          draft: (app.state.path.split('/')[0] === '_drafts') ? true : false
         }));
 
       $('#prose').toggleClass('open mobile', true);
@@ -86,12 +83,11 @@ module.exports = Backbone.View.extend({
 
   save: function(e) {
     var tmpl = _(app.templates.sidebarSave).template();
-    this.eventRegister.trigger('save', e);
+    this.eventRegister.trigger('showDiff', e);
 
     if ($(e.target, this.el).hasClass('active')) {
       this.cancel();
     } else {
-      this.cancel();
       $('.navigation a', this.el).removeClass('active');
       $(e.target, this.el).addClass('active');
 
