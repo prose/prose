@@ -79,7 +79,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'showDiff', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancelSave');
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'showDiff', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancel');
     this.eventRegister.bind('edit', this.edit);
     this.eventRegister.bind('preview', this.preview);
     this.eventRegister.bind('deleteFile', this.deleteFile);
@@ -89,7 +89,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('draft', this.draft);
     this.eventRegister.bind('meta', this.meta);
     this.eventRegister.bind('remove', this.remove);
-    this.eventRegister.bind('cancelSave', this.cancelSave);
+    this.eventRegister.bind('cancel', this.cancel);
 
     var tmpl = _(window.app.templates.post).template();
 
@@ -368,7 +368,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.trigger('closeSettings');
   },
 
-  cancelSave: function() {
+  cancel: function() {
     this.$el.find('.views .view').removeClass('active');
     this.$el.find('.' + app.state.mode).addClass('active');
   },
@@ -1579,7 +1579,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.unbind('updateFile', this.updateFile);
     this.eventRegister.unbind('meta', this.updateFile);
     this.eventRegister.unbind('remove', this.remove);
-    this.eventRegister.unbind('cancelSave', this.cancelSave);
+    this.eventRegister.unbind('cancel', this.cancel);
 
     // Clear any file state classes in #prose
     this.eventRegister.trigger('updateSaveState', '', '');

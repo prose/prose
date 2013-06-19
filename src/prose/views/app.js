@@ -186,16 +186,22 @@ module.exports = Backbone.View.extend({
 
     // Event Triggering to other files
     meta: function(e) {
-      this.eventRegister.trigger('meta', e);
+      if ($(e.target).hasClass('active')) {
+        this.cancel();
+      } else {
+        this.eventRegister.trigger('meta', e);
+      }
+
       return false;
     },
 
     settings: function(e) {
       var tmpl = _(app.templates.settings).template();
       var $navItems = $('.navigation a', this.el);
-      this.cancel();
 
-      if (!$(e.target, this.el).hasClass('active')) {
+      if ($(e.target).hasClass('active')) {
+        this.cancel();
+      } else {
         $navItems.removeClass('active');
         $(e.target, this.el).addClass('active');
 
@@ -309,7 +315,7 @@ module.exports = Backbone.View.extend({
       $('.navigation a', this.el).removeClass('active');
       $('.navigation .' + app.state.mode, this.el).addClass('active');
       $('#prose').toggleClass('open mobile', false);
-      this.eventRegister.trigger('cancelSave', e);
+      this.eventRegister.trigger('cancel', e);
       return false;
     },
 
