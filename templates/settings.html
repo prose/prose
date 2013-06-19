@@ -4,10 +4,10 @@
   </div>
   <div class='inner authoring'>
 
-    <% if (jekyll && !draft) { %>
+    <% if (jekyll && !draft && lang === 'gfm') { %>
       <a class='draft button round' href='#'>Create Draft</a>
     <% } %>
-    
+
     <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>
       <% _(app.state.config.languages).each(function(lang) { %>
         <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>
@@ -16,7 +16,7 @@
       <% }); %>
     <% } %>
 
-    <% if (app.state.mode !== 'new' && writable) { %>
+    <% if (writable) { %>
       <a class='delete button round' href='#'>Delete this File</a>
     <% } %>
   </div>

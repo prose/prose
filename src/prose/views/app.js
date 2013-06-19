@@ -58,7 +58,7 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput', 'renderNav');
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('sidebarContext', this.sidebarContext);
@@ -66,11 +66,12 @@ module.exports = Backbone.View.extend({
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
       this.eventRegister.bind('filenameInput', this.filenameInput);
       this.eventRegister.bind('closeSettings', this.closeSettings);
+      this.eventRegister.bind('renderNav', this.renderNav);
     },
 
     render: function(options) {
       var view = this;
-      var tmpl = _(window.app.templates.app).template();
+      var tmpl = _(app.templates.app).template();
       var isJekyll = false;
       var errorPage = false;
       var hideInterface = false; // Flag for unauthenticated landing
@@ -89,12 +90,17 @@ module.exports = Backbone.View.extend({
         $(this.el).toggleClass('disable-interface', false);
       }
 
-      $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
-        jekyll: isJekyll,
+      this.data = _.extend(this.model, app.state, {
         error: errorPage,
+        jekyll: isJekyll,
         noMenu: view.noMenu,
         lang: (app.state.file) ? _.mode(app.state.file) : undefined
-      })));
+      });
+
+      this.$el.empty().append(tmpl(this.data));
+
+      // Render the vertical Navigation
+      this.renderNav();
 
       // When the sidebar should be open.
       // Fix this in re-factor, could be much tighter
@@ -107,6 +113,11 @@ module.exports = Backbone.View.extend({
       }
 
       return this;
+    },
+
+    renderNav: function() {
+      var tmpl = _(app.templates.verticalNav).template();
+      this.$el.find('#vert').empty().append(tmpl(this.data));
     },
 
     toggleMobileClass: function(e) {
@@ -358,6 +369,7 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
       this.eventRegister.unbind('filenameInput', this.filenameInput);
       this.eventRegister.unbind('closeSettings', this.closeSettings);
+      this.eventRegister.unbind('renderNav', this.renderNav);
       Backbone.View.prototype.remove.call(this);
     }
 });
