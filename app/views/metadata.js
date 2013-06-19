@@ -1,14 +1,21 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
+_.merge = require('deepmerge');
+
 var Backbone = require('backbone');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
   template: _.template(templates.metadata),
 
+  events: {
+    'change input': 'makeDirty',
+    'click .finish': 'exit'
+  },
+
   initialize: function(options) {
     this.model = options.model;
-    this.listenTo(this.model, 'sync', this.render, this);
+    this.view = options.view;
   },
 
   render: function() {
@@ -93,6 +100,7 @@ module.exports = Backbone.View.extend({
             break;
         }
       } else {
+        tmpl = _.template(templates.metadata.text);
         tmpl = _(window.app.templates.text).template();
         form.append(tmpl({
           name: key,
@@ -344,5 +352,17 @@ module.exports = Backbone.View.extend({
   refresh: function() {
     // Refresh CodeMirror
     if (this.rawEditor) this.rawEditor.refresh();
+  },
+
+  exit: function() {
+    this.view.nav.active(this.view.mode);
+
+    if (this.view.mode === 'blob') {
+      this.view.preview();
+    } else {
+      this.view.edit();
+    }
+
+    return false;
   }
 });

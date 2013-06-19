@@ -26,9 +26,7 @@ module.exports = Backbone.View.extend({
     'click .dialog .insert': 'dialogInsert',
     'click .save-action': 'updateFile',
     'click .publish-flag': 'togglePublishing',
-    'click .meta .finish': 'backToMode',
-    'change #upload': 'fileInput',
-    'change .meta input': 'makeDirty'
+    'change #upload': 'fileInput'
   },
 
   initialize: function(options) {
@@ -134,8 +132,8 @@ module.exports = Backbone.View.extend({
   },
 
   renderMetadata: function() {
-    this.metadataEditor = new MetadataView({ model: this.model });
-    this.metadataEditor.setElement(this.$el.find('#meta .form')).render();
+    this.metadataEditor = new MetadataView({ model: this.model, view: this });
+    this.metadataEditor.setElement(this.$el.find('#meta')).render();
     this.subviews.push(this.metadataEditor);
   },
 
@@ -411,16 +409,6 @@ module.exports = Backbone.View.extend({
     this.$el.find('#meta').addClass('active');
 
     this.metadataEditor.refresh();
-
-    return false;
-  },
-
-  backToMode: function() {
-    if (this.mode === 'blob') {
-      this.preview();
-    } else {
-      this.edit();
-    }
 
     return false;
   },
