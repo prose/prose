@@ -182,7 +182,7 @@ module.exports = Backbone.Router.extend({
           var file = new Date().format('Y-m-d-');
           file += query.metadata.title.replace(/\W/ig, '-').replace(/--+/g, '-').substring(0,100);
           if(!file.match(/\.\w+$/))
-            file += '.md'
+            file += '.md';
           data.file = file;
         }
 
@@ -290,10 +290,10 @@ module.exports = Backbone.Router.extend({
   error: function(code) {
     switch (code) {
       case '404':
-        code = 'Page not Found'
+        code = 'Page not Found';
       break;
       default:
-        code = 'Error'
+        code = 'Error';
       break;
     }
 
