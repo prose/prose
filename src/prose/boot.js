@@ -35,9 +35,9 @@ var browserLang = (navigator.language || navigator.userLanguage).split('-')[0];
 if (LOCALES.indexOf(browserLang) != -1) app.locale = browserLang;
 
 if (app.locale && app.locale !== 'en') {
-    $.getJSON(localePath, function(err, result) {
-        window.locale[locale] = result;
-        window.locale.current(locale);
+    $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+        window.locale[app.locale] = result;
+        window.locale.current(app.locale);
     });
 }
 
