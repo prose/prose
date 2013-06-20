@@ -213,7 +213,8 @@ module.exports = Backbone.Router.extend({
       nav: this.app.nav,
       path: (path ? path + '/' : '') + filename,
       repo: repo,
-      router: this
+      router: this,
+      sidebar: this.app.sidebar
     });
 
     // TODO: is relying on 'sync' events acceptable here?

@@ -1,23 +1,19 @@
-<% if (window.authenticated) { %>
-  <div class='inner'>
-    <h2 class='label'>Options</h2>
-  </div>
-  <div class='inner authoring'>
+<div class='inner'>
+  <h2 class='label'>Options</h2>
+</div>
+<div class='inner authoring'>
 
-    <% if (jekyll && !draft) { %>
-      <a class='draft button round' href='#'>Create Draft</a>
-    <% } %>
-    
-    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>
-      <% _(app.state.config.languages).each(function(lang) { %>
-        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>
-          <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>
-        <% } %>
-      <% }); %>
-    <% } %>
+  <!-- if metadata and !draft -->
+  <a class='draft button round' href='#'>Create Draft</a>
+  
+  <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>
+    <% _(app.state.config.languages).each(function(lang) { %>
+      <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>
+        <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>
+      <% } %>
+    <% }); %>
+  <% } %>
 
-    <% if (app.state.mode !== 'new' && writable) { %>
-      <a class='delete button round' href='#'>Delete this File</a>
-    <% } %>
-  </div>
-<% } %>
+  <!-- if !isNew() and is writable -->
+  <a class='delete button round' href='#'>Delete this File</a>
+</div>

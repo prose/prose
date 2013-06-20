@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
     'click a.edit': 'emit',
     'click a.preview': 'emit',
     'click a.meta': 'emit',
-    'click a.settings': 'settings',
+    'click a.settings': 'emit',
     'click a.save': 'emit',
     'click a.logout': 'logout',
     'click .mobile-menu .toggle': 'toggleMobileClass'

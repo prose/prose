@@ -6,7 +6,7 @@ var templates = require('../../../dist/templates');
 var utils = require('../../util');
 
 module.exports = Backbone.View.extend({
-    subviews: [],
+    template: _.template(templates.sidebar.settings),
 
     events: {
       'click a.save': 'save',
@@ -20,35 +20,20 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function(options) {
-      this.user = options.user;
+      this.repo = options.repo;
+      this.branch = options.branch;
+      this.path = options.path;
     },
 
-    render: function(options) {
-      var view = this;
-      var isJekyll = false;
-      var errorPage = false;
-      var hideInterface = false; // Flag for unauthenticated landing
-      this.noMenu = false; // Prevents a mobile toggle from appearing when nto required.
+    render: function() {
+      debugger;
 
-      if (options) {
-        if (options.hideInterface) hideInterface = options.hideInterface;
-        if (options.jekyll) isJekyll = options.jekyll;
-        if (options.noMenu) this.noMenu = options.noMenu;
-        if (options.error) errorPage = options.error;
-      }
-
-      if (hideInterface) {
-        $(this.el).toggleClass('disable-interface', true);
-      } else {
-        $(this.el).toggleClass('disable-interface', false);
-      }
-
-      $(this.el).empty().append(this.template(_.extend(this.model, app.state, {
-        jekyll: isJekyll,
-        error: errorPage,
-        noMenu: view.noMenu,
-        lang: (app.state.file) ? utils.mode(app.state.file) : undefined
-      })));
+      // this.file.get('lang') is programming language
+      // this.file.get('metadata').lang is ISO 639-1 language code
+      this.$el.html(this.template({
+        languages: this.config.languages,
+        lang: this.file.get('metadata').lang
+      }));
 
       return this;
     },

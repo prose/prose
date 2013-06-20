@@ -37,19 +37,22 @@ module.exports = Backbone.View.extend({
     // Track view mode
     this.mode = options.mode;
 
-    this.repo = options.repo;
     this.nav = options.nav;
+    this.sidebar = options.sidebar;
+
+    this.repo = options.repo;
     this.branch = options.branch || this.repo.get('master_branch');
     this.branches = options.branches;
     this.path = options.path || '';
     this.filename = options.filename;
 
-    this.listenTo(this.branches, 'sync', this.setCollection, this);
+    this.listenTo(this.branches, 'sync', this.setCollection);
 
     // Listen for button clicks from the vertical nav
-    this.listenTo(this.nav, 'edit', this.edit, this);
-    this.listenTo(this.nav, 'preview', this.preview, this);
-    this.listenTo(this.nav, 'meta', this.meta, this);
+    this.listenTo(this.nav, 'edit', this.edit);
+    this.listenTo(this.nav, 'preview', this.preview);
+    this.listenTo(this.nav, 'meta', this.meta);
+    this.listenTo(this.nav, 'settings', this.sidebar.open);
 
     /*
     this.listenTo(this.nav, 'deleteFile', this.deleteFile, this);
@@ -70,6 +73,15 @@ module.exports = Backbone.View.extend({
     this.listenTo($window, 'beforeunload', function() {
       if (this.dirty) return 'You have unsaved changes. Are you sure you want to leave?';
     }, this);
+
+    /*
+    this.sidebar.initSubview('settings', {
+      config: this.config,
+      repo: this.repo,
+      branch: this.branch,
+      path: this.path
+    });
+    */
 
     /*
     this.config = {};
@@ -129,12 +141,6 @@ module.exports = Backbone.View.extend({
     });
 
     return content;
-  },
-
-  renderMetadata: function() {
-    this.metadataEditor = new MetadataView({ model: this.model, view: this });
-    this.metadataEditor.setElement(this.$el.find('#meta'));
-    this.subviews.push(this.metadataEditor);
   },
 
   cursor: function() {
@@ -202,10 +208,6 @@ module.exports = Backbone.View.extend({
   },
 
   initEditor: function() {
-    if (this.model.get('metadata')) {
-      this.renderMetadata();
-    }
-
     var lang = this.model.get('lang');
 
     // Don't set up content editor for yaml posts
@@ -281,6 +283,12 @@ module.exports = Backbone.View.extend({
     this.subviews.push(header);
   },
 
+  renderMetadata: function() {
+    this.metadataEditor = new MetadataView({ model: this.model, view: this });
+    this.metadataEditor.setElement(this.$el.find('#meta'));
+    this.subviews.push(this.metadataEditor);
+  },
+
   render: function() {
     /*
     // Link Dialog
@@ -317,6 +325,8 @@ module.exports = Backbone.View.extend({
     // Render subviews
     this.renderHeading();
     this.updateDocumentTitle();
+
+    if (this.model.get('metadata')) this.renderMetadata();
 
     if (this.model.get('markdown') && this.mode === 'blob') {
       this.preview();

@@ -1,23 +1,23 @@
-var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var BranchesView = require('./sidebar/branches');
-var OrgsView = require('./sidebar/orgs');
-var HistoryView = require('./sidebar/history');
-var SettingsView = require('./sidebar/settings');
+
+var views = {
+  branches: require('./sidebar/branches'),
+  history: require('./sidebar/history'),
+  orgs: require('./sidebar/orgs'),
+  settings: require('./sidebar/settings')
+};
+
 var templates = require('../../dist/templates');
-var utils = require('.././util');
 
 module.exports = Backbone.View.extend({
     template: _.template(templates.drawer),
 
     subviews: [],
 
-    initialize: function(options) {
-      this.user = options.user;
-    },
-
     initSubview: function(subview, options) {
+      if (!views[subview]) return false;
+
       options = _.clone(options) || {};
 
       this[subview] = new views[subview](options);
@@ -39,9 +39,7 @@ module.exports = Backbone.View.extend({
     render: function(options) {
       this.$el.html(this.template());
 
-      _.each(this.subviews, function(subview) {
-        subview.render();
-      });
+      _.invoke(this.subviews, 'render');
 
       return this;
     },
@@ -50,6 +48,8 @@ module.exports = Backbone.View.extend({
       // TODO: call when in 'tree'/repo mode and when authenticated but no mode (profile)?
       this.$el.toggleClass('open', true);
       this.$el.toggleClass('mobile', false);
+
+      return false;
     },
 
     close: function() {
