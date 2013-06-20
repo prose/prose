@@ -2,8 +2,8 @@
   <div class='notify <%= type %>'>
     <h2 class='icon landing error'>Prose</h2>
     <div class='inner'>
-      <p>Please login with your GitHub account to access that project.</p>
-      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>Authorize with GitHub</a></a>
+      <p><%= t('notification.login.description') %></p>
+      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'><%= t('notification.login.title') %></a></a>
     </div>
   </div>
 <% } else { %>
@@ -12,13 +12,13 @@
     <div class='inner'>
       <p><%= message %></p>
       <% if (pathFromFile) { %>
-        <p><a class='button round create' href='#'>Create it</a></p>
+        <p><a class='button round create' href='#'><%= t('notification.create') %></a></p>
       <% } %>
 
       <% if (key === 'error') { %>
-        <p><a class='button round' href='#'>Back to Main Page</a></p>
+        <p><a class='button round' href='#'><%= t('notification.home') %></a></p>
       <% } else { %>
-        <p><a class='button round' href='<%= previous %>'>Go back</a></p>
+        <p><a class='button round' href='<%= previous %>'><%= t('notification.back') %></a></p>
       <% } %>
     </div>
   </div>
