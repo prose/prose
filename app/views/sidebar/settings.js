@@ -20,19 +20,19 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function(options) {
+      this.config = options.config;
       this.repo = options.repo;
       this.branch = options.branch;
-      this.path = options.path;
+      this.file = options.file;
     },
 
     render: function() {
-      debugger;
-
       // this.file.get('lang') is programming language
       // this.file.get('metadata').lang is ISO 639-1 language code
       this.$el.html(this.template({
         languages: this.config.languages,
-        lang: this.file.get('metadata').lang
+        lang: this.file.get('lang'),
+        metadata: this.file.get('metadata')
       }));
 
       return this;

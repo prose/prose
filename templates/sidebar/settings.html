@@ -2,13 +2,12 @@
   <h2 class='label'>Options</h2>
 </div>
 <div class='inner authoring'>
-
   <!-- if metadata and !draft -->
   <a class='draft button round' href='#'>Create Draft</a>
   
-  <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>
-    <% _(app.state.config.languages).each(function(lang) { %>
-      <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>
+  <% if (languages && lang !== 'yaml') { %>
+    <% _(languages).each(function(language) { %>
+      <% if (language.value && (metadata && metadata.lang !== language.value)) { %>
         <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>
       <% } %>
     <% }); %>

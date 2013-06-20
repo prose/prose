@@ -104,12 +104,22 @@ module.exports = Backbone.View.extend({
         // render view once config content has loaded
         this.config.fetch({
           complete: (function() {
-            this.setDefaults();
+            var content = this.config.get('content');
+            var config;
+
+            try {
+              config = jsyaml.load(content);
+            } catch(err) {
+              throw err;
+            }
+
+            this.setDefaults(config);
+
             this.sidebar.initSubview('settings', {
-              config: this.config,
+              config: config,
               repo: this.repo,
               branch: this.branch,
-              path: this.path
+              file: this.model
             });
           }).bind(this)
         });
@@ -131,24 +141,16 @@ module.exports = Backbone.View.extend({
     return path;
   },
 
-  setDefaults: function() {
+  setDefaults: function(config) {
     var q = queue();
-    var content = this.config.get('content');
 
     // Set empty defaults on model if no match
     // to avoid loading _config.yml again unecessarily
     var defaults = {};
 
-    var config;
     var metadata;
     var path;
     var raw;
-
-    try {
-      config = jsyaml.load(content);
-    } catch(err) {
-      throw err;
-    }
 
     if (config && config.prose && config.prose.metadata) {
       metadata = config.prose.metadata;
