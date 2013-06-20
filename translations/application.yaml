@@ -2,6 +2,7 @@ en:
   login: "Authorize on GitHub"
   docheader:
     editing: "Editing"
+    error: "Error"
     preview: "Previewing"
   navigation:
     newFile: "New File"
@@ -14,6 +15,8 @@ en:
     about: "About"
     develop: "Developers"
     logout: "Logout"
+  heading:
+    explore: "Explore Projects"
   actions:
     unsaved: "You have unsaved Changes. Are you sure you want to leave?"
     draft:
@@ -36,10 +39,10 @@ en:
       saving:
         save: "Saving"
         patch: "Submitting Request"
-      error: "Error Saving. Try again in 30 Seconds"
       fileNameError: "Needs a Filename"
       submission: "Request Submitted"
       metaError: "Error! Metadata not Found"
+    error: "Error. Try again in 30 Seconds"
     restore:
       restoring: "Restoring"
       restored: "Restored"

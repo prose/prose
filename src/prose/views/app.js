@@ -240,15 +240,15 @@ module.exports = Backbone.View.extend({
       var path = $target.data('path');
 
       // Spinning icon
-      var message = '<span class="ico small inline saving"></span> Restoring ' + path;
+      var message = '<span class="ico small inline saving"></span>' + t('actions.restore.restoring') + path;
       $overlay.html(message);
 
       app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
         if (err) {
-          message = '<span class="ico small inline error"></span> Error Try again in 30 Seconds';
+          message = '<span class="ico small inline error"></span> ' + t('actions.error');
           $overlay.html(message);
         } else {
-          message = '<span class="ico small inline checkmark"></span> Restored ' + path;
+          message = '<span class="ico small inline checkmark"></span> ' + t('actions.restore.restored') + path;
           $overlay.html(message);
           $overlay.removeClass('removed').addClass('restored');
 
@@ -304,8 +304,11 @@ module.exports = Backbone.View.extend({
         var $message = $('.commit-message', this.el);
         var filepath = $('input.filepath').val();
         var filename = _.extractFilename(filepath)[1];
-        var placeholder = 'Updated ' + filename;
-        if (app.state.mode === 'new') placeholder = 'Created ' + filename;
+        var placeholder = t('actions.commits.updated', { filename: filename });
+        if (app.state.mode === 'new') {
+          placeholder = t('actions.commits.created', { filename: filename });
+        }
+
         $message.attr('placeholder', placeholder).focus();
       }
 

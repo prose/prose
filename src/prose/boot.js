@@ -49,7 +49,7 @@ if ('withCredentials' in new XMLHttpRequest()) {
       if (err) {
         var view = new window.app.views.Notification({
           'type': 'error',
-          'message': 'Error while loading data from Github. This might be a temporary issue. Please try again later.'
+          'message': t('notification.error.github')
         }).render();
 
         $('#prose').empty().append(view.el);
