@@ -54,6 +54,13 @@ Transiflex, will automatically detect the change.
 Use `make` to build the translations with the local changes.
 `make translate` can be used to pull the latest translations from Transifex.
 
+If you run `make translate` you will be warned to include a `transifex.auth` file in the root directory that contains your transifex user details:
+
+  {
+      "user": "username",
+      "pass": "password"
+  }
+
 ## Submitting Pull Requests
 
 All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. the `gh-pages` branch manages rebuilds to the server.
