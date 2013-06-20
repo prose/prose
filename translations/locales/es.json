@@ -2,17 +2,5 @@
     "docheader": {
         "editing": "Edición",
         "preview": "Vista previa"
-    },
-    "navigation": {
-        "vertical": {
-            "newFile": "Nuevo archivo",
-            "edit": "Editar",
-            "settings": "Configuración",
-            "save": "Guardar",
-            "login": "Autorizar con GitHub"
-        },
-        "footer": {
-            "about": "Acerca de"
-        }
     }
 }

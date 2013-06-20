@@ -17,6 +17,7 @@
     },
     "actions": {
         "unsaved": "You have unsaved Changes. Are you sure you want to leave?",
+        "draft": "Draft to Post",
         "publishing": {
             "publish": "Publish",
             "published": "Published",
@@ -85,23 +86,23 @@
             "metaDescription": "Additions are highlighted in green. Deletions are crossed out.",
             "back": "Done"
         },
-        "notification": {
-            "login": {
-                "title": "Authorize with GitHub",
-                "description": "Please login with your GitHub account to access that project."
-            },
-            "create": "Create it",
-            "home": "Back to Main Page",
-            "back": "Go Back",
-            "error": {
-                "404": "Page not Found",
-                "github": "Error while loading data from Github. This might be a temporary issue. Please try again later.",
-                "exists": "This file does not exist"
-            }
-        },
         "upgrade": {
             "content": "Prose requires features not available to your browser",
             "download": "Download a Modern Browser"
+        }
+    },
+    "notification": {
+        "login": {
+            "title": "Authorize with GitHub",
+            "description": "Please login with your GitHub account to access that project."
+        },
+        "create": "Create it",
+        "home": "Back to Main Page",
+        "back": "Go Back",
+        "error": {
+            "404": "Page not Found",
+            "github": "Error while loading data from Github. This might be a temporary issue. Please try again later.",
+            "exists": "This file does not exist"
         }
     },
     "sidebar": {
@@ -130,7 +131,7 @@
         "settings": {
             "title": "Options",
             "delete": "Delete This File",
-            "translate": "Translate to {lang}",
+            "translate": "Translate to",
             "draft": "Create Draft"
         }
     },
