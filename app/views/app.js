@@ -37,7 +37,7 @@ module.exports = Backbone.View.extend({
       // Nav
       this.nav = new NavView({
         app: this,
-        user: this.user
+        sidebar: this.sidebar
       });
       this.subviews.push(this.nav);
 

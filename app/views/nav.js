@@ -19,54 +19,16 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     this.app = options.app;
-    this.user = options.user;
+    this.sidebar = options.sidebar;
   },
 
   emit: function(e) {
     var target = $(e.target);
     var state = target.data('state');
 
-    this.active(state);
-    this.trigger(state, e);
+    this.active(state, e);
 
     return false;
-  },
-
-  settings: function(e) {
-    var tmpl = _(app.templates.settings).template();
-    var $navItems = $('.navigation a', this.el);
-    this.cancel();
-
-    if (!$(e.target, this.el).hasClass('active')) {
-      $navItems.removeClass('active');
-      $(e.target, this.el).addClass('active');
-
-      $('#drawer', this.el)
-        .empty()
-        .append(tmpl({
-          lang: this.lang,
-          writable: this.writable,
-          metadata: this.metadata,
-          jekyll: this.model.jekyll,
-          draft: (app.state.path.split('/')[0] === '_drafts') ? true : false
-        }));
-
-      $('#prose').toggleClass('open mobile', true);
-    }
-
-    return false;
-  },
-
-  closeSettings: function() {
-    $('.post-views a', this.el).removeClass('active');
-
-    if (app.state.mode === 'blob') {
-      $('.post-views .preview', this.el).addClass('active');
-    } else {
-      $('.post-views .edit', this.el).addClass('active');
-    }
-
-    $('#prose').toggleClass('open mobile', false);
   },
 
   logout: function() {
@@ -80,9 +42,28 @@ module.exports = Backbone.View.extend({
     this.$el.attr('data-mode', mode);
   },
 
-  active: function(state) {
-    this.$el.find('.post-views a').removeClass('active');
+  active: function(state, e) {
+    this.$el.find('.post-views a').not('[data-state=' + state + ']').removeClass('active');
     this.$el.find('.post-views a[data-state=' + state + ']').addClass('active');
+
+    this.trigger(state, e);
+  },
+
+  toggle: function(state, e) {
+    var target = this.$el.find('.post-views a[data-state=' + state + ']');
+
+    this.$el.find('.post-views a:not[data-state=' + state + ']').removeClass('active');
+    target.toggleClass('active');
+
+    if (target.hasClass('active')) {
+      this.trigger(state, e);
+    } else {
+      if (this.mode === 'blob') {
+        $('.post-views .preview', this.el).addClass('active');
+      } else {
+        $('.post-views .edit', this.el).addClass('active');
+      }
+    }
   },
 
   render: function() {

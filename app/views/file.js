@@ -55,7 +55,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.nav, 'edit', this.edit);
     this.listenTo(this.nav, 'preview', this.preview);
     this.listenTo(this.nav, 'meta', this.meta);
-    this.listenTo(this.nav, 'settings', this.sidebar.open);
+    this.listenTo(this.nav, 'settings', this.sidebar.toggle);
 
     /*
     this.listenTo(this.nav, 'deleteFile', this.deleteFile, this);

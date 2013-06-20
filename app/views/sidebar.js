@@ -49,8 +49,6 @@ module.exports = Backbone.View.extend({
   },
 
   open: function() {
-    debugger;
-
     // TODO: call when in 'tree'/repo mode and when authenticated but no mode (profile)?
     this.$el.toggleClass('open', true);
     this.$el.toggleClass('mobile', false);
@@ -60,6 +58,10 @@ module.exports = Backbone.View.extend({
 
   close: function() {
     this.$el.toggleClass('open mobile', false);
+  },
+
+  toggle: function() {
+    this.$el.toggleClass('open mobile');
   },
 
   remove: function() {
