@@ -54,7 +54,6 @@ APPLICATION = \
 	app/views/header.js \
 	app/views/nav.js \
 	app/views/notification.js \
-	app/views/orgs.js \
 	app/views/post.js \
 	app/views/posts.js \
 	app/views/preview.js \
@@ -68,6 +67,9 @@ APPLICATION = \
 	app/views/li/repo.js \
 	app/views/sidebar/branch.js \
 	app/views/sidebar/branches.js \
+	app/views/sidebar/orgs.js \
+	app/views/sidebar/history.js \
+	app/views/sidebar/settings.js \
 	app/router.js \
 	app/util.js \
 	app/boot.js \

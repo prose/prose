@@ -1,11 +1,9 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var templates = require('../../dist/templates');
+var templates = require('../../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  id: 'orgs',
-
   template: _.template(templates.sidebar.orgs),
 
   initialize: function(options) {

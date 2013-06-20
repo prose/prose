@@ -2,7 +2,7 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var HeaderView = require('./header');
-var OrgsView = require('./orgs');
+var OrgsView = require('./sidebar/orgs');
 var utils = require('.././util');
 var templates = require('../../dist/templates');
 
