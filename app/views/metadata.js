@@ -442,10 +442,11 @@ module.exports = Backbone.View.extend({
           console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
           break;
       }
+
+      this.$el.find('.chzn-select').chosen();
     }).bind(this));
 
-    // TODO: why are JSON HTTP multiselect fields not updating on .chosen()?
-    this.$el.find('.chzn-select').chosen();
+    this.$el.find('.chzn-select').trigger('liszt:updated');
   },
 
   getRaw: function() {
