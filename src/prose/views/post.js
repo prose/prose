@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
+_.merge = require('deepmerge');
 var jsyaml = require('js-yaml');
 var key = require('keymaster');
 var marked = require('marked');
@@ -79,7 +80,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'showDiff', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancelSave');
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'showDiff', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancel');
     this.eventRegister.bind('edit', this.edit);
     this.eventRegister.bind('preview', this.preview);
     this.eventRegister.bind('deleteFile', this.deleteFile);
@@ -89,7 +90,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.bind('draft', this.draft);
     this.eventRegister.bind('meta', this.meta);
     this.eventRegister.bind('remove', this.remove);
-    this.eventRegister.bind('cancelSave', this.cancelSave);
+    this.eventRegister.bind('cancel', this.cancel);
 
     var tmpl = _(window.app.templates.post).template();
 
@@ -368,7 +369,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.trigger('closeSettings');
   },
 
-  cancelSave: function() {
+  cancel: function() {
     this.$el.find('.views .view').removeClass('active');
     this.$el.find('.' + app.state.mode).addClass('active');
   },
@@ -472,7 +473,11 @@ module.exports = Backbone.View.extend({
           view.model.persisted = true;
           view.model.file = filename;
 
-          if (app.state.mode === 'new') app.state.mode = 'edit';
+          if (app.state.mode === 'new') {
+            app.state.mode = 'edit';
+            view.eventRegister.trigger('renderNav');
+          }
+
           view.renderHeading();
           view.updateURL();
           view.prevFile = filecontent;
@@ -740,11 +745,9 @@ module.exports = Backbone.View.extend({
               }));
               break;
             case 'hidden':
-              tmpl = _(window.app.templates.hidden).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                value: JSON.stringify(data.field.value).replace(/"/g, '&quot;').replace(/'/g, '&apos;')
-              }));
+              tmpl = {};
+              tmpl[data.name] = data.field.value;
+              view.model.metadata = _.merge(tmpl, view.model.metadata);
               break;
           }
         } else {
@@ -791,7 +794,6 @@ module.exports = Backbone.View.extend({
         switch (item.type) {
           case 'select-multiple':
           case 'select-one':
-          case 'hidden':
           case 'text':
             if (value) {
               value = $item.data('type') === 'number' ? Number(value) : value;
@@ -831,13 +833,13 @@ module.exports = Backbone.View.extend({
 
       if (view.rawEditor) {
         try {
-          metadata = $.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
+          metadata = _.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
         } catch (err) {
           console.log(err);
         }
       }
 
-      return metadata;
+      return _.extend(view.model.metadata, metadata);
     }
 
     function getRaw() {
@@ -877,7 +879,6 @@ module.exports = Backbone.View.extend({
                     matched = true;
                   }
                   break;
-                case 'hidden':
                 case 'text':
                   input[i].value = value;
                   matched = true;
@@ -904,7 +905,6 @@ module.exports = Backbone.View.extend({
                   matched = true;
                 }
                 break;
-              case 'hidden':
               case 'text':
                 input[i].value = value;
                 matched = true;
@@ -932,9 +932,11 @@ module.exports = Backbone.View.extend({
           }
 
         } else {
-          // Don't render the 'publish?ed' field as
-          // this somewhere else in the interface.
-          if (key !== 'published') {
+          // Don't render the 'publish?ed' field or hidden metadata
+          var defaults = _.find(view.model.default_metadata, function(data) { return data.name === key; });
+          var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
+
+          if (key !== 'published' && !defaults) {
             raw = {};
             raw[key] = value;
 
@@ -1210,8 +1212,8 @@ module.exports = Backbone.View.extend({
         } else {
           var $alt = $('input[name="alt"]');
           var image = ($alt.val() && $alt.val() !== undefined) ?
-            '![' + $alt.val() + '](/' + path + ')' :
-            '![' + file.name + '](/' + path + ')';
+            '\n![' + $alt.val() + '](/' + path + ')' :
+            '\n![' + file.name + '](/' + path + ')';
 
           view.editor.focus();
           view.editor.replaceSelection(image);
@@ -1515,7 +1517,7 @@ module.exports = Backbone.View.extend({
       } else {
         var src = $('input[name="url"]').val();
         var alt = $('input[name="alt"]').val();
-        this.editor.replaceSelection('![' + alt + '](/' + src + ')');
+        this.editor.replaceSelection('\n![' + alt + '](/' + src + ')');
         this.editor.focus();
       }
     }
@@ -1575,7 +1577,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister.unbind('updateFile', this.updateFile);
     this.eventRegister.unbind('meta', this.updateFile);
     this.eventRegister.unbind('remove', this.remove);
-    this.eventRegister.unbind('cancelSave', this.cancelSave);
+    this.eventRegister.unbind('cancel', this.cancel);
 
     // Clear any file state classes in #prose
     this.eventRegister.trigger('updateSaveState', '', '');
