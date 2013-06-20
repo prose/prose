@@ -23,10 +23,9 @@ module.exports = Backbone.View.extend({
   },
 
   emit: function(e) {
-    var target = $(e.target);
-    var state = target.data('state');
+    var state = $(e.target).data('state');
 
-    this.active(state, e);
+    this.toggle(state);
 
     return false;
   },
@@ -42,28 +41,11 @@ module.exports = Backbone.View.extend({
     this.$el.attr('data-mode', mode);
   },
 
-  active: function(state, e) {
+  toggle: function(state) {
     this.$el.find('.post-views a').not('[data-state=' + state + ']').removeClass('active');
-    this.$el.find('.post-views a[data-state=' + state + ']').addClass('active');
+    this.$el.find('.post-views a[data-state=' + state + ']').toggleClass('active');
 
-    this.trigger(state, e);
-  },
-
-  toggle: function(state, e) {
-    var target = this.$el.find('.post-views a[data-state=' + state + ']');
-
-    this.$el.find('.post-views a:not[data-state=' + state + ']').removeClass('active');
-    target.toggleClass('active');
-
-    if (target.hasClass('active')) {
-      this.trigger(state, e);
-    } else {
-      if (this.mode === 'blob') {
-        $('.post-views .preview', this.el).addClass('active');
-      } else {
-        $('.post-views .edit', this.el).addClass('active');
-      }
-    }
+    this.trigger(state);
   },
 
   render: function() {

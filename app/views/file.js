@@ -393,7 +393,7 @@ module.exports = Backbone.View.extend({
       view: this
     });
 
-    this.metadataEditor.setElement(this.$el.find('#meta'));
+    this.metadataEditor.setElement(this.$el.find('#meta')).render();
     this.subviews.push(this.metadataEditor);
   },
 
@@ -458,7 +458,7 @@ module.exports = Backbone.View.extend({
     // this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
   },
 
-  edit: function(e) {
+  edit: function() {
     var view = this;
 
     // If preview was hit on load this.editor
@@ -482,7 +482,7 @@ module.exports = Backbone.View.extend({
     return false;
   },
 
-  preview: function(e) {
+  preview: function() {
     $('#prose').toggleClass('open', false);
 
     var metadata = this.model.get('metadata');
@@ -517,8 +517,7 @@ module.exports = Backbone.View.extend({
   },
 
   meta: function() {
-    // TODO: what is this toggling? emit an event instead?
-    $('#prose').toggleClass('open', false);
+    this.sidebar.close();
 
     // Content Window
     this.$el.find('.views .view').removeClass('active');
