@@ -94,7 +94,7 @@ module.exports = Backbone.Model.extend({
 
   fetch: function(options) {
     // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
-    Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success'));
+    Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
     this.getContent.apply(this, arguments);
   }
 });

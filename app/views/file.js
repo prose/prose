@@ -1,7 +1,10 @@
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
+
 var jsyaml = require('js-yaml');
+var queue = require('queue-async');
+
 var key = require('keymaster');
 var marked = require('marked');
 var diff = require('diff');
@@ -75,15 +78,6 @@ module.exports = Backbone.View.extend({
     }, this);
 
     /*
-    this.sidebar.initSubview('settings', {
-      config: this.config,
-      repo: this.repo,
-      branch: this.branch,
-      path: this.path
-    });
-    */
-
-    /*
     this.config = {};
 
     if (app.state.config && app.state.config.prose) {
@@ -101,7 +95,115 @@ module.exports = Backbone.View.extend({
 
   setModel: function() {
     this.model = this.collection.findWhere({ name: this.filename, path: this.path });
-    this.model.fetch({ success: this.render });
+
+    this.model.fetch({
+      complete: (function() {
+        this.config = this.collection.findWhere({ path: '_prose.yml' }) ||
+          this.collection.findWhere({ path: '_config.yml' });
+
+        // render view once config content has loaded
+        this.config.fetch({
+          complete: (function() {
+            this.setDefaults();
+            this.sidebar.initSubview('settings', {
+              config: this.config,
+              repo: this.repo,
+              branch: this.branch,
+              path: this.path
+            });
+          }).bind(this)
+        });
+
+        this.render();
+      }).bind(this)
+    });
+  },
+
+  nearestPath: function(metadata) {
+    // match nearest parent directory default metadata
+    var path = this.model.get('path');
+    var nearestDir = /\/(?!.*\/).*$/;
+
+    while (metadata[path] === undefined && path.match( nearestDir )) {
+      path = path.replace( nearestDir, '' );
+    }
+
+    return path;
+  },
+
+  setDefaults: function() {
+    var q = queue();
+    var content = this.config.get('content');
+
+    // Set empty defaults on model if no match
+    // to avoid loading _config.yml again unecessarily
+    var defaults = {};
+
+    var config;
+    var metadata;
+    var path;
+    var raw;
+
+    try {
+      config = jsyaml.load(content);
+    } catch(err) {
+      throw err;
+    }
+
+    if (config && config.prose && config.prose.metadata) {
+      metadata = config.prose.metadata;
+      path = this.nearestPath(metadata);
+
+      if (metadata[path]) {
+        raw = config.prose.metadata[path];
+
+        if (_.isObject(raw)) {
+          defaults = raw;
+
+          // TODO: iterate over these to add to queue synchronously
+          _.each(defaults, function(value, key) {
+
+            // Parse JSON URL values
+            if (value.field && value.field.options &&
+                _.isString(value.field.options) &&
+                value.field.options.match(/^https?:\/\//)) {
+
+              q.defer(function(cb) {
+                $.ajax({
+                  cache: true,
+                  dataType: 'jsonp',
+                  jsonp: false,
+                  jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
+                  url: value.field.options,
+                  success: function(d) {
+                    value.field.options = d;
+                    cb();
+                  }
+                });
+              });
+            }
+
+          });
+        } else if (_.isString(raw)) {
+          try {
+            defaults = jsyaml.load(raw);
+
+            if (defaults.date === "CURRENT_DATETIME") {
+              var current = (new Date()).format('Y-m-d H:i');
+              defaults.date = current;
+              raw = raw.replace("CURRENT_DATETIME", current);
+            }
+          } catch(err) {
+            throw err;
+          }
+        }
+      }
+    }
+
+    q.awaitAll((function() {
+      this.model.set('defaults', defaults);
+      if (this.model.get('metadata')) this.renderMetadata();
+    }).bind(this));
   },
 
   compilePreview: function(content) {
@@ -284,7 +386,11 @@ module.exports = Backbone.View.extend({
   },
 
   renderMetadata: function() {
-    this.metadataEditor = new MetadataView({ model: this.model, view: this });
+    this.metadataEditor = new MetadataView({
+      model: this.model,
+      view: this
+    });
+
     this.metadataEditor.setElement(this.$el.find('#meta'));
     this.subviews.push(this.metadataEditor);
   },
@@ -325,8 +431,6 @@ module.exports = Backbone.View.extend({
     // Render subviews
     this.renderHeading();
     this.updateDocumentTitle();
-
-    if (this.model.get('metadata')) this.renderMetadata();
 
     if (this.model.get('markdown') && this.mode === 'blob') {
       this.preview();

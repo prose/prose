@@ -2,7 +2,6 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 _.merge = require('deepmerge');
 
-var queue = require('queue-async');
 var jsyaml = require('js-yaml');
 
 var Backbone = require('backbone');
@@ -21,109 +20,12 @@ module.exports = Backbone.View.extend({
 
     this.model = options.model;
     this.view = options.view;
-
-    this.config = this.model.collection.findWhere({ path: '_prose.yml' }) ||
-      this.model.collection.findWhere({ path: '_config.yml' });
-
-    // render view once config content has loaded
-    if (this.model.get('defaults')) {
-      this.render();
-    } else {
-      this.config.fetch({ success: this.setDefaults });
-    }
   },
 
   rawKeyMap: function() {
     return {
       'Ctrl-S': this.view.updateFile
     };
-  },
-
-  nearestPath: function(metadata) {
-    // match nearest parent directory default metadata
-    var path = this.model.get('path');
-    var nearestDir = /\/(?!.*\/).*$/;
-
-    while (metadata[path] === undefined && path.match( nearestDir )) {
-      path = path.replace( nearestDir, '' );
-    }
-
-    return path;
-  },
-
-  setDefaults: function() {
-    var q = queue();
-    var content = this.config.get('content');
-
-    // Set empty defaults on model if no match
-    // to avoid loading _config.yml again unecessarily
-    var defaults = {};
-
-    var config;
-    var metadata;
-    var path;
-    var raw;
-
-    try {
-      config = jsyaml.load(content);
-    } catch(err) {
-      throw err;
-    }
-
-    if (config && config.prose && config.prose.metadata) {
-      metadata = config.prose.metadata;
-      path = this.nearestPath(metadata);
-
-      if (metadata[path]) {
-        raw = config.prose.metadata[path];
-
-        if (_.isObject(raw)) {
-          defaults = raw;
-
-          // TODO: iterate over these to add to queue synchronously
-          _.each(defaults, function(value, key) {
-
-            // Parse JSON URL values
-            if (value.field && value.field.options &&
-                _.isString(value.field.options) &&
-                value.field.options.match(/^https?:\/\//)) {
-
-              q.defer(function(cb) {
-                $.ajax({
-                  cache: true,
-                  dataType: 'jsonp',
-                  jsonp: false,
-                  jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
-                  url: value.field.options,
-                  success: function(d) {
-                    value.field.options = d;
-                    cb();
-                  }
-                });
-              });
-            }
-
-          });
-        } else if (_.isString(raw)) {
-          try {
-            defaults = jsyaml.load(raw);
-
-            if (defaults.date === "CURRENT_DATETIME") {
-              var current = (new Date()).format('Y-m-d H:i');
-              defaults.date = current;
-              raw = raw.replace("CURRENT_DATETIME", current);
-            }
-          } catch(err) {
-            throw err;
-          }
-        }
-      }
-    }
-
-    q.awaitAll((function() {
-      this.model.set('defaults', defaults);
-      this.render();
-    }).bind(this));
   },
 
   renderRaw: function() {
