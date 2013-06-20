@@ -53,7 +53,7 @@ module.exports = Backbone.Router.extend({
   // #example-organization
   profile: function(user) {
     var router = this;
-    utils.loader.loading('Loading Profile');
+    utils.loader.loading(t('loading.repos'));
 
     // Clean any previous view
     this.eventRegister.trigger('remove');
@@ -83,7 +83,7 @@ module.exports = Backbone.Router.extend({
   // #example-user/example-repo
   repo: function(user, repo) {
     var router = this;
-    utils.loader.loading('Loading Posts');
+    utils.loader.loading(t('loading.repo'));
 
     // Clean any previous view
     this.eventRegister.trigger('remove');
@@ -98,7 +98,7 @@ module.exports = Backbone.Router.extend({
     };
 
     app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
+      if (err) return router.notify('error', t('main.notification.error.exists'));
 
       router.application.render();
       var view = new app.views.Posts({
@@ -114,10 +114,10 @@ module.exports = Backbone.Router.extend({
   repoBranch: function(user, repo, branch, path) {
 
     var router = this;
-    utils.loader.loading('Loading Posts');
+    utils.loader.loading(t('loading.repo'));
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
+      if (err) return router.notify('error', t('main.notification.error.exists'));
       router.application.render();
 
       var view = new app.views.Posts({
@@ -158,7 +158,7 @@ module.exports = Backbone.Router.extend({
     // something like this here.
     app.state.markdown = true;
 
-    utils.loader.loading('Creating a new post');
+    utils.loader.loading(t('loading.creating'));
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
 
@@ -186,15 +186,15 @@ module.exports = Backbone.Router.extend({
 
   post: function(user, repo, branch, path, file, mode) {
     if (mode === 'edit') {
-      utils.loader.loading('Loading Post');
+      utils.loader.loading(t('loading.file'));
     } else {
-      utils.loader.loading('Previewing Post');
+      utils.loader.loading(t('preview.file'));
     }
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', 'This file does not exist.');
+      if (err) return this.notify('error', t('main.notification.error.exists'));
       app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) return this.notify('error', 'This file does not exist.');
+        if (err) return this.notify('error', t('main.notification.error.exists'));
 
         app.state.markdown = data.markdown;
         data.jekyll = !!data.metadata;
@@ -217,10 +217,10 @@ module.exports = Backbone.Router.extend({
 
   preview: function(user, repo, branch, path, file, mode) {
     var router = this;
-    utils.loader.loading('Previewing Post');
+    utils.loader.loading(t('preview.file'));
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', 'This post does not exist.');
+      if (err) return router.notify('error', t('main.notification.error.exists'));
       app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         if (err) {
           app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
@@ -265,7 +265,9 @@ module.exports = Backbone.Router.extend({
   // hits an error code router.navigate('error' + err.error)
   // sends the route here.
   error: function(code) {
-    code = (code && code === '404') ? 'Page not Found.' : 'Error';
+    code = (code && code === '404') ?
+      t('main.notification.error.404') :
+      t('main.notification.error.label');
 
     this.application.render({
       error: true
