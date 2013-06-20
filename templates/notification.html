@@ -2,8 +2,8 @@
   <div class='notify <%= type %>'>
     <h2 class='icon landing error'>Prose</h2>
     <div class='inner'>
-      <p><%= t('notification.login.description') %></p>
-      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'><%= t('notification.login.title') %></a></a>
+      <p><%= t('notification.loginDescription') %></p>
+      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'><%= t('login') %></a></a>
     </div>
   </div>
 <% } else { %>

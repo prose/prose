@@ -2,9 +2,9 @@
   <div class='round splash'>
     <h2 class='icon landing'>Prose</h2>
     <div class='inner'>
-      <p>Prose is a content editor for GitHub designed for managing websites.</p>
-      <p><a href='#about'>Learn more</a></p>
-      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'>Authorize with GitHub</a>
+      <p><%= t('main.start.content') %></p>
+      <p><a href='#about'><%= t('main.start.learn') %></a></p>
+      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>
     </div>
   </div>
 <% } %>

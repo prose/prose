@@ -1,4 +1,5 @@
 {
+    "login": "Authorize on GitHub",
     "docheader": {
         "editing": "Editing",
         "preview": "Previewing"
@@ -17,7 +18,9 @@
     },
     "actions": {
         "unsaved": "You have unsaved Changes. Are you sure you want to leave?",
-        "draft": "Draft to Post",
+        "draft": {
+            "toPost": "Draft to Post"
+        },
         "publishing": {
             "publish": "Publish",
             "published": "Published",
@@ -26,7 +29,7 @@
         },
         "change": {
             "noChange": "No Changes",
-            "changes": "Changes to Submit",
+            "submit": "Changes to Submit",
             "save": "Save"
         },
         "delete": {
@@ -66,13 +69,14 @@
     "main": {
         "start": {
             "content": "Prose is a content editor for GitHub designed for managing websites.",
-            "learn": "Learn more",
-            "login": "Authorize with GitHub"
+            "learn": "Learn more"
         },
         "repos": {
             "filter": "Filter Projects",
             "repo": "View Project",
-            "site": "View Site"
+            "site": "View Site",
+            "sharedFrom": "Shared from an account",
+            "forkedFrom": "Forked from another project"
         },
         "repo": {
             "filter": "Filter Files",
@@ -92,10 +96,7 @@
         }
     },
     "notification": {
-        "login": {
-            "title": "Authorize with GitHub",
-            "description": "Please login with your GitHub account to access that project."
-        },
+        "loginDescription": "Please login with your GitHub account to access that project.",
         "create": "Create it",
         "home": "Back to Main Page",
         "back": "Go Back",
@@ -107,9 +108,7 @@
     },
     "sidebar": {
         "repos": {
-            "groups": {
-                "label": "Groups"
-            }
+            "groups": "Groups"
         },
         "repo": {
             "branch": "Switch Branch",
