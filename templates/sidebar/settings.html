@@ -6,9 +6,9 @@
   <a class='draft button round' href='#'>Create Draft</a>
   
   <% if (languages && lang !== 'yaml') { %>
-    <% _(languages).each(function(language) { %>
-      <% if (language.value && (metadata && metadata.lang !== language.value)) { %>
-        <a class='translate round button' href='#<%= lang.value %>'>Translate to <%= lang.name %></a>
+    <% _.each(languages, function(language) { %>
+      <% if (language.value && (metadata && (metadata.lang !== language.value))) { %>
+        <a class='translate round button' href='#<%= language.value %>'>Translate to <%= language.name %></a>
       <% } %>
     <% }); %>
   <% } %>
