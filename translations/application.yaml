@@ -34,11 +34,14 @@ en:
       title: "Delete"
       warn: "Are you sure you want to delete this file?"
       error: "Error during deletion. Please wait 30 seconds and try again."
+    upload:
+      uploading: "Uploading {file}"
+      uploaded: "Uploaded {file}"
     save:
       title: "Save"
-      saving:
-        save: "Saving"
-        patch: "Submitting Request"
+      saved: "Saved"
+      saving: "Saving"
+      patch: "Submitting Request"
       fileNameError: "Needs a Filename"
       submission: "Request Submitted"
       metaError: "Error! Metadata not Found"
@@ -75,6 +78,7 @@ en:
         ## A New Post\n\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.
     file:
       metaTitle: "Review your changes:"
+      rawMeta: "Raw Metadata"
       metaDescription: "Additions are highlighted in green. Deletions are crossed out."
       back: "Done"
     upgrade:
@@ -114,17 +118,17 @@ en:
   dialogs:
     link:
       title: "Insert Link"
+      insertLocal: "Insert a Local Link"
       insert: "Insert"
     media:
-      insert:
-        title: "Insert Image"
-        description: |
-          Upload images by dragging &amp; Dropping or </br>
-          {input} <a>selecting one</a>
-        help: "Images uploaded are added to the current directory or one specified in the Image URL path above."
-        helpMedia: "Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field."
-      choose:
-        title: "Choose Existing"
+      title: "Insert Image"
+      back: "Back"
+      description: |
+        Upload images by dragging &amp; Dropping or </br>
+        {input} <a>selecting one</a>
+      help: "Images uploaded are added to the current directory or one specified in the Image URL path above."
+      helpMedia: "Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field."
+      choose: "Choose Existing"
     help:
       blockElements:
         title: "Block Elements"

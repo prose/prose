@@ -1,7 +1,7 @@
 <div class='inner clearfix'>
 
   <div <% if (assetsDirectory) { %>class='col fl'<% } %>>
-    <label><%= t('dialogs.media.insert.title') %></label>
+    <label><%= t('dialogs.media.title') %></label>
 
     <% if (writable) { %>
       <div class='contain clearfix'>
@@ -20,9 +20,9 @@
 
   <% if (assetsDirectory) { %>
     <div class='col col-last fl media-listing'>
-      <label><%= t('dialogs.media.choose.title') %></label>
+      <label><%= t('dialogs.media.choose') %></label>
       <ul id='media'></ul>
-      <small class='deemphasize'><%= t('dialogs.media.insert.helpMedia') %></small>
+      <small class='deemphasize'><%= t('dialogs.media.helpMedia') %></small>
     </div>
   <% } %>
 </div>

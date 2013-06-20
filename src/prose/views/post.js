@@ -118,18 +118,18 @@ module.exports = Backbone.View.extend({
 
     // Prevent exit when there are unsaved changes
     window.onbeforeunload = function() {
-      if (app.state.file && view.dirty) return 'You have unsaved changes. Are you sure you want to leave?';
+      if (app.state.file && view.dirty) return t('actions.unsaved');
     };
 
     return this;
   },
 
   updateDocumentTitle: function() {
-    var context = 'Editing ';
+    var context = t('docheader.editing');
     var pathTitle = (app.state.path) ? app.state.path : '';
 
-    if (app.state.mode === 'blob') context = 'Previewing ';
-    this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    if (app.state.mode === 'blob') context = t('docheader.preview');
+    this.eventRegister.trigger('documentTitle', context + ' ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
   },
 
   renderHeading: function() {
@@ -281,9 +281,9 @@ module.exports = Backbone.View.extend({
   },
 
   deleteFile: function() {
-    if (confirm('Are you sure you want to delete this file?')) {
+    if (confirm(t('actions.delete.warn'))) {
       window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
-        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+        if (err) return alert(t('actions.delete.error'));
         router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
       }, this));
     }
@@ -306,11 +306,11 @@ module.exports = Backbone.View.extend({
     if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
     if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
 
-    var label = this.model.writable ? 'Unsaved Changes' : 'Submit Change';
+    var label = this.model.writable ? t('actions.change.save') : t('actions.change.submit');
     this.eventRegister.trigger('updateSaveState', label, 'save');
 
     // Pass a popover span to the avatar icon
-    $('.save-action', this.el).find('.popup').html(this.model.alterable ? 'Save' : 'Submit Change');
+    $('.save-action', this.el).find('.popup').html(this.model.alterable ? t('actions.change.save') : t('actions.change.submit'));
   },
 
   togglePublishing: function(e) {
@@ -319,13 +319,13 @@ module.exports = Backbone.View.extend({
     if ($target.hasClass('published')) {
       $target
         .empty()
-        .html('Unpublish<span class="ico checkmark"></span>')
+        .html(t('actions.publishing.unpublish') + '<span class="ico checkmark"></span>')
         .removeClass('published')
         .attr('data-state', false);
     } else {
       $target
         .empty()
-        .html('Publish<span class="ico checkmark"></span>')
+        .html(t('actions.publishing.publish') + '<span class="ico checkmark"></span>')
         .addClass('published')
         .attr('data-state', true);
     }
@@ -434,7 +434,7 @@ module.exports = Backbone.View.extend({
         app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
 
           if (err) {
-            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
             return;
           }
 
@@ -446,14 +446,14 @@ module.exports = Backbone.View.extend({
           view.prevFile = filecontent;
           view.closeSettings();
           view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', 'Request Submitted', 'saved');
+          view.eventRegister.trigger('updateSaveState', t('actions.save.submission'), 'saved');
         });
       } else {
-        view.eventRegister.trigger('updateSaveState', 'Error Metadata not Found', 'error');
+        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
       }
     }
 
-    view.eventRegister.trigger('updateSaveState', 'Submitting Request', 'saving');
+    view.eventRegister.trigger('updateSaveState', t('actions.save.saving.patch'), 'saving');
     patch();
 
     return false;
@@ -466,7 +466,7 @@ module.exports = Backbone.View.extend({
       if (view.updateMetaData()) {
         window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
           if (err) {
-            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
             return;
           }
           view.dirty = false;
@@ -483,14 +483,14 @@ module.exports = Backbone.View.extend({
           view.prevFile = filecontent;
           view.closeSettings();
           view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
+          view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
         });
       } else {
-        view.eventRegister.trigger('updateSaveState', '!Metadata', 'error');
+        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
       }
     }
 
-    view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
+    view.eventRegister.trigger('updateSaveState', t('actions.save.saving'), 'saving');
 
     if (filepath === _.filepath(this.model.path, this.model.file)) return save();
 
@@ -498,7 +498,7 @@ module.exports = Backbone.View.extend({
     this.updateFilename(filepath, function(err) {
       if (err) {
         view.eventRegister.trigger('filenameInput');
-        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;filename', 'error');
+        view.eventRegister.trigger('updateSaveState', t('actions.save.fileNameError'), 'error');
       } else {
         save();
       }
@@ -507,10 +507,10 @@ module.exports = Backbone.View.extend({
 
   saveDraft: function(filepath, filename, filecontent, message) {
     var view = this;
-    view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
+    view.eventRegister.trigger('updateSaveState', t('actions.save.saving'), 'saving');
     window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
       if (err) {
-        view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+        view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
         return;
       }
       view.dirty = false;
@@ -523,7 +523,7 @@ module.exports = Backbone.View.extend({
       view.prevFile = filecontent;
       view.closeSettings();
       view.updatePublishState();
-      view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
+      view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
     });
   },
 
@@ -533,9 +533,9 @@ module.exports = Backbone.View.extend({
     var key = $publishKey.attr('data-state');
 
     if (key === 'true') {
-      $publishKey.html('Published<span class="ico checkmark"></span>');
+      $publishKey.html(t('actions.publishing.published') + '<span class="ico checkmark"></span>');
     } else {
-      $publishKey.html('Unpublished<span class="ico checkmark"></span>');
+      $publishKey.html(t('actions.publishing.unpublished') + 'Unpublished<span class="ico checkmark"></span>');
     }
   },
 
@@ -586,10 +586,15 @@ module.exports = Backbone.View.extend({
     var filename = _.extractFilename(filepath)[1];
     var filecontent = this.serialize();
     var $message = $('.commit-message');
-    var noVal = 'Updated ' + filename;
-    if (app.state.mode === 'new') noVal = 'Created ' + filename;
+    var defaultMessage;
 
-    var message = $message.val() || noVal;
+    if (app.state.mode === 'new') {
+      defaultMessage = t('actions.commits.created', { filename: filename });
+    } else {
+      defaultMessage = t('actions.commits.updated', { filename: filename });
+    }
+
+    var message = $message.val() || defaultMessage;
     var method = this.model.writable ? this.saveFile : this.sendPatch;
 
     // Update content
@@ -606,7 +611,7 @@ module.exports = Backbone.View.extend({
     var filename = filepath[1];
     var postType = basepath[0];
     var filecontent = this.serialize();
-    var message = 'Created draft of ' + filename;
+    var message = t('actions.commits.toDraft', { filename: filename });
 
     if (postType === '_posts') {
       basepath.splice(0, 1, '_drafts');
@@ -616,7 +621,7 @@ module.exports = Backbone.View.extend({
     } else {
       basepath.splice(0, 1, '_posts');
       filepath.splice(0, 1, basepath.join('/'));
-      message = 'Create post from draft of ' + filename;
+      message = t('actions.commits.fromDraft', { filename: filename });
       this.saveFile(filepath.join('/'), filename, filecontent, message);
       app.state.path = this.model.path = filepath[0];
     }
@@ -761,7 +766,7 @@ module.exports = Backbone.View.extend({
         }
       });
 
-      $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">Raw Metadata</label>').appendTo($metadataEditor);
+      $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">' + t('main.file.rawMeta') + '</label>').appendTo($metadataEditor);
 
       var rawContainer = (view.model.lang === 'yaml') ? 'code' : 'raw';
       view.rawEditor = CodeMirror(document.getElementById(rawContainer), {
@@ -1158,7 +1163,7 @@ module.exports = Backbone.View.extend({
     var view = this;
 
     // Loading State
-    this.eventRegister.trigger('updateSaveState', 'Uploading ' + file.name, 'saving');
+    this.eventRegister.trigger('updateSaveState', t('actions.upload.uploading', { file: file.name }), 'saving');
 
     // Base64 Encode the file content
     var extension = file.type.split('/').pop();
@@ -1177,14 +1182,14 @@ module.exports = Backbone.View.extend({
     }
 
     var data = {};
-        data.message = 'Uploaded ' + file.name;
+        data.message = t('actions.upload.uploaded', { file: file.name });
         data.content = content;
         data.branch = app.state.branch;
 
     // Read through the filenames of path. If there is a filename that
     // exists, we want to pass data.sha to update the existing one.
     app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, _.extractFilename(path)[0], function(err, res) {
-      if (err) return view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
+      if (err) return view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
 
       // Check whether the current (or media) directory
       // contains the same filename as the one a user wishes
@@ -1208,7 +1213,7 @@ module.exports = Backbone.View.extend({
 
       app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
         if (type === 'error') {
-          view.eventRegister.trigger('updateSaveState', 'Error&nbsp;Uploading try again in 30 Seconds!', 'error');
+          view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
         } else {
           var $alt = $('input[name="alt"]');
           var image = ($alt.val() && $alt.val() !== undefined) ?
@@ -1217,7 +1222,7 @@ module.exports = Backbone.View.extend({
 
           view.editor.focus();
           view.editor.replaceSelection(image);
-          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
+          view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
 
           // Update the media directory with the
           // newly uploaded image.
@@ -1313,7 +1318,7 @@ module.exports = Backbone.View.extend({
 
             if (view.relativeLinks) {
               $('.chzn-select', $dialog).chosen().change(function() {
-                $('.chzn-single span').text('Insert a local link.');
+                $('.chzn-single span').text(t('dialogs.link.insertLocal'));
 
                 var parts = $(this).val().split(',');
                 $('input[name=href]', $dialog).val(parts[0]);
@@ -1448,7 +1453,7 @@ module.exports = Backbone.View.extend({
 
     if (back && (back.join() !== this.assetsDirectory)) {
       var link = back.slice(0, back.length - 1).join('/');
-      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
+      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>' + t('dialogs.media.back') + '</a></li>');
     }
 
     _(data).each(function(asset) {

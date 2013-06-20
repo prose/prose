@@ -174,7 +174,7 @@ module.exports = Backbone.View.extend({
       fileName: $file.data('file')
     };
 
-    if (confirm(t('actions.delete.warn')) {
+    if (confirm(t('actions.delete.warn'))) {
       $file.addClass('working');
       $ico.addClass('saving');
 
