@@ -11,55 +11,61 @@ var views = {
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-    template: _.template(templates.drawer),
+  template: _.template(templates.drawer),
 
-    subviews: [],
+  subviews: [],
 
-    initSubview: function(subview, options) {
-      if (!views[subview]) return false;
+  initialize: function(options) {
+    _.bindAll(this);
+  },
 
-      options = _.clone(options) || {};
+  initSubview: function(subview, options) {
+    if (!views[subview]) return false;
 
-      this[subview] = new views[subview](options);
-      this[subview].setElement(this.$el.find('#' + subview));
+    options = _.clone(options) || {};
 
-      this.subviews.push(this[subview]);
-      // this.subviews[subview] = this[subview];
+    this[subview] = new views[subview](options);
+    this[subview].setElement(this.$el.find('#' + subview));
 
-      // TODO: is this.subviews being filled with abandoned views preventing garbage collection?
-      console.log(this.subviews);
+    this.subviews.push(this[subview]);
+    // this.subviews[subview] = this[subview];
 
-      this.renderSubview(subview);
-    },
+    // TODO: is this.subviews being filled with abandoned views preventing garbage collection?
+    console.log(this.subviews);
 
-    renderSubview: function(subview) {
-      this[subview].render();
-    },
+    this.renderSubview(subview);
+  },
 
-    render: function(options) {
-      this.$el.html(this.template());
+  renderSubview: function(subview) {
+    this[subview].render();
+  },
 
-      _.invoke(this.subviews, 'render');
+  render: function(options) {
+    this.$el.html(this.template());
 
-      return this;
-    },
+    _.invoke(this.subviews, 'render');
 
-    open: function() {
-      // TODO: call when in 'tree'/repo mode and when authenticated but no mode (profile)?
-      this.$el.toggleClass('open', true);
-      this.$el.toggleClass('mobile', false);
+    return this;
+  },
 
-      return false;
-    },
+  open: function() {
+    debugger;
 
-    close: function() {
-      this.$el.toggleClass('open mobile', false);
-    },
+    // TODO: call when in 'tree'/repo mode and when authenticated but no mode (profile)?
+    this.$el.toggleClass('open', true);
+    this.$el.toggleClass('mobile', false);
 
-    remove: function() {
-      _.invoke(this.subviews, 'remove');
-      this.subviews = [];
+    return false;
+  },
 
-      Backbone.View.prototype.remove.apply(this, arguments);
-    }
+  close: function() {
+    this.$el.toggleClass('open mobile', false);
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = [];
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
 });
