@@ -17,6 +17,50 @@ Here's a quick list of things to consider before submitting an issue:
 
 And when in doubt, be over-descriptive of the bug and how you discovered it.
 
+## Translating
+
+Translations are managed using the
+[Transifex](https://www.transifex.com/projects/p/prose/) platform. After
+signing up, you can go to [the prose project
+page](https://www.transifex.com/projects/p/prose/), select a language and
+click *Translate now* to start translating.
+
+Words in brackets, for example `{name}`, should not be translated into a
+new language: it's replaced with a place name when prose presents the text. So a
+French translation of `"Uploading {file}"` would look like
+`"Réviser {file}"`.
+
+The translations for presets consist of the names of presets, labels for
+preset fields, and lists of search terms. You do _not_ need to translate the
+search terms literally -- use a set of synonyms and related terms appropriate
+to the target language, separated by commas.
+
+Translations are licensed under
+[BSD](https://github.com/prose/prose/blob/master/LICENCE.md), the same license
+as iD.
+
+[prose translation project on
+Transifex](https://www.transifex.com/projects/p/prose/)
+
+## Adding New Strings for Translation
+
+Prose translates strings with a `t` function - `t('foo.bar')` translate the key
+`foo.bar` into the current language. If you introduce new translatable strings
+to iD, only display them in the interface through the `t()` function.
+
+Then, add the new string to `translations/application.yaml`. The translation system,
+Transiflex, will automatically detect the change.
+
+Use `make` to build the translations with the local changes.
+`make translate` can be used to pull the latest translations from Transifex.
+
+If you run `make translate` you will be warned to include a `transifex.auth` file in the root directory that contains your transifex user details:
+
+  {
+      "user": "username",
+      "pass": "password"
+  }
+
 ## Submitting Pull Requests
 
 All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. the `gh-pages` branch manages rebuilds to the server.

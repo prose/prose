@@ -1,14 +1,12 @@
 <div class='editor views<% if (markdown) { %> markdown<% } %>'>
   <div id='diff' class='view prose diff'>
-    <h2>Review your changes:<br /><span class='deemphasize small'>Additions are highlighted in green. Deletions are crossed out.</span></h2>
+    <h2><%= t('main.file.metaTitle') %><br /><span class='deemphasize small'></span><%= t('main.file.metaDescription') %></h2>
     <div class='diff-content inner'></div>
   </div>
   <% if (jekyll) { %>
     <div id='meta' class='view round meta'>
       <div class='form'></div>
-      <a href='#' class='button round finish'>
-        Back to <% if (app.state.mode === 'new') { %>New Post<% } else { %><%= app.state.mode %><% } %>
-      </a>
+      <a href='#' class='button round finish'><%= t('main.file.back') %></a>
     </div>
   <% } %>
   <div id='edit' class='view active edit'>

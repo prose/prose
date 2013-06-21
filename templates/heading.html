@@ -2,11 +2,7 @@
   <div class='action round avatar'>
     <div class='popup-hover'>
       <span class='ico round status'></span>
-      <% if (writable) { %>
-        <span class='popup round arrow-left'>No Changes</span>
-      <% } else { %>
-        <span class='popup round arrow-left'>Changes to Submit</span>
-      <% } %>
+      <span class='popup round arrow-left'><%= t('actions.change.noChange') %></span>
       <%= avatar %>
     </div>
   </div>

@@ -1655,7 +1655,7 @@ ins {
     /*}*/
 
   .post .view.diff pre {
-    background:#fff;
+    background:transparent;
     font-family:Menlo, monospace;
     font-size:13px;
     line-height:1.4em;
@@ -1663,7 +1663,6 @@ ins {
     padding:0;
     }
     .post .markdown .view.diff pre {
-      background:transparent;
       color:#a8afb2;
       font-size:14px;
       line-height:1.75em;
