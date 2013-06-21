@@ -1324,9 +1324,11 @@ ins {
 
 .dialog .media-listing {
   padding-left:15px;
-  height:180px;
-  overflow:auto;
   }
+  .dialog .media-listing ul {
+    height:155px;
+    overflow:auto;
+    }
   .chzn-results::-webkit-scrollbar,
   .dialog ::-webkit-scrollbar {
     background:#fff;
