@@ -748,6 +748,7 @@ module.exports = Backbone.View.extend({
               tmpl = {};
               tmpl[data.name] = data.field.value;
               view.model.metadata = _.merge(tmpl, view.model.metadata);
+              view.model.hidden = _.merge(tmpl, view.model.hidden || {});
               break;
           }
         } else {
@@ -833,13 +834,13 @@ module.exports = Backbone.View.extend({
 
       if (view.rawEditor) {
         try {
-          metadata = _.extend(metadata, jsyaml.load(view.rawEditor.getValue()));
+          metadata = _.merge(metadata, jsyaml.load(view.rawEditor.getValue()) || {});
         } catch (err) {
           console.log(err);
         }
       }
 
-      return _.extend(view.model.metadata, metadata);
+      return _.merge(view.model.hidden || {}, metadata);
     }
 
     function getRaw() {
