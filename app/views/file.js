@@ -530,17 +530,17 @@ module.exports = Backbone.View.extend({
   destroy: function() {
     if (confirm('Are you sure you want to delete this file?')) {
       this.model.destroy({
-        success: function() {
+        success: (function() {
           // TODO: this.branch.get('path')
           this.router.navigate([
             this.repo.get('owner').login,
             this.repo.get('name'),
             'tree',
-            this.branch.get('name')
+            this.branch
           ].join('/'), true);
-        },
+        }).bind(this),
         error: function() {
-          if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+          return alert('Error during deletion. Please wait 30 seconds and try again.');
         }
       });
     }

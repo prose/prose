@@ -38,6 +38,25 @@ module.exports = Backbone.Model.extend({
     this.set('writable', this.repo.get('permissions').push);
   },
 
+  destroy: function(options) {
+    options = _.clone(options) || {};
+
+    var path = this.get('path');
+
+    var data = {
+      path: path,
+      message: 'Deleted ' + path,
+      sha: this.get('sha'),
+      branch: this.branch.get('name')
+    };
+
+    var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
+
+    Backbone.Model.prototype.destroy.call(this, _.extend(options, {
+      url: this.url() + '&' + params
+    }));
+  },
+
   parse: function(resp, options) {
     if (typeof resp === 'string') {
       return this.parseContent(resp);
@@ -93,11 +112,6 @@ module.exports = Backbone.Model.extend({
     // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
     Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
     this.getContent.apply(this, arguments);
-  },
-
-  destroy: function(options) {
-    debugger;
-    Backbone.View.prototype.destroy.apply(this, arguments);
   },
 
   url: function() {
