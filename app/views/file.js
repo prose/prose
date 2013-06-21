@@ -56,12 +56,12 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.nav, 'preview', this.preview);
     this.listenTo(this.nav, 'meta', this.meta);
     this.listenTo(this.nav, 'settings', this.sidebar.toggle);
+    this.listenTo(this.nav, 'save', this.save);
 
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
 
     /*
-    this.listenTo(this.nav, 'save', this.save, this);
     this.listenTo(this.nav, 'updateFile', this.updateFile, this);
     this.listenTo(this.nav, 'translate', this.translate, this);
     this.listenTo(this.nav, 'remove', this.remove, this);
@@ -601,14 +601,23 @@ module.exports = Backbone.View.extend({
     return false;
   },
 
+  save: function() {
+    this.showDiff();
+  },
+
   showDiff: function() {
-    var $diff = $('#diff', this.el);
-    var text1 = this.model.persisted ? _.escape(this.model.get('previous')) : '';
-    var text2 = _.escape(this.serialize());
+    var $diff = this.$el.find('#diff');
+
+    // TODO: why was _.escape() used here?
+    var text1 = this.model.isNew() ? '' : this.model.get('previous');
+    var text2 = this.serialize();
+
     var d = diff.diffWords(text1, text2);
+    var length = d.length;
+
     var compare = '';
 
-    for (var i = 0; i < d.length; i++) {
+    for (var i = 0; i < length; i++) {
       if (d[i].removed) {
         compare += '<del>' + d[i].value + '</del>';
       } else if (d[i].added) {
@@ -619,9 +628,8 @@ module.exports = Backbone.View.extend({
     }
 
     // Content Window
-    $('.views .view', this.el).removeClass('active');
-    $diff.html('<pre>' + compare + '</pre>');
-    $diff.addClass('active');
+    this.$el.find('.views .view').removeClass('active');
+    $diff.html('<pre>' + compare + '</pre>').addClass('active');
   },
 
   closeSettings: function() {
@@ -644,10 +652,6 @@ module.exports = Backbone.View.extend({
     } else {
       $('#edit', this.el).addClass('active');
     }
-  },
-
-  save: function() {
-    this.showDiff();
   },
 
   refreshCodeMirror: function() {

@@ -17,7 +17,7 @@ module.exports = Backbone.Model.extend({
       repo: attributes.repo,
       sha: attributes.sha,
       type: attributes.type,
-      'content_url': attributes.url
+      content_url: attributes.url
     });
   },
 
@@ -36,25 +36,6 @@ module.exports = Backbone.Model.extend({
     this.set('media', util.isMedia(extension));
     this.set('markdown', util.isMarkdown(extension));
     this.set('writable', this.repo.get('permissions').push);
-  },
-
-  destroy: function(options) {
-    options = _.clone(options) || {};
-
-    var path = this.get('path');
-
-    var data = {
-      path: path,
-      message: 'Deleted ' + path,
-      sha: this.get('sha'),
-      branch: this.branch.get('name')
-    };
-
-    var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
-
-    Backbone.Model.prototype.destroy.call(this, _.extend(options, {
-      url: this.url() + '&' + params
-    }));
   },
 
   parse: function(resp, options) {
@@ -78,9 +59,11 @@ module.exports = Backbone.Model.extend({
       previous: resp
     };
 
-    var res = {};
+    var res = {
+      previous: resp
+    };
 
-    res.content = res.previous = resp.replace(/^(---\n)((.|\n)*?)---\n?/, function(match, dashes, frontmatter) {
+    res.content = resp.replace(/^(---\n)((.|\n)*?)---\n?/, function(match, dashes, frontmatter) {
       try {
         // TODO: _.defaults for each key
         res.metadata = jsyaml.load(frontmatter);
@@ -112,6 +95,47 @@ module.exports = Backbone.Model.extend({
     // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
     Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
     this.getContent.apply(this, arguments);
+  },
+
+  save: function() {
+    options = _.clone(options) || {};
+
+    var path = this.get('path');
+
+    debugger;
+
+    var data = {
+      path: path,
+      message: (this.isNew() ? 'Created ' : 'Updated ') + path,
+      content: null,
+      sha: this.get('sha'),
+      branch: this.branch.get('name')
+    };
+
+    var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
+
+    Backbone.Model.prototype.save.call(this, _.extend(options, {
+      url: this.url() + '&' + params
+    }));
+  },
+
+  destroy: function(options) {
+    options = _.clone(options) || {};
+
+    var path = this.get('path');
+
+    var data = {
+      path: path,
+      message: 'Deleted ' + path,
+      sha: this.get('sha'),
+      branch: this.branch.get('name')
+    };
+
+    var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
+
+    Backbone.Model.prototype.destroy.call(this, _.extend(options, {
+      url: this.url() + '&' + params
+    }));
   },
 
   url: function() {

@@ -23,7 +23,7 @@ module.exports = Backbone.View.extend({
   },
 
   emit: function(e) {
-    var state = $(e.target).data('state');
+    var state = $(e.currentTarget).data('state');
 
     this.toggle(state, e);
 
