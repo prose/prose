@@ -13,6 +13,7 @@ clean:
 
 translations:
 	node translations/update_locales
+	node build
 
 dist/templates.js: $(TEMPLATES)
 	node build

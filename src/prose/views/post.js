@@ -1357,7 +1357,7 @@ module.exports = Backbone.View.extend({
           case 'media':
             tmpl = _(app.templates.mediaDialog).template();
             $dialog.append(tmpl({
-              description: t('dialogs.media.insert.description', {
+              description: t('dialogs.media.description', {
                 input: '<input id="upload" class="upload" type="file" />'
               }),
               writable: view.data.writable,

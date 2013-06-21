@@ -98,7 +98,7 @@ module.exports = Backbone.Router.extend({
     };
 
     app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('main.notification.error.exists'));
+      if (err) return router.notify('error', t('notification.error.exists'));
 
       router.application.render();
       var view = new app.views.Posts({
@@ -117,7 +117,7 @@ module.exports = Backbone.Router.extend({
     utils.loader.loading(t('loading.repo'));
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('main.notification.error.exists'));
+      if (err) return router.notify('error', t('notification.error.exists'));
       router.application.render();
 
       var view = new app.views.Posts({
@@ -192,9 +192,9 @@ module.exports = Backbone.Router.extend({
     }
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', t('main.notification.error.exists'));
+      if (err) return this.notify('error', t('notification.error.exists'));
       app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) return this.notify('error', t('main.notification.error.exists'));
+        if (err) return this.notify('error', t('notification.error.exists'));
 
         app.state.markdown = data.markdown;
         data.jekyll = !!data.metadata;
@@ -220,7 +220,7 @@ module.exports = Backbone.Router.extend({
     utils.loader.loading(t('preview.file'));
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('main.notification.error.exists'));
+      if (err) return router.notify('error', t('notification.error.exists'));
       app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
         if (err) {
           app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
@@ -266,8 +266,8 @@ module.exports = Backbone.Router.extend({
   // sends the route here.
   error: function(code) {
     code = (code && code === '404') ?
-      t('main.notification.error.404') :
-      t('main.notification.error.label');
+      t('notification.error.notFound') :
+      t('notification.error.label');
 
     this.application.render({
       error: true
