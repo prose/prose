@@ -24,7 +24,7 @@ module.exports = Backbone.View.extend({
           avatar: '<img class="round" src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
           parent: data.user.name || data.user.login,
           parentUrl: data.user.login,
-          title: 'Explore Projects',
+          title: t('heading.explore'),
           titleUrl: data.user.login
       };
 

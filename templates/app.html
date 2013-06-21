@@ -15,12 +15,12 @@
   <div class='inner clearfix'>
     <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>
     <ul class='dropdown clearfix'>
-      <li><a href='#'>Prose v1</a></li>
-      <li><a class='about' href='./#about'>About</a></li>
-      <li><a class='help' href='https://github.com/prose/prose'>Developers</a></li>
+      <li><a href='#'>Prose <%= version %></a></li>
+      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>
+      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>
       <% if (window.authenticated) { %>
         <li class='divider'></li>
-        <li><a href='#' class='logout'>Logout</a></li>
+        <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>
       <% } %>
     </ul>
   </div>

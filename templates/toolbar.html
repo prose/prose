@@ -1,10 +1,10 @@
 <% if (draft) { %>
-  <a href='#' class='draft-to-post'>Draft to Post<span class='ico checkmark'></span></a>
+  <a href='#' class='draft-to-post'><%= t('actions.draft.toPost') %><span class='ico checkmark'></span></a>
 <% } else { %>
   <% if (jekyll && metadata.published) { %>
-    <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico small checkmark'></span></a>
+    <a href='#' class='publish-flag published round' data-state='true'><%= t('actions.publishing.published') %><span class='ico small checkmark'></span></a>
   <% } else if (jekyll && !metadata.published) { %>
-    <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico small checkmark'></span></a>
+    <a href='#' class='publish-flag' data-state='false'><%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span></a>
   <% } %>
 <% } %>
 <div class='options clearfix'>
@@ -12,9 +12,9 @@
     <span class='status'></span>
 
     <% if (writable) { %>
-      <span class='popup round arrow-top'>Ctrl&nbsp;+&nbsp;S</span>
+      <span class='popup round arrow-top'><%= t('actions.change.save') %></span>
     <% } else { %>
-      <span class='popup round arrow-top'>Submit Change</span>
+      <span class='popup round arrow-top'><%= t('actions.change.submit') %></span>
     <% } %>
 
   </span>

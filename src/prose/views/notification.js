@@ -20,7 +20,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', 'Error ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    this.eventRegister.trigger('documentTitle', t('docheader.error') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
     var tmpl = _(window.app.templates.notification).template();
 
     // Basically for any previous path we want to try
