@@ -56,7 +56,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.nav, 'preview', this.preview);
     this.listenTo(this.nav, 'meta', this.meta);
     this.listenTo(this.nav, 'settings', this.sidebar.toggle);
-    this.listenTo(this.nav, 'save', this.save);
+    this.listenTo(this.nav, 'save', this.showDiff);
 
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
@@ -599,10 +599,6 @@ module.exports = Backbone.View.extend({
     this.makeDirty();
 
     return false;
-  },
-
-  save: function() {
-    this.showDiff();
   },
 
   showDiff: function() {
