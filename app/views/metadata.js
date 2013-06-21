@@ -119,6 +119,7 @@ module.exports = Backbone.View.extend({
             tmpl = {};
             tmpl[data.name] = data.field.value;
             this.model.set('metadata', _.merge(tmpl, this.model.get('metadata')));
+            this.model.set('hidden', _.merge(tmpl, this.model.get('hidden') || {}));
             break;
         }
       } else {
@@ -194,13 +195,13 @@ module.exports = Backbone.View.extend({
 
     if (this.raw) {
       try {
-        metadata = $.extend(metadata, jsyaml.load(this.raw.getValue()));
+        metadata = _.merge(metadata, jsyaml.load(this.raw.getValue()) || {});
       } catch (err) {
         throw err;
       }
     }
 
-    return _.extend(this.model.get('metadata'), metadata);
+    return _.merge(this.model.get('hidden'), metadata);
   },
 
   setValue: function(data) {
