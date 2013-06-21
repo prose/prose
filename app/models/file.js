@@ -1,7 +1,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var jsyaml = require('js-yaml');
-var config = require('../config');
 var util = require('.././util');
 
 module.exports = Backbone.Model.extend({
@@ -18,20 +17,18 @@ module.exports = Backbone.Model.extend({
       repo: attributes.repo,
       sha: attributes.sha,
       type: attributes.type,
-      url: attributes.url
+      'content_url': attributes.url
     });
   },
 
   initialize: function(attributes, options) {
+    _.bindAll(this);
+
     var extension =  util.extension(attributes.name);
 
     this.branch = attributes.branch;
     this.collection = attributes.collection;
     this.repo = attributes.repo;
-
-    this.url = config.api + '/repos/' + this.repo.get('owner').login + '/' +
-      this.repo.get('name') + '/contents/' + attributes.path;
-    this.contentUrl = attributes.url;
 
     this.set('extension', extension);
     this.set('binary', util.isBinary(extension));
@@ -88,7 +85,7 @@ module.exports = Backbone.Model.extend({
       headers: {
         'Accept': 'application/vnd.github.raw'
       },
-      url: this.contentUrl
+      url: this.get('content_url')
     }));
   },
 
@@ -96,5 +93,14 @@ module.exports = Backbone.Model.extend({
     // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
     Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
     this.getContent.apply(this, arguments);
+  },
+
+  destroy: function(options) {
+    debugger;
+    Backbone.View.prototype.destroy.apply(this, arguments);
+  },
+
+  url: function() {
+    return this.repo.url() + '/contents/' + this.get('path') + '?ref=' + this.branch.get('name');
   }
 });

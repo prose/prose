@@ -22,7 +22,10 @@ module.exports = Backbone.Model.extend({
   },
 
   initialize: function(attributes, options) {
-    this.url = config.api + '/repos/' + attributes.owner.login + '/' + attributes.name;
     this.branches = new Branches([], { repo: this });
+  },
+
+  url: function() {
+    return config.api + '/repos/' + this.get('owner').login + '/' + this.get('name');
   }
 });

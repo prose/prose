@@ -51,14 +51,16 @@ module.exports = Backbone.View.extend({
 
     this.listenTo(this.branches, 'sync', this.setCollection);
 
-    // Listen for button clicks from the vertical nav
+    // Events from vertical nav
     this.listenTo(this.nav, 'edit', this.edit);
     this.listenTo(this.nav, 'preview', this.preview);
     this.listenTo(this.nav, 'meta', this.meta);
     this.listenTo(this.nav, 'settings', this.sidebar.toggle);
 
+    // Events from sidebar
+    this.listenTo(this.sidebar, 'destroy', this.destroy);
+
     /*
-    this.listenTo(this.nav, 'deleteFile', this.deleteFile, this);
     this.listenTo(this.nav, 'save', this.save, this);
     this.listenTo(this.nav, 'updateFile', this.updateFile, this);
     this.listenTo(this.nav, 'translate', this.translate, this);
@@ -116,6 +118,7 @@ module.exports = Backbone.View.extend({
             this.setDefaults(config);
 
             this.sidebar.initSubview('settings', {
+              sidebar: this.sidebar,
               config: config,
               repo: this.repo,
               branch: this.branch,
@@ -478,12 +481,10 @@ module.exports = Backbone.View.extend({
 
     this.mode = this.model.isNew() ? 'new' : 'edit';
     this.updateURL();
-
-    return false;
   },
 
   preview: function() {
-    $('#prose').toggleClass('open', false);
+    this.sidebar.close();
 
     var metadata = this.model.get('metadata');
     var jekyll = this.config && this.config.siteurl && metadata && metadata.layout;
@@ -524,18 +525,25 @@ module.exports = Backbone.View.extend({
     this.$el.find('#meta').addClass('active');
 
     this.metadataEditor.refresh();
-
-    return false;
   },
 
-  deleteFile: function() {
+  destroy: function() {
     if (confirm('Are you sure you want to delete this file?')) {
-      window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
-        if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
-        router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
-      }, this));
+      this.model.destroy({
+        success: function() {
+          // TODO: this.branch.get('path')
+          this.router.navigate([
+            this.repo.get('owner').login,
+            this.repo.get('name'),
+            'tree',
+            this.branch.get('name')
+          ].join('/'), true);
+        },
+        error: function() {
+          if (err) return alert('Error during deletion. Please wait 30 seconds and try again.');
+        }
+      });
     }
-    return false;
   },
 
   updateURL: function() {

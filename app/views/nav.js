@@ -25,7 +25,7 @@ module.exports = Backbone.View.extend({
   emit: function(e) {
     var state = $(e.target).data('state');
 
-    this.toggle(state);
+    this.toggle(state, e);
 
     return false;
   },
@@ -41,11 +41,11 @@ module.exports = Backbone.View.extend({
     this.$el.attr('data-mode', mode);
   },
 
-  toggle: function(state) {
+  toggle: function(state, e) {
     this.$el.find('.post-views a').not('[data-state=' + state + ']').removeClass('active');
     this.$el.find('.post-views a[data-state=' + state + ']').toggleClass('active');
 
-    this.trigger(state);
+    this.trigger(state, e);
   },
 
   render: function() {

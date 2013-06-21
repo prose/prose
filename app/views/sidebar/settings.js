@@ -12,7 +12,7 @@ module.exports = Backbone.View.extend({
       'click a.save': 'save',
       'click a.cancel': 'cancel',
       'click a.confirm': 'updateFile',
-      'click a.delete': 'deleteFile',
+      'click a.delete': 'emit',
       'click a.translate': 'translate',
       'click a.draft': 'draft',
       'focus input.filepath': 'checkPlaceholder',
@@ -20,10 +20,23 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function(options) {
+      this.sidebar = options.sidebar;
       this.config = options.config;
       this.repo = options.repo;
       this.branch = options.branch;
       this.file = options.file;
+
+      this.listenTo(this.sidebar, 'all', function() {
+        console.log(arguments);
+      });
+    },
+
+    emit: function(e) {
+      var action = $(e.currentTarget).data('action');
+
+      this.sidebar.trigger(action, e);
+
+      return false;
     },
 
     render: function() {

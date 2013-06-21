@@ -1,7 +1,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var File = require('../models/file');
-var config = require('../config');
 
 module.exports = Backbone.Collection.extend({
   model: File,
@@ -10,9 +9,6 @@ module.exports = Backbone.Collection.extend({
     this.repo = options.repo;
     this.branch = options.branch;
     this.sha = options.sha;
-
-    this.url = config.api + '/repos/' + this.repo.get('owner').login + '/' + 
-      this.repo.get('name') + '/git/trees/' + this.sha + '?recursive=1';
 
     this.comparator = function(file) {
       return file.get('name');
@@ -27,5 +23,9 @@ module.exports = Backbone.Collection.extend({
         repo: this.repo
       })
     }).bind(this));
+  },
+
+  url: function() {
+    return this.repo.url() + '/git/trees/' + this.sha + '?recursive=1';
   }
 });
