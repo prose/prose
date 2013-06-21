@@ -6,8 +6,6 @@ var templates = require('../../../dist/templates');
 var utils = require('../../util');
 
 module.exports = Backbone.View.extend({
-    className: 'application',
-
     subviews: [],
 
     events: {
