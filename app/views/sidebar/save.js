@@ -6,18 +6,15 @@ var templates = require('../../../dist/templates');
 var utils = require('../../util');
 
 module.exports = Backbone.View.extend({
-    template: _.template(templates.sidebar.settings),
+    template: _.template(templates.sidebar.save),
 
     events: {
-      'click a.save': 'emit',
-      'click a.delete': 'emit',
-      'click a.translate': 'emit',
-      'click a.draft': 'emit'
+      'click a.cancel': 'emit',
+      'click a.confirm': 'emit'
     },
 
     initialize: function(options) {
       this.sidebar = options.sidebar;
-      this.config = options.config;
       this.file = options.file;
     },
 
@@ -29,13 +26,12 @@ module.exports = Backbone.View.extend({
     },
 
     render: function() {
-      // this.file.get('lang') is programming language
-      // this.file.get('metadata').lang is ISO 639-1 language code
       this.$el.html(this.template({
-        languages: this.config.languages,
-        lang: this.file.get('lang'),
-        metadata: this.file.get('metadata')
+        writable: this.file.get('writable')
       }));
+
+      var placeholder = (this.file.isNew() ? 'Created ' : 'Updated ') + this.file.get('name');
+      this.$el.find('.commit-message').attr('placeholder', placeholder).focus();
 
       return this;
     }

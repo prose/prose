@@ -5,6 +5,7 @@ var views = {
   branches: require('./sidebar/branches'),
   history: require('./sidebar/history'),
   orgs: require('./sidebar/orgs'),
+  save: require('./sidebar/save'),
   settings: require('./sidebar/settings')
 };
 
@@ -48,13 +49,15 @@ module.exports = Backbone.View.extend({
     return this;
   },
 
-  /*
   open: function() {
+    this.$el.toggleClass('open mobile', true);
+
+    /*
     // TODO: call when in 'tree'/repo mode and when authenticated but no mode (profile)?
     this.$el.toggleClass('open', true);
     this.$el.toggleClass('mobile', false);
+    */
   },
-  */
 
   close: function() {
     this.$el.toggleClass('open mobile', false);

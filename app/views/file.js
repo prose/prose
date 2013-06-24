@@ -60,12 +60,11 @@ module.exports = Backbone.View.extend({
 
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
+    this.listenTo(this.sidebar, 'cancel', this.cancel);
+    this.listenTo(this.sidebar, 'confirm', this.updateFile);
 
     /*
-    this.listenTo(this.nav, 'updateFile', this.updateFile, this);
     this.listenTo(this.nav, 'translate', this.translate, this);
-    this.listenTo(this.nav, 'remove', this.remove, this);
-    this.listenTo(this.nav, 'cancelSave', this.cancelSave, this);
     */
 
     // Cache jQuery window object
@@ -117,11 +116,16 @@ module.exports = Backbone.View.extend({
 
             this.setDefaults(config);
 
+            // Settings sidebar panel
             this.sidebar.initSubview('settings', {
               sidebar: this.sidebar,
               config: config,
-              repo: this.repo,
-              branch: this.branch,
+              file: this.model
+            });
+
+            // Commit message sidebar panel
+            this.sidebar.initSubview('save', {
+              sidebar: this.sidebar,
               file: this.model
             });
           }).bind(this)
@@ -626,27 +630,19 @@ module.exports = Backbone.View.extend({
     // Content Window
     this.$el.find('.views .view').removeClass('active');
     $diff.html('<pre>' + compare + '</pre>').addClass('active');
+
+    this.sidebar.open();
   },
 
-  closeSettings: function() {
-    $('.views .view', this.el).removeClass('active');
+  cancel: function() {
+    this.sidebar.close();
 
-    if (app.state.mode === 'blob') {
-      $('#preview', this.el).addClass('active');
+    this.$el.find('.views .view').removeClass('active');
+
+    if (this.mode === 'blob') {
+      this.$el.find('#preview').addClass('active');
     } else {
-      $('#edit', this.el).addClass('active');
-    }
-
-    this.eventRegister.trigger('closeSettings');
-  },
-
-  cancelSave: function() {
-    $('.views .view', this.el).removeClass('active');
-
-    if (app.state.mode === 'blob') {
-      $('#preview', this.el).addClass('active');
-    } else {
-      $('#edit', this.el).addClass('active');
+      this.$el.find('#edit').addClass('active');
     }
   },
 
@@ -840,6 +836,28 @@ module.exports = Backbone.View.extend({
     // Delegate
     method.call(this, filepath, filename, filecontent, message);
     return false;
+  },
+
+  updateSaveState: function(label, classes, kill) {
+    var view = this;
+
+    // Cancel if this condition is met
+    if (classes === 'save' && $(this.el).hasClass('saving')) return;
+    $('.button.save', this.el).html(label);
+
+    // Pass a popover span to the avatar icon
+    $('#heading', this.el).find('.popup').html(label);
+    $('.action').find('.popup').html(label);
+
+    $(this.el)
+      .removeClass('error saving saved save')
+      .addClass(classes);
+
+    if (kill) {
+      _.delay(function() {
+        $(view.el).removeClass(classes);
+      }, 1000);
+    }
   },
 
   keyMap: function() {

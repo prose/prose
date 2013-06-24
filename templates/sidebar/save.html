@@ -1,20 +1,18 @@
-<% if (window.authenticated) { %>
-  <div class='inner'>
-    <h2 class='label'>Describe your Changes</h2>
+<div class='inner'>
+  <h2 class='label'>Describe your Changes</h2>
+</div>
+<div class='inner authoring'>
+  <div class='commit'>
+    <textarea class='commit-message' placeholder></textarea>
+    <a class='ico small cancel round' href='#' data-action='cancel'>
+      <span class='popup round arrow-bottom'>Cancel</span>
+    </a>
   </div>
-  <div class='inner authoring'>
-    <div class='commit'>
-      <textarea class='commit-message' placeholder></textarea>
-      <a class='ico small cancel round' href='#'>
-        <span class='popup round arrow-bottom'>Cancel</span>
-      </a>
-    </div>
 
-    <% if (writable) { %>
-      <a class='confirm button round' href='#'>Commit</a>
-    <% } else { %>
-      <a class='confirm button round' href='#'>Submit Change Request</a>
-    <% } %>
+  <% if (writable) { %>
+    <a class='confirm button round' href='#' data-action='confirm'>Commit</a>
+  <% } else { %>
+    <a class='confirm button round' href='#' data-action='confirm'>Submit Change Request</a>
+  <% } %>
 
-  </div>
-<% } %>
+</div>
