@@ -83,7 +83,7 @@ APPLICATION = \
 	app/cookie.js \
 	app/upload.js \
 	app/toolbar/markdown.js \
-	vendor/github.js
+	vendor/github.js \
 	translations/locales.js \
 	locale.js
 

@@ -111,7 +111,6 @@ module.exports = Backbone.View.extend({
         jekyll: isJekyll,
         noMenu: view.noMenu,
         lang: (app.state.file) ? utils.mode(app.state.file) : undefined
-        lang: (app.state.file) ? _.mode(app.state.file) : undefined
       });
 
       this.$el.empty().append(tmpl(this.data));

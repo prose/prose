@@ -1,8 +1,8 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var config = require('./config');
-var LOCALES = require('../../translations/locales');
-var en = require('../../dist/en.js');
+var LOCALES = require('../translations/locales');
+var en = require('../dist/en.js');
 
 var Backbone = require('backbone');
 var User = require('./models/user');
