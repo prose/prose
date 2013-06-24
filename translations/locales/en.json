@@ -62,6 +62,7 @@
         "commits": {
             "created": "Created {filename}",
             "updated": "Updated {filename}",
+            "deleted": "Deleted {filename}",
             "toDraft": "Created draft of {filename}",
             "fromDraft": "Created post from a draft of {filename}"
         }
