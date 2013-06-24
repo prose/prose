@@ -190,7 +190,7 @@ module.exports = Backbone.Router.extend({
         break;
     }
 
-    this.app.nav.mode('post');
+    this.app.nav.mode('file');
 
     if (this.view) this.view.remove();
 

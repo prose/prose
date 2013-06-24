@@ -596,6 +596,13 @@ ins {
     border-color:#d4d7d9;
     }
 
+/* Visibility of navigation groups */
+.repos .repo,
+.repos .file,
+.repo .file {
+  display:none;
+  }
+
 .nav {
   margin:15px 0 0;
   padding-bottom:5px;
