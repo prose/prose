@@ -173,5 +173,10 @@ module.exports = Backbone.Model.extend({
 
   url: function() {
     return this.repo.url() + '/contents/' + this.get('path') + '?ref=' + this.branch.get('name');
+  },
+
+  validate: function(attributes, options) {
+    // Fail validation if path conflicts with another file in repo
+    if (this.collection.where({ path: attributes.path }).length > 1) return 'Path Conflict';
   }
 });
