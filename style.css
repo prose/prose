@@ -2527,7 +2527,7 @@ and (max-device-width:480px) {
     }
 
   .details .mask,
-  .nav.project,
+  .nav.repo,
   .edit .topbar-wrapper, /* wysiwyg toolbar */
   .popup { /* tip messages served on mouse hover */
     display:none!important;

@@ -215,12 +215,12 @@ module.exports = Backbone.View.extend({
     },
 
     closeSettings: function() {
-      $('.post-views a', this.el).removeClass('active');
+      this.$el.find('.file a').removeClass('active');
 
       if (app.state.mode === 'blob') {
-        $('.post-views .preview', this.el).addClass('active');
+        this.$el.find('.file .preview').addClass('active');
       } else {
-        $('.post-views .edit', this.el).addClass('active');
+        this.$el.find('.file .edit').addClass('active');
       }
 
       $('#prose').toggleClass('open mobile', false);

@@ -434,7 +434,7 @@ module.exports = Backbone.View.extend({
     } else {
       // Editor is first up so trigger an active class for it
       this.$el.find('#edit').toggleClass('active', true);
-      this.$el.find('.post-views .edit').addClass('active');
+      this.$el.find('.file .edit').addClass('active');
 
       this.initEditor();
 
