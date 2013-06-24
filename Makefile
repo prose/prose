@@ -4,9 +4,11 @@ BROWSERIFY = node_modules/.bin/browserify
 TEMPLATES = $(shell find templates -type f -name '*.html')
 
 all: \
-	$(shell npm install && mkdir -p dist) \
 	dist/prose.js \
 	dist/prose.min.js
+
+install:
+	npm install && mkdir -p dist && make
 
 clean:
 	rm -f dist/*
@@ -64,4 +66,4 @@ dist/prose.js: oauth.json $(APPLICATION) $(LIBS) dist/templates.js
 dist/prose.min.js: dist/prose.js
 	$(UGLIFY) dist/prose.js > dist/prose.min.js
 
-.PHONY: clean translations
+.PHONY: clean translations install
