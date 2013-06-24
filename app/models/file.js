@@ -118,6 +118,26 @@ module.exports = Backbone.Model.extend({
     return window.decodeURIComponent(window.escape(window.atob(content)));
   },
 
+  toJSON: function() {
+    // Override default toJSON method to only send necessary data to GitHub
+    var path = this.get('path');
+    var content = this.serialize();
+
+    var data = {
+      path: path,
+      message: (this.isNew() ?
+        t('actions.commits.created', { filename: path }) :
+        t('actions.commits.updated', { filename: path })),
+      content: this.encode(content),
+      branch: this.branch.get('name')
+    };
+
+    // Set sha if modifying existing file
+    if (!this.isNew()) data.sha = this.get('sha');
+
+    return data;
+  },
+
   fetch: function(options) {
     // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
     Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
@@ -125,35 +145,8 @@ module.exports = Backbone.Model.extend({
   },
 
   save: function(attributes, options) {
-    options = _.clone(options) || {};
-
-    var path = this.get('path');
-
-    var data = {
-      path: path,
-      message: (this.isNew() ?
-        t('actions.commits.created', { filename: path }) :
-        t('actions.commits.updated', { filename: path })),
-      content: this.encode(this.serialize()),
-      branch: this.branch.get('name')
-    };
-
-    // Set sha if modifying existing file
-    if (!this.isNew()) data.sha = this.get('sha');
-
-    var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
-
-    debugger;
-
-    Backbone.Model.prototype.save.call(this, [
-        'path',
-        'message',
-        'content',
-        'sha',
-        'branch'
-      ], _.extend(options, {
-      url: this.url()
-    }));
+    // TODO: set method to PUT even when this.isNew()
+    Backbone.Model.prototype.save.apply(this, arguments);
   },
 
   destroy: function(options) {
