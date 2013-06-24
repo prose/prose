@@ -106,7 +106,9 @@ module.exports = Backbone.Model.extend({
 
     var data = {
       path: path,
-      message: (this.isNew() ? 'Created ' : 'Updated ') + path,
+      message: (this.isNew() ?
+        t('actions.commits.created', { filename: path }) :
+        t('actions.commits.updated', { filename: path })),
       content: null,
       sha: this.get('sha'),
       branch: this.branch.get('name')
