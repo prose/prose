@@ -1,0 +1,12 @@
+{
+    "docheader": {
+        "editing": "编辑",
+        "preview": "预览"
+    },
+    "actions": {
+        "unsaved": "您有修改尚未提交。确认离开？",
+        "publishing": {
+            "publish": "发布"
+        }
+    }
+}

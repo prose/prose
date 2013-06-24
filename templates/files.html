@@ -14,15 +14,15 @@
     <div class='actions fr clearfix'>
       <% if (!isBinary) { %>
         <a class='clearfix'
-          title='Edit this File'
+          title="<%= t('main.repo.edit') %>"
           href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
-          Edit
+          <%= t('main.repo.edit') %>
         </a>
       <% } %>
       <% if (window.authenticated && writePermissions) { %>
         <a
           class='delete'
-          title='Delete this File'
+          title="<%= t('sidebar.settings.delete') %>"
           data-user='<%= user %>'
           data-repo='<%= repo %>'
           data-branch='<%= branch %>'

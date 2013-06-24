@@ -1,6 +1,6 @@
 <div class='inner'>
   <% if (app.state.branches.length > 0) { %>
-    <h2 class='label'>Switch Branch</h2>
+    <h2 class='label'><%= t('sidebar.repo.branch') %></h2>
     <select data-placeholder='Current Branch Name' class='chzn-select'>
         <option value='#<%= [user, repo, "tree", branch].join("/") %>' selected><%= branch %></option>
       <% _.each(branches, function(branch) { %>
@@ -13,7 +13,7 @@
 <% var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; %>
 <% if (rooturl && path != '_drafts') { %>
   <div class='inner'>
-    <a class='button round' href='#<%= [user, repo, "tree", branch, "_drafts"].join("/") %>'>View Drafts</a>
+    <a class='button round' href='#<%= [user, repo, "tree", branch, "_drafts"].join("/") %>'><%= t('sidebar.repo.drafts') %></a>
   </div>
 <% } %>
 
@@ -26,7 +26,7 @@
         history.recent[app.username]) { %>
     <div class='history'>
       <div class='inner'>
-        <h2 class='label inner'>Most Recent History</h2>
+        <h2 class='label inner'><%= t('sidebar.repo.history.label') %></h2>
       </div>
       <ul id='recent' class='listing'>
         <%
@@ -45,7 +45,7 @@
             <% if (status === 'removed') { %>
               <span class='overlay'>
                 <span class='ico small inline <%= status %>'></span>
-                Restore?
+                <%= t('sidebar.repo.history.actions.restore') %>
               </span>
             <% } %>
             <%= filename %>
@@ -58,6 +58,6 @@
 
 <% if (repo && window.authenticated) { %>
 <div class='inner'>
-  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='round button mobile-new-file'>Create a New File</a>
+  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? "/"+path : ""%>' class='round button mobile-new-file'><%= t('sidebar.repo.create') %></a>
 </div>
 <% } %>
