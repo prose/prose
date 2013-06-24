@@ -4,13 +4,13 @@
   data-repo='<%= name %>'
   href='#<%= owner.login %>/<%= name %>'>
   <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>
-    <span class='icon round repo owner private' title='Shared from the account (<%= owner.login %>)'></span>
+    <span class='icon round repo owner private' title="<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)"></span>
   <% } else if (app.state.user === app.username && owner.login !== app.username) { %>
-    <span class='icon round repo owner' title='Shared from the account (<%= owner.login %>)'></span>
+    <span class='icon round repo owner' title="<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)"></span>
   <% } else if (fork && private) { %>
-    <span class='icon round repo private fork' title='Forked from another project'></span>
+    <span class='icon round repo private fork' title="<%= t('main.repos.forkedFrom') %>"></span>
   <% } else if (fork) { %>
-    <span class='icon round repo fork' title='Forked from another project'></span>
+    <span class='icon round repo fork' title="<%= t('main.repos.forkedFrom') %>"></span>
   <% } else if (private) { %>
     <span class='icon round repo private'></span>
   <% } else { %>
@@ -24,10 +24,10 @@
       data-user='<%= owner.login %>'
       data-repo='<%= name %>'
       href='#<%= owner.login %>/<%= name %>'>
-      View Project
+      <%= t('main.repos.repo') %>
     </a>
     <% if (homepage) { %>
-      <a href='<%= homepage %>'>View Site</a>
+      <a href='<%= homepage %>'><%= t('main.repos.site') %></a>
     <% } %>
   </div>
   <a

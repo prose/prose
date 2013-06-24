@@ -1,10 +1,15 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var config = require('./config');
+var LOCALES = require('../translations/locales');
+var en = require('../dist/en.js');
 
 var Backbone = require('backbone');
 var User = require('./models/user');
 var state = require('./models/state');
+
+window.locale.en = en;
+window.locale.current('en');
 
 window.app = {
     config: {},
@@ -24,6 +29,19 @@ window.app = {
     instance: {},
     eventRegister: _.extend({}, Backbone.Events)
 };
+
+// Set up translations
+var browserLang = (navigator.language || navigator.userLanguage).split('-')[0];
+
+// Check if the browsers language is supported
+if (LOCALES.indexOf(browserLang) != -1) app.locale = browserLang;
+
+if (app.locale && app.locale !== 'en') {
+    $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+        window.locale[app.locale] = result;
+        window.locale.current(app.locale);
+    });
+}
 
 $.ajaxSetup({
   headers: {

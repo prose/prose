@@ -27,7 +27,7 @@ module.exports = Backbone.View.extend({
       path: login,
       private: this.repo && this.repo.get('private') ? true : false,
       repo: this.repo ? this.repo.attributes : undefined,
-      title: this.file ? this.file.get('path') : 'Explore Projects',
+      title: this.file ? this.file.get('path') : t('heading.explore'),
       translate: this.file ? this.file.get('translate') : undefined,
       user: this.user ? this.user.attributes : undefined,
       writable: this.repo ? this.repo.get('permissions').push : undefined

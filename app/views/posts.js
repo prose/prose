@@ -199,7 +199,7 @@ module.exports = Backbone.View.extend({
       fileName: $file.data('file')
     };
 
-    if (confirm('Are you sure you want to delete this file?')) {
+    if (confirm(t('actions.delete.warn'))) {
       $file.addClass('working');
       $ico.addClass('saving');
 
@@ -209,7 +209,7 @@ module.exports = Backbone.View.extend({
         if (err) {
           $file
             .removeClass('working')
-            .attr('title', 'Error. Try again in 30 Seconds')
+            .attr('title', t('actions.delete.error'))
             .addClass('error');
 
           $ico.removeClass('rubbish saving');

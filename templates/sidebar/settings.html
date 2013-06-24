@@ -1,18 +1,18 @@
 <div class='inner'>
-  <h2 class='label'>Options</h2>
+  <h2 class='label'><%= t('sidebar.settings.title') %></h2>
 </div>
 <div class='inner authoring'>
   <!-- if metadata and !draft -->
-  <a class='draft button round' href='#'>Create Draft</a>
+  <a class='draft button round' href='#'><%= t('sidebar.settings.draft') %></a>
   
   <% if (languages && lang !== 'yaml') { %>
     <% _.each(languages, function(language) { %>
       <% if (language.value && (metadata && (metadata.lang !== language.value))) { %>
-        <a class='translate round button' href='#<%= language.value %>'>Translate to <%= language.name %></a>
+        <a class='translate round button' href='#<%= language.value %>'><%= t('sidebar.settings.translate') + ' ' + lang.name %></a>
       <% } %>
     <% }); %>
   <% } %>
 
   <!-- if !isNew() and is writable -->
-  <a class='delete button round' href='#' data-action='destroy'>Delete this File</a>
+  <a class='delete button round' href='#' data-action='destroy'><%= t('sidebar.settings.delete') %></a>
 </div>
