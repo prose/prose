@@ -473,10 +473,7 @@ module.exports = Backbone.View.extend({
           view.model.persisted = true;
           view.model.file = filename;
 
-          if (app.state.mode === 'new') {
-            app.state.mode = 'edit';
-            view.eventRegister.trigger('renderNav');
-          }
+          if (app.state.mode === 'new') app.state.mode = 'edit';
 
           view.renderHeading();
           view.updateURL();
