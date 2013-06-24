@@ -110,7 +110,7 @@ module.exports = Backbone.Router.extend({
   // #example-user/example-repo
   // #example-user/example-repo/tree/example-branch/example-path
   repo: function(login, repoName, branch, path) {
-    utils.loader.loading(t('loading.repo'));
+    util.loader.loading(t('loading.repo'));
     if (this.view) this.view.remove();
 
     var user = this.users.findWhere({ login: login });
@@ -176,13 +176,13 @@ module.exports = Backbone.Router.extend({
   post: function(login, repoName, mode, branch, path, filename) {
     switch(mode) {
       case 'new':
-        utils.loader.loading(t('loading.creating'));
+        util.loader.loading(t('loading.creating'));
         break;
       case 'edit':
-        utils.loader.loading(t('loading.file'));
+        util.loader.loading(t('loading.file'));
         break;
       case 'preview':
-        utils.loader.loading(t('preview.file'));
+        util.loader.loading(t('preview.file'));
         break;
     }
 
@@ -261,7 +261,7 @@ module.exports = Backbone.Router.extend({
     // something like this here.
     app.state.markdown = true;
 
-    utils.loader.loading(t('loading.creating'));
+    util.loader.loading(t('loading.creating'));
     app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
       app.models.emptyPost(user, repo, branch, path, _.bind(function(err, data) {
 
@@ -289,7 +289,7 @@ module.exports = Backbone.Router.extend({
 
   preview: function(user, repo, branch, path, file, mode) {
     var router = this;
-    utils.loader.loading(t('preview.file'));
+    util.loader.loading(t('preview.file'));
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
       if (err) return this.notify('error', t('notification.error.exists'));
