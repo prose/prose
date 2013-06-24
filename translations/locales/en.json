@@ -109,10 +109,10 @@
         "home": "Back to Main Page",
         "back": "Go Back",
         "error": {
-            "404": "Page not Found",
             "label": "Error",
             "github": "Error while loading data from Github. This might be a temporary issue. Please try again later.",
-            "exists": "This file does not exist"
+            "exists": "This file does not exist",
+            "notFound": "Page not Found"
         }
     },
     "sidebar": {

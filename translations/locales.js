@@ -1,3 +1,3 @@
 // Automatically Generated
 
-module.exports = ["es"];
+module.exports = ["zh","de","ro","es"];
