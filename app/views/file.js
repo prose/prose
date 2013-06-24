@@ -371,18 +371,6 @@ module.exports = Backbone.View.extend({
     this.$el.find('#dialog').empty().removeClass();
   },
 
-  serialize: function() {
-    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata).trim();
-    var content = this.model.get('content');
-
-    // TOOD: clean up metadata check
-    if (this.model.get('metadata')) {
-      return ['---', metadata, '---'].join('\n') + '\n\n' + content;
-    } else {
-      return content;
-    }
-  },
-
   renderHeading: function() {
     var header = new HeaderView({
       file: this.model,
@@ -610,7 +598,7 @@ module.exports = Backbone.View.extend({
 
     // TODO: why was _.escape() used here?
     var text1 = this.model.isNew() ? '' : this.model.get('previous');
-    var text2 = this.serialize();
+    var text2 = this.model.serialize();
 
     var d = diff.diffWords(text1, text2);
     var length = d.length;
@@ -750,7 +738,7 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
+    // view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
 
     if (filepath === util.filepath(this.model.path, this.model.file)) return save();
 
@@ -822,19 +810,21 @@ module.exports = Backbone.View.extend({
   updateFile: function() {
     var filepath = $('input.filepath').val();
     var filename = util.extractFilename(filepath)[1];
-    var filecontent = this.serialize();
+    var filecontent = this.model.serialize();
     var $message = $('.commit-message');
     var noVal = 'Updated ' + filename;
     if (app.state.mode === 'new') noVal = 'Created ' + filename;
 
     var message = $message.val() || noVal;
     var method = this.model.get('writable') ? this.saveFile : this.sendPatch;
+    var method = this.model.get('writable') ? this.model.save : this.sendPatch;
 
     // Update content
     this.model.content = (this.editor) ? this.editor.getValue() : '';
 
     // Delegate
-    method.call(this, filepath, filename, filecontent, message);
+    // method.call(this, filepath, filename, filecontent, message);
+    method.call(this);
     return false;
   },
 

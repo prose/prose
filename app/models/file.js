@@ -91,28 +91,55 @@ module.exports = Backbone.Model.extend({
     }));
   },
 
+  serialize: function() {
+    var metadata;
+    var content = this.get('content');
+
+    try {
+      metadata = jsyaml.dump(this.get('metadata')).trim();
+    } catch(err) {
+      throw err;
+    }
+
+    if (metadata) {
+      return ['---', metadata, '---'].join('\n') + '\n\n' + content;
+    } else {
+      return content;
+    }
+  },
+
+  encode: function(content) {
+    // Encode UTF-8 to Base64
+    // https://developer.mozilla.org/en-US/docs/Web/API/window.btoa#Unicode_Strings
+    return window.btoa(window.unescape(window.encodeURIComponent(content)));
+  },
+
+  decode: function(content) {
+    return window.decodeURIComponent(window.escape(window.atob(content)));
+  },
+
   fetch: function(options) {
     // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
     Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
     this.getContent.apply(this, arguments);
   },
 
-  save: function() {
+  save: function(options) {
     options = _.clone(options) || {};
 
     var path = this.get('path');
-
-    debugger;
 
     var data = {
       path: path,
       message: (this.isNew() ?
         t('actions.commits.created', { filename: path }) :
         t('actions.commits.updated', { filename: path })),
-      content: null,
+      content: this.encode(this.serialize()),
       sha: this.get('sha'),
       branch: this.branch.get('name')
     };
+
+    debugger;
 
     var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
 
