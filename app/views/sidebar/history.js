@@ -110,62 +110,6 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
-    save: function(e) {
-      var tmpl = _(app.templates.sidebarSave).template();
-      this.eventRegister.trigger('showDiff', e);
-
-      if ($(e.target, this.el).hasClass('active')) {
-        this.cancel();
-      } else {
-        $('.navigation a', this.el).removeClass('active');
-        $(e.target, this.el).addClass('active');
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl({
-            writable: this.writable
-        }));
-
-        $('#prose').toggleClass('open mobile', true);
-
-        var $message = $('.commit-message', this.el);
-        var filepath = $('input.filepath').val();
-        var filename = _.extractFilename(filepath)[1];
-        var placeholder = 'Updated ' + filename;
-        if (app.state.mode === 'new') placeholder = 'Created ' + filename;
-        $message.attr('placeholder', placeholder).focus();
-      }
-
-      return false;
-    },
-
-    saveFilePath: function(e) {
-      // Trigger updateFile when a return button has been pressed.
-      if (e.which === 13) this.eventRegister.trigger('updateFile', e);
-    },
-
-    updateSaveState: function(label, classes, kill) {
-      var view = this;
-
-      // Cancel if this condition is met
-      if (classes === 'save' && $(this.el).hasClass('saving')) return;
-      $('.button.save', this.el).html(label);
-
-      // Pass a popover span to the avatar icon
-      $('#heading', this.el).find('.popup').html(label);
-      $('.action').find('.popup').html(label);
-
-      $(this.el)
-        .removeClass('error saving saved save')
-        .addClass(classes);
-
-      if (kill) {
-        _.delay(function() {
-          $(view.el).removeClass(classes);
-        }, 1000);
-      }
-    },
-
     remove: function() {
       _.invoke(this.subviews, 'remove');
       this.subviews = [];

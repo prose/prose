@@ -59,8 +59,6 @@ APPLICATION = \
 	app/views/header.js \
 	app/views/nav.js \
 	app/views/notification.js \
-	app/views/post.js \
-	app/views/posts.js \
 	app/views/preview.js \
 	app/views/profile.js \
 	app/views/repo-options.js \

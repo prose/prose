@@ -118,34 +118,35 @@ module.exports = Backbone.Model.extend({
     return window.decodeURIComponent(window.escape(window.atob(content)));
   },
 
-  fetch: function(options) {
-    // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
-    Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
-    this.getContent.apply(this, arguments);
-  },
-
-  save: function(options) {
-    options = _.clone(options) || {};
-
+  toJSON: function() {
+    // Override default toJSON method to only send necessary data to GitHub
     var path = this.get('path');
+    var content = this.serialize();
 
     var data = {
       path: path,
       message: (this.isNew() ?
         t('actions.commits.created', { filename: path }) :
         t('actions.commits.updated', { filename: path })),
-      content: this.encode(this.serialize()),
-      sha: this.get('sha'),
+      content: this.encode(content),
       branch: this.branch.get('name')
     };
 
-    debugger;
+    // Set sha if modifying existing file
+    if (!this.isNew()) data.sha = this.get('sha');
 
-    var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
+    return data;
+  },
 
-    Backbone.Model.prototype.save.call(this, _.extend(options, {
-      url: this.url() + '&' + params
-    }));
+  fetch: function(options) {
+    // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
+    Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
+    this.getContent.apply(this, arguments);
+  },
+
+  save: function(attributes, options) {
+    // TODO: set method to PUT even when this.isNew()
+    Backbone.Model.prototype.save.apply(this, arguments);
   },
 
   destroy: function(options) {
@@ -163,11 +164,19 @@ module.exports = Backbone.Model.extend({
     var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
 
     Backbone.Model.prototype.destroy.call(this, _.extend(options, {
-      url: this.url() + '&' + params
+      url: this.url() + '&' + window.escape(params),
+      error: function(model, xhr, options) {
+        console.log(model, xhr, options);
+      }
     }));
   },
 
   url: function() {
     return this.repo.url() + '/contents/' + this.get('path') + '?ref=' + this.branch.get('name');
+  },
+
+  validate: function(attributes, options) {
+    // Fail validation if path conflicts with another file in repo
+    if (this.collection.where({ path: attributes.path }).length > 1) return 'Path Conflict';
   }
 });
