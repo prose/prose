@@ -19,7 +19,6 @@ window.app = {
       Notification: require('./views/notification'),
       Start: require('./views/start'),
       Preview: require('./views/preview'),
-      Post: require('./views/post'),
       Documentation: require('./views/documentation')
     },
     templates: require('../dist/templates'),

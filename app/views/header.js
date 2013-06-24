@@ -7,11 +7,29 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.View.extend({
   template: _.template(templates.heading),
 
+  events: {
+    'focus input.filepath': 'checkPlaceholder',
+    'keypress input.filepath': 'saveFilePath'
+  },
+
   initialize: function(options) {
     this.user = options.user;
     this.repo = options.repo;
     this.file = options.file;
     this.alterable = options.alterable;
+  },
+
+  checkPlaceholder: function(e) {
+    if (app.state.mode === 'new') {
+      var $target = $(e.target, this.el);
+      if (!$target.val()) {
+        $target.val($target.attr('placeholder'));
+      }
+    }
+  },
+
+  filenameInput: function() {
+    $('.filepath', this.el).focus();
   },
 
   render: function() {
