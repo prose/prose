@@ -77,7 +77,7 @@ To get started:
 1. [Install node.js](http://nodejs.org/). 'Install' will download a package for
 your OS.
 2. Go to the directory where you have checked out `prose`
-3. Run `npm install`
+3. Run `make install`
 4. Run `make`
 5. To run prose with authentication locally, a `oauth.json` file is required to the
 to the root directory. when you run `make` this file is created automatically. 
