@@ -190,58 +190,6 @@ module.exports = Backbone.View.extend({
       return false;
     },
 
-    deleteFile: function(e) {
-      this.eventRegister.trigger('deleteFile', e);
-      return false;
-    },
-
-    translate: function(e) {
-      this.eventRegister.trigger('translate', e);
-      return false;
-    },
-    
-    draft: function(e) {
-      this.eventRegister.trigger('draft', e);
-      return false;
-    },
-
-    save: function(e) {
-      var tmpl = _(app.templates.sidebarSave).template();
-      this.eventRegister.trigger('showDiff', e);
-
-      if ($(e.target, this.el).hasClass('active')) {
-        this.cancel();
-      } else {
-        $('.navigation a', this.el).removeClass('active');
-        $(e.target, this.el).addClass('active');
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl({
-            writable: this.writable
-        }));
-
-        $('#prose').toggleClass('open mobile', true);
-
-        var $message = $('.commit-message', this.el);
-        var filepath = $('input.filepath').val();
-        var filename = _.extractFilename(filepath)[1];
-        var placeholder = 'Updated ' + filename;
-        if (app.state.mode === 'new') placeholder = 'Created ' + filename;
-        $message.attr('placeholder', placeholder).focus();
-      }
-
-      return false;
-    },
-
-    cancel: function(e) {
-      $('.navigation a', this.el).removeClass('active');
-      $('.navigation .' + app.state.mode, this.el).addClass('active');
-      $('#prose').toggleClass('open mobile', false);
-      this.eventRegister.trigger('cancelSave', e);
-      return false;
-    },
-
     updateFile: function(e) {
       this.eventRegister.trigger('updateFile', e);
       return false;
