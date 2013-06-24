@@ -727,7 +727,7 @@ module.exports = {
       cb(null, {
         'metadata': metadata,
         'default_metadata': defaultMetadata,
-        'content': '## A New Post\n\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.',
+        'content': t('main.new.body'),
         'repo': repo,
         'path': path,
         'published': false,

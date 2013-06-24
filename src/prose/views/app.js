@@ -58,7 +58,7 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput', 'renderNav');
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('sidebarContext', this.sidebarContext);
@@ -66,11 +66,12 @@ module.exports = Backbone.View.extend({
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
       this.eventRegister.bind('filenameInput', this.filenameInput);
       this.eventRegister.bind('closeSettings', this.closeSettings);
+      this.eventRegister.bind('renderNav', this.renderNav);
     },
 
     render: function(options) {
       var view = this;
-      var tmpl = _(window.app.templates.app).template();
+      var tmpl = _(app.templates.app).template();
       var isJekyll = false;
       var errorPage = false;
       var hideInterface = false; // Flag for unauthenticated landing
@@ -89,12 +90,18 @@ module.exports = Backbone.View.extend({
         $(this.el).toggleClass('disable-interface', false);
       }
 
-      $(this.el).empty().append(tmpl(_.extend(this.model, app.state, {
-        jekyll: isJekyll,
+      this.data = _.extend(this.model, app.state, {
         error: errorPage,
+        version: 'v1',
+        jekyll: isJekyll,
         noMenu: view.noMenu,
         lang: (app.state.file) ? _.mode(app.state.file) : undefined
-      })));
+      });
+
+      this.$el.empty().append(tmpl(this.data));
+
+      // Render the vertical Navigation
+      this.renderNav();
 
       // When the sidebar should be open.
       // Fix this in re-factor, could be much tighter
@@ -107,6 +114,11 @@ module.exports = Backbone.View.extend({
       }
 
       return this;
+    },
+
+    renderNav: function() {
+      var tmpl = _(app.templates.verticalNav).template();
+      this.$el.find('#vert').empty().append(tmpl(this.data));
     },
 
     toggleMobileClass: function(e) {
@@ -175,16 +187,22 @@ module.exports = Backbone.View.extend({
 
     // Event Triggering to other files
     meta: function(e) {
-      this.eventRegister.trigger('meta', e);
+      if ($(e.target).hasClass('active')) {
+        this.cancel();
+      } else {
+        this.eventRegister.trigger('meta', e);
+      }
+
       return false;
     },
 
     settings: function(e) {
       var tmpl = _(app.templates.settings).template();
       var $navItems = $('.navigation a', this.el);
-      this.cancel();
 
-      if (!$(e.target, this.el).hasClass('active')) {
+      if ($(e.target).hasClass('active')) {
+        this.cancel();
+      } else {
         $navItems.removeClass('active');
         $(e.target, this.el).addClass('active');
 
@@ -222,15 +240,15 @@ module.exports = Backbone.View.extend({
       var path = $target.data('path');
 
       // Spinning icon
-      var message = '<span class="ico small inline saving"></span> Restoring ' + path;
+      var message = '<span class="ico small inline saving"></span>' + t('actions.restore.restoring') + path;
       $overlay.html(message);
 
       app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
         if (err) {
-          message = '<span class="ico small inline error"></span> Error Try again in 30 Seconds';
+          message = '<span class="ico small inline error"></span> ' + t('actions.error');
           $overlay.html(message);
         } else {
-          message = '<span class="ico small inline checkmark"></span> Restored ' + path;
+          message = '<span class="ico small inline checkmark"></span> ' + t('actions.restore.restored') + path;
           $overlay.html(message);
           $overlay.removeClass('removed').addClass('restored');
 
@@ -286,8 +304,11 @@ module.exports = Backbone.View.extend({
         var $message = $('.commit-message', this.el);
         var filepath = $('input.filepath').val();
         var filename = _.extractFilename(filepath)[1];
-        var placeholder = 'Updated ' + filename;
-        if (app.state.mode === 'new') placeholder = 'Created ' + filename;
+        var placeholder = t('actions.commits.updated', { filename: filename });
+        if (app.state.mode === 'new') {
+          placeholder = t('actions.commits.created', { filename: filename });
+        }
+
         $message.attr('placeholder', placeholder).focus();
       }
 
@@ -298,7 +319,7 @@ module.exports = Backbone.View.extend({
       $('.navigation a', this.el).removeClass('active');
       $('.navigation .' + app.state.mode, this.el).addClass('active');
       $('#prose').toggleClass('open mobile', false);
-      this.eventRegister.trigger('cancelSave', e);
+      this.eventRegister.trigger('cancel', e);
       return false;
     },
 
@@ -358,6 +379,7 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
       this.eventRegister.unbind('filenameInput', this.filenameInput);
       this.eventRegister.unbind('closeSettings', this.closeSettings);
+      this.eventRegister.unbind('renderNav', this.renderNav);
       Backbone.View.prototype.remove.call(this);
     }
 });

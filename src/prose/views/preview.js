@@ -7,7 +7,7 @@ module.exports = Backbone.View.extend({
     this.eventRegister = app.eventRegister;
 
     var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', 'Previewing ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    this.eventRegister.trigger('documentTitle', t('docheader.preview') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
     this.stashApply();
     _.preview(this);
     return this;
