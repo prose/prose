@@ -124,7 +124,7 @@ module.exports = Backbone.Model.extend({
     this.getContent.apply(this, arguments);
   },
 
-  save: function(options) {
+  save: function(attributes, options) {
     options = _.clone(options) || {};
 
     var path = this.get('path');
@@ -135,16 +135,24 @@ module.exports = Backbone.Model.extend({
         t('actions.commits.created', { filename: path }) :
         t('actions.commits.updated', { filename: path })),
       content: this.encode(this.serialize()),
-      sha: this.get('sha'),
       branch: this.branch.get('name')
     };
 
-    debugger;
+    // Set sha if modifying existing file
+    if (!this.isNew()) data.sha = this.get('sha');
 
     var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
 
-    Backbone.Model.prototype.save.call(this, _.extend(options, {
-      url: this.url() + '&' + params
+    debugger;
+
+    Backbone.Model.prototype.save.call(this, [
+        'path',
+        'message',
+        'content',
+        'sha',
+        'branch'
+      ], _.extend(options, {
+      url: this.url()
     }));
   },
 
@@ -163,7 +171,10 @@ module.exports = Backbone.Model.extend({
     var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
 
     Backbone.Model.prototype.destroy.call(this, _.extend(options, {
-      url: this.url() + '&' + params
+      url: this.url() + '&' + window.escape(params),
+      error: function(model, xhr, options) {
+        console.log(model, xhr, options);
+      }
     }));
   },
 
