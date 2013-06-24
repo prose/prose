@@ -73,14 +73,13 @@ module.exports = Backbone.View.extend({
 
       this.eventRegister = app.eventRegister;
 
-      _.bindAll(this, 'documentTitle', 'headerContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput', 'renderNav');
+      _.bindAll(this, 'documentTitle', 'headerContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput');
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
       this.eventRegister.bind('closeSettings', this.closeSettings);
       this.eventRegister.bind('filenameInput', this.filenameInput);
-      this.eventRegister.bind('renderNav', this.renderNav);
     },
 
     render: function(options) {
@@ -115,9 +114,6 @@ module.exports = Backbone.View.extend({
 
       this.$el.empty().append(tmpl(this.data));
 
-      // Render the vertical Navigation
-      this.renderNav();
-
       // When the sidebar should be open.
       // Fix this in re-factor, could be much tighter
       if (app.state.mode === 'tree' ||
@@ -132,11 +128,6 @@ module.exports = Backbone.View.extend({
       this.nav.setElement(this.$el.find('nav')).render();
 
       return this;
-    },
-
-    renderNav: function() {
-      var tmpl = _(app.templates.verticalNav).template();
-      this.$el.find('#vert').empty().append(tmpl(this.data));
     },
 
     toggleMobileClass: function(e) {
@@ -224,12 +215,12 @@ module.exports = Backbone.View.extend({
     },
 
     closeSettings: function() {
-      $('.post-views a', this.el).removeClass('active');
+      this.$el.find('.file a').removeClass('active');
 
       if (app.state.mode === 'blob') {
-        $('.post-views .preview', this.el).addClass('active');
+        this.$el.find('.file .preview').addClass('active');
       } else {
-        $('.post-views .edit', this.el).addClass('active');
+        this.$el.find('.file .edit').addClass('active');
       }
 
       $('#prose').toggleClass('open mobile', false);
@@ -321,7 +312,6 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('updateSaveState', this.updateSaveState);
       this.eventRegister.unbind('closeSettings', this.closeSettings);
       this.eventRegister.unbind('filenameInput', this.filenameInput);
-      this.eventRegister.unbind('renderNav', this.renderNav);
       Backbone.View.prototype.remove.call(this, arguments);
     }
 });

@@ -106,7 +106,7 @@ module.exports = Backbone.View.extend({
     } else {
       // Editor is first up so trigger an active class for it
       $('#edit', this.el).toggleClass('active', true);
-      $('.post-views .edit').addClass('active');
+      $('.nav.file .edit').addClass('active');
 
       this.initEditor();
       _.delay(function() {
@@ -176,8 +176,8 @@ module.exports = Backbone.View.extend({
     app.state.mode = this.newFile ? 'new' : 'edit';
     this.updateURL();
 
-    $('.post-views a').removeClass('active');
-    $('.post-views .edit').addClass('active');
+    $('.nav.file a').removeClass('active');
+    $('.nav.file .edit').addClass('active');
     $('#prose').toggleClass('open', false);
 
     $('.views .view', this.el).removeClass('active');
@@ -205,8 +205,8 @@ module.exports = Backbone.View.extend({
       if (e) e.preventDefault();
 
       // Vertical Nav
-      $('.post-views a').removeClass('active');
-      $('.post-views .preview').addClass('active');
+      $('.nav.file a').removeClass('active');
+      $('.nav.file .preview').addClass('active');
 
       // Content Window
       $('.views .view', this.el).removeClass('active');
@@ -258,8 +258,8 @@ module.exports = Backbone.View.extend({
     $('#prose').toggleClass('open', false);
 
     // Vertical Nav
-    $('.post-views a').removeClass('active');
-    $('.post-views .meta').addClass('active');
+    $('.nav.file a').removeClass('active');
+    $('.nav.file .meta').addClass('active');
 
     // Content Window
     $('.views .view', this.el).removeClass('active');
@@ -473,10 +473,7 @@ module.exports = Backbone.View.extend({
           view.model.persisted = true;
           view.model.file = filename;
 
-          if (app.state.mode === 'new') {
-            app.state.mode = 'edit';
-            view.eventRegister.trigger('renderNav');
-          }
+          if (app.state.mode === 'new') app.state.mode = 'edit';
 
           view.renderHeading();
           view.updateURL();

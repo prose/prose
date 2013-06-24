@@ -1,5 +1,5 @@
 <% if (!noMenu && window.authenticated) { %>
-  <ul class='mobile-menu nav clearfix'>
+  <ul class='mobile nav clearfix'>
     <li>
       <a href='#' class='toggle ico menu round'></a>
     </li>
@@ -7,26 +7,26 @@
 <% } %>
 
 <!-- if repo and authenticated -->
-<ul class='project nav clearfix'>
+<ul class='repo nav clearfix'>
   <li>
     <!-- #user/repo/new/branch/path -->
     <a href='#' class='ico round new new-file'>
-      <span class='popup round arrow-right'>New File</span>
+      <span class='popup round arrow-right'><%= t('navigation.newFile') %></span>
     </a>
   </li>
 </ul>
 
-<ul class='post-views nav clearfix'>
+<ul class='file nav clearfix'>
   <li>
     <a href='#' class='ico round pencil edit' data-state='edit'>
-      <span class='popup round arrow-right'>Edit</span>
+      <span class='popup round arrow-right'><%= t('navigation.edit') %></span>
     </a>
   </li>
 
   <!-- if markdown or new -->
   <li>
     <a href='#' class='ico round eye blob preview' data-state='preview'>
-      <span class='popup round arrow-right'>Preview</span>
+      <span class='popup round arrow-right'><%= t('navigation.preview') %></span>
     </a>
   </li>
 
@@ -34,17 +34,17 @@
   <!-- if lang == yaml -->
   <li>
     <a href='#' class='ico round metadata meta' data-state='meta'>
-      <span class='popup round arrow-right'>Meta Data</span>
+      <span class='popup round arrow-right'><%= t('navigation.meta') %></span>
     </a>
   </li>
   <li>
     <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>
-      <span class='popup round arrow-right'>Post Settings</span>
+      <span class='popup round arrow-right'><%= t('navigation.settings') %></span>
     </a>
   </li>
   <li>
     <a href='#' class='ico round save' data-state='save'>
-      <span class='popup round arrow-right'>Save</span>
+      <span class='popup round arrow-right'><%= t('navigation.save') %></span>
     </a>
   </li>
 </ul>
@@ -53,7 +53,7 @@
   <% if (!window.authenticated) { %>
   <li>
   <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>
-      <span class='popup round arrow-right'>Authorize with GitHub</span>
+      <span class='popup round arrow-right'><%= t('login') %></span>
     </a>
   </li>
 </ul>

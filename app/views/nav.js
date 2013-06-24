@@ -39,11 +39,12 @@ module.exports = Backbone.View.extend({
   mode: function(mode) {
     // Set data-mode attribute to toggle nav buttons in CSS
     this.$el.attr('data-mode', mode);
+    this.$el.attr('class', mode);
   },
 
   toggle: function(state, e) {
-    this.$el.find('.post-views a').not('[data-state=' + state + ']').removeClass('active');
-    this.$el.find('.post-views a[data-state=' + state + ']').toggleClass('active');
+    this.$el.find('.file a').not('[data-state=' + state + ']').removeClass('active');
+    this.$el.find('.file a[data-state=' + state + ']').toggleClass('active');
 
     this.trigger(state, e);
   },

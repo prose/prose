@@ -71,6 +71,8 @@ module.exports = Backbone.Router.extend({
   // #example-organization
   profile: function(login) {
     util.loader.loading(t('loading.repos'));
+    this.app.nav.mode('repos');
+
     if (this.view) this.view.remove();
 
     var user = this.users.findWhere({ login: login });
@@ -111,6 +113,8 @@ module.exports = Backbone.Router.extend({
   // #example-user/example-repo/tree/example-branch/example-path
   repo: function(login, repoName, branch, path) {
     util.loader.loading(t('loading.repo'));
+    this.app.nav.mode('repo');
+
     if (this.view) this.view.remove();
 
     var user = this.users.findWhere({ login: login });
@@ -186,6 +190,8 @@ module.exports = Backbone.Router.extend({
         break;
     }
 
+    this.app.nav.mode('file');
+
     if (this.view) this.view.remove();
 
     var user = this.users.findWhere({ login: login });
@@ -224,9 +230,6 @@ module.exports = Backbone.Router.extend({
 
     this.view = content;
     this.app.$el.find('#main').html(this.view.el);
-
-    // Set data-mode attribute to toggle nav buttons in CSS
-    this.app.nav.mode('post');
 
     util.loader.loaded();
 
