@@ -267,8 +267,9 @@ module.exports = Backbone.View.extend({
     var match = {
       lineBreak: /\n/,
       h1: /^#{1}/,
-      h2: /^#{2,2}/,
-      h3: /^#{3,3}/,
+      h2: /^#{2}/,
+      h3: /^#{3}/,
+      h4: /^#{4}/,
       strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
       italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
       isNumber: parseInt(selection.charAt(0), 10)
@@ -278,10 +279,10 @@ module.exports = Backbone.View.extend({
       switch (selection.charAt(0)) {
         case '#':
           if (!match.lineBreak.test(selection)) {
-            if (match.h2.test(selection) && !match.h3.test(selection)) {
-              this.$el.find('[data-key="sub-heading"]').addClass('active');
-            } else if (!match.h2.test(selection)) {
-              this.$el.find('[data-key="heading"]').addClass('active');
+            if (match.h3.test(selection) && !match.h4.test(selection)) {
+              $('[data-key="sub-heading"]').addClass('active');
+            } else if (match.h2.test(selection) && !match.h3.test(selection)) {
+              $('[data-key="heading"]').addClass('active');
             }
           }
           break;
@@ -1045,6 +1046,7 @@ module.exports = Backbone.View.extend({
     var snippet = $target.data('snippet');
     var selection = util.trim(this.editor.getSelection());
 
+    console.log('yep');
     $dialog.removeClass().empty();
 
     if (snippet) {
@@ -1321,18 +1323,18 @@ module.exports = Backbone.View.extend({
   },
 
   heading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(1) !== '#') {
-      this.editor.replaceSelection(util.lTrim(s.replace(/#/g, '')));
+    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
+      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
     } else {
-      this.editor.replaceSelection('# ' + s.replace(/#/g, ''));
+      this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
     }
   },
 
   subHeading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
-      this.editor.replaceSelection(util.lTrim(s.replace(/#/g, '')));
+    if (s.charAt(0) === '#' && s.charAt(3) !== '#') {
+      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
     } else {
-      this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
+      this.editor.replaceSelection('### ' + s.replace(/#/g, ''));
     }
   },
 
