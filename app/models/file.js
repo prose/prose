@@ -101,16 +101,17 @@ module.exports = Backbone.Model.extend({
   },
 
   serialize: function() {
-    var metadata;
-    var content = this.get('content');
-
-    try {
-      metadata = jsyaml.dump(this.get('metadata')).trim();
-    } catch(err) {
-      throw err;
-    }
+    var metadata = this.get('metadata');
+    var content = this.get('content') || '';
+    var frontmatter;
 
     if (metadata) {
+      try {
+        frontmatter = jsyaml.dump(metadata).trim();
+      } catch(err) {
+        throw err;
+      }
+
       return ['---', metadata, '---'].join('\n') + '\n\n' + content;
     } else {
       return content;
