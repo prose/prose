@@ -465,15 +465,13 @@ module.exports = Backbone.View.extend({
 
   new: function() {
     var dirpath = this.path.replace(/\/(?!.*\/).*$/, '');
-    var filename = undefined;
 
     this.router.navigate([
       this.repo.get('owner').login,
       this.repo.get('name'),
       'new',
       this.branch,
-      dirpath,
-      filename
+      dirpath
     ].join('/'), true);
   },
 
