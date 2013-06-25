@@ -29,10 +29,10 @@ module.exports = Backbone.View.extend({
     this[subview].setElement(this.$el.find('#' + subview));
 
     this.subviews.push(this[subview]);
-    // this.subviews[subview] = this[subview];
 
-    // TODO: is this.subviews being filled with abandoned views preventing garbage collection?
-    console.log(this.subviews);
+    // TODO: this.subviews is being filled with abandoned views preventing garbage collection
+    // refactor references to subviews by setting Object values
+    // this.subviews[subview] = this[subview];
 
     this.renderSubview(subview);
   },
