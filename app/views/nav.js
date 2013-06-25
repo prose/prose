@@ -8,6 +8,7 @@ module.exports = Backbone.View.extend({
   template: _.template(templates.nav),
 
   events: {
+    'click a.new': 'emit',
     'click a.edit': 'emit',
     'click a.preview': 'emit',
     'click a.meta': 'emit',
@@ -24,7 +25,6 @@ module.exports = Backbone.View.extend({
 
   emit: function(e) {
     var state = $(e.currentTarget).data('state');
-
     this.toggle(state, e);
 
     return false;
@@ -49,7 +49,15 @@ module.exports = Backbone.View.extend({
     this.trigger(state, e);
   },
 
+  toggleMobileClass: function(e) {
+    $(e.target).toggleClass('active');
+    this.$el.toggleClass('mobile');
+
+    return false;
+  },
+
   render: function() {
+    console.log(app.state);
     this.$el.html(this.template(_.extend(app.state, {
       noMenu: this.app.noMenu
     })));

@@ -8,11 +8,8 @@
       <div class='topbar-wrapper'>
         <div class='topbar'>
           <div id='toolbar' class='containment toolbar round'>
-            <% if (metadata && metadata.published) { %>
-              <a href='#' class='publish-flag published round' data-state='true'>Published<span class='ico small checkmark'></span></a>
-            <% } else if (metadata && !metadata.published) { %>
-              <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico checkmark'></span></a>
-            <% } %>
+            <!-- TODO: udpate published from view? -->
+            <a href='#' class='publish-flag' data-state='false'>Unpublished<span class='ico small checkmark'></span></a>
             <div class='options clearfix'>
               <span href='#' class='action round fl'>
                 <span class='ico status'></span>
@@ -82,8 +79,7 @@
       </div>
       <div id='code' class='code round inner'></div>
     </div>
-    <% if (markdown) { %>
-      <div id='preview' class='view preview prose'><%= preview %></div>
-    <% } %>
+    <!-- TODO: render preview from view? -->
+    <div id='preview' class='view preview prose'></div>
   </div>
 </div>
