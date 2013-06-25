@@ -43,7 +43,8 @@ module.exports = Backbone.View.extend({
   search: function() {
     var searchstr = this.input ? this.input.val() : '';
     return this.model.filter(function(model) {
-      return model.get('name').indexOf(searchstr) > -1;
+      // TODO: filter on name instead?
+      return model.get('path').indexOf(searchstr) > -1;
     });
   }
 });

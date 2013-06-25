@@ -13,7 +13,6 @@ module.exports = Backbone.Model.extend({
       branch: attributes.branch,
       collection: attributes.collection,
       model: attributes.model,
-      name: attributes.filename,
       path: attributes.path,
       repo: attributes.repo,
       sha: attributes.sha,
@@ -31,8 +30,9 @@ module.exports = Backbone.Model.extend({
     this.collection = attributes.collection;
     this.repo = attributes.repo;
 
-    if (attributes.name) {
-      extension = util.extension(attributes.name);
+    // TODO: clean this up using _.defaults
+    if (!this.isNew()) {
+      extension = util.extension(attributes.path);
     }
 
     // Default to gfm and markdown for new files
@@ -42,6 +42,7 @@ module.exports = Backbone.Model.extend({
       'lang': extension ? util.mode(extension) : 'gfm',
       'media': extension ? util.isMedia(extension) : false,
       'markdown': extension ? util.isMarkdown(extension) : true,
+      'name': this.isNew() ? '' : util.extractFilename(attributes.path)[1],
       'writable': this.repo.get('permissions').push
     });
   },

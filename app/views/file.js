@@ -101,7 +101,7 @@ module.exports = Backbone.View.extend({
   },
 
   setModel: function() {
-    this.model = this.collection.findWhere({ name: this.filename, path: this.path });
+    this.model = this.collection.findWhere({ path: this.path });
 
     this.model.fetch({
       complete: (function() {

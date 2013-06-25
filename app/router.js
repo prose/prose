@@ -234,8 +234,6 @@ module.exports = Backbone.Router.extend({
                 collection: repo.files,
                 repo: repo
               });
-            } else {
-              content.filename = filename;
             }
 
             this.view = new FileView(content);
