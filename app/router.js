@@ -246,37 +246,7 @@ module.exports = Backbone.Router.extend({
     });
   },
 
-  newPost: function(user, repo, branch, path) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-    app.state.markdown = true;
-
-    util.loader.loading(t('loading.creating'));
-    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      app.models.emptyPost(user, repo, branch, path, _.bind(function(err, data) {
-
-        data.jekyll = util.jekyll(path, data.file);
-        data.preview = false;
-        data.markdown = util.markdown(data.file);
-        data.lang = util.mode(data.file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        util.loader.loaded();
-        $('#content').empty().append(view.el);
-        app.state.file = data.file;
-
-      }, this));
-    }, this));
-  },
-
+  // TODO: should this still pass through File view?
   preview: function(user, repo, branch, path, file, mode) {
     var router = this;
     util.loader.loading(t('preview.file'));
