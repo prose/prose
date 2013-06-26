@@ -672,7 +672,7 @@ module.exports = Backbone.View.extend({
 
           view.updateURL();
           view.model.set('previous', filecontent);
-          view.closeSettings();
+          view.sidebar.close();
           view.updatePublishState();
           view.eventRegister.trigger('updateSaveState', t('actions.save.submission'), 'saved');
         });
@@ -706,7 +706,7 @@ module.exports = Backbone.View.extend({
           this.heading.render();
           view.updateURL();
           view.model.set('previous', filecontent);
-          view.closeSettings();
+          view.sidebar.close();
           view.updatePublishState();
           view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
         });
