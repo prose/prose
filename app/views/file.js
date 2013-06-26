@@ -45,12 +45,17 @@ module.exports = Backbone.View.extend({
     this.path = options.path || '';
     this.filename = options.filename;
 
-    if (this.model) {
-      // TODO: set defaults, build UI
-      this.render();
-    } else {
-      this.branches.fetch({ success: this.setCollection });
+    var fetch = {
+      success: this.setCollection
+    };
+
+    // Set model for new File models
+    var model = options.model;
+    if (model) {
+      fetch.model = model;
     }
+
+    this.branches.fetch(fetch);
 
     // Events from vertical nav
     this.listenTo(this.nav, 'new', this.new);
@@ -82,9 +87,9 @@ module.exports = Backbone.View.extend({
     }, this);
   },
 
-  setCollection: function() {
-    this.collection = this.branches.findWhere({ name: this.branch }).files;
-    this.collection.fetch({ success: this.setModel });
+  setCollection: function(collection, res, options) {
+    this.collection = collection.findWhere({ name: this.branch }).files;
+    this.collection.fetch({ success: this.setModel, model: options.model });
   },
 
   cursor: function() {
@@ -156,16 +161,17 @@ module.exports = Backbone.View.extend({
     }
   },
 
-  setModel: function() {
-    this.model = this.collection.findWhere({ path: this.path });
+  setModel: function(collection, res, options) {
+    // Set model either by calling directly for new File models
+    // or by filtering collection for existing File models
+    this.model = options.model ? options.model : collection.findWhere({ path: this.path });
 
     this.model.fetch({
       complete: (function() {
-
-        // TODO save config to the file Model as its used accross 
-        // files of the same repo and shouldn't be re-parsed each time:
-        this.config = this.collection.findWhere({ path: '_prose.yml' }) ||
-        this.collection.findWhere({ path: '_config.yml' });
+        // TODO: save parsed config to the repo as it's used accross 
+        // files of the same repo and shouldn't be re-parsed each time
+        this.config = collection.findWhere({ path: '_prose.yml' }) ||
+          collection.findWhere({ path: '_config.yml' });
 
         // render view once config content has loaded
         this.config.fetch({

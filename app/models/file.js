@@ -12,7 +12,7 @@ module.exports = Backbone.Model.extend({
     Backbone.Model.call(this, {
       branch: attributes.branch,
       collection: attributes.collection,
-      model: attributes.model,
+      name: attributes.name,
       path: attributes.path,
       repo: attributes.repo,
       sha: attributes.sha,
@@ -24,29 +24,29 @@ module.exports = Backbone.Model.extend({
   initialize: function(attributes, options) {
     _.bindAll(this);
 
-    var extension;
-    
+    var name = new Date().format('Y-m-d') + '-your-filename.md';
+    var path = this.isNew() ? attributes.path + '/' + name : attributes.path;
+    var extension = util.extension(path);
+
     this.branch = attributes.branch;
     this.collection = attributes.collection;
     this.repo = attributes.repo;
 
-    // TODO: clean this up using _.defaults
-    if (!this.isNew()) {
-      extension = util.extension(attributes.path);
-    }
-
-    // Default to gfm and markdown for new files
+    // TODO: isNew() name and path defaults should fail this.validate()
     this.set({
+      'binary': util.isBinary(extension),
+      'content': this.isNew() ? t('main.new.body') : undefined,
       'draft': function() {
         var path = this.get('path');
         return util.draft(path);
       },
       'extension': extension,
-      'binary': extension ? util.isBinary(extension) : false,
-      'lang': extension ? util.mode(extension) : 'gfm',
-      'media': extension ? util.isMedia(extension) : false,
-      'markdown': extension ? util.isMarkdown(extension) : true,
-      'name': this.isNew() ? '' : util.extractFilename(attributes.path)[1],
+      'lang': util.mode(extension),
+      'media': util.isMedia(extension),
+      'markdown': util.isMarkdown(extension),
+      'name': this.isNew() ? name : util.extractFilename(attributes.path)[1],
+      'path': path,
+      'type': this.isNew() ? 'file' : attributes.type,
       'writable': this.repo.get('permissions').push
     });
   },
@@ -101,6 +101,7 @@ module.exports = Backbone.Model.extend({
 
   getContent: function(options) {
     options = options ? _.clone(options) : {};
+
     Backbone.Model.prototype.fetch.call(this, _.extend(options, {
       dataType: 'text',
       headers: {
@@ -161,9 +162,15 @@ module.exports = Backbone.Model.extend({
   },
 
   fetch: function(options) {
-    // TODO: handle these two AJAX requests using deferreds, call 'success' callback after both complete
-    Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
-    this.getContent.apply(this, arguments);
+    // Series necessary for accurate isNew() check in getContent
+    if (this.isNew()) {
+      if (_.isFunction(options.success)) options.success();
+      if (_.isFunction(options.complete)) options.complete();
+    } else {
+      // TODO: use deffered to fire callbacks when both functions complete
+      Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
+      this.getContent.apply(this, arguments);
+    }
   },
 
   save: function(attributes, options) {
