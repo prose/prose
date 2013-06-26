@@ -232,8 +232,6 @@ module.exports = Backbone.Router.extend({
           var view = new app.views.Preview({
             model: data
           }).render();
-
-          utils.loader.loaded();
         }
       }, this));
     }, this));
