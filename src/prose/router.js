@@ -188,7 +188,7 @@ module.exports = Backbone.Router.extend({
     if (mode === 'edit') {
       utils.loader.loading(t('loading.file'));
     } else {
-      utils.loader.loading(t('preview.file'));
+      utils.loader.loading(t('loading.preview'));
     }
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
@@ -217,7 +217,7 @@ module.exports = Backbone.Router.extend({
 
   preview: function(user, repo, branch, path, file, mode) {
     var router = this;
-    utils.loader.loading(t('preview.file'));
+    utils.loader.loading(t('loading.preview'));
 
     app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
       if (err) return router.notify('error', t('notification.error.exists'));
