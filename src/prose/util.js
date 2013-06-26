@@ -318,15 +318,21 @@ _.preview = function(view) {
   if (p.site.prose && p.site.prose.site) {
     _(p.site.prose.site).each(function(file, key) {
       q.defer(function(cb){
+        var next = false;
         $.ajax({
           cache: true,
           dataType: 'jsonp',
           jsonp: false,
           jsonpCallback: 'callback',
           url: file,
+          timeout: 5000,
           success: function(d) {
             p.site[key] = d;
+            next = true;
             cb();
+          },
+          error: function(msg, b, c) {
+            if (!next) cb();
           }
         });
       });
