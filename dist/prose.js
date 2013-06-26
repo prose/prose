@@ -9890,97 +9890,12 @@ Liquid.Template.registerFilter({
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 module.exports = {"login":"Authorize on GitHub","docheader":{"editing":"Editing","error":"Error","preview":"Previewing"},"navigation":{"newFile":"New File","edit":"Edit","preview":"Preview","settings":"Settings","meta":"Meta Data","save":"Save","login":"Authorize with GitHub","about":"About","develop":"Developers","logout":"Logout"},"heading":{"explore":"Explore Projects"},"actions":{"unsaved":"You have unsaved Changes. Are you sure you want to leave?","draft":{"toPost":"Draft to Post"},"publishing":{"publish":"Publish","published":"Published","unpublish":"Unpublish","unpublished":"Unpublished"},"change":{"noChange":"No Changes","submit":"Changes to Submit","save":"Save"},"delete":{"title":"Delete","warn":"Are you sure you want to delete this file?","error":"Error during deletion. Please wait 30 seconds and try again."},"upload":{"uploading":"Uploading {file}","uploaded":"Uploaded {file}"},"save":{"title":"Save","saved":"Saved","saving":"Saving","patch":"Submitting Request","fileNameError":"Needs a Filename","submission":"Request Submitted","metaError":"Error! Metadata not Found"},"error":"Error. Try again in 30 Seconds","restore":{"restoring":"Restoring","restored":"Restored"},"commits":{"created":"Created {filename}","updated":"Updated {filename}","deleted":"Deleted {filename}","toDraft":"Created draft of {filename}","fromDraft":"Created post from a draft of {filename}"}},"loading":{"repos":"Loading Profile","repo":"Loading Project","file":"Loading File","preview":"Previewing Post","creating":"Creating new post"},"main":{"start":{"content":"Prose is a content editor for GitHub designed for managing websites.","learn":"Learn more"},"repos":{"filter":"Filter Projects","repo":"View Project","site":"View Site","sharedFrom":"Shared from an account","forkedFrom":"Forked from another project"},"repo":{"filter":"Filter Files","edit":"Edit"},"new":{"body":"## A New Post\\n\\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"},"file":{"metaTitle":"Review your changes:","rawMeta":"Raw Metadata","metaDescription":"Additions are highlighted in green. Deletions are crossed out.","back":"Done"},"upgrade":{"content":"Prose requires features not available to your browser","download":"Download a Modern Browser"}},"notification":{"loginDescription":"Please login with your GitHub account to access that project.","create":"Create it","home":"Back to Main Page","back":"Go Back","error":{"label":"Error","github":"Error while loading data from Github. This might be a temporary issue. Please try again later.","exists":"This file does not exist","notFound":"Page not Found"}},"sidebar":{"repos":{"groups":"Groups"},"repo":{"branch":"Switch Branch","drafts":"View Drafts","history":{"label":"Most Recent History","actions":{"restore":"Restore?"}},"create":"Create New File"},"save":{"label":"Describe your Changes","cancel":"Cancel","save":"Commit","submit":"Submit Change Request"},"settings":{"title":"Options","delete":"Delete This File","translate":"Translate to","draft":"Create Draft"}},"dialogs":{"link":{"title":"Insert Link","insertLocal":"Insert a Local Link","insert":"Insert"},"media":{"title":"Insert Image","back":"Back","description":"Upload images by dragging &amp; Dropping or </br>\n{input} <a>selecting one</a>\n","help":"Images uploaded are added to the current directory or one specified in the Image URL path above.","helpMedia":"Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field.","choose":"Choose Existing"},"help":{"blockElements":{"title":"Block Elements","content":{"paragraphs":{"title":"Paragraphs &amp; Breaks","content":"<p>To create a paragraph, simply create a block of text that is not separated by one or more blank lines. Blocks of text separated by one or more blank lines will be parsed as paragraphs.</p><p>If you want to create a line break, end a line with two or more spaces, then hit Return/Enter.</p>\n"},"headers":{"title":"Headers","content":"<p>Markdown supports two header formats. The wiki editor uses the &ldquo;atx&rsquo;-style headers. Simply prefix your header text with the number of <code>#</code> characters to specify heading depth. For example: <code># Header 1</code>, <code>## Header 2</code> and <code>### Header 3</code> will be progressively smaller headers. You may end your headers with any number of hashes.</p>\n"},"blockquotes":{"title":"Blockquotes","content":"<p>Markdown creates blockquotes email-style by prefixing each line with the <code>&gt;</code>. This looks best if you decide to hard-wrap text and prefix each line with a <code>&gt;</code> character, but Markdown supports just putting <code>&gt;</code> before your paragraph.</p>\n"},"lists":{"title":"Lists","content":"<p>Markdown supports both ordered and unordered lists. To create an ordered list, simply prefix each line with a number (any number will do &mdash; this is why the editor only uses one number.) To create an unordered list, you can prefix each line with <code>*</code>, <code>+</code> or <code>-</code>.</p> List items can contain multiple paragraphs, however each paragraph must be indented by at least 4 spaces or a tab.\n"},"codeBlocks":{"title":"Code Blocks","content":"<p>Markdown wraps code blocks in pre-formatted tags to preserve indentation in your code blocks. To create a code block, indent the entire block by at least 4 spaces or one tab. Markdown will strip the extra indentation you&rsquo;ve added to the code block.</p>\n"},"horizontalRules":{"title":"Horizontal Rules","content":"<p>Horizontal rules are created by placing three or more hyphens, asterisks or underscores on a line by themselves. Spaces are allowed between the hyphens, asterisks or underscores.</p>\n"}}},"spanElements":{"title":"Span Elements","content":{"links":{"title":"Links","content":"<p>Markdown has two types of links: <strong>inline</strong> and <strong>reference</strong>. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text &ldquo;GitHub&rdquo;, you write <code>[GitHub]</code>.</p><p>To create an inline link, create a set of parentheses immediately after the brackets and write your URL within the parentheses. (e.g., <code>[GitHub](http://github.com/)</code>). Relative paths are allowed in inline links.</p><p>To create a reference link, use two sets of square brackets. <code>[my internal link][internal-ref]</code> will link to the internal reference <code>internal-ref</code>.</p>\n"},"emphasis":{"title":"Emphasis","content":"<p>Asterisks (<code>*</code>) and underscores (<code>_</code>) are treated as emphasis and are wrapped with an <code>&lt;em&gt;</code> tag, which usually displays as italics in most browsers. Double asterisks (<code>**</code>) or double underscores (<code>__</code>) are treated as bold using the <code>&lt;strong&gt;</code> tag. To create italic or bold text, simply wrap your words in single/double asterisks/underscores. For example, <code>**My double emphasis text**</code> becomes <strong>My double emphasis text</strong>, and <code>*My single emphasis text*</code> becomes <em>My single emphasis text</em>.</p>\n"},"code":{"title":"Code","content":"<p>To create inline spans of code, simply wrap the code in backticks (<code>`</code>). Markdown will turn <code>`myFunction`</code> into <code>myFunction</code>.</p>\n"},"images":{"title":"Images","content":"<p>Markdown image syntax looks a lot like the syntax for links; it is essentially the same syntax preceded by an exclamation point (<code>!</code>). For example, if you want to link to an image at <code>http://github.com/unicorn.png</code> with the alternate text <code>My Unicorn</code>, you would write <code>![My Unicorn](http://github.com/unicorn.png)</code>.</p>\n"}}},"miscellaneous":{"title":"Miscellaneous","content":{"automaticLinks":{"title":"Automatic Links","content":"<p>If you want to create a link that displays the actual URL, markdown allows you to quickly wrap the URL in <code>&lt;</code> and <code>&gt;</code> to do so. For example, the link <a href=\"javascript:void(0);\">http://github.com/</a> is easily produced by writing <code>&lt;http://github.com/&gt;</code>.</p>\n"},"escaping":{"title":"Escaping","content":"<p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\\\</code>). Markdown will ignore the character directly after a backslash.\n"}}}}},"about":{"content":"# About\nProse provides a beatifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"}};
 },{}],2:[function(require,module,exports){
+module.exports = {"app":"<% if (!error) { %>\n  <div id='vert' class='vert clearfix navigation'></div>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose <%= version %></a></li>\n      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>\n      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>\n      <% if (window.authenticated) { %>\n        <li class='divider'></li>\n        <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>\n      <% } %>\n    </ul>\n  </div>\n</div>\n","asset":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (_.isMedia(path)) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon listing-icon round folder'></span>\n    <span class='details'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>\n      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n    </a>\n  <% } %>\n\n  <div class='details'>\n    <div class='actions fr clearfix'>\n      <% if (!isBinary) { %>\n        <a class='clearfix'\n          title=\"<%= t('main.repo.edit') %>\"\n          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n          <%= t('main.repo.edit') %>\n        </a>\n      <% } %>\n      <% if (window.authenticated && writePermissions) { %>\n        <a\n          class='delete'\n          title=\"<%= t('sidebar.settings.delete') %>\"\n          data-user='<%= user %>'\n          data-repo='<%= repo %>'\n          data-branch='<%= branch %>'\n          data-file='<%= file %>'\n          href='#'>\n          <span class='ico rubbish small'></span>\n        </a>\n      <% } %>\n    </div>\n    <% if (isBinary) { %>\n      <h3 class='title' title='<%= name %>'><%= name %></h3>\n    <% } else { %>\n        <% if (isMarkdown) { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <div class='action round avatar'>\n    <div class='popup-hover'>\n      <span class='ico round status'></span>\n      <span class='popup round arrow-left'><%= t('actions.change.noChange') %></span>\n      <%= avatar %>\n    </div>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n\n    <% if (app.state.mode === 'new' && !translate) { %>\n      <input type='text' class='filepath' placeholder='<%= title %>'>\n    <% } else { %>\n      <input type='text' class='filepath' value='<%= title %>'>\n    <% } %>\n\n    <div class='mask'></div>\n  </div>\n\n<% } else { %>\n  <div class='avatar round'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","helpDialog":"<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= _.formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= _.formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= _.formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","hidden":"<input type='hidden' name='<%= name %>' value='<%= value %>' />\n","linkDialog":"<div class='inner'>\n  <label><%= t('dialogs.link.title') %></label>\n  <input type='text' name='href' placeholder='Link URL' />\n  <input type='text' name='text' placeholder='Link Name' />\n  <input type='text' name='title' placeholder='Title (optional)' />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder='Insert a local link' class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>\n</div>\n","loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <%= message %>\n</div>\n","mediaDialog":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label><%= t('dialogs.media.title') %></label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        <%= description %>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder='Image URL' />\n    <input type='text' name='alt' placeholder='Alt text (optional)' />\n    <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>\n      <% if (!assetsDirectory) { %>\n        <small class='deemphasize'><%= t('dialogs.media.help') %></small>\n      <% } %>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label><%= t('dialogs.media.choose') %></label>\n      <ul id='media'></ul>\n      <small class='deemphasize'><%= t('dialogs.media.helpMedia') %></small>\n    </div>\n  <% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('notification.loginDescription') %></p>\n      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'><%= t('login') %></a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= key %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'><%= t('notification.create') %></a></p>\n      <% } %>\n\n      <% if (key === 'error') { %>\n        <p><a class='button round' href='#'><%= t('notification.home') %></a></p>\n      <% } else { %>\n        <p><a class='button round' href='<%= previous %>'><%= t('notification.back') %></a></p>\n      <% } %>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'>\n    <h2><%= t('main.file.metaTitle') %><br /><span class='deemphasize small'></span><%= t('main.file.metaDescription') %></h2>\n    <div class='diff-content inner'></div>\n  </div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n      <a href='#' class='button round finish'><%= t('main.file.back') %></a>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar'>\n        <div id='toolbar' class='containment toolbar round'></div>\n      </div>\n    </div>\n    <div id='code' class='code round inner'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder=\"<%= t('main.repo.filter') %>\" />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files' class='listing'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder=\"<%= t('main.repos.filter') %>\" />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <ul id='projects' class='projects listing'></ul>\n</div>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      class='listing-icon'\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='icon round repo owner private' title=\"<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)\"></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='icon round repo owner' title=\"<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)\"></span>\n      <% } else if (fork && private) { %>\n        <span class='icon round repo private fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n      <% } else if (fork) { %>\n        <span class='icon round repo fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n      <% } else if (private) { %>\n        <span class='icon round repo private'></span>\n      <% } else { %>\n        <span class='icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details'>\n      <div class='actions fr clearfix'>\n        <a\n          data-user='<%= owner.login %>'\n          data-repo='<%= name %>'\n          href='#<%= owner.login %>/<%= name %>'>\n          <%= t('main.repos.repo') %>\n        </a>\n        <% if (homepage) { %>\n          <a href='<%= homepage %>'><%= t('main.repos.site') %></a>\n        <% } %>\n      </div>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.settings.title') %></h2>\n  </div>\n  <div class='inner authoring'>\n\n    <% if (jekyll && !draft && lang === 'gfm') { %>\n      <a class='draft button round' href='#'><%= t('sidebar.settings.draft') %></a>\n    <% } %>\n\n    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'><%= t('sidebar.settings.translate') + ' ' + lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (writable) { %>\n      <a class='delete button round' href='#'><%= t('sidebar.settings.delete') %></a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.repos.groups') %></h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'><%= t('sidebar.repo.branch') %></h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n\n<% var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; %>\n<% if (rooturl && path != '_drafts') { %>\n  <div class='inner'>\n    <a class='button round' href='#<%= [user, repo, \"tree\", branch, \"_drafts\"].join(\"/\") %>'><%= t('sidebar.repo.drafts') %></a>\n  </div>\n<% } %>\n\n<% if (window.authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'><%= t('sidebar.repo.history.label') %></h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username]; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                <%= t('sidebar.repo.history.actions.restore') %>\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n<div class='inner'>\n  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='round button mobile-new-file'><%= t('sidebar.repo.create') %></a>\n</div>\n<% } %>\n","sidebarSave":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.save.label') %></h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>\n      </a>\n    </div>\n\n    <% if (writable) { %>\n      <a class='confirm button round' href='#'><%= t('sidebar.save.save') %></a>\n    <% } else { %>\n      <a class='confirm button round' href='#'><%= t('sidebar.save.submit') %></a>\n    <% } %>\n  </div>\n<% } %>\n","start":"<% if (!window.authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('main.start.content') %></p>\n      <p><a href='#about'><%= t('main.start.learn') %></a></p>\n      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' data-type='<%= type %>' />\n</div>\n","toolbar":"<% if (draft) { %>\n  <a href='#' class='draft-to-post'><%= t('actions.draft.toPost') %><span class='ico checkmark'></span></a>\n<% } else { %>\n  <% if (jekyll && metadata.published) { %>\n    <a href='#' class='publish-flag published round' data-state='true'><%= t('actions.publishing.published') %><span class='ico small checkmark'></span></a>\n  <% } else if (jekyll && !metadata.published) { %>\n    <a href='#' class='publish-flag' data-state='false'><%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span></a>\n  <% } %>\n<% } %>\n<div class='options clearfix'>\n  <span href='#' class='action round fl ico small document <%= avatar %>'>\n    <span class='status'></span>\n\n    <% if (writable) { %>\n      <span class='popup round arrow-top'><%= t('actions.change.save') %></span>\n    <% } else { %>\n      <span class='popup round arrow-top'><%= t('actions.change.submit') %></span>\n    <% } %>\n\n  </span>\n  <% if (markdown) { %>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"##\\n\\n\") %>'>h2</a></li>\n      <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"###\\n\\n\") %>'>h3</a></li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>\n          <span class='ico small link'></span>\n        </a>\n      </li>\n      <li>\n        <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>\n          <span class='ico small picture'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>\n      <li>\n        <a data-key='italic' href='#' title='Italic' data-snippet='__'>\n          <span class='ico small italic'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n          <span class='ico small quote'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n          <span class='ico small list'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n          <span class='ico small numbered-list'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>\n          <span class='ico small question'></span>\n        </a>\n      </li>\n    </ul>\n  <% } %>\n</div>\n<div id='dialog'></div>\n","upgrade":"<div class='start'>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('main.upgrade.content') %></p>\n      <a class='round button' href='https://www.google.com/intl/en/chrome/browser'><%= t('main.upgrade.download') %></a>\n    </div>\n  </div>\n</div>\n","verticalNav":"<%\n  var editMode;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<% if (!noMenu && window.authenticated) { %>\n  <ul class='mobile-menu nav clearfix'>\n    <li>\n      <a href='#' class='toggle ico menu round'></a>\n    </li>\n  </ul>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n  <ul class='project nav clearfix'>\n    <li>\n      <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n        <span class='popup round arrow-right'><%= t('navigation.newFile') %></span>\n      </a>\n    </li>\n  </ul>\n<% } %>\n\n<% if (editMode) { %>\n  <ul class='post-views nav clearfix'>\n    <li>\n      <a href='#' class='ico round pencil edit' data-state='edit'>\n        <span class='popup round arrow-right'><%= t('navigation.edit') %></span>\n      </a>\n    </li>\n    <% if (markdown || mode === 'new') { %>\n      <li>\n        <a href='#' class='ico round eye blob preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n          <span class='popup round arrow-right'><%= t('navigation.preview') %></span>\n        </a>\n      </li>\n    <% } %>\n\n    <% if (window.authenticated) { %>\n      <% if (jekyll && lang !== 'yaml') { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'><%= t('navigation.meta') %></span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (app.state.mode !== 'new') { %>\n        <li>\n          <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n            <span class='popup round arrow-right'><%= t('navigation.settings') %></span>\n          </a>\n        </li>\n      <% } %>\n\n      <li>\n        <a href='#' class='ico round save'>\n          <span class='popup round arrow-right'><%= t('navigation.save') %></span>\n        </a>\n      </li>\n    <% } %>\n  </ul>\n<% } %>\n\n<% if (!window.authenticated) { %>\n<ul class='auth nav clearfix'>\n  <li>\n    <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n      <span class='popup round arrow-right'><%= t('login') %></span>\n    </a>\n  </li>\n</ul>\n<% } %>\n"};
+},{}],3:[function(require,module,exports){
 // Automatically Generated
 
 module.exports = ["zh","de","ro","es"];
-},{}],3:[function(require,module,exports){
-module.exports = {"app":"<% if (!error) { %>\n  <div id='vert' class='vert clearfix navigation'></div>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose <%= version %></a></li>\n      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>\n      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>\n      <% if (window.authenticated) { %>\n        <li class='divider'></li>\n        <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>\n      <% } %>\n    </ul>\n  </div>\n</div>\n","asset":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (_.isMedia(path)) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon listing-icon round folder'></span>\n    <span class='details'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>\n      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n    </a>\n  <% } %>\n\n  <div class='details'>\n    <div class='actions fr clearfix'>\n      <% if (!isBinary) { %>\n        <a class='clearfix'\n          title=\"<%= t('main.repo.edit') %>\"\n          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n          <%= t('main.repo.edit') %>\n        </a>\n      <% } %>\n      <% if (window.authenticated && writePermissions) { %>\n        <a\n          class='delete'\n          title=\"<%= t('sidebar.settings.delete') %>\"\n          data-user='<%= user %>'\n          data-repo='<%= repo %>'\n          data-branch='<%= branch %>'\n          data-file='<%= file %>'\n          href='#'>\n          <span class='ico rubbish small'></span>\n        </a>\n      <% } %>\n    </div>\n    <% if (isBinary) { %>\n      <h3 class='title' title='<%= name %>'><%= name %></h3>\n    <% } else { %>\n        <% if (isMarkdown) { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <div class='action round avatar'>\n    <div class='popup-hover'>\n      <span class='ico round status'></span>\n      <span class='popup round arrow-left'><%= t('actions.change.noChange') %></span>\n      <%= avatar %>\n    </div>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n\n    <% if (app.state.mode === 'new' && !translate) { %>\n      <input type='text' class='filepath' placeholder='<%= title %>'>\n    <% } else { %>\n      <input type='text' class='filepath' value='<%= title %>'>\n    <% } %>\n\n    <div class='mask'></div>\n  </div>\n\n<% } else { %>\n  <div class='avatar round'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","helpDialog":"<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= _.formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= _.formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= _.formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","hidden":"<input type='hidden' name='<%= name %>' value='<%= value %>' />\n","linkDialog":"<div class='inner'>\n  <label><%= t('dialogs.link.title') %></label>\n  <input type='text' name='href' placeholder='Link URL' />\n  <input type='text' name='text' placeholder='Link Name' />\n  <input type='text' name='title' placeholder='Title (optional)' />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder='Insert a local link' class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>\n</div>\n","loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <%= message %>\n</div>\n","mediaDialog":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label><%= t('dialogs.media.title') %></label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        <%= description %>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder='Image URL' />\n    <input type='text' name='alt' placeholder='Alt text (optional)' />\n    <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>\n      <% if (!assetsDirectory) { %>\n        <small class='deemphasize'><%= t('dialogs.media.help') %></small>\n      <% } %>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label><%= t('dialogs.media.choose') %></label>\n      <ul id='media'></ul>\n      <small class='deemphasize'><%= t('dialogs.media.helpMedia') %></small>\n    </div>\n  <% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('notification.loginDescription') %></p>\n      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'><%= t('login') %></a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= key %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'><%= t('notification.create') %></a></p>\n      <% } %>\n\n      <% if (key === 'error') { %>\n        <p><a class='button round' href='#'><%= t('notification.home') %></a></p>\n      <% } else { %>\n        <p><a class='button round' href='<%= previous %>'><%= t('notification.back') %></a></p>\n      <% } %>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'>\n    <h2><%= t('main.file.metaTitle') %><br /><span class='deemphasize small'></span><%= t('main.file.metaDescription') %></h2>\n    <div class='diff-content inner'></div>\n  </div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n      <a href='#' class='button round finish'><%= t('main.file.back') %></a>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar'>\n        <div id='toolbar' class='containment toolbar round'></div>\n      </div>\n    </div>\n    <div id='code' class='code round inner'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder=\"<%= t('main.repo.filter') %>\" />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files' class='listing'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder=\"<%= t('main.repos.filter') %>\" />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <ul id='projects' class='projects listing'></ul>\n</div>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      class='listing-icon'\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='icon round repo owner private' title=\"<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)\"></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='icon round repo owner' title=\"<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)\"></span>\n      <% } else if (fork && private) { %>\n        <span class='icon round repo private fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n      <% } else if (fork) { %>\n        <span class='icon round repo fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n      <% } else if (private) { %>\n        <span class='icon round repo private'></span>\n      <% } else { %>\n        <span class='icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details'>\n      <div class='actions fr clearfix'>\n        <a\n          data-user='<%= owner.login %>'\n          data-repo='<%= name %>'\n          href='#<%= owner.login %>/<%= name %>'>\n          <%= t('main.repos.repo') %>\n        </a>\n        <% if (homepage) { %>\n          <a href='<%= homepage %>'><%= t('main.repos.site') %></a>\n        <% } %>\n      </div>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.settings.title') %></h2>\n  </div>\n  <div class='inner authoring'>\n\n    <% if (jekyll && !draft && lang === 'gfm') { %>\n      <a class='draft button round' href='#'><%= t('sidebar.settings.draft') %></a>\n    <% } %>\n\n    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'><%= t('sidebar.settings.translate') + ' ' + lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (writable) { %>\n      <a class='delete button round' href='#'><%= t('sidebar.settings.delete') %></a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.repos.groups') %></h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'><%= t('sidebar.repo.branch') %></h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n\n<% var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; %>\n<% if (rooturl && path != '_drafts') { %>\n  <div class='inner'>\n    <a class='button round' href='#<%= [user, repo, \"tree\", branch, \"_drafts\"].join(\"/\") %>'><%= t('sidebar.repo.drafts') %></a>\n  </div>\n<% } %>\n\n<% if (window.authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'><%= t('sidebar.repo.history.label') %></h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username]; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                <%= t('sidebar.repo.history.actions.restore') %>\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n<div class='inner'>\n  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='round button mobile-new-file'><%= t('sidebar.repo.create') %></a>\n</div>\n<% } %>\n","sidebarSave":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.save.label') %></h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>\n      </a>\n    </div>\n\n    <% if (writable) { %>\n      <a class='confirm button round' href='#'><%= t('sidebar.save.save') %></a>\n    <% } else { %>\n      <a class='confirm button round' href='#'><%= t('sidebar.save.submit') %></a>\n    <% } %>\n  </div>\n<% } %>\n","start":"<% if (!window.authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('main.start.content') %></p>\n      <p><a href='#about'><%= t('main.start.learn') %></a></p>\n      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' data-type='<%= type %>' />\n</div>\n","toolbar":"<% if (draft) { %>\n  <a href='#' class='draft-to-post'><%= t('actions.draft.toPost') %><span class='ico checkmark'></span></a>\n<% } else { %>\n  <% if (jekyll && metadata.published) { %>\n    <a href='#' class='publish-flag published round' data-state='true'><%= t('actions.publishing.published') %><span class='ico small checkmark'></span></a>\n  <% } else if (jekyll && !metadata.published) { %>\n    <a href='#' class='publish-flag' data-state='false'><%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span></a>\n  <% } %>\n<% } %>\n<div class='options clearfix'>\n  <span href='#' class='action round fl ico small document <%= avatar %>'>\n    <span class='status'></span>\n\n    <% if (writable) { %>\n      <span class='popup round arrow-top'><%= t('actions.change.save') %></span>\n    <% } else { %>\n      <span class='popup round arrow-top'><%= t('actions.change.submit') %></span>\n    <% } %>\n\n  </span>\n  <% if (markdown) { %>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"##\\n\\n\") %>'>h2</a></li>\n      <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"###\\n\\n\") %>'>h3</a></li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>\n          <span class='ico small link'></span>\n        </a>\n      </li>\n      <li>\n        <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>\n          <span class='ico small picture'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>\n      <li>\n        <a data-key='italic' href='#' title='Italic' data-snippet='__'>\n          <span class='ico small italic'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n          <span class='ico small quote'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n          <span class='ico small list'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n          <span class='ico small numbered-list'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>\n          <span class='ico small question'></span>\n        </a>\n      </li>\n    </ul>\n  <% } %>\n</div>\n<div id='dialog'></div>\n","upgrade":"<div class='start'>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('main.upgrade.content') %></p>\n      <a class='round button' href='https://www.google.com/intl/en/chrome/browser'><%= t('main.upgrade.download') %></a>\n    </div>\n  </div>\n</div>\n","verticalNav":"<%\n  var editMode;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<% if (!noMenu && window.authenticated) { %>\n  <ul class='mobile-menu nav clearfix'>\n    <li>\n      <a href='#' class='toggle ico menu round'></a>\n    </li>\n  </ul>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n  <ul class='project nav clearfix'>\n    <li>\n      <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n        <span class='popup round arrow-right'><%= t('navigation.newFile') %></span>\n      </a>\n    </li>\n  </ul>\n<% } %>\n\n<% if (editMode) { %>\n  <ul class='post-views nav clearfix'>\n    <li>\n      <a href='#' class='ico round pencil edit' data-state='edit'>\n        <span class='popup round arrow-right'><%= t('navigation.edit') %></span>\n      </a>\n    </li>\n    <% if (markdown || mode === 'new') { %>\n      <li>\n        <a href='#' class='ico round eye blob preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n          <span class='popup round arrow-right'><%= t('navigation.preview') %></span>\n        </a>\n      </li>\n    <% } %>\n\n    <% if (window.authenticated) { %>\n      <% if (jekyll && lang !== 'yaml') { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'><%= t('navigation.meta') %></span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (app.state.mode !== 'new') { %>\n        <li>\n          <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n            <span class='popup round arrow-right'><%= t('navigation.settings') %></span>\n          </a>\n        </li>\n      <% } %>\n\n      <li>\n        <a href='#' class='ico round save'>\n          <span class='popup round arrow-right'><%= t('navigation.save') %></span>\n        </a>\n      </li>\n    <% } %>\n  </ul>\n<% } %>\n\n<% if (!window.authenticated) { %>\n<ul class='auth nav clearfix'>\n  <li>\n    <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n      <span class='popup round arrow-right'><%= t('login') %></span>\n    </a>\n  </li>\n</ul>\n<% } %>\n"};
 },{}],4:[function(require,module,exports){
-module.exports={
-  "api": "https://api.github.com",
-  "site": "https://github.com",
-  "clientId": "c602a8bd54b1e774f864",
-  "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
-}
-
-},{}],5:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var LOCALES = require('../../translations/locales');
-var en = require('../../dist/en.js');
-
-window.locale.en = en;
-window.locale.current('en');
-
-window.app = {
-    config: {},
-    models: require('./models'),
-    views: {
-      App: require('./views/app'),
-      Notification: require('./views/notification'),
-      Start: require('./views/start'),
-      Preview: require('./views/preview'),
-      Profile: require('./views/profile'),
-      Posts: require('./views/posts'),
-      Post: require('./views/post'),
-      Documentation: require('./views/documentation')
-    },
-    templates: require('../../dist/templates'),
-    router: require('./router'),
-    utils: {},
-    state: {'repo': ''},
-    instance: {},
-    eventRegister: _.extend({}, Backbone.Events)
-};
-
-// Set up translations
-var browserLang = (navigator.language || navigator.userLanguage).split('-')[0];
-
-// Check if the browsers language is supported
-if (LOCALES.indexOf(browserLang) != -1) app.locale = browserLang;
-
-if (app.locale && app.locale !== 'en') {
-    $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
-        window.locale[app.locale] = result;
-        window.locale.current(app.locale);
-    });
-}
-
-// Bootup
-// test the browser supports CORS and return a boolean for an oauth token.
-if ('withCredentials' in new XMLHttpRequest()) {
-  if (app.models.authenticate()) {
-    app.models.loadApplication(function(err, data) {
-      if (err) {
-        var view = new window.app.views.Notification({
-          'type': 'error',
-          'message': t('notification.error.github')
-        }).render();
-
-        $('#prose').empty().append(view.el);
-      } else {
-
-        // Initialize router
-        window.router = new app.router({
-          model: data
-        });
-
-        // Start responding to routes
-        Backbone.history.start();
-      }
-    });
-  }
-} else {
-  // Display an upgrade notice.
-  var tmpl = _(window.app.templates.upgrade).template();
-
-  _.defer(function() {
-    $('#prose').empty().append(tmpl);
-  });
-}
-
-},{"../../dist/en.js":1,"../../translations/locales":2,"./models":6,"./views/app":7,"./views/notification":8,"./views/start":9,"./views/preview":10,"./views/profile":11,"./views/posts":12,"./views/post":13,"./views/documentation":14,"../../dist/templates":3,"./router":15,"jquery-browserify":16,"underscore":17,"backbone":18}],19:[function(require,module,exports){
 function tryParse(obj) {
   try {
     return JSON.parse(obj);
@@ -10052,7 +9967,7 @@ cookie.clear = function() {
 
 module.exports = cookie;
 
-},{}],20:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 module.exports = {
   help: [
     {
@@ -10115,7 +10030,7 @@ module.exports = {
   ]
 }
 
-},{}],21:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = {
   dragEnter: function(e, $el) {
     $el.addClass('drag-over');
@@ -10184,7 +10099,15 @@ module.exports = {
   }
 }
 
-},{}],17:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
+module.exports={
+  "api": "https://api.github.com",
+  "site": "https://github.com",
+  "clientId": "c602a8bd54b1e774f864",
+  "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
+}
+
+},{}],8:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11413,7 +11336,387 @@ module.exports = {
 }).call(this);
 
 })()
-},{}],16:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var LOCALES = require('../../translations/locales');
+var en = require('../../dist/en.js');
+
+window.locale.en = en;
+window.locale.current('en');
+
+window.app = {
+    config: {},
+    models: require('./models'),
+    views: {
+      App: require('./views/app'),
+      Notification: require('./views/notification'),
+      Start: require('./views/start'),
+      Preview: require('./views/preview'),
+      Profile: require('./views/profile'),
+      Posts: require('./views/posts'),
+      Post: require('./views/post'),
+      Documentation: require('./views/documentation')
+    },
+    templates: require('../../dist/templates'),
+    router: require('./router'),
+    utils: {},
+    state: {'repo': ''},
+    instance: {},
+    eventRegister: _.extend({}, Backbone.Events)
+};
+
+// Set up translations
+var browserLang = (navigator.language || navigator.userLanguage).split('-')[0];
+
+// Check if the browsers language is supported
+if (LOCALES.indexOf(browserLang) != -1) app.locale = browserLang;
+
+if (app.locale && app.locale !== 'en') {
+    $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+        window.locale[app.locale] = result;
+        window.locale.current(app.locale);
+    });
+}
+
+// Bootup
+// test the browser supports CORS and return a boolean for an oauth token.
+if ('withCredentials' in new XMLHttpRequest()) {
+  if (app.models.authenticate()) {
+    app.models.loadApplication(function(err, data) {
+      if (err) {
+        var view = new window.app.views.Notification({
+          'type': 'error',
+          'message': t('notification.error.github')
+        }).render();
+
+        $('#prose').empty().append(view.el);
+      } else {
+
+        // Initialize router
+        window.router = new app.router({
+          model: data
+        });
+
+        // Start responding to routes
+        Backbone.history.start();
+      }
+    });
+  }
+} else {
+  // Display an upgrade notice.
+  var tmpl = _(window.app.templates.upgrade).template();
+
+  _.defer(function() {
+    $('#prose').empty().append(tmpl);
+  });
+}
+
+},{"../../dist/en.js":1,"../../translations/locales":3,"./models":10,"./views/app":11,"./views/notification":12,"./views/start":13,"./views/preview":14,"./views/profile":15,"./views/posts":16,"./views/post":17,"./views/documentation":18,"../../dist/templates":2,"./router":19,"underscore":8,"backbone":20,"jquery-browserify":21}],19:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var utils = require('./util');
+
+module.exports = Backbone.Router.extend({
+
+  routes: {
+    'about(/)': 'about',
+    'error/:code': 'error',
+    ':user(/)': 'profile',
+    ':user/:repo(/)': 'repo',
+    ':user/:repo/*path(/)': 'path',
+    '*default': 'start'
+  },
+
+  initialize: function(options) {
+    this.model = options.model;
+    this.eventRegister = app.eventRegister;
+
+    // Load up the main layout
+    this.application = new app.views.App({
+      el: '#prose',
+      model: this.model
+    });
+  },
+
+  resetState: function() {
+    app.state = {
+      user: '',
+      repo: '',
+      mode: 'page',
+      branch: '',
+      path: '',
+      file: ''
+    };
+  },
+
+  about: function() {
+    this.resetState();
+    router.application.render({
+      noMenu: true
+    });
+
+    var view = new app.views.Documentation({
+      page: 'about'
+    }).render();
+
+    $('#content').empty().append(view.el);
+  },
+
+  // #example-user
+  // #example-organization
+  profile: function(user) {
+    var router = this;
+    utils.loader.loading(t('loading.repos'));
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
+
+    app.state = app.state || {};
+    app.state.user = user;
+    app.state.title = user;
+    app.state.repo = '';
+    app.state.mode = '';
+    app.state.branch = '';
+    app.state.path = '';
+    app.state.file = '';
+
+    app.models.loadRepos(user, function(err, data) {
+      data.authenticated = !! window.authenticated;
+
+      router.application.render();
+      var view = new app.views.Profile({
+        model: _.extend(router.model, data)
+      }).render();
+
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    });
+  },
+
+  // #example-user/example-repo
+  repo: function(user, repo) {
+    var router = this;
+    utils.loader.loading(t('loading.repo'));
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
+
+    app.state = {
+      user: user,
+      repo: repo,
+      mode: 'tree',
+      branch: '',
+      path: '',
+      file: ''
+    };
+
+    app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
+      if (err) return router.notify('error', t('notification.error.exists'));
+
+      router.application.render();
+      var view = new app.views.Posts({
+        model: data
+      }).render();
+
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    }, this));
+  },
+
+  // #example-user/example-repo/tree/BRANCH
+  repoBranch: function(user, repo, branch, path) {
+
+    var router = this;
+    utils.loader.loading(t('loading.repo'));
+
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      if (err) return router.notify('error', t('notification.error.exists'));
+      router.application.render();
+
+      var view = new app.views.Posts({
+        model: data
+      }).render();
+
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    }, this));
+  },
+
+  path: function(user, repo, path) {
+    var parts;
+    app.state.user = user;
+    app.state.repo = repo;
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
+    url = _.extractURL(path);
+
+    if (url.mode === 'tree') {
+      this.repoBranch(user, repo, url.branch, url.path);
+    } else if (url.mode === 'new') {
+      this.newPost(user, repo, url.branch, url.path);
+    } else if (url.mode === 'preview') {
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
+    } else { // blob or edit ..
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
+    }
+  },
+
+  newPost: function (user, repo, branch, path) {
+    // TODO Fix this, shouldn't have to pass
+    // something like this here.
+    app.state.markdown = true;
+
+    utils.loader.loading(t('loading.creating'));
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
+
+        data.jekyll = _.jekyll(path, data.file);
+        data.preview = false;
+        data.markdown = _.markdown(data.file);
+        data.lang = _.mode(data.file);
+
+        this.application.render({
+          jekyll: data.jekyll,
+          noMenu: true
+        });
+
+        var view = new app.views.Post({
+          model: data
+        }).render();
+
+        utils.loader.loaded();
+        $('#content').empty().append(view.el);
+        app.state.file = data.file;
+
+      }, this));
+    }, this));
+  },
+
+  post: function(user, repo, branch, path, file, mode) {
+    if (mode === 'edit') {
+      utils.loader.loading(t('loading.file'));
+    } else {
+      utils.loader.loading(t('loading.preview'));
+    }
+
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
+      if (err) return this.notify('error', t('notification.error.exists'));
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
+        if (err) return this.notify('error', t('notification.error.exists'));
+
+        app.state.markdown = data.markdown;
+        data.jekyll = !!data.metadata;
+        data.lang = _.mode(file);
+
+        this.application.render({
+          jekyll: data.jekyll,
+          noMenu: true
+        });
+
+        var view = new app.views.Post({
+          model: data
+        }).render();
+
+        utils.loader.loaded();
+        $('#content').empty().html(view.el);
+      }, this));
+    }, this));
+  },
+
+  preview: function(user, repo, branch, path, file, mode) {
+    var router = this;
+    utils.loader.loading(t('loading.preview'));
+
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      if (err) return router.notify('error', t('notification.error.exists'));
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        if (err) {
+          app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
+        } else {
+          cb(err, data);
+        }
+
+        function cb(err, data) {
+          var view = new app.views.Preview({
+            model: data
+          }).render();
+        }
+      }, this));
+    }, this));
+  },
+
+  start: function() {
+    if (window.authenticated) {
+      $('#start').remove();
+
+      // Redirect
+      router.navigate(app.username, {trigger: true});
+    } else {
+      this.application.render({
+        hideInterface: true
+      });
+
+      var view = new app.views.Start({
+        model: _.extend(this.model, {
+          authenticated: !! window.authenticated
+        })
+      }).render();
+
+      $('#content').empty();
+      $('#prose').append(view.el);
+    }
+  },
+
+  // if the application after routing
+  // hits an error code router.navigate('error' + err.error)
+  // sends the route here.
+  error: function(code) {
+    code = (code && code === '404') ?
+      t('notification.error.notFound') :
+      t('notification.error.label');
+
+    this.application.render({
+      error: true
+    });
+
+    var view = new app.views.Notification({
+      'type': 'Error',
+      'key': 'error',
+      'message': code
+    }).render();
+
+    utils.loader.loaded();
+    $('#content').empty().append(view.el);
+  },
+
+  notify: function(type, message) {
+    // TODO Fix this, shouldn't have to pass
+    // something like this here.
+    app.state.markdown = false;
+    this.application.render({
+      error: true
+    });
+
+    var view = new app.views.Notification({
+      'type': type,
+      'key': 'page-error',
+      'message': message
+    }).render();
+
+    utils.loader.loaded();
+    $('#content').empty().append(view.el);
+  }
+});
+
+},{"./util":22,"underscore":8,"jquery-browserify":21,"backbone":20}],21:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -20748,7 +21051,7 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],6:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -21647,393 +21950,7 @@ module.exports = {
   }
 };
 
-},{"../../oauth.json":4,"./cookie":19,"../libs/github":22,"underscore":17,"jquery-browserify":16,"js-yaml":23,"queue-async":24}],15:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('./util');
-
-module.exports = Backbone.Router.extend({
-
-  routes: {
-    'about(/)': 'about',
-    'error/:code': 'error',
-    ':user(/)': 'profile',
-    ':user/:repo(/)': 'repo',
-    ':user/:repo/*path(/)': 'path',
-    '*default': 'start'
-  },
-
-  initialize: function(options) {
-    this.model = options.model;
-    this.eventRegister = app.eventRegister;
-
-    // Load up the main layout
-    this.application = new app.views.App({
-      el: '#prose',
-      model: this.model
-    });
-  },
-
-  resetState: function() {
-    app.state = {
-      user: '',
-      repo: '',
-      mode: 'page',
-      branch: '',
-      path: '',
-      file: ''
-    };
-  },
-
-  about: function() {
-    this.resetState();
-    router.application.render({
-      noMenu: true
-    });
-
-    var view = new app.views.Documentation({
-      page: 'about'
-    }).render();
-
-    $('#content').empty().append(view.el);
-  },
-
-  // #example-user
-  // #example-organization
-  profile: function(user) {
-    var router = this;
-    utils.loader.loading(t('loading.repos'));
-
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-
-    app.state = app.state || {};
-    app.state.user = user;
-    app.state.title = user;
-    app.state.repo = '';
-    app.state.mode = '';
-    app.state.branch = '';
-    app.state.path = '';
-    app.state.file = '';
-
-    app.models.loadRepos(user, function(err, data) {
-      data.authenticated = !! window.authenticated;
-
-      router.application.render();
-      var view = new app.views.Profile({
-        model: _.extend(router.model, data)
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    });
-  },
-
-  // #example-user/example-repo
-  repo: function(user, repo) {
-    var router = this;
-    utils.loader.loading(t('loading.repo'));
-
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-
-    app.state = {
-      user: user,
-      repo: repo,
-      mode: 'tree',
-      branch: '',
-      path: '',
-      file: ''
-    };
-
-    app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('notification.error.exists'));
-
-      router.application.render();
-      var view = new app.views.Posts({
-        model: data
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    }, this));
-  },
-
-  // #example-user/example-repo/tree/BRANCH
-  repoBranch: function(user, repo, branch, path) {
-
-    var router = this;
-    utils.loader.loading(t('loading.repo'));
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('notification.error.exists'));
-      router.application.render();
-
-      var view = new app.views.Posts({
-        model: data
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    }, this));
-  },
-
-  path: function(user, repo, path) {
-    var parts;
-    app.state.user = user;
-    app.state.repo = repo;
-
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-    url = _.extractURL(path);
-
-    if (url.mode === 'tree') {
-      this.repoBranch(user, repo, url.branch, url.path);
-    } else if (url.mode === 'new') {
-      this.newPost(user, repo, url.branch, url.path);
-    } else if (url.mode === 'preview') {
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
-    } else { // blob or edit ..
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
-    }
-  },
-
-  newPost: function (user, repo, branch, path) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-    app.state.markdown = true;
-
-    utils.loader.loading(t('loading.creating'));
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
-
-        data.jekyll = _.jekyll(path, data.file);
-        data.preview = false;
-        data.markdown = _.markdown(data.file);
-        data.lang = _.mode(data.file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        utils.loader.loaded();
-        $('#content').empty().append(view.el);
-        app.state.file = data.file;
-
-      }, this));
-    }, this));
-  },
-
-  post: function(user, repo, branch, path, file, mode) {
-    if (mode === 'edit') {
-      utils.loader.loading(t('loading.file'));
-    } else {
-      utils.loader.loading(t('loading.preview'));
-    }
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', t('notification.error.exists'));
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) return this.notify('error', t('notification.error.exists'));
-
-        app.state.markdown = data.markdown;
-        data.jekyll = !!data.metadata;
-        data.lang = _.mode(file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        utils.loader.loaded();
-        $('#content').empty().html(view.el);
-      }, this));
-    }, this));
-  },
-
-  preview: function(user, repo, branch, path, file, mode) {
-    var router = this;
-    utils.loader.loading(t('loading.preview'));
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('notification.error.exists'));
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) {
-          app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
-        } else {
-          cb(err, data);
-        }
-
-        function cb(err, data) {
-          var view = new app.views.Preview({
-            model: data
-          }).render();
-        }
-      }, this));
-    }, this));
-  },
-
-  start: function() {
-    if (window.authenticated) {
-      $('#start').remove();
-
-      // Redirect
-      router.navigate(app.username, {trigger: true});
-    } else {
-      this.application.render({
-        hideInterface: true
-      });
-
-      var view = new app.views.Start({
-        model: _.extend(this.model, {
-          authenticated: !! window.authenticated
-        })
-      }).render();
-
-      $('#content').empty();
-      $('#prose').append(view.el);
-    }
-  },
-
-  // if the application after routing
-  // hits an error code router.navigate('error' + err.error)
-  // sends the route here.
-  error: function(code) {
-    code = (code && code === '404') ?
-      t('notification.error.notFound') :
-      t('notification.error.label');
-
-    this.application.render({
-      error: true
-    });
-
-    var view = new app.views.Notification({
-      'type': 'Error',
-      'key': 'error',
-      'message': code
-    }).render();
-
-    utils.loader.loaded();
-    $('#content').empty().append(view.el);
-  },
-
-  notify: function(type, message) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-    app.state.markdown = false;
-    this.application.render({
-      error: true
-    });
-
-    var view = new app.views.Notification({
-      'type': type,
-      'key': 'page-error',
-      'message': message
-    }).render();
-
-    utils.loader.loaded();
-    $('#content').empty().append(view.el);
-  }
-});
-
-},{"./util":25,"jquery-browserify":16,"underscore":17,"backbone":18}],24:[function(require,module,exports){
-(function() {
-  if (typeof module === "undefined") self.queue = queue;
-  else module.exports = queue;
-  queue.version = "1.0.3";
-
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var queue = {},
-        deferrals = [],
-        started = 0, // number of deferrals that have been started (and perhaps finished)
-        active = 0, // number of deferrals currently being executed (started but not finished)
-        remaining = 0, // number of deferrals not yet finished
-        popping, // inside a synchronous deferral callback?
-        error,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    queue.defer = function() {
-      if (!error) {
-        deferrals.push(arguments);
-        ++remaining;
-        pop();
-      }
-      return queue;
-    };
-
-    queue.await = function(f) {
-      await = f;
-      all = false;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    queue.awaitAll = function(f) {
-      await = f;
-      all = true;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    function pop() {
-      while (popping = started < deferrals.length && active < parallelism) {
-        var i = started++,
-            d = deferrals[i],
-            a = slice.call(d, 1);
-        a.push(callback(i));
-        ++active;
-        d[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new deferrals and squelch active callbacks
-          started = remaining = NaN; // stop queued deferrals from starting
-          notify();
-        } else {
-          deferrals[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(null, deferrals);
-      else await.apply(null, [null].concat(deferrals));
-    }
-
-    return queue;
-  }
-
-  function noop() {}
-})();
-
-},{}],7:[function(require,module,exports){
+},{"../../oauth.json":7,"./cookie":4,"../libs/github":23,"underscore":8,"jquery-browserify":21,"queue-async":24,"js-yaml":25}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22420,7 +22337,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":25,"jquery-browserify":16,"underscore":17,"backbone":18}],8:[function(require,module,exports){
+},{".././util":22,"jquery-browserify":21,"underscore":8,"backbone":20}],12:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22482,7 +22399,7 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{"jquery-browserify":16,"underscore":17,"backbone":18}],9:[function(require,module,exports){
+},{"jquery-browserify":21,"underscore":8,"backbone":20}],13:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22498,7 +22415,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":16,"underscore":17,"backbone":18}],11:[function(require,module,exports){
+},{"jquery-browserify":21,"underscore":8,"backbone":20}],15:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22620,46 +22537,7 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":25,"jquery-browserify":16,"underscore":17,"backbone":18}],10:[function(require,module,exports){
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var Backbone = require('backbone');
-var marked = require('marked');
-
-module.exports = Backbone.View.extend({
-  render: function() {
-    this.eventRegister = app.eventRegister;
-
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', t('docheader.preview') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    this.stashApply();
-
-    // Needs access to marked, so it's registered here.
-    Liquid.Template.registerFilter({
-      'markdownify': function(input) {
-        return marked(input || '');
-      }
-    });
-
-    _.preview(this);
-    return this;
-  },
-
-  stashApply: function() {
-    if (!window.sessionStorage) return false;
-
-    var storage = window.sessionStorage;
-    var filepath = window.location.hash.split('/').slice(4).join('/');
-    var stash = JSON.parse(storage.getItem(filepath));
-
-    if (stash) {
-      this.model.content = stash.content;
-      this.model.metadata = stash.metadata;
-    }
-  }
-});
-
-},{"underscore":17,"js-yaml":23,"backbone":18,"marked":26}],12:[function(require,module,exports){
+},{".././util":22,"jquery-browserify":21,"underscore":8,"backbone":20}],16:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -22874,7 +22752,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././util":25,"jquery-browserify":16,"underscore":17,"js-yaml":23,"keymaster":27,"backbone":18}],14:[function(require,module,exports){
+},{".././util":22,"jquery-browserify":21,"underscore":8,"js-yaml":25,"backbone":20,"keymaster":26}],18:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -22889,1581 +22767,1021 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":16,"marked":26,"backbone":18}],18:[function(require,module,exports){
-(function(){//     Backbone.js 1.0.0
+},{"jquery-browserify":21,"backbone":20,"marked":27}],24:[function(require,module,exports){
+(function() {
+  if (typeof module === "undefined") self.queue = queue;
+  else module.exports = queue;
+  queue.version = "1.0.3";
 
-//     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
-//     Backbone may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://backbonejs.org
+  var slice = [].slice;
 
-(function(){
+  function queue(parallelism) {
+    var queue = {},
+        deferrals = [],
+        started = 0, // number of deferrals that have been started (and perhaps finished)
+        active = 0, // number of deferrals currently being executed (started but not finished)
+        remaining = 0, // number of deferrals not yet finished
+        popping, // inside a synchronous deferral callback?
+        error,
+        await = noop,
+        all;
 
-  // Initial Setup
-  // -------------
+    if (!parallelism) parallelism = Infinity;
 
-  // Save a reference to the global object (`window` in the browser, `exports`
-  // on the server).
-  var root = this;
+    queue.defer = function() {
+      if (!error) {
+        deferrals.push(arguments);
+        ++remaining;
+        pop();
+      }
+      return queue;
+    };
 
-  // Save the previous value of the `Backbone` variable, so that it can be
-  // restored later on, if `noConflict` is used.
-  var previousBackbone = root.Backbone;
+    queue.await = function(f) {
+      await = f;
+      all = false;
+      if (!remaining) notify();
+      return queue;
+    };
 
-  // Create local references to array methods we'll want to use later.
-  var array = [];
-  var push = array.push;
-  var slice = array.slice;
-  var splice = array.splice;
+    queue.awaitAll = function(f) {
+      await = f;
+      all = true;
+      if (!remaining) notify();
+      return queue;
+    };
 
-  // The top-level namespace. All public Backbone classes and modules will
-  // be attached to this. Exported for both the browser and the server.
-  var Backbone;
-  if (typeof exports !== 'undefined') {
-    Backbone = exports;
-  } else {
-    Backbone = root.Backbone = {};
+    function pop() {
+      while (popping = started < deferrals.length && active < parallelism) {
+        var i = started++,
+            d = deferrals[i],
+            a = slice.call(d, 1);
+        a.push(callback(i));
+        ++active;
+        d[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new deferrals and squelch active callbacks
+          started = remaining = NaN; // stop queued deferrals from starting
+          notify();
+        } else {
+          deferrals[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(null, deferrals);
+      else await.apply(null, [null].concat(deferrals));
+    }
+
+    return queue;
   }
 
-  // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '1.0.0';
+  function noop() {}
+})();
 
-  // Require Underscore, if we're on the server, and it's not already present.
-  var _ = root._;
-  if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
+},{}],14:[function(require,module,exports){
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
+var marked = require('marked');
 
-  // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
-  // the `$` variable.
-  Backbone.$ = root.jQuery || root.Zepto || root.ender || root.$;
+module.exports = Backbone.View.extend({
+  render: function() {
+    this.eventRegister = app.eventRegister;
 
-  // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
-  // to its previous owner. Returns a reference to this Backbone object.
-  Backbone.noConflict = function() {
-    root.Backbone = previousBackbone;
-    return this;
-  };
+    var pathTitle = (app.state.path) ? app.state.path : '';
+    this.eventRegister.trigger('documentTitle', t('docheader.preview') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    this.stashApply();
 
-  // Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option
-  // will fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and
-  // set a `X-Http-Method-Override` header.
-  Backbone.emulateHTTP = false;
-
-  // Turn on `emulateJSON` to support legacy servers that can't deal with direct
-  // `application/json` requests ... will encode the body as
-  // `application/x-www-form-urlencoded` instead and will send the model in a
-  // form param named `model`.
-  Backbone.emulateJSON = false;
-
-  // Backbone.Events
-  // ---------------
-
-  // A module that can be mixed in to *any object* in order to provide it with
-  // custom events. You may bind with `on` or remove with `off` callback
-  // functions to an event; `trigger`-ing an event fires all callbacks in
-  // succession.
-  //
-  //     var object = {};
-  //     _.extend(object, Backbone.Events);
-  //     object.on('expand', function(){ alert('expanded'); });
-  //     object.trigger('expand');
-  //
-  var Events = Backbone.Events = {
-
-    // Bind an event to a `callback` function. Passing `"all"` will bind
-    // the callback to all events fired.
-    on: function(name, callback, context) {
-      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
-      this._events || (this._events = {});
-      var events = this._events[name] || (this._events[name] = []);
-      events.push({callback: callback, context: context, ctx: context || this});
-      return this;
-    },
-
-    // Bind an event to only be triggered a single time. After the first time
-    // the callback is invoked, it will be removed.
-    once: function(name, callback, context) {
-      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
-      var self = this;
-      var once = _.once(function() {
-        self.off(name, once);
-        callback.apply(this, arguments);
-      });
-      once._callback = callback;
-      return this.on(name, once, context);
-    },
-
-    // Remove one or many callbacks. If `context` is null, removes all
-    // callbacks with that function. If `callback` is null, removes all
-    // callbacks for the event. If `name` is null, removes all bound
-    // callbacks for all events.
-    off: function(name, callback, context) {
-      var retain, ev, events, names, i, l, j, k;
-      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
-      if (!name && !callback && !context) {
-        this._events = {};
-        return this;
+    // Needs access to marked, so it's registered here.
+    Liquid.Template.registerFilter({
+      'markdownify': function(input) {
+        return marked(input || '');
       }
-
-      names = name ? [name] : _.keys(this._events);
-      for (i = 0, l = names.length; i < l; i++) {
-        name = names[i];
-        if (events = this._events[name]) {
-          this._events[name] = retain = [];
-          if (callback || context) {
-            for (j = 0, k = events.length; j < k; j++) {
-              ev = events[j];
-              if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
-                  (context && context !== ev.context)) {
-                retain.push(ev);
-              }
-            }
-          }
-          if (!retain.length) delete this._events[name];
-        }
-      }
-
-      return this;
-    },
-
-    // Trigger one or many events, firing all bound callbacks. Callbacks are
-    // passed the same arguments as `trigger` is, apart from the event name
-    // (unless you're listening on `"all"`, which will cause your callback to
-    // receive the true name of the event as the first argument).
-    trigger: function(name) {
-      if (!this._events) return this;
-      var args = slice.call(arguments, 1);
-      if (!eventsApi(this, 'trigger', name, args)) return this;
-      var events = this._events[name];
-      var allEvents = this._events.all;
-      if (events) triggerEvents(events, args);
-      if (allEvents) triggerEvents(allEvents, arguments);
-      return this;
-    },
-
-    // Tell this object to stop listening to either specific events ... or
-    // to every object it's currently listening to.
-    stopListening: function(obj, name, callback) {
-      var listeners = this._listeners;
-      if (!listeners) return this;
-      var deleteListener = !name && !callback;
-      if (typeof name === 'object') callback = this;
-      if (obj) (listeners = {})[obj._listenerId] = obj;
-      for (var id in listeners) {
-        listeners[id].off(name, callback, this);
-        if (deleteListener) delete this._listeners[id];
-      }
-      return this;
-    }
-
-  };
-
-  // Regular expression used to split event strings.
-  var eventSplitter = /\s+/;
-
-  // Implement fancy features of the Events API such as multiple event
-  // names `"change blur"` and jQuery-style event maps `{change: action}`
-  // in terms of the existing API.
-  var eventsApi = function(obj, action, name, rest) {
-    if (!name) return true;
-
-    // Handle event maps.
-    if (typeof name === 'object') {
-      for (var key in name) {
-        obj[action].apply(obj, [key, name[key]].concat(rest));
-      }
-      return false;
-    }
-
-    // Handle space separated event names.
-    if (eventSplitter.test(name)) {
-      var names = name.split(eventSplitter);
-      for (var i = 0, l = names.length; i < l; i++) {
-        obj[action].apply(obj, [names[i]].concat(rest));
-      }
-      return false;
-    }
-
-    return true;
-  };
-
-  // A difficult-to-believe, but optimized internal dispatch function for
-  // triggering events. Tries to keep the usual cases speedy (most internal
-  // Backbone events have 3 arguments).
-  var triggerEvents = function(events, args) {
-    var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
-    switch (args.length) {
-      case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
-      case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
-      case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
-      case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
-      default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
-    }
-  };
-
-  var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
-
-  // Inversion-of-control versions of `on` and `once`. Tell *this* object to
-  // listen to an event in another object ... keeping track of what it's
-  // listening to.
-  _.each(listenMethods, function(implementation, method) {
-    Events[method] = function(obj, name, callback) {
-      var listeners = this._listeners || (this._listeners = {});
-      var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
-      listeners[id] = obj;
-      if (typeof name === 'object') callback = this;
-      obj[implementation](name, callback, this);
-      return this;
-    };
-  });
-
-  // Aliases for backwards compatibility.
-  Events.bind   = Events.on;
-  Events.unbind = Events.off;
-
-  // Allow the `Backbone` object to serve as a global event bus, for folks who
-  // want global "pubsub" in a convenient place.
-  _.extend(Backbone, Events);
-
-  // Backbone.Model
-  // --------------
-
-  // Backbone **Models** are the basic data object in the framework --
-  // frequently representing a row in a table in a database on your server.
-  // A discrete chunk of data and a bunch of useful, related methods for
-  // performing computations and transformations on that data.
-
-  // Create a new model with the specified attributes. A client id (`cid`)
-  // is automatically generated and assigned for you.
-  var Model = Backbone.Model = function(attributes, options) {
-    var defaults;
-    var attrs = attributes || {};
-    options || (options = {});
-    this.cid = _.uniqueId('c');
-    this.attributes = {};
-    _.extend(this, _.pick(options, modelOptions));
-    if (options.parse) attrs = this.parse(attrs, options) || {};
-    if (defaults = _.result(this, 'defaults')) {
-      attrs = _.defaults({}, attrs, defaults);
-    }
-    this.set(attrs, options);
-    this.changed = {};
-    this.initialize.apply(this, arguments);
-  };
-
-  // A list of options to be attached directly to the model, if provided.
-  var modelOptions = ['url', 'urlRoot', 'collection'];
-
-  // Attach all inheritable methods to the Model prototype.
-  _.extend(Model.prototype, Events, {
-
-    // A hash of attributes whose current and previous value differ.
-    changed: null,
-
-    // The value returned during the last failed validation.
-    validationError: null,
-
-    // The default name for the JSON `id` attribute is `"id"`. MongoDB and
-    // CouchDB users may want to set this to `"_id"`.
-    idAttribute: 'id',
-
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
-    initialize: function(){},
-
-    // Return a copy of the model's `attributes` object.
-    toJSON: function(options) {
-      return _.clone(this.attributes);
-    },
-
-    // Proxy `Backbone.sync` by default -- but override this if you need
-    // custom syncing semantics for *this* particular model.
-    sync: function() {
-      return Backbone.sync.apply(this, arguments);
-    },
-
-    // Get the value of an attribute.
-    get: function(attr) {
-      return this.attributes[attr];
-    },
-
-    // Get the HTML-escaped value of an attribute.
-    escape: function(attr) {
-      return _.escape(this.get(attr));
-    },
-
-    // Returns `true` if the attribute contains a value that is not null
-    // or undefined.
-    has: function(attr) {
-      return this.get(attr) != null;
-    },
-
-    // Set a hash of model attributes on the object, firing `"change"`. This is
-    // the core primitive operation of a model, updating the data and notifying
-    // anyone who needs to know about the change in state. The heart of the beast.
-    set: function(key, val, options) {
-      var attr, attrs, unset, changes, silent, changing, prev, current;
-      if (key == null) return this;
-
-      // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (typeof key === 'object') {
-        attrs = key;
-        options = val;
-      } else {
-        (attrs = {})[key] = val;
-      }
-
-      options || (options = {});
-
-      // Run validation.
-      if (!this._validate(attrs, options)) return false;
-
-      // Extract attributes and options.
-      unset           = options.unset;
-      silent          = options.silent;
-      changes         = [];
-      changing        = this._changing;
-      this._changing  = true;
-
-      if (!changing) {
-        this._previousAttributes = _.clone(this.attributes);
-        this.changed = {};
-      }
-      current = this.attributes, prev = this._previousAttributes;
-
-      // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
-
-      // For each `set` attribute, update or delete the current value.
-      for (attr in attrs) {
-        val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
-          this.changed[attr] = val;
-        } else {
-          delete this.changed[attr];
-        }
-        unset ? delete current[attr] : current[attr] = val;
-      }
-
-      // Trigger all relevant attribute changes.
-      if (!silent) {
-        if (changes.length) this._pending = true;
-        for (var i = 0, l = changes.length; i < l; i++) {
-          this.trigger('change:' + changes[i], this, current[changes[i]], options);
-        }
-      }
-
-      // You might be wondering why there's a `while` loop here. Changes can
-      // be recursively nested within `"change"` events.
-      if (changing) return this;
-      if (!silent) {
-        while (this._pending) {
-          this._pending = false;
-          this.trigger('change', this, options);
-        }
-      }
-      this._pending = false;
-      this._changing = false;
-      return this;
-    },
-
-    // Remove an attribute from the model, firing `"change"`. `unset` is a noop
-    // if the attribute doesn't exist.
-    unset: function(attr, options) {
-      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
-    },
-
-    // Clear all attributes on the model, firing `"change"`.
-    clear: function(options) {
-      var attrs = {};
-      for (var key in this.attributes) attrs[key] = void 0;
-      return this.set(attrs, _.extend({}, options, {unset: true}));
-    },
-
-    // Determine if the model has changed since the last `"change"` event.
-    // If you specify an attribute name, determine if that attribute has changed.
-    hasChanged: function(attr) {
-      if (attr == null) return !_.isEmpty(this.changed);
-      return _.has(this.changed, attr);
-    },
-
-    // Return an object containing all the attributes that have changed, or
-    // false if there are no changed attributes. Useful for determining what
-    // parts of a view need to be updated and/or what attributes need to be
-    // persisted to the server. Unset attributes will be set to undefined.
-    // You can also pass an attributes object to diff against the model,
-    // determining if there *would be* a change.
-    changedAttributes: function(diff) {
-      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
-      var val, changed = false;
-      var old = this._changing ? this._previousAttributes : this.attributes;
-      for (var attr in diff) {
-        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
-        (changed || (changed = {}))[attr] = val;
-      }
-      return changed;
-    },
-
-    // Get the previous value of an attribute, recorded at the time the last
-    // `"change"` event was fired.
-    previous: function(attr) {
-      if (attr == null || !this._previousAttributes) return null;
-      return this._previousAttributes[attr];
-    },
-
-    // Get all of the attributes of the model at the time of the previous
-    // `"change"` event.
-    previousAttributes: function() {
-      return _.clone(this._previousAttributes);
-    },
-
-    // Fetch the model from the server. If the server's representation of the
-    // model differs from its current attributes, they will be overridden,
-    // triggering a `"change"` event.
-    fetch: function(options) {
-      options = options ? _.clone(options) : {};
-      if (options.parse === void 0) options.parse = true;
-      var model = this;
-      var success = options.success;
-      options.success = function(resp) {
-        if (!model.set(model.parse(resp, options), options)) return false;
-        if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
-      };
-      wrapError(this, options);
-      return this.sync('read', this, options);
-    },
-
-    // Set a hash of model attributes, and sync the model to the server.
-    // If the server returns an attributes hash that differs, the model's
-    // state will be `set` again.
-    save: function(key, val, options) {
-      var attrs, method, xhr, attributes = this.attributes;
-
-      // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (key == null || typeof key === 'object') {
-        attrs = key;
-        options = val;
-      } else {
-        (attrs = {})[key] = val;
-      }
-
-      // If we're not waiting and attributes exist, save acts as `set(attr).save(null, opts)`.
-      if (attrs && (!options || !options.wait) && !this.set(attrs, options)) return false;
-
-      options = _.extend({validate: true}, options);
-
-      // Do not persist invalid models.
-      if (!this._validate(attrs, options)) return false;
-
-      // Set temporary attributes if `{wait: true}`.
-      if (attrs && options.wait) {
-        this.attributes = _.extend({}, attributes, attrs);
-      }
-
-      // After a successful server-side save, the client is (optionally)
-      // updated with the server-side state.
-      if (options.parse === void 0) options.parse = true;
-      var model = this;
-      var success = options.success;
-      options.success = function(resp) {
-        // Ensure attributes are restored during synchronous saves.
-        model.attributes = attributes;
-        var serverAttrs = model.parse(resp, options);
-        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
-        if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
-          return false;
-        }
-        if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
-      };
-      wrapError(this, options);
-
-      method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
-      if (method === 'patch') options.attrs = attrs;
-      xhr = this.sync(method, this, options);
-
-      // Restore attributes.
-      if (attrs && options.wait) this.attributes = attributes;
-
-      return xhr;
-    },
-
-    // Destroy this model on the server if it was already persisted.
-    // Optimistically removes the model from its collection, if it has one.
-    // If `wait: true` is passed, waits for the server to respond before removal.
-    destroy: function(options) {
-      options = options ? _.clone(options) : {};
-      var model = this;
-      var success = options.success;
-
-      var destroy = function() {
-        model.trigger('destroy', model, model.collection, options);
-      };
-
-      options.success = function(resp) {
-        if (options.wait || model.isNew()) destroy();
-        if (success) success(model, resp, options);
-        if (!model.isNew()) model.trigger('sync', model, resp, options);
-      };
-
-      if (this.isNew()) {
-        options.success();
-        return false;
-      }
-      wrapError(this, options);
-
-      var xhr = this.sync('delete', this, options);
-      if (!options.wait) destroy();
-      return xhr;
-    },
-
-    // Default URL for the model's representation on the server -- if you're
-    // using Backbone's restful methods, override this to change the endpoint
-    // that will be called.
-    url: function() {
-      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
-      if (this.isNew()) return base;
-      return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
-    },
-
-    // **parse** converts a response into the hash of attributes to be `set` on
-    // the model. The default implementation is just to pass the response along.
-    parse: function(resp, options) {
-      return resp;
-    },
-
-    // Create a new model with identical attributes to this one.
-    clone: function() {
-      return new this.constructor(this.attributes);
-    },
-
-    // A model is new if it has never been saved to the server, and lacks an id.
-    isNew: function() {
-      return this.id == null;
-    },
-
-    // Check if the model is currently in a valid state.
-    isValid: function(options) {
-      return this._validate({}, _.extend(options || {}, { validate: true }));
-    },
-
-    // Run validation against the next complete set of model attributes,
-    // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
-    _validate: function(attrs, options) {
-      if (!options.validate || !this.validate) return true;
-      attrs = _.extend({}, this.attributes, attrs);
-      var error = this.validationError = this.validate(attrs, options) || null;
-      if (!error) return true;
-      this.trigger('invalid', this, error, _.extend(options || {}, {validationError: error}));
-      return false;
-    }
-
-  });
-
-  // Underscore methods that we want to implement on the Model.
-  var modelMethods = ['keys', 'values', 'pairs', 'invert', 'pick', 'omit'];
-
-  // Mix in each Underscore method as a proxy to `Model#attributes`.
-  _.each(modelMethods, function(method) {
-    Model.prototype[method] = function() {
-      var args = slice.call(arguments);
-      args.unshift(this.attributes);
-      return _[method].apply(_, args);
-    };
-  });
-
-  // Backbone.Collection
-  // -------------------
-
-  // If models tend to represent a single row of data, a Backbone Collection is
-  // more analagous to a table full of data ... or a small slice or page of that
-  // table, or a collection of rows that belong together for a particular reason
-  // -- all of the messages in this particular folder, all of the documents
-  // belonging to this particular author, and so on. Collections maintain
-  // indexes of their models, both in order, and for lookup by `id`.
-
-  // Create a new **Collection**, perhaps to contain a specific type of `model`.
-  // If a `comparator` is specified, the Collection will maintain
-  // its models in sort order, as they're added and removed.
-  var Collection = Backbone.Collection = function(models, options) {
-    options || (options = {});
-    if (options.url) this.url = options.url;
-    if (options.model) this.model = options.model;
-    if (options.comparator !== void 0) this.comparator = options.comparator;
-    this._reset();
-    this.initialize.apply(this, arguments);
-    if (models) this.reset(models, _.extend({silent: true}, options));
-  };
-
-  // Default options for `Collection#set`.
-  var setOptions = {add: true, remove: true, merge: true};
-  var addOptions = {add: true, merge: false, remove: false};
-
-  // Define the Collection's inheritable methods.
-  _.extend(Collection.prototype, Events, {
-
-    // The default model for a collection is just a **Backbone.Model**.
-    // This should be overridden in most cases.
-    model: Model,
-
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
-    initialize: function(){},
-
-    // The JSON representation of a Collection is an array of the
-    // models' attributes.
-    toJSON: function(options) {
-      return this.map(function(model){ return model.toJSON(options); });
-    },
-
-    // Proxy `Backbone.sync` by default.
-    sync: function() {
-      return Backbone.sync.apply(this, arguments);
-    },
-
-    // Add a model, or list of models to the set.
-    add: function(models, options) {
-      return this.set(models, _.defaults(options || {}, addOptions));
-    },
-
-    // Remove a model, or a list of models from the set.
-    remove: function(models, options) {
-      models = _.isArray(models) ? models.slice() : [models];
-      options || (options = {});
-      var i, l, index, model;
-      for (i = 0, l = models.length; i < l; i++) {
-        model = this.get(models[i]);
-        if (!model) continue;
-        delete this._byId[model.id];
-        delete this._byId[model.cid];
-        index = this.indexOf(model);
-        this.models.splice(index, 1);
-        this.length--;
-        if (!options.silent) {
-          options.index = index;
-          model.trigger('remove', model, this, options);
-        }
-        this._removeReference(model);
-      }
-      return this;
-    },
-
-    // Update a collection by `set`-ing a new list of models, adding new ones,
-    // removing models that are no longer present, and merging models that
-    // already exist in the collection, as necessary. Similar to **Model#set**,
-    // the core operation for updating the data contained by the collection.
-    set: function(models, options) {
-      options = _.defaults(options || {}, setOptions);
-      if (options.parse) models = this.parse(models, options);
-      if (!_.isArray(models)) models = models ? [models] : [];
-      var i, l, model, attrs, existing, sort;
-      var at = options.at;
-      var sortable = this.comparator && (at == null) && options.sort !== false;
-      var sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var toAdd = [], toRemove = [], modelMap = {};
-
-      // Turn bare objects into model references, and prevent invalid models
-      // from being added.
-      for (i = 0, l = models.length; i < l; i++) {
-        if (!(model = this._prepareModel(models[i], options))) continue;
-
-        // If a duplicate is found, prevent it from being added and
-        // optionally merge it into the existing model.
-        if (existing = this.get(model)) {
-          if (options.remove) modelMap[existing.cid] = true;
-          if (options.merge) {
-            existing.set(model.attributes, options);
-            if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
-          }
-
-        // This is a new model, push it to the `toAdd` list.
-        } else if (options.add) {
-          toAdd.push(model);
-
-          // Listen to added models' events, and index models for lookup by
-          // `id` and by `cid`.
-          model.on('all', this._onModelEvent, this);
-          this._byId[model.cid] = model;
-          if (model.id != null) this._byId[model.id] = model;
-        }
-      }
-
-      // Remove nonexistent models if appropriate.
-      if (options.remove) {
-        for (i = 0, l = this.length; i < l; ++i) {
-          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
-        }
-        if (toRemove.length) this.remove(toRemove, options);
-      }
-
-      // See if sorting is needed, update `length` and splice in new models.
-      if (toAdd.length) {
-        if (sortable) sort = true;
-        this.length += toAdd.length;
-        if (at != null) {
-          splice.apply(this.models, [at, 0].concat(toAdd));
-        } else {
-          push.apply(this.models, toAdd);
-        }
-      }
-
-      // Silently sort the collection if appropriate.
-      if (sort) this.sort({silent: true});
-
-      if (options.silent) return this;
-
-      // Trigger `add` events.
-      for (i = 0, l = toAdd.length; i < l; i++) {
-        (model = toAdd[i]).trigger('add', model, this, options);
-      }
-
-      // Trigger `sort` if the collection was sorted.
-      if (sort) this.trigger('sort', this, options);
-      return this;
-    },
-
-    // When you have more items than you want to add or remove individually,
-    // you can reset the entire set with a new list of models, without firing
-    // any granular `add` or `remove` events. Fires `reset` when finished.
-    // Useful for bulk operations and optimizations.
-    reset: function(models, options) {
-      options || (options = {});
-      for (var i = 0, l = this.models.length; i < l; i++) {
-        this._removeReference(this.models[i]);
-      }
-      options.previousModels = this.models;
-      this._reset();
-      this.add(models, _.extend({silent: true}, options));
-      if (!options.silent) this.trigger('reset', this, options);
-      return this;
-    },
-
-    // Add a model to the end of the collection.
-    push: function(model, options) {
-      model = this._prepareModel(model, options);
-      this.add(model, _.extend({at: this.length}, options));
-      return model;
-    },
-
-    // Remove a model from the end of the collection.
-    pop: function(options) {
-      var model = this.at(this.length - 1);
-      this.remove(model, options);
-      return model;
-    },
-
-    // Add a model to the beginning of the collection.
-    unshift: function(model, options) {
-      model = this._prepareModel(model, options);
-      this.add(model, _.extend({at: 0}, options));
-      return model;
-    },
-
-    // Remove a model from the beginning of the collection.
-    shift: function(options) {
-      var model = this.at(0);
-      this.remove(model, options);
-      return model;
-    },
-
-    // Slice out a sub-array of models from the collection.
-    slice: function(begin, end) {
-      return this.models.slice(begin, end);
-    },
-
-    // Get a model from the set by id.
-    get: function(obj) {
-      if (obj == null) return void 0;
-      return this._byId[obj.id != null ? obj.id : obj.cid || obj];
-    },
-
-    // Get the model at the given index.
-    at: function(index) {
-      return this.models[index];
-    },
-
-    // Return models with matching attributes. Useful for simple cases of
-    // `filter`.
-    where: function(attrs, first) {
-      if (_.isEmpty(attrs)) return first ? void 0 : [];
-      return this[first ? 'find' : 'filter'](function(model) {
-        for (var key in attrs) {
-          if (attrs[key] !== model.get(key)) return false;
-        }
-        return true;
-      });
-    },
-
-    // Return the first model with matching attributes. Useful for simple cases
-    // of `find`.
-    findWhere: function(attrs) {
-      return this.where(attrs, true);
-    },
-
-    // Force the collection to re-sort itself. You don't need to call this under
-    // normal circumstances, as the set will maintain sort order as each item
-    // is added.
-    sort: function(options) {
-      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
-      options || (options = {});
-
-      // Run sort based on type of `comparator`.
-      if (_.isString(this.comparator) || this.comparator.length === 1) {
-        this.models = this.sortBy(this.comparator, this);
-      } else {
-        this.models.sort(_.bind(this.comparator, this));
-      }
-
-      if (!options.silent) this.trigger('sort', this, options);
-      return this;
-    },
-
-    // Figure out the smallest index at which a model should be inserted so as
-    // to maintain order.
-    sortedIndex: function(model, value, context) {
-      value || (value = this.comparator);
-      var iterator = _.isFunction(value) ? value : function(model) {
-        return model.get(value);
-      };
-      return _.sortedIndex(this.models, model, iterator, context);
-    },
-
-    // Pluck an attribute from each model in the collection.
-    pluck: function(attr) {
-      return _.invoke(this.models, 'get', attr);
-    },
-
-    // Fetch the default set of models for this collection, resetting the
-    // collection when they arrive. If `reset: true` is passed, the response
-    // data will be passed through the `reset` method instead of `set`.
-    fetch: function(options) {
-      options = options ? _.clone(options) : {};
-      if (options.parse === void 0) options.parse = true;
-      var success = options.success;
-      var collection = this;
-      options.success = function(resp) {
-        var method = options.reset ? 'reset' : 'set';
-        collection[method](resp, options);
-        if (success) success(collection, resp, options);
-        collection.trigger('sync', collection, resp, options);
-      };
-      wrapError(this, options);
-      return this.sync('read', this, options);
-    },
-
-    // Create a new instance of a model in this collection. Add the model to the
-    // collection immediately, unless `wait: true` is passed, in which case we
-    // wait for the server to agree.
-    create: function(model, options) {
-      options = options ? _.clone(options) : {};
-      if (!(model = this._prepareModel(model, options))) return false;
-      if (!options.wait) this.add(model, options);
-      var collection = this;
-      var success = options.success;
-      options.success = function(resp) {
-        if (options.wait) collection.add(model, options);
-        if (success) success(model, resp, options);
-      };
-      model.save(null, options);
-      return model;
-    },
-
-    // **parse** converts a response into a list of models to be added to the
-    // collection. The default implementation is just to pass it through.
-    parse: function(resp, options) {
-      return resp;
-    },
-
-    // Create a new collection with an identical list of models as this one.
-    clone: function() {
-      return new this.constructor(this.models);
-    },
-
-    // Private method to reset all internal state. Called when the collection
-    // is first initialized or reset.
-    _reset: function() {
-      this.length = 0;
-      this.models = [];
-      this._byId  = {};
-    },
-
-    // Prepare a hash of attributes (or other model) to be added to this
-    // collection.
-    _prepareModel: function(attrs, options) {
-      if (attrs instanceof Model) {
-        if (!attrs.collection) attrs.collection = this;
-        return attrs;
-      }
-      options || (options = {});
-      options.collection = this;
-      var model = new this.model(attrs, options);
-      if (!model._validate(attrs, options)) {
-        this.trigger('invalid', this, attrs, options);
-        return false;
-      }
-      return model;
-    },
-
-    // Internal method to sever a model's ties to a collection.
-    _removeReference: function(model) {
-      if (this === model.collection) delete model.collection;
-      model.off('all', this._onModelEvent, this);
-    },
-
-    // Internal method called every time a model in the set fires an event.
-    // Sets need to update their indexes when models change ids. All other
-    // events simply proxy through. "add" and "remove" events that originate
-    // in other collections are ignored.
-    _onModelEvent: function(event, model, collection, options) {
-      if ((event === 'add' || event === 'remove') && collection !== this) return;
-      if (event === 'destroy') this.remove(model, options);
-      if (model && event === 'change:' + model.idAttribute) {
-        delete this._byId[model.previous(model.idAttribute)];
-        if (model.id != null) this._byId[model.id] = model;
-      }
-      this.trigger.apply(this, arguments);
-    }
-
-  });
-
-  // Underscore methods that we want to implement on the Collection.
-  // 90% of the core usefulness of Backbone Collections is actually implemented
-  // right here:
-  var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
-    'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
-    'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
-    'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
-    'tail', 'drop', 'last', 'without', 'indexOf', 'shuffle', 'lastIndexOf',
-    'isEmpty', 'chain'];
-
-  // Mix in each Underscore method as a proxy to `Collection#models`.
-  _.each(methods, function(method) {
-    Collection.prototype[method] = function() {
-      var args = slice.call(arguments);
-      args.unshift(this.models);
-      return _[method].apply(_, args);
-    };
-  });
-
-  // Underscore methods that take a property name as an argument.
-  var attributeMethods = ['groupBy', 'countBy', 'sortBy'];
-
-  // Use attributes instead of properties.
-  _.each(attributeMethods, function(method) {
-    Collection.prototype[method] = function(value, context) {
-      var iterator = _.isFunction(value) ? value : function(model) {
-        return model.get(value);
-      };
-      return _[method](this.models, iterator, context);
-    };
-  });
-
-  // Backbone.View
-  // -------------
-
-  // Backbone Views are almost more convention than they are actual code. A View
-  // is simply a JavaScript object that represents a logical chunk of UI in the
-  // DOM. This might be a single item, an entire list, a sidebar or panel, or
-  // even the surrounding frame which wraps your whole app. Defining a chunk of
-  // UI as a **View** allows you to define your DOM events declaratively, without
-  // having to worry about render order ... and makes it easy for the view to
-  // react to specific changes in the state of your models.
-
-  // Creating a Backbone.View creates its initial element outside of the DOM,
-  // if an existing element is not provided...
-  var View = Backbone.View = function(options) {
-    this.cid = _.uniqueId('view');
-    this._configure(options || {});
-    this._ensureElement();
-    this.initialize.apply(this, arguments);
-    this.delegateEvents();
-  };
-
-  // Cached regex to split keys for `delegate`.
-  var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-
-  // List of view options to be merged as properties.
-  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
-
-  // Set up all inheritable **Backbone.View** properties and methods.
-  _.extend(View.prototype, Events, {
-
-    // The default `tagName` of a View's element is `"div"`.
-    tagName: 'div',
-
-    // jQuery delegate for element lookup, scoped to DOM elements within the
-    // current view. This should be prefered to global lookups where possible.
-    $: function(selector) {
-      return this.$el.find(selector);
-    },
-
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
-    initialize: function(){},
-
-    // **render** is the core function that your view should override, in order
-    // to populate its element (`this.el`), with the appropriate HTML. The
-    // convention is for **render** to always return `this`.
-    render: function() {
-      return this;
-    },
-
-    // Remove this view by taking the element out of the DOM, and removing any
-    // applicable Backbone.Events listeners.
-    remove: function() {
-      this.$el.remove();
-      this.stopListening();
-      return this;
-    },
-
-    // Change the view's element (`this.el` property), including event
-    // re-delegation.
-    setElement: function(element, delegate) {
-      if (this.$el) this.undelegateEvents();
-      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
-      this.el = this.$el[0];
-      if (delegate !== false) this.delegateEvents();
-      return this;
-    },
-
-    // Set callbacks, where `this.events` is a hash of
-    //
-    // *{"event selector": "callback"}*
-    //
-    //     {
-    //       'mousedown .title':  'edit',
-    //       'click .button':     'save'
-    //       'click .open':       function(e) { ... }
-    //     }
-    //
-    // pairs. Callbacks will be bound to the view, with `this` set properly.
-    // Uses event delegation for efficiency.
-    // Omitting the selector binds the event to `this.el`.
-    // This only works for delegate-able events: not `focus`, `blur`, and
-    // not `change`, `submit`, and `reset` in Internet Explorer.
-    delegateEvents: function(events) {
-      if (!(events || (events = _.result(this, 'events')))) return this;
-      this.undelegateEvents();
-      for (var key in events) {
-        var method = events[key];
-        if (!_.isFunction(method)) method = this[events[key]];
-        if (!method) continue;
-
-        var match = key.match(delegateEventSplitter);
-        var eventName = match[1], selector = match[2];
-        method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.on(eventName, method);
-        } else {
-          this.$el.on(eventName, selector, method);
-        }
-      }
-      return this;
-    },
-
-    // Clears all callbacks previously bound to the view with `delegateEvents`.
-    // You usually don't need to use this, but may wish to if you have multiple
-    // Backbone views attached to the same DOM element.
-    undelegateEvents: function() {
-      this.$el.off('.delegateEvents' + this.cid);
-      return this;
-    },
-
-    // Performs the initial configuration of a View with a set of options.
-    // Keys with special meaning *(e.g. model, collection, id, className)* are
-    // attached directly to the view.  See `viewOptions` for an exhaustive
-    // list.
-    _configure: function(options) {
-      if (this.options) options = _.extend({}, _.result(this, 'options'), options);
-      _.extend(this, _.pick(options, viewOptions));
-      this.options = options;
-    },
-
-    // Ensure that the View has a DOM element to render into.
-    // If `this.el` is a string, pass it through `$()`, take the first
-    // matching element, and re-assign it to `el`. Otherwise, create
-    // an element from the `id`, `className` and `tagName` properties.
-    _ensureElement: function() {
-      if (!this.el) {
-        var attrs = _.extend({}, _.result(this, 'attributes'));
-        if (this.id) attrs.id = _.result(this, 'id');
-        if (this.className) attrs['class'] = _.result(this, 'className');
-        var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
-        this.setElement($el, false);
-      } else {
-        this.setElement(_.result(this, 'el'), false);
-      }
-    }
-
-  });
-
-  // Backbone.sync
-  // -------------
-
-  // Override this function to change the manner in which Backbone persists
-  // models to the server. You will be passed the type of request, and the
-  // model in question. By default, makes a RESTful Ajax request
-  // to the model's `url()`. Some possible customizations could be:
-  //
-  // * Use `setTimeout` to batch rapid-fire updates into a single request.
-  // * Send up the models as XML instead of JSON.
-  // * Persist models via WebSockets instead of Ajax.
-  //
-  // Turn on `Backbone.emulateHTTP` in order to send `PUT` and `DELETE` requests
-  // as `POST`, with a `_method` parameter containing the true HTTP method,
-  // as well as all requests with the body as `application/x-www-form-urlencoded`
-  // instead of `application/json` with the model in a param named `model`.
-  // Useful when interfacing with server-side languages like **PHP** that make
-  // it difficult to read the body of `PUT` requests.
-  Backbone.sync = function(method, model, options) {
-    var type = methodMap[method];
-
-    // Default options, unless specified.
-    _.defaults(options || (options = {}), {
-      emulateHTTP: Backbone.emulateHTTP,
-      emulateJSON: Backbone.emulateJSON
     });
 
-    // Default JSON-request options.
-    var params = {type: type, dataType: 'json'};
+    _.preview(this);
+    return this;
+  },
 
-    // Ensure that we have a URL.
-    if (!options.url) {
-      params.url = _.result(model, 'url') || urlError();
+  stashApply: function() {
+    if (!window.sessionStorage) return false;
+
+    var storage = window.sessionStorage;
+    var filepath = window.location.hash.split('/').slice(4).join('/');
+    var stash = JSON.parse(storage.getItem(filepath));
+
+    if (stash) {
+      this.model.content = stash.content;
+      this.model.metadata = stash.metadata;
     }
+  }
+});
 
-    // Ensure that we have the appropriate request data.
-    if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
-      params.contentType = 'application/json';
-      params.data = JSON.stringify(options.attrs || model.toJSON(options));
+},{"underscore":8,"backbone":20,"js-yaml":25,"marked":27}],26:[function(require,module,exports){
+(function(){//     keymaster.js
+//     (c) 2011-2012 Thomas Fuchs
+//     keymaster.js may be freely distributed under the MIT license.
+
+;(function(global){
+  var k,
+    _handlers = {},
+    _mods = { 16: false, 18: false, 17: false, 91: false },
+    _scope = 'all',
+    // modifier keys
+    _MODIFIERS = {
+      '⇧': 16, shift: 16,
+      '⌥': 18, alt: 18, option: 18,
+      '⌃': 17, ctrl: 17, control: 17,
+      '⌘': 91, command: 91
+    },
+    // special keys
+    _MAP = {
+      backspace: 8, tab: 9, clear: 12,
+      enter: 13, 'return': 13,
+      esc: 27, escape: 27, space: 32,
+      left: 37, up: 38,
+      right: 39, down: 40,
+      del: 46, 'delete': 46,
+      home: 36, end: 35,
+      pageup: 33, pagedown: 34,
+      ',': 188, '.': 190, '/': 191,
+      '`': 192, '-': 189, '=': 187,
+      ';': 186, '\'': 222,
+      '[': 219, ']': 221, '\\': 220
+    },
+    code = function(x){
+      return _MAP[x] || x.toUpperCase().charCodeAt(0);
+    },
+    _downKeys = [];
+
+  for(k=1;k<20;k++) _MAP['f'+k] = 111+k;
+
+  // IE doesn't support Array#indexOf, so have a simple replacement
+  function index(array, item){
+    var i = array.length;
+    while(i--) if(array[i]===item) return i;
+    return -1;
+  }
+
+  // for comparing mods before unassignment
+  function compareArray(a1, a2) {
+    if (a1.length != a2.length) return false;
+    for (var i = 0; i < a1.length; i++) {
+        if (a1[i] !== a2[i]) return false;
     }
+    return true;
+  }
 
-    // For older servers, emulate JSON by encoding the request into an HTML-form.
-    if (options.emulateJSON) {
-      params.contentType = 'application/x-www-form-urlencoded';
-      params.data = params.data ? {model: params.data} : {};
-    }
-
-    // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
-    // And an `X-HTTP-Method-Override` header.
-    if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE' || type === 'PATCH')) {
-      params.type = 'POST';
-      if (options.emulateJSON) params.data._method = type;
-      var beforeSend = options.beforeSend;
-      options.beforeSend = function(xhr) {
-        xhr.setRequestHeader('X-HTTP-Method-Override', type);
-        if (beforeSend) return beforeSend.apply(this, arguments);
-      };
-    }
-
-    // Don't process data on a non-GET request.
-    if (params.type !== 'GET' && !options.emulateJSON) {
-      params.processData = false;
-    }
-
-    // If we're sending a `PATCH` request, and we're in an old Internet Explorer
-    // that still has ActiveX enabled by default, override jQuery to use that
-    // for XHR instead. Remove this line when jQuery supports `PATCH` on IE8.
-    if (params.type === 'PATCH' && window.ActiveXObject &&
-          !(window.external && window.external.msActiveXFilteringEnabled)) {
-      params.xhr = function() {
-        return new ActiveXObject("Microsoft.XMLHTTP");
-      };
-    }
-
-    // Make the request, allowing the user to override any Ajax options.
-    var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
-    model.trigger('request', model, xhr, options);
-    return xhr;
+  var modifierMap = {
+      16:'shiftKey',
+      18:'altKey',
+      17:'ctrlKey',
+      91:'metaKey'
+  };
+  function updateModifierKey(event) {
+      for(k in _mods) _mods[k] = event[modifierMap[k]];
   };
 
-  // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
-  var methodMap = {
-    'create': 'POST',
-    'update': 'PUT',
-    'patch':  'PATCH',
-    'delete': 'DELETE',
-    'read':   'GET'
-  };
+  // handle keydown event
+  function dispatch(event, scope){
+    var key, handler, k, i, modifiersMatch;
+    key = event.keyCode;
 
-  // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
-  // Override this if you'd like to use a different library.
-  Backbone.ajax = function() {
-    return Backbone.$.ajax.apply(Backbone.$, arguments);
-  };
-
-  // Backbone.Router
-  // ---------------
-
-  // Routers map faux-URLs to actions, and fire events when routes are
-  // matched. Creating a new one sets its `routes` hash, if not set statically.
-  var Router = Backbone.Router = function(options) {
-    options || (options = {});
-    if (options.routes) this.routes = options.routes;
-    this._bindRoutes();
-    this.initialize.apply(this, arguments);
-  };
-
-  // Cached regular expressions for matching named param parts and splatted
-  // parts of route strings.
-  var optionalParam = /\((.*?)\)/g;
-  var namedParam    = /(\(\?)?:\w+/g;
-  var splatParam    = /\*\w+/g;
-  var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
-
-  // Set up all inheritable **Backbone.Router** properties and methods.
-  _.extend(Router.prototype, Events, {
-
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
-    initialize: function(){},
-
-    // Manually bind a single named route to a callback. For example:
-    //
-    //     this.route('search/:query/p:num', 'search', function(query, num) {
-    //       ...
-    //     });
-    //
-    route: function(route, name, callback) {
-      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-      if (_.isFunction(name)) {
-        callback = name;
-        name = '';
-      }
-      if (!callback) callback = this[name];
-      var router = this;
-      Backbone.history.route(route, function(fragment) {
-        var args = router._extractParameters(route, fragment);
-        callback && callback.apply(router, args);
-        router.trigger.apply(router, ['route:' + name].concat(args));
-        router.trigger('route', name, args);
-        Backbone.history.trigger('route', router, name, args);
-      });
-      return this;
-    },
-
-    // Simple proxy to `Backbone.history` to save a fragment into the history.
-    navigate: function(fragment, options) {
-      Backbone.history.navigate(fragment, options);
-      return this;
-    },
-
-    // Bind all defined routes to `Backbone.history`. We have to reverse the
-    // order of the routes here to support behavior where the most general
-    // routes can be defined at the bottom of the route map.
-    _bindRoutes: function() {
-      if (!this.routes) return;
-      this.routes = _.result(this, 'routes');
-      var route, routes = _.keys(this.routes);
-      while ((route = routes.pop()) != null) {
-        this.route(route, this.routes[route]);
-      }
-    },
-
-    // Convert a route string into a regular expression, suitable for matching
-    // against the current location hash.
-    _routeToRegExp: function(route) {
-      route = route.replace(escapeRegExp, '\\$&')
-                   .replace(optionalParam, '(?:$1)?')
-                   .replace(namedParam, function(match, optional){
-                     return optional ? match : '([^\/]+)';
-                   })
-                   .replace(splatParam, '(.*?)');
-      return new RegExp('^' + route + '$');
-    },
-
-    // Given a route, and a URL fragment that it matches, return the array of
-    // extracted decoded parameters. Empty or unmatched parameters will be
-    // treated as `null` to normalize cross-browser behavior.
-    _extractParameters: function(route, fragment) {
-      var params = route.exec(fragment).slice(1);
-      return _.map(params, function(param) {
-        return param ? decodeURIComponent(param) : null;
-      });
+    if (index(_downKeys, key) == -1) {
+        _downKeys.push(key);
     }
 
-  });
-
-  // Backbone.History
-  // ----------------
-
-  // Handles cross-browser history management, based on either
-  // [pushState](http://diveintohtml5.info/history.html) and real URLs, or
-  // [onhashchange](https://developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
-  // and URL fragments. If the browser supports neither (old IE, natch),
-  // falls back to polling.
-  var History = Backbone.History = function() {
-    this.handlers = [];
-    _.bindAll(this, 'checkUrl');
-
-    // Ensure that `History` can be used outside of the browser.
-    if (typeof window !== 'undefined') {
-      this.location = window.location;
-      this.history = window.history;
+    // if a modifier key, set the key.<modifierkeyname> property to true and return
+    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
+    if(key in _mods) {
+      _mods[key] = true;
+      // 'assignKey' from inside this closure is exported to window.key
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
+      return;
     }
-  };
+    updateModifierKey(event);
 
-  // Cached regex for stripping a leading hash/slash and trailing space.
-  var routeStripper = /^[#\/]|\s+$/g;
+    // see if we need to ignore the keypress (filter() can can be overridden)
+    // by default ignore key presses if a select, textarea, or input is focused
+    if(!assignKey.filter.call(this, event)) return;
 
-  // Cached regex for stripping leading and trailing slashes.
-  var rootStripper = /^\/+|\/+$/g;
+    // abort if no potentially matching shortcuts found
+    if (!(key in _handlers)) return;
 
-  // Cached regex for detecting MSIE.
-  var isExplorer = /msie [\w.]+/;
+    // for each potential shortcut
+    for (i = 0; i < _handlers[key].length; i++) {
+      handler = _handlers[key][i];
 
-  // Cached regex for removing a trailing slash.
-  var trailingSlash = /\/$/;
-
-  // Has the history handling already been started?
-  History.started = false;
-
-  // Set up all inheritable **Backbone.History** properties and methods.
-  _.extend(History.prototype, Events, {
-
-    // The default interval to poll for hash changes, if necessary, is
-    // twenty times a second.
-    interval: 50,
-
-    // Gets the true hash value. Cannot use location.hash directly due to bug
-    // in Firefox where location.hash will always be decoded.
-    getHash: function(window) {
-      var match = (window || this).location.href.match(/#(.*)$/);
-      return match ? match[1] : '';
-    },
-
-    // Get the cross-browser normalized URL fragment, either from the URL,
-    // the hash, or the override.
-    getFragment: function(fragment, forcePushState) {
-      if (fragment == null) {
-        if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = this.location.pathname;
-          var root = this.root.replace(trailingSlash, '');
-          if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
-        } else {
-          fragment = this.getHash();
+      // see if it's in the current scope
+      if(handler.scope == scope || handler.scope == 'all'){
+        // check if modifiers match if any
+        modifiersMatch = handler.mods.length > 0;
+        for(k in _mods)
+          if((!_mods[k] && index(handler.mods, +k) > -1) ||
+            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
+        // call the handler and stop the event if neccessary
+        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
+          if(handler.method(event, handler)===false){
+            if(event.preventDefault) event.preventDefault();
+              else event.returnValue = false;
+            if(event.stopPropagation) event.stopPropagation();
+            if(event.cancelBubble) event.cancelBubble = true;
+          }
         }
       }
-      return fragment.replace(routeStripper, '');
-    },
+    }
+  };
 
-    // Start the hash change handling, returning `true` if the current URL matches
-    // an existing route, and `false` otherwise.
-    start: function(options) {
-      if (History.started) throw new Error("Backbone.history has already been started");
-      History.started = true;
+  // unset modifier keys on keyup
+  function clearModifier(event){
+    var key = event.keyCode, k,
+        i = index(_downKeys, key);
 
-      // Figure out the initial configuration. Do we need an iframe?
-      // Is pushState desired ... is it available?
-      this.options          = _.extend({}, {root: '/'}, this.options, options);
-      this.root             = this.options.root;
-      this._wantsHashChange = this.options.hashChange !== false;
-      this._wantsPushState  = !!this.options.pushState;
-      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
-      var fragment          = this.getFragment();
-      var docMode           = document.documentMode;
-      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
-
-      // Normalize root to always include a leading and trailing slash.
-      this.root = ('/' + this.root + '/').replace(rootStripper, '/');
-
-      if (oldIE && this._wantsHashChange) {
-        this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
-        this.navigate(fragment);
-      }
-
-      // Depending on whether we're using pushState or hashes, and whether
-      // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState) {
-        Backbone.$(window).on('popstate', this.checkUrl);
-      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        Backbone.$(window).on('hashchange', this.checkUrl);
-      } else if (this._wantsHashChange) {
-        this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
-      }
-
-      // Determine if we need to change the base url, for a pushState link
-      // opened by a non-pushState browser.
-      this.fragment = fragment;
-      var loc = this.location;
-      var atRoot = loc.pathname.replace(/[^\/]$/, '$&/') === this.root;
-
-      // If we've started off with a route from a `pushState`-enabled browser,
-      // but we're currently in a browser that doesn't support it...
-      if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
-        this.fragment = this.getFragment(null, true);
-        this.location.replace(this.root + this.location.search + '#' + this.fragment);
-        // Return immediately as browser will do redirect to new url
-        return true;
-
-      // Or if we've started out with a hash-based route, but we're currently
-      // in a browser where it could be `pushState`-based instead...
-      } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
-        this.fragment = this.getHash().replace(routeStripper, '');
-        this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
-      }
-
-      if (!this.options.silent) return this.loadUrl();
-    },
-
-    // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
-    // but possibly useful for unit testing Routers.
-    stop: function() {
-      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
-      clearInterval(this._checkUrlInterval);
-      History.started = false;
-    },
-
-    // Add a route to be tested when the fragment changes. Routes added later
-    // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
-    },
-
-    // Checks the current URL to see if it has changed, and if it has,
-    // calls `loadUrl`, normalizing across the hidden iframe.
-    checkUrl: function(e) {
-      var current = this.getFragment();
-      if (current === this.fragment && this.iframe) {
-        current = this.getFragment(this.getHash(this.iframe));
-      }
-      if (current === this.fragment) return false;
-      if (this.iframe) this.navigate(current);
-      this.loadUrl() || this.loadUrl(this.getHash());
-    },
-
-    // Attempt to load the current URL fragment. If a route succeeds with a
-    // match, returns `true`. If no defined routes matches the fragment,
-    // returns `false`.
-    loadUrl: function(fragmentOverride) {
-      var fragment = this.fragment = this.getFragment(fragmentOverride);
-      var matched = _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
-        }
-      });
-      return matched;
-    },
-
-    // Save a fragment into the hash history, or replace the URL state if the
-    // 'replace' option is passed. You are responsible for properly URL-encoding
-    // the fragment in advance.
-    //
-    // The options object can contain `trigger: true` if you wish to have the
-    // route callback be fired (not usually desirable), or `replace: true`, if
-    // you wish to modify the current URL without adding an entry to the history.
-    navigate: function(fragment, options) {
-      if (!History.started) return false;
-      if (!options || options === true) options = {trigger: options};
-      fragment = this.getFragment(fragment || '');
-      if (this.fragment === fragment) return;
-      this.fragment = fragment;
-      var url = this.root + fragment;
-
-      // If pushState is available, we use it to set the fragment as a real URL.
-      if (this._hasPushState) {
-        this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
-
-      // If hash changes haven't been explicitly disabled, update the hash
-      // fragment to store history.
-      } else if (this._wantsHashChange) {
-        this._updateHash(this.location, fragment, options.replace);
-        if (this.iframe && (fragment !== this.getFragment(this.getHash(this.iframe)))) {
-          // Opening and closing the iframe tricks IE7 and earlier to push a
-          // history entry on hash-tag change.  When replace is true, we don't
-          // want this.
-          if(!options.replace) this.iframe.document.open().close();
-          this._updateHash(this.iframe.location, fragment, options.replace);
-        }
-
-      // If you've told us that you explicitly don't want fallback hashchange-
-      // based history, then `navigate` becomes a page refresh.
-      } else {
-        return this.location.assign(url);
-      }
-      if (options.trigger) this.loadUrl(fragment);
-    },
-
-    // Update the hash location, either replacing the current entry, or adding
-    // a new one to the browser history.
-    _updateHash: function(location, fragment, replace) {
-      if (replace) {
-        var href = location.href.replace(/(javascript:|#).*$/, '');
-        location.replace(href + '#' + fragment);
-      } else {
-        // Some browsers require that `hash` contains a leading #.
-        location.hash = '#' + fragment;
-      }
+    // remove key from _downKeys
+    if (i >= 0) {
+        _downKeys.splice(i, 1);
     }
 
-  });
+    if(key == 93 || key == 224) key = 91;
+    if(key in _mods) {
+      _mods[key] = false;
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
+    }
+  };
 
-  // Create the default Backbone.history.
-  Backbone.history = new History;
+  function resetModifiers() {
+    for(k in _mods) _mods[k] = false;
+    for(k in _MODIFIERS) assignKey[k] = false;
+  };
 
-  // Helpers
-  // -------
-
-  // Helper function to correctly set up the prototype chain, for subclasses.
-  // Similar to `goog.inherits`, but uses a hash of prototype properties and
-  // class properties to be extended.
-  var extend = function(protoProps, staticProps) {
-    var parent = this;
-    var child;
-
-    // The constructor function for the new subclass is either defined by you
-    // (the "constructor" property in your `extend` definition), or defaulted
-    // by us to simply call the parent's constructor.
-    if (protoProps && _.has(protoProps, 'constructor')) {
-      child = protoProps.constructor;
-    } else {
-      child = function(){ return parent.apply(this, arguments); };
+  // parse and assign shortcut
+  function assignKey(key, scope, method){
+    var keys, mods;
+    keys = getKeys(key);
+    if (method === undefined) {
+      method = scope;
+      scope = 'all';
     }
 
-    // Add static properties to the constructor function, if supplied.
-    _.extend(child, parent, staticProps);
-
-    // Set the prototype chain to inherit from `parent`, without calling
-    // `parent`'s constructor function.
-    var Surrogate = function(){ this.constructor = child; };
-    Surrogate.prototype = parent.prototype;
-    child.prototype = new Surrogate;
-
-    // Add prototype properties (instance properties) to the subclass,
-    // if supplied.
-    if (protoProps) _.extend(child.prototype, protoProps);
-
-    // Set a convenience property in case the parent's prototype is needed
-    // later.
-    child.__super__ = parent.prototype;
-
-    return child;
+    // for each shortcut
+    for (var i = 0; i < keys.length; i++) {
+      // set modifier keys if any
+      mods = [];
+      key = keys[i].split('+');
+      if (key.length > 1){
+        mods = getMods(key);
+        key = [key[key.length-1]];
+      }
+      // convert to keycode and...
+      key = key[0]
+      key = code(key);
+      // ...store handler
+      if (!(key in _handlers)) _handlers[key] = [];
+      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
+    }
   };
 
-  // Set up inheritance for the model, collection, router, view and history.
-  Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
+  // unbind all handlers for given key in current scope
+  function unbindKey(key, scope) {
+    var keys = key.split('+'),
+      mods = [],
+      i, obj;
 
-  // Throw an error when a URL is needed, and none is supplied.
-  var urlError = function() {
-    throw new Error('A "url" property or function must be specified');
+    if (keys.length > 1) {
+      mods = getMods(keys);
+      key = keys[keys.length - 1];
+    }
+
+    key = code(key);
+
+    if (scope === undefined) {
+      scope = getScope();
+    }
+    if (!_handlers[key]) {
+      return;
+    }
+    for (i in _handlers[key]) {
+      obj = _handlers[key][i];
+      // only clear handlers if correct scope and mods match
+      if (obj.scope === scope && compareArray(obj.mods, mods)) {
+        _handlers[key][i] = {};
+      }
+    }
   };
 
-  // Wrap an optional error callback with a fallback error event.
-  var wrapError = function (model, options) {
-    var error = options.error;
-    options.error = function(resp) {
-      if (error) error(model, resp, options);
-      model.trigger('error', model, resp, options);
-    };
+  // Returns true if the key with code 'keyCode' is currently down
+  // Converts strings into key codes.
+  function isPressed(keyCode) {
+      if (typeof(keyCode)=='string') {
+        keyCode = code(keyCode);
+      }
+      return index(_downKeys, keyCode) != -1;
+  }
+
+  function getPressedKeyCodes() {
+      return _downKeys.slice(0);
+  }
+
+  function filter(event){
+    var tagName = (event.target || event.srcElement).tagName;
+    // ignore keypressed in any elements that support keyboard data input
+    return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+  }
+
+  // initialize key.<modifier> to false
+  for(k in _MODIFIERS) assignKey[k] = false;
+
+  // set current scope (default 'all')
+  function setScope(scope){ _scope = scope || 'all' };
+  function getScope(){ return _scope || 'all' };
+
+  // delete all handlers for a given scope
+  function deleteScope(scope){
+    var key, handlers, i;
+
+    for (key in _handlers) {
+      handlers = _handlers[key];
+      for (i = 0; i < handlers.length; ) {
+        if (handlers[i].scope === scope) handlers.splice(i, 1);
+        else i++;
+      }
+    }
   };
 
-}).call(this);
+  // abstract key logic for assign and unassign
+  function getKeys(key) {
+    var keys;
+    key = key.replace(/\s/g, '');
+    keys = key.split(',');
+    if ((keys[keys.length - 1]) == '') {
+      keys[keys.length - 2] += ',';
+    }
+    return keys;
+  }
+
+  // abstract mods logic for assign and unassign
+  function getMods(key) {
+    var mods = key.slice(0, key.length - 1);
+    for (var mi = 0; mi < mods.length; mi++)
+    mods[mi] = _MODIFIERS[mods[mi]];
+    return mods;
+  }
+
+  // cross-browser events
+  function addEvent(object, event, method) {
+    if (object.addEventListener)
+      object.addEventListener(event, method, false);
+    else if(object.attachEvent)
+      object.attachEvent('on'+event, function(){ method(window.event) });
+  };
+
+  // set the handlers globally on document
+  addEvent(document, 'keydown', function(event) { dispatch(event, _scope) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
+  addEvent(document, 'keyup', clearModifier);
+
+  // reset modifiers to false whenever the window is (re)focused.
+  addEvent(window, 'focus', resetModifiers);
+
+  // store previously defined key
+  var previousKey = global.key;
+
+  // restore previously defined key and return reference to our key object
+  function noConflict() {
+    var k = global.key;
+    global.key = previousKey;
+    return k;
+  }
+
+  // set window.key and window.key.set/get/deleteScope, and the default filter
+  global.key = assignKey;
+  global.key.setScope = setScope;
+  global.key.getScope = getScope;
+  global.key.deleteScope = deleteScope;
+  global.key.filter = filter;
+  global.key.isPressed = isPressed;
+  global.key.getPressedKeyCodes = getPressedKeyCodes;
+  global.key.noConflict = noConflict;
+  global.key.unbind = unbindKey;
+
+  if(typeof module !== 'undefined') module.exports = key;
+
+})(this);
 
 })()
-},{"underscore":17}],13:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
+// Github.js (Modified for prose.io)
+// (c) 2012 Michael Aufreiter, Development Seed
+// Github.js is freely distributable under the MIT license.
+// For all details and documentation:
+// http://substance.io/michael/github
+
+var _ = require('underscore');
+
+(function() {
+  var Github;
+
+  Github = window.Github = function(options) {
+
+    var API_URL = options.api || 'https://api.github.com';
+
+    // HTTP Request Abstraction
+    // =======
+    //
+    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
+
+    function _request(method, path, data, cb, raw, sync, headers) {
+      function getURL() {
+        return url = API_URL + path;
+      }
+
+      var xhr = new XMLHttpRequest();
+      if (!raw) {xhr.dataType = "json";}
+
+      xhr.open(method, getURL(), !sync);
+      if (!sync) {
+        xhr.onreadystatechange = function () {
+          if (this.readyState == 4) {
+            if (this.status >= 200 && this.status < 300 || this.status === 304) {
+              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
+            } else {
+              cb({request: this, error: this.status});
+            }
+          }
+        };
+      }
+      xhr.setRequestHeader('Accept','application/vnd.github.raw');
+      xhr.setRequestHeader('Content-Type','application/json');
+
+      if (headers) {
+        for (var i = 0; i < headers.length; i++) {
+          header = headers[i];
+          xhr.setRequestHeader(header[0], header[1]);
+        }
+      }
+
+      if (
+         (options.auth == 'oauth' && options.token) ||
+         (options.auth == 'basic' && options.username && options.password)
+         ) {
+           xhr.setRequestHeader('Authorization',options.auth == 'oauth' ?
+            'token '+ options.token :
+            'Basic ' + Base64.encode(options.username + ':' + options.password)
+           );
+         }
+      if (data) {
+        xhr.send(JSON.stringify(data));
+      } else {
+        xhr.send();
+      }
+      if (sync) return xhr.response;
+    }
+
+    function _parseLinkHeader(err, response, xhr, cb) {
+      var link = xhr.getResponseHeader('link');
+
+      if (!err && link) {
+        var parts = link.split(',');
+        var length = parts.length;
+
+        var links = {};
+
+        var section;
+        var url;
+        var name;
+
+        for (var i = 0; i < length; i++) {
+          section = parts[i].split(';');
+
+          if (section.length !== 2) {
+            throw new Error("section could not be split on ';'");
+          }
+
+          url = section[0].replace(/<(.*)>/, '$1').trim();
+          name = section[1].replace(/rel="(.*)"/, '$1').trim();
+
+          links[name] = url;
+        }
+
+        if (links.next) {
+          _request('GET', links.next.split(API_URL)[1], null, function(err, res, xhr) {
+            if (typeof response.concat === 'function') {
+              response = response.concat(res);
+            } else if (typeof response === 'string') {
+              response += res;
+            }
+
+            _parseLinkHeader(err, response, xhr, cb);
+          });
+        } else {
+          cb(err, response);
+        }
+      } else {
+        cb(err, response);
+      }
+    }
+
+    // File API
+    // =======
+    Github.File = function() {
+      // Manages file creation or updating depending on the data obnect passed.
+      this.uploadFile = function(username, repo, path, data, cb) {
+        _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, data, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      this.deleteFile = function(cb) {
+        _request('DELETE', '/repos/' + username + '/' + repo + '/contents/' + path, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+    };
+
+    // User API
+    // =======
+
+    Github.User = function() {
+      this.repos = function(cb) {
+        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List user organizations
+      // -------
+
+      this.orgs = function(cb) {
+        _request("GET", "/user/orgs", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List authenticated user's gists
+      // -------
+
+      this.gists = function(cb) {
+        _request("GET", "/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // Show user information
+      // -------
+
+      this.show = function(username, cb) {
+        var command = username ? "/users/"+username : "/user";
+
+        _request("GET", command, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List user repositories
+      // -------
+
+      this.userRepos = function(username, cb) {
+        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // List a user's gists
+      // -------
+
+      this.userGists = function(username, cb) {
+        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // List organization repositories
+      // -------
+
+      this.orgRepos = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
+          _parseLinkHeader(err, res, xhr, cb);
+        });
+      };
+
+      // Follow user
+      // -------
+
+      this.follow = function(username, cb) {
+        _request("PUT", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // Unfollow user
+      // -------
+
+      this.unfollow = function(username, cb) {
+        _request("DELETE", "/user/following/"+username, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+    };
+
+
+    // Repository API
+    // =======
+
+    Github.Repository = function(options) {
+      var repo = options.name;
+      var user = options.user;
+
+      var that = this;
+      var repoPath = "/repos/" + user + "/" + repo;
+
+      var currentTree = {
+        "branch": null,
+        "sha": null
+      };
+
+      // Uses the cache if branch has not been changed
+      // -------
+
+      function updateTree(branch, cb) {
+        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
+        that.getRef("heads/"+branch, function(err, sha) {
+          currentTree.branch = branch;
+          currentTree.sha = sha;
+          cb(err, sha);
+        });
+      }
+
+      // Get a particular reference
+      // -------
+
+      this.getRef = function(ref, cb) {
+        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.object.sha);
+        });
+      };
+
+      // Create a new reference
+      // --------
+      //
+      // {
+      //   "ref": "refs/heads/my-new-branch-name",
+      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
+      // }
+
+      this.createRef = function(options, cb) {
+        _request("POST", repoPath + "/git/refs", options, cb);
+      };
+
+      // Delete a reference
+      // --------
+      //
+      // repo.deleteRef('heads/gh-pages')
+      // repo.deleteRef('tags/v1.0')
+
+      this.deleteRef = function(ref, cb) {
+        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
+      };
+
+      // List all branches of a repository
+      // -------
+
+      this.listBranches = function(cb) {
+        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
+          if (err) return cb(err);
+          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
+        });
+      };
+
+      // Retrieve the contents of a blob
+      // -------
+
+      this.getBlob = function(sha, cb) {
+        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
+      };
+
+      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
+      // -------
+
+      this.getSha = function(branch, path, cb) {
+        // Just use head if path is empty
+        if (path === "") return that.getRef("heads/"+branch, cb);
+        that.getTree(branch+"?recursive=true", function(err, tree) {
+          var file = _.select(tree, function(file) {
+            return file.path === path;
+          })[0];
+          cb(null, file ? file.sha : null);
+        });
+      };
+
+      // Retrieve the tree a commit points to
+      // -------
+
+      this.getTree = function(tree, cb) {
+        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.tree);
+        });
+      };
+
+      // Post a new blob object, getting a blob SHA back
+      // -------
+
+      this.postBlob = function(content, cb) {
+        if (typeof(content) === "string") {
+          content = {
+            "content": content,
+            "encoding": "utf-8"
+          };
+        }
+
+        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Update an existing tree adding a new blob object getting a tree SHA back
+      // -------
+
+      this.updateTree = function(baseTree, path, blob, cb) {
+        var data = {
+          "base_tree": baseTree,
+          "tree": [
+            {
+              "path": path,
+              "mode": "100644",
+              "type": "blob",
+              "sha": blob
+            }
+          ]
+        };
+        _request("POST", repoPath + "/git/trees", data, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Post a new tree object having a file path pointer replaced
+      // with a new blob SHA getting a tree SHA back
+      // -------
+
+      this.postTree = function(tree, cb) {
+        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Create a new commit object with the current commit SHA as the parent
+      // and the new tree SHA, getting a commit SHA back
+      // -------
+
+      this.commit = function(parent, tree, message, cb) {
+        var data = {
+          "message": message,
+          "author": {
+            "name": options.username
+          },
+          "parents": [
+            parent
+          ],
+          "tree": tree
+        };
+
+        _request("POST", repoPath + "/git/commits", data, function(err, res) {
+          currentTree.sha = res.sha; // update latest commit
+          if (err) return cb(err);
+          cb(null, res.sha);
+        });
+      };
+
+      // Update the reference of your head to point to the new commit SHA
+      // -------
+
+      this.updateHead = function(head, commit, cb) {
+        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
+          cb(err);
+        });
+      };
+
+      // Show repository information
+      // -------
+
+      this.show = function(cb) {
+        _request("GET", repoPath, null, cb);
+      };
+
+      // Get commits
+      // --------
+
+      this.getCommit = function(sha, cb) {
+        _request("GET", repoPath + "/commits/" + sha, null, cb);
+      };
+
+      this.getCommits = function(branch, lastModified, cb) {
+        _request("GET", repoPath + "/commits" + "?sha=" + branch, null, cb, false, false, [
+          ['If-Modified-Since', lastModified]
+        ]);
+      };
+
+      // Get contents
+      // --------
+
+      this.contents = function(branch, path, cb) {
+        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
+      };
+
+      this.contentsSync = function(branch, path) {
+        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
+      };
+
+      // Fork repository
+      // -------
+
+      this.fork = function(cb) {
+        _request("POST", repoPath + "/forks", null, cb);
+      };
+
+      // Create pull request
+      // --------
+
+      this.createPullRequest = function(options, cb) {
+        _request("POST", repoPath + "/pulls", options, cb);
+      };
+
+      // Read file at given path
+      // -------
+
+      this.read = function(branch, path, cb) {
+        that.getSha(branch, path, function(err, sha) {
+          if (!sha) return cb("not found", null);
+          that.getBlob(sha, function(err, content) {
+            cb(err, content, sha);
+          });
+        });
+      };
+
+      // Remove a file from the tree
+      // -------
+
+      this.remove = function(branch, path, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
+            _.each(newTree, function(ref) {
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(newTree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Move a file to a new location
+      // -------
+
+      this.move = function(branch, path, newPath, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+            // Update Tree
+            _.each(tree, function(ref) {
+              if (ref.path === path) ref.path = newPath;
+              if (ref.type === "tree") delete ref.sha;
+            });
+
+            that.postTree(tree, function(err, rootTree) {
+              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+                that.updateHead(branch, commit, function(err) {
+                  cb(err);
+                });
+              });
+            });
+          });
+        });
+      };
+
+      // Write file contents to a given branch and path
+      // -------
+
+      this.write = function(branch, path, content, message, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          if (err) return cb(err);
+          that.postBlob(content, function(err, blob) {
+            if (err) return cb(err);
+            that.updateTree(latestCommit, path, blob, function(err, tree) {
+              if (err) return cb(err);
+              that.commit(latestCommit, tree, message, function(err, commit) {
+                if (err) return cb(err);
+                that.updateHead(branch, commit, cb);
+              });
+            });
+          });
+        });
+      };
+    };
+
+    // Gists API
+    // =======
+
+    Github.Gist = function(options) {
+      var id = options.id;
+      var gistPath = "/gists/"+id;
+
+      // Read the gist
+      // --------
+
+      this.read = function(cb) {
+        _request("GET", gistPath, null, function(err, gist) {
+          cb(err, gist);
+        });
+      };
+
+      // Create the gist
+      // --------
+      // {
+      //  "description": "the description for this gist",
+      //    "public": true,
+      //    "files": {
+      //      "file1.txt": {
+      //        "content": "String file contents"
+      //      }
+      //    }
+      // }
+
+      this.create = function(options, cb){
+        _request("POST","/gists", options, cb);
+      };
+
+      // Delete the gist
+      // --------
+
+      this.removeGist = function(cb) {
+        _request("DELETE", gistPath, null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Fork a gist
+      // --------
+
+      this.fork = function(cb) {
+        _request("POST", gistPath+"/fork", null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Update a gist with the new stuff
+      // --------
+
+      this.update = function(options, cb) {
+        _request("PATCH", gistPath, options, function(err,res) {
+          cb(err,res);
+        });
+      };
+    };
+
+    // Top Level API
+    // -------
+
+    this.getRepo = function(user, repo) {
+      return new Github.Repository({user: user, name: repo});
+    };
+
+    this.getUser = function() {
+      return new Github.User();
+    };
+
+    this.getFile = function() {
+      return new Github.File();
+    };
+
+    this.getGist = function(id) {
+      return new Github.Gist({id: id});
+    };
+  };
+  module.exports = Github;
+}).call(this);
+
+},{"underscore":8}],17:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -26063,10 +25381,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{".././toolbar/markdown.js":20,".././util":25,".././upload":21,".././cookie":19,"chosen-jquery-browserify":28,"jquery-browserify":16,"underscore":17,"js-yaml":23,"keymaster":27,"marked":26,"backbone":18,"deepmerge":29,"diff":30}],23:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
-
-},{"./lib/js-yaml.js":31}],26:[function(require,module,exports){
+},{".././toolbar/markdown.js":5,".././util":22,".././upload":6,".././cookie":4,"jquery-browserify":21,"underscore":8,"js-yaml":25,"keymaster":26,"marked":27,"backbone":20,"chosen-jquery-browserify":28,"diff":29,"deepmerge":30}],27:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -27220,941 +26535,7 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
-},{}],27:[function(require,module,exports){
-(function(){//     keymaster.js
-//     (c) 2011-2012 Thomas Fuchs
-//     keymaster.js may be freely distributed under the MIT license.
-
-;(function(global){
-  var k,
-    _handlers = {},
-    _mods = { 16: false, 18: false, 17: false, 91: false },
-    _scope = 'all',
-    // modifier keys
-    _MODIFIERS = {
-      '⇧': 16, shift: 16,
-      '⌥': 18, alt: 18, option: 18,
-      '⌃': 17, ctrl: 17, control: 17,
-      '⌘': 91, command: 91
-    },
-    // special keys
-    _MAP = {
-      backspace: 8, tab: 9, clear: 12,
-      enter: 13, 'return': 13,
-      esc: 27, escape: 27, space: 32,
-      left: 37, up: 38,
-      right: 39, down: 40,
-      del: 46, 'delete': 46,
-      home: 36, end: 35,
-      pageup: 33, pagedown: 34,
-      ',': 188, '.': 190, '/': 191,
-      '`': 192, '-': 189, '=': 187,
-      ';': 186, '\'': 222,
-      '[': 219, ']': 221, '\\': 220
-    },
-    code = function(x){
-      return _MAP[x] || x.toUpperCase().charCodeAt(0);
-    },
-    _downKeys = [];
-
-  for(k=1;k<20;k++) _MAP['f'+k] = 111+k;
-
-  // IE doesn't support Array#indexOf, so have a simple replacement
-  function index(array, item){
-    var i = array.length;
-    while(i--) if(array[i]===item) return i;
-    return -1;
-  }
-
-  // for comparing mods before unassignment
-  function compareArray(a1, a2) {
-    if (a1.length != a2.length) return false;
-    for (var i = 0; i < a1.length; i++) {
-        if (a1[i] !== a2[i]) return false;
-    }
-    return true;
-  }
-
-  var modifierMap = {
-      16:'shiftKey',
-      18:'altKey',
-      17:'ctrlKey',
-      91:'metaKey'
-  };
-  function updateModifierKey(event) {
-      for(k in _mods) _mods[k] = event[modifierMap[k]];
-  };
-
-  // handle keydown event
-  function dispatch(event, scope){
-    var key, handler, k, i, modifiersMatch;
-    key = event.keyCode;
-
-    if (index(_downKeys, key) == -1) {
-        _downKeys.push(key);
-    }
-
-    // if a modifier key, set the key.<modifierkeyname> property to true and return
-    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
-    if(key in _mods) {
-      _mods[key] = true;
-      // 'assignKey' from inside this closure is exported to window.key
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
-      return;
-    }
-    updateModifierKey(event);
-
-    // see if we need to ignore the keypress (filter() can can be overridden)
-    // by default ignore key presses if a select, textarea, or input is focused
-    if(!assignKey.filter.call(this, event)) return;
-
-    // abort if no potentially matching shortcuts found
-    if (!(key in _handlers)) return;
-
-    // for each potential shortcut
-    for (i = 0; i < _handlers[key].length; i++) {
-      handler = _handlers[key][i];
-
-      // see if it's in the current scope
-      if(handler.scope == scope || handler.scope == 'all'){
-        // check if modifiers match if any
-        modifiersMatch = handler.mods.length > 0;
-        for(k in _mods)
-          if((!_mods[k] && index(handler.mods, +k) > -1) ||
-            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
-        // call the handler and stop the event if neccessary
-        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
-          if(handler.method(event, handler)===false){
-            if(event.preventDefault) event.preventDefault();
-              else event.returnValue = false;
-            if(event.stopPropagation) event.stopPropagation();
-            if(event.cancelBubble) event.cancelBubble = true;
-          }
-        }
-      }
-    }
-  };
-
-  // unset modifier keys on keyup
-  function clearModifier(event){
-    var key = event.keyCode, k,
-        i = index(_downKeys, key);
-
-    // remove key from _downKeys
-    if (i >= 0) {
-        _downKeys.splice(i, 1);
-    }
-
-    if(key == 93 || key == 224) key = 91;
-    if(key in _mods) {
-      _mods[key] = false;
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
-    }
-  };
-
-  function resetModifiers() {
-    for(k in _mods) _mods[k] = false;
-    for(k in _MODIFIERS) assignKey[k] = false;
-  };
-
-  // parse and assign shortcut
-  function assignKey(key, scope, method){
-    var keys, mods;
-    keys = getKeys(key);
-    if (method === undefined) {
-      method = scope;
-      scope = 'all';
-    }
-
-    // for each shortcut
-    for (var i = 0; i < keys.length; i++) {
-      // set modifier keys if any
-      mods = [];
-      key = keys[i].split('+');
-      if (key.length > 1){
-        mods = getMods(key);
-        key = [key[key.length-1]];
-      }
-      // convert to keycode and...
-      key = key[0]
-      key = code(key);
-      // ...store handler
-      if (!(key in _handlers)) _handlers[key] = [];
-      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
-    }
-  };
-
-  // unbind all handlers for given key in current scope
-  function unbindKey(key, scope) {
-    var keys = key.split('+'),
-      mods = [],
-      i, obj;
-
-    if (keys.length > 1) {
-      mods = getMods(keys);
-      key = keys[keys.length - 1];
-    }
-
-    key = code(key);
-
-    if (scope === undefined) {
-      scope = getScope();
-    }
-    if (!_handlers[key]) {
-      return;
-    }
-    for (i in _handlers[key]) {
-      obj = _handlers[key][i];
-      // only clear handlers if correct scope and mods match
-      if (obj.scope === scope && compareArray(obj.mods, mods)) {
-        _handlers[key][i] = {};
-      }
-    }
-  };
-
-  // Returns true if the key with code 'keyCode' is currently down
-  // Converts strings into key codes.
-  function isPressed(keyCode) {
-      if (typeof(keyCode)=='string') {
-        keyCode = code(keyCode);
-      }
-      return index(_downKeys, keyCode) != -1;
-  }
-
-  function getPressedKeyCodes() {
-      return _downKeys.slice(0);
-  }
-
-  function filter(event){
-    var tagName = (event.target || event.srcElement).tagName;
-    // ignore keypressed in any elements that support keyboard data input
-    return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
-  }
-
-  // initialize key.<modifier> to false
-  for(k in _MODIFIERS) assignKey[k] = false;
-
-  // set current scope (default 'all')
-  function setScope(scope){ _scope = scope || 'all' };
-  function getScope(){ return _scope || 'all' };
-
-  // delete all handlers for a given scope
-  function deleteScope(scope){
-    var key, handlers, i;
-
-    for (key in _handlers) {
-      handlers = _handlers[key];
-      for (i = 0; i < handlers.length; ) {
-        if (handlers[i].scope === scope) handlers.splice(i, 1);
-        else i++;
-      }
-    }
-  };
-
-  // abstract key logic for assign and unassign
-  function getKeys(key) {
-    var keys;
-    key = key.replace(/\s/g, '');
-    keys = key.split(',');
-    if ((keys[keys.length - 1]) == '') {
-      keys[keys.length - 2] += ',';
-    }
-    return keys;
-  }
-
-  // abstract mods logic for assign and unassign
-  function getMods(key) {
-    var mods = key.slice(0, key.length - 1);
-    for (var mi = 0; mi < mods.length; mi++)
-    mods[mi] = _MODIFIERS[mods[mi]];
-    return mods;
-  }
-
-  // cross-browser events
-  function addEvent(object, event, method) {
-    if (object.addEventListener)
-      object.addEventListener(event, method, false);
-    else if(object.attachEvent)
-      object.attachEvent('on'+event, function(){ method(window.event) });
-  };
-
-  // set the handlers globally on document
-  addEvent(document, 'keydown', function(event) { dispatch(event, _scope) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
-  addEvent(document, 'keyup', clearModifier);
-
-  // reset modifiers to false whenever the window is (re)focused.
-  addEvent(window, 'focus', resetModifiers);
-
-  // store previously defined key
-  var previousKey = global.key;
-
-  // restore previously defined key and return reference to our key object
-  function noConflict() {
-    var k = global.key;
-    global.key = previousKey;
-    return k;
-  }
-
-  // set window.key and window.key.set/get/deleteScope, and the default filter
-  global.key = assignKey;
-  global.key.setScope = setScope;
-  global.key.getScope = getScope;
-  global.key.deleteScope = deleteScope;
-  global.key.filter = filter;
-  global.key.isPressed = isPressed;
-  global.key.getPressedKeyCodes = getPressedKeyCodes;
-  global.key.noConflict = noConflict;
-  global.key.unbind = unbindKey;
-
-  if(typeof module !== 'undefined') module.exports = key;
-
-})(this);
-
-})()
-},{}],22:[function(require,module,exports){
-// Github.js (Modified for prose.io)
-// (c) 2012 Michael Aufreiter, Development Seed
-// Github.js is freely distributable under the MIT license.
-// For all details and documentation:
-// http://substance.io/michael/github
-
-var _ = require('underscore');
-
-(function() {
-  var Github;
-
-  Github = window.Github = function(options) {
-
-    var API_URL = options.api || 'https://api.github.com';
-
-    // HTTP Request Abstraction
-    // =======
-    //
-    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
-
-    function _request(method, path, data, cb, raw, sync, headers) {
-      function getURL() {
-        return url = API_URL + path;
-      }
-
-      var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
-
-      xhr.open(method, getURL(), !sync);
-      if (!sync) {
-        xhr.onreadystatechange = function () {
-          if (this.readyState == 4) {
-            if (this.status >= 200 && this.status < 300 || this.status === 304) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
-            } else {
-              cb({request: this, error: this.status});
-            }
-          }
-        };
-      }
-      xhr.setRequestHeader('Accept','application/vnd.github.raw');
-      xhr.setRequestHeader('Content-Type','application/json');
-
-      if (headers) {
-        for (var i = 0; i < headers.length; i++) {
-          header = headers[i];
-          xhr.setRequestHeader(header[0], header[1]);
-        }
-      }
-
-      if (
-         (options.auth == 'oauth' && options.token) ||
-         (options.auth == 'basic' && options.username && options.password)
-         ) {
-           xhr.setRequestHeader('Authorization',options.auth == 'oauth' ?
-            'token '+ options.token :
-            'Basic ' + Base64.encode(options.username + ':' + options.password)
-           );
-         }
-      if (data) {
-        xhr.send(JSON.stringify(data));
-      } else {
-        xhr.send();
-      }
-      if (sync) return xhr.response;
-    }
-
-    function _parseLinkHeader(err, response, xhr, cb) {
-      var link = xhr.getResponseHeader('link');
-
-      if (!err && link) {
-        var parts = link.split(',');
-        var length = parts.length;
-
-        var links = {};
-
-        var section;
-        var url;
-        var name;
-
-        for (var i = 0; i < length; i++) {
-          section = parts[i].split(';');
-
-          if (section.length !== 2) {
-            throw new Error("section could not be split on ';'");
-          }
-
-          url = section[0].replace(/<(.*)>/, '$1').trim();
-          name = section[1].replace(/rel="(.*)"/, '$1').trim();
-
-          links[name] = url;
-        }
-
-        if (links.next) {
-          _request('GET', links.next.split(API_URL)[1], null, function(err, res, xhr) {
-            if (typeof response.concat === 'function') {
-              response = response.concat(res);
-            } else if (typeof response === 'string') {
-              response += res;
-            }
-
-            _parseLinkHeader(err, response, xhr, cb);
-          });
-        } else {
-          cb(err, response);
-        }
-      } else {
-        cb(err, response);
-      }
-    }
-
-    // File API
-    // =======
-    Github.File = function() {
-      // Manages file creation or updating depending on the data obnect passed.
-      this.uploadFile = function(username, repo, path, data, cb) {
-        _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, data, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      this.deleteFile = function(cb) {
-        _request('DELETE', '/repos/' + username + '/' + repo + '/contents/' + path, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-    };
-
-    // User API
-    // =======
-
-    Github.User = function() {
-      this.repos = function(cb) {
-        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user organizations
-      // -------
-
-      this.orgs = function(cb) {
-        _request("GET", "/user/orgs", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List authenticated user's gists
-      // -------
-
-      this.gists = function(cb) {
-        _request("GET", "/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // Show user information
-      // -------
-
-      this.show = function(username, cb) {
-        var command = username ? "/users/"+username : "/user";
-
-        _request("GET", command, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user repositories
-      // -------
-
-      this.userRepos = function(username, cb) {
-        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List a user's gists
-      // -------
-
-      this.userGists = function(username, cb) {
-        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // List organization repositories
-      // -------
-
-      this.orgRepos = function(orgname, cb) {
-        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
-          _parseLinkHeader(err, res, xhr, cb);
-        });
-      };
-
-      // Follow user
-      // -------
-
-      this.follow = function(username, cb) {
-        _request("PUT", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // Unfollow user
-      // -------
-
-      this.unfollow = function(username, cb) {
-        _request("DELETE", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-    };
-
-
-    // Repository API
-    // =======
-
-    Github.Repository = function(options) {
-      var repo = options.name;
-      var user = options.user;
-
-      var that = this;
-      var repoPath = "/repos/" + user + "/" + repo;
-
-      var currentTree = {
-        "branch": null,
-        "sha": null
-      };
-
-      // Uses the cache if branch has not been changed
-      // -------
-
-      function updateTree(branch, cb) {
-        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
-        that.getRef("heads/"+branch, function(err, sha) {
-          currentTree.branch = branch;
-          currentTree.sha = sha;
-          cb(err, sha);
-        });
-      }
-
-      // Get a particular reference
-      // -------
-
-      this.getRef = function(ref, cb) {
-        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.object.sha);
-        });
-      };
-
-      // Create a new reference
-      // --------
-      //
-      // {
-      //   "ref": "refs/heads/my-new-branch-name",
-      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
-      // }
-
-      this.createRef = function(options, cb) {
-        _request("POST", repoPath + "/git/refs", options, cb);
-      };
-
-      // Delete a reference
-      // --------
-      //
-      // repo.deleteRef('heads/gh-pages')
-      // repo.deleteRef('tags/v1.0')
-
-      this.deleteRef = function(ref, cb) {
-        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
-      };
-
-      // List all branches of a repository
-      // -------
-
-      this.listBranches = function(cb) {
-        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
-          if (err) return cb(err);
-          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
-        });
-      };
-
-      // Retrieve the contents of a blob
-      // -------
-
-      this.getBlob = function(sha, cb) {
-        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
-      };
-
-      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
-      // -------
-
-      this.getSha = function(branch, path, cb) {
-        // Just use head if path is empty
-        if (path === "") return that.getRef("heads/"+branch, cb);
-        that.getTree(branch+"?recursive=true", function(err, tree) {
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
-          cb(null, file ? file.sha : null);
-        });
-      };
-
-      // Retrieve the tree a commit points to
-      // -------
-
-      this.getTree = function(tree, cb) {
-        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.tree);
-        });
-      };
-
-      // Post a new blob object, getting a blob SHA back
-      // -------
-
-      this.postBlob = function(content, cb) {
-        if (typeof(content) === "string") {
-          content = {
-            "content": content,
-            "encoding": "utf-8"
-          };
-        }
-
-        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update an existing tree adding a new blob object getting a tree SHA back
-      // -------
-
-      this.updateTree = function(baseTree, path, blob, cb) {
-        var data = {
-          "base_tree": baseTree,
-          "tree": [
-            {
-              "path": path,
-              "mode": "100644",
-              "type": "blob",
-              "sha": blob
-            }
-          ]
-        };
-        _request("POST", repoPath + "/git/trees", data, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Post a new tree object having a file path pointer replaced
-      // with a new blob SHA getting a tree SHA back
-      // -------
-
-      this.postTree = function(tree, cb) {
-        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Create a new commit object with the current commit SHA as the parent
-      // and the new tree SHA, getting a commit SHA back
-      // -------
-
-      this.commit = function(parent, tree, message, cb) {
-        var data = {
-          "message": message,
-          "author": {
-            "name": options.username
-          },
-          "parents": [
-            parent
-          ],
-          "tree": tree
-        };
-
-        _request("POST", repoPath + "/git/commits", data, function(err, res) {
-          currentTree.sha = res.sha; // update latest commit
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update the reference of your head to point to the new commit SHA
-      // -------
-
-      this.updateHead = function(head, commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
-          cb(err);
-        });
-      };
-
-      // Show repository information
-      // -------
-
-      this.show = function(cb) {
-        _request("GET", repoPath, null, cb);
-      };
-
-      // Get commits
-      // --------
-
-      this.getCommit = function(sha, cb) {
-        _request("GET", repoPath + "/commits/" + sha, null, cb);
-      };
-
-      this.getCommits = function(branch, lastModified, cb) {
-        _request("GET", repoPath + "/commits" + "?sha=" + branch, null, cb, false, false, [
-          ['If-Modified-Since', lastModified]
-        ]);
-      };
-
-      // Get contents
-      // --------
-
-      this.contents = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
-      };
-
-      this.contentsSync = function(branch, path) {
-        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
-      };
-
-      // Fork repository
-      // -------
-
-      this.fork = function(cb) {
-        _request("POST", repoPath + "/forks", null, cb);
-      };
-
-      // Create pull request
-      // --------
-
-      this.createPullRequest = function(options, cb) {
-        _request("POST", repoPath + "/pulls", options, cb);
-      };
-
-      // Read file at given path
-      // -------
-
-      this.read = function(branch, path, cb) {
-        that.getSha(branch, path, function(err, sha) {
-          if (!sha) return cb("not found", null);
-          that.getBlob(sha, function(err, content) {
-            cb(err, content, sha);
-          });
-        });
-      };
-
-      // Remove a file from the tree
-      // -------
-
-      this.remove = function(branch, path, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
-            _.each(newTree, function(ref) {
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(newTree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Move a file to a new location
-      // -------
-
-      this.move = function(branch, path, newPath, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            _.each(tree, function(ref) {
-              if (ref.path === path) ref.path = newPath;
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(tree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Write file contents to a given branch and path
-      // -------
-
-      this.write = function(branch, path, content, message, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          if (err) return cb(err);
-          that.postBlob(content, function(err, blob) {
-            if (err) return cb(err);
-            that.updateTree(latestCommit, path, blob, function(err, tree) {
-              if (err) return cb(err);
-              that.commit(latestCommit, tree, message, function(err, commit) {
-                if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
-              });
-            });
-          });
-        });
-      };
-    };
-
-    // Gists API
-    // =======
-
-    Github.Gist = function(options) {
-      var id = options.id;
-      var gistPath = "/gists/"+id;
-
-      // Read the gist
-      // --------
-
-      this.read = function(cb) {
-        _request("GET", gistPath, null, function(err, gist) {
-          cb(err, gist);
-        });
-      };
-
-      // Create the gist
-      // --------
-      // {
-      //  "description": "the description for this gist",
-      //    "public": true,
-      //    "files": {
-      //      "file1.txt": {
-      //        "content": "String file contents"
-      //      }
-      //    }
-      // }
-
-      this.create = function(options, cb){
-        _request("POST","/gists", options, cb);
-      };
-
-      // Delete the gist
-      // --------
-
-      this.removeGist = function(cb) {
-        _request("DELETE", gistPath, null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Fork a gist
-      // --------
-
-      this.fork = function(cb) {
-        _request("POST", gistPath+"/fork", null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Update a gist with the new stuff
-      // --------
-
-      this.update = function(options, cb) {
-        _request("PATCH", gistPath, options, function(err,res) {
-          cb(err,res);
-        });
-      };
-    };
-
-    // Top Level API
-    // -------
-
-    this.getRepo = function(user, repo) {
-      return new Github.Repository({user: user, name: repo});
-    };
-
-    this.getUser = function() {
-      return new Github.User();
-    };
-
-    this.getFile = function() {
-      return new Github.File();
-    };
-
-    this.getGist = function(id) {
-      return new Github.Gist({id: id});
-    };
-  };
-  module.exports = Github;
-}).call(this);
-
-},{"underscore":17}],29:[function(require,module,exports){
-module.exports = function merge (target, src) {
-    var array = Array.isArray(src)
-    var dst = array && [] || {}
-
-    if (array) {
-        target = target || []
-        dst = dst.concat(target)
-        src.forEach(function(e, i) {
-            if (typeof target[i] === 'undefined') {
-                dst[i] = e
-            } else if (typeof e === 'object') {
-                dst[i] = merge(target[i], e)
-            } else {
-                if (target.indexOf(e) === -1) {
-                    dst.push(e)
-                }
-            }
-        })
-    } else {
-        if (target && typeof target === 'object') {
-            Object.keys(target).forEach(function (key) {
-                dst[key] = target[key]
-            })
-        }
-        Object.keys(src).forEach(function (key) {
-            if (typeof src[key] !== 'object' || !src[key]) {
-                dst[key] = src[key]
-            }
-            else {
-                if (!target[key]) {
-                    dst[key] = src[key]
-                } else {
-                    dst[key] = merge(target[key], src[key])
-                }
-            }
-        })
-    }
-
-    return dst
-}
-
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /* See LICENSE file for terms of use */
 
 /*
@@ -28505,7 +26886,7 @@ if (typeof module !== "undefined") {
     module.exports = JsDiff;
 }
 
-},{}],25:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -28994,7 +27375,1629 @@ module.exports = {
   }
 };
 
-},{"jquery-browserify":16,"underscore":17,"marked":26,"js-yaml":23,"queue-async":24,"chrono":32}],31:[function(require,module,exports){
+},{"jquery-browserify":21,"underscore":8,"js-yaml":25,"marked":27,"queue-async":24,"chrono":31}],25:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
+
+},{"./lib/js-yaml.js":32}],20:[function(require,module,exports){
+(function(){//     Backbone.js 1.0.0
+
+//     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
+//     Backbone may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://backbonejs.org
+
+(function(){
+
+  // Initial Setup
+  // -------------
+
+  // Save a reference to the global object (`window` in the browser, `exports`
+  // on the server).
+  var root = this;
+
+  // Save the previous value of the `Backbone` variable, so that it can be
+  // restored later on, if `noConflict` is used.
+  var previousBackbone = root.Backbone;
+
+  // Create local references to array methods we'll want to use later.
+  var array = [];
+  var push = array.push;
+  var slice = array.slice;
+  var splice = array.splice;
+
+  // The top-level namespace. All public Backbone classes and modules will
+  // be attached to this. Exported for both the browser and the server.
+  var Backbone;
+  if (typeof exports !== 'undefined') {
+    Backbone = exports;
+  } else {
+    Backbone = root.Backbone = {};
+  }
+
+  // Current version of the library. Keep in sync with `package.json`.
+  Backbone.VERSION = '1.0.0';
+
+  // Require Underscore, if we're on the server, and it's not already present.
+  var _ = root._;
+  if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
+
+  // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
+  // the `$` variable.
+  Backbone.$ = root.jQuery || root.Zepto || root.ender || root.$;
+
+  // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
+  // to its previous owner. Returns a reference to this Backbone object.
+  Backbone.noConflict = function() {
+    root.Backbone = previousBackbone;
+    return this;
+  };
+
+  // Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option
+  // will fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and
+  // set a `X-Http-Method-Override` header.
+  Backbone.emulateHTTP = false;
+
+  // Turn on `emulateJSON` to support legacy servers that can't deal with direct
+  // `application/json` requests ... will encode the body as
+  // `application/x-www-form-urlencoded` instead and will send the model in a
+  // form param named `model`.
+  Backbone.emulateJSON = false;
+
+  // Backbone.Events
+  // ---------------
+
+  // A module that can be mixed in to *any object* in order to provide it with
+  // custom events. You may bind with `on` or remove with `off` callback
+  // functions to an event; `trigger`-ing an event fires all callbacks in
+  // succession.
+  //
+  //     var object = {};
+  //     _.extend(object, Backbone.Events);
+  //     object.on('expand', function(){ alert('expanded'); });
+  //     object.trigger('expand');
+  //
+  var Events = Backbone.Events = {
+
+    // Bind an event to a `callback` function. Passing `"all"` will bind
+    // the callback to all events fired.
+    on: function(name, callback, context) {
+      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
+      this._events || (this._events = {});
+      var events = this._events[name] || (this._events[name] = []);
+      events.push({callback: callback, context: context, ctx: context || this});
+      return this;
+    },
+
+    // Bind an event to only be triggered a single time. After the first time
+    // the callback is invoked, it will be removed.
+    once: function(name, callback, context) {
+      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
+      var self = this;
+      var once = _.once(function() {
+        self.off(name, once);
+        callback.apply(this, arguments);
+      });
+      once._callback = callback;
+      return this.on(name, once, context);
+    },
+
+    // Remove one or many callbacks. If `context` is null, removes all
+    // callbacks with that function. If `callback` is null, removes all
+    // callbacks for the event. If `name` is null, removes all bound
+    // callbacks for all events.
+    off: function(name, callback, context) {
+      var retain, ev, events, names, i, l, j, k;
+      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
+      if (!name && !callback && !context) {
+        this._events = {};
+        return this;
+      }
+
+      names = name ? [name] : _.keys(this._events);
+      for (i = 0, l = names.length; i < l; i++) {
+        name = names[i];
+        if (events = this._events[name]) {
+          this._events[name] = retain = [];
+          if (callback || context) {
+            for (j = 0, k = events.length; j < k; j++) {
+              ev = events[j];
+              if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
+                  (context && context !== ev.context)) {
+                retain.push(ev);
+              }
+            }
+          }
+          if (!retain.length) delete this._events[name];
+        }
+      }
+
+      return this;
+    },
+
+    // Trigger one or many events, firing all bound callbacks. Callbacks are
+    // passed the same arguments as `trigger` is, apart from the event name
+    // (unless you're listening on `"all"`, which will cause your callback to
+    // receive the true name of the event as the first argument).
+    trigger: function(name) {
+      if (!this._events) return this;
+      var args = slice.call(arguments, 1);
+      if (!eventsApi(this, 'trigger', name, args)) return this;
+      var events = this._events[name];
+      var allEvents = this._events.all;
+      if (events) triggerEvents(events, args);
+      if (allEvents) triggerEvents(allEvents, arguments);
+      return this;
+    },
+
+    // Tell this object to stop listening to either specific events ... or
+    // to every object it's currently listening to.
+    stopListening: function(obj, name, callback) {
+      var listeners = this._listeners;
+      if (!listeners) return this;
+      var deleteListener = !name && !callback;
+      if (typeof name === 'object') callback = this;
+      if (obj) (listeners = {})[obj._listenerId] = obj;
+      for (var id in listeners) {
+        listeners[id].off(name, callback, this);
+        if (deleteListener) delete this._listeners[id];
+      }
+      return this;
+    }
+
+  };
+
+  // Regular expression used to split event strings.
+  var eventSplitter = /\s+/;
+
+  // Implement fancy features of the Events API such as multiple event
+  // names `"change blur"` and jQuery-style event maps `{change: action}`
+  // in terms of the existing API.
+  var eventsApi = function(obj, action, name, rest) {
+    if (!name) return true;
+
+    // Handle event maps.
+    if (typeof name === 'object') {
+      for (var key in name) {
+        obj[action].apply(obj, [key, name[key]].concat(rest));
+      }
+      return false;
+    }
+
+    // Handle space separated event names.
+    if (eventSplitter.test(name)) {
+      var names = name.split(eventSplitter);
+      for (var i = 0, l = names.length; i < l; i++) {
+        obj[action].apply(obj, [names[i]].concat(rest));
+      }
+      return false;
+    }
+
+    return true;
+  };
+
+  // A difficult-to-believe, but optimized internal dispatch function for
+  // triggering events. Tries to keep the usual cases speedy (most internal
+  // Backbone events have 3 arguments).
+  var triggerEvents = function(events, args) {
+    var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
+    switch (args.length) {
+      case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
+      case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
+      case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
+      case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
+      default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
+    }
+  };
+
+  var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
+
+  // Inversion-of-control versions of `on` and `once`. Tell *this* object to
+  // listen to an event in another object ... keeping track of what it's
+  // listening to.
+  _.each(listenMethods, function(implementation, method) {
+    Events[method] = function(obj, name, callback) {
+      var listeners = this._listeners || (this._listeners = {});
+      var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
+      listeners[id] = obj;
+      if (typeof name === 'object') callback = this;
+      obj[implementation](name, callback, this);
+      return this;
+    };
+  });
+
+  // Aliases for backwards compatibility.
+  Events.bind   = Events.on;
+  Events.unbind = Events.off;
+
+  // Allow the `Backbone` object to serve as a global event bus, for folks who
+  // want global "pubsub" in a convenient place.
+  _.extend(Backbone, Events);
+
+  // Backbone.Model
+  // --------------
+
+  // Backbone **Models** are the basic data object in the framework --
+  // frequently representing a row in a table in a database on your server.
+  // A discrete chunk of data and a bunch of useful, related methods for
+  // performing computations and transformations on that data.
+
+  // Create a new model with the specified attributes. A client id (`cid`)
+  // is automatically generated and assigned for you.
+  var Model = Backbone.Model = function(attributes, options) {
+    var defaults;
+    var attrs = attributes || {};
+    options || (options = {});
+    this.cid = _.uniqueId('c');
+    this.attributes = {};
+    _.extend(this, _.pick(options, modelOptions));
+    if (options.parse) attrs = this.parse(attrs, options) || {};
+    if (defaults = _.result(this, 'defaults')) {
+      attrs = _.defaults({}, attrs, defaults);
+    }
+    this.set(attrs, options);
+    this.changed = {};
+    this.initialize.apply(this, arguments);
+  };
+
+  // A list of options to be attached directly to the model, if provided.
+  var modelOptions = ['url', 'urlRoot', 'collection'];
+
+  // Attach all inheritable methods to the Model prototype.
+  _.extend(Model.prototype, Events, {
+
+    // A hash of attributes whose current and previous value differ.
+    changed: null,
+
+    // The value returned during the last failed validation.
+    validationError: null,
+
+    // The default name for the JSON `id` attribute is `"id"`. MongoDB and
+    // CouchDB users may want to set this to `"_id"`.
+    idAttribute: 'id',
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize: function(){},
+
+    // Return a copy of the model's `attributes` object.
+    toJSON: function(options) {
+      return _.clone(this.attributes);
+    },
+
+    // Proxy `Backbone.sync` by default -- but override this if you need
+    // custom syncing semantics for *this* particular model.
+    sync: function() {
+      return Backbone.sync.apply(this, arguments);
+    },
+
+    // Get the value of an attribute.
+    get: function(attr) {
+      return this.attributes[attr];
+    },
+
+    // Get the HTML-escaped value of an attribute.
+    escape: function(attr) {
+      return _.escape(this.get(attr));
+    },
+
+    // Returns `true` if the attribute contains a value that is not null
+    // or undefined.
+    has: function(attr) {
+      return this.get(attr) != null;
+    },
+
+    // Set a hash of model attributes on the object, firing `"change"`. This is
+    // the core primitive operation of a model, updating the data and notifying
+    // anyone who needs to know about the change in state. The heart of the beast.
+    set: function(key, val, options) {
+      var attr, attrs, unset, changes, silent, changing, prev, current;
+      if (key == null) return this;
+
+      // Handle both `"key", value` and `{key: value}` -style arguments.
+      if (typeof key === 'object') {
+        attrs = key;
+        options = val;
+      } else {
+        (attrs = {})[key] = val;
+      }
+
+      options || (options = {});
+
+      // Run validation.
+      if (!this._validate(attrs, options)) return false;
+
+      // Extract attributes and options.
+      unset           = options.unset;
+      silent          = options.silent;
+      changes         = [];
+      changing        = this._changing;
+      this._changing  = true;
+
+      if (!changing) {
+        this._previousAttributes = _.clone(this.attributes);
+        this.changed = {};
+      }
+      current = this.attributes, prev = this._previousAttributes;
+
+      // Check for changes of `id`.
+      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+
+      // For each `set` attribute, update or delete the current value.
+      for (attr in attrs) {
+        val = attrs[attr];
+        if (!_.isEqual(current[attr], val)) changes.push(attr);
+        if (!_.isEqual(prev[attr], val)) {
+          this.changed[attr] = val;
+        } else {
+          delete this.changed[attr];
+        }
+        unset ? delete current[attr] : current[attr] = val;
+      }
+
+      // Trigger all relevant attribute changes.
+      if (!silent) {
+        if (changes.length) this._pending = true;
+        for (var i = 0, l = changes.length; i < l; i++) {
+          this.trigger('change:' + changes[i], this, current[changes[i]], options);
+        }
+      }
+
+      // You might be wondering why there's a `while` loop here. Changes can
+      // be recursively nested within `"change"` events.
+      if (changing) return this;
+      if (!silent) {
+        while (this._pending) {
+          this._pending = false;
+          this.trigger('change', this, options);
+        }
+      }
+      this._pending = false;
+      this._changing = false;
+      return this;
+    },
+
+    // Remove an attribute from the model, firing `"change"`. `unset` is a noop
+    // if the attribute doesn't exist.
+    unset: function(attr, options) {
+      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
+    },
+
+    // Clear all attributes on the model, firing `"change"`.
+    clear: function(options) {
+      var attrs = {};
+      for (var key in this.attributes) attrs[key] = void 0;
+      return this.set(attrs, _.extend({}, options, {unset: true}));
+    },
+
+    // Determine if the model has changed since the last `"change"` event.
+    // If you specify an attribute name, determine if that attribute has changed.
+    hasChanged: function(attr) {
+      if (attr == null) return !_.isEmpty(this.changed);
+      return _.has(this.changed, attr);
+    },
+
+    // Return an object containing all the attributes that have changed, or
+    // false if there are no changed attributes. Useful for determining what
+    // parts of a view need to be updated and/or what attributes need to be
+    // persisted to the server. Unset attributes will be set to undefined.
+    // You can also pass an attributes object to diff against the model,
+    // determining if there *would be* a change.
+    changedAttributes: function(diff) {
+      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
+      var val, changed = false;
+      var old = this._changing ? this._previousAttributes : this.attributes;
+      for (var attr in diff) {
+        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
+        (changed || (changed = {}))[attr] = val;
+      }
+      return changed;
+    },
+
+    // Get the previous value of an attribute, recorded at the time the last
+    // `"change"` event was fired.
+    previous: function(attr) {
+      if (attr == null || !this._previousAttributes) return null;
+      return this._previousAttributes[attr];
+    },
+
+    // Get all of the attributes of the model at the time of the previous
+    // `"change"` event.
+    previousAttributes: function() {
+      return _.clone(this._previousAttributes);
+    },
+
+    // Fetch the model from the server. If the server's representation of the
+    // model differs from its current attributes, they will be overridden,
+    // triggering a `"change"` event.
+    fetch: function(options) {
+      options = options ? _.clone(options) : {};
+      if (options.parse === void 0) options.parse = true;
+      var model = this;
+      var success = options.success;
+      options.success = function(resp) {
+        if (!model.set(model.parse(resp, options), options)) return false;
+        if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
+      };
+      wrapError(this, options);
+      return this.sync('read', this, options);
+    },
+
+    // Set a hash of model attributes, and sync the model to the server.
+    // If the server returns an attributes hash that differs, the model's
+    // state will be `set` again.
+    save: function(key, val, options) {
+      var attrs, method, xhr, attributes = this.attributes;
+
+      // Handle both `"key", value` and `{key: value}` -style arguments.
+      if (key == null || typeof key === 'object') {
+        attrs = key;
+        options = val;
+      } else {
+        (attrs = {})[key] = val;
+      }
+
+      // If we're not waiting and attributes exist, save acts as `set(attr).save(null, opts)`.
+      if (attrs && (!options || !options.wait) && !this.set(attrs, options)) return false;
+
+      options = _.extend({validate: true}, options);
+
+      // Do not persist invalid models.
+      if (!this._validate(attrs, options)) return false;
+
+      // Set temporary attributes if `{wait: true}`.
+      if (attrs && options.wait) {
+        this.attributes = _.extend({}, attributes, attrs);
+      }
+
+      // After a successful server-side save, the client is (optionally)
+      // updated with the server-side state.
+      if (options.parse === void 0) options.parse = true;
+      var model = this;
+      var success = options.success;
+      options.success = function(resp) {
+        // Ensure attributes are restored during synchronous saves.
+        model.attributes = attributes;
+        var serverAttrs = model.parse(resp, options);
+        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
+        if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
+          return false;
+        }
+        if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
+      };
+      wrapError(this, options);
+
+      method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
+      if (method === 'patch') options.attrs = attrs;
+      xhr = this.sync(method, this, options);
+
+      // Restore attributes.
+      if (attrs && options.wait) this.attributes = attributes;
+
+      return xhr;
+    },
+
+    // Destroy this model on the server if it was already persisted.
+    // Optimistically removes the model from its collection, if it has one.
+    // If `wait: true` is passed, waits for the server to respond before removal.
+    destroy: function(options) {
+      options = options ? _.clone(options) : {};
+      var model = this;
+      var success = options.success;
+
+      var destroy = function() {
+        model.trigger('destroy', model, model.collection, options);
+      };
+
+      options.success = function(resp) {
+        if (options.wait || model.isNew()) destroy();
+        if (success) success(model, resp, options);
+        if (!model.isNew()) model.trigger('sync', model, resp, options);
+      };
+
+      if (this.isNew()) {
+        options.success();
+        return false;
+      }
+      wrapError(this, options);
+
+      var xhr = this.sync('delete', this, options);
+      if (!options.wait) destroy();
+      return xhr;
+    },
+
+    // Default URL for the model's representation on the server -- if you're
+    // using Backbone's restful methods, override this to change the endpoint
+    // that will be called.
+    url: function() {
+      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
+      if (this.isNew()) return base;
+      return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
+    },
+
+    // **parse** converts a response into the hash of attributes to be `set` on
+    // the model. The default implementation is just to pass the response along.
+    parse: function(resp, options) {
+      return resp;
+    },
+
+    // Create a new model with identical attributes to this one.
+    clone: function() {
+      return new this.constructor(this.attributes);
+    },
+
+    // A model is new if it has never been saved to the server, and lacks an id.
+    isNew: function() {
+      return this.id == null;
+    },
+
+    // Check if the model is currently in a valid state.
+    isValid: function(options) {
+      return this._validate({}, _.extend(options || {}, { validate: true }));
+    },
+
+    // Run validation against the next complete set of model attributes,
+    // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
+    _validate: function(attrs, options) {
+      if (!options.validate || !this.validate) return true;
+      attrs = _.extend({}, this.attributes, attrs);
+      var error = this.validationError = this.validate(attrs, options) || null;
+      if (!error) return true;
+      this.trigger('invalid', this, error, _.extend(options || {}, {validationError: error}));
+      return false;
+    }
+
+  });
+
+  // Underscore methods that we want to implement on the Model.
+  var modelMethods = ['keys', 'values', 'pairs', 'invert', 'pick', 'omit'];
+
+  // Mix in each Underscore method as a proxy to `Model#attributes`.
+  _.each(modelMethods, function(method) {
+    Model.prototype[method] = function() {
+      var args = slice.call(arguments);
+      args.unshift(this.attributes);
+      return _[method].apply(_, args);
+    };
+  });
+
+  // Backbone.Collection
+  // -------------------
+
+  // If models tend to represent a single row of data, a Backbone Collection is
+  // more analagous to a table full of data ... or a small slice or page of that
+  // table, or a collection of rows that belong together for a particular reason
+  // -- all of the messages in this particular folder, all of the documents
+  // belonging to this particular author, and so on. Collections maintain
+  // indexes of their models, both in order, and for lookup by `id`.
+
+  // Create a new **Collection**, perhaps to contain a specific type of `model`.
+  // If a `comparator` is specified, the Collection will maintain
+  // its models in sort order, as they're added and removed.
+  var Collection = Backbone.Collection = function(models, options) {
+    options || (options = {});
+    if (options.url) this.url = options.url;
+    if (options.model) this.model = options.model;
+    if (options.comparator !== void 0) this.comparator = options.comparator;
+    this._reset();
+    this.initialize.apply(this, arguments);
+    if (models) this.reset(models, _.extend({silent: true}, options));
+  };
+
+  // Default options for `Collection#set`.
+  var setOptions = {add: true, remove: true, merge: true};
+  var addOptions = {add: true, merge: false, remove: false};
+
+  // Define the Collection's inheritable methods.
+  _.extend(Collection.prototype, Events, {
+
+    // The default model for a collection is just a **Backbone.Model**.
+    // This should be overridden in most cases.
+    model: Model,
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize: function(){},
+
+    // The JSON representation of a Collection is an array of the
+    // models' attributes.
+    toJSON: function(options) {
+      return this.map(function(model){ return model.toJSON(options); });
+    },
+
+    // Proxy `Backbone.sync` by default.
+    sync: function() {
+      return Backbone.sync.apply(this, arguments);
+    },
+
+    // Add a model, or list of models to the set.
+    add: function(models, options) {
+      return this.set(models, _.defaults(options || {}, addOptions));
+    },
+
+    // Remove a model, or a list of models from the set.
+    remove: function(models, options) {
+      models = _.isArray(models) ? models.slice() : [models];
+      options || (options = {});
+      var i, l, index, model;
+      for (i = 0, l = models.length; i < l; i++) {
+        model = this.get(models[i]);
+        if (!model) continue;
+        delete this._byId[model.id];
+        delete this._byId[model.cid];
+        index = this.indexOf(model);
+        this.models.splice(index, 1);
+        this.length--;
+        if (!options.silent) {
+          options.index = index;
+          model.trigger('remove', model, this, options);
+        }
+        this._removeReference(model);
+      }
+      return this;
+    },
+
+    // Update a collection by `set`-ing a new list of models, adding new ones,
+    // removing models that are no longer present, and merging models that
+    // already exist in the collection, as necessary. Similar to **Model#set**,
+    // the core operation for updating the data contained by the collection.
+    set: function(models, options) {
+      options = _.defaults(options || {}, setOptions);
+      if (options.parse) models = this.parse(models, options);
+      if (!_.isArray(models)) models = models ? [models] : [];
+      var i, l, model, attrs, existing, sort;
+      var at = options.at;
+      var sortable = this.comparator && (at == null) && options.sort !== false;
+      var sortAttr = _.isString(this.comparator) ? this.comparator : null;
+      var toAdd = [], toRemove = [], modelMap = {};
+
+      // Turn bare objects into model references, and prevent invalid models
+      // from being added.
+      for (i = 0, l = models.length; i < l; i++) {
+        if (!(model = this._prepareModel(models[i], options))) continue;
+
+        // If a duplicate is found, prevent it from being added and
+        // optionally merge it into the existing model.
+        if (existing = this.get(model)) {
+          if (options.remove) modelMap[existing.cid] = true;
+          if (options.merge) {
+            existing.set(model.attributes, options);
+            if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
+          }
+
+        // This is a new model, push it to the `toAdd` list.
+        } else if (options.add) {
+          toAdd.push(model);
+
+          // Listen to added models' events, and index models for lookup by
+          // `id` and by `cid`.
+          model.on('all', this._onModelEvent, this);
+          this._byId[model.cid] = model;
+          if (model.id != null) this._byId[model.id] = model;
+        }
+      }
+
+      // Remove nonexistent models if appropriate.
+      if (options.remove) {
+        for (i = 0, l = this.length; i < l; ++i) {
+          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
+        }
+        if (toRemove.length) this.remove(toRemove, options);
+      }
+
+      // See if sorting is needed, update `length` and splice in new models.
+      if (toAdd.length) {
+        if (sortable) sort = true;
+        this.length += toAdd.length;
+        if (at != null) {
+          splice.apply(this.models, [at, 0].concat(toAdd));
+        } else {
+          push.apply(this.models, toAdd);
+        }
+      }
+
+      // Silently sort the collection if appropriate.
+      if (sort) this.sort({silent: true});
+
+      if (options.silent) return this;
+
+      // Trigger `add` events.
+      for (i = 0, l = toAdd.length; i < l; i++) {
+        (model = toAdd[i]).trigger('add', model, this, options);
+      }
+
+      // Trigger `sort` if the collection was sorted.
+      if (sort) this.trigger('sort', this, options);
+      return this;
+    },
+
+    // When you have more items than you want to add or remove individually,
+    // you can reset the entire set with a new list of models, without firing
+    // any granular `add` or `remove` events. Fires `reset` when finished.
+    // Useful for bulk operations and optimizations.
+    reset: function(models, options) {
+      options || (options = {});
+      for (var i = 0, l = this.models.length; i < l; i++) {
+        this._removeReference(this.models[i]);
+      }
+      options.previousModels = this.models;
+      this._reset();
+      this.add(models, _.extend({silent: true}, options));
+      if (!options.silent) this.trigger('reset', this, options);
+      return this;
+    },
+
+    // Add a model to the end of the collection.
+    push: function(model, options) {
+      model = this._prepareModel(model, options);
+      this.add(model, _.extend({at: this.length}, options));
+      return model;
+    },
+
+    // Remove a model from the end of the collection.
+    pop: function(options) {
+      var model = this.at(this.length - 1);
+      this.remove(model, options);
+      return model;
+    },
+
+    // Add a model to the beginning of the collection.
+    unshift: function(model, options) {
+      model = this._prepareModel(model, options);
+      this.add(model, _.extend({at: 0}, options));
+      return model;
+    },
+
+    // Remove a model from the beginning of the collection.
+    shift: function(options) {
+      var model = this.at(0);
+      this.remove(model, options);
+      return model;
+    },
+
+    // Slice out a sub-array of models from the collection.
+    slice: function(begin, end) {
+      return this.models.slice(begin, end);
+    },
+
+    // Get a model from the set by id.
+    get: function(obj) {
+      if (obj == null) return void 0;
+      return this._byId[obj.id != null ? obj.id : obj.cid || obj];
+    },
+
+    // Get the model at the given index.
+    at: function(index) {
+      return this.models[index];
+    },
+
+    // Return models with matching attributes. Useful for simple cases of
+    // `filter`.
+    where: function(attrs, first) {
+      if (_.isEmpty(attrs)) return first ? void 0 : [];
+      return this[first ? 'find' : 'filter'](function(model) {
+        for (var key in attrs) {
+          if (attrs[key] !== model.get(key)) return false;
+        }
+        return true;
+      });
+    },
+
+    // Return the first model with matching attributes. Useful for simple cases
+    // of `find`.
+    findWhere: function(attrs) {
+      return this.where(attrs, true);
+    },
+
+    // Force the collection to re-sort itself. You don't need to call this under
+    // normal circumstances, as the set will maintain sort order as each item
+    // is added.
+    sort: function(options) {
+      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
+      options || (options = {});
+
+      // Run sort based on type of `comparator`.
+      if (_.isString(this.comparator) || this.comparator.length === 1) {
+        this.models = this.sortBy(this.comparator, this);
+      } else {
+        this.models.sort(_.bind(this.comparator, this));
+      }
+
+      if (!options.silent) this.trigger('sort', this, options);
+      return this;
+    },
+
+    // Figure out the smallest index at which a model should be inserted so as
+    // to maintain order.
+    sortedIndex: function(model, value, context) {
+      value || (value = this.comparator);
+      var iterator = _.isFunction(value) ? value : function(model) {
+        return model.get(value);
+      };
+      return _.sortedIndex(this.models, model, iterator, context);
+    },
+
+    // Pluck an attribute from each model in the collection.
+    pluck: function(attr) {
+      return _.invoke(this.models, 'get', attr);
+    },
+
+    // Fetch the default set of models for this collection, resetting the
+    // collection when they arrive. If `reset: true` is passed, the response
+    // data will be passed through the `reset` method instead of `set`.
+    fetch: function(options) {
+      options = options ? _.clone(options) : {};
+      if (options.parse === void 0) options.parse = true;
+      var success = options.success;
+      var collection = this;
+      options.success = function(resp) {
+        var method = options.reset ? 'reset' : 'set';
+        collection[method](resp, options);
+        if (success) success(collection, resp, options);
+        collection.trigger('sync', collection, resp, options);
+      };
+      wrapError(this, options);
+      return this.sync('read', this, options);
+    },
+
+    // Create a new instance of a model in this collection. Add the model to the
+    // collection immediately, unless `wait: true` is passed, in which case we
+    // wait for the server to agree.
+    create: function(model, options) {
+      options = options ? _.clone(options) : {};
+      if (!(model = this._prepareModel(model, options))) return false;
+      if (!options.wait) this.add(model, options);
+      var collection = this;
+      var success = options.success;
+      options.success = function(resp) {
+        if (options.wait) collection.add(model, options);
+        if (success) success(model, resp, options);
+      };
+      model.save(null, options);
+      return model;
+    },
+
+    // **parse** converts a response into a list of models to be added to the
+    // collection. The default implementation is just to pass it through.
+    parse: function(resp, options) {
+      return resp;
+    },
+
+    // Create a new collection with an identical list of models as this one.
+    clone: function() {
+      return new this.constructor(this.models);
+    },
+
+    // Private method to reset all internal state. Called when the collection
+    // is first initialized or reset.
+    _reset: function() {
+      this.length = 0;
+      this.models = [];
+      this._byId  = {};
+    },
+
+    // Prepare a hash of attributes (or other model) to be added to this
+    // collection.
+    _prepareModel: function(attrs, options) {
+      if (attrs instanceof Model) {
+        if (!attrs.collection) attrs.collection = this;
+        return attrs;
+      }
+      options || (options = {});
+      options.collection = this;
+      var model = new this.model(attrs, options);
+      if (!model._validate(attrs, options)) {
+        this.trigger('invalid', this, attrs, options);
+        return false;
+      }
+      return model;
+    },
+
+    // Internal method to sever a model's ties to a collection.
+    _removeReference: function(model) {
+      if (this === model.collection) delete model.collection;
+      model.off('all', this._onModelEvent, this);
+    },
+
+    // Internal method called every time a model in the set fires an event.
+    // Sets need to update their indexes when models change ids. All other
+    // events simply proxy through. "add" and "remove" events that originate
+    // in other collections are ignored.
+    _onModelEvent: function(event, model, collection, options) {
+      if ((event === 'add' || event === 'remove') && collection !== this) return;
+      if (event === 'destroy') this.remove(model, options);
+      if (model && event === 'change:' + model.idAttribute) {
+        delete this._byId[model.previous(model.idAttribute)];
+        if (model.id != null) this._byId[model.id] = model;
+      }
+      this.trigger.apply(this, arguments);
+    }
+
+  });
+
+  // Underscore methods that we want to implement on the Collection.
+  // 90% of the core usefulness of Backbone Collections is actually implemented
+  // right here:
+  var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
+    'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
+    'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
+    'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
+    'tail', 'drop', 'last', 'without', 'indexOf', 'shuffle', 'lastIndexOf',
+    'isEmpty', 'chain'];
+
+  // Mix in each Underscore method as a proxy to `Collection#models`.
+  _.each(methods, function(method) {
+    Collection.prototype[method] = function() {
+      var args = slice.call(arguments);
+      args.unshift(this.models);
+      return _[method].apply(_, args);
+    };
+  });
+
+  // Underscore methods that take a property name as an argument.
+  var attributeMethods = ['groupBy', 'countBy', 'sortBy'];
+
+  // Use attributes instead of properties.
+  _.each(attributeMethods, function(method) {
+    Collection.prototype[method] = function(value, context) {
+      var iterator = _.isFunction(value) ? value : function(model) {
+        return model.get(value);
+      };
+      return _[method](this.models, iterator, context);
+    };
+  });
+
+  // Backbone.View
+  // -------------
+
+  // Backbone Views are almost more convention than they are actual code. A View
+  // is simply a JavaScript object that represents a logical chunk of UI in the
+  // DOM. This might be a single item, an entire list, a sidebar or panel, or
+  // even the surrounding frame which wraps your whole app. Defining a chunk of
+  // UI as a **View** allows you to define your DOM events declaratively, without
+  // having to worry about render order ... and makes it easy for the view to
+  // react to specific changes in the state of your models.
+
+  // Creating a Backbone.View creates its initial element outside of the DOM,
+  // if an existing element is not provided...
+  var View = Backbone.View = function(options) {
+    this.cid = _.uniqueId('view');
+    this._configure(options || {});
+    this._ensureElement();
+    this.initialize.apply(this, arguments);
+    this.delegateEvents();
+  };
+
+  // Cached regex to split keys for `delegate`.
+  var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+
+  // List of view options to be merged as properties.
+  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
+
+  // Set up all inheritable **Backbone.View** properties and methods.
+  _.extend(View.prototype, Events, {
+
+    // The default `tagName` of a View's element is `"div"`.
+    tagName: 'div',
+
+    // jQuery delegate for element lookup, scoped to DOM elements within the
+    // current view. This should be prefered to global lookups where possible.
+    $: function(selector) {
+      return this.$el.find(selector);
+    },
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize: function(){},
+
+    // **render** is the core function that your view should override, in order
+    // to populate its element (`this.el`), with the appropriate HTML. The
+    // convention is for **render** to always return `this`.
+    render: function() {
+      return this;
+    },
+
+    // Remove this view by taking the element out of the DOM, and removing any
+    // applicable Backbone.Events listeners.
+    remove: function() {
+      this.$el.remove();
+      this.stopListening();
+      return this;
+    },
+
+    // Change the view's element (`this.el` property), including event
+    // re-delegation.
+    setElement: function(element, delegate) {
+      if (this.$el) this.undelegateEvents();
+      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
+      this.el = this.$el[0];
+      if (delegate !== false) this.delegateEvents();
+      return this;
+    },
+
+    // Set callbacks, where `this.events` is a hash of
+    //
+    // *{"event selector": "callback"}*
+    //
+    //     {
+    //       'mousedown .title':  'edit',
+    //       'click .button':     'save'
+    //       'click .open':       function(e) { ... }
+    //     }
+    //
+    // pairs. Callbacks will be bound to the view, with `this` set properly.
+    // Uses event delegation for efficiency.
+    // Omitting the selector binds the event to `this.el`.
+    // This only works for delegate-able events: not `focus`, `blur`, and
+    // not `change`, `submit`, and `reset` in Internet Explorer.
+    delegateEvents: function(events) {
+      if (!(events || (events = _.result(this, 'events')))) return this;
+      this.undelegateEvents();
+      for (var key in events) {
+        var method = events[key];
+        if (!_.isFunction(method)) method = this[events[key]];
+        if (!method) continue;
+
+        var match = key.match(delegateEventSplitter);
+        var eventName = match[1], selector = match[2];
+        method = _.bind(method, this);
+        eventName += '.delegateEvents' + this.cid;
+        if (selector === '') {
+          this.$el.on(eventName, method);
+        } else {
+          this.$el.on(eventName, selector, method);
+        }
+      }
+      return this;
+    },
+
+    // Clears all callbacks previously bound to the view with `delegateEvents`.
+    // You usually don't need to use this, but may wish to if you have multiple
+    // Backbone views attached to the same DOM element.
+    undelegateEvents: function() {
+      this.$el.off('.delegateEvents' + this.cid);
+      return this;
+    },
+
+    // Performs the initial configuration of a View with a set of options.
+    // Keys with special meaning *(e.g. model, collection, id, className)* are
+    // attached directly to the view.  See `viewOptions` for an exhaustive
+    // list.
+    _configure: function(options) {
+      if (this.options) options = _.extend({}, _.result(this, 'options'), options);
+      _.extend(this, _.pick(options, viewOptions));
+      this.options = options;
+    },
+
+    // Ensure that the View has a DOM element to render into.
+    // If `this.el` is a string, pass it through `$()`, take the first
+    // matching element, and re-assign it to `el`. Otherwise, create
+    // an element from the `id`, `className` and `tagName` properties.
+    _ensureElement: function() {
+      if (!this.el) {
+        var attrs = _.extend({}, _.result(this, 'attributes'));
+        if (this.id) attrs.id = _.result(this, 'id');
+        if (this.className) attrs['class'] = _.result(this, 'className');
+        var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
+        this.setElement($el, false);
+      } else {
+        this.setElement(_.result(this, 'el'), false);
+      }
+    }
+
+  });
+
+  // Backbone.sync
+  // -------------
+
+  // Override this function to change the manner in which Backbone persists
+  // models to the server. You will be passed the type of request, and the
+  // model in question. By default, makes a RESTful Ajax request
+  // to the model's `url()`. Some possible customizations could be:
+  //
+  // * Use `setTimeout` to batch rapid-fire updates into a single request.
+  // * Send up the models as XML instead of JSON.
+  // * Persist models via WebSockets instead of Ajax.
+  //
+  // Turn on `Backbone.emulateHTTP` in order to send `PUT` and `DELETE` requests
+  // as `POST`, with a `_method` parameter containing the true HTTP method,
+  // as well as all requests with the body as `application/x-www-form-urlencoded`
+  // instead of `application/json` with the model in a param named `model`.
+  // Useful when interfacing with server-side languages like **PHP** that make
+  // it difficult to read the body of `PUT` requests.
+  Backbone.sync = function(method, model, options) {
+    var type = methodMap[method];
+
+    // Default options, unless specified.
+    _.defaults(options || (options = {}), {
+      emulateHTTP: Backbone.emulateHTTP,
+      emulateJSON: Backbone.emulateJSON
+    });
+
+    // Default JSON-request options.
+    var params = {type: type, dataType: 'json'};
+
+    // Ensure that we have a URL.
+    if (!options.url) {
+      params.url = _.result(model, 'url') || urlError();
+    }
+
+    // Ensure that we have the appropriate request data.
+    if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
+      params.contentType = 'application/json';
+      params.data = JSON.stringify(options.attrs || model.toJSON(options));
+    }
+
+    // For older servers, emulate JSON by encoding the request into an HTML-form.
+    if (options.emulateJSON) {
+      params.contentType = 'application/x-www-form-urlencoded';
+      params.data = params.data ? {model: params.data} : {};
+    }
+
+    // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
+    // And an `X-HTTP-Method-Override` header.
+    if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE' || type === 'PATCH')) {
+      params.type = 'POST';
+      if (options.emulateJSON) params.data._method = type;
+      var beforeSend = options.beforeSend;
+      options.beforeSend = function(xhr) {
+        xhr.setRequestHeader('X-HTTP-Method-Override', type);
+        if (beforeSend) return beforeSend.apply(this, arguments);
+      };
+    }
+
+    // Don't process data on a non-GET request.
+    if (params.type !== 'GET' && !options.emulateJSON) {
+      params.processData = false;
+    }
+
+    // If we're sending a `PATCH` request, and we're in an old Internet Explorer
+    // that still has ActiveX enabled by default, override jQuery to use that
+    // for XHR instead. Remove this line when jQuery supports `PATCH` on IE8.
+    if (params.type === 'PATCH' && window.ActiveXObject &&
+          !(window.external && window.external.msActiveXFilteringEnabled)) {
+      params.xhr = function() {
+        return new ActiveXObject("Microsoft.XMLHTTP");
+      };
+    }
+
+    // Make the request, allowing the user to override any Ajax options.
+    var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
+    model.trigger('request', model, xhr, options);
+    return xhr;
+  };
+
+  // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
+  var methodMap = {
+    'create': 'POST',
+    'update': 'PUT',
+    'patch':  'PATCH',
+    'delete': 'DELETE',
+    'read':   'GET'
+  };
+
+  // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
+  // Override this if you'd like to use a different library.
+  Backbone.ajax = function() {
+    return Backbone.$.ajax.apply(Backbone.$, arguments);
+  };
+
+  // Backbone.Router
+  // ---------------
+
+  // Routers map faux-URLs to actions, and fire events when routes are
+  // matched. Creating a new one sets its `routes` hash, if not set statically.
+  var Router = Backbone.Router = function(options) {
+    options || (options = {});
+    if (options.routes) this.routes = options.routes;
+    this._bindRoutes();
+    this.initialize.apply(this, arguments);
+  };
+
+  // Cached regular expressions for matching named param parts and splatted
+  // parts of route strings.
+  var optionalParam = /\((.*?)\)/g;
+  var namedParam    = /(\(\?)?:\w+/g;
+  var splatParam    = /\*\w+/g;
+  var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
+
+  // Set up all inheritable **Backbone.Router** properties and methods.
+  _.extend(Router.prototype, Events, {
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize: function(){},
+
+    // Manually bind a single named route to a callback. For example:
+    //
+    //     this.route('search/:query/p:num', 'search', function(query, num) {
+    //       ...
+    //     });
+    //
+    route: function(route, name, callback) {
+      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      if (_.isFunction(name)) {
+        callback = name;
+        name = '';
+      }
+      if (!callback) callback = this[name];
+      var router = this;
+      Backbone.history.route(route, function(fragment) {
+        var args = router._extractParameters(route, fragment);
+        callback && callback.apply(router, args);
+        router.trigger.apply(router, ['route:' + name].concat(args));
+        router.trigger('route', name, args);
+        Backbone.history.trigger('route', router, name, args);
+      });
+      return this;
+    },
+
+    // Simple proxy to `Backbone.history` to save a fragment into the history.
+    navigate: function(fragment, options) {
+      Backbone.history.navigate(fragment, options);
+      return this;
+    },
+
+    // Bind all defined routes to `Backbone.history`. We have to reverse the
+    // order of the routes here to support behavior where the most general
+    // routes can be defined at the bottom of the route map.
+    _bindRoutes: function() {
+      if (!this.routes) return;
+      this.routes = _.result(this, 'routes');
+      var route, routes = _.keys(this.routes);
+      while ((route = routes.pop()) != null) {
+        this.route(route, this.routes[route]);
+      }
+    },
+
+    // Convert a route string into a regular expression, suitable for matching
+    // against the current location hash.
+    _routeToRegExp: function(route) {
+      route = route.replace(escapeRegExp, '\\$&')
+                   .replace(optionalParam, '(?:$1)?')
+                   .replace(namedParam, function(match, optional){
+                     return optional ? match : '([^\/]+)';
+                   })
+                   .replace(splatParam, '(.*?)');
+      return new RegExp('^' + route + '$');
+    },
+
+    // Given a route, and a URL fragment that it matches, return the array of
+    // extracted decoded parameters. Empty or unmatched parameters will be
+    // treated as `null` to normalize cross-browser behavior.
+    _extractParameters: function(route, fragment) {
+      var params = route.exec(fragment).slice(1);
+      return _.map(params, function(param) {
+        return param ? decodeURIComponent(param) : null;
+      });
+    }
+
+  });
+
+  // Backbone.History
+  // ----------------
+
+  // Handles cross-browser history management, based on either
+  // [pushState](http://diveintohtml5.info/history.html) and real URLs, or
+  // [onhashchange](https://developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
+  // and URL fragments. If the browser supports neither (old IE, natch),
+  // falls back to polling.
+  var History = Backbone.History = function() {
+    this.handlers = [];
+    _.bindAll(this, 'checkUrl');
+
+    // Ensure that `History` can be used outside of the browser.
+    if (typeof window !== 'undefined') {
+      this.location = window.location;
+      this.history = window.history;
+    }
+  };
+
+  // Cached regex for stripping a leading hash/slash and trailing space.
+  var routeStripper = /^[#\/]|\s+$/g;
+
+  // Cached regex for stripping leading and trailing slashes.
+  var rootStripper = /^\/+|\/+$/g;
+
+  // Cached regex for detecting MSIE.
+  var isExplorer = /msie [\w.]+/;
+
+  // Cached regex for removing a trailing slash.
+  var trailingSlash = /\/$/;
+
+  // Has the history handling already been started?
+  History.started = false;
+
+  // Set up all inheritable **Backbone.History** properties and methods.
+  _.extend(History.prototype, Events, {
+
+    // The default interval to poll for hash changes, if necessary, is
+    // twenty times a second.
+    interval: 50,
+
+    // Gets the true hash value. Cannot use location.hash directly due to bug
+    // in Firefox where location.hash will always be decoded.
+    getHash: function(window) {
+      var match = (window || this).location.href.match(/#(.*)$/);
+      return match ? match[1] : '';
+    },
+
+    // Get the cross-browser normalized URL fragment, either from the URL,
+    // the hash, or the override.
+    getFragment: function(fragment, forcePushState) {
+      if (fragment == null) {
+        if (this._hasPushState || !this._wantsHashChange || forcePushState) {
+          fragment = this.location.pathname;
+          var root = this.root.replace(trailingSlash, '');
+          if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
+        } else {
+          fragment = this.getHash();
+        }
+      }
+      return fragment.replace(routeStripper, '');
+    },
+
+    // Start the hash change handling, returning `true` if the current URL matches
+    // an existing route, and `false` otherwise.
+    start: function(options) {
+      if (History.started) throw new Error("Backbone.history has already been started");
+      History.started = true;
+
+      // Figure out the initial configuration. Do we need an iframe?
+      // Is pushState desired ... is it available?
+      this.options          = _.extend({}, {root: '/'}, this.options, options);
+      this.root             = this.options.root;
+      this._wantsHashChange = this.options.hashChange !== false;
+      this._wantsPushState  = !!this.options.pushState;
+      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
+      var fragment          = this.getFragment();
+      var docMode           = document.documentMode;
+      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
+
+      // Normalize root to always include a leading and trailing slash.
+      this.root = ('/' + this.root + '/').replace(rootStripper, '/');
+
+      if (oldIE && this._wantsHashChange) {
+        this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
+        this.navigate(fragment);
+      }
+
+      // Depending on whether we're using pushState or hashes, and whether
+      // 'onhashchange' is supported, determine how we check the URL state.
+      if (this._hasPushState) {
+        Backbone.$(window).on('popstate', this.checkUrl);
+      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
+        Backbone.$(window).on('hashchange', this.checkUrl);
+      } else if (this._wantsHashChange) {
+        this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
+      }
+
+      // Determine if we need to change the base url, for a pushState link
+      // opened by a non-pushState browser.
+      this.fragment = fragment;
+      var loc = this.location;
+      var atRoot = loc.pathname.replace(/[^\/]$/, '$&/') === this.root;
+
+      // If we've started off with a route from a `pushState`-enabled browser,
+      // but we're currently in a browser that doesn't support it...
+      if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
+        this.fragment = this.getFragment(null, true);
+        this.location.replace(this.root + this.location.search + '#' + this.fragment);
+        // Return immediately as browser will do redirect to new url
+        return true;
+
+      // Or if we've started out with a hash-based route, but we're currently
+      // in a browser where it could be `pushState`-based instead...
+      } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
+        this.fragment = this.getHash().replace(routeStripper, '');
+        this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
+      }
+
+      if (!this.options.silent) return this.loadUrl();
+    },
+
+    // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
+    // but possibly useful for unit testing Routers.
+    stop: function() {
+      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
+      clearInterval(this._checkUrlInterval);
+      History.started = false;
+    },
+
+    // Add a route to be tested when the fragment changes. Routes added later
+    // may override previous routes.
+    route: function(route, callback) {
+      this.handlers.unshift({route: route, callback: callback});
+    },
+
+    // Checks the current URL to see if it has changed, and if it has,
+    // calls `loadUrl`, normalizing across the hidden iframe.
+    checkUrl: function(e) {
+      var current = this.getFragment();
+      if (current === this.fragment && this.iframe) {
+        current = this.getFragment(this.getHash(this.iframe));
+      }
+      if (current === this.fragment) return false;
+      if (this.iframe) this.navigate(current);
+      this.loadUrl() || this.loadUrl(this.getHash());
+    },
+
+    // Attempt to load the current URL fragment. If a route succeeds with a
+    // match, returns `true`. If no defined routes matches the fragment,
+    // returns `false`.
+    loadUrl: function(fragmentOverride) {
+      var fragment = this.fragment = this.getFragment(fragmentOverride);
+      var matched = _.any(this.handlers, function(handler) {
+        if (handler.route.test(fragment)) {
+          handler.callback(fragment);
+          return true;
+        }
+      });
+      return matched;
+    },
+
+    // Save a fragment into the hash history, or replace the URL state if the
+    // 'replace' option is passed. You are responsible for properly URL-encoding
+    // the fragment in advance.
+    //
+    // The options object can contain `trigger: true` if you wish to have the
+    // route callback be fired (not usually desirable), or `replace: true`, if
+    // you wish to modify the current URL without adding an entry to the history.
+    navigate: function(fragment, options) {
+      if (!History.started) return false;
+      if (!options || options === true) options = {trigger: options};
+      fragment = this.getFragment(fragment || '');
+      if (this.fragment === fragment) return;
+      this.fragment = fragment;
+      var url = this.root + fragment;
+
+      // If pushState is available, we use it to set the fragment as a real URL.
+      if (this._hasPushState) {
+        this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
+
+      // If hash changes haven't been explicitly disabled, update the hash
+      // fragment to store history.
+      } else if (this._wantsHashChange) {
+        this._updateHash(this.location, fragment, options.replace);
+        if (this.iframe && (fragment !== this.getFragment(this.getHash(this.iframe)))) {
+          // Opening and closing the iframe tricks IE7 and earlier to push a
+          // history entry on hash-tag change.  When replace is true, we don't
+          // want this.
+          if(!options.replace) this.iframe.document.open().close();
+          this._updateHash(this.iframe.location, fragment, options.replace);
+        }
+
+      // If you've told us that you explicitly don't want fallback hashchange-
+      // based history, then `navigate` becomes a page refresh.
+      } else {
+        return this.location.assign(url);
+      }
+      if (options.trigger) this.loadUrl(fragment);
+    },
+
+    // Update the hash location, either replacing the current entry, or adding
+    // a new one to the browser history.
+    _updateHash: function(location, fragment, replace) {
+      if (replace) {
+        var href = location.href.replace(/(javascript:|#).*$/, '');
+        location.replace(href + '#' + fragment);
+      } else {
+        // Some browsers require that `hash` contains a leading #.
+        location.hash = '#' + fragment;
+      }
+    }
+
+  });
+
+  // Create the default Backbone.history.
+  Backbone.history = new History;
+
+  // Helpers
+  // -------
+
+  // Helper function to correctly set up the prototype chain, for subclasses.
+  // Similar to `goog.inherits`, but uses a hash of prototype properties and
+  // class properties to be extended.
+  var extend = function(protoProps, staticProps) {
+    var parent = this;
+    var child;
+
+    // The constructor function for the new subclass is either defined by you
+    // (the "constructor" property in your `extend` definition), or defaulted
+    // by us to simply call the parent's constructor.
+    if (protoProps && _.has(protoProps, 'constructor')) {
+      child = protoProps.constructor;
+    } else {
+      child = function(){ return parent.apply(this, arguments); };
+    }
+
+    // Add static properties to the constructor function, if supplied.
+    _.extend(child, parent, staticProps);
+
+    // Set the prototype chain to inherit from `parent`, without calling
+    // `parent`'s constructor function.
+    var Surrogate = function(){ this.constructor = child; };
+    Surrogate.prototype = parent.prototype;
+    child.prototype = new Surrogate;
+
+    // Add prototype properties (instance properties) to the subclass,
+    // if supplied.
+    if (protoProps) _.extend(child.prototype, protoProps);
+
+    // Set a convenience property in case the parent's prototype is needed
+    // later.
+    child.__super__ = parent.prototype;
+
+    return child;
+  };
+
+  // Set up inheritance for the model, collection, router, view and history.
+  Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
+
+  // Throw an error when a URL is needed, and none is supplied.
+  var urlError = function() {
+    throw new Error('A "url" property or function must be specified');
+  };
+
+  // Wrap an optional error callback with a fallback error event.
+  var wrapError = function (model, options) {
+    var error = options.error;
+    options.error = function(resp) {
+      if (error) error(model, resp, options);
+      model.trigger('error', model, resp, options);
+    };
+  };
+
+}).call(this);
+
+})()
+},{"underscore":8}],30:[function(require,module,exports){
+module.exports = function merge (target, src) {
+    var array = Array.isArray(src)
+    var dst = array && [] || {}
+
+    if (array) {
+        target = target || []
+        dst = dst.concat(target)
+        src.forEach(function(e, i) {
+            if (typeof target[i] === 'undefined') {
+                dst[i] = e
+            } else if (typeof e === 'object') {
+                dst[i] = merge(target[i], e)
+            } else {
+                if (target.indexOf(e) === -1) {
+                    dst.push(e)
+                }
+            }
+        })
+    } else {
+        if (target && typeof target === 'object') {
+            Object.keys(target).forEach(function (key) {
+                dst[key] = target[key]
+            })
+        }
+        Object.keys(src).forEach(function (key) {
+            if (typeof src[key] !== 'object' || !src[key]) {
+                dst[key] = src[key]
+            }
+            else {
+                if (!target[key]) {
+                    dst[key] = src[key]
+                } else {
+                    dst[key] = merge(target[key], src[key])
+                }
+            }
+        })
+    }
+
+    return dst
+}
+
+},{}],31:[function(require,module,exports){
+module.exports = require('./lib/chrono');
+
+},{"./lib/chrono":33}],32:[function(require,module,exports){
 'use strict';
 
 
@@ -29039,508 +29042,7 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":33,"./js-yaml/dumper":34,"./js-yaml/common":35,"./js-yaml/type":36,"./js-yaml/schema":37,"./js-yaml/schema/failsafe":38,"./js-yaml/schema/json":39,"./js-yaml/schema/core":40,"./js-yaml/schema/default_safe":41,"./js-yaml/schema/default_full":42,"./js-yaml/exception":43,"./js-yaml/require":44}],32:[function(require,module,exports){
-module.exports = require('./lib/chrono');
-
-},{"./lib/chrono":45}],35:[function(require,module,exports){
-'use strict';
-
-
-var NIL = {};
-
-
-function isNothing(subject) {
-  return (undefined === subject) || (null === subject);
-}
-
-
-function isObject(subject) {
-  return ('object' === typeof subject) && (null !== subject);
-}
-
-
-function toArray(sequence) {
-  if (Array.isArray(sequence)) {
-    return sequence;
-  } else if (isNothing(sequence)) {
-    return [];
-  } else {
-    return [ sequence ];
-  }
-}
-
-
-function extend(target, source) {
-  var index, length, key, sourceKeys;
-
-  if (source) {
-    sourceKeys = Object.keys(source);
-
-    for (index = 0, length = sourceKeys.length; index < length; index += 1) {
-      key = sourceKeys[index];
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-
-function repeat(string, count) {
-  var result = '', cycle;
-
-  for (cycle = 0; cycle < count; cycle += 1) {
-    result += string;
-  }
-
-  return result;
-}
-
-
-module.exports.NIL        = NIL;
-module.exports.isNothing  = isNothing;
-module.exports.isObject   = isObject;
-module.exports.toArray    = toArray;
-module.exports.repeat     = repeat;
-module.exports.extend     = extend;
-
-},{}],43:[function(require,module,exports){
-'use strict';
-
-
-function YAMLException(reason, mark) {
-  this.name    = 'YAMLException';
-  this.reason  = reason;
-  this.mark    = mark;
-  this.message = this.toString(false);
-}
-
-
-YAMLException.prototype.toString = function toString(compact) {
-  var result;
-
-  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
-
-  if (!compact && this.mark) {
-    result += ' ' + this.mark.toString();
-  }
-
-  return result;
-};
-
-
-module.exports = YAMLException;
-
-},{}],45:[function(require,module,exports){
-(function(){
-
-// CommonJS exports.
-var data = (typeof exports !== 'undefined') ? exports : {};
-
-data.tzToOffset = {
-  'ACDT': -630,
-  'ACST': -570,
-  'ACT': -480,
-  'ADT': +180,
-  'AEDT': -660,
-  'AEST': -600,
-  'AFT': -270,
-  'AKDT': +480,
-  'AKST': +540,
-  'AMST': -300,
-  'AMT': -240,
-  'ART': +180,
-  'AST': -240, // Arab Standard Time
-  'AWDT': -540,
-  'AWST': -480,
-  'AZOST': +60,
-  'AZT': -240,
-  'BDT': -480,
-  'BIOT': -360,
-  'BIT': +720,
-  'BOT': +240,
-  'BRT': +180,
-  'BST': -60, // British Summer Time
-  'BTT': -360,
-  'CAT': -120,
-  'CCT': -390,
-  'CDT': +300,
-  'CEDT': -120,
-  'CEST': -120,
-  'CET': -60,
-  'CHAST': -765,
-  'ChST': -600,
-  'CIST': +480,
-  'CKT': +600,
-  'CLST': +180,
-  'CLT': +240,
-  'COST': +240,
-  'COT': +300,
-  'CST': -480,
-  'CST': +360,
-  'CVT': +60,
-  'CXT': -420,
-  'DFT': -60,
-  'EAST': +360,
-  'EAT': -180,
-  'ECT': +240,
-  'ECT': +300,
-  'EDT': +240,
-  'EEDT': -180,
-  'EEST': -180,
-  'EET': -120,
-  'EST': +300,
-  'FJT': -720,
-  'FKST': +240,
-  'GALT': +360,
-  'GET': -240,
-  'GFT': +180,
-  'GILT': -720,
-  'GIT': +540,
-  'GMT': 0,
-  'GST': +120,
-  'GYT': +240,
-  'HADT': +540,
-  'HAST': +600,
-  'HKT': -480,
-  'HMT': -300,
-  'HST': +600,
-  'IRKT': -480,
-  'IRST': -210,
-  'IST': -120,
-  'IST': -330,
-  'IST': -60,
-  'JST': -540,
-  'KRAT': -420,
-  'KST': -540,
-  'LHST': -630,
-  'LINT': -840,
-  'MAGT': -660,
-  'MDT': +360,
-  'MIT': +570,
-  'MSD': -240,
-  'MSK': -180,
-  'MST': -390,
-  'MST': -480,
-  'MST': +420,
-  'MUT': -240,
-  'NDT': +150,
-  'NFT': -690,
-  'NPT': -345,
-  'NST': +210,
-  'NT': +210,
-  'NZST': -720,
-  'NZDT': -780,
-  'OMST': -360,
-  'PDT': +420,
-  'PETT': -720,
-  'PHOT': -780,
-  'PKT': -300,
-  'PST': -480,
-  'PST': +480,
-  'RET': -240,
-  'SAMT': -240,
-  'SAST': -120,
-  'SBT': -660,
-  'SCT': -240,
-  'SLT': -330,
-  'SST': -480,
-  'SST': +660,
-  'TAHT': +600,
-  'THA': -420,
-  'UTC': 0,
-  'UYST': +120,
-  'UYT': +180,
-  'VET': +270,
-  'VLAT': -600,
-  'WAT': -60,
-  'WEDT': -60,
-  'WEST': -60,
-  'YAKT': -540,
-  'YEKT': -300
-};
-
-// While indices are strings here, numbers work fine too when retrieving.
-data.offsetToTz = {
-  '720':  ['BIT'],
-  '660':  ['SST'],
-  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
-  '570':  ['MIT'],
-  '540':  ['AKST', 'GIT', 'HADT'],
-  '480':  ['PST', 'AKDT', 'CIST'],
-  '420':  ['MST', 'PDT'],
-  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
-  '300':  ['EST', 'CDT', 'COT', 'ECT'],
-  '270':  ['VET'],
-  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
-  '210':  ['NT', 'NST'],
-  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
-  '150':  ['NDT'],
-  '120':  ['GST', 'UYST'],
-  '60':   ['AZOST', 'CVT'],
-  '0':    ['UTC', 'GMT'],
-  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
-  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
-  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
-  '-210': ['IRST'],
-  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
-  '-270': ['AFT'],
-  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
-  '-330': ['IST', 'SLT'],
-  '-345': ['NPT'],
-  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
-  '-390': ['CCT', 'MST'],
-  '-420': ['CXT', 'KRAT', 'THA'],
-  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
-  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
-  '-570': ['ACST'],
-  '-600': ['AEST', 'ChST', 'VLAT'],
-  '-630': ['ACDT', 'LHST'],
-  '-660': ['AEDT', 'MAGT', 'SBT'],
-  '-690': ['NFT'],
-  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
-  '-765': ['CHAST'],
-  '-780': ['PHOT', 'NZDT'],
-  '-840': ['LINT']
-};
-
-data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
-
-data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
-
-data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
-
-data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
-
-data.intervals = [
-    function(n) { return n !== 1 ? 'years' : 'year'; },
-    function(n) { return n !== 1 ? 'months' : 'month'; },
-    function(n) { return n !== 1 ? 'weeks' : 'week'; },
-    function(n) { return n !== 1 ? 'days' : 'day'; },
-    function(n) { return n !== 1 ? 'hours' : 'hour'; },
-    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
-    function(n) { return n !== 1 ? 'seconds' : 'second'; }
-];
-
-data.intervalFormats = {
-    'ago': '% ago',
-    'in': 'in %'
-};
-
-data.ordinals = function(number) {
-  switch (number % 10) {
-    case 1: return (number % 100 !== 11) ? 'st' : 'th';
-    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
-    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
-    default: return 'th';
-  }
-};
-
-function pad2(i) {
-  return i < 10 ? '0' + i : i;
-};
-
-function pad2sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '0' + i : i);
-};
-
-function pad3(i) {
-  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
-};
-
-function pad4sign(i) {
-  var sgn = i < 0 ? '-' : '+';
-  i = Math.abs(i);
-  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
-}
-
-Date.prototype.interval = function(other) {
-    var self = this, inverse = self > other;
-    if (inverse) {
-        self = other;
-        other = this;
-    }
-
-    var parts = [
-        other.getUTCFullYear() - self.getUTCFullYear(),
-        other.getUTCMonth() - self.getUTCMonth(),
-        0, // weeks
-        other.getUTCDate() - self.getUTCDate(),
-        other.getUTCHours() - self.getUTCHours(),
-        other.getUTCMinutes() - self.getUTCMinutes(),
-        other.getUTCSeconds() - self.getUTCSeconds()
-    ];
-    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
-    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
-    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
-    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
-    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
-    parts[2] = (parts[3] / 7) | 0;
-    parts[3] -= parts[2] * 7;
-
-    var fragments = [];
-    for (var i = 0; i < parts.length; i++) {
-        if (parts[i]) {
-            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
-        }
-    }
-    return fragments;
-};
-
-Date.prototype.format = function(format, tz) {
-  var time = this.getTime();
-
-  if (tz === undefined) {
-    tz = this.getTimezone();
-    tzName = this.getTimezoneName();
-  }
-  else {
-    var tzData = parseTimezone(tz);
-    tz = tzData[0];
-    var tzName = tzData[1];
-  }
-
-  // Use correct timezone.
-  this.setTime(time - tz * 60000);
-
-  var result = '';
-  for (var i = 0; i < format.length; i++) {
-    switch (format.charAt(i)) {
-      // Day
-      case 'd': result += pad2(this.getUTCDate()); break;
-      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
-      case 'j': result += this.getUTCDate(); break;
-      case 'l': result += data.weekdays[this.getUTCDay()]; break;
-      case 'N': result += this.getUTCDay() || 7; break;
-      case 'S': result += data.ordinals(this.getUTCDate()); break;
-      case 'w': result += this.getUTCDay(); break;
-      case 'z': result += this.getUTCDayOfYear(); break;
-
-      // Week
-      case 'W': result += pad2(this.getUTCISOWeek()); break;
-
-      // Month
-      case 'F': result += data.months[this.getUTCMonth()]; break;
-      case 'm': result += pad2(this.getUTCMonth() + 1); break;
-      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
-      case 'n': result += this.getUTCMonth() + 1; break;
-      case 't': result += this.getUTCDaysOfMonth(); break;
-
-      // Year
-      case 'L': result += this.isLeapYear() ? 1 : 0; break;
-      case 'o': result += this.getUTCISOFullYear(); break;
-      case 'Y': result += this.getUTCFullYear(); break;
-      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
-
-      // Time
-      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
-      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
-      case 'g': result += this.getUTCHours() % 12 || 12; break;
-      case 'G': result += this.getUTCHours(); break;
-      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
-      case 'H': result += pad2(this.getUTCHours()); break;
-      case 'i': result += pad2(this.getUTCMinutes()); break;
-      case 's': result += pad2(this.getUTCSeconds()); break;
-      case 'u': result += pad3(this.getUTCMilliseconds()); break;
-
-      // Timezone
-      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
-      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
-      case 'T': result += tzName; break;
-      case 'Z': result += -tz * 60; break;
-
-      // Full Date/Time
-      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
-      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
-      case 'U': result += Math.floor(this.getTime() / 1000); break;
-
-      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
-
-      default: result += format.charAt(i); break;
-    }
-  }
-
-  this.setTime(time);
-
-  return result;
-};
-
-function parseTimezone(tz) {
-  if (typeof tz === 'number') {
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-  var number = parseInt(tz, 10);
-  if (isNaN(number)) {
-    return [data.tzToOffset[tz], tz];
-  }
-  else {
-    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
-    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
-  }
-}
-
-Date.prototype.isLeapYear = function() {
-  var y = this.getUTCFullYear();
-  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
-};
-
-Date.prototype.getUTCISOWeek = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
-};
-
-Date.prototype.getUTCISOFullYear = function() {
-  // Go to the week's thursday.
-  var d = new Date(this);
-  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
-  return d.getUTCFullYear();
-};
-
-Date.prototype.getUTCDaysOfMonth = function() {
-  var d = new Date(this);
-  d.setUTCDate(1);
-  d.setUTCMonth(d.getUTCMonth() + 1);
-  d.setUTCDate(0);
-  return d.getUTCDate();
-};
-
-Date.prototype.getUTCDayOfYear = function() {
-  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
-};
-
-Date.prototype.getTimezone = function() {
-  if (!('_tz' in this)) {
-    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
-    if (matches && matches[1]) {
-        this.setTimezone(matches[1]);
-    } else {
-        this.setTimezone(new Date().getTimezoneOffset());
-    }
-  }
-  return this._tz;
-};
-
-Date.prototype.getTimezoneName = function() {
-  this.getTimezone(); // Make sure the tz data is populated.
-  return this._tzName;
-};
-
-Date.prototype.setTimezone = function(val) {
-  var tzData = parseTimezone(val);
-  this._tz = tzData[0];
-  this._tzName = tzData[1];
-};
-
-})();
-
-},{}],46:[function(require,module,exports){
-// nothing to see here... no file methods for the browser
-
-},{}],28:[function(require,module,exports){
+},{"./js-yaml/loader":34,"./js-yaml/dumper":35,"./js-yaml/common":36,"./js-yaml/type":37,"./js-yaml/schema":38,"./js-yaml/schema/failsafe":39,"./js-yaml/schema/json":40,"./js-yaml/schema/core":41,"./js-yaml/schema/default_safe":42,"./js-yaml/schema/default_full":43,"./js-yaml/exception":44,"./js-yaml/require":45}],28:[function(require,module,exports){
 (function(global){(function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -30621,7 +30123,1172 @@ Date.prototype.setTimezone = function(val) {
 }).call(this);
 
 })(window)
-},{"jquery-browserify":16}],33:[function(require,module,exports){
+},{"jquery-browserify":21}],33:[function(require,module,exports){
+(function(){
+
+// CommonJS exports.
+var data = (typeof exports !== 'undefined') ? exports : {};
+
+data.tzToOffset = {
+  'ACDT': -630,
+  'ACST': -570,
+  'ACT': -480,
+  'ADT': +180,
+  'AEDT': -660,
+  'AEST': -600,
+  'AFT': -270,
+  'AKDT': +480,
+  'AKST': +540,
+  'AMST': -300,
+  'AMT': -240,
+  'ART': +180,
+  'AST': -240, // Arab Standard Time
+  'AWDT': -540,
+  'AWST': -480,
+  'AZOST': +60,
+  'AZT': -240,
+  'BDT': -480,
+  'BIOT': -360,
+  'BIT': +720,
+  'BOT': +240,
+  'BRT': +180,
+  'BST': -60, // British Summer Time
+  'BTT': -360,
+  'CAT': -120,
+  'CCT': -390,
+  'CDT': +300,
+  'CEDT': -120,
+  'CEST': -120,
+  'CET': -60,
+  'CHAST': -765,
+  'ChST': -600,
+  'CIST': +480,
+  'CKT': +600,
+  'CLST': +180,
+  'CLT': +240,
+  'COST': +240,
+  'COT': +300,
+  'CST': -480,
+  'CST': +360,
+  'CVT': +60,
+  'CXT': -420,
+  'DFT': -60,
+  'EAST': +360,
+  'EAT': -180,
+  'ECT': +240,
+  'ECT': +300,
+  'EDT': +240,
+  'EEDT': -180,
+  'EEST': -180,
+  'EET': -120,
+  'EST': +300,
+  'FJT': -720,
+  'FKST': +240,
+  'GALT': +360,
+  'GET': -240,
+  'GFT': +180,
+  'GILT': -720,
+  'GIT': +540,
+  'GMT': 0,
+  'GST': +120,
+  'GYT': +240,
+  'HADT': +540,
+  'HAST': +600,
+  'HKT': -480,
+  'HMT': -300,
+  'HST': +600,
+  'IRKT': -480,
+  'IRST': -210,
+  'IST': -120,
+  'IST': -330,
+  'IST': -60,
+  'JST': -540,
+  'KRAT': -420,
+  'KST': -540,
+  'LHST': -630,
+  'LINT': -840,
+  'MAGT': -660,
+  'MDT': +360,
+  'MIT': +570,
+  'MSD': -240,
+  'MSK': -180,
+  'MST': -390,
+  'MST': -480,
+  'MST': +420,
+  'MUT': -240,
+  'NDT': +150,
+  'NFT': -690,
+  'NPT': -345,
+  'NST': +210,
+  'NT': +210,
+  'NZST': -720,
+  'NZDT': -780,
+  'OMST': -360,
+  'PDT': +420,
+  'PETT': -720,
+  'PHOT': -780,
+  'PKT': -300,
+  'PST': -480,
+  'PST': +480,
+  'RET': -240,
+  'SAMT': -240,
+  'SAST': -120,
+  'SBT': -660,
+  'SCT': -240,
+  'SLT': -330,
+  'SST': -480,
+  'SST': +660,
+  'TAHT': +600,
+  'THA': -420,
+  'UTC': 0,
+  'UYST': +120,
+  'UYT': +180,
+  'VET': +270,
+  'VLAT': -600,
+  'WAT': -60,
+  'WEDT': -60,
+  'WEST': -60,
+  'YAKT': -540,
+  'YEKT': -300
+};
+
+// While indices are strings here, numbers work fine too when retrieving.
+data.offsetToTz = {
+  '720':  ['BIT'],
+  '660':  ['SST'],
+  '600':  ['HST', 'CKT', 'HAST', 'TAHT'],
+  '570':  ['MIT'],
+  '540':  ['AKST', 'GIT', 'HADT'],
+  '480':  ['PST', 'AKDT', 'CIST'],
+  '420':  ['MST', 'PDT'],
+  '360':  ['CST', 'EAST', 'GALT', 'MDT'],
+  '300':  ['EST', 'CDT', 'COT', 'ECT'],
+  '270':  ['VET'],
+  '240':  ['ECT', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKST', 'GYT'],
+  '210':  ['NT', 'NST'],
+  '180':  ['BRT', 'ADT', 'ART', 'CLST', 'GFT', 'UYT'],
+  '150':  ['NDT'],
+  '120':  ['GST', 'UYST'],
+  '60':   ['AZOST', 'CVT'],
+  '0':    ['UTC', 'GMT'],
+  '-60':  ['CET', 'BST', 'DFT', 'IST', 'WAT', 'WEDT', 'WEST'],
+  '-120': ['EET', 'CAT', 'CEDT', 'CEST', 'IST', 'SAST'],
+  '-180': ['MSK', 'AST', 'AST', 'EAT', 'EEDT', 'EEST'],
+  '-210': ['IRST'],
+  '-240': ['AST', 'AMT', 'AZT', 'GET', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
+  '-270': ['AFT'],
+  '-300': ['AMST', 'HMT', 'PKT', 'YEKT'],
+  '-330': ['IST', 'SLT'],
+  '-345': ['NPT'],
+  '-360': ['BIOT', 'BST', 'BTT', 'OMST'],
+  '-390': ['CCT', 'MST'],
+  '-420': ['CXT', 'KRAT', 'THA'],
+  '-480': ['ACT', 'AWST', 'BDT', 'CST', 'HKT', 'IRKT', 'MST', 'PST', 'SST'],
+  '-540': ['AWDT', 'JST', 'KST', 'YAKT'],
+  '-570': ['ACST'],
+  '-600': ['AEST', 'ChST', 'VLAT'],
+  '-630': ['ACDT', 'LHST'],
+  '-660': ['AEDT', 'MAGT', 'SBT'],
+  '-690': ['NFT'],
+  '-720': ['FJT', 'GILT', 'PETT', 'NZST'],
+  '-765': ['CHAST'],
+  '-780': ['PHOT', 'NZDT'],
+  '-840': ['LINT']
+};
+
+data.weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
+
+data.weekdaysShort = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
+
+data.months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+
+data.monthsShort = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+
+data.intervals = [
+    function(n) { return n !== 1 ? 'years' : 'year'; },
+    function(n) { return n !== 1 ? 'months' : 'month'; },
+    function(n) { return n !== 1 ? 'weeks' : 'week'; },
+    function(n) { return n !== 1 ? 'days' : 'day'; },
+    function(n) { return n !== 1 ? 'hours' : 'hour'; },
+    function(n) { return n !== 1 ? 'minutes' : 'minute'; },
+    function(n) { return n !== 1 ? 'seconds' : 'second'; }
+];
+
+data.intervalFormats = {
+    'ago': '% ago',
+    'in': 'in %'
+};
+
+data.ordinals = function(number) {
+  switch (number % 10) {
+    case 1: return (number % 100 !== 11) ? 'st' : 'th';
+    case 2: return (number % 100 !== 12) ? 'nd' : 'th';
+    case 3: return (number % 100 !== 13) ? 'rd' : 'th';
+    default: return 'th';
+  }
+};
+
+function pad2(i) {
+  return i < 10 ? '0' + i : i;
+};
+
+function pad2sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '0' + i : i);
+};
+
+function pad3(i) {
+  return i < 10 ? '00' + i : i < 100 ? '0' + i : i;
+};
+
+function pad4sign(i) {
+  var sgn = i < 0 ? '-' : '+';
+  i = Math.abs(i);
+  return sgn + (i < 10 ? '000' + i : i < 100 ? '00' + i : i < 1000 ? '0' + i : i);
+}
+
+Date.prototype.interval = function(other) {
+    var self = this, inverse = self > other;
+    if (inverse) {
+        self = other;
+        other = this;
+    }
+
+    var parts = [
+        other.getUTCFullYear() - self.getUTCFullYear(),
+        other.getUTCMonth() - self.getUTCMonth(),
+        0, // weeks
+        other.getUTCDate() - self.getUTCDate(),
+        other.getUTCHours() - self.getUTCHours(),
+        other.getUTCMinutes() - self.getUTCMinutes(),
+        other.getUTCSeconds() - self.getUTCSeconds()
+    ];
+    if (parts[6] < 0) { parts[5]--; parts[6] += 60; }
+    if (parts[5] < 0) { parts[4]--; parts[5] += 60; }
+    if (parts[4] < 0) { parts[3]--; parts[4] += 24; }
+    if (parts[3] < 0) { parts[1]--; parts[3] += self.getUTCDaysOfMonth(); }
+    if (parts[1] < 0) { parts[0]--; parts[1] += 12; }
+    parts[2] = (parts[3] / 7) | 0;
+    parts[3] -= parts[2] * 7;
+
+    var fragments = [];
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i]) {
+            fragments.push(parts[i] + ' ' + data.intervals[i](parts[i]));
+        }
+    }
+    return fragments;
+};
+
+Date.prototype.format = function(format, tz) {
+  var time = this.getTime();
+
+  if (tz === undefined) {
+    tz = this.getTimezone();
+    tzName = this.getTimezoneName();
+  }
+  else {
+    var tzData = parseTimezone(tz);
+    tz = tzData[0];
+    var tzName = tzData[1];
+  }
+
+  // Use correct timezone.
+  this.setTime(time - tz * 60000);
+
+  var result = '';
+  for (var i = 0; i < format.length; i++) {
+    switch (format.charAt(i)) {
+      // Day
+      case 'd': result += pad2(this.getUTCDate()); break;
+      case 'D': result += data.weekdaysShort[this.getUTCDay()]; break;
+      case 'j': result += this.getUTCDate(); break;
+      case 'l': result += data.weekdays[this.getUTCDay()]; break;
+      case 'N': result += this.getUTCDay() || 7; break;
+      case 'S': result += data.ordinals(this.getUTCDate()); break;
+      case 'w': result += this.getUTCDay(); break;
+      case 'z': result += this.getUTCDayOfYear(); break;
+
+      // Week
+      case 'W': result += pad2(this.getUTCISOWeek()); break;
+
+      // Month
+      case 'F': result += data.months[this.getUTCMonth()]; break;
+      case 'm': result += pad2(this.getUTCMonth() + 1); break;
+      case 'M': result += data.monthsShort[this.getUTCMonth()]; break;
+      case 'n': result += this.getUTCMonth() + 1; break;
+      case 't': result += this.getUTCDaysOfMonth(); break;
+
+      // Year
+      case 'L': result += this.isLeapYear() ? 1 : 0; break;
+      case 'o': result += this.getUTCISOFullYear(); break;
+      case 'Y': result += this.getUTCFullYear(); break;
+      case 'y': result += pad2(this.getUTCFullYear() % 100); break;
+
+      // Time
+      case 'a': result += this.getUTCHours() >= 12 ? 'pm' : 'am'; break;
+      case 'A': result += this.getUTCHours() >= 12 ? 'PM' : 'AM'; break;
+      case 'g': result += this.getUTCHours() % 12 || 12; break;
+      case 'G': result += this.getUTCHours(); break;
+      case 'h': result += pad2(this.getUTCHours() % 12 || 12); break;
+      case 'H': result += pad2(this.getUTCHours()); break;
+      case 'i': result += pad2(this.getUTCMinutes()); break;
+      case 's': result += pad2(this.getUTCSeconds()); break;
+      case 'u': result += pad3(this.getUTCMilliseconds()); break;
+
+      // Timezone
+      case 'O': result += pad4sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60) * 100 + Math.abs(tz) % 60)); break;
+      case 'P': result += pad2sign((tz < 0 ? 1 : -1) * (Math.floor(Math.abs(tz) / 60))) + ':' + pad2(Math.abs(tz) % 60); break;
+      case 'T': result += tzName; break;
+      case 'Z': result += -tz * 60; break;
+
+      // Full Date/Time
+      case 'c': this.setTime(time); result += this.format('Y-m-d\\TH:i:sP', tz); break;
+      case 'r': this.setTime(time); result += this.format('D, d M y H:i:s O', tz); break;
+      case 'U': result += Math.floor(this.getTime() / 1000); break;
+
+      case '\\': if (format.charAt(++i) !== undefined) result += format.charAt(i); break;
+
+      default: result += format.charAt(i); break;
+    }
+  }
+
+  this.setTime(time);
+
+  return result;
+};
+
+function parseTimezone(tz) {
+  if (typeof tz === 'number') {
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+  var number = parseInt(tz, 10);
+  if (isNaN(number)) {
+    return [data.tzToOffset[tz], tz];
+  }
+  else {
+    tz = (number < 0 ? 1 : -1) * (Math.floor(Math.abs(number) / 100) * 60 + Math.abs(number) % 100);
+    return [tz, tz in data.offsetToTz ? data.offsetToTz[tz][0] : ''];
+  }
+}
+
+Date.prototype.isLeapYear = function() {
+  var y = this.getUTCFullYear();
+  return (y % 400 === 0) || (y % 4 === 0 && y % 100 !== 0);
+};
+
+Date.prototype.getUTCISOWeek = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return Math.ceil((d.getTime() - Date.UTC(d.getUTCFullYear(), 0)) / 86400000 / 7);
+};
+
+Date.prototype.getUTCISOFullYear = function() {
+  // Go to the week's thursday.
+  var d = new Date(this);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 4);
+  return d.getUTCFullYear();
+};
+
+Date.prototype.getUTCDaysOfMonth = function() {
+  var d = new Date(this);
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() + 1);
+  d.setUTCDate(0);
+  return d.getUTCDate();
+};
+
+Date.prototype.getUTCDayOfYear = function() {
+  return Math.floor((this.getTime() - Date.UTC(this.getUTCFullYear(), 0)) / 86400000);
+};
+
+Date.prototype.getTimezone = function() {
+  if (!('_tz' in this)) {
+    var matches = new Date().toString().match(/([A-Z]{3,4}|NT|ChST)(?![-\+])/);
+    if (matches && matches[1]) {
+        this.setTimezone(matches[1]);
+    } else {
+        this.setTimezone(new Date().getTimezoneOffset());
+    }
+  }
+  return this._tz;
+};
+
+Date.prototype.getTimezoneName = function() {
+  this.getTimezone(); // Make sure the tz data is populated.
+  return this._tzName;
+};
+
+Date.prototype.setTimezone = function(val) {
+  var tzData = parseTimezone(val);
+  this._tz = tzData[0];
+  this._tzName = tzData[1];
+};
+
+})();
+
+},{}],36:[function(require,module,exports){
+'use strict';
+
+
+var NIL = {};
+
+
+function isNothing(subject) {
+  return (undefined === subject) || (null === subject);
+}
+
+
+function isObject(subject) {
+  return ('object' === typeof subject) && (null !== subject);
+}
+
+
+function toArray(sequence) {
+  if (Array.isArray(sequence)) {
+    return sequence;
+  } else if (isNothing(sequence)) {
+    return [];
+  } else {
+    return [ sequence ];
+  }
+}
+
+
+function extend(target, source) {
+  var index, length, key, sourceKeys;
+
+  if (source) {
+    sourceKeys = Object.keys(source);
+
+    for (index = 0, length = sourceKeys.length; index < length; index += 1) {
+      key = sourceKeys[index];
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+
+function repeat(string, count) {
+  var result = '', cycle;
+
+  for (cycle = 0; cycle < count; cycle += 1) {
+    result += string;
+  }
+
+  return result;
+}
+
+
+module.exports.NIL        = NIL;
+module.exports.isNothing  = isNothing;
+module.exports.isObject   = isObject;
+module.exports.toArray    = toArray;
+module.exports.repeat     = repeat;
+module.exports.extend     = extend;
+
+},{}],44:[function(require,module,exports){
+'use strict';
+
+
+function YAMLException(reason, mark) {
+  this.name    = 'YAMLException';
+  this.reason  = reason;
+  this.mark    = mark;
+  this.message = this.toString(false);
+}
+
+
+YAMLException.prototype.toString = function toString(compact) {
+  var result;
+
+  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
+
+  if (!compact && this.mark) {
+    result += ' ' + this.mark.toString();
+  }
+
+  return result;
+};
+
+
+module.exports = YAMLException;
+
+},{}],35:[function(require,module,exports){
+(function(){'use strict';
+
+
+var common              = require('./common');
+var NIL                 = common.NIL;
+var YAMLException       = require('./exception');
+var DEFAULT_FULL_SCHEMA = require('./schema/default_full');
+var DEFAULT_SAFE_SCHEMA = require('./schema/default_safe');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+var CHAR_TAB                  = 0x09; /* Tab */
+var CHAR_LINE_FEED            = 0x0A; /* LF */
+var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
+var CHAR_SPACE                = 0x20; /* Space */
+var CHAR_EXCLAMATION          = 0x21; /* ! */
+var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
+var CHAR_SHARP                = 0x23; /* # */
+var CHAR_PERCENT              = 0x25; /* % */
+var CHAR_AMPERSAND            = 0x26; /* & */
+var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
+var CHAR_ASTERISK             = 0x2A; /* * */
+var CHAR_COMMA                = 0x2C; /* , */
+var CHAR_MINUS                = 0x2D; /* - */
+var CHAR_COLON                = 0x3A; /* : */
+var CHAR_GREATER_THAN         = 0x3E; /* > */
+var CHAR_QUESTION             = 0x3F; /* ? */
+var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
+var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
+var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
+var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
+var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
+var CHAR_VERTICAL_LINE        = 0x7C; /* | */
+var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
+
+
+var ESCAPE_SEQUENCES = {};
+
+ESCAPE_SEQUENCES[0x00]   = '\\0';
+ESCAPE_SEQUENCES[0x07]   = '\\a';
+ESCAPE_SEQUENCES[0x08]   = '\\b';
+ESCAPE_SEQUENCES[0x09]   = '\\t';
+ESCAPE_SEQUENCES[0x0A]   = '\\n';
+ESCAPE_SEQUENCES[0x0B]   = '\\v';
+ESCAPE_SEQUENCES[0x0C]   = '\\f';
+ESCAPE_SEQUENCES[0x0D]   = '\\r';
+ESCAPE_SEQUENCES[0x1B]   = '\\e';
+ESCAPE_SEQUENCES[0x22]   = '\\"';
+ESCAPE_SEQUENCES[0x5C]   = '\\\\';
+ESCAPE_SEQUENCES[0x85]   = '\\N';
+ESCAPE_SEQUENCES[0xA0]   = '\\_';
+ESCAPE_SEQUENCES[0x2028] = '\\L';
+ESCAPE_SEQUENCES[0x2029] = '\\P';
+
+
+function kindOf(object) {
+  var kind = typeof object;
+
+  if (null === object) {
+    return 'null';
+  } else if ('number' === kind) {
+    return 0 === object % 1 ? 'integer' : 'float';
+  } else if ('object' === kind && Array.isArray(object)) {
+    return 'array';
+  } else {
+    return kind;
+  }
+}
+
+
+function compileStyleMap(schema, map) {
+  var result, keys, index, length, tag, style, type;
+
+  if (null === map) {
+    return {};
+  }
+
+  result = {};
+  keys = Object.keys(map);
+
+  for (index = 0, length = keys.length; index < length; index += 1) {
+    tag = keys[index];
+    style = String(map[tag]);
+
+    if ('!!' === tag.slice(0, 2)) {
+      tag = 'tag:yaml.org,2002:' + tag.slice(2);
+    }
+
+    type = schema.compiledTypeMap[tag];
+
+    if (type && type.dumper) {
+      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
+        style = type.dumper.styleAliases[style];
+      }
+    }
+
+    result[tag] = style;
+  }
+
+  return result;
+}
+
+
+function encodeHex(character) {
+  var string, handle, length;
+
+  string = character.toString(16).toUpperCase();
+
+  if (character <= 0xFF) {
+    handle = 'x';
+    length = 2;
+  } else if (character <= 0xFFFF) {
+    handle = 'u';
+    length = 4;
+  } else if (character <= 0xFFFFFFFF) {
+    handle = 'U';
+    length = 8;
+  } else {
+    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
+  }
+
+  return '\\' + handle + common.repeat('0', length - string.length) + string;
+}
+
+
+function dump(input, options) {
+  options = options || {};
+
+  var schema      = options['schema'] || DEFAULT_FULL_SCHEMA,
+      indent      = Math.max(1, (options['indent'] || 2)),
+      skipInvalid = options['skipInvalid'] || false,
+      flowLevel   = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
+      styleMap    = compileStyleMap(schema, options['styles'] || null),
+
+      implicitTypes = schema.compiledImplicit,
+      explicitTypes = schema.compiledExplicit,
+
+      kind,
+      tag,
+      result;
+
+  function generateNextLine(level) {
+    return '\n' + common.repeat(' ', indent * level);
+  }
+
+  function testImplicitResolving(object) {
+    var index, length, type;
+
+    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
+      type = implicitTypes[index];
+
+      if (null !== type.loader &&
+          NIL !== type.loader.resolver(object, false)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeScalar(object) {
+    var isQuoted, checkpoint, position, length, character, booleans;
+
+    result = '';
+    isQuoted = false;
+    checkpoint = 0;
+    booleans = /^(y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)$/;
+
+    if (0          === object.length ||
+        CHAR_SPACE === object.charCodeAt(0) ||
+        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
+      isQuoted = true;
+    }
+
+    for (position = 0, length = object.length; position < length; position += 1) {
+      character = object.charCodeAt(position);
+
+      if (!isQuoted) {
+        if (CHAR_TAB                  === character ||
+            CHAR_LINE_FEED            === character ||
+            CHAR_CARRIAGE_RETURN      === character ||
+            CHAR_COMMA                === character ||
+            CHAR_LEFT_SQUARE_BRACKET  === character ||
+            CHAR_RIGHT_SQUARE_BRACKET === character ||
+            CHAR_LEFT_CURLY_BRACKET   === character ||
+            CHAR_RIGHT_CURLY_BRACKET  === character ||
+            CHAR_SHARP                === character ||
+            CHAR_AMPERSAND            === character ||
+            CHAR_ASTERISK             === character ||
+            CHAR_EXCLAMATION          === character ||
+            CHAR_VERTICAL_LINE        === character ||
+            CHAR_GREATER_THAN         === character ||
+            CHAR_SINGLE_QUOTE         === character ||
+            CHAR_DOUBLE_QUOTE         === character ||
+            CHAR_PERCENT              === character ||
+            CHAR_COMMERCIAL_AT        === character ||
+            CHAR_GRAVE_ACCENT         === character ||
+            CHAR_QUESTION             === character ||
+            CHAR_COLON                === character ||
+            CHAR_MINUS                === character) {
+          isQuoted = true;
+        }
+      }
+
+      if (ESCAPE_SEQUENCES[character] ||
+          !((0x00020 <= character && character <= 0x00007E) ||
+            (0x00085 === character)                         ||
+            (0x000A0 <= character && character <= 0x00D7FF) ||
+            (0x0E000 <= character && character <= 0x00FFFD) ||
+            (0x10000 <= character && character <= 0x10FFFF))) {
+        result += object.slice(checkpoint, position);
+        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
+        checkpoint = position + 1;
+        isQuoted = true;
+      }
+    }
+
+    if (checkpoint < position) {
+      result += object.slice(checkpoint, position);
+    }
+
+    if (!isQuoted && testImplicitResolving(result)) {
+      isQuoted = true;
+    }
+
+    if (!isQuoted && booleans.test(object)) {
+      isQuoted = true;
+    }
+
+    if (isQuoted) {
+      result = '"' + result + '"';
+    }
+  }
+
+  function writeFlowSequence(level, object) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      // Write only valid elements.
+      if (writeNode(level, object[index], false, false)) {
+        if (0 !== index) {
+          _result += ', ';
+        }
+        _result += result;
+      }
+    }
+
+    tag = _tag;
+    result = '[' + _result + ']';
+  }
+
+  function writeBlockSequence(level, object, compact) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      // Write only valid elements.
+      if (writeNode(level + 1, object[index], true, true)) {
+        if (!compact || 0 !== index) {
+          _result += generateNextLine(level);
+        }
+        _result += '- ' + result;
+      }
+    }
+
+    tag = _tag;
+    result = _result || '[]'; // Empty sequence if no valid values.
+  }
+
+  function writeFlowMapping(level, object) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        pairBuffer;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      pairBuffer = '';
+
+      if (0 !== index) {
+        pairBuffer += ', ';
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      if (!writeNode(level, objectKey, false, false)) {
+        continue; // Skip this pair because of invalid key;
+      }
+
+      if (result.length > 1024) {
+        pairBuffer += '? ';
+      }
+
+      pairBuffer += result + ': ';
+
+      if (!writeNode(level, objectValue, false, false)) {
+        continue; // Skip this pair because of invalid value.
+      }
+
+      pairBuffer += result;
+
+      // Both key and value are valid.
+      _result += pairBuffer;
+    }
+
+    tag = _tag;
+    result = '{' + _result + '}';
+  }
+
+  function writeBlockMapping(level, object, compact) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        explicitPair,
+        pairBuffer;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      pairBuffer = '';
+
+      if (!compact || 0 !== index) {
+        pairBuffer += generateNextLine(level);
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      if (!writeNode(level + 1, objectKey, true, true)) {
+        continue; // Skip this pair because of invalid key.
+      }
+
+      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
+
+      if (explicitPair) {
+        pairBuffer += '? ';
+      }
+
+      pairBuffer += result;
+
+      if (explicitPair) {
+        pairBuffer += generateNextLine(level);
+      }
+
+      if (!writeNode(level + 1, objectValue, true, explicitPair)) {
+        continue; // Skip this pair because of invalid value.
+      }
+
+      pairBuffer += ': ' + result;
+
+      // Both key and value are valid.
+      _result += pairBuffer;
+    }
+
+    tag = _tag;
+    result = _result || '{}'; // Empty mapping if no valid pairs.
+  }
+
+  function detectType(object, explicit) {
+    var _result, typeList, index, length, type, style;
+
+    typeList = explicit ? explicitTypes : implicitTypes;
+    kind = kindOf(object);
+
+    for (index = 0, length = typeList.length; index < length; index += 1) {
+      type = typeList[index];
+
+      if ((null !== type.dumper) &&
+          (null === type.dumper.kind       || kind === type.dumper.kind) &&
+          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
+          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
+        tag = explicit ? type.tag : '?';
+
+        if (null !== type.dumper.representer) {
+          style = styleMap[type.tag] || type.dumper.defaultStyle;
+
+          if ('function' === typeof type.dumper.representer) {
+            _result = type.dumper.representer(object, style);
+          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
+            _result = type.dumper.representer[style](object, style);
+          } else {
+            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
+          }
+
+          if (NIL !== _result) {
+            kind = kindOf(_result);
+            result = _result;
+          } else {
+            if (explicit) {
+              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
+            } else {
+              continue;
+            }
+          }
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Serializes `object` and writes it to global `result`.
+  // Returns true on success, or false on invalid object.
+  //
+  function writeNode(level, object, block, compact) {
+    tag = null;
+    result = object;
+
+    if (!detectType(object, false)) {
+      detectType(object, true);
+    }
+
+    if (block) {
+      block = (0 > flowLevel || flowLevel > level);
+    }
+
+    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
+      compact = false;
+    }
+
+    if ('object' === kind) {
+      if (block && (0 !== Object.keys(result).length)) {
+        writeBlockMapping(level, result, compact);
+      } else {
+        writeFlowMapping(level, result);
+      }
+    } else if ('array' === kind) {
+      if (block && (0 !== result.length)) {
+        writeBlockSequence(level, result, compact);
+      } else {
+        writeFlowSequence(level, result);
+      }
+    } else if ('string' === kind) {
+      if ('?' !== tag) {
+        writeScalar(result);
+      }
+    } else if (skipInvalid) {
+      return false;
+    } else {
+      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
+    }
+
+    if (null !== tag && '?' !== tag) {
+      result = '!<' + tag + '> ' + result;
+    }
+    return true;
+  }
+
+  if (writeNode(0, input, true, true)) {
+    return result + '\n';
+  } else {
+    return '';
+  }
+}
+
+
+function safeDump(input, options) {
+  return dump(input, common.extend({ schema: DEFAULT_SAFE_SCHEMA }, options));
+}
+
+
+module.exports.dump     = dump;
+module.exports.safeDump = safeDump;
+
+})()
+},{"./common":36,"./exception":44,"./schema/default_full":43,"./schema/default_safe":42}],38:[function(require,module,exports){
+'use strict';
+
+
+var common        = require('./common');
+var YAMLException = require('./exception');
+var Type          = require('./type');
+
+
+function compileList(schema, name, result) {
+  var exclude = [];
+
+  schema.include.forEach(function (includedSchema) {
+    result = compileList(includedSchema, name, result);
+  });
+
+  schema[name].forEach(function (currentType) {
+    result.forEach(function (previousType, previousIndex) {
+      if (previousType.tag === currentType.tag) {
+        exclude.push(previousIndex);
+      }
+    });
+
+    result.push(currentType);
+  });
+
+  return result.filter(function (type, index) {
+    return -1 === exclude.indexOf(index);
+  });
+}
+
+
+function compileMap(/* lists... */) {
+  var result = {}, index, length;
+
+  function collectType(type) {
+    result[type.tag] = type;
+  }
+
+  for (index = 0, length = arguments.length; index < length; index += 1) {
+    arguments[index].forEach(collectType);
+  }
+
+  return result;
+}
+
+
+function Schema(definition) {
+  this.include  = definition.include  || [];
+  this.implicit = definition.implicit || [];
+  this.explicit = definition.explicit || [];
+
+  this.implicit.forEach(function (type) {
+    if (null !== type.loader && 'string' !== type.loader.kind) {
+      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
+    }
+  });
+
+  this.compiledImplicit = compileList(this, 'implicit', []);
+  this.compiledExplicit = compileList(this, 'explicit', []);
+  this.compiledTypeMap  = compileMap(this.compiledImplicit, this.compiledExplicit);
+}
+
+
+Schema.DEFAULT = null;
+
+
+Schema.create = function createSchema() {
+  var schemas, types;
+
+  switch (arguments.length) {
+  case 1:
+    schemas = Schema.DEFAULT;
+    types = arguments[0];
+    break;
+
+  case 2:
+    schemas = arguments[0];
+    types = arguments[1];
+    break;
+
+  default:
+    throw new YAMLException('Wrong number of arguments for Schema.create function');
+  }
+
+  schemas = common.toArray(schemas);
+  types = common.toArray(types);
+
+  if (!schemas.every(function (schema) { return schema instanceof Schema; })) {
+    throw new YAMLException('Specified list of super schemas (or a single Schema object) contains a non-Schema object.');
+  }
+
+  if (!types.every(function (type) { return type instanceof Type; })) {
+    throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
+  }
+
+  return new Schema({
+    include: schemas,
+    explicit: types
+  });
+};
+
+
+module.exports = Schema;
+
+},{"./common":36,"./exception":44,"./type":37}],37:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":44}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -32172,704 +32839,12 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":35,"./exception":43,"./mark":47,"./schema/default_safe":41,"./schema/default_full":42}],34:[function(require,module,exports){
-(function(){'use strict';
-
-
-var common              = require('./common');
-var NIL                 = common.NIL;
-var YAMLException       = require('./exception');
-var DEFAULT_FULL_SCHEMA = require('./schema/default_full');
-var DEFAULT_SAFE_SCHEMA = require('./schema/default_safe');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-var CHAR_TAB                  = 0x09; /* Tab */
-var CHAR_LINE_FEED            = 0x0A; /* LF */
-var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
-var CHAR_SPACE                = 0x20; /* Space */
-var CHAR_EXCLAMATION          = 0x21; /* ! */
-var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
-var CHAR_SHARP                = 0x23; /* # */
-var CHAR_PERCENT              = 0x25; /* % */
-var CHAR_AMPERSAND            = 0x26; /* & */
-var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
-var CHAR_ASTERISK             = 0x2A; /* * */
-var CHAR_COMMA                = 0x2C; /* , */
-var CHAR_MINUS                = 0x2D; /* - */
-var CHAR_COLON                = 0x3A; /* : */
-var CHAR_GREATER_THAN         = 0x3E; /* > */
-var CHAR_QUESTION             = 0x3F; /* ? */
-var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
-var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
-var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
-var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
-var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
-var CHAR_VERTICAL_LINE        = 0x7C; /* | */
-var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
-
-
-var ESCAPE_SEQUENCES = {};
-
-ESCAPE_SEQUENCES[0x00]   = '\\0';
-ESCAPE_SEQUENCES[0x07]   = '\\a';
-ESCAPE_SEQUENCES[0x08]   = '\\b';
-ESCAPE_SEQUENCES[0x09]   = '\\t';
-ESCAPE_SEQUENCES[0x0A]   = '\\n';
-ESCAPE_SEQUENCES[0x0B]   = '\\v';
-ESCAPE_SEQUENCES[0x0C]   = '\\f';
-ESCAPE_SEQUENCES[0x0D]   = '\\r';
-ESCAPE_SEQUENCES[0x1B]   = '\\e';
-ESCAPE_SEQUENCES[0x22]   = '\\"';
-ESCAPE_SEQUENCES[0x5C]   = '\\\\';
-ESCAPE_SEQUENCES[0x85]   = '\\N';
-ESCAPE_SEQUENCES[0xA0]   = '\\_';
-ESCAPE_SEQUENCES[0x2028] = '\\L';
-ESCAPE_SEQUENCES[0x2029] = '\\P';
-
-
-function kindOf(object) {
-  var kind = typeof object;
-
-  if (null === object) {
-    return 'null';
-  } else if ('number' === kind) {
-    return 0 === object % 1 ? 'integer' : 'float';
-  } else if ('object' === kind && Array.isArray(object)) {
-    return 'array';
-  } else {
-    return kind;
-  }
-}
-
-
-function compileStyleMap(schema, map) {
-  var result, keys, index, length, tag, style, type;
-
-  if (null === map) {
-    return {};
-  }
-
-  result = {};
-  keys = Object.keys(map);
-
-  for (index = 0, length = keys.length; index < length; index += 1) {
-    tag = keys[index];
-    style = String(map[tag]);
-
-    if ('!!' === tag.slice(0, 2)) {
-      tag = 'tag:yaml.org,2002:' + tag.slice(2);
-    }
-
-    type = schema.compiledTypeMap[tag];
-
-    if (type && type.dumper) {
-      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
-        style = type.dumper.styleAliases[style];
-      }
-    }
-
-    result[tag] = style;
-  }
-
-  return result;
-}
-
-
-function encodeHex(character) {
-  var string, handle, length;
-
-  string = character.toString(16).toUpperCase();
-
-  if (character <= 0xFF) {
-    handle = 'x';
-    length = 2;
-  } else if (character <= 0xFFFF) {
-    handle = 'u';
-    length = 4;
-  } else if (character <= 0xFFFFFFFF) {
-    handle = 'U';
-    length = 8;
-  } else {
-    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
-  }
-
-  return '\\' + handle + common.repeat('0', length - string.length) + string;
-}
-
-
-function dump(input, options) {
-  options = options || {};
-
-  var schema      = options['schema'] || DEFAULT_FULL_SCHEMA,
-      indent      = Math.max(1, (options['indent'] || 2)),
-      skipInvalid = options['skipInvalid'] || false,
-      flowLevel   = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
-      styleMap    = compileStyleMap(schema, options['styles'] || null),
-
-      implicitTypes = schema.compiledImplicit,
-      explicitTypes = schema.compiledExplicit,
-
-      kind,
-      tag,
-      result;
-
-  function generateNextLine(level) {
-    return '\n' + common.repeat(' ', indent * level);
-  }
-
-  function testImplicitResolving(object) {
-    var index, length, type;
-
-    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
-      type = implicitTypes[index];
-
-      if (null !== type.loader &&
-          NIL !== type.loader.resolver(object, false)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeScalar(object) {
-    var isQuoted, checkpoint, position, length, character, booleans;
-
-    result = '';
-    isQuoted = false;
-    checkpoint = 0;
-    booleans = /^(y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)$/;
-
-    if (0          === object.length ||
-        CHAR_SPACE === object.charCodeAt(0) ||
-        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
-      isQuoted = true;
-    }
-
-    for (position = 0, length = object.length; position < length; position += 1) {
-      character = object.charCodeAt(position);
-
-      if (!isQuoted) {
-        if (CHAR_TAB                  === character ||
-            CHAR_LINE_FEED            === character ||
-            CHAR_CARRIAGE_RETURN      === character ||
-            CHAR_COMMA                === character ||
-            CHAR_LEFT_SQUARE_BRACKET  === character ||
-            CHAR_RIGHT_SQUARE_BRACKET === character ||
-            CHAR_LEFT_CURLY_BRACKET   === character ||
-            CHAR_RIGHT_CURLY_BRACKET  === character ||
-            CHAR_SHARP                === character ||
-            CHAR_AMPERSAND            === character ||
-            CHAR_ASTERISK             === character ||
-            CHAR_EXCLAMATION          === character ||
-            CHAR_VERTICAL_LINE        === character ||
-            CHAR_GREATER_THAN         === character ||
-            CHAR_SINGLE_QUOTE         === character ||
-            CHAR_DOUBLE_QUOTE         === character ||
-            CHAR_PERCENT              === character ||
-            CHAR_COMMERCIAL_AT        === character ||
-            CHAR_GRAVE_ACCENT         === character ||
-            CHAR_QUESTION             === character ||
-            CHAR_COLON                === character ||
-            CHAR_MINUS                === character) {
-          isQuoted = true;
-        }
-      }
-
-      if (ESCAPE_SEQUENCES[character] ||
-          !((0x00020 <= character && character <= 0x00007E) ||
-            (0x00085 === character)                         ||
-            (0x000A0 <= character && character <= 0x00D7FF) ||
-            (0x0E000 <= character && character <= 0x00FFFD) ||
-            (0x10000 <= character && character <= 0x10FFFF))) {
-        result += object.slice(checkpoint, position);
-        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
-        checkpoint = position + 1;
-        isQuoted = true;
-      }
-    }
-
-    if (checkpoint < position) {
-      result += object.slice(checkpoint, position);
-    }
-
-    if (!isQuoted && testImplicitResolving(result)) {
-      isQuoted = true;
-    }
-
-    if (!isQuoted && booleans.test(object)) {
-      isQuoted = true;
-    }
-
-    if (isQuoted) {
-      result = '"' + result + '"';
-    }
-  }
-
-  function writeFlowSequence(level, object) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      // Write only valid elements.
-      if (writeNode(level, object[index], false, false)) {
-        if (0 !== index) {
-          _result += ', ';
-        }
-        _result += result;
-      }
-    }
-
-    tag = _tag;
-    result = '[' + _result + ']';
-  }
-
-  function writeBlockSequence(level, object, compact) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      // Write only valid elements.
-      if (writeNode(level + 1, object[index], true, true)) {
-        if (!compact || 0 !== index) {
-          _result += generateNextLine(level);
-        }
-        _result += '- ' + result;
-      }
-    }
-
-    tag = _tag;
-    result = _result || '[]'; // Empty sequence if no valid values.
-  }
-
-  function writeFlowMapping(level, object) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        pairBuffer;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      pairBuffer = '';
-
-      if (0 !== index) {
-        pairBuffer += ', ';
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      if (!writeNode(level, objectKey, false, false)) {
-        continue; // Skip this pair because of invalid key;
-      }
-
-      if (result.length > 1024) {
-        pairBuffer += '? ';
-      }
-
-      pairBuffer += result + ': ';
-
-      if (!writeNode(level, objectValue, false, false)) {
-        continue; // Skip this pair because of invalid value.
-      }
-
-      pairBuffer += result;
-
-      // Both key and value are valid.
-      _result += pairBuffer;
-    }
-
-    tag = _tag;
-    result = '{' + _result + '}';
-  }
-
-  function writeBlockMapping(level, object, compact) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        explicitPair,
-        pairBuffer;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      pairBuffer = '';
-
-      if (!compact || 0 !== index) {
-        pairBuffer += generateNextLine(level);
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      if (!writeNode(level + 1, objectKey, true, true)) {
-        continue; // Skip this pair because of invalid key.
-      }
-
-      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
-
-      if (explicitPair) {
-        pairBuffer += '? ';
-      }
-
-      pairBuffer += result;
-
-      if (explicitPair) {
-        pairBuffer += generateNextLine(level);
-      }
-
-      if (!writeNode(level + 1, objectValue, true, explicitPair)) {
-        continue; // Skip this pair because of invalid value.
-      }
-
-      pairBuffer += ': ' + result;
-
-      // Both key and value are valid.
-      _result += pairBuffer;
-    }
-
-    tag = _tag;
-    result = _result || '{}'; // Empty mapping if no valid pairs.
-  }
-
-  function detectType(object, explicit) {
-    var _result, typeList, index, length, type, style;
-
-    typeList = explicit ? explicitTypes : implicitTypes;
-    kind = kindOf(object);
-
-    for (index = 0, length = typeList.length; index < length; index += 1) {
-      type = typeList[index];
-
-      if ((null !== type.dumper) &&
-          (null === type.dumper.kind       || kind === type.dumper.kind) &&
-          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
-          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
-        tag = explicit ? type.tag : '?';
-
-        if (null !== type.dumper.representer) {
-          style = styleMap[type.tag] || type.dumper.defaultStyle;
-
-          if ('function' === typeof type.dumper.representer) {
-            _result = type.dumper.representer(object, style);
-          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
-            _result = type.dumper.representer[style](object, style);
-          } else {
-            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
-          }
-
-          if (NIL !== _result) {
-            kind = kindOf(_result);
-            result = _result;
-          } else {
-            if (explicit) {
-              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
-            } else {
-              continue;
-            }
-          }
-        }
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  // Serializes `object` and writes it to global `result`.
-  // Returns true on success, or false on invalid object.
-  //
-  function writeNode(level, object, block, compact) {
-    tag = null;
-    result = object;
-
-    if (!detectType(object, false)) {
-      detectType(object, true);
-    }
-
-    if (block) {
-      block = (0 > flowLevel || flowLevel > level);
-    }
-
-    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
-      compact = false;
-    }
-
-    if ('object' === kind) {
-      if (block && (0 !== Object.keys(result).length)) {
-        writeBlockMapping(level, result, compact);
-      } else {
-        writeFlowMapping(level, result);
-      }
-    } else if ('array' === kind) {
-      if (block && (0 !== result.length)) {
-        writeBlockSequence(level, result, compact);
-      } else {
-        writeFlowSequence(level, result);
-      }
-    } else if ('string' === kind) {
-      if ('?' !== tag) {
-        writeScalar(result);
-      }
-    } else if (skipInvalid) {
-      return false;
-    } else {
-      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
-    }
-
-    if (null !== tag && '?' !== tag) {
-      result = '!<' + tag + '> ' + result;
-    }
-    return true;
-  }
-
-  if (writeNode(0, input, true, true)) {
-    return result + '\n';
-  } else {
-    return '';
-  }
-}
-
-
-function safeDump(input, options) {
-  return dump(input, common.extend({ schema: DEFAULT_SAFE_SCHEMA }, options));
-}
-
-
-module.exports.dump     = dump;
-module.exports.safeDump = safeDump;
-
-})()
-},{"./common":35,"./exception":43,"./schema/default_full":42,"./schema/default_safe":41}],36:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":43}],37:[function(require,module,exports){
-'use strict';
-
-
-var common        = require('./common');
-var YAMLException = require('./exception');
-var Type          = require('./type');
-
-
-function compileList(schema, name, result) {
-  var exclude = [];
-
-  schema.include.forEach(function (includedSchema) {
-    result = compileList(includedSchema, name, result);
-  });
-
-  schema[name].forEach(function (currentType) {
-    result.forEach(function (previousType, previousIndex) {
-      if (previousType.tag === currentType.tag) {
-        exclude.push(previousIndex);
-      }
-    });
-
-    result.push(currentType);
-  });
-
-  return result.filter(function (type, index) {
-    return -1 === exclude.indexOf(index);
-  });
-}
-
-
-function compileMap(/* lists... */) {
-  var result = {}, index, length;
-
-  function collectType(type) {
-    result[type.tag] = type;
-  }
-
-  for (index = 0, length = arguments.length; index < length; index += 1) {
-    arguments[index].forEach(collectType);
-  }
-
-  return result;
-}
-
-
-function Schema(definition) {
-  this.include  = definition.include  || [];
-  this.implicit = definition.implicit || [];
-  this.explicit = definition.explicit || [];
-
-  this.implicit.forEach(function (type) {
-    if (null !== type.loader && 'string' !== type.loader.kind) {
-      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
-    }
-  });
-
-  this.compiledImplicit = compileList(this, 'implicit', []);
-  this.compiledExplicit = compileList(this, 'explicit', []);
-  this.compiledTypeMap  = compileMap(this.compiledImplicit, this.compiledExplicit);
-}
-
-
-Schema.DEFAULT = null;
-
-
-Schema.create = function createSchema() {
-  var schemas, types;
-
-  switch (arguments.length) {
-  case 1:
-    schemas = Schema.DEFAULT;
-    types = arguments[0];
-    break;
-
-  case 2:
-    schemas = arguments[0];
-    types = arguments[1];
-    break;
-
-  default:
-    throw new YAMLException('Wrong number of arguments for Schema.create function');
-  }
-
-  schemas = common.toArray(schemas);
-  types = common.toArray(types);
-
-  if (!schemas.every(function (schema) { return schema instanceof Schema; })) {
-    throw new YAMLException('Specified list of super schemas (or a single Schema object) contains a non-Schema object.');
-  }
-
-  if (!types.every(function (type) { return type instanceof Type; })) {
-    throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
-  }
-
-  return new Schema({
-    include: schemas,
-    explicit: types
-  });
-};
-
-
-module.exports = Schema;
-
-},{"./common":35,"./exception":43,"./type":36}],44:[function(require,module,exports){
-'use strict';
-
-
-var fs     = require('fs');
-var loader = require('./loader');
-
-
-function yamlRequireHandler(module, filename) {
-  var content = fs.readFileSync(filename, 'utf8');
-
-  // fill in documents
-  module.exports = loader.safeLoad(content, { filename: filename });
-}
-
-// register require extensions only if we're on node.js
-// hack for browserify
-if (undefined !== require.extensions) {
-  require.extensions['.yml']  = yamlRequireHandler;
-  require.extensions['.yaml'] = yamlRequireHandler;
-}
-
-
-module.exports = require;
-
-},{"fs":46,"./loader":33}],38:[function(require,module,exports){
-// Standard YAML's Failsafe schema.
-// http://www.yaml.org/spec/1.2/spec.html#id2802346
+},{"./common":36,"./exception":44,"./mark":46,"./schema/default_safe":42,"./schema/default_full":43}],41:[function(require,module,exports){
+// Standard YAML's Core schema.
+// http://www.yaml.org/spec/1.2/spec.html#id2804923
+//
+// NOTE: JS-YAML does not support schema-specific tag resolution restrictions.
+// So, Core schema has no distinctions from JSON schema is JS-YAML.
 
 
 'use strict';
@@ -32879,14 +32854,12 @@ var Schema = require('../schema');
 
 
 module.exports = new Schema({
-  explicit: [
-    require('../type/str'),
-    require('../type/seq'),
-    require('../type/map')
+  include: [
+    require('./json')
   ]
 });
 
-},{"../schema":37,"../type/str":48,"../type/seq":49,"../type/map":50}],39:[function(require,module,exports){
+},{"../schema":38,"./json":40}],40:[function(require,module,exports){
 // Standard YAML's JSON schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2803231
 //
@@ -32913,27 +32886,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":37,"./failsafe":38,"../type/null":51,"../type/bool":52,"../type/int":53,"../type/float":54}],40:[function(require,module,exports){
-// Standard YAML's Core schema.
-// http://www.yaml.org/spec/1.2/spec.html#id2804923
-//
-// NOTE: JS-YAML does not support schema-specific tag resolution restrictions.
-// So, Core schema has no distinctions from JSON schema is JS-YAML.
-
-
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  include: [
-    require('./json')
-  ]
-});
-
-},{"../schema":37,"./json":39}],41:[function(require,module,exports){
+},{"../schema":38,"./failsafe":39,"../type/null":47,"../type/bool":48,"../type/int":49,"../type/float":50}],42:[function(require,module,exports){
 // JS-YAML's default schema for `safeLoad` function.
 // It is not described in the YAML specification.
 //
@@ -32963,7 +32916,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":37,"./core":40,"../type/timestamp":55,"../type/merge":56,"../type/binary":57,"../type/omap":58,"../type/pairs":59,"../type/set":60}],42:[function(require,module,exports){
+},{"../schema":38,"./core":41,"../type/timestamp":51,"../type/merge":52,"../type/binary":53,"../type/omap":54,"../type/pairs":55,"../type/set":56}],43:[function(require,module,exports){
 // JS-YAML's default schema for `load` function.
 // It is not described in the YAML specification.
 //
@@ -32990,7 +32943,54 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"./default_safe":41,"../schema":37,"../type/js/undefined":61,"../type/js/regexp":62,"../type/js/function":63}],47:[function(require,module,exports){
+},{"../schema":38,"./default_safe":42,"../type/js/regexp":57,"../type/js/undefined":58,"../type/js/function":59}],39:[function(require,module,exports){
+// Standard YAML's Failsafe schema.
+// http://www.yaml.org/spec/1.2/spec.html#id2802346
+
+
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  explicit: [
+    require('../type/str'),
+    require('../type/seq'),
+    require('../type/map')
+  ]
+});
+
+},{"../schema":38,"../type/str":60,"../type/seq":61,"../type/map":62}],45:[function(require,module,exports){
+'use strict';
+
+
+var fs     = require('fs');
+var loader = require('./loader');
+
+
+function yamlRequireHandler(module, filename) {
+  var content = fs.readFileSync(filename, 'utf8');
+
+  // fill in documents
+  module.exports = loader.safeLoad(content, { filename: filename });
+}
+
+// register require extensions only if we're on node.js
+// hack for browserify
+if (undefined !== require.extensions) {
+  require.extensions['.yml']  = yamlRequireHandler;
+  require.extensions['.yaml'] = yamlRequireHandler;
+}
+
+
+module.exports = require;
+
+},{"fs":63,"./loader":34}],63:[function(require,module,exports){
+// nothing to see here... no file methods for the browser
+
+},{}],46:[function(require,module,exports){
 'use strict';
 
 
@@ -33070,7 +33070,891 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":35}],64:[function(require,module,exports){
+},{"./common":36}],47:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
+    }
+  }
+});
+
+},{"../common":36,"../type":37}],48:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
+},{"../common":36,"../type":37}],49:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":36,"../type":37}],50:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_FLOAT_PATTERN = new RegExp(
+  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
+  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
+  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
+  '|[-+]?\\.(?:inf|Inf|INF)' +
+  '|\\.(?:nan|NaN|NAN))$');
+
+
+function resolveYamlFloat(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_FLOAT_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '').toLowerCase();
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('.inf' === value) {
+    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+
+  } else if ('.nan' === value) {
+    return NaN;
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseFloat(v, 10));
+    });
+
+    value = 0.0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += d * base;
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseFloat(value, 10);
+  }
+}
+
+
+function representYamlFloat(object, style) {
+  if (isNaN(object)) {
+    switch (style) {
+    case 'lowercase':
+      return '.nan';
+    case 'uppercase':
+      return '.NAN';
+    case 'camelcase':
+      return '.NaN';
+    }
+  } else if (Number.POSITIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '.inf';
+    case 'uppercase':
+      return '.INF';
+    case 'camelcase':
+      return '.Inf';
+    }
+  } else if (Number.NEGATIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '-.inf';
+    case 'uppercase':
+      return '-.INF';
+    case 'camelcase':
+      return '-.Inf';
+    }
+  } else {
+    return object.toString(10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:float', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlFloat
+  },
+  dumper: {
+    kind: 'float',
+    defaultStyle: 'lowercase',
+    representer: representYamlFloat
+  }
+});
+
+},{"../common":36,"../type":37}],52:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
+},{"../common":36,"../type":37}],51:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_TIMESTAMP_REGEXP = new RegExp(
+  '^([0-9][0-9][0-9][0-9])'          + // [1] year
+  '-([0-9][0-9]?)'                   + // [2] month
+  '-([0-9][0-9]?)'                   + // [3] day
+  '(?:(?:[Tt]|[ \\t]+)'              + // ...
+  '([0-9][0-9]?)'                    + // [4] hour
+  ':([0-9][0-9])'                    + // [5] minute
+  ':([0-9][0-9])'                    + // [6] second
+  '(?:\\.([0-9]*))?'                 + // [7] fraction
+  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
+  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
+
+
+function resolveYamlTimestamp(object /*, explicit*/) {
+  var match, year, month, day, hour, minute, second, fraction = 0,
+      delta = null, tz_hour, tz_minute, data;
+
+  match = YAML_TIMESTAMP_REGEXP.exec(object);
+
+  if (null === match) {
+    return NIL;
+  }
+
+  // match: [1] year [2] month [3] day
+
+  year = +(match[1]);
+  month = +(match[2]) - 1; // JS month starts with 0
+  day = +(match[3]);
+
+  if (!match[4]) { // no hour
+    return new Date(Date.UTC(year, month, day));
+  }
+
+  // match: [4] hour [5] minute [6] second [7] fraction
+
+  hour = +(match[4]);
+  minute = +(match[5]);
+  second = +(match[6]);
+
+  if (match[7]) {
+    fraction = match[7].slice(0, 3);
+    while (fraction.length < 3) { // milli-seconds
+      fraction += '0';
+    }
+    fraction = +fraction;
+  }
+
+  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
+
+  if (match[9]) {
+    tz_hour = +(match[10]);
+    tz_minute = +(match[11] || 0);
+    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
+    if ('-' === match[9]) {
+      delta = -delta;
+    }
+  }
+
+  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
+
+  if (delta) {
+    data.setTime(data.getTime() - delta);
+  }
+
+  return data;
+}
+
+
+function representYamlTimestamp(object /*, style*/) {
+  return object.toISOString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:timestamp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlTimestamp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: Date,
+    representer: representYamlTimestamp
+  }
+});
+
+},{"../common":36,"../type":37}],56:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+function resolveYamlSet(object /*, explicit*/) {
+  var key;
+
+  for (key in object) {
+    if (_hasOwnProperty.call(object, key)) {
+      if (null !== object[key]) {
+        return NIL;
+      }
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:set', {
+  loader: {
+    kind: 'object',
+    resolver: resolveYamlSet
+  }
+});
+
+},{"../common":36,"../type":37}],54:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+
+function resolveYamlOmap(object /*, explicit*/) {
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) {
+          pairHasKey = true;
+        } else {
+          return NIL;
+        }
+      }
+    }
+
+    if (!pairHasKey) {
+      return NIL;
+    }
+
+    if (-1 === objectKeys.indexOf(pairKey)) {
+      objectKeys.push(pairKey);
+    } else {
+      return NIL;
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":36,"../type":37}],55:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
+  }
+});
+
+},{"../common":36,"../type":37}],60:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:str', {
+  loader: {
+    kind: 'string'
+  }
+});
+
+},{"../type":37}],53:[function(require,module,exports){
+(function(){// Modified from:
+// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
+
+'use strict';
+
+
+var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
+var common     = require('../common');
+var NIL        = common.NIL;
+var Type       = require('../type');
+
+
+
+var BASE64_PADDING = '=';
+
+var BASE64_BINTABLE = [
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
+  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
+];
+
+var BASE64_CHARTABLE =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+
+
+function resolveYamlBinary(object /*, explicit*/) {
+  var value, code, idx = 0, result = [], leftbits, leftdata;
+
+  leftbits = 0; // number of bits decoded, but yet to be appended
+  leftdata = 0; // bits decoded, but yet to be appended
+
+  // Convert one by one.
+  for (idx = 0; idx < object.length; idx += 1) {
+    code = object.charCodeAt(idx);
+    value = BASE64_BINTABLE[code & 0x7F];
+
+    // Skip LF(NL) || CR
+    if (0x0A !== code && 0x0D !== code) {
+      // Fail on illegal characters
+      if (-1 === value) {
+        return NIL;
+      }
+
+      // Collect data into leftdata, update bitcount
+      leftdata = (leftdata << 6) | value;
+      leftbits += 6;
+
+      // If we have 8 or more bits, append 8 bits to the result
+      if (leftbits >= 8) {
+        leftbits -= 8;
+
+        // Append if not padding.
+        if (BASE64_PADDING !== object.charAt(idx)) {
+          result.push((leftdata >> leftbits) & 0xFF);
+        }
+
+        leftdata &= (1 << leftbits) - 1;
+      }
+    }
+  }
+
+  // If there are any bits left, the base64 string was corrupted
+  if (leftbits) {
+    return NIL;
+  } else {
+    return new NodeBuffer(result);
+  }
+}
+
+
+function representYamlBinary(object /*, style*/) {
+  var result = '', index, length, rest;
+
+  // Convert every three bytes to 4 ASCII characters.
+  for (index = 0, length = object.length - 2; index < length; index += 3) {
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
+    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
+  }
+
+  rest = object.length % 3;
+
+  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
+  if (0 !== rest) {
+    index = object.length - rest;
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+
+    if (2 === rest) {
+      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
+      result += BASE64_PADDING;
+    } else {
+      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
+      result += BASE64_PADDING + BASE64_PADDING;
+    }
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:binary', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBinary
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: NodeBuffer,
+    representer: representYamlBinary
+  }
+});
+
+})()
+},{"buffer":64,"../common":36,"../type":37}],62:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:map', {
+  loader: {
+    kind: 'object'
+  }
+});
+
+},{"../type":37}],61:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:seq', {
+  loader: {
+    kind: 'array'
+  }
+});
+
+},{"../type":37}],57:[function(require,module,exports){
+(function(){'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptRegExp(object /*, explicit*/) {
+  var regexp = object,
+      tail   = /\/([gim]*)$/.exec(object),
+      modifiers;
+
+  // `/foo/gim` - tail can be maximum 4 chars
+  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
+    regexp = regexp.slice(1, regexp.length - tail[0].length);
+    modifiers = tail[1];
+  }
+
+  try {
+    return new RegExp(regexp, modifiers);
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptRegExp(object /*, style*/) {
+  var result = '/' + object.source + '/';
+
+  if (object.global) {
+    result += 'g';
+  }
+
+  if (object.multiline) {
+    result += 'm';
+  }
+
+  if (object.ignoreCase) {
+    result += 'i';
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/regexp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptRegExp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: RegExp,
+    representer: representJavascriptRegExp
+  }
+});
+
+})()
+},{"../../common":36,"../../type":37}],58:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../../type');
+
+
+function resolveJavascriptUndefined(/*object, explicit*/) {
+  var undef;
+
+  return undef;
+}
+
+
+function representJavascriptUndefined(/*object, explicit*/) {
+  return '';
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/undefined', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptUndefined
+  },
+  dumper: {
+    kind: 'undefined',
+    representer: representJavascriptUndefined
+  }
+});
+
+},{"../../type":37}],65:[function(require,module,exports){
+exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
+  var e, m,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      nBits = -7,
+      i = isBE ? 0 : (nBytes - 1),
+      d = isBE ? 1 : -1,
+      s = buffer[offset + i];
+
+  i += d;
+
+  e = s & ((1 << (-nBits)) - 1);
+  s >>= (-nBits);
+  nBits += eLen;
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+  m = e & ((1 << (-nBits)) - 1);
+  e >>= (-nBits);
+  nBits += mLen;
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+  if (e === 0) {
+    e = 1 - eBias;
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity);
+  } else {
+    m = m + Math.pow(2, mLen);
+    e = e - eBias;
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
+};
+
+exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
+  var e, m, c,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
+      i = isBE ? (nBytes - 1) : 0,
+      d = isBE ? -1 : 1,
+      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+
+  value = Math.abs(value);
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0;
+    e = eMax;
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2);
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--;
+      c *= 2;
+    }
+    if (e + eBias >= 1) {
+      value += rt / c;
+    } else {
+      value += rt * Math.pow(2, 1 - eBias);
+    }
+    if (value * c >= 2) {
+      e++;
+      c /= 2;
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0;
+      e = eMax;
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen);
+      e = e + eBias;
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+      e = 0;
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
+
+  e = (e << mLen) | m;
+  eLen += mLen;
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
+
+  buffer[offset + i - d] |= s * 128;
+};
+
+},{}],66:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -33387,805 +34271,151 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":65,"buffer":66}],48:[function(require,module,exports){
+},{"util":67,"buffer":64}],59:[function(require,module,exports){
 'use strict';
 
 
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:str', {
-  loader: {
-    kind: 'string'
-  }
-});
-
-},{"../type":36}],49:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:seq', {
-  loader: {
-    kind: 'array'
-  }
-});
-
-},{"../type":36}],50:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:map', {
-  loader: {
-    kind: 'object'
-  }
-});
-
-},{"../type":36}],51:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
-};
-
-
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
-    }
-  }
-});
-
-},{"../common":35,"../type":36}],52:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
-  }
-});
-
-},{"../common":35,"../type":36}],53:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":35,"../type":36}],54:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
-  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
-  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  '|\\.(?:nan|NaN|NAN))$');
-
-
-function resolveYamlFloat(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_FLOAT_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '').toLowerCase();
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('.inf' === value) {
-    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if ('.nan' === value) {
-    return NaN;
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseFloat(v, 10));
-    });
-
-    value = 0.0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += d * base;
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseFloat(value, 10);
-  }
-}
-
-
-function representYamlFloat(object, style) {
-  if (isNaN(object)) {
-    switch (style) {
-    case 'lowercase':
-      return '.nan';
-    case 'uppercase':
-      return '.NAN';
-    case 'camelcase':
-      return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '.inf';
-    case 'uppercase':
-      return '.INF';
-    case 'camelcase':
-      return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '-.inf';
-    case 'uppercase':
-      return '-.INF';
-    case 'camelcase':
-      return '-.Inf';
-    }
-  } else {
-    return object.toString(10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlFloat
-  },
-  dumper: {
-    kind: 'float',
-    defaultStyle: 'lowercase',
-    representer: representYamlFloat
-  }
-});
-
-},{"../common":35,"../type":36}],55:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_TIMESTAMP_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9]?)'                   + // [2] month
-  '-([0-9][0-9]?)'                   + // [3] day
-  '(?:(?:[Tt]|[ \\t]+)'              + // ...
-  '([0-9][0-9]?)'                    + // [4] hour
-  ':([0-9][0-9])'                    + // [5] minute
-  ':([0-9][0-9])'                    + // [6] second
-  '(?:\\.([0-9]*))?'                 + // [7] fraction
-  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
-  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
-
-
-function resolveYamlTimestamp(object /*, explicit*/) {
-  var match, year, month, day, hour, minute, second, fraction = 0,
-      delta = null, tz_hour, tz_minute, data;
-
-  match = YAML_TIMESTAMP_REGEXP.exec(object);
-
-  if (null === match) {
-    return NIL;
-  }
-
-  // match: [1] year [2] month [3] day
-
-  year = +(match[1]);
-  month = +(match[2]) - 1; // JS month starts with 0
-  day = +(match[3]);
-
-  if (!match[4]) { // no hour
-    return new Date(Date.UTC(year, month, day));
-  }
-
-  // match: [4] hour [5] minute [6] second [7] fraction
-
-  hour = +(match[4]);
-  minute = +(match[5]);
-  second = +(match[6]);
-
-  if (match[7]) {
-    fraction = match[7].slice(0, 3);
-    while (fraction.length < 3) { // milli-seconds
-      fraction += '0';
-    }
-    fraction = +fraction;
-  }
-
-  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
-
-  if (match[9]) {
-    tz_hour = +(match[10]);
-    tz_minute = +(match[11] || 0);
-    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-    if ('-' === match[9]) {
-      delta = -delta;
-    }
-  }
-
-  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
-
-  if (delta) {
-    data.setTime(data.getTime() - delta);
-  }
-
-  return data;
-}
-
-
-function representYamlTimestamp(object /*, style*/) {
-  return object.toISOString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:timestamp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlTimestamp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: Date,
-    representer: representYamlTimestamp
-  }
-});
-
-},{"../common":35,"../type":36}],56:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":35,"../type":36}],57:[function(require,module,exports){
-(function(){// Modified from:
-// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
-
-'use strict';
-
-
-var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
-var common     = require('../common');
-var NIL        = common.NIL;
-var Type       = require('../type');
-
-
-
-var BASE64_PADDING = '=';
-
-var BASE64_BINTABLE = [
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
-  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
-];
-
-var BASE64_CHARTABLE =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
-
-
-function resolveYamlBinary(object /*, explicit*/) {
-  var value, code, idx = 0, result = [], leftbits, leftdata;
-
-  leftbits = 0; // number of bits decoded, but yet to be appended
-  leftdata = 0; // bits decoded, but yet to be appended
-
-  // Convert one by one.
-  for (idx = 0; idx < object.length; idx += 1) {
-    code = object.charCodeAt(idx);
-    value = BASE64_BINTABLE[code & 0x7F];
-
-    // Skip LF(NL) || CR
-    if (0x0A !== code && 0x0D !== code) {
-      // Fail on illegal characters
-      if (-1 === value) {
-        return NIL;
-      }
-
-      // Collect data into leftdata, update bitcount
-      leftdata = (leftdata << 6) | value;
-      leftbits += 6;
-
-      // If we have 8 or more bits, append 8 bits to the result
-      if (leftbits >= 8) {
-        leftbits -= 8;
-
-        // Append if not padding.
-        if (BASE64_PADDING !== object.charAt(idx)) {
-          result.push((leftdata >> leftbits) & 0xFF);
-        }
-
-        leftdata &= (1 << leftbits) - 1;
-      }
-    }
-  }
-
-  // If there are any bits left, the base64 string was corrupted
-  if (leftbits) {
-    return NIL;
-  } else {
-    return new NodeBuffer(result);
-  }
-}
-
-
-function representYamlBinary(object /*, style*/) {
-  var result = '', index, length, rest;
-
-  // Convert every three bytes to 4 ASCII characters.
-  for (index = 0, length = object.length - 2; index < length; index += 3) {
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
-    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
-  }
-
-  rest = object.length % 3;
-
-  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
-  if (0 !== rest) {
-    index = object.length - rest;
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-
-    if (2 === rest) {
-      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
-      result += BASE64_PADDING;
-    } else {
-      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
-      result += BASE64_PADDING + BASE64_PADDING;
-    }
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:binary', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBinary
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: NodeBuffer,
-    representer: representYamlBinary
-  }
-});
-
-})()
-},{"buffer":66,"../common":35,"../type":36}],58:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-
-function resolveYamlOmap(object /*, explicit*/) {
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) {
-          pairHasKey = true;
-        } else {
-          return NIL;
-        }
-      }
-    }
-
-    if (!pairHasKey) {
-      return NIL;
-    }
-
-    if (-1 === objectKeys.indexOf(pairKey)) {
-      objectKeys.push(pairKey);
-    } else {
-      return NIL;
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlOmap
-  }
-});
-
-},{"../common":35,"../type":36}],59:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
-  }
-});
-
-},{"../common":35,"../type":36}],60:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-function resolveYamlSet(object /*, explicit*/) {
-  var key;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (null !== object[key]) {
-        return NIL;
-      }
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  loader: {
-    kind: 'object',
-    resolver: resolveYamlSet
-  }
-});
-
-},{"../common":35,"../type":36}],61:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../../type');
-
-
-function resolveJavascriptUndefined(/*object, explicit*/) {
-  var undef;
-
-  return undef;
-}
-
-
-function representJavascriptUndefined(/*object, explicit*/) {
-  return '';
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/undefined', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptUndefined
-  },
-  dumper: {
-    kind: 'undefined',
-    representer: representJavascriptUndefined
-  }
-});
-
-},{"../../type":36}],62:[function(require,module,exports){
-(function(){'use strict';
+var esprima = require('esprima');
 
 
 var NIL  = require('../../common').NIL;
 var Type = require('../../type');
 
 
-function resolveJavascriptRegExp(object /*, explicit*/) {
-  var regexp = object,
-      tail   = /\/([gim]*)$/.exec(object),
-      modifiers;
-
-  // `/foo/gim` - tail can be maximum 4 chars
-  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
-    regexp = regexp.slice(1, regexp.length - tail[0].length);
-    modifiers = tail[1];
-  }
+function resolveJavascriptFunction(object /*, explicit*/) {
+  /*jslint evil:true*/
 
   try {
-    return new RegExp(regexp, modifiers);
-  } catch (error) {
+    var source = '(' + object + ')',
+        ast    = esprima.parse(source, { range: true }),
+        params = [],
+        body;
+
+    if ('Program'             !== ast.type         ||
+        1                     !== ast.body.length  ||
+        'ExpressionStatement' !== ast.body[0].type ||
+        'FunctionExpression'  !== ast.body[0].expression.type) {
+      return NIL;
+    }
+
+    ast.body[0].expression.params.forEach(function (param) {
+      params.push(param.name);
+    });
+
+    body = ast.body[0].expression.body.range;
+
+    // Esprima's ranges include the first '{' and the last '}' characters on
+    // function expressions. So cut them out.
+    return new Function(params, source.slice(body[0]+1, body[1]-1));
+  } catch (err) {
     return NIL;
   }
 }
 
 
-function representJavascriptRegExp(object /*, style*/) {
-  var result = '/' + object.source + '/';
-
-  if (object.global) {
-    result += 'g';
-  }
-
-  if (object.multiline) {
-    result += 'm';
-  }
-
-  if (object.ignoreCase) {
-    result += 'i';
-  }
-
-  return result;
+function representJavascriptFunction(object /*, style*/) {
+  return object.toString();
 }
 
 
-module.exports = new Type('tag:yaml.org,2002:js/regexp', {
+module.exports = new Type('tag:yaml.org,2002:js/function', {
   loader: {
     kind: 'string',
-    resolver: resolveJavascriptRegExp
+    resolver: resolveJavascriptFunction
   },
   dumper: {
-    kind: 'object',
-    instanceOf: RegExp,
-    representer: representJavascriptRegExp
+    kind: 'function',
+    representer: representJavascriptFunction,
   }
 });
 
-})()
-},{"../../common":35,"../../type":36}],65:[function(require,module,exports){
+},{"../../common":36,"../../type":37,"esprima":68}],69:[function(require,module,exports){
+(function (exports) {
+	'use strict';
+
+	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+	function b64ToByteArray(b64) {
+		var i, j, l, tmp, placeHolders, arr;
+	
+		if (b64.length % 4 > 0) {
+			throw 'Invalid string. Length must be a multiple of 4';
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		placeHolders = b64.indexOf('=');
+		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length;
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
+			arr.push((tmp & 0xFF0000) >> 16);
+			arr.push((tmp & 0xFF00) >> 8);
+			arr.push(tmp & 0xFF);
+		}
+
+		if (placeHolders === 2) {
+			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
+			arr.push(tmp & 0xFF);
+		} else if (placeHolders === 1) {
+			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
+			arr.push((tmp >> 8) & 0xFF);
+			arr.push(tmp & 0xFF);
+		}
+
+		return arr;
+	}
+
+	function uint8ToBase64(uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length;
+
+		function tripletToBase64 (num) {
+			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+		};
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+			output += tripletToBase64(temp);
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1];
+				output += lookup[temp >> 2];
+				output += lookup[(temp << 4) & 0x3F];
+				output += '==';
+				break;
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
+				output += lookup[temp >> 10];
+				output += lookup[(temp >> 4) & 0x3F];
+				output += lookup[(temp << 2) & 0x3F];
+				output += '=';
+				break;
+		}
+
+		return output;
+	}
+
+	module.exports.toByteArray = b64ToByteArray;
+	module.exports.fromByteArray = uint8ToBase64;
+}());
+
+},{}],67:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -34538,333 +34768,7 @@ exports.format = function(f) {
   return str;
 };
 
-},{"events":67}],68:[function(require,module,exports){
-exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
-  var e, m,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      nBits = -7,
-      i = isBE ? 0 : (nBytes - 1),
-      d = isBE ? 1 : -1,
-      s = buffer[offset + i];
-
-  i += d;
-
-  e = s & ((1 << (-nBits)) - 1);
-  s >>= (-nBits);
-  nBits += eLen;
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-  m = e & ((1 << (-nBits)) - 1);
-  e >>= (-nBits);
-  nBits += mLen;
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-  if (e === 0) {
-    e = 1 - eBias;
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity);
-  } else {
-    m = m + Math.pow(2, mLen);
-    e = e - eBias;
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-};
-
-exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
-  var e, m, c,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
-      i = isBE ? (nBytes - 1) : 0,
-      d = isBE ? -1 : 1,
-      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
-
-  value = Math.abs(value);
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0;
-    e = eMax;
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2);
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--;
-      c *= 2;
-    }
-    if (e + eBias >= 1) {
-      value += rt / c;
-    } else {
-      value += rt * Math.pow(2, 1 - eBias);
-    }
-    if (value * c >= 2) {
-      e++;
-      c /= 2;
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0;
-      e = eMax;
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen);
-      e = e + eBias;
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-      e = 0;
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
-
-  e = (e << mLen) | m;
-  eLen += mLen;
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
-
-  buffer[offset + i - d] |= s * 128;
-};
-
-},{}],69:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],67:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
-
-var EventEmitter = exports.EventEmitter = process.EventEmitter;
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
-
-// By default EventEmitters will print a warning if more than
-// 10 listeners are added to it. This is a useful default which
-// helps finding memory leaks.
-//
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-var defaultMaxListeners = 10;
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!this._events) this._events = {};
-  this._events.maxListeners = n;
-};
-
-
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
-      return false;
-    }
-  }
-
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
-
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-    return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
-    return false;
-  }
-};
-
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
-  }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-
-    // Check for listener leak
-    if (!this._events[type].warned) {
-      var m;
-      if (this._events.maxListeners !== undefined) {
-        m = this._events.maxListeners;
-      } else {
-        m = defaultMaxListeners;
-      }
-
-      if (m && m > 0 && this._events[type].length > m) {
-        this._events[type].warned = true;
-        console.error('(node) warning: possible EventEmitter memory ' +
-                      'leak detected. %d listeners added. ' +
-                      'Use emitter.setMaxListeners() to increase limit.',
-                      this._events[type].length);
-        console.trace();
-      }
-    }
-
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
-};
-
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
-
-})(require("__browserify_process"))
-},{"__browserify_process":69}],66:[function(require,module,exports){
+},{"events":70}],64:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -36184,151 +36088,247 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":64,"./buffer_ieee754":68,"base64-js":70}],70:[function(require,module,exports){
-(function (exports) {
-	'use strict';
+},{"assert":66,"./buffer_ieee754":65,"base64-js":69}],71:[function(require,module,exports){
+// shim for using process in browser
 
-	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+var process = module.exports = {};
 
-	function b64ToByteArray(b64) {
-		var i, j, l, tmp, placeHolders, arr;
-	
-		if (b64.length % 4 > 0) {
-			throw 'Invalid string. Length must be a multiple of 4';
-		}
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
 
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		placeHolders = b64.indexOf('=');
-		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length;
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
-			arr.push((tmp & 0xFF0000) >> 16);
-			arr.push((tmp & 0xFF00) >> 8);
-			arr.push(tmp & 0xFF);
-		}
-
-		if (placeHolders === 2) {
-			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
-			arr.push(tmp & 0xFF);
-		} else if (placeHolders === 1) {
-			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
-			arr.push((tmp >> 8) & 0xFF);
-			arr.push(tmp & 0xFF);
-		}
-
-		return arr;
-	}
-
-	function uint8ToBase64(uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length;
-
-		function tripletToBase64 (num) {
-			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
-		};
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
-			output += tripletToBase64(temp);
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1];
-				output += lookup[temp >> 2];
-				output += lookup[(temp << 4) & 0x3F];
-				output += '==';
-				break;
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
-				output += lookup[temp >> 10];
-				output += lookup[(temp >> 4) & 0x3F];
-				output += lookup[(temp << 2) & 0x3F];
-				output += '=';
-				break;
-		}
-
-		return output;
-	}
-
-	module.exports.toByteArray = b64ToByteArray;
-	module.exports.fromByteArray = uint8ToBase64;
-}());
-
-},{}],63:[function(require,module,exports){
-'use strict';
-
-
-var esprima = require('esprima');
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptFunction(object /*, explicit*/) {
-  /*jslint evil:true*/
-
-  try {
-    var source = '(' + object + ')',
-        ast    = esprima.parse(source, { range: true }),
-        params = [],
-        body;
-
-    if ('Program'             !== ast.type         ||
-        1                     !== ast.body.length  ||
-        'ExpressionStatement' !== ast.body[0].type ||
-        'FunctionExpression'  !== ast.body[0].expression.type) {
-      return NIL;
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
     }
 
-    ast.body[0].expression.params.forEach(function (param) {
-      params.push(param.name);
-    });
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
 
-    body = ast.body[0].expression.body.range;
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
 
-    // Esprima's ranges include the first '{' and the last '}' characters on
-    // function expressions. So cut them out.
-    return new Function(params, source.slice(body[0]+1, body[1]-1));
-  } catch (err) {
-    return NIL;
-  }
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
 }
 
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
 
-function representJavascriptFunction(object /*, style*/) {
-  return object.toString();
+},{}],70:[function(require,module,exports){
+(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
 }
 
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
+//
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
+};
 
-module.exports = new Type('tag:yaml.org,2002:js/function', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptFunction
-  },
-  dumper: {
-    kind: 'function',
-    representer: representJavascriptFunction,
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
+    }
   }
-});
 
-},{"../../common":35,"../../type":36,"esprima":71}],71:[function(require,module,exports){
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
+
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
+
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
+
+  } else {
+    return false;
+  }
+};
+
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
+
+  if (!this._events) this._events = {};
+
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
+
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
+
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
+
+  return this;
+};
+
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
+};
+
+})(require("__browserify_process"))
+},{"__browserify_process":71}],68:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -40239,5 +40239,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}]},{},[5])
+},{}]},{},[9])
 ;
