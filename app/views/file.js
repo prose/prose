@@ -25,8 +25,11 @@ module.exports = Backbone.View.extend({
   subviews: [],
 
   events: {
-    'change #upload': 'fileInput'
+    'click .meta .finish': 'backToMode'
   },
+
+  // TODO
+  backToMode: function() { },
 
   initialize: function(options) {
     _.bindAll(this);
@@ -305,7 +308,7 @@ module.exports = Backbone.View.extend({
         var parts = (image).exec(r);
 
         if (parts !== null) {
-          var path = parts[2];
+          path = parts[2];
 
           if (!util.absolutePath(path)) {
             // Remove any title attribute in the image tag is there is one.
@@ -313,7 +316,7 @@ module.exports = Backbone.View.extend({
               path = path.split(titleAttribute)[0];
             }
 
-            var path = this.model.get('path');
+            path = this.model.get('path');
             var raw = auth.raw + '/' + this.repo.get('owner').login + '/' + this.repo.get('name') + '/' + this.branch + '/' + (path ? path  + '/' : '') + this.model.get('name');
 
             if (this.repo.get('private')) {
@@ -387,11 +390,14 @@ module.exports = Backbone.View.extend({
     this.toolbar = new ToolbarView({
       view: this,
       file: this.model,
+      collection: this.collection,
       config: this.config
     });
 
     this.subviews.push(this.toolbar);
     this.toolbar.setElement(this.$el.find('#toolbar')).render();
+
+    this.listenTo(this.toolbar, 'updateImageInsert', this.updateImageInsert);
   },
 
   initHeading: function() {
@@ -854,24 +860,8 @@ module.exports = Backbone.View.extend({
     return false;
   },
 
-  fileInput: function(e) {
-    var view = this;
-    upload.fileSelect(e, function(e, file, content) {
-      view.updateImageInsert(e, file, content);
-    });
-
-    return false;
-  },
-
   updateImageInsert: function(e, file, content) {
-    var view = this;
-    var path = (this.assetsDirectory) ? this.assetsDirectory : this.model.path;
-
-    var src = path + '/' + encodeURIComponent(file.name);
-    $('input[name="url"]').val(src);
-    $('input[name="alt"]').val('');
-
-    view.queue = {
+    this.queue = {
       e: e,
       file: file,
       content: content
