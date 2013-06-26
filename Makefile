@@ -62,7 +62,6 @@ APPLICATION = \
 	app/views/notification.js \
 	app/views/preview.js \
 	app/views/profile.js \
-	app/views/repo-options.js \
 	app/views/repo.js \
 	app/views/repos.js \
 	app/views/search.js \
