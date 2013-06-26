@@ -90,7 +90,7 @@
             "edit": "Editează"
         },
         "new": {
-            "body": "## Articol nou\\n\\nIntroduceți textul în format [Markdown](http://daringfireball.net/projects/markdown/). Folosiți meniul de unelte sau apăsați butonul **?** pentru instrucțiuni de formatare.\n"
+            "body": "## Articol nou\n\nIntroduceți textul în format [Markdown](http://daringfireball.net/projects/markdown/). Folosiți meniul de unelte sau apăsați butonul **?** pentru instrucțiuni de formatare.\n"
         },
         "file": {
             "metaTitle": "Revizuie schimbările",

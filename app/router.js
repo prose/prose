@@ -166,6 +166,7 @@ module.exports = Backbone.Router.extend({
         break;
       case 'new':
         this.post(login, repoName, url.mode, url.branch, url.path);
+        break;
       case 'blob':
       case 'edit':
         parts = util.extractFilename(url.path);
@@ -211,12 +212,13 @@ module.exports = Backbone.Router.extend({
       user.repos.add(repo);
     }
 
-    var content = {
+    var file = {
       branch: branch,
       branches: repo.branches,
       mode: mode,
       nav: this.app.nav,
-      path: (path ? path + '/' : '') + filename,
+      name: filename,
+      path: path,
       repo: repo,
       router: this,
       sidebar: this.app.sidebar
@@ -229,14 +231,15 @@ module.exports = Backbone.Router.extend({
         repo.fetch({
           success: (function(model, res, options) {
             if (mode === 'new') {
-              content.model = new File({
+              file.model = new File({
                 branch: branch,
                 collection: repo.files,
+                path: path,
                 repo: repo
               });
             }
 
-            this.view = new FileView(content);
+            this.view = new FileView(file);
             this.app.$el.find('#main').html(this.view.el);
 
             util.loader.loaded();

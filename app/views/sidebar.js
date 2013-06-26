@@ -62,19 +62,6 @@ module.exports = Backbone.View.extend({
     this.$el.toggleClass('open mobile', false);
   },
 
-  closeSettings: function() {
-    this.$el.find('.file a').removeClass('active');
-
-    if (app.state.mode === 'blob') {
-      this.$el.find('.file .preview').addClass('active');
-    } else {
-      this.$el.find('.file .edit').addClass('active');
-    }
-
-    $('#prose').toggleClass('open mobile', false);
-  },
-
-
   toggle: function() {
     this.$el.toggleClass('open mobile');
   },
