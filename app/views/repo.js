@@ -5,7 +5,7 @@ var BranchesView = require('./sidebar/branches');
 var FilesView = require('./files');
 var HeaderView = require('./header');
 var SearchView = require('./search');
-var utils = require('.././util');
+var util = require('.././util');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
@@ -25,11 +25,14 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
+    // TODO: load _config.yml, set parsed value on Repo model
     this.$el.html(this.template({
       owner: this.model.get('owner'),
       repo: this.model.get('name'),
       branch: this.branch,
-      path: this.path
+      path: this.path,
+      jailed: '',
+      util: util
     }));
 
     var header = new HeaderView({
@@ -66,7 +69,7 @@ module.exports = Backbone.View.extend({
 
     this.branches.fetch();
 
-    utils.fixedScroll(this.$el.find('.topbar'));
+    util.fixedScroll(this.$el.find('.topbar'));
 
     return this;
   },

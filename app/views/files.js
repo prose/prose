@@ -29,13 +29,17 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    var collection = this.search ? this.search.search() : this.model.filter((function(file) {
-      return file.get('path').indexOf(this.path) > -1;
+    var search = this.search && this.search.input && this.search.input.val();
+
+    // if not searching, filter to only show current level
+    var collection = search ? this.search.search() : this.model.filter((function(file) {
+      var path = this.path ? this.path + '/' : '';
+      var regex = new RegExp('^' + path + '[^\/]*$');
+      return file.get('path').match(regex);
     }).bind(this));
     
     var frag = document.createDocumentFragment();
 
-    // TODO: filter to only show current level
     collection.each((function(file, index) {
       var view;
 

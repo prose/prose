@@ -16,7 +16,7 @@
       <% if (path.length && path !== jailed) { %>
         <div class='breadcrumb'>
           <a class='branch' href='#<%= [owner.login, repo, "tree", branch].join("/") %>'>..</a>
-          <% _.each(_.chunkedPath(path), function(p) { %>
+          <% _.each(util.chunkedPath(path), function(p) { %>
             <% if (p.name !== jailed) { %>
               <span class='slash'>/</span>
               <a class='path' href='#<%= [owner.login, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
