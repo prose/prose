@@ -4,7 +4,7 @@ var Backbone = require('backbone');
 var templates = require('../../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.li.file),
+  template: _.template(templates.li.folder),
 
   tagName: 'li',
 
@@ -19,11 +19,9 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    if (!this.model.get('binary')) {
-      this.$el.data('navigate', '#' + this.repo.get('owner').login + '/' +
-        this.repo.get('name') + '/edit/' + this.branch + '/' +
-        this.model.get('path'));
-    }
+    this.$el.data('navigate', '#' + this.repo.get('owner').login + '/' +
+      this.repo.get('name') + '/tree/' + this.branch + '/' +
+      this.model.get('path'));
 
     this.$el.html(this.template(_.extend(this.model.attributes, {
       branch: this.branch,

@@ -48,6 +48,7 @@ APPLICATION = \
 	app/models/branch.js \
 	app/models/commit.js \
 	app/models/file.js \
+	app/models/folder.js \
 	app/models/org.js \
 	app/models/repo.js \
 	app/models/state.js \
@@ -67,6 +68,7 @@ APPLICATION = \
 	app/views/search.js \
 	app/views/start.js \
 	app/views/li/file.js \
+	app/views/li/folder.js \
 	app/views/li/repo.js \
 	app/views/sidebar/branch.js \
 	app/views/sidebar/branches.js \

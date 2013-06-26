@@ -1,7 +1,10 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var File = require('../models/file');
+var Folder = require('../models/folder');
 var FileView = require('./li/file');
+var FolderView = require('./li/folder');
 
 module.exports = Backbone.View.extend({
   subviews: [],
@@ -32,12 +35,23 @@ module.exports = Backbone.View.extend({
     
     var frag = document.createDocumentFragment();
 
+    // TODO: filter to only show current level
     collection.each((function(file, index) {
-      var view = new FileView({
-        model: file,
-        repo: this.repo,
-        branch: this.branch
-      });
+      var view;
+
+      if (file instanceof File) {
+        view = new FileView({
+          model: file,
+          repo: this.repo,
+          branch: this.branch
+        });
+      } else if (file instanceof Folder) {
+        view = new FolderView({
+          model: file,
+          repo: this.repo,
+          branch: this.branch
+        });
+      }
 
       frag.appendChild(view.render().el);
       this.subviews.push(view);

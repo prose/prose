@@ -1,9 +1,22 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var File = require('../models/file');
+var Folder = require('../models/folder');
 
 module.exports = Backbone.Collection.extend({
-  model: File,
+  model: function(attributes, options) {
+    switch(attributes.type) {
+      case 'blob':
+        return new File(attributes, options);
+        break;
+      case 'tree':
+        return new Folder(attributes, options);
+        break;
+      default:
+        throw 'Unrecognized Type';
+        break;
+    }
+  },
 
   initialize: function(models, options) {
     this.repo = options.repo;
