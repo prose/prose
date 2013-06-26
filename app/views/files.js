@@ -5,8 +5,11 @@ var File = require('../models/file');
 var Folder = require('../models/folder');
 var FileView = require('./li/file');
 var FolderView = require('./li/folder');
+var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
+  template: _.template(templates.files),
+
   subviews: [],
 
   initialize: function(options) {
@@ -43,7 +46,12 @@ module.exports = Backbone.View.extend({
       return file.get('path').match(regex);
     }).bind(this));
     
-    var frag = document.createDocumentFragment();
+    var frag = {
+      tree: document.createDocumentFragment(),
+      blob: document.createDocumentFragment()
+    };
+
+    this.$el.html(this.template());
 
     collection.each((function(file, index) {
       var view;
@@ -62,11 +70,12 @@ module.exports = Backbone.View.extend({
         });
       }
 
-      frag.appendChild(view.render().el);
+      frag[file.get('type')].appendChild(view.render().el);
       this.subviews.push(view);
     }).bind(this));
 
-    this.$el.html(frag);
+    this.$el.find('.folders').html(frag.tree);
+    this.$el.find('.files').html(frag.blob);
 
     return this;
   },

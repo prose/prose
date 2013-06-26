@@ -23,9 +23,7 @@ module.exports = Backbone.Collection.extend({
     this.branch = options.branch;
     this.sha = options.sha;
 
-    this.comparator = function(file) {
-      return file.get('name');
-    };
+    this.comparator = 'name';
   },
 
   parse: function(resp, options) {
