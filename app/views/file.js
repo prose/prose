@@ -78,7 +78,7 @@ module.exports = Backbone.View.extend({
 
     // Prevent exit when there are unsaved changes
     this.listenTo($window, 'beforeunload', function() {
-      if (this.dirty) return 'You have unsaved changes. Are you sure you want to leave?';
+      if (this.dirty) return t('actions.unsaved');
     }, this);
   },
 
@@ -436,7 +436,7 @@ module.exports = Backbone.View.extend({
   },
 
   updateDocumentTitle: function() {
-    var context = (this.mode === 'blob' ? 'Previewing ' : 'Editing ');
+    var context = (this.mode === 'blob' ? t('docheader.preview') : t('docheader.editing'));
 
     var path = this.model.get('path');
     var pathTitle = path ? path : '';
@@ -523,7 +523,7 @@ module.exports = Backbone.View.extend({
   },
 
   destroy: function() {
-    if (confirm('Are you sure you want to delete this file?')) {
+    if (confirm(t('actions.delete.warn'))) {
       this.model.destroy({
         success: (function() {
           // TODO: this.branch.get('path')
@@ -535,7 +535,7 @@ module.exports = Backbone.View.extend({
           ].join('/'), true);
         }).bind(this),
         error: function() {
-          return alert('Error during deletion. Please wait 30 seconds and try again.');
+          return alert(t('actions.delete.error'));
         }
       });
     }
@@ -566,7 +566,7 @@ module.exports = Backbone.View.extend({
     if (this.editor && this.editor.getValue) this.model.set('content', this.editor.getValue());
     if (this.metadataEditor) this.model.set('metadata', this.metadataEditor.getValue());
 
-    var label = this.model.get('writable') ? 'Unsaved Changes' : 'Submit Change';
+    var label = this.model.writable ? t('actions.change.save') : t('actions.change.submit');
     // this.eventRegister.trigger('updateSaveState', label, 'save');
   },
 
@@ -662,7 +662,7 @@ module.exports = Backbone.View.extend({
         app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
 
           if (err) {
-            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
             return;
           }
 
@@ -674,14 +674,14 @@ module.exports = Backbone.View.extend({
           view.model.set('previous', filecontent);
           view.closeSettings();
           view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', 'Request Submitted', 'saved');
+          view.eventRegister.trigger('updateSaveState', t('actions.save.submission'), 'saved');
         });
       } else {
-        view.eventRegister.trigger('updateSaveState', 'Error Metadata not Found', 'error');
+        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
       }
     }
 
-    view.eventRegister.trigger('updateSaveState', 'Submitting Request', 'saving');
+    view.eventRegister.trigger('updateSaveState', t('actions.save.patch'), 'saving');
     patch();
 
     return false;
@@ -694,7 +694,7 @@ module.exports = Backbone.View.extend({
       if (view.updateMetaData()) {
         window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
           if (err) {
-            view.eventRegister.trigger('updateSaveState', '!&nbsp;Try&nbsp;again&nbsp;in 30&nbsp;seconds', 'error');
+            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
             return;
           }
 
@@ -708,10 +708,10 @@ module.exports = Backbone.View.extend({
           view.model.set('previous', filecontent);
           view.closeSettings();
           view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
+          view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
         });
       } else {
-        view.eventRegister.trigger('updateSaveState', '!Metadata', 'error');
+        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
       }
     }
 
@@ -723,7 +723,7 @@ module.exports = Backbone.View.extend({
     this.updateFilename(filepath, function(err) {
       if (err) {
         view.eventRegister.trigger('filenameInput');
-        view.eventRegister.trigger('updateSaveState', 'Needs&nbsp;a&nbsp;filename', 'error');
+        view.eventRegister.trigger('updateSaveState', t('actions.save.fileNameError'), 'error');
       } else {
         save();
       }
@@ -736,9 +736,9 @@ module.exports = Backbone.View.extend({
     var key = $publishKey.attr('data-state');
 
     if (key === 'true') {
-      $publishKey.html('Published<span class="ico checkmark"></span>');
+      $publishKey.html(t('actions.publishing.published') + '<span class="ico checkmark"></span>');
     } else {
-      $publishKey.html('Unpublished<span class="ico checkmark"></span>');
+      $publishKey.html(t('actions.publishing.unpublished') + 'Unpublished<span class="ico checkmark"></span>');
     }
   },
 
@@ -876,7 +876,7 @@ module.exports = Backbone.View.extend({
     var view = this;
 
     // Loading State
-    this.eventRegister.trigger('updateSaveState', 'Uploading ' + file.name, 'saving');
+    this.eventRegister.trigger('updateSaveState', t('actions.upload.uploading', { file: file.name }), 'saving');
 
     // Base64 Encode the file content
     var extension = file.type.split('/').pop();
@@ -902,7 +902,7 @@ module.exports = Backbone.View.extend({
     // Read through the filenames of path. If there is a filename that
     // exists, we want to pass data.sha to update the existing one.
     app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, util.extractFilename(path)[0], function(err, res) {
-      if (err) return view.eventRegister.trigger('updateSaveState', 'Error Uploading try again in 30 Seconds!', 'error');
+      if (err) return view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
 
       // Check whether the current (or media) directory
       // contains the same filename as the one a user wishes
@@ -926,7 +926,7 @@ module.exports = Backbone.View.extend({
 
       app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
         if (type === 'error') {
-          view.eventRegister.trigger('updateSaveState', 'Error&nbsp;Uploading try again in 30 Seconds!', 'error');
+          view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
         } else {
           var $alt = $('input[name="alt"]');
           var image = ($alt.val) ?
