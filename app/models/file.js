@@ -49,8 +49,6 @@ module.exports = Backbone.Model.extend({
       'name': this.isNew() ? '' : util.extractFilename(attributes.path)[1],
       'writable': this.repo.get('permissions').push
     });
-
-    debugger;
   },
 
   get: function(attr) {
