@@ -37,7 +37,10 @@ module.exports = Backbone.Model.extend({
 
     // Default to gfm and markdown for new files
     this.set({
-      'draft': util.draft(attributes.path),
+      'draft': function() {
+        var path = this.get('path');
+        return util.draft(path);
+      },
       'extension': extension,
       'binary': extension ? util.isBinary(extension) : false,
       'lang': extension ? util.mode(extension) : 'gfm',
@@ -46,6 +49,14 @@ module.exports = Backbone.Model.extend({
       'name': this.isNew() ? '' : util.extractFilename(attributes.path)[1],
       'writable': this.repo.get('permissions').push
     });
+
+    debugger;
+  },
+
+  get: function(attr) {
+    // Return result of functions set on model
+    var value = Backbone.Model.prototype.get.call(this, attr);
+    return _.isFunction(value) ? value.call(this) : value;
   },
 
   parse: function(resp, options) {
