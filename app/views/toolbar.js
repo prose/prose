@@ -49,7 +49,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(this.template(this.file.attributes));
+    this.$el.html(this.template(this.file.getAttributes()));
     return this;
   },
 

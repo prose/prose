@@ -141,8 +141,18 @@ module.exports = Backbone.Model.extend({
     return window.decodeURIComponent(window.escape(window.atob(content)));
   },
 
+  getAttributes: function() {
+    var data = {};
+
+    _.each(this.attributes, function(value, key) {
+      data[key] = this.get(key);
+    }, this);
+
+    return data;
+  },
+
   toJSON: function() {
-    // Override default toJSON method to only send necessary data to GitHub
+    // TODO: override default toJSON method in Backbone.sync to only send necessary data to GitHub
     var path = this.get('path');
     var content = this.serialize();
 

@@ -218,7 +218,7 @@ module.exports = Backbone.Router.extend({
       mode: mode,
       nav: this.app.nav,
       name: filename,
-      path: path,
+      path: filename ? path + '/' + filename : path,
       repo: repo,
       router: this,
       sidebar: this.app.sidebar
