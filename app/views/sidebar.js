@@ -32,7 +32,6 @@ module.exports = Backbone.View.extend({
     // this.subviews[subview] = this[subview];
 
     // TODO: is this.subviews being filled with abandoned views preventing garbage collection?
-    console.log(this.subviews);
 
     this.renderSubview(subview);
   },

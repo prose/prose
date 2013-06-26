@@ -76,6 +76,13 @@ module.exports = {
     return match ? match[1] : null;
   },
 
+  // Does the root of the path === _drafts?
+  // -------
+
+  draft: function(path) {
+    return (path.split('/')[0] === '_drafts') ? true : false
+  },
+
   // Determine types
   // -------
 

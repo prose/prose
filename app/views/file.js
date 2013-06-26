@@ -10,11 +10,11 @@ var marked = require('marked');
 var diff = require('diff');
 var Backbone = require('backbone');
 var HeaderView = require('./header');
+var ToolbarView = require('./toolbar');
 var MetadataView = require('./metadata');
 var util = require('../util');
 var upload = require('../upload');
 var cookie = require('../cookie');
-var toolbar = require('../toolbar/markdown.js');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
@@ -25,10 +25,6 @@ module.exports = Backbone.View.extend({
   subviews: [],
 
   events: {
-    'click .group a': 'markdownSnippet',
-    'click .dialog .insert': 'dialogInsert',
-    'click .save-action': 'updateFile',
-    'click .publish-flag': 'togglePublishing',
     'change #upload': 'fileInput'
   },
 
@@ -63,6 +59,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'cancel', this.cancel);
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
 
+    //this.listenTo(this.toolbar, 'destroy', this.destroy);
     /*
     this.listenTo(this.nav, 'translate', this.translate, this);
     */
@@ -77,16 +74,6 @@ module.exports = Backbone.View.extend({
     this.listenTo($window, 'beforeunload', function() {
       if (this.dirty) return 'You have unsaved changes. Are you sure you want to leave?';
     }, this);
-
-    /*
-    this.config = {};
-
-    if (app.state.config && app.state.config.prose) {
-      this.config.siteurl = app.state.config.prose.siteurl || false;
-      this.config.relativeLinks = app.state.config.prose.relativeLinks || false;
-      this.config.media = app.state.config.prose.media || false;
-    }
-    */
   },
 
   setCollection: function() {
@@ -94,32 +81,108 @@ module.exports = Backbone.View.extend({
     this.collection.fetch({ success: this.setModel });
   },
 
+  cursor: function() {
+    var view = this;
+    var selection = util.trim(this.editor.getSelection());
+
+    var match = {
+      lineBreak: /\n/,
+      h1: /^#{1}/,
+      h2: /^#{2}/,
+      h3: /^#{3}/,
+      h4: /^#{4}/,
+      strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+      italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+      isNumber: parseInt(selection.charAt(0), 10)
+    };
+
+    if (!match.isNumber) {
+      switch (selection.charAt(0)) {
+        case '#':
+          if (!match.lineBreak.test(selection)) {
+            if (match.h3.test(selection) && !match.h4.test(selection)) {
+              this.toolbar.highlight('sub-heading');
+            } else if (match.h2.test(selection) && !match.h3.test(selection)) {
+              this.toolbar.highlight('heading');
+            }
+          }
+          break;
+        case '>':
+          this.toolbar.highlight('quote');
+          break;
+        case '*':
+        case '_':
+          if (!match.lineBreak.test(selection)) {
+            if (match.strong.test(selection)) {
+              // trigger a change
+              this.toolbar.highlight('bold');
+            } else if (match.italic.test(selection)) {
+              this.toolbar.highlight('italic');
+            }
+          }
+          break;
+        case '!':
+          if (!match.lineBreak.test(selection) &&
+              selection.charAt(1) === '[' &&
+              selection.charAt(selection.length - 1) === ')') {
+              this.toolbar.highlight('media');
+          }
+          break;
+        case '[':
+          if (!match.lineBreak.test(selection) &&
+              selection.charAt(selection.length - 1) === ')') {
+              this.toolbar.highlight('link');
+          }
+          break;
+        case '-':
+          if (selection.charAt(1) === ' ') {
+            this.toolbar.highlight('list');
+          }
+        break;
+        default:
+          this.toolbar.highlight();
+        break;
+      }
+    } else {
+      if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
+        this.toolbar.highlight('numbered-list');
+      }
+    }
+  },
+
   setModel: function() {
     this.model = this.collection.findWhere({ name: this.filename, path: this.path });
 
     this.model.fetch({
       complete: (function() {
+
+        // TODO save config to the file Model as its used accross 
+        // files of the same repo and shouldn't be re-parsed each time:
         this.config = this.collection.findWhere({ path: '_prose.yml' }) ||
-          this.collection.findWhere({ path: '_config.yml' });
+        this.collection.findWhere({ path: '_config.yml' });
 
         // render view once config content has loaded
         this.config.fetch({
           complete: (function() {
             var content = this.config.get('content');
-            var config;
 
             try {
-              config = jsyaml.load(content);
+              this.config = jsyaml.load(content);
             } catch(err) {
               throw err;
             }
 
-            this.setDefaults(config);
+            this.poachConfig(this.config);
+
+            // initialize the subviews
+            this.initHeading();
+            this.initToolbar();
+            this.initEditor();
 
             // Settings sidebar panel
             this.sidebar.initSubview('settings', {
               sidebar: this.sidebar,
-              config: config,
+              config: this.config,
               file: this.model
             });
 
@@ -148,71 +211,71 @@ module.exports = Backbone.View.extend({
     return path;
   },
 
-  setDefaults: function(config) {
+  poachConfig: function(config) {
     var q = queue();
 
-    // Set empty defaults on model if no match
-    // to avoid loading _config.yml again unecessarily
-    var defaults = {};
+    if (config && config.prose) {
+      if (config.prose.metadata) {
+        // Set empty defaults on model if no match
+        // to avoid loading _config.yml again unecessarily
+        var defaults = {};
+        var metadata;
+        var path;
+        var raw;
 
-    var metadata;
-    var path;
-    var raw;
+        metadata = config.prose.metadata;
+        path = this.nearestPath(metadata);
 
-    if (config && config.prose && config.prose.metadata) {
-      metadata = config.prose.metadata;
-      path = this.nearestPath(metadata);
+        if (metadata[path]) {
+          raw = config.prose.metadata[path];
 
-      if (metadata[path]) {
-        raw = config.prose.metadata[path];
+          if (_.isObject(raw)) {
+            defaults = raw;
 
-        if (_.isObject(raw)) {
-          defaults = raw;
+            // TODO: iterate over these to add to queue synchronously
+            _.each(defaults, function(value, key) {
 
-          // TODO: iterate over these to add to queue synchronously
-          _.each(defaults, function(value, key) {
+              // Parse JSON URL values
+              if (value.field && value.field.options &&
+                  _.isString(value.field.options) &&
+                  value.field.options.match(/^https?:\/\//)) {
 
-            // Parse JSON URL values
-            if (value.field && value.field.options &&
-                _.isString(value.field.options) &&
-                value.field.options.match(/^https?:\/\//)) {
-
-              q.defer(function(cb) {
-                $.ajax({
-                  cache: true,
-                  dataType: 'jsonp',
-                  jsonp: false,
-                  jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
-                  url: value.field.options,
-                  success: function(d) {
-                    value.field.options = d;
-                    cb();
-                  }
+                q.defer(function(cb) {
+                  $.ajax({
+                    cache: true,
+                    dataType: 'jsonp',
+                    jsonp: false,
+                    jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
+                    url: value.field.options,
+                    success: function(d) {
+                      value.field.options = d;
+                      cb();
+                    }
+                  });
                 });
-              });
-            }
+              }
+            });
+          } else if (_.isString(raw)) {
+            try {
+              defaults = jsyaml.load(raw);
 
-          });
-        } else if (_.isString(raw)) {
-          try {
-            defaults = jsyaml.load(raw);
-
-            if (defaults.date === "CURRENT_DATETIME") {
-              var current = (new Date()).format('Y-m-d H:i');
-              defaults.date = current;
-              raw = raw.replace("CURRENT_DATETIME", current);
+              if (defaults.date === "CURRENT_DATETIME") {
+                var current = (new Date()).format('Y-m-d H:i');
+                defaults.date = current;
+                raw = raw.replace("CURRENT_DATETIME", current);
+              }
+            } catch(err) {
+              throw err;
             }
-          } catch(err) {
-            throw err;
           }
         }
       }
-    }
 
-    q.awaitAll((function() {
-      this.model.set('defaults', defaults);
-      if (this.model.get('metadata')) this.renderMetadata();
-    }).bind(this));
+      q.awaitAll((function() {
+        this.model.set('defaults', defaults);
+        if (this.model.get('metadata')) this.renderMetadata();
+      }).bind(this));
+    }
   },
 
   compilePreview: function(content) {
@@ -254,83 +317,17 @@ module.exports = Backbone.View.extend({
     return content;
   },
 
-  cursor: function() {
-    var selection = util.trim(this.editor.getSelection());
-    this.$el.find('.toolbar .group a').removeClass('active');
-
-    var match = {
-      lineBreak: /\n/,
-      h1: /^#{1}/,
-      h2: /^#{2}/,
-      h3: /^#{3}/,
-      h4: /^#{4}/,
-      strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-      italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-      isNumber: parseInt(selection.charAt(0), 10)
-    };
-
-    if (!match.isNumber) {
-      switch (selection.charAt(0)) {
-        case '#':
-          if (!match.lineBreak.test(selection)) {
-            if (match.h3.test(selection) && !match.h4.test(selection)) {
-              $('[data-key="sub-heading"]').addClass('active');
-            } else if (match.h2.test(selection) && !match.h3.test(selection)) {
-              $('[data-key="heading"]').addClass('active');
-            }
-          }
-          break;
-        case '>':
-          this.$el.find('[data-key="quote"]').addClass('active');
-          break;
-        case '*':
-        case '_':
-          if (!match.lineBreak.test(selection)) {
-            if (match.strong.test(selection)) {
-              this.$el.find('[data-key="bold"]').addClass('active');
-            } else if (match.italic.test(selection)) {
-              this.$el.find('[data-key="italic"]').addClass('active');
-            }
-          }
-          break;
-        case '!':
-          if (!match.lineBreak.test(selection) &&
-              selection.charAt(1) === '[' &&
-              selection.charAt(selection.length - 1) === ')') {
-            this.$el.find('[data-key="media"]').addClass('active');
-          }
-          break;
-        case '[':
-          if (!match.lineBreak.test(selection) &&
-              selection.charAt(selection.length - 1) === ')') {
-            this.$el.find('[data-key="link"]').addClass('active');
-          }
-          break;
-        case '-':
-          if (selection.charAt(1) === ' ') {
-            this.$el.find('[data-key="list"]').addClass('active');
-          }
-        break;
-      }
-    } else {
-      if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
-        this.$el.find('[data-key="numbered-list"]').addClass('active');
-      }
-    }
-  },
-
   initEditor: function() {
     var lang = this.model.get('lang');
 
     // Don't set up content editor for yaml posts
     if (lang === 'yaml') return;
-
     this.editor = CodeMirror(document.getElementById('code'), {
       mode: lang,
       value: this.model.get('content'),
       lineWrapping: true,
       lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
-      extraKeys: this.keyMap(),
+      extraKeys: this.toolbar.keyMap(),
       matchBrackets: true,
       dragDrop: false,
       theme: 'prose-bright'
@@ -372,15 +369,26 @@ module.exports = Backbone.View.extend({
     this.$el.find('#dialog').empty().removeClass();
   },
 
-  renderHeading: function() {
-    var header = new HeaderView({
+  initToolbar: function() {
+    this.toolbar = new ToolbarView({
+      view: this,
+      file: this.model,
+      config: this.config
+    });
+
+    this.subviews.push(this.toolbar);
+    this.toolbar.setElement(this.$el.find('#toolbar')).render();
+  },
+
+  initHeading: function() {
+    this.heading = new HeaderView({
       file: this.model,
       repo: this.repo,
       alterable: true
     });
 
-    header.setElement(this.$el.find('#heading')).render();
-    this.subviews.push(header);
+    this.subviews.push(this.heading);
+    this.heading.setElement(this.$el.find('#heading')).render();
   },
 
   renderMetadata: function() {
@@ -394,30 +402,6 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    /*
-    // Link Dialog
-    if (app.state.markdown && this.config.relativeLinks) {
-      $.ajax({
-        cache: true,
-        dataType: 'jsonp',
-        jsonp: false,
-        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
-        url: this.config.relativeLinks,
-        success: function(links) {
-          view.relativeLinks = links;
-        }
-      });
-    }
-
-    // Assets Listing for the Media Dialog
-    if (app.state.markdown && this.config.media) {
-      this.assetsDirectory = this.config.media;
-      app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
-        view.assets = data.files;
-      });
-    }
-    */
-
     if (this.model.get('markdown')) {
       this.model.set('preview', marked(this.compilePreview(this.model.get('content'))));
     }
@@ -426,8 +410,6 @@ module.exports = Backbone.View.extend({
       mode: this.mode
     })));
 
-    // Render subviews
-    this.renderHeading();
     this.updateDocumentTitle();
 
     if (this.model.get('markdown') && this.mode === 'blob') {
@@ -436,8 +418,6 @@ module.exports = Backbone.View.extend({
       // Editor is first up so trigger an active class for it
       this.$el.find('#edit').toggleClass('active', true);
       this.$el.find('.file .edit').addClass('active');
-
-      this.initEditor();
 
       util.fixedScroll(this.$el.find('.topbar'));
     }
@@ -566,32 +546,6 @@ module.exports = Backbone.View.extend({
 
     var label = this.model.get('writable') ? 'Unsaved Changes' : 'Submit Change';
     // this.eventRegister.trigger('updateSaveState', label, 'save');
-
-    // Pass a popover span to the avatar icon
-    this.$el.find('.save-action .popup').html(this.model.get('alterable') ? 'Save' : 'Submit Change');
-  },
-
-  togglePublishing: function(e) {
-    var $target = $(e.currentTarget);
-
-    // TODO: remove HTML from view
-    if ($target.hasClass('published')) {
-      $target
-        .empty()
-        .html('Unpublish<span class="ico small checkmark"></span>')
-        .removeClass('published')
-        .attr('data-state', false);
-    } else {
-      $target
-        .empty()
-        .html('Publish<span class="ico small checkmark"></span>')
-        .addClass('published')
-        .attr('data-state', true);
-    }
-
-    this.makeDirty();
-
-    return false;
   },
 
   showDiff: function() {
@@ -727,7 +681,7 @@ module.exports = Backbone.View.extend({
           view.model.file = filename;
 
           if (app.state.mode === 'new') app.state.mode = 'edit';
-          view.renderHeading();
+          this.heading.render();
           view.updateURL();
           view.model.set('previous', filecontent);
           view.closeSettings();
@@ -848,36 +802,6 @@ module.exports = Backbone.View.extend({
       _.delay(function() {
         $(view.el).removeClass(classes);
       }, 1000);
-    }
-  },
-
-  keyMap: function() {
-    var view = this;
-
-    if (this.model.markdown) {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.updateFile();
-        },
-        'Cmd-B': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
-        },
-        'Ctrl-B': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
-        },
-        'Cmd-I': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
-        },
-        'Ctrl-I': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
-        }
-      };
-    } else {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.updateFile();
-        }
-      };
     }
   },
 
@@ -1012,331 +936,6 @@ module.exports = Backbone.View.extend({
         }
       });
     });
-  },
-
-  markdownSnippet: function(e) {
-    var view = this;
-    var $target = $(e.target, this.el).closest('a');
-    var $dialog = $('#dialog', this.el);
-    var $snippets = $('.toolbar .group a', this.el);
-    var key = $target.data('key');
-    var snippet = $target.data('snippet');
-    var selection = util.trim(this.editor.getSelection());
-
-    console.log('yep');
-    $dialog.removeClass().empty();
-
-    if (snippet) {
-      $snippets.removeClass('on');
-
-      if (selection) {
-        switch (key) {
-        case 'bold':
-          this.bold(selection);
-          break;
-        case 'italic':
-          this.italic(selection);
-          break;
-        case 'heading':
-          this.heading(selection);
-          break;
-        case 'sub-heading':
-          this.subHeading(selection);
-          break;
-        case 'quote':
-          this.quote(selection);
-          break;
-        default:
-          this.editor.replaceSelection(snippet);
-          break;
-        }
-        this.editor.focus();
-      } else {
-        this.editor.replaceSelection(snippet);
-        this.editor.focus();
-      }
-    } else if ($target.data('dialog')) {
-
-      var tmpl, className;
-      if (key === 'media' && !this.assets) {
-          className = key + ' no-directory';
-      } else {
-          className = key;
-      }
-
-      // This condition handles the link and media link in the toolbar.
-      if ($target.hasClass('on')) {
-        $target.removeClass('on');
-        $dialog.removeClass().empty();
-      } else {
-        $snippets.removeClass('on');
-        $target.addClass('on');
-        $dialog
-          .removeClass()
-          .addClass('dialog ' + className)
-          .empty();
-
-        switch(key) {
-          case 'link':
-            tmpl = _(app.templates.linkDialog).template();
-
-            $dialog.append(tmpl({
-              relativeLinks: view.relativeLinks
-            }));
-
-            if (view.relativeLinks) {
-              $('.chzn-select', $dialog).chosen().change(function() {
-                $('.chzn-single span').text('Insert a local link.');
-
-                var parts = $(this).val().split(',');
-                $('input[name=href]', $dialog).val(parts[0]);
-                $('input[name=text]', $dialog).val(parts[1]);
-              });
-            }
-
-            if (selection) {
-              // test if this is a markdown link: [text](link)
-              var link = /\[([^\]]+)\]\(([^)]+)\)/;
-              var quoted = /".*?"/;
-
-              var text = selection;
-              var href;
-              var title;
-
-              if (link.test(selection)) {
-                var parts = link.exec(selection);
-                text = parts[1];
-                href = parts[2];
-
-                // Search for a title attrbute within the url string
-                if (quoted.test(parts[2])) {
-                  href = parts[2].split(quoted)[0];
-
-                  // TODO could be improved
-                  title = parts[2].match(quoted)[0].replace(/"/g, '');
-                }
-              }
-
-              $('input[name=text]', $dialog).val(text);
-              if (href) $('input[name=href]', $dialog).val(href);
-              if (title) $('input[name=title]', $dialog).val(title);
-            }
-          break;
-          case 'media':
-            tmpl = _(app.templates.mediaDialog).template();
-            $dialog.append(tmpl({
-              writable: view.data.writable,
-              assetsDirectory: (view.assets) ? true : false
-            }));
-
-            if (view.assets) view.renderAssets(view.assets);
-
-            if (selection) {
-              var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
-              var src;
-              var alt;
-
-              if (image.test(selection)) {
-                var imageParts = image.exec(selection);
-                alt = imageParts[1];
-                src = imageParts[2];
-
-                $('input[name=url]', $dialog).val(src);
-                if (alt) $('input[name=alt]', $dialog).val(alt);
-              }
-            }
-          break;
-          case 'help':
-            tmpl = _(app.templates.helpDialog).template();
-            $dialog.append(tmpl({
-              help: toolbar.help
-            }));
-
-            // Page through different help sections
-            var $mainMenu = $('.main-menu a', this.el);
-            var $subMenu = $('.sub-menu', this.el);
-            var $content = $('.help-content', this.el);
-
-            $mainMenu.on('click', function() {
-              if (!$(this).hasClass('active')) {
-
-                $mainMenu.removeClass('active');
-                $content.removeClass('active');
-                $subMenu
-                    .removeClass('active')
-                    .find('a')
-                    .removeClass('active');
-
-                $(this).addClass('active');
-
-                // Add the relavent sub menu
-                var parent = $(this).data('id');
-                $('.' + parent).addClass('active');
-
-                // Add an active class and populate the
-                // content of the first list item.
-                var $firstSubElement = $('.' + parent + ' a:first', this.el);
-                $firstSubElement.addClass('active');
-
-                var subParent = $firstSubElement.data('id');
-                $('.help-' + subParent).addClass('active');
-              }
-              return false;
-            });
-
-            $subMenu.find('a').on('click', function() {
-              if (!$(this).hasClass('active')) {
-
-                $subMenu.find('a').removeClass('active');
-                $content.removeClass('active');
-                $(this).addClass('active');
-
-                // Add the relavent content section
-                var parent = $(this).data('id');
-                $('.help-' + parent).addClass('active');
-              }
-
-              return false;
-            });
-
-          break;
-        }
-      }
-    }
-
-    return false;
-  },
-
-  renderAssets: function(data, back) {
-    var view = this;
-    var $media = $('#media', this.el);
-    var tmpl = _(app.templates.asset).template();
-
-    // Reset some stuff
-    $('.directory a', $media).off('click', this.assetDirectory);
-    $media.empty();
-
-    if (back && (back.join() !== this.assetsDirectory)) {
-      var link = back.slice(0, back.length - 1).join('/');
-      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
-    }
-
-    _(data).each(function(asset) {
-      var parts = asset.path.split('/');
-      var path = parts.slice(0, parts.length - 1).join('/');
-
-      $media.append(tmpl({
-        name: asset.name,
-        type: asset.type,
-        path: path + '/' + encodeURIComponent(asset.name),
-        isMedia: util.isMedia(path)
-      }));
-    });
-
-    $('.asset a', $media).on('click', function(e) {
-      var href = $(this).attr('href');
-      var alt = util.trim($(this).text());
-
-      if (util.isImage(href)) {
-        $('input[name="url"]').val(href);
-        $('input[name="alt"]').val(alt);
-      } else {
-        view.editor.replaceSelection(href);
-        view.editor.focus();
-      }
-      return false;
-    });
-
-    $('.directory a', $media).on('click', function(e) {
-      view.assetDirectory($(e.target), view);
-      return false;
-    });
-  },
-
-  assetDirectory: function(dir, view) {
-    var path = dir.attr('href');
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, path, function(err, data) {
-      view.renderAssets(data.files, path.split('/'));
-    });
-  },
-
-  dialogInsert: function(e) {
-    var $dialog = $('#dialog', this.el);
-    var $target = $(e.target, this.el);
-    var type = $target.data('type');
-
-    if (type === 'link') {
-      var href = $('input[name="href"]').val();
-      var text = $('input[name="text"]').val();
-      var title = $('input[name="title"]').val();
-
-      if (!text) text = href;
-
-      if (title) {
-        this.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
-      } else {
-        this.editor.replaceSelection('[' + text + '](' + href + ')');
-      }
-
-      this.editor.focus();
-    }
-
-    if (type === 'media') {
-      if (this.queue) {
-        var userDefinedPath = $('input[name="url"]').val();
-        this.createAndUpload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
-
-        // Finally, clear the queue object
-        this.queue = undefined;
-      } else {
-        var src = $('input[name="url"]').val();
-        var alt = $('input[name="alt"]').val();
-        this.editor.replaceSelection('![' + alt + '](/' + src + ')');
-        this.editor.focus();
-      }
-    }
-
-    return false;
-  },
-
-  heading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
-    } else {
-      this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
-    }
-  },
-
-  subHeading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(3) !== '#') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
-    } else {
-      this.editor.replaceSelection('### ' + s.replace(/#/g, ''));
-    }
-  },
-
-  italic: function(s) {
-    if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
-      this.editor.replaceSelection(s.replace(/_/g, ''));
-    } else {
-      this.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
-    }
-  },
-
-  bold: function(s) {
-    if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
-      this.editor.replaceSelection(s.replace(/\*/g, ''));
-    } else {
-      this.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
-    }
-  },
-
-  quote: function(s) {
-    if (s.charAt(0) === '>') {
-      this.editor.replaceSelection(util.lTrim(s.replace(/\>/g, '')));
-    } else {
-      this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
-    }
   },
 
   remove: function() {

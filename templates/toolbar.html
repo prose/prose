@@ -1,14 +1,14 @@
 <% if (draft) { %>
   <a href='#' class='draft-to-post'><%= t('actions.draft.toPost') %><span class='ico checkmark'></span></a>
 <% } else { %>
-  <% if (jekyll && metadata.published) { %>
+  <% if (metadata && metadata.published) { %>
     <a href='#' class='publish-flag published round' data-state='true'><%= t('actions.publishing.published') %><span class='ico small checkmark'></span></a>
-  <% } else if (jekyll && !metadata.published) { %>
+  <% } else if (metadata && !metadata.published) { %>
     <a href='#' class='publish-flag' data-state='false'><%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span></a>
   <% } %>
 <% } %>
 <div class='options clearfix'>
-  <span href='#' class='action round fl ico small document <%= avatar %>'>
+  <span href='#' class='action round fl ico small document <%= extension %>'>
     <span class='status'></span>
 
     <% if (writable) { %>

@@ -30,6 +30,7 @@ module.exports = Backbone.Model.extend({
     this.collection = attributes.collection;
     this.repo = attributes.repo;
 
+    this.set('draft', util.draft(attributes.path));
     this.set('extension', extension);
     this.set('binary', util.isBinary(extension));
     this.set('lang', util.mode(extension));
