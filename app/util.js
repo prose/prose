@@ -10,18 +10,18 @@ module.exports = {
   // this.extractFilename('path/to/foo.md')
   // => ['path/to', 'foo.md']
 
-  extractFilename: _.memoize(function(path) {
+  extractFilename: function(path) {
     if (!path.match(/\//)) return ['', path];
     var matches = path.match(/(.*)\/(.*)$/);
     return [matches[1], matches[2]];
-  }),
+  },
 
-  validPathname: _.memoize(function(path) {
+  validPathname: function(path) {
     var self = this;
     return _.all(path.split('/'), function(filename) {
       return !!filename.match(/^([a-zA-Z0-9_\-]|\.)+$/);
     });
-  }),
+  },
 
   parentPath: function(path) {
     return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
@@ -31,18 +31,18 @@ module.exports = {
   // into a state from the router
   // -------
 
-  extractURL: _.memoize(function(url) {
+  extractURL: function(url) {
     url = url.split('/');
     app.state.mode = url[0];
     app.state.branch = url[1];
     app.state.path = (url.slice(2) || []).join('/');
     return app.state;
-  }),
+  },
 
   // Determine mode for CodeMirror
   // -------
 
-  mode: _.memoize(function(extension) {
+  mode: function(extension) {
     if (this.isMarkdown(extension)) return 'gfm';
     if (_.include(['js', 'json'], extension)) return 'javascript';
     if (extension === 'html') return 'htmlmixed';
@@ -51,45 +51,45 @@ module.exports = {
     if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
 
     return extension;
-  }),
+  },
 
   // Check if a given file is a Jekyll post
   // -------
 
-  jekyll: _.memoize(function(path, file) {
+  jekyll: function(path, file) {
     return !!(path.match('_posts') && this.markdown(file));
-  }),
+  },
 
   // Check if a given file has YAML frontmater
   // -------
 
-  hasMetadata: _.memoize(function(content) {
+  hasMetadata: function(content) {
     content = content.replace(/\r\n/g, '\n'); // normalize a little bit
     return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
-  }),
+  },
 
   // Extract file extension
   // -------
 
-  extension: _.memoize(function(file) {
+  extension: function(file) {
     var match = file.match(/\.(\w+)$/);
     return match ? match[1] : null;
-  }),
+  },
 
   // Does the root of the path === _drafts?
   // -------
 
-  draft: _.memoize(function(path) {
+  draft: function(path) {
     return (path.split('/')[0] === '_drafts') ? true : false
-  }),
+  },
 
   // Determine types
   // -------
 
-  markdown: _.memoize(function(file) {
+  markdown: function(file) {
     var regex = new RegExp(/.(md|mkdn?|mdown|markdown)$/);
     return !!(regex.test(file));
-  }),
+  },
 
   // chunked path
   // -------
@@ -102,7 +102,7 @@ module.exports = {
   //   { url: 'path/to/foo', name: 'foo' }
   // ]
 
-  chunkedPath: _.memoize(function(path) {
+  chunkedPath: function(path) {
     var chunks = path.split('/');
     return _.map(chunks, function(chunk, index) {
       var url = [];
@@ -114,59 +114,59 @@ module.exports = {
         name: chunk
       };
     });
-  }),
+  },
 
-  isBinary: _.memoize(function(extension) {
+  isBinary: function(extension) {
     var regex = new RegExp(/^(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$/);
     return !!(regex.test(extension));
-  }),
+  },
 
   isMarkdown: function(extension) {
     var regex = new RegExp(/^(md|mkdn?|mdown|markdown)$/);
     return !!(regex.test(extension));
   },
 
-  isMedia: _.memoize(function(extension) {
+  isMedia: function(extension) {
     var regex = new RegExp(/^(jpeg|jpg|gif|png|swf|mov)$/);
     return !!(regex.test(extension));
-  }),
+  },
 
-  isImage: _.memoize(function(extension) {
+  isImage: function(extension) {
     var regex = new RegExp(/^(jpeg|jpg|gif|png)$/);
     return !!(regex.test(extension));
-  }),
+  },
 
   // Return a true or false boolean if a path
   // a absolute or not.
   // -------
 
-  absolutePath: _.memoize(function(path) {
+  absolutePath: function(path) {
     return /^https?:\/\//i.test(path);
-  }),
+  },
 
   // Concatenate path + file to full filepath
   // -------
 
-  filepath: _.memoize(function(path, file) {
+  filepath: function(path, file) {
     return (path ? path + '/' : '') + file;
-  }),
+  },
 
   // Returns a filename without the file extension
   // -------
 
-  filename: _.memoize(function(file) {
+  filename: function(file) {
     return file.replace(/\.[^\/.]+$/, '');
-  }),
+  },
 
   // String Manipulations
   // -------
-  trim: _.memoize(function(str) {
+  trim: function(str) {
     return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-  }),
+  },
 
-  lTrim: _.memoize(function(str) {
+  lTrim: function(str) {
     return str.replace(/^\s\s*/, '');
-  }),
+  },
 
   // UI Stuff
   // -------
