@@ -3,6 +3,7 @@ var _ = require('underscore');
 var util = require('../util');
 var Backbone = require('backbone');
 var toolbar = require('../toolbar/markdown.js');
+var upload = require('../upload');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
@@ -11,6 +12,7 @@ module.exports = Backbone.View.extend({
   events: {
     'click .group a': 'markdownSnippet',
     'click .publish-flag': 'togglePublishing',
+    'change #upload': 'fileInput',
     'click .dialog .insert': 'dialogInsert',
     'click .draft-to-post': 'draft'
   },
@@ -19,19 +21,20 @@ module.exports = Backbone.View.extend({
     var self = this;
     this.file = options.file;
     this.view = options.view;
+    this.collection = options.collection;
     var config = options.config;
 
     if (config && config.prose) {
       this.hasMedia = (config.media) ? true : false;
       this.siteUrl = (config.siteUrl) ? true : false;
 
-      // TODO! Assets Listing for the Media Dialog
-      //if (config.media) {
-        //this.assetsDirectory = this.config.media;
-        //app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
-          //self.assets = data.files;
-        //});
-      //}
+      if (config.prose.media) {
+        // Fetch the media directory to display its contents
+        this.mediaDirectoryPath = config.prose.media;
+        this.media = this.collection.filter(function(m) {
+          return util.draft(m.attributes.path);
+        });
+      }
 
       if (config.prose.relativeLinks) {
         $.ajax({
@@ -44,13 +47,27 @@ module.exports = Backbone.View.extend({
             self.relativeLinks = links;
           }
         });
-      } 
+      }
     }
   },
 
   render: function() {
     this.$el.html(this.template(this.file.attributes));
     return this;
+  },
+
+  fileInput: function(e) {
+    var view = this;
+    upload.fileSelect(e, function(e, file, content) {
+      var path = (view.mediaDirectoryPath) ? view.mediaDirectoryPath : util.extractFilename(view.file.attributes.path)[0];
+      var src = path + '/' + encodeURIComponent(file.name);
+
+      view.$el.find('input[name="url"]').val(src);
+      view.$el.find('input[name="alt"]').val('');
+      view.trigger('updateImageInsert', e);
+    });
+
+    return false;
   },
 
   highlight: function(type) {
@@ -90,7 +107,7 @@ module.exports = Backbone.View.extend({
 
   draft: function() {
     // TODO https://github.com/prose/prose/blob/master/src/prose/views/post.js#L608-L631
-    return false;  
+    return false;
   },
 
   markdownSnippet: function(e) {
@@ -136,7 +153,7 @@ module.exports = Backbone.View.extend({
     } else if ($target.data('dialog')) {
 
       var tmpl, className;
-      if (key === 'media' && !this.assets) {
+      if (key === 'media' && !this.mediaDirectoryPath) {
           className = key + ' no-directory';
       } else {
           className = key;
@@ -203,13 +220,14 @@ module.exports = Backbone.View.extend({
           case 'media':
             tmpl = _(templates.dialogs.media).template();
             $dialog.append(tmpl({
-              // TODO Do this:
-              // assetsDirectory: (view.assets) ? true : false,
+              description: t('dialogs.media.description', {
+                input: '<input id="upload" class="upload" type="file" />'
+              }),
+              assetsDirectory: (self.media) ? true : false,
               writable: self.file.attributes.writable
             }));
 
-            // TODO Do this:
-            // if (self.assets) self.renderAssets(self.assets);
+            if (self.media) self.renderMedia(self.media);
 
             if (selection) {
               var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
@@ -388,13 +406,13 @@ module.exports = Backbone.View.extend({
     }
   },
 
-  renderAssets: function(data, back) {
+  renderMedia: function(data, back) {
     var self = this;
-    var $media = $('#media', this.el);
-    var tmpl = _(app.templates.asset).template();
+    var $media = this.$el.find('#media');
+    var tmpl = _(templates.dialogs.mediadirectory).template();
 
     // Reset some stuff
-    $('.directory a', $media).off('click', this.assetDirectory);
+    $('.directory a', $media).off('click', this.mediaDirectory);
     $media.empty();
 
     if (back && (back.join() !== this.assetsDirectory)) {
@@ -419,8 +437,8 @@ module.exports = Backbone.View.extend({
       var alt = util.trim($(this).text());
 
       if (util.isImage(href)) {
-        $('input[name="url"]').val(href);
-        $('input[name="alt"]').val(alt);
+        self.$el.find('input[name="url"]').val(href);
+        self.$el.find('input[name="alt"]').val(alt);
       } else {
         self.view.editor.replaceSelection(href);
         self.view.editor.focus();
@@ -429,15 +447,16 @@ module.exports = Backbone.View.extend({
     });
 
     $('.directory a', $media).on('click', function(e) {
-      self.assetDirectory($(e.target), self);
+      self.mediaDirectory($(e.target));
       return false;
     });
   },
 
-  assetDirectory: function(dir, self) {
+  // TODO What am I using this for? This should also change
+  mediaDirectory: function(dir, self) {
     var path = dir.attr('href');
     app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, path, function(err, data) {
-      self.renderAssets(data.files, path.split('/'));
+      self.renderMedia(data.files, path.split('/'));
     });
   }
 
