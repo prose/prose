@@ -120,12 +120,6 @@ module.exports = Backbone.View.extend({
       return this;
     },
 
-    toggleMobileClass: function(e) {
-      $(e.target).toggleClass('active');
-      $(this.el).toggleClass('mobile');
-      return false;
-    },
-
     documentTitle: function(title) {
       document.title = title + ' · Prose';
     },

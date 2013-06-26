@@ -1,16 +1,15 @@
-<% if (!noMenu && window.authenticated) { %>
-  <ul class='mobile nav clearfix'>
-    <li>
-      <a href='#' class='toggle ico menu round'></a>
-    </li>
-  </ul>
-<% } %>
+<!-- if !noMenu and authenticated -->
+<ul class='mobile nav clearfix'>
+  <li>
+    <a href='#' class='toggle ico menu round'></a>
+  </li>
+</ul>
 
 <!-- if repo and authenticated -->
 <ul class='repo nav clearfix'>
   <li>
     <!-- #user/repo/new/branch/path -->
-    <a href='#' class='ico round new new-file'>
+    <a href='#' class='ico round new new-file' data-state='new'>
       <span class='popup round arrow-right'><%= t('navigation.newFile') %></span>
     </a>
   </li>

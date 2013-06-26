@@ -6,6 +6,7 @@ var User = require('./models/user');
 var Users = require('./collections/users');
 
 var Repo = require('./models/repo');
+var File = require('./models/file');
 
 var ProfileView = require('./views/profile');
 var SearchView = require('./views/search');
@@ -159,20 +160,19 @@ module.exports = Backbone.Router.extend({
       case 'tree':
         this.repo(login, repoName, url.branch, url.path);
         break;
-      case 'new':
-        this.newPost(login, repoName, url.branch, url.path);
-        break;
       case 'preview':
         parts = util.extractFilename(url.path);
         this.preview(login, repoName, url.mode, url.branch, parts[0], parts[1]);
         break;
+      case 'new':
+        this.post(login, repoName, url.mode, url.branch, url.path);
       case 'blob':
       case 'edit':
         parts = util.extractFilename(url.path);
         this.post(login, repoName, url.mode, url.branch, parts[0], parts[1]);
         break;
       default:
-        // TODO: throw error
+        throw url.mode;
         break;
     }
   },
@@ -211,85 +211,42 @@ module.exports = Backbone.Router.extend({
       user.repos.add(repo);
     }
 
-    var content = new FileView({
+    var content = {
       branch: branch,
       branches: repo.branches,
-      filename: filename,
       mode: mode,
       nav: this.app.nav,
       path: (path ? path + '/' : '') + filename,
       repo: repo,
       router: this,
       sidebar: this.app.sidebar
+    };
+
+    // TODO: defer this success function until both user and repo have been fetched
+    // in paralell rather than in series
+    user.fetch({
+      success: (function(model, res, options) {
+        repo.fetch({
+          success: (function(model, res, options) {
+            if (mode === 'new') {
+              content.model = new File({
+                branch: branch,
+                collection: repo.files,
+                repo: repo
+              });
+            }
+
+            this.view = new FileView(content);
+            this.app.$el.find('#main').html(this.view.el);
+
+            util.loader.loaded();
+          }).bind(this)
+        });
+      }).bind(this)
     });
-
-    // TODO: is relying on 'sync' events acceptable here?
-    user.fetch();
-    repo.fetch();
-    repo.branches.fetch();
-
-    this.view = content;
-    this.app.$el.find('#main').html(this.view.el);
-
-    util.loader.loaded();
-
-    /*
-    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', t('notification.error.exists'));
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) return this.notify('error', t('notification.error.exists'));
-
-        app.state.markdown = data.markdown;
-        data.jekyll = !! data.metadata;
-        data.lang = util.mode(file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        util.loader.loaded();
-        $('#content').empty().html(view.el);
-      }, this));
-    }, this));
-    */
   },
 
-  newPost: function(user, repo, branch, path) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-    app.state.markdown = true;
-
-    util.loader.loading(t('loading.creating'));
-    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      app.models.emptyPost(user, repo, branch, path, _.bind(function(err, data) {
-
-        data.jekyll = util.jekyll(path, data.file);
-        data.preview = false;
-        data.markdown = util.markdown(data.file);
-        data.lang = util.mode(data.file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        util.loader.loaded();
-        $('#content').empty().append(view.el);
-        app.state.file = data.file;
-
-      }, this));
-    }, this));
-  },
-
+  // TODO: should this still pass through File view?
   preview: function(user, repo, branch, path, file, mode) {
     var router = this;
     util.loader.loading(t('preview.file'));

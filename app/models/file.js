@@ -12,7 +12,7 @@ module.exports = Backbone.Model.extend({
     Backbone.Model.call(this, {
       branch: attributes.branch,
       collection: attributes.collection,
-      name: util.extractFilename(attributes.path)[1],
+      model: attributes.model,
       path: attributes.path,
       repo: attributes.repo,
       sha: attributes.sha,
@@ -24,19 +24,28 @@ module.exports = Backbone.Model.extend({
   initialize: function(attributes, options) {
     _.bindAll(this);
 
-    var extension =  util.extension(attributes.name);
-
+    var extension;
+    
     this.branch = attributes.branch;
     this.collection = attributes.collection;
     this.repo = attributes.repo;
 
-    this.set('draft', util.draft(attributes.path));
-    this.set('extension', extension);
-    this.set('binary', util.isBinary(extension));
-    this.set('lang', util.mode(extension));
-    this.set('media', util.isMedia(extension));
-    this.set('markdown', util.isMarkdown(extension));
-    this.set('writable', this.repo.get('permissions').push);
+    // TODO: clean this up using _.defaults
+    if (!this.isNew()) {
+      extension = util.extension(attributes.path);
+    }
+
+    // Default to gfm and markdown for new files
+    this.set({
+      'draft': util.draft(attributes.path),
+      'extension': extension,
+      'binary': extension ? util.isBinary(extension) : false,
+      'lang': extension ? util.mode(extension) : 'gfm',
+      'media': extension ? util.isMedia(extension) : false,
+      'markdown': extension ? util.isMarkdown(extension) : true,
+      'name': this.isNew() ? '' : util.extractFilename(attributes.path)[1],
+      'writable': this.repo.get('permissions').push
+    });
   },
 
   parse: function(resp, options) {
@@ -93,16 +102,17 @@ module.exports = Backbone.Model.extend({
   },
 
   serialize: function() {
-    var metadata;
-    var content = this.get('content');
-
-    try {
-      metadata = jsyaml.dump(this.get('metadata')).trim();
-    } catch(err) {
-      throw err;
-    }
+    var metadata = this.get('metadata');
+    var content = this.get('content') || '';
+    var frontmatter;
 
     if (metadata) {
+      try {
+        frontmatter = jsyaml.dump(metadata).trim();
+      } catch(err) {
+        throw err;
+      }
+
       return ['---', metadata, '---'].join('\n') + '\n\n' + content;
     } else {
       return content;
@@ -116,6 +126,8 @@ module.exports = Backbone.Model.extend({
   },
 
   decode: function(content) {
+    // Decode Base64 to UTF-8
+    // https://developer.mozilla.org/en-US/docs/Web/API/window.btoa#Unicode_Strings
     return window.decodeURIComponent(window.escape(window.atob(content)));
   },
 

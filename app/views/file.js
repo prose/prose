@@ -45,9 +45,15 @@ module.exports = Backbone.View.extend({
     this.path = options.path || '';
     this.filename = options.filename;
 
-    this.listenTo(this.branches, 'sync', this.setCollection);
+    if (this.model) {
+      // TODO: set defaults, build UI
+      this.render();
+    } else {
+      this.branches.fetch({ success: this.setCollection });
+    }
 
     // Events from vertical nav
+    this.listenTo(this.nav, 'new', this.new);
     this.listenTo(this.nav, 'edit', this.edit);
     this.listenTo(this.nav, 'preview', this.preview);
     this.listenTo(this.nav, 'meta', this.meta);
@@ -151,7 +157,7 @@ module.exports = Backbone.View.extend({
   },
 
   setModel: function() {
-    this.model = this.collection.findWhere({ name: this.filename, path: this.path });
+    this.model = this.collection.findWhere({ path: this.path });
 
     this.model.fetch({
       complete: (function() {
@@ -322,9 +328,11 @@ module.exports = Backbone.View.extend({
 
     // Don't set up content editor for yaml posts
     if (lang === 'yaml') return;
-    this.editor = CodeMirror(document.getElementById('code'), {
+
+    // TODO: set default content for CodeMirror
+    this.editor = CodeMirror(this.$el.find('#code')[0], {
       mode: lang,
-      value: this.model.get('content'),
+      value: this.model.get('content') || '',
       lineWrapping: true,
       lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
       extraKeys: this.toolbar.keyMap(),
@@ -402,8 +410,10 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    if (this.model.get('markdown')) {
-      this.model.set('preview', marked(this.compilePreview(this.model.get('content'))));
+    var content = this.model.get('content');
+
+    if (this.model.get('markdown' && content)) {
+      this.model.set('preview', marked(this.compilePreview(content)));
     }
 
     this.$el.html(this.template(_.extend(this.model.attributes, {
@@ -432,6 +442,18 @@ module.exports = Backbone.View.extend({
     var pathTitle = path ? path : '';
 
     // this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
+  },
+
+  new: function() {
+    var dirpath = this.path.replace(/\/(?!.*\/).*$/, '');
+
+    this.router.navigate([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      'new',
+      this.branch,
+      dirpath
+    ].join('/'), true);
   },
 
   edit: function() {
