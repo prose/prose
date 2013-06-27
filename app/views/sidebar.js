@@ -66,6 +66,11 @@ module.exports = Backbone.View.extend({
     this.$el.toggleClass('open mobile');
   },
 
+  mode: function(mode) {
+    // Set data-mode attribute to toggle nav buttons in CSS
+    this.$el.attr('data-mode', mode);
+  },
+
   remove: function() {
     _.invoke(this.subviews, 'remove');
     this.subviews = [];
