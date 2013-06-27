@@ -873,7 +873,7 @@ module.exports = Backbone.View.extend({
     var item = store.getItem(filepath);
     var stash = JSON.parse(item);
 
-    if (stash && stash.sha === window.app.state.sha) {
+    if (stash && stash.sha === this.model.get('sha')) {
       // Restore from stash if file sha hasn't changed
       if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
       if (this.metadataEditor) {
