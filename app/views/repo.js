@@ -17,15 +17,71 @@ module.exports = Backbone.View.extend({
     this.user = options.user;
     this.model = options.model;
     this.branch = options.branch || this.model.get('master_branch');
-    this.branches = this.model.branches;
     this.path = options.path || '';
     this.router = options.router;
+    this.sidebar = options.sidebar;
+
+    // Init subviews
+    this.initHeader();
+    this.initSearch();
+    this.initBranches();
 
     this.listenTo(this.model, 'sync', this.render, this);
+
+    // Events from sidebar
+    this.listenTo(this.sidebar, 'destroy', this.destroy);
+    this.listenTo(this.sidebar, 'cancel', this.cancel);
+    this.listenTo(this.sidebar, 'confirm', this.updateFile);
+  },
+
+  initHeader: function() {
+    this.header = new HeaderView({
+      user: this.user,
+      alterable: false
+    });
+
+    this.subviews.push(this.header);
+  },
+
+  initSearch: function() {
+    this.search = new SearchView({});
+    this.subviews.push(this.search);
+
+    this.initFiles();
+  },
+
+  initFiles: function() {
+    this.files = new FilesView({
+      search: this.search,
+      repo: this.model,
+      branch: this.branch,
+      branches: this.model.branches,
+      path: this.path
+    });
+
+    this.subviews.push(this.files);
+  },
+
+  initBranches: function() {
+    this.branches = new BranchesView({
+      model: this.model.branches,
+      repo: this.model,
+      branch: this.branch,
+      router: this.router,
+      sidebar: this.sidebar
+    });
+
+    this.subviews.push(this.sidebar);
+
+    this.model.branches.fetch();
   },
 
   render: function() {
+    this.sidebar.mode('repo');
+    this.sidebar.open();
+
     // TODO: load _config.yml, set parsed value on Repo model
+    // TODO: set jailed from config.prose.rooturl
     this.$el.html(this.template({
       owner: this.model.get('owner'),
       repo: this.model.get('name'),
@@ -35,39 +91,10 @@ module.exports = Backbone.View.extend({
       util: util
     }));
 
-    var header = new HeaderView({
-      user: this.user,
-      alterable: false
-    });
-    header.setElement(this.$el.find('#heading')).render();
-    this.subviews.push(header);
-
-    var search = new SearchView({});
-    search.setElement(this.$el.find('#search')).render();
-    this.subviews.push(search);
-
-    var files = new FilesView({
-      search: search,
-      repo: this.model,
-      branch: this.branch,
-      branches: this.branches,
-      path: this.path
-    });
-
-    files.setElement(this.$el.find('#files'));
-    this.subviews.push(files);
-
-    var sidebar = new BranchesView({
-      model: this.branches,
-      repo: this.model,
-      branch: this.branch,
-      router: this.router
-    });
-
-    sidebar.setElement(this.$el.find('#drawer'));
-    this.subviews.push(sidebar);
-
-    this.branches.fetch();
+    this.header.setElement(this.$el.find('#heading')).render();
+    this.search.setElement(this.$el.find('#search')).render();
+    this.files.setElement(this.$el.find('#files'));
+    this.branches.setElement(this.sidebar.$el.find('#branches'));
 
     util.fixedScroll(this.$el.find('.topbar'));
 

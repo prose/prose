@@ -200,22 +200,7 @@ module.exports = Backbone.View.extend({
             this.initHeading();
             this.initToolbar();
             this.initEditor();
-
-            // Settings sidebar panel
-            this.sidebar.initSubview('settings', {
-              sidebar: this.sidebar,
-              config: this.config,
-              file: this.model,
-              fileInput: this.titleAsHeading()
-            });
-
-            this.listenTo(this.sidebar, 'updateFile', this.makeDirty());
-
-            // Commit message sidebar panel
-            this.sidebar.initSubview('save', {
-              sidebar: this.sidebar,
-              file: this.model
-            });
+            this.initSidebar();
           }).bind(this)
         });
 
@@ -428,6 +413,24 @@ module.exports = Backbone.View.extend({
     } else {
       return false;
     }
+  },
+
+  initSidebar: function() {
+    // Settings sidebar panel
+    this.sidebar.initSubview('settings', {
+      sidebar: this.sidebar,
+      config: this.config,
+      file: this.model,
+      fileInput: this.titleAsHeading()
+    });
+
+    this.listenTo(this.sidebar, 'updateFile', this.makeDirty());
+
+    // Commit message sidebar panel
+    this.sidebar.initSubview('save', {
+      sidebar: this.sidebar,
+      file: this.model
+    });
   },
 
   initHeading: function() {

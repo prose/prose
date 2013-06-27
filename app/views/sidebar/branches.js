@@ -43,8 +43,6 @@ module.exports = Backbone.View.extend({
       router.navigate($(this).val(), true);
     });
 
-    this.$el.addClass('open');
-
     return this;
   },
 

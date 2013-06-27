@@ -135,19 +135,23 @@ module.exports = Backbone.Router.extend({
       user.repos.add(repo);
     }
 
-    var content = new RepoView({
-      user: user,
-      model: repo,
-      branch: branch,
-      path: path,
-      router: this
-    });
-
     user.fetch();
-    repo.fetch();
 
-    this.view = content;
-    this.app.$el.find('#main').html(this.view.el);
+    repo.fetch({
+      success: (function(model, res, options) {
+        var content = new RepoView({
+          user: user,
+          model: repo,
+          branch: branch,
+          path: path,
+          router: this,
+          sidebar: this.app.sidebar
+        });
+
+        this.view = content;
+        this.app.$el.find('#main').html(this.view.el);
+      }).bind(this)
+    });
 
     util.loader.loaded();
   },
