@@ -398,6 +398,7 @@ module.exports = Backbone.View.extend({
     this.toolbar.setElement(this.$el.find('#toolbar')).render();
 
     this.listenTo(this.toolbar, 'updateImageInsert', this.updateImageInsert);
+    this.listenTo(this.toolbar, 'draft', this.draft);
   },
 
   initHeading: function() {
@@ -503,7 +504,7 @@ module.exports = Backbone.View.extend({
       // if last item in hash array does not begin with Jekyll YYYY-MM-DD format,
       // append filename from input
       if (!_.last(hash).match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
-        hash.push(_.last($('input.filepath').val().split('/')));
+        hash.push(_.last(this.header.headerInputGet().split('/')));
       }
 
       this.stashFile();
@@ -699,6 +700,55 @@ module.exports = Backbone.View.extend({
     return false;
   },
 
+  draft: function() {
+
+    // TODO Fix this all up.
+    var filepath = _.extractFilename(this.header.headerInputGet());
+    var basepath = filepath[0].split('/');
+    var filename = filepath[1];
+    var postType = basepath[0];
+    var filecontent = this.serialize();
+    var message = t('actions.commits.toDraft', { filename: filename });
+
+    if (postType === '_posts') {
+      basepath.splice(0, 1, '_drafts');
+      filepath.splice(0, 1, basepath.join('/'));
+      this.saveDraft(filepath.join('/'), filename, filecontent, message);
+      app.state.path = this.model.path = filepath[0];
+    } else {
+      basepath.splice(0, 1, '_posts');
+      filepath.splice(0, 1, basepath.join('/'));
+      message = t('actions.commits.fromDraft', { filename: filename });
+      this.saveFile(filepath.join('/'), filename, filecontent, message);
+      app.state.path = this.model.path = filepath[0];
+    }
+
+    return false;
+  },
+
+   saveDraft: function(filepath, filename, filecontent, message) {
+    var view = this;
+    view.eventRegister.trigger('updateSaveState', t('actions.save.saving'), 'saving');
+    window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+      if (err) {
+        view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+        return;
+      }
+      view.dirty = false;
+      view.model.persisted = true;
+      view.model.file = filename;
+      this.toolbar.render();
+
+      if (app.state.mode === 'new') app.state.mode = 'edit';
+      view.renderHeading();
+      view.updateURL();
+      view.prevFile = filecontent;
+      view.closeSettings();
+      view.updatePublishState();
+      view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
+    });
+  },
+
   saveFile: function(filepath, filename, filecontent, message) {
     var view = this;
 
@@ -713,6 +763,7 @@ module.exports = Backbone.View.extend({
           view.dirty = false;
           view.model.persisted = true;
           view.model.file = filename;
+          this.toolbar.render();
 
           if (app.state.mode === 'new') app.state.mode = 'edit';
           this.heading.render();
@@ -734,7 +785,7 @@ module.exports = Backbone.View.extend({
     // Move or create file
     this.updateFilename(filepath, function(err) {
       if (err) {
-        view.eventRegister.trigger('filenameInput');
+        view.eventRegister.trigger('headerInputFocus');
         view.eventRegister.trigger('updateSaveState', t('actions.save.fileNameError'), 'error');
       } else {
         save();
@@ -779,7 +830,7 @@ module.exports = Backbone.View.extend({
     if (!window.sessionStorage) return false;
 
     var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
+    var filepath = this.header.headerInputGet();
     var item = store.getItem(filepath);
     var stash = JSON.parse(item);
 
@@ -797,7 +848,7 @@ module.exports = Backbone.View.extend({
   },
 
   updateFile: function() {
-    var filepath = $('input.filepath').val();
+    var filepath = this.header.headerInputGet();
     var filename = util.extractFilename(filepath)[1];
     var filecontent = this.model.serialize();
     var $message = $('.commit-message');
@@ -897,7 +948,7 @@ module.exports = Backbone.View.extend({
 
     // Read through the filenames of path. If there is a filename that
     // exists, we want to pass data.sha to update the existing one.
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, util.extractFilename(path)[0], function(err, res) {
+    window.app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, util.extractFilename(path)[0], function(err, res) {
       if (err) return view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
 
       // Check whether the current (or media) directory
@@ -920,7 +971,7 @@ module.exports = Backbone.View.extend({
         }
       });
 
-      app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
+      window.app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
         if (type === 'error') {
           view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
         } else {

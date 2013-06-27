@@ -8,8 +8,8 @@ module.exports = Backbone.View.extend({
   template: _.template(templates.heading),
 
   events: {
-    'focus input.filepath': 'checkPlaceholder',
-    'keypress input.filepath': 'saveFilePath'
+    'focus input': 'checkPlaceholder',
+    'keypress input': 'saveFilePath'
   },
 
   initialize: function(options) {
@@ -28,8 +28,12 @@ module.exports = Backbone.View.extend({
     }
   },
 
-  filenameInput: function() {
-    $('.filepath', this.el).focus();
+  headerInputGet: function() {
+    return this.$el.find('.headerinput');
+  },
+
+  headerInputFocus: function() {
+    this.$el.find('.headerinput').focus();
   },
 
   render: function() {

@@ -31,8 +31,12 @@ module.exports = Backbone.View.extend({
       if (config.prose.media) {
         // Fetch the media directory to display its contents
         this.mediaDirectoryPath = config.prose.media;
+        var match = new RegExp(this.mediaDirectoryPath);
+
         this.media = this.collection.filter(function(m) {
-          return util.draft(m.attributes.path);
+          if (m.attributes.type === 'blob') {
+            return match.test(m.attributes.path);
+          }
         });
       }
 
@@ -105,8 +109,8 @@ module.exports = Backbone.View.extend({
     }
   },
 
-  draft: function() {
-    // TODO https://github.com/prose/prose/blob/master/src/prose/views/post.js#L608-L631
+  draft: function(e) {
+    view.trigger('draft', e);
     return false;
   },
 
@@ -251,9 +255,9 @@ module.exports = Backbone.View.extend({
             }));
 
             // Page through different help sections
-            var $mainMenu = $('.main-menu a', this.el);
-            var $subMenu = $('.sub-menu', this.el);
-            var $content = $('.help-content', this.el);
+            var $mainMenu = this.$el.find('.main-menu a');
+            var $subMenu = this.$el.find('.sub-menu');
+            var $content = this.$el.find('.help-content');
 
             $mainMenu.on('click', function() {
               if (!$(this).hasClass('active')) {
@@ -412,7 +416,6 @@ module.exports = Backbone.View.extend({
     var tmpl = _(templates.dialogs.mediadirectory).template();
 
     // Reset some stuff
-    $('.directory a', $media).off('click', this.mediaDirectory);
     $media.empty();
 
     if (back && (back.join() !== this.assetsDirectory)) {
@@ -420,15 +423,15 @@ module.exports = Backbone.View.extend({
       $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
     }
 
-    _(data).each(function(asset) {
-      var parts = asset.path.split('/');
+    data.each(function(d) {
+      var parts = d.get('path').split('/');
       var path = parts.slice(0, parts.length - 1).join('/');
 
       $media.append(tmpl({
-        name: asset.name,
-        type: asset.type,
-        path: path + '/' + encodeURIComponent(asset.name),
-        isMedia: util.isMedia(path)
+        name: d.get('name'),
+        type: d.get('type'),
+        path: path + '/' + encodeURIComponent(d.get('name')),
+        isMedia: util.isMedia(d.get('name').split('.').pop())
       }));
     });
 
@@ -436,7 +439,7 @@ module.exports = Backbone.View.extend({
       var href = $(this).attr('href');
       var alt = util.trim($(this).text());
 
-      if (util.isImage(href)) {
+      if (util.isImage(href.split('.').pop())) {
         self.$el.find('input[name="url"]').val(href);
         self.$el.find('input[name="alt"]').val(alt);
       } else {
@@ -445,19 +448,5 @@ module.exports = Backbone.View.extend({
       }
       return false;
     });
-
-    $('.directory a', $media).on('click', function(e) {
-      self.mediaDirectory($(e.target));
-      return false;
-    });
-  },
-
-  // TODO What am I using this for? This should also change
-  mediaDirectory: function(dir, self) {
-    var path = dir.attr('href');
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, path, function(err, data) {
-      self.renderMedia(data.files, path.split('/'));
-    });
   }
-
 });

@@ -294,10 +294,10 @@ textarea#code {
 :-ms-input-placeholder      { color:#a8afb2; }
 input:-moz-placeholder      { color:#a8afb2; }
 
-.filepath::-webkit-input-placeholder { color:#d4d7d9; font-style:italic; }
-.filepath::-moz-placeholder          { color:#d4d7d9; font-style:italic; }
-.filepath:-ms-input-placeholder      { color:#d4d7d9; font-style:italic; }
-.filepath:-moz-placeholder           { color:#d4d7d9; font-style:italic; }
+.headerinput::-webkit-input-placeholder { color:#d4d7d9; font-style:italic; }
+.headerinput::-moz-placeholder          { color:#d4d7d9; font-style:italic; }
+.headerinput:-ms-input-placeholder      { color:#d4d7d9; font-style:italic; }
+.headerinput:-moz-placeholder           { color:#d4d7d9; font-style:italic; }
 
 strong  { font-weight:700; }
 em      { font-style:italic; }
@@ -459,7 +459,7 @@ ins {
   }
 
 /* Alterable filename input */
-.heading .filepath {
+.heading .headerinput {
   background:transparent;
   border:none;
   color:#434c50;
@@ -482,15 +482,15 @@ ins {
       padding:0;
       }
   .heading .details .mask {
-    background:transparent url(img/filepath-mask.png) no-repeat top right;
+    background:transparent url(img/headerinput-mask.png) no-repeat top right;
     position:absolute;
     width:60px;
     height:30px;
     bottom:0;
     right:-30px;
     }
-  .heading .filepath:focus,
-  .heading .filepath:hover {
+  .heading .headerinput:focus,
+  .heading .headerinput:hover {
     background-color:#f8f8f8;
     }
 
@@ -1370,7 +1370,7 @@ ins {
     text-decoration:none;
     }
   .dialog .media-listing .mask {
-    background:transparent url(img/filepath-mask.png) no-repeat top right;
+    background:transparent url(img/headerinput-mask.png) no-repeat top right;
     position:absolute;
     width:60px;
     height:30px;
