@@ -9,13 +9,14 @@ module.exports = Backbone.View.extend({
 
   events: {
     'focus input': 'checkPlaceholder',
-    'keypress input': 'saveFilePath'
+    'keypress input': 'updateFile'
   },
 
   initialize: function(options) {
     this.user = options.user;
     this.repo = options.repo;
     this.file = options.file;
+    this.inputValue = options.inputValue;
     this.alterable = options.alterable;
   },
 
@@ -26,6 +27,10 @@ module.exports = Backbone.View.extend({
         $target.val($target.attr('placeholder'));
       }
     }
+  },
+
+  updateFile: function() {
+    this.trigger('makeDirty');
   },
 
   headerInputGet: function() {
@@ -41,6 +46,7 @@ module.exports = Backbone.View.extend({
 
     this.$el.html(this.template({
       alterable: this.alterable,
+      inputValue: this.inputValue,
       avatar: this.file ?  '<span class="ico round document ' + this.file.get('lang') + '"></span>' :
         '<img src="' + this.user.get('avatar_url') + '" width="40" height="40" alt="Avatar" />',
       lang: this.file ? this.file.get('lang') : undefined,

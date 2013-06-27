@@ -113,6 +113,7 @@ en:
       submit: "Submit Change Request"
     settings:
       title: "Options"
+      fileInputLabel: "File Path"
       delete: "Delete This File"
       translate: "Translate to"
       draft: "Create Draft"

@@ -10,9 +10,9 @@
     <h4 class='parent-trail'><a href="#<%= login %>"><%= login %></a> / <a href="#<%= login %>/<%= repo.name %>"><%= repo.name %></a><% if (private) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
 
     <% if (app.state.mode === 'new' && !translate) { %>
-      <input type='text' class='headerinput' placeholder='<%= title %>'>
+      <input type='text' class='headerinput' placeholder='<%= inputValue %>'>
     <% } else { %>
-      <input type='text' class='headerinput' value='<%= title %>'>
+      <input type='text' class='headerinput' value='<%= inputValue %>'>
     <% } %>
 
     <div class='mask'></div>

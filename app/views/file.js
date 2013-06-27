@@ -171,7 +171,7 @@ module.exports = Backbone.View.extend({
 
     this.model.fetch({
       complete: (function() {
-        // TODO: save parsed config to the repo as it's used accross 
+        // TODO: save parsed config to the repo as it's used accross
         // files of the same repo and shouldn't be re-parsed each time
         this.config = collection.findWhere({ path: '_prose.yml' }) ||
           collection.findWhere({ path: '_config.yml' });
@@ -198,8 +198,11 @@ module.exports = Backbone.View.extend({
             this.sidebar.initSubview('settings', {
               sidebar: this.sidebar,
               config: this.config,
-              file: this.model
+              file: this.model,
+              fileInput: this.titleAsHeading()
             });
+
+            this.listenTo(this.sidebar, 'updateFile', this.makeDirty());
 
             // Commit message sidebar panel
             this.sidebar.initSubview('save', {
@@ -401,8 +404,32 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.toolbar, 'draft', this.draft);
   },
 
+  titleAsHeading: function() {
+    // If the following condition is true the editable field in the
+    // header should be the title of the Markdown Document.
+    //
+    //  1. is Markdown
+    //  2. is Jekyll
+    //  3. Contains a title field in its front matter
+    //
+    if (this.model.get('markdown') &&
+        this.model.attributes.metadata &&
+        this.model.attributes.metadata.title) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
   initHeading: function() {
+    var inputValue = this.model.get('path');
+
+    if (this.titleAsHeading()) {
+      inputValue = this.model.attributes.metadata.title;
+    }
+
     this.heading = new HeaderView({
+      inputValue: inputValue,
       file: this.model,
       repo: this.repo,
       alterable: true
@@ -410,6 +437,7 @@ module.exports = Backbone.View.extend({
 
     this.subviews.push(this.heading);
     this.heading.setElement(this.$el.find('#heading')).render();
+    this.listenTo(this.heading, 'updateFile', this.makeDirty());
   },
 
   renderMetadata: function() {
@@ -828,9 +856,8 @@ module.exports = Backbone.View.extend({
 
   stashApply: function() {
     if (!window.sessionStorage) return false;
-
     var store = window.sessionStorage;
-    var filepath = this.header.headerInputGet();
+    var filepath = this.model.get('path');
     var item = store.getItem(filepath);
     var stash = JSON.parse(item);
 

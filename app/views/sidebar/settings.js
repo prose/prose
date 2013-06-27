@@ -12,13 +12,22 @@ module.exports = Backbone.View.extend({
       'click a.save': 'emit',
       'click a.delete': 'emit',
       'click a.translate': 'emit',
-      'click a.draft': 'emit'
+      'click a.draft': 'emit',
+      'keypress input.filepath': 'saveFilePath'
+    },
+
+    saveFilePath: function(e) {
+      this.trigger('updateFile', e);
     },
 
     initialize: function(options) {
       this.sidebar = options.sidebar;
       this.config = options.config;
       this.file = options.file;
+
+      // fileInput is passed if a title replaces where it
+      // normally is shown in the heading of the file.
+      this.fileInput = options.fileInput;
     },
 
     emit: function(e) {
@@ -34,9 +43,12 @@ module.exports = Backbone.View.extend({
       this.$el.html(this.template({
         languages: this.config.languages,
         lang: this.file.get('lang'),
-        metadata: this.file.get('metadata')
+        metadata: this.file.get('metadata'),
+        fileInput: this.fileInput,
+        path: this.file.get('path')
       }));
 
+      utils.autoSelect(this.$el.find('input.filepath'));
       return this;
     }
 });
