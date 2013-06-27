@@ -5,13 +5,14 @@ var LOCALES = require('../translations/locales');
 var en = require('../dist/en.js');
 
 var Backbone = require('backbone');
+var Router = require('./Router');
+
 var User = require('./models/user');
 
 var NotificationView = require('./views/notification');
 
 var config = require('./config');
 var cookie = require('./cookie');
-var router = require('./router');
 
 // Set locale as global variable
 window.locale.en = en;
@@ -53,7 +54,7 @@ user.authenticate(function() {
         });
 
         // Initialize router
-        window.router = new router({ user: model });
+        window.router = new Router({ user: model });
 
         // Start responding to routes
         Backbone.history.start();
