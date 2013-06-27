@@ -20,34 +20,8 @@ module.exports = Backbone.View.extend({
     this.view = options.view;
   },
 
-  rawKeyMap: function() {
-    return {
-      'Ctrl-S': this.view.updateFile
-    };
-  },
-
-  renderRaw: function() {
-    var selector = this.model.get('lang') === 'yaml' ? 'code' : 'raw';
-
-    if (selector === 'raw') {
-      this.$el.find('.form').append(_.template(templates.meta.raw));
-    }
-
-    this.raw = CodeMirror(document.getElementById(selector), {
-      mode: 'yaml',
-      value: '',
-      lineWrapping: true,
-      extraKeys: this.rawKeyMap(),
-      theme: 'prose-bright'
-    });
-
-    this.listenTo(this.raw, 'change', this.view.makeDirty);
-
-    this.setValue(this.model.get('metadata'));
-  },
-
   render: function() {
-    this.$el.html(this.template({}));
+    this.$el.html(this.template());
 
     var form = this.$el.find('.form');
     var lang = this.model.get('metadata').lang || 'en';
@@ -134,8 +108,32 @@ module.exports = Backbone.View.extend({
     $('.chzn-select').chosen();
 
     this.renderRaw();
-    
     return this;
+  },
+
+  rawKeyMap: function() {
+    return {
+      'Ctrl-S': this.view.updateFile
+    };
+  },
+
+  renderRaw: function() {
+    var selector = this.model.get('lang') === 'yaml' ? 'code' : 'raw';
+
+    if (selector === 'raw') {
+      this.$el.find('.form').append(_.template(templates.meta.raw));
+    }
+
+    this.raw = CodeMirror(document.getElementById(selector), {
+      mode: 'yaml',
+      value: '',
+      lineWrapping: true,
+      extraKeys: this.rawKeyMap(),
+      theme: 'prose-bright'
+    });
+
+    this.listenTo(this.raw, 'change', this.view.makeDirty);
+    this.raw.setValue(jsyaml.dump(this.model.get('metadata')));
   },
 
   getValue: function() {

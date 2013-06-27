@@ -59,6 +59,7 @@ APPLICATION = \
 	app/views/files.js \
 	app/views/header.js \
 	app/views/toolbar.js \
+	app/views/metadata.js \
 	app/views/nav.js \
 	app/views/notification.js \
 	app/views/preview.js \

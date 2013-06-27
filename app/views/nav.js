@@ -42,10 +42,13 @@ module.exports = Backbone.View.extend({
     this.$el.attr('class', mode);
   },
 
-  toggle: function(state, e) {
-    this.$el.find('.file a').not('[data-state=' + state + ']').removeClass('active');
+  active: function(state) {
+    this.$el.find('.file a').removeClass('active');
     this.$el.find('.file a[data-state=' + state + ']').toggleClass('active');
+  },
 
+  toggle: function(state, e) {
+    this.active(state);
     this.trigger(state, e);
   },
 
