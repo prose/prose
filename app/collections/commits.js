@@ -5,13 +5,16 @@ var config = require('../config');
 module.exports = Backbone.Collection.extend({
   model: Commit,
 
-  constructor: function(models, options) {
-    this.url = config.api + '/users/' + options.owner + '/' + 
-      options.repo + '/commits';
-    Backbone.Collection.apply(this, arguments);
+  initialize: function(models, options) {
+    this.repo = options.repo;
   },
 
-  initialize: function(models, options) {
-    this.fetch({ reset: true });
+  branch: function(branch, options) {
+    this.branch = branch;
+    this.fetch(options);
+  },
+
+  url: function() {
+    return this.repo.url() + '/commits?sha=' + this.branch;
   }
 });

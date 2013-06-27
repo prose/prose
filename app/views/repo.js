@@ -1,10 +1,11 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var BranchesView = require('./sidebar/branches');
 var FilesView = require('./files');
 var HeaderView = require('./header');
 var SearchView = require('./search');
+var BranchesView = require('./sidebar/branches');
+var HistoryView = require('./sidebar/history');
 var util = require('.././util');
 var templates = require('../../dist/templates');
 
@@ -25,6 +26,7 @@ module.exports = Backbone.View.extend({
     this.initHeader();
     this.initSearch();
     this.initBranches();
+    this.initHistory();
 
     this.listenTo(this.model, 'sync', this.render, this);
 
@@ -74,6 +76,17 @@ module.exports = Backbone.View.extend({
     this.subviews.push(this.sidebar);
 
     this.model.branches.fetch();
+  },
+
+  initHistory: function() {
+    this.history = new HistoryView({
+      repo: this.model,
+      branch: this.branch,
+      commits: this.model.commits,
+      sidebar: this.sidebar
+    });
+
+    this.subviews.push(this.sidebar);
   },
 
   render: function() {
