@@ -8,17 +8,6 @@ var utils = require('../../util');
 module.exports = Backbone.View.extend({
     subviews: [],
 
-    events: {
-      'click a.save': 'save',
-      'click a.cancel': 'cancel',
-      'click a.confirm': 'updateFile',
-      'click a.delete': 'deleteFile',
-      'click a.translate': 'translate',
-      'click a.draft': 'draft',
-      'focus input.filepath': 'checkPlaceholder',
-      'keypress input.filepath': 'saveFilePath'
-    },
-
     initialize: function(options) {
       this.user = options.user;
     },
