@@ -3,9 +3,10 @@
   data-user='<%= owner.login %>'
   data-repo='<%= name %>'
   href='#<%= owner.login %>/<%= name %>'>
-  <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>
+  <% if (false) { %>
+  <!-- if (app.state.user === app.username && (owner.login !== app.username && private)) -->
     <span class='icon round repo owner private' title="<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)"></span>
-  <% } else if (app.state.user === app.username && owner.login !== app.username) { %>
+  <!-- else if (app.state.user === app.username && owner.login !== app.username) -->
     <span class='icon round repo owner' title="<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)"></span>
   <% } else if (fork && private) { %>
     <span class='icon round repo private fork' title="<%= t('main.repos.forkedFrom') %>"></span>
