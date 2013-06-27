@@ -134,11 +134,7 @@ module.exports = Backbone.View.extend({
 
     this.listenTo(this.raw, 'change', this.view.makeDirty);
 
-    try {
-      this.raw.setValue(jsyaml.dump(this.model.get('metadata')));
-    } catch(err) {
-      console.log('Error Writing Frontmatter');
-    }
+    this.setRaw(this.model.get('metadata'));
   },
 
   getValue: function() {
@@ -359,7 +355,8 @@ module.exports = Backbone.View.extend({
 
   setRaw: function(data) {
     try {
-      this.setValue(jsyaml.load(data));
+      this.raw.setValue(jsyaml.dump(data));
+      this.refresh;
     } catch (err) {
       throw err;
     }

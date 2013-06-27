@@ -572,7 +572,7 @@ module.exports = Backbone.View.extend({
     this.$el.find('.views .view').removeClass('active');
     this.$el.find('#meta').addClass('active');
 
-    // this.metadataEditor.refresh();
+    this.metadataEditor.refresh();
   },
 
   destroy: function() {
@@ -794,6 +794,7 @@ module.exports = Backbone.View.extend({
 
     function save() {
       if (view.updateMetaData()) {
+
         window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
           if (err) {
             view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');

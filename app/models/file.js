@@ -113,6 +113,7 @@ module.exports = Backbone.Model.extend({
 
   serialize: function() {
     var metadata = this.get('metadata');
+
     var content = this.get('content') || '';
     var frontmatter;
 
@@ -123,7 +124,7 @@ module.exports = Backbone.Model.extend({
         throw err;
       }
 
-      return ['---', metadata, '---'].join('\n') + '\n\n' + content;
+      return ['---', frontmatter, '---'].join('\n') + '\n\n' + content;
     } else {
       return content;
     }
