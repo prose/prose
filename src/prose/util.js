@@ -311,7 +311,7 @@ _.preview = function(view) {
   var year = parts[0];
   var month = parts[1];
   var day = parts[2];
-  var date = [year, month, day].join('-');
+  var date = [year, month, day].join('-') + ' 05:00:00';
 
   p.post.date = jsyaml.load(date).toDateString();
 
