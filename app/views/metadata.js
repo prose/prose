@@ -133,7 +133,12 @@ module.exports = Backbone.View.extend({
     });
 
     this.listenTo(this.raw, 'change', this.view.makeDirty);
-    this.raw.setValue(jsyaml.dump(this.model.get('metadata')));
+
+    try {
+      this.raw.setValue(jsyaml.dump(this.model.get('metadata')));
+    } catch(err) {
+      console.log('Error Writing Frontmatter');
+    }
   },
 
   getValue: function() {
