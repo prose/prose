@@ -14,7 +14,6 @@ module.exports = Backbone.Model.extend({
   initialize: function(attributes, options) {
     this.repos = new Repos([], { user: this });
     this.orgs = new Orgs([], { user: this });
-
   },
 
   authenticate: function(cb) {

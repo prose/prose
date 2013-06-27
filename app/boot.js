@@ -46,6 +46,12 @@ user.authenticate(function() {
   if ('withCredentials' in new XMLHttpRequest()) {
     user.fetch({
       success: function(model, res, options) {
+        // Set authenticated user cookie
+        cookie.set('user', {
+          id: user.get('id'),
+          login: user.get('login')
+        });
+
         // Initialize router
         window.router = new router({ user: model });
 
