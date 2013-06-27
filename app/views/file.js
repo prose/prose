@@ -189,6 +189,13 @@ module.exports = Backbone.View.extend({
 
             this.poachConfig(this.config);
 
+            // TODO Take this out of here when this
+            // method is added to the repo level.
+            if (!this.config.prose ||
+              this.config.prose && !this.config.prose.metadata) {
+              this.renderMetadata();
+            }
+
             // initialize the subviews
             this.initHeading();
             this.initToolbar();
@@ -276,7 +283,9 @@ module.exports = Backbone.View.extend({
 
       q.awaitAll((function() {
         this.model.set('defaults', defaults);
-        if (this.model.get('metadata')) this.renderMetadata();
+        if (this.model.get('metadata')) {
+          this.renderMetadata();
+        }
       }).bind(this));
     }
   },
@@ -563,7 +572,7 @@ module.exports = Backbone.View.extend({
     this.$el.find('.views .view').removeClass('active');
     this.$el.find('#meta').addClass('active');
 
-    this.metadataEditor.refresh();
+    // this.metadataEditor.refresh();
   },
 
   destroy: function() {
