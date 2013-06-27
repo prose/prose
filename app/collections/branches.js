@@ -1,15 +1,12 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Branch = require('../models/branch');
-var config = require('../config');
 
 module.exports = Backbone.Collection.extend({
   model: Branch,
 
   initialize: function(models, options) {
     this.repo = options.repo;
-    this.url = config.api + '/repos/' + this.repo.get('owner').login + '/' +
-      this.repo.get('name') + '/branches';
   },
 
   parse: function(resp, options) {
@@ -18,5 +15,9 @@ module.exports = Backbone.Collection.extend({
         repo: this.repo
       })
     }).bind(this));
+  },
+
+  url: function() {
+    return this.repo.url() + '/branches';
   }
 });

@@ -1,10 +1,11 @@
 var Backbone = require('backbone');
-var config = require('../config');
 
 module.exports = Backbone.Model.extend({
-  constructor: function(attributes, options) {
-    this.url = config.api + '/users/' + attributes.owner.login + '/' + 
-      attributes.repo + '/commits/' + attributes.sha;
-    Backbone.Model.apply(this, arguments);
+  initialize: function(attributes, options) {
+    this.repo = attributes.repo;
+  },
+
+  url: function() {
+    return this.repo.url() + '/commits/' + this.get('sha');
   }
 });

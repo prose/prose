@@ -10,6 +10,8 @@ module.exports = Backbone.View.extend({
   subviews: [],
 
   initialize: function(options) {
+    _.bindAll(this);
+
     this.model = options.model;
     this.repo = options.repo;
     this.branch = options.branch || this.repo.get('master_branch');

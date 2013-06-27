@@ -1,5 +1,6 @@
 var Backbone = require('backbone');
 var Branches = require('../collections/branches');
+var Commits = require('../collections/commits');
 var config = require('../config');
 
 module.exports = Backbone.Model.extend({
@@ -23,6 +24,7 @@ module.exports = Backbone.Model.extend({
 
   initialize: function(attributes, options) {
     this.branches = new Branches([], { repo: this });
+    this.commits = new Commits([], { repo: this, branch: this.branch })
   },
 
   url: function() {
