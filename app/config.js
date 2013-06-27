@@ -6,7 +6,6 @@ module.exports = {
   site: oauth.site || 'https://github.com',
   id: oauth.clientId,
   url: oauth.gatekeeperUrl,
-  token: cookie.get('oauth-token'),
   username: cookie.get('username'),
   auth: 'oauth'
 };

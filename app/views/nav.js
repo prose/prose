@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var config = require('../config');
 var utils = require('../util');
 var templates = require('../../dist/templates');
 
@@ -21,6 +22,7 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     this.app = options.app;
     this.sidebar = options.sidebar;
+    this.user = options.user;
   },
 
   emit: function(e) {
@@ -60,10 +62,11 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    console.log(app.state);
-    this.$el.html(this.template(_.extend(app.state, {
+    this.$el.html(this.template({
+      config: config,
+      user: this.user.toJSON(),
       noMenu: this.app.noMenu
-    })));
+    }));
 
     return this;
   }

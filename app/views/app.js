@@ -28,7 +28,8 @@ module.exports = Backbone.View.extend({
       // Nav
       this.nav = new NavView({
         app: this,
-        sidebar: this.sidebar
+        sidebar: this.sidebar,
+        user: this.user
       });
       this.subviews.push(this.nav);
 
@@ -54,26 +55,17 @@ module.exports = Backbone.View.extend({
         window.shortcutsRegistered = true;
       }
 
-      app.state = {
-        user: '',
-        repo: '',
-        mode: '',
-        branch: '',
-        path: ''
-      };
-
-      this.eventRegister = app.eventRegister;
-
+      /*
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
       this.eventRegister.bind('updateSaveState', this.updateSaveState);
       this.eventRegister.bind('filenameInput', this.filenameInput);
+      */
     },
 
     render: function(options) {
       var view = this;
-      var tmpl = _(app.templates.app).template();
       var isJekyll = false;
       var errorPage = false;
       var hideInterface = false; // Flag for unauthenticated landing
@@ -93,18 +85,19 @@ module.exports = Backbone.View.extend({
         $(this.el).toggleClass('disable-interface', false);
       }
 
-      this.data = _.extend(this.model, app.state, {
+      this.data = _.extend(this.model, {
         error: errorPage,
         version: 'v1',
         jekyll: isJekyll,
-        noMenu: view.noMenu,
-        lang: (app.state.file) ? utils.mode(app.state.file) : undefined
+        noMenu: view.noMenu
+        // lang: (app.state.file) ? utils.mode(app.state.file) : undefined
       });
 
-      this.$el.empty().append(tmpl(this.data));
+      this.$el.html(this.template(this.data));
 
       // When the sidebar should be open.
       // Fix this in re-factor, could be much tighter
+      /*
       if (app.state.mode === 'tree' ||
           app.state.mode === '' && window.authenticated && app.state.user) {
         $('#prose').toggleClass('open', true);
@@ -112,6 +105,7 @@ module.exports = Backbone.View.extend({
       } else {
         $('#prose').toggleClass('open mobile', false);
       }
+      */
 
       this.sidebar.setElement(this.$el.find('#drawer')).render();
       this.nav.setElement(this.$el.find('nav')).render();

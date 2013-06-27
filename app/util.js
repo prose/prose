@@ -1,5 +1,6 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
+var templates = require('../dist/templates');
 var chrono = require('chrono');
 
 module.exports = {
@@ -33,10 +34,12 @@ module.exports = {
 
   extractURL: function(url) {
     url = url.split('/');
-    app.state.mode = url[0];
-    app.state.branch = url[1];
-    app.state.path = (url.slice(2) || []).join('/');
-    return app.state;
+
+    return {
+      mode: url[0],
+      branch: url[1],
+      path: (url.slice(2) || []).join('/')
+    };
   },
 
   // Determine mode for CodeMirror
@@ -247,8 +250,8 @@ module.exports = {
 
   loader: {
     loading: function(message) {
-      var tmpl = _(window.app.templates.loading).template();
-      $('#loader').empty().append(tmpl({
+      var tmpl = _(templates.loading).template();
+      $('#loader').html(tmpl({
         message: message
       }));
     },

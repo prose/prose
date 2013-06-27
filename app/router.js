@@ -8,6 +8,7 @@ var Users = require('./collections/users');
 var Repo = require('./models/repo');
 var File = require('./models/file');
 
+var AppView = require('./views/app');
 var ProfileView = require('./views/profile');
 var SearchView = require('./views/search');
 var ReposView = require('./views/repos');
@@ -32,10 +33,8 @@ module.exports = Backbone.Router.extend({
     this.user = options.user;
     this.users = new Users([this.user]);
 
-    this.eventRegister = app.eventRegister;
-
     // Load up the main layout
-    this.app = new app.views.App({
+    this.app = new AppView({
       el: '#prose',
       model: {},
       user: this.user
@@ -44,20 +43,8 @@ module.exports = Backbone.Router.extend({
     this.app.render();
   },
 
-  resetState: function() {
-    app.state = {
-      user: '',
-      repo: '',
-      mode: 'page',
-      branch: '',
-      path: '',
-      file: ''
-    };
-  },
-
   about: function() {
-    this.resetState();
-    router.app.render({
+    this.app.render({
       noMenu: true
     });
 
@@ -327,7 +314,9 @@ module.exports = Backbone.Router.extend({
   notify: function(type, message) {
     // TODO Fix this, shouldn't have to pass
     // something like this here.
-    app.state.markdown = false;
+
+    // app.state.markdown = false;
+
     this.application.render({
       error: true
     });
