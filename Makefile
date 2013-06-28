@@ -71,6 +71,7 @@ APPLICATION = \
 	app/views/li/file.js \
 	app/views/li/folder.js \
 	app/views/li/repo.js \
+	app/views/sidebar.js \
 	app/views/sidebar/branch.js \
 	app/views/sidebar/branches.js \
 	app/views/sidebar/li/commit.js \

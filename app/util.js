@@ -5,6 +5,17 @@ var chrono = require('chrono');
 
 module.exports = {
 
+  // Cleans up a string for use in urls
+  stringToUrl: function(string) {
+    return string.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  },
+
+  // Extract a Jekyll date format from a filename
+  extractDate: function(string) {
+    var match = string.match(/^\d{4}-\d{2}-\d{2}/);
+    return match ? match[0] : '';
+  },
+
   // Extract filename from a given path
   // -------
   //

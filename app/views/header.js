@@ -21,7 +21,7 @@ module.exports = Backbone.View.extend({
   },
 
   checkPlaceholder: function(e) {
-    if (app.state.mode === 'new') {
+    if (this.file.isNew()) {
       var $target = $(e.target, this.el);
       if (!$target.val()) {
         $target.val($target.attr('placeholder'));
@@ -29,12 +29,16 @@ module.exports = Backbone.View.extend({
     }
   },
 
+  updateState: function(label) {
+    this.$el.find('.popup').html(label);
+  },
+
   updateFile: function() {
     this.trigger('makeDirty');
   },
 
-  headerInputGet: function() {
-    return this.$el.find('.headerinput');
+  inputGet: function() {
+    return this.$el.find('.headerinput').val();
   },
 
   headerInputFocus: function() {

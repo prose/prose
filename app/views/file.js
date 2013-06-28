@@ -24,13 +24,6 @@ module.exports = Backbone.View.extend({
 
   subviews: [],
 
-  events: {
-    'click .meta .finish': 'backToMode'
-  },
-
-  // TODO
-  backToMode: function() { },
-
   initialize: function(options) {
     _.bindAll(this);
 
@@ -61,7 +54,7 @@ module.exports = Backbone.View.extend({
     this.branches.fetch(fetch);
 
     // Events from vertical nav
-    this.listenTo(this.nav, 'new', this.new);
+    this.listenTo(this.nav, 'new', this.newFile);
     this.listenTo(this.nav, 'edit', this.edit);
     this.listenTo(this.nav, 'preview', this.preview);
     this.listenTo(this.nav, 'meta', this.meta);
@@ -72,11 +65,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'destroy', this.destroy);
     this.listenTo(this.sidebar, 'cancel', this.cancel);
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
-
-    //this.listenTo(this.toolbar, 'destroy', this.destroy);
-    /*
-    this.listenTo(this.nav, 'translate', this.translate, this);
-    */
+    this.listenTo(this.sidebar, 'translate', this.translate);
 
     // Cache jQuery window object
     var $window = $(window);
@@ -189,6 +178,12 @@ module.exports = Backbone.View.extend({
 
             this.poachConfig(this.config);
 
+            // initialize the subviews
+            this.initHeading();
+            this.initToolbar();
+            this.initEditor();
+            this.initSidebar();
+
             // TODO Take this out of here when this
             // method is added to the repo level.
             if (!this.config.prose ||
@@ -196,11 +191,6 @@ module.exports = Backbone.View.extend({
               this.renderMetadata();
             }
 
-            // initialize the subviews
-            this.initHeading();
-            this.initToolbar();
-            this.initEditor();
-            this.initSidebar();
           }).bind(this)
         });
 
@@ -437,7 +427,7 @@ module.exports = Backbone.View.extend({
     var inputValue = this.model.get('path');
 
     if (this.titleAsHeading()) {
-      inputValue = this.model.attributes.metadata.title;
+      inputValue = this.model.get('metadata').title;
     }
 
     this.heading = new HeaderView({
@@ -449,7 +439,7 @@ module.exports = Backbone.View.extend({
 
     this.subviews.push(this.heading);
     this.heading.setElement(this.$el.find('#heading')).render();
-    this.listenTo(this.heading, 'updateFile', this.makeDirty());
+    this.listenTo(this.heading, 'updateFile', this.makeDirty);
   },
 
   renderMetadata: function() {
@@ -497,7 +487,7 @@ module.exports = Backbone.View.extend({
     // this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
   },
 
-  new: function() {
+  newFile: function() {
     var dirpath = this.path.replace(/\/(?!.*\/).*$/, '');
 
     this.router.navigate([
@@ -544,7 +534,7 @@ module.exports = Backbone.View.extend({
       // if last item in hash array does not begin with Jekyll YYYY-MM-DD format,
       // append filename from input
       if (!_.last(hash).match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
-        hash.push(_.last(this.header.headerInputGet().split('/')));
+        hash.push(_.last(this.filepath().split('/')));
       }
 
       this.stashFile();
@@ -616,11 +606,31 @@ module.exports = Backbone.View.extend({
 
   makeDirty: function(e) {
     this.dirty = true;
-    if (this.editor && this.editor.getValue) this.model.set('content', this.editor.getValue());
-    if (this.metadataEditor) this.model.set('metadata', this.metadataEditor.getValue());
 
-    var label = this.model.writable ? t('actions.change.save') : t('actions.change.submit');
-    // this.eventRegister.trigger('updateSaveState', label, 'save');
+    // Update Content.
+    if (this.editor && this.editor.getValue) {
+      this.model.set('content', this.editor.getValue());
+    }
+
+    // Update MetaData
+    if (this.metadataEditor) {
+      this.model.set('metadata', this.metadataEditor.getValue());
+    }
+
+    if (this.titleAsHeading) {
+      var value = this.heading.inputGet();
+
+      if (this.model.isNew()) {
+        // Update the filename in the sidebar
+        this.sidebar.updateFilepath(value);
+      }
+    }
+
+    var label = this.model.get('writable') ?
+      t('actions.change.save') :
+      t('actions.change.submit');
+
+    this.updateSaveState(label, 'save');
   },
 
   showDiff: function() {
@@ -715,7 +725,7 @@ module.exports = Backbone.View.extend({
         app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
 
           if (err) {
-            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+            view.updateSaveState(t('actions.error'), 'error');
             return;
           }
 
@@ -726,24 +736,32 @@ module.exports = Backbone.View.extend({
           view.updateURL();
           view.model.set('previous', filecontent);
           view.sidebar.close();
-          view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', t('actions.save.submission'), 'saved');
+          view.toolbar.updatePublishState();
+          view.updateSaveState(t('actions.save.submission'), 'saved');
         });
       } else {
-        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
+        view.updateSaveState(t('actions.save.metaError'), 'error');
       }
     }
 
-    view.eventRegister.trigger('updateSaveState', t('actions.save.patch'), 'saving');
+    view.updateSaveState(t('actions.save.patch'), 'saving');
     patch();
 
     return false;
   },
 
+  filepath: function() {
+    if (this.titleAsHeading()) {
+      return this.header.inputGet();
+    } else {
+      return this.sidebar.filepathGet();
+    }
+  },
+
   draft: function() {
 
     // TODO Fix this all up.
-    var filepath = _.extractFilename(this.header.headerInputGet());
+    var filepath = _.extractFilename(this.filepath());
     var basepath = filepath[0].split('/');
     var filename = filepath[1];
     var postType = basepath[0];
@@ -768,10 +786,10 @@ module.exports = Backbone.View.extend({
 
    saveDraft: function(filepath, filename, filecontent, message) {
     var view = this;
-    view.eventRegister.trigger('updateSaveState', t('actions.save.saving'), 'saving');
+    view.updateSaveState(t('actions.save.saving'), 'saving');
     window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
       if (err) {
-        view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+        view.updateSaveState(t('actions.error'), 'error');
         return;
       }
       view.dirty = false;
@@ -784,8 +802,8 @@ module.exports = Backbone.View.extend({
       view.updateURL();
       view.prevFile = filecontent;
       view.closeSettings();
-      view.updatePublishState();
-      view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
+      view.toolbar.updatePublishState();
+      view.updateSaveState(t('actions.save.saved'), 'saved', true);
     });
   },
 
@@ -797,7 +815,7 @@ module.exports = Backbone.View.extend({
 
         window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
           if (err) {
-            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+            view.updateSaveState(t('actions.error'), 'error');
             return;
           }
 
@@ -811,15 +829,15 @@ module.exports = Backbone.View.extend({
           view.updateURL();
           view.model.set('previous', filecontent);
           view.sidebar.close();
-          view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
+          view.toolbar.updatePublishState();
+          view.updateSaveState(t('actions.save.saved'), 'saved', true);
         });
       } else {
-        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
+        view.updateSaveState(t('actions.save.metaError'), 'error');
       }
     }
 
-    // view.eventRegister.trigger('updateSaveState', 'Saving', 'saving');
+     view.updateSaveState('Saving', 'saving');
 
     if (filepath === util.filepath(this.model.path, this.model.file)) return save();
 
@@ -827,23 +845,11 @@ module.exports = Backbone.View.extend({
     this.updateFilename(filepath, function(err) {
       if (err) {
         view.eventRegister.trigger('headerInputFocus');
-        view.eventRegister.trigger('updateSaveState', t('actions.save.fileNameError'), 'error');
+        view.updateSaveState(t('actions.save.fileNameError'), 'error');
       } else {
         save();
       }
     });
-  },
-
-  updatePublishState: function() {
-    // Update the publish key wording depening on what was saved
-    var $publishKey = $('.publish-flag', this.el);
-    var key = $publishKey.attr('data-state');
-
-    if (key === 'true') {
-      $publishKey.html(t('actions.publishing.published') + '<span class="ico checkmark"></span>');
-    } else {
-      $publishKey.html(t('actions.publishing.unpublished') + 'Unpublished<span class="ico checkmark"></span>');
-    }
   },
 
   stashFile: function(e) {
@@ -888,7 +894,7 @@ module.exports = Backbone.View.extend({
   },
 
   updateFile: function() {
-    var filepath = this.header.headerInputGet();
+    var filepath = this.filepath();
     var filename = util.extractFilename(filepath)[1];
     var filecontent = this.model.serialize();
     var $message = $('.commit-message');
@@ -909,23 +915,26 @@ module.exports = Backbone.View.extend({
   },
 
   updateSaveState: function(label, classes, kill) {
-    var view = this;
 
     // Cancel if this condition is met
     if (classes === 'save' && $(this.el).hasClass('saving')) return;
-    $('.button.save', this.el).html(label);
 
-    // Pass a popover span to the avatar icon
-    $('#heading', this.el).find('.popup').html(label);
-    $('.action').find('.popup').html(label);
+    // Update the Header
+    this.heading.updateState(label)
 
-    $(this.el)
+    // Update the Sidebar save button
+    this.sidebar.updateState(label);
+
+    // Update the avatar in the toolbar
+    this.toolbar.updateState(label);
+
+    this.$el
       .removeClass('error saving saved save')
       .addClass(classes);
 
     if (kill) {
       _.delay(function() {
-        $(view.el).removeClass(classes);
+        this.$el.removeClass(classes);
       }, 1000);
     }
   },
@@ -963,7 +972,7 @@ module.exports = Backbone.View.extend({
     var view = this;
 
     // Loading State
-    this.eventRegister.trigger('updateSaveState', t('actions.upload.uploading', { file: file.name }), 'saving');
+    this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
     // Base64 Encode the file content
     var extension = file.type.split('/').pop();
@@ -989,7 +998,7 @@ module.exports = Backbone.View.extend({
     // Read through the filenames of path. If there is a filename that
     // exists, we want to pass data.sha to update the existing one.
     window.app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, util.extractFilename(path)[0], function(err, res) {
-      if (err) return view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+      if (err) return view.updateSaveState(t('actions.error'), 'error');
 
       // Check whether the current (or media) directory
       // contains the same filename as the one a user wishes
@@ -1013,7 +1022,7 @@ module.exports = Backbone.View.extend({
 
       window.app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
         if (type === 'error') {
-          view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+          view.updateSaveState(t('actions.error'), 'error');
         } else {
           var $alt = $('input[name="alt"]');
           var image = ($alt.val) ?
@@ -1022,7 +1031,7 @@ module.exports = Backbone.View.extend({
 
           view.editor.focus();
           view.editor.replaceSelection(image);
-          view.eventRegister.trigger('updateSaveState', 'Saved', 'saved', true);
+          view.updateSaveState('Saved', 'saved', true);
 
           // Update the media directory with the
           // newly uploaded image.
@@ -1054,7 +1063,7 @@ module.exports = Backbone.View.extend({
     this.subviews = [];
 
     // Clear any file state classes in #prose
-    // this.eventRegister.trigger('updateSaveState', '', '');
+    this.updateSaveState('', '');
 
     Backbone.View.prototype.remove.apply(this, arguments);
   }

@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
+var util = require('../util');
 
 var views = {
   branches: require('./sidebar/branches'),
@@ -42,20 +43,38 @@ module.exports = Backbone.View.extend({
 
   render: function(options) {
     this.$el.html(this.template());
-
     _.invoke(this.subviews, 'render');
-
     return this;
+  },
+
+  filepathGet: function() {
+    return this.$el.find('.filepath').val();
+  },
+
+  updateFilepath: function(name) {
+    var path = this.$el.find('.filepath').val();
+    var parts = path.split('/');
+    var old = parts.pop();
+
+    // preserve the date and the extension
+    var date = util.extractDate(old);
+    var extension = old.split('.').pop();
+
+    var newPath = parts.join('/') + date + '-' + util.stringToUrl(name) + '.' + extension;
+
+    this.$el.find('.filepath').attr('value', newPath);
+  },
+
+  updateState: function(label) {
+    this.$el.find('.button.save').html(label);
   },
 
   open: function() {
     this.$el.toggleClass('open mobile', true);
 
-    /*
     // TODO: call when in 'tree'/repo mode and when authenticated but no mode (profile)?
-    this.$el.toggleClass('open', true);
-    this.$el.toggleClass('mobile', false);
-    */
+    // this.$el.toggleClass('open', true);
+    // this.$el.toggleClass('mobile', false);
   },
 
   close: function() {
