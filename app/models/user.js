@@ -35,6 +35,8 @@ module.exports = Backbone.Model.extend({
 
           if (_.isFunction(cb)) cb();
         });
+      } else {
+        if (_.isFunction(cb)) cb();
       }
     }
   },

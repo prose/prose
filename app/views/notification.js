@@ -1,27 +1,27 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-
   id: 'notification',
+
   className: 'notification round',
+
+  template: _.template(templates.notification),
 
   events: {
     'click .create': 'createPost'
   },
 
   initialize: function() {
+    debugger;
     this.model = this.options;
   },
 
   render: function() {
-    var view = this;
-    this.eventRegister = app.eventRegister;
-
     var pathTitle = (app.state.path) ? app.state.path : '';
     this.eventRegister.trigger('documentTitle', t('docheader.error') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    var tmpl = _(window.app.templates.notification).template();
 
     // Basically for any previous path we want to try
     // and bring a user back to the directory tree.
@@ -31,9 +31,9 @@ module.exports = Backbone.View.extend({
 
     var previous = parts.join('/');
 
-    $(this.el).html(tmpl(_.extend(this.model, {
-      key: view.model.key,
-      message: view.model.message,
+    this.$el.html(this.template(_.extend(this.model, {
+      key: this.model.key,
+      message: this.model.message,
       previous: previous,
       pathFromFile: (app.state.file) ? true : false
     })));
