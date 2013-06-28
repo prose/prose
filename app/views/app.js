@@ -59,7 +59,6 @@ module.exports = Backbone.View.extend({
       this.eventRegister.bind('documentTitle', this.documentTitle);
       this.eventRegister.bind('headerContext', this.headerContext);
       this.eventRegister.bind('recentFiles', this.recentFiles);
-      this.eventRegister.bind('updateSaveState', this.updateSaveState);
       this.eventRegister.bind('filenameInput', this.filenameInput);
       */
     },
@@ -125,7 +124,6 @@ module.exports = Backbone.View.extend({
       this.eventRegister.unbind('documentTitle', this.documentTitle);
       this.eventRegister.unbind('headerContext', this.headerContext);
       this.eventRegister.unbind('recentFiles', this.recentFiles);
-      this.eventRegister.unbind('updateSaveState', this.updateSaveState);
       this.eventRegister.unbind('filenameInput', this.filenameInput);
       Backbone.View.prototype.remove.call(this, arguments);
     }

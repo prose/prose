@@ -48,6 +48,10 @@ module.exports = Backbone.View.extend({
     return this;
   },
 
+  updateState: function(label) {
+    this.$el.find('.button.save').html(label);
+  },
+
   open: function() {
     this.$el.toggleClass('open mobile', true);
 

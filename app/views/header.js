@@ -21,12 +21,16 @@ module.exports = Backbone.View.extend({
   },
 
   checkPlaceholder: function(e) {
-    if (app.state.mode === 'new') {
+    if (this.file.isNew()) {
       var $target = $(e.target, this.el);
       if (!$target.val()) {
         $target.val($target.attr('placeholder'));
       }
     }
+  },
+
+  updateState: function(label) {
+    this.$el.find('.popup').html(label);
   },
 
   updateFile: function() {
