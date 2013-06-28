@@ -15,6 +15,7 @@ module.exports = Backbone.View.extend({
     this.auth = options.auth;
     this.user = options.user;
     this.search = options.search;
+    this.sidebar = options.sidebar;
     this.repos = options.repos;
   },
 
@@ -28,9 +29,17 @@ module.exports = Backbone.View.extend({
     header.setElement(this.$el.find('#heading')).render();
     this.subviews.push(header);
 
-    var sidebar = new OrgsView({ model: this.auth.orgs });
-    sidebar.setElement(this.$el.find('#drawer'));
-    this.subviews.push(sidebar);
+    if (this.auth) {
+      this.orgs = new OrgsView({ model: this.auth.orgs });
+      this.orgs.setElement(this.sidebar.$el.find('#orgs'));
+      this.subviews.push(sidebar);
+
+      this.auth.orgs.fetch({
+        success: (function() {
+          this.orgs.render();
+        }).bind(this)
+      });
+    }
 
     utils.fixedScroll(this.$el.find('.topbar'));
 

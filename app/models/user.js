@@ -47,6 +47,7 @@ module.exports = Backbone.Model.extend({
   },
 
   url: function() {
-    return auth.api + (this.get('id') === cookie.id ? '/user' : '/users/' + this.get('login'));
+    var id = cookie.get('id');
+    return auth.api + (id && this.get('id') === id ? '/user' : '/users/' + this.get('login'));
   }
 });

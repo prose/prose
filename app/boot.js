@@ -49,10 +49,7 @@ user.authenticate({
       user.fetch({
         success: function(model, res, options) {
           // Set authenticated user cookie
-          cookie.set('user', {
-            id: user.get('id'),
-            login: user.get('login')
-          });
+          cookie.set('id', user.get('id'));
 
           // Initialize router
           window.router = new Router({ user: model });

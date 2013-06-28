@@ -61,10 +61,10 @@ module.exports = Backbone.Router.extend({
   // #example-user
   // #example-organization
   profile: function(login) {
+    if (this.view) this.view.remove();
+
     util.loader.loading(t('loading.repos'));
     this.app.nav.mode('repos');
-
-    if (this.view) this.view.remove();
 
     var user = this.users.findWhere({ login: login });
     if (_.isUndefined(user)) {
@@ -85,28 +85,30 @@ module.exports = Backbone.Router.extend({
       auth: this.user,
       user: user,
       search: search,
+      sidebar: this.app.sidebar,
       repos: repos
     });
 
-    user.fetch();
+    user.fetch({
+      success: (function() {
+        this.view = content;
+        this.app.$el.find('#main').html(this.view.render().el);
 
-    this.view = content;
-    this.app.$el.find('#main').html(this.view.render().el);
+        user.repos.fetch();
 
-    this.user.repos.fetch();
-    this.user.orgs.fetch();
-
-    // TODO: build event-driven loader queue
-    util.loader.loaded();
+        // TODO: build event-driven loader queue
+        util.loader.loaded();
+      }).bind(this)
+    });
   },
 
   // #example-user/example-repo
   // #example-user/example-repo/tree/example-branch/example-path
   repo: function(login, repoName, branch, path) {
+    if (this.view) this.view.remove();
+
     util.loader.loading(t('loading.repo'));
     this.app.nav.mode('repo');
-
-    if (this.view) this.view.remove();
 
     var user = this.users.findWhere({ login: login });
     if (_.isUndefined(user)) {
@@ -173,6 +175,8 @@ module.exports = Backbone.Router.extend({
   },
 
   post: function(login, repoName, mode, branch, path, filename) {
+    if (this.view) this.view.remove();
+
     switch(mode) {
       case 'new':
         util.loader.loading(t('loading.creating'));
@@ -186,8 +190,6 @@ module.exports = Backbone.Router.extend({
     }
 
     this.app.nav.mode('file');
-
-    if (this.view) this.view.remove();
 
     var user = this.users.findWhere({ login: login });
     if (_.isUndefined(user)) {
@@ -269,15 +271,15 @@ module.exports = Backbone.Router.extend({
   },
 
   start: function() {
+    if (this.view) this.view.remove();
+
     // If user has authenticated
     if (this.user) {
-      $('#start').remove();
-
-      // Redirect
       router.navigate(this.user.get('login'), {
         trigger: true
       });
     } else {
+      this.app.nav.mode('start');
       this.view = new StartView();
       this.app.$el.html(this.view.render().el);
     }
