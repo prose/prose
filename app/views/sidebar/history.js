@@ -23,7 +23,6 @@ module.exports = Backbone.View.extend({
 
     this.commits.setBranch(this.branch, {
       success: (function(model, res, options) {
-        console.log(model);
         this.render()
       }).bind(this)
     });
