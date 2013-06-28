@@ -32,7 +32,7 @@ module.exports = Backbone.View.extend({
     if (this.auth) {
       this.orgs = new OrgsView({ model: this.auth.orgs });
       this.orgs.setElement(this.sidebar.$el.find('#orgs'));
-      this.subviews.push(sidebar);
+      this.subviews.push(this.orgs);
 
       this.auth.orgs.fetch({
         success: (function() {
