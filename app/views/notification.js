@@ -15,7 +15,6 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function() {
-    debugger;
     this.model = this.options;
   },
 

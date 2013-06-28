@@ -33,8 +33,12 @@ module.exports = Backbone.Router.extend({
   initialize: function(options) {
     options = _.clone(options) || {};
 
-    this.user = options.user;
-    this.users = new Users([this.user]);
+    this.users = new Users();
+
+    if (options.user) {
+      this.user = options.user;
+      this.users.add(this.user);
+    }
 
     // Load up the main layout
     this.app = new AppView({
@@ -126,8 +130,6 @@ module.exports = Backbone.Router.extend({
       });
       user.repos.add(repo);
     }
-
-    user.fetch();
 
     repo.fetch({
       success: (function(model, res, options) {

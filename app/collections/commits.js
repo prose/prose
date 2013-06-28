@@ -1,6 +1,6 @@
+var _ = require('underscore');
 var Backbone = require('backbone');
 var Commit = require('../models/commit');
-var config = require('../config');
 
 module.exports = Backbone.Collection.extend({
   model: Commit,
@@ -12,6 +12,14 @@ module.exports = Backbone.Collection.extend({
   setBranch: function(branch, options) {
     this.branch = branch;
     this.fetch(options);
+  },
+
+  parse: function(resp, options) {
+    return map = _.map(resp, (function(commit) {
+     return  _.extend(commit, {
+        repo: this.repo
+      })
+    }).bind(this));
   },
 
   url: function() {

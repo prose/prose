@@ -38,7 +38,7 @@ module.exports = Backbone.View.extend({
 
   initHeader: function() {
     this.header = new HeaderView({
-      user: this.user,
+      repo: this.model,
       alterable: false
     });
 
@@ -80,6 +80,7 @@ module.exports = Backbone.View.extend({
 
   initHistory: function() {
     this.history = new HistoryView({
+      user: this.user,
       repo: this.model,
       branch: this.branch,
       commits: this.model.commits,
@@ -108,6 +109,7 @@ module.exports = Backbone.View.extend({
     this.search.setElement(this.$el.find('#search')).render();
     this.files.setElement(this.$el.find('#files'));
     this.branches.setElement(this.sidebar.$el.find('#branches'));
+    this.history.setElement(this.sidebar.$el.find('#history'));
 
     util.fixedScroll(this.$el.find('.topbar'));
 

@@ -1,0 +1,10 @@
+<a class='item <%= commit.status %>' title='<% print(commit.status.charAt(0).toUpperCase() + commit.status.slice(1)) %>: <%= commit.file.filename %>' href='#<%= [commit.repo.owner.login, commit.repo.name, "edit", commit.branch, commit.file.filename].join("/") %>' data-path='<%= commit.file.filename %>'>
+  <span class='ico small inline <%= commit.status %>'></span>
+  <% if (status === 'removed') { %>
+    <span class='overlay'>
+      <span class='ico small inline <%= commit.status %>'></span>
+      <%= t('sidebar.repo.history.actions.restore') %>
+    </span>
+  <% } %>
+  <%= commit.file.filename %>
+</a>
