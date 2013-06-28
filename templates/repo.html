@@ -1,31 +1,25 @@
-<div id='drawer' class='sidebar'></div>
+<header id='heading' class='heading limiter clearfix'></header>
 
-<div class='limiter'>
-  <header id='heading' class='heading clearfix'></header>
-</div>
+<div id='content' class='application content limiter'>
+  <div class='topbar-wrapper'>
+    <div class='topbar'>
+      <div id='search' class='containment content-search'></div>
+    </div>
+  </div>
 
-<div class='limiter'>
-  <div id='content' class='application content'>
-    <div class='topbar-wrapper'>
-      <div class='topbar'>
-        <div id='search' class='containment content-search'></div>
+  <div class='listings'>
+    <% if (path.length && path !== jailed) { %>
+      <div class='breadcrumb'>
+        <a class='branch' href='#<%= [owner.login, repo, "tree", branch].join("/") %>'>..</a>
+        <% _.each(util.chunkedPath(path), function(p) { %>
+          <% if (p.name !== jailed) { %>
+            <span class='slash'>/</span>
+            <a class='path' href='#<%= [owner.login, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
+          <% } %>
+        <% }); %>
       </div>
-    </div>
+    <% } %>
 
-    <div class='listings'>
-      <% if (path.length && path !== jailed) { %>
-        <div class='breadcrumb'>
-          <a class='branch' href='#<%= [owner.login, repo, "tree", branch].join("/") %>'>..</a>
-          <% _.each(util.chunkedPath(path), function(p) { %>
-            <% if (p.name !== jailed) { %>
-              <span class='slash'>/</span>
-              <a class='path' href='#<%= [owner.login, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
-            <% } %>
-          <% }); %>
-        </div>
-      <% } %>
-
-      <div id='files'></div>
-    </div>
+    <div id='files'></div>
   </div>
 </div>

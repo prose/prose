@@ -27,6 +27,7 @@ module.exports = Backbone.Model.extend({
     var name = new Date().format('Y-m-d') + '-your-filename.md';
     var path = this.isNew() ? attributes.path + '/' + name : attributes.path;
     var extension = util.extension(path);
+    var permissions = this.repo ? this.repo.get('permissions') : undefined;
 
     this.branch = attributes.branch;
     this.collection = attributes.collection;
@@ -47,7 +48,7 @@ module.exports = Backbone.Model.extend({
       'name': this.isNew() ? name : util.extractFilename(attributes.path)[1],
       'path': path,
       'type': this.isNew() ? 'file' : attributes.type,
-      'writable': this.repo.get('permissions').push
+      'writable': permissions ? permissions.push : false
     });
   },
 

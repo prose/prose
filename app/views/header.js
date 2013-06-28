@@ -43,6 +43,7 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var login = this.user ? this.user.get('login') : this.repo.get('owner').login;
+    var permissions = this.repo ? this.repo.get('permissions') : undefined;
 
     this.$el.html(this.template({
       alterable: this.alterable,
@@ -58,7 +59,7 @@ module.exports = Backbone.View.extend({
       title: this.file ? this.file.get('path') : t('heading.explore'),
       translate: this.file ? this.file.get('translate') : undefined,
       user: this.user ? this.user.attributes : undefined,
-      writable: this.repo ? this.repo.get('permissions').push : undefined
+      writable: permissions ? permissions.push : false
     }));
 
     return this;
