@@ -617,6 +617,11 @@ module.exports = Backbone.View.extend({
       this.model.set('metadata', this.metadataEditor.getValue());
     }
 
+    if (this.model.isNew() && this.titleAsHeading) {
+      // Update the filename in the sidebar
+      this.sidebar.updateFilepath(this.heading.filepathGet());
+    }
+
     var label = this.model.get('writable') ?
       t('actions.change.save') :
       t('actions.change.submit');
