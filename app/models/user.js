@@ -49,6 +49,11 @@ module.exports = Backbone.Model.extend({
 
   url: function() {
     var id = cookie.get('id');
-    return auth.api + (id && this.get('id') === id ? '/user' : '/users/' + this.get('login'));
+    var token = cookie.get('oauth-token');
+
+    // Return '/user' if authenticated but no user id cookie has been set yet
+    // or if this model's id matches authenticated user id
+    return auth.api + ((token && _.isUndefined(id)) || (id && this.get('id') === id) ?
+      '/user' : '/users/' + this.get('login'));
   }
 });
