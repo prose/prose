@@ -54,7 +54,7 @@ module.exports = Backbone.View.extend({
     this.branches.fetch(fetch);
 
     // Events from vertical nav
-    this.listenTo(this.nav, 'new', this.new);
+    this.listenTo(this.nav, 'new', this.newFile);
     this.listenTo(this.nav, 'edit', this.edit);
     this.listenTo(this.nav, 'preview', this.preview);
     this.listenTo(this.nav, 'meta', this.meta);
@@ -65,11 +65,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'destroy', this.destroy);
     this.listenTo(this.sidebar, 'cancel', this.cancel);
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
-
-    //this.listenTo(this.toolbar, 'destroy', this.destroy);
-    /*
-    this.listenTo(this.nav, 'translate', this.translate, this);
-    */
+    this.listenTo(this.sidebar, 'translate', this.translate);
 
     // Cache jQuery window object
     var $window = $(window);
@@ -491,7 +487,7 @@ module.exports = Backbone.View.extend({
     // this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
   },
 
-  new: function() {
+  newFile: function() {
     var dirpath = this.path.replace(/\/(?!.*\/).*$/, '');
 
     this.router.navigate([
