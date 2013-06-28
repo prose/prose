@@ -56,11 +56,7 @@ module.exports = Backbone.View.extend({
 
       // Shallow flatten mapped array of all commit files
       var files = _.flatten(_.map(this.history, function(commit) {
-        return _.map(commit.get('files'), function(file) {
-          return _.extend(file, {
-            commit: commit
-          });
-        });
+        return commit.get('files');
       }), true);
 
       /*

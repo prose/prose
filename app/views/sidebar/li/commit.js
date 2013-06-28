@@ -13,7 +13,6 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     this.file = options.file;
-    this.model = options.file.commit;
     this.repo = options.repo;
     this.branch = options.branch;
   },
@@ -55,7 +54,6 @@ module.exports = Backbone.View.extend({
   render: function() {
     this.$el.html(_.template(this.template, {
       file: this.file,
-      model: this.model.toJSON(),
       repo: this.repo.toJSON(),
       branch: this.branch,
       status: this.file.status
