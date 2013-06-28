@@ -915,7 +915,6 @@ module.exports = Backbone.View.extend({
 
   updateSaveState: function(label, classes, kill) {
 
-    // debugger;
     // Cancel if this condition is met
     if (classes === 'save' && $(this.el).hasClass('saving')) return;
 

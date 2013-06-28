@@ -1,22 +1,18 @@
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-
 var LOCALES = require('../translations/locales');
 var en = require('../dist/en.js');
-
-var Backbone = require('backbone');
-var Router = require('./Router');
-
-var User = require('./models/user');
-
-var NotificationView = require('./views/notification');
-
-var config = require('./config');
-var cookie = require('./cookie');
 
 // Set locale as global variable
 window.locale.en = en;
 window.locale.current('en');
+
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Router = require('./Router');
+var User = require('./models/user');
+var NotificationView = require('./views/notification');
+var config = require('./config');
+var cookie = require('./cookie');
 
 // Set up translations
 var browserLang = (navigator.language || navigator.userLanguage).split('-')[0];
@@ -24,7 +20,6 @@ var locale;
 
 // Check if the browsers language is supported
 if (LOCALES.indexOf(browserLang) != -1) locale = browserLang;
-
 if (locale && locale !== 'en') {
   $.getJSON('./translations/locales/' + locale + '.json', function(result) {
     window.locale[locale] = result;
