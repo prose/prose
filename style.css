@@ -1074,7 +1074,7 @@ ins {
   display:none;
   }
 
-.start {
+#start {
   position:absolute;
   top:0;bottom:0;left:0;right:0;
   width:100%;
@@ -1082,7 +1082,7 @@ ins {
   z-index:100;
   }
   .notification,
-  .start .splash {
+  #start .splash {
     background:#fff;
     text-align:center;
     margin:45px auto;

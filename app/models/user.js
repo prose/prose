@@ -6,7 +6,7 @@ var Repos = require('../collections/repos');
 var Orgs = require('../collections/orgs');
 var NotificationView = require('../views/notification');
 
-var config = require('../config');
+var auth = require('../config');
 var cookie = require('../cookie');
 var templates = require('../../dist/templates');
 
@@ -16,27 +16,28 @@ module.exports = Backbone.Model.extend({
     this.orgs = new Orgs([], { user: this });
   },
 
-  authenticate: function(cb) {
+  authenticate: function(options) {
     if (cookie.get('oauth-token')) {
       this.set('authenticated', true);
-      if (_.isFunction(cb)) cb();
+      if (_.isFunction(options.success)) options.success();
     } else {
       var match = window.location.href.match(/\?code=([a-z0-9]*)/);
 
       if (match) {
-        $.getJSON(config.url + '/authenticate/' + match[1], function(data) {
-          cookie.set('oauth-token', data.token);
+        var ajax = $.ajax(auth.url + '/authenticate/' + match[1], {
+          success: function(data) {
+            cookie.set('oauth-token', data.token);
 
-          var regex = new RegExp("\\/\?code=" + match[1]);
-          debugger;
-          window.location.href = window.location.href.replace(regex, '').replace('&state=', '');
+            var regex = new RegExp("(?:\\/)?\\?code=" + match[1]);
+            window.location.href = window.location.href.replace(regex, '');
 
-          this.set('authenticated', true);
+            this.set('authenticated', true);
 
-          if (_.isFunction(cb)) cb();
+            if (_.isFunction(options.success)) options.success();
+          }
         });
       } else {
-        if (_.isFunction(cb)) cb();
+        if (_.isFunction(options.error)) options.error();
       }
     }
   },
@@ -46,6 +47,6 @@ module.exports = Backbone.Model.extend({
   },
 
   url: function() {
-    return config.api + (this.get('id') === cookie.id ? '/user' : '/users/' + this.get('login'));
+    return auth.api + (this.get('id') === cookie.id ? '/user' : '/users/' + this.get('login'));
   }
 });

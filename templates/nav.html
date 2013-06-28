@@ -50,7 +50,8 @@
 
 <ul class='auth nav clearfix'>
   <li>
-    <a class='ico round switch login' href='<%= config.site %>/login/oauth/authorize?client_id=<%= user.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>
+  <!-- config.site + /login/oauth/authorize?client_id= + user.id + &scope=repo&redirect_uri= + encodeURIComponent(window.location.href) -->
+    <a class='ico round switch login' href='#'>
       <span class='popup round arrow-right'><%= t('login') %></span>
     </a>
   </li>

@@ -62,11 +62,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(this.template({
-      config: config,
-      user: this.user.toJSON(),
-      noMenu: this.app.noMenu
-    }));
+    this.$el.html(this.template());
 
     return this;
   }

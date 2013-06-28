@@ -9,6 +9,7 @@ var Repo = require('./models/repo');
 var File = require('./models/file');
 
 var AppView = require('./views/app');
+var StartView = require('./views/start');
 var ProfileView = require('./views/profile');
 var SearchView = require('./views/search');
 var ReposView = require('./views/repos');
@@ -30,6 +31,8 @@ module.exports = Backbone.Router.extend({
   },
 
   initialize: function(options) {
+    options = _.clone(options) || {};
+
     this.user = options.user;
     this.users = new Users([this.user]);
 
@@ -266,7 +269,8 @@ module.exports = Backbone.Router.extend({
   },
 
   start: function() {
-    if (window.authenticated) {
+    // If user has authenticated
+    if (this.user) {
       $('#start').remove();
 
       // Redirect
@@ -274,18 +278,8 @@ module.exports = Backbone.Router.extend({
         trigger: true
       });
     } else {
-      this.application.render({
-        hideInterface: true
-      });
-
-      var view = new app.views.Start({
-        model: _.extend(this.model, {
-          authenticated: !! window.authenticated
-        })
-      }).render();
-
-      $('#content').empty();
-      $('#prose').append(view.el);
+      this.view = new StartView();
+      this.app.$el.html(this.view.render().el);
     }
   },
 

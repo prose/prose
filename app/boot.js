@@ -32,47 +32,56 @@ if (locale && locale !== 'en') {
   });
 }
 
-$.ajaxSetup({
-  headers: {
-    'Authorization': config.auth === 'oauth' ? 
-      'token ' + cookie.get('oauth-token') :
-      'Basic ' + Base64.encode(config.username + ':' + config.password)
-  }
-});
-
 var user = new User();
 
-user.authenticate(function() {
-  // CORS compatibility test
-  if ('withCredentials' in new XMLHttpRequest()) {
-    user.fetch({
-      success: function(model, res, options) {
-        // Set authenticated user cookie
-        cookie.set('user', {
-          id: user.get('id'),
-          login: user.get('login')
-        });
+user.authenticate({
+  success: function() {
+    if ('withCredentials' in new XMLHttpRequest()) {
+      // Set OAuth header for all CORS requests
+      $.ajaxSetup({
+        headers: {
+          'Authorization': config.auth === 'oauth' ? 
+            'token ' + cookie.get('oauth-token') :
+            'Basic ' + Base64.encode(config.username + ':' + config.password)
+        }
+      });
 
-        // Initialize router
-        window.router = new Router({ user: model });
+      user.fetch({
+        success: function(model, res, options) {
+          // Set authenticated user cookie
+          cookie.set('user', {
+            id: user.get('id'),
+            login: user.get('login')
+          });
 
-        // Start responding to routes
-        Backbone.history.start();
-      },
-      error: function() {
-        // TODO: emit notification event
-        var view = new NotificationView({
-          'type': 'error',
-          'message': t('notification.error.github')
-        }).render();
+          // Initialize router
+          window.router = new Router({ user: model });
 
-        $('#prose').html(view.el);
-      }
-    });
-  } else {
-    // TODO: emit notification event
-    // Display an upgrade notice.
-    var tmpl = _.template(templates.upgrade);
-    $('#prose').html(tmpl);
+          // Start responding to routes
+          Backbone.history.start();
+        },
+        error: function(model, res, options) {
+          // TODO: emit notification event
+          var view = new NotificationView({
+            'type': 'error',
+            'message': t('notification.error.github')
+          }).render();
+
+          $('#prose').html(view.el);
+        }
+      });
+    } else {
+      // TODO: emit notification event
+      // Display an upgrade notice.
+      var tmpl = _.template(templates.upgrade);
+      $('#prose').html(tmpl);
+    }
+  },
+  error: function() {
+    // Initialize router
+    window.router = new Router();
+
+    // Start responding to routes
+    Backbone.history.start();
   }
 });
