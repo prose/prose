@@ -18,7 +18,6 @@ module.exports = Backbone.Model.extend({
 
   authenticate: function(options) {
     if (cookie.get('oauth-token')) {
-      this.set('authenticated', true);
       if (_.isFunction(options.success)) options.success();
     } else {
       var match = window.location.href.match(/\?code=([a-z0-9]*)/);
@@ -30,8 +29,6 @@ module.exports = Backbone.Model.extend({
 
             var regex = new RegExp("(?:\\/)?\\?code=" + match[1]);
             window.location.href = window.location.href.replace(regex, '');
-
-            this.set('authenticated', true);
 
             if (_.isFunction(options.success)) options.success();
           }

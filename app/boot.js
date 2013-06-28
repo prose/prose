@@ -46,10 +46,18 @@ user.authenticate({
         }
       });
 
+      // Set User model id and login from cookies
+      var id = cookie.get('id');
+      if (id) user.set('id', id);
+
+      var login = cookie.get('login');
+      if (login) user.set('login', login);
+
       user.fetch({
         success: function(model, res, options) {
-          // Set authenticated user cookie
+          // Set authenticated user id and login cookies
           cookie.set('id', user.get('id'));
+          cookie.set('login', user.get('login'));
 
           // Initialize router
           window.router = new Router({ user: model });
