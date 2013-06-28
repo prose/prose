@@ -42,10 +42,12 @@ module.exports = Backbone.View.extend({
 
   render: function(options) {
     this.$el.html(this.template());
-
     _.invoke(this.subviews, 'render');
-
     return this;
+  },
+
+  filepathGet: function() {
+    return this.$el.find('.filepath').val();
   },
 
   updateState: function(label) {
@@ -55,11 +57,9 @@ module.exports = Backbone.View.extend({
   open: function() {
     this.$el.toggleClass('open mobile', true);
 
-    /*
     // TODO: call when in 'tree'/repo mode and when authenticated but no mode (profile)?
-    this.$el.toggleClass('open', true);
-    this.$el.toggleClass('mobile', false);
-    */
+    // this.$el.toggleClass('open', true);
+    // this.$el.toggleClass('mobile', false);
   },
 
   close: function() {

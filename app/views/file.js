@@ -534,7 +534,7 @@ module.exports = Backbone.View.extend({
       // if last item in hash array does not begin with Jekyll YYYY-MM-DD format,
       // append filename from input
       if (!_.last(hash).match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
-        hash.push(_.last(this.header.headerInputGet().split('/')));
+        hash.push(_.last(this.filepath().split('/')));
       }
 
       this.stashFile();
@@ -741,10 +741,18 @@ module.exports = Backbone.View.extend({
     return false;
   },
 
+  filepath: function() {
+    if (this.titleAsHeading()) {
+      return this.header.filepathGet();
+    } else {
+      return this.sidebar.filepathGet();
+    }
+  },
+
   draft: function() {
 
     // TODO Fix this all up.
-    var filepath = _.extractFilename(this.header.headerInputGet());
+    var filepath = _.extractFilename(this.filepath());
     var basepath = filepath[0].split('/');
     var filename = filepath[1];
     var postType = basepath[0];
@@ -889,7 +897,7 @@ module.exports = Backbone.View.extend({
   },
 
   updateFile: function() {
-    var filepath = this.header.headerInputGet();
+    var filepath = this.filepath();
     var filename = util.extractFilename(filepath)[1];
     var filecontent = this.model.serialize();
     var $message = $('.commit-message');

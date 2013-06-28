@@ -37,8 +37,8 @@ module.exports = Backbone.View.extend({
     this.trigger('makeDirty');
   },
 
-  headerInputGet: function() {
-    return this.$el.find('.headerinput');
+  filepathGet: function() {
+    return this.$el.find('.headerinput').val();
   },
 
   headerInputFocus: function() {
