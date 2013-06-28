@@ -617,9 +617,13 @@ module.exports = Backbone.View.extend({
       this.model.set('metadata', this.metadataEditor.getValue());
     }
 
-    if (this.model.isNew() && this.titleAsHeading) {
-      // Update the filename in the sidebar
-      this.sidebar.updateFilepath(this.heading.filepathGet());
+    if (this.titleAsHeading) {
+      var value = this.heading.inputGet();
+
+      if (this.model.isNew()) {
+        // Update the filename in the sidebar
+        this.sidebar.updateFilepath(value);
+      }
     }
 
     var label = this.model.get('writable') ?
@@ -732,7 +736,7 @@ module.exports = Backbone.View.extend({
           view.updateURL();
           view.model.set('previous', filecontent);
           view.sidebar.close();
-          view.updatePublishState();
+          view.toolbar.updatePublishState();
           view.updateSaveState(t('actions.save.submission'), 'saved');
         });
       } else {
@@ -748,7 +752,7 @@ module.exports = Backbone.View.extend({
 
   filepath: function() {
     if (this.titleAsHeading()) {
-      return this.header.filepathGet();
+      return this.header.inputGet();
     } else {
       return this.sidebar.filepathGet();
     }
@@ -798,7 +802,7 @@ module.exports = Backbone.View.extend({
       view.updateURL();
       view.prevFile = filecontent;
       view.closeSettings();
-      view.updatePublishState();
+      view.toolbar.updatePublishState();
       view.updateSaveState(t('actions.save.saved'), 'saved', true);
     });
   },
@@ -825,7 +829,7 @@ module.exports = Backbone.View.extend({
           view.updateURL();
           view.model.set('previous', filecontent);
           view.sidebar.close();
-          view.updatePublishState();
+          view.toolbar.updatePublishState();
           view.updateSaveState(t('actions.save.saved'), 'saved', true);
         });
       } else {
@@ -846,18 +850,6 @@ module.exports = Backbone.View.extend({
         save();
       }
     });
-  },
-
-  updatePublishState: function() {
-    // Update the publish key wording depening on what was saved
-    var $publishKey = $('.publish-flag', this.el);
-    var key = $publishKey.attr('data-state');
-
-    if (key === 'true') {
-      $publishKey.html(t('actions.publishing.published') + '<span class="ico checkmark"></span>');
-    } else {
-      $publishKey.html(t('actions.publishing.unpublished') + 'Unpublished<span class="ico checkmark"></span>');
-    }
   },
 
   stashFile: function(e) {

@@ -313,6 +313,26 @@ module.exports = Backbone.View.extend({
     return false;
   },
 
+  publishState: function() {
+    if (this.$el.find('publish-state') === 'true') {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  updatePublishState: function() {
+    // Update the publish key wording depening on what was saved
+    var $publishkey = this.$el.find('.publish-flag');
+    var key = $publishKey.attr('data-state');
+
+    if (key === 'true') {
+      $publishKey.html(t('actions.publishing.published') + '<span class="ico checkmark"></span>');
+    } else {
+      $publishKey.html(t('actions.publishing.unpublished') + 'Unpublished<span class="ico checkmark"></span>');
+    }
+  },
+
   togglePublishing: function(e) {
     var $target = $(e.currentTarget);
 
