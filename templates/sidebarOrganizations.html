@@ -6,14 +6,12 @@
   <% if (organizations && organizations.length) { %>
     <li>
       <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>
-        <span class='ico repos inline small'></span>
         <%= app.username %>
       </a>
     </li>
     <% _.each(organizations, function(org) { %>
     <li>
     <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>
-        <span class='ico repos inline small'></span>
         <%= org.login %>
       </a>
     </li>
