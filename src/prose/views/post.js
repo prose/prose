@@ -533,9 +533,13 @@ module.exports = Backbone.View.extend({
     var key = $publishKey.attr('data-state');
 
     if (key === 'true') {
-      $publishKey.html(t('actions.publishing.published') + '<span class="ico checkmark"></span>');
+      $publishKey
+        .empty()
+        .html(t('actions.publishing.published') + '<span class="ico checkmark"></span>');
     } else {
-      $publishKey.html(t('actions.publishing.unpublished') + 'Unpublished<span class="ico checkmark"></span>');
+      $publishKey
+        .empty()
+        .html(t('actions.publishing.unpublished') + 'Unpublished<span class="ico checkmark"></span>');
     }
   },
 
