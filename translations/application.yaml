@@ -15,6 +15,7 @@ en:
     about: "About"
     develop: "Developers"
     logout: "Logout"
+    language: "Choose Language"
   heading:
     explore: "Explore Projects"
   actions:
@@ -191,6 +192,10 @@ en:
             title: "Escaping"
             content: |
               <p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\</code>). Markdown will ignore the character directly after a backslash.
+  chooselanguage:
+    title: "Choose a Language"
+    description: |
+      Prose is a translated application. If you don't see your language in the list consider <a href='https://www.transifex.com/projects/p/prose'>contributing a translation to the project</a>.
   about:
     content: |
       # About

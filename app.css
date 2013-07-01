@@ -544,7 +544,7 @@ ins {
   }
 
 .dropdown-menu.prose-menu {
-  width:120px;
+  width:140px;
   position:fixed;
   z-index:5000;
   top:0;
@@ -1533,36 +1533,32 @@ ins {
       opacity:1;
       }
 
-.prose .blocks {
-  margin:0;
+.prose .fat-list {
+  list-style:none;
   padding:0;
+  margin:0 0 30px;
+  border:1px solid #d4d7d9;
   }
-  .blocks .img {
-    width:100%;
-    height:120px;
-    background-size:cover;
-    }
-  .blocks li {
-    list-style:none;
-    width:33.333%;
+  .fat-list li a {
+    padding:8px 15px;
+    color:#444;
+    border-bottom:1px solid #d4d7d9;
     display:block;
-    float:left;
     }
-    .blocks li a {
-      background-color:#fff;
-      margin:0 5px 15px;
-      color:#444;
-      display:block;
-      font-weight:400;
-      height:280px;
-      border:1px solid #a8afb2;
-      box-shadow:0 1px 0 rgba(255, 255, 255, 0),
-                 0 0 10px rgba(0, 0, 0, 0.1);
+    .fat-list li:first-child a {
+      -webkit-border-radius:4px 4px 0 0;
+              border-radius:4px 4px 0 0;
       }
-      .blocks li a:hover {
-        border-color:#516066;
-        color:#444;
-        }
+    .fat-list li:last-child a {
+      border-bottom:none;
+      -webkit-border-radius:0 0 4px 4px;
+              border-radius:0 0 4px 4px;
+      }
+    .fat-list li a.active,
+    .fat-list li a:hover {
+      background-color:#f8f8f8;
+      color:#444;
+      }
 
 .dropdown-menu {
   position:relative;
@@ -1577,7 +1573,7 @@ ins {
     top:100%;
     right:0;
     z-index:1000;
-    min-width:120px;
+    min-width:140px;
     padding:0 0 15px;
     text-align:left;
     display:none;

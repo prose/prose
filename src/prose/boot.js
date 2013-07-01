@@ -1,5 +1,6 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
+var cookie = require('./cookie');
 var Backbone = require('backbone');
 var LOCALES = require('../../translations/locales');
 var en = require('../../dist/en.js');
@@ -18,7 +19,8 @@ window.app = {
       Profile: require('./views/profile'),
       Posts: require('./views/posts'),
       Post: require('./views/post'),
-      Documentation: require('./views/documentation')
+      Documentation: require('./views/documentation'),
+      ChooseLanguage: require('./views/chooselanguage')
     },
     templates: require('../../dist/templates'),
     router: require('./router'),
@@ -29,10 +31,14 @@ window.app = {
 };
 
 // Set up translations
-var browserLang = (navigator.language || navigator.userLanguage).split('-')[0];
+var setLanguage = (cookie.get('lang')) ? true : false;
+
+if (setLanguage) {
+  setLanguage = _(LOCALES).some(function(l) { return l.code === cookie.get('lang'); });
+}
 
 // Check if the browsers language is supported
-if (LOCALES.indexOf(browserLang) != -1) app.locale = browserLang;
+if (setLanguage) app.locale = cookie.get('lang');
 
 if (app.locale && app.locale !== 'en') {
     $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {

@@ -7,6 +7,7 @@ module.exports = Backbone.Router.extend({
 
   routes: {
     'about(/)': 'about',
+    'chooselanguage(/)': 'chooseLanguage',
     'error/:code': 'error',
     ':user(/)': 'profile',
     ':user/:repo(/)': 'repo',
@@ -37,16 +38,28 @@ module.exports = Backbone.Router.extend({
   },
 
   about: function() {
-    this.resetState();
-    router.application.render({
-      noMenu: true
-    });
-
     var view = new app.views.Documentation({
       page: 'about'
     }).render();
 
+    this.minimalPage();
     $('#content').empty().append(view.el);
+  },
+
+  chooseLanguage: function() {
+    var view = new app.views.ChooseLanguage({
+      page: 'about'
+    }).render();
+
+    this.minimalPage();
+    $('#content').empty().append(view.el);
+  },
+
+  minimalPage: function() {
+    this.resetState();
+    router.application.render({
+      noMenu: true
+    });
   },
 
   // #example-user
