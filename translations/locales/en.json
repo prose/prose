@@ -71,7 +71,7 @@
         "repos": "Loading Profile",
         "repo": "Loading Project",
         "file": "Loading File",
-        "preview": "Previewing Post",
+        "preview": "Previewing File",
         "creating": "Creating new post"
     },
     "main": {
@@ -91,7 +91,7 @@
             "edit": "Edit"
         },
         "new": {
-            "body": "## A New Post\n\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"
+            "body": "## A New Post\\n\\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"
         },
         "file": {
             "metaTitle": "Review your changes:",

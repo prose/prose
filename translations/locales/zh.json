@@ -1,12 +1,106 @@
 {
     "docheader": {
-        "editing": "编辑",
-        "preview": "预览"
+        "editing": "正在编辑",
+        "preview": "正在预览"
     },
     "actions": {
         "unsaved": "您有修改尚未提交。确认离开？",
         "publishing": {
-            "publish": "发布"
+            "publish": "发布",
+            "published": "已发布",
+            "unpublish": "撤销发布",
+            "unpublished": "已撤销发布"
+        },
+        "change": {
+            "noChange": "尚无改动",
+            "save": "保存"
+        },
+        "delete": {
+            "title": "删除",
+            "warn": "确认要删除此文件吗？",
+            "error": "删除时出现错误。请稍等30秒再试"
+        },
+        "save": {
+            "title": "保存",
+            "fileNameError": "需要文件名称",
+            "submission": "已提交请求",
+            "metaError": "出现错误！未找到元数据"
+        },
+        "restore": {
+            "restoring": "正在恢复",
+            "restored": "已恢复"
+        },
+        "commits": {
+            "created": "已新建 {filename}",
+            "updated": "已更新 {filename}",
+            "toDraft": "新建了草稿 {filename}",
+            "fromDraft": "用草稿 {filename} 新建了帖子"
+        }
+    },
+    "loading": {
+        "repo": "正在加载项目",
+        "file": "正在加载文件",
+        "creating": "正在新建帖子"
+    },
+    "main": {
+        "start": {
+            "content": "Prose是一个Github文章编辑器，专为管理网站而设计。",
+            "learn": "了解更多"
+        },
+        "repos": {
+            "filter": "过滤项目",
+            "repo": "查看项目",
+            "site": "查看网站"
+        },
+        "repo": {
+            "filter": "过滤文件",
+            "edit": "编辑"
+        },
+        "new": {
+            "body": "## 新帖子\\n\\n 用 [Markdown][md] 语法编写. 可以使用上面的工具栏，或点击 **?** 查看语法帮助.\\n\\n[md]: http://wowubuntu.com/markdown/\\n\\n"
+        },
+        "upgrade": {
+            "content": "Prose 所需功能你的浏览器未能提供 ",
+            "download": "请下载现代化的浏览器"
+        }
+    },
+    "sidebar": {
+        "repo": {
+            "branch": "切换分支",
+            "history": {
+                "label": "最近历史记录"
+            },
+            "create": "新建文件"
+        },
+        "save": {
+            "label": "描述所做修改",
+            "cancel": "取消",
+            "save": "提交修改"
+        },
+        "settings": {
+            "delete": "删除此文件",
+            "draft": "新建草稿"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "插入链接",
+            "insert": "插入"
+        },
+        "help": {
+            "blockElements": {
+                "content": {
+                    "paragraphs": {
+                        "title": "段落与换行符"
+                    },
+                    "blockquotes": {
+                        "title": "段落引用"
+                    },
+                    "lists": {
+                        "title": "列表"
+                    }
+                }
+            }
         }
     }
 }
