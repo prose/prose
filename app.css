@@ -603,9 +603,8 @@ ins {
 
 .vert .nav.auth {
   position:absolute;
-  margin:0
   padding:0;
-  bottom:5px;
+  bottom:0;
   }
 .vert .nav li a {
   background-color:#f8f8f8;
