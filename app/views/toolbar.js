@@ -334,19 +334,19 @@ module.exports = Backbone.View.extend({
   },
 
   togglePublishing: function(e) {
-    var $target = $(e.currentTarget);
+    var $target = $(e.target).hasClass('checkmark') ? $(e.target).parent() : $(e.target);
 
     // TODO: remove HTML from view
     if ($target.hasClass('published')) {
       $target
         .empty()
-        .html('Unpublish<span class="ico small checkmark"></span>')
+        .append(t('actions.publishing.unpublish') + '<span class="ico checkmark"></span>')
         .removeClass('published')
         .attr('data-state', false);
     } else {
       $target
         .empty()
-        .html('Publish<span class="ico small checkmark"></span>')
+        .append(t('actions.publishing.publish') + '<span class="ico checkmark"></span>')
         .addClass('published')
         .attr('data-state', true);
     }

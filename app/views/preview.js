@@ -12,6 +12,14 @@ module.exports = Backbone.View.extend({
     this.eventRegister.trigger('documentTitle', t('docheader.preview') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
     this.stashApply();
     this.preview();
+
+    // Needs access to marked, so it's registered here.
+    Liquid.Template.registerFilter({
+      'markdownify': function(input) {
+        return marked(input || '');
+      }
+    });
+
     return this;
   },
 
@@ -45,15 +53,21 @@ module.exports = Backbone.View.extend({
     if (p.site.prose && p.site.prose.site) {
       _(p.site.prose.site).each(function(file, key) {
         q.defer(function(cb){
+          var next = false;
           $.ajax({
             cache: true,
             dataType: 'jsonp',
             jsonp: false,
             jsonpCallback: 'callback',
+            timeout: 5000,
             url: file,
             success: function(d) {
               p.site[key] = d;
+              next = true;
               cb();
+            },
+            error: function(msg, b, c) {
+              if (!next) cb();
             }
           });
         });
