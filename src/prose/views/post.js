@@ -319,13 +319,21 @@ module.exports = Backbone.View.extend({
     if ($target.hasClass('published')) {
       $target
         .empty()
-        .html(t('actions.publishing.unpublish') + '<span class="ico checkmark"></span>')
+        .html(t('actions.publishing.unpublish') +
+              '<span class="ico small checkmark"></span>' +
+              '<span class="popup round arrow-top">' +
+              t('actions.publishing.unpublishInfo') +
+              '</span>')
         .removeClass('published')
         .attr('data-state', false);
     } else {
       $target
         .empty()
-        .html(t('actions.publishing.publish') + '<span class="ico checkmark"></span>')
+        .html(t('actions.publishing.publish') +
+              '<span class="ico small checkmark"></span>' +
+              '<span class="popup round arrow-top">' +
+              t('actions.publishing.publishInfo') +
+              '</span>')
         .addClass('published')
         .attr('data-state', true);
     }
@@ -535,11 +543,11 @@ module.exports = Backbone.View.extend({
     if (key === 'true') {
       $publishKey
         .empty()
-        .html(t('actions.publishing.published') + '<span class="ico checkmark"></span>');
+        .html(t('actions.publishing.published') + '<span class="ico small checkmark"></span>');
     } else {
       $publishKey
         .empty()
-        .html(t('actions.publishing.unpublished') + '<span class="ico checkmark"></span>');
+        .html(t('actions.publishing.unpublished') + '<span class="ico small checkmark"></span>');
     }
   },
 
