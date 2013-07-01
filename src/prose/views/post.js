@@ -314,7 +314,7 @@ module.exports = Backbone.View.extend({
   },
 
   togglePublishing: function(e) {
-    var $target = $(e.target);
+    var $target = $(e.target).hasClass('checkmark') ? $(e.target) : $(e.target).parent();
 
     if ($target.hasClass('published')) {
       $target
