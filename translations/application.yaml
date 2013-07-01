@@ -195,7 +195,7 @@ en:
   chooselanguage:
     title: "Choose a Language"
     description: |
-      Prose is a translated application. If you don't see your language in the list consider <a href='https://www.transifex.com/projects/p/prose'>contributing a translation to the project</a>.
+      Prose is a translated application. If you don't see your language in the list, there are spelling errors, or translations are missing, consider <a href='https://www.transifex.com/projects/p/prose'>contributing translations to the project</a>.
   about:
     content: |
       # About
