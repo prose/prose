@@ -2407,11 +2407,8 @@ ins {
       position:static;
       width:auto;
       float:left;
-      padding:8px 0;
+      padding:0 0 8px;
       }
-      .prose-menu .dropdown li {
-        float:left;
-        }
       .prose-menu .dropdown .divider {
         display:none;
         }
