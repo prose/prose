@@ -539,7 +539,7 @@ module.exports = Backbone.View.extend({
     } else {
       $publishKey
         .empty()
-        .html(t('actions.publishing.unpublished') + 'Unpublished<span class="ico checkmark"></span>');
+        .html(t('actions.publishing.unpublished') + '<span class="ico checkmark"></span>');
     }
   },
 
