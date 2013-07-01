@@ -38,7 +38,8 @@ module.exports = Backbone.View.extend({
           });
       }
 
-      this.render();
+      // Reflect changes. Could be more elegant.
+      window.location.reload();
     }
 
     return false;

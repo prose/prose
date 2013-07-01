@@ -38,20 +38,18 @@ module.exports = Backbone.Router.extend({
   },
 
   about: function() {
+    this.minimalPage();
     var view = new app.views.Documentation({
       page: 'about'
     }).render();
-
-    this.minimalPage();
     $('#content').empty().append(view.el);
   },
 
   chooseLanguage: function() {
+    this.minimalPage();
     var view = new app.views.ChooseLanguage({
       page: 'about'
     }).render();
-
-    this.minimalPage();
     $('#content').empty().append(view.el);
   },
 
