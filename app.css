@@ -544,7 +544,7 @@ ins {
   }
 
 .dropdown-menu.prose-menu {
-  width:140px;
+  width:135px;
   position:fixed;
   z-index:5000;
   top:0;
@@ -1573,9 +1573,7 @@ ins {
     top:100%;
     right:0;
     z-index:1000;
-    min-width:140px;
     padding:0 0 15px;
-    text-align:left;
     display:none;
     }
     .dropdown li {

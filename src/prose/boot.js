@@ -33,10 +33,6 @@ window.app = {
 // Set up translations
 var setLanguage = (cookie.get('lang')) ? true : false;
 
-if (setLanguage) {
-  setLanguage = _(LOCALES).some(function(l) { return l.code === cookie.get('lang'); });
-}
-
 // Check if the browsers language is supported
 if (setLanguage) app.locale = cookie.get('lang');
 
