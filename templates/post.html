@@ -1,6 +1,8 @@
 <div class='editor views<% if (markdown) { %> markdown<% } %>'>
   <div id='diff' class='view prose diff'>
-    <h2><%= t('main.file.metaTitle') %><br /><span class='deemphasize small'></span><%= t('main.file.metaDescription') %></h2>
+    <h2><%= t('main.file.metaTitle') %><br />
+      <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>
+    </h2>
     <div class='diff-content inner'></div>
   </div>
   <% if (jekyll) { %>

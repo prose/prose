@@ -31,27 +31,27 @@ asyncMap(['application'], getResource, function(err, locales) {
 
 function getResource(resource, callback) {
     resource = project + 'resource/' + resource + '/';
-    getLanguages(resource, function(err, codes) {
+    getLanguages(resource, function(err, lang) {
         if (err) return callback(err);
 
-        asyncMap(codes, getLanguage(resource), function(err, results) {
+        asyncMap(lang, getLanguage(resource), function(err, results) {
             if (err) return callback(err);
-
             var locale = {};
+
             results.forEach(function(result, i) {
-                locale[codes[i]] = yaml.load(result)[codes[i]];
+                locale[lang[i].code] = yaml.load(result)[lang[i].code];
             });
 
             callback(null, locale);
         });
 
-        fs.writeFileSync('translations/locales.js', '// Automatically Generated\n\nmodule.exports = ' + JSON.stringify(codes) + ';');
+        fs.writeFileSync('translations/locales.js', '// Automatically Generated\n\nmodule.exports = ' + JSON.stringify(lang) + ';');
     });
 }
 
 function getLanguage(resource) {
-    return function(code, callback) {
-        request.get(resource + 'translation/' + code, { auth : auth },
+    return function(lang, callback) {
+        request.get(resource + 'translation/' + lang.code, { auth : auth },
             function(err, resp, body) {
             if (err) return callback(err);
             callback(null, JSON.parse(body).content);
@@ -64,7 +64,10 @@ function getLanguages(resource, callback) {
         function(err, resp, body) {
         if (err) return callback(err);
         callback(null, JSON.parse(body).available_languages.map(function(d) {
-            return d.code.replace(/_/g, '-');
+            return {
+              name: d.name,
+              code: d.code.replace(/_/g, '-')
+            }
         }).filter(function(d) {
             return d !== 'en';
         }));

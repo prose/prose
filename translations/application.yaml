@@ -15,17 +15,21 @@ en:
     about: "About"
     develop: "Developers"
     logout: "Logout"
+    language: "Choose Language"
   heading:
     explore: "Explore Projects"
   actions:
     unsaved: "You have unsaved Changes. Are you sure you want to leave?"
     draft:
       toPost: "Draft to Post"
+      toPostInfo: "Convert this draft into a published post"
     publishing:
       publish: "Publish"
+      publishInfo: "This post will be published the next time you save"
       published: "Published"
       unpublish: "Unpublish"
       unpublished: "Unpublished"
+      unpublishInfo: "This post will be unpublished the next time you save"
     change:
       noChange: "No Changes"
       submit: "Changes to Submit"
@@ -125,7 +129,7 @@ en:
       title: "Insert Image"
       back: "Back"
       description: |
-        Upload images by dragging &amp; Dropping or </br>
+        Upload images by Dragging &amp; Dropping or </br>
         {input} <a>selecting one</a>
       help: "Images uploaded are added to the current directory or one specified in the Image URL path above."
       helpMedia: "Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field."
@@ -188,6 +192,10 @@ en:
             title: "Escaping"
             content: |
               <p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\</code>). Markdown will ignore the character directly after a backslash.
+  chooselanguage:
+    title: "Choose a Language"
+    description: |
+      Prose is a translated application. If you don't see your language in the list, there are spelling errors, or translations are missing, consider <a href='https://www.transifex.com/projects/p/prose'>contributing translations to the project</a>.
   about:
     content: |
       # About
