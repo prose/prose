@@ -255,6 +255,7 @@ module.exports = Backbone.View.extend({
   },
 
   meta: function() {
+    var view = this;
     $('#prose').toggleClass('open', false);
 
     // Vertical Nav
@@ -267,6 +268,13 @@ module.exports = Backbone.View.extend({
 
     // Refresh CodeMirror
     if (this.rawEditor) this.rawEditor.refresh();
+
+    // Refresh any textarea's in the frontmatter form that use codemirror
+    $('.yaml-block').each(function() {
+      var editor = $(this).find('.CodeMirror').attr('id');
+      if (view[editor]) view[editor].refresh();
+    });
+
     return false;
   },
 
@@ -422,7 +430,6 @@ module.exports = Backbone.View.extend({
 
   serialize: function() {
     var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata).trim();
-
     if (this.model.jekyll) {
       return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
     } else {
@@ -732,6 +739,33 @@ module.exports = Backbone.View.extend({
                 type: 'text'
               }));
               break;
+            case 'textarea':
+              tmpl = _(window.app.templates.textarea).template();
+              var id = _.stringToUrl(data.name);
+
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                id: id,
+                value: data.field.value,
+                label: data.field.label,
+                type: 'textarea'
+              }));
+
+              _.defer(function() {
+                var textarea = document.getElementById(id);
+                view[id] = CodeMirror(function(el) {
+                  textarea.parentNode.replaceChild(el, textarea);
+                  el.id = id;
+                  el.className += ' inner ';
+                  el.setAttribute('data-name', data.name);
+                }, {
+                  mode: id,
+                  value: textarea.value,
+                  lineWrapping: true,
+                  theme: 'prose-bright'
+                });
+              });
+              break;
             case 'number':
               tmpl = _(window.app.templates.text).template();
               $metadataEditor.append(tmpl({
@@ -812,6 +846,7 @@ module.exports = Backbone.View.extend({
         switch (item.type) {
           case 'select-multiple':
           case 'select-one':
+          case 'textarea':
           case 'text':
             if (value) {
               value = $item.data('type') === 'number' ? Number(value) : value;
@@ -849,6 +884,17 @@ module.exports = Backbone.View.extend({
         }
       });
 
+      // Load any data coming from a yaml-block of content.
+      $('.yaml-block').each(function() {
+        var editor = $(this).find('.CodeMirror').attr('id');
+        var name = $('#' + editor).data('name');
+
+        if (view[editor]) {
+          metadata[name] = jsyaml.load('|\n' + view[editor].getValue());
+        }
+      });
+
+      // Load any data coming from not defined raw yaml front matter.
       if (view.rawEditor) {
         try {
           metadata = _.merge(metadata, jsyaml.load(view.rawEditor.getValue()) || {});
@@ -898,6 +944,7 @@ module.exports = Backbone.View.extend({
                   }
                   break;
                 case 'text':
+                case 'textarea':
                   input[i].value = value;
                   matched = true;
                   break;
@@ -924,6 +971,7 @@ module.exports = Backbone.View.extend({
                 }
                 break;
               case 'text':
+              case 'textarea':
                 input[i].value = value;
                 matched = true;
                 break;
