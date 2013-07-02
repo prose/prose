@@ -9888,22 +9888,8 @@ Liquid.Template.registerFilter({
   }
 });
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-module.exports = {"login":"Authorize on GitHub","docheader":{"editing":"Editing","error":"Error","preview":"Previewing"},"navigation":{"newFile":"New File","edit":"Edit","preview":"Preview","settings":"Settings","meta":"Meta Data","save":"Save","login":"Authorize with GitHub","about":"About","develop":"Developers","logout":"Logout"},"heading":{"explore":"Explore Projects"},"actions":{"unsaved":"You have unsaved Changes. Are you sure you want to leave?","draft":{"toPost":"Draft to Post"},"publishing":{"publish":"Publish","published":"Published","unpublish":"Unpublish","unpublished":"Unpublished"},"change":{"noChange":"No Changes","submit":"Changes to Submit","save":"Save"},"delete":{"title":"Delete","warn":"Are you sure you want to delete this file?","error":"Error during deletion. Please wait 30 seconds and try again."},"upload":{"uploading":"Uploading {file}","uploaded":"Uploaded {file}"},"save":{"title":"Save","saved":"Saved","saving":"Saving","patch":"Submitting Request","fileNameError":"Needs a Filename","submission":"Request Submitted","metaError":"Error! Metadata not Found"},"error":"Error. Try again in 30 Seconds","restore":{"restoring":"Restoring","restored":"Restored"},"commits":{"created":"Created {filename}","updated":"Updated {filename}","deleted":"Deleted {filename}","toDraft":"Created draft of {filename}","fromDraft":"Created post from a draft of {filename}"}},"loading":{"repos":"Loading Profile","repo":"Loading Project","file":"Loading File","preview":"Previewing File","creating":"Creating new post"},"main":{"start":{"content":"Prose is a content editor for GitHub designed for managing websites.","learn":"Learn more"},"repos":{"filter":"Filter Projects","repo":"View Project","site":"View Site","sharedFrom":"Shared from an account","forkedFrom":"Forked from another project"},"repo":{"filter":"Filter Files","edit":"Edit"},"new":{"body":"## A New Post\\n\\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"},"file":{"metaTitle":"Review your changes:","rawMeta":"Raw Metadata","metaDescription":"Additions are highlighted in green. Deletions are crossed out.","back":"Done"},"upgrade":{"content":"Prose requires features not available to your browser","download":"Download a Modern Browser"}},"notification":{"loginDescription":"Please login with your GitHub account to access that project.","create":"Create it","home":"Back to Main Page","back":"Go Back","error":{"label":"Error","github":"Error while loading data from Github. This might be a temporary issue. Please try again later.","exists":"This file does not exist","notFound":"Page not Found"}},"sidebar":{"repos":{"groups":"Groups"},"repo":{"branch":"Switch Branch","drafts":"View Drafts","history":{"label":"Most Recent History","actions":{"restore":"Restore?"}},"create":"Create New File"},"save":{"label":"Describe your Changes","cancel":"Cancel","save":"Commit","submit":"Submit Change Request"},"settings":{"title":"Options","delete":"Delete This File","translate":"Translate to","draft":"Create Draft"}},"dialogs":{"link":{"title":"Insert Link","insertLocal":"Insert a Local Link","insert":"Insert"},"media":{"title":"Insert Image","back":"Back","description":"Upload images by dragging &amp; Dropping or </br>\n{input} <a>selecting one</a>\n","help":"Images uploaded are added to the current directory or one specified in the Image URL path above.","helpMedia":"Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field.","choose":"Choose Existing"},"help":{"blockElements":{"title":"Block Elements","content":{"paragraphs":{"title":"Paragraphs &amp; Breaks","content":"<p>To create a paragraph, simply create a block of text that is not separated by one or more blank lines. Blocks of text separated by one or more blank lines will be parsed as paragraphs.</p><p>If you want to create a line break, end a line with two or more spaces, then hit Return/Enter.</p>\n"},"headers":{"title":"Headers","content":"<p>Markdown supports two header formats. The wiki editor uses the &ldquo;atx&rsquo;-style headers. Simply prefix your header text with the number of <code>#</code> characters to specify heading depth. For example: <code># Header 1</code>, <code>## Header 2</code> and <code>### Header 3</code> will be progressively smaller headers. You may end your headers with any number of hashes.</p>\n"},"blockquotes":{"title":"Blockquotes","content":"<p>Markdown creates blockquotes email-style by prefixing each line with the <code>&gt;</code>. This looks best if you decide to hard-wrap text and prefix each line with a <code>&gt;</code> character, but Markdown supports just putting <code>&gt;</code> before your paragraph.</p>\n"},"lists":{"title":"Lists","content":"<p>Markdown supports both ordered and unordered lists. To create an ordered list, simply prefix each line with a number (any number will do &mdash; this is why the editor only uses one number.) To create an unordered list, you can prefix each line with <code>*</code>, <code>+</code> or <code>-</code>.</p> List items can contain multiple paragraphs, however each paragraph must be indented by at least 4 spaces or a tab.\n"},"codeBlocks":{"title":"Code Blocks","content":"<p>Markdown wraps code blocks in pre-formatted tags to preserve indentation in your code blocks. To create a code block, indent the entire block by at least 4 spaces or one tab. Markdown will strip the extra indentation you&rsquo;ve added to the code block.</p>\n"},"horizontalRules":{"title":"Horizontal Rules","content":"<p>Horizontal rules are created by placing three or more hyphens, asterisks or underscores on a line by themselves. Spaces are allowed between the hyphens, asterisks or underscores.</p>\n"}}},"spanElements":{"title":"Span Elements","content":{"links":{"title":"Links","content":"<p>Markdown has two types of links: <strong>inline</strong> and <strong>reference</strong>. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text &ldquo;GitHub&rdquo;, you write <code>[GitHub]</code>.</p><p>To create an inline link, create a set of parentheses immediately after the brackets and write your URL within the parentheses. (e.g., <code>[GitHub](http://github.com/)</code>). Relative paths are allowed in inline links.</p><p>To create a reference link, use two sets of square brackets. <code>[my internal link][internal-ref]</code> will link to the internal reference <code>internal-ref</code>.</p>\n"},"emphasis":{"title":"Emphasis","content":"<p>Asterisks (<code>*</code>) and underscores (<code>_</code>) are treated as emphasis and are wrapped with an <code>&lt;em&gt;</code> tag, which usually displays as italics in most browsers. Double asterisks (<code>**</code>) or double underscores (<code>__</code>) are treated as bold using the <code>&lt;strong&gt;</code> tag. To create italic or bold text, simply wrap your words in single/double asterisks/underscores. For example, <code>**My double emphasis text**</code> becomes <strong>My double emphasis text</strong>, and <code>*My single emphasis text*</code> becomes <em>My single emphasis text</em>.</p>\n"},"code":{"title":"Code","content":"<p>To create inline spans of code, simply wrap the code in backticks (<code>`</code>). Markdown will turn <code>`myFunction`</code> into <code>myFunction</code>.</p>\n"},"images":{"title":"Images","content":"<p>Markdown image syntax looks a lot like the syntax for links; it is essentially the same syntax preceded by an exclamation point (<code>!</code>). For example, if you want to link to an image at <code>http://github.com/unicorn.png</code> with the alternate text <code>My Unicorn</code>, you would write <code>![My Unicorn](http://github.com/unicorn.png)</code>.</p>\n"}}},"miscellaneous":{"title":"Miscellaneous","content":{"automaticLinks":{"title":"Automatic Links","content":"<p>If you want to create a link that displays the actual URL, markdown allows you to quickly wrap the URL in <code>&lt;</code> and <code>&gt;</code> to do so. For example, the link <a href=\"javascript:void(0);\">http://github.com/</a> is easily produced by writing <code>&lt;http://github.com/&gt;</code>.</p>\n"},"escaping":{"title":"Escaping","content":"<p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\\\</code>). Markdown will ignore the character directly after a backslash.\n"}}}}},"about":{"content":"# About\nProse provides a beatifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"}};
+module.exports = {"login":"Authorize on GitHub","docheader":{"editing":"Editing","error":"Error","preview":"Previewing"},"navigation":{"newFile":"New File","edit":"Edit","preview":"Preview","settings":"Settings","meta":"Meta Data","save":"Save","login":"Authorize with GitHub","about":"About","develop":"Developers","logout":"Logout","language":"Choose Language"},"heading":{"explore":"Explore Projects"},"actions":{"unsaved":"You have unsaved Changes. Are you sure you want to leave?","draft":{"toPost":"Draft to Post","toPostInfo":"Convert this draft into a published post"},"publishing":{"publish":"Publish","publishInfo":"This post will be published the next time you save","published":"Published","unpublish":"Unpublish","unpublished":"Unpublished","unpublishInfo":"This post will be unpublished the next time you save"},"change":{"noChange":"No Changes","submit":"Changes to Submit","save":"Save"},"delete":{"title":"Delete","warn":"Are you sure you want to delete this file?","error":"Error during deletion. Please wait 30 seconds and try again."},"upload":{"uploading":"Uploading {file}","uploaded":"Uploaded {file}"},"save":{"title":"Save","saved":"Saved","saving":"Saving","patch":"Submitting Request","fileNameError":"Needs a Filename","submission":"Request Submitted","metaError":"Error! Metadata not Found"},"error":"Error. Try again in 30 Seconds","restore":{"restoring":"Restoring","restored":"Restored"},"commits":{"created":"Created {filename}","updated":"Updated {filename}","deleted":"Deleted {filename}","toDraft":"Created draft of {filename}","fromDraft":"Created post from a draft of {filename}"}},"loading":{"repos":"Loading Profile","repo":"Loading Project","file":"Loading File","preview":"Previewing File","creating":"Creating new post"},"main":{"start":{"content":"Prose is a content editor for GitHub designed for managing websites.","learn":"Learn more"},"repos":{"filter":"Filter Projects","repo":"View Project","site":"View Site","sharedFrom":"Shared from an account","forkedFrom":"Forked from another project"},"repo":{"filter":"Filter Files","edit":"Edit"},"new":{"body":"## A New Post\\n\\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"},"file":{"metaTitle":"Review your changes:","rawMeta":"Raw Metadata","metaDescription":"Additions are highlighted in green. Deletions are crossed out.","back":"Done"},"upgrade":{"content":"Prose requires features not available to your browser","download":"Download a Modern Browser"}},"notification":{"loginDescription":"Please login with your GitHub account to access that project.","create":"Create it","home":"Back to Main Page","back":"Go Back","error":{"label":"Error","github":"Error while loading data from Github. This might be a temporary issue. Please try again later.","exists":"This file does not exist","notFound":"Page not Found"}},"sidebar":{"repos":{"groups":"Groups"},"repo":{"branch":"Switch Branch","drafts":"View Drafts","history":{"label":"Most Recent History","actions":{"restore":"Restore?"}},"create":"Create New File"},"save":{"label":"Describe your Changes","cancel":"Cancel","save":"Commit","submit":"Submit Change Request"},"settings":{"title":"Options","delete":"Delete This File","translate":"Translate to","draft":"Create Draft"}},"dialogs":{"link":{"title":"Insert Link","insertLocal":"Insert a Local Link","insert":"Insert"},"media":{"title":"Insert Image","back":"Back","description":"Upload images by Dragging &amp; Dropping or </br>\n{input} <a>selecting one</a>\n","help":"Images uploaded are added to the current directory or one specified in the Image URL path above.","helpMedia":"Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field.","choose":"Choose Existing"},"help":{"blockElements":{"title":"Block Elements","content":{"paragraphs":{"title":"Paragraphs &amp; Breaks","content":"<p>To create a paragraph, simply create a block of text that is not separated by one or more blank lines. Blocks of text separated by one or more blank lines will be parsed as paragraphs.</p><p>If you want to create a line break, end a line with two or more spaces, then hit Return/Enter.</p>\n"},"headers":{"title":"Headers","content":"<p>Markdown supports two header formats. The wiki editor uses the &ldquo;atx&rsquo;-style headers. Simply prefix your header text with the number of <code>#</code> characters to specify heading depth. For example: <code># Header 1</code>, <code>## Header 2</code> and <code>### Header 3</code> will be progressively smaller headers. You may end your headers with any number of hashes.</p>\n"},"blockquotes":{"title":"Blockquotes","content":"<p>Markdown creates blockquotes email-style by prefixing each line with the <code>&gt;</code>. This looks best if you decide to hard-wrap text and prefix each line with a <code>&gt;</code> character, but Markdown supports just putting <code>&gt;</code> before your paragraph.</p>\n"},"lists":{"title":"Lists","content":"<p>Markdown supports both ordered and unordered lists. To create an ordered list, simply prefix each line with a number (any number will do &mdash; this is why the editor only uses one number.) To create an unordered list, you can prefix each line with <code>*</code>, <code>+</code> or <code>-</code>.</p> List items can contain multiple paragraphs, however each paragraph must be indented by at least 4 spaces or a tab.\n"},"codeBlocks":{"title":"Code Blocks","content":"<p>Markdown wraps code blocks in pre-formatted tags to preserve indentation in your code blocks. To create a code block, indent the entire block by at least 4 spaces or one tab. Markdown will strip the extra indentation you&rsquo;ve added to the code block.</p>\n"},"horizontalRules":{"title":"Horizontal Rules","content":"<p>Horizontal rules are created by placing three or more hyphens, asterisks or underscores on a line by themselves. Spaces are allowed between the hyphens, asterisks or underscores.</p>\n"}}},"spanElements":{"title":"Span Elements","content":{"links":{"title":"Links","content":"<p>Markdown has two types of links: <strong>inline</strong> and <strong>reference</strong>. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text &ldquo;GitHub&rdquo;, you write <code>[GitHub]</code>.</p><p>To create an inline link, create a set of parentheses immediately after the brackets and write your URL within the parentheses. (e.g., <code>[GitHub](http://github.com/)</code>). Relative paths are allowed in inline links.</p><p>To create a reference link, use two sets of square brackets. <code>[my internal link][internal-ref]</code> will link to the internal reference <code>internal-ref</code>.</p>\n"},"emphasis":{"title":"Emphasis","content":"<p>Asterisks (<code>*</code>) and underscores (<code>_</code>) are treated as emphasis and are wrapped with an <code>&lt;em&gt;</code> tag, which usually displays as italics in most browsers. Double asterisks (<code>**</code>) or double underscores (<code>__</code>) are treated as bold using the <code>&lt;strong&gt;</code> tag. To create italic or bold text, simply wrap your words in single/double asterisks/underscores. For example, <code>**My double emphasis text**</code> becomes <strong>My double emphasis text</strong>, and <code>*My single emphasis text*</code> becomes <em>My single emphasis text</em>.</p>\n"},"code":{"title":"Code","content":"<p>To create inline spans of code, simply wrap the code in backticks (<code>`</code>). Markdown will turn <code>`myFunction`</code> into <code>myFunction</code>.</p>\n"},"images":{"title":"Images","content":"<p>Markdown image syntax looks a lot like the syntax for links; it is essentially the same syntax preceded by an exclamation point (<code>!</code>). For example, if you want to link to an image at <code>http://github.com/unicorn.png</code> with the alternate text <code>My Unicorn</code>, you would write <code>![My Unicorn](http://github.com/unicorn.png)</code>.</p>\n"}}},"miscellaneous":{"title":"Miscellaneous","content":{"automaticLinks":{"title":"Automatic Links","content":"<p>If you want to create a link that displays the actual URL, markdown allows you to quickly wrap the URL in <code>&lt;</code> and <code>&gt;</code> to do so. For example, the link <a href=\"javascript:void(0);\">http://github.com/</a> is easily produced by writing <code>&lt;http://github.com/&gt;</code>.</p>\n"},"escaping":{"title":"Escaping","content":"<p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\\\</code>). Markdown will ignore the character directly after a backslash.\n"}}}}},"chooselanguage":{"title":"Choose a Language","description":"Prose is a translated application. If you don't see your language in the list, there are spelling errors, or translations are missing, consider <a href='https://www.transifex.com/projects/p/prose'>contributing translations to the project</a>.\n"},"about":{"content":"# About\nProse provides a beatifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"}};
 },{}],2:[function(require,module,exports){
-module.exports = {"app":"<% if (!error) { %>\n  <div id='vert' class='vert clearfix navigation'></div>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose <%= version %></a></li>\n      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>\n      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>\n      <% if (window.authenticated) { %>\n        <li class='divider'></li>\n        <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>\n      <% } %>\n    </ul>\n  </div>\n</div>\n","asset":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (_.isMedia(path)) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon listing-icon round folder'></span>\n    <span class='details'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>\n      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n    </a>\n  <% } %>\n\n  <div class='details'>\n    <div class='actions fr clearfix'>\n      <% if (!isBinary) { %>\n        <a class='clearfix'\n          title=\"<%= t('main.repo.edit') %>\"\n          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n          <%= t('main.repo.edit') %>\n        </a>\n      <% } %>\n      <% if (window.authenticated && writePermissions) { %>\n        <a\n          class='delete'\n          title=\"<%= t('sidebar.settings.delete') %>\"\n          data-user='<%= user %>'\n          data-repo='<%= repo %>'\n          data-branch='<%= branch %>'\n          data-file='<%= file %>'\n          href='#'>\n          <span class='ico rubbish small'></span>\n        </a>\n      <% } %>\n    </div>\n    <% if (isBinary) { %>\n      <h3 class='title' title='<%= name %>'><%= name %></h3>\n    <% } else { %>\n        <% if (isMarkdown) { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <div class='action round avatar'>\n    <div class='popup-hover'>\n      <span class='ico round status'></span>\n      <span class='popup round arrow-left'><%= t('actions.change.noChange') %></span>\n      <%= avatar %>\n    </div>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n\n    <% if (app.state.mode === 'new' && !translate) { %>\n      <input type='text' class='filepath' placeholder='<%= title %>'>\n    <% } else { %>\n      <input type='text' class='filepath' value='<%= title %>'>\n    <% } %>\n\n    <div class='mask'></div>\n  </div>\n\n<% } else { %>\n  <div class='avatar round'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","helpDialog":"<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= _.formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= _.formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= _.formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","hidden":"<input type='hidden' name='<%= name %>' value='<%= value %>' />\n","linkDialog":"<div class='inner'>\n  <label><%= t('dialogs.link.title') %></label>\n  <input type='text' name='href' placeholder='Link URL' />\n  <input type='text' name='text' placeholder='Link Name' />\n  <input type='text' name='title' placeholder='Title (optional)' />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder='Insert a local link' class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>\n</div>\n","loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <%= message %>\n</div>\n","mediaDialog":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label><%= t('dialogs.media.title') %></label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        <%= description %>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder='Image URL' />\n    <input type='text' name='alt' placeholder='Alt text (optional)' />\n    <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>\n      <% if (!assetsDirectory) { %>\n        <small class='deemphasize'><%= t('dialogs.media.help') %></small>\n      <% } %>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label><%= t('dialogs.media.choose') %></label>\n      <ul id='media'></ul>\n      <small class='deemphasize'><%= t('dialogs.media.helpMedia') %></small>\n    </div>\n  <% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('notification.loginDescription') %></p>\n      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'><%= t('login') %></a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= key %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'><%= t('notification.create') %></a></p>\n      <% } %>\n\n      <% if (key === 'error') { %>\n        <p><a class='button round' href='#'><%= t('notification.home') %></a></p>\n      <% } else { %>\n        <p><a class='button round' href='<%= previous %>'><%= t('notification.back') %></a></p>\n      <% } %>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'>\n    <h2><%= t('main.file.metaTitle') %><br /><span class='deemphasize small'></span><%= t('main.file.metaDescription') %></h2>\n    <div class='diff-content inner'></div>\n  </div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n      <a href='#' class='button round finish'><%= t('main.file.back') %></a>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar'>\n        <div id='toolbar' class='containment toolbar round'></div>\n      </div>\n    </div>\n    <div id='code' class='code round inner'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder=\"<%= t('main.repo.filter') %>\" />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files' class='listing'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder=\"<%= t('main.repos.filter') %>\" />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <ul id='projects' class='projects listing'></ul>\n</div>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      class='listing-icon'\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='icon round repo owner private' title=\"<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)\"></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='icon round repo owner' title=\"<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)\"></span>\n      <% } else if (fork && private) { %>\n        <span class='icon round repo private fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n      <% } else if (fork) { %>\n        <span class='icon round repo fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n      <% } else if (private) { %>\n        <span class='icon round repo private'></span>\n      <% } else { %>\n        <span class='icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details'>\n      <div class='actions fr clearfix'>\n        <a\n          data-user='<%= owner.login %>'\n          data-repo='<%= name %>'\n          href='#<%= owner.login %>/<%= name %>'>\n          <%= t('main.repos.repo') %>\n        </a>\n        <% if (homepage) { %>\n          <a href='<%= homepage %>'><%= t('main.repos.site') %></a>\n        <% } %>\n      </div>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.settings.title') %></h2>\n  </div>\n  <div class='inner authoring'>\n\n    <% if (jekyll && !draft && lang === 'gfm') { %>\n      <a class='draft button round' href='#'><%= t('sidebar.settings.draft') %></a>\n    <% } %>\n\n    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'><%= t('sidebar.settings.translate') + ' ' + lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (writable) { %>\n      <a class='delete button round' href='#'><%= t('sidebar.settings.delete') %></a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.repos.groups') %></h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <span class='ico repos inline small'></span>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <span class='ico repos inline small'></span>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'><%= t('sidebar.repo.branch') %></h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n\n<% var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; %>\n<% if (rooturl && path != '_drafts') { %>\n  <div class='inner'>\n    <a class='button round' href='#<%= [user, repo, \"tree\", branch, \"_drafts\"].join(\"/\") %>'><%= t('sidebar.repo.drafts') %></a>\n  </div>\n<% } %>\n\n<% if (window.authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'><%= t('sidebar.repo.history.label') %></h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username]; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                <%= t('sidebar.repo.history.actions.restore') %>\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n<div class='inner'>\n  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='round button mobile-new-file'><%= t('sidebar.repo.create') %></a>\n</div>\n<% } %>\n","sidebarSave":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.save.label') %></h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>\n      </a>\n    </div>\n\n    <% if (writable) { %>\n      <a class='confirm button round' href='#'><%= t('sidebar.save.save') %></a>\n    <% } else { %>\n      <a class='confirm button round' href='#'><%= t('sidebar.save.submit') %></a>\n    <% } %>\n  </div>\n<% } %>\n","start":"<% if (!window.authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('main.start.content') %></p>\n      <p><a href='#about'><%= t('main.start.learn') %></a></p>\n      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' data-type='<%= type %>' />\n</div>\n","toolbar":"<% if (draft) { %>\n  <a href='#' class='draft-to-post'><%= t('actions.draft.toPost') %><span class='ico checkmark'></span></a>\n<% } else { %>\n  <% if (jekyll && metadata.published) { %>\n    <a href='#' class='publish-flag published round' data-state='true'><%= t('actions.publishing.published') %><span class='ico small checkmark'></span></a>\n  <% } else if (jekyll && !metadata.published) { %>\n    <a href='#' class='publish-flag' data-state='false'><%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span></a>\n  <% } %>\n<% } %>\n<div class='options clearfix'>\n  <span href='#' class='action round fl ico small document <%= avatar %>'>\n    <span class='status'></span>\n\n    <% if (writable) { %>\n      <span class='popup round arrow-top'><%= t('actions.change.save') %></span>\n    <% } else { %>\n      <span class='popup round arrow-top'><%= t('actions.change.submit') %></span>\n    <% } %>\n\n  </span>\n  <% if (markdown) { %>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"##\\n\\n\") %>'>h2</a></li>\n      <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"###\\n\\n\") %>'>h3</a></li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>\n          <span class='ico small link'></span>\n        </a>\n      </li>\n      <li>\n        <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>\n          <span class='ico small picture'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>\n      <li>\n        <a data-key='italic' href='#' title='Italic' data-snippet='__'>\n          <span class='ico small italic'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n          <span class='ico small quote'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n          <span class='ico small list'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n          <span class='ico small numbered-list'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>\n          <span class='ico small question'></span>\n        </a>\n      </li>\n    </ul>\n  <% } %>\n</div>\n<div id='dialog'></div>\n","upgrade":"<div class='start'>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('main.upgrade.content') %></p>\n      <a class='round button' href='https://www.google.com/intl/en/chrome/browser'><%= t('main.upgrade.download') %></a>\n    </div>\n  </div>\n</div>\n","verticalNav":"<%\n  var editMode;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<% if (!noMenu && window.authenticated) { %>\n  <ul class='mobile-menu nav clearfix'>\n    <li>\n      <a href='#' class='toggle ico menu round'></a>\n    </li>\n  </ul>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n  <ul class='project nav clearfix'>\n    <li>\n      <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n        <span class='popup round arrow-right'><%= t('navigation.newFile') %></span>\n      </a>\n    </li>\n  </ul>\n<% } %>\n\n<% if (editMode) { %>\n  <ul class='post-views nav clearfix'>\n    <li>\n      <a href='#' class='ico round pencil edit' data-state='edit'>\n        <span class='popup round arrow-right'><%= t('navigation.edit') %></span>\n      </a>\n    </li>\n    <% if (markdown || mode === 'new') { %>\n      <li>\n        <a href='#' class='ico round eye blob preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n          <span class='popup round arrow-right'><%= t('navigation.preview') %></span>\n        </a>\n      </li>\n    <% } %>\n\n    <% if (window.authenticated) { %>\n      <% if (jekyll && lang !== 'yaml') { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'><%= t('navigation.meta') %></span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (app.state.mode !== 'new') { %>\n        <li>\n          <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n            <span class='popup round arrow-right'><%= t('navigation.settings') %></span>\n          </a>\n        </li>\n      <% } %>\n\n      <li>\n        <a href='#' class='ico round save'>\n          <span class='popup round arrow-right'><%= t('navigation.save') %></span>\n        </a>\n      </li>\n    <% } %>\n  </ul>\n<% } %>\n\n<% if (!window.authenticated) { %>\n<ul class='auth nav clearfix'>\n  <li>\n    <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n      <span class='popup round arrow-right'><%= t('login') %></span>\n    </a>\n  </li>\n</ul>\n<% } %>\n"};
-},{}],3:[function(require,module,exports){
-// Automatically Generated
-
-module.exports = ["zh","de","ro","es","vi"];
-},{}],4:[function(require,module,exports){
-module.exports={
-  "api": "https://api.github.com",
-  "site": "https://github.com",
-  "clientId": "c602a8bd54b1e774f864",
-  "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
-}
-
-},{}],5:[function(require,module,exports){
 function tryParse(obj) {
   try {
     return JSON.parse(obj);
@@ -9975,9 +9961,24 @@ cookie.clear = function() {
 
 module.exports = cookie;
 
+},{}],3:[function(require,module,exports){
+// Automatically Generated
+
+module.exports = [{"name":"Chinese","code":"zh"},{"name":"English","code":"en"},{"name":"German","code":"de"},{"name":"Romanian","code":"ro"},{"name":"Spanish","code":"es"},{"name":"Vietnamese","code":"vi"}];
+},{}],4:[function(require,module,exports){
+module.exports = {"app":"<% if (!error) { %>\n  <div id='vert' class='vert clearfix navigation'></div>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose <%= version %></a></li>\n      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>\n      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>\n      <li><a href='./#chooselanguage'><%= t('navigation.language') %></a></li>\n      <% if (window.authenticated) { %>\n        <li class='divider'></li>\n        <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>\n      <% } %>\n    </ul>\n  </div>\n</div>\n","asset":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (_.isMedia(path)) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","chooselanguage":"<h1><%= t('chooselanguage.title') %></h1>\n<ul class='fat-list round'>\n  <% _(languages).each(function(l) { %> \n    <li>\n    <a href='#' data-code='<%= l.code %>' class='language<% if (l.code === active) { %> active<% } %>'>\n        <% if (l.code === active) { %><span class='ico checkmark fr'></span><% } %> \n        <%= l.name %>\n        <small>(<%= l.code %>)</small>\n      </a>\n    </li>\n  <% }); %> \n</ul>\n<p><%= t('chooselanguage.description') %></p>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon listing-icon round folder'></span>\n    <span class='details'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>\n      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n    </a>\n  <% } %>\n\n  <div class='details'>\n    <div class='actions fr clearfix'>\n      <% if (!isBinary) { %>\n        <a class='clearfix'\n          title=\"<%= t('main.repo.edit') %>\"\n          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n          <%= t('main.repo.edit') %>\n        </a>\n      <% } %>\n      <% if (window.authenticated && writePermissions) { %>\n        <a\n          class='delete'\n          title=\"<%= t('sidebar.settings.delete') %>\"\n          data-user='<%= user %>'\n          data-repo='<%= repo %>'\n          data-branch='<%= branch %>'\n          data-file='<%= file %>'\n          href='#'>\n          <span class='ico rubbish small'></span>\n        </a>\n      <% } %>\n    </div>\n    <% if (isBinary) { %>\n      <h3 class='title' title='<%= name %>'><%= name %></h3>\n    <% } else { %>\n        <% if (isMarkdown) { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <div class='action round avatar'>\n    <div class='popup-hover'>\n      <span class='ico round status'></span>\n      <span class='popup round arrow-left'><%= t('actions.change.noChange') %></span>\n      <%= avatar %>\n    </div>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n\n    <% if (app.state.mode === 'new' && !translate) { %>\n      <input type='text' class='filepath' placeholder='<%= title %>'>\n    <% } else { %>\n      <input type='text' class='filepath' value='<%= title %>'>\n    <% } %>\n\n    <div class='mask'></div>\n  </div>\n\n<% } else { %>\n  <div class='avatar round'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","helpDialog":"<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= _.formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= _.formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= _.formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","hidden":"<input type='hidden' name='<%= name %>' value='<%= value %>' />\n","linkDialog":"<div class='inner'>\n  <label><%= t('dialogs.link.title') %></label>\n  <input type='text' name='href' placeholder='Link URL' />\n  <input type='text' name='text' placeholder='Link Name' />\n  <input type='text' name='title' placeholder='Title (optional)' />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder='Insert a local link' class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>\n</div>\n","loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <%= message %>\n</div>\n","mediaDialog":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label><%= t('dialogs.media.title') %></label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        <%= description %>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder='Image URL' />\n    <input type='text' name='alt' placeholder='Alt text (optional)' />\n    <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>\n      <% if (!assetsDirectory) { %>\n        <small class='deemphasize'><%= t('dialogs.media.help') %></small>\n      <% } %>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label><%= t('dialogs.media.choose') %></label>\n      <ul id='media'></ul>\n      <small class='deemphasize'><%= t('dialogs.media.helpMedia') %></small>\n    </div>\n  <% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('notification.loginDescription') %></p>\n      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'><%= t('login') %></a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= key %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'><%= t('notification.create') %></a></p>\n      <% } %>\n\n      <% if (key === 'error') { %>\n        <p><a class='button round' href='#'><%= t('notification.home') %></a></p>\n      <% } else { %>\n        <p><a class='button round' href='<%= previous %>'><%= t('notification.back') %></a></p>\n      <% } %>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'>\n    <h2><%= t('main.file.metaTitle') %><br />\n      <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>\n    </h2>\n    <div class='diff-content inner'></div>\n  </div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n      <a href='#' class='button round finish'><%= t('main.file.back') %></a>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar'>\n        <div id='toolbar' class='containment toolbar round'></div>\n      </div>\n    </div>\n    <div id='code' class='code round inner'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder=\"<%= t('main.repo.filter') %>\" />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files' class='listing'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder=\"<%= t('main.repos.filter') %>\" />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <ul id='projects' class='projects listing'></ul>\n</div>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      class='listing-icon'\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='icon round repo owner private' title=\"<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)\"></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='icon round repo owner' title=\"<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)\"></span>\n      <% } else if (fork && private) { %>\n        <span class='icon round repo private fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n      <% } else if (fork) { %>\n        <span class='icon round repo fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n      <% } else if (private) { %>\n        <span class='icon round repo private'></span>\n      <% } else { %>\n        <span class='icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details'>\n      <div class='actions fr clearfix'>\n        <a\n          data-user='<%= owner.login %>'\n          data-repo='<%= name %>'\n          href='#<%= owner.login %>/<%= name %>'>\n          <%= t('main.repos.repo') %>\n        </a>\n        <% if (homepage) { %>\n          <a href='<%= homepage %>'><%= t('main.repos.site') %></a>\n        <% } %>\n      </div>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.settings.title') %></h2>\n  </div>\n  <div class='inner authoring'>\n\n    <% if (jekyll && !draft && lang === 'gfm') { %>\n      <a class='draft button round' href='#'><%= t('sidebar.settings.draft') %></a>\n    <% } %>\n\n    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'><%= t('sidebar.settings.translate') + ' ' + lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (writable) { %>\n      <a class='delete button round' href='#'><%= t('sidebar.settings.delete') %></a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.repos.groups') %></h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'><%= t('sidebar.repo.branch') %></h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n\n<% var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; %>\n<% if (rooturl && path != '_drafts') { %>\n  <div class='inner'>\n    <a class='button round' href='#<%= [user, repo, \"tree\", branch, \"_drafts\"].join(\"/\") %>'><%= t('sidebar.repo.drafts') %></a>\n  </div>\n<% } %>\n\n<% if (window.authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'><%= t('sidebar.repo.history.label') %></h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username]; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                <%= t('sidebar.repo.history.actions.restore') %>\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n<div class='inner'>\n  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='round button mobile-new-file'><%= t('sidebar.repo.create') %></a>\n</div>\n<% } %>\n","sidebarSave":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.save.label') %></h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>\n      </a>\n    </div>\n\n    <% if (writable) { %>\n      <a class='confirm button round' href='#'><%= t('sidebar.save.save') %></a>\n    <% } else { %>\n      <a class='confirm button round' href='#'><%= t('sidebar.save.submit') %></a>\n    <% } %>\n  </div>\n<% } %>\n","start":"<% if (!window.authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('main.start.content') %></p>\n      <p><a href='#about'><%= t('main.start.learn') %></a></p>\n      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' data-type='<%= type %>' />\n</div>\n","toolbar":"<% if (draft) { %>\n  <a href='#' class='draft-to-post round contain'>\n    <%= t('actions.draft.toPost') %><span class='ico checkmark'></span>\n    <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>\n  </a>\n<% } else { %>\n  <% if (jekyll && metadata.published) { %>\n    <a href='#' class='publish-flag published round contain' data-state='true'>\n      <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>\n      <span class='popup round arrow-top'><%= t('actions.change.save') %></span>\n    </a>\n  <% } else if (jekyll && !metadata.published) { %>\n    <a href='#' class='publish-flag round contain' data-state='false'>\n      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>\n    </a>\n  <% } %>\n<% } %>\n<div class='options clearfix'>\n  <span href='#' class='action round fl ico small document <%= avatar %>'>\n    <span class='status'></span>\n\n    <% if (writable) { %>\n      <span class='popup round arrow-top'><%= t('actions.change.save') %></span>\n    <% } else { %>\n      <span class='popup round arrow-top'><%= t('actions.change.submit') %></span>\n    <% } %>\n\n  </span>\n  <% if (markdown) { %>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"##\\n\\n\") %>'>h2</a></li>\n      <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"###\\n\\n\") %>'>h3</a></li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>\n          <span class='ico small link'></span>\n        </a>\n      </li>\n      <li>\n        <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>\n          <span class='ico small picture'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>\n      <li>\n        <a data-key='italic' href='#' title='Italic' data-snippet='__'>\n          <span class='ico small italic'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n          <span class='ico small quote'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n          <span class='ico small list'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n          <span class='ico small numbered-list'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>\n          <span class='ico small question'></span>\n        </a>\n      </li>\n    </ul>\n  <% } %>\n</div>\n<div id='dialog'></div>\n","upgrade":"<div class='start'>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('main.upgrade.content') %></p>\n      <a class='round button' href='https://www.google.com/intl/en/chrome/browser'><%= t('main.upgrade.download') %></a>\n    </div>\n  </div>\n</div>\n","verticalNav":"<%\n  var editMode;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<% if (!noMenu && window.authenticated) { %>\n  <ul class='mobile-menu nav clearfix'>\n    <li>\n      <a href='#' class='toggle ico menu round'></a>\n    </li>\n  </ul>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n  <ul class='project nav clearfix'>\n    <li>\n      <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n        <span class='popup round arrow-right'><%= t('navigation.newFile') %></span>\n      </a>\n    </li>\n  </ul>\n<% } %>\n\n<% if (editMode) { %>\n  <ul class='post-views nav clearfix'>\n    <li>\n      <a href='#' class='ico round pencil edit' data-state='edit'>\n        <span class='popup round arrow-right'><%= t('navigation.edit') %></span>\n      </a>\n    </li>\n    <% if (markdown || mode === 'new') { %>\n      <li>\n        <a href='#' class='ico round eye blob preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n          <span class='popup round arrow-right'><%= t('navigation.preview') %></span>\n        </a>\n      </li>\n    <% } %>\n\n    <% if (window.authenticated) { %>\n      <% if (jekyll && lang !== 'yaml') { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'><%= t('navigation.meta') %></span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (app.state.mode !== 'new') { %>\n        <li>\n          <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n            <span class='popup round arrow-right'><%= t('navigation.settings') %></span>\n          </a>\n        </li>\n      <% } %>\n\n      <li>\n        <a href='#' class='ico round save'>\n          <span class='popup round arrow-right'><%= t('navigation.save') %></span>\n        </a>\n      </li>\n    <% } %>\n  </ul>\n<% } %>\n\n<% if (!window.authenticated) { %>\n<ul class='auth nav clearfix'>\n  <li>\n    <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n      <span class='popup round arrow-right'><%= t('login') %></span>\n    </a>\n  </li>\n</ul>\n<% } %>\n"};
+},{}],5:[function(require,module,exports){
+module.exports={
+  "api": "https://api.github.com",
+  "site": "https://github.com",
+  "clientId": "c602a8bd54b1e774f864",
+  "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
+}
+
 },{}],6:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
+var cookie = require('./cookie');
 var Backbone = require('backbone');
 var LOCALES = require('../../translations/locales');
 var en = require('../../dist/en.js');
@@ -9996,7 +9997,8 @@ window.app = {
       Profile: require('./views/profile'),
       Posts: require('./views/posts'),
       Post: require('./views/post'),
-      Documentation: require('./views/documentation')
+      Documentation: require('./views/documentation'),
+      ChooseLanguage: require('./views/chooselanguage')
     },
     templates: require('../../dist/templates'),
     router: require('./router'),
@@ -10007,10 +10009,10 @@ window.app = {
 };
 
 // Set up translations
-var browserLang = (navigator.language || navigator.userLanguage).split('-')[0];
+var setLanguage = (cookie.get('lang')) ? true : false;
 
 // Check if the browsers language is supported
-if (LOCALES.indexOf(browserLang) != -1) app.locale = browserLang;
+if (setLanguage) app.locale = cookie.get('lang');
 
 if (app.locale && app.locale !== 'en') {
     $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
@@ -10052,7 +10054,7 @@ if ('withCredentials' in new XMLHttpRequest()) {
   });
 }
 
-},{"../../dist/en.js":1,"../../translations/locales":3,"./models":7,"./views/app":8,"./views/notification":9,"./views/start":10,"./views/preview":11,"./views/profile":12,"./views/posts":13,"./views/post":14,"./views/documentation":15,"./router":16,"../../dist/templates":2,"underscore":17,"backbone":18,"jquery-browserify":19}],20:[function(require,module,exports){
+},{"../../dist/en.js":1,"./cookie":2,"../../translations/locales":3,"./models":7,"./views/app":8,"./views/notification":9,"./views/start":10,"./views/preview":11,"./views/profile":12,"./views/posts":13,"./views/post":14,"./views/documentation":15,"./views/chooselanguage":16,"../../dist/templates":4,"./router":17,"jquery-browserify":18,"underscore":19,"backbone":20}],21:[function(require,module,exports){
 module.exports = {
   help: [
     {
@@ -10115,7 +10117,7 @@ module.exports = {
   ]
 }
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = {
   dragEnter: function(e, $el) {
     $el.addClass('drag-over');
@@ -10184,7 +10186,7 @@ module.exports = {
   }
 }
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11413,7 +11415,7 @@ module.exports = {
 }).call(this);
 
 })()
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -20748,775 +20750,7 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],16:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('./util');
-
-module.exports = Backbone.Router.extend({
-
-  routes: {
-    'about(/)': 'about',
-    'error/:code': 'error',
-    ':user(/)': 'profile',
-    ':user/:repo(/)': 'repo',
-    ':user/:repo/*path(/)': 'path',
-    '*default': 'start'
-  },
-
-  initialize: function(options) {
-    this.model = options.model;
-    this.eventRegister = app.eventRegister;
-
-    // Load up the main layout
-    this.application = new app.views.App({
-      el: '#prose',
-      model: this.model
-    });
-  },
-
-  resetState: function() {
-    app.state = {
-      user: '',
-      repo: '',
-      mode: 'page',
-      branch: '',
-      path: '',
-      file: ''
-    };
-  },
-
-  about: function() {
-    this.resetState();
-    router.application.render({
-      noMenu: true
-    });
-
-    var view = new app.views.Documentation({
-      page: 'about'
-    }).render();
-
-    $('#content').empty().append(view.el);
-  },
-
-  // #example-user
-  // #example-organization
-  profile: function(user) {
-    var router = this;
-    utils.loader.loading(t('loading.repos'));
-
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-
-    app.state = app.state || {};
-    app.state.user = user;
-    app.state.title = user;
-    app.state.repo = '';
-    app.state.mode = '';
-    app.state.branch = '';
-    app.state.path = '';
-    app.state.file = '';
-
-    app.models.loadRepos(user, function(err, data) {
-      data.authenticated = !! window.authenticated;
-
-      router.application.render();
-      var view = new app.views.Profile({
-        model: _.extend(router.model, data)
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    });
-  },
-
-  // #example-user/example-repo
-  repo: function(user, repo) {
-    var router = this;
-    utils.loader.loading(t('loading.repo'));
-
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-
-    app.state = {
-      user: user,
-      repo: repo,
-      mode: 'tree',
-      branch: '',
-      path: '',
-      file: ''
-    };
-
-    app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('notification.error.exists'));
-
-      router.application.render();
-      var view = new app.views.Posts({
-        model: data
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    }, this));
-  },
-
-  // #example-user/example-repo/tree/BRANCH
-  repoBranch: function(user, repo, branch, path) {
-
-    var router = this;
-    utils.loader.loading(t('loading.repo'));
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('notification.error.exists'));
-      router.application.render();
-
-      var view = new app.views.Posts({
-        model: data
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    }, this));
-  },
-
-  path: function(user, repo, path) {
-    var parts;
-    app.state.user = user;
-    app.state.repo = repo;
-
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-    url = _.extractURL(path);
-
-    if (url.mode === 'tree') {
-      this.repoBranch(user, repo, url.branch, url.path);
-    } else if (url.mode === 'new') {
-      this.newPost(user, repo, url.branch, url.path);
-    } else if (url.mode === 'preview') {
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
-    } else { // blob or edit ..
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
-    }
-  },
-
-  newPost: function (user, repo, branch, path) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-    app.state.markdown = true;
-
-    utils.loader.loading(t('loading.creating'));
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
-
-        data.jekyll = _.jekyll(path, data.file);
-        data.preview = false;
-        data.markdown = _.markdown(data.file);
-        data.lang = _.mode(data.file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        utils.loader.loaded();
-        $('#content').empty().append(view.el);
-        app.state.file = data.file;
-
-      }, this));
-    }, this));
-  },
-
-  post: function(user, repo, branch, path, file, mode) {
-    if (mode === 'edit') {
-      utils.loader.loading(t('loading.file'));
-    } else {
-      utils.loader.loading(t('loading.preview'));
-    }
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', t('notification.error.exists'));
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) return this.notify('error', t('notification.error.exists'));
-
-        app.state.markdown = data.markdown;
-        data.jekyll = !!data.metadata;
-        data.lang = _.mode(file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        utils.loader.loaded();
-        $('#content').empty().html(view.el);
-      }, this));
-    }, this));
-  },
-
-  preview: function(user, repo, branch, path, file, mode) {
-    var router = this;
-    utils.loader.loading(t('loading.preview'));
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('notification.error.exists'));
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) {
-          app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
-        } else {
-          cb(err, data);
-        }
-
-        function cb(err, data) {
-          var view = new app.views.Preview({
-            model: data
-          }).render();
-        }
-      }, this));
-    }, this));
-  },
-
-  start: function() {
-    if (window.authenticated) {
-      $('#start').remove();
-
-      // Redirect
-      router.navigate(app.username, {trigger: true});
-    } else {
-      this.application.render({
-        hideInterface: true
-      });
-
-      var view = new app.views.Start({
-        model: _.extend(this.model, {
-          authenticated: !! window.authenticated
-        })
-      }).render();
-
-      $('#content').empty();
-      $('#prose').append(view.el);
-    }
-  },
-
-  // if the application after routing
-  // hits an error code router.navigate('error' + err.error)
-  // sends the route here.
-  error: function(code) {
-    code = (code && code === '404') ?
-      t('notification.error.notFound') :
-      t('notification.error.label');
-
-    this.application.render({
-      error: true
-    });
-
-    var view = new app.views.Notification({
-      'type': 'Error',
-      'key': 'error',
-      'message': code
-    }).render();
-
-    utils.loader.loaded();
-    $('#content').empty().append(view.el);
-  },
-
-  notify: function(type, message) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-    app.state.markdown = false;
-    this.application.render({
-      error: true
-    });
-
-    var view = new app.views.Notification({
-      'type': type,
-      'key': 'page-error',
-      'message': message
-    }).render();
-
-    utils.loader.loaded();
-    $('#content').empty().append(view.el);
-  }
-});
-
-},{"./util":22,"jquery-browserify":19,"underscore":17,"backbone":18}],9:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-
-  id: 'notification',
-  className: 'notification round',
-
-  events: {
-    'click .create': 'createPost'
-  },
-
-  initialize: function() {
-    this.model = this.options;
-  },
-
-  render: function() {
-    var view = this;
-    this.eventRegister = app.eventRegister;
-
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', t('docheader.error') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    var tmpl = _(window.app.templates.notification).template();
-
-    // Basically for any previous path we want to try
-    // and bring a user back to the directory tree.
-    var hash = document.location.hash.split('/');
-    var parts = hash.slice(0, hash.length -1);
-    if (parts[2]) parts[2] = 'tree';
-
-    var previous = parts.join('/');
-
-    $(this.el).html(tmpl(_.extend(this.model, {
-      key: view.model.key,
-      message: view.model.message,
-      previous: previous,
-      pathFromFile: (app.state.file) ? true : false
-    })));
-
-    return this;
-  },
-
-  createPost: function (e) {
-    var hash = window.location.hash.split('/');
-    hash[2] = 'new';
-
-    var path = hash[hash.length - 1].split('?');
-    hash[hash.length - 1] = path[0] + '?file=' + path[0];
-
-    // append query string
-    if (path.length > 1) {
-      hash[hash.length - 1]  += '&' + path[1];
-    }
-
-    router.navigate(_(hash).compact().join('/'), true);
-    return false;
-  }
-
-});
-
-},{"jquery-browserify":19,"underscore":17,"backbone":18}],8:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-    className: 'application',
-
-    events: {
-      'click .post-views .edit': 'edit',
-      'click .post-views .preview': 'preview',
-      'click .post-views .settings': 'settings',
-      'click .post-views .meta': 'meta',
-      'click .logout': 'logout',
-      'click a.item.removed': 'restoreFile',
-      'click a.save': 'save',
-      'click a.cancel': 'cancel',
-      'click a.confirm': 'updateFile',
-      'click a.delete': 'deleteFile',
-      'click a.translate': 'translate',
-      'click a.draft': 'draft',
-      'click .mobile-menu .toggle': 'toggleMobileClass',
-      'focus input.filepath': 'checkPlaceholder',
-      'keypress input.filepath': 'saveFilePath'
-    },
-
-    initialize: function(options) {
-
-      // Key Binding support accross the application.
-      if (!window.shortcutsRegistered) {
-        key('j, k, enter, o, ctrl+s', _.bind(function(e, handler) {
-          if (!app.state.mode || app.state.mode === 'tree') {
-            // We are in any navigation view
-            if (handler.key === 'j' || handler.key === 'k') {
-              utils.pageListing(handler.key);
-            } else {
-              utils.goToFile();
-            }
-          } else {
-            // We are in state of the application
-            // where we can edit a file
-            if (handler.key === 'ctrl+s') {
-              this.updateFile();
-            }
-          }
-        }, this));
-
-        window.shortcutsRegistered = true;
-      }
-
-      app.state = {
-        user: '',
-        repo: '',
-        mode: '',
-        branch: '',
-        path: ''
-      };
-
-      this.eventRegister = app.eventRegister;
-
-      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput', 'renderNav');
-      this.eventRegister.bind('documentTitle', this.documentTitle);
-      this.eventRegister.bind('headerContext', this.headerContext);
-      this.eventRegister.bind('sidebarContext', this.sidebarContext);
-      this.eventRegister.bind('recentFiles', this.recentFiles);
-      this.eventRegister.bind('updateSaveState', this.updateSaveState);
-      this.eventRegister.bind('filenameInput', this.filenameInput);
-      this.eventRegister.bind('closeSettings', this.closeSettings);
-      this.eventRegister.bind('renderNav', this.renderNav);
-    },
-
-    render: function(options) {
-      var view = this;
-      var tmpl = _(app.templates.app).template();
-      var isJekyll = false;
-      var errorPage = false;
-      var hideInterface = false; // Flag for unauthenticated landing
-      this.noMenu = false; // Prevents a mobile toggle from appearing when nto required.
-
-      if (options) {
-        if (options.hideInterface) hideInterface = options.hideInterface;
-        if (options.jekyll) isJekyll = options.jekyll;
-        if (options.noMenu) this.noMenu = options.noMenu;
-        if (options.error) errorPage = options.error;
-      }
-
-      if (hideInterface) {
-        $(this.el).toggleClass('disable-interface', true);
-      } else {
-        $(this.el).toggleClass('disable-interface', false);
-      }
-
-      this.data = _.extend(this.model, app.state, {
-        error: errorPage,
-        version: 'v1',
-        jekyll: isJekyll,
-        noMenu: view.noMenu,
-        lang: (app.state.file) ? _.mode(app.state.file) : undefined
-      });
-
-      this.$el.empty().append(tmpl(this.data));
-
-      // Render the vertical Navigation
-      this.renderNav();
-
-      // When the sidebar should be open.
-      // Fix this in re-factor, could be much tighter
-      if (app.state.mode === 'tree' ||
-          app.state.mode === '' && window.authenticated && app.state.user) {
-        $('#prose').toggleClass('open', true);
-        $('#prose').toggleClass('mobile', false);
-      } else {
-        $('#prose').toggleClass('open mobile', false);
-      }
-
-      return this;
-    },
-
-    renderNav: function() {
-      var tmpl = _(app.templates.verticalNav).template();
-      this.$el.find('#vert').empty().append(tmpl(this.data));
-    },
-
-    toggleMobileClass: function(e) {
-      $(e.target).toggleClass('active');
-      $(this.el).toggleClass('mobile');
-      return false;
-    },
-
-    documentTitle: function(title) {
-      document.title = title + ' · Prose';
-    },
-
-    headerContext: function(data, alterable) {
-      var heading = _(window.app.templates.heading).template();
-
-      if (data.writable) this.writable = true;
-      if (data.lang) this.lang = data.lang;
-      if (data.metadata) this.metadata = data.metadata;
-
-      $('#heading').empty().append(heading(_.extend(data, {
-        alterable: alterable ? true : false
-      })));
-    },
-
-    filenameInput: function() {
-      $('.filepath', this.el).focus();
-    },
-
-    sidebarContext: function(data) {
-      if (app.state.mode === 'tree') {
-        var tmpl = _(app.templates.sidebarProject).template();
-
-        // Branch Switching
-        _.defer(function() {
-          $('.chzn-select', this.el).chosen().change(function() {
-              router.navigate($(this).val(), true);
-          });
-        });
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl(data));
-      }
-    },
-
-    recentFiles: function(data) {
-      var sidebarTmpl = _(window.app.templates.recentFiles).template();
-      $('#drawer', this.el).empty().append(sidebarTmpl(data));
-    },
-
-    // Event Triggering to other files
-    edit: function(e) {
-      this.eventRegister.trigger('edit', e);
-      return false;
-    },
-
-    preview: function(e) {
-      if ($(e.target).data('jekyll')) {
-        this.eventRegister.trigger('preview', e);
-      } else {
-        this.eventRegister.trigger('preview', e);
-        // Cancel propagation
-        return false;
-      }
-    },
-
-    // Event Triggering to other files
-    meta: function(e) {
-      if ($(e.target).hasClass('active')) {
-        this.cancel();
-      } else {
-        this.eventRegister.trigger('meta', e);
-      }
-
-      return false;
-    },
-
-    settings: function(e) {
-      var tmpl = _(app.templates.settings).template();
-      var $navItems = $('.navigation a', this.el);
-
-      if ($(e.target).hasClass('active')) {
-        this.cancel();
-      } else {
-        $navItems.removeClass('active');
-        $(e.target, this.el).addClass('active');
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl({
-            lang: this.lang,
-            writable: this.writable,
-            metadata: this.metadata,
-            jekyll: this.model.jekyll,
-            draft: (app.state.path.split('/')[0] === '_drafts') ? true : false
-          }));
-
-        $('#prose').toggleClass('open mobile', true);
-      }
-
-      return false;
-    },
-
-    closeSettings: function() {
-      $('.post-views a', this.el).removeClass('active');
-
-      if (app.state.mode === 'blob') {
-        $('.post-views .preview', this.el).addClass('active');
-      } else {
-        $('.post-views .edit', this.el).addClass('active');
-      }
-
-      $('#prose').toggleClass('open mobile', false);
-    },
-
-    restoreFile: function(e) {
-      var $target = $(e.currentTarget);
-      var $overlay = $(e.currentTarget).find('.overlay');
-      var path = $target.data('path');
-
-      // Spinning icon
-      var message = '<span class="ico small inline saving"></span>' + t('actions.restore.restoring') + path;
-      $overlay.html(message);
-
-      app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
-        if (err) {
-          message = '<span class="ico small inline error"></span> ' + t('actions.error');
-          $overlay.html(message);
-        } else {
-          message = '<span class="ico small inline checkmark"></span> ' + t('actions.restore.restored') + path;
-          $overlay.html(message);
-          $overlay.removeClass('removed').addClass('restored');
-
-          // Update the listing anchor link
-          $target
-            .removeClass('removed')
-            .attr('title', 'Restored ' + path)
-            .addClass('added');
-
-          // Update the anchor listing icon
-          $target.find('.removed')
-            .removeClass('removed')
-            .addClass('added');
-        }
-      });
-
-      return false;
-    },
-
-    deleteFile: function(e) {
-      this.eventRegister.trigger('deleteFile', e);
-      return false;
-    },
-
-    translate: function(e) {
-      this.eventRegister.trigger('translate', e);
-      return false;
-    },
-    
-    draft: function(e) {
-      this.eventRegister.trigger('draft', e);
-      return false;
-    },
-
-    save: function(e) {
-      var tmpl = _(app.templates.sidebarSave).template();
-      this.eventRegister.trigger('showDiff', e);
-
-      if ($(e.target, this.el).hasClass('active')) {
-        this.cancel();
-      } else {
-        $('.navigation a', this.el).removeClass('active');
-        $(e.target, this.el).addClass('active');
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl({
-            writable: this.writable
-        }));
-
-        $('#prose').toggleClass('open mobile', true);
-
-        var $message = $('.commit-message', this.el);
-        var filepath = $('input.filepath').val();
-        var filename = _.extractFilename(filepath)[1];
-        var placeholder = t('actions.commits.updated', { filename: filename });
-        if (app.state.mode === 'new') {
-          placeholder = t('actions.commits.created', { filename: filename });
-        }
-
-        $message.attr('placeholder', placeholder).focus();
-      }
-
-      return false;
-    },
-
-    cancel: function(e) {
-      $('.navigation a', this.el).removeClass('active');
-      $('.navigation .' + app.state.mode, this.el).addClass('active');
-      $('#prose').toggleClass('open mobile', false);
-      this.eventRegister.trigger('cancel', e);
-      return false;
-    },
-
-    updateFile: function(e) {
-      this.eventRegister.trigger('updateFile', e);
-      return false;
-    },
-
-    saveFilePath: function(e) {
-      // Trigger updateFile when a return button has been pressed.
-      if (e.which === 13) this.eventRegister.trigger('updateFile', e);
-    },
-
-    checkPlaceholder: function(e) {
-      if (app.state.mode === 'new') {
-        var $target = $(e.target, this.el);
-        if (!$target.val()) {
-          $target.val($target.attr('placeholder'));
-        }
-      }
-    },
-
-    logout: function() {
-      app.models.logout();
-      window.location.reload();
-      return false;
-    },
-
-    updateSaveState: function(label, classes, kill) {
-      var view = this;
-
-      // Cancel if this condition is met
-      if (classes === 'save' && $(this.el).hasClass('saving')) return;
-      $('.button.save', this.el).html(label);
-
-      // Pass a popover span to the avatar icon
-      $('#heading', this.el).find('.popup').html(label);
-      $('.action').find('.popup').html(label);
-
-      $(this.el)
-        .removeClass('error saving saved save')
-        .addClass(classes);
-
-      if (kill) {
-        _.delay(function() {
-          $(view.el).removeClass(classes);
-        }, 1000);
-      }
-    },
-
-    remove: function() {
-      // Unbind pagehide event handler when View is removed
-      this.eventRegister.unbind('documentTitle', this.documentTitle);
-      this.eventRegister.unbind('sidebarContext', this.sidebarContext);
-      this.eventRegister.unbind('headerContext', this.headerContext);
-      this.eventRegister.unbind('recentFiles', this.recentFiles);
-      this.eventRegister.unbind('updateSaveState', this.updateSaveState);
-      this.eventRegister.unbind('filenameInput', this.filenameInput);
-      this.eventRegister.unbind('closeSettings', this.closeSettings);
-      this.eventRegister.unbind('renderNav', this.renderNav);
-      Backbone.View.prototype.remove.call(this);
-    }
-});
-
-},{".././util":22,"jquery-browserify":19,"underscore":17,"backbone":18}],10:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  id: 'start',
-  className: 'start',
-
-  render: function() {
-    var tmpl = _(window.app.templates.start).template();
-    $(this.el).empty().append(tmpl(this.model));
-    return this;
-  }
-});
-
-},{"jquery-browserify":19,"underscore":17,"backbone":18}],7:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -22415,46 +21649,869 @@ module.exports = {
   }
 };
 
-},{"../../oauth.json":4,"./cookie":5,"../libs/github":23,"jquery-browserify":19,"underscore":17,"js-yaml":24,"queue-async":25}],11:[function(require,module,exports){
+},{"../../oauth.json":5,"./cookie":2,"../libs/github":23,"jquery-browserify":18,"underscore":19,"js-yaml":24,"queue-async":25}],17:[function(require,module,exports){
+var $ = require('jquery-browserify');
 var _ = require('underscore');
-var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
-var marked = require('marked');
+var utils = require('./util');
 
-module.exports = Backbone.View.extend({
-  render: function() {
-    this.eventRegister = app.eventRegister;
+module.exports = Backbone.Router.extend({
 
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', t('docheader.preview') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    this.stashApply();
-
-    // Needs access to marked, so it's registered here.
-    Liquid.Template.registerFilter({
-      'markdownify': function(input) {
-        return marked(input || '');
-      }
-    });
-
-    _.preview(this);
-    return this;
+  routes: {
+    'about(/)': 'about',
+    'chooselanguage(/)': 'chooseLanguage',
+    'error/:code': 'error',
+    ':user(/)': 'profile',
+    ':user/:repo(/)': 'repo',
+    ':user/:repo/*path(/)': 'path',
+    '*default': 'start'
   },
 
-  stashApply: function() {
-    if (!window.sessionStorage) return false;
+  initialize: function(options) {
+    this.model = options.model;
+    this.eventRegister = app.eventRegister;
 
-    var storage = window.sessionStorage;
-    var filepath = window.location.hash.split('/').slice(4).join('/');
-    var stash = JSON.parse(storage.getItem(filepath));
+    // Load up the main layout
+    this.application = new app.views.App({
+      el: '#prose',
+      model: this.model
+    });
+  },
 
-    if (stash) {
-      this.model.content = stash.content;
-      this.model.metadata = stash.metadata;
+  resetState: function() {
+    app.state = {
+      user: '',
+      repo: '',
+      mode: 'page',
+      branch: '',
+      path: '',
+      file: ''
+    };
+  },
+
+  about: function() {
+    this.minimalPage();
+    var view = new app.views.Documentation({
+      page: 'about'
+    }).render();
+    $('#content').empty().append(view.el);
+  },
+
+  chooseLanguage: function() {
+    this.minimalPage();
+    var view = new app.views.ChooseLanguage({
+      page: 'about'
+    }).render();
+    $('#content').empty().append(view.el);
+  },
+
+  minimalPage: function() {
+    this.resetState();
+    router.application.render({
+      noMenu: true
+    });
+  },
+
+  // #example-user
+  // #example-organization
+  profile: function(user) {
+    var router = this;
+    utils.loader.loading(t('loading.repos'));
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
+
+    app.state = app.state || {};
+    app.state.user = user;
+    app.state.title = user;
+    app.state.repo = '';
+    app.state.mode = '';
+    app.state.branch = '';
+    app.state.path = '';
+    app.state.file = '';
+
+    app.models.loadRepos(user, function(err, data) {
+      data.authenticated = !! window.authenticated;
+
+      router.application.render();
+      var view = new app.views.Profile({
+        model: _.extend(router.model, data)
+      }).render();
+
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    });
+  },
+
+  // #example-user/example-repo
+  repo: function(user, repo) {
+    var router = this;
+    utils.loader.loading(t('loading.repo'));
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
+
+    app.state = {
+      user: user,
+      repo: repo,
+      mode: 'tree',
+      branch: '',
+      path: '',
+      file: ''
+    };
+
+    app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
+      if (err) return router.notify('error', t('notification.error.exists'));
+
+      router.application.render();
+      var view = new app.views.Posts({
+        model: data
+      }).render();
+
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    }, this));
+  },
+
+  // #example-user/example-repo/tree/BRANCH
+  repoBranch: function(user, repo, branch, path) {
+
+    var router = this;
+    utils.loader.loading(t('loading.repo'));
+
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      if (err) return router.notify('error', t('notification.error.exists'));
+      router.application.render();
+
+      var view = new app.views.Posts({
+        model: data
+      }).render();
+
+      utils.loader.loaded();
+      $('#content').empty().append(view.el);
+    }, this));
+  },
+
+  path: function(user, repo, path) {
+    var parts;
+    app.state.user = user;
+    app.state.repo = repo;
+
+    // Clean any previous view
+    this.eventRegister.trigger('remove');
+    url = _.extractURL(path);
+
+    if (url.mode === 'tree') {
+      this.repoBranch(user, repo, url.branch, url.path);
+    } else if (url.mode === 'new') {
+      this.newPost(user, repo, url.branch, url.path);
+    } else if (url.mode === 'preview') {
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
+    } else { // blob or edit ..
+      parts = _.extractFilename(url.path);
+      app.state.file = parts[1];
+      this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
     }
+  },
+
+  newPost: function (user, repo, branch, path) {
+    // TODO Fix this, shouldn't have to pass
+    // something like this here.
+    app.state.markdown = true;
+
+    utils.loader.loading(t('loading.creating'));
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
+
+        data.jekyll = _.jekyll(path, data.file);
+        data.preview = false;
+        data.markdown = _.markdown(data.file);
+        data.lang = _.mode(data.file);
+
+        this.application.render({
+          jekyll: data.jekyll,
+          noMenu: true
+        });
+
+        var view = new app.views.Post({
+          model: data
+        }).render();
+
+        utils.loader.loaded();
+        $('#content').empty().append(view.el);
+        app.state.file = data.file;
+
+      }, this));
+    }, this));
+  },
+
+  post: function(user, repo, branch, path, file, mode) {
+    if (mode === 'edit') {
+      utils.loader.loading(t('loading.file'));
+    } else {
+      utils.loader.loading(t('loading.preview'));
+    }
+
+    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
+      if (err) return this.notify('error', t('notification.error.exists'));
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
+        if (err) return this.notify('error', t('notification.error.exists'));
+
+        app.state.markdown = data.markdown;
+        data.jekyll = !!data.metadata;
+        data.lang = _.mode(file);
+
+        this.application.render({
+          jekyll: data.jekyll,
+          noMenu: true
+        });
+
+        var view = new app.views.Post({
+          model: data
+        }).render();
+
+        utils.loader.loaded();
+        $('#content').empty().html(view.el);
+      }, this));
+    }, this));
+  },
+
+  preview: function(user, repo, branch, path, file, mode) {
+    var router = this;
+    utils.loader.loading(t('loading.preview'));
+
+    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
+      if (err) return router.notify('error', t('notification.error.exists'));
+      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
+        if (err) {
+          app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
+        } else {
+          cb(err, data);
+        }
+
+        function cb(err, data) {
+          var view = new app.views.Preview({
+            model: data
+          }).render();
+        }
+      }, this));
+    }, this));
+  },
+
+  start: function() {
+    if (window.authenticated) {
+      $('#start').remove();
+
+      // Redirect
+      router.navigate(app.username, {trigger: true});
+    } else {
+      this.application.render({
+        hideInterface: true
+      });
+
+      var view = new app.views.Start({
+        model: _.extend(this.model, {
+          authenticated: !! window.authenticated
+        })
+      }).render();
+
+      $('#content').empty();
+      $('#prose').append(view.el);
+    }
+  },
+
+  // if the application after routing
+  // hits an error code router.navigate('error' + err.error)
+  // sends the route here.
+  error: function(code) {
+    code = (code && code === '404') ?
+      t('notification.error.notFound') :
+      t('notification.error.label');
+
+    this.application.render({
+      error: true
+    });
+
+    var view = new app.views.Notification({
+      'type': 'Error',
+      'key': 'error',
+      'message': code
+    }).render();
+
+    utils.loader.loaded();
+    $('#content').empty().append(view.el);
+  },
+
+  notify: function(type, message) {
+    // TODO Fix this, shouldn't have to pass
+    // something like this here.
+    app.state.markdown = false;
+    this.application.render({
+      error: true
+    });
+
+    var view = new app.views.Notification({
+      'type': type,
+      'key': 'page-error',
+      'message': message
+    }).render();
+
+    utils.loader.loaded();
+    $('#content').empty().append(view.el);
   }
 });
 
-},{"underscore":17,"js-yaml":24,"backbone":18,"marked":26}],12:[function(require,module,exports){
+},{"./util":26,"jquery-browserify":18,"underscore":19,"backbone":20}],25:[function(require,module,exports){
+(function() {
+  if (typeof module === "undefined") self.queue = queue;
+  else module.exports = queue;
+  queue.version = "1.0.3";
+
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var queue = {},
+        deferrals = [],
+        started = 0, // number of deferrals that have been started (and perhaps finished)
+        active = 0, // number of deferrals currently being executed (started but not finished)
+        remaining = 0, // number of deferrals not yet finished
+        popping, // inside a synchronous deferral callback?
+        error,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    queue.defer = function() {
+      if (!error) {
+        deferrals.push(arguments);
+        ++remaining;
+        pop();
+      }
+      return queue;
+    };
+
+    queue.await = function(f) {
+      await = f;
+      all = false;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    queue.awaitAll = function(f) {
+      await = f;
+      all = true;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    function pop() {
+      while (popping = started < deferrals.length && active < parallelism) {
+        var i = started++,
+            d = deferrals[i],
+            a = slice.call(d, 1);
+        a.push(callback(i));
+        ++active;
+        d[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new deferrals and squelch active callbacks
+          started = remaining = NaN; // stop queued deferrals from starting
+          notify();
+        } else {
+          deferrals[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(null, deferrals);
+      else await.apply(null, [null].concat(deferrals));
+    }
+
+    return queue;
+  }
+
+  function noop() {}
+})();
+
+},{}],8:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+    className: 'application',
+
+    events: {
+      'click .post-views .edit': 'edit',
+      'click .post-views .preview': 'preview',
+      'click .post-views .settings': 'settings',
+      'click .post-views .meta': 'meta',
+      'click .logout': 'logout',
+      'click a.item.removed': 'restoreFile',
+      'click a.save': 'save',
+      'click a.cancel': 'cancel',
+      'click a.confirm': 'updateFile',
+      'click a.delete': 'deleteFile',
+      'click a.translate': 'translate',
+      'click a.draft': 'draft',
+      'click .mobile-menu .toggle': 'toggleMobileClass',
+      'focus input.filepath': 'checkPlaceholder',
+      'keypress input.filepath': 'saveFilePath'
+    },
+
+    initialize: function(options) {
+
+      // Key Binding support accross the application.
+      if (!window.shortcutsRegistered) {
+        key('j, k, enter, o, ctrl+s', _.bind(function(e, handler) {
+          if (!app.state.mode || app.state.mode === 'tree') {
+            // We are in any navigation view
+            if (handler.key === 'j' || handler.key === 'k') {
+              utils.pageListing(handler.key);
+            } else {
+              utils.goToFile();
+            }
+          } else {
+            // We are in state of the application
+            // where we can edit a file
+            if (handler.key === 'ctrl+s') {
+              this.updateFile();
+            }
+          }
+        }, this));
+
+        window.shortcutsRegistered = true;
+      }
+
+      app.state = {
+        user: '',
+        repo: '',
+        mode: '',
+        branch: '',
+        path: ''
+      };
+
+      this.eventRegister = app.eventRegister;
+
+      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput', 'renderNav');
+      this.eventRegister.bind('documentTitle', this.documentTitle);
+      this.eventRegister.bind('headerContext', this.headerContext);
+      this.eventRegister.bind('sidebarContext', this.sidebarContext);
+      this.eventRegister.bind('recentFiles', this.recentFiles);
+      this.eventRegister.bind('updateSaveState', this.updateSaveState);
+      this.eventRegister.bind('filenameInput', this.filenameInput);
+      this.eventRegister.bind('closeSettings', this.closeSettings);
+      this.eventRegister.bind('renderNav', this.renderNav);
+    },
+
+    render: function(options) {
+      var view = this;
+      var tmpl = _(app.templates.app).template();
+      var isJekyll = false;
+      var errorPage = false;
+      var hideInterface = false; // Flag for unauthenticated landing
+      this.noMenu = false; // Prevents a mobile toggle from appearing when nto required.
+
+      if (options) {
+        if (options.hideInterface) hideInterface = options.hideInterface;
+        if (options.jekyll) isJekyll = options.jekyll;
+        if (options.noMenu) this.noMenu = options.noMenu;
+        if (options.error) errorPage = options.error;
+      }
+
+      if (hideInterface) {
+        $(this.el).toggleClass('disable-interface', true);
+      } else {
+        $(this.el).toggleClass('disable-interface', false);
+      }
+
+      this.data = _.extend(this.model, app.state, {
+        error: errorPage,
+        version: 'v1',
+        jekyll: isJekyll,
+        noMenu: view.noMenu,
+        lang: (app.state.file) ? _.mode(app.state.file) : undefined
+      });
+
+      this.$el.empty().append(tmpl(this.data));
+
+      // Render the vertical Navigation
+      this.renderNav();
+
+      // When the sidebar should be open.
+      // Fix this in re-factor, could be much tighter
+      if (app.state.mode === 'tree' ||
+          app.state.mode === '' && window.authenticated && app.state.user) {
+        $('#prose').toggleClass('open', true);
+        $('#prose').toggleClass('mobile', false);
+      } else {
+        $('#prose').toggleClass('open mobile', false);
+      }
+
+      return this;
+    },
+
+    renderNav: function() {
+      var tmpl = _(app.templates.verticalNav).template();
+      this.$el.find('#vert').empty().append(tmpl(this.data));
+    },
+
+    toggleMobileClass: function(e) {
+      $(e.target).toggleClass('active');
+      $(this.el).toggleClass('mobile');
+      return false;
+    },
+
+    documentTitle: function(title) {
+      document.title = title + ' · Prose';
+    },
+
+    headerContext: function(data, alterable) {
+      var heading = _(window.app.templates.heading).template();
+
+      if (data.writable) this.writable = true;
+      if (data.lang) this.lang = data.lang;
+      if (data.metadata) this.metadata = data.metadata;
+
+      $('#heading').empty().append(heading(_.extend(data, {
+        alterable: alterable ? true : false
+      })));
+    },
+
+    filenameInput: function() {
+      $('.filepath', this.el).focus();
+    },
+
+    sidebarContext: function(data) {
+      if (app.state.mode === 'tree') {
+        var tmpl = _(app.templates.sidebarProject).template();
+
+        // Branch Switching
+        _.defer(function() {
+          $('.chzn-select', this.el).chosen().change(function() {
+              router.navigate($(this).val(), true);
+          });
+        });
+
+        $('#drawer', this.el)
+          .empty()
+          .append(tmpl(data));
+      }
+    },
+
+    recentFiles: function(data) {
+      var sidebarTmpl = _(window.app.templates.recentFiles).template();
+      $('#drawer', this.el).empty().append(sidebarTmpl(data));
+    },
+
+    // Event Triggering to other files
+    edit: function(e) {
+      this.eventRegister.trigger('edit', e);
+      return false;
+    },
+
+    preview: function(e) {
+      if ($(e.target).data('jekyll')) {
+        this.eventRegister.trigger('preview', e);
+      } else {
+        this.eventRegister.trigger('preview', e);
+        // Cancel propagation
+        return false;
+      }
+    },
+
+    // Event Triggering to other files
+    meta: function(e) {
+      if ($(e.target).hasClass('active')) {
+        this.cancel();
+      } else {
+        this.eventRegister.trigger('meta', e);
+      }
+
+      return false;
+    },
+
+    settings: function(e) {
+      var tmpl = _(app.templates.settings).template();
+      var $navItems = $('.navigation a', this.el);
+
+      if ($(e.target).hasClass('active')) {
+        this.cancel();
+      } else {
+        $navItems.removeClass('active');
+        $(e.target, this.el).addClass('active');
+
+        $('#drawer', this.el)
+          .empty()
+          .append(tmpl({
+            lang: this.lang,
+            writable: this.writable,
+            metadata: this.metadata,
+            jekyll: this.model.jekyll,
+            draft: (app.state.path.split('/')[0] === '_drafts') ? true : false
+          }));
+
+        $('#prose').toggleClass('open mobile', true);
+      }
+
+      return false;
+    },
+
+    closeSettings: function() {
+      $('.post-views a', this.el).removeClass('active');
+
+      if (app.state.mode === 'blob') {
+        $('.post-views .preview', this.el).addClass('active');
+      } else {
+        $('.post-views .edit', this.el).addClass('active');
+      }
+
+      $('#prose').toggleClass('open mobile', false);
+    },
+
+    restoreFile: function(e) {
+      var $target = $(e.currentTarget);
+      var $overlay = $(e.currentTarget).find('.overlay');
+      var path = $target.data('path');
+
+      // Spinning icon
+      var message = '<span class="ico small inline saving"></span>' + t('actions.restore.restoring') + path;
+      $overlay.html(message);
+
+      app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
+        if (err) {
+          message = '<span class="ico small inline error"></span> ' + t('actions.error');
+          $overlay.html(message);
+        } else {
+          message = '<span class="ico small inline checkmark"></span> ' + t('actions.restore.restored') + path;
+          $overlay.html(message);
+          $overlay.removeClass('removed').addClass('restored');
+
+          // Update the listing anchor link
+          $target
+            .removeClass('removed')
+            .attr('title', 'Restored ' + path)
+            .addClass('added');
+
+          // Update the anchor listing icon
+          $target.find('.removed')
+            .removeClass('removed')
+            .addClass('added');
+        }
+      });
+
+      return false;
+    },
+
+    deleteFile: function(e) {
+      this.eventRegister.trigger('deleteFile', e);
+      return false;
+    },
+
+    translate: function(e) {
+      this.eventRegister.trigger('translate', e);
+      return false;
+    },
+    
+    draft: function(e) {
+      this.eventRegister.trigger('draft', e);
+      return false;
+    },
+
+    save: function(e) {
+      var tmpl = _(app.templates.sidebarSave).template();
+      this.eventRegister.trigger('showDiff', e);
+
+      if ($(e.target, this.el).hasClass('active')) {
+        this.cancel();
+      } else {
+        $('.navigation a', this.el).removeClass('active');
+        $(e.target, this.el).addClass('active');
+
+        $('#drawer', this.el)
+          .empty()
+          .append(tmpl({
+            writable: this.writable
+        }));
+
+        $('#prose').toggleClass('open mobile', true);
+
+        var $message = $('.commit-message', this.el);
+        var filepath = $('input.filepath').val();
+        var filename = _.extractFilename(filepath)[1];
+        var placeholder = t('actions.commits.updated', { filename: filename });
+        if (app.state.mode === 'new') {
+          placeholder = t('actions.commits.created', { filename: filename });
+        }
+
+        $message.attr('placeholder', placeholder).focus();
+      }
+
+      return false;
+    },
+
+    cancel: function(e) {
+      $('.navigation a', this.el).removeClass('active');
+      $('.navigation .' + app.state.mode, this.el).addClass('active');
+      $('#prose').toggleClass('open mobile', false);
+      this.eventRegister.trigger('cancel', e);
+      return false;
+    },
+
+    updateFile: function(e) {
+      this.eventRegister.trigger('updateFile', e);
+      return false;
+    },
+
+    saveFilePath: function(e) {
+      // Trigger updateFile when a return button has been pressed.
+      if (e.which === 13) this.eventRegister.trigger('updateFile', e);
+    },
+
+    checkPlaceholder: function(e) {
+      if (app.state.mode === 'new') {
+        var $target = $(e.target, this.el);
+        if (!$target.val()) {
+          $target.val($target.attr('placeholder'));
+        }
+      }
+    },
+
+    logout: function() {
+      app.models.logout();
+      window.location.reload();
+      return false;
+    },
+
+    updateSaveState: function(label, classes, kill) {
+      var view = this;
+
+      // Cancel if this condition is met
+      if (classes === 'save' && $(this.el).hasClass('saving')) return;
+      $('.button.save', this.el).html(label);
+
+      // Pass a popover span to the avatar icon
+      $('#heading', this.el).find('.popup').html(label);
+      $('.action').find('.popup').html(label);
+
+      $(this.el)
+        .removeClass('error saving saved save')
+        .addClass(classes);
+
+      if (kill) {
+        _.delay(function() {
+          $(view.el).removeClass(classes);
+        }, 1000);
+      }
+    },
+
+    remove: function() {
+      // Unbind pagehide event handler when View is removed
+      this.eventRegister.unbind('documentTitle', this.documentTitle);
+      this.eventRegister.unbind('sidebarContext', this.sidebarContext);
+      this.eventRegister.unbind('headerContext', this.headerContext);
+      this.eventRegister.unbind('recentFiles', this.recentFiles);
+      this.eventRegister.unbind('updateSaveState', this.updateSaveState);
+      this.eventRegister.unbind('filenameInput', this.filenameInput);
+      this.eventRegister.unbind('closeSettings', this.closeSettings);
+      this.eventRegister.unbind('renderNav', this.renderNav);
+      Backbone.View.prototype.remove.call(this);
+    }
+});
+
+},{".././util":26,"jquery-browserify":18,"underscore":19,"backbone":20}],9:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+
+  id: 'notification',
+  className: 'notification round',
+
+  events: {
+    'click .create': 'createPost'
+  },
+
+  initialize: function() {
+    this.model = this.options;
+  },
+
+  render: function() {
+    var view = this;
+    this.eventRegister = app.eventRegister;
+
+    var pathTitle = (app.state.path) ? app.state.path : '';
+    this.eventRegister.trigger('documentTitle', t('docheader.error') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    var tmpl = _(window.app.templates.notification).template();
+
+    // Basically for any previous path we want to try
+    // and bring a user back to the directory tree.
+    var hash = document.location.hash.split('/');
+    var parts = hash.slice(0, hash.length -1);
+    if (parts[2]) parts[2] = 'tree';
+
+    var previous = parts.join('/');
+
+    $(this.el).html(tmpl(_.extend(this.model, {
+      key: view.model.key,
+      message: view.model.message,
+      previous: previous,
+      pathFromFile: (app.state.file) ? true : false
+    })));
+
+    return this;
+  },
+
+  createPost: function (e) {
+    var hash = window.location.hash.split('/');
+    hash[2] = 'new';
+
+    var path = hash[hash.length - 1].split('?');
+    hash[hash.length - 1] = path[0] + '?file=' + path[0];
+
+    // append query string
+    if (path.length > 1) {
+      hash[hash.length - 1]  += '&' + path[1];
+    }
+
+    router.navigate(_(hash).compact().join('/'), true);
+    return false;
+  }
+
+});
+
+},{"jquery-browserify":18,"underscore":19,"backbone":20}],10:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  id: 'start',
+  className: 'start',
+
+  render: function() {
+    var tmpl = _(window.app.templates.start).template();
+    $(this.el).empty().append(tmpl(this.model));
+    return this;
+  }
+});
+
+},{"jquery-browserify":18,"underscore":19,"backbone":20}],12:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -22576,7 +22633,261 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{".././util":22,"jquery-browserify":19,"underscore":17,"backbone":18}],15:[function(require,module,exports){
+},{".././util":26,"jquery-browserify":18,"underscore":19,"backbone":20}],11:[function(require,module,exports){
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
+var marked = require('marked');
+
+module.exports = Backbone.View.extend({
+  render: function() {
+    this.eventRegister = app.eventRegister;
+
+    var pathTitle = (app.state.path) ? app.state.path : '';
+    this.eventRegister.trigger('documentTitle', t('docheader.preview') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    this.stashApply();
+
+    // Needs access to marked, so it's registered here.
+    Liquid.Template.registerFilter({
+      'markdownify': function(input) {
+        return marked(input || '');
+      }
+    });
+
+    _.preview(this);
+    return this;
+  },
+
+  stashApply: function() {
+    if (!window.sessionStorage) return false;
+
+    var storage = window.sessionStorage;
+    var filepath = window.location.hash.split('/').slice(4).join('/');
+    var stash = JSON.parse(storage.getItem(filepath));
+
+    if (stash) {
+      this.model.content = stash.content;
+      this.model.metadata = stash.metadata;
+    }
+  }
+});
+
+},{"underscore":19,"js-yaml":24,"backbone":20,"marked":27}],13:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var Backbone = require('backbone');
+var utils = require('.././util');
+
+module.exports = Backbone.View.extend({
+
+  id: 'posts',
+
+  events: {
+    'mouseover .item': 'activeListing',
+    'mouseover .item a': 'parentActiveListing',
+    'click .delete': 'deleteFile',
+    'keyup #filter': 'search'
+  },
+
+  render: function () {
+    var that = this;
+    var jailed;
+
+    // Pass a check to template whether we should
+    // stagger the output of a breadcrumb trail
+    if (app.state.config && app.state.config.prose && app.state.config.prose.rooturl) {
+      jailed = app.state.config.prose.rooturl;
+    }
+
+    var data = _.extend(this.model, app.state, {
+      currentPath: app.state.path,
+      jailed: jailed
+    });
+
+    // If this repo is writable to the current user we use
+    // this check to provide a deletion option to the user
+    this.writePermissions = this.model.permissions && this.model.permissions.push;
+
+    this.eventRegister = app.eventRegister;
+
+    // Listen for button clicks from the vertical nav
+    _.bindAll(this, 'remove');
+    this.eventRegister.bind('remove', this.remove);
+
+    var isPrivate = app.state.isPrivate ? ' private' : '';
+    var header = {
+      avatar: '<span class="icon round repo' + isPrivate +  '"></span>',
+      parent: data.user,
+      parentUrl: data.user,
+      title: data.repo,
+      titleUrl: data.user + '/' + data.repo
+    };
+
+    var pathTitle = (app.state.path) ? '/' + app.state.path : '';
+    this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
+
+    this.eventRegister.trigger('sidebarContext', app.state);
+    this.eventRegister.trigger('headerContext', header);
+
+    var tmpl = _(app.templates.posts).template();
+    $(this.el).empty().append(tmpl(data));
+
+    _.delay(function () {
+      that.renderResults();
+      $('#filter').focus();
+      utils.fixedScroll($('.topbar'));
+    }, 1);
+
+    return this;
+  },
+
+  search: function (e) {
+    if (e.which === 27) { // ESC
+      _.delay(_.bind(function () {
+        $('#filter', this.el).val('');
+        this.model = app.models.getFiles(this.model.tree, app.state.path, '');
+        this.renderResults();
+      }, this), 10);
+    } else if (e.which === 40 && $('.item').length > 0) {
+        utils.pageListing('down'); // Arrow Down
+        e.preventDefault();
+        e.stopPropagation();
+        $('#filter').blur();
+    } else {
+      _.delay(_.bind(function () {
+        var searchstr = $('#filter', this.el).val();
+        this.model = app.models.getFiles(this.model.tree, app.state.path, searchstr);
+        this.renderResults();
+      }, this), 10);
+    }
+  },
+
+  renderResults: function () {
+    var view = this;
+    var files = _(app.templates.files).template();
+    var directories = _(app.templates.directories).template();
+    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
+    var $files = $('#files', this.el);
+    $files.empty();
+
+    _(this.model.files).each(function(f, i) {
+      // Directories ..
+      if (f.type === 'tree') {
+        $files.append(directories({
+          index: i,
+          user: data.user,
+          repo: data.repo,
+          path: (f.path) ? '/' + f.path : '',
+          branch: data.branch,
+          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
+        }));
+      } else {
+        // Files ..
+        $files.append(files({
+          index: i,
+          extension: _.extension(f.path),
+          isBinary: _.isBinary(_.extension(f.path)),
+          isMedia: _.isMedia(_.extension(f.path)),
+          isMarkdown: _.markdown(_.extension(f.path)),
+          writePermissions: view.writePermissions,
+          repo: data.repo,
+          branch: data.branch,
+          path: f.path,
+          filename: _.filename(f.name) || 'Untitled',
+          file: f.path.match(/[^\/]*$/)[0],
+          name: f.name,
+          user: data.user
+        }));
+      }
+    });
+  },
+
+  // Creates human readable versions of _posts/paths
+  semantifyPaths: function (paths) {
+    return _.map(paths, function (path) {
+      return {
+        path: path,
+        name: path
+      };
+    });
+  },
+
+  activeListing: function (e) {
+    if ($(e.target, this.el).hasClass('item')) {
+      $listings = $('.item', this.el);
+      $listing = $(e.target, this.el);
+
+      $listings.removeClass('active');
+      $listing.addClass('active');
+
+      // Blur out search if its selected
+      $('#filter').blur();
+    }
+  },
+
+  parentActiveListing: function (e) {
+    $listings = $('.item', this.el);
+    $listing = $(e.target, this.el).closest('li');
+
+    $listings.removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    $('#filter').blur();
+  },
+
+  deleteFile: function(e) {
+    var $file = $(e.target, this.el).closest('a');
+    var $ico = $file.find('.ico');
+
+    var file = {
+      user: $file.data('user'),
+      repo: $file.data('repo'),
+      branch: $file.data('branch'),
+      fileName: $file.data('file')
+    };
+
+    if (confirm(t('actions.delete.warn'))) {
+      $file.addClass('working');
+      $ico.addClass('saving');
+
+      // Change the icon to a spinning one
+      app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
+
+        if (err) {
+          $file
+            .removeClass('working')
+            .attr('title', t('actions.delete.error'))
+            .addClass('error');
+
+          $ico.removeClass('rubbish saving');
+          return;
+        }
+
+        // On Success
+        $file.closest('.item').fadeOut('fast');
+
+        // Capture the filename and make sure the enty
+        // does not exist in the model object
+        for (var i = 0; i < this.model.tree.length; i++) {
+          if (this.model.tree[i] && this.model.tree[i].name === file.fileName) {
+            delete this.model.tree[i];
+          }
+        }
+
+        // TODO Bring this back in. Currently hitting githubs api this fast
+        // does not return an updated file listing.
+        // router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
+      }, this));
+    }
+
+    return false;
+  }
+});
+
+},{".././util":26,"jquery-browserify":18,"underscore":19,"js-yaml":24,"keymaster":28,"backbone":20}],15:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -22591,7 +22902,1668 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":19,"marked":26,"backbone":18}],18:[function(require,module,exports){
+},{"jquery-browserify":18,"marked":27,"backbone":20}],16:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var Backbone = require('backbone');
+var _ = require('underscore');
+var cookie = require('../cookie');
+var LOCALES = require('../../../translations/locales');
+
+module.exports = Backbone.View.extend({
+  className: 'inner deep prose',
+
+  events: {
+    'click .language': 'setLanguage' 
+  },
+
+  render: function() {
+    var tmpl = _.template(window.app.templates.chooselanguage);
+
+    this.$el
+      .empty()
+      .append(tmpl({
+        languages: LOCALES,
+        active: app.locale
+      }));
+    return this;
+  },
+
+  setLanguage: function(e) {
+    if (!$(e.target).hasClass('active')) {
+      var code = $(e.target).data('code');
+      cookie.set('lang', code);
+
+      // Check if the browsers language is supported
+      app.locale = code;
+
+      if (app.locale && app.locale !== 'en') {
+          $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+              window.locale[app.locale] = result;
+              window.locale.current(app.locale);
+          });
+      }
+
+      // Reflect changes. Could be more elegant.
+      window.location.reload();
+    }
+
+    return false;
+  }
+});
+
+},{"../cookie":2,"../../../translations/locales":3,"jquery-browserify":18,"backbone":20,"underscore":19}],14:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
+_.merge = require('deepmerge');
+var jsyaml = require('js-yaml');
+var key = require('keymaster');
+var marked = require('marked');
+var diff = require('diff');
+var Backbone = require('backbone');
+var utils = require('.././util');
+var upload = require('.././upload');
+var cookie = require('.././cookie');
+var toolbar = require('.././toolbar/markdown.js');
+
+module.exports = Backbone.View.extend({
+
+  id: 'post',
+  className: 'post',
+
+  events: {
+    'click .group a': 'markdownSnippet',
+    'click .dialog .insert': 'dialogInsert',
+    'click .save-action': 'updateFile',
+    'click .publish-flag': 'togglePublishing',
+    'click .draft-to-post': 'draft',
+    'click .meta .finish': 'backToMode',
+    'change #upload': 'fileInput',
+    'change .meta input': 'makeDirty'
+  },
+
+  initialize: function() {
+    this.prevFile = this.serialize();
+    this.config = {};
+    this.recentlyUploadedFiles = [];
+
+    if (app.state.config && app.state.config.prose) {
+      this.config.siteurl = app.state.config.prose.siteurl || false;
+      this.config.relativeLinks = app.state.config.prose.relativeLinks || false;
+      this.config.media = app.state.config.prose.media || false;
+    }
+
+    this.newFile = (app.state.mode === 'new') ? true : false;
+
+    // Stash editor and metadataEditor content to sessionStorage on pagehide event
+    // Always run stashFile in context of view
+    $(window).on('pagehide', _.bind(this.stashFile, this));
+  },
+
+  render: function() {
+    var view = this;
+
+    // Link Dialog
+    if (app.state.markdown && this.config.relativeLinks) {
+      $.ajax({
+        cache: true,
+        dataType: 'jsonp',
+        jsonp: false,
+        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
+        url: this.config.relativeLinks,
+        success: function(links) {
+          view.relativeLinks = links;
+        }
+      });
+    }
+
+    // Assets Listing for the Media Dialog
+    if (app.state.markdown && this.config.media) {
+      this.assetsDirectory = this.config.media;
+      app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
+        view.assets = data.files;
+      });
+    }
+
+    this.data = _.extend(this.model, {
+      mode: app.state.mode,
+      preview: this.model.markdown ? marked(this.compilePreview(this.model.content)) : '',
+      metadata: this.model.metadata
+    });
+
+    this.eventRegister = app.eventRegister;
+
+    // Listen for button clicks from the vertical nav
+    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'showDiff', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancel');
+    this.eventRegister.bind('edit', this.edit);
+    this.eventRegister.bind('preview', this.preview);
+    this.eventRegister.bind('deleteFile', this.deleteFile);
+    this.eventRegister.bind('showDiff', this.showDiff);
+    this.eventRegister.bind('updateFile', this.updateFile);
+    this.eventRegister.bind('translate', this.translate);
+    this.eventRegister.bind('draft', this.draft);
+    this.eventRegister.bind('meta', this.meta);
+    this.eventRegister.bind('remove', this.remove);
+    this.eventRegister.bind('cancel', this.cancel);
+
+    var tmpl = _(window.app.templates.post).template();
+
+    $(this.el).empty().append(tmpl(_.extend(this.model, {
+      mode: app.state.mode
+    })));
+
+    this.renderHeading();
+    this.renderToolbar();
+
+    if (this.model.markdown && app.state.mode === 'blob') {
+      this.preview();
+    } else {
+      // Editor is first up so trigger an active class for it
+      $('#edit', this.el).toggleClass('active', true);
+      $('.post-views .edit').addClass('active');
+
+      this.initEditor();
+      _.delay(function() {
+        utils.fixedScroll($('.topbar', view.el));
+      }, 1);
+    }
+
+    this.updateDocumentTitle();
+
+    // Prevent exit when there are unsaved changes
+    window.onbeforeunload = function() {
+      if (app.state.file && view.dirty) return t('actions.unsaved');
+    };
+
+    return this;
+  },
+
+  updateDocumentTitle: function() {
+    var context = t('docheader.editing');
+    var pathTitle = (app.state.path) ? app.state.path : '';
+
+    if (app.state.mode === 'blob') context = t('docheader.preview');
+    this.eventRegister.trigger('documentTitle', context + ' ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+  },
+
+  renderHeading: function() {
+    // Render heading
+    var isPrivate = app.state.isPrivate ? true : false;
+    var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
+
+    this.header = {
+      avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
+      parentTrail: parentTrail,
+      isPrivate: isPrivate,
+      title: _.filepath(this.data.path, this.data.file),
+      writable: this.model.writable,
+      alterable: true,
+      translate: this.data.translate,
+      lang: this.data.lang,
+      metadata: this.data.metadata
+    };
+
+    this.eventRegister.trigger('headerContext', this.header, true);
+  },
+
+  renderToolbar: function() {
+    var tmpl = _(window.app.templates.toolbar).template();
+
+    this.$el.find('#toolbar').empty().append(tmpl(_.extend(this.model, {
+      metadata: this.model.metadata,
+      avatar: this.model.lang,
+      draft: (this.model.path.split('/')[0] === '_drafts') ? true : false
+    })));
+  },
+
+  edit: function(e) {
+    var view = this;
+    // If preview was hit on load this.editor
+    // was not initialized.
+    if (!this.editor) {
+      this.initEditor();
+      _.delay(function() {
+        utils.fixedScroll($('.topbar', view.el));
+      }, 1);
+    }
+
+    app.state.mode = this.newFile ? 'new' : 'edit';
+    this.updateURL();
+
+    $('.post-views a').removeClass('active');
+    $('.post-views .edit').addClass('active');
+    $('#prose').toggleClass('open', false);
+
+    $('.views .view', this.el).removeClass('active');
+    $('#edit', this.el).addClass('active');
+
+    return false;
+  },
+
+  preview: function(e) {
+    $('#prose').toggleClass('open', false);
+    if (this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
+      var hash = window.location.hash.split('/');
+      hash[2] = 'preview';
+      if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
+        hash.push(_($('input.filepath').val().split('/')).last());
+      }
+      this.stashFile();
+
+      $(e.currentTarget).attr({
+        target: '_blank',
+        href: hash.join('/')
+      });
+      return true;
+    } else {
+      if (e) e.preventDefault();
+
+      // Vertical Nav
+      $('.post-views a').removeClass('active');
+      $('.post-views .preview').addClass('active');
+
+      // Content Window
+      $('.views .view', this.el).removeClass('active');
+      $('#preview', this.el).addClass('active').html(marked(this.compilePreview(this.model.content)));
+
+      app.state.mode = 'blob';
+      this.updateURL();
+    }
+  },
+
+  compilePreview: function(content) {
+    // Scan the content search for ![]()
+    // grab the path and file and form a RAW github aboslute request for it
+    var scan = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
+    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
+    var titleAttribute = /".*?"/;
+
+    // Build an array of found images
+    var result = content.match(scan);
+
+    // Iterate over the results and replace
+    _(result).each(function(r) {
+        var parts = (image).exec(r);
+
+        if (parts !== null) {
+          var path = parts[2];
+
+          if (!_.absolutePath(path)) {
+            // Remove any title attribute in the image tag is there is one.
+            if (titleAttribute.test(path)) {
+              path = path.split(titleAttribute)[0];
+            }
+
+            var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path;
+            if (app.state.isPrivate) {
+              // append auth param
+              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
+            }
+
+            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+          }
+        }
+    });
+
+    return content;
+  },
+
+  meta: function() {
+    $('#prose').toggleClass('open', false);
+
+    // Vertical Nav
+    $('.post-views a').removeClass('active');
+    $('.post-views .meta').addClass('active');
+
+    // Content Window
+    $('.views .view', this.el).removeClass('active');
+    $('#meta', this.el).addClass('active');
+
+    // Refresh CodeMirror
+    if (this.rawEditor) this.rawEditor.refresh();
+    return false;
+  },
+
+  backToMode: function() {
+    if (app.state.mode === 'preview') {
+      this.preview();
+    } else {
+      this.edit();
+    }
+
+    return false;
+  },
+
+  deleteFile: function() {
+    if (confirm(t('actions.delete.warn'))) {
+      window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
+        if (err) return alert(t('actions.delete.error'));
+        router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
+      }, this));
+    }
+    return false;
+  },
+
+  updateURL: function() {
+    var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
+    this.updateDocumentTitle();
+    router.navigate(url.join('/'), {
+      trigger: false,
+      replace: true
+    });
+
+    $('.chzn-select', this.el).trigger('liszt:updated');
+  },
+
+  makeDirty: function(e) {
+    this.dirty = true;
+    if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
+    if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
+
+    var label = this.model.writable ? t('actions.change.save') : t('actions.change.submit');
+    this.eventRegister.trigger('updateSaveState', label, 'save');
+
+    // Pass a popover span to the avatar icon
+    $('.save-action', this.el).find('.popup').html(this.model.alterable ? t('actions.change.save') : t('actions.change.submit'));
+  },
+
+  togglePublishing: function(e) {
+    var $target = $(e.target).hasClass('checkmark') ? $(e.target).parent() : $(e.target);
+
+    if ($target.hasClass('published')) {
+      $target
+        .empty()
+        .html(t('actions.publishing.unpublish') +
+              '<span class="ico small checkmark"></span>' +
+              '<span class="popup round arrow-top">' +
+              t('actions.publishing.unpublishInfo') +
+              '</span>')
+        .removeClass('published')
+        .attr('data-state', false);
+    } else {
+      $target
+        .empty()
+        .html(t('actions.publishing.publish') +
+              '<span class="ico small checkmark"></span>' +
+              '<span class="popup round arrow-top">' +
+              t('actions.publishing.publishInfo') +
+              '</span>')
+        .addClass('published')
+        .attr('data-state', true);
+    }
+
+    this.makeDirty();
+    return false;
+  },
+
+  showDiff: function() {
+    var $diff = this.$el.find('#diff');
+    var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
+    var text2 = _.escape(this.serialize());
+    var d = diff.diffWords(text1, text2);
+    var compare = '';
+
+    for (var i = 0; i < d.length; i++) {
+      if (d[i].removed) {
+        compare += '<del>' + d[i].value + '</del>';
+      } else if (d[i].added) {
+        compare += '<ins>' + d[i].value + '</ins>';
+      } else {
+        compare += d[i].value;
+      }
+    }
+
+    // Content Window
+    this.$el.find('.views .view').removeClass('active');
+    $diff.addClass('active');
+    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
+  },
+
+  closeSettings: function() {
+    $('.views .view', this.el).removeClass('active');
+
+    if (app.state.mode === 'blob') {
+      $('#preview', this.el).addClass('active');
+    } else {
+      $('#edit', this.el).addClass('active');
+    }
+
+    this.eventRegister.trigger('closeSettings');
+  },
+
+  cancel: function() {
+    this.$el.find('.views .view').removeClass('active');
+    this.$el.find('.' + app.state.mode).addClass('active');
+  },
+
+  refreshCodeMirror: function() {
+    if (typeof this.editor.refresh === 'function') this.editor.refresh();
+  },
+
+  updateMetaData: function() {
+    if (!this.model.jekyll) return true; // metadata -> skip
+    this.model.metadata = this.metadataEditor.getValue();
+    return true;
+  },
+
+  updateFilename: function(filepath, cb) {
+    var view = this;
+
+    if (!_.validPathname(filepath)) return cb('error');
+    app.state.path = this.model.path; // ?
+    app.state.file = _.extractFilename(filepath)[1];
+    app.state.path = _.extractFilename(filepath)[0];
+
+    function finish() {
+      view.model.path = app.state.path;
+      view.model.file = app.state.file;
+    }
+
+    if (this.model.persisted) {
+      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
+        if (!err) finish();
+        if (err) {
+          cb('error');
+        } else {
+          cb(null);
+        }
+      }, this));
+    } else {
+      finish();
+      cb(null);
+    }
+  },
+
+  serialize: function() {
+    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata).trim();
+
+    if (this.model.jekyll) {
+      return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
+    } else {
+      return this.model.content;
+    }
+  },
+
+  sendPatch: function(filepath, filename, filecontent, message) {
+    // Submits a patch (fork + pull request workflow)
+    var view = this;
+
+    function patch() {
+      if (view.updateMetaData()) {
+        view.model.content = view.prevFile;
+        view.editor.setValue(view.prevFile);
+
+        app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+
+          if (err) {
+            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+            return;
+          }
+
+          view.dirty = false;
+          view.model.persisted = true;
+          view.model.file = filename;
+
+          view.updateURL();
+          view.prevFile = filecontent;
+          view.closeSettings();
+          view.updatePublishState();
+          view.eventRegister.trigger('updateSaveState', t('actions.save.submission'), 'saved');
+        });
+      } else {
+        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
+      }
+    }
+
+    view.eventRegister.trigger('updateSaveState', t('actions.save.saving.patch'), 'saving');
+    patch();
+
+    return false;
+  },
+
+  saveFile: function(filepath, filename, filecontent, message) {
+    var view = this;
+
+    function save() {
+      if (view.updateMetaData()) {
+        window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+          if (err) {
+            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+            return;
+          }
+          view.dirty = false;
+          view.model.persisted = true;
+          view.model.file = filename;
+
+          if (app.state.mode === 'new') {
+            app.state.mode = 'edit';
+            view.eventRegister.trigger('renderNav');
+          }
+
+          view.renderHeading();
+          view.updateURL();
+          view.prevFile = filecontent;
+          view.closeSettings();
+          view.updatePublishState();
+          view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
+        });
+      } else {
+        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
+      }
+    }
+
+    view.eventRegister.trigger('updateSaveState', t('actions.save.saving'), 'saving');
+
+    if (filepath === _.filepath(this.model.path, this.model.file)) return save();
+
+    // Move or create file
+    this.updateFilename(filepath, function(err) {
+      if (err) {
+        view.eventRegister.trigger('filenameInput');
+        view.eventRegister.trigger('updateSaveState', t('actions.save.fileNameError'), 'error');
+      } else {
+        save();
+      }
+    });
+  },
+
+  saveDraft: function(filepath, filename, filecontent, message) {
+    var view = this;
+    view.eventRegister.trigger('updateSaveState', t('actions.save.saving'), 'saving');
+    window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+      if (err) {
+        view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+        return;
+      }
+      view.dirty = false;
+      view.model.persisted = true;
+      view.model.file = filename;
+
+      if (app.state.mode === 'new') app.state.mode = 'edit';
+      view.renderHeading();
+      view.updateURL();
+      view.prevFile = filecontent;
+      view.closeSettings();
+      view.updatePublishState();
+      view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
+    });
+  },
+
+  updatePublishState: function() {
+    // Update the publish key wording depening on what was saved
+    var $publishKey = $('.publish-flag', this.el);
+    var key = $publishKey.attr('data-state');
+
+    if (key === 'true') {
+      $publishKey
+        .empty()
+        .html(t('actions.publishing.published') + '<span class="ico small checkmark"></span>');
+    } else {
+      $publishKey
+        .empty()
+        .html(t('actions.publishing.unpublished') + '<span class="ico small checkmark"></span>');
+    }
+  },
+
+  stashFile: function(e) {
+    if (e) e.preventDefault();
+    if (!window.sessionStorage) return false;
+
+    var store = window.sessionStorage;
+    var filepath = $('input.filepath').val();
+
+    // Don't stash if filepath is undefined
+    if (filepath) {
+      try {
+        store.setItem(filepath, JSON.stringify({
+          sha: app.state.sha,
+          content: this.editor ? this.editor.getValue() : null,
+          metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+        }));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  },
+
+  stashApply: function() {
+    if (!window.sessionStorage) return false;
+
+    var store = window.sessionStorage;
+    var filepath = $('input.filepath').val();
+    var item = store.getItem(filepath);
+    var stash = JSON.parse(item);
+
+    if (stash && stash.sha === window.app.state.sha) {
+      // Restore from stash if file sha hasn't changed
+      if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
+      if (this.metadataEditor) {
+        this.rawEditor.setValue('');
+        this.metadataEditor.setValue(stash.metadata);
+      }
+    } else if (item) {
+      // Remove expired content
+      store.removeItem(filepath);
+    }
+  },
+
+  updateFile: function() {
+    var filepath = $('input.filepath').val();
+    var filename = _.extractFilename(filepath)[1];
+    var filecontent = this.serialize();
+    var $message = $('.commit-message');
+    var defaultMessage;
+
+    if (app.state.mode === 'new') {
+      defaultMessage = t('actions.commits.created', { filename: filename });
+    } else {
+      defaultMessage = t('actions.commits.updated', { filename: filename });
+    }
+
+    var message = $message.val() || defaultMessage;
+    var method = this.model.writable ? this.saveFile : this.sendPatch;
+
+    // Update content
+    this.model.content = (this.editor) ? this.editor.getValue() : '';
+
+    // Delegate
+    method.call(this, filepath, filename, filecontent, message);
+    return false;
+  },
+
+  draft: function() {
+    var filepath = _.extractFilename($('input.filepath').val());
+    var basepath = filepath[0].split('/');
+    var filename = filepath[1];
+    var postType = basepath[0];
+    var filecontent = this.serialize();
+    var message = t('actions.commits.toDraft', { filename: filename });
+
+    if (postType === '_posts') {
+      basepath.splice(0, 1, '_drafts');
+      filepath.splice(0, 1, basepath.join('/'));
+      this.saveDraft(filepath.join('/'), filename, filecontent, message);
+      app.state.path = this.model.path = filepath[0];
+    } else {
+      basepath.splice(0, 1, '_posts');
+      filepath.splice(0, 1, basepath.join('/'));
+      message = t('actions.commits.fromDraft', { filename: filename });
+      this.saveFile(filepath.join('/'), filename, filecontent, message);
+      app.state.path = this.model.path = filepath[0];
+    }
+
+    this.renderToolbar();
+    return false;
+  },
+
+  keyMap: function() {
+    var view = this;
+
+    if (this.model.markdown) {
+      return {
+        'Ctrl-S': function(codemirror) {
+          view.updateFile();
+        },
+        'Cmd-B': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
+        },
+        'Ctrl-B': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
+        },
+        'Cmd-I': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
+        },
+        'Ctrl-I': function(codemirror) {
+          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
+        }
+      };
+    } else {
+      return {
+        'Ctrl-S': function(codemirror) {
+          view.updateFile();
+        }
+      };
+    }
+  },
+
+  translate: function(e) {
+    // TODO Drop the 'EN' requirement.
+    var hash = window.location.hash.split('/'),
+      href = $(e.currentTarget).attr('href').substr(1);
+
+    // If current page is not english and target page is english
+    if (href === 'en') {
+      hash.splice(-2, 2, hash[hash.length - 1]);
+      // If current page is english and target page is not english
+    } else if (this.model.metadata.lang === 'en') {
+      hash.splice(-1, 1, href, hash[hash.length - 1]);
+      // If current page is not english and target page is not english
+    } else {
+      hash.splice(-2, 2, href, hash[hash.length - 1]);
+    }
+
+    router.navigate(_(hash).compact().join('/') + '?lang=' + href + '&translate=true', true);
+
+    return false;
+  },
+
+  buildMeta: function() {
+    var view = this;
+    var $metadataEditor = $('#meta', this.el).find('.form');
+    $metadataEditor.empty();
+
+    function initialize(model) {
+      var tmpl;
+
+      _(model.default_metadata).each(function(data, key) {
+        if (data && typeof data.field === 'object') {
+          switch (data.field.element) {
+            case 'button':
+              tmpl = _(window.app.templates.button).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                on: data.field.on,
+                off: data.field.off
+              }));
+              break;
+            case 'checkbox':
+              tmpl = _(window.app.templates.checkbox).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.name,
+                checked: data.field.value
+              }));
+              break;
+            case 'text':
+              tmpl = _(window.app.templates.text).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                type: 'text'
+              }));
+              break;
+            case 'number':
+              tmpl = _(window.app.templates.text).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                type: 'number'
+              }));
+              break;
+            case 'select':
+              tmpl = _(window.app.templates.select).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: model.metadata.lang || 'en'
+              }));
+              break;
+            case 'multiselect':
+              tmpl = _(window.app.templates.multiselect).template();
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: model.metadata.lang || 'en'
+              }));
+              break;
+            case 'hidden':
+              tmpl = {};
+              tmpl[data.name] = data.field.value;
+              view.model.metadata = _.merge(tmpl, view.model.metadata);
+              view.model.hidden = _.merge(tmpl, view.model.hidden || {});
+              break;
+          }
+        } else {
+          tmpl = _(window.app.templates.text).template();
+          $metadataEditor.append(tmpl({
+            name: key,
+            label: key,
+            value: data,
+            type: 'text'
+          }));
+        }
+      });
+
+      $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">' + t('main.file.rawMeta') + '</label>').appendTo($metadataEditor);
+
+      var rawContainer = (view.model.lang === 'yaml') ? 'code' : 'raw';
+      view.rawEditor = CodeMirror(document.getElementById(rawContainer), {
+        mode: 'yaml',
+        value: '',
+        lineWrapping: true,
+        extraKeys: view.keyMap(),
+        theme: 'prose-bright'
+      });
+
+      view.rawEditor.on('change', _.bind(view.makeDirty, view));
+
+      setValue(model.metadata);
+      $('.chzn-select').chosen();
+    }
+
+    function getValue() {
+      var metadata = {};
+
+      if ($('.publish-flag').attr('data-state') === 'true') {
+        metadata.published = true;
+      } else {
+        metadata.published = false;
+      }
+
+      _.each($metadataEditor.find('[name]'), function(item) {
+        var $item = $(item);
+        var value = $item.val();
+
+        switch (item.type) {
+          case 'select-multiple':
+          case 'select-one':
+          case 'text':
+            if (value) {
+              value = $item.data('type') === 'number' ? Number(value) : value;
+              if (metadata.hasOwnProperty(item.name)) {
+                metadata[item.name] = _.union(metadata[item.name], value);
+              } else {
+                metadata[item.name] = value;
+              }
+            }
+            break;
+          case 'checkbox':
+            if (item.checked) {
+
+              if (metadata.hasOwnProperty(item.name)) {
+                metadata[item.name] = _.union(metadata[item.name], item.value);
+              } else if (item.value === item.name) {
+                metadata[item.name] = item.checked;
+              } else {
+                metadata[item.name] = item.value;
+              }
+
+            } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
+              metadata[item.name] = item.checked;
+            } else {
+              metadata[item.name] = item.checked;
+            }
+            break;
+          case 'button':
+            if (value === 'true') {
+              metadata[item.name] = true;
+            } else if (value === 'false') {
+              metadata[item.name] = false;
+            }
+            break;
+        }
+      });
+
+      if (view.rawEditor) {
+        try {
+          metadata = _.merge(metadata, jsyaml.load(view.rawEditor.getValue()) || {});
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      return _.merge(view.model.hidden || {}, metadata);
+    }
+
+    function getRaw() {
+      return jsyaml.dump(getValue()).trim();
+    }
+
+    function setValue(data) {
+      var missing = {};
+      var raw;
+
+      _(data).each(function(value, key) {
+        var matched = false;
+        var input = $metadataEditor.find('[name="' + key + '"]');
+        var length = input.length;
+        var options;
+        var tmpl;
+
+        if (length) {
+
+          // iterate over matching fields
+          for (var i = 0; i < length; i++) {
+
+            // if value is an array
+            if (value !== null && typeof value === 'object' && value.length) {
+
+              // iterate over values in array
+              for (var j = 0; j < value.length; j++) {
+                switch (input[i].type) {
+                case 'select-multiple':
+                case 'select-one':
+                  options = $(input[i]).find('option[value="' + value[j] + '"]');
+                  if (options.length) {
+                    for (var k = 0; k < options.length; k++) {
+                      options[k].selected = 'selected';
+                    }
+
+                    matched = true;
+                  }
+                  break;
+                case 'text':
+                  input[i].value = value;
+                  matched = true;
+                  break;
+                case 'checkbox':
+                  if (input[i].value === value) {
+                    input[i].checked = 'checked';
+                    matched = true;
+                  }
+                  break;
+                }
+              }
+
+            } else {
+              switch (input[i].type) {
+              case 'select-multiple':
+              case 'select-one':
+                options = $(input[i]).find('option[value="' + value + '"]');
+                if (options.length) {
+                  for (var m = 0; m < options.length; m++) {
+                    options[m].selected = 'selected';
+                  }
+
+                  matched = true;
+                }
+                break;
+              case 'text':
+                input[i].value = value;
+                matched = true;
+                break;
+              case 'checkbox':
+                input[i].checked = value ? 'checked' : false;
+                matched = true;
+                break;
+              case 'button':
+                input[i].value = value ? true : false;
+                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
+                matched = true;
+                break;
+              }
+
+            }
+          }
+
+          if (!matched && value !== null) {
+            if (missing.hasOwnProperty(key)) {
+              missing[key] = _.union(missing[key], value);
+            } else {
+              missing[key] = value;
+            }
+          }
+
+        } else {
+          // Don't render the 'publish?ed' field or hidden metadata
+          var defaults = _.find(view.model.default_metadata, function(data) { return data.name === key; });
+          var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
+
+          if (key !== 'published' && !defaults) {
+            raw = {};
+            raw[key] = value;
+
+            if (view.rawEditor) {
+              view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
+            }
+          }
+        }
+      });
+
+      _.each(missing, function(value, key) {
+        if (value === null) return;
+
+        switch (typeof value) {
+        case 'boolean':
+          tmpl = _(window.app.templates.checkbox).template();
+          $metadataEditor.append(tmpl({
+            name: key,
+            label: value,
+            value: value,
+            checked: value ? 'checked' : false
+          }));
+          break;
+        case 'string':
+          tmpl = _(window.app.templates.text).template();
+          $metadataEditor.append(tmpl({
+            name: key,
+            label: value,
+            value: value,
+            type: 'text'
+          }));
+          break;
+        case 'object':
+          tmpl = _(window.app.templates.multiselect).template();
+          $metadataEditor.append(tmpl({
+            name: key,
+            label: key,
+            placeholder: key,
+            options: value,
+            lang: data.lang || 'en'
+          }));
+          break;
+        default:
+          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
+          break;
+        }
+      });
+    }
+
+    function setRaw(data) {
+      try {
+        setValue(jsyaml.load(data));
+      } catch (err) {
+        console.log('ERROR encoding YAML');
+        // No-op
+      }
+    }
+
+    initialize(this.model);
+
+    return {
+      el: $metadataEditor,
+      getRaw: getRaw,
+      setRaw: setRaw,
+      getValue: getValue,
+      setValue: setValue
+    };
+  },
+
+  fileInput: function(e) {
+    var view = this;
+    upload.fileSelect(e, function(e, file, content) {
+      view.updateImageInsert(e, file, content);
+    });
+
+    return false;
+  },
+
+  updateImageInsert: function(e, file, content) {
+    var view = this;
+    var path = (this.assetsDirectory) ? this.assetsDirectory : this.model.path;
+
+    var src = path + '/' + encodeURIComponent(file.name);
+    $('input[name="url"]').val(src);
+    $('input[name="alt"]').val('');
+
+    view.queue = {
+      e: e,
+      file: file,
+      content: content
+    };
+  },
+
+  initEditor: function() {
+    var view = this;
+
+    // TODO Remove setTimeout
+    setTimeout(function() {
+      if (view.model.jekyll) {
+        view.metadataEditor = view.buildMeta();
+      }
+
+      // Don't set up content editor for yaml posts
+      if (view.model.lang === 'yaml') return;
+
+      var lang = view.model.lang;
+      view.editor = CodeMirror(document.getElementById('code'), {
+        mode: view.model.lang,
+        value: view.model.content,
+        lineWrapping: true,
+        lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
+        extraKeys: view.keyMap(),
+        matchBrackets: true,
+        dragDrop: false,
+        theme: 'prose-bright'
+      });
+
+      // Bind Drag and Drop work on the editor
+      if (app.state.markdown && view.model.writable) {
+        upload.dragDrop($('#edit'), function(e, file, content) {
+          if ($('#dialog').hasClass('dialog')) {
+            view.updateImageInsert(e, file, content);
+          } else {
+            view.createAndUpload(e, file, content);
+          }
+        });
+      }
+
+      // Monitor the current selection and apply
+      // an active class to any snippet links
+      if (view.model.lang === 'gfm') {
+        var $snippetLinks = $('.toolbar .group a', view.el);
+        view.editor.on('cursorActivity', _.bind(function() {
+
+          var selection = _.trim(view.editor.getSelection());
+          $snippetLinks.removeClass('active');
+
+          var match = {
+            lineBreak: /\n/,
+            h1: /^#{1}/,
+            h2: /^#{2}/,
+            h3: /^#{3}/,
+            h4: /^#{4}/,
+            strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+            italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+            isNumber: parseInt(selection.charAt(0), 10)
+          };
+
+          if (!match.isNumber) {
+            switch (selection.charAt(0)) {
+              case '#':
+                if (!match.lineBreak.test(selection)) {
+                  if (match.h3.test(selection) && !match.h4.test(selection)) {
+                    $('[data-key="sub-heading"]').addClass('active');
+                  } else if (match.h2.test(selection) && !match.h3.test(selection)) {
+                    $('[data-key="heading"]').addClass('active');
+                  }
+                }
+                break;
+              case '>':
+                $('[data-key="quote"]').addClass('active');
+                break;
+              case '*':
+              case '_':
+                if (!match.lineBreak.test(selection)) {
+                  if (match.strong.test(selection)) {
+                    $('[data-key="bold"]').addClass('active');
+                  } else if (match.italic.test(selection)) {
+                    $('[data-key="italic"]').addClass('active');
+                  }
+                }
+                break;
+              case '!':
+                if (!match.lineBreak.test(selection) &&
+                    selection.charAt(1) === '[' &&
+                    selection.charAt(selection.length - 1) === ')') {
+                  $('[data-key="media"]').addClass('active');
+                }
+                break;
+              case '[':
+                if (!match.lineBreak.test(selection) &&
+                    selection.charAt(selection.length - 1) === ')') {
+                  $('[data-key="link"]').addClass('active');
+                }
+                break;
+              case '-':
+                if (selection.charAt(1) === ' ') {
+                  $('[data-key="list"]').addClass('active');
+                }
+              break;
+            }
+          } else {
+            if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
+              $('[data-key="numbered-list"]').addClass('active');
+            }
+          }
+        }, view));
+      }
+
+      view.editor.on('change', _.bind(view.makeDirty, view));
+      view.editor.on('focus', _.bind(function() {
+
+        // If an upload queue is set, we want to clear it.
+        this.queue = undefined;
+
+        // If a dialog window is open and the editor is in focus, close it.
+        $('.toolbar .group a', this.el).removeClass('on');
+        $('#dialog', view.el).empty().removeClass();
+      }, view));
+
+      view.refreshCodeMirror();
+
+      // Check sessionStorage for existing stash
+      // Apply if stash exists and is current, remove if expired
+      view.stashApply();
+    }, 100);
+  },
+
+  createAndUpload: function(e, file, content, userDefinedPath) {
+    var view = this;
+
+    // Loading State
+    this.eventRegister.trigger('updateSaveState', t('actions.upload.uploading', { file: file.name }), 'saving');
+
+    // Base64 Encode the file content
+    var extension = file.type.split('/').pop();
+    var path;
+
+    if (userDefinedPath) {
+      // Unique Filename
+      path = userDefinedPath;
+    } else {
+      var uid = encodeURIComponent(file.name);
+      path = this.assetsDirectory ?
+             this.assetsDirectory + '/' + uid :
+             (this.model.path) ?
+               this.model.path + '/' + uid :
+               uid;
+    }
+
+    var data = {};
+        data.message = t('actions.upload.uploaded', { file: file.name });
+        data.content = content;
+        data.branch = app.state.branch;
+
+    // Read through the filenames of path. If there is a filename that
+    // exists, we want to pass data.sha to update the existing one.
+    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, _.extractFilename(path)[0], function(err, res) {
+      if (err) return view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+
+      // Check whether the current (or media) directory
+      // contains the same filename as the one a user wishes
+      // to upload. we want to update the file by passing the sha
+      // to the data object in this case.
+      _(res.files).each(function(f) {
+        var parts = _.extractFilename(f.path);
+        var structuredPath = [parts[0], encodeURIComponent(parts[1])].join('/');
+        if (structuredPath === path) {
+          data.sha = f.sha;
+        }
+      });
+
+      // Stored in memory to test as GitHub may have not
+      // picked up on the change fast enough.
+      _(view.recentlyUploadedFiles).each(function(f) {
+        if (f.path === path) {
+          data.sha = f.sha;
+        }
+      });
+
+      app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
+        if (type === 'error') {
+          view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
+        } else {
+          var $alt = $('input[name="alt"]');
+          var image = ($alt.val() && $alt.val() !== undefined) ?
+            '\n![' + $alt.val() + '](/' + path + ')' :
+            '\n![' + file.name + '](/' + path + ')';
+
+          view.editor.focus();
+          view.editor.replaceSelection(image);
+          view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
+
+          // Update the media directory with the
+          // newly uploaded image.
+          if (!data.sha && view.assets) {
+            view.assets.push({
+              name: file.name,
+              type: 'blob',
+              path: path
+            });
+          }
+
+          // Store a record of recently uploaded files in memory
+          var fileParts = _.extractFilename(res.content.path);
+          var structuredPath = [fileParts[0], encodeURIComponent(fileParts[1])].join('/');
+
+          view.recentlyUploadedFiles.push({
+            path: structuredPath,
+            sha: res.content.sha
+          });
+        }
+      });
+    });
+  },
+
+  markdownSnippet: function(e) {
+    var view = this;
+    var $target = $(e.target, this.el).closest('a');
+    var $dialog = $('#dialog', this.el);
+    var $snippets = $('.toolbar .group a', this.el);
+    var key = $target.data('key');
+    var snippet = $target.data('snippet');
+    var selection = _.trim(this.editor.getSelection());
+
+    $dialog.removeClass().empty();
+
+    if (snippet) {
+      $snippets.removeClass('on');
+
+      if (selection) {
+        switch (key) {
+        case 'bold':
+          this.bold(selection);
+          break;
+        case 'italic':
+          this.italic(selection);
+          break;
+        case 'heading':
+          this.heading(selection);
+          break;
+        case 'sub-heading':
+          this.subHeading(selection);
+          break;
+        case 'quote':
+          this.quote(selection);
+          break;
+        default:
+          this.editor.replaceSelection(snippet);
+          break;
+        }
+        this.editor.focus();
+      } else {
+        this.editor.replaceSelection(snippet);
+        this.editor.focus();
+      }
+    } else if ($target.data('dialog')) {
+
+      var tmpl, className;
+      if (key === 'media' && !this.assets) {
+          className = key + ' no-directory';
+      } else {
+          className = key;
+      }
+
+      // This condition handles the link and media link in the toolbar.
+      if ($target.hasClass('on')) {
+        $target.removeClass('on');
+        $dialog.removeClass().empty();
+      } else {
+        $snippets.removeClass('on');
+        $target.addClass('on');
+        $dialog
+          .removeClass()
+          .addClass('dialog ' + className)
+          .empty();
+
+        switch(key) {
+          case 'link':
+            tmpl = _(app.templates.linkDialog).template();
+
+            $dialog.append(tmpl({
+              relativeLinks: view.relativeLinks
+            }));
+
+            if (view.relativeLinks) {
+              $('.chzn-select', $dialog).chosen().change(function() {
+                $('.chzn-single span').text(t('dialogs.link.insertLocal'));
+
+                var parts = $(this).val().split(',');
+                $('input[name=href]', $dialog).val(parts[0]);
+                $('input[name=text]', $dialog).val(parts[1]);
+              });
+            }
+
+            if (selection) {
+              // test if this is a markdown link: [text](link)
+              var link = /\[([^\]]+)\]\(([^)]+)\)/;
+              var quoted = /".*?"/;
+
+              var text = selection;
+              var href;
+              var title;
+
+              if (link.test(selection)) {
+                var parts = link.exec(selection);
+                text = parts[1];
+                href = parts[2];
+
+                // Search for a title attrbute within the url string
+                if (quoted.test(parts[2])) {
+                  href = parts[2].split(quoted)[0];
+
+                  // TODO could be improved
+                  title = parts[2].match(quoted)[0].replace(/"/g, '');
+                }
+              }
+
+              $('input[name=text]', $dialog).val(text);
+              if (href) $('input[name=href]', $dialog).val(href);
+              if (title) $('input[name=title]', $dialog).val(title);
+            }
+          break;
+          case 'media':
+            tmpl = _(app.templates.mediaDialog).template();
+            $dialog.append(tmpl({
+              description: t('dialogs.media.description', {
+                input: '<input id="upload" class="upload" type="file" />'
+              }),
+              writable: view.data.writable,
+              assetsDirectory: (view.assets) ? true : false
+            }));
+
+            if (view.assets) view.renderAssets(view.assets);
+
+            if (selection) {
+              var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
+              var src;
+              var alt;
+
+              if (image.test(selection)) {
+                var imageParts = image.exec(selection);
+                alt = imageParts[1];
+                src = imageParts[2];
+
+                $('input[name=url]', $dialog).val(src);
+                if (alt) $('input[name=alt]', $dialog).val(alt);
+              }
+            }
+          break;
+          case 'help':
+            tmpl = _(app.templates.helpDialog).template();
+            $dialog.append(tmpl({
+              help: toolbar.help
+            }));
+
+            // Page through different help sections
+            var $mainMenu = $('.main-menu a', this.el);
+            var $subMenu = $('.sub-menu', this.el);
+            var $content = $('.help-content', this.el);
+
+            $mainMenu.on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $mainMenu.removeClass('active');
+                $content.removeClass('active');
+                $subMenu
+                    .removeClass('active')
+                    .find('a')
+                    .removeClass('active');
+
+                $(this).addClass('active');
+
+                // Add the relavent sub menu
+                var parent = $(this).data('id');
+                $('.' + parent).addClass('active');
+
+                // Add an active class and populate the
+                // content of the first list item.
+                var $firstSubElement = $('.' + parent + ' a:first', this.el);
+                $firstSubElement.addClass('active');
+
+                var subParent = $firstSubElement.data('id');
+                $('.help-' + subParent).addClass('active');
+              }
+              return false;
+            });
+
+            $subMenu.find('a').on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $subMenu.find('a').removeClass('active');
+                $content.removeClass('active');
+                $(this).addClass('active');
+
+                // Add the relavent content section
+                var parent = $(this).data('id');
+                $('.help-' + parent).addClass('active');
+              }
+
+              return false;
+            });
+
+          break;
+        }
+      }
+    }
+
+    return false;
+  },
+
+  renderAssets: function(data, back) {
+    var view = this;
+    var $media = $('#media', this.el);
+    var tmpl = _(app.templates.asset).template();
+
+    // Reset some stuff
+    $('.directory a', $media).off('click', this.assetDirectory);
+    $media.empty();
+
+    if (back && (back.join() !== this.assetsDirectory)) {
+      var link = back.slice(0, back.length - 1).join('/');
+      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>' + t('dialogs.media.back') + '</a></li>');
+    }
+
+    _(data).each(function(asset) {
+      var parts = asset.path.split('/');
+      var path = parts.slice(0, parts.length - 1).join('/');
+
+      $media.append(tmpl({
+        name: asset.name,
+        type: asset.type,
+        path: path + '/' + encodeURIComponent(asset.name)
+      }));
+    });
+
+    $('.asset a', $media).on('click', function(e) {
+      var href = $(this).attr('href');
+      var alt = _.trim($(this).text());
+
+      if (_.isImage(href)) {
+        $('input[name="url"]').val(href);
+        $('input[name="alt"]').val(alt);
+      } else {
+        view.editor.replaceSelection(href);
+        view.editor.focus();
+      }
+      return false;
+    });
+
+    $('.directory a', $media).on('click', function(e) {
+      view.assetDirectory($(e.target), view);
+      return false;
+    });
+  },
+
+  assetDirectory: function(dir, view) {
+    var path = dir.attr('href');
+    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, path, function(err, data) {
+      view.renderAssets(data.files, path.split('/'));
+    });
+  },
+
+  dialogInsert: function(e) {
+    var $dialog = $('#dialog', this.el);
+    var $target = $(e.target, this.el);
+    var type = $target.data('type');
+
+    if (type === 'link') {
+      var href = $('input[name="href"]').val();
+      var text = $('input[name="text"]').val();
+      var title = $('input[name="title"]').val();
+
+      if (!text) text = href;
+
+      if (title) {
+        this.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
+      } else {
+        this.editor.replaceSelection('[' + text + '](' + href + ')');
+      }
+
+      this.editor.focus();
+    }
+
+    if (type === 'media') {
+      if (this.queue) {
+        var userDefinedPath = $('input[name="url"]').val();
+        this.createAndUpload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
+
+        // Finally, clear the queue object
+        this.queue = undefined;
+      } else {
+        var src = $('input[name="url"]').val();
+        var alt = $('input[name="alt"]').val();
+        this.editor.replaceSelection('\n![' + alt + '](/' + src + ')');
+        this.editor.focus();
+      }
+    }
+
+    return false;
+  },
+
+  heading: function(s) {
+    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
+      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
+    } else {
+      this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
+    }
+  },
+
+  subHeading: function(s) {
+    if (s.charAt(0) === '#' && s.charAt(3) !== '#') {
+      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
+    } else {
+      this.editor.replaceSelection('### ' + s.replace(/#/g, ''));
+    }
+  },
+
+  italic: function(s) {
+    if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
+      this.editor.replaceSelection(s.replace(/_/g, ''));
+    } else {
+      this.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
+    }
+  },
+
+  bold: function(s) {
+    if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
+      this.editor.replaceSelection(s.replace(/\*/g, ''));
+    } else {
+      this.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
+    }
+  },
+
+  quote: function(s) {
+    if (s.charAt(0) === '>') {
+      this.editor.replaceSelection(_.lTrim(s.replace(/\>/g, '')));
+    } else {
+      this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
+    }
+  },
+
+  remove: function() {
+    this.stashFile();
+
+    this.eventRegister.unbind('edit', this.postViews);
+    this.eventRegister.unbind('preview', this.preview);
+    this.eventRegister.unbind('deleteFile', this.deleteFile);
+    this.eventRegister.unbind('showDiff', this.showDiff);
+    this.eventRegister.unbind('translate', this.translate);
+    this.eventRegister.unbind('draft', this.draft);
+    this.eventRegister.unbind('updateFile', this.updateFile);
+    this.eventRegister.unbind('meta', this.updateFile);
+    this.eventRegister.unbind('remove', this.remove);
+    this.eventRegister.unbind('cancel', this.cancel);
+
+    // Clear any file state classes in #prose
+    this.eventRegister.trigger('updateSaveState', '', '');
+
+    $(window).off('pagehide');
+    Backbone.View.prototype.remove.call(this);
+  }
+});
+
+},{".././toolbar/markdown.js":21,".././util":26,".././upload":22,".././cookie":2,"jquery-browserify":18,"chosen-jquery-browserify":29,"underscore":19,"js-yaml":24,"keymaster":28,"marked":27,"backbone":20,"deepmerge":30,"diff":31}],20:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -24165,2302 +26137,10 @@ module.exports = Backbone.View.extend({
 }).call(this);
 
 })()
-},{"underscore":17}],14:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var chosen = require('chosen-jquery-browserify');
-var _ = require('underscore');
-_.merge = require('deepmerge');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var marked = require('marked');
-var diff = require('diff');
-var Backbone = require('backbone');
-var utils = require('.././util');
-var upload = require('.././upload');
-var cookie = require('.././cookie');
-var toolbar = require('.././toolbar/markdown.js');
+},{"underscore":19}],24:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
 
-module.exports = Backbone.View.extend({
-
-  id: 'post',
-  className: 'post',
-
-  events: {
-    'click .group a': 'markdownSnippet',
-    'click .dialog .insert': 'dialogInsert',
-    'click .save-action': 'updateFile',
-    'click .publish-flag': 'togglePublishing',
-    'click .draft-to-post': 'draft',
-    'click .meta .finish': 'backToMode',
-    'change #upload': 'fileInput',
-    'change .meta input': 'makeDirty'
-  },
-
-  initialize: function() {
-    this.prevFile = this.serialize();
-    this.config = {};
-    this.recentlyUploadedFiles = [];
-
-    if (app.state.config && app.state.config.prose) {
-      this.config.siteurl = app.state.config.prose.siteurl || false;
-      this.config.relativeLinks = app.state.config.prose.relativeLinks || false;
-      this.config.media = app.state.config.prose.media || false;
-    }
-
-    this.newFile = (app.state.mode === 'new') ? true : false;
-
-    // Stash editor and metadataEditor content to sessionStorage on pagehide event
-    // Always run stashFile in context of view
-    $(window).on('pagehide', _.bind(this.stashFile, this));
-  },
-
-  render: function() {
-    var view = this;
-
-    // Link Dialog
-    if (app.state.markdown && this.config.relativeLinks) {
-      $.ajax({
-        cache: true,
-        dataType: 'jsonp',
-        jsonp: false,
-        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
-        url: this.config.relativeLinks,
-        success: function(links) {
-          view.relativeLinks = links;
-        }
-      });
-    }
-
-    // Assets Listing for the Media Dialog
-    if (app.state.markdown && this.config.media) {
-      this.assetsDirectory = this.config.media;
-      app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
-        view.assets = data.files;
-      });
-    }
-
-    this.data = _.extend(this.model, {
-      mode: app.state.mode,
-      preview: this.model.markdown ? marked(this.compilePreview(this.model.content)) : '',
-      metadata: this.model.metadata
-    });
-
-    this.eventRegister = app.eventRegister;
-
-    // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'showDiff', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancel');
-    this.eventRegister.bind('edit', this.edit);
-    this.eventRegister.bind('preview', this.preview);
-    this.eventRegister.bind('deleteFile', this.deleteFile);
-    this.eventRegister.bind('showDiff', this.showDiff);
-    this.eventRegister.bind('updateFile', this.updateFile);
-    this.eventRegister.bind('translate', this.translate);
-    this.eventRegister.bind('draft', this.draft);
-    this.eventRegister.bind('meta', this.meta);
-    this.eventRegister.bind('remove', this.remove);
-    this.eventRegister.bind('cancel', this.cancel);
-
-    var tmpl = _(window.app.templates.post).template();
-
-    $(this.el).empty().append(tmpl(_.extend(this.model, {
-      mode: app.state.mode
-    })));
-
-    this.renderHeading();
-    this.renderToolbar();
-
-    if (this.model.markdown && app.state.mode === 'blob') {
-      this.preview();
-    } else {
-      // Editor is first up so trigger an active class for it
-      $('#edit', this.el).toggleClass('active', true);
-      $('.post-views .edit').addClass('active');
-
-      this.initEditor();
-      _.delay(function() {
-        utils.fixedScroll($('.topbar', view.el));
-      }, 1);
-    }
-
-    this.updateDocumentTitle();
-
-    // Prevent exit when there are unsaved changes
-    window.onbeforeunload = function() {
-      if (app.state.file && view.dirty) return t('actions.unsaved');
-    };
-
-    return this;
-  },
-
-  updateDocumentTitle: function() {
-    var context = t('docheader.editing');
-    var pathTitle = (app.state.path) ? app.state.path : '';
-
-    if (app.state.mode === 'blob') context = t('docheader.preview');
-    this.eventRegister.trigger('documentTitle', context + ' ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-  },
-
-  renderHeading: function() {
-    // Render heading
-    var isPrivate = app.state.isPrivate ? true : false;
-    var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
-
-    this.header = {
-      avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
-      parentTrail: parentTrail,
-      isPrivate: isPrivate,
-      title: _.filepath(this.data.path, this.data.file),
-      writable: this.model.writable,
-      alterable: true,
-      translate: this.data.translate,
-      lang: this.data.lang,
-      metadata: this.data.metadata
-    };
-
-    this.eventRegister.trigger('headerContext', this.header, true);
-  },
-
-  renderToolbar: function() {
-    var tmpl = _(window.app.templates.toolbar).template();
-
-    this.$el.find('#toolbar').empty().append(tmpl(_.extend(this.model, {
-      metadata: this.model.metadata,
-      avatar: this.model.lang,
-      draft: (this.model.path.split('/')[0] === '_drafts') ? true : false
-    })));
-  },
-
-  edit: function(e) {
-    var view = this;
-    // If preview was hit on load this.editor
-    // was not initialized.
-    if (!this.editor) {
-      this.initEditor();
-      _.delay(function() {
-        utils.fixedScroll($('.topbar', view.el));
-      }, 1);
-    }
-
-    app.state.mode = this.newFile ? 'new' : 'edit';
-    this.updateURL();
-
-    $('.post-views a').removeClass('active');
-    $('.post-views .edit').addClass('active');
-    $('#prose').toggleClass('open', false);
-
-    $('.views .view', this.el).removeClass('active');
-    $('#edit', this.el).addClass('active');
-
-    return false;
-  },
-
-  preview: function(e) {
-    $('#prose').toggleClass('open', false);
-    if (this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
-      var hash = window.location.hash.split('/');
-      hash[2] = 'preview';
-      if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
-        hash.push(_($('input.filepath').val().split('/')).last());
-      }
-      this.stashFile();
-
-      $(e.currentTarget).attr({
-        target: '_blank',
-        href: hash.join('/')
-      });
-      return true;
-    } else {
-      if (e) e.preventDefault();
-
-      // Vertical Nav
-      $('.post-views a').removeClass('active');
-      $('.post-views .preview').addClass('active');
-
-      // Content Window
-      $('.views .view', this.el).removeClass('active');
-      $('#preview', this.el).addClass('active').html(marked(this.compilePreview(this.model.content)));
-
-      app.state.mode = 'blob';
-      this.updateURL();
-    }
-  },
-
-  compilePreview: function(content) {
-    // Scan the content search for ![]()
-    // grab the path and file and form a RAW github aboslute request for it
-    var scan = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
-    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
-    var titleAttribute = /".*?"/;
-
-    // Build an array of found images
-    var result = content.match(scan);
-
-    // Iterate over the results and replace
-    _(result).each(function(r) {
-        var parts = (image).exec(r);
-
-        if (parts !== null) {
-          var path = parts[2];
-
-          if (!_.absolutePath(path)) {
-            // Remove any title attribute in the image tag is there is one.
-            if (titleAttribute.test(path)) {
-              path = path.split(titleAttribute)[0];
-            }
-
-            var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path;
-            if (app.state.isPrivate) {
-              // append auth param
-              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
-            }
-
-            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
-          }
-        }
-    });
-
-    return content;
-  },
-
-  meta: function() {
-    $('#prose').toggleClass('open', false);
-
-    // Vertical Nav
-    $('.post-views a').removeClass('active');
-    $('.post-views .meta').addClass('active');
-
-    // Content Window
-    $('.views .view', this.el).removeClass('active');
-    $('#meta', this.el).addClass('active');
-
-    // Refresh CodeMirror
-    if (this.rawEditor) this.rawEditor.refresh();
-    return false;
-  },
-
-  backToMode: function() {
-    if (app.state.mode === 'preview') {
-      this.preview();
-    } else {
-      this.edit();
-    }
-
-    return false;
-  },
-
-  deleteFile: function() {
-    if (confirm(t('actions.delete.warn'))) {
-      window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
-        if (err) return alert(t('actions.delete.error'));
-        router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
-      }, this));
-    }
-    return false;
-  },
-
-  updateURL: function() {
-    var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
-    this.updateDocumentTitle();
-    router.navigate(url.join('/'), {
-      trigger: false,
-      replace: true
-    });
-
-    $('.chzn-select', this.el).trigger('liszt:updated');
-  },
-
-  makeDirty: function(e) {
-    this.dirty = true;
-    if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
-    if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
-
-    var label = this.model.writable ? t('actions.change.save') : t('actions.change.submit');
-    this.eventRegister.trigger('updateSaveState', label, 'save');
-
-    // Pass a popover span to the avatar icon
-    $('.save-action', this.el).find('.popup').html(this.model.alterable ? t('actions.change.save') : t('actions.change.submit'));
-  },
-
-  togglePublishing: function(e) {
-    var $target = $(e.target).hasClass('checkmark') ? $(e.target).parent() : $(e.target);
-
-    if ($target.hasClass('published')) {
-      $target
-        .empty()
-        .html(t('actions.publishing.unpublish') + '<span class="ico checkmark"></span>')
-        .removeClass('published')
-        .attr('data-state', false);
-    } else {
-      $target
-        .empty()
-        .html(t('actions.publishing.publish') + '<span class="ico checkmark"></span>')
-        .addClass('published')
-        .attr('data-state', true);
-    }
-
-    this.makeDirty();
-    return false;
-  },
-
-  showDiff: function() {
-    var $diff = this.$el.find('#diff');
-    var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
-    var text2 = _.escape(this.serialize());
-    var d = diff.diffWords(text1, text2);
-    var compare = '';
-
-    for (var i = 0; i < d.length; i++) {
-      if (d[i].removed) {
-        compare += '<del>' + d[i].value + '</del>';
-      } else if (d[i].added) {
-        compare += '<ins>' + d[i].value + '</ins>';
-      } else {
-        compare += d[i].value;
-      }
-    }
-
-    // Content Window
-    this.$el.find('.views .view').removeClass('active');
-    $diff.addClass('active');
-    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
-  },
-
-  closeSettings: function() {
-    $('.views .view', this.el).removeClass('active');
-
-    if (app.state.mode === 'blob') {
-      $('#preview', this.el).addClass('active');
-    } else {
-      $('#edit', this.el).addClass('active');
-    }
-
-    this.eventRegister.trigger('closeSettings');
-  },
-
-  cancel: function() {
-    this.$el.find('.views .view').removeClass('active');
-    this.$el.find('.' + app.state.mode).addClass('active');
-  },
-
-  refreshCodeMirror: function() {
-    if (typeof this.editor.refresh === 'function') this.editor.refresh();
-  },
-
-  updateMetaData: function() {
-    if (!this.model.jekyll) return true; // metadata -> skip
-    this.model.metadata = this.metadataEditor.getValue();
-    return true;
-  },
-
-  updateFilename: function(filepath, cb) {
-    var view = this;
-
-    if (!_.validPathname(filepath)) return cb('error');
-    app.state.path = this.model.path; // ?
-    app.state.file = _.extractFilename(filepath)[1];
-    app.state.path = _.extractFilename(filepath)[0];
-
-    function finish() {
-      view.model.path = app.state.path;
-      view.model.file = app.state.file;
-    }
-
-    if (this.model.persisted) {
-      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
-        if (!err) finish();
-        if (err) {
-          cb('error');
-        } else {
-          cb(null);
-        }
-      }, this));
-    } else {
-      finish();
-      cb(null);
-    }
-  },
-
-  serialize: function() {
-    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata).trim();
-
-    if (this.model.jekyll) {
-      return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
-    } else {
-      return this.model.content;
-    }
-  },
-
-  sendPatch: function(filepath, filename, filecontent, message) {
-    // Submits a patch (fork + pull request workflow)
-    var view = this;
-
-    function patch() {
-      if (view.updateMetaData()) {
-        view.model.content = view.prevFile;
-        view.editor.setValue(view.prevFile);
-
-        app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-
-          if (err) {
-            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
-            return;
-          }
-
-          view.dirty = false;
-          view.model.persisted = true;
-          view.model.file = filename;
-
-          view.updateURL();
-          view.prevFile = filecontent;
-          view.closeSettings();
-          view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', t('actions.save.submission'), 'saved');
-        });
-      } else {
-        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
-      }
-    }
-
-    view.eventRegister.trigger('updateSaveState', t('actions.save.saving.patch'), 'saving');
-    patch();
-
-    return false;
-  },
-
-  saveFile: function(filepath, filename, filecontent, message) {
-    var view = this;
-
-    function save() {
-      if (view.updateMetaData()) {
-        window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-          if (err) {
-            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
-            return;
-          }
-          view.dirty = false;
-          view.model.persisted = true;
-          view.model.file = filename;
-
-          if (app.state.mode === 'new') {
-            app.state.mode = 'edit';
-            view.eventRegister.trigger('renderNav');
-          }
-
-          view.renderHeading();
-          view.updateURL();
-          view.prevFile = filecontent;
-          view.closeSettings();
-          view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
-        });
-      } else {
-        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
-      }
-    }
-
-    view.eventRegister.trigger('updateSaveState', t('actions.save.saving'), 'saving');
-
-    if (filepath === _.filepath(this.model.path, this.model.file)) return save();
-
-    // Move or create file
-    this.updateFilename(filepath, function(err) {
-      if (err) {
-        view.eventRegister.trigger('filenameInput');
-        view.eventRegister.trigger('updateSaveState', t('actions.save.fileNameError'), 'error');
-      } else {
-        save();
-      }
-    });
-  },
-
-  saveDraft: function(filepath, filename, filecontent, message) {
-    var view = this;
-    view.eventRegister.trigger('updateSaveState', t('actions.save.saving'), 'saving');
-    window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-      if (err) {
-        view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
-        return;
-      }
-      view.dirty = false;
-      view.model.persisted = true;
-      view.model.file = filename;
-
-      if (app.state.mode === 'new') app.state.mode = 'edit';
-      view.renderHeading();
-      view.updateURL();
-      view.prevFile = filecontent;
-      view.closeSettings();
-      view.updatePublishState();
-      view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
-    });
-  },
-
-  updatePublishState: function() {
-    // Update the publish key wording depening on what was saved
-    var $publishKey = $('.publish-flag', this.el);
-    var key = $publishKey.attr('data-state');
-
-    if (key === 'true') {
-      $publishKey
-        .empty()
-        .html(t('actions.publishing.published') + '<span class="ico checkmark"></span>');
-    } else {
-      $publishKey
-        .empty()
-        .html(t('actions.publishing.unpublished') + '<span class="ico checkmark"></span>');
-    }
-  },
-
-  stashFile: function(e) {
-    if (e) e.preventDefault();
-    if (!window.sessionStorage) return false;
-
-    var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
-
-    // Don't stash if filepath is undefined
-    if (filepath) {
-      try {
-        store.setItem(filepath, JSON.stringify({
-          sha: app.state.sha,
-          content: this.editor ? this.editor.getValue() : null,
-          metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
-        }));
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  },
-
-  stashApply: function() {
-    if (!window.sessionStorage) return false;
-
-    var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
-    var item = store.getItem(filepath);
-    var stash = JSON.parse(item);
-
-    if (stash && stash.sha === window.app.state.sha) {
-      // Restore from stash if file sha hasn't changed
-      if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
-      if (this.metadataEditor) {
-        this.rawEditor.setValue('');
-        this.metadataEditor.setValue(stash.metadata);
-      }
-    } else if (item) {
-      // Remove expired content
-      store.removeItem(filepath);
-    }
-  },
-
-  updateFile: function() {
-    var filepath = $('input.filepath').val();
-    var filename = _.extractFilename(filepath)[1];
-    var filecontent = this.serialize();
-    var $message = $('.commit-message');
-    var defaultMessage;
-
-    if (app.state.mode === 'new') {
-      defaultMessage = t('actions.commits.created', { filename: filename });
-    } else {
-      defaultMessage = t('actions.commits.updated', { filename: filename });
-    }
-
-    var message = $message.val() || defaultMessage;
-    var method = this.model.writable ? this.saveFile : this.sendPatch;
-
-    // Update content
-    this.model.content = (this.editor) ? this.editor.getValue() : '';
-
-    // Delegate
-    method.call(this, filepath, filename, filecontent, message);
-    return false;
-  },
-
-  draft: function() {
-    var filepath = _.extractFilename($('input.filepath').val());
-    var basepath = filepath[0].split('/');
-    var filename = filepath[1];
-    var postType = basepath[0];
-    var filecontent = this.serialize();
-    var message = t('actions.commits.toDraft', { filename: filename });
-
-    if (postType === '_posts') {
-      basepath.splice(0, 1, '_drafts');
-      filepath.splice(0, 1, basepath.join('/'));
-      this.saveDraft(filepath.join('/'), filename, filecontent, message);
-      app.state.path = this.model.path = filepath[0];
-    } else {
-      basepath.splice(0, 1, '_posts');
-      filepath.splice(0, 1, basepath.join('/'));
-      message = t('actions.commits.fromDraft', { filename: filename });
-      this.saveFile(filepath.join('/'), filename, filecontent, message);
-      app.state.path = this.model.path = filepath[0];
-    }
-
-    this.renderToolbar();
-    return false;
-  },
-
-  keyMap: function() {
-    var view = this;
-
-    if (this.model.markdown) {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.updateFile();
-        },
-        'Cmd-B': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
-        },
-        'Ctrl-B': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
-        },
-        'Cmd-I': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
-        },
-        'Ctrl-I': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
-        }
-      };
-    } else {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.updateFile();
-        }
-      };
-    }
-  },
-
-  translate: function(e) {
-    // TODO Drop the 'EN' requirement.
-    var hash = window.location.hash.split('/'),
-      href = $(e.currentTarget).attr('href').substr(1);
-
-    // If current page is not english and target page is english
-    if (href === 'en') {
-      hash.splice(-2, 2, hash[hash.length - 1]);
-      // If current page is english and target page is not english
-    } else if (this.model.metadata.lang === 'en') {
-      hash.splice(-1, 1, href, hash[hash.length - 1]);
-      // If current page is not english and target page is not english
-    } else {
-      hash.splice(-2, 2, href, hash[hash.length - 1]);
-    }
-
-    router.navigate(_(hash).compact().join('/') + '?lang=' + href + '&translate=true', true);
-
-    return false;
-  },
-
-  buildMeta: function() {
-    var view = this;
-    var $metadataEditor = $('#meta', this.el).find('.form');
-    $metadataEditor.empty();
-
-    function initialize(model) {
-      var tmpl;
-
-      _(model.default_metadata).each(function(data, key) {
-        if (data && typeof data.field === 'object') {
-          switch (data.field.element) {
-            case 'button':
-              tmpl = _(window.app.templates.button).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value,
-                on: data.field.on,
-                off: data.field.off
-              }));
-              break;
-            case 'checkbox':
-              tmpl = _(window.app.templates.checkbox).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.name,
-                checked: data.field.value
-              }));
-              break;
-            case 'text':
-              tmpl = _(window.app.templates.text).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value,
-                type: 'text'
-              }));
-              break;
-            case 'number':
-              tmpl = _(window.app.templates.text).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value,
-                type: 'number'
-              }));
-              break;
-            case 'select':
-              tmpl = _(window.app.templates.select).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: model.metadata.lang || 'en'
-              }));
-              break;
-            case 'multiselect':
-              tmpl = _(window.app.templates.multiselect).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: model.metadata.lang || 'en'
-              }));
-              break;
-            case 'hidden':
-              tmpl = {};
-              tmpl[data.name] = data.field.value;
-              view.model.metadata = _.merge(tmpl, view.model.metadata);
-              view.model.hidden = _.merge(tmpl, view.model.hidden || {});
-              break;
-          }
-        } else {
-          tmpl = _(window.app.templates.text).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: key,
-            value: data,
-            type: 'text'
-          }));
-        }
-      });
-
-      $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">' + t('main.file.rawMeta') + '</label>').appendTo($metadataEditor);
-
-      var rawContainer = (view.model.lang === 'yaml') ? 'code' : 'raw';
-      view.rawEditor = CodeMirror(document.getElementById(rawContainer), {
-        mode: 'yaml',
-        value: '',
-        lineWrapping: true,
-        extraKeys: view.keyMap(),
-        theme: 'prose-bright'
-      });
-
-      view.rawEditor.on('change', _.bind(view.makeDirty, view));
-
-      setValue(model.metadata);
-      $('.chzn-select').chosen();
-    }
-
-    function getValue() {
-      var metadata = {};
-
-      if ($('.publish-flag').attr('data-state') === 'true') {
-        metadata.published = true;
-      } else {
-        metadata.published = false;
-      }
-
-      _.each($metadataEditor.find('[name]'), function(item) {
-        var $item = $(item);
-        var value = $item.val();
-
-        switch (item.type) {
-          case 'select-multiple':
-          case 'select-one':
-          case 'text':
-            if (value) {
-              value = $item.data('type') === 'number' ? Number(value) : value;
-              if (metadata.hasOwnProperty(item.name)) {
-                metadata[item.name] = _.union(metadata[item.name], value);
-              } else {
-                metadata[item.name] = value;
-              }
-            }
-            break;
-          case 'checkbox':
-            if (item.checked) {
-
-              if (metadata.hasOwnProperty(item.name)) {
-                metadata[item.name] = _.union(metadata[item.name], item.value);
-              } else if (item.value === item.name) {
-                metadata[item.name] = item.checked;
-              } else {
-                metadata[item.name] = item.value;
-              }
-
-            } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
-              metadata[item.name] = item.checked;
-            } else {
-              metadata[item.name] = item.checked;
-            }
-            break;
-          case 'button':
-            if (value === 'true') {
-              metadata[item.name] = true;
-            } else if (value === 'false') {
-              metadata[item.name] = false;
-            }
-            break;
-        }
-      });
-
-      if (view.rawEditor) {
-        try {
-          metadata = _.merge(metadata, jsyaml.load(view.rawEditor.getValue()) || {});
-        } catch (err) {
-          console.log(err);
-        }
-      }
-
-      return _.merge(view.model.hidden || {}, metadata);
-    }
-
-    function getRaw() {
-      return jsyaml.dump(getValue()).trim();
-    }
-
-    function setValue(data) {
-      var missing = {};
-      var raw;
-
-      _(data).each(function(value, key) {
-        var matched = false;
-        var input = $metadataEditor.find('[name="' + key + '"]');
-        var length = input.length;
-        var options;
-        var tmpl;
-
-        if (length) {
-
-          // iterate over matching fields
-          for (var i = 0; i < length; i++) {
-
-            // if value is an array
-            if (value !== null && typeof value === 'object' && value.length) {
-
-              // iterate over values in array
-              for (var j = 0; j < value.length; j++) {
-                switch (input[i].type) {
-                case 'select-multiple':
-                case 'select-one':
-                  options = $(input[i]).find('option[value="' + value[j] + '"]');
-                  if (options.length) {
-                    for (var k = 0; k < options.length; k++) {
-                      options[k].selected = 'selected';
-                    }
-
-                    matched = true;
-                  }
-                  break;
-                case 'text':
-                  input[i].value = value;
-                  matched = true;
-                  break;
-                case 'checkbox':
-                  if (input[i].value === value) {
-                    input[i].checked = 'checked';
-                    matched = true;
-                  }
-                  break;
-                }
-              }
-
-            } else {
-              switch (input[i].type) {
-              case 'select-multiple':
-              case 'select-one':
-                options = $(input[i]).find('option[value="' + value + '"]');
-                if (options.length) {
-                  for (var m = 0; m < options.length; m++) {
-                    options[m].selected = 'selected';
-                  }
-
-                  matched = true;
-                }
-                break;
-              case 'text':
-                input[i].value = value;
-                matched = true;
-                break;
-              case 'checkbox':
-                input[i].checked = value ? 'checked' : false;
-                matched = true;
-                break;
-              case 'button':
-                input[i].value = value ? true : false;
-                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
-                matched = true;
-                break;
-              }
-
-            }
-          }
-
-          if (!matched && value !== null) {
-            if (missing.hasOwnProperty(key)) {
-              missing[key] = _.union(missing[key], value);
-            } else {
-              missing[key] = value;
-            }
-          }
-
-        } else {
-          // Don't render the 'publish?ed' field or hidden metadata
-          var defaults = _.find(view.model.default_metadata, function(data) { return data.name === key; });
-          var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
-
-          if (key !== 'published' && !defaults) {
-            raw = {};
-            raw[key] = value;
-
-            if (view.rawEditor) {
-              view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
-            }
-          }
-        }
-      });
-
-      _.each(missing, function(value, key) {
-        if (value === null) return;
-
-        switch (typeof value) {
-        case 'boolean':
-          tmpl = _(window.app.templates.checkbox).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: value,
-            value: value,
-            checked: value ? 'checked' : false
-          }));
-          break;
-        case 'string':
-          tmpl = _(window.app.templates.text).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: value,
-            value: value,
-            type: 'text'
-          }));
-          break;
-        case 'object':
-          tmpl = _(window.app.templates.multiselect).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: key,
-            placeholder: key,
-            options: value,
-            lang: data.lang || 'en'
-          }));
-          break;
-        default:
-          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
-          break;
-        }
-      });
-    }
-
-    function setRaw(data) {
-      try {
-        setValue(jsyaml.load(data));
-      } catch (err) {
-        console.log('ERROR encoding YAML');
-        // No-op
-      }
-    }
-
-    initialize(this.model);
-
-    return {
-      el: $metadataEditor,
-      getRaw: getRaw,
-      setRaw: setRaw,
-      getValue: getValue,
-      setValue: setValue
-    };
-  },
-
-  fileInput: function(e) {
-    var view = this;
-    upload.fileSelect(e, function(e, file, content) {
-      view.updateImageInsert(e, file, content);
-    });
-
-    return false;
-  },
-
-  updateImageInsert: function(e, file, content) {
-    var view = this;
-    var path = (this.assetsDirectory) ? this.assetsDirectory : this.model.path;
-
-    var src = path + '/' + encodeURIComponent(file.name);
-    $('input[name="url"]').val(src);
-    $('input[name="alt"]').val('');
-
-    view.queue = {
-      e: e,
-      file: file,
-      content: content
-    };
-  },
-
-  initEditor: function() {
-    var view = this;
-
-    // TODO Remove setTimeout
-    setTimeout(function() {
-      if (view.model.jekyll) {
-        view.metadataEditor = view.buildMeta();
-      }
-
-      // Don't set up content editor for yaml posts
-      if (view.model.lang === 'yaml') return;
-
-      var lang = view.model.lang;
-      view.editor = CodeMirror(document.getElementById('code'), {
-        mode: view.model.lang,
-        value: view.model.content,
-        lineWrapping: true,
-        lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
-        extraKeys: view.keyMap(),
-        matchBrackets: true,
-        dragDrop: false,
-        theme: 'prose-bright'
-      });
-
-      // Bind Drag and Drop work on the editor
-      if (app.state.markdown && view.model.writable) {
-        upload.dragDrop($('#edit'), function(e, file, content) {
-          if ($('#dialog').hasClass('dialog')) {
-            view.updateImageInsert(e, file, content);
-          } else {
-            view.createAndUpload(e, file, content);
-          }
-        });
-      }
-
-      // Monitor the current selection and apply
-      // an active class to any snippet links
-      if (view.model.lang === 'gfm') {
-        var $snippetLinks = $('.toolbar .group a', view.el);
-        view.editor.on('cursorActivity', _.bind(function() {
-
-          var selection = _.trim(view.editor.getSelection());
-          $snippetLinks.removeClass('active');
-
-          var match = {
-            lineBreak: /\n/,
-            h1: /^#{1}/,
-            h2: /^#{2}/,
-            h3: /^#{3}/,
-            h4: /^#{4}/,
-            strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-            italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-            isNumber: parseInt(selection.charAt(0), 10)
-          };
-
-          if (!match.isNumber) {
-            switch (selection.charAt(0)) {
-              case '#':
-                if (!match.lineBreak.test(selection)) {
-                  if (match.h3.test(selection) && !match.h4.test(selection)) {
-                    $('[data-key="sub-heading"]').addClass('active');
-                  } else if (match.h2.test(selection) && !match.h3.test(selection)) {
-                    $('[data-key="heading"]').addClass('active');
-                  }
-                }
-                break;
-              case '>':
-                $('[data-key="quote"]').addClass('active');
-                break;
-              case '*':
-              case '_':
-                if (!match.lineBreak.test(selection)) {
-                  if (match.strong.test(selection)) {
-                    $('[data-key="bold"]').addClass('active');
-                  } else if (match.italic.test(selection)) {
-                    $('[data-key="italic"]').addClass('active');
-                  }
-                }
-                break;
-              case '!':
-                if (!match.lineBreak.test(selection) &&
-                    selection.charAt(1) === '[' &&
-                    selection.charAt(selection.length - 1) === ')') {
-                  $('[data-key="media"]').addClass('active');
-                }
-                break;
-              case '[':
-                if (!match.lineBreak.test(selection) &&
-                    selection.charAt(selection.length - 1) === ')') {
-                  $('[data-key="link"]').addClass('active');
-                }
-                break;
-              case '-':
-                if (selection.charAt(1) === ' ') {
-                  $('[data-key="list"]').addClass('active');
-                }
-              break;
-            }
-          } else {
-            if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
-              $('[data-key="numbered-list"]').addClass('active');
-            }
-          }
-        }, view));
-      }
-
-      view.editor.on('change', _.bind(view.makeDirty, view));
-      view.editor.on('focus', _.bind(function() {
-
-        // If an upload queue is set, we want to clear it.
-        this.queue = undefined;
-
-        // If a dialog window is open and the editor is in focus, close it.
-        $('.toolbar .group a', this.el).removeClass('on');
-        $('#dialog', view.el).empty().removeClass();
-      }, view));
-
-      view.refreshCodeMirror();
-
-      // Check sessionStorage for existing stash
-      // Apply if stash exists and is current, remove if expired
-      view.stashApply();
-    }, 100);
-  },
-
-  createAndUpload: function(e, file, content, userDefinedPath) {
-    var view = this;
-
-    // Loading State
-    this.eventRegister.trigger('updateSaveState', t('actions.upload.uploading', { file: file.name }), 'saving');
-
-    // Base64 Encode the file content
-    var extension = file.type.split('/').pop();
-    var path;
-
-    if (userDefinedPath) {
-      // Unique Filename
-      path = userDefinedPath;
-    } else {
-      var uid = encodeURIComponent(file.name);
-      path = this.assetsDirectory ?
-             this.assetsDirectory + '/' + uid :
-             (this.model.path) ?
-               this.model.path + '/' + uid :
-               uid;
-    }
-
-    var data = {};
-        data.message = t('actions.upload.uploaded', { file: file.name });
-        data.content = content;
-        data.branch = app.state.branch;
-
-    // Read through the filenames of path. If there is a filename that
-    // exists, we want to pass data.sha to update the existing one.
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, _.extractFilename(path)[0], function(err, res) {
-      if (err) return view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
-
-      // Check whether the current (or media) directory
-      // contains the same filename as the one a user wishes
-      // to upload. we want to update the file by passing the sha
-      // to the data object in this case.
-      _(res.files).each(function(f) {
-        var parts = _.extractFilename(f.path);
-        var structuredPath = [parts[0], encodeURIComponent(parts[1])].join('/');
-        if (structuredPath === path) {
-          data.sha = f.sha;
-        }
-      });
-
-      // Stored in memory to test as GitHub may have not
-      // picked up on the change fast enough.
-      _(view.recentlyUploadedFiles).each(function(f) {
-        if (f.path === path) {
-          data.sha = f.sha;
-        }
-      });
-
-      app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
-        if (type === 'error') {
-          view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
-        } else {
-          var $alt = $('input[name="alt"]');
-          var image = ($alt.val() && $alt.val() !== undefined) ?
-            '\n![' + $alt.val() + '](/' + path + ')' :
-            '\n![' + file.name + '](/' + path + ')';
-
-          view.editor.focus();
-          view.editor.replaceSelection(image);
-          view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
-
-          // Update the media directory with the
-          // newly uploaded image.
-          if (!data.sha && view.assets) {
-            view.assets.push({
-              name: file.name,
-              type: 'blob',
-              path: path
-            });
-          }
-
-          // Store a record of recently uploaded files in memory
-          var fileParts = _.extractFilename(res.content.path);
-          var structuredPath = [fileParts[0], encodeURIComponent(fileParts[1])].join('/');
-
-          view.recentlyUploadedFiles.push({
-            path: structuredPath,
-            sha: res.content.sha
-          });
-        }
-      });
-    });
-  },
-
-  markdownSnippet: function(e) {
-    var view = this;
-    var $target = $(e.target, this.el).closest('a');
-    var $dialog = $('#dialog', this.el);
-    var $snippets = $('.toolbar .group a', this.el);
-    var key = $target.data('key');
-    var snippet = $target.data('snippet');
-    var selection = _.trim(this.editor.getSelection());
-
-    $dialog.removeClass().empty();
-
-    if (snippet) {
-      $snippets.removeClass('on');
-
-      if (selection) {
-        switch (key) {
-        case 'bold':
-          this.bold(selection);
-          break;
-        case 'italic':
-          this.italic(selection);
-          break;
-        case 'heading':
-          this.heading(selection);
-          break;
-        case 'sub-heading':
-          this.subHeading(selection);
-          break;
-        case 'quote':
-          this.quote(selection);
-          break;
-        default:
-          this.editor.replaceSelection(snippet);
-          break;
-        }
-        this.editor.focus();
-      } else {
-        this.editor.replaceSelection(snippet);
-        this.editor.focus();
-      }
-    } else if ($target.data('dialog')) {
-
-      var tmpl, className;
-      if (key === 'media' && !this.assets) {
-          className = key + ' no-directory';
-      } else {
-          className = key;
-      }
-
-      // This condition handles the link and media link in the toolbar.
-      if ($target.hasClass('on')) {
-        $target.removeClass('on');
-        $dialog.removeClass().empty();
-      } else {
-        $snippets.removeClass('on');
-        $target.addClass('on');
-        $dialog
-          .removeClass()
-          .addClass('dialog ' + className)
-          .empty();
-
-        switch(key) {
-          case 'link':
-            tmpl = _(app.templates.linkDialog).template();
-
-            $dialog.append(tmpl({
-              relativeLinks: view.relativeLinks
-            }));
-
-            if (view.relativeLinks) {
-              $('.chzn-select', $dialog).chosen().change(function() {
-                $('.chzn-single span').text(t('dialogs.link.insertLocal'));
-
-                var parts = $(this).val().split(',');
-                $('input[name=href]', $dialog).val(parts[0]);
-                $('input[name=text]', $dialog).val(parts[1]);
-              });
-            }
-
-            if (selection) {
-              // test if this is a markdown link: [text](link)
-              var link = /\[([^\]]+)\]\(([^)]+)\)/;
-              var quoted = /".*?"/;
-
-              var text = selection;
-              var href;
-              var title;
-
-              if (link.test(selection)) {
-                var parts = link.exec(selection);
-                text = parts[1];
-                href = parts[2];
-
-                // Search for a title attrbute within the url string
-                if (quoted.test(parts[2])) {
-                  href = parts[2].split(quoted)[0];
-
-                  // TODO could be improved
-                  title = parts[2].match(quoted)[0].replace(/"/g, '');
-                }
-              }
-
-              $('input[name=text]', $dialog).val(text);
-              if (href) $('input[name=href]', $dialog).val(href);
-              if (title) $('input[name=title]', $dialog).val(title);
-            }
-          break;
-          case 'media':
-            tmpl = _(app.templates.mediaDialog).template();
-            $dialog.append(tmpl({
-              description: t('dialogs.media.description', {
-                input: '<input id="upload" class="upload" type="file" />'
-              }),
-              writable: view.data.writable,
-              assetsDirectory: (view.assets) ? true : false
-            }));
-
-            if (view.assets) view.renderAssets(view.assets);
-
-            if (selection) {
-              var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
-              var src;
-              var alt;
-
-              if (image.test(selection)) {
-                var imageParts = image.exec(selection);
-                alt = imageParts[1];
-                src = imageParts[2];
-
-                $('input[name=url]', $dialog).val(src);
-                if (alt) $('input[name=alt]', $dialog).val(alt);
-              }
-            }
-          break;
-          case 'help':
-            tmpl = _(app.templates.helpDialog).template();
-            $dialog.append(tmpl({
-              help: toolbar.help
-            }));
-
-            // Page through different help sections
-            var $mainMenu = $('.main-menu a', this.el);
-            var $subMenu = $('.sub-menu', this.el);
-            var $content = $('.help-content', this.el);
-
-            $mainMenu.on('click', function() {
-              if (!$(this).hasClass('active')) {
-
-                $mainMenu.removeClass('active');
-                $content.removeClass('active');
-                $subMenu
-                    .removeClass('active')
-                    .find('a')
-                    .removeClass('active');
-
-                $(this).addClass('active');
-
-                // Add the relavent sub menu
-                var parent = $(this).data('id');
-                $('.' + parent).addClass('active');
-
-                // Add an active class and populate the
-                // content of the first list item.
-                var $firstSubElement = $('.' + parent + ' a:first', this.el);
-                $firstSubElement.addClass('active');
-
-                var subParent = $firstSubElement.data('id');
-                $('.help-' + subParent).addClass('active');
-              }
-              return false;
-            });
-
-            $subMenu.find('a').on('click', function() {
-              if (!$(this).hasClass('active')) {
-
-                $subMenu.find('a').removeClass('active');
-                $content.removeClass('active');
-                $(this).addClass('active');
-
-                // Add the relavent content section
-                var parent = $(this).data('id');
-                $('.help-' + parent).addClass('active');
-              }
-
-              return false;
-            });
-
-          break;
-        }
-      }
-    }
-
-    return false;
-  },
-
-  renderAssets: function(data, back) {
-    var view = this;
-    var $media = $('#media', this.el);
-    var tmpl = _(app.templates.asset).template();
-
-    // Reset some stuff
-    $('.directory a', $media).off('click', this.assetDirectory);
-    $media.empty();
-
-    if (back && (back.join() !== this.assetsDirectory)) {
-      var link = back.slice(0, back.length - 1).join('/');
-      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>' + t('dialogs.media.back') + '</a></li>');
-    }
-
-    _(data).each(function(asset) {
-      var parts = asset.path.split('/');
-      var path = parts.slice(0, parts.length - 1).join('/');
-
-      $media.append(tmpl({
-        name: asset.name,
-        type: asset.type,
-        path: path + '/' + encodeURIComponent(asset.name)
-      }));
-    });
-
-    $('.asset a', $media).on('click', function(e) {
-      var href = $(this).attr('href');
-      var alt = _.trim($(this).text());
-
-      if (_.isImage(href)) {
-        $('input[name="url"]').val(href);
-        $('input[name="alt"]').val(alt);
-      } else {
-        view.editor.replaceSelection(href);
-        view.editor.focus();
-      }
-      return false;
-    });
-
-    $('.directory a', $media).on('click', function(e) {
-      view.assetDirectory($(e.target), view);
-      return false;
-    });
-  },
-
-  assetDirectory: function(dir, view) {
-    var path = dir.attr('href');
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, path, function(err, data) {
-      view.renderAssets(data.files, path.split('/'));
-    });
-  },
-
-  dialogInsert: function(e) {
-    var $dialog = $('#dialog', this.el);
-    var $target = $(e.target, this.el);
-    var type = $target.data('type');
-
-    if (type === 'link') {
-      var href = $('input[name="href"]').val();
-      var text = $('input[name="text"]').val();
-      var title = $('input[name="title"]').val();
-
-      if (!text) text = href;
-
-      if (title) {
-        this.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
-      } else {
-        this.editor.replaceSelection('[' + text + '](' + href + ')');
-      }
-
-      this.editor.focus();
-    }
-
-    if (type === 'media') {
-      if (this.queue) {
-        var userDefinedPath = $('input[name="url"]').val();
-        this.createAndUpload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
-
-        // Finally, clear the queue object
-        this.queue = undefined;
-      } else {
-        var src = $('input[name="url"]').val();
-        var alt = $('input[name="alt"]').val();
-        this.editor.replaceSelection('\n![' + alt + '](/' + src + ')');
-        this.editor.focus();
-      }
-    }
-
-    return false;
-  },
-
-  heading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
-    } else {
-      this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
-    }
-  },
-
-  subHeading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(3) !== '#') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
-    } else {
-      this.editor.replaceSelection('### ' + s.replace(/#/g, ''));
-    }
-  },
-
-  italic: function(s) {
-    if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
-      this.editor.replaceSelection(s.replace(/_/g, ''));
-    } else {
-      this.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
-    }
-  },
-
-  bold: function(s) {
-    if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
-      this.editor.replaceSelection(s.replace(/\*/g, ''));
-    } else {
-      this.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
-    }
-  },
-
-  quote: function(s) {
-    if (s.charAt(0) === '>') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/\>/g, '')));
-    } else {
-      this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
-    }
-  },
-
-  remove: function() {
-    this.stashFile();
-
-    this.eventRegister.unbind('edit', this.postViews);
-    this.eventRegister.unbind('preview', this.preview);
-    this.eventRegister.unbind('deleteFile', this.deleteFile);
-    this.eventRegister.unbind('showDiff', this.showDiff);
-    this.eventRegister.unbind('translate', this.translate);
-    this.eventRegister.unbind('draft', this.draft);
-    this.eventRegister.unbind('updateFile', this.updateFile);
-    this.eventRegister.unbind('meta', this.updateFile);
-    this.eventRegister.unbind('remove', this.remove);
-    this.eventRegister.unbind('cancel', this.cancel);
-
-    // Clear any file state classes in #prose
-    this.eventRegister.trigger('updateSaveState', '', '');
-
-    $(window).off('pagehide');
-    Backbone.View.prototype.remove.call(this);
-  }
-});
-
-},{".././toolbar/markdown.js":20,".././util":22,".././upload":21,".././cookie":5,"jquery-browserify":19,"underscore":17,"js-yaml":24,"marked":26,"backbone":18,"deepmerge":27,"diff":28,"chosen-jquery-browserify":29,"keymaster":30}],27:[function(require,module,exports){
-module.exports = function merge (target, src) {
-    var array = Array.isArray(src)
-    var dst = array && [] || {}
-
-    if (array) {
-        target = target || []
-        dst = dst.concat(target)
-        src.forEach(function(e, i) {
-            if (typeof target[i] === 'undefined') {
-                dst[i] = e
-            } else if (typeof e === 'object') {
-                dst[i] = merge(target[i], e)
-            } else {
-                if (target.indexOf(e) === -1) {
-                    dst.push(e)
-                }
-            }
-        })
-    } else {
-        if (target && typeof target === 'object') {
-            Object.keys(target).forEach(function (key) {
-                dst[key] = target[key]
-            })
-        }
-        Object.keys(src).forEach(function (key) {
-            if (typeof src[key] !== 'object' || !src[key]) {
-                dst[key] = src[key]
-            }
-            else {
-                if (!target[key]) {
-                    dst[key] = src[key]
-                } else {
-                    dst[key] = merge(target[key], src[key])
-                }
-            }
-        })
-    }
-
-    return dst
-}
-
-},{}],13:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-
-  id: 'posts',
-
-  events: {
-    'mouseover .item': 'activeListing',
-    'mouseover .item a': 'parentActiveListing',
-    'click .delete': 'deleteFile',
-    'keyup #filter': 'search'
-  },
-
-  render: function () {
-    var that = this;
-    var jailed;
-
-    // Pass a check to template whether we should
-    // stagger the output of a breadcrumb trail
-    if (app.state.config && app.state.config.prose && app.state.config.prose.rooturl) {
-      jailed = app.state.config.prose.rooturl;
-    }
-
-    var data = _.extend(this.model, app.state, {
-      currentPath: app.state.path,
-      jailed: jailed
-    });
-
-    // If this repo is writable to the current user we use
-    // this check to provide a deletion option to the user
-    this.writePermissions = this.model.permissions && this.model.permissions.push;
-
-    this.eventRegister = app.eventRegister;
-
-    // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'remove');
-    this.eventRegister.bind('remove', this.remove);
-
-    var isPrivate = app.state.isPrivate ? ' private' : '';
-    var header = {
-      avatar: '<span class="icon round repo' + isPrivate +  '"></span>',
-      parent: data.user,
-      parentUrl: data.user,
-      title: data.repo,
-      titleUrl: data.user + '/' + data.repo
-    };
-
-    var pathTitle = (app.state.path) ? '/' + app.state.path : '';
-    this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
-
-    this.eventRegister.trigger('sidebarContext', app.state);
-    this.eventRegister.trigger('headerContext', header);
-
-    var tmpl = _(app.templates.posts).template();
-    $(this.el).empty().append(tmpl(data));
-
-    _.delay(function () {
-      that.renderResults();
-      $('#filter').focus();
-      utils.fixedScroll($('.topbar'));
-    }, 1);
-
-    return this;
-  },
-
-  search: function (e) {
-    if (e.which === 27) { // ESC
-      _.delay(_.bind(function () {
-        $('#filter', this.el).val('');
-        this.model = app.models.getFiles(this.model.tree, app.state.path, '');
-        this.renderResults();
-      }, this), 10);
-    } else if (e.which === 40 && $('.item').length > 0) {
-        utils.pageListing('down'); // Arrow Down
-        e.preventDefault();
-        e.stopPropagation();
-        $('#filter').blur();
-    } else {
-      _.delay(_.bind(function () {
-        var searchstr = $('#filter', this.el).val();
-        this.model = app.models.getFiles(this.model.tree, app.state.path, searchstr);
-        this.renderResults();
-      }, this), 10);
-    }
-  },
-
-  renderResults: function () {
-    var view = this;
-    var files = _(app.templates.files).template();
-    var directories = _(app.templates.directories).template();
-    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
-    var $files = $('#files', this.el);
-    $files.empty();
-
-    _(this.model.files).each(function(f, i) {
-      // Directories ..
-      if (f.type === 'tree') {
-        $files.append(directories({
-          index: i,
-          user: data.user,
-          repo: data.repo,
-          path: (f.path) ? '/' + f.path : '',
-          branch: data.branch,
-          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
-        }));
-      } else {
-        // Files ..
-        $files.append(files({
-          index: i,
-          extension: _.extension(f.path),
-          isBinary: _.isBinary(_.extension(f.path)),
-          isMedia: _.isMedia(_.extension(f.path)),
-          isMarkdown: _.markdown(_.extension(f.path)),
-          writePermissions: view.writePermissions,
-          repo: data.repo,
-          branch: data.branch,
-          path: f.path,
-          filename: _.filename(f.name) || 'Untitled',
-          file: f.path.match(/[^\/]*$/)[0],
-          name: f.name,
-          user: data.user
-        }));
-      }
-    });
-  },
-
-  // Creates human readable versions of _posts/paths
-  semantifyPaths: function (paths) {
-    return _.map(paths, function (path) {
-      return {
-        path: path,
-        name: path
-      };
-    });
-  },
-
-  activeListing: function (e) {
-    if ($(e.target, this.el).hasClass('item')) {
-      $listings = $('.item', this.el);
-      $listing = $(e.target, this.el);
-
-      $listings.removeClass('active');
-      $listing.addClass('active');
-
-      // Blur out search if its selected
-      $('#filter').blur();
-    }
-  },
-
-  parentActiveListing: function (e) {
-    $listings = $('.item', this.el);
-    $listing = $(e.target, this.el).closest('li');
-
-    $listings.removeClass('active');
-    $listing.addClass('active');
-
-    // Blur out search if its selected
-    $('#filter').blur();
-  },
-
-  deleteFile: function(e) {
-    var $file = $(e.target, this.el).closest('a');
-    var $ico = $file.find('.ico');
-
-    var file = {
-      user: $file.data('user'),
-      repo: $file.data('repo'),
-      branch: $file.data('branch'),
-      fileName: $file.data('file')
-    };
-
-    if (confirm(t('actions.delete.warn'))) {
-      $file.addClass('working');
-      $ico.addClass('saving');
-
-      // Change the icon to a spinning one
-      app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
-
-        if (err) {
-          $file
-            .removeClass('working')
-            .attr('title', t('actions.delete.error'))
-            .addClass('error');
-
-          $ico.removeClass('rubbish saving');
-          return;
-        }
-
-        // On Success
-        $file.closest('.item').fadeOut('fast');
-
-        // Capture the filename and make sure the enty
-        // does not exist in the model object
-        for (var i = 0; i < this.model.tree.length; i++) {
-          if (this.model.tree[i] && this.model.tree[i].name === file.fileName) {
-            delete this.model.tree[i];
-          }
-        }
-
-        // TODO Bring this back in. Currently hitting githubs api this fast
-        // does not return an updated file listing.
-        // router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
-      }, this));
-    }
-
-    return false;
-  }
-});
-
-},{".././util":22,"jquery-browserify":19,"underscore":17,"js-yaml":24,"backbone":18,"keymaster":30}],28:[function(require,module,exports){
-/* See LICENSE file for terms of use */
-
-/*
- * Text diff implementation.
- * 
- * This library supports the following APIS:
- * JsDiff.diffChars: Character by character diff
- * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
- * JsDiff.diffLines: Line based diff
- * 
- * JsDiff.diffCss: Diff targeted at CSS content
- * 
- * These methods are based on the implementation proposed in
- * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
- * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
- */
-var JsDiff = (function() {
-  function clonePath(path) {
-    return { newPos: path.newPos, components: path.components.slice(0) };
-  }
-  function removeEmpty(array) {
-    var ret = [];
-    for (var i = 0; i < array.length; i++) {
-      if (array[i]) {
-        ret.push(array[i]);
-      }
-    }
-    return ret;
-  }
-  function escapeHTML(s) {
-    var n = s;
-    n = n.replace(/&/g, "&amp;");
-    n = n.replace(/</g, "&lt;");
-    n = n.replace(/>/g, "&gt;");
-    n = n.replace(/"/g, "&quot;");
-
-    return n;
-  }
-
-  var fbDiff = function(ignoreWhitespace) {
-    this.ignoreWhitespace = ignoreWhitespace;
-  };
-  fbDiff.prototype = {
-      diff: function(oldString, newString) {
-        // Handle the identity case (this is due to unrolling editLength == 0
-        if (newString == oldString) {
-          return [{ value: newString }];
-        }
-        if (!newString) {
-          return [{ value: oldString, removed: true }];
-        }
-        if (!oldString) {
-          return [{ value: newString, added: true }];
-        }
-
-        newString = this.tokenize(newString);
-        oldString = this.tokenize(oldString);
-
-        var newLen = newString.length, oldLen = oldString.length;
-        var maxEditLength = newLen + oldLen;
-        var bestPath = [{ newPos: -1, components: [] }];
-
-        // Seed editLength = 0
-        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
-        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
-          return bestPath[0].components;
-        }
-
-        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
-          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
-            var basePath;
-            var addPath = bestPath[diagonalPath-1],
-                removePath = bestPath[diagonalPath+1];
-            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
-            if (addPath) {
-              // No one else is going to attempt to use this value, clear it
-              bestPath[diagonalPath-1] = undefined;
-            }
-
-            var canAdd = addPath && addPath.newPos+1 < newLen;
-            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
-            if (!canAdd && !canRemove) {
-              bestPath[diagonalPath] = undefined;
-              continue;
-            }
-
-            // Select the diagonal that we want to branch from. We select the prior
-            // path whose position in the new string is the farthest from the origin
-            // and does not pass the bounds of the diff graph
-            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
-              basePath = clonePath(removePath);
-              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
-            } else {
-              basePath = clonePath(addPath);
-              basePath.newPos++;
-              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
-            }
-
-            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
-
-            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
-              return basePath.components;
-            } else {
-              bestPath[diagonalPath] = basePath;
-            }
-          }
-        }
-      },
-
-      pushComponent: function(components, value, added, removed) {
-        var last = components[components.length-1];
-        if (last && last.added === added && last.removed === removed) {
-          // We need to clone here as the component clone operation is just
-          // as shallow array clone
-          components[components.length-1] =
-            {value: this.join(last.value, value), added: added, removed: removed };
-        } else {
-          components.push({value: value, added: added, removed: removed });
-        }
-      },
-      extractCommon: function(basePath, newString, oldString, diagonalPath) {
-        var newLen = newString.length,
-            oldLen = oldString.length,
-            newPos = basePath.newPos,
-            oldPos = newPos - diagonalPath;
-        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
-          newPos++;
-          oldPos++;
-
-          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
-        }
-        basePath.newPos = newPos;
-        return oldPos;
-      },
-
-      equals: function(left, right) {
-        var reWhitespace = /\S/;
-        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
-          return true;
-        } else {
-          return left == right;
-        }
-      },
-      join: function(left, right) {
-        return left + right;
-      },
-      tokenize: function(value) {
-        return value;
-      }
-  };
-
-  var CharDiff = new fbDiff();
-
-  var WordDiff = new fbDiff(true);
-  WordDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/(\s+|\b)/));
-  };
-
-  var CssDiff = new fbDiff(true);
-  CssDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/([{}:;,]|\s+)/));
-  };
-
-  var LineDiff = new fbDiff();
-  LineDiff.tokenize = function(value) {
-    return value.split(/^/m);
-  };
-
-  return {
-    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
-    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
-    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
-
-    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
-
-    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
-      var ret = [];
-
-      ret.push("Index: " + fileName);
-      ret.push("===================================================================");
-      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
-      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
-
-      var diff = LineDiff.diff(oldStr, newStr);
-      if (!diff[diff.length-1].value) {
-        diff.pop();   // Remove trailing newline add
-      }
-      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
-
-      function contextLines(lines) {
-        return lines.map(function(entry) { return ' ' + entry; });
-      }
-      function eofNL(curRange, i, current) {
-        var last = diff[diff.length-2],
-            isLast = i === diff.length-2,
-            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
-
-        // Figure out if this is the last line for the given file and missing NL
-        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
-          curRange.push('\\ No newline at end of file');
-        }
-      }
-
-      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
-          oldLine = 1, newLine = 1;
-      for (var i = 0; i < diff.length; i++) {
-        var current = diff[i],
-            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
-        current.lines = lines;
-
-        if (current.added || current.removed) {
-          if (!oldRangeStart) {
-            var prev = diff[i-1];
-            oldRangeStart = oldLine;
-            newRangeStart = newLine;
-
-            if (prev) {
-              curRange = contextLines(prev.lines.slice(-4));
-              oldRangeStart -= curRange.length;
-              newRangeStart -= curRange.length;
-            }
-          }
-          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
-          eofNL(curRange, i, current);
-
-          if (current.added) {
-            newLine += lines.length;
-          } else {
-            oldLine += lines.length;
-          }
-        } else {
-          if (oldRangeStart) {
-            // Close out any changes that have been output (or join overlapping)
-            if (lines.length <= 8 && i < diff.length-2) {
-              // Overlapping
-              curRange.push.apply(curRange, contextLines(lines));
-            } else {
-              // end the range and output
-              var contextSize = Math.min(lines.length, 4);
-              ret.push(
-                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
-                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
-                  + " @@");
-              ret.push.apply(ret, curRange);
-              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
-              if (lines.length <= 4) {
-                eofNL(ret, i, current);
-              }
-
-              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
-            }
-          }
-          oldLine += lines.length;
-          newLine += lines.length;
-        }
-      }
-
-      return ret.join('\n') + '\n';
-    },
-
-    applyPatch: function(oldStr, uniDiff) {
-      var diffstr = uniDiff.split("\n");
-      var diff = [];
-      var remEOFNL = false,
-          addEOFNL = false;
-
-      for (var i = (diffstr[0][0]=="I"?4:0); i < diffstr.length; i++) {
-        if(diffstr[i][0] == "@") {
-          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
-          diff.unshift({
-            start:meh[3],
-            oldlength:meh[2],
-            oldlines:[],
-            newlength:meh[4],
-            newlines:[]
-          });
-        } else if(diffstr[i][0] == '+') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == '-') {
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == ' ') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] == '\\') {
-          if (diffstr[i-1][0] == '+') {
-            remEOFNL = true;
-          } else if(diffstr[i-1][0] == '-') {
-            addEOFNL = true;
-          }
-        }
-      }
-
-      var str = oldStr.split("\n");
-      for (var i = diff.length - 1; i >= 0; i--) {
-        var d = diff[i];
-        for (var j = 0; j < d.oldlength; j++) {
-          if(str[d.start-1+j] != d.oldlines[j]) {
-            return false;
-          }
-        }
-        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
-      }
-
-      if (remEOFNL) {
-        while (!str[str.length-1]) {
-          str.pop();
-        }
-      } else if (addEOFNL) {
-        str.push('');
-      }
-      return str.join('\n');
-    },
-
-    convertChangesToXML: function(changes){
-      var ret = [];
-      for ( var i = 0; i < changes.length; i++) {
-        var change = changes[i];
-        if (change.added) {
-          ret.push("<ins>");
-        } else if (change.removed) {
-          ret.push("<del>");
-        }
-
-        ret.push(escapeHTML(change.value));
-
-        if (change.added) {
-          ret.push("</ins>");
-        } else if (change.removed) {
-          ret.push("</del>");
-        }
-      }
-      return ret.join("");
-    },
-
-    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
-    convertChangesToDMP: function(changes){
-      var ret = [], change;
-      for ( var i = 0; i < changes.length; i++) {
-        change = changes[i];
-        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
-      }
-      return ret;
-    }
-  };
-})();
-
-if (typeof module !== "undefined") {
-    module.exports = JsDiff;
-}
-
-},{}],25:[function(require,module,exports){
-(function() {
-  if (typeof module === "undefined") self.queue = queue;
-  else module.exports = queue;
-  queue.version = "1.0.3";
-
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var queue = {},
-        deferrals = [],
-        started = 0, // number of deferrals that have been started (and perhaps finished)
-        active = 0, // number of deferrals currently being executed (started but not finished)
-        remaining = 0, // number of deferrals not yet finished
-        popping, // inside a synchronous deferral callback?
-        error,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    queue.defer = function() {
-      if (!error) {
-        deferrals.push(arguments);
-        ++remaining;
-        pop();
-      }
-      return queue;
-    };
-
-    queue.await = function(f) {
-      await = f;
-      all = false;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    queue.awaitAll = function(f) {
-      await = f;
-      all = true;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    function pop() {
-      while (popping = started < deferrals.length && active < parallelism) {
-        var i = started++,
-            d = deferrals[i],
-            a = slice.call(d, 1);
-        a.push(callback(i));
-        ++active;
-        d[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new deferrals and squelch active callbacks
-          started = remaining = NaN; // stop queued deferrals from starting
-          notify();
-        } else {
-          deferrals[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(null, deferrals);
-      else await.apply(null, [null].concat(deferrals));
-    }
-
-    return queue;
-  }
-
-  function noop() {}
-})();
-
-},{}],26:[function(require,module,exports){
+},{"./lib/js-yaml.js":32}],27:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -27614,6 +27294,690 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
+},{}],28:[function(require,module,exports){
+(function(){//     keymaster.js
+//     (c) 2011-2012 Thomas Fuchs
+//     keymaster.js may be freely distributed under the MIT license.
+
+;(function(global){
+  var k,
+    _handlers = {},
+    _mods = { 16: false, 18: false, 17: false, 91: false },
+    _scope = 'all',
+    // modifier keys
+    _MODIFIERS = {
+      '⇧': 16, shift: 16,
+      '⌥': 18, alt: 18, option: 18,
+      '⌃': 17, ctrl: 17, control: 17,
+      '⌘': 91, command: 91
+    },
+    // special keys
+    _MAP = {
+      backspace: 8, tab: 9, clear: 12,
+      enter: 13, 'return': 13,
+      esc: 27, escape: 27, space: 32,
+      left: 37, up: 38,
+      right: 39, down: 40,
+      del: 46, 'delete': 46,
+      home: 36, end: 35,
+      pageup: 33, pagedown: 34,
+      ',': 188, '.': 190, '/': 191,
+      '`': 192, '-': 189, '=': 187,
+      ';': 186, '\'': 222,
+      '[': 219, ']': 221, '\\': 220
+    },
+    code = function(x){
+      return _MAP[x] || x.toUpperCase().charCodeAt(0);
+    },
+    _downKeys = [];
+
+  for(k=1;k<20;k++) _MAP['f'+k] = 111+k;
+
+  // IE doesn't support Array#indexOf, so have a simple replacement
+  function index(array, item){
+    var i = array.length;
+    while(i--) if(array[i]===item) return i;
+    return -1;
+  }
+
+  // for comparing mods before unassignment
+  function compareArray(a1, a2) {
+    if (a1.length != a2.length) return false;
+    for (var i = 0; i < a1.length; i++) {
+        if (a1[i] !== a2[i]) return false;
+    }
+    return true;
+  }
+
+  var modifierMap = {
+      16:'shiftKey',
+      18:'altKey',
+      17:'ctrlKey',
+      91:'metaKey'
+  };
+  function updateModifierKey(event) {
+      for(k in _mods) _mods[k] = event[modifierMap[k]];
+  };
+
+  // handle keydown event
+  function dispatch(event, scope){
+    var key, handler, k, i, modifiersMatch;
+    key = event.keyCode;
+
+    if (index(_downKeys, key) == -1) {
+        _downKeys.push(key);
+    }
+
+    // if a modifier key, set the key.<modifierkeyname> property to true and return
+    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
+    if(key in _mods) {
+      _mods[key] = true;
+      // 'assignKey' from inside this closure is exported to window.key
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
+      return;
+    }
+    updateModifierKey(event);
+
+    // see if we need to ignore the keypress (filter() can can be overridden)
+    // by default ignore key presses if a select, textarea, or input is focused
+    if(!assignKey.filter.call(this, event)) return;
+
+    // abort if no potentially matching shortcuts found
+    if (!(key in _handlers)) return;
+
+    // for each potential shortcut
+    for (i = 0; i < _handlers[key].length; i++) {
+      handler = _handlers[key][i];
+
+      // see if it's in the current scope
+      if(handler.scope == scope || handler.scope == 'all'){
+        // check if modifiers match if any
+        modifiersMatch = handler.mods.length > 0;
+        for(k in _mods)
+          if((!_mods[k] && index(handler.mods, +k) > -1) ||
+            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
+        // call the handler and stop the event if neccessary
+        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
+          if(handler.method(event, handler)===false){
+            if(event.preventDefault) event.preventDefault();
+              else event.returnValue = false;
+            if(event.stopPropagation) event.stopPropagation();
+            if(event.cancelBubble) event.cancelBubble = true;
+          }
+        }
+      }
+    }
+  };
+
+  // unset modifier keys on keyup
+  function clearModifier(event){
+    var key = event.keyCode, k,
+        i = index(_downKeys, key);
+
+    // remove key from _downKeys
+    if (i >= 0) {
+        _downKeys.splice(i, 1);
+    }
+
+    if(key == 93 || key == 224) key = 91;
+    if(key in _mods) {
+      _mods[key] = false;
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
+    }
+  };
+
+  function resetModifiers() {
+    for(k in _mods) _mods[k] = false;
+    for(k in _MODIFIERS) assignKey[k] = false;
+  };
+
+  // parse and assign shortcut
+  function assignKey(key, scope, method){
+    var keys, mods;
+    keys = getKeys(key);
+    if (method === undefined) {
+      method = scope;
+      scope = 'all';
+    }
+
+    // for each shortcut
+    for (var i = 0; i < keys.length; i++) {
+      // set modifier keys if any
+      mods = [];
+      key = keys[i].split('+');
+      if (key.length > 1){
+        mods = getMods(key);
+        key = [key[key.length-1]];
+      }
+      // convert to keycode and...
+      key = key[0]
+      key = code(key);
+      // ...store handler
+      if (!(key in _handlers)) _handlers[key] = [];
+      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
+    }
+  };
+
+  // unbind all handlers for given key in current scope
+  function unbindKey(key, scope) {
+    var keys = key.split('+'),
+      mods = [],
+      i, obj;
+
+    if (keys.length > 1) {
+      mods = getMods(keys);
+      key = keys[keys.length - 1];
+    }
+
+    key = code(key);
+
+    if (scope === undefined) {
+      scope = getScope();
+    }
+    if (!_handlers[key]) {
+      return;
+    }
+    for (i in _handlers[key]) {
+      obj = _handlers[key][i];
+      // only clear handlers if correct scope and mods match
+      if (obj.scope === scope && compareArray(obj.mods, mods)) {
+        _handlers[key][i] = {};
+      }
+    }
+  };
+
+  // Returns true if the key with code 'keyCode' is currently down
+  // Converts strings into key codes.
+  function isPressed(keyCode) {
+      if (typeof(keyCode)=='string') {
+        keyCode = code(keyCode);
+      }
+      return index(_downKeys, keyCode) != -1;
+  }
+
+  function getPressedKeyCodes() {
+      return _downKeys.slice(0);
+  }
+
+  function filter(event){
+    var tagName = (event.target || event.srcElement).tagName;
+    // ignore keypressed in any elements that support keyboard data input
+    return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+  }
+
+  // initialize key.<modifier> to false
+  for(k in _MODIFIERS) assignKey[k] = false;
+
+  // set current scope (default 'all')
+  function setScope(scope){ _scope = scope || 'all' };
+  function getScope(){ return _scope || 'all' };
+
+  // delete all handlers for a given scope
+  function deleteScope(scope){
+    var key, handlers, i;
+
+    for (key in _handlers) {
+      handlers = _handlers[key];
+      for (i = 0; i < handlers.length; ) {
+        if (handlers[i].scope === scope) handlers.splice(i, 1);
+        else i++;
+      }
+    }
+  };
+
+  // abstract key logic for assign and unassign
+  function getKeys(key) {
+    var keys;
+    key = key.replace(/\s/g, '');
+    keys = key.split(',');
+    if ((keys[keys.length - 1]) == '') {
+      keys[keys.length - 2] += ',';
+    }
+    return keys;
+  }
+
+  // abstract mods logic for assign and unassign
+  function getMods(key) {
+    var mods = key.slice(0, key.length - 1);
+    for (var mi = 0; mi < mods.length; mi++)
+    mods[mi] = _MODIFIERS[mods[mi]];
+    return mods;
+  }
+
+  // cross-browser events
+  function addEvent(object, event, method) {
+    if (object.addEventListener)
+      object.addEventListener(event, method, false);
+    else if(object.attachEvent)
+      object.attachEvent('on'+event, function(){ method(window.event) });
+  };
+
+  // set the handlers globally on document
+  addEvent(document, 'keydown', function(event) { dispatch(event, _scope) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
+  addEvent(document, 'keyup', clearModifier);
+
+  // reset modifiers to false whenever the window is (re)focused.
+  addEvent(window, 'focus', resetModifiers);
+
+  // store previously defined key
+  var previousKey = global.key;
+
+  // restore previously defined key and return reference to our key object
+  function noConflict() {
+    var k = global.key;
+    global.key = previousKey;
+    return k;
+  }
+
+  // set window.key and window.key.set/get/deleteScope, and the default filter
+  global.key = assignKey;
+  global.key.setScope = setScope;
+  global.key.getScope = getScope;
+  global.key.deleteScope = deleteScope;
+  global.key.filter = filter;
+  global.key.isPressed = isPressed;
+  global.key.getPressedKeyCodes = getPressedKeyCodes;
+  global.key.noConflict = noConflict;
+  global.key.unbind = unbindKey;
+
+  if(typeof module !== 'undefined') module.exports = key;
+
+})(this);
+
+})()
+},{}],30:[function(require,module,exports){
+module.exports = function merge (target, src) {
+    var array = Array.isArray(src)
+    var dst = array && [] || {}
+
+    if (array) {
+        target = target || []
+        dst = dst.concat(target)
+        src.forEach(function(e, i) {
+            if (typeof target[i] === 'undefined') {
+                dst[i] = e
+            } else if (typeof e === 'object') {
+                dst[i] = merge(target[i], e)
+            } else {
+                if (target.indexOf(e) === -1) {
+                    dst.push(e)
+                }
+            }
+        })
+    } else {
+        if (target && typeof target === 'object') {
+            Object.keys(target).forEach(function (key) {
+                dst[key] = target[key]
+            })
+        }
+        Object.keys(src).forEach(function (key) {
+            if (typeof src[key] !== 'object' || !src[key]) {
+                dst[key] = src[key]
+            }
+            else {
+                if (!target[key]) {
+                    dst[key] = src[key]
+                } else {
+                    dst[key] = merge(target[key], src[key])
+                }
+            }
+        })
+    }
+
+    return dst
+}
+
+},{}],31:[function(require,module,exports){
+/* See LICENSE file for terms of use */
+
+/*
+ * Text diff implementation.
+ * 
+ * This library supports the following APIS:
+ * JsDiff.diffChars: Character by character diff
+ * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
+ * JsDiff.diffLines: Line based diff
+ * 
+ * JsDiff.diffCss: Diff targeted at CSS content
+ * 
+ * These methods are based on the implementation proposed in
+ * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
+ * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
+ */
+var JsDiff = (function() {
+  function clonePath(path) {
+    return { newPos: path.newPos, components: path.components.slice(0) };
+  }
+  function removeEmpty(array) {
+    var ret = [];
+    for (var i = 0; i < array.length; i++) {
+      if (array[i]) {
+        ret.push(array[i]);
+      }
+    }
+    return ret;
+  }
+  function escapeHTML(s) {
+    var n = s;
+    n = n.replace(/&/g, "&amp;");
+    n = n.replace(/</g, "&lt;");
+    n = n.replace(/>/g, "&gt;");
+    n = n.replace(/"/g, "&quot;");
+
+    return n;
+  }
+
+  var fbDiff = function(ignoreWhitespace) {
+    this.ignoreWhitespace = ignoreWhitespace;
+  };
+  fbDiff.prototype = {
+      diff: function(oldString, newString) {
+        // Handle the identity case (this is due to unrolling editLength == 0
+        if (newString == oldString) {
+          return [{ value: newString }];
+        }
+        if (!newString) {
+          return [{ value: oldString, removed: true }];
+        }
+        if (!oldString) {
+          return [{ value: newString, added: true }];
+        }
+
+        newString = this.tokenize(newString);
+        oldString = this.tokenize(oldString);
+
+        var newLen = newString.length, oldLen = oldString.length;
+        var maxEditLength = newLen + oldLen;
+        var bestPath = [{ newPos: -1, components: [] }];
+
+        // Seed editLength = 0
+        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
+        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
+          return bestPath[0].components;
+        }
+
+        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
+          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
+            var basePath;
+            var addPath = bestPath[diagonalPath-1],
+                removePath = bestPath[diagonalPath+1];
+            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
+            if (addPath) {
+              // No one else is going to attempt to use this value, clear it
+              bestPath[diagonalPath-1] = undefined;
+            }
+
+            var canAdd = addPath && addPath.newPos+1 < newLen;
+            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
+            if (!canAdd && !canRemove) {
+              bestPath[diagonalPath] = undefined;
+              continue;
+            }
+
+            // Select the diagonal that we want to branch from. We select the prior
+            // path whose position in the new string is the farthest from the origin
+            // and does not pass the bounds of the diff graph
+            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
+              basePath = clonePath(removePath);
+              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
+            } else {
+              basePath = clonePath(addPath);
+              basePath.newPos++;
+              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
+            }
+
+            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
+
+            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
+              return basePath.components;
+            } else {
+              bestPath[diagonalPath] = basePath;
+            }
+          }
+        }
+      },
+
+      pushComponent: function(components, value, added, removed) {
+        var last = components[components.length-1];
+        if (last && last.added === added && last.removed === removed) {
+          // We need to clone here as the component clone operation is just
+          // as shallow array clone
+          components[components.length-1] =
+            {value: this.join(last.value, value), added: added, removed: removed };
+        } else {
+          components.push({value: value, added: added, removed: removed });
+        }
+      },
+      extractCommon: function(basePath, newString, oldString, diagonalPath) {
+        var newLen = newString.length,
+            oldLen = oldString.length,
+            newPos = basePath.newPos,
+            oldPos = newPos - diagonalPath;
+        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
+          newPos++;
+          oldPos++;
+
+          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
+        }
+        basePath.newPos = newPos;
+        return oldPos;
+      },
+
+      equals: function(left, right) {
+        var reWhitespace = /\S/;
+        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
+          return true;
+        } else {
+          return left == right;
+        }
+      },
+      join: function(left, right) {
+        return left + right;
+      },
+      tokenize: function(value) {
+        return value;
+      }
+  };
+
+  var CharDiff = new fbDiff();
+
+  var WordDiff = new fbDiff(true);
+  WordDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/(\s+|\b)/));
+  };
+
+  var CssDiff = new fbDiff(true);
+  CssDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/([{}:;,]|\s+)/));
+  };
+
+  var LineDiff = new fbDiff();
+  LineDiff.tokenize = function(value) {
+    return value.split(/^/m);
+  };
+
+  return {
+    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
+    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
+    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
+
+    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
+
+    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
+      var ret = [];
+
+      ret.push("Index: " + fileName);
+      ret.push("===================================================================");
+      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
+      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
+
+      var diff = LineDiff.diff(oldStr, newStr);
+      if (!diff[diff.length-1].value) {
+        diff.pop();   // Remove trailing newline add
+      }
+      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
+
+      function contextLines(lines) {
+        return lines.map(function(entry) { return ' ' + entry; });
+      }
+      function eofNL(curRange, i, current) {
+        var last = diff[diff.length-2],
+            isLast = i === diff.length-2,
+            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
+
+        // Figure out if this is the last line for the given file and missing NL
+        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
+          curRange.push('\\ No newline at end of file');
+        }
+      }
+
+      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
+          oldLine = 1, newLine = 1;
+      for (var i = 0; i < diff.length; i++) {
+        var current = diff[i],
+            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
+        current.lines = lines;
+
+        if (current.added || current.removed) {
+          if (!oldRangeStart) {
+            var prev = diff[i-1];
+            oldRangeStart = oldLine;
+            newRangeStart = newLine;
+
+            if (prev) {
+              curRange = contextLines(prev.lines.slice(-4));
+              oldRangeStart -= curRange.length;
+              newRangeStart -= curRange.length;
+            }
+          }
+          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
+          eofNL(curRange, i, current);
+
+          if (current.added) {
+            newLine += lines.length;
+          } else {
+            oldLine += lines.length;
+          }
+        } else {
+          if (oldRangeStart) {
+            // Close out any changes that have been output (or join overlapping)
+            if (lines.length <= 8 && i < diff.length-2) {
+              // Overlapping
+              curRange.push.apply(curRange, contextLines(lines));
+            } else {
+              // end the range and output
+              var contextSize = Math.min(lines.length, 4);
+              ret.push(
+                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
+                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
+                  + " @@");
+              ret.push.apply(ret, curRange);
+              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
+              if (lines.length <= 4) {
+                eofNL(ret, i, current);
+              }
+
+              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
+            }
+          }
+          oldLine += lines.length;
+          newLine += lines.length;
+        }
+      }
+
+      return ret.join('\n') + '\n';
+    },
+
+    applyPatch: function(oldStr, uniDiff) {
+      var diffstr = uniDiff.split("\n");
+      var diff = [];
+      var remEOFNL = false,
+          addEOFNL = false;
+
+      for (var i = (diffstr[0][0]=="I"?4:0); i < diffstr.length; i++) {
+        if(diffstr[i][0] == "@") {
+          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
+          diff.unshift({
+            start:meh[3],
+            oldlength:meh[2],
+            oldlines:[],
+            newlength:meh[4],
+            newlines:[]
+          });
+        } else if(diffstr[i][0] == '+') {
+          diff[0].newlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == '-') {
+          diff[0].oldlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == ' ') {
+          diff[0].newlines.push(diffstr[i].substr(1));
+          diff[0].oldlines.push(diffstr[i].substr(1));
+        } else if(diffstr[i][0] == '\\') {
+          if (diffstr[i-1][0] == '+') {
+            remEOFNL = true;
+          } else if(diffstr[i-1][0] == '-') {
+            addEOFNL = true;
+          }
+        }
+      }
+
+      var str = oldStr.split("\n");
+      for (var i = diff.length - 1; i >= 0; i--) {
+        var d = diff[i];
+        for (var j = 0; j < d.oldlength; j++) {
+          if(str[d.start-1+j] != d.oldlines[j]) {
+            return false;
+          }
+        }
+        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
+      }
+
+      if (remEOFNL) {
+        while (!str[str.length-1]) {
+          str.pop();
+        }
+      } else if (addEOFNL) {
+        str.push('');
+      }
+      return str.join('\n');
+    },
+
+    convertChangesToXML: function(changes){
+      var ret = [];
+      for ( var i = 0; i < changes.length; i++) {
+        var change = changes[i];
+        if (change.added) {
+          ret.push("<ins>");
+        } else if (change.removed) {
+          ret.push("<del>");
+        }
+
+        ret.push(escapeHTML(change.value));
+
+        if (change.added) {
+          ret.push("</ins>");
+        } else if (change.removed) {
+          ret.push("</del>");
+        }
+      }
+      return ret.join("");
+    },
+
+    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
+    convertChangesToDMP: function(changes){
+      var ret = [], change;
+      for ( var i = 0; i < changes.length; i++) {
+        change = changes[i];
+        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
+      }
+      return ret;
+    }
+  };
+})();
+
+if (typeof module !== "undefined") {
+    module.exports = JsDiff;
+}
+
 },{}],23:[function(require,module,exports){
 // Github.js (Modified for prose.io)
 // (c) 2012 Michael Aufreiter, Development Seed
@@ -28215,298 +28579,7 @@ var _ = require('underscore');
   module.exports = Github;
 }).call(this);
 
-},{"underscore":17}],30:[function(require,module,exports){
-(function(){//     keymaster.js
-//     (c) 2011-2012 Thomas Fuchs
-//     keymaster.js may be freely distributed under the MIT license.
-
-;(function(global){
-  var k,
-    _handlers = {},
-    _mods = { 16: false, 18: false, 17: false, 91: false },
-    _scope = 'all',
-    // modifier keys
-    _MODIFIERS = {
-      '⇧': 16, shift: 16,
-      '⌥': 18, alt: 18, option: 18,
-      '⌃': 17, ctrl: 17, control: 17,
-      '⌘': 91, command: 91
-    },
-    // special keys
-    _MAP = {
-      backspace: 8, tab: 9, clear: 12,
-      enter: 13, 'return': 13,
-      esc: 27, escape: 27, space: 32,
-      left: 37, up: 38,
-      right: 39, down: 40,
-      del: 46, 'delete': 46,
-      home: 36, end: 35,
-      pageup: 33, pagedown: 34,
-      ',': 188, '.': 190, '/': 191,
-      '`': 192, '-': 189, '=': 187,
-      ';': 186, '\'': 222,
-      '[': 219, ']': 221, '\\': 220
-    },
-    code = function(x){
-      return _MAP[x] || x.toUpperCase().charCodeAt(0);
-    },
-    _downKeys = [];
-
-  for(k=1;k<20;k++) _MAP['f'+k] = 111+k;
-
-  // IE doesn't support Array#indexOf, so have a simple replacement
-  function index(array, item){
-    var i = array.length;
-    while(i--) if(array[i]===item) return i;
-    return -1;
-  }
-
-  // for comparing mods before unassignment
-  function compareArray(a1, a2) {
-    if (a1.length != a2.length) return false;
-    for (var i = 0; i < a1.length; i++) {
-        if (a1[i] !== a2[i]) return false;
-    }
-    return true;
-  }
-
-  var modifierMap = {
-      16:'shiftKey',
-      18:'altKey',
-      17:'ctrlKey',
-      91:'metaKey'
-  };
-  function updateModifierKey(event) {
-      for(k in _mods) _mods[k] = event[modifierMap[k]];
-  };
-
-  // handle keydown event
-  function dispatch(event, scope){
-    var key, handler, k, i, modifiersMatch;
-    key = event.keyCode;
-
-    if (index(_downKeys, key) == -1) {
-        _downKeys.push(key);
-    }
-
-    // if a modifier key, set the key.<modifierkeyname> property to true and return
-    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
-    if(key in _mods) {
-      _mods[key] = true;
-      // 'assignKey' from inside this closure is exported to window.key
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
-      return;
-    }
-    updateModifierKey(event);
-
-    // see if we need to ignore the keypress (filter() can can be overridden)
-    // by default ignore key presses if a select, textarea, or input is focused
-    if(!assignKey.filter.call(this, event)) return;
-
-    // abort if no potentially matching shortcuts found
-    if (!(key in _handlers)) return;
-
-    // for each potential shortcut
-    for (i = 0; i < _handlers[key].length; i++) {
-      handler = _handlers[key][i];
-
-      // see if it's in the current scope
-      if(handler.scope == scope || handler.scope == 'all'){
-        // check if modifiers match if any
-        modifiersMatch = handler.mods.length > 0;
-        for(k in _mods)
-          if((!_mods[k] && index(handler.mods, +k) > -1) ||
-            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
-        // call the handler and stop the event if neccessary
-        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
-          if(handler.method(event, handler)===false){
-            if(event.preventDefault) event.preventDefault();
-              else event.returnValue = false;
-            if(event.stopPropagation) event.stopPropagation();
-            if(event.cancelBubble) event.cancelBubble = true;
-          }
-        }
-      }
-    }
-  };
-
-  // unset modifier keys on keyup
-  function clearModifier(event){
-    var key = event.keyCode, k,
-        i = index(_downKeys, key);
-
-    // remove key from _downKeys
-    if (i >= 0) {
-        _downKeys.splice(i, 1);
-    }
-
-    if(key == 93 || key == 224) key = 91;
-    if(key in _mods) {
-      _mods[key] = false;
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
-    }
-  };
-
-  function resetModifiers() {
-    for(k in _mods) _mods[k] = false;
-    for(k in _MODIFIERS) assignKey[k] = false;
-  };
-
-  // parse and assign shortcut
-  function assignKey(key, scope, method){
-    var keys, mods;
-    keys = getKeys(key);
-    if (method === undefined) {
-      method = scope;
-      scope = 'all';
-    }
-
-    // for each shortcut
-    for (var i = 0; i < keys.length; i++) {
-      // set modifier keys if any
-      mods = [];
-      key = keys[i].split('+');
-      if (key.length > 1){
-        mods = getMods(key);
-        key = [key[key.length-1]];
-      }
-      // convert to keycode and...
-      key = key[0]
-      key = code(key);
-      // ...store handler
-      if (!(key in _handlers)) _handlers[key] = [];
-      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
-    }
-  };
-
-  // unbind all handlers for given key in current scope
-  function unbindKey(key, scope) {
-    var keys = key.split('+'),
-      mods = [],
-      i, obj;
-
-    if (keys.length > 1) {
-      mods = getMods(keys);
-      key = keys[keys.length - 1];
-    }
-
-    key = code(key);
-
-    if (scope === undefined) {
-      scope = getScope();
-    }
-    if (!_handlers[key]) {
-      return;
-    }
-    for (i in _handlers[key]) {
-      obj = _handlers[key][i];
-      // only clear handlers if correct scope and mods match
-      if (obj.scope === scope && compareArray(obj.mods, mods)) {
-        _handlers[key][i] = {};
-      }
-    }
-  };
-
-  // Returns true if the key with code 'keyCode' is currently down
-  // Converts strings into key codes.
-  function isPressed(keyCode) {
-      if (typeof(keyCode)=='string') {
-        keyCode = code(keyCode);
-      }
-      return index(_downKeys, keyCode) != -1;
-  }
-
-  function getPressedKeyCodes() {
-      return _downKeys.slice(0);
-  }
-
-  function filter(event){
-    var tagName = (event.target || event.srcElement).tagName;
-    // ignore keypressed in any elements that support keyboard data input
-    return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
-  }
-
-  // initialize key.<modifier> to false
-  for(k in _MODIFIERS) assignKey[k] = false;
-
-  // set current scope (default 'all')
-  function setScope(scope){ _scope = scope || 'all' };
-  function getScope(){ return _scope || 'all' };
-
-  // delete all handlers for a given scope
-  function deleteScope(scope){
-    var key, handlers, i;
-
-    for (key in _handlers) {
-      handlers = _handlers[key];
-      for (i = 0; i < handlers.length; ) {
-        if (handlers[i].scope === scope) handlers.splice(i, 1);
-        else i++;
-      }
-    }
-  };
-
-  // abstract key logic for assign and unassign
-  function getKeys(key) {
-    var keys;
-    key = key.replace(/\s/g, '');
-    keys = key.split(',');
-    if ((keys[keys.length - 1]) == '') {
-      keys[keys.length - 2] += ',';
-    }
-    return keys;
-  }
-
-  // abstract mods logic for assign and unassign
-  function getMods(key) {
-    var mods = key.slice(0, key.length - 1);
-    for (var mi = 0; mi < mods.length; mi++)
-    mods[mi] = _MODIFIERS[mods[mi]];
-    return mods;
-  }
-
-  // cross-browser events
-  function addEvent(object, event, method) {
-    if (object.addEventListener)
-      object.addEventListener(event, method, false);
-    else if(object.attachEvent)
-      object.attachEvent('on'+event, function(){ method(window.event) });
-  };
-
-  // set the handlers globally on document
-  addEvent(document, 'keydown', function(event) { dispatch(event, _scope) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
-  addEvent(document, 'keyup', clearModifier);
-
-  // reset modifiers to false whenever the window is (re)focused.
-  addEvent(window, 'focus', resetModifiers);
-
-  // store previously defined key
-  var previousKey = global.key;
-
-  // restore previously defined key and return reference to our key object
-  function noConflict() {
-    var k = global.key;
-    global.key = previousKey;
-    return k;
-  }
-
-  // set window.key and window.key.set/get/deleteScope, and the default filter
-  global.key = assignKey;
-  global.key.setScope = setScope;
-  global.key.getScope = getScope;
-  global.key.deleteScope = deleteScope;
-  global.key.filter = filter;
-  global.key.isPressed = isPressed;
-  global.key.getPressedKeyCodes = getPressedKeyCodes;
-  global.key.noConflict = noConflict;
-  global.key.unbind = unbindKey;
-
-  if(typeof module !== 'undefined') module.exports = key;
-
-})(this);
-
-})()
-},{}],22:[function(require,module,exports){
+},{"underscore":19}],26:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var jsyaml = require('js-yaml');
@@ -28995,13 +29068,7 @@ module.exports = {
   }
 };
 
-},{"jquery-browserify":19,"underscore":17,"js-yaml":24,"marked":26,"queue-async":25,"chrono":31}],24:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
-
-},{"./lib/js-yaml.js":32}],31:[function(require,module,exports){
-module.exports = require('./lib/chrono');
-
-},{"./lib/chrono":33}],32:[function(require,module,exports){
+},{"jquery-browserify":18,"underscore":19,"js-yaml":24,"marked":27,"queue-async":25,"chrono":33}],32:[function(require,module,exports){
 'use strict';
 
 
@@ -29046,7 +29113,99 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/dumper":34,"./js-yaml/loader":35,"./js-yaml/common":36,"./js-yaml/type":37,"./js-yaml/schema":38,"./js-yaml/schema/failsafe":39,"./js-yaml/schema/json":40,"./js-yaml/schema/core":41,"./js-yaml/schema/default_safe":42,"./js-yaml/schema/default_full":43,"./js-yaml/exception":44,"./js-yaml/require":45}],29:[function(require,module,exports){
+},{"./js-yaml/loader":34,"./js-yaml/dumper":35,"./js-yaml/common":36,"./js-yaml/type":37,"./js-yaml/schema":38,"./js-yaml/schema/failsafe":39,"./js-yaml/schema/json":40,"./js-yaml/schema/core":41,"./js-yaml/schema/default_safe":42,"./js-yaml/schema/default_full":43,"./js-yaml/exception":44,"./js-yaml/require":45}],33:[function(require,module,exports){
+module.exports = require('./lib/chrono');
+
+},{"./lib/chrono":46}],36:[function(require,module,exports){
+'use strict';
+
+
+var NIL = {};
+
+
+function isNothing(subject) {
+  return (undefined === subject) || (null === subject);
+}
+
+
+function isObject(subject) {
+  return ('object' === typeof subject) && (null !== subject);
+}
+
+
+function toArray(sequence) {
+  if (Array.isArray(sequence)) {
+    return sequence;
+  } else if (isNothing(sequence)) {
+    return [];
+  } else {
+    return [ sequence ];
+  }
+}
+
+
+function extend(target, source) {
+  var index, length, key, sourceKeys;
+
+  if (source) {
+    sourceKeys = Object.keys(source);
+
+    for (index = 0, length = sourceKeys.length; index < length; index += 1) {
+      key = sourceKeys[index];
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+
+function repeat(string, count) {
+  var result = '', cycle;
+
+  for (cycle = 0; cycle < count; cycle += 1) {
+    result += string;
+  }
+
+  return result;
+}
+
+
+module.exports.NIL        = NIL;
+module.exports.isNothing  = isNothing;
+module.exports.isObject   = isObject;
+module.exports.toArray    = toArray;
+module.exports.repeat     = repeat;
+module.exports.extend     = extend;
+
+},{}],44:[function(require,module,exports){
+'use strict';
+
+
+function YAMLException(reason, mark) {
+  this.name    = 'YAMLException';
+  this.reason  = reason;
+  this.mark    = mark;
+  this.message = this.toString(false);
+}
+
+
+YAMLException.prototype.toString = function toString(compact) {
+  var result;
+
+  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
+
+  if (!compact && this.mark) {
+    result += ' ' + this.mark.toString();
+  }
+
+  return result;
+};
+
+
+module.exports = YAMLException;
+
+},{}],29:[function(require,module,exports){
 (function(global){(function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -30127,7 +30286,7 @@ require('./js-yaml/require');
 }).call(this);
 
 })(window)
-},{"jquery-browserify":19}],33:[function(require,module,exports){
+},{"jquery-browserify":18}],46:[function(require,module,exports){
 (function(){
 
 // CommonJS exports.
@@ -30533,580 +30692,10 @@ Date.prototype.setTimezone = function(val) {
 
 })();
 
-},{}],36:[function(require,module,exports){
-'use strict';
-
-
-var NIL = {};
-
-
-function isNothing(subject) {
-  return (undefined === subject) || (null === subject);
-}
-
-
-function isObject(subject) {
-  return ('object' === typeof subject) && (null !== subject);
-}
-
-
-function toArray(sequence) {
-  if (Array.isArray(sequence)) {
-    return sequence;
-  } else if (isNothing(sequence)) {
-    return [];
-  } else {
-    return [ sequence ];
-  }
-}
-
-
-function extend(target, source) {
-  var index, length, key, sourceKeys;
-
-  if (source) {
-    sourceKeys = Object.keys(source);
-
-    for (index = 0, length = sourceKeys.length; index < length; index += 1) {
-      key = sourceKeys[index];
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-
-function repeat(string, count) {
-  var result = '', cycle;
-
-  for (cycle = 0; cycle < count; cycle += 1) {
-    result += string;
-  }
-
-  return result;
-}
-
-
-module.exports.NIL        = NIL;
-module.exports.isNothing  = isNothing;
-module.exports.isObject   = isObject;
-module.exports.toArray    = toArray;
-module.exports.repeat     = repeat;
-module.exports.extend     = extend;
-
-},{}],44:[function(require,module,exports){
-'use strict';
-
-
-function YAMLException(reason, mark) {
-  this.name    = 'YAMLException';
-  this.reason  = reason;
-  this.mark    = mark;
-  this.message = this.toString(false);
-}
-
-
-YAMLException.prototype.toString = function toString(compact) {
-  var result;
-
-  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
-
-  if (!compact && this.mark) {
-    result += ' ' + this.mark.toString();
-  }
-
-  return result;
-};
-
-
-module.exports = YAMLException;
-
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 // nothing to see here... no file methods for the browser
 
 },{}],34:[function(require,module,exports){
-(function(){'use strict';
-
-
-var common              = require('./common');
-var NIL                 = common.NIL;
-var YAMLException       = require('./exception');
-var DEFAULT_FULL_SCHEMA = require('./schema/default_full');
-var DEFAULT_SAFE_SCHEMA = require('./schema/default_safe');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-var CHAR_TAB                  = 0x09; /* Tab */
-var CHAR_LINE_FEED            = 0x0A; /* LF */
-var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
-var CHAR_SPACE                = 0x20; /* Space */
-var CHAR_EXCLAMATION          = 0x21; /* ! */
-var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
-var CHAR_SHARP                = 0x23; /* # */
-var CHAR_PERCENT              = 0x25; /* % */
-var CHAR_AMPERSAND            = 0x26; /* & */
-var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
-var CHAR_ASTERISK             = 0x2A; /* * */
-var CHAR_COMMA                = 0x2C; /* , */
-var CHAR_MINUS                = 0x2D; /* - */
-var CHAR_COLON                = 0x3A; /* : */
-var CHAR_GREATER_THAN         = 0x3E; /* > */
-var CHAR_QUESTION             = 0x3F; /* ? */
-var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
-var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
-var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
-var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
-var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
-var CHAR_VERTICAL_LINE        = 0x7C; /* | */
-var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
-
-
-var ESCAPE_SEQUENCES = {};
-
-ESCAPE_SEQUENCES[0x00]   = '\\0';
-ESCAPE_SEQUENCES[0x07]   = '\\a';
-ESCAPE_SEQUENCES[0x08]   = '\\b';
-ESCAPE_SEQUENCES[0x09]   = '\\t';
-ESCAPE_SEQUENCES[0x0A]   = '\\n';
-ESCAPE_SEQUENCES[0x0B]   = '\\v';
-ESCAPE_SEQUENCES[0x0C]   = '\\f';
-ESCAPE_SEQUENCES[0x0D]   = '\\r';
-ESCAPE_SEQUENCES[0x1B]   = '\\e';
-ESCAPE_SEQUENCES[0x22]   = '\\"';
-ESCAPE_SEQUENCES[0x5C]   = '\\\\';
-ESCAPE_SEQUENCES[0x85]   = '\\N';
-ESCAPE_SEQUENCES[0xA0]   = '\\_';
-ESCAPE_SEQUENCES[0x2028] = '\\L';
-ESCAPE_SEQUENCES[0x2029] = '\\P';
-
-
-function kindOf(object) {
-  var kind = typeof object;
-
-  if (null === object) {
-    return 'null';
-  } else if ('number' === kind) {
-    return 0 === object % 1 ? 'integer' : 'float';
-  } else if ('object' === kind && Array.isArray(object)) {
-    return 'array';
-  } else {
-    return kind;
-  }
-}
-
-
-function compileStyleMap(schema, map) {
-  var result, keys, index, length, tag, style, type;
-
-  if (null === map) {
-    return {};
-  }
-
-  result = {};
-  keys = Object.keys(map);
-
-  for (index = 0, length = keys.length; index < length; index += 1) {
-    tag = keys[index];
-    style = String(map[tag]);
-
-    if ('!!' === tag.slice(0, 2)) {
-      tag = 'tag:yaml.org,2002:' + tag.slice(2);
-    }
-
-    type = schema.compiledTypeMap[tag];
-
-    if (type && type.dumper) {
-      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
-        style = type.dumper.styleAliases[style];
-      }
-    }
-
-    result[tag] = style;
-  }
-
-  return result;
-}
-
-
-function encodeHex(character) {
-  var string, handle, length;
-
-  string = character.toString(16).toUpperCase();
-
-  if (character <= 0xFF) {
-    handle = 'x';
-    length = 2;
-  } else if (character <= 0xFFFF) {
-    handle = 'u';
-    length = 4;
-  } else if (character <= 0xFFFFFFFF) {
-    handle = 'U';
-    length = 8;
-  } else {
-    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
-  }
-
-  return '\\' + handle + common.repeat('0', length - string.length) + string;
-}
-
-
-function dump(input, options) {
-  options = options || {};
-
-  var schema      = options['schema'] || DEFAULT_FULL_SCHEMA,
-      indent      = Math.max(1, (options['indent'] || 2)),
-      skipInvalid = options['skipInvalid'] || false,
-      flowLevel   = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
-      styleMap    = compileStyleMap(schema, options['styles'] || null),
-
-      implicitTypes = schema.compiledImplicit,
-      explicitTypes = schema.compiledExplicit,
-
-      kind,
-      tag,
-      result;
-
-  function generateNextLine(level) {
-    return '\n' + common.repeat(' ', indent * level);
-  }
-
-  function testImplicitResolving(object) {
-    var index, length, type;
-
-    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
-      type = implicitTypes[index];
-
-      if (null !== type.loader &&
-          NIL !== type.loader.resolver(object, false)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeScalar(object) {
-    var isQuoted, checkpoint, position, length, character, booleans;
-
-    result = '';
-    isQuoted = false;
-    checkpoint = 0;
-    booleans = /^(y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)$/;
-
-    if (0          === object.length ||
-        CHAR_SPACE === object.charCodeAt(0) ||
-        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
-      isQuoted = true;
-    }
-
-    for (position = 0, length = object.length; position < length; position += 1) {
-      character = object.charCodeAt(position);
-
-      if (!isQuoted) {
-        if (CHAR_TAB                  === character ||
-            CHAR_LINE_FEED            === character ||
-            CHAR_CARRIAGE_RETURN      === character ||
-            CHAR_COMMA                === character ||
-            CHAR_LEFT_SQUARE_BRACKET  === character ||
-            CHAR_RIGHT_SQUARE_BRACKET === character ||
-            CHAR_LEFT_CURLY_BRACKET   === character ||
-            CHAR_RIGHT_CURLY_BRACKET  === character ||
-            CHAR_SHARP                === character ||
-            CHAR_AMPERSAND            === character ||
-            CHAR_ASTERISK             === character ||
-            CHAR_EXCLAMATION          === character ||
-            CHAR_VERTICAL_LINE        === character ||
-            CHAR_GREATER_THAN         === character ||
-            CHAR_SINGLE_QUOTE         === character ||
-            CHAR_DOUBLE_QUOTE         === character ||
-            CHAR_PERCENT              === character ||
-            CHAR_COMMERCIAL_AT        === character ||
-            CHAR_GRAVE_ACCENT         === character ||
-            CHAR_QUESTION             === character ||
-            CHAR_COLON                === character ||
-            CHAR_MINUS                === character) {
-          isQuoted = true;
-        }
-      }
-
-      if (ESCAPE_SEQUENCES[character] ||
-          !((0x00020 <= character && character <= 0x00007E) ||
-            (0x00085 === character)                         ||
-            (0x000A0 <= character && character <= 0x00D7FF) ||
-            (0x0E000 <= character && character <= 0x00FFFD) ||
-            (0x10000 <= character && character <= 0x10FFFF))) {
-        result += object.slice(checkpoint, position);
-        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
-        checkpoint = position + 1;
-        isQuoted = true;
-      }
-    }
-
-    if (checkpoint < position) {
-      result += object.slice(checkpoint, position);
-    }
-
-    if (!isQuoted && testImplicitResolving(result)) {
-      isQuoted = true;
-    }
-
-    if (!isQuoted && booleans.test(object)) {
-      isQuoted = true;
-    }
-
-    if (isQuoted) {
-      result = '"' + result + '"';
-    }
-  }
-
-  function writeFlowSequence(level, object) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      // Write only valid elements.
-      if (writeNode(level, object[index], false, false)) {
-        if (0 !== index) {
-          _result += ', ';
-        }
-        _result += result;
-      }
-    }
-
-    tag = _tag;
-    result = '[' + _result + ']';
-  }
-
-  function writeBlockSequence(level, object, compact) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      // Write only valid elements.
-      if (writeNode(level + 1, object[index], true, true)) {
-        if (!compact || 0 !== index) {
-          _result += generateNextLine(level);
-        }
-        _result += '- ' + result;
-      }
-    }
-
-    tag = _tag;
-    result = _result || '[]'; // Empty sequence if no valid values.
-  }
-
-  function writeFlowMapping(level, object) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        pairBuffer;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      pairBuffer = '';
-
-      if (0 !== index) {
-        pairBuffer += ', ';
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      if (!writeNode(level, objectKey, false, false)) {
-        continue; // Skip this pair because of invalid key;
-      }
-
-      if (result.length > 1024) {
-        pairBuffer += '? ';
-      }
-
-      pairBuffer += result + ': ';
-
-      if (!writeNode(level, objectValue, false, false)) {
-        continue; // Skip this pair because of invalid value.
-      }
-
-      pairBuffer += result;
-
-      // Both key and value are valid.
-      _result += pairBuffer;
-    }
-
-    tag = _tag;
-    result = '{' + _result + '}';
-  }
-
-  function writeBlockMapping(level, object, compact) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        explicitPair,
-        pairBuffer;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      pairBuffer = '';
-
-      if (!compact || 0 !== index) {
-        pairBuffer += generateNextLine(level);
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      if (!writeNode(level + 1, objectKey, true, true)) {
-        continue; // Skip this pair because of invalid key.
-      }
-
-      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
-
-      if (explicitPair) {
-        pairBuffer += '? ';
-      }
-
-      pairBuffer += result;
-
-      if (explicitPair) {
-        pairBuffer += generateNextLine(level);
-      }
-
-      if (!writeNode(level + 1, objectValue, true, explicitPair)) {
-        continue; // Skip this pair because of invalid value.
-      }
-
-      pairBuffer += ': ' + result;
-
-      // Both key and value are valid.
-      _result += pairBuffer;
-    }
-
-    tag = _tag;
-    result = _result || '{}'; // Empty mapping if no valid pairs.
-  }
-
-  function detectType(object, explicit) {
-    var _result, typeList, index, length, type, style;
-
-    typeList = explicit ? explicitTypes : implicitTypes;
-    kind = kindOf(object);
-
-    for (index = 0, length = typeList.length; index < length; index += 1) {
-      type = typeList[index];
-
-      if ((null !== type.dumper) &&
-          (null === type.dumper.kind       || kind === type.dumper.kind) &&
-          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
-          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
-        tag = explicit ? type.tag : '?';
-
-        if (null !== type.dumper.representer) {
-          style = styleMap[type.tag] || type.dumper.defaultStyle;
-
-          if ('function' === typeof type.dumper.representer) {
-            _result = type.dumper.representer(object, style);
-          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
-            _result = type.dumper.representer[style](object, style);
-          } else {
-            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
-          }
-
-          if (NIL !== _result) {
-            kind = kindOf(_result);
-            result = _result;
-          } else {
-            if (explicit) {
-              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
-            } else {
-              continue;
-            }
-          }
-        }
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  // Serializes `object` and writes it to global `result`.
-  // Returns true on success, or false on invalid object.
-  //
-  function writeNode(level, object, block, compact) {
-    tag = null;
-    result = object;
-
-    if (!detectType(object, false)) {
-      detectType(object, true);
-    }
-
-    if (block) {
-      block = (0 > flowLevel || flowLevel > level);
-    }
-
-    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
-      compact = false;
-    }
-
-    if ('object' === kind) {
-      if (block && (0 !== Object.keys(result).length)) {
-        writeBlockMapping(level, result, compact);
-      } else {
-        writeFlowMapping(level, result);
-      }
-    } else if ('array' === kind) {
-      if (block && (0 !== result.length)) {
-        writeBlockSequence(level, result, compact);
-      } else {
-        writeFlowSequence(level, result);
-      }
-    } else if ('string' === kind) {
-      if ('?' !== tag) {
-        writeScalar(result);
-      }
-    } else if (skipInvalid) {
-      return false;
-    } else {
-      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
-    }
-
-    if (null !== tag && '?' !== tag) {
-      result = '!<' + tag + '> ' + result;
-    }
-    return true;
-  }
-
-  if (writeNode(0, input, true, true)) {
-    return result + '\n';
-  } else {
-    return '';
-  }
-}
-
-
-function safeDump(input, options) {
-  return dump(input, common.extend({ schema: DEFAULT_SAFE_SCHEMA }, options));
-}
-
-
-module.exports.dump     = dump;
-module.exports.safeDump = safeDump;
-
-})()
-},{"./common":36,"./exception":44,"./schema/default_full":43,"./schema/default_safe":42}],35:[function(require,module,exports){
 'use strict';
 
 
@@ -32657,7 +32246,572 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":36,"./exception":44,"./mark":47,"./schema/default_safe":42,"./schema/default_full":43}],38:[function(require,module,exports){
+},{"./common":36,"./mark":48,"./exception":44,"./schema/default_safe":42,"./schema/default_full":43}],35:[function(require,module,exports){
+(function(){'use strict';
+
+
+var common              = require('./common');
+var NIL                 = common.NIL;
+var YAMLException       = require('./exception');
+var DEFAULT_FULL_SCHEMA = require('./schema/default_full');
+var DEFAULT_SAFE_SCHEMA = require('./schema/default_safe');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+var CHAR_TAB                  = 0x09; /* Tab */
+var CHAR_LINE_FEED            = 0x0A; /* LF */
+var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
+var CHAR_SPACE                = 0x20; /* Space */
+var CHAR_EXCLAMATION          = 0x21; /* ! */
+var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
+var CHAR_SHARP                = 0x23; /* # */
+var CHAR_PERCENT              = 0x25; /* % */
+var CHAR_AMPERSAND            = 0x26; /* & */
+var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
+var CHAR_ASTERISK             = 0x2A; /* * */
+var CHAR_COMMA                = 0x2C; /* , */
+var CHAR_MINUS                = 0x2D; /* - */
+var CHAR_COLON                = 0x3A; /* : */
+var CHAR_GREATER_THAN         = 0x3E; /* > */
+var CHAR_QUESTION             = 0x3F; /* ? */
+var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
+var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
+var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
+var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
+var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
+var CHAR_VERTICAL_LINE        = 0x7C; /* | */
+var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
+
+
+var ESCAPE_SEQUENCES = {};
+
+ESCAPE_SEQUENCES[0x00]   = '\\0';
+ESCAPE_SEQUENCES[0x07]   = '\\a';
+ESCAPE_SEQUENCES[0x08]   = '\\b';
+ESCAPE_SEQUENCES[0x09]   = '\\t';
+ESCAPE_SEQUENCES[0x0A]   = '\\n';
+ESCAPE_SEQUENCES[0x0B]   = '\\v';
+ESCAPE_SEQUENCES[0x0C]   = '\\f';
+ESCAPE_SEQUENCES[0x0D]   = '\\r';
+ESCAPE_SEQUENCES[0x1B]   = '\\e';
+ESCAPE_SEQUENCES[0x22]   = '\\"';
+ESCAPE_SEQUENCES[0x5C]   = '\\\\';
+ESCAPE_SEQUENCES[0x85]   = '\\N';
+ESCAPE_SEQUENCES[0xA0]   = '\\_';
+ESCAPE_SEQUENCES[0x2028] = '\\L';
+ESCAPE_SEQUENCES[0x2029] = '\\P';
+
+
+function kindOf(object) {
+  var kind = typeof object;
+
+  if (null === object) {
+    return 'null';
+  } else if ('number' === kind) {
+    return 0 === object % 1 ? 'integer' : 'float';
+  } else if ('object' === kind && Array.isArray(object)) {
+    return 'array';
+  } else {
+    return kind;
+  }
+}
+
+
+function compileStyleMap(schema, map) {
+  var result, keys, index, length, tag, style, type;
+
+  if (null === map) {
+    return {};
+  }
+
+  result = {};
+  keys = Object.keys(map);
+
+  for (index = 0, length = keys.length; index < length; index += 1) {
+    tag = keys[index];
+    style = String(map[tag]);
+
+    if ('!!' === tag.slice(0, 2)) {
+      tag = 'tag:yaml.org,2002:' + tag.slice(2);
+    }
+
+    type = schema.compiledTypeMap[tag];
+
+    if (type && type.dumper) {
+      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
+        style = type.dumper.styleAliases[style];
+      }
+    }
+
+    result[tag] = style;
+  }
+
+  return result;
+}
+
+
+function encodeHex(character) {
+  var string, handle, length;
+
+  string = character.toString(16).toUpperCase();
+
+  if (character <= 0xFF) {
+    handle = 'x';
+    length = 2;
+  } else if (character <= 0xFFFF) {
+    handle = 'u';
+    length = 4;
+  } else if (character <= 0xFFFFFFFF) {
+    handle = 'U';
+    length = 8;
+  } else {
+    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
+  }
+
+  return '\\' + handle + common.repeat('0', length - string.length) + string;
+}
+
+
+function dump(input, options) {
+  options = options || {};
+
+  var schema      = options['schema'] || DEFAULT_FULL_SCHEMA,
+      indent      = Math.max(1, (options['indent'] || 2)),
+      skipInvalid = options['skipInvalid'] || false,
+      flowLevel   = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
+      styleMap    = compileStyleMap(schema, options['styles'] || null),
+
+      implicitTypes = schema.compiledImplicit,
+      explicitTypes = schema.compiledExplicit,
+
+      kind,
+      tag,
+      result;
+
+  function generateNextLine(level) {
+    return '\n' + common.repeat(' ', indent * level);
+  }
+
+  function testImplicitResolving(object) {
+    var index, length, type;
+
+    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
+      type = implicitTypes[index];
+
+      if (null !== type.loader &&
+          NIL !== type.loader.resolver(object, false)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeScalar(object) {
+    var isQuoted, checkpoint, position, length, character, booleans;
+
+    result = '';
+    isQuoted = false;
+    checkpoint = 0;
+    booleans = /^(y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)$/;
+
+    if (0          === object.length ||
+        CHAR_SPACE === object.charCodeAt(0) ||
+        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
+      isQuoted = true;
+    }
+
+    for (position = 0, length = object.length; position < length; position += 1) {
+      character = object.charCodeAt(position);
+
+      if (!isQuoted) {
+        if (CHAR_TAB                  === character ||
+            CHAR_LINE_FEED            === character ||
+            CHAR_CARRIAGE_RETURN      === character ||
+            CHAR_COMMA                === character ||
+            CHAR_LEFT_SQUARE_BRACKET  === character ||
+            CHAR_RIGHT_SQUARE_BRACKET === character ||
+            CHAR_LEFT_CURLY_BRACKET   === character ||
+            CHAR_RIGHT_CURLY_BRACKET  === character ||
+            CHAR_SHARP                === character ||
+            CHAR_AMPERSAND            === character ||
+            CHAR_ASTERISK             === character ||
+            CHAR_EXCLAMATION          === character ||
+            CHAR_VERTICAL_LINE        === character ||
+            CHAR_GREATER_THAN         === character ||
+            CHAR_SINGLE_QUOTE         === character ||
+            CHAR_DOUBLE_QUOTE         === character ||
+            CHAR_PERCENT              === character ||
+            CHAR_COMMERCIAL_AT        === character ||
+            CHAR_GRAVE_ACCENT         === character ||
+            CHAR_QUESTION             === character ||
+            CHAR_COLON                === character ||
+            CHAR_MINUS                === character) {
+          isQuoted = true;
+        }
+      }
+
+      if (ESCAPE_SEQUENCES[character] ||
+          !((0x00020 <= character && character <= 0x00007E) ||
+            (0x00085 === character)                         ||
+            (0x000A0 <= character && character <= 0x00D7FF) ||
+            (0x0E000 <= character && character <= 0x00FFFD) ||
+            (0x10000 <= character && character <= 0x10FFFF))) {
+        result += object.slice(checkpoint, position);
+        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
+        checkpoint = position + 1;
+        isQuoted = true;
+      }
+    }
+
+    if (checkpoint < position) {
+      result += object.slice(checkpoint, position);
+    }
+
+    if (!isQuoted && testImplicitResolving(result)) {
+      isQuoted = true;
+    }
+
+    if (!isQuoted && booleans.test(object)) {
+      isQuoted = true;
+    }
+
+    if (isQuoted) {
+      result = '"' + result + '"';
+    }
+  }
+
+  function writeFlowSequence(level, object) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      // Write only valid elements.
+      if (writeNode(level, object[index], false, false)) {
+        if (0 !== index) {
+          _result += ', ';
+        }
+        _result += result;
+      }
+    }
+
+    tag = _tag;
+    result = '[' + _result + ']';
+  }
+
+  function writeBlockSequence(level, object, compact) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      // Write only valid elements.
+      if (writeNode(level + 1, object[index], true, true)) {
+        if (!compact || 0 !== index) {
+          _result += generateNextLine(level);
+        }
+        _result += '- ' + result;
+      }
+    }
+
+    tag = _tag;
+    result = _result || '[]'; // Empty sequence if no valid values.
+  }
+
+  function writeFlowMapping(level, object) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        pairBuffer;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      pairBuffer = '';
+
+      if (0 !== index) {
+        pairBuffer += ', ';
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      if (!writeNode(level, objectKey, false, false)) {
+        continue; // Skip this pair because of invalid key;
+      }
+
+      if (result.length > 1024) {
+        pairBuffer += '? ';
+      }
+
+      pairBuffer += result + ': ';
+
+      if (!writeNode(level, objectValue, false, false)) {
+        continue; // Skip this pair because of invalid value.
+      }
+
+      pairBuffer += result;
+
+      // Both key and value are valid.
+      _result += pairBuffer;
+    }
+
+    tag = _tag;
+    result = '{' + _result + '}';
+  }
+
+  function writeBlockMapping(level, object, compact) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        explicitPair,
+        pairBuffer;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      pairBuffer = '';
+
+      if (!compact || 0 !== index) {
+        pairBuffer += generateNextLine(level);
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      if (!writeNode(level + 1, objectKey, true, true)) {
+        continue; // Skip this pair because of invalid key.
+      }
+
+      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
+
+      if (explicitPair) {
+        pairBuffer += '? ';
+      }
+
+      pairBuffer += result;
+
+      if (explicitPair) {
+        pairBuffer += generateNextLine(level);
+      }
+
+      if (!writeNode(level + 1, objectValue, true, explicitPair)) {
+        continue; // Skip this pair because of invalid value.
+      }
+
+      pairBuffer += ': ' + result;
+
+      // Both key and value are valid.
+      _result += pairBuffer;
+    }
+
+    tag = _tag;
+    result = _result || '{}'; // Empty mapping if no valid pairs.
+  }
+
+  function detectType(object, explicit) {
+    var _result, typeList, index, length, type, style;
+
+    typeList = explicit ? explicitTypes : implicitTypes;
+    kind = kindOf(object);
+
+    for (index = 0, length = typeList.length; index < length; index += 1) {
+      type = typeList[index];
+
+      if ((null !== type.dumper) &&
+          (null === type.dumper.kind       || kind === type.dumper.kind) &&
+          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
+          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
+        tag = explicit ? type.tag : '?';
+
+        if (null !== type.dumper.representer) {
+          style = styleMap[type.tag] || type.dumper.defaultStyle;
+
+          if ('function' === typeof type.dumper.representer) {
+            _result = type.dumper.representer(object, style);
+          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
+            _result = type.dumper.representer[style](object, style);
+          } else {
+            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
+          }
+
+          if (NIL !== _result) {
+            kind = kindOf(_result);
+            result = _result;
+          } else {
+            if (explicit) {
+              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
+            } else {
+              continue;
+            }
+          }
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Serializes `object` and writes it to global `result`.
+  // Returns true on success, or false on invalid object.
+  //
+  function writeNode(level, object, block, compact) {
+    tag = null;
+    result = object;
+
+    if (!detectType(object, false)) {
+      detectType(object, true);
+    }
+
+    if (block) {
+      block = (0 > flowLevel || flowLevel > level);
+    }
+
+    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
+      compact = false;
+    }
+
+    if ('object' === kind) {
+      if (block && (0 !== Object.keys(result).length)) {
+        writeBlockMapping(level, result, compact);
+      } else {
+        writeFlowMapping(level, result);
+      }
+    } else if ('array' === kind) {
+      if (block && (0 !== result.length)) {
+        writeBlockSequence(level, result, compact);
+      } else {
+        writeFlowSequence(level, result);
+      }
+    } else if ('string' === kind) {
+      if ('?' !== tag) {
+        writeScalar(result);
+      }
+    } else if (skipInvalid) {
+      return false;
+    } else {
+      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
+    }
+
+    if (null !== tag && '?' !== tag) {
+      result = '!<' + tag + '> ' + result;
+    }
+    return true;
+  }
+
+  if (writeNode(0, input, true, true)) {
+    return result + '\n';
+  } else {
+    return '';
+  }
+}
+
+
+function safeDump(input, options) {
+  return dump(input, common.extend({ schema: DEFAULT_SAFE_SCHEMA }, options));
+}
+
+
+module.exports.dump     = dump;
+module.exports.safeDump = safeDump;
+
+})()
+},{"./common":36,"./exception":44,"./schema/default_full":43,"./schema/default_safe":42}],37:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":44}],38:[function(require,module,exports){
 'use strict';
 
 
@@ -32762,91 +32916,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":36,"./exception":44,"./type":37}],37:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":44}],45:[function(require,module,exports){
+},{"./common":36,"./exception":44,"./type":37}],45:[function(require,module,exports){
 'use strict';
 
 
@@ -32871,27 +32941,7 @@ if (undefined !== require.extensions) {
 
 module.exports = require;
 
-},{"fs":46,"./loader":35}],41:[function(require,module,exports){
-// Standard YAML's Core schema.
-// http://www.yaml.org/spec/1.2/spec.html#id2804923
-//
-// NOTE: JS-YAML does not support schema-specific tag resolution restrictions.
-// So, Core schema has no distinctions from JSON schema is JS-YAML.
-
-
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  include: [
-    require('./json')
-  ]
-});
-
-},{"../schema":38,"./json":40}],39:[function(require,module,exports){
+},{"fs":47,"./loader":34}],39:[function(require,module,exports){
 // Standard YAML's Failsafe schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2802346
 
@@ -32910,7 +32960,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":38,"../type/str":48,"../type/seq":49,"../type/map":50}],40:[function(require,module,exports){
+},{"../schema":38,"../type/str":49,"../type/seq":50,"../type/map":51}],40:[function(require,module,exports){
 // Standard YAML's JSON schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2803231
 //
@@ -32937,7 +32987,27 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":38,"./failsafe":39,"../type/null":51,"../type/bool":52,"../type/int":53,"../type/float":54}],42:[function(require,module,exports){
+},{"../schema":38,"./failsafe":39,"../type/null":52,"../type/bool":53,"../type/int":54,"../type/float":55}],41:[function(require,module,exports){
+// Standard YAML's Core schema.
+// http://www.yaml.org/spec/1.2/spec.html#id2804923
+//
+// NOTE: JS-YAML does not support schema-specific tag resolution restrictions.
+// So, Core schema has no distinctions from JSON schema is JS-YAML.
+
+
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  include: [
+    require('./json')
+  ]
+});
+
+},{"../schema":38,"./json":40}],42:[function(require,module,exports){
 // JS-YAML's default schema for `safeLoad` function.
 // It is not described in the YAML specification.
 //
@@ -32967,7 +33037,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":38,"./core":41,"../type/timestamp":55,"../type/merge":56,"../type/binary":57,"../type/omap":58,"../type/pairs":59,"../type/set":60}],43:[function(require,module,exports){
+},{"../schema":38,"./core":41,"../type/timestamp":56,"../type/merge":57,"../type/binary":58,"../type/omap":59,"../type/pairs":60,"../type/set":61}],43:[function(require,module,exports){
 // JS-YAML's default schema for `load` function.
 // It is not described in the YAML specification.
 //
@@ -32994,7 +33064,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":38,"./default_safe":42,"../type/js/undefined":61,"../type/js/regexp":62,"../type/js/function":63}],47:[function(require,module,exports){
+},{"../schema":38,"./default_safe":42,"../type/js/undefined":62,"../type/js/regexp":63,"../type/js/function":64}],48:[function(require,module,exports){
 'use strict';
 
 
@@ -33074,805 +33144,7 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":36}],49:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:seq', {
-  loader: {
-    kind: 'array'
-  }
-});
-
-},{"../type":37}],48:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:str', {
-  loader: {
-    kind: 'string'
-  }
-});
-
-},{"../type":37}],50:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:map', {
-  loader: {
-    kind: 'object'
-  }
-});
-
-},{"../type":37}],51:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
-};
-
-
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
-    }
-  }
-});
-
-},{"../common":36,"../type":37}],52:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
-  }
-});
-
-},{"../common":36,"../type":37}],53:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":36,"../type":37}],54:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
-  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
-  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  '|\\.(?:nan|NaN|NAN))$');
-
-
-function resolveYamlFloat(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_FLOAT_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '').toLowerCase();
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('.inf' === value) {
-    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if ('.nan' === value) {
-    return NaN;
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseFloat(v, 10));
-    });
-
-    value = 0.0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += d * base;
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseFloat(value, 10);
-  }
-}
-
-
-function representYamlFloat(object, style) {
-  if (isNaN(object)) {
-    switch (style) {
-    case 'lowercase':
-      return '.nan';
-    case 'uppercase':
-      return '.NAN';
-    case 'camelcase':
-      return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '.inf';
-    case 'uppercase':
-      return '.INF';
-    case 'camelcase':
-      return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '-.inf';
-    case 'uppercase':
-      return '-.INF';
-    case 'camelcase':
-      return '-.Inf';
-    }
-  } else {
-    return object.toString(10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlFloat
-  },
-  dumper: {
-    kind: 'float',
-    defaultStyle: 'lowercase',
-    representer: representYamlFloat
-  }
-});
-
-},{"../common":36,"../type":37}],55:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_TIMESTAMP_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9]?)'                   + // [2] month
-  '-([0-9][0-9]?)'                   + // [3] day
-  '(?:(?:[Tt]|[ \\t]+)'              + // ...
-  '([0-9][0-9]?)'                    + // [4] hour
-  ':([0-9][0-9])'                    + // [5] minute
-  ':([0-9][0-9])'                    + // [6] second
-  '(?:\\.([0-9]*))?'                 + // [7] fraction
-  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
-  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
-
-
-function resolveYamlTimestamp(object /*, explicit*/) {
-  var match, year, month, day, hour, minute, second, fraction = 0,
-      delta = null, tz_hour, tz_minute, data;
-
-  match = YAML_TIMESTAMP_REGEXP.exec(object);
-
-  if (null === match) {
-    return NIL;
-  }
-
-  // match: [1] year [2] month [3] day
-
-  year = +(match[1]);
-  month = +(match[2]) - 1; // JS month starts with 0
-  day = +(match[3]);
-
-  if (!match[4]) { // no hour
-    return new Date(Date.UTC(year, month, day));
-  }
-
-  // match: [4] hour [5] minute [6] second [7] fraction
-
-  hour = +(match[4]);
-  minute = +(match[5]);
-  second = +(match[6]);
-
-  if (match[7]) {
-    fraction = match[7].slice(0, 3);
-    while (fraction.length < 3) { // milli-seconds
-      fraction += '0';
-    }
-    fraction = +fraction;
-  }
-
-  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
-
-  if (match[9]) {
-    tz_hour = +(match[10]);
-    tz_minute = +(match[11] || 0);
-    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-    if ('-' === match[9]) {
-      delta = -delta;
-    }
-  }
-
-  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
-
-  if (delta) {
-    data.setTime(data.getTime() - delta);
-  }
-
-  return data;
-}
-
-
-function representYamlTimestamp(object /*, style*/) {
-  return object.toISOString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:timestamp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlTimestamp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: Date,
-    representer: representYamlTimestamp
-  }
-});
-
-},{"../common":36,"../type":37}],56:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":36,"../type":37}],57:[function(require,module,exports){
-(function(){// Modified from:
-// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
-
-'use strict';
-
-
-var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
-var common     = require('../common');
-var NIL        = common.NIL;
-var Type       = require('../type');
-
-
-
-var BASE64_PADDING = '=';
-
-var BASE64_BINTABLE = [
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
-  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
-];
-
-var BASE64_CHARTABLE =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
-
-
-function resolveYamlBinary(object /*, explicit*/) {
-  var value, code, idx = 0, result = [], leftbits, leftdata;
-
-  leftbits = 0; // number of bits decoded, but yet to be appended
-  leftdata = 0; // bits decoded, but yet to be appended
-
-  // Convert one by one.
-  for (idx = 0; idx < object.length; idx += 1) {
-    code = object.charCodeAt(idx);
-    value = BASE64_BINTABLE[code & 0x7F];
-
-    // Skip LF(NL) || CR
-    if (0x0A !== code && 0x0D !== code) {
-      // Fail on illegal characters
-      if (-1 === value) {
-        return NIL;
-      }
-
-      // Collect data into leftdata, update bitcount
-      leftdata = (leftdata << 6) | value;
-      leftbits += 6;
-
-      // If we have 8 or more bits, append 8 bits to the result
-      if (leftbits >= 8) {
-        leftbits -= 8;
-
-        // Append if not padding.
-        if (BASE64_PADDING !== object.charAt(idx)) {
-          result.push((leftdata >> leftbits) & 0xFF);
-        }
-
-        leftdata &= (1 << leftbits) - 1;
-      }
-    }
-  }
-
-  // If there are any bits left, the base64 string was corrupted
-  if (leftbits) {
-    return NIL;
-  } else {
-    return new NodeBuffer(result);
-  }
-}
-
-
-function representYamlBinary(object /*, style*/) {
-  var result = '', index, length, rest;
-
-  // Convert every three bytes to 4 ASCII characters.
-  for (index = 0, length = object.length - 2; index < length; index += 3) {
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
-    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
-  }
-
-  rest = object.length % 3;
-
-  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
-  if (0 !== rest) {
-    index = object.length - rest;
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-
-    if (2 === rest) {
-      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
-      result += BASE64_PADDING;
-    } else {
-      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
-      result += BASE64_PADDING + BASE64_PADDING;
-    }
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:binary', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBinary
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: NodeBuffer,
-    representer: representYamlBinary
-  }
-});
-
-})()
-},{"buffer":64,"../common":36,"../type":37}],58:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-
-function resolveYamlOmap(object /*, explicit*/) {
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) {
-          pairHasKey = true;
-        } else {
-          return NIL;
-        }
-      }
-    }
-
-    if (!pairHasKey) {
-      return NIL;
-    }
-
-    if (-1 === objectKeys.indexOf(pairKey)) {
-      objectKeys.push(pairKey);
-    } else {
-      return NIL;
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlOmap
-  }
-});
-
-},{"../common":36,"../type":37}],59:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
-  }
-});
-
-},{"../common":36,"../type":37}],60:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-function resolveYamlSet(object /*, explicit*/) {
-  var key;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (null !== object[key]) {
-        return NIL;
-      }
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  loader: {
-    kind: 'object',
-    resolver: resolveYamlSet
-  }
-});
-
-},{"../common":36,"../type":37}],61:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../../type');
-
-
-function resolveJavascriptUndefined(/*object, explicit*/) {
-  var undef;
-
-  return undef;
-}
-
-
-function representJavascriptUndefined(/*object, explicit*/) {
-  return '';
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/undefined', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptUndefined
-  },
-  dumper: {
-    kind: 'undefined',
-    representer: representJavascriptUndefined
-  }
-});
-
-},{"../../type":37}],62:[function(require,module,exports){
-(function(){'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptRegExp(object /*, explicit*/) {
-  var regexp = object,
-      tail   = /\/([gim]*)$/.exec(object),
-      modifiers;
-
-  // `/foo/gim` - tail can be maximum 4 chars
-  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
-    regexp = regexp.slice(1, regexp.length - tail[0].length);
-    modifiers = tail[1];
-  }
-
-  try {
-    return new RegExp(regexp, modifiers);
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptRegExp(object /*, style*/) {
-  var result = '/' + object.source + '/';
-
-  if (object.global) {
-    result += 'g';
-  }
-
-  if (object.multiline) {
-    result += 'm';
-  }
-
-  if (object.ignoreCase) {
-    result += 'i';
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/regexp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptRegExp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: RegExp,
-    representer: representJavascriptRegExp
-  }
-});
-
-})()
-},{"../../common":36,"../../type":37}],65:[function(require,module,exports){
+},{"./common":36}],65:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -34189,7 +33461,805 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":66,"buffer":64}],66:[function(require,module,exports){
+},{"util":66,"buffer":67}],49:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:str', {
+  loader: {
+    kind: 'string'
+  }
+});
+
+},{"../type":37}],50:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:seq', {
+  loader: {
+    kind: 'array'
+  }
+});
+
+},{"../type":37}],51:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:map', {
+  loader: {
+    kind: 'object'
+  }
+});
+
+},{"../type":37}],52:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
+    }
+  }
+});
+
+},{"../common":36,"../type":37}],53:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
+},{"../common":36,"../type":37}],54:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":36,"../type":37}],55:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_FLOAT_PATTERN = new RegExp(
+  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
+  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
+  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
+  '|[-+]?\\.(?:inf|Inf|INF)' +
+  '|\\.(?:nan|NaN|NAN))$');
+
+
+function resolveYamlFloat(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_FLOAT_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '').toLowerCase();
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('.inf' === value) {
+    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+
+  } else if ('.nan' === value) {
+    return NaN;
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseFloat(v, 10));
+    });
+
+    value = 0.0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += d * base;
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseFloat(value, 10);
+  }
+}
+
+
+function representYamlFloat(object, style) {
+  if (isNaN(object)) {
+    switch (style) {
+    case 'lowercase':
+      return '.nan';
+    case 'uppercase':
+      return '.NAN';
+    case 'camelcase':
+      return '.NaN';
+    }
+  } else if (Number.POSITIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '.inf';
+    case 'uppercase':
+      return '.INF';
+    case 'camelcase':
+      return '.Inf';
+    }
+  } else if (Number.NEGATIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '-.inf';
+    case 'uppercase':
+      return '-.INF';
+    case 'camelcase':
+      return '-.Inf';
+    }
+  } else {
+    return object.toString(10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:float', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlFloat
+  },
+  dumper: {
+    kind: 'float',
+    defaultStyle: 'lowercase',
+    representer: representYamlFloat
+  }
+});
+
+},{"../common":36,"../type":37}],56:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_TIMESTAMP_REGEXP = new RegExp(
+  '^([0-9][0-9][0-9][0-9])'          + // [1] year
+  '-([0-9][0-9]?)'                   + // [2] month
+  '-([0-9][0-9]?)'                   + // [3] day
+  '(?:(?:[Tt]|[ \\t]+)'              + // ...
+  '([0-9][0-9]?)'                    + // [4] hour
+  ':([0-9][0-9])'                    + // [5] minute
+  ':([0-9][0-9])'                    + // [6] second
+  '(?:\\.([0-9]*))?'                 + // [7] fraction
+  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
+  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
+
+
+function resolveYamlTimestamp(object /*, explicit*/) {
+  var match, year, month, day, hour, minute, second, fraction = 0,
+      delta = null, tz_hour, tz_minute, data;
+
+  match = YAML_TIMESTAMP_REGEXP.exec(object);
+
+  if (null === match) {
+    return NIL;
+  }
+
+  // match: [1] year [2] month [3] day
+
+  year = +(match[1]);
+  month = +(match[2]) - 1; // JS month starts with 0
+  day = +(match[3]);
+
+  if (!match[4]) { // no hour
+    return new Date(Date.UTC(year, month, day));
+  }
+
+  // match: [4] hour [5] minute [6] second [7] fraction
+
+  hour = +(match[4]);
+  minute = +(match[5]);
+  second = +(match[6]);
+
+  if (match[7]) {
+    fraction = match[7].slice(0, 3);
+    while (fraction.length < 3) { // milli-seconds
+      fraction += '0';
+    }
+    fraction = +fraction;
+  }
+
+  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
+
+  if (match[9]) {
+    tz_hour = +(match[10]);
+    tz_minute = +(match[11] || 0);
+    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
+    if ('-' === match[9]) {
+      delta = -delta;
+    }
+  }
+
+  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
+
+  if (delta) {
+    data.setTime(data.getTime() - delta);
+  }
+
+  return data;
+}
+
+
+function representYamlTimestamp(object /*, style*/) {
+  return object.toISOString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:timestamp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlTimestamp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: Date,
+    representer: representYamlTimestamp
+  }
+});
+
+},{"../common":36,"../type":37}],57:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
+},{"../common":36,"../type":37}],58:[function(require,module,exports){
+(function(){// Modified from:
+// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
+
+'use strict';
+
+
+var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
+var common     = require('../common');
+var NIL        = common.NIL;
+var Type       = require('../type');
+
+
+
+var BASE64_PADDING = '=';
+
+var BASE64_BINTABLE = [
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
+  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
+];
+
+var BASE64_CHARTABLE =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+
+
+function resolveYamlBinary(object /*, explicit*/) {
+  var value, code, idx = 0, result = [], leftbits, leftdata;
+
+  leftbits = 0; // number of bits decoded, but yet to be appended
+  leftdata = 0; // bits decoded, but yet to be appended
+
+  // Convert one by one.
+  for (idx = 0; idx < object.length; idx += 1) {
+    code = object.charCodeAt(idx);
+    value = BASE64_BINTABLE[code & 0x7F];
+
+    // Skip LF(NL) || CR
+    if (0x0A !== code && 0x0D !== code) {
+      // Fail on illegal characters
+      if (-1 === value) {
+        return NIL;
+      }
+
+      // Collect data into leftdata, update bitcount
+      leftdata = (leftdata << 6) | value;
+      leftbits += 6;
+
+      // If we have 8 or more bits, append 8 bits to the result
+      if (leftbits >= 8) {
+        leftbits -= 8;
+
+        // Append if not padding.
+        if (BASE64_PADDING !== object.charAt(idx)) {
+          result.push((leftdata >> leftbits) & 0xFF);
+        }
+
+        leftdata &= (1 << leftbits) - 1;
+      }
+    }
+  }
+
+  // If there are any bits left, the base64 string was corrupted
+  if (leftbits) {
+    return NIL;
+  } else {
+    return new NodeBuffer(result);
+  }
+}
+
+
+function representYamlBinary(object /*, style*/) {
+  var result = '', index, length, rest;
+
+  // Convert every three bytes to 4 ASCII characters.
+  for (index = 0, length = object.length - 2; index < length; index += 3) {
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
+    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
+  }
+
+  rest = object.length % 3;
+
+  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
+  if (0 !== rest) {
+    index = object.length - rest;
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+
+    if (2 === rest) {
+      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
+      result += BASE64_PADDING;
+    } else {
+      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
+      result += BASE64_PADDING + BASE64_PADDING;
+    }
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:binary', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBinary
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: NodeBuffer,
+    representer: representYamlBinary
+  }
+});
+
+})()
+},{"buffer":67,"../common":36,"../type":37}],59:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+
+function resolveYamlOmap(object /*, explicit*/) {
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) {
+          pairHasKey = true;
+        } else {
+          return NIL;
+        }
+      }
+    }
+
+    if (!pairHasKey) {
+      return NIL;
+    }
+
+    if (-1 === objectKeys.indexOf(pairKey)) {
+      objectKeys.push(pairKey);
+    } else {
+      return NIL;
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":36,"../type":37}],60:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
+  }
+});
+
+},{"../common":36,"../type":37}],61:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+function resolveYamlSet(object /*, explicit*/) {
+  var key;
+
+  for (key in object) {
+    if (_hasOwnProperty.call(object, key)) {
+      if (null !== object[key]) {
+        return NIL;
+      }
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:set', {
+  loader: {
+    kind: 'object',
+    resolver: resolveYamlSet
+  }
+});
+
+},{"../common":36,"../type":37}],62:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../../type');
+
+
+function resolveJavascriptUndefined(/*object, explicit*/) {
+  var undef;
+
+  return undef;
+}
+
+
+function representJavascriptUndefined(/*object, explicit*/) {
+  return '';
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/undefined', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptUndefined
+  },
+  dumper: {
+    kind: 'undefined',
+    representer: representJavascriptUndefined
+  }
+});
+
+},{"../../type":37}],63:[function(require,module,exports){
+(function(){'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptRegExp(object /*, explicit*/) {
+  var regexp = object,
+      tail   = /\/([gim]*)$/.exec(object),
+      modifiers;
+
+  // `/foo/gim` - tail can be maximum 4 chars
+  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
+    regexp = regexp.slice(1, regexp.length - tail[0].length);
+    modifiers = tail[1];
+  }
+
+  try {
+    return new RegExp(regexp, modifiers);
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptRegExp(object /*, style*/) {
+  var result = '/' + object.source + '/';
+
+  if (object.global) {
+    result += 'g';
+  }
+
+  if (object.multiline) {
+    result += 'm';
+  }
+
+  if (object.ignoreCase) {
+    result += 'i';
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/regexp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptRegExp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: RegExp,
+    representer: representJavascriptRegExp
+  }
+});
+
+})()
+},{"../../common":36,"../../type":37}],66:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -34542,7 +34612,7 @@ exports.format = function(f) {
   return str;
 };
 
-},{"events":67}],68:[function(require,module,exports){
+},{"events":68}],69:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -34628,7 +34698,1327 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],69:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
+(function(){function SlowBuffer (size) {
+    this.length = size;
+};
+
+var assert = require('assert');
+
+exports.INSPECT_MAX_BYTES = 50;
+
+
+function toHex(n) {
+  if (n < 16) return '0' + n.toString(16);
+  return n.toString(16);
+}
+
+function utf8ToBytes(str) {
+  var byteArray = [];
+  for (var i = 0; i < str.length; i++)
+    if (str.charCodeAt(i) <= 0x7F)
+      byteArray.push(str.charCodeAt(i));
+    else {
+      var h = encodeURIComponent(str.charAt(i)).substr(1).split('%');
+      for (var j = 0; j < h.length; j++)
+        byteArray.push(parseInt(h[j], 16));
+    }
+
+  return byteArray;
+}
+
+function asciiToBytes(str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; i++ )
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push( str.charCodeAt(i) & 0xFF );
+
+  return byteArray;
+}
+
+function base64ToBytes(str) {
+  return require("base64-js").toByteArray(str);
+}
+
+SlowBuffer.byteLength = function (str, encoding) {
+  switch (encoding || "utf8") {
+    case 'hex':
+      return str.length / 2;
+
+    case 'utf8':
+    case 'utf-8':
+      return utf8ToBytes(str).length;
+
+    case 'ascii':
+    case 'binary':
+      return str.length;
+
+    case 'base64':
+      return base64ToBytes(str).length;
+
+    default:
+      throw new Error('Unknown encoding');
+  }
+};
+
+function blitBuffer(src, dst, offset, length) {
+  var pos, i = 0;
+  while (i < length) {
+    if ((i+offset >= dst.length) || (i >= src.length))
+      break;
+
+    dst[i + offset] = src[i];
+    i++;
+  }
+  return i;
+}
+
+SlowBuffer.prototype.utf8Write = function (string, offset, length) {
+  var bytes, pos;
+  return SlowBuffer._charsWritten =  blitBuffer(utf8ToBytes(string), this, offset, length);
+};
+
+SlowBuffer.prototype.asciiWrite = function (string, offset, length) {
+  var bytes, pos;
+  return SlowBuffer._charsWritten =  blitBuffer(asciiToBytes(string), this, offset, length);
+};
+
+SlowBuffer.prototype.binaryWrite = SlowBuffer.prototype.asciiWrite;
+
+SlowBuffer.prototype.base64Write = function (string, offset, length) {
+  var bytes, pos;
+  return SlowBuffer._charsWritten = blitBuffer(base64ToBytes(string), this, offset, length);
+};
+
+SlowBuffer.prototype.base64Slice = function (start, end) {
+  var bytes = Array.prototype.slice.apply(this, arguments)
+  return require("base64-js").fromByteArray(bytes);
+}
+
+function decodeUtf8Char(str) {
+  try {
+    return decodeURIComponent(str);
+  } catch (err) {
+    return String.fromCharCode(0xFFFD); // UTF 8 invalid char
+  }
+}
+
+SlowBuffer.prototype.utf8Slice = function () {
+  var bytes = Array.prototype.slice.apply(this, arguments);
+  var res = "";
+  var tmp = "";
+  var i = 0;
+  while (i < bytes.length) {
+    if (bytes[i] <= 0x7F) {
+      res += decodeUtf8Char(tmp) + String.fromCharCode(bytes[i]);
+      tmp = "";
+    } else
+      tmp += "%" + bytes[i].toString(16);
+
+    i++;
+  }
+
+  return res + decodeUtf8Char(tmp);
+}
+
+SlowBuffer.prototype.asciiSlice = function () {
+  var bytes = Array.prototype.slice.apply(this, arguments);
+  var ret = "";
+  for (var i = 0; i < bytes.length; i++)
+    ret += String.fromCharCode(bytes[i]);
+  return ret;
+}
+
+SlowBuffer.prototype.binarySlice = SlowBuffer.prototype.asciiSlice;
+
+SlowBuffer.prototype.inspect = function() {
+  var out = [],
+      len = this.length;
+  for (var i = 0; i < len; i++) {
+    out[i] = toHex(this[i]);
+    if (i == exports.INSPECT_MAX_BYTES) {
+      out[i + 1] = '...';
+      break;
+    }
+  }
+  return '<SlowBuffer ' + out.join(' ') + '>';
+};
+
+
+SlowBuffer.prototype.hexSlice = function(start, end) {
+  var len = this.length;
+
+  if (!start || start < 0) start = 0;
+  if (!end || end < 0 || end > len) end = len;
+
+  var out = '';
+  for (var i = start; i < end; i++) {
+    out += toHex(this[i]);
+  }
+  return out;
+};
+
+
+SlowBuffer.prototype.toString = function(encoding, start, end) {
+  encoding = String(encoding || 'utf8').toLowerCase();
+  start = +start || 0;
+  if (typeof end == 'undefined') end = this.length;
+
+  // Fastpath empty strings
+  if (+end == start) {
+    return '';
+  }
+
+  switch (encoding) {
+    case 'hex':
+      return this.hexSlice(start, end);
+
+    case 'utf8':
+    case 'utf-8':
+      return this.utf8Slice(start, end);
+
+    case 'ascii':
+      return this.asciiSlice(start, end);
+
+    case 'binary':
+      return this.binarySlice(start, end);
+
+    case 'base64':
+      return this.base64Slice(start, end);
+
+    case 'ucs2':
+    case 'ucs-2':
+      return this.ucs2Slice(start, end);
+
+    default:
+      throw new Error('Unknown encoding');
+  }
+};
+
+
+SlowBuffer.prototype.hexWrite = function(string, offset, length) {
+  offset = +offset || 0;
+  var remaining = this.length - offset;
+  if (!length) {
+    length = remaining;
+  } else {
+    length = +length;
+    if (length > remaining) {
+      length = remaining;
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length;
+  if (strLen % 2) {
+    throw new Error('Invalid hex string');
+  }
+  if (length > strLen / 2) {
+    length = strLen / 2;
+  }
+  for (var i = 0; i < length; i++) {
+    var byte = parseInt(string.substr(i * 2, 2), 16);
+    if (isNaN(byte)) throw new Error('Invalid hex string');
+    this[offset + i] = byte;
+  }
+  SlowBuffer._charsWritten = i * 2;
+  return i;
+};
+
+
+SlowBuffer.prototype.write = function(string, offset, length, encoding) {
+  // Support both (string, offset, length, encoding)
+  // and the legacy (string, encoding, offset, length)
+  if (isFinite(offset)) {
+    if (!isFinite(length)) {
+      encoding = length;
+      length = undefined;
+    }
+  } else {  // legacy
+    var swap = encoding;
+    encoding = offset;
+    offset = length;
+    length = swap;
+  }
+
+  offset = +offset || 0;
+  var remaining = this.length - offset;
+  if (!length) {
+    length = remaining;
+  } else {
+    length = +length;
+    if (length > remaining) {
+      length = remaining;
+    }
+  }
+  encoding = String(encoding || 'utf8').toLowerCase();
+
+  switch (encoding) {
+    case 'hex':
+      return this.hexWrite(string, offset, length);
+
+    case 'utf8':
+    case 'utf-8':
+      return this.utf8Write(string, offset, length);
+
+    case 'ascii':
+      return this.asciiWrite(string, offset, length);
+
+    case 'binary':
+      return this.binaryWrite(string, offset, length);
+
+    case 'base64':
+      return this.base64Write(string, offset, length);
+
+    case 'ucs2':
+    case 'ucs-2':
+      return this.ucs2Write(string, offset, length);
+
+    default:
+      throw new Error('Unknown encoding');
+  }
+};
+
+
+// slice(start, end)
+SlowBuffer.prototype.slice = function(start, end) {
+  if (end === undefined) end = this.length;
+
+  if (end > this.length) {
+    throw new Error('oob');
+  }
+  if (start > end) {
+    throw new Error('oob');
+  }
+
+  return new Buffer(this, end - start, +start);
+};
+
+SlowBuffer.prototype.copy = function(target, targetstart, sourcestart, sourceend) {
+  var temp = [];
+  for (var i=sourcestart; i<sourceend; i++) {
+    assert.ok(typeof this[i] !== 'undefined', "copying undefined buffer bytes!");
+    temp.push(this[i]);
+  }
+
+  for (var i=targetstart; i<targetstart+temp.length; i++) {
+    target[i] = temp[i-targetstart];
+  }
+};
+
+SlowBuffer.prototype.fill = function(value, start, end) {
+  if (end > this.length) {
+    throw new Error('oob');
+  }
+  if (start > end) {
+    throw new Error('oob');
+  }
+
+  for (var i = start; i < end; i++) {
+    this[i] = value;
+  }
+}
+
+function coerce(length) {
+  // Coerce length to a number (possibly NaN), round up
+  // in case it's fractional (e.g. 123.456) then do a
+  // double negate to coerce a NaN to 0. Easy, right?
+  length = ~~Math.ceil(+length);
+  return length < 0 ? 0 : length;
+}
+
+
+// Buffer
+
+function Buffer(subject, encoding, offset) {
+  if (!(this instanceof Buffer)) {
+    return new Buffer(subject, encoding, offset);
+  }
+
+  var type;
+
+  // Are we slicing?
+  if (typeof offset === 'number') {
+    this.length = coerce(encoding);
+    this.parent = subject;
+    this.offset = offset;
+  } else {
+    // Find the length
+    switch (type = typeof subject) {
+      case 'number':
+        this.length = coerce(subject);
+        break;
+
+      case 'string':
+        this.length = Buffer.byteLength(subject, encoding);
+        break;
+
+      case 'object': // Assume object is an array
+        this.length = coerce(subject.length);
+        break;
+
+      default:
+        throw new Error('First argument needs to be a number, ' +
+                        'array or string.');
+    }
+
+    if (this.length > Buffer.poolSize) {
+      // Big buffer, just alloc one.
+      this.parent = new SlowBuffer(this.length);
+      this.offset = 0;
+
+    } else {
+      // Small buffer.
+      if (!pool || pool.length - pool.used < this.length) allocPool();
+      this.parent = pool;
+      this.offset = pool.used;
+      pool.used += this.length;
+    }
+
+    // Treat array-ish objects as a byte array.
+    if (isArrayIsh(subject)) {
+      for (var i = 0; i < this.length; i++) {
+        if (subject instanceof Buffer) {
+          this.parent[i + this.offset] = subject.readUInt8(i);
+        }
+        else {
+          this.parent[i + this.offset] = subject[i];
+        }
+      }
+    } else if (type == 'string') {
+      // We are a string
+      this.length = this.write(subject, 0, encoding);
+    }
+  }
+
+}
+
+function isArrayIsh(subject) {
+  return Array.isArray(subject) || Buffer.isBuffer(subject) ||
+         subject && typeof subject === 'object' &&
+         typeof subject.length === 'number';
+}
+
+exports.SlowBuffer = SlowBuffer;
+exports.Buffer = Buffer;
+
+Buffer.poolSize = 8 * 1024;
+var pool;
+
+function allocPool() {
+  pool = new SlowBuffer(Buffer.poolSize);
+  pool.used = 0;
+}
+
+
+// Static methods
+Buffer.isBuffer = function isBuffer(b) {
+  return b instanceof Buffer || b instanceof SlowBuffer;
+};
+
+Buffer.concat = function (list, totalLength) {
+  if (!Array.isArray(list)) {
+    throw new Error("Usage: Buffer.concat(list, [totalLength])\n \
+      list should be an Array.");
+  }
+
+  if (list.length === 0) {
+    return new Buffer(0);
+  } else if (list.length === 1) {
+    return list[0];
+  }
+
+  if (typeof totalLength !== 'number') {
+    totalLength = 0;
+    for (var i = 0; i < list.length; i++) {
+      var buf = list[i];
+      totalLength += buf.length;
+    }
+  }
+
+  var buffer = new Buffer(totalLength);
+  var pos = 0;
+  for (var i = 0; i < list.length; i++) {
+    var buf = list[i];
+    buf.copy(buffer, pos);
+    pos += buf.length;
+  }
+  return buffer;
+};
+
+// Inspect
+Buffer.prototype.inspect = function inspect() {
+  var out = [],
+      len = this.length;
+
+  for (var i = 0; i < len; i++) {
+    out[i] = toHex(this.parent[i + this.offset]);
+    if (i == exports.INSPECT_MAX_BYTES) {
+      out[i + 1] = '...';
+      break;
+    }
+  }
+
+  return '<Buffer ' + out.join(' ') + '>';
+};
+
+
+Buffer.prototype.get = function get(i) {
+  if (i < 0 || i >= this.length) throw new Error('oob');
+  return this.parent[this.offset + i];
+};
+
+
+Buffer.prototype.set = function set(i, v) {
+  if (i < 0 || i >= this.length) throw new Error('oob');
+  return this.parent[this.offset + i] = v;
+};
+
+
+// write(string, offset = 0, length = buffer.length-offset, encoding = 'utf8')
+Buffer.prototype.write = function(string, offset, length, encoding) {
+  // Support both (string, offset, length, encoding)
+  // and the legacy (string, encoding, offset, length)
+  if (isFinite(offset)) {
+    if (!isFinite(length)) {
+      encoding = length;
+      length = undefined;
+    }
+  } else {  // legacy
+    var swap = encoding;
+    encoding = offset;
+    offset = length;
+    length = swap;
+  }
+
+  offset = +offset || 0;
+  var remaining = this.length - offset;
+  if (!length) {
+    length = remaining;
+  } else {
+    length = +length;
+    if (length > remaining) {
+      length = remaining;
+    }
+  }
+  encoding = String(encoding || 'utf8').toLowerCase();
+
+  var ret;
+  switch (encoding) {
+    case 'hex':
+      ret = this.parent.hexWrite(string, this.offset + offset, length);
+      break;
+
+    case 'utf8':
+    case 'utf-8':
+      ret = this.parent.utf8Write(string, this.offset + offset, length);
+      break;
+
+    case 'ascii':
+      ret = this.parent.asciiWrite(string, this.offset + offset, length);
+      break;
+
+    case 'binary':
+      ret = this.parent.binaryWrite(string, this.offset + offset, length);
+      break;
+
+    case 'base64':
+      // Warning: maxLength not taken into account in base64Write
+      ret = this.parent.base64Write(string, this.offset + offset, length);
+      break;
+
+    case 'ucs2':
+    case 'ucs-2':
+      ret = this.parent.ucs2Write(string, this.offset + offset, length);
+      break;
+
+    default:
+      throw new Error('Unknown encoding');
+  }
+
+  Buffer._charsWritten = SlowBuffer._charsWritten;
+
+  return ret;
+};
+
+
+// toString(encoding, start=0, end=buffer.length)
+Buffer.prototype.toString = function(encoding, start, end) {
+  encoding = String(encoding || 'utf8').toLowerCase();
+
+  if (typeof start == 'undefined' || start < 0) {
+    start = 0;
+  } else if (start > this.length) {
+    start = this.length;
+  }
+
+  if (typeof end == 'undefined' || end > this.length) {
+    end = this.length;
+  } else if (end < 0) {
+    end = 0;
+  }
+
+  start = start + this.offset;
+  end = end + this.offset;
+
+  switch (encoding) {
+    case 'hex':
+      return this.parent.hexSlice(start, end);
+
+    case 'utf8':
+    case 'utf-8':
+      return this.parent.utf8Slice(start, end);
+
+    case 'ascii':
+      return this.parent.asciiSlice(start, end);
+
+    case 'binary':
+      return this.parent.binarySlice(start, end);
+
+    case 'base64':
+      return this.parent.base64Slice(start, end);
+
+    case 'ucs2':
+    case 'ucs-2':
+      return this.parent.ucs2Slice(start, end);
+
+    default:
+      throw new Error('Unknown encoding');
+  }
+};
+
+
+// byteLength
+Buffer.byteLength = SlowBuffer.byteLength;
+
+
+// fill(value, start=0, end=buffer.length)
+Buffer.prototype.fill = function fill(value, start, end) {
+  value || (value = 0);
+  start || (start = 0);
+  end || (end = this.length);
+
+  if (typeof value === 'string') {
+    value = value.charCodeAt(0);
+  }
+  if (!(typeof value === 'number') || isNaN(value)) {
+    throw new Error('value is not a number');
+  }
+
+  if (end < start) throw new Error('end < start');
+
+  // Fill 0 bytes; we're done
+  if (end === start) return 0;
+  if (this.length == 0) return 0;
+
+  if (start < 0 || start >= this.length) {
+    throw new Error('start out of bounds');
+  }
+
+  if (end < 0 || end > this.length) {
+    throw new Error('end out of bounds');
+  }
+
+  return this.parent.fill(value,
+                          start + this.offset,
+                          end + this.offset);
+};
+
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function(target, target_start, start, end) {
+  var source = this;
+  start || (start = 0);
+  end || (end = this.length);
+  target_start || (target_start = 0);
+
+  if (end < start) throw new Error('sourceEnd < sourceStart');
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0;
+  if (target.length == 0 || source.length == 0) return 0;
+
+  if (target_start < 0 || target_start >= target.length) {
+    throw new Error('targetStart out of bounds');
+  }
+
+  if (start < 0 || start >= source.length) {
+    throw new Error('sourceStart out of bounds');
+  }
+
+  if (end < 0 || end > source.length) {
+    throw new Error('sourceEnd out of bounds');
+  }
+
+  // Are we oob?
+  if (end > this.length) {
+    end = this.length;
+  }
+
+  if (target.length - target_start < end - start) {
+    end = target.length - target_start + start;
+  }
+
+  return this.parent.copy(target.parent,
+                          target_start + target.offset,
+                          start + this.offset,
+                          end + this.offset);
+};
+
+
+// slice(start, end)
+Buffer.prototype.slice = function(start, end) {
+  if (end === undefined) end = this.length;
+  if (end > this.length) throw new Error('oob');
+  if (start > end) throw new Error('oob');
+
+  return new Buffer(this.parent, end - start, +start + this.offset);
+};
+
+
+// Legacy methods for backwards compatibility.
+
+Buffer.prototype.utf8Slice = function(start, end) {
+  return this.toString('utf8', start, end);
+};
+
+Buffer.prototype.binarySlice = function(start, end) {
+  return this.toString('binary', start, end);
+};
+
+Buffer.prototype.asciiSlice = function(start, end) {
+  return this.toString('ascii', start, end);
+};
+
+Buffer.prototype.utf8Write = function(string, offset) {
+  return this.write(string, offset, 'utf8');
+};
+
+Buffer.prototype.binaryWrite = function(string, offset) {
+  return this.write(string, offset, 'binary');
+};
+
+Buffer.prototype.asciiWrite = function(string, offset) {
+  return this.write(string, offset, 'ascii');
+};
+
+Buffer.prototype.readUInt8 = function(offset, noAssert) {
+  var buffer = this;
+
+  if (!noAssert) {
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset < buffer.length,
+        'Trying to read beyond buffer length');
+  }
+
+  if (offset >= buffer.length) return;
+
+  return buffer.parent[buffer.offset + offset];
+};
+
+function readUInt16(buffer, offset, isBigEndian, noAssert) {
+  var val = 0;
+
+
+  if (!noAssert) {
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset + 1 < buffer.length,
+        'Trying to read beyond buffer length');
+  }
+
+  if (offset >= buffer.length) return 0;
+
+  if (isBigEndian) {
+    val = buffer.parent[buffer.offset + offset] << 8;
+    if (offset + 1 < buffer.length) {
+      val |= buffer.parent[buffer.offset + offset + 1];
+    }
+  } else {
+    val = buffer.parent[buffer.offset + offset];
+    if (offset + 1 < buffer.length) {
+      val |= buffer.parent[buffer.offset + offset + 1] << 8;
+    }
+  }
+
+  return val;
+}
+
+Buffer.prototype.readUInt16LE = function(offset, noAssert) {
+  return readUInt16(this, offset, false, noAssert);
+};
+
+Buffer.prototype.readUInt16BE = function(offset, noAssert) {
+  return readUInt16(this, offset, true, noAssert);
+};
+
+function readUInt32(buffer, offset, isBigEndian, noAssert) {
+  var val = 0;
+
+  if (!noAssert) {
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset + 3 < buffer.length,
+        'Trying to read beyond buffer length');
+  }
+
+  if (offset >= buffer.length) return 0;
+
+  if (isBigEndian) {
+    if (offset + 1 < buffer.length)
+      val = buffer.parent[buffer.offset + offset + 1] << 16;
+    if (offset + 2 < buffer.length)
+      val |= buffer.parent[buffer.offset + offset + 2] << 8;
+    if (offset + 3 < buffer.length)
+      val |= buffer.parent[buffer.offset + offset + 3];
+    val = val + (buffer.parent[buffer.offset + offset] << 24 >>> 0);
+  } else {
+    if (offset + 2 < buffer.length)
+      val = buffer.parent[buffer.offset + offset + 2] << 16;
+    if (offset + 1 < buffer.length)
+      val |= buffer.parent[buffer.offset + offset + 1] << 8;
+    val |= buffer.parent[buffer.offset + offset];
+    if (offset + 3 < buffer.length)
+      val = val + (buffer.parent[buffer.offset + offset + 3] << 24 >>> 0);
+  }
+
+  return val;
+}
+
+Buffer.prototype.readUInt32LE = function(offset, noAssert) {
+  return readUInt32(this, offset, false, noAssert);
+};
+
+Buffer.prototype.readUInt32BE = function(offset, noAssert) {
+  return readUInt32(this, offset, true, noAssert);
+};
+
+
+/*
+ * Signed integer types, yay team! A reminder on how two's complement actually
+ * works. The first bit is the signed bit, i.e. tells us whether or not the
+ * number should be positive or negative. If the two's complement value is
+ * positive, then we're done, as it's equivalent to the unsigned representation.
+ *
+ * Now if the number is positive, you're pretty much done, you can just leverage
+ * the unsigned translations and return those. Unfortunately, negative numbers
+ * aren't quite that straightforward.
+ *
+ * At first glance, one might be inclined to use the traditional formula to
+ * translate binary numbers between the positive and negative values in two's
+ * complement. (Though it doesn't quite work for the most negative value)
+ * Mainly:
+ *  - invert all the bits
+ *  - add one to the result
+ *
+ * Of course, this doesn't quite work in Javascript. Take for example the value
+ * of -128. This could be represented in 16 bits (big-endian) as 0xff80. But of
+ * course, Javascript will do the following:
+ *
+ * > ~0xff80
+ * -65409
+ *
+ * Whoh there, Javascript, that's not quite right. But wait, according to
+ * Javascript that's perfectly correct. When Javascript ends up seeing the
+ * constant 0xff80, it has no notion that it is actually a signed number. It
+ * assumes that we've input the unsigned value 0xff80. Thus, when it does the
+ * binary negation, it casts it into a signed value, (positive 0xff80). Then
+ * when you perform binary negation on that, it turns it into a negative number.
+ *
+ * Instead, we're going to have to use the following general formula, that works
+ * in a rather Javascript friendly way. I'm glad we don't support this kind of
+ * weird numbering scheme in the kernel.
+ *
+ * (BIT-MAX - (unsigned)val + 1) * -1
+ *
+ * The astute observer, may think that this doesn't make sense for 8-bit numbers
+ * (really it isn't necessary for them). However, when you get 16-bit numbers,
+ * you do. Let's go back to our prior example and see how this will look:
+ *
+ * (0xffff - 0xff80 + 1) * -1
+ * (0x007f + 1) * -1
+ * (0x0080) * -1
+ */
+Buffer.prototype.readInt8 = function(offset, noAssert) {
+  var buffer = this;
+  var neg;
+
+  if (!noAssert) {
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset < buffer.length,
+        'Trying to read beyond buffer length');
+  }
+
+  if (offset >= buffer.length) return;
+
+  neg = buffer.parent[buffer.offset + offset] & 0x80;
+  if (!neg) {
+    return (buffer.parent[buffer.offset + offset]);
+  }
+
+  return ((0xff - buffer.parent[buffer.offset + offset] + 1) * -1);
+};
+
+function readInt16(buffer, offset, isBigEndian, noAssert) {
+  var neg, val;
+
+  if (!noAssert) {
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset + 1 < buffer.length,
+        'Trying to read beyond buffer length');
+  }
+
+  val = readUInt16(buffer, offset, isBigEndian, noAssert);
+  neg = val & 0x8000;
+  if (!neg) {
+    return val;
+  }
+
+  return (0xffff - val + 1) * -1;
+}
+
+Buffer.prototype.readInt16LE = function(offset, noAssert) {
+  return readInt16(this, offset, false, noAssert);
+};
+
+Buffer.prototype.readInt16BE = function(offset, noAssert) {
+  return readInt16(this, offset, true, noAssert);
+};
+
+function readInt32(buffer, offset, isBigEndian, noAssert) {
+  var neg, val;
+
+  if (!noAssert) {
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset + 3 < buffer.length,
+        'Trying to read beyond buffer length');
+  }
+
+  val = readUInt32(buffer, offset, isBigEndian, noAssert);
+  neg = val & 0x80000000;
+  if (!neg) {
+    return (val);
+  }
+
+  return (0xffffffff - val + 1) * -1;
+}
+
+Buffer.prototype.readInt32LE = function(offset, noAssert) {
+  return readInt32(this, offset, false, noAssert);
+};
+
+Buffer.prototype.readInt32BE = function(offset, noAssert) {
+  return readInt32(this, offset, true, noAssert);
+};
+
+function readFloat(buffer, offset, isBigEndian, noAssert) {
+  if (!noAssert) {
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset + 3 < buffer.length,
+        'Trying to read beyond buffer length');
+  }
+
+  return require('./buffer_ieee754').readIEEE754(buffer, offset, isBigEndian,
+      23, 4);
+}
+
+Buffer.prototype.readFloatLE = function(offset, noAssert) {
+  return readFloat(this, offset, false, noAssert);
+};
+
+Buffer.prototype.readFloatBE = function(offset, noAssert) {
+  return readFloat(this, offset, true, noAssert);
+};
+
+function readDouble(buffer, offset, isBigEndian, noAssert) {
+  if (!noAssert) {
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset + 7 < buffer.length,
+        'Trying to read beyond buffer length');
+  }
+
+  return require('./buffer_ieee754').readIEEE754(buffer, offset, isBigEndian,
+      52, 8);
+}
+
+Buffer.prototype.readDoubleLE = function(offset, noAssert) {
+  return readDouble(this, offset, false, noAssert);
+};
+
+Buffer.prototype.readDoubleBE = function(offset, noAssert) {
+  return readDouble(this, offset, true, noAssert);
+};
+
+
+/*
+ * We have to make sure that the value is a valid integer. This means that it is
+ * non-negative. It has no fractional component and that it does not exceed the
+ * maximum allowed value.
+ *
+ *      value           The number to check for validity
+ *
+ *      max             The maximum value
+ */
+function verifuint(value, max) {
+  assert.ok(typeof (value) == 'number',
+      'cannot write a non-number as a number');
+
+  assert.ok(value >= 0,
+      'specified a negative value for writing an unsigned value');
+
+  assert.ok(value <= max, 'value is larger than maximum value for type');
+
+  assert.ok(Math.floor(value) === value, 'value has a fractional component');
+}
+
+Buffer.prototype.writeUInt8 = function(value, offset, noAssert) {
+  var buffer = this;
+
+  if (!noAssert) {
+    assert.ok(value !== undefined && value !== null,
+        'missing value');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset < buffer.length,
+        'trying to write beyond buffer length');
+
+    verifuint(value, 0xff);
+  }
+
+  if (offset < buffer.length) {
+    buffer.parent[buffer.offset + offset] = value;
+  }
+};
+
+function writeUInt16(buffer, value, offset, isBigEndian, noAssert) {
+  if (!noAssert) {
+    assert.ok(value !== undefined && value !== null,
+        'missing value');
+
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset + 1 < buffer.length,
+        'trying to write beyond buffer length');
+
+    verifuint(value, 0xffff);
+  }
+
+  for (var i = 0; i < Math.min(buffer.length - offset, 2); i++) {
+    buffer.parent[buffer.offset + offset + i] =
+        (value & (0xff << (8 * (isBigEndian ? 1 - i : i)))) >>>
+            (isBigEndian ? 1 - i : i) * 8;
+  }
+
+}
+
+Buffer.prototype.writeUInt16LE = function(value, offset, noAssert) {
+  writeUInt16(this, value, offset, false, noAssert);
+};
+
+Buffer.prototype.writeUInt16BE = function(value, offset, noAssert) {
+  writeUInt16(this, value, offset, true, noAssert);
+};
+
+function writeUInt32(buffer, value, offset, isBigEndian, noAssert) {
+  if (!noAssert) {
+    assert.ok(value !== undefined && value !== null,
+        'missing value');
+
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset + 3 < buffer.length,
+        'trying to write beyond buffer length');
+
+    verifuint(value, 0xffffffff);
+  }
+
+  for (var i = 0; i < Math.min(buffer.length - offset, 4); i++) {
+    buffer.parent[buffer.offset + offset + i] =
+        (value >>> (isBigEndian ? 3 - i : i) * 8) & 0xff;
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function(value, offset, noAssert) {
+  writeUInt32(this, value, offset, false, noAssert);
+};
+
+Buffer.prototype.writeUInt32BE = function(value, offset, noAssert) {
+  writeUInt32(this, value, offset, true, noAssert);
+};
+
+
+/*
+ * We now move onto our friends in the signed number category. Unlike unsigned
+ * numbers, we're going to have to worry a bit more about how we put values into
+ * arrays. Since we are only worrying about signed 32-bit values, we're in
+ * slightly better shape. Unfortunately, we really can't do our favorite binary
+ * & in this system. It really seems to do the wrong thing. For example:
+ *
+ * > -32 & 0xff
+ * 224
+ *
+ * What's happening above is really: 0xe0 & 0xff = 0xe0. However, the results of
+ * this aren't treated as a signed number. Ultimately a bad thing.
+ *
+ * What we're going to want to do is basically create the unsigned equivalent of
+ * our representation and pass that off to the wuint* functions. To do that
+ * we're going to do the following:
+ *
+ *  - if the value is positive
+ *      we can pass it directly off to the equivalent wuint
+ *  - if the value is negative
+ *      we do the following computation:
+ *         mb + val + 1, where
+ *         mb   is the maximum unsigned value in that byte size
+ *         val  is the Javascript negative integer
+ *
+ *
+ * As a concrete value, take -128. In signed 16 bits this would be 0xff80. If
+ * you do out the computations:
+ *
+ * 0xffff - 128 + 1
+ * 0xffff - 127
+ * 0xff80
+ *
+ * You can then encode this value as the signed version. This is really rather
+ * hacky, but it should work and get the job done which is our goal here.
+ */
+
+/*
+ * A series of checks to make sure we actually have a signed 32-bit number
+ */
+function verifsint(value, max, min) {
+  assert.ok(typeof (value) == 'number',
+      'cannot write a non-number as a number');
+
+  assert.ok(value <= max, 'value larger than maximum allowed value');
+
+  assert.ok(value >= min, 'value smaller than minimum allowed value');
+
+  assert.ok(Math.floor(value) === value, 'value has a fractional component');
+}
+
+function verifIEEE754(value, max, min) {
+  assert.ok(typeof (value) == 'number',
+      'cannot write a non-number as a number');
+
+  assert.ok(value <= max, 'value larger than maximum allowed value');
+
+  assert.ok(value >= min, 'value smaller than minimum allowed value');
+}
+
+Buffer.prototype.writeInt8 = function(value, offset, noAssert) {
+  var buffer = this;
+
+  if (!noAssert) {
+    assert.ok(value !== undefined && value !== null,
+        'missing value');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset < buffer.length,
+        'Trying to write beyond buffer length');
+
+    verifsint(value, 0x7f, -0x80);
+  }
+
+  if (value >= 0) {
+    buffer.writeUInt8(value, offset, noAssert);
+  } else {
+    buffer.writeUInt8(0xff + value + 1, offset, noAssert);
+  }
+};
+
+function writeInt16(buffer, value, offset, isBigEndian, noAssert) {
+  if (!noAssert) {
+    assert.ok(value !== undefined && value !== null,
+        'missing value');
+
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset + 1 < buffer.length,
+        'Trying to write beyond buffer length');
+
+    verifsint(value, 0x7fff, -0x8000);
+  }
+
+  if (value >= 0) {
+    writeUInt16(buffer, value, offset, isBigEndian, noAssert);
+  } else {
+    writeUInt16(buffer, 0xffff + value + 1, offset, isBigEndian, noAssert);
+  }
+}
+
+Buffer.prototype.writeInt16LE = function(value, offset, noAssert) {
+  writeInt16(this, value, offset, false, noAssert);
+};
+
+Buffer.prototype.writeInt16BE = function(value, offset, noAssert) {
+  writeInt16(this, value, offset, true, noAssert);
+};
+
+function writeInt32(buffer, value, offset, isBigEndian, noAssert) {
+  if (!noAssert) {
+    assert.ok(value !== undefined && value !== null,
+        'missing value');
+
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset + 3 < buffer.length,
+        'Trying to write beyond buffer length');
+
+    verifsint(value, 0x7fffffff, -0x80000000);
+  }
+
+  if (value >= 0) {
+    writeUInt32(buffer, value, offset, isBigEndian, noAssert);
+  } else {
+    writeUInt32(buffer, 0xffffffff + value + 1, offset, isBigEndian, noAssert);
+  }
+}
+
+Buffer.prototype.writeInt32LE = function(value, offset, noAssert) {
+  writeInt32(this, value, offset, false, noAssert);
+};
+
+Buffer.prototype.writeInt32BE = function(value, offset, noAssert) {
+  writeInt32(this, value, offset, true, noAssert);
+};
+
+function writeFloat(buffer, value, offset, isBigEndian, noAssert) {
+  if (!noAssert) {
+    assert.ok(value !== undefined && value !== null,
+        'missing value');
+
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset + 3 < buffer.length,
+        'Trying to write beyond buffer length');
+
+    verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38);
+  }
+
+  require('./buffer_ieee754').writeIEEE754(buffer, value, offset, isBigEndian,
+      23, 4);
+}
+
+Buffer.prototype.writeFloatLE = function(value, offset, noAssert) {
+  writeFloat(this, value, offset, false, noAssert);
+};
+
+Buffer.prototype.writeFloatBE = function(value, offset, noAssert) {
+  writeFloat(this, value, offset, true, noAssert);
+};
+
+function writeDouble(buffer, value, offset, isBigEndian, noAssert) {
+  if (!noAssert) {
+    assert.ok(value !== undefined && value !== null,
+        'missing value');
+
+    assert.ok(typeof (isBigEndian) === 'boolean',
+        'missing or invalid endian');
+
+    assert.ok(offset !== undefined && offset !== null,
+        'missing offset');
+
+    assert.ok(offset + 7 < buffer.length,
+        'Trying to write beyond buffer length');
+
+    verifIEEE754(value, 1.7976931348623157E+308, -1.7976931348623157E+308);
+  }
+
+  require('./buffer_ieee754').writeIEEE754(buffer, value, offset, isBigEndian,
+      52, 8);
+}
+
+Buffer.prototype.writeDoubleLE = function(value, offset, noAssert) {
+  writeDouble(this, value, offset, false, noAssert);
+};
+
+Buffer.prototype.writeDoubleBE = function(value, offset, noAssert) {
+  writeDouble(this, value, offset, true, noAssert);
+};
+
+SlowBuffer.prototype.readUInt8 = Buffer.prototype.readUInt8;
+SlowBuffer.prototype.readUInt16LE = Buffer.prototype.readUInt16LE;
+SlowBuffer.prototype.readUInt16BE = Buffer.prototype.readUInt16BE;
+SlowBuffer.prototype.readUInt32LE = Buffer.prototype.readUInt32LE;
+SlowBuffer.prototype.readUInt32BE = Buffer.prototype.readUInt32BE;
+SlowBuffer.prototype.readInt8 = Buffer.prototype.readInt8;
+SlowBuffer.prototype.readInt16LE = Buffer.prototype.readInt16LE;
+SlowBuffer.prototype.readInt16BE = Buffer.prototype.readInt16BE;
+SlowBuffer.prototype.readInt32LE = Buffer.prototype.readInt32LE;
+SlowBuffer.prototype.readInt32BE = Buffer.prototype.readInt32BE;
+SlowBuffer.prototype.readFloatLE = Buffer.prototype.readFloatLE;
+SlowBuffer.prototype.readFloatBE = Buffer.prototype.readFloatBE;
+SlowBuffer.prototype.readDoubleLE = Buffer.prototype.readDoubleLE;
+SlowBuffer.prototype.readDoubleBE = Buffer.prototype.readDoubleBE;
+SlowBuffer.prototype.writeUInt8 = Buffer.prototype.writeUInt8;
+SlowBuffer.prototype.writeUInt16LE = Buffer.prototype.writeUInt16LE;
+SlowBuffer.prototype.writeUInt16BE = Buffer.prototype.writeUInt16BE;
+SlowBuffer.prototype.writeUInt32LE = Buffer.prototype.writeUInt32LE;
+SlowBuffer.prototype.writeUInt32BE = Buffer.prototype.writeUInt32BE;
+SlowBuffer.prototype.writeInt8 = Buffer.prototype.writeInt8;
+SlowBuffer.prototype.writeInt16LE = Buffer.prototype.writeInt16LE;
+SlowBuffer.prototype.writeInt16BE = Buffer.prototype.writeInt16BE;
+SlowBuffer.prototype.writeInt32LE = Buffer.prototype.writeInt32LE;
+SlowBuffer.prototype.writeInt32BE = Buffer.prototype.writeInt32BE;
+SlowBuffer.prototype.writeFloatLE = Buffer.prototype.writeFloatLE;
+SlowBuffer.prototype.writeFloatBE = Buffer.prototype.writeFloatBE;
+SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
+SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
+
+})()
+},{"assert":65,"./buffer_ieee754":69,"base64-js":70}],71:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -34682,7 +36072,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 (function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
 
 var EventEmitter = exports.EventEmitter = process.EventEmitter;
@@ -34868,7 +36258,93 @@ EventEmitter.prototype.listeners = function(type) {
 };
 
 })(require("__browserify_process"))
-},{"__browserify_process":69}],63:[function(require,module,exports){
+},{"__browserify_process":71}],70:[function(require,module,exports){
+(function (exports) {
+	'use strict';
+
+	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+	function b64ToByteArray(b64) {
+		var i, j, l, tmp, placeHolders, arr;
+	
+		if (b64.length % 4 > 0) {
+			throw 'Invalid string. Length must be a multiple of 4';
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		placeHolders = b64.indexOf('=');
+		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length;
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
+			arr.push((tmp & 0xFF0000) >> 16);
+			arr.push((tmp & 0xFF00) >> 8);
+			arr.push(tmp & 0xFF);
+		}
+
+		if (placeHolders === 2) {
+			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
+			arr.push(tmp & 0xFF);
+		} else if (placeHolders === 1) {
+			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
+			arr.push((tmp >> 8) & 0xFF);
+			arr.push(tmp & 0xFF);
+		}
+
+		return arr;
+	}
+
+	function uint8ToBase64(uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length;
+
+		function tripletToBase64 (num) {
+			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+		};
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+			output += tripletToBase64(temp);
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1];
+				output += lookup[temp >> 2];
+				output += lookup[(temp << 4) & 0x3F];
+				output += '==';
+				break;
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
+				output += lookup[temp >> 10];
+				output += lookup[(temp >> 4) & 0x3F];
+				output += lookup[(temp << 2) & 0x3F];
+				output += '=';
+				break;
+		}
+
+		return output;
+	}
+
+	module.exports.toByteArray = b64ToByteArray;
+	module.exports.fromByteArray = uint8ToBase64;
+}());
+
+},{}],64:[function(require,module,exports){
 'use strict';
 
 
@@ -34926,7 +36402,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":36,"../../type":37,"esprima":70}],70:[function(require,module,exports){
+},{"../../common":36,"../../type":37,"esprima":72}],72:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -38837,1411 +40313,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}],64:[function(require,module,exports){
-(function(){function SlowBuffer (size) {
-    this.length = size;
-};
-
-var assert = require('assert');
-
-exports.INSPECT_MAX_BYTES = 50;
-
-
-function toHex(n) {
-  if (n < 16) return '0' + n.toString(16);
-  return n.toString(16);
-}
-
-function utf8ToBytes(str) {
-  var byteArray = [];
-  for (var i = 0; i < str.length; i++)
-    if (str.charCodeAt(i) <= 0x7F)
-      byteArray.push(str.charCodeAt(i));
-    else {
-      var h = encodeURIComponent(str.charAt(i)).substr(1).split('%');
-      for (var j = 0; j < h.length; j++)
-        byteArray.push(parseInt(h[j], 16));
-    }
-
-  return byteArray;
-}
-
-function asciiToBytes(str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; i++ )
-    // Node's code seems to be doing this and not & 0x7F..
-    byteArray.push( str.charCodeAt(i) & 0xFF );
-
-  return byteArray;
-}
-
-function base64ToBytes(str) {
-  return require("base64-js").toByteArray(str);
-}
-
-SlowBuffer.byteLength = function (str, encoding) {
-  switch (encoding || "utf8") {
-    case 'hex':
-      return str.length / 2;
-
-    case 'utf8':
-    case 'utf-8':
-      return utf8ToBytes(str).length;
-
-    case 'ascii':
-    case 'binary':
-      return str.length;
-
-    case 'base64':
-      return base64ToBytes(str).length;
-
-    default:
-      throw new Error('Unknown encoding');
-  }
-};
-
-function blitBuffer(src, dst, offset, length) {
-  var pos, i = 0;
-  while (i < length) {
-    if ((i+offset >= dst.length) || (i >= src.length))
-      break;
-
-    dst[i + offset] = src[i];
-    i++;
-  }
-  return i;
-}
-
-SlowBuffer.prototype.utf8Write = function (string, offset, length) {
-  var bytes, pos;
-  return SlowBuffer._charsWritten =  blitBuffer(utf8ToBytes(string), this, offset, length);
-};
-
-SlowBuffer.prototype.asciiWrite = function (string, offset, length) {
-  var bytes, pos;
-  return SlowBuffer._charsWritten =  blitBuffer(asciiToBytes(string), this, offset, length);
-};
-
-SlowBuffer.prototype.binaryWrite = SlowBuffer.prototype.asciiWrite;
-
-SlowBuffer.prototype.base64Write = function (string, offset, length) {
-  var bytes, pos;
-  return SlowBuffer._charsWritten = blitBuffer(base64ToBytes(string), this, offset, length);
-};
-
-SlowBuffer.prototype.base64Slice = function (start, end) {
-  var bytes = Array.prototype.slice.apply(this, arguments)
-  return require("base64-js").fromByteArray(bytes);
-}
-
-function decodeUtf8Char(str) {
-  try {
-    return decodeURIComponent(str);
-  } catch (err) {
-    return String.fromCharCode(0xFFFD); // UTF 8 invalid char
-  }
-}
-
-SlowBuffer.prototype.utf8Slice = function () {
-  var bytes = Array.prototype.slice.apply(this, arguments);
-  var res = "";
-  var tmp = "";
-  var i = 0;
-  while (i < bytes.length) {
-    if (bytes[i] <= 0x7F) {
-      res += decodeUtf8Char(tmp) + String.fromCharCode(bytes[i]);
-      tmp = "";
-    } else
-      tmp += "%" + bytes[i].toString(16);
-
-    i++;
-  }
-
-  return res + decodeUtf8Char(tmp);
-}
-
-SlowBuffer.prototype.asciiSlice = function () {
-  var bytes = Array.prototype.slice.apply(this, arguments);
-  var ret = "";
-  for (var i = 0; i < bytes.length; i++)
-    ret += String.fromCharCode(bytes[i]);
-  return ret;
-}
-
-SlowBuffer.prototype.binarySlice = SlowBuffer.prototype.asciiSlice;
-
-SlowBuffer.prototype.inspect = function() {
-  var out = [],
-      len = this.length;
-  for (var i = 0; i < len; i++) {
-    out[i] = toHex(this[i]);
-    if (i == exports.INSPECT_MAX_BYTES) {
-      out[i + 1] = '...';
-      break;
-    }
-  }
-  return '<SlowBuffer ' + out.join(' ') + '>';
-};
-
-
-SlowBuffer.prototype.hexSlice = function(start, end) {
-  var len = this.length;
-
-  if (!start || start < 0) start = 0;
-  if (!end || end < 0 || end > len) end = len;
-
-  var out = '';
-  for (var i = start; i < end; i++) {
-    out += toHex(this[i]);
-  }
-  return out;
-};
-
-
-SlowBuffer.prototype.toString = function(encoding, start, end) {
-  encoding = String(encoding || 'utf8').toLowerCase();
-  start = +start || 0;
-  if (typeof end == 'undefined') end = this.length;
-
-  // Fastpath empty strings
-  if (+end == start) {
-    return '';
-  }
-
-  switch (encoding) {
-    case 'hex':
-      return this.hexSlice(start, end);
-
-    case 'utf8':
-    case 'utf-8':
-      return this.utf8Slice(start, end);
-
-    case 'ascii':
-      return this.asciiSlice(start, end);
-
-    case 'binary':
-      return this.binarySlice(start, end);
-
-    case 'base64':
-      return this.base64Slice(start, end);
-
-    case 'ucs2':
-    case 'ucs-2':
-      return this.ucs2Slice(start, end);
-
-    default:
-      throw new Error('Unknown encoding');
-  }
-};
-
-
-SlowBuffer.prototype.hexWrite = function(string, offset, length) {
-  offset = +offset || 0;
-  var remaining = this.length - offset;
-  if (!length) {
-    length = remaining;
-  } else {
-    length = +length;
-    if (length > remaining) {
-      length = remaining;
-    }
-  }
-
-  // must be an even number of digits
-  var strLen = string.length;
-  if (strLen % 2) {
-    throw new Error('Invalid hex string');
-  }
-  if (length > strLen / 2) {
-    length = strLen / 2;
-  }
-  for (var i = 0; i < length; i++) {
-    var byte = parseInt(string.substr(i * 2, 2), 16);
-    if (isNaN(byte)) throw new Error('Invalid hex string');
-    this[offset + i] = byte;
-  }
-  SlowBuffer._charsWritten = i * 2;
-  return i;
-};
-
-
-SlowBuffer.prototype.write = function(string, offset, length, encoding) {
-  // Support both (string, offset, length, encoding)
-  // and the legacy (string, encoding, offset, length)
-  if (isFinite(offset)) {
-    if (!isFinite(length)) {
-      encoding = length;
-      length = undefined;
-    }
-  } else {  // legacy
-    var swap = encoding;
-    encoding = offset;
-    offset = length;
-    length = swap;
-  }
-
-  offset = +offset || 0;
-  var remaining = this.length - offset;
-  if (!length) {
-    length = remaining;
-  } else {
-    length = +length;
-    if (length > remaining) {
-      length = remaining;
-    }
-  }
-  encoding = String(encoding || 'utf8').toLowerCase();
-
-  switch (encoding) {
-    case 'hex':
-      return this.hexWrite(string, offset, length);
-
-    case 'utf8':
-    case 'utf-8':
-      return this.utf8Write(string, offset, length);
-
-    case 'ascii':
-      return this.asciiWrite(string, offset, length);
-
-    case 'binary':
-      return this.binaryWrite(string, offset, length);
-
-    case 'base64':
-      return this.base64Write(string, offset, length);
-
-    case 'ucs2':
-    case 'ucs-2':
-      return this.ucs2Write(string, offset, length);
-
-    default:
-      throw new Error('Unknown encoding');
-  }
-};
-
-
-// slice(start, end)
-SlowBuffer.prototype.slice = function(start, end) {
-  if (end === undefined) end = this.length;
-
-  if (end > this.length) {
-    throw new Error('oob');
-  }
-  if (start > end) {
-    throw new Error('oob');
-  }
-
-  return new Buffer(this, end - start, +start);
-};
-
-SlowBuffer.prototype.copy = function(target, targetstart, sourcestart, sourceend) {
-  var temp = [];
-  for (var i=sourcestart; i<sourceend; i++) {
-    assert.ok(typeof this[i] !== 'undefined', "copying undefined buffer bytes!");
-    temp.push(this[i]);
-  }
-
-  for (var i=targetstart; i<targetstart+temp.length; i++) {
-    target[i] = temp[i-targetstart];
-  }
-};
-
-SlowBuffer.prototype.fill = function(value, start, end) {
-  if (end > this.length) {
-    throw new Error('oob');
-  }
-  if (start > end) {
-    throw new Error('oob');
-  }
-
-  for (var i = start; i < end; i++) {
-    this[i] = value;
-  }
-}
-
-function coerce(length) {
-  // Coerce length to a number (possibly NaN), round up
-  // in case it's fractional (e.g. 123.456) then do a
-  // double negate to coerce a NaN to 0. Easy, right?
-  length = ~~Math.ceil(+length);
-  return length < 0 ? 0 : length;
-}
-
-
-// Buffer
-
-function Buffer(subject, encoding, offset) {
-  if (!(this instanceof Buffer)) {
-    return new Buffer(subject, encoding, offset);
-  }
-
-  var type;
-
-  // Are we slicing?
-  if (typeof offset === 'number') {
-    this.length = coerce(encoding);
-    this.parent = subject;
-    this.offset = offset;
-  } else {
-    // Find the length
-    switch (type = typeof subject) {
-      case 'number':
-        this.length = coerce(subject);
-        break;
-
-      case 'string':
-        this.length = Buffer.byteLength(subject, encoding);
-        break;
-
-      case 'object': // Assume object is an array
-        this.length = coerce(subject.length);
-        break;
-
-      default:
-        throw new Error('First argument needs to be a number, ' +
-                        'array or string.');
-    }
-
-    if (this.length > Buffer.poolSize) {
-      // Big buffer, just alloc one.
-      this.parent = new SlowBuffer(this.length);
-      this.offset = 0;
-
-    } else {
-      // Small buffer.
-      if (!pool || pool.length - pool.used < this.length) allocPool();
-      this.parent = pool;
-      this.offset = pool.used;
-      pool.used += this.length;
-    }
-
-    // Treat array-ish objects as a byte array.
-    if (isArrayIsh(subject)) {
-      for (var i = 0; i < this.length; i++) {
-        if (subject instanceof Buffer) {
-          this.parent[i + this.offset] = subject.readUInt8(i);
-        }
-        else {
-          this.parent[i + this.offset] = subject[i];
-        }
-      }
-    } else if (type == 'string') {
-      // We are a string
-      this.length = this.write(subject, 0, encoding);
-    }
-  }
-
-}
-
-function isArrayIsh(subject) {
-  return Array.isArray(subject) || Buffer.isBuffer(subject) ||
-         subject && typeof subject === 'object' &&
-         typeof subject.length === 'number';
-}
-
-exports.SlowBuffer = SlowBuffer;
-exports.Buffer = Buffer;
-
-Buffer.poolSize = 8 * 1024;
-var pool;
-
-function allocPool() {
-  pool = new SlowBuffer(Buffer.poolSize);
-  pool.used = 0;
-}
-
-
-// Static methods
-Buffer.isBuffer = function isBuffer(b) {
-  return b instanceof Buffer || b instanceof SlowBuffer;
-};
-
-Buffer.concat = function (list, totalLength) {
-  if (!Array.isArray(list)) {
-    throw new Error("Usage: Buffer.concat(list, [totalLength])\n \
-      list should be an Array.");
-  }
-
-  if (list.length === 0) {
-    return new Buffer(0);
-  } else if (list.length === 1) {
-    return list[0];
-  }
-
-  if (typeof totalLength !== 'number') {
-    totalLength = 0;
-    for (var i = 0; i < list.length; i++) {
-      var buf = list[i];
-      totalLength += buf.length;
-    }
-  }
-
-  var buffer = new Buffer(totalLength);
-  var pos = 0;
-  for (var i = 0; i < list.length; i++) {
-    var buf = list[i];
-    buf.copy(buffer, pos);
-    pos += buf.length;
-  }
-  return buffer;
-};
-
-// Inspect
-Buffer.prototype.inspect = function inspect() {
-  var out = [],
-      len = this.length;
-
-  for (var i = 0; i < len; i++) {
-    out[i] = toHex(this.parent[i + this.offset]);
-    if (i == exports.INSPECT_MAX_BYTES) {
-      out[i + 1] = '...';
-      break;
-    }
-  }
-
-  return '<Buffer ' + out.join(' ') + '>';
-};
-
-
-Buffer.prototype.get = function get(i) {
-  if (i < 0 || i >= this.length) throw new Error('oob');
-  return this.parent[this.offset + i];
-};
-
-
-Buffer.prototype.set = function set(i, v) {
-  if (i < 0 || i >= this.length) throw new Error('oob');
-  return this.parent[this.offset + i] = v;
-};
-
-
-// write(string, offset = 0, length = buffer.length-offset, encoding = 'utf8')
-Buffer.prototype.write = function(string, offset, length, encoding) {
-  // Support both (string, offset, length, encoding)
-  // and the legacy (string, encoding, offset, length)
-  if (isFinite(offset)) {
-    if (!isFinite(length)) {
-      encoding = length;
-      length = undefined;
-    }
-  } else {  // legacy
-    var swap = encoding;
-    encoding = offset;
-    offset = length;
-    length = swap;
-  }
-
-  offset = +offset || 0;
-  var remaining = this.length - offset;
-  if (!length) {
-    length = remaining;
-  } else {
-    length = +length;
-    if (length > remaining) {
-      length = remaining;
-    }
-  }
-  encoding = String(encoding || 'utf8').toLowerCase();
-
-  var ret;
-  switch (encoding) {
-    case 'hex':
-      ret = this.parent.hexWrite(string, this.offset + offset, length);
-      break;
-
-    case 'utf8':
-    case 'utf-8':
-      ret = this.parent.utf8Write(string, this.offset + offset, length);
-      break;
-
-    case 'ascii':
-      ret = this.parent.asciiWrite(string, this.offset + offset, length);
-      break;
-
-    case 'binary':
-      ret = this.parent.binaryWrite(string, this.offset + offset, length);
-      break;
-
-    case 'base64':
-      // Warning: maxLength not taken into account in base64Write
-      ret = this.parent.base64Write(string, this.offset + offset, length);
-      break;
-
-    case 'ucs2':
-    case 'ucs-2':
-      ret = this.parent.ucs2Write(string, this.offset + offset, length);
-      break;
-
-    default:
-      throw new Error('Unknown encoding');
-  }
-
-  Buffer._charsWritten = SlowBuffer._charsWritten;
-
-  return ret;
-};
-
-
-// toString(encoding, start=0, end=buffer.length)
-Buffer.prototype.toString = function(encoding, start, end) {
-  encoding = String(encoding || 'utf8').toLowerCase();
-
-  if (typeof start == 'undefined' || start < 0) {
-    start = 0;
-  } else if (start > this.length) {
-    start = this.length;
-  }
-
-  if (typeof end == 'undefined' || end > this.length) {
-    end = this.length;
-  } else if (end < 0) {
-    end = 0;
-  }
-
-  start = start + this.offset;
-  end = end + this.offset;
-
-  switch (encoding) {
-    case 'hex':
-      return this.parent.hexSlice(start, end);
-
-    case 'utf8':
-    case 'utf-8':
-      return this.parent.utf8Slice(start, end);
-
-    case 'ascii':
-      return this.parent.asciiSlice(start, end);
-
-    case 'binary':
-      return this.parent.binarySlice(start, end);
-
-    case 'base64':
-      return this.parent.base64Slice(start, end);
-
-    case 'ucs2':
-    case 'ucs-2':
-      return this.parent.ucs2Slice(start, end);
-
-    default:
-      throw new Error('Unknown encoding');
-  }
-};
-
-
-// byteLength
-Buffer.byteLength = SlowBuffer.byteLength;
-
-
-// fill(value, start=0, end=buffer.length)
-Buffer.prototype.fill = function fill(value, start, end) {
-  value || (value = 0);
-  start || (start = 0);
-  end || (end = this.length);
-
-  if (typeof value === 'string') {
-    value = value.charCodeAt(0);
-  }
-  if (!(typeof value === 'number') || isNaN(value)) {
-    throw new Error('value is not a number');
-  }
-
-  if (end < start) throw new Error('end < start');
-
-  // Fill 0 bytes; we're done
-  if (end === start) return 0;
-  if (this.length == 0) return 0;
-
-  if (start < 0 || start >= this.length) {
-    throw new Error('start out of bounds');
-  }
-
-  if (end < 0 || end > this.length) {
-    throw new Error('end out of bounds');
-  }
-
-  return this.parent.fill(value,
-                          start + this.offset,
-                          end + this.offset);
-};
-
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function(target, target_start, start, end) {
-  var source = this;
-  start || (start = 0);
-  end || (end = this.length);
-  target_start || (target_start = 0);
-
-  if (end < start) throw new Error('sourceEnd < sourceStart');
-
-  // Copy 0 bytes; we're done
-  if (end === start) return 0;
-  if (target.length == 0 || source.length == 0) return 0;
-
-  if (target_start < 0 || target_start >= target.length) {
-    throw new Error('targetStart out of bounds');
-  }
-
-  if (start < 0 || start >= source.length) {
-    throw new Error('sourceStart out of bounds');
-  }
-
-  if (end < 0 || end > source.length) {
-    throw new Error('sourceEnd out of bounds');
-  }
-
-  // Are we oob?
-  if (end > this.length) {
-    end = this.length;
-  }
-
-  if (target.length - target_start < end - start) {
-    end = target.length - target_start + start;
-  }
-
-  return this.parent.copy(target.parent,
-                          target_start + target.offset,
-                          start + this.offset,
-                          end + this.offset);
-};
-
-
-// slice(start, end)
-Buffer.prototype.slice = function(start, end) {
-  if (end === undefined) end = this.length;
-  if (end > this.length) throw new Error('oob');
-  if (start > end) throw new Error('oob');
-
-  return new Buffer(this.parent, end - start, +start + this.offset);
-};
-
-
-// Legacy methods for backwards compatibility.
-
-Buffer.prototype.utf8Slice = function(start, end) {
-  return this.toString('utf8', start, end);
-};
-
-Buffer.prototype.binarySlice = function(start, end) {
-  return this.toString('binary', start, end);
-};
-
-Buffer.prototype.asciiSlice = function(start, end) {
-  return this.toString('ascii', start, end);
-};
-
-Buffer.prototype.utf8Write = function(string, offset) {
-  return this.write(string, offset, 'utf8');
-};
-
-Buffer.prototype.binaryWrite = function(string, offset) {
-  return this.write(string, offset, 'binary');
-};
-
-Buffer.prototype.asciiWrite = function(string, offset) {
-  return this.write(string, offset, 'ascii');
-};
-
-Buffer.prototype.readUInt8 = function(offset, noAssert) {
-  var buffer = this;
-
-  if (!noAssert) {
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset < buffer.length,
-        'Trying to read beyond buffer length');
-  }
-
-  if (offset >= buffer.length) return;
-
-  return buffer.parent[buffer.offset + offset];
-};
-
-function readUInt16(buffer, offset, isBigEndian, noAssert) {
-  var val = 0;
-
-
-  if (!noAssert) {
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset + 1 < buffer.length,
-        'Trying to read beyond buffer length');
-  }
-
-  if (offset >= buffer.length) return 0;
-
-  if (isBigEndian) {
-    val = buffer.parent[buffer.offset + offset] << 8;
-    if (offset + 1 < buffer.length) {
-      val |= buffer.parent[buffer.offset + offset + 1];
-    }
-  } else {
-    val = buffer.parent[buffer.offset + offset];
-    if (offset + 1 < buffer.length) {
-      val |= buffer.parent[buffer.offset + offset + 1] << 8;
-    }
-  }
-
-  return val;
-}
-
-Buffer.prototype.readUInt16LE = function(offset, noAssert) {
-  return readUInt16(this, offset, false, noAssert);
-};
-
-Buffer.prototype.readUInt16BE = function(offset, noAssert) {
-  return readUInt16(this, offset, true, noAssert);
-};
-
-function readUInt32(buffer, offset, isBigEndian, noAssert) {
-  var val = 0;
-
-  if (!noAssert) {
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset + 3 < buffer.length,
-        'Trying to read beyond buffer length');
-  }
-
-  if (offset >= buffer.length) return 0;
-
-  if (isBigEndian) {
-    if (offset + 1 < buffer.length)
-      val = buffer.parent[buffer.offset + offset + 1] << 16;
-    if (offset + 2 < buffer.length)
-      val |= buffer.parent[buffer.offset + offset + 2] << 8;
-    if (offset + 3 < buffer.length)
-      val |= buffer.parent[buffer.offset + offset + 3];
-    val = val + (buffer.parent[buffer.offset + offset] << 24 >>> 0);
-  } else {
-    if (offset + 2 < buffer.length)
-      val = buffer.parent[buffer.offset + offset + 2] << 16;
-    if (offset + 1 < buffer.length)
-      val |= buffer.parent[buffer.offset + offset + 1] << 8;
-    val |= buffer.parent[buffer.offset + offset];
-    if (offset + 3 < buffer.length)
-      val = val + (buffer.parent[buffer.offset + offset + 3] << 24 >>> 0);
-  }
-
-  return val;
-}
-
-Buffer.prototype.readUInt32LE = function(offset, noAssert) {
-  return readUInt32(this, offset, false, noAssert);
-};
-
-Buffer.prototype.readUInt32BE = function(offset, noAssert) {
-  return readUInt32(this, offset, true, noAssert);
-};
-
-
-/*
- * Signed integer types, yay team! A reminder on how two's complement actually
- * works. The first bit is the signed bit, i.e. tells us whether or not the
- * number should be positive or negative. If the two's complement value is
- * positive, then we're done, as it's equivalent to the unsigned representation.
- *
- * Now if the number is positive, you're pretty much done, you can just leverage
- * the unsigned translations and return those. Unfortunately, negative numbers
- * aren't quite that straightforward.
- *
- * At first glance, one might be inclined to use the traditional formula to
- * translate binary numbers between the positive and negative values in two's
- * complement. (Though it doesn't quite work for the most negative value)
- * Mainly:
- *  - invert all the bits
- *  - add one to the result
- *
- * Of course, this doesn't quite work in Javascript. Take for example the value
- * of -128. This could be represented in 16 bits (big-endian) as 0xff80. But of
- * course, Javascript will do the following:
- *
- * > ~0xff80
- * -65409
- *
- * Whoh there, Javascript, that's not quite right. But wait, according to
- * Javascript that's perfectly correct. When Javascript ends up seeing the
- * constant 0xff80, it has no notion that it is actually a signed number. It
- * assumes that we've input the unsigned value 0xff80. Thus, when it does the
- * binary negation, it casts it into a signed value, (positive 0xff80). Then
- * when you perform binary negation on that, it turns it into a negative number.
- *
- * Instead, we're going to have to use the following general formula, that works
- * in a rather Javascript friendly way. I'm glad we don't support this kind of
- * weird numbering scheme in the kernel.
- *
- * (BIT-MAX - (unsigned)val + 1) * -1
- *
- * The astute observer, may think that this doesn't make sense for 8-bit numbers
- * (really it isn't necessary for them). However, when you get 16-bit numbers,
- * you do. Let's go back to our prior example and see how this will look:
- *
- * (0xffff - 0xff80 + 1) * -1
- * (0x007f + 1) * -1
- * (0x0080) * -1
- */
-Buffer.prototype.readInt8 = function(offset, noAssert) {
-  var buffer = this;
-  var neg;
-
-  if (!noAssert) {
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset < buffer.length,
-        'Trying to read beyond buffer length');
-  }
-
-  if (offset >= buffer.length) return;
-
-  neg = buffer.parent[buffer.offset + offset] & 0x80;
-  if (!neg) {
-    return (buffer.parent[buffer.offset + offset]);
-  }
-
-  return ((0xff - buffer.parent[buffer.offset + offset] + 1) * -1);
-};
-
-function readInt16(buffer, offset, isBigEndian, noAssert) {
-  var neg, val;
-
-  if (!noAssert) {
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset + 1 < buffer.length,
-        'Trying to read beyond buffer length');
-  }
-
-  val = readUInt16(buffer, offset, isBigEndian, noAssert);
-  neg = val & 0x8000;
-  if (!neg) {
-    return val;
-  }
-
-  return (0xffff - val + 1) * -1;
-}
-
-Buffer.prototype.readInt16LE = function(offset, noAssert) {
-  return readInt16(this, offset, false, noAssert);
-};
-
-Buffer.prototype.readInt16BE = function(offset, noAssert) {
-  return readInt16(this, offset, true, noAssert);
-};
-
-function readInt32(buffer, offset, isBigEndian, noAssert) {
-  var neg, val;
-
-  if (!noAssert) {
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset + 3 < buffer.length,
-        'Trying to read beyond buffer length');
-  }
-
-  val = readUInt32(buffer, offset, isBigEndian, noAssert);
-  neg = val & 0x80000000;
-  if (!neg) {
-    return (val);
-  }
-
-  return (0xffffffff - val + 1) * -1;
-}
-
-Buffer.prototype.readInt32LE = function(offset, noAssert) {
-  return readInt32(this, offset, false, noAssert);
-};
-
-Buffer.prototype.readInt32BE = function(offset, noAssert) {
-  return readInt32(this, offset, true, noAssert);
-};
-
-function readFloat(buffer, offset, isBigEndian, noAssert) {
-  if (!noAssert) {
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset + 3 < buffer.length,
-        'Trying to read beyond buffer length');
-  }
-
-  return require('./buffer_ieee754').readIEEE754(buffer, offset, isBigEndian,
-      23, 4);
-}
-
-Buffer.prototype.readFloatLE = function(offset, noAssert) {
-  return readFloat(this, offset, false, noAssert);
-};
-
-Buffer.prototype.readFloatBE = function(offset, noAssert) {
-  return readFloat(this, offset, true, noAssert);
-};
-
-function readDouble(buffer, offset, isBigEndian, noAssert) {
-  if (!noAssert) {
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset + 7 < buffer.length,
-        'Trying to read beyond buffer length');
-  }
-
-  return require('./buffer_ieee754').readIEEE754(buffer, offset, isBigEndian,
-      52, 8);
-}
-
-Buffer.prototype.readDoubleLE = function(offset, noAssert) {
-  return readDouble(this, offset, false, noAssert);
-};
-
-Buffer.prototype.readDoubleBE = function(offset, noAssert) {
-  return readDouble(this, offset, true, noAssert);
-};
-
-
-/*
- * We have to make sure that the value is a valid integer. This means that it is
- * non-negative. It has no fractional component and that it does not exceed the
- * maximum allowed value.
- *
- *      value           The number to check for validity
- *
- *      max             The maximum value
- */
-function verifuint(value, max) {
-  assert.ok(typeof (value) == 'number',
-      'cannot write a non-number as a number');
-
-  assert.ok(value >= 0,
-      'specified a negative value for writing an unsigned value');
-
-  assert.ok(value <= max, 'value is larger than maximum value for type');
-
-  assert.ok(Math.floor(value) === value, 'value has a fractional component');
-}
-
-Buffer.prototype.writeUInt8 = function(value, offset, noAssert) {
-  var buffer = this;
-
-  if (!noAssert) {
-    assert.ok(value !== undefined && value !== null,
-        'missing value');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset < buffer.length,
-        'trying to write beyond buffer length');
-
-    verifuint(value, 0xff);
-  }
-
-  if (offset < buffer.length) {
-    buffer.parent[buffer.offset + offset] = value;
-  }
-};
-
-function writeUInt16(buffer, value, offset, isBigEndian, noAssert) {
-  if (!noAssert) {
-    assert.ok(value !== undefined && value !== null,
-        'missing value');
-
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset + 1 < buffer.length,
-        'trying to write beyond buffer length');
-
-    verifuint(value, 0xffff);
-  }
-
-  for (var i = 0; i < Math.min(buffer.length - offset, 2); i++) {
-    buffer.parent[buffer.offset + offset + i] =
-        (value & (0xff << (8 * (isBigEndian ? 1 - i : i)))) >>>
-            (isBigEndian ? 1 - i : i) * 8;
-  }
-
-}
-
-Buffer.prototype.writeUInt16LE = function(value, offset, noAssert) {
-  writeUInt16(this, value, offset, false, noAssert);
-};
-
-Buffer.prototype.writeUInt16BE = function(value, offset, noAssert) {
-  writeUInt16(this, value, offset, true, noAssert);
-};
-
-function writeUInt32(buffer, value, offset, isBigEndian, noAssert) {
-  if (!noAssert) {
-    assert.ok(value !== undefined && value !== null,
-        'missing value');
-
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset + 3 < buffer.length,
-        'trying to write beyond buffer length');
-
-    verifuint(value, 0xffffffff);
-  }
-
-  for (var i = 0; i < Math.min(buffer.length - offset, 4); i++) {
-    buffer.parent[buffer.offset + offset + i] =
-        (value >>> (isBigEndian ? 3 - i : i) * 8) & 0xff;
-  }
-}
-
-Buffer.prototype.writeUInt32LE = function(value, offset, noAssert) {
-  writeUInt32(this, value, offset, false, noAssert);
-};
-
-Buffer.prototype.writeUInt32BE = function(value, offset, noAssert) {
-  writeUInt32(this, value, offset, true, noAssert);
-};
-
-
-/*
- * We now move onto our friends in the signed number category. Unlike unsigned
- * numbers, we're going to have to worry a bit more about how we put values into
- * arrays. Since we are only worrying about signed 32-bit values, we're in
- * slightly better shape. Unfortunately, we really can't do our favorite binary
- * & in this system. It really seems to do the wrong thing. For example:
- *
- * > -32 & 0xff
- * 224
- *
- * What's happening above is really: 0xe0 & 0xff = 0xe0. However, the results of
- * this aren't treated as a signed number. Ultimately a bad thing.
- *
- * What we're going to want to do is basically create the unsigned equivalent of
- * our representation and pass that off to the wuint* functions. To do that
- * we're going to do the following:
- *
- *  - if the value is positive
- *      we can pass it directly off to the equivalent wuint
- *  - if the value is negative
- *      we do the following computation:
- *         mb + val + 1, where
- *         mb   is the maximum unsigned value in that byte size
- *         val  is the Javascript negative integer
- *
- *
- * As a concrete value, take -128. In signed 16 bits this would be 0xff80. If
- * you do out the computations:
- *
- * 0xffff - 128 + 1
- * 0xffff - 127
- * 0xff80
- *
- * You can then encode this value as the signed version. This is really rather
- * hacky, but it should work and get the job done which is our goal here.
- */
-
-/*
- * A series of checks to make sure we actually have a signed 32-bit number
- */
-function verifsint(value, max, min) {
-  assert.ok(typeof (value) == 'number',
-      'cannot write a non-number as a number');
-
-  assert.ok(value <= max, 'value larger than maximum allowed value');
-
-  assert.ok(value >= min, 'value smaller than minimum allowed value');
-
-  assert.ok(Math.floor(value) === value, 'value has a fractional component');
-}
-
-function verifIEEE754(value, max, min) {
-  assert.ok(typeof (value) == 'number',
-      'cannot write a non-number as a number');
-
-  assert.ok(value <= max, 'value larger than maximum allowed value');
-
-  assert.ok(value >= min, 'value smaller than minimum allowed value');
-}
-
-Buffer.prototype.writeInt8 = function(value, offset, noAssert) {
-  var buffer = this;
-
-  if (!noAssert) {
-    assert.ok(value !== undefined && value !== null,
-        'missing value');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset < buffer.length,
-        'Trying to write beyond buffer length');
-
-    verifsint(value, 0x7f, -0x80);
-  }
-
-  if (value >= 0) {
-    buffer.writeUInt8(value, offset, noAssert);
-  } else {
-    buffer.writeUInt8(0xff + value + 1, offset, noAssert);
-  }
-};
-
-function writeInt16(buffer, value, offset, isBigEndian, noAssert) {
-  if (!noAssert) {
-    assert.ok(value !== undefined && value !== null,
-        'missing value');
-
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset + 1 < buffer.length,
-        'Trying to write beyond buffer length');
-
-    verifsint(value, 0x7fff, -0x8000);
-  }
-
-  if (value >= 0) {
-    writeUInt16(buffer, value, offset, isBigEndian, noAssert);
-  } else {
-    writeUInt16(buffer, 0xffff + value + 1, offset, isBigEndian, noAssert);
-  }
-}
-
-Buffer.prototype.writeInt16LE = function(value, offset, noAssert) {
-  writeInt16(this, value, offset, false, noAssert);
-};
-
-Buffer.prototype.writeInt16BE = function(value, offset, noAssert) {
-  writeInt16(this, value, offset, true, noAssert);
-};
-
-function writeInt32(buffer, value, offset, isBigEndian, noAssert) {
-  if (!noAssert) {
-    assert.ok(value !== undefined && value !== null,
-        'missing value');
-
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset + 3 < buffer.length,
-        'Trying to write beyond buffer length');
-
-    verifsint(value, 0x7fffffff, -0x80000000);
-  }
-
-  if (value >= 0) {
-    writeUInt32(buffer, value, offset, isBigEndian, noAssert);
-  } else {
-    writeUInt32(buffer, 0xffffffff + value + 1, offset, isBigEndian, noAssert);
-  }
-}
-
-Buffer.prototype.writeInt32LE = function(value, offset, noAssert) {
-  writeInt32(this, value, offset, false, noAssert);
-};
-
-Buffer.prototype.writeInt32BE = function(value, offset, noAssert) {
-  writeInt32(this, value, offset, true, noAssert);
-};
-
-function writeFloat(buffer, value, offset, isBigEndian, noAssert) {
-  if (!noAssert) {
-    assert.ok(value !== undefined && value !== null,
-        'missing value');
-
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset + 3 < buffer.length,
-        'Trying to write beyond buffer length');
-
-    verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38);
-  }
-
-  require('./buffer_ieee754').writeIEEE754(buffer, value, offset, isBigEndian,
-      23, 4);
-}
-
-Buffer.prototype.writeFloatLE = function(value, offset, noAssert) {
-  writeFloat(this, value, offset, false, noAssert);
-};
-
-Buffer.prototype.writeFloatBE = function(value, offset, noAssert) {
-  writeFloat(this, value, offset, true, noAssert);
-};
-
-function writeDouble(buffer, value, offset, isBigEndian, noAssert) {
-  if (!noAssert) {
-    assert.ok(value !== undefined && value !== null,
-        'missing value');
-
-    assert.ok(typeof (isBigEndian) === 'boolean',
-        'missing or invalid endian');
-
-    assert.ok(offset !== undefined && offset !== null,
-        'missing offset');
-
-    assert.ok(offset + 7 < buffer.length,
-        'Trying to write beyond buffer length');
-
-    verifIEEE754(value, 1.7976931348623157E+308, -1.7976931348623157E+308);
-  }
-
-  require('./buffer_ieee754').writeIEEE754(buffer, value, offset, isBigEndian,
-      52, 8);
-}
-
-Buffer.prototype.writeDoubleLE = function(value, offset, noAssert) {
-  writeDouble(this, value, offset, false, noAssert);
-};
-
-Buffer.prototype.writeDoubleBE = function(value, offset, noAssert) {
-  writeDouble(this, value, offset, true, noAssert);
-};
-
-SlowBuffer.prototype.readUInt8 = Buffer.prototype.readUInt8;
-SlowBuffer.prototype.readUInt16LE = Buffer.prototype.readUInt16LE;
-SlowBuffer.prototype.readUInt16BE = Buffer.prototype.readUInt16BE;
-SlowBuffer.prototype.readUInt32LE = Buffer.prototype.readUInt32LE;
-SlowBuffer.prototype.readUInt32BE = Buffer.prototype.readUInt32BE;
-SlowBuffer.prototype.readInt8 = Buffer.prototype.readInt8;
-SlowBuffer.prototype.readInt16LE = Buffer.prototype.readInt16LE;
-SlowBuffer.prototype.readInt16BE = Buffer.prototype.readInt16BE;
-SlowBuffer.prototype.readInt32LE = Buffer.prototype.readInt32LE;
-SlowBuffer.prototype.readInt32BE = Buffer.prototype.readInt32BE;
-SlowBuffer.prototype.readFloatLE = Buffer.prototype.readFloatLE;
-SlowBuffer.prototype.readFloatBE = Buffer.prototype.readFloatBE;
-SlowBuffer.prototype.readDoubleLE = Buffer.prototype.readDoubleLE;
-SlowBuffer.prototype.readDoubleBE = Buffer.prototype.readDoubleBE;
-SlowBuffer.prototype.writeUInt8 = Buffer.prototype.writeUInt8;
-SlowBuffer.prototype.writeUInt16LE = Buffer.prototype.writeUInt16LE;
-SlowBuffer.prototype.writeUInt16BE = Buffer.prototype.writeUInt16BE;
-SlowBuffer.prototype.writeUInt32LE = Buffer.prototype.writeUInt32LE;
-SlowBuffer.prototype.writeUInt32BE = Buffer.prototype.writeUInt32BE;
-SlowBuffer.prototype.writeInt8 = Buffer.prototype.writeInt8;
-SlowBuffer.prototype.writeInt16LE = Buffer.prototype.writeInt16LE;
-SlowBuffer.prototype.writeInt16BE = Buffer.prototype.writeInt16BE;
-SlowBuffer.prototype.writeInt32LE = Buffer.prototype.writeInt32LE;
-SlowBuffer.prototype.writeInt32BE = Buffer.prototype.writeInt32BE;
-SlowBuffer.prototype.writeFloatLE = Buffer.prototype.writeFloatLE;
-SlowBuffer.prototype.writeFloatBE = Buffer.prototype.writeFloatBE;
-SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
-SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
-
-})()
-},{"assert":65,"./buffer_ieee754":68,"base64-js":71}],71:[function(require,module,exports){
-(function (exports) {
-	'use strict';
-
-	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-	function b64ToByteArray(b64) {
-		var i, j, l, tmp, placeHolders, arr;
-	
-		if (b64.length % 4 > 0) {
-			throw 'Invalid string. Length must be a multiple of 4';
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		placeHolders = b64.indexOf('=');
-		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length;
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
-			arr.push((tmp & 0xFF0000) >> 16);
-			arr.push((tmp & 0xFF00) >> 8);
-			arr.push(tmp & 0xFF);
-		}
-
-		if (placeHolders === 2) {
-			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
-			arr.push(tmp & 0xFF);
-		} else if (placeHolders === 1) {
-			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
-			arr.push((tmp >> 8) & 0xFF);
-			arr.push(tmp & 0xFF);
-		}
-
-		return arr;
-	}
-
-	function uint8ToBase64(uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length;
-
-		function tripletToBase64 (num) {
-			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
-		};
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
-			output += tripletToBase64(temp);
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1];
-				output += lookup[temp >> 2];
-				output += lookup[(temp << 4) & 0x3F];
-				output += '==';
-				break;
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
-				output += lookup[temp >> 10];
-				output += lookup[(temp >> 4) & 0x3F];
-				output += lookup[(temp << 2) & 0x3F];
-				output += '=';
-				break;
-		}
-
-		return output;
-	}
-
-	module.exports.toByteArray = b64ToByteArray;
-	module.exports.fromByteArray = uint8ToBase64;
-}());
-
 },{}]},{},[6])
 ;
