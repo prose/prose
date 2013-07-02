@@ -23,6 +23,7 @@ module.exports = Backbone.View.extend({
     'click .save-action': 'updateFile',
     'click .publish-flag': 'togglePublishing',
     'click .draft-to-post': 'draft',
+    'click .create-select': 'createSelect',
     'click .meta .finish': 'backToMode',
     'change #upload': 'fileInput',
     'change .meta input': 'makeDirty'
@@ -756,6 +757,7 @@ module.exports = Backbone.View.extend({
               $metadataEditor.append(tmpl({
                 name: data.name,
                 label: data.field.label,
+                alterable: data.field.alterable,
                 placeholder: data.field.placeholder,
                 options: data.field.options,
                 lang: model.metadata.lang || 'en'
@@ -1022,6 +1024,29 @@ module.exports = Backbone.View.extend({
       getValue: getValue,
       setValue: setValue
     };
+  },
+
+  createSelect: function(e) {
+    var $parent = $(e.target).parent();
+    var $input = $parent.find('input');
+    var selectTarget = $(e.target).data('select');
+    var $select = this.$el.find('#' + selectTarget);
+    var value = $input.val();
+
+    if (value.length > 0) {
+      var option = '<option value="' + value + '" selected="selected">' + value + '</option>';
+
+      // Append this new option to the select list.
+      $select.append(option);
+
+      // Clear the now added value.
+      $input.attr('value', '');
+
+      // Update the list
+      $select.trigger('liszt:updated');
+    }
+
+    return false;
   },
 
   fileInput: function(e) {
