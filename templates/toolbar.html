@@ -7,7 +7,6 @@
   <% if (jekyll && metadata.published) { %>
     <a href='#' class='publish-flag published round contain' data-state='true'>
       <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>
-      <span class='popup round arrow-top'><%= t('actions.change.save') %></span>
     </a>
   <% } else if (jekyll && !metadata.published) { %>
     <a href='#' class='publish-flag round contain' data-state='false'>
