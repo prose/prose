@@ -101,7 +101,8 @@
             "metaTitle": "Review your changes:",
             "rawMeta": "Raw Metadata",
             "metaDescription": "Additions are highlighted in green. Deletions are crossed out.",
-            "back": "Done"
+            "back": "Done",
+            "createMeta": "Create New"
         },
         "upgrade": {
             "content": "Prose requires features not available to your browser",

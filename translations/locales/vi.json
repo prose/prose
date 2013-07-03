@@ -101,7 +101,8 @@
             "metaTitle": "Xem lại các thay đổi bạn đã chọn:",
             "rawMeta": "Thông tin bổ sung thô",
             "metaDescription": "Phần thêm vào được đánh dấu màu xanh. Phần xóa được gạch lằn.",
-            "back": "Hoàn tất"
+            "back": "Hoàn tất",
+            "createMeta": "Tạo mới"
         },
         "upgrade": {
             "content": "Các tính năng cần có từ chương trình hiện không có trong trình duyệt của bạn",

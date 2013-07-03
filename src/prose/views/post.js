@@ -23,6 +23,7 @@ module.exports = Backbone.View.extend({
     'click .save-action': 'updateFile',
     'click .publish-flag': 'togglePublishing',
     'click .draft-to-post': 'draft',
+    'click .create-select': 'createSelect',
     'click .meta .finish': 'backToMode',
     'change #upload': 'fileInput',
     'change .meta input': 'makeDirty'
@@ -255,6 +256,7 @@ module.exports = Backbone.View.extend({
   },
 
   meta: function() {
+    var view = this;
     $('#prose').toggleClass('open', false);
 
     // Vertical Nav
@@ -267,6 +269,13 @@ module.exports = Backbone.View.extend({
 
     // Refresh CodeMirror
     if (this.rawEditor) this.rawEditor.refresh();
+
+    // Refresh any textarea's in the frontmatter form that use codemirror
+    $('.yaml-block').each(function() {
+      var editor = $(this).find('.CodeMirror').attr('id');
+      if (view[editor]) view[editor].refresh();
+    });
+
     return false;
   },
 
@@ -422,7 +431,6 @@ module.exports = Backbone.View.extend({
 
   serialize: function() {
     var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata).trim();
-
     if (this.model.jekyll) {
       return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
     } else {
@@ -732,6 +740,33 @@ module.exports = Backbone.View.extend({
                 type: 'text'
               }));
               break;
+            case 'textarea':
+              tmpl = _(window.app.templates.textarea).template();
+              var id = _.stringToUrl(data.name);
+
+              $metadataEditor.append(tmpl({
+                name: data.name,
+                id: id,
+                value: data.field.value,
+                label: data.field.label,
+                type: 'textarea'
+              }));
+
+              _.defer(function() {
+                var textarea = document.getElementById(id);
+                view[id] = CodeMirror(function(el) {
+                  textarea.parentNode.replaceChild(el, textarea);
+                  el.id = id;
+                  el.className += ' inner ';
+                  el.setAttribute('data-name', data.name);
+                }, {
+                  mode: id,
+                  value: textarea.value,
+                  lineWrapping: true,
+                  theme: 'prose-bright'
+                });
+              });
+              break;
             case 'number':
               tmpl = _(window.app.templates.text).template();
               $metadataEditor.append(tmpl({
@@ -756,6 +791,7 @@ module.exports = Backbone.View.extend({
               $metadataEditor.append(tmpl({
                 name: data.name,
                 label: data.field.label,
+                alterable: data.field.alterable,
                 placeholder: data.field.placeholder,
                 options: data.field.options,
                 lang: model.metadata.lang || 'en'
@@ -812,6 +848,7 @@ module.exports = Backbone.View.extend({
         switch (item.type) {
           case 'select-multiple':
           case 'select-one':
+          case 'textarea':
           case 'text':
             if (value) {
               value = $item.data('type') === 'number' ? Number(value) : value;
@@ -849,6 +886,17 @@ module.exports = Backbone.View.extend({
         }
       });
 
+      // Load any data coming from a yaml-block of content.
+      $('.yaml-block').each(function() {
+        var editor = $(this).find('.CodeMirror').attr('id');
+        var name = $('#' + editor).data('name');
+
+        if (view[editor]) {
+          metadata[name] = jsyaml.load('|\n' + view[editor].getValue());
+        }
+      });
+
+      // Load any data coming from not defined raw yaml front matter.
       if (view.rawEditor) {
         try {
           metadata = _.merge(metadata, jsyaml.load(view.rawEditor.getValue()) || {});
@@ -898,6 +946,7 @@ module.exports = Backbone.View.extend({
                   }
                   break;
                 case 'text':
+                case 'textarea':
                   input[i].value = value;
                   matched = true;
                   break;
@@ -924,6 +973,7 @@ module.exports = Backbone.View.extend({
                 }
                 break;
               case 'text':
+              case 'textarea':
                 input[i].value = value;
                 matched = true;
                 break;
@@ -1024,6 +1074,29 @@ module.exports = Backbone.View.extend({
     };
   },
 
+  createSelect: function(e) {
+    var $parent = $(e.target).parent();
+    var $input = $parent.find('input');
+    var selectTarget = $(e.target).data('select');
+    var $select = this.$el.find('#' + selectTarget);
+    var value = $input.val();
+
+    if (value.length > 0) {
+      var option = '<option value="' + value + '" selected="selected">' + value + '</option>';
+
+      // Append this new option to the select list.
+      $select.append(option);
+
+      // Clear the now added value.
+      $input.attr('value', '');
+
+      // Update the list
+      $select.trigger('liszt:updated');
+    }
+
+    return false;
+  },
+
   fileInput: function(e) {
     var view = this;
     upload.fileSelect(e, function(e, file, content) {
@@ -1056,9 +1129,6 @@ module.exports = Backbone.View.extend({
       if (view.model.jekyll) {
         view.metadataEditor = view.buildMeta();
       }
-
-      // Don't set up content editor for yaml posts
-      if (view.model.lang === 'yaml') return;
 
       var lang = view.model.lang;
       view.editor = CodeMirror(document.getElementById('code'), {
