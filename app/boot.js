@@ -18,12 +18,12 @@ var cookie = require('./cookie');
 var setLanguage = (cookie.get('lang')) ? true : false;
 
 // Check if the browsers language is supported
-if (setLanguage) app.locale = cookie.get('lang');
+if (setLanguage) locale = cookie.get('lang');
 
-if (app.locale && app.locale !== 'en') {
-    $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
-        window.locale[app.locale] = result;
-        window.locale.current(app.locale);
+if (locale && locale !== 'en') {
+    $.getJSON('./translations/locales/' + locale + '.json', function(result) {
+        window.locale[locale] = result;
+        window.locale.current(locale);
     });
 }
 
