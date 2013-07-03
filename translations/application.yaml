@@ -15,7 +15,7 @@ en:
     about: "About"
     develop: "Developers"
     logout: "Logout"
-    language: "Choose Language"
+    language: "Language"
   heading:
     explore: "Explore Projects"
   actions:

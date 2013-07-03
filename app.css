@@ -544,7 +544,7 @@ ins {
   }
 
 .dropdown-menu.prose-menu {
-  width:135px;
+  width:120px;
   position:fixed;
   z-index:5000;
   top:0;
@@ -1574,6 +1574,7 @@ ins {
     right:0;
     z-index:1000;
     padding:0 0 15px;
+    width:120px;
     display:none;
     }
     .dropdown li {
@@ -1592,7 +1593,9 @@ ins {
       float:none;
       clear:both;
       line-height:20px;
+      text-overflow:ellipsis;
       white-space:nowrap;
+      overflow:hidden;
       -webkit-font-smoothing:subpixel-antialiased;
       }
     .dropdown a.active,
