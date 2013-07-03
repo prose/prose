@@ -1130,9 +1130,6 @@ module.exports = Backbone.View.extend({
         view.metadataEditor = view.buildMeta();
       }
 
-      // Don't set up content editor for yaml posts
-      if (view.model.lang === 'yaml') return;
-
       var lang = view.model.lang;
       view.editor = CodeMirror(document.getElementById('code'), {
         mode: view.model.lang,
