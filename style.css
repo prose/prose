@@ -150,6 +150,9 @@ button,
   font-weight:700;
   color:#fff;
   text-align:center;
+  text-overflow:ellipsis;
+	white-space:nowrap;
+	overflow:hidden;
   }
   button:active,
   .button:active {
@@ -252,8 +255,8 @@ input[type=text] {
   display:inline-block;
   width:100%;
   padding:6px 8px;
-  -webkit-border-radius:1px;
-          border-radius:1px;
+  -webkit-border-radius:2px;
+          border-radius:2px;
   }
 textarea,
 input[type=text] {
@@ -276,11 +279,8 @@ textarea#code {
   border:none;
   }
 .authoring textarea,
-.meta textarea,
-.authoring input[type=text],
-.meta input[type=text] {
-  -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.15);
-          box-shadow:inset 0 1px 3px rgba(0,0,0,0.15);
+.authoring input[type=text] {
+  border-color:#a8afb2;
   }
   textarea:focus,
   input[type=text]:focus {
@@ -610,9 +610,8 @@ ins {
 
 .nav.auth {
   position:absolute;
-  margin:0
   padding:0;
-  bottom:5px;
+  bottom:0;
   }
 .nav li a {
   background-color:#f8f8f8;
@@ -1541,36 +1540,32 @@ ins {
       opacity:1;
       }
 
-.prose .blocks {
-  margin:0;
+.prose .fat-list {
+  list-style:none;
   padding:0;
+  margin:0 0 30px;
+  border:1px solid #d4d7d9;
   }
-  .blocks .img {
-    width:100%;
-    height:120px;
-    background-size:cover;
-    }
-  .blocks li {
-    list-style:none;
-    width:33.333%;
+  .fat-list li a {
+    padding:8px 15px;
+    color:#444;
+    border-bottom:1px solid #d4d7d9;
     display:block;
-    float:left;
     }
-    .blocks li a {
-      background-color:#fff;
-      margin:0 5px 15px;
-      color:#444;
-      display:block;
-      font-weight:400;
-      height:280px;
-      border:1px solid #a8afb2;
-      box-shadow:0 1px 0 rgba(255, 255, 255, 0),
-                 0 0 10px rgba(0, 0, 0, 0.1);
+    .fat-list li:first-child a {
+      -webkit-border-radius:4px 4px 0 0;
+              border-radius:4px 4px 0 0;
       }
-      .blocks li a:hover {
-        border-color:#516066;
-        color:#444;
-        }
+    .fat-list li:last-child a {
+      border-bottom:none;
+      -webkit-border-radius:0 0 4px 4px;
+              border-radius:0 0 4px 4px;
+      }
+    .fat-list li a.active,
+    .fat-list li a:hover {
+      background-color:#f8f8f8;
+      color:#444;
+      }
 
 .dropdown-menu {
   position:relative;
@@ -1585,9 +1580,8 @@ ins {
     top:100%;
     right:0;
     z-index:1000;
-    min-width:120px;
-    padding:0 0 12px;
-    text-align:left;
+    padding:0 0 15px;
+    width:120px;
     display:none;
     }
     .dropdown li {
@@ -1606,7 +1600,9 @@ ins {
       float:none;
       clear:both;
       line-height:20px;
+      text-overflow:ellipsis;
       white-space:nowrap;
+      overflow:hidden;
       -webkit-font-smoothing:subpixel-antialiased;
       }
     .dropdown a.active,
@@ -1632,8 +1628,8 @@ ins {
 
 .publish-flag, .draft-to-post {
   color:#a8afb2;
-  height:43px;
-  line-height:43px;
+  height:42px;
+  line-height:42px;
   padding:0 15px;
   float:right;
   }
@@ -1679,7 +1675,7 @@ ins {
         }
 
   .post .view.meta {
-    background:#f8f8f8;
+    background:#f0f0f0;
     width:360px;
     margin:0 auto;
     }
@@ -1689,6 +1685,12 @@ ins {
   white-space:pre-wrap;
   }
 
+.meta .chzn-container-multi .chzn-choices,
+.meta input {
+  border:none;
+  -webkit-box-shadow:none;
+          box-shadow:none;
+  }
 .meta .inner {
   background:#fff;
   }
@@ -1700,7 +1702,7 @@ ins {
   padding:15px 15px 30px;
   }
   .meta .form-item {
-    padding:4px 15px;
+    padding:8px 15px 0;
     }
     .meta .form-item.link {
       margin:15px 0 0;
@@ -1719,6 +1721,26 @@ ins {
         .form-item button[value='false']:hover {
           background-color:#73955c;
           }
+    .meta .create {
+      position:relative;
+      margin:5px 0 0;
+      width:90%;
+      }
+      .meta .create input {
+        padding-right:135px;
+        }
+      .meta .create .button {
+        position:absolute;
+        top:2px;
+        right:0;
+        padding:0 15px;
+        margin:0;
+        height:30px;
+        line-height:30px;
+        max-width:120px;
+        -webkit-border-radius:0 4px 4px 0;
+                border-radius:0 4px 4px 0;
+        }
 
 .sidebar .commit {
   position:relative;
@@ -1769,7 +1791,7 @@ ins {
   }
 .chzn-container .chzn-drop {
   background:#fff;
-  border:1px solid #adb4b6;
+  border:1px solid #adb4b6!important;
   border-top:0;
   position:absolute;
   z-index:1010;
@@ -1876,9 +1898,11 @@ ins {
   padding:0;
   cursor:text;
   overflow:hidden;
-  height:auto !important;
+  height:auto!important;
   height:1%;
   position:relative;
+  -webkit-border-radius:2px;
+          border-radius:2px;
   }
 .chzn-container-multi .chzn-choices li {
   float:left;
@@ -1892,7 +1916,7 @@ ins {
 .chzn-container-multi .chzn-choices .search-field input {
   border:none;
   height:15px;
-  padding:5px;
+  padding:5px 8px;
   color:#666;
   height:30px;
   -webkit-box-shadow:none;
@@ -1900,13 +1924,14 @@ ins {
   }
 .chzn-container-multi .chzn-choices .search-field .default {
   color:#999;
+  font-style:italic;
   }
 .chzn-container-multi .chzn-choices .search-choice {
   background:#eff3f5;
   border:1px solid #2099AA;
   color:#3d494e;
   width:95%;
-  padding:4px 20px 5px 5px;
+  padding:4px 20px 5px 8px;
   margin:3px;
   position:relative;
   cursor:default;
@@ -1932,10 +1957,11 @@ ins {
   display:block;
   position:absolute;
   right:0;
-  top:0;
+  top:50%;
   width:20px;
   height:20px;
   text-indent:-999em;
+  margin:-10px 0 0 0;
   }
 .chzn-container .chzn-results {
   margin:0 0 10px 5px;
@@ -1947,8 +1973,8 @@ ins {
   -webkit-overflow-scrolling:touch;
   }
 .chzn-container-multi .chzn-results {
-  padding:0 0 0 4px;
-  margin:10px 0 10px 5px;
+  padding:0;
+  margin:0;
   }
 .chzn-container .chzn-results li {
   display:none;
@@ -1962,7 +1988,7 @@ ins {
   display:list-item;
   }
 .chzn-container .chzn-results .highlighted {
-  background-color:#eff3f5;
+  background-color:#f8f8f8;
   -webkit-font-smoothing:subpixel-antialiased;
   }
 .chzn-container .chzn-results li em {
@@ -2415,11 +2441,8 @@ ins {
       position:static;
       width:auto;
       float:left;
-      padding:8px 0;
+      padding:0 0 8px;
       }
-      .prose-menu .dropdown li {
-        float:left;
-        }
       .prose-menu .dropdown .divider {
         display:none;
         }

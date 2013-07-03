@@ -322,9 +322,6 @@ module.exports = Backbone.View.extend({
   initEditor: function() {
     var lang = this.model.get('lang');
 
-    // Don't set up content editor for yaml posts
-    if (lang === 'yaml') return;
-
     // TODO: set default content for CodeMirror
     this.editor = CodeMirror(this.$el.find('#code')[0], {
       mode: lang,
@@ -561,6 +558,12 @@ module.exports = Backbone.View.extend({
     // Content Window
     this.$el.find('.views .view').removeClass('active');
     this.$el.find('#meta').addClass('active');
+
+    // Refresh any textarea's in the frontmatter form that use codemirror
+    $('.yaml-block').each(function() {
+      var editor = $(this).find('.CodeMirror').attr('id');
+      if (view[editor]) view[editor].refresh();
+    });
 
     this.metadataEditor.refresh();
   },

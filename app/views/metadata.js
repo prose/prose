@@ -10,6 +10,7 @@ module.exports = Backbone.View.extend({
 
   events: {
     'change input': 'makeDirty',
+    'click .create-select': 'createSelect',
     'click .finish': 'exit'
   },
 
@@ -58,6 +59,33 @@ module.exports = Backbone.View.extend({
               type: 'text'
             }));
             break;
+        case 'textarea':
+          tmpl = _.template(templates.meta.textarea);
+          var id = _.stringToUrl(data.name);
+
+          form.append(tmpl({
+            name: data.name,
+            id: id,
+            value: data.field.value,
+            label: data.field.label,
+            type: 'textarea'
+          }));
+
+          _.defer(function() {
+            var textarea = document.getElementById(id);
+            view[id] = CodeMirror(function(el) {
+              textarea.parentNode.replaceChild(el, textarea);
+              el.id = id;
+              el.className += ' inner ';
+              el.setAttribute('data-name', data.name);
+            }, {
+              mode: id,
+              value: textarea.value,
+              lineWrapping: true,
+              theme: 'prose-bright'
+            });
+          });
+          break;
           case 'number':
             tmpl = _.template(templates.meta.text);
             form.append(tmpl({
@@ -82,6 +110,7 @@ module.exports = Backbone.View.extend({
             form.append(tmpl({
               name: data.name,
               label: data.field.label,
+              alterable: data.field.alterable,
               placeholder: data.field.placeholder,
               options: data.field.options,
               lang: lang
@@ -137,6 +166,7 @@ module.exports = Backbone.View.extend({
   },
 
   getValue: function() {
+    var view = this;
     var metadata = {};
 
     // TODO Do the same with title
@@ -159,6 +189,7 @@ module.exports = Backbone.View.extend({
       switch (item.type) {
         case 'select-multiple':
         case 'select-one':
+        case 'textarea':
         case 'text':
           if (value) {
             value = $item.data('type') === 'number' ? Number(value) : value;
@@ -196,6 +227,17 @@ module.exports = Backbone.View.extend({
       }
     });
 
+    // Load any data coming from a yaml-block of content.
+    this.$el.find('.yaml-block').each(function() {
+      var editor = $(this).find('.CodeMirror').attr('id');
+      var name = $('#' + editor).data('name');
+
+      if (view[editor]) {
+        metadata[name] = jsyaml.load(view[editor].getValue());
+      }
+    });
+
+    // Load any data coming from not defined raw yaml front matter.
     if (this.raw) {
       try {
         metadata = _.merge(metadata, jsyaml.load(this.raw.getValue()) || {});
@@ -243,6 +285,7 @@ module.exports = Backbone.View.extend({
                   }
                   break;
                 case 'text':
+                case 'textarea':
                   input[i].value = value;
                   matched = true;
                   break;
@@ -301,7 +344,7 @@ module.exports = Backbone.View.extend({
         var defaults = _.find(this.model.get('defaults'), function(data) { return data.name === key; });
         var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
 
-        if (key !== 'published' && 
+        if (key !== 'published' &&
             key !== 'title' &&
             !defaults) {
           raw = {};
@@ -373,6 +416,29 @@ module.exports = Backbone.View.extend({
   refresh: function() {
     // Refresh CodeMirror
     if (this.raw) this.raw.refresh();
+  },
+
+  createSelect: function(e) {
+    var $parent = $(e.target).parent();
+    var $input = $parent.find('input');
+    var selectTarget = $(e.target).data('select');
+    var $select = this.$el.find('#' + selectTarget);
+    var value = $input.val();
+
+    if (value.length > 0) {
+      var option = '<option value="' + value + '" selected="selected">' + value + '</option>';
+
+      // Append this new option to the select list.
+      $select.append(option);
+
+      // Clear the now added value.
+      $input.attr('value', '');
+
+      // Update the list
+      $select.trigger('liszt:updated');
+    }
+
+    return false;
   },
 
   exit: function() {

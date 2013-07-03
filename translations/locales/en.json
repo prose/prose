@@ -15,7 +15,8 @@
         "login": "Authorize with GitHub",
         "about": "About",
         "develop": "Developers",
-        "logout": "Logout"
+        "logout": "Logout",
+        "language": "Choose Language"
     },
     "heading": {
         "explore": "Explore Projects"
@@ -23,13 +24,16 @@
     "actions": {
         "unsaved": "You have unsaved Changes. Are you sure you want to leave?",
         "draft": {
-            "toPost": "Draft to Post"
+            "toPost": "Draft to Post",
+            "toPostInfo": "Convert this draft into a published post"
         },
         "publishing": {
             "publish": "Publish",
+            "publishInfo": "This post will be published the next time you save",
             "published": "Published",
             "unpublish": "Unpublish",
-            "unpublished": "Unpublished"
+            "unpublished": "Unpublished",
+            "unpublishInfo": "This post will be unpublished the next time you save"
         },
         "change": {
             "noChange": "No Changes",
@@ -97,7 +101,8 @@
             "metaTitle": "Review your changes:",
             "rawMeta": "Raw Metadata",
             "metaDescription": "Additions are highlighted in green. Deletions are crossed out.",
-            "back": "Done"
+            "back": "Done",
+            "createMeta": "Create New"
         },
         "upgrade": {
             "content": "Prose requires features not available to your browser",
@@ -153,7 +158,7 @@
         "media": {
             "title": "Insert Image",
             "back": "Back",
-            "description": "Upload images by dragging &amp; Dropping or </br>\n{input} <a>selecting one</a>\n",
+            "description": "Upload images by Dragging &amp; Dropping or </br>\n{input} <a>selecting one</a>\n",
             "help": "Images uploaded are added to the current directory or one specified in the Image URL path above.",
             "helpMedia": "Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field.",
             "choose": "Choose Existing"
@@ -223,6 +228,10 @@
                 }
             }
         }
+    },
+    "chooselanguage": {
+        "title": "Choose a Language",
+        "description": "Prose is a translated application. If you don't see your language in the list, there are spelling errors, or translations are missing, consider <a href='https://www.transifex.com/projects/p/prose'>contributing translations to the project</a>.\n"
     },
     "about": {
         "content": "# About\nProse provides a beatifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"

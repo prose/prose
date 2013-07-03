@@ -2,7 +2,12 @@
 
 <div id='post' class='post limiter'>
   <div class='editor views<% if (markdown) { %> markdown<% } %>'>
-    <div id='diff' class='view prose diff'></div>
+    <div id='diff' class='view prose diff'>
+      <h2><%= t('main.file.metaTitle') %><br />
+        <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>
+      </h2>
+      <div class='diff-content inner'></div>
+    </div>
     <div id='meta' class='view round meta'></div>
     <div id='edit' class='view active edit'>
       <div class='topbar-wrapper'>
