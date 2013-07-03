@@ -5,6 +5,13 @@ var marked = require('marked');
 var queue = require('queue-async');
 var chrono = require('chrono');
 
+// Cleans up a string for use in urls
+// -------
+_.stringToUrl = function(string) {
+  return string.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+},
+
+
 // Run an array of functions in serial
 // -------
 
