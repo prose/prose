@@ -4,6 +4,7 @@ _.merge = require('deepmerge');
 var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
 var templates = require('../../dist/templates');
+var util = require('.././util');
 
 module.exports = Backbone.View.extend({
   template: _.template(templates.metadata),
@@ -61,7 +62,7 @@ module.exports = Backbone.View.extend({
             break;
         case 'textarea':
           tmpl = _.template(templates.meta.textarea);
-          var id = _.stringToUrl(data.name);
+          var id = util.stringToUrl(data.name);
 
           form.append(tmpl({
             name: data.name,

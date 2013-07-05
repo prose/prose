@@ -4,6 +4,7 @@ var en = require('../dist/en.js');
 // Set locale as global variable
 window.locale.en = en;
 window.locale.current('en');
+window.app = {};
 
 var $ = require('jquery-browserify');
 var _ = require('underscore');
@@ -18,12 +19,12 @@ var cookie = require('./cookie');
 var setLanguage = (cookie.get('lang')) ? true : false;
 
 // Check if the browsers language is supported
-if (setLanguage) locale = cookie.get('lang');
+if (setLanguage) app.locale = cookie.get('lang');
 
-if (locale && locale !== 'en') {
-    $.getJSON('./translations/locales/' + locale + '.json', function(result) {
-        window.locale[locale] = result;
-        window.locale.current(locale);
+if (app.locale && app.locale !== 'en') {
+    $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+        window.locale[app.locale] = result;
+        window.locale.current(app.locale);
     });
 }
 

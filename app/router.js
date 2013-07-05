@@ -15,6 +15,8 @@ var SearchView = require('./views/search');
 var ReposView = require('./views/repos');
 var RepoView = require('./views/repo');
 var FileView = require('./views/file');
+var DocumentationView = require('./views/documentation');
+var ChooseLanguageView = require('./views/chooselanguage');
 
 var templates = require('../dist/templates');
 var util = require('./util');
@@ -53,18 +55,20 @@ module.exports = Backbone.Router.extend({
 
   chooseLanguage: function() {
     this.minimalPage();
-    var view = new app.views.ChooseLanguage().render();
+    var view = new ChooseLanguageView().render();
     $('#main').empty().append(view.el);
   },
 
   about: function() {
     this.minimalPage();
-    var view = new app.views.Documentation().render();
+    var view = new DocumentationView().render();
+
+    console.log(view);
     $('#main').empty().append(view.el);
   },
 
   minimalPage: function() {
-    router.application.render({
+    this.app.render({
       nomenu: true
     });
   },

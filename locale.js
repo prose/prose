@@ -11,7 +11,7 @@ function t(s, o, loc) {
     if (!arguments.length) return;
     loc = loc || locale._current;
 
-    var path = s.split(".").reverse(),
+    var path = s.split('.').reverse(),
         rep = locale[loc];
 
     while (rep !== undefined && path.length) rep = rep[path.pop()];

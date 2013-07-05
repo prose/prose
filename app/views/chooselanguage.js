@@ -3,10 +3,10 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 var cookie = require('../cookie');
 var templates = require('../../dist/templates');
-var LOCALES = require('../../../translations/locales');
+var LOCALES = require('../../translations/locales');
 
 module.exports = Backbone.View.extend({
-  className: 'inner deep prose',
+  className: 'inner deep prose limiter',
 
   template: _.template(templates.chooselanguage),
 
