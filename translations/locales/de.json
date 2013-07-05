@@ -1,1 +1,122 @@
-{}
+{
+    "docheader": {
+        "editing": "Bearbeiten",
+        "preview": "Vorschau"
+    },
+    "actions": {
+        "unsaved": "Sie haben nicht gespeicherte Änderungen. Sind Sie sicher, das Sie die Anwendung verlassen möchten? ",
+        "publishing": {
+            "publish": "Veröffentlichen",
+            "published": "Veröffentlicht",
+            "unpublish": "Veröffentlichung  aufheben",
+            "unpublished": "Veröffentlichung  aufgehoben"
+        },
+        "change": {
+            "noChange": "Keine Änderungen",
+            "save": "Speichern"
+        },
+        "delete": {
+            "title": "Löschen",
+            "warn": "Sind Sie sicher, das Sie die Datei löschen möchtest?",
+            "error": "Fehler beim löschen. Bitte warten Sie 30 Sekunden und versuchen es erneut."
+        },
+        "save": {
+            "title": "Speichern",
+            "fileNameError": "Dateiname benötigt",
+            "submission": "Anfrage verschickt",
+            "metaError": "Fehler! Metainformationen nicht gefunden"
+        },
+        "restore": {
+            "restoring": "Wiederherstellung",
+            "restored": "Wiederhergestellt"
+        },
+        "commits": {
+            "created": "Erstellt {filename}",
+            "updated": "Aktualisiert {filename}",
+            "toDraft": "Erstellt Entwurf für {filename}",
+            "fromDraft": "Erstellte Beitrag von Entwurf für {filename}"
+        }
+    },
+    "loading": {
+        "repos": "Lade Profil",
+        "repo": "Lade Projekt",
+        "file": "Lade Datei",
+        "creating": "Erstelle neue Beitrag"
+    },
+    "main": {
+        "start": {
+            "content": "Prose ist ein Content-Editor für GitHub zur Verwaltung von Websites.",
+            "learn": "Erfahren Sie mehr"
+        },
+        "repos": {
+            "filter": "Projekte filtern",
+            "repo": "Projekt ansehen",
+            "site": "Webseite ansehen"
+        },
+        "repo": {
+            "filter": "Dateien filtern",
+            "edit": "Bearbeiten"
+        },
+        "new": {
+            "body": "## Ein neuer Beitrag\\n\\nGeben Text in [Markdown](http://daringfireball.net/projects/markdown/). Verwenden Sie die Symbolleiste oben, oder klicken Sie auf die **?** Taste um Hilfe mit de Formatierung zu erhalten.\n"
+        },
+        "upgrade": {
+            "content": "Prose erfordert Funktionen, die Ihr Browser nicht besitzt.",
+            "download": "Laden Sie einen modernen Browser herunter"
+        }
+    },
+    "sidebar": {
+        "repo": {
+            "branch": "Branch ändern",
+            "drafts": "Entwürfe ansehen",
+            "history": {
+                "actions": {
+                    "restore": "Wiederherstellen?"
+                }
+            },
+            "create": "Neue Datei erstellen"
+        },
+        "save": {
+            "label": "Beschreiben Sie Ihre Änderungen",
+            "cancel": "Beenden",
+            "save": "Commit",
+            "submit": "Änderungswunsch abschicken"
+        },
+        "settings": {
+            "title": "Optionen",
+            "delete": "Diese Datei löschen",
+            "draft": "Entwurf erstellen"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Link einfügen",
+            "insert": "Einfügen"
+        },
+        "help": {
+            "blockElements": {
+                "content": {
+                    "paragraphs": {
+                        "title": "Absätze  &amp; Umbrüche",
+                        "content": "<p>Um einen Absatz zu erstellen, erstellen Sie einfach einen Text, der nicht durch eine oder mehrere Leerzeilen getrennt ist. Textblöcke, die von einem oder mehreren Leerzeilen getrennt werden als Absätze betrachtet.</p><p>Wenn Sie einen Zeilenumbruch erstellen möchten, beenden Sie eine Zeile mit zwei oder mehr Leerzeichen, dann drücken Sie Return / Eingabe.</p>\n"
+                    },
+                    "headers": {
+                        "title": "Überschriften",
+                        "content": "<p>Markdown unterstützt zwei Überschriftenformate. Der Wiki-Editor gibt es die &ldquo;atx&rsquo;-style-Überschrift. Beginnen Sie Überschrift einfach mit einerAnzahl von <code>#</code> Zeichen, um die Tiefe anzugeben. Zum Beispiel: <code># Header 1</ code>, <code>## Header 2 </ code> und <code>### Header 3 </ code> erstellen immer kleiner Überschriften. Sie können Ihre Überschrift mit einer beliebigen Anzahl von <code>#</code> beenden.</p>\n\n"
+                    },
+                    "blockquotes": {
+                        "title": "Zitate",
+                        "content": "<p>Markdown zitiert im E-Mail-Stil durch Voranstellen jeder Zeile mit <code>&gt;</code>. Das sieht am Besten aus, wenn Sie einen harten Zeilenumbruch benutzen und jeder Zeile ein <code>&gt;</code> voranstellen. Allerdings Markdown unterstützt auch <code>&gt;</code> vor jeden Absatz.</p>\n"
+                    },
+                    "lists": {
+                        "title": "Listen",
+                        "content": "<p>Markdown unterstützt sowohl geordnete und ungeordnete Listen. Um eine geordnete Liste zu erstellen, einfach jeder Zeile mit einer Zahl beginnen (jede beliebige Zahl funktioniert &mdash; deshalb benutzt der Editor nur eine einzige Zahl). Um eine ungeordnete Liste zu erstellen, beginnen Sie jede Zeile mit <code>*</code>, <code>+</code> oder <code>-</code>.</p> Listenelemente können mehrere Absätze enthalten, aber jeder Absatz muss mit mindestens 4 Leerzeichen oder einem Tabulator eingerückt werden.\n"
+                    },
+                    "codeBlocks": {
+                        "title": "Code Blöcke"
+                    }
+                }
+            }
+        }
+    }
+}
