@@ -66,20 +66,23 @@ user.authenticate({
 
           var link = auth.site + '/login/oauth/authorize?client_id=' + auth.id + '&scope=repo,user&redirect_uri' + encodeURIComponent(window.location.href);
 
-          var view = new NotificationView({
+          var error = new NotificationView({
             'message': t('notification.error.github'),
-            'action': 'Login',
+            'action': t('login'),
             'link': link
           }).render();
 
-          $('#prose').html(view.el);
+          $('#prose').html(error.el);
         }
       });
     } else {
-      // TODO: emit notification event
-      // Display an upgrade notice.
-      var tmpl = _.template(templates.upgrade);
-      $('#prose').html(tmpl);
+      var upgrade = new NotificationView({
+        'message': t('main.upgrade.content'),
+        'action': t('main.upgrade.download'),
+        'link': 'https://www.google.com/intl/en/chrome/browser'
+      }).render();
+
+      $('#prose').html(upgrade.el);
     }
   },
   error: function() {
