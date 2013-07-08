@@ -240,5 +240,7 @@ module.exports = Backbone.Model.extend({
   validate: function(attributes, options) {
     // Fail validation if path conflicts with another file in repo
     if (this.collection.where({ path: attributes.path }).length > 1) return 'Path Conflict';
+
+    // TODO Check If there is a markdown error
   }
 });

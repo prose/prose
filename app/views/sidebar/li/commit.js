@@ -75,12 +75,14 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(_.template(this.template, {
+    var commit = {
       file: this.file,
       repo: this.repo.toJSON(),
       branch: this.branch,
       status: this.file.status
-    }, { variable: 'commit' }));
+    }
+
+    this.$el.html(_.template(this.template, commit, { variable: 'commit' }));
 
     return this;
   }
