@@ -1,7 +1,7 @@
 <div class='form-item'>
-  <label for='<%= name %>'><%= label %></label>
-  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>
-    <% _(options).each(function(o) { %>
+  <label for='<%= meta.name %>'><%= meta.label %></label>
+  <select name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' class='chzn-select'>
+    <% _(meta.options).each(function(o) { %>
       <% if (!o.lang || o.lang === lang) { %>
         <% if (o.name) { %>
          <option value='<%= o.value %>'><%= o.name %></option>

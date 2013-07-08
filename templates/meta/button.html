@@ -1,6 +1,6 @@
 <div class='form-item'>
-  <label for='<%= name %>'><%= label %></label>
-  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>
-    <% print(value ? on : off); %>
+  <label for='<%= meta.name %>'><%= meta.label %></label>
+  <button class='round <%= meta.name %>' type='button' name='<%= meta.name %>' value='<%= meta.value %>' data-on='<%= meta.on %>' data-off='<%= meta.off %>'>
+    <% print(value ? meta.on : meta.off); %>
   </button>
 </div>

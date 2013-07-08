@@ -1,7 +1,7 @@
 <div class='form-item'>
-  <label for='<%= name %>'><%= label %></label>
-  <select id='<%= name %>' name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>
-    <% _(options).each(function(o) { %>
+  <label for='<%= meta.name %>'><%= meta.label %></label>
+  <select id='<%= meta.name %>' name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' multiple class='chzn-select'>
+    <% _(meta.options).each(function(o) { %>
       <% if (!o.lang || o.lang === lang) { %>
         <% if (o.name) { %>
          <option value='<%= o.value %>'><%= o.name %></option>
@@ -14,10 +14,10 @@
     <% }); %>
   </select>
 
-  <% if (alterable) { %>
+  <% if (meta.alterable) { %>
     <div class='create'>
       <input type='text' class='inline' />
-      <a href='#' class='round create-select inline button' data-select='<%= name %>' title="<%= t('main.file.createMeta') %>"><%= t('main.file.createMeta') %></a>
+      <a href='#' class='round create-select inline button' data-select='<%= meta.name %>' title="<%= t('main.file.createMeta') %>"><%= t('main.file.createMeta') %></a>
     </div>
   <% } %>
 </div>

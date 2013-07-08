@@ -7,7 +7,7 @@ var templates = require('../../dist/templates');
 var util = require('.././util');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.metadata),
+  template: templates.metadata,
 
   events: {
     'change input': 'makeDirty',
@@ -24,7 +24,7 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var self = this;
-    this.$el.html(this.template());
+    this.$el.empty().append(_.template(this.template));
 
     var form = this.$el.find('.form');
     var lang = this.model.get('metadata').lang || 'en';
@@ -34,88 +34,108 @@ module.exports = Backbone.View.extend({
       if (data && data.field) {
         switch (data.field.element) {
           case 'button':
-            tmpl = _.template(templates.meta.button);
-            form.append(tmpl({
+            var button = {
               name: data.name,
               label: data.field.label,
               value: data.field.value,
               on: data.field.on,
               off: data.field.off
+            }
+
+            form.append(_.template(templates.meta.button, button, {
+              variable: 'meta'
             }));
             break;
           case 'checkbox':
-            tmpl = _.template(templates.meta.checkbox);
-            form.append(tmpl({
+            var checkbox = {
               name: data.name,
               label: data.field.label,
               value: data.name,
               checked: data.field.value
+            }
+
+            form.append(_.template(templates.meta.checkbox, checkbox, {
+              variable: 'meta'
             }));
             break;
           case 'text':
-            tmpl = _.template(templates.meta.text);
-            form.append(tmpl({
+            var text = {
               name: data.name,
               label: data.field.label,
               value: data.field.value,
               type: 'text'
+            }
+
+            form.append(_.template(templates.meta.text, text, {
+              variable: 'meta'
             }));
             break;
-        case 'textarea':
-          tmpl = _.template(templates.meta.textarea);
-          var id = util.stringToUrl(data.name);
+          case 'textarea':
+            var id = util.stringToUrl(data.name);
+            var textarea = {
+              name: data.name,
+              id: id,
+              value: data.field.value,
+              label: data.field.label,
+              type: 'textarea'
+            }
 
-          form.append(tmpl({
-            name: data.name,
-            id: id,
-            value: data.field.value,
-            label: data.field.label,
-            type: 'textarea'
-          }));
+            form.append(_.template(templates.meta.textarea, textarea, {
+              variable: 'meta'
+            }));
 
-          _.defer(function() {
-            var textarea = document.getElementById(id);
-            self[id] = CodeMirror(function(el) {
-              textarea.parentNode.replaceChild(el, textarea);
-              el.id = id;
-              el.className += ' inner ';
-              el.setAttribute('data-name', data.name);
-            }, {
-              mode: id,
-              value: textarea.value,
-              lineWrapping: true,
-              theme: 'prose-bright'
+            _.defer(function() {
+              var textarea = document.getElementById(id);
+              self[id] = CodeMirror(function(el) {
+                textarea.parentNode.replaceChild(el, textarea);
+                el.id = id;
+                el.className += ' inner ';
+                el.setAttribute('data-name', data.name);
+              }, {
+                mode: id,
+                value: textarea.value,
+                lineWrapping: true,
+                theme: 'prose-bright'
+              });
             });
-          });
-          break;
+            break;
           case 'number':
-            tmpl = _.template(templates.meta.text);
-            form.append(tmpl({
+            var number = {
               name: data.name,
               label: data.field.label,
               value: data.field.value,
               type: 'number'
+            }
+
+            form.append(_.template(templates.meta.text, number, {
+              variable: 'meta'
             }));
             break;
           case 'select':
-            tmpl = _.template(templates.meta.select);
-            form.append(tmpl({
+            var select = {
               name: data.name,
               label: data.field.label,
               placeholder: data.field.placeholder,
               options: data.field.options,
               lang: lang
+            }
+
+            form.append(_.template(templates.meta.select, select, {
+              variable: 'meta'
             }));
             break;
           case 'multiselect':
-            tmpl = _.template(templates.meta.multiselect);
-            form.append(tmpl({
+            var multiselect = {
               name: data.name,
               label: data.field.label,
               alterable: data.field.alterable,
               placeholder: data.field.placeholder,
               options: data.field.options,
               lang: lang
+            }
+
+            form.append(_.template(templates.meta.multiselect, multiselect, {
+              variable: 'meta'
             }));
             break;
           case 'hidden':
@@ -126,12 +146,15 @@ module.exports = Backbone.View.extend({
             break;
         }
       } else {
-        tmpl = _.template(templates.meta.text);
-        form.append(tmpl({
+        var txt = {
           name: key,
           label: key,
           value: data,
           type: 'text'
+        }
+
+        form.append(_.template(templates.meta.text, txt, {
+          variable: 'meta'
         }));
       }
     }).bind(this));

@@ -6,7 +6,7 @@ var utils = require('../util');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.nav),
+  template: templates.nav,
 
   events: {
     'click a.new': 'emit',
@@ -28,7 +28,6 @@ module.exports = Backbone.View.extend({
   emit: function(e) {
     var state = $(e.currentTarget).data('state');
     this.toggle(state, e);
-
     return false;
   },
 
@@ -57,13 +56,11 @@ module.exports = Backbone.View.extend({
   toggleMobileClass: function(e) {
     $(e.target).toggleClass('active');
     this.$el.toggleClass('mobile');
-
     return false;
   },
 
   render: function() {
-    this.$el.html(this.template());
-
+    this.$el.empty().append(_.template(this.template));
     return this;
   }
 });
