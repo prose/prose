@@ -1,12 +1,20 @@
 <% if (draft) { %>
-  <a href='#' class='draft-to-post'><%= t('actions.draft.toPost') %><span class='ico checkmark'></span></a>
+  <a href='#' class='draft-to-post'>
+    <%= t('actions.draft.toPost') %><span class='ico checkmark'></span>
+    <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>
+  </a>
 <% } else { %>
   <% if (metadata && metadata.published) { %>
-    <a href='#' class='publish-flag published round' data-state='true'><%= t('actions.publishing.published') %><span class='ico small checkmark'></span></a>
+    <a href='#' class='publish-flag published round' data-state='true'>
+      <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>
+    </a>
   <% } else if (metadata && !metadata.published) { %>
-    <a href='#' class='publish-flag' data-state='false'><%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span></a>
+    <a href='#' class='publish-flag' data-state='false'>
+      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>
+    </a>
   <% } %>
 <% } %>
+
 <div class='options clearfix'>
   <span href='#' class='action round fl ico small document <%= lang %>'>
     <span class='status'></span>

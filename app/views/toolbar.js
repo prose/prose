@@ -161,7 +161,7 @@ module.exports = Backbone.View.extend({
     } else if ($target.data('dialog')) {
 
       var tmpl, className;
-      if (key === 'media' && !this.mediaDirectoryPath) {
+      if (key === 'media' && !this.mediaDirectoryPath || !this.media.length) {
           className = key + ' no-directory';
       } else {
           className = key;
@@ -231,11 +231,11 @@ module.exports = Backbone.View.extend({
               description: t('dialogs.media.description', {
                 input: '<input id="upload" class="upload" type="file" />'
               }),
-              assetsDirectory: (self.media) ? true : false,
-              writable: self.file.attributes.writable
+              assetsDirectory: (self.media && self.media.length) ? true : false,
+              writable: self.file.get('writable')
             }));
 
-            if (self.media) self.renderMedia(self.media);
+            if (self.media && self.media.length) self.renderMedia(self.media);
 
             if (selection) {
               var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
@@ -334,19 +334,19 @@ module.exports = Backbone.View.extend({
   },
 
   togglePublishing: function(e) {
-    var $target = $(e.currentTarget);
+    var $target = $(e.target).hasClass('checkmark') ? $(e.target).parent() : $(e.target);
 
     // TODO: remove HTML from view
     if ($target.hasClass('published')) {
       $target
         .empty()
-        .html('Unpublish<span class="ico small checkmark"></span>')
+        .append(t('actions.publishing.unpublish') + '<span class="ico checkmark"></span>')
         .removeClass('published')
         .attr('data-state', false);
     } else {
       $target
         .empty()
-        .html('Publish<span class="ico small checkmark"></span>')
+        .append(t('actions.publishing.publish') + '<span class="ico checkmark"></span>')
         .addClass('published')
         .attr('data-state', true);
     }

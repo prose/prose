@@ -3,7 +3,6 @@ Liquid.readTemplateFile = function(path) {
     return repo.contentsSync(app.state.branch, '_includes/' + path);
 }
 
-
 Liquid.Template.registerTag( 'include', Liquid.Tag.extend({
 
   tagSyntax: /((?:"[^"]+"|'[^']+'|[^\s,|]+)+)(\s+(?:with|for)\s+((?:"[^"]+"|'[^']+'|[^\s,|]+)+))?/,
@@ -52,7 +51,7 @@ Liquid.Template.registerTag( 'include', Liquid.Tag.extend({
       }
     });
     output = [output].flatten().join('');
-    return output
+    return output;
   }
 }));
 
@@ -63,7 +62,6 @@ Liquid.Block.prototype.renderAll = function(list, context) {
     try { // hmmm... feels a little heavy
       output = ( token['render'] ) ? token.render(context) : token;
     } catch(e) {
-      
       console.log(context.handleError(e));
     }
     return output;
@@ -88,6 +86,30 @@ Liquid.Template.registerTag( 'highlight', Liquid.Block.extend({
   }
 }));
 
+// Unless tag wasn't properly returning output
+Liquid.Template.registerTag( 'unless', Liquid.Template.tags['if'].extend({
+
+  render: function(context) {
+    var self = this,
+        output = '';
+    context.stack(function(){
+      var block = self.blocks[0];
+      if( !block.evaluate(context) ) {
+        output = self.renderAll(block.attachment, context);
+        return;
+      }
+      for (var i=1; i < self.blocks.length; i++) {
+        var block = self.blocks[i];
+        if( block.evaluate(context) ) {
+          output = self.renderAll(block.attachment, context);
+          return;
+        }
+      };
+    })
+    return [output].flatten().join('');
+  }
+}));
+
 Liquid.Block.prototype.unknownTag = function(tag, params, tokens) {
   switch(tag) {
     case 'else': console.log(this.blockName +" tag does not expect else tag"); break;
@@ -95,3 +117,25 @@ Liquid.Block.prototype.unknownTag = function(tag, params, tokens) {
     default:     console.log("Unknown tag: "+ tag);
   }
 };
+
+// Contains should work with strings or arrays
+Liquid.Condition.operators.contains = function(l,r) {
+  if (typeof l === 'object') {
+    return l.include(r);
+  } else {
+    return (l.indexOf(r) !== -1);
+  }
+}
+
+// Don't use regex for replace functions. Messes up '.'
+Liquid.Template.registerFilter({
+  replace: function(input, string, replacement) {
+    replacement = replacement || '';
+    return input.toString().split(string).join(replacement);
+  },
+
+  replace_first: function(input, string, replacement) {
+    replacement = replacement || '';
+    return input.toString().replace(string, replacement);
+  }
+});

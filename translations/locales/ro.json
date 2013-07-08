@@ -70,7 +70,6 @@
         "repos": "Se încarcă profilul",
         "repo": "Se încarcă proiectul",
         "file": "Se încarcă fișierul",
-        "preview": "Vizualizare articol",
         "creating": "Se creează un articol nou"
     },
     "main": {
@@ -90,7 +89,7 @@
             "edit": "Editează"
         },
         "new": {
-            "body": "## Articol nou\n\nIntroduceți textul în format [Markdown](http://daringfireball.net/projects/markdown/). Folosiți meniul de unelte sau apăsați butonul **?** pentru instrucțiuni de formatare.\n"
+            "body": "## Articol nou\\n\\nIntroduceți textul în format [Markdown](http://daringfireball.net/projects/markdown/). Folosiți meniul de unelte sau apăsați butonul **?** pentru instrucțiuni de formatare.\n"
         },
         "file": {
             "metaTitle": "Revizuie schimbările",
@@ -152,7 +151,6 @@
         "media": {
             "title": "Adaugă imagine",
             "back": "Înapoi",
-            "description": "Încărcați imagini prin Drag &amp; Drop sau </br>\n{input} <a>selectați</a>\n",
             "help": "Imaginile încarcate sunt salvate în directorul curent sau în directorul specificat în calea URL imagine de mai sus.",
             "helpMedia": "Imaginile încărcate sunt adăugate la directorul  'Alege existente' sau în directorul specific în câmpul URL imagine.",
             "choose": "Alege existente"

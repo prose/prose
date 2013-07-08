@@ -55,6 +55,7 @@ APPLICATION = \
 	app/models/user.js \
 	app/views/app.js \
 	app/views/documentation.js \
+	app/views/chooselanguage.js \
 	app/views/file.js \
 	app/views/files.js \
 	app/views/header.js \
