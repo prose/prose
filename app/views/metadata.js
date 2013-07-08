@@ -23,6 +23,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
+    var self = this;
     this.$el.html(this.template());
 
     var form = this.$el.find('.form');
@@ -74,7 +75,7 @@ module.exports = Backbone.View.extend({
 
           _.defer(function() {
             var textarea = document.getElementById(id);
-            view[id] = CodeMirror(function(el) {
+            self[id] = CodeMirror(function(el) {
               textarea.parentNode.replaceChild(el, textarea);
               el.id = id;
               el.className += ' inner ';

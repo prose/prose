@@ -232,7 +232,7 @@ module.exports = Backbone.View.extend({
                 input: '<input id="upload" class="upload" type="file" />'
               }),
               assetsDirectory: (self.media && self.media.length) ? true : false,
-              writable: self.file.attributes.writable
+              writable: self.file.get('writable')
             }));
 
             if (self.media && self.media.length) self.renderMedia(self.media);
