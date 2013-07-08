@@ -9,65 +9,66 @@ module.exports = Backbone.View.extend({
   tagName: 'li',
 
   events: {
+    'mouseenter a.removed': 'eventMessage',
+    'mouseleave a.removed': 'eventMessage',
+    'click a.removed': 'restore'
   },
 
   initialize: function(options) {
-    this.file = options.file;
-    this.repo = options.repo;
     this.branch = options.branch;
+    this.file = options.file;
+    this.files = options.repo.branches.findWhere({ name: options.branch }).files;
+    this.repo = options.repo;
+    this.view  = options.view;
+  },
+
+  message: function(message) {
+    this.$el.find('.message').html(message);
+    this.$el.attr('title', message);
+  },
+
+  eventMessage: function(e) {
+    switch(e.type) {
+      case 'mouseenter':
+        this.message(t('sidebar.repo.history.actions.restore'));
+        break;
+      case 'mouseleave':
+        this.message(this.file.filename);
+        break;
+    }
+
+    return false;
+  },
+
+  state: function(state) {
+    // TODO: Set data-state attribute to toggle icon in CSS?
+    // this.$el.attr('data-state', state);
+
+    var $icon = this.$el.find('.ico');
+    $icon.removeClass('added modified renamed removed saving checkmark error')
+      .addClass(state);
   },
 
   restore: function(e) {
-    var $target = $(e.currentTarget);
-    var $overlay = $(e.currentTarget).find('.overlay');
-    var path = $target.data('path');
+    var path = this.file.filename;
 
     // Spinning icon
-    var message = '<span class="ico small inline saving"></span> Restoring ' + path;
-    $overlay.html(message);
+    this.message('Restoring ' + path);
+    this.state('saving');
 
-    var cb = function(err) {
-      if (err) {
-        message = '<span class="ico small inline error"></span> Error Try again in 30 Seconds';
-        $overlay.html(message);
-      } else {
-        message = '<span class="ico small inline checkmark"></span> Restored ' + path;
-        $overlay.html(message);
-        $overlay.removeClass('removed').addClass('restored');
+    this.files.restore(this.file, {
+      success: (function(model, res, options) {
+        this.message('Restored ' + path);
+        this.state('checkmark');
 
-        // Update the listing anchor link
-        $target
-          .removeClass('removed')
-          .attr('title', 'Restored ' + path)
-          .addClass('added');
-
-        // Update the anchor listing icon
-        $target.find('.removed')
-          .removeClass('removed')
-          .addClass('added');
-      }
-    };
-
-    $.ajax({
-      type: 'GET',
-      url: app.state.history.commits[path][0].url,
-      headers: {
-        Authorization: 'token ' + cookie.get('oauth-token'),
-        Accept: 'application/vnd.github.raw'
-      },
-      success: (function(res) {
-        // TODO: CRUD create new file with content
-        this.saveFile(app.state.user, app.state.repo, app.state.branch, path, res, 'Restored ' + path, function(err) {
-          if (err) {
-            cb(err);
-          } else {
-            cb();
-          }
-        });
+        // render Files view once collection has updated
+        this.view.files.render();
       }).bind(this),
-      error: function(err) {
-        cb(err);
-      }
+      error: (function(model, xhr, options) {
+        // log actual error message
+        this.message(['Error', xhr.status, xhr.statusText].join(' '));
+        this.state('error');
+      }).bind(this)
     });
 
     return false;

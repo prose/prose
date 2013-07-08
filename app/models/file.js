@@ -12,6 +12,7 @@ module.exports = Backbone.Model.extend({
     Backbone.Model.call(this, {
       branch: attributes.branch,
       collection: attributes.collection,
+      content: attributes.content,
       name: attributes.name,
       path: attributes.path,
       repo: attributes.repo,
@@ -25,18 +26,27 @@ module.exports = Backbone.Model.extend({
     _.bindAll(this);
 
     var name = new Date().format('Y-m-d') + '-your-filename.md';
-    var path = this.isNew() ? attributes.path + '/' + name : attributes.path;
+    var path = this.isNew() && _.isUndefined(attributes.path) ?
+      attributes.path + '/' + name : attributes.path;
     var extension = util.extension(path);
-    var permissions = this.repo ? this.repo.get('permissions') : undefined;
+    var permissions = attributes.repo ?
+      attributes.repo.get('permissions') : undefined;
+    var type;
 
     this.branch = attributes.branch;
     this.collection = attributes.collection;
     this.repo = attributes.repo;
 
+    if (this.isNew() || attributes.type === 'blob') {
+      type = 'file';
+    } else {
+      type = attributes.type;
+    }
+
     // TODO: isNew() name and path defaults should fail this.validate()
     this.set({
       'binary': util.isBinary(extension),
-      'content': this.isNew() ? t('main.new.body') : undefined,
+      'content': this.isNew() && _.isUndefined(attributes.content) ? t('main.new.body') : attributes.content,
       'draft': function() {
         var path = this.get('path');
         return util.draft(path);
@@ -45,9 +55,10 @@ module.exports = Backbone.Model.extend({
       'lang': util.mode(extension),
       'media': util.isMedia(extension),
       'markdown': util.isMarkdown(extension),
-      'name': this.isNew() ? name : util.extractFilename(attributes.path)[1],
+      'name': this.isNew() && _.isUndefined(attributes.path) ?
+        name : util.extractFilename(attributes.path)[1],
       'path': path,
-      'type': this.isNew() ? 'file' : attributes.type,
+      'type': type,
       'writable': permissions ? permissions.push : false
     });
   },
@@ -154,7 +165,7 @@ module.exports = Backbone.Model.extend({
   },
 
   toJSON: function() {
-    // TODO: override default toJSON method in Backbone.sync to only send necessary data to GitHub
+    // override default toJSON method to only send necessary data to GitHub
     var path = this.get('path');
     var content = this.serialize();
 
@@ -185,9 +196,18 @@ module.exports = Backbone.Model.extend({
     }
   },
 
-  save: function(attributes, options) {
-    // TODO: set method to PUT even when this.isNew()
-    Backbone.Model.prototype.save.apply(this, arguments);
+  save: function(options) {
+    options = options ? _.clone(options) : {};
+
+    // set method to PUT even when this.isNew()
+    if (this.isNew()) {
+      options = _.extend(options, {
+        type: 'PUT'
+      });
+    }
+
+    // call save method with undefined attributes
+    Backbone.Model.prototype.save.call(this, undefined, options);
   },
 
   destroy: function(options) {
@@ -207,6 +227,7 @@ module.exports = Backbone.Model.extend({
     Backbone.Model.prototype.destroy.call(this, _.extend(options, {
       url: this.url() + '&' + window.escape(params),
       error: function(model, xhr, options) {
+        // TODO: handle 422 Unprocessable Entity error
         console.log(model, xhr, options);
       }
     }));

@@ -35,6 +35,8 @@ module.exports = Backbone.View.extend({
     // refactor references to subviews by setting Object values
     // this.subviews[subview] = this[subview];
     this.renderSubview(subview);
+
+    return this[subview];
   },
 
   renderSubview: function(subview) {

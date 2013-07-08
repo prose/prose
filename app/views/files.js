@@ -48,7 +48,7 @@ module.exports = Backbone.View.extend({
     
     var frag = {
       tree: document.createDocumentFragment(),
-      blob: document.createDocumentFragment()
+      file: document.createDocumentFragment()
     };
 
     this.$el.html(this.template());
@@ -75,7 +75,7 @@ module.exports = Backbone.View.extend({
     }).bind(this));
 
     this.$el.find('.folders').html(frag.tree);
-    this.$el.find('.files').html(frag.blob);
+    this.$el.find('.files').html(frag.file);
 
     return this;
   },

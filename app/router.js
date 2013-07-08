@@ -178,8 +178,7 @@ module.exports = Backbone.Router.extend({
         break;
       case 'blob':
       case 'edit':
-        parts = util.extractFilename(url.path);
-        this.post(login, repoName, url.mode, url.branch, parts[0], parts[1]);
+        this.post(login, repoName, url.mode, url.branch, url.path);
         break;
       default:
         throw url.mode;
@@ -187,7 +186,7 @@ module.exports = Backbone.Router.extend({
     }
   },
 
-  post: function(login, repoName, mode, branch, path, filename) {
+  post: function(login, repoName, mode, branch, path) {
     if (this.view) this.view.remove();
 
     switch(mode) {
@@ -226,8 +225,8 @@ module.exports = Backbone.Router.extend({
       branches: repo.branches,
       mode: mode,
       nav: this.app.nav,
-      name: filename,
-      path: filename ? path + '/' + filename : path,
+      name: util.extractFilename(path)[1],
+      path: path,
       repo: repo,
       router: this,
       sidebar: this.app.sidebar

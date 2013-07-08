@@ -20,6 +20,7 @@ module.exports = Backbone.View.extend({
     this.repo = options.repo;
     this.branch = options.branch;
     this.commits = options.commits;
+    this.view = options.view;
 
     this.commits.setBranch(this.branch, {
       success: (function(model, res, options) {
@@ -83,9 +84,10 @@ module.exports = Backbone.View.extend({
         var commits = map[file];
 
         var view = new CommitView({
+          branch: this.branch,
           file: commits[0],
           repo: this.repo,
-          branch: this.branch
+          view: this.view
         });
 
         frag.appendChild(view.render().el);
