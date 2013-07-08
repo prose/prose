@@ -1685,12 +1685,17 @@ ins {
   white-space:pre-wrap;
   }
 
+.meta .chzn-container-single .chzn-single,
 .meta .chzn-container-multi .chzn-choices,
 .meta input {
   border:none;
   -webkit-box-shadow:none;
           box-shadow:none;
   }
+  .meta .chzn-container-single .chzn-single {
+    height:30px;
+    }
+
 .meta .inner {
   background:#fff;
   }
@@ -1930,11 +1935,14 @@ ins {
   background:#eff3f5;
   border:1px solid #2099AA;
   color:#3d494e;
-  width:95%;
+  width:48%;
   padding:4px 20px 5px 8px;
   margin:3px;
   position:relative;
   cursor:default;
+  text-overflow:ellipsis;
+	white-space:nowrap;
+	overflow:hidden;
   -webkit-font-smoothing:subpixel-antialiased;
   -webkit-background-clip:padding-box;
           background-clip:padding-box;
