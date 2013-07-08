@@ -14,6 +14,7 @@ var User = require('./models/user');
 var NotificationView = require('./views/notification');
 var config = require('./config');
 var cookie = require('./cookie');
+var auth = require('./config');
 
 // Set up translations
 var setLanguage = (cookie.get('lang')) ? true : false;
@@ -62,10 +63,13 @@ user.authenticate({
           Backbone.history.start();
         },
         error: function(model, res, options) {
-          // TODO: emit notification event
+
+          var link = auth.site + '/login/oauth/authorize?client_id=' + auth.id + '&scope=repo,user&redirect_uri' + encodeURIComponent(window.location.href);
+
           var view = new NotificationView({
-            'type': 'error',
-            'message': t('notification.error.github')
+            'message': t('notification.error.github'),
+            'action': 'Login',
+            'link': link
           }).render();
 
           $('#prose').html(view.el);

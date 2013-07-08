@@ -4,6 +4,8 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var Repos = require('../collections/repos');
 var Orgs = require('../collections/orgs');
+
+// TODO Pass Notification view here if something goes wrong?
 var NotificationView = require('../views/notification');
 
 var auth = require('../config');

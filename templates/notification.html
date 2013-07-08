@@ -1,25 +1,7 @@
-<% if (!window.authenticated) { %>
-  <div class='notify <%= type %>'>
-    <h2 class='icon landing error'>Prose</h2>
-    <div class='inner'>
-      <p><%= t('notification.loginDescription') %></p>
-      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'><%= t('login') %></a></a>
-    </div>
+<div class='notify'>
+  <h2 class='icon landing error'>Prose</h2>
+  <div class='inner'>
+    <p><%= notification.message %></p>
+    <p><a class='button round' href='<%= notification.link %>'><%= t('notification.action') %></a></p>
   </div>
-<% } else { %>
-  <div class='notify <%= key %>'>
-    <h2 class='icon landing error'>Prose</h2>
-    <div class='inner'>
-      <p><%= message %></p>
-      <% if (pathFromFile) { %>
-        <p><a class='button round create' href='#'><%= t('notification.create') %></a></p>
-      <% } %>
-
-      <% if (key === 'error') { %>
-        <p><a class='button round' href='#'><%= t('notification.home') %></a></p>
-      <% } else { %>
-        <p><a class='button round' href='<%= previous %>'><%= t('notification.back') %></a></p>
-      <% } %>
-    </div>
-  </div>
-<% } %>
+</div>

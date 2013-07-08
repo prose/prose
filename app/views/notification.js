@@ -8,7 +8,7 @@ module.exports = Backbone.View.extend({
 
   className: 'notification round',
 
-  template: _.template(templates.notification),
+  template: templates.notification,
 
   events: {
     'click .create': 'createPost'
@@ -21,20 +21,15 @@ module.exports = Backbone.View.extend({
   render: function() {
     this.eventRegister.trigger('documentTitle', t('docheader.error'));
 
-    // Basically for any previous path we want to try
-    // and bring a user back to the directory tree.
-    var hash = document.location.hash.split('/');
-    var parts = hash.slice(0, hash.length -1);
-    if (parts[2]) parts[2] = 'tree';
-
-    var previous = parts.join('/');
-
-    this.$el.html(this.template(_.extend(this.model, {
-      key: this.model.key,
+    var notification = {
       message: this.model.message,
-      previous: previous,
-      pathFromFile: (app.state.file) ? true : false
-    })));
+      link: previous,
+      action: this.model.pathFromFile
+    }
+
+    this.$el.html(_.template(this.template, notification, {
+      variable: 'notification'
+    }));
 
     return this;
   },
