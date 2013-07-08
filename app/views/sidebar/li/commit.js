@@ -26,7 +26,7 @@ module.exports = Backbone.View.extend({
     var message = '<span class="ico small inline saving"></span> Restoring ' + path;
     $overlay.html(message);
 
-    app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
+    var cb = function(err) {
       if (err) {
         message = '<span class="ico small inline error"></span> Error Try again in 30 Seconds';
         $overlay.html(message);
@@ -45,6 +45,28 @@ module.exports = Backbone.View.extend({
         $target.find('.removed')
           .removeClass('removed')
           .addClass('added');
+      }
+    };
+
+    $.ajax({
+      type: 'GET',
+      url: app.state.history.commits[path][0].url,
+      headers: {
+        Authorization: 'token ' + cookie.get('oauth-token'),
+        Accept: 'application/vnd.github.raw'
+      },
+      success: (function(res) {
+        // TODO: CRUD create new file with content
+        this.saveFile(app.state.user, app.state.repo, app.state.branch, path, res, 'Restored ' + path, function(err) {
+          if (err) {
+            cb(err);
+          } else {
+            cb();
+          }
+        });
+      }).bind(this),
+      error: function(err) {
+        cb(err);
       }
     });
 
