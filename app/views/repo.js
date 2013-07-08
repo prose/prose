@@ -101,6 +101,7 @@ module.exports = Backbone.View.extend({
       repoName: this.model.get('name'),
       branch: this.branch,
       path: this.path,
+      pathParts: util.chunkedPath(this.path),
       jailed: '',
       util: util
     };
