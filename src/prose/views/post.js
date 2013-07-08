@@ -1374,7 +1374,7 @@ module.exports = Backbone.View.extend({
     } else if ($target.data('dialog')) {
 
       var tmpl, className;
-      if (key === 'media' && !this.assets) {
+      if (key === 'media' && !this.assets || !this.assets.length) {
           className = key + ' no-directory';
       } else {
           className = key;
@@ -1445,10 +1445,10 @@ module.exports = Backbone.View.extend({
                 input: '<input id="upload" class="upload" type="file" />'
               }),
               writable: view.data.writable,
-              assetsDirectory: (view.assets) ? true : false
+              assetsDirectory: (view.assets && view.assets.length) ? true : false
             }));
 
-            if (view.assets) view.renderAssets(view.assets);
+            if (view.assets && view.assets.length) view.renderAssets(view.assets);
 
             if (selection) {
               var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
