@@ -10,7 +10,7 @@ var util = require('.././util');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.repo),
+  template: templates.repo,
 
   subviews: [],
 
@@ -96,14 +96,16 @@ module.exports = Backbone.View.extend({
 
     // TODO: load _config.yml, set parsed value on Repo model
     // TODO: set jailed from config.prose.rooturl
-    this.$el.html(this.template({
+    var repo = {
       owner: this.model.get('owner'),
-      repo: this.model.get('name'),
+      repoName: this.model.get('name'),
       branch: this.branch,
       path: this.path,
       jailed: '',
       util: util
-    }));
+    };
+
+    this.$el.html(_.template(this.template, repo, {variable: 'repo'}));
 
     this.header.setElement(this.$el.find('#heading')).render();
     this.search.setElement(this.$el.find('#search')).render();

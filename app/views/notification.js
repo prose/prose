@@ -19,8 +19,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', t('docheader.error') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    this.eventRegister.trigger('documentTitle', t('docheader.error'));
 
     // Basically for any previous path we want to try
     // and bring a user back to the directory tree.

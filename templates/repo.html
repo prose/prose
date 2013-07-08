@@ -8,13 +8,13 @@
   </div>
 
   <div class='listings'>
-    <% if (path.length && path !== jailed) { %>
+    <% if (repo.path.length && repo.path !== repo.jailed) { %>
       <div class='breadcrumb'>
-        <a class='branch' href='#<%= [owner.login, repo, "tree", branch].join("/") %>'>..</a>
-        <% _.each(util.chunkedPath(path), function(p) { %>
-          <% if (p.name !== jailed) { %>
+        <a class='branch' href='#<%= [repo.owner.login, repo.repoName, "tree", repo.branch].join("/") %>'>..</a>
+        <% _.each(util.chunkedPath(repo.path), function(p) { %>
+          <% if (p.name !== repo.jailed) { %>
             <span class='slash'>/</span>
-            <a class='path' href='#<%= [owner.login, repo, "tree", branch, p.url].join("/") %>'><%= p.name %></a>
+            <a class='path' href='#<%= [repo.owner.login, repo.repoName, "tree", repo.branch, p.url].join("/") %>'><%= p.name %></a>
           <% } %>
         <% }); %>
       </div>
