@@ -7,7 +7,7 @@ var upload = require('../upload');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.toolbar),
+  template: templates.toolbar,
 
   events: {
     'click .group a': 'markdownSnippet',
@@ -56,7 +56,16 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(this.template(this.file.getAttributes()));
+
+    var toolbar = {
+      markdown: this.file.get('markdown'),
+      writable: this.file.get('writable'),
+      lang: this.file.get('lang'),
+      draft: this.file.get('draft'),
+      metadata: this.file.get('metadata')
+    };
+
+    this.$el.html(_.template(this.template, toolbar, { variable: 'toolbar' }));
     return this;
   },
 

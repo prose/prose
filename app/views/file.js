@@ -620,13 +620,9 @@ module.exports = Backbone.View.extend({
       this.model.set('metadata', this.metadataEditor.getValue());
     }
 
-    if (this.titleAsHeading) {
-      var value = this.heading.inputGet();
-
-      if (this.model.isNew()) {
-        // Update the filename in the sidebar
-        this.sidebar.updateFilepath(value);
-      }
+    // Update the filename in the sidebar
+    if (this.model.isNew()) {
+      this.sidebar.updateFilepath(value);
     }
 
     var label = this.model.get('writable') ?
@@ -923,13 +919,13 @@ module.exports = Backbone.View.extend({
     if (classes === 'save' && $(this.el).hasClass('saving')) return;
 
     // Update the Header
-    this.heading.updateState(label)
+    if (this.heading) this.heading.updateState(label)
 
     // Update the Sidebar save button
-    this.sidebar.updateState(label);
+    if (this.sidebar) this.sidebar.updateState(label);
 
     // Update the avatar in the toolbar
-    this.toolbar.updateState(label);
+    if (this.toolbar) this.toolbar.updateState(label);
 
     this.$el
       .removeClass('error saving saved save')

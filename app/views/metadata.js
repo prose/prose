@@ -171,17 +171,19 @@ module.exports = Backbone.View.extend({
     var view = this;
     var metadata = {};
 
-    // TODO Do the same with title
-    if (this.view.toolbar.publishState()) {
+    if (this.view.toolbar &&
+       this.view.toolbar.publishState() ||
+       this.model.get('metadata').published) {
       metadata.published = true;
     } else {
       metadata.published = false;
     }
 
-    // Get the title value from heading
-    // if we need to.
+    // Get the title value from heading if we need to.
     if (this.view.titleAsHeading()) {
-      metadata.title = this.view.heading.inputGet();
+      metadata.title = (this.view.heading) ?
+        this.view.heading.inputGet() :
+        this.model.get('metadata').title;
     }
 
     _.each(this.$el.find('[name]'), function(item) {

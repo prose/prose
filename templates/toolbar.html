@@ -1,14 +1,14 @@
-<% if (draft) { %>
+<% if (toolbar.draft) { %>
   <a href='#' class='draft-to-post'>
     <%= t('actions.draft.toPost') %><span class='ico checkmark'></span>
     <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>
   </a>
 <% } else { %>
-  <% if (metadata && metadata.published) { %>
+  <% if (toolbar.metadata && toolbar.metadata.published) { %>
     <a href='#' class='publish-flag published round' data-state='true'>
       <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>
     </a>
-  <% } else if (metadata && !metadata.published) { %>
+  <% } else if (toolbar.metadata && !toolbar.metadata.published) { %>
     <a href='#' class='publish-flag' data-state='false'>
       <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>
     </a>
@@ -16,17 +16,17 @@
 <% } %>
 
 <div class='options clearfix'>
-  <span href='#' class='action round fl ico small document <%= lang %>'>
+  <span href='#' class='action round fl ico small document <%= toolbar.lang %>'>
     <span class='status'></span>
 
-    <% if (writable) { %>
+    <% if (toolbar.writable) { %>
       <span class='popup round arrow-top'><%= t('actions.change.save') %></span>
     <% } else { %>
       <span class='popup round arrow-top'><%= t('actions.change.submit') %></span>
     <% } %>
 
   </span>
-  <% if (markdown) { %>
+  <% if (toolbar.markdown) { %>
     <ul class='group round clearfix'>
       <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print("##\n\n") %>'>h2</a></li>
       <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print("###\n\n") %>'>h3</a></li>

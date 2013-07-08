@@ -13,12 +13,18 @@ var views = {
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.drawer),
+  template: templates.drawer,
 
   subviews: [],
 
   initialize: function(options) {
     _.bindAll(this);
+  },
+
+  render: function(options) {
+    this.$el.html(_.template(this.template, {}, {variable: 'sidebar'}));
+    _.invoke(this.subviews, 'render');
+    return this;
   },
 
   initSubview: function(subview, options) {
@@ -39,12 +45,6 @@ module.exports = Backbone.View.extend({
 
   renderSubview: function(subview) {
     this[subview].render();
-  },
-
-  render: function(options) {
-    this.$el.html(this.template());
-    _.invoke(this.subviews, 'render');
-    return this;
   },
 
   filepathGet: function() {
