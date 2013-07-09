@@ -24,8 +24,8 @@ module.exports = Backbone.View.extend({
 
     var notification = {
       message: this.model.message,
-      link: previous,
-      action: this.model.pathFromFile
+      link: this.model.link,
+      action: this.model.action
     }
 
     this.$el.html(_.template(this.template, notification, {
