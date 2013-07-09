@@ -4,7 +4,7 @@ var Backbone = require('backbone');
 var templates = require('../../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.li.file),
+  template: templates.li.file,
 
   tagName: 'li',
 
@@ -25,10 +25,14 @@ module.exports = Backbone.View.extend({
         this.model.get('path'));
     }
 
-    this.$el.html(this.template(_.extend(this.model.attributes, {
-      branch: this.branch,
-      repo: this.repo.attributes
-    })));
+    var file = _.extend(this.model.attributes, {
+        branch: this.branch,
+        repo: this.repo.attributes
+    });
+
+    this.$el.empty().append(_.template(this.template, file, {
+      variable: 'file'
+    }));
 
     return this;
   }

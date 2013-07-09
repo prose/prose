@@ -4,11 +4,11 @@ var Backbone = require('backbone');
 var templates = require('../../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.li.folder),
-
   tagName: 'li',
 
   className: 'item clearfix',
+
+  template: templates.li.folder,
 
   initialize: function(options) {
     this.model = options.model;
@@ -23,10 +23,14 @@ module.exports = Backbone.View.extend({
       this.repo.get('name') + '/tree/' + this.branch + '/' +
       this.model.get('path'));
 
-    this.$el.html(this.template(_.extend(this.model.attributes, {
+    var folder = _.extend(this.model.attributes, {
       branch: this.branch,
       repo: this.repo.attributes
-    })));
+    });
+
+    this.$el.empty().append(_.template(this.template, folder, {
+      variable: 'folder'
+    }));
 
     return this;
   }

@@ -6,6 +6,11 @@ var RepoView = require('./li/repo');
 module.exports = Backbone.View.extend({
   subviews: [],
 
+  events: {
+    'mouseover .item': 'activeListing',
+    'mouseover .item a': 'activeListing'
+  },
+
   initialize: function(options) {
     this.model = options.model;
     this.search = options.search;
@@ -27,7 +32,24 @@ module.exports = Backbone.View.extend({
 
     this.$el.html(frag);
 
+    this.$listings = this.$el.find('.item');
+    this.$search = this.$el.find('#filter');
+
     return this;
+  },
+
+  activeListing: function(e) {
+    var $listing = $(e.target);
+
+    if (!$listing.hasClass('item')) {
+      $listing = $(e.target).closest('li');
+    }
+
+    this.$listings.removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    this.$search.blur();
   },
 
   remove: function() {
