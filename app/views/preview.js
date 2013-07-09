@@ -5,6 +5,11 @@ var marked = require('marked');
 var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
+
+  initialize: function() {
+    // TODO instantiate a File view
+  },
+
   render: function() {
     this.eventRegister = app.eventRegister;
 
