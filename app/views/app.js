@@ -31,29 +31,27 @@ module.exports = Backbone.View.extend({
         sidebar: this.sidebar,
         user: this.user
       });
+
       this.subviews.push(this.nav);
 
+      console.log(this);
       // Key Binding support accross the application.
-      if (!window.shortcutsRegistered) {
-        key('j, k, enter, o, ctrl+s', _.bind(function(e, handler) {
-          if (!app.state.mode || app.state.mode === 'tree') {
-            // We are in any navigation view
-            if (handler.key === 'j' || handler.key === 'k') {
-              utils.pageListing(handler.key);
-            } else {
-              utils.goToFile();
-            }
+      key('j, k, enter, o, ctrl+s', _.bind(function(e, handler) {
+        if (!app.state.mode || app.state.mode === 'tree') {
+          // We are in any navigation view
+          if (handler.key === 'j' || handler.key === 'k') {
+            utils.pageListing(handler.key);
           } else {
-            // We are in state of the application
-            // where we can edit a file
-            if (handler.key === 'ctrl+s') {
-              this.updateFile();
-            }
+            utils.goToFile();
           }
-        }, this));
-
-        window.shortcutsRegistered = true;
-      }
+        } else {
+          // We are in state of the application
+          // where we can edit a file
+          if (handler.key === 'ctrl+s') {
+            this.updateFile();
+          }
+        }
+      }, this));
     },
 
     render: function(options) {

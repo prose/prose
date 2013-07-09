@@ -456,7 +456,7 @@ module.exports = Backbone.View.extend({
     }
 
     var file = {
-      mode: this.mode
+      markdown: this.model.get('markdown')
     };
 
     this.$el.empty().append(_.template(this.template, file, {
