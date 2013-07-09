@@ -36,7 +36,9 @@ module.exports = Backbone.View.extend({
     var id = this.user ? this.user.get('id') : undefined;
 
     this.history = this.commits.filter(function(commit) {
-      return commit.get('author').id === id;
+      // Handle malformed commit data
+      var author = commit.get('author') || commit.get('commit').author;
+      return author.id === id;
     });
 
     var q = queue();

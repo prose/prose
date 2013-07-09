@@ -169,6 +169,7 @@ module.exports = Backbone.Model.extend({
     var path = this.get('path');
     var content = this.serialize();
 
+    // TODO: check if commit message has been set
     var data = {
       path: path,
       message: (this.isNew() ?
@@ -241,6 +242,8 @@ module.exports = Backbone.Model.extend({
     // Fail validation if path conflicts with another file in repo
     if (this.collection.where({ path: attributes.path }).length > 1) return 'Path Conflict';
 
-    // TODO Check If there is a markdown error
+    // TODO: Check if there is a markdown error
+    // TODO: check if path is valid
+    // if (!util.validPathname(filepath)) return cb('error');
   }
 });

@@ -8,7 +8,7 @@ var cookie = require('../cookie');
 
 module.exports = Backbone.Collection.extend({
   model: function(attributes, options) {
-    // TODO: handle 'submodule' type
+    // TODO: handle 'symlink' and 'submodule' type
     switch(attributes.type) {
       case 'blob':
         return new File(attributes, options);
