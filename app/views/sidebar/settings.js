@@ -48,9 +48,9 @@ module.exports = Backbone.View.extend({
         path: this.file.get('path')
       };
 
-      this.$el.empty().append(this.template, settings, {
+      this.$el.empty().append(_.template(this.template, settings, {
         variable: 'settings'
-      });
+      }));
 
       utils.autoSelect(this.$el.find('input.filepath'));
       return this;

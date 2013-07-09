@@ -80,7 +80,7 @@ module.exports = Backbone.View.extend({
       repo: this.repo.toJSON(),
       branch: this.branch,
       status: this.file.status
-    }
+    };
 
     this.$el.html(_.template(this.template, commit, { variable: 'commit' }));
 

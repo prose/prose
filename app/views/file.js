@@ -834,7 +834,7 @@ module.exports = Backbone.View.extend({
     if (classes === 'save' && $(this.el).hasClass('saving')) return;
 
     // Update the Header
-    if (this.heading) this.heading.updateState(label)
+    if (this.heading) this.heading.updateState(label);
 
     // Update the Sidebar save button
     if (this.sidebar) this.sidebar.updateState(label);

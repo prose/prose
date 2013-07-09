@@ -29,11 +29,11 @@ module.exports = Backbone.View.extend({
         action: this.file.get('writable') ?
           t('sidebar.save.save') :
           t('sidebar.save.submit')
-      }
+      };
 
-      this.$el.empty().append(this.template, save, {
+      this.$el.empty().append(_.template(this.template, save, {
         variable: 'save'
-      });
+      }));
 
       var placeholder = (this.file.isNew() ? 'Created ' : 'Updated ') + this.file.get('name');
       this.$el.find('.commit-message').attr('placeholder', placeholder).focus();
