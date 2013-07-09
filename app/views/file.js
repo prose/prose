@@ -20,7 +20,7 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.View.extend({
   id: 'post',
 
-  template: _.template(templates.file),
+  template: templates.file,
 
   subviews: [],
 
@@ -455,9 +455,13 @@ module.exports = Backbone.View.extend({
       this.model.set('preview', marked(this.compilePreview(content)));
     }
 
-    this.$el.html(this.template(_.extend(this.model.attributes, {
+    var file = {
       mode: this.mode
-    })));
+    };
+
+    this.$el.empty().append(_.template(this.template, file, {
+      variable: 'file'
+    }));
 
     this.updateDocumentTitle();
 
