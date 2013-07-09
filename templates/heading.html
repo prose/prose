@@ -1,23 +1,23 @@
-<% if (alterable) { %>
+<% if (heading.alterable) { %>
   <div class='action round avatar'>
     <div class='popup-hover'>
       <span class='ico round status'></span>
       <span class='popup round arrow-left'><%= t('actions.change.noChange') %></span>
-      <%= avatar %>
+      <%= heading.avatar %>
     </div>
   </div>
   <div class='fl details'>
-    <h4 class='parent-trail'><a href="#<%= login %>"><%= login %></a> / <a href="#<%= login %>/<%= repo.name %>"><%= repo.name %></a><% if (private) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
+    <h4 class='parent-trail'><a href='#<%= heading.user %>'><%= heading.user %></a> / <a href='#<%= heading.user %>/<%= heading.repo.name %>'><%= heading.repo.name %></a><% if (heading.isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
 
     <!-- if (app.state.mode === 'new' && !translate) placeholder, not value -->
-    <input type='text' class='headerinput' value='<%= inputValue %>'>
-
+    <input type='text' class='headerinput' value='<%= heading.inputValue %>'>
     <div class='mask'></div>
   </div>
 <% } else { %>
-  <div class='avatar round'><%= avatar %></div>
+
+  <div class='avatar round'><%= heading.avatar %></div>
   <div class='fl details'>
-    <h4><a class='user' href='#<%= login %>'><%= login %></a></h4>
-    <h2><a class='repo' href='#<%= path %>'><%= title %></a></h2>
+    <h4><a class='user' href='#<%= heading.user %>'><%= heading.user %></a></h4>
+    <h2><a class='repo' href='#<%= heading.path %>'><%= heading.title %></a></h2>
   </div>
 <% } %>

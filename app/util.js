@@ -262,8 +262,12 @@ module.exports = {
   loader: {
     loading: function(message) {
       var tmpl = _(templates.loading).template();
-      $('#loader').html(tmpl({
+      var loading = {
         message: message
+      };
+
+      $('#loader').empty().append(_.template(templates.loading, loading, {
+        variable: 'loading'
       }));
     },
 

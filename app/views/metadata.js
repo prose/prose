@@ -40,7 +40,7 @@ module.exports = Backbone.View.extend({
               value: data.field.value,
               on: data.field.on,
               off: data.field.off
-            }
+            };
 
             form.append(_.template(templates.meta.button, button, {
               variable: 'meta'
@@ -52,7 +52,7 @@ module.exports = Backbone.View.extend({
               label: data.field.label,
               value: data.name,
               checked: data.field.value
-            }
+            };
 
             form.append(_.template(templates.meta.checkbox, checkbox, {
               variable: 'meta'
@@ -64,7 +64,7 @@ module.exports = Backbone.View.extend({
               label: data.field.label,
               value: data.field.value,
               type: 'text'
-            }
+            };
 
             form.append(_.template(templates.meta.text, text, {
               variable: 'meta'
@@ -78,7 +78,7 @@ module.exports = Backbone.View.extend({
               value: data.field.value,
               label: data.field.label,
               type: 'textarea'
-            }
+            };
 
             form.append(_.template(templates.meta.textarea, textarea, {
               variable: 'meta'
@@ -105,7 +105,7 @@ module.exports = Backbone.View.extend({
               label: data.field.label,
               value: data.field.value,
               type: 'number'
-            }
+            };
 
             form.append(_.template(templates.meta.text, number, {
               variable: 'meta'
@@ -118,7 +118,7 @@ module.exports = Backbone.View.extend({
               placeholder: data.field.placeholder,
               options: data.field.options,
               lang: lang
-            }
+            };
 
             form.append(_.template(templates.meta.select, select, {
               variable: 'meta'
@@ -132,7 +132,7 @@ module.exports = Backbone.View.extend({
               placeholder: data.field.placeholder,
               options: data.field.options,
               lang: lang
-            }
+            };
 
             form.append(_.template(templates.meta.multiselect, multiselect, {
               variable: 'meta'
@@ -151,7 +151,7 @@ module.exports = Backbone.View.extend({
           label: key,
           value: data,
           type: 'text'
-        }
+        };
 
         form.append(_.template(templates.meta.text, txt, {
           variable: 'meta'

@@ -5,7 +5,7 @@ var utils = require('../util');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.heading),
+  template: templates.heading,
 
   events: {
     'focus input': 'checkPlaceholder',
@@ -46,32 +46,46 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    var login = this.user ? this.user.get('login') : this.repo.get('owner').login;
+    var user = this.user ? this.user.get('login') : this.repo.get('owner').login;
     var permissions = this.repo ? this.repo.get('permissions') : undefined;
+    var isPrivate = this.repo && this.repo.get('private') ? true : false;
+    var title = t('heading.explore');
     var avatar;
+    var path = user;
 
     if (this.user) {
       avatar = '<img src="' + this.user.get('avatar_url') + '" width="40" height="40" alt="Avatar" />';
     } else if (this.file) {
+      // File View
       avatar = '<span class="ico round document ' + this.file.get('lang') + '"></span>';
+      title = this.file.get('path');
     } else {
-      avatar = '<div class="avatar round"><span class="icon round repo"></span></div>';
+      // Repo View
+      var lock = (isPrivate) ? ' private' : '';
+
+      title = this.repo.get('name');
+      path = path + '/' + title;
+      avatar = '<div class="avatar round"><span class="icon round repo' + lock + '"></span></div>';
     }
 
-    this.$el.html(this.template({
+    var heading = {
       alterable: this.alterable,
-      inputValue: this.inputValue,
       avatar: avatar,
-      lang: this.file ? this.file.get('lang') : undefined,
-      login: this.user ? this.user.get('login') : this.repo.get('owner').login,
-      metadata: this.file ? this.file.get('metadata') : undefined,
-      path: login,
-      private: this.repo && this.repo.get('private') ? true : false,
       repo: this.repo ? this.repo.attributes : undefined,
-      title: this.file ? this.file.get('path') : t('heading.explore'),
+      isPrivate: isPrivate,
+      inputValue: this.inputValue,
+      path: path,
+      user: user,
+      title: title,
+
+      // These needed?
+      metadata: this.file ? this.file.get('metadata') : undefined,
       translate: this.file ? this.file.get('translate') : undefined,
-      user: this.user ? this.user.attributes : undefined,
       writable: permissions ? permissions.push : false
+    };
+
+    this.$el.empty().append(_.template(this.template, heading, {
+      variable: 'heading'
     }));
 
     return this;
