@@ -170,7 +170,8 @@ module.exports = Backbone.View.extend({
     } else if ($target.data('dialog')) {
 
       var tmpl, className;
-      if (key === 'media' && !this.mediaDirectoryPath || !this.media.length) {
+      if (key === 'media' && !this.mediaDirectoryPath ||
+          key === 'media' && !this.media.length) {
           className = key + ' no-directory';
       } else {
           className = key;
