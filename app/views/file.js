@@ -39,7 +39,6 @@ module.exports = Backbone.View.extend({
     this.branch = options.branch || this.repo.get('master_branch');
     this.branches = options.branches;
     this.path = options.path || '';
-    this.filename = options.filename;
 
     var fetch = {
       success: this.setCollection

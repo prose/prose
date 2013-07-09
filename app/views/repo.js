@@ -4,8 +4,6 @@ var Backbone = require('backbone');
 var FilesView = require('./files');
 var HeaderView = require('./header');
 var SearchView = require('./search');
-var BranchesView = require('./sidebar/branches');
-var HistoryView = require('./sidebar/history');
 var util = require('.././util');
 var templates = require('../../dist/templates');
 
@@ -65,7 +63,7 @@ module.exports = Backbone.View.extend({
   },
 
   initBranches: function() {
-    this.branches = new BranchesView({
+    this.branches = this.sidebar.initSubview('branches', {
       model: this.model.branches,
       repo: this.model,
       branch: this.branch,
@@ -79,12 +77,13 @@ module.exports = Backbone.View.extend({
   },
 
   initHistory: function() {
-    this.history = new HistoryView({
+    this.history = this.sidebar.initSubview('history', {
       user: this.user,
       repo: this.model,
       branch: this.branch,
       commits: this.model.commits,
-      sidebar: this.sidebar
+      sidebar: this.sidebar,
+      view: this
     });
 
     this.subviews.push(this.sidebar);
