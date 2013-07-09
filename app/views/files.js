@@ -8,9 +8,14 @@ var FolderView = require('./li/folder');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.files),
+  template: templates.files,
 
   subviews: [],
+
+  events: {
+    'mouseover .item': 'activeListing',
+    'mouseover .item a': 'activeListing'
+  },
 
   initialize: function(options) {
     this.repo = options.repo;
@@ -51,7 +56,7 @@ module.exports = Backbone.View.extend({
       file: document.createDocumentFragment()
     };
 
-    this.$el.html(this.template());
+    this.$el.empty().append(_.template(this.template));
 
     collection.each((function(file, index) {
       var view;
@@ -77,7 +82,24 @@ module.exports = Backbone.View.extend({
     this.$el.find('.folders').html(frag.tree);
     this.$el.find('.files').html(frag.file);
 
+    this.$listings = this.$el.find('.item');
+    this.$search = this.$el.find('#filter');
+
     return this;
+  },
+
+  activeListing: function(e) {
+    var $listing = $(e.target);
+
+    if (!$listing.hasClass('item')) {
+      $listing = $(e.target).closest('li');
+    }
+
+    this.$listings.removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    this.$search.blur();
   },
 
   remove: function() {
