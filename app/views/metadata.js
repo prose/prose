@@ -28,7 +28,6 @@ module.exports = Backbone.View.extend({
 
     var form = this.$el.find('.form');
     var lang = this.model.get('metadata').lang || 'en';
-    var tmpl;
 
     _.each(this.model.get('defaults'), (function(data, key) {
       if (data && data.field) {
@@ -37,7 +36,6 @@ module.exports = Backbone.View.extend({
             var button = {
               name: data.name,
               label: data.field.label,
-              value: data.field.value,
               on: data.field.on,
               off: data.field.off
             };
@@ -139,7 +137,7 @@ module.exports = Backbone.View.extend({
             }));
             break;
           case 'hidden':
-            tmpl = {};
+            var tmpl = {};
             tmpl[data.name] = data.field.value;
             this.model.set('metadata', _.merge(tmpl, this.model.get('metadata')));
             this.model.set('hidden', _.merge(tmpl, this.model.get('hidden') || {}));
@@ -287,7 +285,6 @@ module.exports = Backbone.View.extend({
       var input = this.$el.find('[name="' + key + '"]');
       var length = input.length;
       var options;
-      var tmpl;
 
       if (length) {
 
@@ -389,31 +386,40 @@ module.exports = Backbone.View.extend({
 
       switch (typeof value) {
         case 'boolean':
-          tmpl = _.template(templates.meta.checkbox);
-          form.append(tmpl({
+          var bool = {
             name: key,
             label: value,
             value: value,
             checked: value ? 'checked' : false
+          };
+
+          form.append(_.template(templates.meta.checkbox, bool, {
+            variable: 'meta'
           }));
           break;
         case 'string':
-          tmpl = _.template(templates.meta.text);
-          form.append(tmpl({
+          var string = {
             name: key,
             label: value,
             value: value,
             type: 'text'
+          };
+
+          form.append(_.template(templates.meta.text, string, {
+            variable: 'meta'
           }));
           break;
         case 'object':
-          tmpl = _.template(templates.meta.multiselect);
-          form.append(tmpl({
+          var obj = {
             name: key,
             label: key,
             placeholder: key,
             options: value,
             lang: data.lang || 'en'
+          };
+
+          form.append(_.template(templates.meta.multiselect, obj, {
+            variable: 'meta'
           }));
           break;
         default:
