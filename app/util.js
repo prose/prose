@@ -186,9 +186,8 @@ module.exports = {
   // -------
 
   fixedScroll: function($el) {
-    var top = $el.offset().top;
-
     $(window).scroll(function (e) {
+      var top = $el.offset().top;
       var y = $(this).scrollTop();
       if (y >= top) {
         $el.addClass('fixed');

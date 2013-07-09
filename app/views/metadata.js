@@ -337,6 +337,7 @@ module.exports = Backbone.View.extend({
                 }
                 break;
               case 'text':
+              case 'textarea':
                 input[i].value = value;
                 matched = true;
                 break;
