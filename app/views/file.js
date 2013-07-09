@@ -559,11 +559,6 @@ module.exports = Backbone.View.extend({
     this.$el.find('#meta').addClass('active');
 
     // Refresh any textarea's in the frontmatter form that use codemirror
-    $('.yaml-block').each(function() {
-      var editor = $(this).find('.CodeMirror').attr('id');
-      if (view[editor]) view[editor].refresh();
-    });
-
     this.metadataEditor.refresh();
   },
 

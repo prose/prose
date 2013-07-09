@@ -84,20 +84,20 @@ module.exports = Backbone.View.extend({
               variable: 'meta'
             }));
 
-            _.defer(function() {
-              var textarea = document.getElementById(id);
-              self[id] = CodeMirror(function(el) {
-                textarea.parentNode.replaceChild(el, textarea);
-                el.id = id;
-                el.className += ' inner ';
-                el.setAttribute('data-name', data.name);
-              }, {
-                mode: id,
-                value: textarea.value,
-                lineWrapping: true,
-                theme: 'prose-bright'
-              });
+            var textElement = document.getElementById(id);
+
+            self[id] = CodeMirror(function(el) {
+              textElement.parentNode.replaceChild(el, textElement);
+              el.id = id;
+              el.className += ' inner ';
+              el.setAttribute('data-name', data.name);
+            }, {
+              mode: id,
+              value: textElement.value,
+              lineWrapping: true,
+              theme: 'prose-bright'
             });
+
             break;
           case 'number':
             var number = {
@@ -441,6 +441,12 @@ module.exports = Backbone.View.extend({
   },
 
   refresh: function() {
+    var view = this;
+    this.$el.find('.yaml-block').each(function() {
+      var editor = $(this).find('.CodeMirror').attr('id');
+      if (view[editor]) view[editor].refresh();
+    });
+
     // Refresh CodeMirror
     if (this.raw) this.raw.refresh();
   },
