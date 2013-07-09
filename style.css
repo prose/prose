@@ -603,6 +603,11 @@ ins {
   display:none;
   }
 
+/* Visibility of metadata toggle
+ * on file pages */
+.file .meta      { display:none; }
+.file.meta .meta { display:block; }
+
 .nav {
   margin:15px 0 0;
   padding-bottom:5px;

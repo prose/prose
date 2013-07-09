@@ -471,6 +471,12 @@ module.exports = Backbone.View.extend({
       util.fixedScroll(this.$el.find('.topbar'));
     }
 
+    // Update the navigation view with a meta
+    // class name if this post contains it
+    if (this.model.get('metadata')) {
+      this.nav.mode('file meta');
+    }
+
     return this;
   },
 

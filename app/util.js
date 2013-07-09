@@ -67,13 +67,6 @@ module.exports = {
     return extension;
   },
 
-  // Check if a given file is a Jekyll post
-  // -------
-
-  jekyll: function(path, file) {
-    return !!(path.match('_posts') && this.markdown(file));
-  },
-
   // Check if a given file has YAML frontmater
   // -------
 
