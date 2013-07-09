@@ -683,34 +683,6 @@ module.exports = Backbone.View.extend({
     return true;
   },
 
-  updateFilename: function(filepath, cb) {
-    var view = this;
-
-    if (!util.validPathname(filepath)) return cb('error');
-    app.state.path = this.model.path; // ?
-    app.state.file = util.extractFilename(filepath)[1];
-    app.state.path = util.extractFilename(filepath)[0];
-
-    function finish() {
-      view.model.path = app.state.path;
-      view.model.file = app.state.file;
-    }
-
-    if (this.model.persisted) {
-      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, util.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
-        if (!err) finish();
-        if (err) {
-          cb('error');
-        } else {
-          cb(null);
-        }
-      }, this));
-    } else {
-      finish();
-      cb(null);
-    }
-  },
-
   sendPatch: function(filepath, filename, filecontent, message) {
     // Submits a patch (fork + pull request workflow)
     var view = this;
@@ -758,8 +730,7 @@ module.exports = Backbone.View.extend({
   },
 
   draft: function() {
-
-    // TODO Fix this all up.
+    // TODO: Fix this all up.
     var filepath = _.extractFilename(this.filepath());
     var basepath = filepath[0].split('/');
     var filename = filepath[1];
@@ -783,72 +754,12 @@ module.exports = Backbone.View.extend({
     return false;
   },
 
-   saveDraft: function(filepath, filename, filecontent, message) {
-    var view = this;
-    view.updateSaveState(t('actions.save.saving'), 'saving');
-    window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-      if (err) {
-        view.updateSaveState(t('actions.error'), 'error');
-        return;
-      }
-      view.dirty = false;
-      view.model.persisted = true;
-      view.model.file = filename;
-      this.toolbar.render();
-
-      if (app.state.mode === 'new') app.state.mode = 'edit';
-      view.renderHeading();
-      view.updateURL();
-      view.prevFile = filecontent;
-      view.closeSettings();
-      view.toolbar.updatePublishState();
-      view.updateSaveState(t('actions.save.saved'), 'saved', true);
-    });
-  },
-
   saveFile: function(filepath, filename, filecontent, message) {
-    var view = this;
-
-    function save() {
-      if (view.updateMetaData()) {
-
-        window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-          if (err) {
-            view.updateSaveState(t('actions.error'), 'error');
-            return;
-          }
-
-          view.dirty = false;
-          view.model.persisted = true;
-          view.model.file = filename;
-          this.toolbar.render();
-
-          if (app.state.mode === 'new') app.state.mode = 'edit';
-          this.heading.render();
-          view.updateURL();
-          view.model.set('previous', filecontent);
-          view.sidebar.close();
-          view.toolbar.updatePublishState();
-          view.updateSaveState(t('actions.save.saved'), 'saved', true);
-        });
-      } else {
-        view.updateSaveState(t('actions.save.metaError'), 'error');
-      }
-    }
-
-     view.updateSaveState('Saving', 'saving');
-
-    if (filepath === util.filepath(this.model.path, this.model.file)) return save();
-
-    // Move or create file
-    this.updateFilename(filepath, function(err) {
-      if (err) {
-        view.eventRegister.trigger('headerInputFocus');
-        view.updateSaveState(t('actions.save.fileNameError'), 'error');
-      } else {
-        save();
-      }
-    });
+    view.updateSaveState(t('actions.save.metaError'), 'error');
+    view.updateSaveState(t('actions.error'), 'error');
+    view.updateSaveState('Saving', 'saving');
+    view.updateSaveState(t('actions.save.saved'), 'saved', true);
+    view.updateSaveState(t('actions.save.fileNameError'), 'error');
   },
 
   stashFile: function(e) {
