@@ -21,11 +21,9 @@ module.exports = Backbone.View.extend({
       active: app.locale
     };
 
-    this.$el
-      .empty()
-      .append(_.template(this.template, chooseLanguages, {
-        variable: 'chooseLanguage'
-      }));
+    this.$el.empty().append(_.template(this.template, chooseLanguages, {
+      variable: 'chooseLanguage'
+    }));
     return this;
   },
 

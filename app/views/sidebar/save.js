@@ -6,7 +6,7 @@ var templates = require('../../../dist/templates');
 var utils = require('../../util');
 
 module.exports = Backbone.View.extend({
-    template: _.template(templates.sidebar.save),
+    template: templates.sidebar.save,
 
     events: {
       'click a.cancel': 'emit',
@@ -21,14 +21,19 @@ module.exports = Backbone.View.extend({
     emit: function(e) {
       var action = $(e.currentTarget).data('action');
       this.sidebar.trigger(action, e);
-
       return false;
     },
 
     render: function() {
-      this.$el.html(this.template({
-        writable: this.file.get('writable')
-      }));
+      var save = {
+        action: this.file.get('writable') ?
+          t('sidebar.save.save') :
+          t('sidebar.save.submit')
+      }
+
+      this.$el.empty().append(this.template, save, {
+        variable: 'save'
+      });
 
       var placeholder = (this.file.isNew() ? 'Created ' : 'Updated ') + this.file.get('name');
       this.$el.find('.commit-message').attr('placeholder', placeholder).focus();

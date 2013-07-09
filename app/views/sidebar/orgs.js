@@ -4,7 +4,7 @@ var Backbone = require('backbone');
 var templates = require('../../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.sidebar.orgs),
+  template: templates.sidebar.orgs,
 
   initialize: function(options) {
     this.model = options.model;
@@ -12,11 +12,16 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(this.template({ user: this.model.user.toJSON(), orgs: this.model.toJSON() }));
+    var orgs = {
+      user: this.model.user.toJSON(),
+      memberOf: this.model.toJSON()
+    };
 
-    
+    this.$el.empty().append(_.template(this.template, orgs, {
+      variable: 'orgs'
+    }));
+
     this.$el.addClass('open');
-
     return this;
   }
 });
