@@ -590,10 +590,19 @@ ins {
     top:25%;
     left:50%;
     margin:0 0 0 -180px;
-    text-align:center;
     box-shadow:0 1px 0 rgba(255, 255, 255, 0),
                0 0 10px rgba(0, 0, 0, 0.1);
     }
+  .modal .modal-heading {
+    border-bottom:1px solid #d4d7d9;
+    font-weight:bold;
+    }
+  .modal .modal-footer {
+    border-top:1px solid #d4d7d9;
+    }
+    .modal .modal-footer .button {
+      margin:0;
+      }
 
 .sidebar {
   background:#fff;

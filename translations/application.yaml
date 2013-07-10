@@ -67,7 +67,8 @@ en:
     preview: "Previewing File"
     creating: "Creating new post"
   modal:
-    gotIt: "Got it"
+    errorHeading: "Error"
+    confirm: "Got it"
   main:
     start:
       content: "Prose is a content editor for GitHub designed for managing websites."
