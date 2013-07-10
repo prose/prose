@@ -37,11 +37,14 @@ user.authenticate({
       // Set OAuth header for all CORS requests
       $.ajaxSetup({
         headers: {
-          'Authorization': config.auth === 'oauth' ? 
+          'Authorization': config.auth === 'oauth' ?
             'token ' + cookie.get('oauth-token') :
             'Basic ' + Base64.encode(config.username + ':' + config.password)
         }
       });
+
+      // Set an 'authenticated' class to #prose
+      $('#prose').addClass('authenticated');
 
       // Set User model id and login from cookies
       var id = cookie.get('id');

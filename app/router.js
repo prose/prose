@@ -54,21 +54,13 @@ module.exports = Backbone.Router.extend({
   },
 
   chooseLanguage: function() {
-    this.minimalPage();
     var view = new ChooseLanguageView().render();
     $('#main').empty().append(view.el);
   },
 
   about: function() {
-    this.minimalPage();
     var view = new DocumentationView().render();
     $('#main').empty().append(view.el);
-  },
-
-  minimalPage: function() {
-    this.app.render({
-      nomenu: true
-    });
   },
 
   // #example-user
@@ -302,10 +294,6 @@ module.exports = Backbone.Router.extend({
       t('notification.error.notFound') :
       t('notification.error.label');
 
-    this.application.render({
-      error: true
-    });
-
     var view = new app.views.Notification({
       'type': 'Error',
       'key': 'error',
@@ -317,15 +305,6 @@ module.exports = Backbone.Router.extend({
   },
 
   notify: function(type, message) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-
-    // app.state.markdown = false;
-
-    this.application.render({
-      error: true
-    });
-
     var view = new app.views.Notification({
       'type': type,
       'key': 'page-error',

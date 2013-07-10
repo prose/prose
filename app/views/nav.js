@@ -25,6 +25,11 @@ module.exports = Backbone.View.extend({
     this.user = options.user;
   },
 
+  render: function() {
+    this.$el.empty().append(_.template(this.template));
+    return this;
+  },
+
   emit: function(e) {
     var state = $(e.currentTarget).data('state');
     this.toggle(state, e);
@@ -39,8 +44,6 @@ module.exports = Backbone.View.extend({
   },
 
   mode: function(mode) {
-    // Set data-mode attribute to toggle nav buttons in CSS
-    this.$el.attr('data-mode', mode);
     this.$el.attr('class', mode);
   },
 
@@ -58,10 +61,5 @@ module.exports = Backbone.View.extend({
     $(e.target).toggleClass('active');
     this.$el.toggleClass('mobile');
     return false;
-  },
-
-  render: function() {
-    this.$el.empty().append(_.template(this.template));
-    return this;
   }
 });
