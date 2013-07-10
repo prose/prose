@@ -628,8 +628,12 @@ ins {
 
 /* By default they are off */
 #navigation .nav { display:none; }
+
 /* Except for the login link */
 #navigation .nav.auth   { display:block; }
+
+/* Though, If the user is authenticated we dont need to show it */
+.authenticated #navigation .auth { display:none; }
 
 /* In a project view */
 #navigation.repo .repo  { display:block; }
