@@ -789,11 +789,11 @@ module.exports = Backbone.View.extend({
   },
 
   saveFile: function(filepath, filename, filecontent, message) {
-    view.updateSaveState(t('actions.save.metaError'), 'error');
-    view.updateSaveState(t('actions.error'), 'error');
-    view.updateSaveState('Saving', 'saving');
-    view.updateSaveState(t('actions.save.saved'), 'saved', true);
-    view.updateSaveState(t('actions.save.fileNameError'), 'error');
+    this.updateSaveState(t('actions.save.metaError'), 'error');
+    this.updateSaveState(t('actions.error'), 'error');
+    this.updateSaveState(t('actions.save.saving'), 'saving');
+    this.updateSaveState(t('actions.save.saved'), 'saved', true);
+    this.updateSaveState(t('actions.save.fileNameError'), 'error');
   },
 
   stashFile: function(e) {
@@ -844,12 +844,21 @@ module.exports = Backbone.View.extend({
     var $message = $('.commit-message');
 
     var noVal = this.model.isNew() ?
-      'Created ' + filename :
-      'Updated ' + filename;
+      t('actions.commits.created', {
+        filename: filename
+      }) :
+      t('actions.commits.updated', {
+        filename: filename
+      });
 
     var message = $message.val() || noVal;
     var method = this.model.get('writable') ? this.saveFile : this.sendPatch;
     var method = this.model.get('writable') ? this.model.save : this.sendPatch;
+
+    // TODO Finish this
+    this.model.on('invalid', function(model, error) {
+      console.log(error);
+    });
 
     // Update content
     this.model.content = (this.editor) ? this.editor.getValue() : '';
@@ -937,7 +946,9 @@ module.exports = Backbone.View.extend({
     }
 
     var data = {};
-        data.message = 'Uploaded ' + file.name;
+        data.message = t('actions.upload.uploaded', {
+          file: file.name
+        });
         data.content = content;
         data.branch = app.state.branch;
 
