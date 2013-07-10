@@ -852,7 +852,6 @@ module.exports = Backbone.View.extend({
       });
 
     var message = $message.val() || noVal;
-    var method = this.model.get('writable') ? this.saveFile : this.sendPatch;
     var method = this.model.get('writable') ? this.model.save : this.sendPatch;
 
     // TODO Finish this

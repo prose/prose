@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var marked = require('marked');
 var Backbone = require('backbone');
 var jsyaml = require('js-yaml');
 var util = require('.././util');
@@ -240,10 +241,14 @@ module.exports = Backbone.Model.extend({
 
   validate: function(attributes, options) {
     // Fail validation if path conflicts with another file in repo
-    if (this.collection.where({ path: attributes.path }).length > 1) return 'Path Conflict';
+    if (this.collection.where({ path: attributes.path }).length > 1) return t('actions.save.fileNameExists');
 
-    // TODO: Check if there is a markdown error
-    // TODO: check if path is valid
-    // if (!util.validPathname(filepath)) return cb('error');
+    // Validate the Markdown
+    marked(attributes.content, {}, function(err, content) {
+
+      //console.log(err);
+      //console.log(content);
+      if (err) return err;
+    });
   }
 });

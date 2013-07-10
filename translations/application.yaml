@@ -49,6 +49,7 @@ en:
       fileNameError: "Needs a Filename"
       submission: "Request Submitted"
       metaError: "Error! Metadata not Found"
+      fileNameExists: "A filename with this path already exists"
     error: "Error. Try again in 30 Seconds"
     restore:
       restoring: "Restoring"
