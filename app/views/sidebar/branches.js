@@ -17,7 +17,7 @@ module.exports = Backbone.View.extend({
     this.branch = options.branch || this.repo.get('master_branch');
     this.router = options.router;
 
-    this.listenTo(this.model, 'sync', this.render, this);
+    this.model.fetch({ success: this.render });
   },
 
   render: function() {

@@ -68,7 +68,6 @@ module.exports = Backbone.View.extend({
         $(this.el).toggleClass('disable-interface', false);
       }
 
-      console.log(this.model);
       var app = {
         authed: true
       };
