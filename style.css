@@ -622,7 +622,7 @@ ins {
   height:100%;
   border-left:1px solid #fff;
   }
-  .open #navigation {
+  .open + #navigation {
     border-color:#d4d7d9;
     }
 
