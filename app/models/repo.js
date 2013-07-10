@@ -28,6 +28,21 @@ module.exports = Backbone.Model.extend({
     this.commits = new Commits([], { repo: this, branch: this.branch })
   },
 
+  ref: function(options) {
+    options = _.clone(options) || {};
+
+    $.ajax({
+      type: 'POST',
+      url: this.url() + '/git/refs',
+      data: JSON.stringify({
+        ref: options.ref,
+        sha: options.sha
+      }),
+      success: options.success,
+      error: options.error
+    });
+  },
+
   fork: function(options) {
     options = _.clone(options) || {};
 
@@ -49,7 +64,7 @@ module.exports = Backbone.Model.extend({
             var branches = collection.filter(function(model) {
               return model.get('name').indexOf(prefix) === 0;
             }).map(function(model) {
-              return parseInt(model.get('name').split(prefix)[0]);
+              return parseInt(model.get('name').split(prefix)[1]);
             });
 
             var branch = prefix + (branches.length ? _.max(branches) + 1 : 1);

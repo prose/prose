@@ -724,10 +724,9 @@ module.exports = Backbone.View.extend({
     // view.updateMetaData();
 
     this.model.patch({
-      success: (function() {
-        debugger;
-
+      success: (function(res) {
         /*
+        // TODO: revert to previous state?
         var previous = view.model.get('previous');
         this.model.content = previous;
         this.editor.setValue(previous);
@@ -737,12 +736,15 @@ module.exports = Backbone.View.extend({
         this.model.set('previous', filecontent);
         */
 
+        // TODO: why is this breaking?
+        // this.toolbar.updatePublishState();
+
         this.updateURL();
         this.sidebar.close();
-        this.toolbar.updatePublishState();
         this.updateSaveState(t('actions.save.submission'), 'saved');
       }).bind(this),
       error: (function(model, xhr, options) {
+        debugger;
         var res = JSON.parse(xhr.responseText);
         this.updateSaveState(res.message, 'error');
       }).bind(this)
