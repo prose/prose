@@ -327,7 +327,7 @@ module.exports = Backbone.View.extend({
       value: this.model.get('content') || '',
       lineWrapping: true,
       lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
-      extraKeys: this.toolbar.keyMap(),
+      extraKeys: this.keyMap(),
       matchBrackets: true,
       dragDrop: false,
       theme: 'prose-bright'
@@ -358,6 +358,36 @@ module.exports = Backbone.View.extend({
     // Check sessionStorage for existing stash
     // Apply if stash exists and is current, remove if expired
     this.stashApply();
+  },
+
+  keyMap: function() {
+    var self = this;
+
+    if (this.model.get('markdown')) {
+      return {
+        'Ctrl-S': function(codemirror) {
+          self.updateFile();
+        },
+        'Cmd-B': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.bold(self.editor.getSelection());
+        },
+        'Ctrl-B': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.bold(self.editor.getSelection());
+        },
+        'Cmd-I': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.italic(self.editor.getSelection());
+        },
+        'Ctrl-I': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.italic(self.editor.getSelection());
+        }
+      };
+    } else {
+      return {
+        'Ctrl-S': function(codemirror) {
+          self.updateFile();
+        }
+      };
+    }
   },
 
   focus: function() {
@@ -727,9 +757,9 @@ module.exports = Backbone.View.extend({
 
   filepath: function() {
     if (this.titleAsHeading()) {
-      return this.header.inputGet();
-    } else {
       return this.sidebar.filepathGet();
+    } else {
+      return this.heading.inputGet();
     }
   },
 
@@ -812,8 +842,10 @@ module.exports = Backbone.View.extend({
     var filename = util.extractFilename(filepath)[1];
     var filecontent = this.model.serialize();
     var $message = $('.commit-message');
-    var noVal = 'Updated ' + filename;
-    if (app.state.mode === 'new') noVal = 'Created ' + filename;
+
+    var noVal = this.model.isNew() ?
+      'Created ' + filename :
+      'Updated ' + filename;
 
     var message = $message.val() || noVal;
     var method = this.model.get('writable') ? this.saveFile : this.sendPatch;
