@@ -70,7 +70,7 @@ module.exports = Backbone.View.extend({
       }), true);
 
       /*
-      // TODO: limit files to rooturl
+      // TODO: jail files to rooturl
       if (rooturl) {
         files = files.filter(function(file) {
           return file.filename.indexOf(rooturl) === 0;
@@ -100,10 +100,11 @@ module.exports = Backbone.View.extend({
         });
 
         frag.appendChild(view.render().el);
+
         this.subviews.push(view);
       }).bind(this));
 
-      this.$el.find('#commits').html(frag.list);
+      this.$el.find('#commits').html(frag);
     }).bind(this));
 
     return this;
