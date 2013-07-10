@@ -62,8 +62,6 @@ module.exports = Backbone.Router.extend({
   about: function() {
     this.minimalPage();
     var view = new DocumentationView().render();
-
-    console.log(view);
     $('#main').empty().append(view.el);
   },
 
@@ -108,7 +106,6 @@ module.exports = Backbone.Router.extend({
       success: (function() {
         this.view = content;
         this.app.$el.find('#main').html(this.view.render().el);
-
         user.repos.fetch();
 
         // TODO: build event-driven loader queue

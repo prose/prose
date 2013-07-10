@@ -5,11 +5,17 @@ var marked = require('marked');
 var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
+
+  initialize: function() {
+    // TODO instantiate a File view
+  },
+
   render: function() {
     this.eventRegister = app.eventRegister;
 
     var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', t('docheader.preview') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+    // util.documentTitle(t('docheader.preview') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
+
     this.stashApply();
     this.preview();
 

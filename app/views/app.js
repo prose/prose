@@ -9,7 +9,7 @@ var utils = require('.././util');
 module.exports = Backbone.View.extend({
     className: 'application',
 
-    template: _.template(templates.app),
+    template: templates.app,
 
     subviews: [],
 
@@ -31,36 +31,20 @@ module.exports = Backbone.View.extend({
         sidebar: this.sidebar,
         user: this.user
       });
+
       this.subviews.push(this.nav);
 
       // Key Binding support accross the application.
-      if (!window.shortcutsRegistered) {
-        key('j, k, enter, o, ctrl+s', _.bind(function(e, handler) {
-          if (!app.state.mode || app.state.mode === 'tree') {
-            // We are in any navigation view
-            if (handler.key === 'j' || handler.key === 'k') {
-              utils.pageListing(handler.key);
-            } else {
-              utils.goToFile();
-            }
+      key('j, k, enter, o', _.bind(function(e, handler) {
+        if (!app.state.mode || app.state.mode === 'tree') {
+          // We are in any navigation view
+          if (handler.key === 'j' || handler.key === 'k') {
+            utils.pageListing(handler.key);
           } else {
-            // We are in state of the application
-            // where we can edit a file
-            if (handler.key === 'ctrl+s') {
-              this.updateFile();
-            }
+            utils.goToFile();
           }
-        }, this));
-
-        window.shortcutsRegistered = true;
-      }
-
-      /*
-      this.eventRegister.bind('documentTitle', this.documentTitle);
-      this.eventRegister.bind('headerContext', this.headerContext);
-      this.eventRegister.bind('recentFiles', this.recentFiles);
-      this.eventRegister.bind('filenameInput', this.filenameInput);
-      */
+        }
+      }, this));
     },
 
     render: function(options) {
@@ -84,15 +68,14 @@ module.exports = Backbone.View.extend({
         $(this.el).toggleClass('disable-interface', false);
       }
 
-      this.data = _.extend(this.model, {
-        error: errorPage,
-        version: 'v1',
-        jekyll: isJekyll,
-        noMenu: view.noMenu
-        // lang: (app.state.file) ? utils.mode(app.state.file) : undefined
-      });
+      console.log(this.model);
+      var app = {
+        authed: true
+      };
 
-      this.$el.html(this.template(this.data));
+      this.$el.empty().append(_.template(this.template, app, {
+        variable: 'app'
+      }));
 
       // When the sidebar should be open.
       // Fix this in re-factor, could be much tighter
@@ -112,19 +95,10 @@ module.exports = Backbone.View.extend({
       return this;
     },
 
-    documentTitle: function(title) {
-      document.title = title + ' · Prose';
-    },
-
     remove: function() {
       _.invoke(this.subviews, 'remove');
       this.subviews = [];
 
-      // Unbind pagehide event handler when View is removed
-      this.eventRegister.unbind('documentTitle', this.documentTitle);
-      this.eventRegister.unbind('headerContext', this.headerContext);
-      this.eventRegister.unbind('recentFiles', this.recentFiles);
-      this.eventRegister.unbind('filenameInput', this.filenameInput);
       Backbone.View.prototype.remove.call(this, arguments);
     }
 });

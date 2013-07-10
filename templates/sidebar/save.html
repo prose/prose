@@ -8,10 +8,5 @@
       <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>
     </a>
   </div>
-
-  <% if (writable) { %>
-    <a class='confirm button round' href='#' data-action='confirm'><%= t('sidebar.save.save') %></a>
-  <% } else { %>
-    <a class='confirm button round' href='#' data-action='confirm'><%= t('sidebar.save.submit') %></a>
-  <% } %>
+  <a class='confirm button round' href='#' data-action='confirm'><%= save.action %></a>
 </div>

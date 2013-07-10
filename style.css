@@ -1117,10 +1117,9 @@ ins {
     }
 
   .topbar .containment.content-search {
-    background:#fff;
-    height:60px;
     background:rgba(255,255,255,0.95);
     border-bottom:1px solid #d4d7d9;
+    height:60px;
     }
 
   .topbar .toolbar {

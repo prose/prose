@@ -5,7 +5,7 @@ var BranchView = require('./branch');
 var templates = require('../../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.sidebar.branches),
+  template: templates.sidebar.branches,
 
   subviews: [],
 
@@ -24,7 +24,7 @@ module.exports = Backbone.View.extend({
     // only render branches selector if two or more branches
     if (this.model.length < 2) return;
 
-    this.$el.html(this.template());
+    this.$el.empty().append(_.template(this.template));
     var frag = document.createDocumentFragment();
 
     this.model.each((function(branch, index) {

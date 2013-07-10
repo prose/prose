@@ -9,9 +9,9 @@ var templates = require('../../../dist/templates');
 var utils = require('../../util');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.sidebar.history),
-
   subviews: [],
+
+  template: templates.sidebar.history,
 
   initialize: function(options) {
     _.bindAll(this);
@@ -24,13 +24,13 @@ module.exports = Backbone.View.extend({
 
     this.commits.setBranch(this.branch, {
       success: (function(model, res, options) {
-        this.render()
+        this.render();
       }).bind(this)
     });
   },
 
   render: function(options) {
-    this.$el.html(this.template());
+    this.$el.empty().append(_.template(this.template));
 
     // Filter on commit.get('author').id === this.user.get('id')
     var id = this.user ? this.user.get('id') : undefined;

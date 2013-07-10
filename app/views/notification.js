@@ -2,6 +2,7 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var templates = require('../../dist/templates');
+var util = require('../util');
 
 module.exports = Backbone.View.extend({
   id: 'notification',
@@ -19,12 +20,12 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.eventRegister.trigger('documentTitle', t('docheader.error'));
+    util.documentTitle(t('docheader.error'));
 
     var notification = {
       message: this.model.message,
-      link: previous,
-      action: this.model.pathFromFile
+      link: this.model.link,
+      action: this.model.action
     }
 
     this.$el.html(_.template(this.template, notification, {

@@ -92,36 +92,6 @@ module.exports = Backbone.View.extend({
     if (arguments) this.$el.find('[data-key="' + type + '"]').addClass('active');
   },
 
-  keyMap: function() {
-    var self = this;
-
-    if (this.file.attributes.markdown) {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.file.updateFile();
-        },
-        'Cmd-B': function(codemirror) {
-          if (self.view.editor.getSelection() !== '') self.bold(self.view.editor.getSelection());
-        },
-        'Ctrl-B': function(codemirror) {
-          if (self.view.editor.getSelection() !== '') self.bold(self.view.editor.getSelection());
-        },
-        'Cmd-I': function(codemirror) {
-          if (self.view.editor.getSelection() !== '') self.italic(self.view.editor.getSelection());
-        },
-        'Ctrl-I': function(codemirror) {
-          if (self.view.editor.getSelection() !== '') self.italic(self.view.editor.getSelection());
-        }
-      };
-    } else {
-      return {
-        'Ctrl-S': function(codemirror) {
-          self.view.updateFile();
-        }
-      };
-    }
-  },
-
   draft: function(e) {
     view.trigger('draft', e);
     return false;

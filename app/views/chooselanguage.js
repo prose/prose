@@ -8,19 +8,22 @@ var LOCALES = require('../../translations/locales');
 module.exports = Backbone.View.extend({
   className: 'inner deep prose limiter',
 
-  template: _.template(templates.chooselanguage),
+  template: templates.chooselanguage,
 
   events: {
     'click .language': 'setLanguage' 
   },
 
   render: function() {
-    this.$el
-      .empty()
-      .append(this.template({
-        languages: LOCALES,
-        active: app.locale
-      }));
+
+    var chooseLanguages = {
+      languages: LOCALES,
+      active: app.locale
+    };
+
+    this.$el.empty().append(_.template(this.template, chooseLanguages, {
+      variable: 'chooseLanguage'
+    }));
     return this;
   },
 

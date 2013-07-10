@@ -20,7 +20,7 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.View.extend({
   id: 'post',
 
-  template: _.template(templates.file),
+  template: templates.file,
 
   subviews: [],
 
@@ -327,7 +327,7 @@ module.exports = Backbone.View.extend({
       value: this.model.get('content') || '',
       lineWrapping: true,
       lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
-      extraKeys: this.toolbar.keyMap(),
+      extraKeys: this.keyMap(),
       matchBrackets: true,
       dragDrop: false,
       theme: 'prose-bright'
@@ -358,6 +358,36 @@ module.exports = Backbone.View.extend({
     // Check sessionStorage for existing stash
     // Apply if stash exists and is current, remove if expired
     this.stashApply();
+  },
+
+  keyMap: function() {
+    var self = this;
+
+    if (this.model.get('markdown')) {
+      return {
+        'Ctrl-S': function(codemirror) {
+          self.updateFile();
+        },
+        'Cmd-B': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.bold(self.editor.getSelection());
+        },
+        'Ctrl-B': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.bold(self.editor.getSelection());
+        },
+        'Cmd-I': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.italic(self.editor.getSelection());
+        },
+        'Ctrl-I': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.italic(self.editor.getSelection());
+        }
+      };
+    } else {
+      return {
+        'Ctrl-S': function(codemirror) {
+          self.updateFile();
+        }
+      };
+    }
   },
 
   focus: function() {
@@ -455,9 +485,13 @@ module.exports = Backbone.View.extend({
       this.model.set('preview', marked(this.compilePreview(content)));
     }
 
-    this.$el.html(this.template(_.extend(this.model.attributes, {
-      mode: this.mode
-    })));
+    var file = {
+      markdown: this.model.get('markdown')
+    };
+
+    this.$el.empty().append(_.template(this.template, file, {
+      variable: 'file'
+    }));
 
     this.updateDocumentTitle();
 
@@ -486,7 +520,7 @@ module.exports = Backbone.View.extend({
     var path = this.model.get('path');
     var pathTitle = path ? path : '';
 
-    // this.eventRegister.trigger('documentTitle', context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
+    util.documentTitle(context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
   },
 
   newFile: function() {
@@ -722,9 +756,9 @@ module.exports = Backbone.View.extend({
 
   filepath: function() {
     if (this.titleAsHeading()) {
-      return this.header.inputGet();
-    } else {
       return this.sidebar.filepathGet();
+    } else {
+      return this.heading.inputGet();
     }
   },
 
@@ -754,11 +788,11 @@ module.exports = Backbone.View.extend({
   },
 
   saveFile: function(filepath, filename, filecontent, message) {
-    view.updateSaveState(t('actions.save.metaError'), 'error');
-    view.updateSaveState(t('actions.error'), 'error');
-    view.updateSaveState('Saving', 'saving');
-    view.updateSaveState(t('actions.save.saved'), 'saved', true);
-    view.updateSaveState(t('actions.save.fileNameError'), 'error');
+    this.updateSaveState(t('actions.save.metaError'), 'error');
+    this.updateSaveState(t('actions.error'), 'error');
+    this.updateSaveState(t('actions.save.saving'), 'saving');
+    this.updateSaveState(t('actions.save.saved'), 'saved', true);
+    this.updateSaveState(t('actions.save.fileNameError'), 'error');
   },
 
   stashFile: function(e) {
@@ -807,12 +841,22 @@ module.exports = Backbone.View.extend({
     var filename = util.extractFilename(filepath)[1];
     var filecontent = this.model.serialize();
     var $message = $('.commit-message');
-    var noVal = 'Updated ' + filename;
-    if (app.state.mode === 'new') noVal = 'Created ' + filename;
+
+    var noVal = this.model.isNew() ?
+      t('actions.commits.created', {
+        filename: filename
+      }) :
+      t('actions.commits.updated', {
+        filename: filename
+      });
 
     var message = $message.val() || noVal;
-    var method = this.model.get('writable') ? this.saveFile : this.sendPatch;
     var method = this.model.get('writable') ? this.model.save : this.sendPatch;
+
+    // TODO Finish this
+    this.model.on('invalid', function(model, error) {
+      console.log(error);
+    });
 
     // Update content
     this.model.content = (this.editor) ? this.editor.getValue() : '';
@@ -828,7 +872,7 @@ module.exports = Backbone.View.extend({
     if (classes === 'save' && $(this.el).hasClass('saving')) return;
 
     // Update the Header
-    if (this.heading) this.heading.updateState(label)
+    if (this.heading) this.heading.updateState(label);
 
     // Update the Sidebar save button
     if (this.sidebar) this.sidebar.updateState(label);
@@ -879,6 +923,10 @@ module.exports = Backbone.View.extend({
   upload: function(e, file, content, path) {
     // Loading State
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
+
+    // Default to current directory if no path specified
+    var parts = util.extractFilename(this.path);
+    path = path || [parts[0], file.name].join('/');
 
     this.collection.upload(file, content, path, {
       success: (function(model, res, options) {

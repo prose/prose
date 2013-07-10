@@ -178,6 +178,10 @@ module.exports = {
   // UI Stuff
   // -------
 
+  documentTitle: function(title) {
+    document.title = title + ' · Prose';
+  },
+
   fixedScroll: function($el) {
     $(window).scroll(function (e) {
       var y = $(this).scrollTop();

@@ -6,7 +6,7 @@ var templates = require('../../../dist/templates');
 var utils = require('../../util');
 
 module.exports = Backbone.View.extend({
-    template: _.template(templates.sidebar.settings),
+    template: templates.sidebar.settings,
 
     events: {
       'click a.save': 'emit',
@@ -40,12 +40,16 @@ module.exports = Backbone.View.extend({
     render: function() {
       // this.file.get('lang') is programming language
       // this.file.get('metadata').lang is ISO 639-1 language code
-      this.$el.html(this.template({
+      var settings = {
         languages: this.config.languages,
         lang: this.file.get('lang'),
         metadata: this.file.get('metadata'),
         fileInput: this.fileInput,
         path: this.file.get('path')
+      };
+
+      this.$el.empty().append(_.template(this.template, settings, {
+        variable: 'settings'
       }));
 
       utils.autoSelect(this.$el.find('input.filepath'));
