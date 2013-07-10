@@ -626,12 +626,17 @@ ins {
     border-color:#d4d7d9;
     }
 
-/* Visibility of navigation groups */
-.repos .repo,
-.repos .file,
-.repo .file {
-  display:none;
-  }
+/* By default they are off */
+#navigation .nav { display:none; }
+/* Except for the login link */
+#navigation .nav.auth   { display:block; }
+
+/* In a project view */
+#navigation.repo .repo  { display:block; }
+
+/* In a file view */
+#navigation.file .file,
+#navigation.file .repo  { display:block; }
 
 /* Visibility of metadata toggle
  * on file pages */

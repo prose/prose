@@ -49,33 +49,7 @@ module.exports = Backbone.View.extend({
 
     render: function(options) {
       var view = this;
-      var isJekyll = false;
-      var errorPage = false;
-      var hideInterface = false; // Flag for unauthenticated landing
-      this.noMenu = false; // Prevents a mobile toggle from appearing when nto required.
-
-      if (options) {
-        if (options.hideInterface) hideInterface = options.hideInterface;
-        if (options.jekyll) isJekyll = options.jekyll;
-        if (options.noMenu) this.noMenu = options.noMenu;
-        if (options.error) errorPage = options.error;
-      }
-
-      // TODO: replace with this.hide()
-      if (hideInterface) {
-        $(this.el).toggleClass('disable-interface', true);
-      } else {
-        $(this.el).toggleClass('disable-interface', false);
-      }
-
-      console.log(this.model);
-      var app = {
-        authed: true
-      };
-
-      this.$el.empty().append(_.template(this.template, app, {
-        variable: 'app'
-      }));
+      this.$el.empty().append(_.template(this.template));
 
       // When the sidebar should be open.
       // Fix this in re-factor, could be much tighter
