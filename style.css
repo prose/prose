@@ -498,7 +498,7 @@ ins {
   padding:15px;
   }
   .inner.deep {
-    padding:15px 60px;
+    padding:60px;
     }
 
 .content {
@@ -573,6 +573,36 @@ ins {
     display:block;
     margin:5px 0 0;
     }
+
+.modal.overlay {
+  background:rgba(255,255,255,0.6);
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  width:100%;
+  z-index:8000;
+  }
+  .modal .modal-content {
+    background:#fff;
+    border:1px solid #a8afb2;
+    position:absolute;
+    z-index:9000;
+    width:360px;
+    top:25%;
+    left:50%;
+    margin:0 0 0 -180px;
+    box-shadow:0 1px 0 rgba(255, 255, 255, 0),
+               0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  .modal .modal-heading {
+    border-bottom:1px solid #d4d7d9;
+    font-weight:bold;
+    }
+  .modal .modal-footer {
+    border-top:1px solid #d4d7d9;
+    }
+    .modal .modal-footer .button {
+      margin:0;
+      }
 
 .sidebar {
   background:#fff;
