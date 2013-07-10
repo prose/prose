@@ -50,18 +50,22 @@ module.exports = {
 
   compileResult: function(files, cb) {
     for (var i = 0, f; f = files[i]; i++) {
+      // TODO: add size validation, warn > 50MB, reject > 100MB
+      // https://help.github.com/articles/working-with-large-files
+
       // Only upload images
+      // TODO: remove this filter, allow uploading any binary file?
       if (/image/.test(f.type)) {
         var reader = new FileReader();
 
         reader.onload = (function(currentFile) {
           return function(e) {
-            cb(e, currentFile, window.btoa(e.target.result));
+            cb(e, currentFile, e.target.result);
           };
         })(f);
-      }
 
-      reader.readAsBinaryString(f);
+        reader.readAsBinaryString(f);
+      }
     };
   }
 }

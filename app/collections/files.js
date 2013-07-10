@@ -83,5 +83,52 @@ module.exports = Backbone.Collection.extend({
       }).bind(this),
       error: options.error
     });
+  },
+
+  upload: function(file, content, path, options) {
+    var success = options.success;
+
+    var extension = file.type.split('/').pop();
+    var uid;
+
+    if (!path) {
+      uid = file.name;
+
+      if (this.assetsDirectory) {
+        path = this.assetsDirectory + '/' + uid;
+      } else {
+        path = this.model.path ? this.model.path + '/' + uid : uid;
+      }
+    }
+
+    // If path matches an existing file, confirm the overwrite is intentional
+    // then set new content and update the existing file
+    var model = this.findWhere({ path: path });
+
+    if (model) {
+      // TODO: confirm overwrite with UI prompt
+      model.set('content', content);
+    } else {
+      // initialize new File model with content
+      model = new File({
+        branch: this.branch,
+        collection: this,
+        content: content,
+        path: path,
+        repo: this.repo
+      });
+    }
+
+    // add to collection on save
+    model.save({
+      success: (function(model, res, options) {
+        // Update model attributes and add to collection
+        model.set(res.content);
+        this.add(model);
+
+        if (_.isFunction(success)) success(model, res, options);
+      }).bind(this),
+      error: options.error
+    });
   }
 });
