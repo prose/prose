@@ -176,7 +176,7 @@ module.exports = Backbone.Model.extend({
       message: (this.isNew() ?
         t('actions.commits.created', { filename: path }) :
         t('actions.commits.updated', { filename: path })),
-      content: this.encode(content),
+      content: this.get('binary') ? window.btoa(content) : this.encode(content),
       branch: this.branch.get('name')
     };
 

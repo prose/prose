@@ -359,7 +359,7 @@ module.exports = Backbone.View.extend({
     if (type === 'media') {
       if (this.queue) {
         var userDefinedPath = $('input[name="url"]').val();
-        this.createAndUpload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
+        this.view.upload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
 
         // Finally, clear the queue object
         this.queue = undefined;

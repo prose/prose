@@ -340,7 +340,7 @@ module.exports = Backbone.View.extend({
         if (this.$el.find('#dialog').hasClass('dialog')) {
           this.updateImageInsert(e, file, content);
         } else {
-          this.createAndUpload(e, file, content);
+          this.upload(e, file, content);
         }
       }).bind(this));
     }
@@ -607,7 +607,6 @@ module.exports = Backbone.View.extend({
     if (confirm(t('actions.delete.warn'))) {
       this.model.destroy({
         success: (function() {
-          // TODO: this.branch.get('path')
           this.router.navigate([
             this.repo.get('owner').login,
             this.repo.get('name'),
@@ -876,7 +875,6 @@ module.exports = Backbone.View.extend({
   },
 
   updateSaveState: function(label, classes, kill) {
-
     // Cancel if this condition is met
     if (classes === 'save' && $(this.el).hasClass('saving')) return;
 
@@ -894,9 +892,9 @@ module.exports = Backbone.View.extend({
       .addClass(classes);
 
     if (kill) {
-      _.delay(function() {
+      _.delay((function() {
         this.$el.removeClass(classes);
-      }, 1000);
+      }).bind(this), 1000);
     }
   },
 
@@ -929,93 +927,44 @@ module.exports = Backbone.View.extend({
     };
   },
 
-  createAndUpload: function(e, file, content, userDefinedPath) {
-    var view = this;
-
+  upload: function(e, file, content, path) {
     // Loading State
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
-    // Base64 Encode the file content
-    var extension = file.type.split('/').pop();
-    var path;
+    // Default to current directory if no path specified
+    var parts = util.extractFilename(this.path);
+    path = path || [parts[0], file.name].join('/');
 
-    if (userDefinedPath) {
-      // Unique Filename
-      path = userDefinedPath;
-    } else {
-      var uid = encodeURIComponent(file.name);
-      path = this.assetsDirectory ?
-             this.assetsDirectory + '/' + uid :
-             (this.model.path) ?
-               this.model.path + '/' + uid :
-               uid;
-    }
+    this.collection.upload(file, content, path, {
+      success: (function(model, res, options) {
+        var name = res.content.name;
+        var path = res.content.path;
 
-    var data = {};
-        data.message = t('actions.upload.uploaded', {
-          file: file.name
-        });
-        data.content = content;
-        data.branch = app.state.branch;
+        // TODO: where does $alt exist in the UI?
+        var $alt = $('input[name="alt"]');
+        var value = $alt.val();
+        var image = (value) ?
+          '![' + value + '](/' + path + ')' :
+          '![' + name + '](/' + path + ')';
 
-    // Read through the filenames of path. If there is a filename that
-    // exists, we want to pass data.sha to update the existing one.
-    window.app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, util.extractFilename(path)[0], function(err, res) {
-      if (err) return view.updateSaveState(t('actions.error'), 'error');
+        this.editor.focus();
+        this.editor.replaceSelection(image);
+        this.updateSaveState('Saved', 'saved', true);
 
-      // Check whether the current (or media) directory
-      // contains the same filename as the one a user wishes
-      // to upload. we want to update the file by passing the sha
-      // to the data object in this case.
-      _(res.files).each(function(f) {
-        var parts = util.extractFilename(f.path);
-        var structuredPath = [parts[0], encodeURIComponent(parts[1])].join('/');
-        if (structuredPath === path) {
-          data.sha = f.sha;
-        }
-      });
-
-      // Stored in memory to test as GitHub may have not
-      // picked up on the change fast enough.
-      _(view.recentlyUploadedFiles).each(function(f) {
-        if (f.path === path) {
-          data.sha = f.sha;
-        }
-      });
-
-      window.app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
-        if (type === 'error') {
-          view.updateSaveState(t('actions.error'), 'error');
-        } else {
-          var $alt = $('input[name="alt"]');
-          var image = ($alt.val) ?
-            '![' + $alt.val() + '](/' + path + ')' :
-            '![' + file.name + '](/' + path + ')';
-
-          view.editor.focus();
-          view.editor.replaceSelection(image);
-          view.updateSaveState('Saved', 'saved', true);
-
-          // Update the media directory with the
-          // newly uploaded image.
-          if (!data.sha && view.assets) {
-            view.assets.push({
-              name: file.name,
-              type: 'blob',
-              path: path
-            });
-          }
-
-          // Store a record of recently uploaded files in memory
-          var fileParts = util.extractFilename(res.content.path);
-          var structuredPath = [fileParts[0], encodeURIComponent(fileParts[1])].join('/');
-
-          view.recentlyUploadedFiles.push({
-            path: structuredPath,
-            sha: res.content.sha
+        // Update the media directory
+        if (this.assets) {
+          this.assets[res.content.sha]({
+            name: name,
+            type: 'blob', // TODO: type: 'file'?
+            path: path
           });
         }
-      });
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        // Display error message returned by XHR
+        var res = JSON.parse(xhr.responseText);
+        this.updateSaveState(res.message, 'error');
+      }).bind(this)
     });
   },
 
