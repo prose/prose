@@ -51,7 +51,6 @@ APPLICATION = \
 	app/models/folder.js \
 	app/models/org.js \
 	app/models/repo.js \
-	app/models/state.js \
 	app/models/user.js \
 	app/views/app.js \
 	app/views/documentation.js \
