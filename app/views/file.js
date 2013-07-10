@@ -5,6 +5,7 @@ var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var queue = require('queue-async');
 
+var ModalView = require('./modal');
 var key = require('keymaster');
 var marked = require('marked');
 var diff = require('diff');
@@ -838,6 +839,7 @@ module.exports = Backbone.View.extend({
   },
 
   updateFile: function() {
+    var view = this;
     var filepath = this.filepath();
     var filename = util.extractFilename(filepath)[1];
     var filecontent = this.model.serialize();
@@ -854,9 +856,14 @@ module.exports = Backbone.View.extend({
     var message = $message.val() || noVal;
     var method = this.model.get('writable') ? this.model.save : this.sendPatch;
 
-    // TODO Finish this
+    // Validation checking
     this.model.on('invalid', function(model, error) {
-      console.log(error);
+      view.modal = new ModalView({
+        message: error
+      });
+
+      view.$el.find('#modal').empty().append(view.modal.el);
+      view.modal.render();
     });
 
     // Update content

@@ -245,9 +245,6 @@ module.exports = Backbone.Model.extend({
 
     // Validate the Markdown
     marked(attributes.content, {}, function(err, content) {
-
-      //console.log(err);
-      //console.log(content);
       if (err) return err;
     });
   }
