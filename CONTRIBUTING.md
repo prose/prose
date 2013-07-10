@@ -109,5 +109,5 @@ through [JSHint](http://www.jshint.com/) with no warnings.
 - Single Quotes
 - 2 spaces soft tabs
 
-for CSS, use classes to target elements
+for CSS, use classes to target elements.
 
