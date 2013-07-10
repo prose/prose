@@ -15,14 +15,14 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.View.extend({
   template: templates.drawer,
 
-  subviews: [],
+  subviews: {},
 
   initialize: function(options) {
     _.bindAll(this);
   },
 
   render: function(options) {
-    this.$el.html(_.template(this.template, {}, {variable: 'sidebar'}));
+    this.$el.html(_.template(this.template, {}, { variable: 'sidebar' }));
     _.invoke(this.subviews, 'render');
     return this;
   },
@@ -32,21 +32,14 @@ module.exports = Backbone.View.extend({
 
     options = _.clone(options) || {};
 
-    this[subview] = new views[subview](options);
-    this[subview].setElement(this.$el.find('#' + subview));
+    var view = new views[subview](options);
+    view.setElement(this.$el.find('#' + subview));
 
-    this.subviews.push(this[subview]);
+    // this.subviews array collects abandoned views preventing garbage collection
+    // TODO: refactor all references to subviews by setting Object values
+    this.subviews[subview] = view;
 
-    // TODO: this.subviews is being filled with abandoned views preventing garbage collection
-    // refactor references to subviews by setting Object values
-    // this.subviews[subview] = this[subview];
-    this.renderSubview(subview);
-
-    return this[subview];
-  },
-
-  renderSubview: function(subview) {
-    this[subview].render();
+    return view;
   },
 
   filepathGet: function() {
@@ -94,7 +87,7 @@ module.exports = Backbone.View.extend({
 
   remove: function() {
     _.invoke(this.subviews, 'remove');
-    this.subviews = [];
+    this.subviews = {};
 
     Backbone.View.prototype.remove.apply(this, arguments);
   }

@@ -439,7 +439,7 @@ module.exports = Backbone.View.extend({
       config: this.config,
       file: this.model,
       fileInput: this.titleAsHeading()
-    });
+    }).render();
 
     this.listenTo(this.sidebar, 'updateFile', this.makeDirty());
 
@@ -447,7 +447,7 @@ module.exports = Backbone.View.extend({
     this.sidebar.initSubview('save', {
       sidebar: this.sidebar,
       file: this.model
-    });
+    }).render();
   },
 
   initHeading: function() {

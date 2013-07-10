@@ -33,17 +33,24 @@ module.exports = Backbone.View.extend({
     this.$el.empty().append(_.template(this.template));
 
     // Filter on commit.get('author').id === this.user.get('id')
-    var id = this.user ? this.user.get('id') : undefined;
+    var id = this.user ? this.user.get('id') : false;
 
-    this.history = this.commits.filter(function(commit) {
+    // Group and deduplicate commits by authenticated user
+    var history = this.commits.groupBy(function(commit) {
       // Handle malformed commit data
       var author = commit.get('author') || commit.get('commit').author;
-      return author.id === id;
+      return author.id === id ? 'author' : 'all';
     });
+
+    // TODO: display list of recent updates by all users
+    this.history = history.all || [];
+
+    // Recent commits by authenticated user
+    this.recent = history.author || [];
 
     var q = queue();
 
-    this.history.each(function(commit) {
+    this.recent.each(function(commit) {
       q.defer(function(cb) {
         commit.fetch({
           success: function(model, res, options) {
@@ -58,12 +65,12 @@ module.exports = Backbone.View.extend({
       if (err) return err;
 
       // Shallow flatten mapped array of all commit files
-      var files = _.flatten(_.map(this.history, function(commit) {
+      var files = _.flatten(_.map(this.recent, function(commit) {
         return commit.get('files');
       }), true);
 
       /*
-      // TODO: limit files to rooturl
+      // TODO: jail files to rooturl
       if (rooturl) {
         files = files.filter(function(file) {
           return file.filename.indexOf(rooturl) === 0;
@@ -93,6 +100,7 @@ module.exports = Backbone.View.extend({
         });
 
         frag.appendChild(view.render().el);
+
         this.subviews.push(view);
       }).bind(this));
 

@@ -18,13 +18,15 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function(options) {
+    _.bindAll(this);
+
     this.repo = options.repo;
     this.search = options.search;
     this.branches = options.branches;
     this.branch = options.branch || this.repo.get('master_branch');
     this.path = options.path || '';
 
-    this.listenTo(this.branches, 'sync', this.setModel, this);
+    this.branches.fetch({ success: this.setModel });
   },
 
   setModel: function() {

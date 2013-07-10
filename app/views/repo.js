@@ -13,6 +13,8 @@ module.exports = Backbone.View.extend({
   subviews: [],
 
   initialize: function(options) {
+    _.bindAll(this);
+
     this.user = options.user;
     this.model = options.model;
     this.branch = options.branch || this.model.get('master_branch');
@@ -72,8 +74,6 @@ module.exports = Backbone.View.extend({
     });
 
     this.subviews.push(this.sidebar);
-
-    this.model.branches.fetch();
   },
 
   initHistory: function() {

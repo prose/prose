@@ -51,18 +51,6 @@ module.exports = Backbone.View.extend({
       var view = this;
       this.$el.empty().append(_.template(this.template));
 
-      // When the sidebar should be open.
-      // Fix this in re-factor, could be much tighter
-      /*
-      if (app.state.mode === 'tree' ||
-          app.state.mode === '' && window.authenticated && app.state.user) {
-        $('#prose').toggleClass('open', true);
-        $('#prose').toggleClass('mobile', false);
-      } else {
-        $('#prose').toggleClass('open mobile', false);
-      }
-      */
-
       this.sidebar.setElement(this.$el.find('#drawer')).render();
       this.nav.setElement(this.$el.find('nav')).render();
 
