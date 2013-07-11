@@ -324,6 +324,11 @@ module.exports = Backbone.View.extend({
         if (this.$el.find('#dialog').hasClass('dialog')) {
           this.updateImageInsert(e, file, content);
         } else {
+          // Clear selection
+          this.editor.focus();
+          this.editor.replaceSelection('');
+
+          // Append images links in this.upload()
           this.upload(e, file, content);
         }
       }).bind(this));
@@ -1009,7 +1014,7 @@ module.exports = Backbone.View.extend({
           '![' + name + '](/' + path + ')';
 
         this.editor.focus();
-        this.editor.replaceSelection(image);
+        this.editor.replaceSelection(image + '\n', 'end');
         this.updateSaveState('Saved', 'saved', true);
 
         // Update the media directory

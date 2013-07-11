@@ -21,17 +21,16 @@ module.exports = {
   },
 
   dragDrop: function($el, cb) {
-    var that = this;
-    $el.on('dragenter', function(e) {
-          that.dragEnter(e, $el);
-        }).
-        on('dragover', that.dragOver).
-        on('dragleave', function(e) {
-          that.dragLeave(e, $el);
-        }).
-        on('drop', function(e) {
-          that.drop(e, cb);
-        });
+    $el.on('dragenter', (function(e) {
+      this.dragEnter(e, $el);
+    }).bind(this))
+    .on('dragover', this.dragOver)
+    .on('dragleave', (function(e) {
+      this.dragLeave(e, $el);
+    }).bind(this))
+    .on('drop', (function(e) {
+      this.drop(e, cb);
+    }).bind(this));
   },
 
   fileSelect: function(e, cb) {
