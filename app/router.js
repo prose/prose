@@ -15,7 +15,6 @@ var SearchView = require('./views/search');
 var ReposView = require('./views/repos');
 var RepoView = require('./views/repo');
 var FileView = require('./views/file');
-var Preview = require('./views/preview');
 var DocumentationView = require('./views/documentation');
 var ChooseLanguageView = require('./views/chooselanguage');
 
@@ -162,12 +161,10 @@ module.exports = Backbone.Router.extend({
       case 'tree':
         this.repo(login, repoName, url.branch, url.path);
         break;
-      case 'preview':
-        this.preview(login, repoName, url.mode, url.branch, url.path);
-        break;
       case 'new':
       case 'blob':
       case 'edit':
+      case 'preview':
         this.post(login, repoName, url.mode, url.branch, url.path);
         break;
       default:

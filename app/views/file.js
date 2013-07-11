@@ -108,24 +108,8 @@ module.exports = Backbone.View.extend({
             }
 
             this.poachConfig(this.config);
-
-            // initialize the subviews
-            this.initHeading();
-            this.initToolbar();
-            this.initEditor();
-            this.initSidebar();
-
-            // TODO Take this out of here when this
-            // method is added to the repo level.
-            if (!this.config.prose ||
-              this.config.prose && !this.config.prose.metadata) {
-              this.renderMetadata();
-            }
-
           }).bind(this)
         });
-
-        this.render();
       }).bind(this)
     });
   },
@@ -273,9 +257,7 @@ module.exports = Backbone.View.extend({
 
       q.awaitAll((function() {
         this.model.set('defaults', defaults);
-        if (this.model.get('metadata')) {
-          this.renderMetadata();
-        }
+        this.render();
       }).bind(this));
     }
   },
@@ -480,36 +462,57 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    var content = this.model.get('content');
-
-    if (this.model.get('markdown' && content)) {
-      this.model.set('preview', marked(this.compilePreview(content)));
-    }
-
-    var file = {
-      markdown: this.model.get('markdown')
-    };
-
-    this.$el.empty().append(_.template(this.template, file, {
-      variable: 'file'
-    }));
-
-    this.updateDocumentTitle();
-
-    if (this.model.get('markdown') && this.mode === 'blob') {
+    if (this.mode === 'preview') {
       this.preview();
     } else {
-      // Editor is first up so trigger an active class for it
-      this.$el.find('#edit').toggleClass('active', true);
-      this.$el.find('.file .edit').addClass('active');
+      var content = this.model.get('content');
 
-      util.fixedScroll(this.$el.find('.topbar'));
-    }
+      if (this.model.get('markdown' && content)) {
+        this.model.set('preview', marked(this.compilePreview(content)));
+      }
 
-    // Update the navigation view with a meta
-    // class name if this post contains it
-    if (this.model.get('metadata')) {
-      this.nav.mode('file meta');
+      var file = {
+        markdown: this.model.get('markdown')
+      };
+
+      this.$el.empty().append(_.template(this.template, file, {
+        variable: 'file'
+      }));
+
+      // initialize the subviews
+      this.initEditor();
+      this.initHeading();
+      this.initToolbar();
+      this.initSidebar();
+
+      if (this.model.get('metadata')) {
+        this.renderMetadata();
+      }
+
+      this.updateDocumentTitle();
+
+      // Update the navigation view with a meta
+      // class name if this post contains it
+      if (this.model.get('metadata')) {
+        this.nav.mode('file meta');
+      }
+
+      // Preview needs access to marked, so it's registered here
+      Liquid.Template.registerFilter({
+        'markdownify': function(input) {
+          return marked(input || '');
+        }
+      });
+
+      if (this.model.get('markdown') && this.mode === 'blob') {
+        this.blob();
+      } else {
+        // Editor is first up so trigger an active class for it
+        this.$el.find('#edit').toggleClass('active', true);
+        this.$el.find('.file .edit').addClass('active');
+
+        util.fixedScroll(this.$el.find('.topbar'));
+      }
     }
 
     return this;
@@ -558,7 +561,7 @@ module.exports = Backbone.View.extend({
     this.updateURL();
   },
 
-  preview: function() {
+  blob: function() {
     this.sidebar.close();
 
     var metadata = this.model.get('metadata');
@@ -590,6 +593,66 @@ module.exports = Backbone.View.extend({
     }
 
     return jekyll;
+  },
+
+  preview: function() {
+    var q = queue(1);
+
+    var metadata = this.model.get('metadata');
+
+    var p = {
+      site: this.config,
+      post: metadata,
+      page: metadata,
+      content: Liquid.parse(marked(this.model.get('content'))).render({
+        site: this.config,
+        post: metadata,
+        page: metadata
+      }) || ''
+    };
+
+    function getLayout(cb) {
+      var file = p.page.layout;
+      var layout = this.collection.findWhere({ path: '_layouts/' + file + '.html' });
+
+      layout.fetch({
+        success: (function(model, res, options) {
+          var meta = model.get('metadata');
+          var content = model.get('content');
+          var template = Liquid.parse(content);
+
+          p.page = _.extend(metadata, meta);
+
+          p.content = template.render({
+            site: p.site,
+            post: p.post,
+            page: p.page,
+            content: p.content
+          });
+
+          // Handle nested layouts
+          if (meta && meta.layout) q.defer(getLayout.bind(this));
+
+          cb();
+        }).bind(this)
+      })
+    }
+
+    q.defer(getLayout.bind(this));
+
+    q.await((function() {
+      var content = p.content;
+
+      // Set base URL to public site
+      if (this.config.prose && this.config.prose.siteurl) {
+        content = content.replace(/(<head(?:.*)>)/, (function() {
+          return arguments[1] + '<base href="' + this.config.prose.siteurl + '">';
+        }).bind(this));
+      }
+
+      document.write(content);
+      document.close();
+    }).bind(this));
   },
 
   meta: function() {

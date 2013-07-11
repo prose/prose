@@ -62,7 +62,6 @@ APPLICATION = \
 	app/views/metadata.js \
 	app/views/nav.js \
 	app/views/notification.js \
-	app/views/preview.js \
 	app/views/profile.js \
 	app/views/repo.js \
 	app/views/repos.js \
