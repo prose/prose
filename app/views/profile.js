@@ -20,6 +20,9 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
+    this.sidebar.mode('repos');
+    this.sidebar.open();
+
     this.$el.html(this.template());
 
     this.search.setElement(this.$el.find('#search')).render();
