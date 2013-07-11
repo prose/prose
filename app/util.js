@@ -23,15 +23,16 @@ module.exports = {
   // => ['path/to', 'foo.md']
 
   extractFilename: function(path) {
-    if (!path.match(/\//)) return ['', path];
+    var regex = /\//;
+    if (!regex.test(path)) return ['', path];
     var matches = path.match(/(.*)\/(.*)$/);
     return [matches[1], matches[2]];
   },
 
   validPathname: function(path) {
-    var self = this;
+    var regex = /^([a-zA-Z0-9_\-]|\.)+$/;
     return _.all(path.split('/'), function(filename) {
-      return !!filename.match(/^([a-zA-Z0-9_\-]|\.)+$/);
+      return !!regex.test(filename);
     });
   },
 
@@ -71,8 +72,9 @@ module.exports = {
   // -------
 
   hasMetadata: function(content) {
+    var regex = /^(---\n)((.|\n)*?)\n---\n?/;
     content = content.replace(/\r\n/g, '\n'); // normalize a little bit
-    return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
+    return regex.test(content);
   },
 
   // Extract file extension

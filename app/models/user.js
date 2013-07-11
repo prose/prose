@@ -19,10 +19,12 @@ module.exports = Backbone.Model.extend({
   },
 
   authenticate: function(options) {
+    var match;
+
     if (cookie.get('oauth-token')) {
       if (_.isFunction(options.success)) options.success();
     } else {
-      var match = window.location.href.match(/\?code=([a-z0-9]*)/);
+      match = window.location.href.match(/\?code=([a-z0-9]*)/);
 
       if (match) {
         var ajax = $.ajax(auth.url + '/authenticate/' + match[1], {
