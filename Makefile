@@ -82,11 +82,9 @@ APPLICATION = \
 	app/util.js \
 	app/boot.js \
 	dist/templates.js \
-	app/models.js \
 	app/cookie.js \
 	app/upload.js \
 	app/toolbar/markdown.js \
-	vendor/github.js \
 	translations/locales.js \
 	locale.js
 
