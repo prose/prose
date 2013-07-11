@@ -160,8 +160,14 @@ button,
     top:1px;
     }
   .button:hover        { background:#3d494e; color:#fff; }
-  .button.delete       { background-color:#db6f6f; }
+  .button.delete         { background-color:#db6f6f; }
   .button.delete:hover   { background-color:#d35252; }
+
+  .button.minor         { background-color:#f38361; }
+  .button.minor:hover   { background-color:#ec6c45; }
+
+  .button.good         { background-color:#90bb74; }
+  .button.good:hover   { background-color:#73955c; }
 
   .listing .actions .delete:active,
   .listing .actions .delete:hover { border-color:#d35252; }

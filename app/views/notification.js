@@ -24,8 +24,7 @@ module.exports = Backbone.View.extend({
 
     var notification = {
       message: this.model.message,
-      link: this.model.link,
-      action: this.model.action
+      options: this.model.options
     }
 
     this.$el.html(_.template(this.template, notification, {

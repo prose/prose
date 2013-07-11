@@ -81,6 +81,7 @@ APPLICATION = \
 	app/router.js \
 	app/util.js \
 	app/boot.js \
+	app/status.js \
 	dist/templates.js \
 	app/models.js \
 	app/cookie.js \
