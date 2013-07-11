@@ -15,6 +15,7 @@ var SearchView = require('./views/search');
 var ReposView = require('./views/repos');
 var RepoView = require('./views/repo');
 var FileView = require('./views/file');
+var Preview = require('./views/preview');
 var DocumentationView = require('./views/documentation');
 var ChooseLanguageView = require('./views/chooselanguage');
 
@@ -156,19 +157,15 @@ module.exports = Backbone.Router.extend({
 
   path: function(login, repoName, path) {
     var url = util.extractURL(path);
-    var parts;
 
     switch(url.mode) {
       case 'tree':
         this.repo(login, repoName, url.branch, url.path);
         break;
       case 'preview':
-        parts = util.extractFilename(url.path);
-        this.preview(login, repoName, url.mode, url.branch, parts[0], parts[1]);
+        this.preview(login, repoName, url.mode, url.branch, url.path);
         break;
       case 'new':
-        this.post(login, repoName, url.mode, url.branch, url.path);
-        break;
       case 'blob':
       case 'edit':
         this.post(login, repoName, url.mode, url.branch, url.path);
@@ -182,6 +179,8 @@ module.exports = Backbone.Router.extend({
   post: function(login, repoName, mode, branch, path) {
     if (this.view) this.view.remove();
 
+    this.app.nav.mode('file');
+
     switch(mode) {
       case 'new':
         util.loader.loading(t('loading.creating'));
@@ -193,8 +192,6 @@ module.exports = Backbone.Router.extend({
         util.loader.loading(t('preview.file'));
         break;
     }
-
-    this.app.nav.mode('file');
 
     var user = this.users.findWhere({ login: login });
     if (_.isUndefined(user)) {
@@ -250,29 +247,52 @@ module.exports = Backbone.Router.extend({
     });
   },
 
-  // TODO: should this still pass through File view?
-  preview: function(user, repo, branch, path, file, mode) {
-    var router = this;
+  preview: function(login, repoName, mode, branch, path) {
+    if (this.view) this.view.remove();
+
     util.loader.loading(t('preview.file'));
 
-    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', t('notification.error.exists'));
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) {
-          app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
-        } else {
-          cb(err, data);
-        }
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
 
-        function cb(err, data) {
-          var view = new app.views.Preview({
-            model: data
-          }).render();
-
-          util.loader.loaded();
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
         }
-      }, this));
-    }, this));
+      });
+      user.repos.add(repo);
+    }
+
+    var file = {
+      branch: branch,
+      branches: repo.branches,
+      mode: mode,
+      nav: this.app.nav,
+      name: util.extractFilename(path)[1],
+      path: path,
+      repo: repo,
+      router: this,
+      sidebar: this.app.sidebar
+    };
+
+    repo.fetch({
+      success: (function(model, res, options) {
+        // TODO: should this still pass through File view?
+        this.view = new Preview(file);
+        this.app.$el.find('#main').html(this.view.el);
+
+        util.loader.loaded();
+      }).bind(this),
+      error: (function() {
+        this.notify('error', t('notification.error.exists'));
+      }).bind(this)
+    });
   },
 
   start: function() {

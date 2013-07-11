@@ -84,6 +84,52 @@ module.exports = Backbone.View.extend({
     this.collection.fetch({ success: this.setModel, model: options.model });
   },
 
+  setModel: function(collection, res, options) {
+    // Set model either by calling directly for new File models
+    // or by filtering collection for existing File models
+    this.model = options.model ? options.model : collection.findWhere({ path: this.path });
+
+    this.model.fetch({
+      complete: (function() {
+        // TODO: save parsed config to the repo as it's used accross
+        // files of the same repo and shouldn't be re-parsed each time
+        this.config = collection.findWhere({ path: '_prose.yml' }) ||
+          collection.findWhere({ path: '_config.yml' });
+
+        // render view once config content has loaded
+        this.config.fetch({
+          complete: (function() {
+            var content = this.config.get('content');
+
+            try {
+              this.config = jsyaml.load(content);
+            } catch(err) {
+              throw err;
+            }
+
+            this.poachConfig(this.config);
+
+            // initialize the subviews
+            this.initHeading();
+            this.initToolbar();
+            this.initEditor();
+            this.initSidebar();
+
+            // TODO Take this out of here when this
+            // method is added to the repo level.
+            if (!this.config.prose ||
+              this.config.prose && !this.config.prose.metadata) {
+              this.renderMetadata();
+            }
+
+          }).bind(this)
+        });
+
+        this.render();
+      }).bind(this)
+    });
+  },
+
   cursor: function() {
     var view = this;
     var selection = util.trim(this.editor.getSelection());
@@ -151,52 +197,6 @@ module.exports = Backbone.View.extend({
         this.toolbar.highlight('numbered-list');
       }
     }
-  },
-
-  setModel: function(collection, res, options) {
-    // Set model either by calling directly for new File models
-    // or by filtering collection for existing File models
-    this.model = options.model ? options.model : collection.findWhere({ path: this.path });
-
-    this.model.fetch({
-      complete: (function() {
-        // TODO: save parsed config to the repo as it's used accross
-        // files of the same repo and shouldn't be re-parsed each time
-        this.config = collection.findWhere({ path: '_prose.yml' }) ||
-          collection.findWhere({ path: '_config.yml' });
-
-        // render view once config content has loaded
-        this.config.fetch({
-          complete: (function() {
-            var content = this.config.get('content');
-
-            try {
-              this.config = jsyaml.load(content);
-            } catch(err) {
-              throw err;
-            }
-
-            this.poachConfig(this.config);
-
-            // initialize the subviews
-            this.initHeading();
-            this.initToolbar();
-            this.initEditor();
-            this.initSidebar();
-
-            // TODO Take this out of here when this
-            // method is added to the repo level.
-            if (!this.config.prose ||
-              this.config.prose && !this.config.prose.metadata) {
-              this.renderMetadata();
-            }
-
-          }).bind(this)
-        });
-
-        this.render();
-      }).bind(this)
-    });
   },
 
   nearestPath: function(metadata) {
