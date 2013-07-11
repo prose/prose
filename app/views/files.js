@@ -8,8 +8,6 @@ var FolderView = require('./li/folder');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: templates.files,
-
   subviews: [],
 
   events: {
@@ -35,10 +33,6 @@ module.exports = Backbone.View.extend({
 
     this.listenTo(this.search, 'search', this.render);
 
-    this.listenTo(this.model, 'all', function(e) {
-      console.log(e);
-    });
-
     this.model.fetch({ success: this.render, reset: true });
   },
 
@@ -57,12 +51,7 @@ module.exports = Backbone.View.extend({
       return regex.test(file.get('path'));
     }).bind(this));
 
-    var frag = {
-      tree: document.createDocumentFragment(),
-      file: document.createDocumentFragment()
-    };
-
-    this.$el.empty().append(_.template(this.template));
+    var frag = document.createDocumentFragment();
 
     collection.each((function(file, index) {
       var view;
@@ -81,12 +70,11 @@ module.exports = Backbone.View.extend({
         });
       }
 
-      frag[file.get('type')].appendChild(view.render().el);
+      frag.appendChild(view.render().el);
       this.subviews.push(view);
     }).bind(this));
 
-    this.$el.find('.folders').html(frag.tree);
-    this.$el.find('.files').html(frag.file);
+    this.$el.html(frag);
 
     this.$listings = this.$el.find('.item');
     this.$search = this.$el.find('#filter');

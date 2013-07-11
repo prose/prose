@@ -9,6 +9,7 @@ var cookie = require('../cookie');
 module.exports = Backbone.Collection.extend({
   model: function(attributes, options) {
     // TODO: handle 'symlink' and 'submodule' type
+    // TODO: coerce tree/folder to a single type
     switch(attributes.type) {
       case 'blob':
         return new File(attributes, options);
@@ -29,7 +30,34 @@ module.exports = Backbone.Collection.extend({
     this.branch = options.branch;
     this.sha = options.sha;
 
-    this.comparator = 'name';
+    // Sort files reverse alphabetically if path begins with '_posts/'
+    this.comparator = function(a, b) {
+      var typeA = a.get('type');
+      var typeB = b.get('type');
+
+      var pathA = a.get('path');
+      var pathB = b.get('path');
+
+      var regex = /^_posts\/.*$/
+
+      if (typeA === typeB && regex.test(pathA) && regex.test(pathB)) {
+        // Reverse alphabetical
+        return pathA < pathB ? 1 : -1;
+      } else if (typeA === typeB) {
+        // Alphabetical
+        return pathA < pathB ? -1 : 1;
+      } else {
+        switch(typeA) {
+          case 'tree':
+          case 'folder':
+            return -1;
+            break;
+          case 'file':
+            return typeB === 'folder' || typeB === 'tree' ? 1 : -1;
+            break;
+        }
+      }
+    };
   },
 
   parse: function(resp, options) {
