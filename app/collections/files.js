@@ -42,10 +42,6 @@ module.exports = Backbone.Collection.extend({
     }).bind(this));
   },
 
-  url: function() {
-    return this.repo.url() + '/git/trees/' + this.sha + '?recursive=1';
-  },
-
   restore: function(file, options) {
     options = options ? _.clone(options) : {};
 
@@ -126,5 +122,9 @@ module.exports = Backbone.Collection.extend({
       }).bind(this),
       error: options.error
     });
+  },
+
+  url: function() {
+    return this.repo.url() + '/git/trees/' + this.sha + '?recursive=1';
   }
 });
