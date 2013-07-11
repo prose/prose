@@ -2,7 +2,7 @@
   <div class='listing-icon icon round <%= file.extension %> <% if (file.media) { %>media<% } %>'></div>
 <% } else { %>
   <a href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>' class='listing-icon'>
-    <span class='icon round <%= file.extension %> <% if (file.media) { %>media<% } %>'></span>
+    <span class='icon round <% if (file.markdown) { %> md<% } %> <% if (file.media) { %> media<% } %>'></span>
   </a>
 <% } %>
 
@@ -31,7 +31,7 @@
   <% if (file.binary) { %>
     <h3 class='title' title='<%= file.name %>'><%= file.name %></h3>
   <% } else { %>
-      <% if (file.extension === 'md') { %>
+      <% if (file.markdown) { %>
         <a class='clearfix' href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'>
           <h3><%= file.name %></h3>
           <span class='deemphasize'><%= file.name %></span>

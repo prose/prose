@@ -163,6 +163,9 @@ button,
   .button.delete         { background-color:#db6f6f; }
   .button.delete:hover   { background-color:#d35252; }
 
+  .button.major         { background-color:#db6f6f; }
+  .button.major:hover   { background-color:#d35252; }
+
   .button.minor         { background-color:#f38361; }
   .button.minor:hover   { background-color:#ec6c45; }
 
