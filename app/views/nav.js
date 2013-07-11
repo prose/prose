@@ -37,7 +37,8 @@ module.exports = Backbone.View.extend({
   },
 
   logout: function() {
-    app.models.logout();
+    cookie.unset('oauth-token');
+    cookie.unset('id');
     window.location.reload();
     return false;
   },

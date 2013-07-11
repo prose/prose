@@ -717,42 +717,38 @@ module.exports = Backbone.View.extend({
     return true;
   },
 
-  sendPatch: function(filepath, filename, filecontent, message) {
-    // Submits a patch (fork + pull request workflow)
-    var view = this;
+  patch: function() {
+    // Submit a patch (fork + pull request workflow)
+    this.updateSaveState(t('actions.save.patch'), 'saving');
 
-    function patch() {
-      var previous = view.model.get('previous');
-      if (view.updateMetaData()) {
-        view.model.content = previous;
-        view.editor.setValue(previous);
+    // view.updateMetaData();
 
-        app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
+    this.model.patch({
+      success: (function(res) {
+        /*
+        // TODO: revert to previous state?
+        var previous = view.model.get('previous');
+        this.model.content = previous;
+        this.editor.setValue(previous);
+        this.dirty = false;
+        this.model.persisted = true;
+        this.model.file = filename;
+        this.model.set('previous', filecontent);
+        */
 
-          if (err) {
-            view.updateSaveState(t('actions.error'), 'error');
-            return;
-          }
+        // TODO: why is this breaking?
+        // this.toolbar.updatePublishState();
 
-          view.dirty = false;
-          view.model.persisted = true;
-          view.model.file = filename;
-
-          view.updateURL();
-          view.model.set('previous', filecontent);
-          view.sidebar.close();
-          view.toolbar.updatePublishState();
-          view.updateSaveState(t('actions.save.submission'), 'saved');
-        });
-      } else {
-        view.updateSaveState(t('actions.save.metaError'), 'error');
-      }
-    }
-
-    view.updateSaveState(t('actions.save.patch'), 'saving');
-    patch();
-
-    return false;
+        this.updateURL();
+        this.sidebar.close();
+        this.updateSaveState(t('actions.save.submission'), 'saved');
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        debugger;
+        var res = JSON.parse(xhr.responseText);
+        this.updateSaveState(res.message, 'error');
+      }).bind(this)
+    });
   },
 
   filepath: function() {
@@ -853,7 +849,7 @@ module.exports = Backbone.View.extend({
       });
 
     var message = $message.val() || noVal;
-    var method = this.model.get('writable') ? this.model.save : this.sendPatch;
+    var method = this.model.get('writable') ? this.model.save : this.patch;
 
     // Validation checking
     this.model.on('invalid', function(model, error) {
