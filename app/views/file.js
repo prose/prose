@@ -259,6 +259,8 @@ module.exports = Backbone.View.extend({
         this.model.set('defaults', defaults);
         this.render();
       }).bind(this));
+    } else {
+      this.render();
     }
   },
 
