@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var cookie = require('../../cookie');
 var templates = require('../../../dist/templates');
 
 module.exports = Backbone.View.extend({
@@ -19,7 +20,10 @@ module.exports = Backbone.View.extend({
     this.$el.data('navigate', '#' + this.model.get('owner').login + '/' + this.model.get('name'));
     this.$el.data('id', this.model.id);
 
-    var repo = this.model.attributes;
+    var repo = _.extend(this.model.attributes, {
+      login: cookie.get('login')
+    });
+
     this.$el.empty().append(_.template(this.template, repo, {
       variable: 'repo'
     }));

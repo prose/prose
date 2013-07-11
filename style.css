@@ -1984,9 +1984,8 @@ ins {
   font-style:italic;
   }
 .chzn-container-multi .chzn-choices .search-choice {
-  background:#eff3f5;
-  border:1px solid #2099AA;
-  color:#3d494e;
+  background:#98c177;
+  color:#fff;
   width:48%;
   padding:4px 20px 5px 8px;
   margin:3px;
@@ -1998,19 +1997,16 @@ ins {
   -webkit-font-smoothing:subpixel-antialiased;
   -webkit-background-clip:padding-box;
           background-clip:padding-box;
-  box-shadow:0 0 2px #FFF inset,
-             0 1px 0 rgba(0, 0, 0, 0.05);
   -webkit-border-radius:3px;
           border-radius:3px;
   }
 .chzn-container-multi .chzn-choices .search-choice.search-choice-disabled {
   background-color:#d4d7d9;
   color:#516066;
-  border:1px solid #d4d7d9;
   padding-right:5px;
   }
 .chzn-container-multi .chzn-choices .search-choice-focus {
-  border-color:#DB6F6F;
+  background-color:#DB6F6F;
   }
 .chzn-container-multi .chzn-choices .search-choice .search-choice-close {
   background:transparent url('img/sprite.png') no-repeat -40px -80px;
