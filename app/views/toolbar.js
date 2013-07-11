@@ -195,7 +195,7 @@ module.exports = Backbone.View.extend({
                 if (quoted.test(parts[2])) {
                   href = parts[2].split(quoted)[0];
 
-                  // TODO could be improved
+                  // TODO: could be improved
                   title = parts[2].match(quoted)[0].replace(/"/g, '');
                 }
               }

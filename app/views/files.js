@@ -33,9 +33,13 @@ module.exports = Backbone.View.extend({
     this.model = this.branches.findWhere({ name: this.branch }).files;
     this.search.model = this.model;
 
-    this.listenTo(this.search, 'search', this.render, this);
+    this.listenTo(this.search, 'search', this.render);
 
-    this.model.fetch({ success: _.bind(this.render, this) });
+    this.listenTo(this.model, 'all', function(e) {
+      console.log(e);
+    });
+
+    this.model.fetch({ success: this.render, reset: true });
   },
 
   render: function() {
@@ -50,9 +54,9 @@ module.exports = Backbone.View.extend({
 
     // if not searching, filter to only show current level
     var collection = search ? this.search.search() : this.model.filter((function(file) {
-      return file.get('path').match(regex);
+      return regex.test(file.get('path'));
     }).bind(this));
-    
+
     var frag = {
       tree: document.createDocumentFragment(),
       file: document.createDocumentFragment()

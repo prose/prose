@@ -188,7 +188,7 @@ module.exports = Backbone.View.extend({
     var path = this.model.get('path');
     var nearestDir = /\/(?!.*\/).*$/;
 
-    while (metadata[path] === undefined && path.match( nearestDir )) {
+    while (metadata[path] === undefined && nearestDir.test(path)) {
       path = path.replace( nearestDir, '' );
     }
 
@@ -218,11 +218,12 @@ module.exports = Backbone.View.extend({
 
             // TODO: iterate over these to add to queue synchronously
             _.each(defaults, function(value, key) {
+              var regex = /^https?:\/\//;
 
               // Parse JSON URL values
               if (value.field && value.field.options &&
                   _.isString(value.field.options) &&
-                  value.field.options.match(/^https?:\/\//)) {
+                  regex.test(value.field.options)) {
 
                 q.defer(function(cb) {
                   $.ajax({
@@ -578,9 +579,10 @@ module.exports = Backbone.View.extend({
       var hash = window.location.hash.split('/');
       hash[2] = 'preview';
 
-      // if last item in hash array does not begin with Jekyll YYYY-MM-DD format,
+      // If last item in hash array does not begin with Jekyll YYYY-MM-DD format,
       // append filename from input
-      if (!_.last(hash).match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
+      var regex = /^\d{4}-\d{2}-\d{2}-(?:.+)/;
+      if (!regex.test(_.last(hash))) {
         hash.push(_.last(this.filepath().split('/')));
       }
 

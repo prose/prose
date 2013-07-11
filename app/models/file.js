@@ -5,23 +5,7 @@ var jsyaml = require('js-yaml');
 var util = require('.././util');
 
 module.exports = Backbone.Model.extend({
-  idAttribute: 'sha',
-
-  uploads: [],
-
-  constructor: function(attributes, options) {
-    Backbone.Model.call(this, {
-      branch: attributes.branch,
-      collection: attributes.collection,
-      content: attributes.content,
-      name: attributes.name,
-      path: attributes.path,
-      repo: attributes.repo,
-      sha: attributes.sha,
-      type: attributes.type,
-      content_url: attributes.url
-    });
-  },
+  idAttribute: 'path',
 
   initialize: function(attributes, options) {
     _.bindAll(this);
@@ -48,6 +32,7 @@ module.exports = Backbone.Model.extend({
     this.set({
       'binary': util.isBinary(extension),
       'content': this.isNew() && _.isUndefined(attributes.content) ? t('main.new.body') : attributes.content,
+      'content_url': attributes.url,
       'draft': function() {
         var path = this.get('path');
         return util.draft(path);
@@ -68,6 +53,10 @@ module.exports = Backbone.Model.extend({
     // Return result of functions set on model
     var value = Backbone.Model.prototype.get.call(this, attr);
     return _.isFunction(value) ? value.call(this) : value;
+  },
+
+  isNew: function() {
+    return this.get('sha') == null;
   },
 
   parse: function(resp, options) {
@@ -96,12 +85,14 @@ module.exports = Backbone.Model.extend({
     };
 
     res.content = resp.replace(/^(---\n)((.|\n)*?)---\n?/, function(match, dashes, frontmatter) {
+      var regex = /published: false/;
+
       try {
         // TODO: _.defaults for each key
         res.metadata = jsyaml.load(frontmatter);
 
         // Default to published unless explicitly set to false
-        res.metadata.published = !frontmatter.match(/published: false/);
+        res.metadata.published = !regex.test(frontmatter);
       } catch(err) {
         console.log('ERROR encoding YAML');
       }
