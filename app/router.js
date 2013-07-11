@@ -4,6 +4,7 @@ var Backbone = require('backbone');
 
 var User = require('./models/user');
 var Users = require('./collections/users');
+var Orgs = require('./collections/orgs');
 
 var Repo = require('./models/repo');
 var File = require('./models/file');
@@ -99,10 +100,11 @@ module.exports = Backbone.Router.extend({
     });
 
     user.fetch({
-      success: (function() {
+      success: (function(model, res, options) {
         this.view = content;
         this.app.$el.find('#main').html(this.view.render().el);
-        user.repos.fetch();
+
+        model.repos.fetch({ success: repos.render });
 
         // TODO: build event-driven loader queue
         util.loader.loaded();

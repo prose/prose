@@ -12,12 +12,13 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function(options) {
+    _.bindAll(this);
+
     this.model = options.model;
     this.search = options.search;
     this.subviews = [];
 
-    this.listenTo(this.model, 'sync', this.render, this);
-    this.listenTo(this.search, 'search', this.render, this);
+    this.listenTo(this.search, 'search', this.render);
   },
 
   render: function() {
