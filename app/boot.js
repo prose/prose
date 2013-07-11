@@ -15,6 +15,7 @@ var NotificationView = require('./views/notification');
 var config = require('./config');
 var cookie = require('./cookie');
 var auth = require('./config');
+var status = require('./status');
 
 // Set up translations
 var setLanguage = (cookie.get('lang')) ? true : false;
@@ -66,23 +67,36 @@ user.authenticate({
           Backbone.history.start();
         },
         error: function(model, res, options) {
+          var apiStatus = status.githubApi(function(res) {
 
-          var link = auth.site + '/login/oauth/authorize?client_id=' + auth.id + '&scope=repo,user&redirect_uri' + encodeURIComponent(window.location.href);
+            var error = new NotificationView({
+              'message': t('notification.error.github'),
+              'options': [
+                {
+                  'title': t('notification.back'),
+                  'link': '/'
+                },
+                {
+                  'title': t('notification.githubStatus', {
+                    status: res.status
+                  }),
+                  'link': '//status.github.com',
+                  'className': res.status
+                }
+              ]
+            }).render();
 
-          var error = new NotificationView({
-            'message': t('notification.error.github'),
-            'action': t('login'),
-            'link': link
-          }).render();
-
-          $('#prose').html(error.el);
+            $('#prose').html(error.el);
+          });
         }
       });
     } else {
       var upgrade = new NotificationView({
         'message': t('main.upgrade.content'),
-        'action': t('main.upgrade.download'),
-        'link': 'https://www.google.com/intl/en/chrome/browser'
+        'options': [{
+          'title': t('main.upgrade.download'),
+          'link': 'https://www.google.com/intl/en/chrome/browser'
+        }]
       }).render();
 
       $('#prose').html(upgrade.el);

@@ -99,6 +99,7 @@ en:
     create: "Create it"
     home: "Back to Main Page"
     back: "Go Back"
+    githubStatus: "Status on GitHub ({status})"
     error:
       label: "Error"
       github: "Error while loading data from Github. This might be a temporary issue. Please try again later."
