@@ -293,6 +293,7 @@ module.exports = Backbone.View.extend({
 
             if (this.repo.get('private')) {
               // append auth param
+              // TODO This is not correct. See #491
               raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
             }
 
@@ -816,7 +817,6 @@ module.exports = Backbone.View.extend({
         this.updateSaveState(t('actions.save.submission'), 'saved');
       }).bind(this),
       error: (function(model, xhr, options) {
-        debugger;
         var res = JSON.parse(xhr.responseText);
         this.updateSaveState(res.message, 'error');
       }).bind(this)
@@ -843,25 +843,17 @@ module.exports = Backbone.View.extend({
     if (postType === '_posts') {
       basepath.splice(0, 1, '_drafts');
       filepath.splice(0, 1, basepath.join('/'));
-      this.saveDraft(filepath.join('/'), filename, filecontent, message);
+      // this.saveDraft(filepath.join('/'), filename, filecontent, message);
       app.state.path = this.model.path = filepath[0];
     } else {
       basepath.splice(0, 1, '_posts');
       filepath.splice(0, 1, basepath.join('/'));
       message = t('actions.commits.fromDraft', { filename: filename });
-      this.saveFile(filepath.join('/'), filename, filecontent, message);
+      // this.saveFile(filepath.join('/'), filename, filecontent, message);
       app.state.path = this.model.path = filepath[0];
     }
 
     return false;
-  },
-
-  saveFile: function(filepath, filename, filecontent, message) {
-    this.updateSaveState(t('actions.save.metaError'), 'error');
-    this.updateSaveState(t('actions.error'), 'error');
-    this.updateSaveState(t('actions.save.saving'), 'saving');
-    this.updateSaveState(t('actions.save.saved'), 'saved', true);
-    this.updateSaveState(t('actions.save.fileNameError'), 'error');
   },
 
   stashFile: function(e) {
@@ -907,6 +899,9 @@ module.exports = Backbone.View.extend({
 
   updateFile: function() {
     var view = this;
+
+    // Trigger the save event
+    this.updateSaveState(t('actions.save.saving'), 'saving');
     var filepath = this.filepath();
     var filename = util.extractFilename(filepath)[1];
     var filecontent = this.model.serialize();
@@ -923,6 +918,11 @@ module.exports = Backbone.View.extend({
     var message = $message.val() || noVal;
     var method = this.model.get('writable') ? this.model.save : this.patch;
 
+    //this.updateSaveState(t('actions.save.metaError'), 'error');
+    //this.updateSaveState(t('actions.error'), 'error');
+    //this.updateSaveState(t('actions.save.saved'), 'saved', true);
+    //this.updateSaveState(t('actions.save.fileNameError'), 'error');
+
     // Validation checking
     this.model.on('invalid', function(model, error) {
       view.modal = new ModalView({
@@ -937,7 +937,6 @@ module.exports = Backbone.View.extend({
     this.model.content = (this.editor) ? this.editor.getValue() : '';
 
     // Delegate
-    // method.call(this, filepath, filename, filecontent, message);
     method.call(this);
     return false;
   },
