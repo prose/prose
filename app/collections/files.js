@@ -11,14 +11,14 @@ module.exports = Backbone.Collection.extend({
     // TODO: handle 'symlink' and 'submodule' type
     // TODO: coerce tree/folder to a single type
     switch(attributes.type) {
-      case 'blob':
-        return new File(attributes, options);
-        break;
       case 'tree':
         return new Folder(attributes, options);
         break;
+      case 'blob':
+        return new File(attributes, options);
+        break;
       default:
-        throw 'Unrecognized Type';
+        return new File(attributes, options);
         break;
     }
   },
@@ -40,7 +40,7 @@ module.exports = Backbone.Collection.extend({
 
       var regex = /^_posts\/.*$/
 
-      if (typeA === typeB && regex.test(pathA) && regex.test(pathB)) {
+      if (typeA === typeB && typeA === 'file' && regex.test(pathA) && regex.test(pathB)) {
         // Reverse alphabetical
         return pathA < pathB ? 1 : -1;
       } else if (typeA === typeB) {
