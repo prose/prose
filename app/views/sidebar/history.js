@@ -45,14 +45,15 @@ module.exports = Backbone.View.extend({
     // TODO: how many commits should be fetched initially?
     // TODO: option to load more?
 
-    // TODO: display list of recent updates by all users
-    this.history = (history.all || []).slice(0, 10);
+    // TODO: display list of recent updates by all other users
+    this.history = (history.all || []).slice(0, 15);
 
     // Recent commits by authenticated user
-    this.recent = (history.author || []).slice(0, 10);
+    this.recent = (history.author || []).slice(0, 15);
 
     var q = queue();
 
+    // _.union(this.history, this.recent).each(function(commit) {
     this.recent.each(function(commit) {
       q.defer(function(cb) {
         commit.fetch({
