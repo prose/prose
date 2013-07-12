@@ -53,6 +53,6 @@ module.exports = Backbone.View.extend({
     _.invoke(this.subviews, 'remove');
     this.subviews = {};
 
-    Backbone.View.prototype.remove.call(this);
+    Backbone.View.prototype.remove.apply(this, arguments);
   }
 });

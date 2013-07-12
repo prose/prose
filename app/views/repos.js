@@ -4,7 +4,7 @@ var Backbone = require('backbone');
 var RepoView = require('./li/repo');
 
 module.exports = Backbone.View.extend({
-  subviews: [],
+  subviews: {},
 
   events: {
     'mouseover .item': 'activeListing',
@@ -16,7 +16,6 @@ module.exports = Backbone.View.extend({
 
     this.model = options.model;
     this.search = options.search;
-    this.subviews = [];
 
     this.listenTo(this.search, 'search', this.render);
   },
@@ -28,7 +27,7 @@ module.exports = Backbone.View.extend({
     collection.each((function(repo, index) {
       var view = new RepoView({ model: repo });
       frag.appendChild(view.render().el);
-      this.subviews.push(view);
+      this.subviews[repo.id] = view;
     }).bind(this));
 
     this.$el.html(frag);
@@ -55,8 +54,8 @@ module.exports = Backbone.View.extend({
 
   remove: function() {
     _.invoke(this.subviews, 'remove');
-    this.subviews = [];
+    this.subviews = {};
 
-    Backbone.View.prototype.remove.call(this);
+    Backbone.View.prototype.remove.apply(this, arguments);
   }
 });

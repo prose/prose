@@ -9,7 +9,7 @@ var templates = require('../../../dist/templates');
 var utils = require('../../util');
 
 module.exports = Backbone.View.extend({
-  subviews: [],
+  subviews: {},
 
   template: templates.sidebar.history,
 
@@ -91,17 +91,18 @@ module.exports = Backbone.View.extend({
 
       list.slice(0,5).each((function(file, index) {
         var commits = map[file];
+        var commit = commits[0];
 
         var view = new CommitView({
           branch: this.branch,
-          file: commits[0],
+          file: commit,
           repo: this.repo,
           view: this.view
         });
 
         frag.appendChild(view.render().el);
 
-        this.subviews.push(view);
+        this.subviews[commit.sha] = view;
       }).bind(this));
 
       this.$el.find('#commits').html(frag);
@@ -112,7 +113,7 @@ module.exports = Backbone.View.extend({
 
   remove: function() {
     _.invoke(this.subviews, 'remove');
-    this.subviews = [];
+    this.subviews = {};
 
     Backbone.View.prototype.remove.apply(this, arguments);
   }
