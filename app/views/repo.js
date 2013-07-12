@@ -28,8 +28,6 @@ module.exports = Backbone.View.extend({
     this.initBranches();
     this.initHistory();
 
-    this.listenTo(this.model, 'sync', this.render, this);
-
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
     this.listenTo(this.sidebar, 'cancel', this.cancel);
@@ -90,16 +88,12 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    // TODO: load _config.yml, set parsed value on Repo model
-    // TODO: set jailed from config.prose.rooturl
     var repo = {
       owner: this.model.get('owner'),
       repoName: this.model.get('name'),
       branch: this.branch,
       path: this.path,
-      pathParts: util.chunkedPath(this.path),
-      jailed: '',
-      util: util
+      pathParts: util.chunkedPath(this.path)
     };
 
     this.$el.html(_.template(this.template, repo, {variable: 'repo'}));

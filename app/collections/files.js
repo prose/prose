@@ -77,12 +77,15 @@ module.exports = Backbone.Collection.extend({
 
     // Attempt to parse YAML
     try {
-      this.config = config = jsyaml.load(content);
+      config = jsyaml.load(content);
     } catch(err) {
       throw err;
     }
 
     if (config && config.prose) {
+      // load _config.yml, set parsed value on collection
+      this.config = config.prose;
+
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
         // path = this.nearestPath(metadata);
