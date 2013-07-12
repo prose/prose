@@ -42,11 +42,14 @@ module.exports = Backbone.View.extend({
       return author.id === id ? 'author' : 'all';
     });
 
+    // TODO: how many commits should be fetched initially?
+    // TODO: option to load more?
+
     // TODO: display list of recent updates by all users
-    this.history = history.all || [];
+    this.history = (history.all || []).slice(0, 10);
 
     // Recent commits by authenticated user
-    this.recent = history.author || [];
+    this.recent = (history.author || []).slice(0, 10);
 
     var q = queue();
 
@@ -54,7 +57,7 @@ module.exports = Backbone.View.extend({
       q.defer(function(cb) {
         commit.fetch({
           success: function(model, res, options) {
-            // TODO: Why is this necessary instead of success: cb?
+            // This is necessary instead of success: cb for some reason
             cb();
           }
         });
