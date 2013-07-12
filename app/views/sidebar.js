@@ -33,7 +33,7 @@ module.exports = Backbone.View.extend({
     options = _.clone(options) || {};
 
     var view = new views[subview](options);
-    view.setElement(this.$el.find('#' + subview));
+    this.$el.find('#' + subview).html(view.el);
 
     this.subviews[subview] = view;
 

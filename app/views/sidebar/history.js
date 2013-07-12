@@ -20,6 +20,7 @@ module.exports = Backbone.View.extend({
     this.repo = options.repo;
     this.branch = options.branch;
     this.commits = options.commits;
+    this.sidebar = options.sidebar;
     this.view = options.view;
 
     this.commits.setBranch(this.branch, {
@@ -110,6 +111,8 @@ module.exports = Backbone.View.extend({
       }).bind(this));
 
       this.$el.find('#commits').html(frag);
+
+      this.sidebar.open();
     }).bind(this));
 
     return this;

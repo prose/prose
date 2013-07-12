@@ -16,6 +16,7 @@ module.exports = Backbone.View.extend({
     this.repo = options.repo;
     this.branch = options.branch || this.repo.get('master_branch');
     this.router = options.router;
+    this.sidebar = options.sidebar;
 
     this.model.fetch({ success: this.render });
   },
@@ -44,6 +45,8 @@ module.exports = Backbone.View.extend({
     this.$el.find('.chzn-select').chosen().change(function() {
       router.navigate($(this).val(), true);
     });
+
+    this.sidebar.open();
 
     return this;
   },

@@ -90,9 +90,6 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.sidebar.mode('repo');
-    this.sidebar.open();
-
     // TODO: load _config.yml, set parsed value on Repo model
     // TODO: set jailed from config.prose.rooturl
     var repo = {
@@ -110,8 +107,6 @@ module.exports = Backbone.View.extend({
     this.header.setElement(this.$el.find('#heading')).render();
     this.search.setElement(this.$el.find('#search')).render();
     this.files.setElement(this.$el.find('#files'));
-    this.branches.setElement(this.sidebar.$el.find('#branches'));
-    this.history.setElement(this.sidebar.$el.find('#history'));
 
     util.fixedScroll(this.$el.find('.topbar'));
 
@@ -119,6 +114,8 @@ module.exports = Backbone.View.extend({
   },
 
   remove: function() {
+    this.sidebar.close();
+
     _.invoke(this.subviews, 'remove');
     this.subviews = {};
 
