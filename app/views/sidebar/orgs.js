@@ -8,20 +8,23 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     this.model = options.model;
-    this.listenTo(this.model, 'sync', this.render, this);
+    this.user = options.user;
   },
 
   render: function() {
-    var orgs = {
+    var data = {
       user: this.model.user.toJSON(),
-      memberOf: this.model.toJSON()
+      orgs: this.model.toJSON()
     };
 
-    this.$el.empty().append(_.template(this.template, orgs, {
-      variable: 'orgs'
+    this.$el.html(_.template(this.template, data, {
+      variable: 'data'
     }));
 
-    this.$el.addClass('open');
+    // Update active user or organization
+    this.$el.find('li a').removeClass('active');
+    this.$el.find('li a[data-id="' + this.user.get('id') + '"]').addClass('active');
+
     return this;
   }
 });

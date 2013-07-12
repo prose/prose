@@ -3,11 +3,11 @@
 </div>
 <ul class='listing'>
   <li>
-    <a href='#<%= orgs.user.login %>' title='<%= orgs.user.login %>' data-id='<%= orgs.user.id %>'>
-      <%= orgs.user.login %>
+    <a href='#<%= data.user.login %>' title='<%= data.user.login %>' data-id='<%= data.user.id %>'>
+      <%= data.user.login %>
     </a>
   </li>
-  <% orgs.memberOf.each(function(org) {  %>
+  <% data.orgs.each(function(org) {  %>
   <li>
     <a href='#<%= org.login %>' title='<%= org.login %>' data-id='<%= org.id %>'>
       <%= org.login %>
