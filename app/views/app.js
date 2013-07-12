@@ -31,7 +31,6 @@ module.exports = Backbone.View.extend({
       sidebar: this.sidebar,
       user: this.user
     });
-
     this.subviews['nav'] = this.nav;
 
     // Key Binding support accross the application.
@@ -47,9 +46,8 @@ module.exports = Backbone.View.extend({
     }).bind(this));
   },
 
-  render: function(options) {
-    var view = this;
-    this.$el.empty().append(_.template(this.template));
+  render: function() {
+    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
 
     this.sidebar.setElement(this.$el.find('#drawer')).render();
     this.nav.setElement(this.$el.find('nav')).render();

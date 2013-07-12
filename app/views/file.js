@@ -425,20 +425,22 @@ module.exports = Backbone.View.extend({
 
   initSidebar: function() {
     // Settings sidebar panel
-    this.sidebar.initSubview('settings', {
+    this.settings = this.sidebar.initSubview('settings', {
       sidebar: this.sidebar,
       config: this.config,
       file: this.model,
       fileInput: this.titleAsHeading()
     }).render();
+    this.subviews['settings'] = this.settings;
 
     this.listenTo(this.sidebar, 'updateFile', this.makeDirty());
 
     // Commit message sidebar panel
-    this.sidebar.initSubview('save', {
+    this.save = this.sidebar.initSubview('save', {
       sidebar: this.sidebar,
       file: this.model
     }).render();
+    this.subviews['save'] = this.save;
   },
 
   initHeader: function() {

@@ -73,7 +73,7 @@ module.exports = Backbone.View.extend({
       sidebar: this.sidebar
     });
 
-    this.subviews['sidebar'] = this.sidebar;
+    this.subviews['branches'] = this.branches;
   },
 
   initHistory: function() {
@@ -86,7 +86,7 @@ module.exports = Backbone.View.extend({
       view: this
     });
 
-    this.subviews['sidebar'] = this.sidebar;
+    this.subviews['history'] = this.history;
   },
 
   render: function() {
