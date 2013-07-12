@@ -7,7 +7,7 @@ var utils = require('.././util');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.profile),
+  template: templates.profile,
 
   subviews: [],
 
@@ -23,7 +23,7 @@ module.exports = Backbone.View.extend({
     this.sidebar.mode('repos');
     this.sidebar.open();
 
-    this.$el.html(this.template());
+    this.$el.empty().append(_.template(this.template));
 
     this.search.setElement(this.$el.find('#search')).render();
     this.repos.setElement(this.$el.find('#repos'));
