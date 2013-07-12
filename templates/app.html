@@ -10,10 +10,8 @@
       <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>
       <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>
       <li><a href='./#chooselanguage'><%= t('navigation.language') %></a></li>
-      <% if (app.authed) { %>
-        <li class='divider'></li>
-        <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>
-      <% } %>
+      <li class='divider'></li>
+      <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>
     </ul>
   </div>
 </div>

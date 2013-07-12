@@ -15,7 +15,6 @@ module.exports = Backbone.View.extend({
     'click a.meta': 'emit',
     'click a.settings': 'emit',
     'click a.save': 'emit',
-    'click a.logout': 'logout',
     'click .mobile-menu .toggle': 'toggleMobileClass'
   },
 
@@ -26,20 +25,15 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.empty().append(_.template(this.template));
+    this.$el.html(_.template(this.template, {
+      login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=repo'
+    }, { variable: 'data' }));
     return this;
   },
 
   emit: function(e) {
     var state = $(e.currentTarget).data('state');
     this.toggle(state, e);
-    return false;
-  },
-
-  logout: function() {
-    cookie.unset('oauth-token');
-    cookie.unset('id');
-    window.location.reload();
     return false;
   },
 

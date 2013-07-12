@@ -3,6 +3,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var SidebarView = require('./sidebar');
 var NavView = require('./nav');
+var cookie = require('../cookie');
 var templates = require('../../dist/templates');
 var utils = require('.././util');
 
@@ -12,6 +13,10 @@ module.exports = Backbone.View.extend({
   template: templates.app,
 
   subviews: {},
+
+  events: {
+    'click a.logout': 'logout'
+  },
 
   initialize: function(options) {
     _.bindAll(this);
@@ -44,6 +49,13 @@ module.exports = Backbone.View.extend({
       }
       */
     }).bind(this));
+  },
+
+  logout: function() {
+    cookie.unset('oauth-token');
+    cookie.unset('id');
+    window.location.reload();
+    return false;
   },
 
   render: function() {

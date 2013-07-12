@@ -24,10 +24,10 @@ var setLanguage = (cookie.get('lang')) ? true : false;
 if (setLanguage) app.locale = cookie.get('lang');
 
 if (app.locale && app.locale !== 'en') {
-    $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
-        window.locale[app.locale] = result;
-        window.locale.current(app.locale);
-    });
+  $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+    window.locale[app.locale] = result;
+    window.locale.current(app.locale);
+  });
 }
 
 var user = new User();
