@@ -88,15 +88,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    var repo = {
-      owner: this.model.get('owner'),
-      repoName: this.model.get('name'),
-      branch: this.branch,
-      path: this.path,
-      pathParts: util.chunkedPath(this.path)
-    };
-
-    this.$el.html(_.template(this.template, repo, {variable: 'repo'}));
+    this.$el.html(_.template(this.template, {}, {variable: 'data'}));
 
     this.header.setElement(this.$el.find('#heading')).render();
     this.search.setElement(this.$el.find('#search')).render();
