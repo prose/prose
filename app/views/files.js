@@ -42,16 +42,18 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    var config = this.model.config;
     var search = this.search && this.search.input && this.search.input.val();
+    var config = this.model.config;
+    var rooturl = config ? config.rooturl + '/' : '';
     var path = this.path ? this.path + '/' : '';
-    var regex = new RegExp('^' + path + '[^\/]*$');
 
     // Set rooturl jail from collection config
+    var regex = new RegExp('^' + (path ? path : rooturl) + '[^\/]*$');
+
     var data = {
       path: path,
       parts: util.chunkedPath(this.path),
-      rooturl: config ? config.rooturl : false,
+      rooturl: rooturl,
       url: [
         this.repo.get('owner').login,
         this.repo.get('name'),
