@@ -41,7 +41,7 @@ module.exports = Backbone.View.extend({
       // this.file.get('lang') is programming language
       // this.file.get('metadata').lang is ISO 639-1 language code
       var settings = {
-        languages: this.config.languages,
+        languages: this.config ? this.config.languages : [],
         lang: this.file.get('lang'),
         metadata: this.file.get('metadata'),
         fileInput: this.fileInput,
