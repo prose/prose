@@ -10,7 +10,7 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.View.extend({
   template: templates.repo,
 
-  subviews: [],
+  subviews: {},
 
   initialize: function(options) {
     _.bindAll(this);
@@ -42,12 +42,12 @@ module.exports = Backbone.View.extend({
       alterable: false
     });
 
-    this.subviews.push(this.header);
+    this.subviews['header'] = this.header;
   },
 
   initSearch: function() {
     this.search = new SearchView({});
-    this.subviews.push(this.search);
+    this.subviews['search'] = this.search;
 
     this.initFiles();
   },
@@ -61,7 +61,7 @@ module.exports = Backbone.View.extend({
       path: this.path
     });
 
-    this.subviews.push(this.files);
+    this.subviews['files'] = this.files;
   },
 
   initBranches: function() {
@@ -73,7 +73,7 @@ module.exports = Backbone.View.extend({
       sidebar: this.sidebar
     });
 
-    this.subviews.push(this.sidebar);
+    this.subviews['branches'] = this.branches;
   },
 
   initHistory: function() {
@@ -86,7 +86,7 @@ module.exports = Backbone.View.extend({
       view: this
     });
 
-    this.subviews.push(this.sidebar);
+    this.subviews['history'] = this.history;
   },
 
   render: function() {
@@ -120,7 +120,7 @@ module.exports = Backbone.View.extend({
 
   remove: function() {
     _.invoke(this.subviews, 'remove');
-    this.subviews = [];
+    this.subviews = {};
 
     Backbone.View.prototype.remove.apply(this, arguments);
   }

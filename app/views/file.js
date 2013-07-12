@@ -23,7 +23,7 @@ module.exports = Backbone.View.extend({
 
   template: templates.file,
 
-  subviews: [],
+  subviews: {},
 
   initialize: function(options) {
     _.bindAll(this);
@@ -399,7 +399,7 @@ module.exports = Backbone.View.extend({
       config: this.config
     });
 
-    this.subviews.push(this.toolbar);
+    this.subviews['toolbar'] = this.toolbar;
     this.toolbar.setElement(this.$el.find('#toolbar')).render();
 
     this.listenTo(this.toolbar, 'updateImageInsert', this.updateImageInsert);
@@ -425,39 +425,41 @@ module.exports = Backbone.View.extend({
 
   initSidebar: function() {
     // Settings sidebar panel
-    this.sidebar.initSubview('settings', {
+    this.settings = this.sidebar.initSubview('settings', {
       sidebar: this.sidebar,
       config: this.config,
       file: this.model,
       fileInput: this.titleAsHeading()
     }).render();
+    this.subviews['settings'] = this.settings;
 
     this.listenTo(this.sidebar, 'updateFile', this.makeDirty());
 
     // Commit message sidebar panel
-    this.sidebar.initSubview('save', {
+    this.save = this.sidebar.initSubview('save', {
       sidebar: this.sidebar,
       file: this.model
     }).render();
+    this.subviews['save'] = this.save;
   },
 
-  initHeading: function() {
+  initHeader: function() {
     var inputValue = this.model.get('path');
 
     if (this.titleAsHeading()) {
       inputValue = this.model.get('metadata').title;
     }
 
-    this.heading = new HeaderView({
+    this.header = new HeaderView({
       inputValue: inputValue,
       file: this.model,
       repo: this.repo,
       alterable: true
     });
 
-    this.subviews.push(this.heading);
-    this.heading.setElement(this.$el.find('#heading')).render();
-    this.listenTo(this.heading, 'updateFile', this.makeDirty);
+    this.subviews['header'] = this.header;
+    this.header.setElement(this.$el.find('#heading')).render();
+    this.listenTo(this.header, 'updateFile', this.makeDirty);
   },
 
   renderMetadata: function() {
@@ -467,7 +469,7 @@ module.exports = Backbone.View.extend({
     });
 
     this.metadataEditor.setElement(this.$el.find('#meta')).render();
-    this.subviews.push(this.metadataEditor);
+    this.subviews['metadata'] = this.metadataEditor;
   },
 
   render: function() {
@@ -490,7 +492,7 @@ module.exports = Backbone.View.extend({
 
       // initialize the subviews
       this.initEditor();
-      this.initHeading();
+      this.initHeader();
       this.initToolbar();
       this.initSidebar();
 
@@ -827,7 +829,7 @@ module.exports = Backbone.View.extend({
     if (this.titleAsHeading()) {
       return this.sidebar.filepathGet();
     } else {
-      return this.heading.inputGet();
+      return this.header.inputGet();
     }
   },
 
@@ -946,7 +948,7 @@ module.exports = Backbone.View.extend({
     if (classes === 'save' && $(this.el).hasClass('saving')) return;
 
     // Update the Header
-    if (this.heading) this.heading.updateState(label);
+    if (this.header) this.header.updateState(label);
 
     // Update the Sidebar save button
     if (this.sidebar) this.sidebar.updateState(label);
@@ -1039,7 +1041,7 @@ module.exports = Backbone.View.extend({
     this.stashFile();
 
     _.invoke(this.subviews, 'remove');
-    this.subviews = [];
+    this.subviews = {};
 
     // Clear any file state classes in #prose
     this.updateSaveState('', '');

@@ -3,7 +3,7 @@ var Backbone = require('backbone');
 var util = require('.././util');
 
 module.exports = Backbone.Model.extend({
-  idAttribute: 'sha',
+  idAttribute: 'path',
 
   initialize: function(attributes, options) {
     _.bindAll(this);

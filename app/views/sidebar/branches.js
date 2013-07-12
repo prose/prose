@@ -7,7 +7,7 @@ var templates = require('../../../dist/templates');
 module.exports = Backbone.View.extend({
   template: templates.sidebar.branches,
 
-  subviews: [],
+  subviews: {},
 
   initialize: function(options) {
     _.bindAll(this);
@@ -35,7 +35,7 @@ module.exports = Backbone.View.extend({
       });
 
       frag.appendChild(view.render().el);
-      this.subviews.push(view);
+      this.subviews[branch.get('name')] = view;
     }).bind(this));
 
     this.$el.find('select').html(frag);
@@ -50,8 +50,8 @@ module.exports = Backbone.View.extend({
 
   remove: function() {
     _.invoke(this.subviews, 'remove');
-    this.subviews = [];
+    this.subviews = {};
 
-    Backbone.View.prototype.remove.call(this);
+    Backbone.View.prototype.remove.apply(this, arguments);
   }
 });

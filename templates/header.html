@@ -1,0 +1,21 @@
+<% if (data.alterable) { %>
+  <div class='action round avatar'>
+    <div class='popup-hover'>
+      <span class='ico round status'></span>
+      <span class='popup round arrow-left'><%= t('actions.change.noChange') %></span>
+      <%= data.avatar %>
+    </div>
+  </div>
+  <div class='fl details'>
+    <h4 class='parent-trail'><a href='#<%= data.user %>'><%= data.user %></a> / <a href='#<%= data.user %>/<%= data.repo.name %>'><%= data.repo.name %></a><% if (data.isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
+    <!-- if (isNew() && !translate) placeholder, not value -->
+    <input type='text' class='headerinput' value='<%= data.inputValue %>'>
+    <div class='mask'></div>
+  </div>
+<% } else { %>
+  <div class='avatar round'><%= data.avatar %></div>
+  <div class='fl details'>
+    <h4><a class='user' href='#<%= data.user %>'><%= data.user %></a></h4>
+    <h2><a class='repo' href='#<%= data.path %>'><%= data.title %></a></h2>
+  </div>
+<% } %>

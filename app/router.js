@@ -149,7 +149,7 @@ module.exports = Backbone.Router.extend({
         });
 
         this.view = content;
-        this.app.$el.find('#main').html(this.view.el);
+        this.app.$el.find('#main').html(this.view.render().el);
       }).bind(this)
     });
 

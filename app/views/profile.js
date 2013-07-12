@@ -9,7 +9,7 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.View.extend({
   template: templates.profile,
 
-  subviews: [],
+  subviews: {},
 
   initialize: function(options) {
     this.auth = options.auth;
@@ -20,9 +20,6 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.sidebar.mode('repos');
-    this.sidebar.open();
-
     this.$el.empty().append(_.template(this.template));
 
     this.search.setElement(this.$el.find('#search')).render();
@@ -30,16 +27,19 @@ module.exports = Backbone.View.extend({
 
     var header = new HeaderView({ user: this.user, alterable: false });
     header.setElement(this.$el.find('#heading')).render();
-    this.subviews.push(header);
+    this.subviews['header'] = header;
 
     if (this.auth) {
-      this.orgs = new OrgsView({ model: this.auth.orgs });
-      this.orgs.setElement(this.sidebar.$el.find('#orgs'));
-      this.subviews.push(this.orgs);
+      var orgs = new OrgsView({ model: this.auth.orgs, user: this.user });
+      orgs.setElement(this.sidebar.$el.find('#orgs'));
+      this.subviews['orgs'] = orgs;
 
       this.auth.orgs.fetch({
-        success: (function() {
-          this.orgs.render();
+        success: (function(model, res, options) {
+          orgs.render();
+
+          this.sidebar.mode('repos');
+          this.sidebar.open();
         }).bind(this)
       });
     }
@@ -51,8 +51,8 @@ module.exports = Backbone.View.extend({
 
   remove: function() {
     _.invoke(this.subviews, 'remove');
-    this.subviews = [];
+    this.subviews = {};
 
-    Backbone.View.prototype.remove.call(this);
+    Backbone.View.prototype.remove.apply(this, arguments);
   }
 });

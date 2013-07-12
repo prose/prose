@@ -5,7 +5,7 @@ var utils = require('../util');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: templates.heading,
+  template: templates.header,
 
   events: {
     'focus input': 'checkPlaceholder',
@@ -68,7 +68,7 @@ module.exports = Backbone.View.extend({
       avatar = '<div class="avatar round"><span class="icon round repo' + lock + '"></span></div>';
     }
 
-    var heading = {
+    var data = {
       alterable: this.alterable,
       avatar: avatar,
       repo: this.repo ? this.repo.attributes : undefined,
@@ -77,15 +77,11 @@ module.exports = Backbone.View.extend({
       path: path,
       user: user,
       title: title,
-
-      // These needed?
-      metadata: this.file ? this.file.get('metadata') : undefined,
-      translate: this.file ? this.file.get('translate') : undefined,
-      writable: permissions ? permissions.push : false
+      translate: this.file ? this.file.get('translate') : undefined
     };
 
-    this.$el.empty().append(_.template(this.template, heading, {
-      variable: 'heading'
+    this.$el.empty().append(_.template(this.template, data, {
+      variable: 'data'
     }));
 
     return this;

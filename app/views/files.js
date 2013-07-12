@@ -8,7 +8,7 @@ var FolderView = require('./li/folder');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  subviews: [],
+  subviews: {},
 
   events: {
     'mouseover .item': 'activeListing',
@@ -71,7 +71,7 @@ module.exports = Backbone.View.extend({
       }
 
       frag.appendChild(view.render().el);
-      this.subviews.push(view);
+      this.subviews[file.id] = view;
     }).bind(this));
 
     this.$el.html(frag);
@@ -98,8 +98,8 @@ module.exports = Backbone.View.extend({
 
   remove: function() {
     _.invoke(this.subviews, 'remove');
-    this.subviews = [];
+    this.subviews = {};
 
-    Backbone.View.prototype.remove.call(this);
+    Backbone.View.prototype.remove.apply(this, arguments);
   }
 });
