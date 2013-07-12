@@ -3,6 +3,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var File = require('../models/file');
 var Folder = require('../models/folder');
+var DraftsView = require('./sidebar/drafts');
 var FileView = require('./li/file');
 var FolderView = require('./li/folder');
 var templates = require('../../dist/templates');
@@ -23,11 +24,12 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this);
 
+    this.branch = options.branch || options.repo.get('master_branch');
+    this.branches = options.branches;
+    this.path = options.path || '';
     this.repo = options.repo;
     this.search = options.search;
-    this.branches = options.branches;
-    this.branch = options.branch || this.repo.get('master_branch');
-    this.path = options.path || '';
+    this.sidebar = options.sidebar;
 
     this.branches.fetch({ success: this.setModel });
   },
@@ -46,20 +48,34 @@ module.exports = Backbone.View.extend({
     var config = this.model.config;
     var rooturl = config ? config.rooturl + '/' : '';
     var path = this.path ? this.path + '/' : '';
+    var drafts;
+
+    var url = [
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      'tree',
+      this.branch
+    ].join('/');
 
     // Set rooturl jail from collection config
     var regex = new RegExp('^' + (path ? path : rooturl) + '[^\/]*$');
+
+    // Render drafts link in sidebar as subview
+    if (rooturl && this.path !== '_drafts') {
+      drafts = this.sidebar.initSubview('drafts', {
+        link: [url, '_drafts'].join('/'),
+        sidebar: this.sidebar
+      });
+
+      this.subviews['drafts'] = drafts;
+      drafts.render();
+    }
 
     var data = {
       path: path,
       parts: util.chunkedPath(this.path),
       rooturl: rooturl,
-      url: [
-        this.repo.get('owner').login,
-        this.repo.get('name'),
-        'tree',
-        this.branch
-      ].join('/')
+      url: url
     };
 
     this.$el.html(_.template(this.template, data, {variable: 'data'}));

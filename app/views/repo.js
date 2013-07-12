@@ -52,11 +52,12 @@ module.exports = Backbone.View.extend({
 
   initFiles: function() {
     this.files = new FilesView({
-      search: this.search,
-      repo: this.model,
       branch: this.branch,
       branches: this.model.branches,
-      path: this.path
+      path: this.path,
+      repo: this.model,
+      search: this.search,
+      sidebar: this.sidebar
     });
 
     this.subviews['files'] = this.files;
