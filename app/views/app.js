@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
 
     template: templates.app,
 
-    subviews: [],
+    subviews: {},
 
     initialize: function(options) {
       _.bindAll(this);
@@ -23,7 +23,7 @@ module.exports = Backbone.View.extend({
         app: this,
         user: this.user
       });
-      this.subviews.push(this.sidebar);
+      this.subviews['sidebar'] = this.sidebar;
 
       // Nav
       this.nav = new NavView({
@@ -32,19 +32,19 @@ module.exports = Backbone.View.extend({
         user: this.user
       });
 
-      this.subviews.push(this.nav);
+      this.subviews['nav'] = this.nav;
 
       // Key Binding support accross the application.
-      key('j, k, enter, o', _.bind(function(e, handler) {
-        if (!app.state.mode || app.state.mode === 'tree') {
-          // We are in any navigation view
-          if (handler.key === 'j' || handler.key === 'k') {
-            utils.pageListing(handler.key);
-          } else {
-            utils.goToFile();
-          }
+      key('j, k, enter, o', (function(e, handler) {
+        // TODO: only enable key bindings in navigation views
+        /*
+        if (handler.key === 'j' || handler.key === 'k') {
+          utils.pageListing(handler.key);
+        } else {
+          utils.goToFile();
         }
-      }, this));
+        */
+      }).bind(this));
     },
 
     render: function(options) {
@@ -59,7 +59,7 @@ module.exports = Backbone.View.extend({
 
     remove: function() {
       _.invoke(this.subviews, 'remove');
-      this.subviews = [];
+      this.subviews = {};
 
       Backbone.View.prototype.remove.call(this, arguments);
     }
