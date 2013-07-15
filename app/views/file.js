@@ -454,7 +454,7 @@ module.exports = Backbone.View.extend({
     var path = this.model.get('path');
     var pathTitle = path ? path : '';
 
-    util.documentTitle(context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
+    util.documentTitle(context + ' ' + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
   },
 
   edit: function() {

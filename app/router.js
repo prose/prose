@@ -73,6 +73,7 @@ module.exports = Backbone.Router.extend({
   profile: function(login) {
     if (this.view) this.view.remove();
 
+    util.documentTitle(login)
     util.loader.loading(t('loading.repos'));
     this.app.nav.mode('repos');
 
@@ -118,6 +119,9 @@ module.exports = Backbone.Router.extend({
   repo: function(login, repoName, branch, path) {
     if (this.view) this.view.remove();
 
+    var title = repoName;
+    if (branch) title = repoName + ': /' + path + ' at ' + branch;
+    util.documentTitle(title);
     util.loader.loading(t('loading.repo'));
     this.app.nav.mode('repo');
 
