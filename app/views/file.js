@@ -661,7 +661,6 @@ module.exports = Backbone.View.extend({
 
     var d = diff.diffWords(text1, text2);
     var length = d.length;
-
     var compare = '';
 
     for (var i = 0; i < length; i++) {
@@ -676,7 +675,9 @@ module.exports = Backbone.View.extend({
 
     // Content Window
     this.$el.find('.views .view').removeClass('active');
-    $diff.html('<pre>' + compare + '</pre>').addClass('active');
+
+    $diff.addClass('active');
+    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
 
     this.sidebar.open();
   },
