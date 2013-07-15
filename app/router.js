@@ -141,12 +141,13 @@ module.exports = Backbone.Router.extend({
     repo.fetch({
       success: (function(model, res, options) {
         var content = new RepoView({
-          user: user,
-          model: repo,
           branch: branch,
+          model: repo,
+          nav: this.app.nav,
           path: path,
           router: this,
-          sidebar: this.app.sidebar
+          sidebar: this.app.sidebar,
+          user: user
         });
 
         this.view = content;
