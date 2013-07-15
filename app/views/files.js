@@ -65,7 +65,7 @@ module.exports = Backbone.View.extend({
   render: function() {
     var search = this.search && this.search.input && this.search.input.val();
     var config = this.model.config;
-    var rooturl = config ? config.rooturl + '/' : '';
+    var rooturl = config && config.rooturl ? config.rooturl + '/' : '';
     var path = this.path ? this.path + '/' : '';
     var drafts;
 
