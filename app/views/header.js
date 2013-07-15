@@ -9,7 +9,7 @@ module.exports = Backbone.View.extend({
 
   events: {
     'focus input': 'checkPlaceholder',
-    'keypress input': 'updateFile'
+    'keydown input': 'updateFile'
   },
 
   initialize: function(options) {

@@ -378,12 +378,13 @@ module.exports = Backbone.View.extend({
 
     this.subviews['header'] = this.header;
     this.header.setElement(this.$el.find('#heading')).render();
-    this.listenTo(this.header, 'updateFile', this.makeDirty);
+    this.listenTo(this.header, 'makeDirty', this.makeDirty);
   },
 
   renderMetadata: function() {
     this.metadataEditor = new MetadataView({
       model: this.model,
+      titleAsHeading: this.titleAsHeading(),
       view: this
     });
 
@@ -408,6 +409,9 @@ module.exports = Backbone.View.extend({
       this.$el.empty().append(_.template(this.template, file, {
         variable: 'file'
       }));
+
+      // Store the configuration object from the collection
+      this.config = this.model.get('collection').config;
 
       // initialize the subviews
       this.initEditor();
@@ -517,7 +521,6 @@ module.exports = Backbone.View.extend({
 
   preview: function() {
     var q = queue(1);
-
     var metadata = this.model.get('metadata');
 
     var p = {

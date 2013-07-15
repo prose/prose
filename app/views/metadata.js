@@ -19,6 +19,7 @@ module.exports = Backbone.View.extend({
     _.bindAll(this);
 
     this.model = options.model;
+    this.titleAsHeading = options.titleAsHeading;
     this.view = options.view;
   },
 
@@ -29,131 +30,143 @@ module.exports = Backbone.View.extend({
     var form = this.$el.find('.form');
     var lang = this.model.get('metadata').lang || 'en';
 
+    // This renders any fields defined in the metadata entry
+    // of a given prose configuration file.
     _.each(this.model.get('defaults'), (function(data, key) {
-      if (data && data.field) {
-        switch (data.field.element) {
-          case 'button':
-            var button = {
-              name: data.name,
-              label: data.field.label,
-              on: data.field.on,
-              off: data.field.off
-            };
+      var renderTitle = true;
 
-            form.append(_.template(templates.meta.button, button, {
-              variable: 'meta'
-            }));
-            break;
-          case 'checkbox':
-            var checkbox = {
-              name: data.name,
-              label: data.field.label,
-              value: data.name,
-              checked: data.field.value
-            };
+      if (data &&
+          data.name === 'title' &&
+          this.titleAsHeading) {
+        renderTitle = false;
+      };
 
-            form.append(_.template(templates.meta.checkbox, checkbox, {
-              variable: 'meta'
-            }));
-            break;
-          case 'text':
-            var text = {
-              name: data.name,
-              label: data.field.label,
-              value: data.field.value,
-              type: 'text'
-            };
+      if (renderTitle) {
+        if (data && data.field) {
+          switch (data.field.element) {
+            case 'button':
+              var button = {
+                name: data.name,
+                label: data.field.label,
+                on: data.field.on,
+                off: data.field.off
+              };
 
-            form.append(_.template(templates.meta.text, text, {
-              variable: 'meta'
-            }));
-            break;
-          case 'textarea':
-            var id = util.stringToUrl(data.name);
-            var textarea = {
-              name: data.name,
-              id: id,
-              value: data.field.value,
-              label: data.field.label,
-              type: 'textarea'
-            };
+              form.append(_.template(templates.meta.button, button, {
+                variable: 'meta'
+              }));
+              break;
+            case 'checkbox':
+              var checkbox = {
+                name: data.name,
+                label: data.field.label,
+                value: data.name,
+                checked: data.field.value
+              };
 
-            form.append(_.template(templates.meta.textarea, textarea, {
-              variable: 'meta'
-            }));
+              form.append(_.template(templates.meta.checkbox, checkbox, {
+                variable: 'meta'
+              }));
+              break;
+            case 'text':
+              var text = {
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                type: 'text'
+              };
 
-            var textElement = document.getElementById(id);
+              form.append(_.template(templates.meta.text, text, {
+                variable: 'meta'
+              }));
+              break;
+            case 'textarea':
+              var id = util.stringToUrl(data.name);
+              var textarea = {
+                name: data.name,
+                id: id,
+                value: data.field.value,
+                label: data.field.label,
+                type: 'textarea'
+              };
 
-            self[id] = CodeMirror(function(el) {
-              textElement.parentNode.replaceChild(el, textElement);
-              el.id = id;
-              el.className += ' inner ';
-              el.setAttribute('data-name', data.name);
-            }, {
-              mode: id,
-              value: textElement.value,
-              lineWrapping: true,
-              theme: 'prose-bright'
-            });
+              form.append(_.template(templates.meta.textarea, textarea, {
+                variable: 'meta'
+              }));
 
-            break;
-          case 'number':
-            var number = {
-              name: data.name,
-              label: data.field.label,
-              value: data.field.value,
-              type: 'number'
-            };
+              var textElement = document.getElementById(id);
 
-            form.append(_.template(templates.meta.text, number, {
-              variable: 'meta'
-            }));
-            break;
-          case 'select':
-            var select = {
-              name: data.name,
-              label: data.field.label,
-              placeholder: data.field.placeholder,
-              options: data.field.options,
-              lang: lang
-            };
+              self[id] = CodeMirror(function(el) {
+                textElement.parentNode.replaceChild(el, textElement);
+                el.id = id;
+                el.className += ' inner ';
+                el.setAttribute('data-name', data.name);
+              }, {
+                mode: id,
+                value: textElement.value,
+                lineWrapping: true,
+                theme: 'prose-bright'
+              });
 
-            form.append(_.template(templates.meta.select, select, {
-              variable: 'meta'
-            }));
-            break;
-          case 'multiselect':
-            var multiselect = {
-              name: data.name,
-              label: data.field.label,
-              alterable: data.field.alterable,
-              placeholder: data.field.placeholder,
-              options: data.field.options,
-              lang: lang
-            };
+              break;
+            case 'number':
+              var number = {
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                type: 'number'
+              };
 
-            form.append(_.template(templates.meta.multiselect, multiselect, {
-              variable: 'meta'
-            }));
-            break;
-          case 'hidden':
-            var tmpl = {};
-            tmpl[data.name] = data.field.value;
-            this.model.set('metadata', _.merge(tmpl, this.model.get('metadata')));
-            this.model.set('hidden', _.merge(tmpl, this.model.get('hidden') || {}));
-            break;
+              form.append(_.template(templates.meta.text, number, {
+                variable: 'meta'
+              }));
+              break;
+            case 'select':
+              var select = {
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: lang
+              };
+
+              form.append(_.template(templates.meta.select, select, {
+                variable: 'meta'
+              }));
+              break;
+            case 'multiselect':
+              var multiselect = {
+                name: data.name,
+                label: data.field.label,
+                alterable: data.field.alterable,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: lang
+              };
+
+              form.append(_.template(templates.meta.multiselect, multiselect, {
+                variable: 'meta'
+              }));
+              break;
+            case 'hidden':
+              var tmpl = {};
+              tmpl[data.name] = data.field.value;
+              this.model.set('metadata', _.merge(tmpl, this.model.get('metadata')));
+              this.model.set('hidden', _.merge(tmpl, this.model.get('hidden') || {}));
+              break;
+          }
+        } else {
+          var txt = {
+            name: key,
+            label: key,
+            value: data,
+            type: 'text'
+          };
+
+          form.append(_.template(templates.meta.text, txt, {
+            variable: 'meta'
+          }));
         }
-      } else {
-        var txt = {
-          name: key,
-          label: key,
-          value: data,
-          type: 'text'
-        };
-
-        form.append(_.template(templates.meta.text, txt, {
-          variable: 'meta'
-        }));
       }
     }).bind(this));
 
@@ -201,10 +214,10 @@ module.exports = Backbone.View.extend({
     }
 
     // Get the title value from heading if we need to.
-    if (this.view.titleAsHeading()) {
-      metadata.title = (this.view.heading) ?
-        this.view.heading.inputGet() :
-        this.model.get('metadata').title;
+    if (this.titleAsHeading) {
+      metadata.title = (this.view.header) ?
+        this.view.header.inputGet() :
+        this.model.get('metadata').title[0];
     }
 
     _.each(this.$el.find('[name]'), function(item) {
@@ -374,7 +387,6 @@ module.exports = Backbone.View.extend({
             !defaults) {
           raw = {};
           raw[key] = value;
-
           if (this.raw) {
             this.raw.setValue(this.raw.getValue() + jsyaml.dump(raw));
           }
