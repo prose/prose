@@ -648,8 +648,7 @@ ins {
 #navigation.repo .repo  { display:block; }
 
 /* In a file view */
-#navigation.file .file,
-#navigation.file .repo  { display:block; }
+#navigation.file .file { display:block; }
 
 /* Visibility of metadata toggle
  * on file pages */
@@ -1165,7 +1164,6 @@ ins {
     }
 
   .topbar .containment.content-search {
-    background:rgba(255,255,255,0.95);
     border-bottom:1px solid #d4d7d9;
     height:60px;
     }
@@ -1176,6 +1174,7 @@ ins {
   .fixed.topbar .toolbar,
   .markdown .toolbar {
     min-height:43px;
+    height:auto;
     }
   .topbar .inner > a {
     display:block;
@@ -2457,6 +2456,9 @@ ins {
 
 /* Screen sizes < 1200px --------------------- */
 @media all and (max-width:1200px) {
+  .icon.branding {
+    background-position:0 -115px;
+    }
   .loading {
     background:rgb(255,255,255);
     background:rgba(255,255,255,0.9);

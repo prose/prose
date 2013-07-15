@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.2 r9819"
    sodipodi:docname="sprite.svg"
-   inkscape:export-filename="/Users/tristen/dev/devseed/prose/img/sprite.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/Users/tristen/dev/devseed/prose/img/sprite@2x.png"
+   inkscape:export-xdpi="180"
+   inkscape:export-ydpi="180">
   <defs
      id="defs26578">
     <linearGradient
@@ -68,15 +68,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4"
-     inkscape:cx="-39.519421"
-     inkscape:cy="65.837166"
+     inkscape:zoom="1.5302233"
+     inkscape:cx="169.06288"
+     inkscape:cy="54.399384"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      inkscape:window-width="1280"
      inkscape:window-height="752"
-     inkscape:window-x="57"
+     inkscape:window-x="-13"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      showguides="false"
@@ -110,7 +110,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -998,5 +998,19 @@
        width="20"
        id="rect5166"
        style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;opacity:0.2" />
+    <g
+       transform="matrix(0.3,0,0,0.3,-274.5,952.6497)"
+       id="g3257">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3259"
+         d="m 915,222.375 0,110 10,0 10,0 70,-110 -80,0 -10,0 z m 10,10 61.625,0 -6.375,10 -55.25,0 0,-10 z m 0,20 48.9375,0 -6.375,10 -42.5625,0 0,-10 z m 0,20 36.1875,0 -6.375,10 -29.8125,0 0,-10 z m 0,20 23.4375,0 -6.375,10 -17.0625,0 0,-10 z m 0,20 10.75,0 -6.375,10 -4.375,0 0,-10 z"
+         style="color:#000000;fill:#516066;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.49999997;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         inkscape:connector-curvature="0"
+         style="color:#000000;fill:#868f93;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.66666663;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter6400-4);enable-background:accumulate"
+         d="m 1025,222.375 -8.125,0.1875 -18.9375,29.8125 17.0625,0 0,70 -61.625,0 -6.375,10 68,0 10,0 0,-80 0,-30 z m -33.4375,40 -6.375,10 -6.375,10 -6.375,10 32.5625,0 0,-10 0,-10 0,-10 -13.4375,0 z m -25.5,40 -6.3125,10 45.25,0 0,-10 -38.9375,0 z"
+         id="path3261" />
+    </g>
   </g>
 </svg>

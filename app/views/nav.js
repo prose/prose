@@ -33,8 +33,19 @@ module.exports = Backbone.View.extend({
 
   emit: function(e) {
     var state = $(e.currentTarget).data('state');
+    if ($(e.target).hasClass('active')) {
+      // return to file state
+      state = this.state;
+    }
+
+    this.active(state);
     this.toggle(state, e);
     return false;
+  },
+
+  setFileState: function(state) {
+    this.state = state;
+    this.active(state);
   },
 
   mode: function(mode) {
@@ -47,7 +58,6 @@ module.exports = Backbone.View.extend({
   },
 
   toggle: function(state, e) {
-    this.active(state);
     this.trigger(state, e);
   },
 

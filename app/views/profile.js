@@ -39,8 +39,6 @@ module.exports = Backbone.View.extend({
       this.subviews['orgs'] = orgs;
     }
 
-    utils.fixedScroll(this.$el.find('.topbar'));
-
     return this;
   },
 

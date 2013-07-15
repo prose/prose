@@ -66,7 +66,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'translate', this.translate);
 
     // Set the active nav element established by this.mode
-    this.nav.active(this.mode);
+    this.nav.setFileState(this.mode);
 
     // Cache jQuery window object
     var $window = $(window);
@@ -459,6 +459,7 @@ module.exports = Backbone.View.extend({
 
   edit: function() {
     var view = this;
+    this.sidebar.close();
 
     // If preview was hit on load this.editor
     // was not initialized.
@@ -681,7 +682,11 @@ module.exports = Backbone.View.extend({
   },
 
   cancel: function() {
+
+    // Close the sidebar and return the
+    // active nav item to the current file mode.
     this.sidebar.close();
+    this.nav.active(this.mode);
 
     this.$el.find('.views .view').removeClass('active');
 
