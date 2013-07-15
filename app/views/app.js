@@ -5,7 +5,7 @@ var SidebarView = require('./sidebar');
 var NavView = require('./nav');
 var cookie = require('../cookie');
 var templates = require('../../dist/templates');
-var utils = require('.././util');
+var util = require('../util');
 
 module.exports = Backbone.View.extend({
   className: 'application',
@@ -20,6 +20,16 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     _.bindAll(this);
+
+    key('j, k, enter, o', (function(e, handler) {
+      if (this.$el.find('.listing')[0]) {
+        if (handler.key === 'j' || handler.key === 'k') {
+          util.pageListing(handler.key);
+        } else {
+          util.goToFile();
+        }
+      }
+    }).bind(this));
 
     this.user = options.user;
 
@@ -37,25 +47,6 @@ module.exports = Backbone.View.extend({
       user: this.user
     });
     this.subviews['nav'] = this.nav;
-
-    // Key Binding support accross the application.
-    key('j, k, enter, o', (function(e, handler) {
-      // TODO: only enable key bindings in navigation views
-      /*
-      if (handler.key === 'j' || handler.key === 'k') {
-        utils.pageListing(handler.key);
-      } else {
-        utils.goToFile();
-      }
-      */
-    }).bind(this));
-  },
-
-  logout: function() {
-    cookie.unset('oauth-token');
-    cookie.unset('id');
-    window.location.reload();
-    return false;
   },
 
   render: function() {
@@ -65,6 +56,13 @@ module.exports = Backbone.View.extend({
     this.nav.setElement(this.$el.find('nav')).render();
 
     return this;
+  },
+
+  logout: function() {
+    cookie.unset('oauth-token');
+    cookie.unset('id');
+    window.location.reload();
+    return false;
   },
 
   remove: function() {

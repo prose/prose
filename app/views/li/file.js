@@ -15,6 +15,7 @@ module.exports = Backbone.View.extend({
     this.repo = options.repo;
     this.branch = options.branch;
 
+    this.$el.attr('data-index', options.index);
     this.listenTo(this.model, 'sync', this.render, this);
   },
 

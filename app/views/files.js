@@ -93,12 +93,14 @@ module.exports = Backbone.View.extend({
       if (file instanceof File) {
         view = new FileView({
           model: file,
+          index: index,
           repo: this.repo,
           branch: this.branch
         });
       } else if (file instanceof Folder) {
         view = new FolderView({
           model: file,
+          index: index,
           repo: this.repo,
           branch: this.branch
         });
@@ -130,7 +132,6 @@ module.exports = Backbone.View.extend({
   remove: function() {
     _.invoke(this.subviews, 'remove');
     this.subviews = {};
-
     Backbone.View.prototype.remove.apply(this, arguments);
   }
 });

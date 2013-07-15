@@ -24,8 +24,12 @@ module.exports = Backbone.View.extend({
     var collection = this.search ? this.search.search() : this.model;
     var frag = document.createDocumentFragment();
 
-    collection.each((function(repo, index) {
-      var view = new RepoView({ model: repo });
+    collection.each((function(repo, i) {
+      var view = new RepoView({
+        index: i,
+        model: repo
+      });
+
       frag.appendChild(view.render().el);
       this.subviews[repo.id] = view;
     }).bind(this));

@@ -13,6 +13,7 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     this.model = options.model;
+    this.$el.attr('data-index', options.index);
     this.listenTo(this.model, 'sync', this.render, this);
   },
 
