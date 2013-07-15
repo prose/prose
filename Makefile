@@ -73,6 +73,7 @@ APPLICATION = \
 	app/views/sidebar.js \
 	app/views/sidebar/branch.js \
 	app/views/sidebar/branches.js \
+	app/views/sidebar/drafts.js \
 	app/views/sidebar/li/commit.js \
 	app/views/sidebar/orgs.js \
 	app/views/sidebar/history.js \

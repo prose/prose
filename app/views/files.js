@@ -3,11 +3,17 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var File = require('../models/file');
 var Folder = require('../models/folder');
+var DraftsView = require('./sidebar/drafts');
 var FileView = require('./li/file');
 var FolderView = require('./li/folder');
 var templates = require('../../dist/templates');
+var util = require('.././util');
 
 module.exports = Backbone.View.extend({
+  className: 'listings',
+
+  template: templates.files,
+
   subviews: {},
 
   events: {
@@ -18,11 +24,12 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this);
 
+    this.branch = options.branch || options.repo.get('master_branch');
+    this.branches = options.branches;
+    this.path = options.path || '';
     this.repo = options.repo;
     this.search = options.search;
-    this.branches = options.branches;
-    this.branch = options.branch || this.repo.get('master_branch');
-    this.path = options.path || '';
+    this.sidebar = options.sidebar;
 
     this.branches.fetch({ success: this.setModel });
   },
@@ -38,13 +45,40 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var search = this.search && this.search.input && this.search.input.val();
-    var path;
-    var regex;
+    var config = this.model.config;
+    var rooturl = config ? config.rooturl + '/' : '';
+    var path = this.path ? this.path + '/' : '';
+    var drafts;
 
-    if (!search) {
-      path = this.path ? this.path + '/' : '';
-      regex = new RegExp('^' + path + '[^\/]*$');
+    var url = [
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      'tree',
+      this.branch
+    ].join('/');
+
+    // Set rooturl jail from collection config
+    var regex = new RegExp('^' + (path ? path : rooturl) + '[^\/]*$');
+
+    // Render drafts link in sidebar as subview
+    if (rooturl && this.path !== '_drafts') {
+      drafts = this.sidebar.initSubview('drafts', {
+        link: [url, '_drafts'].join('/'),
+        sidebar: this.sidebar
+      });
+
+      this.subviews['drafts'] = drafts;
+      drafts.render();
     }
+
+    var data = {
+      path: path,
+      parts: util.chunkedPath(this.path),
+      rooturl: rooturl,
+      url: url
+    };
+
+    this.$el.html(_.template(this.template, data, {variable: 'data'}));
 
     // if not searching, filter to only show current level
     var collection = search ? this.search.search() : this.model.filter((function(file) {
@@ -74,10 +108,7 @@ module.exports = Backbone.View.extend({
       this.subviews[file.id] = view;
     }).bind(this));
 
-    this.$el.html(frag);
-
-    this.$listings = this.$el.find('.item');
-    this.$search = this.$el.find('#filter');
+    this.$el.find('ul').html(frag);
 
     return this;
   },
@@ -89,11 +120,11 @@ module.exports = Backbone.View.extend({
       $listing = $(e.target).closest('li');
     }
 
-    this.$listings.removeClass('active');
+    this.$el.find('.item').removeClass('active');
     $listing.addClass('active');
 
     // Blur out search if its selected
-    this.$search.blur();
+    this.search.$el.blur();
   },
 
   remove: function() {

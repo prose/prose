@@ -2,7 +2,6 @@ var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
 
-var jsyaml = require('js-yaml');
 var queue = require('queue-async');
 
 var ModalView = require('./modal');
@@ -81,37 +80,33 @@ module.exports = Backbone.View.extend({
 
   setCollection: function(collection, res, options) {
     this.collection = collection.findWhere({ name: this.branch }).files;
-    this.collection.fetch({ success: this.setModel, model: options.model });
+    this.collection.fetch({ success: this.setModel, args: arguments });
   },
 
-  setModel: function(collection, res, options) {
+  setModel: function(model, res, options) {
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
-    this.model = options.model ? options.model : collection.findWhere({ path: this.path });
+    this.model = options.model ? options.model : this.collection.findWhere({ path: this.path });
 
-    this.model.fetch({
-      complete: (function() {
-        // TODO: save parsed config to the repo as it's used accross
-        // files of the same repo and shouldn't be re-parsed each time
-        this.config = collection.findWhere({ path: '_prose.yml' }) ||
-          collection.findWhere({ path: '_config.yml' });
+    // Set default metadata from collection
+    var defaults = this.collection.defaults;
+    var path = this.nearestPath(defaults);
+    this.model.set('defaults', defaults[path]);
 
-        // render view once config content has loaded
-        this.config.fetch({
-          complete: (function() {
-            var content = this.config.get('content');
+    // Render on complete to render even if model does not exist on remote yet
+    this.model.fetch({ complete: this.render });
+  },
 
-            try {
-              this.config = jsyaml.load(content);
-            } catch(err) {
-              throw err;
-            }
+  nearestPath: function(defaults) {
+    // match nearest parent directory default metadata
+    var path = this.model.get('path');
+    var nearestDir = /\/(?!.*\/).*$/;
 
-            this.poachConfig(this.config);
-          }).bind(this)
-        });
-      }).bind(this)
-    });
+    while (defaults[path] === undefined && nearestDir.test(path)) {
+      path = path.replace( nearestDir, '' );
+    }
+
+    return path;
   },
 
   cursor: function() {
@@ -180,88 +175,6 @@ module.exports = Backbone.View.extend({
       if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
         this.toolbar.highlight('numbered-list');
       }
-    }
-  },
-
-  nearestPath: function(metadata) {
-    // match nearest parent directory default metadata
-    var path = this.model.get('path');
-    var nearestDir = /\/(?!.*\/).*$/;
-
-    while (metadata[path] === undefined && nearestDir.test(path)) {
-      path = path.replace( nearestDir, '' );
-    }
-
-    return path;
-  },
-
-  poachConfig: function(config) {
-    var q = queue();
-
-    if (config && config.prose) {
-      if (config.prose.metadata) {
-        // Set empty defaults on model if no match
-        // to avoid loading _config.yml again unecessarily
-        var defaults = {};
-        var metadata;
-        var path;
-        var raw;
-
-        metadata = config.prose.metadata;
-        path = this.nearestPath(metadata);
-
-        if (metadata[path]) {
-          raw = config.prose.metadata[path];
-
-          if (_.isObject(raw)) {
-            defaults = raw;
-
-            // TODO: iterate over these to add to queue synchronously
-            _.each(defaults, function(value, key) {
-              var regex = /^https?:\/\//;
-
-              // Parse JSON URL values
-              if (value.field && value.field.options &&
-                  _.isString(value.field.options) &&
-                  regex.test(value.field.options)) {
-
-                q.defer(function(cb) {
-                  $.ajax({
-                    cache: true,
-                    dataType: 'jsonp',
-                    jsonp: false,
-                    jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
-                    url: value.field.options,
-                    success: function(d) {
-                      value.field.options = d;
-                      cb();
-                    }
-                  });
-                });
-              }
-            });
-          } else if (_.isString(raw)) {
-            try {
-              defaults = jsyaml.load(raw);
-
-              if (defaults.date === "CURRENT_DATETIME") {
-                var current = (new Date()).format('Y-m-d H:i');
-                defaults.date = current;
-                raw = raw.replace("CURRENT_DATETIME", current);
-              }
-            } catch(err) {
-              throw err;
-            }
-          }
-        }
-      }
-
-      q.awaitAll((function() {
-        this.model.set('defaults', defaults);
-        this.render();
-      }).bind(this));
-    } else {
-      this.render();
     }
   },
 
@@ -427,7 +340,7 @@ module.exports = Backbone.View.extend({
     // Settings sidebar panel
     this.settings = this.sidebar.initSubview('settings', {
       sidebar: this.sidebar,
-      config: this.config,
+      config: this.collection.config,
       file: this.model,
       fileInput: this.titleAsHeading()
     }).render();

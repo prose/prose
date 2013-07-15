@@ -1,4 +1,6 @@
 var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var queue = require('queue-async');
 
 var Backbone = require('backbone');
 var File = require('../models/file');
@@ -68,6 +70,118 @@ module.exports = Backbone.Collection.extend({
         repo: this.repo
       })
     }).bind(this));
+  },
+
+  parseConfig: function(config, options) {
+    var content = config.get('content');
+
+    // Attempt to parse YAML
+    try {
+      config = jsyaml.load(content);
+    } catch(err) {
+      throw err;
+    }
+
+    if (config && config.prose) {
+      // load _config.yml, set parsed value on collection
+      this.config = config.prose;
+
+      if (config.prose.metadata) {
+        var metadata = config.prose.metadata;
+        // path = this.nearestPath(metadata);
+
+        // Serial queue to not break global scope JSONP callbacks
+        var q = queue(1);
+
+        _.each(metadata, function(raw, key) {
+          q.defer(function(cb) {
+            var subq = queue();
+            var defaults;
+
+            if (_.isObject(raw)) {
+              defaults = raw;
+
+              _.each(defaults, function(value, key) {
+                var regex = /^https?:\/\//;
+
+                // Parse JSON URL values
+                if (value.field && value.field.options &&
+                    _.isString(value.field.options) &&
+                    regex.test(value.field.options)) {
+
+                  subq.defer(function(cb) {
+                    $.ajax({
+                      cache: true,
+                      dataType: 'jsonp',
+                      jsonp: false,
+                      jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
+                      timeout: 5000,
+                      url: value.field.options,
+                      success: (function(d) {
+                        value.field.options = d;
+                        cb();
+                      }).bind(this)
+                    });
+                  });
+                }
+              });
+            } else if (_.isString(raw)) {
+              try {
+                defaults = jsyaml.load(raw);
+
+                if (defaults.date === "CURRENT_DATETIME") {
+                  var current = (new Date()).format('Y-m-d H:i');
+                  defaults.date = current;
+                  raw = raw.replace("CURRENT_DATETIME", current);
+                }
+              } catch(err) {
+                throw err;
+              }
+            }
+
+            subq.awaitAll(function() {
+              metadata[key] = defaults;
+              cb();
+            });
+          });
+        });
+      }
+
+      q.awaitAll((function() {
+        // Save parsed config to the collection as it's used accross
+        // files of the same collection and shouldn't be re-parsed each time
+        this.defaults = metadata;
+
+        if (_.isFunction(options.success)) options.success.apply(this, options.args);
+      }).bind(this));
+    } else {
+      if (_.isFunction(options.success)) options.success.apply(this, options.args);
+    }
+  },
+
+  fetch: function(options) {
+    options = _.clone(options) || {};
+
+    var success = options.success;
+    var args = options.args;
+
+    Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+      success: (function(model, res, options) {
+        var config = this.findWhere({ path: '_prose.yml' }) ||
+          this.findWhere({ path: '_config.yml' });
+
+        if (config) {
+          config.fetch({
+            complete: (function() {
+              this.parseConfig(config, { success: success, args: args });
+            }).bind(this)
+          });
+        } else {
+          if (_.isFunction(success)) success.apply(this, args);
+        }
+
+      }).bind(this)
+    }));
   },
 
   restore: function(file, options) {

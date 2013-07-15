@@ -4,6 +4,7 @@ var util = require('../util');
 
 var views = {
   branches: require('./sidebar/branches'),
+  drafts: require('./sidebar/drafts'),
   history: require('./sidebar/history'),
   orgs: require('./sidebar/orgs'),
   save: require('./sidebar/save'),
@@ -33,7 +34,7 @@ module.exports = Backbone.View.extend({
     options = _.clone(options) || {};
 
     var view = new views[subview](options);
-    view.setElement(this.$el.find('#' + subview));
+    this.$el.find('#' + subview).html(view.el);
 
     this.subviews[subview] = view;
 

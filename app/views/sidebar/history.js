@@ -20,12 +20,11 @@ module.exports = Backbone.View.extend({
     this.repo = options.repo;
     this.branch = options.branch;
     this.commits = options.commits;
+    this.sidebar = options.sidebar;
     this.view = options.view;
 
     this.commits.setBranch(this.branch, {
-      success: (function(model, res, options) {
-        this.render();
-      }).bind(this)
+      success: this.render
     });
   },
 
@@ -42,19 +41,23 @@ module.exports = Backbone.View.extend({
       return author.id === id ? 'author' : 'all';
     });
 
-    // TODO: display list of recent updates by all users
-    this.history = history.all || [];
+    // TODO: how many commits should be fetched initially?
+    // TODO: option to load more?
+
+    // TODO: display list of recent updates by all other users
+    this.history = (history.all || []).slice(0, 15);
 
     // Recent commits by authenticated user
-    this.recent = history.author || [];
+    this.recent = (history.author || []).slice(0, 15);
 
     var q = queue();
 
+    // _.union(this.history, this.recent).each(function(commit) {
     this.recent.each(function(commit) {
       q.defer(function(cb) {
         commit.fetch({
           success: function(model, res, options) {
-            // TODO: Why is this necessary instead of success: cb?
+            // This is necessary instead of success: cb for some reason
             cb();
           }
         });
@@ -106,6 +109,8 @@ module.exports = Backbone.View.extend({
       }).bind(this));
 
       this.$el.find('#commits').html(frag);
+
+      this.sidebar.open();
     }).bind(this));
 
     return this;

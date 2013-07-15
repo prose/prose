@@ -28,8 +28,6 @@ module.exports = Backbone.View.extend({
     this.initBranches();
     this.initHistory();
 
-    this.listenTo(this.model, 'sync', this.render, this);
-
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
     this.listenTo(this.sidebar, 'cancel', this.cancel);
@@ -54,11 +52,12 @@ module.exports = Backbone.View.extend({
 
   initFiles: function() {
     this.files = new FilesView({
-      search: this.search,
-      repo: this.model,
       branch: this.branch,
       branches: this.model.branches,
-      path: this.path
+      path: this.path,
+      repo: this.model,
+      search: this.search,
+      sidebar: this.sidebar
     });
 
     this.subviews['files'] = this.files;
@@ -90,28 +89,11 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.sidebar.mode('repo');
-    this.sidebar.open();
-
-    // TODO: load _config.yml, set parsed value on Repo model
-    // TODO: set jailed from config.prose.rooturl
-    var repo = {
-      owner: this.model.get('owner'),
-      repoName: this.model.get('name'),
-      branch: this.branch,
-      path: this.path,
-      pathParts: util.chunkedPath(this.path),
-      jailed: '',
-      util: util
-    };
-
-    this.$el.html(_.template(this.template, repo, {variable: 'repo'}));
+    this.$el.html(_.template(this.template, {}, {variable: 'data'}));
 
     this.header.setElement(this.$el.find('#heading')).render();
     this.search.setElement(this.$el.find('#search')).render();
     this.files.setElement(this.$el.find('#files'));
-    this.branches.setElement(this.sidebar.$el.find('#branches'));
-    this.history.setElement(this.sidebar.$el.find('#history'));
 
     util.fixedScroll(this.$el.find('.topbar'));
 
@@ -119,6 +101,8 @@ module.exports = Backbone.View.extend({
   },
 
   remove: function() {
+    this.sidebar.close();
+
     _.invoke(this.subviews, 'remove');
     this.subviews = {};
 

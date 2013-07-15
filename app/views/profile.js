@@ -30,18 +30,13 @@ module.exports = Backbone.View.extend({
     this.subviews['header'] = header;
 
     if (this.auth) {
-      var orgs = new OrgsView({ model: this.auth.orgs, user: this.user });
-      orgs.setElement(this.sidebar.$el.find('#orgs'));
-      this.subviews['orgs'] = orgs;
-
-      this.auth.orgs.fetch({
-        success: (function(model, res, options) {
-          orgs.render();
-
-          this.sidebar.mode('repos');
-          this.sidebar.open();
-        }).bind(this)
+      var orgs = this.sidebar.initSubview('orgs', {
+        model: this.auth.orgs,
+        sidebar: this.sidebar,
+        user: this.user
       });
+      
+      this.subviews['orgs'] = orgs;
     }
 
     utils.fixedScroll(this.$el.find('.topbar'));
@@ -50,6 +45,8 @@ module.exports = Backbone.View.extend({
   },
 
   remove: function() {
+    this.sidebar.close();
+
     _.invoke(this.subviews, 'remove');
     this.subviews = {};
 
