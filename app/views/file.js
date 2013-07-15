@@ -67,7 +67,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'translate', this.translate);
 
     // Set the active nav element established by this.mode
-    this.nav.active(this.mode);
+    this.nav.setFileState(this.mode);
 
     // Cache jQuery window object
     var $window = $(window);
