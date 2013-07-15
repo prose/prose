@@ -53,7 +53,6 @@ module.exports = Backbone.View.extend({
     this.branches.fetch(fetch);
 
     // Events from vertical nav
-    this.listenTo(this.nav, 'new', this.newFile);
     this.listenTo(this.nav, 'edit', this.edit);
     this.listenTo(this.nav, 'preview', this.preview);
     this.listenTo(this.nav, 'meta', this.meta);
@@ -84,14 +83,18 @@ module.exports = Backbone.View.extend({
   },
 
   setModel: function(model, res, options) {
+    // Set default metadata from collection
+    var defaults = this.collection.defaults;
+    var path;
+
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
     this.model = options.model ? options.model : this.collection.findWhere({ path: this.path });
 
-    // Set default metadata from collection
-    var defaults = this.collection.defaults;
-    var path = this.nearestPath(defaults);
-    this.model.set('defaults', defaults[path]);
+    if (defaults) {
+      path = this.nearestPath(defaults);
+      this.model.set('defaults', defaults[path]);
+    }
 
     // Render on complete to render even if model does not exist on remote yet
     this.model.fetch({ complete: this.render });
@@ -451,18 +454,6 @@ module.exports = Backbone.View.extend({
     util.documentTitle(context + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
   },
 
-  newFile: function() {
-    var dirpath = this.path.replace(/\/(?!.*\/).*$/, '');
-
-    this.router.navigate([
-      this.repo.get('owner').login,
-      this.repo.get('name'),
-      'new',
-      this.branch,
-      dirpath
-    ].join('/'), true);
-  },
-
   edit: function() {
     var view = this;
 
@@ -643,9 +634,12 @@ module.exports = Backbone.View.extend({
     }
 
     // Update the filename in the sidebar
+    // TODO: how is this supposed to work?
+    /*
     if (this.model.isNew()) {
-      this.sidebar.updateFilepath(value);
+      this.sidebar.updateFilepath(this.model.get('path'));
     }
+    */
 
     var label = this.model.get('writable') ?
       t('actions.change.save') :

@@ -15,12 +15,13 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this);
 
-    this.user = options.user;
-    this.model = options.model;
     this.branch = options.branch || this.model.get('master_branch');
+    this.model = options.model;
+    this.nav = options.nav;
     this.path = options.path || '';
     this.router = options.router;
     this.sidebar = options.sidebar;
+    this.user = options.user;
 
     // Init subviews
     this.initHeader();
@@ -56,8 +57,10 @@ module.exports = Backbone.View.extend({
     this.files = new FilesView({
       branch: this.branch,
       branches: this.model.branches,
+      nav: this.nav,
       path: this.path,
       repo: this.model,
+      router: this.router,
       search: this.search,
       sidebar: this.sidebar
     });

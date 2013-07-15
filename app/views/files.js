@@ -26,12 +26,17 @@ module.exports = Backbone.View.extend({
 
     this.branch = options.branch || options.repo.get('master_branch');
     this.branches = options.branches;
+    this.nav = options.nav;
     this.path = options.path || '';
     this.repo = options.repo;
+    this.router = options.router;
     this.search = options.search;
     this.sidebar = options.sidebar;
 
     this.branches.fetch({ success: this.setModel });
+
+    // Events from vertical nav
+    this.listenTo(this.nav, 'new', this.new);
   },
 
   setModel: function() {
@@ -41,6 +46,20 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.search, 'search', this.render);
 
     this.model.fetch({ success: this.render, reset: true });
+  },
+
+  new: function() {
+    var dirpath = this.path.replace(/\/(?!.*\/).*$/, '');
+
+    var path = [
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      'new',
+      this.branch,
+      dirpath
+    ]
+
+    this.router.navigate(_.compact(path).join('/'), true);
   },
 
   render: function() {
