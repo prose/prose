@@ -682,7 +682,11 @@ module.exports = Backbone.View.extend({
   },
 
   cancel: function() {
+
+    // Close the sidebar and return the
+    // active nav item to the current file mode.
     this.sidebar.close();
+    this.nav.active(this.mode);
 
     this.$el.find('.views .view').removeClass('active');
 
