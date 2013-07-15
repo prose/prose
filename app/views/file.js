@@ -459,6 +459,7 @@ module.exports = Backbone.View.extend({
 
   edit: function() {
     var view = this;
+    this.sidebar.close();
 
     // If preview was hit on load this.editor
     // was not initialized.
