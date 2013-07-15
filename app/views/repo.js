@@ -44,9 +44,11 @@ module.exports = Backbone.View.extend({
   },
 
   initSearch: function() {
-    this.search = new SearchView({});
-    this.subviews['search'] = this.search;
+    this.search = new SearchView({
+      mode: 'repo'
+    });
 
+    this.subviews['search'] = this.search;
     this.initFiles();
   },
 

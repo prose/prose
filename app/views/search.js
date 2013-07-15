@@ -5,22 +5,31 @@ var templates = require('../../dist/templates');
 var util = require('../util');
 
 module.exports = Backbone.View.extend({
-  template: _.template(templates.search),
+  template: templates.search,
 
   events: {
     'keyup input': 'keyup'
   },
 
   initialize: function(options) {
+    this.mode = options.mode;
     this.model = options.model;
   },
 
   render: function() {
-    this.$el.html(this.template());
+    var placeholder = t('main.repos.filter');
+    if (this.mode === 'repo') placeholder = t('main.repo.filter');
+
+    var search = {
+      placeholder: placeholder
+    };
+
+    this.$el.empty().append(_.template(this.template, search, {
+      variable: 'search'
+    }));
 
     this.input = this.$el.find('input');
     this.input.focus();
-
     return this;
   },
 

@@ -83,7 +83,8 @@ module.exports = Backbone.Router.extend({
     }
 
     var search = new SearchView({
-      model: user.repos
+      model: user.repos,
+      mode: 'repos'
     });
 
     var repos = new ReposView({
