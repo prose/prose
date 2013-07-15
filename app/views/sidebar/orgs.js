@@ -2,6 +2,7 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var templates = require('../../../dist/templates');
+var cookie = require('../../cookie');
 
 module.exports = Backbone.View.extend({
   template: templates.sidebar.orgs,
@@ -19,19 +20,22 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    var data = {
+    var orgs = {
+      login: {
+        user: cookie.get('login'),
+        id: cookie.get('id')
+      },
       user: this.user.toJSON(),
       orgs: this.model.toJSON()
     };
 
-    this.$el.html(_.template(this.template, data, {
-      variable: 'data'
+    this.$el.html(_.template(this.template, orgs, {
+      variable: 'orgs'
     }));
 
     // Update active user or organization
     this.$el.find('li a').removeClass('active');
     this.$el.find('li a[data-id="' + this.user.get('id') + '"]').addClass('active');
-
     this.sidebar.open();
 
     return this;
