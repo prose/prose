@@ -648,8 +648,7 @@ ins {
 #navigation.repo .repo  { display:block; }
 
 /* In a file view */
-#navigation.file .file,
-#navigation.file .repo  { display:block; }
+#navigation.file .file { display:block; }
 
 /* Visibility of metadata toggle
  * on file pages */
