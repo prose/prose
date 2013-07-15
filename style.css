@@ -1175,6 +1175,7 @@ ins {
   .fixed.topbar .toolbar,
   .markdown .toolbar {
     min-height:43px;
+    height:auto;
     }
   .topbar .inner > a {
     display:block;
@@ -2456,6 +2457,9 @@ ins {
 
 /* Screen sizes < 1200px --------------------- */
 @media all and (max-width:1200px) {
+  .icon.branding {
+    background-position:0 -115px;
+    }
   .loading {
     background:rgb(255,255,255);
     background:rgba(255,255,255,0.9);
