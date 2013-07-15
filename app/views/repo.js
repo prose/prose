@@ -100,8 +100,6 @@ module.exports = Backbone.View.extend({
     this.search.setElement(this.$el.find('#search')).render();
     this.files.setElement(this.$el.find('#files'));
 
-    util.fixedScroll(this.$el.find('.topbar'));
-
     return this;
   },
 
