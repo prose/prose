@@ -60,14 +60,8 @@ module.exports = Backbone.View.extend({
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
     this.listenTo($window, 'pagehide', this.stashFile);
 
-    //// Prevent exit when there are unsaved changes
-    //window.onbeforeunload = function() {
-      //if (this.dirty) return t('actions.unsaved');
-    //};
-
     // Prevent exit when there are unsaved changes
-    this.listenTo($window, 'onbeforeunload', function() {
-      return t('actions.unsaved');
+    this.listenTo($window, 'unload', function() {
       if (this.dirty) return t('actions.unsaved');
     });
 
@@ -333,7 +327,7 @@ module.exports = Backbone.View.extend({
   },
 
   titleAsHeading: function() {
-    // If the file is Markdown, has metadata and has a title, 
+    // If the file is Markdown, has metadata and has a title,
     // the editable field in the header should be
     // the title of the Markdown document.
 
