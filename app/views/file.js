@@ -54,22 +54,13 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
     this.listenTo(this.sidebar, 'translate', this.translate);
 
-    // Cache jQuery window object
-    var $window = $(window);
-
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
-    this.listenTo($window, 'pagehide', this.stashFile);
+    this.listenTo($(window), 'pagehide', this.stashFile);
 
-    //// Prevent exit when there are unsaved changes
-    //window.onbeforeunload = function() {
-      //if (this.dirty) return t('actions.unsaved');
-    //};
-
-    // Prevent exit when there are unsaved changes
-    this.listenTo($window, 'onbeforeunload', function() {
-      return t('actions.unsaved');
+    // jQuery won't bind to 'beforeunload' event
+    window.onbeforeunload = (function(e) {
       if (this.dirty) return t('actions.unsaved');
-    });
+    }).bind(this);
 
     this.branches.fetch({ success: this.setCollection });
   },
@@ -950,7 +941,14 @@ module.exports = Backbone.View.extend({
   },
 
   remove: function() {
-    this.stashFile();
+    // Unbind beforeunload prompt
+    window.onbeforeunload = null;
+
+    // Reset dirty models on navigation
+    if (this.dirty) {
+      this.stashFile();
+      this.model.fetch();
+    }
 
     _.invoke(this.subviews, 'remove');
     this.subviews = {};

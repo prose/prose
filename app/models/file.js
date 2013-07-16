@@ -189,6 +189,8 @@ module.exports = Backbone.Model.extend({
   },
 
   fetch: function(options) {
+    options = options ? _.clone(options) : {};
+
     // Series necessary for accurate isNew() check in getContent
     if (this.isNew()) {
       if (_.isFunction(options.success)) options.success();
