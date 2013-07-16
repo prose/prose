@@ -844,14 +844,16 @@ module.exports = Backbone.View.extend({
     //this.updateSaveState(t('actions.save.fileNameError'), 'error');
 
     // Validation checking
-    this.model.on('invalid', function(model, error) {
+    this.model.on('invalid', (function(model, error) {
+      this.updateSaveState(error, 'error');
+
       view.modal = new ModalView({
         message: error
       });
 
       view.$el.find('#modal').empty().append(view.modal.el);
       view.modal.render();
-    });
+    }).bind(this));
 
     // Update content
     this.model.content = (this.editor) ? this.editor.getValue() : '';
