@@ -24,12 +24,12 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    var self = this;
     this.$el.empty().append(_.template(this.template));
 
-    var metadata = this.model.get('metadata');
     var form = this.$el.find('.form');
-    var lang = metadata ? metadata.lang || 'en' : 'en';
+
+    var metadata = this.model.get('metadata');
+    var lang = metadata && metadata.lang ? metadata.lang : 'en';
 
     // This renders any fields defined in the metadata entry
     // of a given prose configuration file.
@@ -97,7 +97,7 @@ module.exports = Backbone.View.extend({
 
               var textElement = document.getElementById(id);
 
-              self[id] = CodeMirror(function(el) {
+              this[id] = CodeMirror(function(el) {
                 textElement.parentNode.replaceChild(el, textElement);
                 el.id = id;
                 el.className += ' inner ';
@@ -152,7 +152,7 @@ module.exports = Backbone.View.extend({
             case 'hidden':
               var tmpl = {};
               tmpl[data.name] = data.field.value;
-              this.model.set('metadata', _.merge(tmpl, this.model.get('metadata')));
+              this.model.set('metadata', _.merge(tmpl, this.model.get('metadata') || {}));
               this.model.set('hidden', _.merge(tmpl, this.model.get('hidden') || {}));
               break;
           }

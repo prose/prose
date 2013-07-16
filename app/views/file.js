@@ -418,7 +418,7 @@ module.exports = Backbone.View.extend({
 
       // Update the navigation view with a meta
       // class name if this post contains it
-      if (this.model.get('metadata')) {
+      if (this.model.get('metadata') || this.model.get('defaults')) {
         this.renderMetadata();
         this.nav.mode('file meta');
       }
