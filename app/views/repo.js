@@ -10,6 +10,10 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.View.extend({
   template: templates.repo,
 
+  events: {
+    'click a.new': 'create'
+  },
+
   subviews: {},
 
   initialize: function(options) {
@@ -33,6 +37,16 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'destroy', this.destroy);
     this.listenTo(this.sidebar, 'cancel', this.cancel);
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
+  },
+
+  render: function() {
+    this.$el.html(_.template(this.template, {}, {variable: 'data'}));
+
+    this.header.setElement(this.$el.find('#heading')).render();
+    this.search.setElement(this.$el.find('#search')).render();
+    this.files.setElement(this.$el.find('#files'));
+
+    return this;
   },
 
   initHeader: function() {
@@ -93,14 +107,9 @@ module.exports = Backbone.View.extend({
     this.subviews['history'] = this.history;
   },
 
-  render: function() {
-    this.$el.html(_.template(this.template, {}, {variable: 'data'}));
-
-    this.header.setElement(this.$el.find('#heading')).render();
-    this.search.setElement(this.$el.find('#search')).render();
-    this.files.setElement(this.$el.find('#files'));
-
-    return this;
+  create: function() {
+    this.files.newFile();
+    return false;
   },
 
   remove: function() {
