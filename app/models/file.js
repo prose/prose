@@ -11,8 +11,20 @@ module.exports = Backbone.Model.extend({
     _.bindAll(this);
 
     var name = new Date().format('Y-m-d') + '-your-filename.md';
-    var path = this.isNew() && _.isUndefined(attributes.path) ?
-      attributes.path + '/' + name : attributes.path;
+    var path = attributes.path.split('?')[0];
+    var lang;
+
+    this.translate = attributes.path.match(/lang=([^&]*)/);
+
+    if (this.translate) {
+      lang = this.translate[1];
+    }
+
+    // Append placeholder name if file is new and not translated
+    if (this.isNew() && !this.translate) {
+      path = path ? path + '/' + name : name;
+    }
+
     var extension = util.extension(path);
     var permissions = attributes.repo ?
       attributes.repo.get('permissions') : undefined;

@@ -16,7 +16,8 @@ module.exports = Backbone.View.extend({
     this.user = options.user;
     this.repo = options.repo;
     this.file = options.file;
-    this.inputValue = options.inputValue;
+    this.input = options.input;
+    this.placeholder = options.placeholder;
     this.alterable = options.alterable;
   },
 
@@ -73,8 +74,9 @@ module.exports = Backbone.View.extend({
       avatar: avatar,
       repo: this.repo ? this.repo.attributes : undefined,
       isPrivate: isPrivate,
-      inputValue: this.inputValue,
+      input: this.input,
       path: path,
+      placeholder: this.placeholder,
       user: user,
       title: title,
       translate: this.file ? this.file.get('translate') : undefined

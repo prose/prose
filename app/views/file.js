@@ -9,6 +9,7 @@ var key = require('keymaster');
 var marked = require('marked');
 var diff = require('diff');
 var Backbone = require('backbone');
+var File = require('../models/file');
 var HeaderView = require('./header');
 var ToolbarView = require('./toolbar');
 var MetadataView = require('./metadata');
@@ -92,7 +93,16 @@ module.exports = Backbone.View.extend({
 
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
-    this.model = options.model ? options.model : this.collection.findWhere({ path: this.path });
+    this.model = this.collection.findWhere({ path: this.path });
+
+    if (!this.model) {
+      this.model = new File({
+        branch: this.branch,
+        collection: this.collection,
+        path: this.path,
+        repo: this.repo
+      });
+    }
 
     if (defaults) {
       path = this.nearestPath(defaults);
@@ -363,17 +373,15 @@ module.exports = Backbone.View.extend({
   },
 
   initHeader: function() {
-    var inputValue = this.model.get('path');
-
-    if (this.titleAsHeading()) {
-      inputValue = this.model.get('metadata').title;
-    }
+    var input = this.titleAsHeading() ? this.model.get('metadata').title :
+      this.model.get('path');
 
     this.header = new HeaderView({
-      inputValue: inputValue,
+      input: input,
       file: this.model,
       repo: this.repo,
-      alterable: true
+      alterable: true,
+      placeholder: this.model.isNew() && !this.model.translate
     });
 
     this.subviews['header'] = this.header;
@@ -887,6 +895,8 @@ module.exports = Backbone.View.extend({
   },
 
   translate: function(e) {
+    if (e) e.preventDefault();
+
     // TODO: Drop the 'en' requirement.
     var hash = window.location.hash.split('/'),
       href = $(e.currentTarget).attr('href').substr(1);
@@ -895,7 +905,7 @@ module.exports = Backbone.View.extend({
     if (href === 'en') {
       hash.splice(-2, 2, hash[hash.length - 1]);
       // If current page is english and target page is not english
-    } else if (this.model.metadata.lang === 'en') {
+    } else if (this.model.get('metadata').lang === 'en') {
       hash.splice(-1, 1, href, hash[hash.length - 1]);
       // If current page is not english and target page is not english
     } else {

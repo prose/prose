@@ -233,15 +233,6 @@ module.exports = Backbone.Router.extend({
       success: (function(model, res, options) {
         repo.fetch({
           success: (function(model, res, options) {
-            if (mode === 'new') {
-              file.model = new File({
-                branch: branch,
-                collection: repo.files,
-                path: path,
-                repo: repo
-              });
-            }
-
             this.view = new FileView(file);
             this.app.$el.find('#main').html(this.view.el);
 
