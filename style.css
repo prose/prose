@@ -809,15 +809,15 @@ ins {
 .ico.htmlmixed:before { content:'\f109'; }
 
 .listing .saving,
-.saving .action .status:before {
+.saving .save .status:before {
   content:'\f11f';
-  color:#d4d7d9;
+  color:#a8afb2;
   }
-.error .action .status:before {
+.error .save .status:before {
   content:'\f106';
   color:#db6f6f;
   }
-.saved .action .status:before {
+.saved .save .status:before {
   content:'\f103';
   color:#90bb74;
   }
@@ -829,9 +829,9 @@ ins {
   margin:0 10px 15px 0;
   }
 
-  .saving .action .status,
-  .error .action .status,
-  .saved .action .status {
+  .saving .save .status,
+  .error .save .status,
+  .saved .save .status {
     background:#f8f8f8;
     }
   .listing .actions .working {
@@ -856,7 +856,7 @@ ins {
             animation-name:pulsate;
     }
   .listing .actions .saving,
-  .saving .action .status {
+  .saving .save .status {
     -webkit-animation-duration:1000ms;
        -moz-animation-duration:1000ms;
          -o-animation-duration:1000ms;
@@ -874,7 +874,7 @@ ins {
          -o-animation-name:spin;
             animation-name:spin;
     }
-  .saved .action .status {
+  .saved .save .status {
     -webkit-animation-duration:500ms;
        -moz-animation-duration:500ms;
          -o-animation-duration:500ms;
@@ -892,7 +892,7 @@ ins {
          -o-animation-name:saved;
             animation-name:saved;
     }
-    .saved .action .status {
+    .saved .save .status {
       -webkit-animation-fill-mode:both;
          -moz-animation-fill-mode:both;
               animation-fill-mode:both;
@@ -980,7 +980,7 @@ ins {
   }
 
 /* Saving States */
-.action .status {
+.save .status {
   background:transparent;
   width:25px;
   height:25px;
@@ -992,16 +992,16 @@ ins {
   -webkit-border-radius:50%;
           border-radius:50%;
   }
-  .heading .action .status {
+  .save .status {
     width:30px;
     height:30px;
     line-height:32px;
-    font-size:27px;
-    top:10px;
-    left:12px;
+    font-size:22px;
+    top:5px;
+    left:5px;
     }
-  .save .action .status {
-    background:#d4d7d9;
+  .save .save .status {
+    background:#526066;
     width:7px;
     height:7px;
     top:0;
@@ -1011,10 +1011,6 @@ ins {
     -webkit-border-radius:0 4px 0 4px;
             border-radius:0 4px 0 4px;
     }
-    .save .heading .action .status {
-      width:10px;
-      height:10px;
-      }
 
 .heading .icon,
 .listing .icon {
@@ -1278,25 +1274,6 @@ ins {
           border-width:0 6px 6px;
           border-color:#fff transparent;
           }
-
-.toolbar .action {
-  background:#f8f8f8;
-  display:block;
-  width:40px;
-  height:25px;
-  line-height:25px;
-  text-align:center;
-  margin:8px 0 8px 15px;
-  display:none;
-  position:relative;
-  }
-  .toolbar .action .ico {
-    font-size:16px;
-    line-height:25px;
-    }
-  .fixed .toolbar .action {
-    display:block;
-    }
 
 .dialog {
   background:#fff;
@@ -2684,11 +2661,11 @@ and (max-device-width:480px) {
     .heading .details {
       padding-left:55px;
       }
-    .heading .action .status {
+    .file .save .status {
       top:5px;
       left:5px;
       }
-      .save .heading .action .status {
+      .save .save .status {
         top:0;
         right:0;
         left:auto;

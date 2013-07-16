@@ -1,10 +1,6 @@
 <% if (data.alterable) { %>
-  <div class='action round avatar'>
-    <div class='popup-hover'>
-      <span class='ico round status'></span>
-      <span class='popup round arrow-left'><%= t('actions.change.noChange') %></span>
-      <%= data.avatar %>
-    </div>
+  <div class='round avatar'>
+    <%= data.avatar %>
   </div>
   <div class='fl details'>
     <h4 class='parent-trail'><a href='#<%= data.user %>'><%= data.user %></a> / <a href='#<%= data.user %>/<%= data.repo.name %>'><%= data.repo.name %></a><% if (data.isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>

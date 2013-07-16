@@ -60,8 +60,14 @@ module.exports = Backbone.View.extend({
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
     this.listenTo($window, 'pagehide', this.stashFile, this);
 
+    //// Prevent exit when there are unsaved changes
+    //window.onbeforeunload = function() {
+      //if (this.dirty) return t('actions.unsaved');
+    //};
+
     // Prevent exit when there are unsaved changes
-    this.listenTo($window, 'beforeunload', function() {
+    this.listenTo($window, 'onbeforeunload', function() {
+      return t('actions.unsaved');
       if (this.dirty) return t('actions.unsaved');
     }, this);
 
@@ -175,7 +181,7 @@ module.exports = Backbone.View.extend({
           }
         break;
         default:
-          this.toolbar.highlight();
+          if (this.toolbar) this.toolbar.highlight();
         break;
       }
     } else {
@@ -433,7 +439,9 @@ module.exports = Backbone.View.extend({
         this.$el.find('#edit').toggleClass('active', true);
         this.$el.find('.file .edit').addClass('active');
 
-        util.fixedScroll(this.$el.find('.topbar'));
+        if (this.model.get('markdown')) {
+          util.fixedScroll(this.$el.find('.topbar'));
+        }
       }
     }
 
@@ -457,9 +465,12 @@ module.exports = Backbone.View.extend({
     // was not initialized.
     if (!this.editor) {
       this.initEditor();
-      _.delay(function() {
-        util.fixedScroll($('.topbar', view.el));
-      }, 1);
+
+      if (this.model.get('markdown')) {
+        _.delay(function() {
+          util.fixedScroll($('.topbar', view.el));
+        }, 1);
+      }
     }
 
     $('#prose').toggleClass('open', false);
@@ -770,13 +781,13 @@ module.exports = Backbone.View.extend({
     if (!window.sessionStorage) return false;
 
     var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
+    var filepath = this.filepath();
 
     // Don't stash if filepath is undefined
     if (filepath) {
       try {
         store.setItem(filepath, JSON.stringify({
-          sha: app.state.sha,
+          sha: this.model.get('sha'),
           content: this.editor ? this.editor.getValue() : null,
           metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
         }));
@@ -854,24 +865,11 @@ module.exports = Backbone.View.extend({
     // Cancel if this condition is met
     if (classes === 'save' && $(this.el).hasClass('saving')) return;
 
-    // Update the Header
-    if (this.header) this.header.updateState(label);
-
     // Update the Sidebar save button
     if (this.sidebar) this.sidebar.updateState(label);
 
     // Update the avatar in the toolbar
-    if (this.toolbar) this.toolbar.updateState(label);
-
-    this.$el
-      .removeClass('error saving saved save')
-      .addClass(classes);
-
-    if (kill) {
-      _.delay((function() {
-        this.$el.removeClass(classes);
-      }).bind(this), 1000);
-    }
+    if (this.nav) this.nav.updateState(label, classes, kill);
   },
 
   translate: function(e) {

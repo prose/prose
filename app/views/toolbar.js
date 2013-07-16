@@ -69,10 +69,6 @@ module.exports = Backbone.View.extend({
     return this;
   },
 
-  updateState: function(label) {
-    this.$el.find('.popup').html(label);
-  },
-
   fileInput: function(e) {
     var view = this;
     upload.fileSelect(e, function(e, file, content) {
@@ -307,9 +303,11 @@ module.exports = Backbone.View.extend({
     var key = $publishKey.attr('data-state');
 
     if (key === 'true') {
-      $publishKey.html(t('actions.publishing.published') + '<span class="ico small checkmark"></span>');
+      $publishKey.html(t('actions.publishing.published') +
+                      '<span class="ico small checkmark"></span>');
     } else {
-      $publishKey.html(t('actions.publishing.unpublished') + 'Unpublished<span class="ico small checkmark"></span>');
+      $publishKey.html(t('actions.publishing.unpublished') +
+                      '<span class="ico small checkmark"></span>');
     }
   },
 
@@ -317,26 +315,45 @@ module.exports = Backbone.View.extend({
     var $target = $(e.target).hasClass('checkmark') ? $(e.target).parent() : $(e.target);
 
     // TODO: remove HTML from view
-    if ($target.hasClass('published')) {
-      $target
-        .empty()
-        .html(t('actions.publishing.unpublish') +
-              '<span class="ico small checkmark"></span>' +
-              '<span class="popup round arrow-top">' +
-              t('actions.publishing.unpublishInfo') +
-              '</span>')
-        .removeClass('published')
-        .attr('data-state', false);
+    // Toggling publish state when the current file is published live
+    if (this.file.get('metadata').published) {
+      if ($target.hasClass('published')) {
+        $target
+          .empty()
+          .append(t('actions.publishing.unpublish') +
+                '<span class="ico small checkmark"></span>' +
+                '<span class="popup round arrow-top">' +
+                t('actions.publishing.unpublishInfo') +
+                '</span>')
+          .removeClass('published')
+          .attr('data-state', false);
+      } else {
+        $target
+          .empty()
+          .append(t('actions.publishing.published') +
+                '<span class="ico small checkmark"></span>')
+          .addClass('published')
+          .attr('data-state', true);
+      }
     } else {
-      $target
-        .empty()
-        .html(t('actions.publishing.publish') +
-              '<span class="ico small checkmark"></span>' +
-              '<span class="popup round arrow-top">' +
-              t('actions.publishing.publishInfo') +
-              '</span>')
-        .addClass('published')
-        .attr('data-state', true);
+      if ($target.hasClass('published')) {
+        $target
+          .empty()
+          .append(t('actions.publishing.unpublished') +
+                '<span class="ico small checkmark"></span>')
+          .removeClass('published')
+          .attr('data-state', false);
+      } else {
+        $target
+          .empty()
+          .append(t('actions.publishing.publish') +
+                '<span class="ico small checkmark"></span>' +
+                '<span class="popup round arrow-top">' +
+                t('actions.publishing.publishInfo') +
+                '</span>')
+          .addClass('published')
+          .attr('data-state', true);
+      }
     }
 
     this.view.makeDirty();

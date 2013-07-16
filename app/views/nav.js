@@ -28,6 +28,8 @@ module.exports = Backbone.View.extend({
     this.$el.html(_.template(this.template, {
       login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=repo'
     }, { variable: 'data' }));
+
+    this.$save = this.$el.find('.file .save .popup');
     return this;
   },
 
@@ -46,6 +48,21 @@ module.exports = Backbone.View.extend({
   setFileState: function(state) {
     this.state = state;
     this.active(state);
+  },
+
+  updateState: function(label, classes, kill) {
+    this.$save.html(label);
+
+    // Add, remove classes to the file nav group
+    this.$el.find('.file')
+      .removeClass('error saving saved save')
+      .addClass(classes);
+
+    if (kill) {
+      _.delay((function() {
+        this.$el.find('.file').removeClass(classes);
+      }).bind(this), 1000);
+    }
   },
 
   mode: function(mode) {
