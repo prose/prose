@@ -884,7 +884,7 @@ module.exports = Backbone.View.extend({
   },
 
   translate: function(e) {
-    // TODO Drop the 'EN' requirement.
+    // TODO: Drop the 'en' requirement.
     var hash = window.location.hash.split('/'),
       href = $(e.currentTarget).attr('href').substr(1);
 

@@ -8,7 +8,7 @@
   <% if (settings.languages && settings.lang !== 'yaml') { %>
     <% _.each(settings.languages, function(l) { %>
       <% if (l.value && (settings.metadata && (settings.metadata.lang !== l.value))) { %>
-        <a class='translate round button' href='#<%= l.value %>'><%= t('sidebar.settings.translate') + ' ' + settings.l.name %></a>
+        <a class='translate round button' href='#<%= l.value %>'><%= t('sidebar.settings.translate') + ' ' + l.name %></a>
       <% } %>
     <% }); %>
   <% } %>
