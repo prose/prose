@@ -995,7 +995,7 @@ ins {
   .save .status {
     width:30px;
     height:30px;
-    line-height:32px;
+    line-height:30px;
     font-size:22px;
     top:5px;
     left:5px;
