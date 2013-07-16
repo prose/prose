@@ -27,8 +27,9 @@ module.exports = Backbone.View.extend({
     var self = this;
     this.$el.empty().append(_.template(this.template));
 
+    var metadata = this.model.get('metadata');
     var form = this.$el.find('.form');
-    var lang = this.model.get('metadata').lang || 'en';
+    var lang = metadata ? metadata.lang || 'en' : 'en';
 
     // This renders any fields defined in the metadata entry
     // of a given prose configuration file.
@@ -173,6 +174,7 @@ module.exports = Backbone.View.extend({
     $('.chzn-select').chosen();
 
     this.renderRaw();
+
     return this;
   },
 

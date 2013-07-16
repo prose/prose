@@ -10,7 +10,7 @@ module.exports = Backbone.Model.extend({
   initialize: function(attributes, options) {
     _.bindAll(this);
 
-    var name = new Date().format('Y-m-d') + '-your-filename.md';
+    this.placeholder = new Date().format('Y-m-d') + '-your-filename.md';
     var path = attributes.path.split('?')[0];
     var lang;
 
@@ -22,7 +22,7 @@ module.exports = Backbone.Model.extend({
 
     // Append placeholder name if file is new and not translated
     if (this.isNew() && !this.translate) {
-      path = path ? path + '/' + name : name;
+      path = path ? path + '/' + this.placeholder : this.placeholder;
     }
 
     var extension = util.extension(path);
@@ -40,7 +40,6 @@ module.exports = Backbone.Model.extend({
       type = attributes.type;
     }
 
-    // TODO: isNew() name and path defaults should fail this.validate()
     this.set({
       'binary': util.isBinary(extension),
       'content': this.isNew() && _.isUndefined(attributes.content) ? t('main.new.body') : attributes.content,
@@ -53,8 +52,8 @@ module.exports = Backbone.Model.extend({
       'lang': util.mode(extension),
       'media': util.isMedia(extension),
       'markdown': util.isMarkdown(extension),
-      'name': this.isNew() && _.isUndefined(attributes.path) ?
-        name : util.extractFilename(attributes.path)[1],
+      'name': this.isNew() && !this.translate ?
+        this.placeholder : util.extractFilename(attributes.path)[1],
       'path': path,
       'type': type,
       'writable': permissions ? permissions.push : false
@@ -211,7 +210,7 @@ module.exports = Backbone.Model.extend({
       });
     }
 
-    // call save method with undefined attributes
+    // Call save method with undefined attributes
     Backbone.Model.prototype.save.call(this, undefined, options);
   },
 
@@ -307,7 +306,11 @@ module.exports = Backbone.Model.extend({
     // Fail validation if path conflicts with another file in repo
     if (this.collection.where({ path: attributes.path }).length > 1) return t('actions.save.fileNameExists');
 
-    // Validate the Markdown
+    // Fail validation if name matches default
+    if (this.get('name') === this.placeholder) return 'File name is default';
+
+    // Fail validation if marked returns an error
+    // TODO: does this work as callback?
     marked(attributes.content, {}, function(err, content) {
       if (err) return err;
     });

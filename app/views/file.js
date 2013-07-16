@@ -410,17 +410,14 @@ module.exports = Backbone.View.extend({
       this.initToolbar();
       this.initSidebar();
 
-      if (this.model.get('metadata')) {
-        this.renderMetadata();
-      }
-
-      this.updateDocumentTitle();
-
       // Update the navigation view with a meta
       // class name if this post contains it
       if (this.model.get('metadata')) {
+        this.renderMetadata();
         this.nav.mode('file meta');
       }
+
+      this.updateDocumentTitle();
 
       // Preview needs access to marked, so it's registered here
       Liquid.Template.registerFilter({
