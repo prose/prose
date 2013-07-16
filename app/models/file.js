@@ -126,6 +126,19 @@ module.exports = Backbone.Model.extend({
     }));
   },
 
+  getContentSync: function(options) {
+    options = options ? _.clone(options) : {};
+
+    return Backbone.Model.prototype.fetch.call(this, _.extend(options, {
+      async: false,
+      dataType: 'text',
+      headers: {
+        'Accept': 'application/vnd.github.raw'
+      },
+      url: this.get('content_url')
+    }));
+  },
+
   serialize: function() {
     var metadata = this.get('metadata');
 

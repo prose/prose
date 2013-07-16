@@ -1,8 +1,9 @@
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
-
 var queue = require('queue-async');
+var jsyaml = require('js-yaml');
+var patch = require('../../vendor/liquid.patch');
 
 var ModalView = require('./modal');
 var key = require('keymaster');
@@ -27,6 +28,9 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     _.bindAll(this);
+
+    // Patch Liquid
+    patch.apply(this);
 
     this.branch = options.branch || options.repo.get('master_branch');
     this.branches = options.branches;
@@ -536,29 +540,70 @@ module.exports = Backbone.View.extend({
       }) || ''
     };
 
+    // Grab a date from the filename
+    // and add this post to be evaluated as {{post.date}}
+    var parts = util.extractFilename(this.path)[1].split('-');
+    var year = parts[0];
+    var month = parts[1];
+    var day = parts[2];
+
+    // TODO: remove EST specific time adjustment
+    var date = [year, month, day].join('-') + ' 05:00:00';
+
+    p.post.date = jsyaml.load(date).toDateString();
+
+    // Parse JSONP links
+    if (p.site && p.site.site) {
+      _(p.site.site).each(function(file, key) {
+        q.defer(function(cb){
+          var next = false;
+          $.ajax({
+            cache: true,
+            dataType: 'jsonp',
+            jsonp: false,
+            jsonpCallback: 'callback',
+            url: file,
+            timeout: 5000,
+            success: function(d) {
+              p.site[key] = d;
+              next = true;
+              cb();
+            },
+            error: function(msg, b, c) {
+              if (!next) cb();
+            }
+          });
+        });
+      });
+    }
+
     function getLayout(cb) {
       var file = p.page.layout;
       var layout = this.collection.findWhere({ path: '_layouts/' + file + '.html' });
 
       layout.fetch({
         success: (function(model, res, options) {
-          var meta = model.get('metadata');
-          var content = model.get('content');
-          var template = Liquid.parse(content);
+          model.getContent({
+            success: (function(model, res, options) {
+              var meta = model.get('metadata');
+              var content = model.get('content');
+              var template = Liquid.parse(content);
 
-          p.page = _.extend(metadata, meta);
+              p.page = _.extend(metadata, meta);
 
-          p.content = template.render({
-            site: p.site,
-            post: p.post,
-            page: p.page,
-            content: p.content
+              p.content = template.render({
+                site: p.site,
+                post: p.post,
+                page: p.page,
+                content: p.content
+              });
+
+              // Handle nested layouts
+              if (meta && meta.layout) q.defer(getLayout.bind(this));
+
+              cb();
+            }).bind(this)
           });
-
-          // Handle nested layouts
-          if (meta && meta.layout) q.defer(getLayout.bind(this));
-
-          cb();
         }).bind(this)
       })
     }

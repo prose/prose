@@ -35,8 +35,7 @@ LIBS = \
 	vendor/codemirror/javascript.js \
 	vendor/codemirror/css.js \
 	vendor/codemirror/gfm.js \
-	vendor/liquid.js \
-	vendor/liquid.patch.js
+	vendor/liquid.js
 
 APPLICATION = \
 	app/collections/branches.js \
@@ -87,8 +86,9 @@ APPLICATION = \
 	app/cookie.js \
 	app/upload.js \
 	app/toolbar/markdown.js \
+	locale.js \
 	translations/locales.js \
-	locale.js
+	vendor/liquid.patch.js
 
 dist/prose.js: oauth.json $(APPLICATION) $(LIBS) dist/templates.js
 	cat $(LIBS) > dist/prose.js
