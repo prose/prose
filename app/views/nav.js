@@ -33,6 +33,9 @@ module.exports = Backbone.View.extend({
   },
 
   emit: function(e) {
+    // TODO: get rid of this hack exception
+    if (e && !$(e.currentTarget).hasClass('preview')) e.preventDefault();
+
     var state = $(e.currentTarget).data('state');
     if ($(e.target).hasClass('active')) {
       // return to file state
@@ -41,7 +44,6 @@ module.exports = Backbone.View.extend({
 
     this.active(state);
     this.toggle(state, e);
-    return false;
   },
 
   setFileState: function(state) {

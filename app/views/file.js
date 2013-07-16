@@ -42,7 +42,7 @@ module.exports = Backbone.View.extend({
 
     // Events from vertical nav
     this.listenTo(this.nav, 'edit', this.edit);
-    this.listenTo(this.nav, 'preview', this.preview);
+    this.listenTo(this.nav, 'preview', this.blob);
     this.listenTo(this.nav, 'meta', this.meta);
     this.listenTo(this.nav, 'settings', this.settings);
     this.listenTo(this.nav, 'save', this.showDiff);
@@ -85,6 +85,7 @@ module.exports = Backbone.View.extend({
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
     switch(this.mode) {
+      case 'preview':
       case 'edit':
         this.model = this.collection.findWhere({ path: this.path });
         break;
@@ -482,16 +483,19 @@ module.exports = Backbone.View.extend({
     this.updateURL();
   },
 
-  blob: function() {
+  blob: function(e) {
     this.sidebar.close();
 
     var metadata = this.model.get('metadata');
     var jekyll = this.config && this.config.siteurl && metadata && metadata.layout;
 
     if (jekyll) {
+      // TODO: this could all be removed if preview button listened to
+      // change:path event on model
       var hash = window.location.hash.split('/');
       hash[2] = 'preview';
 
+      // TODO: How should this change to handle new files in collection?
       // If last item in hash array does not begin with Jekyll YYYY-MM-DD format,
       // append filename from input
       var regex = /^\d{4}-\d{2}-\d{2}-(?:.+)/;
@@ -522,11 +526,11 @@ module.exports = Backbone.View.extend({
     var metadata = this.model.get('metadata');
 
     var p = {
-      site: this.config,
+      site: this.collection.config,
       post: metadata,
       page: metadata,
       content: Liquid.parse(marked(this.model.get('content'))).render({
-        site: this.config,
+        site: this.collection.config,
         post: metadata,
         page: metadata
       }) || ''
@@ -559,15 +563,18 @@ module.exports = Backbone.View.extend({
       })
     }
 
-    q.defer(getLayout.bind(this));
+    if (p.page.layout) {
+      q.defer(getLayout.bind(this));
+    }
 
     q.await((function() {
+      var config = this.collection.config;
       var content = p.content;
 
       // Set base URL to public site
-      if (this.config.prose && this.config.prose.siteurl) {
+      if (config && config.siteurl) {
         content = content.replace(/(<head(?:.*)>)/, (function() {
-          return arguments[1] + '<base href="' + this.config.prose.siteurl + '">';
+          return arguments[1] + '<base href="' + config.siteurl + '">';
         }).bind(this));
       }
 
