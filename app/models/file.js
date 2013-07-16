@@ -309,7 +309,8 @@ module.exports = Backbone.Model.extend({
     if (this.collection.where({ path: attributes.path }).length > 1) return t('actions.save.fileNameExists');
 
     // Fail validation if name matches default
-    if (this.get('name') === this.placeholder) return 'File name is default';
+    var name = util.extractFilename(this.get('path'));
+    if (name === this.placeholder) return 'File name is default';
 
     // Fail validation if marked returns an error
     // TODO: does this work as callback?

@@ -38,7 +38,6 @@ module.exports = Backbone.View.extend({
     this.sidebar = options.sidebar;
 
     // Set the active nav element established by this.mode
-    // TODO: this breaks for mode 'new'
     this.nav.setFileState(this.mode);
 
     // Events from vertical nav
@@ -91,7 +90,7 @@ module.exports = Backbone.View.extend({
         break;
       case 'new':
         this.model = new File({
-          branch: this.branch,
+          branch: this.branches.findWhere({ name: this.branch }),
           collection: this.collection,
           path: this.path,
           repo: this.repo
@@ -479,6 +478,7 @@ module.exports = Backbone.View.extend({
 
     this.contentMode('edit');
     this.mode = this.model.isNew() ? 'new' : 'edit';
+    this.nav.setFileState(this.mode);
     this.updateURL();
   },
 
@@ -867,7 +867,32 @@ module.exports = Backbone.View.extend({
     this.model.content = (this.editor) ? this.editor.getValue() : '';
 
     // Delegate
-    method.call(this);
+    method.call(this, {
+      success: (function(model, res, options) {
+        this.sidebar.close();
+        this.updateSaveState(t('actions.save.saved'), 'saved');
+        
+        // Unset dirty, return to edit view
+        this.dirty = false;
+        this.edit();
+
+        // Navigate to edit path for new files
+        if (this.model.isNew()) {
+          this.router.navigate(_.compact([
+            this.repo.get('owner').login,
+            this.repo.get('name'),
+            'edit',
+            this.model.branch.get('name'),
+            this.model.get('path')
+          ]).join('/'));
+        }
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        var res = JSON.parse(xhr.responseText);
+        this.updateSaveState(res.message, 'error');
+      }).bind(this)
+    });
+
     return false;
   },
 
