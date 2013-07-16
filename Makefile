@@ -77,6 +77,7 @@ APPLICATION = \
 	app/views/sidebar/li/commit.js \
 	app/views/sidebar/orgs.js \
 	app/views/sidebar/history.js \
+	app/views/sidebar/save.js \
 	app/views/sidebar/settings.js \
 	app/router.js \
 	app/util.js \

@@ -13,11 +13,13 @@ module.exports = Backbone.View.extend({
     'click a.delete': 'emit',
     'click a.translate': 'emit',
     'click a.draft': 'emit',
-    'keypress input.filepath': 'saveFilePath'
+    'change input.filepath': 'saveFilePath'
   },
 
   saveFilePath: function(e) {
-    this.trigger('updateFile', e);
+    this.file.set('path', e.currentTarget.value);
+    this.trigger('makeDirty');
+    return false;
   },
 
   initialize: function(options) {

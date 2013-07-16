@@ -6,38 +6,41 @@ var templates = require('../../../dist/templates');
 var utils = require('../../util');
 
 module.exports = Backbone.View.extend({
-    template: templates.sidebar.save,
+  template: templates.sidebar.save,
 
-    events: {
-      'click a.cancel': 'emit',
-      'click a.confirm': 'emit'
-    },
+  events: {
+    'click a.cancel': 'emit',
+    'click a.confirm': 'emit'
+  },
 
-    initialize: function(options) {
-      this.sidebar = options.sidebar;
-      this.file = options.file;
-    },
+  initialize: function(options) {
+    _.bindAll(this);
 
-    emit: function(e) {
-      var action = $(e.currentTarget).data('action');
-      this.sidebar.trigger(action, e);
-      return false;
-    },
+    this.sidebar = options.sidebar;
+    this.file = options.file;
+  },
 
-    render: function() {
-      var save = {
-        action: this.file.get('writable') ?
-          t('sidebar.save.save') :
-          t('sidebar.save.submit')
-      };
+  emit: function(e) {
+    var action = $(e.currentTarget).data('action');
+    this.sidebar.trigger(action, e);
+    return false;
+  },
 
-      this.$el.empty().append(_.template(this.template, save, {
-        variable: 'save'
-      }));
+  render: function() {
+    var save = {
+      action: this.file.get('writable') ?
+        t('sidebar.save.save') :
+        t('sidebar.save.submit')
+    };
 
-      var placeholder = (this.file.isNew() ? 'Created ' : 'Updated ') + this.file.get('name');
-      this.$el.find('.commit-message').attr('placeholder', placeholder).focus();
+    this.$el.empty().append(_.template(this.template, save, {
+      variable: 'save'
+    }));
 
-      return this;
-    }
+    // TODO: util.extractFilename()
+    var placeholder = (this.file.isNew() ? 'Created ' : 'Updated ') + this.file.get('path');
+    this.$el.find('.commit-message').attr('placeholder', placeholder).focus();
+
+    return this;
+  }
 });
