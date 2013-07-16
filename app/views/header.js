@@ -30,10 +30,6 @@ module.exports = Backbone.View.extend({
     }
   },
 
-  updateState: function(label) {
-    this.$el.find('.popup').html(label);
-  },
-
   updateFile: function() {
     this.trigger('makeDirty');
   },

@@ -218,7 +218,7 @@ module.exports = {
         if (!inView($prev)) {
           // Offset is the list height minus the difference between the
           // height and .content-search (60) that is fixed down the page
-          offset = $prev.height() + 60;
+          offset = $prev.height();
 
           $('html, body').animate({
             scrollTop: $prev.offset().top + ($prev.height() - offset)
@@ -236,7 +236,7 @@ module.exports = {
         if (index < $('#content li').length - 1) ++index;
         var $next = $('.item[data-index=' + index + ']');
         var nextTop = $next.offset().top + $next.height();
-        offset = $next.height() + 60;
+        offset = $next.height();
 
         if (!inView($next)) {
           $('html, body').animate({

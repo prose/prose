@@ -453,7 +453,9 @@ module.exports = Backbone.View.extend({
         this.$el.find('#edit').toggleClass('active', true);
         this.$el.find('.file .edit').addClass('active');
 
-        util.fixedScroll(this.$el.find('.topbar'));
+        if (this.model.get('markdown')) {
+          util.fixedScroll(this.$el.find('.topbar'));
+        }
       }
     }
 
@@ -477,9 +479,12 @@ module.exports = Backbone.View.extend({
     // was not initialized.
     if (!this.editor) {
       this.initEditor();
-      _.delay(function() {
-        util.fixedScroll($('.topbar', view.el));
-      }, 1);
+
+      if (this.model.get('markdown')) {
+        _.delay(function() {
+          util.fixedScroll($('.topbar', view.el));
+        }, 1);
+      }
     }
 
     $('#prose').toggleClass('open', false);
@@ -874,24 +879,11 @@ module.exports = Backbone.View.extend({
     // Cancel if this condition is met
     if (classes === 'save' && $(this.el).hasClass('saving')) return;
 
-    // Update the Header
-    if (this.header) this.header.updateState(label);
-
     // Update the Sidebar save button
     if (this.sidebar) this.sidebar.updateState(label);
 
     // Update the avatar in the toolbar
-    if (this.toolbar) this.toolbar.updateState(label);
-
-    this.$el
-      .removeClass('error saving saved save')
-      .addClass(classes);
-
-    if (kill) {
-      _.delay((function() {
-        this.$el.removeClass(classes);
-      }).bind(this), 1000);
-    }
+    if (this.nav) this.nav.updateState(label, classes, kill);
   },
 
   translate: function(e) {

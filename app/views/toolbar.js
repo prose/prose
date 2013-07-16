@@ -69,10 +69,6 @@ module.exports = Backbone.View.extend({
     return this;
   },
 
-  updateState: function(label) {
-    this.$el.find('.popup').html(label);
-  },
-
   fileInput: function(e) {
     var view = this;
     upload.fileSelect(e, function(e, file, content) {
