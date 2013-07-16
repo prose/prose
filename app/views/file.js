@@ -75,8 +75,14 @@ module.exports = Backbone.View.extend({
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
     this.listenTo($window, 'pagehide', this.stashFile, this);
 
+    //// Prevent exit when there are unsaved changes
+    //window.onbeforeunload = function() {
+      //if (this.dirty) return t('actions.unsaved');
+    //};
+
     // Prevent exit when there are unsaved changes
-    this.listenTo($window, 'beforeunload', function() {
+    this.listenTo($window, 'onbeforeunload', function() {
+      return t('actions.unsaved');
       if (this.dirty) return t('actions.unsaved');
     }, this);
   },
@@ -184,7 +190,7 @@ module.exports = Backbone.View.extend({
           }
         break;
         default:
-          this.toolbar.highlight();
+          if (this.toolbar) this.toolbar.highlight();
         break;
       }
     } else {
@@ -795,13 +801,13 @@ module.exports = Backbone.View.extend({
     if (!window.sessionStorage) return false;
 
     var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
+    var filepath = this.filepath();
 
     // Don't stash if filepath is undefined
     if (filepath) {
       try {
         store.setItem(filepath, JSON.stringify({
-          sha: app.state.sha,
+          sha: this.model.get('sha'),
           content: this.editor ? this.editor.getValue() : null,
           metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
         }));
