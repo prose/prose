@@ -34,9 +34,6 @@ module.exports = Backbone.View.extend({
     this.sidebar = options.sidebar;
 
     this.branches.fetch({ success: this.setModel });
-
-    // Events from vertical nav
-    this.listenTo(this.nav, 'new', this.new);
   },
 
   setModel: function() {
@@ -54,7 +51,7 @@ module.exports = Backbone.View.extend({
     }).bind(this), reset: true });
   },
 
-  new: function() {
+  newFile: function() {
     var path = [
       this.repo.get('owner').login,
       this.repo.get('name'),

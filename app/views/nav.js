@@ -9,7 +9,6 @@ module.exports = Backbone.View.extend({
   template: templates.nav,
 
   events: {
-    'click a.new': 'emit',
     'click a.edit': 'emit',
     'click a.preview': 'emit',
     'click a.meta': 'emit',

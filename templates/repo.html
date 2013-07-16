@@ -2,8 +2,13 @@
 
 <div id='content' class='application content limiter'>
   <div class='topbar-wrapper'>
-    <div class='topbar'>
-      <div id='search' class='containment content-search'></div>
+    <div class='topbar clearfix'>
+      <!-- if repo and authenticated -->
+      <!-- #user/repo/new/branch/path -->
+      <a href='#' class='fr button round new new-file' data-state='new'>
+        <%= t('navigation.newFile') %>
+      </a>
+      <div id='search' class='content-search round'></div>
     </div>
   </div>
 
