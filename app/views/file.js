@@ -45,7 +45,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.nav, 'edit', this.edit);
     this.listenTo(this.nav, 'preview', this.preview);
     this.listenTo(this.nav, 'meta', this.meta);
-    this.listenTo(this.nav, 'settings', this.sidebar.toggle);
+    this.listenTo(this.nav, 'settings', this.settings);
     this.listenTo(this.nav, 'save', this.showDiff);
 
     // Events from sidebar
@@ -475,10 +475,7 @@ module.exports = Backbone.View.extend({
 
     $('#prose').toggleClass('open', false);
 
-    // Content Window
-    this.$el.find('.views .view').removeClass('active');
-    this.$el.find('#edit').addClass('active');
-
+    this.contentMode('edit');
     this.mode = this.model.isNew() ? 'new' : 'edit';
     this.updateURL();
   },
@@ -508,8 +505,8 @@ module.exports = Backbone.View.extend({
       });
     } else {
       // Content Window
-      this.$el.find('.views .view').removeClass('active');
-      this.$el.find('#preview').addClass('active').html(marked(this.compilePreview(this.model.get('content'))));
+      this.contentMode('preview');
+      this.$el.find('#preview').html(marked(this.compilePreview(this.model.get('content'))));
 
       this.mode = 'blob';
       this.updateURL();
@@ -577,12 +574,22 @@ module.exports = Backbone.View.extend({
     }).bind(this));
   },
 
+  contentMode: function(mode) {
+    this.$el.find('.views .view').removeClass('active');
+    if (mode) {
+      this.$el.find('#' + mode).addClass('active');
+    } else {
+      if (this.mode === 'blob') {
+        this.$el.find('#preview').addClass('active');
+      } else {
+        this.$el.find('#edit').addClass('active');
+      }
+    }
+  },
+
   meta: function() {
     this.sidebar.close();
-
-    // Content Window
-    this.$el.find('.views .view').removeClass('active');
-    this.$el.find('#meta').addClass('active');
+    this.contentMode('meta');
 
     // Refresh any textarea's in the frontmatter form that use codemirror
     this.metadataEditor.refresh();
@@ -654,7 +661,17 @@ module.exports = Backbone.View.extend({
     this.updateSaveState(label, 'save');
   },
 
+  settings: function() {
+    this.contentMode();
+    this.sidebar.mode('settings');
+    this.sidebar.open();
+  },
+
   showDiff: function() {
+    this.contentMode('diff');
+    this.sidebar.mode('save');
+    this.sidebar.open();
+
     var $diff = this.$el.find('#diff');
 
     // TODO: why was _.escape() used here?
@@ -675,13 +692,7 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    // Content Window
-    this.$el.find('.views .view').removeClass('active');
-
-    $diff.addClass('active');
     $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
-
-    this.sidebar.open();
   },
 
   cancel: function() {
@@ -691,13 +702,8 @@ module.exports = Backbone.View.extend({
     this.sidebar.close();
     this.nav.active(this.mode);
 
-    this.$el.find('.views .view').removeClass('active');
-
-    if (this.mode === 'blob') {
-      this.$el.find('#preview').addClass('active');
-    } else {
-      this.$el.find('#edit').addClass('active');
-    }
+    // Return back to old mode.
+    this.contentMode();
   },
 
   refreshCodeMirror: function() {

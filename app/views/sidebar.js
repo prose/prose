@@ -65,10 +65,6 @@ module.exports = Backbone.View.extend({
 
   open: function() {
     this.$el.toggleClass('open mobile', true);
-
-    // TODO: call when in 'tree'/repo mode and when authenticated but no mode (profile)?
-    // this.$el.toggleClass('open', true);
-    // this.$el.toggleClass('mobile', false);
   },
 
   close: function() {
@@ -81,7 +77,7 @@ module.exports = Backbone.View.extend({
 
   mode: function(mode) {
     // Set data-mode attribute to toggle nav buttons in CSS
-    this.$el.attr('data-mode', mode);
+    this.$el.attr('data-sidebar', mode);
   },
 
   remove: function() {

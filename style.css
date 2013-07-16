@@ -1775,6 +1775,16 @@ ins {
                 border-radius:0 4px 4px 0;
         }
 
+/* Sidebar content on the file page */
+.sidebar #save,
+.sidebar #settings {
+  display:none;
+  }
+.sidebar[data-sidebar='save'] #save,
+.sidebar[data-sidebar='settings'] #settings {
+  display:block;
+  }
+
 .sidebar .commit {
   position:relative;
   bottom:-4px;
