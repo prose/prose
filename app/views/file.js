@@ -85,6 +85,7 @@ module.exports = Backbone.View.extend({
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
     switch(this.mode) {
+      case 'preview':
       case 'edit':
         this.model = this.collection.findWhere({ path: this.path });
         break;
@@ -482,16 +483,19 @@ module.exports = Backbone.View.extend({
     this.updateURL();
   },
 
-  blob: function() {
+  blob: function(e) {
     this.sidebar.close();
 
     var metadata = this.model.get('metadata');
     var jekyll = this.config && this.config.siteurl && metadata && metadata.layout;
 
     if (jekyll) {
+      // TODO: this could all be removed if preview button listened to
+      // change:path event on model
       var hash = window.location.hash.split('/');
       hash[2] = 'preview';
 
+      // TODO: How should this change to handle new files in collection?
       // If last item in hash array does not begin with Jekyll YYYY-MM-DD format,
       // append filename from input
       var regex = /^\d{4}-\d{2}-\d{2}-(?:.+)/;

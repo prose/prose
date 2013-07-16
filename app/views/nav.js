@@ -34,7 +34,8 @@ module.exports = Backbone.View.extend({
   },
 
   emit: function(e) {
-    if (e) e.preventDefault();
+    // TODO: get rid of this hack exception
+    if (e && !$(e.currentTarget).hasClass('preview')) e.preventDefault();
 
     var state = $(e.currentTarget).data('state');
     if ($(e.target).hasClass('active')) {
