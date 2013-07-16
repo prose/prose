@@ -58,7 +58,7 @@ module.exports = Backbone.View.extend({
     var $window = $(window);
 
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
-    this.listenTo($window, 'pagehide', this.stashFile, this);
+    this.listenTo($window, 'pagehide', this.stashFile);
 
     //// Prevent exit when there are unsaved changes
     //window.onbeforeunload = function() {
@@ -69,7 +69,7 @@ module.exports = Backbone.View.extend({
     this.listenTo($window, 'onbeforeunload', function() {
       return t('actions.unsaved');
       if (this.dirty) return t('actions.unsaved');
-    }, this);
+    });
 
     this.branches.fetch({ success: this.setCollection });
   },
@@ -351,7 +351,7 @@ module.exports = Backbone.View.extend({
     }).render();
     this.subviews['settings'] = this.settings;
 
-    this.listenTo(this.sidebar, 'updateFile', this.makeDirty());
+    this.listenTo(this.sidebar, 'makeDirty', this.makeDirty);
 
     // Commit message sidebar panel
     this.save = this.sidebar.initSubview('save', {
@@ -359,6 +359,9 @@ module.exports = Backbone.View.extend({
       file: this.model
     }).render();
     this.subviews['save'] = this.save;
+
+    // Re-render updated path in commit message
+    this.listenTo(this.model, 'change:path', this.subviews['save'].render);
   },
 
   initHeader: function() {

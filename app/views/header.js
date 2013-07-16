@@ -9,10 +9,12 @@ module.exports = Backbone.View.extend({
 
   events: {
     'focus input': 'checkPlaceholder',
-    'keydown input': 'updateFile'
+    'change input': 'updateFile'
   },
 
   initialize: function(options) {
+    _.bindAll(this);
+
     this.user = options.user;
     this.repo = options.repo;
     this.file = options.file;
@@ -30,8 +32,10 @@ module.exports = Backbone.View.extend({
     }
   },
 
-  updateFile: function() {
+  updateFile: function(e) {
+    this.file.set('path', e.currentTarget.value);
     this.trigger('makeDirty');
+    return false;
   },
 
   inputGet: function() {
