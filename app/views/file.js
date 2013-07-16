@@ -42,7 +42,7 @@ module.exports = Backbone.View.extend({
 
     // Events from vertical nav
     this.listenTo(this.nav, 'edit', this.edit);
-    this.listenTo(this.nav, 'preview', this.preview);
+    this.listenTo(this.nav, 'preview', this.blob);
     this.listenTo(this.nav, 'meta', this.meta);
     this.listenTo(this.nav, 'settings', this.settings);
     this.listenTo(this.nav, 'save', this.showDiff);
@@ -559,15 +559,18 @@ module.exports = Backbone.View.extend({
       })
     }
 
-    q.defer(getLayout.bind(this));
+    if (p.page.layout) {
+      q.defer(getLayout.bind(this));
+    }
 
     q.await((function() {
+      var config = this.collection.config;
       var content = p.content;
 
       // Set base URL to public site
-      if (this.config.prose && this.config.prose.siteurl) {
+      if (config && config.siteurl) {
         content = content.replace(/(<head(?:.*)>)/, (function() {
-          return arguments[1] + '<base href="' + this.config.prose.siteurl + '">';
+          return arguments[1] + '<base href="' + config.siteurl + '">';
         }).bind(this));
       }
 
