@@ -16,6 +16,17 @@ en:
     develop: "Developers"
     logout: "Logout"
     language: "Language"
+  toolbar:
+    heading: "Heading"
+    subHeading: "Sub Heading"
+    link: "Insert Link"
+    image: "Insert Link"
+    bold: "Bold"
+    italic: "Italic"
+    blockquote: "Blockquote"
+    list: "List"
+    numberedlist: "Numbered List"
+    help: "Help"
   heading:
     explore: "Explore Projects"
   actions:
