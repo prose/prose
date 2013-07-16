@@ -307,7 +307,7 @@ module.exports = Backbone.View.extend({
                       '<span class="ico small checkmark"></span>');
     } else {
       $publishKey.html(t('actions.publishing.unpublished') +
-                      'Unpublished<span class="ico small checkmark"></span>');
+                      '<span class="ico small checkmark"></span>');
     }
   },
 
@@ -340,7 +340,7 @@ module.exports = Backbone.View.extend({
         $target
           .empty()
           .append(t('actions.publishing.unpublished') +
-                'Unpublished<span class="ico small checkmark"></span>')
+                '<span class="ico small checkmark"></span>')
           .removeClass('published')
           .attr('data-state', false);
       } else {

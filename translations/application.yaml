@@ -33,7 +33,7 @@ en:
     change:
       noChange: "No Changes"
       submit: "Changes to Submit"
-      save: "Save"
+      save: "Changes to Save"
     delete:
       title: "Delete"
       warn: "Are you sure you want to delete this file?"
