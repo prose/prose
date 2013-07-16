@@ -526,11 +526,11 @@ module.exports = Backbone.View.extend({
     var metadata = this.model.get('metadata');
 
     var p = {
-      site: this.config,
+      site: this.collection.config,
       post: metadata,
       page: metadata,
       content: Liquid.parse(marked(this.model.get('content'))).render({
-        site: this.config,
+        site: this.collection.config,
         post: metadata,
         page: metadata
       }) || ''

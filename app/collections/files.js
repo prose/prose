@@ -83,8 +83,13 @@ module.exports = Backbone.Collection.extend({
     }
 
     if (config && config.prose) {
-      // load _config.yml, set parsed value on collection
-      this.config = config.prose;
+      // Load _config.yml, set parsed value on collection
+      // Extend to capture settings from outside config.prose
+      // while allowing override
+      this.config = _.extend({
+        baseurl: config.baseurl,
+        languages: config.languages
+      }, config.prose);
 
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
