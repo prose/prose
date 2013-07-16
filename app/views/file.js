@@ -28,30 +28,18 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this);
 
-    this.router = options.router;
-
-    // Track view mode
+    this.branch = options.branch || options.repo.get('master_branch');
+    this.branches = options.branches;
     this.mode = options.mode;
-
     this.nav = options.nav;
+    this.path = options.path || '';
+    this.repo = options.repo;
+    this.router = options.router;
     this.sidebar = options.sidebar;
 
-    this.repo = options.repo;
-    this.branch = options.branch || this.repo.get('master_branch');
-    this.branches = options.branches;
-    this.path = options.path || '';
-
-    var fetch = {
-      success: this.setCollection
-    };
-
-    // Set model for new File models
-    var model = options.model;
-    if (model) {
-      fetch.model = model;
-    }
-
-    this.branches.fetch(fetch);
+    // Set the active nav element established by this.mode
+    // TODO: this breaks for mode 'new'
+    this.nav.setFileState(this.mode);
 
     // Events from vertical nav
     this.listenTo(this.nav, 'edit', this.edit);
@@ -66,9 +54,6 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
     this.listenTo(this.sidebar, 'translate', this.translate);
 
-    // Set the active nav element established by this.mode
-    this.nav.setFileState(this.mode);
-
     // Cache jQuery window object
     var $window = $(window);
 
@@ -79,6 +64,8 @@ module.exports = Backbone.View.extend({
     this.listenTo($window, 'beforeunload', function() {
       if (this.dirty) return t('actions.unsaved');
     }, this);
+
+    this.branches.fetch({ success: this.setCollection });
   },
 
   setCollection: function(collection, res, options) {
@@ -93,15 +80,18 @@ module.exports = Backbone.View.extend({
 
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
-    this.model = this.collection.findWhere({ path: this.path });
-
-    if (!this.model) {
-      this.model = new File({
-        branch: this.branch,
-        collection: this.collection,
-        path: this.path,
-        repo: this.repo
-      });
+    switch(this.mode) {
+      case 'edit':
+        this.model = this.collection.findWhere({ path: this.path });
+        break;
+      case 'new':
+        this.model = new File({
+          branch: this.branch,
+          collection: this.collection,
+          path: this.path,
+          repo: this.repo
+        });
+        break;
     }
 
     if (defaults) {
@@ -114,8 +104,9 @@ module.exports = Backbone.View.extend({
   },
 
   nearestPath: function(defaults) {
-    // match nearest parent directory default metadata
-    var path = this.model.get('path');
+    // Match nearest parent directory default metadata
+    // Match paths in _drafts to corresponding defaults set at _posts
+    var path = this.model.get('path').replace(/^(_drafts)/, '_posts');
     var nearestDir = /\/(?!.*\/).*$/;
 
     while (defaults[path] === undefined && nearestDir.test(path)) {
@@ -336,20 +327,12 @@ module.exports = Backbone.View.extend({
   },
 
   titleAsHeading: function() {
-    // If the following condition is true the editable field in the
-    // header should be the title of the Markdown Document.
-    //
-    //  1. is Markdown
-    //  2. is Jekyll
-    //  3. Contains a title field in its front matter
-    //
-    if (this.model.get('markdown') &&
-        this.model.attributes.metadata &&
-        this.model.attributes.metadata.title) {
-      return true;
-    } else {
-      return false;
-    }
+    // If the file is Markdown, has metadata and has a title, 
+    // the editable field in the header should be
+    // the title of the Markdown document.
+
+    var metadata = this.model.get('metadata');
+    return (this.model.get('markdown') && metadata && metadata.title);
   },
 
   initSidebar: function() {

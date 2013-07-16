@@ -53,6 +53,8 @@ module.exports = Backbone.View.extend({
   },
 
   active: function(state) {
+    // Coerce 'new' to 'edit' to activate correct icon
+    state = (state === 'new' ? 'edit' : state);
     this.$el.find('.file a').removeClass('active');
     this.$el.find('.file a[data-state=' + state + ']').toggleClass('active');
   },

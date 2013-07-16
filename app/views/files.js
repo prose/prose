@@ -43,20 +43,24 @@ module.exports = Backbone.View.extend({
     this.model = this.branches.findWhere({ name: this.branch }).files;
     this.search.model = this.model;
 
-    this.listenTo(this.search, 'search', this.render);
+    this.model.fetch({ success: (function() {
+      // Update this.path with rooturl
+      var config = this.model.config;
+      this.rooturl = config && config.rooturl ? config.rooturl : '';
 
-    this.model.fetch({ success: this.render, reset: true });
+      // Render on fetch and on search
+      this.listenTo(this.search, 'search', this.render);
+      this.render();
+    }).bind(this), reset: true });
   },
 
   new: function() {
-    var dirpath = this.path.replace(/\/(?!.*\/).*$/, '');
-
     var path = [
       this.repo.get('owner').login,
       this.repo.get('name'),
       'new',
       this.branch,
-      dirpath
+      this.path ? this.path : this.rooturl
     ]
 
     this.router.navigate(_.compact(path).join('/'), true);
@@ -64,8 +68,7 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     var search = this.search && this.search.input && this.search.input.val();
-    var config = this.model.config;
-    var rooturl = config && config.rooturl ? config.rooturl + '/' : '';
+    var rooturl = this.rooturl ? this.rooturl + '/' : '';
     var path = this.path ? this.path + '/' : '';
     var drafts;
 
@@ -80,7 +83,8 @@ module.exports = Backbone.View.extend({
     var regex = new RegExp('^' + (path ? path : rooturl) + '[^\/]*$');
 
     // Render drafts link in sidebar as subview
-    if (rooturl && this.path !== '_drafts') {
+    // if path does not begin with _drafts
+    if (/^(?!_drafts)/.test(this.path)) {
       drafts = this.sidebar.initSubview('drafts', {
         link: [url, '_drafts'].join('/'),
         sidebar: this.sidebar
