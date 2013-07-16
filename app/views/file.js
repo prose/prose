@@ -59,8 +59,15 @@ module.exports = Backbone.View.extend({
 
     // Prevent exit when there are unsaved changes
     // jQuery won't bind to 'beforeunload' event
+    // e.returnValue for Firefox compatibility
+    // https://developer.mozilla.org/en-US/docs/Web/Reference/Events/beforeunload
     window.onbeforeunload = (function(e) {
-      if (this.dirty) return t('actions.unsaved');
+      if (this.dirty) {
+        var message = t('actions.unsaved');
+        (e || window.event).returnValue = message;
+
+        return message;
+      }
     }).bind(this);
 
     this.branches.fetch({ success: this.setCollection });
