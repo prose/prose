@@ -197,6 +197,9 @@ module.exports = Backbone.Collection.extend({
     $.ajax({
       type: 'GET',
       url: file.contents_url,
+      headers: {
+        Accept: 'application/vnd.github.raw'
+      },
       success: (function(res) {
         // initialize new File model with content
         var model = new File({
