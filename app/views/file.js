@@ -368,7 +368,12 @@ module.exports = Backbone.View.extend({
     // the editable field in the header should be
     // the title of the Markdown document.
 
-    var metadata = this.model.get('metadata');
+    // If there is no this.model.get('metadata').title,
+    // check for a title existing in this.model.get('defaults'). Grab the
+    // default value if there is one, otherwise default to 'Untitled'
+    // console.log(this.model.get('metadata'));
+
+    var metadata = this.model.get('metadata') || this.model.get('defaults');
     return (this.model.get('markdown') && metadata && metadata.title);
   },
 
@@ -450,13 +455,21 @@ module.exports = Backbone.View.extend({
       this.initToolbar();
       this.initSidebar();
 
-      // Update the navigation view with a meta
-      // class name if this post contains it
-      if (this.model.get('metadata') || this.model.get('defaults')) {
+      // Update the navigation view with menu options
+      // if certain conditions pass:
+
+      // 1. A file contains metadata but is not new.
+      if (this.model.get('metadata') || this.model.get('defaults') && !this.model.isNew()) {
         this.renderMetadata();
         this.nav.mode('file settings meta');
-      } else if (!this.model.isNew()) {
-        this.nav.mode('file settings');
+
+      // 2. A file contains metadata and is new
+      } else if (this.model.isNew() && this.model.get('defaults')) {
+        this.renderMetadata();
+        // this.nav.mode('file meta');
+
+        // TODO swap for the one above
+        this.nav.mode('file settings meta');
       }
 
       this.updateDocumentTitle();
