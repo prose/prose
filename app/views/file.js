@@ -822,22 +822,41 @@ module.exports = Backbone.View.extend({
   },
 
   draft: function() {
-    var filepath = util.extractFilename(this.model.get('path'));
-    var basepath = filepath[0].split('/');
-    var filename = filepath[1];
-    var filecontent = this.model.serialize();
+    var path = this.model.get('path');
+    var draft = path.replace(/^(_posts)/, '_drafts');
 
-    var message = t('actions.commits.toDraft', { filename: filename });
+    var name = util.extractFilename(path)[0];
+    var content = this.model.serialize();
 
-    basepath.splice(0, 1, '_drafts');
-    filepath.splice(0, 1, basepath.join('/'));
+    // Commit message
+    var message = t('actions.commits.toDraft', { filename: name });
 
+    // Create File model clone with metadata and content
     var clone = this.model.clone({
-      path: filepath.join('/')
+      path: draft
     });
 
-    // TODO: new File view with metadata and content, clone?
-    // this.saveDraft(filepath.join('/'), filename, filecontent, message);
+    // Reassign this.model to clone and re-render
+    this.model = clone;
+
+    // Update view properties
+    this.repo = this.model.get('repo');
+    this.path = draft;
+
+    var url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
+      trigger: false
+    });
+
+    this.sidebar.close();
+    this.render();
   },
 
   stashFile: function(e) {
