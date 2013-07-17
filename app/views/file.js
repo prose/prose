@@ -429,7 +429,9 @@ module.exports = Backbone.View.extend({
       // class name if this post contains it
       if (this.model.get('metadata') || this.model.get('defaults')) {
         this.renderMetadata();
-        this.nav.mode('file meta');
+        this.nav.mode('file settings meta');
+      } else if (!this.model.isNew()) {
+        this.nav.mode('file settings');
       }
 
       this.updateDocumentTitle();
@@ -920,7 +922,7 @@ module.exports = Backbone.View.extend({
       success: (function(model, res, options) {
         this.sidebar.close();
         this.updateSaveState(t('actions.save.saved'), 'saved');
-        
+
         // Unset dirty, return to edit view
         this.dirty = false;
         this.edit();

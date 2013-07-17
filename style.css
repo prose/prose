@@ -649,10 +649,13 @@ ins {
 /* In a file view */
 #navigation.file .file { display:block; }
 
-/* Visibility of metadata toggle
- * on file pages */
+/* Visibility of metadata & settings
+ * nav item on file pages */
 .file .meta      { display:none; }
 .file.meta .meta { display:block; }
+
+.file .settings          { display:none; }
+.file.settings .settings { display:block; }
 
 .nav {
   margin:15px 0 0;
