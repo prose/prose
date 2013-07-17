@@ -1,4 +1,6 @@
 var _ = require('underscore');
+_.merge = require('deepmerge');
+
 var marked = require('marked');
 var Backbone = require('backbone');
 var jsyaml = require('js-yaml');
@@ -199,6 +201,17 @@ module.exports = Backbone.Model.extend({
     if (!this.isNew()) data.sha = this.get('sha');
 
     return data;
+  },
+
+  clone: function(attributes) {
+    attributes = _.merge(_.pick(this.attributes, [
+      'content',
+      'metadata'
+    ]), attributes);
+
+    debugger;
+
+    return new this.constructor(attributes);
   },
 
   fetch: function(options) {

@@ -825,7 +825,9 @@ module.exports = Backbone.View.extend({
     basepath.splice(0, 1, '_drafts');
     filepath.splice(0, 1, basepath.join('/'));
 
-    debugger;
+    var clone = this.model.clone({
+      path: filepath.join('/')
+    });
 
     // TODO: new File view with metadata and content, clone?
     // this.saveDraft(filepath.join('/'), filename, filecontent, message);
