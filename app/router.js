@@ -58,14 +58,14 @@ module.exports = Backbone.Router.extend({
     if (this.view) this.view.remove();
 
     this.view = new ChooseLanguageView();
-    $('#main').empty().append(this.view.render().el);
+    this.app.$el.find('#main').html(this.view.render().el);
   },
 
   about: function() {
     if (this.view) this.view.remove();
 
     this.view = new DocumentationView();
-    $('#main').empty().append(this.view.render().el);
+    this.app.$el.find('#main').html(this.view.render().el);
   },
 
   // #example-user
@@ -327,7 +327,7 @@ module.exports = Backbone.Router.extend({
       'options': options
     });
 
-    this.app.$el.html(this.view.render().el);
+    this.app.$el.find('#main').html(this.view.render().el);
     util.loader.loaded();
   },
 

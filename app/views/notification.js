@@ -50,7 +50,7 @@ module.exports = Backbone.View.extend({
       hash[hash.length - 1]  += '&' + path[1];
     }
 
-    router.navigate(_(hash).compact().join('/'), true);
+    router.navigate(_(hash).compact().join('/'), { trigger: true });
     return false;
   }
 });

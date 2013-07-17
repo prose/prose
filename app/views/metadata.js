@@ -192,7 +192,7 @@ module.exports = Backbone.View.extend({
       this.$el.find('.form').append(_.template(templates.meta.raw));
     }
 
-    this.raw = CodeMirror(document.getElementById(selector), {
+    this.raw = CodeMirror(this.$el.find('#' + selector)[0], {
       mode: 'yaml',
       value: '',
       lineWrapping: true,
