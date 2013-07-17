@@ -114,20 +114,13 @@ module.exports = Backbone.View.extend({
       // Render on complete to render even if model does not exist on remote yet
       this.model.fetch({ complete: this.render });
     } else {
-      this.router.notify( t('notification.error.exists') );
-      /*
       this.router.notify(
         t('notification.error.exists'),
         [
           {
             'title': t('notification.create'),
-            'link': '#' + _.compact([
-              this.repo.get('owner').login,
-              this.repo.get('name'),
-              'new',
-              this.branch,
-              this.path
-            ]).join('/')
+            'className': 'create',
+            'link': '#'
           },
           {
             'title': t('notification.back'),
@@ -141,7 +134,6 @@ module.exports = Backbone.View.extend({
           }
         ]
       );
-      */
     }
   },
 
