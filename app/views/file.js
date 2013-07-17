@@ -399,6 +399,8 @@ module.exports = Backbone.View.extend({
   },
 
   initHeader: function() {
+
+    console.log(this.titleAsHeading());
     var input = this.titleAsHeading() ? this.model.get('metadata').title :
       this.model.get('path');
 
