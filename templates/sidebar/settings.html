@@ -3,7 +3,7 @@
 </div>
 <div class='inner authoring'>
   <!-- if metadata and !draft -->
-  <a class='draft button round' href='#'><%= t('sidebar.settings.draft') %></a>
+  <a class='draft button round' href='#' data-action='draft'><%= t('sidebar.settings.draft') %></a>
   
   <% if (settings.languages && settings.lang !== 'yaml') { %>
     <% _.each(settings.languages, function(l) { %>

@@ -33,10 +33,10 @@ module.exports = Backbone.View.extend({
   },
 
   emit: function(e) {
-    var action = $(e.currentTarget).data('action');
-    this.sidebar.trigger(action, e);
+    if (e) e.preventDefault();
 
-    return false;
+    var action = $(e.currentTarget).data('action');
+    this.sidebar.trigger(action);
   },
 
   render: function() {

@@ -53,6 +53,7 @@ module.exports = Backbone.View.extend({
 
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
+    this.listenTo(this.sidebar, 'draft', this.draft);
     this.listenTo(this.sidebar, 'cancel', this.cancel);
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
     this.listenTo(this.sidebar, 'translate', this.translate);
@@ -332,7 +333,9 @@ module.exports = Backbone.View.extend({
     this.toolbar.setElement(this.$el.find('#toolbar')).render();
 
     this.listenTo(this.toolbar, 'updateImageInsert', this.updateImageInsert);
-    this.listenTo(this.toolbar, 'draft', this.draft);
+
+    // TODO: deprecated?
+    // this.listenTo(this.toolbar, 'draft', this.draft);
   },
 
   titleAsHeading: function() {
@@ -812,28 +815,20 @@ module.exports = Backbone.View.extend({
   },
 
   draft: function() {
-    // TODO: Fix this all up.
-    var filepath = _.extractFilename(this.filepath());
+    var filepath = util.extractFilename(this.model.get('path'));
     var basepath = filepath[0].split('/');
     var filename = filepath[1];
-    var postType = basepath[0];
-    var filecontent = this.serialize();
+    var filecontent = this.model.serialize();
+
     var message = t('actions.commits.toDraft', { filename: filename });
 
-    if (postType === '_posts') {
-      basepath.splice(0, 1, '_drafts');
-      filepath.splice(0, 1, basepath.join('/'));
-      // this.saveDraft(filepath.join('/'), filename, filecontent, message);
-      app.state.path = this.model.path = filepath[0];
-    } else {
-      basepath.splice(0, 1, '_posts');
-      filepath.splice(0, 1, basepath.join('/'));
-      message = t('actions.commits.fromDraft', { filename: filename });
-      // this.saveFile(filepath.join('/'), filename, filecontent, message);
-      app.state.path = this.model.path = filepath[0];
-    }
+    basepath.splice(0, 1, '_drafts');
+    filepath.splice(0, 1, basepath.join('/'));
 
-    return false;
+    debugger;
+
+    // TODO: new File view with metadata and content, clone?
+    // this.saveDraft(filepath.join('/'), filename, filecontent, message);
   },
 
   stashFile: function(e) {
