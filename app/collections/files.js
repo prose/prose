@@ -109,7 +109,7 @@ module.exports = Backbone.Collection.extend({
                 var regex = /^https?:\/\//;
 
                 // Parse JSON URL values
-                if (value.field && value.field.options &&
+                if (value && value.field && value.field.options &&
                     _.isString(value.field.options) &&
                     regex.test(value.field.options)) {
 
