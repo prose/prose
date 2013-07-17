@@ -4,8 +4,8 @@ var util = require('../util');
 
 var views = {
   branches: require('./sidebar/branches'),
-  drafts: require('./sidebar/drafts'),
   history: require('./sidebar/history'),
+  drafts: require('./sidebar/drafts'),
   orgs: require('./sidebar/orgs'),
   save: require('./sidebar/save'),
   settings: require('./sidebar/settings')

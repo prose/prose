@@ -3,7 +3,6 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var File = require('../models/file');
 var Folder = require('../models/folder');
-var DraftsView = require('./sidebar/drafts');
 var FileView = require('./li/file');
 var FolderView = require('./li/folder');
 var templates = require('../../dist/templates');
