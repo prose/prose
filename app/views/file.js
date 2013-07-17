@@ -362,17 +362,44 @@ module.exports = Backbone.View.extend({
   },
 
   titleAsHeading: function() {
-    // If the file is Markdown, has metadata and has a title,
+    // If the file is Markdown, has metadata for a title,
     // the editable field in the header should be
     // the title of the Markdown document.
+    var metadata = this.model.get('metadata');
 
-    // If there is no this.model.get('metadata').title,
-    // check for a title existing in this.model.get('defaults'). Grab the
-    // default value if there is one, otherwise default to 'Untitled'
-    // console.log(this.model.get('metadata'));
+    if (this.model.get('markdown')) {
 
-    var metadata = this.model.get('metadata') || this.model.get('defaults');
-    return (this.model.get('markdown') && metadata && metadata.title);
+      // 1. A title exists in a files current metadata
+      if (metadata && metadata.title) {
+        return metadata.title;
+
+      // 2. A title does not exist and should be checked in the defaults
+      } else if (this.model.get('defaults')) {
+
+        var defaultTitle = _(this.model.get('defaults')).find(function(t) {
+          return t.name == 'title';
+        });
+
+        if (defaultTitle) {
+          if (defaultTitle.field && defaultTitle.field.value) {
+            return defaultTitle.field.value;
+          } else {
+
+            // 3. If a title entry is in the defaults but with no
+            // default value, use an untitled placeholder message.
+            // return t('main.file.noTitle');
+            return t('main.file.noTitle');
+          }
+        } else {
+          return false;
+        }
+      } else {
+
+        // This is not a markdownn post, bounce
+        // TODO Should this handle _posts/name.html?
+        return false;
+      }
+    }
   },
 
   initSidebar: function() {
@@ -399,9 +426,8 @@ module.exports = Backbone.View.extend({
   },
 
   initHeader: function() {
-
-    console.log(this.titleAsHeading());
-    var input = this.titleAsHeading() ? this.model.get('metadata').title :
+    var input = this.titleAsHeading() ?
+      this.titleAsHeading() :
       this.model.get('path');
 
     this.header = new HeaderView({
@@ -489,7 +515,7 @@ module.exports = Backbone.View.extend({
         this.$el.find('.file .edit').addClass('active');
 
         if (this.model.get('markdown')) {
-          util.fixedScroll(this.$el.find('.topbar'));
+          util.fixedScroll(this.$el.find('.topbar'), 90);
         }
       }
 
@@ -521,7 +547,7 @@ module.exports = Backbone.View.extend({
 
       if (this.model.get('markdown')) {
         _.delay(function() {
-          util.fixedScroll($('.topbar', view.el));
+          util.fixedScroll($('.topbar', view.el), 90);
         }, 1);
       }
     }
@@ -747,13 +773,9 @@ module.exports = Backbone.View.extend({
       this.model.set('metadata', this.metadataEditor.getValue());
     }
 
-    // Update the filename in the sidebar
-    // TODO: how is this supposed to work?
-    /*
     if (this.model.isNew()) {
       this.sidebar.updateFilepath(this.model.get('path'));
     }
-    */
 
     var label = this.model.get('writable') ?
       t('actions.change.save') :

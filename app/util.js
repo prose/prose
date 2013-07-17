@@ -184,11 +184,10 @@ module.exports = {
     document.title = title + ' · Prose';
   },
 
-  fixedScroll: function($el) {
-    $(window).scroll(function (e) {
+  fixedScroll: function($el, offset) {
+    $(window).scroll(function(e) {
       var y = $(this).scrollTop();
-
-      if (y >= $el.offset().top) {
+      if (y >= offset) {
         $el.addClass('fixed');
       } else {
         $el.removeClass('fixed');

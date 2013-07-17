@@ -1004,8 +1004,8 @@ ins {
     }
   .save .save .status {
     background:#526066;
-    width:7px;
-    height:7px;
+    width:8px;
+    height:8px;
     top:0;
     right:0;
     left:auto;
@@ -1146,6 +1146,8 @@ ins {
   position:relative;
   z-index:1000;
   width:100%;
+  min-height:40px;
+  height:auto;
   }
 .topbar {
   margin:8px 0 15px;
@@ -1154,10 +1156,8 @@ ins {
     margin:0;
     }
 
-.fixed .containment {
+.markdown .fixed .toolbar {
   border-bottom:1px solid #d4d7d9;
-  -webkit-border-radius:0;
-          border-radius:0;
   -webkit-box-shadow:0 4px 6px -4px rgba(0, 0, 0, 0.10);
           box-shadow:0 4px 6px -4px rgba(0, 0, 0, 0.10);
   }

@@ -98,6 +98,7 @@ en:
       body: |
         ## A New Post\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.
     file:
+      noTitle: "Untitled"
       metaTitle: "Review your changes:"
       rawMeta: "Raw Metadata"
       metaDescription: "Additions are highlighted in green. Deletions are crossed out."
