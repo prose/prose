@@ -19,7 +19,6 @@ module.exports = Backbone.View.extend({
     options = _.clone(options) || {};
     _.bindAll(this);
 
-    this.code = options.code;
     this.message = options.message;
     this.options = options.options;
   },

@@ -332,7 +332,13 @@ module.exports = Backbone.Router.extend({
   },
 
   error: function(xhr) {
-    var message = [xhr.status, xhr.statusText].join(' ');
+    var message = [
+      xhr.status,
+      xhr.statusText
+    ].join(' ');
+
+    var error = JSON.parse(xhr.responseText).message;
+
     var options = [
       {
         'title': t('notification.home'),
