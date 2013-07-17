@@ -1,10 +1,12 @@
 <div class='notify'>
   <h2 class='icon landing error'>Prose</h2>
   <div class='inner'>
-    <p><%= notification.message %></p>
+    <p><%= data.message %></p>
 
-    <% _(notification.options).each(function(options) { %>
-    <p><a class='button round <% if(options.className) { %><%= options.className %><% } %>' href='<%= options.link %>'><%= options.title %></a></p>
+    <% _(data.options).each(function(options) { %>
+    <div>
+      <a class='button round <% if(options.className) { %><%= options.className %><% } %>' href='<%= options.link %>'><%= options.title %></a>
+    </div>
     <% }); %>
   </div>
 </div>

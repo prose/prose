@@ -105,13 +105,44 @@ module.exports = Backbone.View.extend({
         break;
     }
 
-    if (defaults) {
-      path = this.nearestPath(defaults);
-      this.model.set('defaults', defaults[path]);
-    }
+    if (this.model) {
+      if (defaults) {
+        path = this.nearestPath(defaults);
+        this.model.set('defaults', defaults[path]);
+      }
 
-    // Render on complete to render even if model does not exist on remote yet
-    this.model.fetch({ complete: this.render });
+      // Render on complete to render even if model does not exist on remote yet
+      this.model.fetch({ complete: this.render });
+    } else {
+      this.router.notify( t('notification.error.exists') );
+      /*
+      this.router.notify(
+        t('notification.error.exists'),
+        [
+          {
+            'title': t('notification.create'),
+            'link': '#' + _.compact([
+              this.repo.get('owner').login,
+              this.repo.get('name'),
+              'new',
+              this.branch,
+              this.path
+            ]).join('/')
+          },
+          {
+            'title': t('notification.back'),
+            'link': '#' + _.compact([
+              this.repo.get('owner').login,
+              this.repo.get('name'),
+              'tree',
+              this.branch,
+              util.extractFilename(this.path)[0]
+            ]).join('/')
+          }
+        ]
+      );
+      */
+    }
   },
 
   nearestPath: function(defaults) {

@@ -15,20 +15,25 @@ module.exports = Backbone.View.extend({
     'click .create': 'createPost'
   },
 
-  initialize: function() {
-    this.model = this.options;
+  initialize: function(options) {
+    options = _.clone(options) || {};
+    _.bindAll(this);
+
+    this.code = options.code;
+    this.message = options.message;
+    this.options = options.options;
   },
 
   render: function() {
     util.documentTitle(t('docheader.error'));
 
-    var notification = {
-      message: this.model.message,
-      options: this.model.options
+    var data = {
+      message: this.message,
+      options: this.options
     }
 
-    this.$el.html(_.template(this.template, notification, {
-      variable: 'notification'
+    this.$el.html(_.template(this.template, data, {
+      variable: 'data'
     }));
 
     return this;
@@ -49,5 +54,4 @@ module.exports = Backbone.View.extend({
     router.navigate(_(hash).compact().join('/'), true);
     return false;
   }
-
 });

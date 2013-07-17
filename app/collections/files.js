@@ -93,7 +93,6 @@ module.exports = Backbone.Collection.extend({
 
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
-        // path = this.nearestPath(metadata);
 
         // Serial queue to not break global scope JSONP callbacks
         var q = queue(1);

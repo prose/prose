@@ -10,6 +10,7 @@ var Repo = require('./models/repo');
 var File = require('./models/file');
 
 var AppView = require('./views/app');
+var NotificationView = require('./views/notification');
 var StartView = require('./views/start');
 var ProfileView = require('./views/profile');
 var SearchView = require('./views/search');
@@ -27,7 +28,6 @@ module.exports = Backbone.Router.extend({
   routes: {
     'about(/)': 'about',
     'chooselanguage(/)': 'chooseLanguage',
-    'error/:code': 'error',
     ':user(/)': 'profile',
     ':user/:repo(/)': 'repo',
     ':user/:repo/*path(/)': 'path',
@@ -110,6 +110,9 @@ module.exports = Backbone.Router.extend({
 
         // TODO: build event-driven loader queue
         util.loader.loaded();
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
       }).bind(this)
     });
   },
@@ -156,6 +159,9 @@ module.exports = Backbone.Router.extend({
 
         this.view = content;
         this.app.$el.find('#main').html(this.view.render().el);
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
       }).bind(this)
     });
 
@@ -237,8 +243,14 @@ module.exports = Backbone.Router.extend({
             this.app.$el.find('#main').html(this.view.el);
 
             util.loader.loaded();
+          }).bind(this),
+          error: (function(model, xhr, options) {
+            this.error(xhr);
           }).bind(this)
         });
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
       }).bind(this)
     });
   },
@@ -297,7 +309,8 @@ module.exports = Backbone.Router.extend({
     // If user has authenticated
     if (this.user) {
       router.navigate(this.user.get('login'), {
-        trigger: true
+        trigger: true,
+        replace: true
       });
     } else {
       this.app.nav.mode('start');
@@ -306,32 +319,27 @@ module.exports = Backbone.Router.extend({
     }
   },
 
-  // if the application after routing
-  // hits an error code router.navigate('error' + err.error)
-  // sends the route here.
-  error: function(code) {
-    code = (code && code === '404') ?
-      t('notification.error.notFound') :
-      t('notification.error.label');
+  notify: function(message, options) {
+    if (this.view) this.view.remove();
 
-    var view = new app.views.Notification({
-      'type': 'Error',
-      'key': 'error',
-      'message': code
-    }).render();
+    this.view = new NotificationView({
+      'message': message,
+      'options': options
+    });
 
+    this.app.$el.html(this.view.render().el);
     util.loader.loaded();
-    $('#content').empty().append(view.el);
   },
 
-  notify: function(type, message) {
-    var view = new app.views.Notification({
-      'type': type,
-      'key': 'page-error',
-      'message': message
-    }).render();
+  error: function(xhr) {
+    var message = [xhr.status, xhr.statusText].join(' ');
+    var options = [
+      {
+        'title': t('notification.home'),
+        'link': '/'
+      }
+    ];
 
-    util.loader.loaded();
-    $('#content').empty().append(view.el);
+    this.notify(message, options)
   }
 });

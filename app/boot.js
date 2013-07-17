@@ -84,9 +84,9 @@ user.authenticate({
                   'className': res.status
                 }
               ]
-            }).render();
+            });
 
-            $('#prose').html(error.el);
+            $('#prose').html(error.render().el);
           });
         }
       });
@@ -97,9 +97,9 @@ user.authenticate({
           'title': t('main.upgrade.download'),
           'link': 'https://www.google.com/intl/en/chrome/browser'
         }]
-      }).render();
+      });
 
-      $('#prose').html(upgrade.el);
+      $('#prose').html(upgrade.render().el);
     }
   },
   error: function() {
