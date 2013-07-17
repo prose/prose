@@ -14,18 +14,17 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     this.model = options.model;
     this.$el.attr('data-index', options.index);
+    this.$el.attr('data-id', this.model.id);
+    this.$el.attr('data-navigate', '#' + this.model.get('owner').login + '/' + this.model.get('name'));
     this.listenTo(this.model, 'sync', this.render, this);
   },
 
   render: function() {
-    this.$el.data('navigate', '#' + this.model.get('owner').login + '/' + this.model.get('name'));
-    this.$el.data('id', this.model.id);
-
-    var repo = _.extend(this.model.attributes, {
+    var data = _.extend(this.model.attributes, {
       login: cookie.get('login')
     });
 
-    this.$el.empty().append(_.template(this.template, repo, {
+    this.$el.empty().append(_.template(this.template, data, {
       variable: 'repo'
     }));
 

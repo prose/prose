@@ -16,20 +16,20 @@ module.exports = Backbone.View.extend({
     this.branch = options.branch;
 
     this.$el.attr('data-index', options.index);
+    this.$el.attr('data-navigate', '#' + this.repo.get('owner').login + '/' +
+      this.repo.get('name') + '/tree/' + this.branch + '/' +
+      this.model.get('path'));
+
     this.listenTo(this.model, 'sync', this.render, this);
   },
 
   render: function() {
-    this.$el.data('navigate', '#' + this.repo.get('owner').login + '/' +
-      this.repo.get('name') + '/tree/' + this.branch + '/' +
-      this.model.get('path'));
-
-    var folder = _.extend(this.model.attributes, {
+    var data = _.extend(this.model.attributes, {
       branch: this.branch,
       repo: this.repo.attributes
     });
 
-    this.$el.empty().append(_.template(this.template, folder, {
+    this.$el.empty().append(_.template(this.template, data, {
       variable: 'folder'
     }));
 

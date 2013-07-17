@@ -10,19 +10,15 @@
   <div class='actions fr clearfix'>
     <% if (!file.binary) { %>
       <a class='clearfix'
-        title='Edit this File'
+        title="<%= t('main.repo.edit') %>"
         href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'>
-        Edit
+        <%= t('main.repo.edit') %>
       </a>
     <% } %>
     <% if (file.writable) { %>
       <a
         class='delete'
-        title='Delete this File'
-        data-user='<%= file.repo.owner.login %>'
-        data-repo='<%= file.repo.name %>'
-        data-branch='<%= file.branch %>'
-        data-file='<%= file.name %>'
+        title="<%= t('main.repo.delete') %>"
         href='#'>
         <span class='ico rubbish small'></span>
       </a>

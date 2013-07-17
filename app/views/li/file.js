@@ -10,31 +10,45 @@ module.exports = Backbone.View.extend({
 
   className: 'item clearfix',
 
+  events: {
+    'click a.delete': 'deleteFile'
+  },
+
   initialize: function(options) {
     this.model = options.model;
     this.repo = options.repo;
     this.branch = options.branch;
 
     this.$el.attr('data-index', options.index);
-    this.listenTo(this.model, 'sync', this.render, this);
-  },
 
-  render: function() {
     if (!this.model.get('binary')) {
-      this.$el.data('navigate', '#' + this.repo.get('owner').login + '/' +
+      this.$el.attr('data-navigate', '#' + this.repo.get('owner').login + '/' +
         this.repo.get('name') + '/edit/' + this.branch + '/' +
         this.model.get('path'));
     }
 
-    var file = _.extend(this.model.attributes, {
+    this.listenTo(this.model, 'sync', this.render, this);
+  },
+
+  render: function() {
+    var data = _.extend(this.model.attributes, {
         branch: this.branch,
         repo: this.repo.attributes
     });
 
-    this.$el.empty().append(_.template(this.template, file, {
+    this.$el.empty().append(_.template(this.template, data, {
       variable: 'file'
     }));
 
     return this;
+  },
+
+  deleteFile: function(e) {
+    if (confirm(t('actions.delete.warn'))) {
+      this.model.destroy();
+      this.$el.fadeOut('fast');
+    }
+
+    return false;
   }
 });
