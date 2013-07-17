@@ -46,7 +46,7 @@ module.exports = Backbone.View.extend({
 
     // Events from vertical nav
     this.listenTo(this.nav, 'edit', this.edit);
-    this.listenTo(this.nav, 'preview', this.blob);
+    this.listenTo(this.nav, 'blob', this.blob);
     this.listenTo(this.nav, 'meta', this.meta);
     this.listenTo(this.nav, 'settings', this.settings);
     this.listenTo(this.nav, 'save', this.showDiff);
@@ -90,8 +90,9 @@ module.exports = Backbone.View.extend({
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
     switch(this.mode) {
-      case 'preview':
       case 'edit':
+      case 'blob':
+      case 'preview':
         this.model = this.collection.findWhere({ path: this.path });
         break;
       case 'new':
@@ -454,6 +455,10 @@ module.exports = Backbone.View.extend({
           util.fixedScroll(this.$el.find('.topbar'));
         }
       }
+
+      if (this.mode === 'blob') {
+        this.blob();
+      }
     }
 
     return this;
@@ -519,15 +524,15 @@ module.exports = Backbone.View.extend({
         href: hash.join('/')
       });
     } else {
-      // Content Window
-      this.contentMode('preview');
+      if (e) e.preventDefault();
+
       this.$el.find('#preview').html(marked(this.compilePreview(this.model.get('content'))));
 
       this.mode = 'blob';
+      this.contentMode('preview');
+      this.nav.setFileState('blob');
       this.updateURL();
     }
-
-    return jekyll;
   },
 
   preview: function() {
@@ -733,9 +738,9 @@ module.exports = Backbone.View.extend({
 
     var $diff = this.$el.find('#diff');
 
-    // TODO: why was _.escape() used here?
-    var text1 = this.model.isNew() ? '' : this.model.get('previous');
-    var text2 = this.model.serialize();
+    // Use _.escape() to prevent rendering HTML tags
+    var text1 = this.model.isNew() ? '' : _.escape(this.model.get('previous'));
+    var text2 = _.escape(this.model.serialize());
 
     var d = diff.diffWords(text1, text2);
     var length = d.length;
@@ -817,22 +822,41 @@ module.exports = Backbone.View.extend({
   },
 
   draft: function() {
-    var filepath = util.extractFilename(this.model.get('path'));
-    var basepath = filepath[0].split('/');
-    var filename = filepath[1];
-    var filecontent = this.model.serialize();
+    var path = this.model.get('path');
+    var draft = path.replace(/^(_posts)/, '_drafts');
 
-    var message = t('actions.commits.toDraft', { filename: filename });
+    var name = util.extractFilename(path)[0];
+    var content = this.model.serialize();
 
-    basepath.splice(0, 1, '_drafts');
-    filepath.splice(0, 1, basepath.join('/'));
+    // Commit message
+    var message = t('actions.commits.toDraft', { filename: name });
 
+    // Create File model clone with metadata and content
     var clone = this.model.clone({
-      path: filepath.join('/')
+      path: draft
     });
 
-    // TODO: new File view with metadata and content, clone?
-    // this.saveDraft(filepath.join('/'), filename, filecontent, message);
+    // Reassign this.model to clone and re-render
+    this.model = clone;
+
+    // Update view properties
+    this.repo = this.model.get('repo');
+    this.path = draft;
+
+    var url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
+      trigger: false
+    });
+
+    this.sidebar.close();
+    this.render();
   },
 
   stashFile: function(e) {

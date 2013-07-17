@@ -10,6 +10,7 @@ module.exports = Backbone.Model.extend({
   idAttribute: 'path',
 
   initialize: function(attributes, options) {
+    options = _.clone(options) || {};
     _.bindAll(this);
 
     this.placeholder = new Date().format('Y-m-d') + '-your-filename.md';
@@ -23,7 +24,7 @@ module.exports = Backbone.Model.extend({
     }
 
     // Append placeholder name if file is new and not translated
-    if (this.isNew() && !this.translate) {
+    if (this.isNew() && !this.translate && !options.clone) {
       path = path ? path + '/' + this.placeholder : this.placeholder;
     }
 
@@ -203,15 +204,19 @@ module.exports = Backbone.Model.extend({
     return data;
   },
 
-  clone: function(attributes) {
-    attributes = _.merge(_.pick(this.attributes, [
+  clone: function(attributes, options) {
+    options = options ? _.clone(options) : {};
+
+    var method = options.method ? _[options.method] : _.merge;
+    attributes = method(_.pick(this.attributes, [
+      'branch',
+      'collection',
       'content',
-      'metadata'
+      'metadata',
+      'repo'
     ]), attributes);
 
-    debugger;
-
-    return new this.constructor(attributes);
+    return new this.constructor(attributes, { clone: true });
   },
 
   fetch: function(options) {
