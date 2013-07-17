@@ -77,8 +77,7 @@ module.exports = Backbone.View.extend({
           .removeClass('removed')
           .attr('title', 'Restored: ' + this.file.filename);
 
-        // render Files view once collection has updated
-        this.view.files.render();
+        // TODO: re-render Files view once collection has updated
       }).bind(this),
       error: (function(model, xhr, options) {
         // log actual error message

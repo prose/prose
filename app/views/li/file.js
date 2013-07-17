@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
   className: 'item clearfix',
 
   events: {
-    'click a.delete': 'deleteFile'
+    'click a.delete': 'destroy'
   },
 
   initialize: function(options) {
@@ -43,8 +43,10 @@ module.exports = Backbone.View.extend({
     return this;
   },
 
-  deleteFile: function(e) {
+  destroy: function(e) {
     if (confirm(t('actions.delete.warn'))) {
+      // TODO: on success, either reload recent commits (expensive) or append
+      // to recent commits el
       this.model.destroy();
       this.$el.fadeOut('fast');
     }
