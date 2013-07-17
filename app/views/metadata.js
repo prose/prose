@@ -1,4 +1,5 @@
 var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
 _.merge = require('deepmerge');
 var jsyaml = require('js-yaml');
