@@ -23,8 +23,10 @@ module.exports = Backbone.Model.extend({
       lang = this.translate[1];
     }
 
-    // Append placeholder name if file is new and not translated
-    if (this.isNew() && !this.translate && !options.clone) {
+    // Append placeholder name if file is new and
+    // path matches a directory in collection or is empty string
+    var dir = attributes.collection.findWhere({ path: path });
+    if (this.isNew() && (!path || (dir && dir.get('type') === 'tree'))) {
       path = path ? path + '/' + this.placeholder : this.placeholder;
     }
 
