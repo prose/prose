@@ -44,7 +44,6 @@ module.exports = Backbone.View.extend({
     this.$el.find('select').html(frag);
 
     var router = this.router;
-    debugger;
     this.$el.find('.chzn-select').chosen().change(function() {
       router.navigate($(this).val(), true);
     });
