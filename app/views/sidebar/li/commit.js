@@ -22,6 +22,18 @@ module.exports = Backbone.View.extend({
     this.view  = options.view;
   },
 
+  render: function() {
+    var data = {
+      file: this.file,
+      repo: this.repo.toJSON(),
+      branch: this.branch,
+      status: this.file.status
+    };
+
+    this.$el.empty().append(_.template(this.template, data, { variable: 'commit' }));
+    return this;
+  },
+
   message: function(message) {
     this.$el.find('.message').html(message);
     this.$el.attr('title', message);
@@ -61,6 +73,10 @@ module.exports = Backbone.View.extend({
         this.message('Restored ' + path);
         this.state('checkmark');
 
+        $(e.target)
+          .removeClass('removed')
+          .attr('title', 'Restored: ' + this.file.filename);
+
         // render Files view once collection has updated
         this.view.files.render();
       }).bind(this),
@@ -72,18 +88,5 @@ module.exports = Backbone.View.extend({
     });
 
     return false;
-  },
-
-  render: function() {
-    var commit = {
-      file: this.file,
-      repo: this.repo.toJSON(),
-      branch: this.branch,
-      status: this.file.status
-    };
-
-    this.$el.html(_.template(this.template, commit, { variable: 'commit' }));
-
-    return this;
   }
 });
