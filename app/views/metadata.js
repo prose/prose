@@ -287,7 +287,7 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    return _.merge(this.model.get('hidden'), metadata);
+    return _.merge(this.model.get('hidden') || {}, metadata);
   },
 
   setValue: function(data) {
@@ -382,7 +382,7 @@ module.exports = Backbone.View.extend({
       } else {
         // Don't render the 'published' field or hidden metadata
         // TODO: render metadata values that share a key with a hidden value
-        var defaults = _.find(this.model.get('defaults'), function(data) { return data.name === key; });
+        var defaults = _.find(this.model.get('defaults'), function(data) { return data && (data.name === key); });
         var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
 
         if (key !== 'published' &&

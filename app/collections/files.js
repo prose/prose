@@ -109,7 +109,7 @@ module.exports = Backbone.Collection.extend({
                 var regex = /^https?:\/\//;
 
                 // Parse JSON URL values
-                if (value.field && value.field.options &&
+                if (value && value.field && value.field.options &&
                     _.isString(value.field.options) &&
                     regex.test(value.field.options)) {
 
@@ -197,6 +197,9 @@ module.exports = Backbone.Collection.extend({
     $.ajax({
       type: 'GET',
       url: file.contents_url,
+      headers: {
+        Accept: 'application/vnd.github.raw'
+      },
       success: (function(res) {
         // initialize new File model with content
         var model = new File({

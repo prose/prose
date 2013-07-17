@@ -322,14 +322,16 @@ module.exports = Backbone.Model.extend({
       branch: this.branch.get('name')
     };
 
+    var url = this.url().split('?')[0];
     var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
 
     Backbone.Model.prototype.destroy.call(this, _.extend(options, {
-      url: this.url() + '&' + window.escape(params),
+      url: url + '?' + params,
       error: function(model, xhr, options) {
         // TODO: handle 422 Unprocessable Entity error
         console.log(model, xhr, options);
-      }
+      },
+      wait: true
     }));
   },
 

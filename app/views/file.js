@@ -111,7 +111,9 @@ module.exports = Backbone.View.extend({
       }
 
       // Render on complete to render even if model does not exist on remote yet
-      this.model.fetch({ complete: this.render });
+      this.model.fetch({
+        complete: this.render
+      });
     } else {
       this.router.notify(
         t('notification.error.exists'),
