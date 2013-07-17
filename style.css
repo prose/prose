@@ -143,7 +143,7 @@ button,
   background:#516066;
   display:block;
   position:relative;
-  padding:10px 30px;
+  padding:10px 15px;
   margin:3px 0 10px;
   text-transform:uppercase;
   font-size:11px;
@@ -1147,18 +1147,20 @@ ins {
   z-index:1000;
   width:100%;
   }
+.topbar {
+  margin:8px 0 15px;
+  }
+  .edit .topbar {
+    margin:0;
+    }
+
 .fixed .containment {
-  -webkit-transform:translate3d(0,0,0);
-          transform:translate3d(0,0,0);
+  border-bottom:1px solid #d4d7d9;
+  -webkit-border-radius:0;
+          border-radius:0;
   -webkit-box-shadow:0 4px 6px -4px rgba(0, 0, 0, 0.10);
           box-shadow:0 4px 6px -4px rgba(0, 0, 0, 0.10);
   }
-  .fixed .containment.toolbar {
-    border-bottom:1px solid #d4d7d9;
-    -webkit-border-radius:0;
-            border-radius:0;
-    }
-
   .topbar .toolbar {
     height:0;
     }
@@ -1176,15 +1178,12 @@ ins {
 
 .content-search {
   background:#f8f8f8;
-  width:65%;
-  margin:8px 0 15px;
+  width:60%;
   position:relative;
-  display:inline-block;
   -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
           box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
   }
   .new-file {
-    display:inline-block;
     margin:0 15px;
     }
   .content-search input {
@@ -1663,10 +1662,6 @@ ins {
 /* ------------------------------------------
   File /:filename
 ---------------------------------------------*/
-.editor {
-  padding:15px 0 0;
-  }
-
 .publish-flag, .draft-to-post {
   color:#a8afb2;
   height:42px;
@@ -2438,15 +2433,6 @@ ins {
   }
 }
 
-.mobile.nav {
-  margin:15px 0 -15px;
-  }
-
-.mobile-new-file,
-.mobile.nav {
-  display:none;
-  }
-
 /* ------------------------------------------
   Media Queries
 ---------------------------------------------*/
@@ -2511,6 +2497,9 @@ ins {
 
   .heading {
     padding:20px 15px;
+    }
+  .content-search {
+    margin:8px 15px 15px;
     }
   .containment,
   .limiter {
@@ -2613,8 +2602,7 @@ and (max-device-width:480px) {
   .popup { /* tip messages served on mouse hover */
     display:none!important;
     }
-  .mobile-new-file,
-  .mobile-menu {
+  #navigation .nav.mobile {
     display:block;
     }
 

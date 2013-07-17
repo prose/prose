@@ -64,15 +64,19 @@ module.exports = Backbone.View.extend({
   },
 
   open: function() {
-    this.$el.toggleClass('open mobile', true);
+    this.$el.toggleClass('open', true);
   },
 
   close: function() {
-    this.$el.toggleClass('open mobile', false);
+    this.$el.toggleClass('open', false);
   },
 
   toggle: function() {
-    this.$el.toggleClass('open mobile');
+    this.$el.toggleClass('open');
+  },
+
+  toggleMobile: function() {
+    this.$el.toggleClass('mobile');
   },
 
   mode: function(mode) {

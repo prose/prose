@@ -14,7 +14,7 @@ module.exports = Backbone.View.extend({
     'click a.meta': 'emit',
     'click a.settings': 'emit',
     'click a.save': 'emit',
-    'click .mobile-menu .toggle': 'toggleMobileClass'
+    'click .mobile .toggle': 'toggleMobile'
   },
 
   initialize: function(options) {
@@ -81,9 +81,9 @@ module.exports = Backbone.View.extend({
     this.trigger(state, e);
   },
 
-  toggleMobileClass: function(e) {
+  toggleMobile: function(e) {
+    this.sidebar.toggleMobile();
     $(e.target).toggleClass('active');
-    this.$el.toggleClass('mobile');
     return false;
   }
 });
