@@ -46,7 +46,7 @@ module.exports = Backbone.View.extend({
 
     // Events from vertical nav
     this.listenTo(this.nav, 'edit', this.edit);
-    this.listenTo(this.nav, 'preview', this.blob);
+    this.listenTo(this.nav, 'blob', this.blob);
     this.listenTo(this.nav, 'meta', this.meta);
     this.listenTo(this.nav, 'settings', this.settings);
     this.listenTo(this.nav, 'save', this.showDiff);
@@ -90,8 +90,9 @@ module.exports = Backbone.View.extend({
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
     switch(this.mode) {
-      case 'preview':
       case 'edit':
+      case 'blob':
+      case 'preview':
         this.model = this.collection.findWhere({ path: this.path });
         break;
       case 'new':
@@ -454,6 +455,10 @@ module.exports = Backbone.View.extend({
           util.fixedScroll(this.$el.find('.topbar'));
         }
       }
+
+      if (this.mode === 'blob') {
+        this.blob();
+      }
     }
 
     return this;
@@ -519,15 +524,15 @@ module.exports = Backbone.View.extend({
         href: hash.join('/')
       });
     } else {
-      // Content Window
-      this.contentMode('preview');
+      if (e) e.preventDefault();
+
       this.$el.find('#preview').html(marked(this.compilePreview(this.model.get('content'))));
 
       this.mode = 'blob';
+      this.contentMode('preview');
+      this.nav.setFileState('blob');
       this.updateURL();
     }
-
-    return jekyll;
   },
 
   preview: function() {
@@ -733,9 +738,9 @@ module.exports = Backbone.View.extend({
 
     var $diff = this.$el.find('#diff');
 
-    // TODO: why was _.escape() used here?
-    var text1 = this.model.isNew() ? '' : this.model.get('previous');
-    var text2 = this.model.serialize();
+    // Use _.escape() to prevent rendering HTML tags
+    var text1 = this.model.isNew() ? '' : _.escape(this.model.get('previous'));
+    var text2 = _.escape(this.model.serialize());
 
     var d = diff.diffWords(text1, text2);
     var length = d.length;

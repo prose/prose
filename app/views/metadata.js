@@ -499,7 +499,7 @@ module.exports = Backbone.View.extend({
     this.view.nav.active(this.view.mode);
 
     if (this.view.mode === 'blob') {
-      this.view.preview();
+      this.view.blob();
     } else {
       this.view.edit();
     }
