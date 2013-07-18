@@ -14,7 +14,7 @@
     <input type='text' name='alt' placeholder='Alt text (optional)' />
     <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>
       <% if (!assetsDirectory) { %>
-        <small class='deemphasize'><%= t('dialogs.media.help') %></small>
+        <small class='caption deemphasize'><%= t('dialogs.media.help') %></small>
       <% } %>
   </div>
 
@@ -22,7 +22,7 @@
     <div class='col col-last fl media-listing'>
       <label><%= t('dialogs.media.choose') %></label>
       <ul id='media'></ul>
-      <small class='deemphasize'><%= t('dialogs.media.helpMedia') %></small>
+      <small class='caption deemphasize'><%= t('dialogs.media.helpMedia') %></small>
     </div>
   <% } %>
 </div>

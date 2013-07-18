@@ -70,10 +70,10 @@ module.exports = Backbone.View.extend({
 
     this.files.restore(this.file, {
       success: (function(model, res, options) {
-        this.message('Restored ' + path);
+        this.message('Restored: ' + path);
         this.state('checkmark');
 
-        $(e.target)
+        this.$el.find('a')
           .removeClass('removed')
           .attr('title', 'Restored: ' + this.file.filename);
 

@@ -9,7 +9,8 @@ module.exports = Backbone.View.extend({
 
   events: {
     'focus input': 'checkPlaceholder',
-    'change input': 'updateFile'
+    'change input[data-mode="path"]': 'updatePath',
+    'change input[data-mode="title"]': 'updateTitle'
   },
 
   initialize: function(options) {
@@ -19,31 +20,9 @@ module.exports = Backbone.View.extend({
     this.repo = options.repo;
     this.file = options.file;
     this.input = options.input;
+    this.title = options.title;
     this.placeholder = options.placeholder;
     this.alterable = options.alterable;
-  },
-
-  checkPlaceholder: function(e) {
-    if (this.file.isNew()) {
-      var $target = $(e.target, this.el);
-      if (!$target.val()) {
-        $target.val($target.attr('placeholder'));
-      }
-    }
-  },
-
-  updateFile: function(e) {
-    this.file.set('path', e.currentTarget.value);
-    this.trigger('makeDirty');
-    return false;
-  },
-
-  inputGet: function() {
-    return this.$el.find('.headerinput').val();
-  },
-
-  headerInputFocus: function() {
-    this.$el.find('.headerinput').focus();
   },
 
   render: function() {
@@ -79,6 +58,7 @@ module.exports = Backbone.View.extend({
       placeholder: this.placeholder,
       user: user,
       title: title,
+      mode: this.title ? 'title' : 'path',
       translate: this.file ? this.file.get('translate') : undefined
     };
 
@@ -87,5 +67,35 @@ module.exports = Backbone.View.extend({
     }));
 
     return this;
+  },
+
+  checkPlaceholder: function(e) {
+    if (this.file.isNew()) {
+      var $target = $(e.target, this.el);
+      if (!$target.val()) {
+        $target.val($target.attr('placeholder'));
+      }
+    }
+  },
+
+  updatePath: function(e) {
+    this.file.set('path', e.currentTarget.value);
+    this.trigger('makeDirty');
+    return false;
+  },
+
+  updateTitle: function(e) {
+    // makeDirty updates the metadata so there's no
+    // need to set it in the model here.
+    this.trigger('makeDirty');
+    return false;
+  },
+
+  inputGet: function() {
+    return this.$el.find('.headerinput').val();
+  },
+
+  headerInputFocus: function() {
+    this.$el.find('.headerinput').focus();
   }
 });

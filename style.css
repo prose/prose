@@ -836,6 +836,12 @@ ins {
   .saved .save .status {
     background:#f8f8f8;
     }
+    .saving .save.active .status,
+    .error .save.active .status,
+    .saved .save.active .status {
+      background:#516066;
+      }
+
   .listing .actions .working {
     border-color:#D35252;
     -webkit-box-shadow:0 0 2px rgb(211,82,82);
@@ -2139,6 +2145,10 @@ ins {
 .deemphasize {
   font-weight:normal;
   color:#888;
+  }
+.caption {
+  display:block;
+  margin-top:8px;
   }
 .round {
   -webkit-border-radius:4px;

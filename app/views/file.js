@@ -428,12 +428,14 @@ module.exports = Backbone.View.extend({
   },
 
   initHeader: function() {
-    var input = this.titleAsHeading() ?
-      this.titleAsHeading() :
+    var title = this.titleAsHeading();
+    var input = title ?
+      title :
       this.model.get('path');
 
     this.header = new HeaderView({
       input: input,
+      title: title ? true : false,
       file: this.model,
       repo: this.repo,
       alterable: true,
