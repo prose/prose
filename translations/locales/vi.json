@@ -1,14 +1,14 @@
 {
     "login": "Đồng bộ hóa với GitHub",
     "docheader": {
-        "editing": "Đang chỉnh",
+        "editing": "Đang chỉnh sửa",
         "error": "Lỗi",
-        "preview": "Đang xem sơ lược"
+        "preview": "Xem sơ lược"
     },
     "navigation": {
         "newFile": "Tập tin mới",
         "edit": "Chỉnh sửa",
-        "preview": "Xem trước",
+        "preview": "Xem thử",
         "settings": "Thiết lập",
         "meta": "Thông tin bổ sung",
         "save": "Lưu",
@@ -22,7 +22,7 @@
         "explore": "Khám phá các dự án"
     },
     "actions": {
-        "unsaved": "Bạn vẫn chưa lưu thay đổi. Bạn có chắc muốn đóng lại phần này?",
+        "unsaved": "Bạn vẫn chưa lưu các thay đổi. Bạn có chắc muốn đóng lại phần này?",
         "draft": {
             "toPost": "Lưu bài đăng dưới dạng nháp",
             "toPostInfo": "Chuyển phần nháp này thành tin được xuất bản"
@@ -33,10 +33,10 @@
             "published": "Đã xuất bản",
             "unpublish": "Gỡ xuất bản",
             "unpublished": "Đã gỡ xuất bản",
-            "unpublishInfo": "Phần đăng tin này sẽ không được xuất bạn vào lần tới khi bạn lưu"
+            "unpublishInfo": "Phần bài đăng này sẽ không được xuất bản vào lần tới khi bạn lưu"
         },
         "change": {
-            "noChange": "Không thay đổi",
+            "noChange": "Không có thay đổi nào",
             "submit": "Các thay đổi để cập nhật",
             "save": "Lưu"
         },
@@ -55,20 +55,20 @@
             "saving": "Đã lưu",
             "patch": "Gửi yêu cầu",
             "fileNameError": "Cần tên cho tập tin",
-            "submission": "Đã gửi Yêu cầu",
+            "submission": "Đã gửi Yêu Cầu",
             "metaError": "Lỗi! Không tìm thấy thông tin chi tiết"
         },
         "error": "Lỗi. Thử lại lần nữa trong 30 giây",
         "restore": {
-            "restoring": "Đang khôi phục",
-            "restored": "Đã khôi phục"
+            "restoring": "Đang khôi phục lại",
+            "restored": "Đã khôi phục lại"
         },
         "commits": {
-            "created": "Tạo {filename}",
+            "created": "Đã Tạo {filename}",
             "updated": "Đã cập nhật {filename}",
             "deleted": "Xóa {filename}",
             "toDraft": "Đã tạo bản nháp của {filename}",
-            "fromDraft": "Tạo một bản tin từ bản nháp {filename}"
+            "fromDraft": "Đã tạo một bản tin từ bản nháp {filename}"
         }
     },
     "loading": {
@@ -84,7 +84,7 @@
             "learn": "Tìm hiểu thêm"
         },
         "repos": {
-            "filter": "Lọc dự án",
+            "filter": "Lọc các dự án",
             "repo": "Xem dự án",
             "site": "Xem trang",
             "sharedFrom": "Đã chia sẻ từ một tài khoản",
@@ -98,7 +98,7 @@
             "body": "## Một bản tin mới\\n\\nĐiền nội dung vào [Markdown](http://daringfireball.net/projects/markdown/). Sử dụng thanh công cụ phía trên, hoặc click vào nút **?** để có tìm hiểu về định dạng chỉnh sửa.\n"
         },
         "file": {
-            "metaTitle": "Xem lại các thay đổi bạn đã chọn:",
+            "metaTitle": "Xem lại các thay đổi bạn đã thao tác:",
             "rawMeta": "Thông tin bổ sung thô",
             "metaDescription": "Phần thêm vào được đánh dấu màu xanh. Phần xóa được gạch lằn.",
             "back": "Hoàn tất",
@@ -215,15 +215,15 @@
                 }
             },
             "miscellaneous": {
-                "title": "Khác",
+                "title": "Các phần khác",
                 "content": {
                     "automaticLinks": {
                         "title": "Liên kết tự động",
-                        "content": "<p>If you want to create a link that displays the actual URL, markdown allows you to quickly wrap the URL in <code>&lt;</code> and <code>&gt;</code> to do so. For example, the link <a href=\"javascript:void(0);\">http://github.com/</a> is easily produced by writing <code>&lt;http://github.com/&gt;</code>.</p>\n"
+                        "content": "<p>Nếu bạn muốn tạo một liên kết hiển thị đường dẫn URL thật sự, markdown cho phép bạn nhanh chóng lấy thông tin về đường dẫn trong <code>&lt;</code> và <code>&gt;</code> để thực hiện điều đó. Lấy ví dụ, liên kết <a href=\"javascript:void(0);\">http://github.com/</a> có thể được dễ dàng được tạo ra bằng cách viết <code>&lt;http://github.com/&gt;</code>.</p>\n"
                     },
                     "escaping": {
                         "title": "Đang thoát",
-                        "content": "<p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\\\</code>). Markdown will ignore the character directly after a backslash.\n"
+                        "content": "<p>Nếu bạn muốn sử dụng một ký tự đặc biệt trong Markdown tại tài liệu của mình (chẳng hạn như việc thể hiện các dấu hình sao), ở cuối phần ký tự đó bạn có thể thêm vào hai dấu chéo ngược (<code>\\\\</code>). Markdown sẽ bỏ qua ký tự này trực tiếp sau mỗi dấu chéo ngược.\n"
                     }
                 }
             }
@@ -231,7 +231,7 @@
     },
     "chooselanguage": {
         "title": "Chọn một ngôn ngữ hiển thị",
-        "description": "Prose được phiên dịch ra nhiều phiên bản ngôn ngữ khác nhau. Nếu bạn thấy phần ngôn ngữ mà bạn mong muốn chưa có trên danh sách, hoặc phần phiên dịch này bị lỗi về mặt cú pháp và ý nghĩa hay chính tả, hãy tham gia  <a href='https://www.transifex.com/projects/p/prose'>cộng tác phần dịch thuật của bạn vào dự án</a>.\n"
+        "description": "Prose được phiên dịch ra nhiều phiên bản ngôn ngữ khác nhau. Nếu bạn thấy phần ngôn ngữ mà bạn mong muốn chưa có trên danh sách, hoặc phần phiên dịch này bị lỗi về mặt cú pháp và ý nghĩa hay chính tả, hãy tham gia  <a href='https://www.transifex.com/projects/p/prose'>cộng tác phần dịch thuật của bạn vào dự án, prose được dịch và chuyển ngữ bởi Phan Anh</a>.\n"
     },
     "about": {
         "content": "# Thông tin thêm - Dịch bởi Phan Anh\nProse provides a beatifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"
