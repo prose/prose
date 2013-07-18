@@ -887,26 +887,18 @@ module.exports = Backbone.View.extend({
   draft: function() {
     var path = this.model.get('path');
     var draft = path.replace(/^(_posts)/, '_drafts');
-
-    var name = util.extractFilename(path)[0];
-    var content = this.model.serialize();
-
-    // Commit message
-    var message = t('actions.commits.toDraft', { filename: name });
+    var url;
 
     // Create File model clone with metadata and content
-    var clone = this.model.clone({
+    // Reassign this.model to clone and re-render
+    this.model = this.model.clone({
       path: draft
     });
 
-    // Reassign this.model to clone and re-render
-    this.model = clone;
-
     // Update view properties
-    this.repo = this.model.get('repo');
     this.path = draft;
 
-    var url = _.compact([
+    url = _.compact([
       this.repo.get('owner').login,
       this.repo.get('name'),
       this.mode,
@@ -935,7 +927,7 @@ module.exports = Backbone.View.extend({
         store.setItem(filepath, JSON.stringify({
           sha: this.model.get('sha'),
           content: this.editor ? this.editor.getValue() : null,
-          metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
+          metadata: this.metadataEditor ? this.metadataEditor.getValue() : null
         }));
       } catch (err) {
         console.log(err);
@@ -1046,26 +1038,60 @@ module.exports = Backbone.View.extend({
   },
 
   translate: function(e) {
-    if (e) e.preventDefault();
+    var defaults = this.collection.defaults;
+    var metadata = this.model.get('metadata');
+    var lang = $(e.currentTarget).attr('href').substr(1);
+    var path = this.model.get('path').split('/');
+    var model;
+    var url;
 
     // TODO: Drop the 'en' requirement.
-    var hash = window.location.hash.split('/'),
-      href = $(e.currentTarget).attr('href').substr(1);
-
-    // If current page is not english and target page is english
-    if (href === 'en') {
-      hash.splice(-2, 2, hash[hash.length - 1]);
+    if (lang === 'en') {
+      // If current page is not english and target page is english
+      path.splice(-2, 2, path[path.length - 1]);
+    } else if (metadata.lang === 'en') {
       // If current page is english and target page is not english
-    } else if (this.model.get('metadata').lang === 'en') {
-      hash.splice(-1, 1, href, hash[hash.length - 1]);
-      // If current page is not english and target page is not english
+      path.splice(-1, 1, lang, path[path.length - 1]);
     } else {
-      hash.splice(-2, 2, href, hash[hash.length - 1]);
+      // If current page is not english and target page is not english
+      path.splice(-2, 2, lang, path[path.length - 1]);
     }
 
-    router.navigate(_(hash).compact().join('/') + '?lang=' + href + '&translate=true', true);
+    path = _.compact(path).join('/');
 
-    return false;
+    var categories = (metadata.categories || []);
+    categories.push(lang);
+
+    this.model = this.collection.get(path) || this.model.clone({
+      metadata: {
+        categories: categories,
+        lang: lang
+      },
+      path: path
+    });
+    
+    // Set default metadata for new path
+    if (this.model && defaults) {
+      this.model.set('defaults', defaults[this.nearestPath(defaults)]);
+    }
+
+    // Update view properties
+    this.path = path;
+
+    url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
+      trigger: false
+    });
+
+    this.sidebar.close();
+    this.model.fetch({ complete: this.render });
   },
 
   updateImageInsert: function(e, file, content) {
