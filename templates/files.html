@@ -1,49 +1,13 @@
-<li class='clearfix item'
-    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>
-    data-index='<%= index %>'>
-
-  <% if (isBinary) { %>
-    <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>
-  <% } else { %>
-    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>
-      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>
-    </a>
-  <% } %>
-
-  <div class='details'>
-    <div class='actions fr clearfix'>
-      <% if (!isBinary) { %>
-        <a class='clearfix'
-          title="<%= t('main.repo.edit') %>"
-          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
-          <%= t('main.repo.edit') %>
-        </a>
+<% if (data.path && data.path !== data.rooturl) { %>
+  <div class='breadcrumb'>
+    <a class='branch' href='#<%= data.url %>'>..</a>
+    <% _.each(data.parts, function(part) { %>
+      <% if (part.name !== data.rooturl) { %>
+        <span class='slash'>/</span>
+        <a class='path' href='#<%= [data.url, part.url].join("/") %>'><%= part.name %></a>
       <% } %>
-      <% if (window.authenticated && writePermissions) { %>
-        <a
-          class='delete'
-          title="<%= t('sidebar.settings.delete') %>"
-          data-user='<%= user %>'
-          data-repo='<%= repo %>'
-          data-branch='<%= branch %>'
-          data-file='<%= file %>'
-          href='#'>
-          <span class='ico rubbish small'></span>
-        </a>
-      <% } %>
-    </div>
-    <% if (isBinary) { %>
-      <h3 class='title' title='<%= name %>'><%= name %></h3>
-    <% } else { %>
-        <% if (isMarkdown) { %>
-          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>
-            <h3><%= filename %></h3>
-            <span class='deemphasize'><%= name %></span>
-          </a>
-        <% } else { %>
-          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>
-        <% } %>
-      </a>
-    <% } %>
+    <% }); %>
   </div>
-</li>
+<% } %>
+
+<ul class='listing'></ul>
