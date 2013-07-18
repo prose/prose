@@ -1,6 +1,4 @@
 var _ = require('underscore');
-_.merge = require('deepmerge');
-
 var marked = require('marked');
 var Backbone = require('backbone');
 var jsyaml = require('js-yaml');
@@ -15,13 +13,6 @@ module.exports = Backbone.Model.extend({
 
     this.placeholder = new Date().format('Y-m-d') + '-your-filename.md';
     var path = attributes.path.split('?')[0];
-    var lang;
-
-    this.translate = attributes.path.match(/lang=([^&]*)/);
-
-    if (this.translate) {
-      lang = this.translate[1];
-    }
 
     // Append placeholder name if file is new and
     // path matches a directory in collection or is empty string
@@ -57,8 +48,7 @@ module.exports = Backbone.Model.extend({
       'lang': util.mode(extension),
       'media': util.isMedia(extension),
       'markdown': util.isMarkdown(extension),
-      'name': this.isNew() && !this.translate ?
-        this.placeholder : util.extractFilename(attributes.path)[1],
+      'name': util.extractFilename(path)[1],
       'path': path,
       'type': type,
       'writable': permissions ? permissions.push : false
@@ -209,8 +199,7 @@ module.exports = Backbone.Model.extend({
   clone: function(attributes, options) {
     options = options ? _.clone(options) : {};
 
-    var method = options.method ? _[options.method] : _.merge;
-    attributes = method(_.pick(this.attributes, [
+    attributes = _.extend(_.pick(this.attributes, [
       'branch',
       'collection',
       'content',
