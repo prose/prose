@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
   template: templates.metadata,
 
   events: {
-    'change input': 'makeDirty',
+    'change input': 'updateModel',
     'click .create-select': 'createSelect',
     'click .finish': 'exit'
   },
@@ -37,9 +37,7 @@ module.exports = Backbone.View.extend({
     _.each(this.model.get('defaults'), (function(data, key) {
       var renderTitle = true;
 
-      if (data &&
-          data.name === 'title' &&
-          this.titleAsHeading) {
+      if (data && data.name === 'title' && this.titleAsHeading) {
         renderTitle = false;
       };
 
@@ -149,6 +147,7 @@ module.exports = Backbone.View.extend({
               form.append(_.template(templates.meta.multiselect, multiselect, {
                 variable: 'meta'
               }));
+
               break;
             case 'hidden':
               var tmpl = {};
@@ -172,11 +171,25 @@ module.exports = Backbone.View.extend({
       }
     }).bind(this));
 
-    $('.chzn-select').chosen();
+    this.$el.find('.chzn-select').chosen().change(this.updateModel);
 
     this.renderRaw();
 
     return this;
+  },
+
+  updateModel: function(e) {
+    var target = e.currentTarget;
+    var key = target.name;
+    var value = target.value;
+
+    var delta = {};
+    delta[key] = value;
+
+    var metadata = this.model.get('metadata');
+    this.model.set('metadata', _.extend(metadata, delta));
+
+    this.view.makeDirty();
   },
 
   rawKeyMap: function() {
@@ -200,7 +213,24 @@ module.exports = Backbone.View.extend({
       theme: 'prose-bright'
     });
 
-    this.listenTo(this.raw, 'change', this.view.makeDirty);
+    this.listenTo(this.raw, 'blur', (function(cm) {
+      var value = cm.getValue();
+      var raw;
+
+      try {
+        raw = jsyaml.load(value);
+      } catch(err) {
+        console.log(err);
+      }
+
+      if (raw) {
+        var metadata = this.model.get('metadata');
+        this.model.set('metadata', _.extend(metadata, raw));
+
+        this.view.makeDirty();
+      }
+    }).bind(this));
+
     this.setValue(this.model.get('metadata'));
   },
 
@@ -385,11 +415,10 @@ module.exports = Backbone.View.extend({
         var defaults = _.find(this.model.get('defaults'), function(data) { return data && (data.name === key); });
         var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
 
-        if (key !== 'published' &&
-            key !== 'title' &&
-            !defaults) {
+        if (key !== 'published' && key !== 'title' && !defaults) {
           raw = {};
           raw[key] = value;
+
           if (this.raw) {
             this.raw.setValue(this.raw.getValue() + jsyaml.dump(raw));
           }
@@ -443,10 +472,14 @@ module.exports = Backbone.View.extend({
           break;
       }
 
-      this.$el.find('.chzn-select').chosen();
+      this.$el.find('.chzn-select').chosen().change(this.updateModel);
     }).bind(this));
 
     this.$el.find('.chzn-select').trigger('liszt:updated');
+
+    // Update model with defaults
+    // TODO: should this makeDirty if any differences?
+    this.model.set('metadata', this.getValue());
   },
 
   getRaw: function() {

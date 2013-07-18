@@ -122,7 +122,7 @@ module.exports = Backbone.Collection.extend({
                       timeout: 5000,
                       url: value.field.options,
                       success: (function(d) {
-                        value.field.options = d;
+                        value.field.options = _.compact(d);
                         cb();
                       }).bind(this)
                     });
