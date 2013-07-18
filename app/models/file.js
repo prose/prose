@@ -340,6 +340,9 @@ module.exports = Backbone.Model.extend({
   },
 
   validate: function(attributes, options) {
+
+    // For testing:
+    // if (attributes) return 'uh oh spaghetti o'
     // Fail validation if path conflicts with another file in repo
     if (this.collection.where({ path: attributes.path }).length > 1) return t('actions.save.fileNameExists');
 
