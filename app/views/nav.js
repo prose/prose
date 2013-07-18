@@ -37,7 +37,7 @@ module.exports = Backbone.View.extend({
     if (e && !$(e.currentTarget).hasClass('preview')) e.preventDefault();
 
     var state = $(e.currentTarget).data('state');
-    if ($(e.target).hasClass('active')) {
+    if ($(e.currentTarget).hasClass('active')) {
       // return to file state
       state = this.state;
     }
@@ -52,6 +52,8 @@ module.exports = Backbone.View.extend({
   },
 
   updateState: function(label, classes, kill) {
+
+    if (!label) label = t('navigation.save');
     this.$save.html(label);
 
     // Add, remove classes to the file nav group
