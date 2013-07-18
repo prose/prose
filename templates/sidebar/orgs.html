@@ -1,0 +1,17 @@
+<div class='inner'>
+  <h2 class='label'><%= t('sidebar.repos.groups') %></h2>
+</div>
+<ul class='listing'>
+  <li>
+    <a href='#<%= orgs.login.user %>' title='<%= orgs.login.user %>' data-id='<%= orgs.login.id %>'>
+      <%= orgs.login.user %>
+    </a>
+  </li>
+  <% orgs.orgs.each(function(org) {  %>
+  <li>
+    <a href='#<%= org.login %>' title='<%= org.login %>' data-id='<%= org.id %>'>
+      <%= org.login %>
+    </a>
+  </li>
+  <% }); %>
+</ul>
