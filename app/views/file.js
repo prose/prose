@@ -1012,7 +1012,7 @@ module.exports = Backbone.View.extend({
             this.repo.get('owner').login,
             this.repo.get('name'),
             'edit',
-            this.model.branch.get('name'),
+            this.collection.branch.get('name'),
             this.model.get('path')
           ]).join('/'));
         }
