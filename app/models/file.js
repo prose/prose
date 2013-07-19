@@ -225,12 +225,22 @@ module.exports = Backbone.Model.extend({
   save: function(options) {
     options = options ? _.clone(options) : {};
 
+    var success = options.success;
+
     // set method to PUT even when this.isNew()
     if (this.isNew()) {
       options = _.extend(options, {
         type: 'PUT'
       });
     }
+
+    options.success = (function(model, res, options) {
+      this.set(_.extend(res.content, {
+        previous: this.serialize()
+      }));
+
+      if (_.isFunction(success)) success.apply(this, arguments);
+    }).bind(this);
 
     // Call save method with undefined attributes
     Backbone.Model.prototype.save.call(this, undefined, options);
