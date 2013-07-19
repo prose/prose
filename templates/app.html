@@ -1,28 +1,17 @@
-<% if (!error) { %>
-  <div id='vert' class='vert clearfix navigation'></div>
-  <div id='drawer' class='sidebar'></div>
-<% } %>
-
-<div class='limiter'>
-  <div id='heading' class='heading clearfix'></div>
-</div>
-
-<div class='limiter'>
-  <div id='content' class='application content'></div>
-</div>
+<div id='drawer' class='sidebar'></div>
+<nav id='navigation'></nav>
+<div id='main'></div>
 
 <div class='prose-menu dropdown-menu'>
   <div class='inner clearfix'>
     <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>
     <ul class='dropdown clearfix'>
-      <li><a href='#'>Prose <%= version %></a></li>
+      <li><a href='#'>Prose</a></li>
       <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>
       <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>
       <li><a href='./#chooselanguage'><%= t('navigation.language') %></a></li>
-      <% if (window.authenticated) { %>
-        <li class='divider'></li>
-        <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>
-      <% } %>
+      <li class='divider'></li>
+      <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>
     </ul>
   </div>
 </div>

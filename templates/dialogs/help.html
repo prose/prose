@@ -1,0 +1,33 @@
+<%
+  function formattedClass(str) {
+    return str.toLowerCase().replace(/\s/g, '-').replace('&amp;', '');
+  };
+%>
+
+<div class='col col25'>
+  <ul class='main-menu'>
+    <% _(help).each(function(mainMenu, i) { %>
+      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>
+    <% }); %>
+  </ul>
+</div>
+
+<div class='col col25'>
+  <% _(help).each(function(mainMenu, index) { %>
+  <ul class='sub-menu <%= formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'>
+      <% _(mainMenu.content).each(function(subMenu, i) { %>
+        <li><a href='#' data-id='<%= formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>
+      <% }); %>
+    </ul>
+  <% }); %>
+</div>
+
+<div class='col col-last prose small'>
+  <% _(help).each(function(mainMenu, index) { %>
+    <% _(mainMenu.content).each(function(d, i) { %>
+    <div class='help-content inner help-<%= formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>
+      <%= d.data %>
+    </div>
+    <% }); %>
+  <% }); %>
+</div>

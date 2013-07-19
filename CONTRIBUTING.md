@@ -37,7 +37,7 @@ to the target language, separated by commas.
 
 Translations are licensed under
 [BSD](https://github.com/prose/prose/blob/master/LICENCE.md), the same license
-as iD.
+as prose.
 
 [prose translation project on
 Transifex](https://www.transifex.com/projects/p/prose/)
@@ -46,7 +46,7 @@ Transifex](https://www.transifex.com/projects/p/prose/)
 
 Prose translates strings with a `t` function - `t('foo.bar')` translate the key
 `foo.bar` into the current language. If you introduce new translatable strings
-to iD, only display them in the interface through the `t()` function.
+to prose, only display them in the interface through the `t()` function.
 
 Then, add the new string to `translations/application.yaml`. The translation system,
 Transiflex, will automatically detect the change.
@@ -63,7 +63,7 @@ If you run `make translate` you will be warned to include a `transifex.auth` fil
 
 ## Submitting Pull Requests
 
-All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. the `gh-pages` branch manages rebuilds to the server.
+All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. The `gh-pages` branch manages rebuilds to the server.
 
 
 ## Building / Installing
@@ -109,5 +109,5 @@ through [JSHint](http://www.jshint.com/) with no warnings.
 - Single Quotes
 - 2 spaces soft tabs
 
-for CSS, use classes to target elements
+for CSS, use classes to target elements.
 

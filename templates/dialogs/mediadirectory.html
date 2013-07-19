@@ -1,0 +1,21 @@
+<% if (type === 'tree') { %>
+  <li class='directory'>
+    <span class='mask'></span>
+    <a class='clearfix item' href='<%= path %>'>
+      <span class='ico fl small inline folder'></span>
+      <%= name %>
+    </a>
+  </li>
+<% } else { %>
+  <li class='asset'>
+    <span class='mask'></span>
+    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>
+      <% if (isMedia) { %>
+        <span class='ico fl small inline media'></span>
+      <% } else { %>
+        <span class='ico fl small inline document'></span>
+      <% } %>
+      <%= name %>
+    </a>
+  </li>
+<% } %>

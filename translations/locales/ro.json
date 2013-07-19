@@ -33,8 +33,7 @@
         },
         "change": {
             "noChange": "Nici o modificare",
-            "submit": "Schimbări pentru trimitere",
-            "save": "Salvează"
+            "submit": "Schimbări pentru trimitere"
         },
         "delete": {
             "title": "Șterge",
@@ -87,9 +86,6 @@
         "repo": {
             "filter": "Filtrează fișiere",
             "edit": "Editează"
-        },
-        "new": {
-            "body": "## Articol nou\\n\\nIntroduceți textul în format [Markdown](http://daringfireball.net/projects/markdown/). Folosiți meniul de unelte sau apăsați butonul **?** pentru instrucțiuni de formatare.\n"
         },
         "file": {
             "metaTitle": "Revizuie schimbările",

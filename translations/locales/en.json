@@ -18,6 +18,18 @@
         "logout": "Logout",
         "language": "Language"
     },
+    "toolbar": {
+        "heading": "Heading",
+        "subHeading": "Sub Heading",
+        "link": "Insert Link",
+        "image": "Insert Link",
+        "bold": "Bold",
+        "italic": "Italic",
+        "blockquote": "Blockquote",
+        "list": "List",
+        "numberedlist": "Numbered List",
+        "help": "Help"
+    },
     "heading": {
         "explore": "Explore Projects"
     },
@@ -38,7 +50,7 @@
         "change": {
             "noChange": "No Changes",
             "submit": "Changes to Submit",
-            "save": "Save"
+            "save": "Changes to Save"
         },
         "delete": {
             "title": "Delete",
@@ -56,7 +68,8 @@
             "patch": "Submitting Request",
             "fileNameError": "Needs a Filename",
             "submission": "Request Submitted",
-            "metaError": "Error! Metadata not Found"
+            "metaError": "Error! Metadata not Found",
+            "fileNameExists": "A filename with this path already exists"
         },
         "error": "Error. Try again in 30 Seconds",
         "restore": {
@@ -78,6 +91,10 @@
         "preview": "Previewing File",
         "creating": "Creating new post"
     },
+    "modal": {
+        "errorHeading": "Error",
+        "confirm": "Got it"
+    },
     "main": {
         "start": {
             "content": "Prose is a content editor for GitHub designed for managing websites.",
@@ -92,12 +109,14 @@
         },
         "repo": {
             "filter": "Filter Files",
-            "edit": "Edit"
+            "edit": "Edit",
+            "delete": "Delete this File"
         },
         "new": {
-            "body": "## A New Post\\n\\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"
+            "body": "## A New Post\\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"
         },
         "file": {
+            "noTitle": "Untitled",
             "metaTitle": "Review your changes:",
             "rawMeta": "Raw Metadata",
             "metaDescription": "Additions are highlighted in green. Deletions are crossed out.",
@@ -114,6 +133,7 @@
         "create": "Create it",
         "home": "Back to Main Page",
         "back": "Go Back",
+        "githubStatus": "Status on GitHub ({status})",
         "error": {
             "label": "Error",
             "github": "Error while loading data from Github. This might be a temporary issue. Please try again later.",
@@ -144,6 +164,7 @@
         },
         "settings": {
             "title": "Options",
+            "fileInputLabel": "File Path",
             "delete": "Delete This File",
             "translate": "Translate to",
             "draft": "Create Draft"
