@@ -97,7 +97,7 @@ window.CodeMirror = (function() {
     else input.setAttribute("wrap", "off");
     // if border: 0; -- iOS fails to open keyboard (issue #1287)
     if (ios) input.style.border = "1px solid black";
-    input.setAttribute("autocorrect", "off"); input.setAttribute("autocapitalize", "off");
+    input.setAttribute("autocorrect", "off"); input.setAttribute("autocapitalize", "off"); input.setAttribute("spellcheck", "false");
 
     // Wraps and hides input textarea
     d.inputDiv = elt("div", [input], null, "overflow: hidden; position: relative; width: 3px; height: 0px;");
@@ -105,8 +105,9 @@ window.CodeMirror = (function() {
     d.scrollbarH = elt("div", [elt("div", null, null, "height: 1px")], "CodeMirror-hscrollbar");
     d.scrollbarV = elt("div", [elt("div", null, null, "width: 1px")], "CodeMirror-vscrollbar");
     d.scrollbarFiller = elt("div", null, "CodeMirror-scrollbar-filler");
+    d.gutterFiller = elt("div", null, "CodeMirror-gutter-filler");
     // DIVs containing the selection and the actual code
-    d.lineDiv = elt("div");
+    d.lineDiv = elt("div", null, "CodeMirror-code");
     d.selectionDiv = elt("div", null, null, "position: relative; z-index: 1");
     // Blinky cursor, and element used to ensure cursor fits at the end of a line
     d.cursor = elt("div", "\u00a0", "CodeMirror-cursor");
@@ -126,14 +127,12 @@ window.CodeMirror = (function() {
     // Will contain the gutters, if any
     d.gutters = elt("div", null, "CodeMirror-gutters");
     d.lineGutter = null;
-    // Helper element to properly size the gutter backgrounds
-    var scrollerInner = elt("div", [d.sizer, d.heightForcer, d.gutters], null, "position: relative; min-height: 100%");
     // Provides scrolling
-    d.scroller = elt("div", [scrollerInner], "CodeMirror-scroll");
+    d.scroller = elt("div", [d.sizer, d.heightForcer, d.gutters], "CodeMirror-scroll");
     d.scroller.setAttribute("tabIndex", "-1");
     // The element in which the editor lives.
     d.wrapper = elt("div", [d.inputDiv, d.scrollbarH, d.scrollbarV,
-                            d.scrollbarFiller, d.scroller], "CodeMirror");
+                            d.scrollbarFiller, d.gutterFiller, d.scroller], "CodeMirror");
     // Work around IE7 z-index bug
     if (ie_lt8) { d.gutters.style.zIndex = -1; d.scroller.style.paddingRight = 0; }
     if (place.appendChild) place.appendChild(d.wrapper); else place(d.wrapper);
@@ -212,7 +211,7 @@ window.CodeMirror = (function() {
     estimateLineHeights(cm);
     regChange(cm);
     clearCaches(cm);
-    setTimeout(function(){updateScrollbars(cm.display, cm.doc.height);}, 100);
+    setTimeout(function(){updateScrollbars(cm);}, 100);
   }
 
   function estimateHeight(cm) {
@@ -237,9 +236,10 @@ window.CodeMirror = (function() {
   }
 
   function keyMapChanged(cm) {
-    var style = keyMap[cm.options.keyMap].style;
+    var map = keyMap[cm.options.keyMap], style = map.style;
     cm.display.wrapper.className = cm.display.wrapper.className.replace(/\s*cm-keymap-\S+/g, "") +
       (style ? " cm-keymap-" + style : "");
+    cm.state.disableInput = map.disableInput;
   }
 
   function themeChanged(cm) {
@@ -251,6 +251,7 @@ window.CodeMirror = (function() {
   function guttersChanged(cm) {
     updateGutters(cm);
     regChange(cm);
+    setTimeout(function(){alignHorizontally(cm);}, 20);
   }
 
   function updateGutters(cm) {
@@ -317,12 +318,14 @@ window.CodeMirror = (function() {
 
   // Re-synchronize the fake scrollbars with the actual size of the
   // content. Optionally force a scrollTop.
-  function updateScrollbars(d /* display */, docHeight) {
+  function updateScrollbars(cm) {
+    var d = cm.display, docHeight = cm.doc.height;
     var totalHeight = docHeight + paddingVert(d);
     d.sizer.style.minHeight = d.heightForcer.style.top = totalHeight + "px";
+    d.gutters.style.height = Math.max(totalHeight, d.scroller.clientHeight - scrollerCutOff) + "px";
     var scrollHeight = Math.max(totalHeight, d.scroller.scrollHeight);
-    var needsH = d.scroller.scrollWidth > d.scroller.clientWidth;
-    var needsV = scrollHeight > d.scroller.clientHeight;
+    var needsH = d.scroller.scrollWidth > (d.scroller.clientWidth + 1);
+    var needsV = scrollHeight > (d.scroller.clientHeight + 1);
     if (needsV) {
       d.scrollbarV.style.display = "block";
       d.scrollbarV.style.bottom = needsH ? scrollbarWidth(d.measure) + "px" : "0";
@@ -339,6 +342,11 @@ window.CodeMirror = (function() {
       d.scrollbarFiller.style.display = "block";
       d.scrollbarFiller.style.height = d.scrollbarFiller.style.width = scrollbarWidth(d.measure) + "px";
     } else d.scrollbarFiller.style.display = "";
+    if (needsH && cm.options.coverGutterNextToScrollbar && cm.options.fixedGutter) {
+      d.gutterFiller.style.display = "block";
+      d.gutterFiller.style.height = scrollbarWidth(d.measure) + "px";
+      d.gutterFiller.style.width = d.gutters.offsetWidth + "px";
+    } else d.gutterFiller.style.display = "";
 
     if (mac_geLion && scrollbarWidth(d.measure) === 0)
       d.scrollbarV.style.minWidth = d.scrollbarH.style.minHeight = mac_geMountainLion ? "18px" : "12px";
@@ -397,14 +405,10 @@ window.CodeMirror = (function() {
     var oldFrom = cm.display.showingFrom, oldTo = cm.display.showingTo, updated;
     var visible = visibleLines(cm.display, cm.doc, viewPort);
     for (;;) {
-      if (updateDisplayInner(cm, changes, visible)) {
-        updated = true;
-        signalLater(cm, "update", cm);
-        if (cm.display.showingFrom != oldFrom || cm.display.showingTo != oldTo)
-          signalLater(cm, "viewportChange", cm, cm.display.showingFrom, cm.display.showingTo);
-      } else break;
+      if (!updateDisplayInner(cm, changes, visible)) break;
+      updated = true;
       updateSelection(cm);
-      updateScrollbars(cm.display, cm.doc.height);
+      updateScrollbars(cm);
 
       // Clip forced viewport to actual scrollable area
       if (viewPort)
@@ -416,6 +420,11 @@ window.CodeMirror = (function() {
       changes = [];
     }
 
+    if (updated) {
+      signalLater(cm, "update", cm);
+      if (cm.display.showingFrom != oldFrom || cm.display.showingTo != oldTo)
+        signalLater(cm, "viewportChange", cm, cm.display.showingFrom, cm.display.showingTo);
+    }
     return updated;
   }
 
@@ -503,9 +512,11 @@ window.CodeMirror = (function() {
       display.lastSizeC != display.wrapper.clientHeight;
     // This is just a bogus formula that detects when the editor is
     // resized or the font size changes.
-    if (different) display.lastSizeC = display.wrapper.clientHeight;
+    if (different) {
+      display.lastSizeC = display.wrapper.clientHeight;
+      startWorker(cm, 400);
+    }
     display.showingFrom = from; display.showingTo = to;
-    startWorker(cm, 100);
 
     var prevBottom = display.lineDiv.offsetTop;
     for (var node = display.lineDiv.firstChild, height; node; node = node.nextSibling) if (node.lineObj) {
@@ -594,8 +605,9 @@ window.CodeMirror = (function() {
       if (nextIntact && nextIntact.to == lineN) nextIntact = intact.shift();
       if (lineIsHidden(cm.doc, line)) {
         if (line.height != 0) updateLineHeight(line, 0);
-        if (line.widgets && cur.previousSibling) for (var i = 0; i < line.widgets.length; ++i)
-          if (line.widgets[i].showIfHidden) {
+        if (line.widgets && cur.previousSibling) for (var i = 0; i < line.widgets.length; ++i) {
+          var w = line.widgets[i];
+          if (w.showIfHidden) {
             var prev = cur.previousSibling;
             if (/pre/i.test(prev.nodeName)) {
               var wrap = elt("div", null, null, "position: relative");
@@ -603,9 +615,11 @@ window.CodeMirror = (function() {
               wrap.appendChild(prev);
               prev = wrap;
             }
-            var wnode = prev.appendChild(elt("div", [line.widgets[i].node], "CodeMirror-linewidget"));
-            positionLineWidget(line.widgets[i], wnode, prev, dims);
+            var wnode = prev.appendChild(elt("div", [w.node], "CodeMirror-linewidget"));
+            if (!w.handleMouseEvents) wnode.ignoreEvents = true;
+            positionLineWidget(w, wnode, prev, dims);
           }
+        }
       } else if (nextIntact && nextIntact.from <= lineN && nextIntact.to > lineN) {
         // This line is intact. Skip to the actual node. Update its
         // line number if needed.
@@ -648,25 +662,25 @@ window.CodeMirror = (function() {
 
     if (reuse) {
       reuse.alignable = null;
-      var isOk = true, widgetsSeen = 0;
+      var isOk = true, widgetsSeen = 0, insertBefore = null;
       for (var n = reuse.firstChild, next; n; n = next) {
         next = n.nextSibling;
         if (!/\bCodeMirror-linewidget\b/.test(n.className)) {
           reuse.removeChild(n);
         } else {
-          for (var i = 0, first = true; i < line.widgets.length; ++i) {
-            var widget = line.widgets[i], isFirst = false;
-            if (!widget.above) { isFirst = first; first = false; }
+          for (var i = 0; i < line.widgets.length; ++i) {
+            var widget = line.widgets[i];
             if (widget.node == n.firstChild) {
+              if (!widget.above && !insertBefore) insertBefore = n;
               positionLineWidget(widget, n, reuse, dims);
               ++widgetsSeen;
-              if (isFirst) reuse.insertBefore(lineElement, n);
               break;
             }
           }
           if (i == line.widgets.length) { isOk = false; break; }
         }
       }
+      reuse.insertBefore(lineElement, insertBefore);
       if (isOk && widgetsSeen == line.widgets.length) {
         wrap = reuse;
         reuse.className = line.wrapClass || "";
@@ -701,6 +715,7 @@ window.CodeMirror = (function() {
     if (ie_lt8) wrap.style.zIndex = 2;
     if (line.widgets && wrap != reuse) for (var i = 0, ws = line.widgets; i < ws.length; ++i) {
       var widget = ws[i], node = elt("div", [widget.node], "CodeMirror-linewidget");
+      if (!widget.handleMouseEvents) node.ignoreEvents = true;
       positionLineWidget(widget, node, wrap, dims);
       if (widget.above)
         wrap.insertBefore(node, cm.options.lineNumbers && line.height != 0 ? gutterWrap : lineElement);
@@ -783,74 +798,59 @@ window.CodeMirror = (function() {
                                "px; height: " + (bottom - top) + "px"));
     }
 
-    function drawForLine(line, fromArg, toArg, retTop) {
+    function drawForLine(line, fromArg, toArg) {
       var lineObj = getLine(doc, line);
-      var lineLen = lineObj.text.length, rVal = retTop ? Infinity : -Infinity;
-      function coords(ch) {
-        return charCoords(cm, Pos(line, ch), "div", lineObj);
+      var lineLen = lineObj.text.length;
+      var start, end;
+      function coords(ch, bias) {
+        return charCoords(cm, Pos(line, ch), "div", lineObj, bias);
       }
 
       iterateBidiSections(getOrder(lineObj), fromArg || 0, toArg == null ? lineLen : toArg, function(from, to, dir) {
-        var leftPos = coords(from), rightPos, left, right;
+        var leftPos = coords(from, "left"), rightPos, left, right;
         if (from == to) {
           rightPos = leftPos;
           left = right = leftPos.left;
         } else {
-          rightPos = coords(to - 1);
+          rightPos = coords(to - 1, "right");
           if (dir == "rtl") { var tmp = leftPos; leftPos = rightPos; rightPos = tmp; }
           left = leftPos.left;
           right = rightPos.right;
         }
+        if (fromArg == null && from == 0) left = pl;
         if (rightPos.top - leftPos.top > 3) { // Different lines, draw top part
           add(left, leftPos.top, null, leftPos.bottom);
           left = pl;
           if (leftPos.bottom < rightPos.top) add(left, leftPos.bottom, null, rightPos.top);
         }
         if (toArg == null && to == lineLen) right = clientWidth;
-        if (fromArg == null && from == 0) left = pl;
-        rVal = retTop ? Math.min(rightPos.top, rVal) : Math.max(rightPos.bottom, rVal);
+        if (!start || leftPos.top < start.top || leftPos.top == start.top && leftPos.left < start.left)
+          start = leftPos;
+        if (!end || rightPos.bottom > end.bottom || rightPos.bottom == end.bottom && rightPos.right > end.right)
+          end = rightPos;
         if (left < pl + 1) left = pl;
         add(left, rightPos.top, right - left, rightPos.bottom);
       });
-      return rVal;
+      return {start: start, end: end};
     }
 
     if (sel.from.line == sel.to.line) {
       drawForLine(sel.from.line, sel.from.ch, sel.to.ch);
     } else {
-      var fromObj = getLine(doc, sel.from.line);
-      var cur = fromObj, merged, path = [sel.from.line, sel.from.ch], singleLine;
-      while (merged = collapsedSpanAtEnd(cur)) {
-        var found = merged.find();
-        path.push(found.from.ch, found.to.line, found.to.ch);
-        if (found.to.line == sel.to.line) {
-          path.push(sel.to.ch);
-          singleLine = true;
-          break;
+      var fromLine = getLine(doc, sel.from.line), toLine = getLine(doc, sel.to.line);
+      var singleVLine = visualLine(doc, fromLine) == visualLine(doc, toLine);
+      var leftEnd = drawForLine(sel.from.line, sel.from.ch, singleVLine ? fromLine.text.length : null).end;
+      var rightStart = drawForLine(sel.to.line, singleVLine ? 0 : null, sel.to.ch).start;
+      if (singleVLine) {
+        if (leftEnd.top < rightStart.top - 2) {
+          add(leftEnd.right, leftEnd.top, null, leftEnd.bottom);
+          add(pl, rightStart.top, rightStart.left, rightStart.bottom);
+        } else {
+          add(leftEnd.right, leftEnd.top, rightStart.left - leftEnd.right, leftEnd.bottom);
         }
-        cur = getLine(doc, found.to.line);
       }
-
-      // This is a single, merged line
-      if (singleLine) {
-        for (var i = 0; i < path.length; i += 3)
-          drawForLine(path[i], path[i+1], path[i+2]);
-      } else {
-        var middleTop, middleBot, toObj = getLine(doc, sel.to.line);
-        if (sel.from.ch)
-          // Draw the first line of selection.
-          middleTop = drawForLine(sel.from.line, sel.from.ch, null, false);
-        else
-          // Simply include it in the middle block.
-          middleTop = heightAtLine(cm, fromObj) - display.viewOffset;
-
-        if (!sel.to.ch)
-          middleBot = heightAtLine(cm, toObj) - display.viewOffset;
-        else
-          middleBot = drawForLine(sel.to.line, collapsedSpanAtStart(toObj) ? null : 0, sel.to.ch, true);
-
-        if (middleTop < middleBot) add(pl, middleTop, null, middleBot);
-      }
+      if (leftEnd.bottom < rightStart.top)
+        add(pl, leftEnd.bottom, null, rightStart.top);
     }
 
     removeChildrenAndAdd(display.selectionDiv, fragment);
@@ -916,12 +916,12 @@ window.CodeMirror = (function() {
   // valid state. If that fails, it returns the line with the
   // smallest indentation, which tends to need the least context to
   // parse correctly.
-  function findStartLine(cm, n) {
+  function findStartLine(cm, n, precise) {
     var minindent, minline, doc = cm.doc;
     for (var search = n, lim = n - 100; search > lim; --search) {
       if (search <= doc.first) return doc.first;
       var line = getLine(doc, search - 1);
-      if (line.stateAfter) return search;
+      if (line.stateAfter && (!precise || search <= doc.frontier)) return search;
       var indented = countColumn(line.text, null, cm.options.tabSize);
       if (minline == null || minindent > indented) {
         minline = search - 1;
@@ -931,10 +931,10 @@ window.CodeMirror = (function() {
     return minline;
   }
 
-  function getStateBefore(cm, n) {
+  function getStateBefore(cm, n, precise) {
     var doc = cm.doc, display = cm.display;
       if (!doc.mode.startState) return true;
-    var pos = findStartLine(cm, n), state = pos > doc.first && getLine(doc, pos-1).stateAfter;
+    var pos = findStartLine(cm, n, precise), state = pos > doc.first && getLine(doc, pos-1).stateAfter;
     if (!state) state = startState(doc.mode);
     else state = copyState(doc.mode, state);
     doc.iter(pos, n, function(line) {
@@ -955,7 +955,7 @@ window.CodeMirror = (function() {
     return e.offsetLeft;
   }
 
-  function measureChar(cm, line, ch, data) {
+  function measureChar(cm, line, ch, data, bias) {
     var dir = -1;
     data = data || measureLine(cm, line);
 
@@ -964,9 +964,13 @@ window.CodeMirror = (function() {
       if (r) break;
       if (dir < 0 && pos == 0) dir = 1;
     }
+    bias = pos > ch ? "left" : pos < ch ? "right" : bias;
+    if (bias == "left" && r.leftSide) r = r.leftSide;
+    else if (bias == "right" && r.rightSide) r = r.rightSide;
     return {left: pos < ch ? r.right : r.left,
             right: pos > ch ? r.left : r.right,
-            top: r.top, bottom: r.bottom};
+            top: r.top,
+            bottom: r.bottom};
   }
 
   function findCachedMeasurement(cm, line) {
@@ -976,23 +980,28 @@ window.CodeMirror = (function() {
       if (memo.text == line.text && memo.markedSpans == line.markedSpans &&
           cm.display.scroller.clientWidth == memo.width &&
           memo.classes == line.textClass + "|" + line.bgClass + "|" + line.wrapClass)
-        return memo.measure;
+        return memo;
     }
+  }
+
+  function clearCachedMeasurement(cm, line) {
+    var exists = findCachedMeasurement(cm, line);
+    if (exists) exists.text = exists.measure = exists.markedSpans = null;
   }
 
   function measureLine(cm, line) {
     // First look in the cache
-    var measure = findCachedMeasurement(cm, line);
-    if (!measure) {
-      // Failing that, recompute and store result in cache
-      measure = measureLineInner(cm, line);
-      var cache = cm.display.measureLineCache;
-      var memo = {text: line.text, width: cm.display.scroller.clientWidth,
-                  markedSpans: line.markedSpans, measure: measure,
-                  classes: line.textClass + "|" + line.bgClass + "|" + line.wrapClass};
-      if (cache.length == 16) cache[++cm.display.measureLineCachePos % 16] = memo;
-      else cache.push(memo);
-    }
+    var cached = findCachedMeasurement(cm, line);
+    if (cached) return cached.measure;
+
+    // Failing that, recompute and store result in cache
+    var measure = measureLineInner(cm, line);
+    var cache = cm.display.measureLineCache;
+    var memo = {text: line.text, width: cm.display.scroller.clientWidth,
+                markedSpans: line.markedSpans, measure: measure,
+                classes: line.textClass + "|" + line.bgClass + "|" + line.wrapClass};
+    if (cache.length == 16) cache[++cm.display.measureLineCachePos % 16] = memo;
+    else cache.push(memo);
     return measure;
   }
 
@@ -1034,30 +1043,51 @@ window.CodeMirror = (function() {
     if (ie_lt9 && display.measure.first != pre)
       removeChildrenAndAdd(display.measure, pre);
 
-    for (var i = 0, cur; i < measure.length; ++i) if (cur = measure[i]) {
-      var size = getRect(cur);
-      var top = Math.max(0, size.top - outer.top), bot = Math.min(size.bottom - outer.top, maxBot);
-      for (var j = 0; j < vranges.length; j += 2) {
-        var rtop = vranges[j], rbot = vranges[j+1];
+    function measureRect(rect) {
+      var top = rect.top - outer.top, bot = rect.bottom - outer.top;
+      if (bot > maxBot) bot = maxBot;
+      if (top < 0) top = 0;
+      for (var i = vranges.length - 2; i >= 0; i -= 2) {
+        var rtop = vranges[i], rbot = vranges[i+1];
         if (rtop > bot || rbot < top) continue;
         if (rtop <= top && rbot >= bot ||
             top <= rtop && bot >= rbot ||
             Math.min(bot, rbot) - Math.max(top, rtop) >= (bot - top) >> 1) {
-          vranges[j] = Math.min(top, rtop);
-          vranges[j+1] = Math.max(bot, rbot);
+          vranges[i] = Math.min(top, rtop);
+          vranges[i+1] = Math.max(bot, rbot);
           break;
         }
       }
-      if (j == vranges.length) vranges.push(top, bot);
-      var right = size.right;
-      if (cur.measureRight) right = getRect(cur.measureRight).left;
-      data[i] = {left: size.left - outer.left, right: right - outer.left, top: j};
+      if (i < 0) { i = vranges.length; vranges.push(top, bot); }
+      return {left: rect.left - outer.left,
+              right: rect.right - outer.left,
+              top: i, bottom: null};
     }
-    for (var i = 0, cur; i < data.length; ++i) if (cur = data[i]) {
-      var vr = cur.top;
-      cur.top = vranges[vr]; cur.bottom = vranges[vr+1];
+    function finishRect(rect) {
+      rect.bottom = vranges[rect.top+1];
+      rect.top = vranges[rect.top];
     }
 
+    for (var i = 0, cur; i < measure.length; ++i) if (cur = measure[i]) {
+      var node = cur, rect = null;
+      // A widget might wrap, needs special care
+      if (/\bCodeMirror-widget\b/.test(cur.className) && cur.getClientRects) {
+        if (cur.firstChild.nodeType == 1) node = cur.firstChild;
+        var rects = node.getClientRects();
+        if (rects.length > 1) {
+          rect = data[i] = measureRect(rects[0]);
+          rect.rightSide = measureRect(rects[rects.length - 1]);
+        }
+      }
+      if (!rect) rect = data[i] = measureRect(getRect(node));
+      if (cur.measureRight) rect.right = getRect(cur.measureRight).left;
+      if (cur.leftSide) rect.leftSide = measureRect(getRect(cur.leftSide));
+    }
+    for (var i = 0, cur; i < data.length; ++i) if (cur = data[i]) {
+      finishRect(cur);
+      if (cur.leftSide) finishRect(cur.leftSide);
+      if (cur.rightSide) finishRect(cur.rightSide);
+    }
     return data;
   }
 
@@ -1068,7 +1098,7 @@ window.CodeMirror = (function() {
       if (sp.collapsed && (sp.to == null || sp.to == line.text.length)) hasBadSpan = true;
     }
     var cached = !hasBadSpan && findCachedMeasurement(cm, line);
-    if (cached) return measureChar(cm, line, line.text.length, cached).right;
+    if (cached) return measureChar(cm, line, line.text.length, cached.measure, "right").right;
 
     var pre = lineContent(cm, line);
     var end = pre.appendChild(zeroWidthElement(cm.display.measure));
@@ -1083,6 +1113,9 @@ window.CodeMirror = (function() {
     cm.display.lineNumChars = null;
   }
 
+  function pageScrollX() { return window.pageXOffset || (document.documentElement || document.body).scrollLeft; }
+  function pageScrollY() { return window.pageYOffset || (document.documentElement || document.body).scrollTop; }
+
   // Context is one of "line", "div" (display.lineDiv), "local"/null (editor), or "page"
   function intoCoordSystem(cm, lineObj, rect, context) {
     if (lineObj.widgets) for (var i = 0; i < lineObj.widgets.length; ++i) if (lineObj.widgets[i].above) {
@@ -1092,11 +1125,12 @@ window.CodeMirror = (function() {
     if (context == "line") return rect;
     if (!context) context = "local";
     var yOff = heightAtLine(cm, lineObj);
-    if (context != "local") yOff -= cm.display.viewOffset;
-    if (context == "page") {
+    if (context == "local") yOff += paddingTop(cm.display);
+    else yOff -= cm.display.viewOffset;
+    if (context == "page" || context == "window") {
       var lOff = getRect(cm.display.lineSpace);
-      yOff += lOff.top + (window.pageYOffset || (document.documentElement || document.body).scrollTop);
-      var xOff = lOff.left + (window.pageXOffset || (document.documentElement || document.body).scrollLeft);
+      yOff += lOff.top + (context == "window" ? 0 : pageScrollY());
+      var xOff = lOff.left + (context == "window" ? 0 : pageScrollX());
       rect.left += xOff; rect.right += xOff;
     }
     rect.top += yOff; rect.bottom += yOff;
@@ -1108,64 +1142,58 @@ window.CodeMirror = (function() {
   function fromCoordSystem(cm, coords, context) {
     if (context == "div") return coords;
     var left = coords.left, top = coords.top;
+    // First move into "page" coordinate system
     if (context == "page") {
-      left -= window.pageXOffset || (document.documentElement || document.body).scrollLeft;
-      top -= window.pageYOffset || (document.documentElement || document.body).scrollTop;
+      left -= pageScrollX();
+      top -= pageScrollY();
+    } else if (context == "local" || !context) {
+      var localBox = getRect(cm.display.sizer);
+      left += localBox.left;
+      top += localBox.top;
     }
+
     var lineSpaceBox = getRect(cm.display.lineSpace);
-    left -= lineSpaceBox.left;
-    top -= lineSpaceBox.top;
-    if (context == "local" || !context) {
-      var editorBox = getRect(cm.display.wrapper);
-      left += editorBox.left;
-      top += editorBox.top;
-    }
-    return {left: left, top: top};
+    return {left: left - lineSpaceBox.left, top: top - lineSpaceBox.top};
   }
 
-  function charCoords(cm, pos, context, lineObj) {
+  function charCoords(cm, pos, context, lineObj, bias) {
     if (!lineObj) lineObj = getLine(cm.doc, pos.line);
-    return intoCoordSystem(cm, lineObj, measureChar(cm, lineObj, pos.ch), context);
+    return intoCoordSystem(cm, lineObj, measureChar(cm, lineObj, pos.ch, null, bias), context);
   }
 
   function cursorCoords(cm, pos, context, lineObj, measurement) {
     lineObj = lineObj || getLine(cm.doc, pos.line);
     if (!measurement) measurement = measureLine(cm, lineObj);
     function get(ch, right) {
-      var m = measureChar(cm, lineObj, ch, measurement);
+      var m = measureChar(cm, lineObj, ch, measurement, right ? "right" : "left");
       if (right) m.left = m.right; else m.right = m.left;
       return intoCoordSystem(cm, lineObj, m, context);
     }
+    function getBidi(ch, partPos) {
+      var part = order[partPos], right = part.level % 2;
+      if (ch == bidiLeft(part) && partPos && part.level < order[partPos - 1].level) {
+        part = order[--partPos];
+        ch = bidiRight(part) - (part.level % 2 ? 0 : 1);
+        right = true;
+      } else if (ch == bidiRight(part) && partPos < order.length - 1 && part.level < order[partPos + 1].level) {
+        part = order[++partPos];
+        ch = bidiLeft(part) - part.level % 2;
+        right = false;
+      }
+      if (right && ch == part.to && ch > part.from) return get(ch - 1);
+      return get(ch, right);
+    }
     var order = getOrder(lineObj), ch = pos.ch;
     if (!order) return get(ch);
-    var main, other, linedir = order[0].level;
-    for (var i = 0; i < order.length; ++i) {
-      var part = order[i], rtl = part.level % 2, nb, here;
-      if (part.from < ch && part.to > ch) return get(ch, rtl);
-      var left = rtl ? part.to : part.from, right = rtl ? part.from : part.to;
-      if (left == ch) {
-        // IE returns bogus offsets and widths for edges where the
-        // direction flips, but only for the side with the lower
-        // level. So we try to use the side with the higher level.
-        if (i && part.level < (nb = order[i-1]).level) here = get(nb.level % 2 ? nb.from : nb.to - 1, true);
-        else here = get(rtl && part.from != part.to ? ch - 1 : ch);
-        if (rtl == linedir) main = here; else other = here;
-      } else if (right == ch) {
-        var nb = i < order.length - 1 && order[i+1];
-        if (!rtl && nb && nb.from == nb.to) continue;
-        if (nb && part.level < nb.level) here = get(nb.level % 2 ? nb.to - 1 : nb.from);
-        else here = get(rtl ? ch : ch - 1, true);
-        if (rtl == linedir) main = here; else other = here;
-      }
-    }
-    if (linedir && !ch) other = get(order[0].to - 1);
-    if (!main) return other;
-    if (other) main.other = other;
-    return main;
+    var partPos = getBidiPartAt(order, ch);
+    var val = getBidi(ch, partPos);
+    if (bidiOther != null) val.other = getBidi(ch, bidiOther);
+    return val;
   }
 
-  function PosMaybeOutside(line, ch, outside) {
+  function PosWithInfo(line, ch, outside, xRel) {
     var pos = new Pos(line, ch);
+    pos.xRel = xRel;
     if (outside) pos.outside = true;
     return pos;
   }
@@ -1174,10 +1202,10 @@ window.CodeMirror = (function() {
   function coordsChar(cm, x, y) {
     var doc = cm.doc;
     y += cm.display.viewOffset;
-    if (y < 0) return PosMaybeOutside(doc.first, 0, true);
+    if (y < 0) return PosWithInfo(doc.first, 0, true, -1);
     var lineNo = lineAtHeight(doc, y), last = doc.first + doc.size - 1;
     if (lineNo > last)
-      return PosMaybeOutside(doc.first + doc.size - 1, getLine(doc, last).text.length, true);
+      return PosWithInfo(doc.first + doc.size - 1, getLine(doc, last).text.length, true, 1);
     if (x < 0) x = 0;
 
     for (;;) {
@@ -1185,7 +1213,7 @@ window.CodeMirror = (function() {
       var found = coordsCharInner(cm, lineObj, lineNo, x, y);
       var merged = collapsedSpanAtEnd(lineObj);
       var mergedPos = merged && merged.find();
-      if (merged && found.ch >= mergedPos.from.ch)
+      if (merged && (found.ch > mergedPos.from.ch || found.ch == mergedPos.from.ch && found.xRel > 0))
         lineNo = mergedPos.to.line;
       else
         return found;
@@ -1211,14 +1239,15 @@ window.CodeMirror = (function() {
     var from = lineLeft(lineObj), to = lineRight(lineObj);
     var fromX = getX(from), fromOutside = wrongLine, toX = getX(to), toOutside = wrongLine;
 
-    if (x > toX) return PosMaybeOutside(lineNo, to, toOutside);
+    if (x > toX) return PosWithInfo(lineNo, to, toOutside, 1);
     // Do a binary search between these bounds.
     for (;;) {
       if (bidi ? to == from || to == moveVisually(lineObj, from, 1) : to - from <= 1) {
-        var after = x - fromX < toX - x, ch = after ? from : to;
+        var ch = x < fromX || x - fromX <= toX - x ? from : to;
+        var xDiff = x - (ch == from ? fromX : toX);
         while (isExtendingChar.test(lineObj.text.charAt(ch))) ++ch;
-        var pos = PosMaybeOutside(lineNo, ch, after ? fromOutside : toOutside);
-        pos.after = after;
+        var pos = PosWithInfo(lineNo, ch, ch == from ? fromOutside : toOutside,
+                              xDiff < 0 ? -1 : xDiff ? 1 : 0);
         return pos;
       }
       var step = Math.ceil(dist / 2), middle = from + step;
@@ -1404,7 +1433,7 @@ window.CodeMirror = (function() {
   // supported or compatible enough yet to rely on.)
   function readInput(cm) {
     var input = cm.display.input, prevInput = cm.display.prevInput, doc = cm.doc, sel = doc.sel;
-    if (!cm.state.focused || hasSelection(input) || isReadOnly(cm)) return false;
+    if (!cm.state.focused || hasSelection(input) || isReadOnly(cm) || cm.state.disableInput) return false;
     var text = input.value;
     if (text == prevInput && posEq(sel.from, sel.to)) return false;
     if (ie && !ie_lt9 && cm.display.inputHasSelection === text) {
@@ -1422,11 +1451,14 @@ window.CodeMirror = (function() {
       from = Pos(from.line, from.ch - (prevInput.length - same));
     else if (cm.state.overwrite && posEq(from, to) && !cm.state.pasteIncoming)
       to = Pos(to.line, Math.min(getLine(doc, to.line).text.length, to.ch + (text.length - same)));
-    var updateInput = cm.curOp.updateInput;
-    makeChange(cm.doc, {from: from, to: to, text: splitLines(text.slice(same)),
-                        origin: cm.state.pasteIncoming ? "paste" : "+input"}, "end");
 
+    var updateInput = cm.curOp.updateInput;
+    var changeEvent = {from: from, to: to, text: splitLines(text.slice(same)),
+                       origin: cm.state.pasteIncoming ? "paste" : "+input"};
+    makeChange(cm.doc, changeEvent, "end");
     cm.curOp.updateInput = updateInput;
+    signalLater(cm, "inputRead", cm, changeEvent);
+
     if (text.length > 1000 || text.indexOf("\n") > -1) input.value = cm.display.prevInput = "";
     else cm.display.prevInput = text;
     if (withOp) endOperation(cm);
@@ -1467,6 +1499,7 @@ window.CodeMirror = (function() {
     on(d.scroller, "mousedown", operation(cm, onMouseDown));
     if (ie)
       on(d.scroller, "dblclick", operation(cm, function(e) {
+        if (signalDOMEvent(cm, e)) return;
         var pos = posFromMouse(cm, e);
         if (!pos || clickInGutter(cm, e) || eventInWidget(cm.display, e)) return;
         e_preventDefault(e);
@@ -1474,7 +1507,7 @@ window.CodeMirror = (function() {
         extendSelection(cm.doc, word.from, word.to);
       }));
     else
-      on(d.scroller, "dblclick", e_preventDefault);
+      on(d.scroller, "dblclick", function(e) { signalDOMEvent(cm, e) || e_preventDefault(e); });
     on(d.lineSpace, "selectstart", function(e) {
       if (!eventInWidget(d, e)) e_preventDefault(e);
     });
@@ -1506,11 +1539,15 @@ window.CodeMirror = (function() {
     // Prevent wrapper from ever scrolling
     on(d.wrapper, "scroll", function() { d.wrapper.scrollTop = d.wrapper.scrollLeft = 0; });
 
+    var resizeTimer;
     function onResize() {
-      // Might be a text scaling operation, clear size caches.
-      d.cachedCharWidth = d.cachedTextHeight = null;
-      clearCaches(cm);
-      runInOp(cm, bind(regChange, cm));
+      if (resizeTimer == null) resizeTimer = setTimeout(function() {
+        resizeTimer = null;
+        // Might be a text scaling operation, clear size caches.
+        d.cachedCharWidth = d.cachedTextHeight = knownScrollbarWidth = null;
+        clearCaches(cm);
+        runInOp(cm, bind(regChange, cm));
+      }, 100);
     }
     on(window, "resize", onResize);
     // Above handler holds on to the editor and its data structures.
@@ -1524,7 +1561,7 @@ window.CodeMirror = (function() {
     setTimeout(unregister, 5000);
 
     on(d.input, "keyup", operation(cm, function(e) {
-      if (cm.options.onKeyEvent && cm.options.onKeyEvent(cm, addStop(e))) return;
+      if (signalDOMEvent(cm, e) || cm.options.onKeyEvent && cm.options.onKeyEvent(cm, addStop(e))) return;
       if (e.keyCode == 16) cm.doc.sel.shift = false;
     }));
     on(d.input, "input", bind(fastPoll, cm));
@@ -1534,7 +1571,7 @@ window.CodeMirror = (function() {
     on(d.input, "blur", bind(onBlur, cm));
 
     function drag_(e) {
-      if (cm.options.onDragEvent && cm.options.onDragEvent(cm, addStop(e))) return;
+      if (signalDOMEvent(cm, e) || cm.options.onDragEvent && cm.options.onDragEvent(cm, addStop(e))) return;
       e_stop(e);
     }
     if (cm.options.dragDrop) {
@@ -1573,9 +1610,7 @@ window.CodeMirror = (function() {
 
   function eventInWidget(display, e) {
     for (var n = e_target(e); n != display.wrapper; n = n.parentNode) {
-      if (!n) return true;
-      if (/\bCodeMirror-(?:line)?widget\b/.test(n.className) ||
-          n.parentNode == display.sizer && n != display.mover) return true;
+      if (!n || n.ignoreEvents || n.parentNode == display.sizer && n != display.mover) return true;
     }
   }
 
@@ -1585,7 +1620,7 @@ window.CodeMirror = (function() {
       var target = e_target(e);
       if (target == display.scrollbarH || target == display.scrollbarH.firstChild ||
           target == display.scrollbarV || target == display.scrollbarV.firstChild ||
-          target == display.scrollbarFiller) return null;
+          target == display.scrollbarFiller || target == display.gutterFiller) return null;
     }
     var x, y, space = getRect(display.lineSpace);
     // Fails unpredictably on IE[67] when mouse is dragged around quickly.
@@ -1595,6 +1630,7 @@ window.CodeMirror = (function() {
 
   var lastClick, lastDoubleClick;
   function onMouseDown(e) {
+    if (signalDOMEvent(this, e)) return;
     var cm = this, display = cm.display, doc = cm.doc, sel = doc.sel;
     sel.shift = e.shiftKey;
 
@@ -1718,8 +1754,6 @@ window.CodeMirror = (function() {
 
     function done(e) {
       counter = Infinity;
-      var cur = posFromMouse(cm, e);
-      if (cur) doSelect(cur);
       e_preventDefault(e);
       focusInput(cm);
       off(document, "mousemove", move);
@@ -1735,11 +1769,41 @@ window.CodeMirror = (function() {
     on(document, "mouseup", up);
   }
 
+  function clickInGutter(cm, e) {
+    var display = cm.display;
+    try { var mX = e.clientX, mY = e.clientY; }
+    catch(e) { return false; }
+
+    if (mX >= Math.floor(getRect(display.gutters).right)) return false;
+    e_preventDefault(e);
+    if (!hasHandler(cm, "gutterClick")) return true;
+
+    var lineBox = getRect(display.lineDiv);
+    if (mY > lineBox.bottom) return true;
+    mY -= lineBox.top - display.viewOffset;
+
+    for (var i = 0; i < cm.options.gutters.length; ++i) {
+      var g = display.gutters.childNodes[i];
+      if (g && getRect(g).right >= mX) {
+        var line = lineAtHeight(cm.doc, mY);
+        var gutter = cm.options.gutters[i];
+        signalLater(cm, "gutterClick", cm, line, gutter, e);
+        break;
+      }
+    }
+    return true;
+  }
+
+  // Kludge to work around strange IE behavior where it'll sometimes
+  // re-fire a series of drag-related events right after the drop (#1551)
+  var lastDrop = 0;
+
   function onDrop(e) {
     var cm = this;
-    if (eventInWidget(cm.display, e) || (cm.options.onDragEvent && cm.options.onDragEvent(cm, addStop(e))))
+    if (signalDOMEvent(cm, e) || eventInWidget(cm.display, e) || (cm.options.onDragEvent && cm.options.onDragEvent(cm, addStop(e))))
       return;
     e_preventDefault(e);
+    if (ie) lastDrop = +new Date;
     var pos = posFromMouse(cm, e, true), files = e.dataTransfer.files;
     if (!pos || isReadOnly(cm)) return;
     if (files && files.length && window.FileReader && window.File) {
@@ -1779,56 +1843,22 @@ window.CodeMirror = (function() {
     }
   }
 
-  function clickInGutter(cm, e) {
-    var display = cm.display;
-    try { var mX = e.clientX, mY = e.clientY; }
-    catch(e) { return false; }
-
-    if (mX >= Math.floor(getRect(display.gutters).right)) return false;
-    e_preventDefault(e);
-    if (!hasHandler(cm, "gutterClick")) return true;
-
-    var lineBox = getRect(display.lineDiv);
-    if (mY > lineBox.bottom) return true;
-    mY -= lineBox.top - display.viewOffset;
-
-    for (var i = 0; i < cm.options.gutters.length; ++i) {
-      var g = display.gutters.childNodes[i];
-      if (g && getRect(g).right >= mX) {
-        var line = lineAtHeight(cm.doc, mY);
-        var gutter = cm.options.gutters[i];
-        signalLater(cm, "gutterClick", cm, line, gutter, e);
-        break;
-      }
-    }
-    return true;
-  }
-
   function onDragStart(cm, e) {
-    if (ie && !cm.state.draggingText) { e_stop(e); return; }
-    if (eventInWidget(cm.display, e)) return;
+    if (ie && (!cm.state.draggingText || +new Date - lastDrop < 100)) { e_stop(e); return; }
+    if (signalDOMEvent(cm, e) || eventInWidget(cm.display, e)) return;
 
     var txt = cm.getSelection();
     e.dataTransfer.setData("Text", txt);
 
     // Use dummy image instead of default browsers image.
     // Recent Safari (~6.0.2) have a tendency to segfault when this happens, so we don't do it there.
-    if (e.dataTransfer.setDragImage) {
+    if (e.dataTransfer.setDragImage && !safari) {
       var img = elt("img", null, null, "position: fixed; left: 0; top: 0;");
       if (opera) {
         img.width = img.height = 1;
         cm.display.wrapper.appendChild(img);
         // Force a relayout, or Opera won't use our image for some obscure reason
         img._top = img.offsetTop;
-      }
-      if (safari) {
-        if (cm.display.dragImg) {
-          img = cm.display.dragImg;
-        } else {
-          cm.display.dragImg = img;
-          img.src = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
-          cm.display.wrapper.appendChild(img);
-        }
       }
       e.dataTransfer.setDragImage(img, 0, 0);
       if (opera) img.parentNode.removeChild(img);
@@ -1842,6 +1872,7 @@ window.CodeMirror = (function() {
     if (cm.display.scroller.scrollTop != val) cm.display.scroller.scrollTop = val;
     if (cm.display.scrollbarV.scrollTop != val) cm.display.scrollbarV.scrollTop = val;
     if (gecko) updateDisplay(cm, []);
+    startWorker(cm, 100);
   }
   function setScrollLeft(cm, val, isScroller) {
     if (isScroller ? val == cm.doc.scrollLeft : Math.abs(cm.doc.scrollLeft - val) < 2) return;
@@ -1974,8 +2005,10 @@ window.CodeMirror = (function() {
     var startMap = getKeyMap(cm.options.keyMap), next = startMap.auto;
     clearTimeout(maybeTransition);
     if (next && !isModifierKey(e)) maybeTransition = setTimeout(function() {
-      if (getKeyMap(cm.options.keyMap) == startMap)
+      if (getKeyMap(cm.options.keyMap) == startMap) {
         cm.options.keyMap = (next.call ? next.call(null, cm) : next);
+        keyMapChanged(cm);
+      }
     }, 50);
 
     var name = keyName(e, true), handled = false;
@@ -1988,17 +2021,18 @@ window.CodeMirror = (function() {
       // 'go') bound to the keyname without 'Shift-'.
       handled = lookupKey("Shift-" + name, keymaps, function(b) {return doHandleBinding(cm, b, true);})
              || lookupKey(name, keymaps, function(b) {
-                  if (typeof b == "string" && /^go[A-Z]/.test(b)) return doHandleBinding(cm, b);
+                  if (typeof b == "string" ? /^go[A-Z]/.test(b) : b.motion)
+                    return doHandleBinding(cm, b);
                 });
     } else {
       handled = lookupKey(name, keymaps, function(b) { return doHandleBinding(cm, b); });
     }
-    if (handled == "stop") handled = false;
 
     if (handled) {
       e_preventDefault(e);
       restartBlink(cm);
       if (ie_lt9) { e.oldKeyCode = e.keyCode; e.keyCode = 0; }
+      signalLater(cm, "keyHandled", cm, name, e);
     }
     return handled;
   }
@@ -2009,6 +2043,7 @@ window.CodeMirror = (function() {
     if (handled) {
       e_preventDefault(e);
       restartBlink(cm);
+      signalLater(cm, "keyHandled", cm, "'" + ch + "'", e);
     }
     return handled;
   }
@@ -2018,7 +2053,7 @@ window.CodeMirror = (function() {
     var cm = this;
     if (!cm.state.focused) onFocus(cm);
     if (ie && e.keyCode == 27) { e.returnValue = false; }
-    if (cm.options.onKeyEvent && cm.options.onKeyEvent(cm, addStop(e))) return;
+    if (signalDOMEvent(cm, e) || cm.options.onKeyEvent && cm.options.onKeyEvent(cm, addStop(e))) return;
     var code = e.keyCode;
     // IE does strange things with escape.
     cm.doc.sel.shift = code == 16 || e.shiftKey;
@@ -2034,7 +2069,7 @@ window.CodeMirror = (function() {
 
   function onKeyPress(e) {
     var cm = this;
-    if (cm.options.onKeyEvent && cm.options.onKeyEvent(cm, addStop(e))) return;
+    if (signalDOMEvent(cm, e) || cm.options.onKeyEvent && cm.options.onKeyEvent(cm, addStop(e))) return;
     var keyCode = e.keyCode, charCode = e.charCode;
     if (opera && keyCode == lastStoppedKey) {lastStoppedKey = null; e_preventDefault(e); return;}
     if (((opera && (!e.which || e.which < 10)) || khtml) && handleKeyBinding(cm, e)) return;
@@ -2072,6 +2107,7 @@ window.CodeMirror = (function() {
 
   var detectingSelectAll;
   function onContextMenu(cm, e) {
+    if (signalDOMEvent(cm, e, "contextmenu")) return;
     var display = cm.display, sel = cm.doc.sel;
     if (eventInWidget(display, e)) return;
 
@@ -2090,6 +2126,13 @@ window.CodeMirror = (function() {
     // Adds "Select all" to context menu in FF
     if (posEq(sel.from, sel.to)) display.input.value = display.prevInput = " ";
 
+    function prepareSelectAllHack() {
+      if (display.input.selectionStart != null) {
+        var extval = display.input.value = " " + (posEq(sel.from, sel.to) ? "" : display.input.value);
+        display.prevInput = " ";
+        display.input.selectionStart = 1; display.input.selectionEnd = extval.length;
+      }
+    }
     function rehide() {
       display.inputDiv.style.position = "relative";
       display.input.style.cssText = oldCSS;
@@ -2097,12 +2140,10 @@ window.CodeMirror = (function() {
       slowPoll(cm);
 
       // Try to detect the user choosing select-all
-      if (display.input.selectionStart != null && (!ie || ie_lt9)) {
+      if (display.input.selectionStart != null) {
+        if (!ie || ie_lt9) prepareSelectAllHack();
         clearTimeout(detectingSelectAll);
-        var extval = display.input.value = " " + (posEq(sel.from, sel.to) ? "" : display.input.value), i = 0;
-        display.prevInput = " ";
-        display.input.selectionStart = 1; display.input.selectionEnd = extval.length;
-        var poll = function(){
+        var i = 0, poll = function(){
           if (display.prevInput == " " && display.input.selectionStart == 0)
             operation(cm, commands.selectAll)(cm);
           else if (i++ < 10) detectingSelectAll = setTimeout(poll, 500);
@@ -2112,6 +2153,7 @@ window.CodeMirror = (function() {
       }
     }
 
+    if (ie && !ie_lt9) prepareSelectAllHack();
     if (captureMiddleClick) {
       e_stop(e);
       var mouseup = function() {
@@ -2126,11 +2168,11 @@ window.CodeMirror = (function() {
 
   // UPDATING
 
-  function changeEnd(change) {
+  var changeEnd = CodeMirror.changeEnd = function(change) {
     if (!change.text) return change.to;
     return Pos(change.from.line + change.text.length - 1,
                lst(change.text).length + (change.text.length == 1 ? change.from.ch : 0));
-  }
+  };
 
   // Make sure a position will be valid after the given change.
   function clipPostChange(doc, change, pos) {
@@ -2172,20 +2214,20 @@ window.CodeMirror = (function() {
     return {anchor: adjustPos(doc.sel.anchor), head: adjustPos(doc.sel.head)};
   }
 
-  function filterChange(doc, change) {
+  function filterChange(doc, change, update) {
     var obj = {
       canceled: false,
       from: change.from,
       to: change.to,
       text: change.text,
       origin: change.origin,
-      update: function(from, to, text, origin) {
-        if (from) this.from = clipPos(doc, from);
-        if (to) this.to = clipPos(doc, to);
-        if (text) this.text = text;
-        if (origin !== undefined) this.origin = origin;
-      },
       cancel: function() { this.canceled = true; }
+    };
+    if (update) obj.update = function(from, to, text, origin) {
+      if (from) this.from = clipPos(doc, from);
+      if (to) this.to = clipPos(doc, to);
+      if (text) this.text = text;
+      if (origin !== undefined) this.origin = origin;
     };
     signal(doc, "beforeChange", doc, obj);
     if (doc.cm) signal(doc.cm, "beforeChange", doc.cm, obj);
@@ -2203,7 +2245,7 @@ window.CodeMirror = (function() {
     }
 
     if (hasHandler(doc, "beforeChange") || doc.cm && hasHandler(doc.cm, "beforeChange")) {
-      change = filterChange(doc, change);
+      change = filterChange(doc, change, true);
       if (!change) return;
     }
 
@@ -2242,15 +2284,23 @@ window.CodeMirror = (function() {
     var hist = doc.history;
     var event = (type == "undo" ? hist.done : hist.undone).pop();
     if (!event) return;
-    hist.dirtyCounter += type == "undo" ? -1 : 1;
 
     var anti = {changes: [], anchorBefore: event.anchorAfter, headBefore: event.headAfter,
-                anchorAfter: event.anchorBefore, headAfter: event.headBefore};
+                anchorAfter: event.anchorBefore, headAfter: event.headBefore,
+                generation: hist.generation};
     (type == "undo" ? hist.undone : hist.done).push(anti);
+    hist.generation = event.generation || ++hist.maxGeneration;
+
+    var filter = hasHandler(doc, "beforeChange") || doc.cm && hasHandler(doc.cm, "beforeChange");
 
     for (var i = event.changes.length - 1; i >= 0; --i) {
       var change = event.changes[i];
       change.origin = type;
+      if (filter && !filterChange(doc, change, false)) {
+        (type == "undo" ? hist.done : hist.undone).length = 0;
+        return;
+      }
+
       anti.changes.push(historyChangeFromChange(doc, change));
 
       var after = i ? computeSelAfterChange(doc, change, null)
@@ -2512,11 +2562,11 @@ window.CodeMirror = (function() {
   // SCROLLING
 
   function scrollCursorIntoView(cm) {
-    var coords = scrollPosIntoView(cm, cm.doc.sel.head);
+    var coords = scrollPosIntoView(cm, cm.doc.sel.head, cm.options.cursorScrollMargin);
     if (!cm.state.focused) return;
-    var display = cm.display, box = getRect(display.sizer), doScroll = null, pTop = paddingTop(cm.display);
-    if (coords.top + pTop + box.top < 0) doScroll = true;
-    else if (coords.bottom + pTop + box.top > (window.innerHeight || document.documentElement.clientHeight)) doScroll = false;
+    var display = cm.display, box = getRect(display.sizer), doScroll = null;
+    if (coords.top + box.top < 0) doScroll = true;
+    else if (coords.bottom + box.top > (window.innerHeight || document.documentElement.clientHeight)) doScroll = false;
     if (doScroll != null && !phantom) {
       var hidden = display.cursor.style.display == "none";
       if (hidden) {
@@ -2554,12 +2604,11 @@ window.CodeMirror = (function() {
   }
 
   function calculateScrollPos(cm, x1, y1, x2, y2) {
-    var display = cm.display, pt = paddingTop(display);
-    y1 += pt; y2 += pt;
+    var display = cm.display, snapMargin = textHeight(cm.display);
     if (y1 < 0) y1 = 0;
     var screen = display.scroller.clientHeight - scrollerCutOff, screentop = display.scroller.scrollTop, result = {};
     var docBottom = cm.doc.height + paddingVert(display);
-    var atTop = y1 < pt + 10, atBottom = y2 + pt > docBottom - 10;
+    var atTop = y1 < snapMargin, atBottom = y2 > docBottom - snapMargin;
     if (y1 < screentop) {
       result.scrollTop = atTop ? 0 : y1;
     } else if (y2 > screentop + screen) {
@@ -2596,7 +2645,7 @@ window.CodeMirror = (function() {
 
   function indentLine(cm, n, how, aggressive) {
     var doc = cm.doc;
-    if (!how) how = "add";
+    if (how == null) how = "add";
     if (how == "smart") {
       if (!cm.doc.mode.indent) how = "prev";
       else var state = getStateBefore(cm, n);
@@ -2619,6 +2668,8 @@ window.CodeMirror = (function() {
       indentation = curSpace + cm.options.indentUnit;
     } else if (how == "subtract") {
       indentation = curSpace - cm.options.indentUnit;
+    } else if (typeof how == "number") {
+      indentation = curSpace + how;
     }
     indentation = Math.max(0, indentation);
 
@@ -2643,7 +2694,7 @@ window.CodeMirror = (function() {
   }
 
   function findPosH(doc, pos, dir, unit, visually) {
-    var line = pos.line, ch = pos.ch;
+    var line = pos.line, ch = pos.ch, origDir = dir;
     var lineObj = getLine(doc, line);
     var possible = true;
     function findNextLine() {
@@ -2682,7 +2733,7 @@ window.CodeMirror = (function() {
         if (dir > 0 && !moveOnce(!first)) break;
       }
     }
-    var result = skipAtomic(doc, Pos(line, ch), dir, true);
+    var result = skipAtomic(doc, Pos(line, ch), origDir, true);
     if (!possible) result.hitSide = true;
     return result;
   }
@@ -2707,7 +2758,7 @@ window.CodeMirror = (function() {
   function findWordAt(line, pos) {
     var start = pos.ch, end = pos.ch;
     if (line) {
-      if (pos.after === false || end == line.length) --start; else ++end;
+      if ((pos.xRel < 0 || end == line.length) && start) --start; else ++end;
       var startChar = line.charAt(start);
       var check = isWordChar(startChar) ? isWordChar
         : /\s/.test(startChar) ? function(ch) {return /\s/.test(ch);}
@@ -2728,6 +2779,7 @@ window.CodeMirror = (function() {
   // 'wrap f in an operation, performed on its `this` parameter'
 
   CodeMirror.prototype = {
+    constructor: CodeMirror,
     focus: function(){window.focus(); focusInput(this); onFocus(this); fastPoll(this);},
 
     setOption: function(option, value) {
@@ -2747,7 +2799,7 @@ window.CodeMirror = (function() {
     removeKeyMap: function(map) {
       var maps = this.state.keyMaps;
       for (var i = 0; i < maps.length; ++i)
-        if ((typeof map == "string" ? maps[i].name : maps[i]) == map) {
+        if (maps[i] == map || (typeof maps[i] != "string" && maps[i].name == map)) {
           maps.splice(i, 1);
           return true;
         }
@@ -2763,7 +2815,8 @@ window.CodeMirror = (function() {
     removeOverlay: operation(null, function(spec) {
       var overlays = this.state.overlays;
       for (var i = 0; i < overlays.length; ++i) {
-        if (overlays[i].modeSpec == spec) {
+        var cur = overlays[i].modeSpec;
+        if (cur == spec || typeof spec == "string" && cur.name == spec) {
           overlays.splice(i, 1);
           this.state.modeGen++;
           regChange(this);
@@ -2773,7 +2826,7 @@ window.CodeMirror = (function() {
     }),
 
     indentLine: operation(null, function(n, dir, aggressive) {
-      if (typeof dir != "string") {
+      if (typeof dir != "string" && typeof dir != "number") {
         if (dir == null) dir = this.options.smartIndent ? "smart" : "prev";
         else dir = dir ? "add" : "subtract";
       }
@@ -2788,10 +2841,10 @@ window.CodeMirror = (function() {
 
     // Fetch the parser token for a given character. Useful for hacks
     // that want to inspect the mode state (say, for completion).
-    getTokenAt: function(pos) {
+    getTokenAt: function(pos, precise) {
       var doc = this.doc;
       pos = clipPos(doc, pos);
-      var state = getStateBefore(this, pos.line), mode = this.doc.mode;
+      var state = getStateBefore(this, pos.line, precise), mode = this.doc.mode;
       var line = getLine(doc, pos.line);
       var stream = new StringStream(line.text, this.options.tabSize);
       while (stream.pos < pos.ch && !stream.eol()) {
@@ -2806,10 +2859,37 @@ window.CodeMirror = (function() {
               state: state};
     },
 
-    getStateAfter: function(line) {
+    getTokenTypeAt: function(pos) {
+      pos = clipPos(this.doc, pos);
+      var styles = getLineStyles(this, getLine(this.doc, pos.line));
+      var before = 0, after = (styles.length - 1) / 2, ch = pos.ch;
+      if (ch == 0) return styles[2];
+      for (;;) {
+        var mid = (before + after) >> 1;
+        if ((mid ? styles[mid * 2 - 1] : 0) >= ch) after = mid;
+        else if (styles[mid * 2 + 1] < ch) before = mid + 1;
+        else return styles[mid * 2 + 2];
+      }
+    },
+
+    getModeAt: function(pos) {
+      var mode = this.doc.mode;
+      if (!mode.innerMode) return mode;
+      return CodeMirror.innerMode(mode, this.getTokenAt(pos).state).mode;
+    },
+
+    getHelper: function(pos, type) {
+      if (!helpers.hasOwnProperty(type)) return;
+      var help = helpers[type], mode = this.getModeAt(pos);
+      return mode[type] && help[mode[type]] ||
+        mode.helperType && help[mode.helperType] ||
+        help[mode.name];
+    },
+
+    getStateAfter: function(line, precise) {
       var doc = this.doc;
       line = clipLine(doc, line == null ? doc.first + doc.size - 1: line);
-      return getStateBefore(this, line + 1);
+      return getStateBefore(this, line + 1, precise);
     },
 
     cursorCoords: function(start, mode) {
@@ -2827,6 +2907,19 @@ window.CodeMirror = (function() {
     coordsChar: function(coords, mode) {
       coords = fromCoordSystem(this, coords, mode || "page");
       return coordsChar(this, coords.left, coords.top);
+    },
+
+    lineAtHeight: function(height, mode) {
+      height = fromCoordSystem(this, {top: height, left: 0}, mode || "page").top;
+      return lineAtHeight(this.doc, height + this.display.viewOffset);
+    },
+    heightAtLine: function(line, mode) {
+      var end = false, last = this.doc.first + this.doc.size - 1;
+      if (line < this.doc.first) line = this.doc.first;
+      else if (line > last) { line = last; end = true; }
+      var lineObj = getLine(this.doc, line);
+      return intoCoordSystem(this, getLine(this.doc, line), {top: 0, left: 0}, mode || "page").top +
+        (end ? lineObj.height : 0);
     },
 
     defaultTextHeight: function() { return textHeight(this.display); },
@@ -2857,7 +2950,7 @@ window.CodeMirror = (function() {
       return changeLine(this, handle, function(line) {
         var prop = where == "text" ? "textClass" : where == "background" ? "bgClass" : "wrapClass";
         if (!line[prop]) line[prop] = cls;
-        else if (new RegExp("\\b" + cls + "\\b").test(line[prop])) return false;
+        else if (new RegExp("(?:^|\\s)" + cls + "(?:$|\\s)").test(line[prop])) return false;
         else line[prop] += " " + cls;
         return true;
       });
@@ -2870,9 +2963,10 @@ window.CodeMirror = (function() {
         if (!cur) return false;
         else if (cls == null) line[prop] = null;
         else {
-          var upd = cur.replace(new RegExp("^" + cls + "\\b\\s*|\\s*\\b" + cls + "\\b"), "");
-          if (upd == cur) return false;
-          line[prop] = upd || null;
+          var found = cur.match(new RegExp("(?:^|\\s+)" + cls + "(?:$|\\s+)"));
+          if (!found) return false;
+          var end = found.index + found[0].length;
+          line[prop] = cur.slice(0, found.index) + (!found.index || end == cur.length ? "" : " ") + cur.slice(end) || null;
         }
         return true;
       });
@@ -2920,7 +3014,7 @@ window.CodeMirror = (function() {
         if (left + node.offsetWidth > hspace)
           left = hspace - node.offsetWidth;
       }
-      node.style.top = (top + paddingTop(display)) + "px";
+      node.style.top = top + "px";
       node.style.left = node.style.right = "";
       if (horiz == "right") {
         left = display.sizer.clientWidth - node.offsetWidth;
@@ -2988,7 +3082,8 @@ window.CodeMirror = (function() {
       sel.goalColumn = pos.left;
     }),
 
-    toggleOverwrite: function() {
+    toggleOverwrite: function(value) {
+      if (value != null && value == this.state.overwrite) return;
       if (this.state.overwrite = !this.state.overwrite)
         this.display.cursor.className += " CodeMirror-overwrite";
       else
@@ -3029,9 +3124,6 @@ window.CodeMirror = (function() {
       this.refresh();
     },
 
-    on: function(type, f) {on(this, type, f);},
-    off: function(type, f) {off(this, type, f);},
-
     operation: function(f){return runInOp(this, f);},
 
     refresh: operation(null, function() {
@@ -3055,6 +3147,7 @@ window.CodeMirror = (function() {
     getScrollerElement: function(){return this.display.scroller;},
     getGutterElement: function(){return this.display.gutters;}
   };
+  eventMixin(CodeMirror);
 
   // OPTION DEFAULTS
 
@@ -3111,6 +3204,7 @@ window.CodeMirror = (function() {
     cm.display.gutters.style.left = val ? compensateForHScroll(cm.display) + "px" : "0";
     cm.refresh();
   }, true);
+  option("coverGutterNextToScrollbar", false, updateScrollbars, true);
   option("lineNumbers", false, function(cm) {
     setGuttersForLineNumbers(cm.options);
     guttersChanged(cm);
@@ -3126,6 +3220,7 @@ window.CodeMirror = (function() {
   option("dragDrop", true);
 
   option("cursorBlinkRate", 530);
+  option("cursorScrollMargin", 0);
   option("cursorHeight", 1);
   option("workTime", 100);
   option("workDelay", 100);
@@ -3163,16 +3258,21 @@ window.CodeMirror = (function() {
   };
 
   CodeMirror.resolveMode = function(spec) {
-    if (typeof spec == "string" && mimeModes.hasOwnProperty(spec))
+    if (typeof spec == "string" && mimeModes.hasOwnProperty(spec)) {
       spec = mimeModes[spec];
-    else if (typeof spec == "string" && /^[\w\-]+\/[\w\-]+\+xml$/.test(spec))
+    } else if (spec && typeof spec.name == "string" && mimeModes.hasOwnProperty(spec.name)) {
+      var found = mimeModes[spec.name];
+      spec = createObj(found, spec);
+      spec.name = found.name;
+    } else if (typeof spec == "string" && /^[\w\-]+\/[\w\-]+\+xml$/.test(spec)) {
       return CodeMirror.resolveMode("application/xml");
+    }
     if (typeof spec == "string") return {name: spec};
     else return spec || {name: "null"};
   };
 
   CodeMirror.getMode = function(options, spec) {
-    spec = CodeMirror.resolveMode(spec);
+    var spec = CodeMirror.resolveMode(spec);
     var mfactory = modes[spec.name];
     if (!mfactory) return CodeMirror.getMode(options, "text/plain");
     var modeObj = mfactory(options, spec);
@@ -3185,6 +3285,7 @@ window.CodeMirror = (function() {
       }
     }
     modeObj.name = spec.name;
+
     return modeObj;
   };
 
@@ -3211,6 +3312,16 @@ window.CodeMirror = (function() {
 
   var initHooks = [];
   CodeMirror.defineInitHook = function(f) {initHooks.push(f);};
+
+  var helpers = CodeMirror.helpers = {};
+  CodeMirror.registerHelper = function(type, name, value) {
+    if (!helpers.hasOwnProperty(type)) helpers[type] = CodeMirror[type] = {};
+    helpers[type][name] = value;
+  };
+
+  // UTILITIES
+
+  CodeMirror.isWordChar = isWordChar;
 
   // MODE STATE HANDLING
 
@@ -3256,6 +3367,10 @@ window.CodeMirror = (function() {
     deleteLine: function(cm) {
       var l = cm.getCursor().line;
       cm.replaceRange("", Pos(l, 0), Pos(l), "+delete");
+    },
+    delLineLeft: function(cm) {
+      var cur = cm.getCursor();
+      cm.replaceRange("", Pos(cur.line, 0), cur, "+delete");
     },
     undo: function(cm) {cm.undo();},
     redo: function(cm) {cm.redo();},
@@ -3352,7 +3467,7 @@ window.CodeMirror = (function() {
     "Alt-Right": "goGroupRight", "Cmd-Left": "goLineStart", "Cmd-Right": "goLineEnd", "Alt-Backspace": "delGroupBefore",
     "Ctrl-Alt-Backspace": "delGroupAfter", "Alt-Delete": "delGroupAfter", "Cmd-S": "save", "Cmd-F": "find",
     "Cmd-G": "findNext", "Shift-Cmd-G": "findPrev", "Cmd-Alt-F": "replace", "Shift-Cmd-Alt-F": "replaceAll",
-    "Cmd-[": "indentLess", "Cmd-]": "indentMore",
+    "Cmd-[": "indentLess", "Cmd-]": "indentMore", "Cmd-Backspace": "delLineLeft",
     fallthrough: ["basic", "emacsy"]
   };
   keyMap["default"] = mac ? keyMap.macDefault : keyMap.pcDefault;
@@ -3391,7 +3506,7 @@ window.CodeMirror = (function() {
 
     for (var i = 0; i < maps.length; ++i) {
       var done = lookup(maps[i]);
-      if (done) return done;
+      if (done) return done != "stop";
     }
   }
   function isModifierKey(event) {
@@ -3545,6 +3660,7 @@ window.CodeMirror = (function() {
     this.doc = doc;
   }
   CodeMirror.TextMarker = TextMarker;
+  eventMixin(TextMarker);
 
   TextMarker.prototype.clear = function() {
     if (this.explicitlyCleared) return;
@@ -3573,7 +3689,7 @@ window.CodeMirror = (function() {
     if (min != null && cm) regChange(cm, min, max + 1);
     this.lines.length = 0;
     this.explicitlyCleared = true;
-    if (this.collapsed && this.doc.cantEdit) {
+    if (this.atomic && this.doc.cantEdit) {
       this.doc.cantEdit = false;
       if (cm) reCheckSelection(cm);
     }
@@ -3596,15 +3712,18 @@ window.CodeMirror = (function() {
     return from && {from: from, to: to};
   };
 
-  TextMarker.prototype.getOptions = function(copyWidget) {
-    var repl = this.replacedWith;
-    return {className: this.className,
-            inclusiveLeft: this.inclusiveLeft, inclusiveRight: this.inclusiveRight,
-            atomic: this.atomic,
-            collapsed: this.collapsed,
-            replacedWith: copyWidget ? repl && repl.cloneNode(true) : repl,
-            readOnly: this.readOnly,
-            startStyle: this.startStyle, endStyle: this.endStyle};
+  TextMarker.prototype.changed = function() {
+    var pos = this.find(), cm = this.doc.cm;
+    if (!pos || !cm) return;
+    var line = getLine(this.doc, pos.from.line);
+    clearCachedMeasurement(cm, line);
+    if (pos.from.line >= cm.display.showingFrom && pos.from.line < cm.display.showingTo) {
+      for (var node = cm.display.lineDiv.firstChild; node; node = node.nextSibling) if (node.lineObj == line) {
+        if (node.offsetHeight != line.height) updateLineHeight(line, node.offsetHeight);
+        break;
+      }
+      runInOp(cm, function() { cm.curOp.selectionChanged = true; });
+    }
   };
 
   TextMarker.prototype.attachLine = function(line) {
@@ -3633,6 +3752,7 @@ window.CodeMirror = (function() {
     if (marker.replacedWith) {
       marker.collapsed = true;
       marker.replacedWith = elt("span", [marker.replacedWith], "CodeMirror-widget");
+      if (!options.handleMouseEvents) marker.replacedWith.ignoreEvents = true;
     }
     if (marker.collapsed) sawCollapsedSpans = true;
 
@@ -3675,7 +3795,7 @@ window.CodeMirror = (function() {
     }
     if (cm) {
       if (updateMaxLine) cm.curOp.updateMaxLine = true;
-      if (marker.className || marker.startStyle || marker.endStyle || marker.collapsed)
+      if (marker.className || marker.title || marker.startStyle || marker.endStyle || marker.collapsed)
         regChange(cm, from.line, to.line + 1);
       if (marker.atomic) reCheckSelection(cm);
     }
@@ -3693,6 +3813,7 @@ window.CodeMirror = (function() {
     }
   }
   CodeMirror.SharedTextMarker = SharedTextMarker;
+  eventMixin(SharedTextMarker);
 
   SharedTextMarker.prototype.clear = function() {
     if (this.explicitlyCleared) return;
@@ -3703,11 +3824,6 @@ window.CodeMirror = (function() {
   };
   SharedTextMarker.prototype.find = function() {
     return this.primary.find();
-  };
-  SharedTextMarker.prototype.getOptions = function(copyWidget) {
-    var inner = this.primary.getOptions(copyWidget);
-    inner.shared = true;
-    return inner;
   };
 
   function markTextShared(doc, from, to, options, type) {
@@ -3811,6 +3927,13 @@ window.CodeMirror = (function() {
         }
       }
     }
+    if (sameLine && first) {
+      // Make sure we didn't create any zero-length spans
+      for (var i = 0; i < first.length; ++i)
+        if (first[i].from != null && first[i].from == first[i].to && first[i].marker.type != "bookmark")
+          first.splice(i--, 1);
+      if (!first.length) first = null;
+    }
 
     var newMarkers = [first];
     if (!sameLine) {
@@ -3905,6 +4028,7 @@ window.CodeMirror = (function() {
       sp = sps[i];
       if (!sp.marker.collapsed) continue;
       if (sp.from == null) return true;
+      if (sp.marker.replacedWith) continue;
       if (sp.from == 0 && sp.marker.inclusiveLeft && lineIsHiddenInner(doc, line, sp))
         return true;
     }
@@ -3918,7 +4042,7 @@ window.CodeMirror = (function() {
       return true;
     for (var sp, i = 0; i < line.markedSpans.length; ++i) {
       sp = line.markedSpans[i];
-      if (sp.marker.collapsed && sp.from == span.to &&
+      if (sp.marker.collapsed && !sp.marker.replacedWith && sp.from == span.to &&
           (sp.marker.inclusiveLeft || span.marker.inclusiveRight) &&
           lineIsHiddenInner(doc, line, sp)) return true;
     }
@@ -3942,11 +4066,12 @@ window.CodeMirror = (function() {
   // LINE WIDGETS
 
   var LineWidget = CodeMirror.LineWidget = function(cm, node, options) {
-    for (var opt in options) if (options.hasOwnProperty(opt))
+    if (options) for (var opt in options) if (options.hasOwnProperty(opt))
       this[opt] = options[opt];
     this.cm = cm;
     this.node = node;
   };
+  eventMixin(LineWidget);
   function widgetOperation(f) {
     return function() {
       var withOp = !this.cm.curOp;
@@ -3961,7 +4086,9 @@ window.CodeMirror = (function() {
     if (no == null || !ws) return;
     for (var i = 0; i < ws.length; ++i) if (ws[i] == this) ws.splice(i--, 1);
     if (!ws.length) this.line.widgets = null;
+    var aboveVisible = heightAtLine(this.cm, this.line) < this.cm.doc.scrollTop;
     updateLineHeight(this.line, Math.max(0, this.line.height - widgetHeight(this)));
+    if (aboveVisible) addToScrollPos(this.cm, 0, -this.height);
     regChange(this.cm, no, no + 1);
   });
   LineWidget.prototype.changed = widgetOperation(function() {
@@ -3985,10 +4112,12 @@ window.CodeMirror = (function() {
     var widget = new LineWidget(cm, node, options);
     if (widget.noHScroll) cm.display.alignWidgets = true;
     changeLine(cm, handle, function(line) {
-      (line.widgets || (line.widgets = [])).push(widget);
+      var widgets = line.widgets || (line.widgets = []);
+      if (widget.insertAt == null) widgets.push(widget);
+      else widgets.splice(Math.min(widgets.length - 1, Math.max(0, widget.insertAt)), 0, widget);
       widget.line = line;
       if (!lineIsHidden(cm.doc, line) || widget.showIfHidden) {
-        var aboveVisible = heightAtLine(cm, line) < cm.display.scroller.scrollTop;
+        var aboveVisible = heightAtLine(cm, line) < cm.doc.scrollTop;
         updateLineHeight(line, line.height + widgetHeight(widget));
         if (aboveVisible) addToScrollPos(cm, 0, widget.height);
       }
@@ -4001,12 +4130,12 @@ window.CodeMirror = (function() {
 
   // Line objects. These hold state related to a line, including
   // highlighting info (the styles array).
-  function makeLine(text, markedSpans, estimateHeight) {
-    var line = {text: text};
-    attachMarkedSpans(line, markedSpans);
-    line.height = estimateHeight ? estimateHeight(line) : 1;
-    return line;
-  }
+  var Line = CodeMirror.Line = function(text, markedSpans, estimateHeight) {
+    this.text = text;
+    attachMarkedSpans(this, markedSpans);
+    this.height = estimateHeight ? estimateHeight(this) : 1;
+  };
+  eventMixin(Line);
 
   function updateLine(line, text, markedSpans, estimateHeight) {
     line.text = text;
@@ -4030,7 +4159,7 @@ window.CodeMirror = (function() {
   function runMode(cm, text, mode, state, f) {
     var flattenSpans = mode.flattenSpans;
     if (flattenSpans == null) flattenSpans = cm.options.flattenSpans;
-    var curText = "", curStyle = null;
+    var curStart = 0, curStyle = null;
     var stream = new StringStream(text, cm.options.tabSize), style;
     if (text == "" && mode.blankLine) mode.blankLine(state);
     while (!stream.eol()) {
@@ -4042,14 +4171,13 @@ window.CodeMirror = (function() {
       } else {
         style = mode.token(stream, state);
       }
-      var substr = stream.current();
-      stream.start = stream.pos;
       if (!flattenSpans || curStyle != style) {
-        if (curText) f(curText, curStyle);
-        curText = substr; curStyle = style;
-      } else curText = curText + substr;
+        if (curStart < stream.start) f(stream.start, curStyle);
+        curStart = stream.start; curStyle = style;
+      }
+      stream.start = stream.pos;
     }
-    if (curText) f(curText, curStyle);
+    if (curStart < stream.pos) f(stream.pos, curStyle);
   }
 
   function highlightLine(cm, line, state) {
@@ -4057,27 +4185,24 @@ window.CodeMirror = (function() {
     // mode/overlays that it is based on (for easy invalidation).
     var st = [cm.state.modeGen];
     // Compute the base array of styles
-    runMode(cm, line.text, cm.doc.mode, state, function(txt, style) {st.push(txt, style);});
+    runMode(cm, line.text, cm.doc.mode, state, function(end, style) {st.push(end, style);});
 
     // Run overlays, adjust style array.
     for (var o = 0; o < cm.state.overlays.length; ++o) {
-      var overlay = cm.state.overlays[o], i = 1;
-      runMode(cm, line.text, overlay.mode, true, function(txt, style) {
-        var start = i, len = txt.length;
+      var overlay = cm.state.overlays[o], i = 1, at = 0;
+      runMode(cm, line.text, overlay.mode, true, function(end, style) {
+        var start = i;
         // Ensure there's a token end at the current position, and that i points at it
-        while (len) {
-          var cur = st[i], len_ = cur.length;
-          if (len_ <= len) {
-            len -= len_;
-          } else {
-            st.splice(i, 1, cur.slice(0, len), st[i+1], cur.slice(len));
-            len = 0;
-          }
+        while (at < end) {
+          var i_end = st[i];
+          if (i_end > end)
+            st.splice(i, 1, end, st[i+1], i_end);
           i += 2;
+          at = Math.min(end, i_end);
         }
         if (!style) return;
         if (overlay.opaque) {
-          st.splice(start, i - start, txt, style);
+          st.splice(start, i - start, end, style);
           i = start + 2;
         } else {
           for (; start < i; start += 2) {
@@ -4117,37 +4242,31 @@ window.CodeMirror = (function() {
   }
 
   function lineContent(cm, realLine, measure) {
-    var merged, line = realLine, lineBefore, sawBefore, simple = true;
-    while (merged = collapsedSpanAtStart(line)) {
-      simple = false;
+    var merged, line = realLine, empty = true;
+    while (merged = collapsedSpanAtStart(line))
       line = getLine(cm.doc, merged.find().from.line);
-      if (!lineBefore) lineBefore = line;
-    }
 
     var builder = {pre: elt("pre"), col: 0, pos: 0, display: !measure,
-                   measure: null, addedOne: false, cm: cm};
+                   measure: null, measuredSomething: false, cm: cm};
     if (line.textClass) builder.pre.className = line.textClass;
 
     do {
+      if (line.text) empty = false;
       builder.measure = line == realLine && measure;
       builder.pos = 0;
       builder.addToken = builder.measure ? buildTokenMeasure : buildToken;
       if ((ie || webkit) && cm.getOption("lineWrapping"))
         builder.addToken = buildTokenSplitSpaces(builder.addToken);
-      if (measure && sawBefore && line != realLine && !builder.addedOne) {
-        measure[0] = builder.pre.appendChild(zeroWidthElement(cm.display.measure));
-        builder.addedOne = true;
-      }
       var next = insertLineContent(line, builder, getLineStyles(cm, line));
-      sawBefore = line == lineBefore;
-      if (next) {
-        line = getLine(cm.doc, next.to.line);
-        simple = false;
+      if (measure && line == realLine && !builder.measuredSomething) {
+        measure[0] = builder.pre.appendChild(zeroWidthElement(cm.display.measure));
+        builder.measuredSomething = true;
       }
+      if (next) line = getLine(cm.doc, next.to.line);
     } while (next);
 
-    if (measure && !builder.addedOne)
-      measure[0] = builder.pre.appendChild(simple ? elt("span", "\u00a0") : zeroWidthElement(cm.display.measure));
+    if (measure && !builder.measuredSomething && !measure[0])
+      measure[0] = builder.pre.appendChild(empty ? elt("span", "\u00a0") : zeroWidthElement(cm.display.measure));
     if (!builder.pre.firstChild && !lineIsHidden(cm.doc, realLine))
       builder.pre.appendChild(document.createTextNode("\u00a0"));
 
@@ -4171,7 +4290,7 @@ window.CodeMirror = (function() {
   }
 
   var tokenSpecialChars = /[\t\u0000-\u0019\u00ad\u200b\u2028\u2029\uFEFF]/g;
-  function buildToken(builder, text, style, startStyle, endStyle) {
+  function buildToken(builder, text, style, startStyle, endStyle, title) {
     if (!text) return;
     if (!tokenSpecialChars.test(text)) {
       builder.col += text.length;
@@ -4204,7 +4323,9 @@ window.CodeMirror = (function() {
       var fullStyle = style || "";
       if (startStyle) fullStyle += startStyle;
       if (endStyle) fullStyle += endStyle;
-      return builder.pre.appendChild(elt("span", [content], fullStyle));
+      var token = elt("span", [content], fullStyle);
+      if (title) token.title = title;
+      return builder.pre.appendChild(token);
     }
     builder.pre.appendChild(content);
   }
@@ -4216,13 +4337,14 @@ window.CodeMirror = (function() {
       if (ch >= "\ud800" && ch < "\udbff" && i < text.length - 1) {
         ch = text.slice(i, i + 2);
         ++i;
-      } else if (i && wrapping &&
-                 spanAffectsWrapping.test(text.slice(i - 1, i + 1))) {
+      } else if (i && wrapping && spanAffectsWrapping(text, i)) {
         builder.pre.appendChild(elt("wbr"));
       }
+      var old = builder.measure[builder.pos];
       var span = builder.measure[builder.pos] =
         buildToken(builder, ch, style,
                    start && startStyle, i == text.length - 1 && endStyle);
+      if (old) span.leftSide = old.leftSide || old;
       // In IE single-space nodes wrap differently than spaces
       // embedded in larger text nodes, except when set to
       // white-space: normal (issue #1268).
@@ -4231,7 +4353,7 @@ window.CodeMirror = (function() {
         span.style.whiteSpace = "normal";
       builder.pos += ch.length;
     }
-    if (text.length) builder.addedOne = true;
+    if (text.length) builder.measuredSomething = true;
   }
 
   function buildTokenSplitSpaces(inner) {
@@ -4241,18 +4363,27 @@ window.CodeMirror = (function() {
       out += " ";
       return out;
     }
-    return function(builder, text, style, startStyle, endStyle) {
-      return inner(builder, text.replace(/ {3,}/, split), style, startStyle, endStyle);
+    return function(builder, text, style, startStyle, endStyle, title) {
+      return inner(builder, text.replace(/ {3,}/, split), style, startStyle, endStyle, title);
     };
   }
 
-  function buildCollapsedSpan(builder, size, widget) {
+  function buildCollapsedSpan(builder, size, marker, ignoreWidget) {
+    var widget = !ignoreWidget && marker.replacedWith;
     if (widget) {
       if (!builder.display) widget = widget.cloneNode(true);
       builder.pre.appendChild(widget);
-      if (builder.measure && size) {
-        builder.measure[builder.pos] = widget;
-        builder.addedOne = true;
+      if (builder.measure) {
+        if (size) {
+          builder.measure[builder.pos] = widget;
+        } else {
+          var elt = builder.measure[builder.pos] = zeroWidthElement(builder.cm.display.measure);
+          if (marker.type != "bookmark" || marker.insertLeft)
+            builder.pre.insertBefore(elt, widget);
+          else
+            builder.pre.appendChild(elt);
+        }
+        builder.measuredSomething = true;
       }
     }
     builder.pos += size;
@@ -4261,19 +4392,18 @@ window.CodeMirror = (function() {
   // Outputs a number of spans to make up a line, taking highlighting
   // and marked text into account.
   function insertLineContent(line, builder, styles) {
-    var spans = line.markedSpans;
+    var spans = line.markedSpans, allText = line.text, at = 0;
     if (!spans) {
       for (var i = 1; i < styles.length; i+=2)
-        builder.addToken(builder, styles[i], styleToClass(styles[i+1]));
+        builder.addToken(builder, allText.slice(at, at = styles[i]), styleToClass(styles[i+1]));
       return;
     }
 
-    var allText = line.text, len = allText.length;
-    var pos = 0, i = 1, text = "", style;
-    var nextChange = 0, spanStyle, spanEndStyle, spanStartStyle, collapsed;
+    var len = allText.length, pos = 0, i = 1, text = "", style;
+    var nextChange = 0, spanStyle, spanEndStyle, spanStartStyle, title, collapsed;
     for (;;) {
       if (nextChange == pos) { // Update current marker set
-        spanStyle = spanEndStyle = spanStartStyle = "";
+        spanStyle = spanEndStyle = spanStartStyle = title = "";
         collapsed = null; nextChange = Infinity;
         var foundBookmark = null;
         for (var j = 0; j < spans.length; ++j) {
@@ -4283,17 +4413,17 @@ window.CodeMirror = (function() {
             if (m.className) spanStyle += " " + m.className;
             if (m.startStyle && sp.from == pos) spanStartStyle += " " + m.startStyle;
             if (m.endStyle && sp.to == nextChange) spanEndStyle += " " + m.endStyle;
-            if (m.collapsed && (!collapsed || collapsed.marker.width < m.width))
+            if (m.title && !title) title = m.title;
+            if (m.collapsed && (!collapsed || collapsed.marker.size < m.size))
               collapsed = sp;
           } else if (sp.from > pos && nextChange > sp.from) {
             nextChange = sp.from;
           }
-          if (m.type == "bookmark" && sp.from == pos && m.replacedWith)
-            foundBookmark = m.replacedWith;
+          if (m.type == "bookmark" && sp.from == pos && m.replacedWith) foundBookmark = m;
         }
         if (collapsed && (collapsed.from || 0) == pos) {
           buildCollapsedSpan(builder, (collapsed.to == null ? len : collapsed.to) - pos,
-                             collapsed.from != null && collapsed.marker.replacedWith);
+                             collapsed.marker, collapsed.from == null);
           if (collapsed.to == null) return collapsed.marker.find();
         }
         if (foundBookmark && !collapsed) buildCollapsedSpan(builder, 0, foundBookmark);
@@ -4307,13 +4437,14 @@ window.CodeMirror = (function() {
           if (!collapsed) {
             var tokenText = end > upto ? text.slice(0, upto - pos) : text;
             builder.addToken(builder, tokenText, style ? style + spanStyle : spanStyle,
-                             spanStartStyle, pos + tokenText.length == nextChange ? spanEndStyle : "");
+                             spanStartStyle, pos + tokenText.length == nextChange ? spanEndStyle : "", title);
           }
           if (end >= upto) {text = text.slice(upto - pos); pos = upto; break;}
           pos = end;
           spanStartStyle = "";
         }
-        text = styles[i++]; style = styleToClass(styles[i++]);
+        text = allText.slice(at, at = styles[i++]);
+        style = styleToClass(styles[i++]);
       }
     }
   }
@@ -4336,7 +4467,7 @@ window.CodeMirror = (function() {
       // This is a whole-line replace. Treated specially to make
       // sure line objects move the way they are supposed to.
       for (var i = 0, e = text.length - 1, added = []; i < e; ++i)
-        added.push(makeLine(text[i], spansFor(i), estimateHeight));
+        added.push(new Line(text[i], spansFor(i), estimateHeight));
       update(lastLine, lastLine.text, lastSpans);
       if (nlines) doc.remove(from.line, nlines);
       if (added.length) doc.insert(from.line, added);
@@ -4345,8 +4476,8 @@ window.CodeMirror = (function() {
         update(firstLine, firstLine.text.slice(0, from.ch) + lastText + firstLine.text.slice(to.ch), lastSpans);
       } else {
         for (var added = [], i = 1, e = text.length - 1; i < e; ++i)
-          added.push(makeLine(text[i], spansFor(i), estimateHeight));
-        added.push(makeLine(lastText + firstLine.text.slice(to.ch), lastSpans, estimateHeight));
+          added.push(new Line(text[i], spansFor(i), estimateHeight));
+        added.push(new Line(lastText + firstLine.text.slice(to.ch), lastSpans, estimateHeight));
         update(firstLine, firstLine.text.slice(0, from.ch) + text[0], spansFor(0));
         doc.insert(from.line + 1, added);
       }
@@ -4357,7 +4488,7 @@ window.CodeMirror = (function() {
       update(firstLine, firstLine.text.slice(0, from.ch) + text[0], spansFor(0));
       update(lastLine, lastText + lastLine.text.slice(to.ch), lastSpans);
       for (var i = 1, e = text.length - 1, added = []; i < e; ++i)
-        added.push(makeLine(text[i], spansFor(i), estimateHeight));
+        added.push(new Line(text[i], spansFor(i), estimateHeight));
       if (nlines > 1) doc.remove(from.line + 1, nlines - 1);
       doc.insert(from.line + 1, added);
     }
@@ -4500,11 +4631,12 @@ window.CodeMirror = (function() {
     if (!(this instanceof Doc)) return new Doc(text, mode, firstLine);
     if (firstLine == null) firstLine = 0;
 
-    BranchChunk.call(this, [new LeafChunk([makeLine("", null)])]);
+    BranchChunk.call(this, [new LeafChunk([new Line("", null)])]);
     this.first = firstLine;
     this.scrollTop = this.scrollLeft = 0;
     this.cantEdit = false;
     this.history = makeHistory();
+    this.cleanGeneration = 1;
     this.frontier = firstLine;
     var start = Pos(firstLine, 0);
     this.sel = {from: start, to: start, head: start, anchor: start, shift: false, extend: false, goalColumn: null};
@@ -4516,6 +4648,7 @@ window.CodeMirror = (function() {
   };
 
   Doc.prototype = createObj(BranchChunk.prototype, {
+    constructor: Doc,
     iter: function(from, to, op) {
       if (op) this.iterN(from - this.first, to - from, op);
       else this.iterN(this.first, this.first + this.size, from);
@@ -4563,6 +4696,11 @@ window.CodeMirror = (function() {
     getLineHandle: function(line) {if (isLine(this, line)) return getLine(this, line);},
     getLineNumber: function(line) {return lineNo(line);},
 
+    getLineHandleVisualStart: function(line) {
+      if (typeof line == "number") line = getLine(this, line);
+      return visualLine(this, line);
+    },
+
     lineCount: function() {return this.size;},
     firstLine: function() {return this.first;},
     lastLine: function() {return this.first + this.size - 1;},
@@ -4604,20 +4742,25 @@ window.CodeMirror = (function() {
       var hist = this.history;
       return {undo: hist.done.length, redo: hist.undone.length};
     },
-    clearHistory: function() {this.history = makeHistory();},
+    clearHistory: function() {this.history = makeHistory(this.history.maxGeneration);},
 
     markClean: function() {
-      this.history.dirtyCounter = 0;
-      this.history.lastOp = this.history.lastOrigin = null;
+      this.cleanGeneration = this.changeGeneration();
     },
-    isClean: function () {return this.history.dirtyCounter == 0;},
+    changeGeneration: function() {
+      this.history.lastOp = this.history.lastOrigin = null;
+      return this.history.generation;
+    },
+    isClean: function (gen) {
+      return this.history.generation == (gen || this.cleanGeneration);
+    },
 
     getHistory: function() {
       return {done: copyHistoryArray(this.history.done),
               undone: copyHistoryArray(this.history.undone)};
     },
     setHistory: function(histData) {
-      var hist = this.history = makeHistory();
+      var hist = this.history = makeHistory(this.history.maxGeneration);
       hist.done = histData.done.slice(0);
       hist.undone = histData.undone.slice(0);
     },
@@ -4727,6 +4870,8 @@ window.CodeMirror = (function() {
     CodeMirror.prototype[prop] = (function(method) {
       return function() {return method.apply(this.doc, arguments);};
     })(Doc.prototype[prop]);
+
+  eventMixin(Doc);
 
   function linkedDocs(doc, f, sharedHistOnly) {
     function propagate(doc, skip, sharedHist) {
@@ -4847,7 +4992,7 @@ window.CodeMirror = (function() {
 
   // HISTORY
 
-  function makeHistory() {
+  function makeHistory(startGen) {
     return {
       // Arrays of history events. Doing something adds an event to
       // done and clears undo. Undoing moves events from done to
@@ -4857,7 +5002,7 @@ window.CodeMirror = (function() {
       // event
       lastTime: 0, lastOp: null, lastOrigin: null,
       // Used by the isClean() method
-      dirtyCounter: 0
+      generation: startGen || 1, maxGeneration: startGen || 1
     };
   }
 
@@ -4871,7 +5016,8 @@ window.CodeMirror = (function() {
   }
 
   function historyChangeFromChange(doc, change) {
-    var histChange = {from: change.from, to: changeEnd(change), text: getBetween(doc, change.from, change.to)};
+    var from = { line: change.from.line, ch: change.from.ch };
+    var histChange = {from: from, to: changeEnd(change), text: getBetween(doc, change.from, change.to)};
     attachLocalSpans(doc, histChange, change.from.line, change.to.line + 1);
     linkedDocs(doc, function(doc) {attachLocalSpans(doc, histChange, change.from.line, change.to.line + 1);}, true);
     return histChange;
@@ -4901,17 +5047,13 @@ window.CodeMirror = (function() {
     } else {
       // Can not be merged, start a new event.
       cur = {changes: [historyChangeFromChange(doc, change)],
+             generation: hist.generation,
              anchorBefore: doc.sel.anchor, headBefore: doc.sel.head,
              anchorAfter: selAfter.anchor, headAfter: selAfter.head};
       hist.done.push(cur);
+      hist.generation = ++hist.maxGeneration;
       while (hist.done.length > hist.undoDepth)
         hist.done.shift();
-      if (hist.dirtyCounter < 0)
-        // The user has made a change after undoing past the last clean state.
-        // We can never get back to a clean state now until markClean() is called.
-        hist.dirtyCounter = NaN;
-      else
-        hist.dirtyCounter++;
     }
     hist.lastTime = time;
     hist.lastOp = opId;
@@ -5026,6 +5168,9 @@ window.CodeMirror = (function() {
     if (e.stopPropagation) e.stopPropagation();
     else e.cancelBubble = true;
   }
+  function e_defaultPrevented(e) {
+    return e.defaultPrevented != null ? e.defaultPrevented : e.returnValue == false;
+  }
   function e_stop(e) {e_preventDefault(e); e_stopPropagation(e);}
   CodeMirror.e_stop = e_stop;
   CodeMirror.e_preventDefault = e_preventDefault;
@@ -5092,6 +5237,11 @@ window.CodeMirror = (function() {
       delayedCallbacks.push(bnd(arr[i]));
   }
 
+  function signalDOMEvent(cm, e, override) {
+    signal(cm, override || e.type, cm, e);
+    return e_defaultPrevented(e);
+  }
+
   function fireDelayed() {
     --delayedCallbackDepth;
     var delayed = delayedCallbacks;
@@ -5105,6 +5255,11 @@ window.CodeMirror = (function() {
   }
 
   CodeMirror.on = on; CodeMirror.off = off; CodeMirror.signal = signal;
+
+  function eventMixin(ctor) {
+    ctor.prototype.on = function(type, f) {on(this, type, f);};
+    ctor.prototype.off = function(type, f) {off(this, type, f);};
+  }
 
   // MISC UTILITIES
 
@@ -5146,7 +5301,11 @@ window.CodeMirror = (function() {
     if (ios) { // Mobile Safari apparently has a bug where select() is broken.
       node.selectionStart = 0;
       node.selectionEnd = node.value.length;
-    } else node.select();
+    } else {
+      // Suppress mysterious IE10 errors
+      try { node.select(); }
+      catch(_e) {}
+    }
   }
 
   function indexOf(collection, elt) {
@@ -5180,7 +5339,7 @@ window.CodeMirror = (function() {
     return function(){return f.apply(null, args);};
   }
 
-  var nonASCIISingleCaseWordChar = /[\u3040-\u309f\u30a0-\u30ff\u3400-\u4db5\u4e00-\u9fcc]/;
+  var nonASCIISingleCaseWordChar = /[\u3040-\u309f\u30a0-\u30ff\u3400-\u4db5\u4e00-\u9fcc\uac00-\ud7af]/;
   function isWordChar(ch) {
     return /\w/.test(ch) || ch > "\x80" &&
       (ch.toUpperCase() != ch.toLowerCase() || nonASCIISingleCaseWordChar.test(ch));
@@ -5241,13 +5400,26 @@ window.CodeMirror = (function() {
   // word wrapping between certain characters *only* if a new inline
   // element is started between them. This makes it hard to reliably
   // measure the position of things, since that requires inserting an
-  // extra span. This terribly fragile set of regexps matches the
+  // extra span. This terribly fragile set of tests matches the
   // character combinations that suffer from this phenomenon on the
   // various browsers.
-  var spanAffectsWrapping = /^$/; // Won't match any two-character string
-  if (gecko) spanAffectsWrapping = /$'/;
-  else if (safari && !/Version\/([6-9]|\d\d)\b/.test(navigator.userAgent)) spanAffectsWrapping = /\-[^ \-?]|\?[^ !'\"\),.\-\/:;\?\]\}]/;
-  else if (webkit) spanAffectsWrapping = /[~!#%&*)=+}\]|\"\.>,:;][({[<]|-[^\-?\.]|\?[\w~`@#$%\^&*(_=+{[|><]/;
+  function spanAffectsWrapping() { return false; }
+  if (gecko) // Only for "$'"
+    spanAffectsWrapping = function(str, i) {
+      return str.charCodeAt(i - 1) == 36 && str.charCodeAt(i) == 39;
+    };
+  else if (safari && !/Version\/([6-9]|\d\d)\b/.test(navigator.userAgent))
+    spanAffectsWrapping = function(str, i) {
+      return /\-[^ \-?]|\?[^ !\'\"\),.\-\/:;\?\]\}]/.test(str.slice(i - 1, i + 1));
+    };
+  else if (webkit && !/Chrome\/(?:29|[3-9]\d|\d\d\d)\./.test(navigator.userAgent))
+    spanAffectsWrapping = function(str, i) {
+      if (i > 1 && str.charCodeAt(i - 1) == 45) {
+        if (/\w/.test(str.charAt(i - 2)) && /[^\-?\.]/.test(str.charAt(i))) return true;
+        if (i > 2 && /[\d\.,]/.test(str.charAt(i - 2)) && /[\d\.,]/.test(str.charAt(i))) return false;
+      }
+      return /[~!#%&*)=+}\]|\"\.>,:;][({[<]|-[^\-?\.\u2010-\u201f\u2026]|\?[\w~`@#$%\^&*(_=+{[|><]|…[\w~`@#$%\^&*(_=+{[><]/.test(str.slice(i - 1, i + 1));
+    };
 
   var knownScrollbarWidth;
   function scrollbarWidth(measure) {
@@ -5332,11 +5504,15 @@ window.CodeMirror = (function() {
 
   function iterateBidiSections(order, from, to, f) {
     if (!order) return f(from, to, "ltr");
+    var found = false;
     for (var i = 0; i < order.length; ++i) {
       var part = order[i];
-      if (part.from < to && part.to > from || from == to && part.to == from)
+      if (part.from < to && part.to > from || from == to && part.to == from) {
         f(Math.max(part.from, from), Math.min(part.to, to), part.level == 1 ? "rtl" : "ltr");
+        found = true;
+      }
     }
+    if (!found) f(from, to, "ltr");
   }
 
   function bidiLeft(part) { return part.level % 2 ? part.to : part.from; }
@@ -5366,6 +5542,40 @@ window.CodeMirror = (function() {
     return Pos(lineN, ch);
   }
 
+  function compareBidiLevel(order, a, b) {
+    var linedir = order[0].level;
+    if (a == linedir) return true;
+    if (b == linedir) return false;
+    return a < b;
+  }
+  var bidiOther;
+  function getBidiPartAt(order, pos) {
+    for (var i = 0, found; i < order.length; ++i) {
+      var cur = order[i];
+      if (cur.from < pos && cur.to > pos) { bidiOther = null; return i; }
+      if (cur.from == pos || cur.to == pos) {
+        if (found == null) {
+          found = i;
+        } else if (compareBidiLevel(order, cur.level, order[found].level)) {
+          bidiOther = found;
+          return i;
+        } else {
+          bidiOther = i;
+          return found;
+        }
+      }
+    }
+    bidiOther = null;
+    return found;
+  }
+
+  function moveInLine(line, pos, dir, byUnit) {
+    if (!byUnit) return pos + dir;
+    do pos += dir;
+    while (pos > 0 && isExtendingChar.test(line.text.charAt(pos)));
+    return pos;
+  }
+
   // This is somewhat involved. It is needed in order to move
   // 'visually' through bi-directional text -- i.e., pressing left
   // should make the cursor go left, even when in RTL text. The
@@ -5375,37 +5585,24 @@ window.CodeMirror = (function() {
   function moveVisually(line, start, dir, byUnit) {
     var bidi = getOrder(line);
     if (!bidi) return moveLogically(line, start, dir, byUnit);
-    var moveOneUnit = byUnit ? function(pos, dir) {
-      do pos += dir;
-      while (pos > 0 && isExtendingChar.test(line.text.charAt(pos)));
-      return pos;
-    } : function(pos, dir) { return pos + dir; };
-    var linedir = bidi[0].level;
-    for (var i = 0; i < bidi.length; ++i) {
-      var part = bidi[i], sticky = part.level % 2 == linedir;
-      if ((part.from < start && part.to > start) ||
-          (sticky && (part.from == start || part.to == start))) break;
-    }
-    var target = moveOneUnit(start, part.level % 2 ? -dir : dir);
+    var pos = getBidiPartAt(bidi, start), part = bidi[pos];
+    var target = moveInLine(line, start, part.level % 2 ? -dir : dir, byUnit);
 
-    while (target != null) {
-      if (part.level % 2 == linedir) {
-        if (target < part.from || target > part.to) {
-          part = bidi[i += dir];
-          target = part && (dir > 0 == part.level % 2 ? moveOneUnit(part.to, -1) : moveOneUnit(part.from, 1));
-        } else break;
+    for (;;) {
+      if (target > part.from && target < part.to) return target;
+      if (target == part.from || target == part.to) {
+        if (getBidiPartAt(bidi, target) == pos) return target;
+        part = bidi[pos += dir];
+        return (dir > 0) == part.level % 2 ? part.to : part.from;
       } else {
-        if (target == bidiLeft(part)) {
-          part = bidi[--i];
-          target = part && bidiRight(part);
-        } else if (target == bidiRight(part)) {
-          part = bidi[++i];
-          target = part && bidiLeft(part);
-        } else break;
+        part = bidi[pos += dir];
+        if (!part) return null;
+        if ((dir > 0) == part.level % 2)
+          target = moveInLine(line, part.to, -1, byUnit);
+        else
+          target = moveInLine(line, part.from, 1, byUnit);
       }
     }
-
-    return target < 0 || target > line.text.length ? null : target;
   }
 
   function moveLogically(line, start, dir, byUnit) {
@@ -5577,7 +5774,7 @@ window.CodeMirror = (function() {
 
   // THE END
 
-  CodeMirror.version = "3.12";
+  CodeMirror.version = "3.14.1";
 
   return CodeMirror;
 })();
@@ -5896,12 +6093,16 @@ CodeMirror.defineMode("clike", function(config, parserConfig) {
       if (ctx.type == "statement" && firstChar == "}") ctx = ctx.prev;
       var closing = firstChar == ctx.type;
       if (ctx.type == "statement") return ctx.indented + (firstChar == "{" ? 0 : statementIndentUnit);
-      else if (dontAlignCalls && ctx.type == ")" && !closing) return ctx.indented + statementIndentUnit;
-      else if (ctx.align) return ctx.column + (closing ? 0 : 1);
+      else if (ctx.align && (!dontAlignCalls || ctx.type != ")")) return ctx.column + (closing ? 0 : 1);
+      else if (ctx.type == ")" && !closing) return ctx.indented + statementIndentUnit;
       else return ctx.indented + (closing ? 0 : indentUnit);
     },
 
-    electricChars: "{}"
+    electricChars: "{}",
+    blockCommentStart: "/*",
+    blockCommentEnd: "*/",
+    lineComment: "//",
+    fold: "brace"
   };
 });
 
@@ -6045,6 +6246,62 @@ CodeMirror.defineMode("clike", function(config, parserConfig) {
       }
     }
   });
+  mimes(["x-shader/x-vertex", "x-shader/x-fragment"], {
+    name: "clike",
+    keywords: words("float int bool void " +
+                    "vec2 vec3 vec4 ivec2 ivec3 ivec4 bvec2 bvec3 bvec4 " +
+                    "mat2 mat3 mat4 " +
+                    "sampler1D sampler2D sampler3D samplerCube " +
+                    "sampler1DShadow sampler2DShadow" +
+                    "const attribute uniform varying " +
+                    "break continue discard return " +
+                    "for while do if else struct " +
+                    "in out inout"),
+    blockKeywords: words("for while do if else struct"),
+    builtin: words("radians degrees sin cos tan asin acos atan " +
+                    "pow exp log exp2 sqrt inversesqrt " +
+                    "abs sign floor ceil fract mod min max clamp mix step smootstep " +
+                    "length distance dot cross normalize ftransform faceforward " +
+                    "reflect refract matrixCompMult " +
+                    "lessThan lessThanEqual greaterThan greaterThanEqual " +
+                    "equal notEqual any all not " +
+                    "texture1D texture1DProj texture1DLod texture1DProjLod " +
+                    "texture2D texture2DProj texture2DLod texture2DProjLod " +
+                    "texture3D texture3DProj texture3DLod texture3DProjLod " +
+                    "textureCube textureCubeLod " +
+                    "shadow1D shadow2D shadow1DProj shadow2DProj " +
+                    "shadow1DLod shadow2DLod shadow1DProjLod shadow2DProjLod " +
+                    "dFdx dFdy fwidth " +
+                    "noise1 noise2 noise3 noise4"),
+    atoms: words("true false " +
+                "gl_FragColor gl_SecondaryColor gl_Normal gl_Vertex " +
+                "gl_MultiTexCoord0 gl_MultiTexCoord1 gl_MultiTexCoord2 gl_MultiTexCoord3 " +
+                "gl_MultiTexCoord4 gl_MultiTexCoord5 gl_MultiTexCoord6 gl_MultiTexCoord7 " +
+                "gl_FogCoord " +
+                "gl_Position gl_PointSize gl_ClipVertex " +
+                "gl_FrontColor gl_BackColor gl_FrontSecondaryColor gl_BackSecondaryColor " +
+                "gl_TexCoord gl_FogFragCoord " +
+                "gl_FragCoord gl_FrontFacing " +
+                "gl_FragColor gl_FragData gl_FragDepth " +
+                "gl_ModelViewMatrix gl_ProjectionMatrix gl_ModelViewProjectionMatrix " +
+                "gl_TextureMatrix gl_NormalMatrix gl_ModelViewMatrixInverse " +
+                "gl_ProjectionMatrixInverse gl_ModelViewProjectionMatrixInverse " +
+                "gl_TexureMatrixTranspose gl_ModelViewMatrixInverseTranspose " +
+                "gl_ProjectionMatrixInverseTranspose " +
+                "gl_ModelViewProjectionMatrixInverseTranspose " +
+                "gl_TextureMatrixInverseTranspose " +
+                "gl_NormalScale gl_DepthRange gl_ClipPlane " +
+                "gl_Point gl_FrontMaterial gl_BackMaterial gl_LightSource gl_LightModel " +
+                "gl_FrontLightModelProduct gl_BackLightModelProduct " +
+                "gl_TextureColor gl_EyePlaneS gl_EyePlaneT gl_EyePlaneR gl_EyePlaneQ " +
+                "gl_FogParameters " +
+                "gl_MaxLights gl_MaxClipPlanes gl_MaxTextureUnits gl_MaxTextureCoords " +
+                "gl_MaxVertexAttribs gl_MaxVertexUniformComponents gl_MaxVaryingFloats " +
+                "gl_MaxVertexTextureImageUnits gl_MaxTextureImageUnits " +
+                "gl_MaxFragmentUniformComponents gl_MaxCombineTextureImageUnits " +
+                "gl_MaxDrawBuffers"),
+    hooks: {"#": cppHook}
+  });
 }());
 CodeMirror.defineMode("yaml", function() {
 
@@ -6057,7 +6314,9 @@ CodeMirror.defineMode("yaml", function() {
       var esc = state.escaped;
       state.escaped = false;
       /* comments */
-      if (ch == "#") { stream.skipToEnd(); return "comment"; }
+      if (ch == "#" && (stream.pos == 0 || /\s/.test(stream.string.charAt(stream.pos - 1)))) {
+        stream.skipToEnd(); return "comment";
+      }
       if (state.literal && stream.indentation() > state.keyCol) {
         stream.skipToEnd(); return "string";
       } else if (state.literal) { state.literal = false; }
@@ -6153,7 +6412,7 @@ CodeMirror.defineMode("ruby", function(config) {
     "redo", "rescue", "retry", "return", "self", "super", "then", "true", "undef", "unless",
     "until", "when", "while", "yield", "nil", "raise", "throw", "catch", "fail", "loop", "callcc",
     "caller", "lambda", "proc", "public", "protected", "private", "require", "load",
-    "require_relative", "extend", "autoload"
+    "require_relative", "extend", "autoload", "__END__", "__FILE__", "__LINE__", "__dir__"
   ]);
   var indentWords = wordObj(["def", "class", "case", "for", "while", "do", "module", "then",
                              "catch", "loop", "proc", "begin"]);
@@ -6174,14 +6433,16 @@ CodeMirror.defineMode("ruby", function(config) {
     }
     if (stream.eatSpace()) return null;
     var ch = stream.next(), m;
-    if (ch == "`" || ch == "'" || ch == '"' ||
-        (ch == "/" && !stream.eol() && stream.peek() != " ")) {
+    if (ch == "`" || ch == "'" || ch == '"') {
       return chain(readQuoted(ch, "string", ch == '"' || ch == "`"), stream, state);
+    } else if (ch == "/" && !stream.eol() && stream.peek() != " ") {
+      return chain(readQuoted(ch, "string-2", true), stream, state);
     } else if (ch == "%") {
-      var style, embed = false;
+      var style = "string", embed = false;
       if (stream.eat("s")) style = "atom";
       else if (stream.eat(/[WQ]/)) { style = "string"; embed = true; }
-      else if (stream.eat(/[wxqr]/)) style = "string";
+      else if (stream.eat(/[r]/)) { style = "string-2"; embed = true; }
+      else if (stream.eat(/[wxq]/)) style = "string";
       var delim = stream.eat(/[^\w\s]/);
       if (!delim) return "operator";
       if (matching.propertyIsEnumerable(delim)) delim = matching[delim];
@@ -6207,18 +6468,42 @@ CodeMirror.defineMode("ruby", function(config) {
     } else if (ch == ":") {
       if (stream.eat("'")) return chain(readQuoted("'", "atom", false), stream, state);
       if (stream.eat('"')) return chain(readQuoted('"', "atom", true), stream, state);
-      stream.eatWhile(/[\w\?]/);
-      return "atom";
-    } else if (ch == "@") {
+
+      // :> :>> :< :<< are valid symbols
+      if (stream.eat(/[\<\>]/)) {
+        stream.eat(/[\<\>]/);
+        return "atom";
+      }
+
+      // :+ :- :/ :* :| :& :! are valid symbols
+      if (stream.eat(/[\+\-\*\/\&\|\:\!]/)) {
+        return "atom";
+      }
+
+      // Symbols can't start by a digit
+      if (stream.eat(/[a-zA-Z$@_]/)) {
+        stream.eatWhile(/[\w]/);
+        // Only one ? ! = is allowed and only as the last character
+        stream.eat(/[\?\!\=]/);
+        return "atom";
+      }
+      return "operator";
+    } else if (ch == "@" && stream.match(/^@?[a-zA-Z_]/)) {
       stream.eat("@");
-      stream.eatWhile(/[\w\?]/);
+      stream.eatWhile(/[\w]/);
       return "variable-2";
     } else if (ch == "$") {
-      stream.next();
-      stream.eatWhile(/[\w\?]/);
+      if (stream.eat(/[a-zA-Z_]/)) {
+        stream.eatWhile(/[\w]/);
+      } else if (stream.eat(/\d/)) {
+        stream.eat(/\d/);
+      } else {
+        stream.next(); // Must be a special global like $: or $!
+      }
       return "variable-3";
-    } else if (/\w/.test(ch)) {
-      stream.eatWhile(/[\w\?]/);
+    } else if (/[a-zA-Z_]/.test(ch)) {
+      stream.eatWhile(/[\w]/);
+      stream.eat(/[\?\!]/);
       if (stream.eat(":")) return "atom";
       return "ident";
     } else if (ch == "|" && (state.varList || state.lastTok == "{" || state.lastTok == "do")) {
@@ -6252,17 +6537,42 @@ CodeMirror.defineMode("ruby", function(config) {
       return tokenBase(stream, state);
     };
   }
+  function tokenBaseOnce() {
+    var alreadyCalled = false;
+    return function(stream, state) {
+      if (alreadyCalled) {
+        state.tokenize.pop();
+        return state.tokenize[state.tokenize.length-1](stream, state);
+      }
+      alreadyCalled = true;
+      return tokenBase(stream, state);
+    };
+  }
   function readQuoted(quote, style, embed, unescaped) {
     return function(stream, state) {
       var escaped = false, ch;
+
+      if (state.context.type === 'read-quoted-paused') {
+        state.context = state.context.prev;
+        stream.eat("}");
+      }
+
       while ((ch = stream.next()) != null) {
         if (ch == quote && (unescaped || !escaped)) {
           state.tokenize.pop();
           break;
         }
-        if (embed && ch == "#" && !escaped && stream.eat("{")) {
-          state.tokenize.push(tokenBaseUntilBrace(arguments.callee));
-          break;
+        if (embed && ch == "#" && !escaped) {
+          if (stream.eat("{")) {
+            if (quote == "}") {
+              state.context = {prev: state.context, type: 'read-quoted-paused'};
+            }
+            state.tokenize.push(tokenBaseUntilBrace());
+            break;
+          } else if (/[@\$]/.test(stream.peek())) {
+            state.tokenize.push(tokenBaseOnce());
+            break;
+          }
         }
         escaped = !escaped && ch == "\\";
       }
@@ -6329,8 +6639,9 @@ CodeMirror.defineMode("ruby", function(config) {
       return ct.indented + (closing ? 0 : config.indentUnit) +
         (state.continuedLine ? config.indentUnit : 0);
     },
-     electricChars: "}de" // enD and rescuE
 
+    electricChars: "}de", // enD and rescuE
+    lineComment: "#"
   };
 });
 
@@ -6338,8 +6649,8 @@ CodeMirror.defineMIME("text/x-ruby", "ruby");
 
 CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
-  var htmlFound = CodeMirror.mimeModes.hasOwnProperty("text/html");
-  var htmlMode = CodeMirror.getMode(cmCfg, htmlFound ? "text/html" : "text/plain");
+  var htmlFound = CodeMirror.modes.hasOwnProperty("xml");
+  var htmlMode = CodeMirror.getMode(cmCfg, htmlFound ? {name: "xml", htmlMode: true} : "text/plain");
   var aliases = {
     html: "htmlmixed",
     js: "javascript",
@@ -6441,6 +6752,9 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.f = inlineNormal;
       state.block = blockNormal;
     }
+    // Reset state.trailingSpace
+    state.trailingSpace = 0;
+    state.trailingSpaceNewLine = false;
     // Mark this line as blank
     state.thisLineHasContent = false;
     return null;
@@ -6555,6 +6869,12 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       }
     }
 
+    if (state.trailingSpaceNewLine) {
+      styles.push("trailing-space-new-line");
+    } else if (state.trailingSpace) {
+      styles.push("trailing-space-" + (state.trailingSpace % 2 ? "a" : "b"));
+    }
+
     return styles.length ? styles.join(' ') : null;
   }
 
@@ -6646,11 +6966,11 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return type;
     }
 
-    if (ch === '<' && stream.match(/^(https?|ftps?):\/\/(?:[^\\>]|\\.)+>/, true)) {
+    if (ch === '<' && stream.match(/^(https?|ftps?):\/\/(?:[^\\>]|\\.)+>/, false)) {
       return switchInline(stream, state, inlineElement(linkinline, '>'));
     }
 
-    if (ch === '<' && stream.match(/^[^> \\]+@(?:[^\\>]|\\.)+>/, true)) {
+    if (ch === '<' && stream.match(/^[^> \\]+@(?:[^\\>]|\\.)+>/, false)) {
       return switchInline(stream, state, inlineElement(linkemail, '>'));
     }
 
@@ -6704,6 +7024,14 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         } else { // Not surrounded by spaces, back up pointer
           stream.backUp(1);
         }
+      }
+    }
+
+    if (ch === ' ') {
+      if (stream.match(/ +$/, false)) {
+        state.trailingSpace++;
+      } else if (state.trailingSpace) {
+        state.trailingSpaceNewLine = true;
       }
     }
 
@@ -6791,7 +7119,9 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         taskList: false,
         list: false,
         listDepth: 0,
-        quote: 0
+        quote: 0,
+        trailingSpace: 0,
+        trailingSpaceNewLine: false
       };
     },
 
@@ -6819,6 +7149,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         list: s.list,
         listDepth: s.listDepth,
         quote: s.quote,
+        trailingSpace: s.trailingSpace,
+        trailingSpaceNewLine: s.trailingSpaceNewLine,
         md_inside: s.md_inside
       };
     },
@@ -6841,6 +7173,10 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
         // Reset state.code
         state.code = false;
+
+        // Reset state.trailingSpace
+        state.trailingSpace = 0;
+        state.trailingSpaceNewLine = false;
 
         state.f = state.block;
         var indentation = stream.match(/^\s*/, true)[0].replace(/\t/g, '    ').length;
@@ -6922,20 +7258,19 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
         if (stream.eat("[")) {
           if (stream.match("CDATA[")) return chain(inBlock("atom", "]]>"));
           else return null;
-        }
-        else if (stream.match("--")) return chain(inBlock("comment", "-->"));
-        else if (stream.match("DOCTYPE", true, true)) {
+        } else if (stream.match("--")) {
+          return chain(inBlock("comment", "-->"));
+        } else if (stream.match("DOCTYPE", true, true)) {
           stream.eatWhile(/[\w\._\-]/);
           return chain(doctype(1));
+        } else {
+          return null;
         }
-        else return null;
-      }
-      else if (stream.eat("?")) {
+      } else if (stream.eat("?")) {
         stream.eatWhile(/[\w\._\-]/);
         state.tokenize = inBlock("meta", "?>");
         return "meta";
-      }
-      else {
+      } else {
         var isClose = stream.eat("/");
         tagName = "";
         var c;
@@ -6945,8 +7280,7 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
         state.tokenize = inTag;
         return "tag";
       }
-    }
-    else if (ch == "&") {
+    } else if (ch == "&") {
       var ok;
       if (stream.eat("#")) {
         if (stream.eat("x")) {
@@ -6958,8 +7292,7 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
         ok = stream.eatWhile(/[\w\.\-:]/) && stream.eat(";");
       }
       return ok ? "atom" : "error";
-    }
-    else {
+    } else {
       stream.eatWhile(/[^&<]/);
       return null;
     }
@@ -6971,16 +7304,15 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
       state.tokenize = inText;
       type = ch == ">" ? "endTag" : "selfcloseTag";
       return "tag";
-    }
-    else if (ch == "=") {
+    } else if (ch == "=") {
       type = "equals";
       return null;
-    }
-    else if (/[\'\"]/.test(ch)) {
+    } else if (ch == "<") {
+      return "error";
+    } else if (/[\'\"]/.test(ch)) {
       state.tokenize = inAttribute(ch);
       return state.tokenize(stream, state);
-    }
-    else {
+    } else {
       stream.eatWhile(/[^\s\u00a0=<>\"\']/);
       return "word";
     }
@@ -7181,8 +7513,11 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
     },
 
     electricChars: "/",
+    blockCommentStart: "<!--",
+    blockCommentEnd: "-->",
 
-    configuration: parserConfig.htmlMode ? "html" : "xml"
+    configuration: parserConfig.htmlMode ? "html" : "xml",
+    helperType: parserConfig.htmlMode ? "html" : "xml"
   };
 });
 
@@ -7194,6 +7529,7 @@ if (!CodeMirror.mimeModes.hasOwnProperty("text/html"))
 
 CodeMirror.defineMode("javascript", function(config, parserConfig) {
   var indentUnit = config.indentUnit;
+  var statementIndent = parserConfig.statementIndent;
   var jsonMode = parserConfig.json;
   var isTS = parserConfig.typescript;
 
@@ -7418,8 +7754,9 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
   }
   function pushlex(type, info) {
     var result = function() {
-      var state = cx.state;
-      state.lexical = new JSLexical(state.indented, cx.stream.column(), type, null, state.lexical, info);
+      var state = cx.state, indent = state.indented;
+      if (state.lexical.type == "stat") indent = state.lexical.indented;
+      state.lexical = new JSLexical(indent, cx.stream.column(), type, null, state.lexical, info);
     };
     result.lex = true;
     return result;
@@ -7448,31 +7785,32 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     if (type == "keyword b") return cont(pushlex("form"), statement, poplex);
     if (type == "{") return cont(pushlex("}"), block, poplex);
     if (type == ";") return cont();
-    if (type == "if") return cont(pushlex("form"), expression, statement, poplex, maybeelse(cx.state.indented));
+    if (type == "if") return cont(pushlex("form"), expression, statement, poplex, maybeelse);
     if (type == "function") return cont(functiondef);
     if (type == "for") return cont(pushlex("form"), expect("("), pushlex(")"), forspec1, expect(")"),
-                                      poplex, statement, poplex);
+                                   poplex, statement, poplex);
     if (type == "variable") return cont(pushlex("stat"), maybelabel);
     if (type == "switch") return cont(pushlex("form"), expression, pushlex("}", "switch"), expect("{"),
-                                         block, poplex, poplex);
+                                      block, poplex, poplex);
     if (type == "case") return cont(expression, expect(":"));
     if (type == "default") return cont(expect(":"));
     if (type == "catch") return cont(pushlex("form"), pushcontext, expect("("), funarg, expect(")"),
-                                        statement, poplex, popcontext);
+                                     statement, poplex, popcontext);
     return pass(pushlex("stat"), expression, expect(";"), poplex);
   }
   function expression(type) {
-    return expressionInner(type, maybeoperatorComma);
+    return expressionInner(type, false);
   }
   function expressionNoComma(type) {
-    return expressionInner(type, maybeoperatorNoComma);
+    return expressionInner(type, true);
   }
-  function expressionInner(type, maybeop) {
+  function expressionInner(type, noComma) {
+    var maybeop = noComma ? maybeoperatorNoComma : maybeoperatorComma;
     if (atomicTypes.hasOwnProperty(type)) return cont(maybeop);
     if (type == "function") return cont(functiondef);
-    if (type == "keyword c") return cont(maybeexpression);
+    if (type == "keyword c") return cont(noComma ? maybeexpressionNoComma : maybeexpression);
     if (type == "(") return cont(pushlex(")"), maybeexpression, expect(")"), poplex, maybeop);
-    if (type == "operator") return cont(expression);
+    if (type == "operator") return cont(noComma ? expressionNoComma : expression);
     if (type == "[") return cont(pushlex("]"), commasep(expressionNoComma, "]"), poplex, maybeop);
     if (type == "{") return cont(pushlex("}"), commasep(objprop, "}"), poplex, maybeop);
     return cont();
@@ -7480,6 +7818,10 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
   function maybeexpression(type) {
     if (type.match(/[;\}\)\],]/)) return pass();
     return pass(expression);
+  }
+  function maybeexpressionNoComma(type) {
+    if (type.match(/[;\}\)\],]/)) return pass();
+    return pass(expressionNoComma);
   }
 
   function maybeoperatorComma(type, value) {
@@ -7496,7 +7838,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     if (type == ";") return;
     if (type == "(") return cont(pushlex(")", "call"), commasep(expressionNoComma, ")"), poplex, me);
     if (type == ".") return cont(property, me);
-    if (type == "[") return cont(pushlex("]"), expression, expect("]"), poplex, me);
+    if (type == "[") return cont(pushlex("]"), maybeexpression, expect("]"), poplex, me);
   }
   function maybelabel(type) {
     if (type == ":") return cont(poplex, statement);
@@ -7558,14 +7900,8 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     if (value == "=") return cont(expressionNoComma, vardef2);
     if (type == ",") return cont(vardef1);
   }
-  function maybeelse(indent) {
-    return function(type, value) {
-      if (type == "keyword b" && value == "else") {
-        cx.state.lexical = new JSLexical(indent, 0, "form", null, cx.state.lexical);
-        return cont(statement, poplex);
-      }
-      return pass();
-    };
+  function maybeelse(type, value) {
+    if (type == "keyword b" && value == "else") return cont(pushlex("form"), statement, poplex);
   }
   function forspec1(type) {
     if (type == "var") return cont(vardef1, expect(";"), forspec2);
@@ -7626,26 +7962,35 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
       if (state.tokenize == jsTokenComment) return CodeMirror.Pass;
       if (state.tokenize != jsTokenBase) return 0;
       var firstChar = textAfter && textAfter.charAt(0), lexical = state.lexical;
-      if (lexical.type == "stat" && firstChar == "}") lexical = lexical.prev;
-      var type = lexical.type, closing = firstChar == type;
-      if (parserConfig.statementIndent != null) {
-        if (type == ")" && lexical.prev && lexical.prev.type == "stat") lexical = lexical.prev;
-        if (lexical.type == "stat") return lexical.indented + parserConfig.statementIndent;
+      // Kludge to prevent 'maybelse' from blocking lexical scope pops
+      for (var i = state.cc.length - 1; i >= 0; --i) {
+        var c = state.cc[i];
+        if (c == poplex) lexical = lexical.prev;
+        else if (c != maybeelse || /^else\b/.test(textAfter)) break;
       }
+      if (lexical.type == "stat" && firstChar == "}") lexical = lexical.prev;
+      if (statementIndent && lexical.type == ")" && lexical.prev.type == "stat")
+        lexical = lexical.prev;
+      var type = lexical.type, closing = firstChar == type;
 
       if (type == "vardef") return lexical.indented + (state.lastType == "operator" || state.lastType == "," ? 4 : 0);
       else if (type == "form" && firstChar == "{") return lexical.indented;
       else if (type == "form") return lexical.indented + indentUnit;
       else if (type == "stat")
-        return lexical.indented + (state.lastType == "operator" || state.lastType == "," ? indentUnit : 0);
-      else if (lexical.info == "switch" && !closing)
+        return lexical.indented + (state.lastType == "operator" || state.lastType == "," ? statementIndent || indentUnit : 0);
+      else if (lexical.info == "switch" && !closing && parserConfig.doubleIndentSwitch != false)
         return lexical.indented + (/^(?:case|default)\b/.test(textAfter) ? indentUnit : 2 * indentUnit);
       else if (lexical.align) return lexical.column + (closing ? 0 : 1);
       else return lexical.indented + (closing ? 0 : indentUnit);
     },
 
     electricChars: ":{}",
+    blockCommentStart: jsonMode ? null : "/*",
+    blockCommentEnd: jsonMode ? null : "*/",
+    lineComment: jsonMode ? null : "//",
+    fold: "brace",
 
+    helperType: jsonMode ? "json" : "javascript",
     jsonMode: jsonMode
   };
 });
@@ -7655,6 +8000,7 @@ CodeMirror.defineMIME("text/ecmascript", "javascript");
 CodeMirror.defineMIME("application/javascript", "javascript");
 CodeMirror.defineMIME("application/ecmascript", "javascript");
 CodeMirror.defineMIME("application/json", {name: "javascript", json: true});
+CodeMirror.defineMIME("application/x-json", {name: "javascript", json: true});
 CodeMirror.defineMIME("text/typescript", { name: "javascript", typescript: true });
 CodeMirror.defineMIME("application/typescript", { name: "javascript", typescript: true });
 CodeMirror.defineMode("css", function(config) {
@@ -7762,7 +8108,8 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
     startState: function(base) {
       return {tokenize: tokenBase,
               baseIndent: base || 0,
-              stack: []};
+              stack: [],
+              lastToken: null};
     },
 
     token: function(stream, state) {
@@ -7822,28 +8169,29 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
       var context = state.stack[state.stack.length-1];
       if (style == "variable") {
         if (type == "variable-definition") state.stack.push("propertyValue");
-        return "variable-2";
+        return state.lastToken = "variable-2";
       } else if (style == "property") {
-        if (context == "propertyValue"){
-          if (valueKeywords[stream.current()]) {
+        var word = stream.current().toLowerCase();
+        if (context == "propertyValue") {
+          if (valueKeywords.hasOwnProperty(word)) {
             style = "string-2";
-          } else if (colorKeywords[stream.current()]) {
+          } else if (colorKeywords.hasOwnProperty(word)) {
             style = "keyword";
           } else {
             style = "variable-2";
           }
         } else if (context == "rule") {
-          if (!propertyKeywords[stream.current()]) {
+          if (!propertyKeywords.hasOwnProperty(word)) {
             style += " error";
           }
         } else if (context == "block") {
           // if a value is present in both property, value, or color, the order
           // of preference is property -> color -> value
-          if (propertyKeywords[stream.current()]) {
+          if (propertyKeywords.hasOwnProperty(word)) {
             style = "property";
-          } else if (colorKeywords[stream.current()]) {
+          } else if (colorKeywords.hasOwnProperty(word)) {
             style = "keyword";
-          } else if (valueKeywords[stream.current()]) {
+          } else if (valueKeywords.hasOwnProperty(word)) {
             style = "string-2";
           } else {
             style = "tag";
@@ -7853,42 +8201,42 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
         } else if (context == "@media") {
           if (atMediaTypes[stream.current()]) {
             style = "attribute"; // Known attribute
-          } else if (/^(only|not)$/i.test(stream.current())) {
+          } else if (/^(only|not)$/.test(word)) {
             style = "keyword";
-          } else if (stream.current().toLowerCase() == "and") {
+          } else if (word == "and") {
             style = "error"; // "and" is only allowed in @mediaType
-          } else if (atMediaFeatures[stream.current()]) {
+          } else if (atMediaFeatures.hasOwnProperty(word)) {
             style = "error"; // Known property, should be in @mediaType(
           } else {
             // Unknown, expecting keyword or attribute, assuming attribute
             style = "attribute error";
           }
         } else if (context == "@mediaType") {
-          if (atMediaTypes[stream.current()]) {
+          if (atMediaTypes.hasOwnProperty(word)) {
             style = "attribute";
-          } else if (stream.current().toLowerCase() == "and") {
+          } else if (word == "and") {
             style = "operator";
-          } else if (/^(only|not)$/i.test(stream.current())) {
+          } else if (/^(only|not)$/.test(word)) {
             style = "error"; // Only allowed in @media
-          } else if (atMediaFeatures[stream.current()]) {
-            style = "error"; // Known property, should be in parentheses
           } else {
             // Unknown attribute or property, but expecting property (preceded
             // by "and"). Should be in parentheses
             style = "error";
           }
         } else if (context == "@mediaType(") {
-          if (propertyKeywords[stream.current()]) {
+          if (propertyKeywords.hasOwnProperty(word)) {
             // do nothing, remains "property"
-          } else if (atMediaTypes[stream.current()]) {
+          } else if (atMediaTypes.hasOwnProperty(word)) {
             style = "error"; // Known property, should be in parentheses
-          } else if (stream.current().toLowerCase() == "and") {
+          } else if (word == "and") {
             style = "operator";
-          } else if (/^(only|not)$/i.test(stream.current())) {
+          } else if (/^(only|not)$/.test(word)) {
             style = "error"; // Only allowed in @media
           } else {
             style += " error";
           }
+        } else if (context == "@import") {
+          style = "tag";
         } else {
           style = "error";
         }
@@ -7925,14 +8273,16 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
       }
       else if (type == "interpolation") state.stack.push("interpolation");
       else if (type == "@media") state.stack.push("@media");
+      else if (type == "@import") state.stack.push("@import");
       else if (context == "@media" && /\b(keyword|attribute)\b/.test(style))
         state.stack.push("@mediaType");
       else if (context == "@mediaType" && stream.current() == ",") state.stack.pop();
       else if (context == "@mediaType" && type == "(") state.stack.push("@mediaType(");
       else if (context == "@mediaType(" && type == ")") state.stack.pop();
-      else if ((context == "rule" || context == "block") && type == ":") state.stack.push("propertyValue");
+      else if (type == ":" && state.lastToken == "property") state.stack.push("propertyValue");
       else if (context == "propertyValue" && type == ";") state.stack.pop();
-      return style;
+      else if (context == "@import" && type == ";") state.stack.pop();
+      return state.lastToken = style;
     },
 
     indent: function(state, textAfter) {
@@ -7942,7 +8292,10 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
       return state.baseIndent + n * indentUnit;
     },
 
-    electricChars: "}"
+    electricChars: "}",
+    blockCommentStart: "/*",
+    blockCommentEnd: "*/",
+    fold: "brace"
   };
 });
 
@@ -8046,12 +8399,46 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
     "vertical-align", "visibility", "voice-balance", "voice-duration",
     "voice-family", "voice-pitch", "voice-range", "voice-rate", "voice-stress",
     "voice-volume", "volume", "white-space", "widows", "width", "word-break",
-    "word-spacing", "word-wrap", "z-index"
+    "word-spacing", "word-wrap", "z-index",
+    // SVG-specific
+    "clip-path", "clip-rule", "mask", "enable-background", "filter", "flood-color",
+    "flood-opacity", "lighting-color", "stop-color", "stop-opacity", "pointer-events",
+    "color-interpolation", "color-interpolation-filters", "color-profile",
+    "color-rendering", "fill", "fill-opacity", "fill-rule", "image-rendering",
+    "marker", "marker-end", "marker-mid", "marker-start", "shape-rendering", "stroke",
+    "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin",
+    "stroke-miterlimit", "stroke-opacity", "stroke-width", "text-rendering",
+    "baseline-shift", "dominant-baseline", "glyph-orientation-horizontal",
+    "glyph-orientation-vertical", "kerning", "text-anchor", "writing-mode"
   ]);
 
   var colorKeywords = keySet([
-    "black", "silver", "gray", "white", "maroon", "red", "purple", "fuchsia",
-    "green", "lime", "olive", "yellow", "navy", "blue", "teal", "aqua"
+    "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige",
+    "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown",
+    "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue",
+    "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod",
+    "darkgray", "darkgreen", "darkkhaki", "darkmagenta", "darkolivegreen",
+    "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen",
+    "darkslateblue", "darkslategray", "darkturquoise", "darkviolet",
+    "deeppink", "deepskyblue", "dimgray", "dodgerblue", "firebrick",
+    "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite",
+    "gold", "goldenrod", "gray", "green", "greenyellow", "honeydew",
+    "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender",
+    "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral",
+    "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen", "lightpink",
+    "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray",
+    "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta",
+    "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple",
+    "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise",
+    "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin",
+    "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange", "orangered",
+    "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred",
+    "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue",
+    "purple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon",
+    "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue",
+    "slateblue", "slategray", "snow", "springgreen", "steelblue", "tan",
+    "teal", "thistle", "tomato", "turquoise", "violet", "wheat", "white",
+    "whitesmoke", "yellow", "yellowgreen"
   ]);
 
   var valueKeywords = keySet([
@@ -8134,7 +8521,7 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
     "upper-alpha", "upper-armenian", "upper-greek", "upper-hexadecimal",
     "upper-latin", "upper-norwegian", "upper-roman", "uppercase", "urdu", "url",
     "vertical", "vertical-text", "visible", "visibleFill", "visiblePainted",
-    "visibleStroke", "visual", "w-resize", "wait", "wave", "white", "wider",
+    "visibleStroke", "visual", "w-resize", "wait", "wave", "wider",
     "window", "windowframe", "windowtext", "x-large", "x-small", "xor",
     "xx-large", "xx-small"
   ]);
@@ -9746,150 +10133,13 @@ cbSplit._nativeSplit = String.prototype.split;
 String.prototype.split = function (separator, limit) {
     return cbSplit(this, separator, limit);
 };
-Liquid.readTemplateFile = function(path) {
-    var repo = window.app.models.getRepo(app.state.user, app.state.repo);
-    return repo.contentsSync(app.state.branch, '_includes/' + path);
-}
-
-Liquid.Template.registerTag( 'include', Liquid.Tag.extend({
-
-  tagSyntax: /((?:"[^"]+"|'[^']+'|[^\s,|]+)+)(\s+(?:with|for)\s+((?:"[^"]+"|'[^']+'|[^\s,|]+)+))?/,
-
-  init: function(tag, markup, tokens) {
-    var matches = (markup || '').match(this.tagSyntax);
-    if(matches) {
-      this.templateName = matches[1];
-      this.templateNameVar = this.templateName.substring(1, this.templateName.length - 1);
-      this.variableName = matches[3];
-      this.attributes = {};
-
-      var attMatchs = markup.match(/(\w*?)\s*\:\s*("[^"]+"|'[^']+'|[^\s,|]+)/g);
-      if(attMatchs) {
-        attMatchs.each(function(pair){
-          pair = pair.split(":");
-          this.attributes[pair[0].strip()] = pair[1].strip();
-        }, this);
-      }
-    } else {
-      throw ("Error in tag 'include' - Valid syntax: include '[template]' (with|for) [object|collection]");
-    }
-    this._super(tag, markup, tokens);
-  },
-
-  render: function(context) {
-    var self     = this,
-        source   = Liquid.readTemplateFile( this.templateName ),
-        partial  = Liquid.parse(source),
-        variable = context.get((this.variableName || this.templateNameVar)),
-        output   = '';
-    context.stack(function(){
-      self.attributes.each = hackObjectEach;
-      self.attributes.each(function(pair){
-        context.set(pair.key, context.get(pair.value));
-      })
-
-      if(variable instanceof Array) {
-        output = variable.map(function(variable){
-          context.set( self.templateNameVar, variable );
-          return partial.render(context);
-        });
-      } else {
-        context.set(self.templateNameVar, variable);
-        output = partial.render(context);
-      }
-    });
-    output = [output].flatten().join('');
-    return output;
-  }
-}));
-
-
-Liquid.Block.prototype.renderAll = function(list, context) {
-  return (list || []).map(function(token, i){
-    var output = '';
-    try { // hmmm... feels a little heavy
-      output = ( token['render'] ) ? token.render(context) : token;
-    } catch(e) {
-      console.log(context.handleError(e));
-    }
-    return output;
-  });
-};
-
-Liquid.Template.registerTag( 'highlight', Liquid.Block.extend({
-  tagSyntax: /(\w+)/,
-
-  init: function(tagName, markup, tokens) {
-    var parts = markup.match(this.tagSyntax);
-    if( parts ) {
-      this.to = parts[1];
-    } else {
-      throw ("Syntax error in 'highlight' - Valid syntax: hightlight [language]");
-    }
-    this._super(tagName, markup, tokens);
-  },
-  render: function(context) {
-    var output = this._super(context);
-    return '<pre>' + output[0] + '</pre>';
-  }
-}));
-
-// Unless tag wasn't properly returning output
-Liquid.Template.registerTag( 'unless', Liquid.Template.tags['if'].extend({
-
-  render: function(context) {
-    var self = this,
-        output = '';
-    context.stack(function(){
-      var block = self.blocks[0];
-      if( !block.evaluate(context) ) {
-        output = self.renderAll(block.attachment, context);
-        return;
-      }
-      for (var i=1; i < self.blocks.length; i++) {
-        var block = self.blocks[i];
-        if( block.evaluate(context) ) {
-          output = self.renderAll(block.attachment, context);
-          return;
-        }
-      };
-    })
-    return [output].flatten().join('');
-  }
-}));
-
-Liquid.Block.prototype.unknownTag = function(tag, params, tokens) {
-  switch(tag) {
-    case 'else': console.log(this.blockName +" tag does not expect else tag"); break;
-    case 'end':  console.log("'end' is not a valid delimiter for "+ this.blockName +" tags. use "+ this.blockDelimiter); break;
-    default:     console.log("Unknown tag: "+ tag);
-  }
-};
-
-// Contains should work with strings or arrays
-Liquid.Condition.operators.contains = function(l,r) {
-  if (typeof l === 'object') {
-    return l.include(r);
-  } else {
-    return (l.indexOf(r) !== -1);
-  }
-}
-
-// Don't use regex for replace functions. Messes up '.'
-Liquid.Template.registerFilter({
-  replace: function(input, string, replacement) {
-    replacement = replacement || '';
-    return input.toString().split(string).join(replacement);
-  },
-
-  replace_first: function(input, string, replacement) {
-    replacement = replacement || '';
-    return input.toString().replace(string, replacement);
-  }
-});
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-module.exports = {"login":"Authorize on GitHub","docheader":{"editing":"Editing","error":"Error","preview":"Previewing"},"navigation":{"newFile":"New File","edit":"Edit","preview":"Preview","settings":"Settings","meta":"Meta Data","save":"Save","login":"Authorize with GitHub","about":"About","develop":"Developers","logout":"Logout","language":"Language"},"heading":{"explore":"Explore Projects"},"actions":{"unsaved":"You have unsaved Changes. Are you sure you want to leave?","draft":{"toPost":"Draft to Post","toPostInfo":"Convert this draft into a published post"},"publishing":{"publish":"Publish","publishInfo":"This post will be published the next time you save","published":"Published","unpublish":"Unpublish","unpublished":"Unpublished","unpublishInfo":"This post will be unpublished the next time you save"},"change":{"noChange":"No Changes","submit":"Changes to Submit","save":"Save"},"delete":{"title":"Delete","warn":"Are you sure you want to delete this file?","error":"Error during deletion. Please wait 30 seconds and try again."},"upload":{"uploading":"Uploading {file}","uploaded":"Uploaded {file}"},"save":{"title":"Save","saved":"Saved","saving":"Saving","patch":"Submitting Request","fileNameError":"Needs a Filename","submission":"Request Submitted","metaError":"Error! Metadata not Found"},"error":"Error. Try again in 30 Seconds","restore":{"restoring":"Restoring","restored":"Restored"},"commits":{"created":"Created {filename}","updated":"Updated {filename}","deleted":"Deleted {filename}","toDraft":"Created draft of {filename}","fromDraft":"Created post from a draft of {filename}"}},"loading":{"repos":"Loading Profile","repo":"Loading Project","file":"Loading File","preview":"Previewing File","creating":"Creating new post"},"main":{"start":{"content":"Prose is a content editor for GitHub designed for managing websites.","learn":"Learn more"},"repos":{"filter":"Filter Projects","repo":"View Project","site":"View Site","sharedFrom":"Shared from an account","forkedFrom":"Forked from another project"},"repo":{"filter":"Filter Files","edit":"Edit"},"new":{"body":"## A New Post\\n\\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"},"file":{"metaTitle":"Review your changes:","rawMeta":"Raw Metadata","metaDescription":"Additions are highlighted in green. Deletions are crossed out.","back":"Done","createMeta":"Create New"},"upgrade":{"content":"Prose requires features not available to your browser","download":"Download a Modern Browser"}},"notification":{"loginDescription":"Please login with your GitHub account to access that project.","create":"Create it","home":"Back to Main Page","back":"Go Back","error":{"label":"Error","github":"Error while loading data from Github. This might be a temporary issue. Please try again later.","exists":"This file does not exist","notFound":"Page not Found"}},"sidebar":{"repos":{"groups":"Groups"},"repo":{"branch":"Switch Branch","drafts":"View Drafts","history":{"label":"Most Recent History","actions":{"restore":"Restore?"}},"create":"Create New File"},"save":{"label":"Describe your Changes","cancel":"Cancel","save":"Commit","submit":"Submit Change Request"},"settings":{"title":"Options","delete":"Delete This File","translate":"Translate to","draft":"Create Draft"}},"dialogs":{"link":{"title":"Insert Link","insertLocal":"Insert a Local Link","insert":"Insert"},"media":{"title":"Insert Image","back":"Back","description":"Upload images by Dragging &amp; Dropping or </br>\n{input} <a>selecting one</a>\n","help":"Images uploaded are added to the current directory or one specified in the Image URL path above.","helpMedia":"Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field.","choose":"Choose Existing"},"help":{"blockElements":{"title":"Block Elements","content":{"paragraphs":{"title":"Paragraphs &amp; Breaks","content":"<p>To create a paragraph, simply create a block of text that is not separated by one or more blank lines. Blocks of text separated by one or more blank lines will be parsed as paragraphs.</p><p>If you want to create a line break, end a line with two or more spaces, then hit Return/Enter.</p>\n"},"headers":{"title":"Headers","content":"<p>Markdown supports two header formats. The wiki editor uses the &ldquo;atx&rsquo;-style headers. Simply prefix your header text with the number of <code>#</code> characters to specify heading depth. For example: <code># Header 1</code>, <code>## Header 2</code> and <code>### Header 3</code> will be progressively smaller headers. You may end your headers with any number of hashes.</p>\n"},"blockquotes":{"title":"Blockquotes","content":"<p>Markdown creates blockquotes email-style by prefixing each line with the <code>&gt;</code>. This looks best if you decide to hard-wrap text and prefix each line with a <code>&gt;</code> character, but Markdown supports just putting <code>&gt;</code> before your paragraph.</p>\n"},"lists":{"title":"Lists","content":"<p>Markdown supports both ordered and unordered lists. To create an ordered list, simply prefix each line with a number (any number will do &mdash; this is why the editor only uses one number.) To create an unordered list, you can prefix each line with <code>*</code>, <code>+</code> or <code>-</code>.</p> List items can contain multiple paragraphs, however each paragraph must be indented by at least 4 spaces or a tab.\n"},"codeBlocks":{"title":"Code Blocks","content":"<p>Markdown wraps code blocks in pre-formatted tags to preserve indentation in your code blocks. To create a code block, indent the entire block by at least 4 spaces or one tab. Markdown will strip the extra indentation you&rsquo;ve added to the code block.</p>\n"},"horizontalRules":{"title":"Horizontal Rules","content":"<p>Horizontal rules are created by placing three or more hyphens, asterisks or underscores on a line by themselves. Spaces are allowed between the hyphens, asterisks or underscores.</p>\n"}}},"spanElements":{"title":"Span Elements","content":{"links":{"title":"Links","content":"<p>Markdown has two types of links: <strong>inline</strong> and <strong>reference</strong>. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text &ldquo;GitHub&rdquo;, you write <code>[GitHub]</code>.</p><p>To create an inline link, create a set of parentheses immediately after the brackets and write your URL within the parentheses. (e.g., <code>[GitHub](http://github.com/)</code>). Relative paths are allowed in inline links.</p><p>To create a reference link, use two sets of square brackets. <code>[my internal link][internal-ref]</code> will link to the internal reference <code>internal-ref</code>.</p>\n"},"emphasis":{"title":"Emphasis","content":"<p>Asterisks (<code>*</code>) and underscores (<code>_</code>) are treated as emphasis and are wrapped with an <code>&lt;em&gt;</code> tag, which usually displays as italics in most browsers. Double asterisks (<code>**</code>) or double underscores (<code>__</code>) are treated as bold using the <code>&lt;strong&gt;</code> tag. To create italic or bold text, simply wrap your words in single/double asterisks/underscores. For example, <code>**My double emphasis text**</code> becomes <strong>My double emphasis text</strong>, and <code>*My single emphasis text*</code> becomes <em>My single emphasis text</em>.</p>\n"},"code":{"title":"Code","content":"<p>To create inline spans of code, simply wrap the code in backticks (<code>`</code>). Markdown will turn <code>`myFunction`</code> into <code>myFunction</code>.</p>\n"},"images":{"title":"Images","content":"<p>Markdown image syntax looks a lot like the syntax for links; it is essentially the same syntax preceded by an exclamation point (<code>!</code>). For example, if you want to link to an image at <code>http://github.com/unicorn.png</code> with the alternate text <code>My Unicorn</code>, you would write <code>![My Unicorn](http://github.com/unicorn.png)</code>.</p>\n"}}},"miscellaneous":{"title":"Miscellaneous","content":{"automaticLinks":{"title":"Automatic Links","content":"<p>If you want to create a link that displays the actual URL, markdown allows you to quickly wrap the URL in <code>&lt;</code> and <code>&gt;</code> to do so. For example, the link <a href=\"javascript:void(0);\">http://github.com/</a> is easily produced by writing <code>&lt;http://github.com/&gt;</code>.</p>\n"},"escaping":{"title":"Escaping","content":"<p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\\\</code>). Markdown will ignore the character directly after a backslash.\n"}}}}},"chooselanguage":{"title":"Choose a Language","description":"Prose is a translated application. If you don't see your language in the list, there are spelling errors, or translations are missing, consider <a href='https://www.transifex.com/projects/p/prose'>contributing translations to the project</a>.\n"},"about":{"content":"# About\nProse provides a beatifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"}};
+module.exports = {"login":"Authorize on GitHub","docheader":{"editing":"Editing","error":"Error","preview":"Previewing"},"navigation":{"newFile":"New File","edit":"Edit","preview":"Preview","settings":"Settings","meta":"Meta Data","save":"Save","login":"Authorize with GitHub","about":"About","develop":"Developers","logout":"Logout","language":"Language"},"toolbar":{"heading":"Heading","subHeading":"Sub Heading","link":"Insert Link","image":"Insert Link","bold":"Bold","italic":"Italic","blockquote":"Blockquote","list":"List","numberedlist":"Numbered List","help":"Help"},"heading":{"explore":"Explore Projects"},"actions":{"unsaved":"You have unsaved Changes. Are you sure you want to leave?","draft":{"toPost":"Draft to Post","toPostInfo":"Convert this draft into a published post"},"publishing":{"publish":"Publish","publishInfo":"This post will be published the next time you save","published":"Published","unpublish":"Unpublish","unpublished":"Unpublished","unpublishInfo":"This post will be unpublished the next time you save"},"change":{"noChange":"No Changes","submit":"Changes to Submit","save":"Changes to Save"},"delete":{"title":"Delete","warn":"Are you sure you want to delete this file?","error":"Error during deletion. Please wait 30 seconds and try again."},"upload":{"uploading":"Uploading {file}","uploaded":"Uploaded {file}"},"save":{"title":"Save","saved":"Saved","saving":"Saving","patch":"Submitting Request","fileNameError":"Needs a Filename","submission":"Request Submitted","metaError":"Error! Metadata not Found","fileNameExists":"A filename with this path already exists"},"error":"Error. Try again in 30 Seconds","restore":{"restoring":"Restoring","restored":"Restored"},"commits":{"created":"Created {filename}","updated":"Updated {filename}","deleted":"Deleted {filename}","toDraft":"Created draft of {filename}","fromDraft":"Created post from a draft of {filename}"}},"loading":{"repos":"Loading Profile","repo":"Loading Project","file":"Loading File","preview":"Previewing File","creating":"Creating new post"},"modal":{"errorHeading":"Error","confirm":"Got it"},"main":{"start":{"content":"Prose is a content editor for GitHub designed for managing websites.","learn":"Learn more"},"repos":{"filter":"Filter Projects","repo":"View Project","site":"View Site","sharedFrom":"Shared from an account","forkedFrom":"Forked from another project"},"repo":{"filter":"Filter Files","edit":"Edit","delete":"Delete this File"},"new":{"body":"## A New Post\\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"},"file":{"noTitle":"Untitled","metaTitle":"Review your changes:","rawMeta":"Raw Metadata","metaDescription":"Additions are highlighted in green. Deletions are crossed out.","back":"Done","createMeta":"Create New"},"upgrade":{"content":"Prose requires features not available to your browser","download":"Download a Modern Browser"}},"notification":{"loginDescription":"Please login with your GitHub account to access that project.","create":"Create it","home":"Back to Main Page","back":"Go Back","githubStatus":"Status on GitHub ({status})","error":{"label":"Error","github":"Error while loading data from Github. This might be a temporary issue. Please try again later.","exists":"This file does not exist","notFound":"Page not Found"}},"sidebar":{"repos":{"groups":"Groups"},"repo":{"branch":"Switch Branch","drafts":"View Drafts","history":{"label":"Most Recent History","actions":{"restore":"Restore?"}},"create":"Create New File"},"save":{"label":"Describe your Changes","cancel":"Cancel","save":"Commit","submit":"Submit Change Request"},"settings":{"title":"Options","fileInputLabel":"File Path","delete":"Delete This File","translate":"Translate to","draft":"Create Draft"}},"dialogs":{"link":{"title":"Insert Link","insertLocal":"Insert a Local Link","insert":"Insert"},"media":{"title":"Insert Image","back":"Back","description":"Upload images by Dragging &amp; Dropping or </br>\n{input} <a>selecting one</a>\n","help":"Images uploaded are added to the current directory or one specified in the Image URL path above.","helpMedia":"Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field.","choose":"Choose Existing"},"help":{"blockElements":{"title":"Block Elements","content":{"paragraphs":{"title":"Paragraphs &amp; Breaks","content":"<p>To create a paragraph, simply create a block of text that is not separated by one or more blank lines. Blocks of text separated by one or more blank lines will be parsed as paragraphs.</p><p>If you want to create a line break, end a line with two or more spaces, then hit Return/Enter.</p>\n"},"headers":{"title":"Headers","content":"<p>Markdown supports two header formats. The wiki editor uses the &ldquo;atx&rsquo;-style headers. Simply prefix your header text with the number of <code>#</code> characters to specify heading depth. For example: <code># Header 1</code>, <code>## Header 2</code> and <code>### Header 3</code> will be progressively smaller headers. You may end your headers with any number of hashes.</p>\n"},"blockquotes":{"title":"Blockquotes","content":"<p>Markdown creates blockquotes email-style by prefixing each line with the <code>&gt;</code>. This looks best if you decide to hard-wrap text and prefix each line with a <code>&gt;</code> character, but Markdown supports just putting <code>&gt;</code> before your paragraph.</p>\n"},"lists":{"title":"Lists","content":"<p>Markdown supports both ordered and unordered lists. To create an ordered list, simply prefix each line with a number (any number will do &mdash; this is why the editor only uses one number.) To create an unordered list, you can prefix each line with <code>*</code>, <code>+</code> or <code>-</code>.</p> List items can contain multiple paragraphs, however each paragraph must be indented by at least 4 spaces or a tab.\n"},"codeBlocks":{"title":"Code Blocks","content":"<p>Markdown wraps code blocks in pre-formatted tags to preserve indentation in your code blocks. To create a code block, indent the entire block by at least 4 spaces or one tab. Markdown will strip the extra indentation you&rsquo;ve added to the code block.</p>\n"},"horizontalRules":{"title":"Horizontal Rules","content":"<p>Horizontal rules are created by placing three or more hyphens, asterisks or underscores on a line by themselves. Spaces are allowed between the hyphens, asterisks or underscores.</p>\n"}}},"spanElements":{"title":"Span Elements","content":{"links":{"title":"Links","content":"<p>Markdown has two types of links: <strong>inline</strong> and <strong>reference</strong>. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text &ldquo;GitHub&rdquo;, you write <code>[GitHub]</code>.</p><p>To create an inline link, create a set of parentheses immediately after the brackets and write your URL within the parentheses. (e.g., <code>[GitHub](http://github.com/)</code>). Relative paths are allowed in inline links.</p><p>To create a reference link, use two sets of square brackets. <code>[my internal link][internal-ref]</code> will link to the internal reference <code>internal-ref</code>.</p>\n"},"emphasis":{"title":"Emphasis","content":"<p>Asterisks (<code>*</code>) and underscores (<code>_</code>) are treated as emphasis and are wrapped with an <code>&lt;em&gt;</code> tag, which usually displays as italics in most browsers. Double asterisks (<code>**</code>) or double underscores (<code>__</code>) are treated as bold using the <code>&lt;strong&gt;</code> tag. To create italic or bold text, simply wrap your words in single/double asterisks/underscores. For example, <code>**My double emphasis text**</code> becomes <strong>My double emphasis text</strong>, and <code>*My single emphasis text*</code> becomes <em>My single emphasis text</em>.</p>\n"},"code":{"title":"Code","content":"<p>To create inline spans of code, simply wrap the code in backticks (<code>`</code>). Markdown will turn <code>`myFunction`</code> into <code>myFunction</code>.</p>\n"},"images":{"title":"Images","content":"<p>Markdown image syntax looks a lot like the syntax for links; it is essentially the same syntax preceded by an exclamation point (<code>!</code>). For example, if you want to link to an image at <code>http://github.com/unicorn.png</code> with the alternate text <code>My Unicorn</code>, you would write <code>![My Unicorn](http://github.com/unicorn.png)</code>.</p>\n"}}},"miscellaneous":{"title":"Miscellaneous","content":{"automaticLinks":{"title":"Automatic Links","content":"<p>If you want to create a link that displays the actual URL, markdown allows you to quickly wrap the URL in <code>&lt;</code> and <code>&gt;</code> to do so. For example, the link <a href=\"javascript:void(0);\">http://github.com/</a> is easily produced by writing <code>&lt;http://github.com/&gt;</code>.</p>\n"},"escaping":{"title":"Escaping","content":"<p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\\\</code>). Markdown will ignore the character directly after a backslash.\n"}}}}},"chooselanguage":{"title":"Choose a Language","description":"Prose is a translated application. If you don't see your language in the list, there are spelling errors, or translations are missing, consider <a href='https://www.transifex.com/projects/p/prose'>contributing translations to the project</a>.\n"},"about":{"content":"# About\nProse provides a beatifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"}};
 },{}],2:[function(require,module,exports){
+// Automatically Generated
+
+module.exports = [{"name":"Chinese","code":"zh"},{"name":"English","code":"en"},{"name":"German","code":"de"},{"name":"Romanian","code":"ro"},{"name":"Vietnamese","code":"vi"}];
+},{}],3:[function(require,module,exports){
 function tryParse(obj) {
   try {
     return JSON.parse(obj);
@@ -9961,52 +10211,25 @@ cookie.clear = function() {
 
 module.exports = cookie;
 
-},{}],3:[function(require,module,exports){
-// Automatically Generated
-
-module.exports = [{"name":"Chinese","code":"zh"},{"name":"English","code":"en"},{"name":"German","code":"de"},{"name":"Romanian","code":"ro"},{"name":"Spanish","code":"es"},{"name":"Vietnamese","code":"vi"}];
 },{}],4:[function(require,module,exports){
-module.exports = {"app":"<% if (!error) { %>\n  <div id='vert' class='vert clearfix navigation'></div>\n  <div id='drawer' class='sidebar'></div>\n<% } %>\n\n<div class='limiter'>\n  <div id='heading' class='heading clearfix'></div>\n</div>\n\n<div class='limiter'>\n  <div id='content' class='application content'></div>\n</div>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose <%= version %></a></li>\n      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>\n      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>\n      <li><a href='./#chooselanguage'><%= t('navigation.language') %></a></li>\n      <% if (window.authenticated) { %>\n        <li class='divider'></li>\n        <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>\n      <% } %>\n    </ul>\n  </div>\n</div>\n","asset":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (_.isMedia(path)) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n","button":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <button class='round <%= name %>' type='button' name='<%= name %>' value='<%= value %>' data-on='<%= on %>' data-off='<%= off %>'>\n    <% print(value ? on : off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= name %>' value='<%= value %>'<% print(checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= name %>'><%= label %></label>\n</div>\n","chooselanguage":"<h1><%= t('chooselanguage.title') %></h1>\n<ul class='fat-list round'>\n  <% _(languages).each(function(l) { %> \n    <li>\n    <a href='#' data-code='<%= l.code %>' class='language<% if (l.code === active) { %> active<% } %>'>\n        <% if (l.code === active) { %><span class='ico checkmark fr'></span><% } %> \n        <%= l.name %>\n        <small>(<%= l.code %>)</small>\n      </a>\n    </li>\n  <% }); %> \n</ul>\n<p><%= t('chooselanguage.description') %></p>\n","directories":"<li class='directory'>\n  <a\n    class='clearfix item'\n    data-index='<%= index %>'\n    data-navigate='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'\n    href='#<%= user %>/<%= repo %>/tree/<%= branch %><%= path %>'>\n\n    <span class='icon listing-icon round folder'></span>\n    <span class='details'>\n      <h3 class='title'><%= name %></h3>\n    </span>\n  </a>\n</li>\n","files":"<li class='clearfix item'\n    <% if (!isBinary) { %>data-navigate='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'<% } %>\n    data-index='<%= index %>'>\n\n  <% if (isBinary) { %>\n    <div class='listing-icon icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></div>\n  <% } else { %>\n    <a href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>' class='listing-icon'>\n      <span class='icon round <%= extension %> <% if (isMedia) { %>media<% } %>'></span>\n    </a>\n  <% } %>\n\n  <div class='details'>\n    <div class='actions fr clearfix'>\n      <% if (!isBinary) { %>\n        <a class='clearfix'\n          title=\"<%= t('main.repo.edit') %>\"\n          href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n          <%= t('main.repo.edit') %>\n        </a>\n      <% } %>\n      <% if (window.authenticated && writePermissions) { %>\n        <a\n          class='delete'\n          title=\"<%= t('sidebar.settings.delete') %>\"\n          data-user='<%= user %>'\n          data-repo='<%= repo %>'\n          data-branch='<%= branch %>'\n          data-file='<%= file %>'\n          href='#'>\n          <span class='ico rubbish small'></span>\n        </a>\n      <% } %>\n    </div>\n    <% if (isBinary) { %>\n      <h3 class='title' title='<%= name %>'><%= name %></h3>\n    <% } else { %>\n        <% if (isMarkdown) { %>\n          <a class='clearfix' href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'>\n            <h3><%= filename %></h3>\n            <span class='deemphasize'><%= name %></span>\n          </a>\n        <% } else { %>\n          <h3 class='title' title='<%= name %>'><a class='clearfix'href='#<%= user %>/<%= repo %>/edit/<%= branch %>/<%= path %>'><%= name %></a></h3>\n        <% } %>\n      </a>\n    <% } %>\n  </div>\n</li>\n","heading":"<% if (alterable) { %>\n  <div class='action round avatar'>\n    <div class='popup-hover'>\n      <span class='ico round status'></span>\n      <span class='popup round arrow-left'><%= t('actions.change.noChange') %></span>\n      <%= avatar %>\n    </div>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><%= parentTrail %><% if (isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n\n    <% if (app.state.mode === 'new' && !translate) { %>\n      <input type='text' class='filepath' placeholder='<%= title %>'>\n    <% } else { %>\n      <input type='text' class='filepath' value='<%= title %>'>\n    <% } %>\n\n    <div class='mask'></div>\n  </div>\n\n<% } else { %>\n  <div class='avatar round'><%= avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= parentUrl %>'><%= parent %></a></h4>\n    <h2><a class='repo' href='#<%= titleUrl %>'><%= title %></a></h2>\n  </div>\n<% } %>\n","helpDialog":"<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= _.formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= _.formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= _.formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= _.formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","hidden":"<input type='hidden' name='<%= name %>' value='<%= value %>' />\n","linkDialog":"<div class='inner'>\n  <label><%= t('dialogs.link.title') %></label>\n  <input type='text' name='href' placeholder='Link URL' />\n  <input type='text' name='text' placeholder='Link Name' />\n  <input type='text' name='title' placeholder='Title (optional)' />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder='Insert a local link' class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>\n</div>\n","loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <%= message %>\n</div>\n","mediaDialog":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label><%= t('dialogs.media.title') %></label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        <%= description %>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder='Image URL' />\n    <input type='text' name='alt' placeholder='Alt text (optional)' />\n    <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>\n      <% if (!assetsDirectory) { %>\n        <small class='deemphasize'><%= t('dialogs.media.help') %></small>\n      <% } %>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label><%= t('dialogs.media.choose') %></label>\n      <ul id='media'></ul>\n      <small class='deemphasize'><%= t('dialogs.media.helpMedia') %></small>\n    </div>\n  <% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select id='<%= name %>' name='<%= name %>' data-placeholder='<%= placeholder %>' multiple class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>' selected='selected'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n\n  <% if (alterable) { %>\n    <div class='create'>\n      <input type='text' class='inline' />\n      <a href='#' class='round create-select inline button' data-select='<%= name %>' title=\"<%= t('main.file.createMeta') %>\"><%= t('main.file.createMeta') %></a>\n    </div>\n  <% } %>\n</div>\n","notification":"<% if (!window.authenticated) { %>\n  <div class='notify <%= type %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('notification.loginDescription') %></p>\n      <p><a class='button round' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo, user&redirect_uri=<%= encodeURIComponent(window.location.href) %>'><%= t('login') %></a></a>\n    </div>\n  </div>\n<% } else { %>\n  <div class='notify <%= key %>'>\n    <h2 class='icon landing error'>Prose</h2>\n    <div class='inner'>\n      <p><%= message %></p>\n      <% if (pathFromFile) { %>\n        <p><a class='button round create' href='#'><%= t('notification.create') %></a></p>\n      <% } %>\n\n      <% if (key === 'error') { %>\n        <p><a class='button round' href='#'><%= t('notification.home') %></a></p>\n      <% } else { %>\n        <p><a class='button round' href='<%= previous %>'><%= t('notification.back') %></a></p>\n      <% } %>\n    </div>\n  </div>\n<% } %>\n","post":"<div class='editor views<% if (markdown) { %> markdown<% } %>'>\n  <div id='diff' class='view prose diff'>\n    <h2><%= t('main.file.metaTitle') %><br />\n      <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>\n    </h2>\n    <div class='diff-content inner'></div>\n  </div>\n  <% if (jekyll) { %>\n    <div id='meta' class='view round meta'>\n      <div class='form'></div>\n      <a href='#' class='button round finish'><%= t('main.file.back') %></a>\n    </div>\n  <% } %>\n  <div id='edit' class='view active edit'>\n    <div class='topbar-wrapper'>\n      <div class='topbar'>\n        <div id='toolbar' class='containment toolbar round'></div>\n      </div>\n    </div>\n    <div id='code' class='code round inner'></div>\n  </div>\n  <% if (markdown) { %>\n    <div id='preview' class='view preview prose'><%- preview %></div>\n  <% } %>\n</div>\n","posts":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder=\"<%= t('main.repo.filter') %>\" />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <% if (path.length && path !== jailed) { %>\n    <div class='breadcrumb'>\n      <a class='branch' href='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'>..</a>\n      <% _.each(_.chunkedPath(path), function(p) { %>\n        <% if (p.name !== jailed) { %>\n          <span class='slash'>/</span>\n          <a class='path' href='#<%= [user, repo, \"tree\", branch, p.url].join(\"/\") %>'><%= p.name %></a>\n        <% } %>\n      <% }); %>\n    </div>\n  <% } %>\n\n  <ul id='files' class='listing'></ul>\n</div>\n","profile":"<div class='topbar-wrapper'>\n  <div class='topbar'>\n    <div class='containment content-search'>\n      <span class='ico search inline fr'></span>\n      <input type='text' id='filter' placeholder=\"<%= t('main.repos.filter') %>\" />\n    </div>\n  </div>\n</div>\n\n<div class='listings'>\n  <ul id='projects' class='projects listing'></ul>\n</div>\n","projects":"<li class='item clearfix'\n    data-navigate='#<%= owner.login %>/<%= name %>'\n    data-index='<%= index %>'>\n\n    <a\n      class='listing-icon'\n      data-user='<%= owner.login %>'\n      data-repo='<%= name %>'\n      href='#<%= owner.login %>/<%= name %>'>\n      <% if (app.state.user === app.username && (owner.login !== app.username && private)) { %>\n        <span class='icon round repo owner private' title=\"<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)\"></span>\n      <% } else if (app.state.user === app.username && owner.login !== app.username) { %>\n        <span class='icon round repo owner' title=\"<%= t('main.repos.sharedFrom') %> (<%= owner.login %>)\"></span>\n      <% } else if (fork && private) { %>\n        <span class='icon round repo private fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n      <% } else if (fork) { %>\n        <span class='icon round repo fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n      <% } else if (private) { %>\n        <span class='icon round repo private'></span>\n      <% } else { %>\n        <span class='icon round repo'></span>\n      <% } %>\n    </a>\n\n    <div class='details'>\n      <div class='actions fr clearfix'>\n        <a\n          data-user='<%= owner.login %>'\n          data-repo='<%= name %>'\n          href='#<%= owner.login %>/<%= name %>'>\n          <%= t('main.repos.repo') %>\n        </a>\n        <% if (homepage) { %>\n          <a href='<%= homepage %>'><%= t('main.repos.site') %></a>\n        <% } %>\n      </div>\n      <a\n        data-user='<%= owner.login %>'\n        data-repo='<%= name %>'\n        href='#<%= owner.login %>/<%= name %>'>\n        <h3<% if (!description) { %> class='title'<% } %>><%= name %></h3>\n        <span class='deemphasize'><%= description %></span>\n      </a>\n    </div>\n</li>\n","select":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <select name='<%= name %>' data-placeholder='<%= placeholder %>' class='chzn-select'>\n    <% _(options).each(function(o) { %>\n      <% if (!o.lang || o.lang === lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","settings":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.settings.title') %></h2>\n  </div>\n  <div class='inner authoring'>\n\n    <% if (jekyll && !draft && lang === 'gfm') { %>\n      <a class='draft button round' href='#'><%= t('sidebar.settings.draft') %></a>\n    <% } %>\n\n    <% if (app.state.config && app.state.config.languages && lang !== 'yaml') { %>\n      <% _(app.state.config.languages).each(function(lang) { %>\n        <% if (lang.value && (metadata && metadata.lang !== lang.value)) { %>\n          <a class='translate round button' href='#<%= lang.value %>'><%= t('sidebar.settings.translate') + ' ' + lang.name %></a>\n        <% } %>\n      <% }); %>\n    <% } %>\n\n    <% if (writable) { %>\n      <a class='delete button round' href='#'><%= t('sidebar.settings.delete') %></a>\n    <% } %>\n  </div>\n<% } %>\n","sidebarOrganizations":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.repos.groups') %></h2>\n  </div>\n  <ul class='listing'>\n  <% if (organizations && organizations.length) { %>\n    <li>\n      <a href='#<%= app.username %>' title='<%= app.username %>'<% if (app.state.user === app.username) { %> class='active'<% } %>>\n        <%= app.username %>\n      </a>\n    </li>\n    <% _.each(organizations, function(org) { %>\n    <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>'<% if (app.state.user === org.login) { %> class='active'<% } %>'>\n        <%= org.login %>\n      </a>\n    </li>\n    <% }); %>\n  <% } %>\n  </ul>\n<% } %>\n","sidebarProject":"<div class='inner'>\n  <% if (app.state.branches.length > 0) { %>\n    <h2 class='label'><%= t('sidebar.repo.branch') %></h2>\n    <select data-placeholder='Current Branch Name' class='chzn-select'>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>' selected><%= branch %></option>\n      <% _.each(branches, function(branch) { %>\n        <option value='#<%= [user, repo, \"tree\", branch].join(\"/\") %>'><%= branch %></option>\n      <% }); %>\n    </select>\n  <% } %>\n</div>\n\n<% var rooturl = (app.state.config && app.state.config.prose) ? app.state.config.prose.rooturl : undefined; %>\n<% if (rooturl && path != '_drafts') { %>\n  <div class='inner'>\n    <a class='button round' href='#<%= [user, repo, \"tree\", branch, \"_drafts\"].join(\"/\") %>'><%= t('sidebar.repo.drafts') %></a>\n  </div>\n<% } %>\n\n<% if (window.authenticated) { %>\n<% if (history &&\n        history.user === user &&\n        history.repo === repo &&\n        history.branch === branch &&\n        history.recent &&\n        history.recent[app.username]) { %>\n    <div class='history'>\n      <div class='inner'>\n        <h2 class='label inner'><%= t('sidebar.repo.history.label') %></h2>\n      </div>\n      <ul id='recent' class='listing'>\n        <%\n          var recent = history.recent[app.username]; \n          if (rooturl) {\n            recent = recent.filter(function(item) {\n              return item.indexOf(rooturl) > -1;\n            });\n          }\n        %>\n        <% _.each(recent.slice(0,5), function(filename) { \n            var status = history.commits[filename][0].status;\n        %>\n        <li><a class='item <%= status %>' title='<%= status %>: <%= filename %>' href='#<%= [user, repo, \"edit\", branch, filename].join(\"/\") %>' data-path='<%= filename %>'>\n            <span class='ico small inline <%= status %>'></span>\n            <% if (status === 'removed') { %>\n              <span class='overlay'>\n                <span class='ico small inline <%= status %>'></span>\n                <%= t('sidebar.repo.history.actions.restore') %>\n              </span>\n            <% } %>\n            <%= filename %>\n          </a></li>\n        <% }); %>\n      </ul>\n    </div>\n  <% } %>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n<div class='inner'>\n  <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='round button mobile-new-file'><%= t('sidebar.repo.create') %></a>\n</div>\n<% } %>\n","sidebarSave":"<% if (window.authenticated) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.save.label') %></h2>\n  </div>\n  <div class='inner authoring'>\n    <div class='commit'>\n      <textarea class='commit-message' placeholder></textarea>\n      <a class='ico small cancel round' href='#'>\n        <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>\n      </a>\n    </div>\n\n    <% if (writable) { %>\n      <a class='confirm button round' href='#'><%= t('sidebar.save.save') %></a>\n    <% } else { %>\n      <a class='confirm button round' href='#'><%= t('sidebar.save.submit') %></a>\n    <% } %>\n  </div>\n<% } %>\n","start":"<% if (!window.authenticated) { %>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('main.start.content') %></p>\n      <p><a href='#about'><%= t('main.start.learn') %></a></p>\n      <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>\n    </div>\n  </div>\n<% } %>\n","text":"<div class='form-item'>\n  <label for='<%= name %>'><%= label %></label>\n  <input type='text' name='<%= name %>' value='<%= value %>' data-type='<%= type %>' />\n</div>\n","textarea":"<div class='form-item yaml-block'>\n  <label for='<%= name %>'><%= label %></label>\n  <textarea id='<%= id %>' type='text' name='<%= name %>' data-type='<%= type %>'><%= value %></textarea>\n</div>\n","toolbar":"<% if (draft) { %>\n  <a href='#' class='draft-to-post round contain'>\n    <%= t('actions.draft.toPost') %><span class='ico checkmark'></span>\n    <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>\n  </a>\n<% } else { %>\n  <% if (jekyll && metadata.published) { %>\n    <a href='#' class='publish-flag published round contain' data-state='true'>\n      <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>\n    </a>\n  <% } else if (jekyll && !metadata.published) { %>\n    <a href='#' class='publish-flag round contain' data-state='false'>\n      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>\n    </a>\n  <% } %>\n<% } %>\n<div class='options clearfix'>\n  <span href='#' class='action round fl ico small document <%= avatar %>'>\n    <span class='status'></span>\n\n    <% if (writable) { %>\n      <span class='popup round arrow-top'><%= t('actions.change.save') %></span>\n    <% } else { %>\n      <span class='popup round arrow-top'><%= t('actions.change.submit') %></span>\n    <% } %>\n\n  </span>\n  <% if (markdown) { %>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Heading' data-key='heading' data-snippet='<% print(\"##\\n\\n\") %>'>h2</a></li>\n      <li><a href='#' title='Sub Heading' data-key='sub-heading' data-snippet='<% print(\"###\\n\\n\") %>'>h3</a></li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Insert Link' href='#' data-key='link' data-snippet=false data-dialog=true>\n          <span class='ico small link'></span>\n        </a>\n      </li>\n      <li>\n        <a title='Insert Image' href='#' data-key='media' data-snippet=false data-dialog=true>\n          <span class='ico small picture'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li><a href='#' title='Bold' data-key='bold' data-snippet='****'>B</a></li>\n      <li>\n        <a data-key='italic' href='#' title='Italic' data-snippet='__'>\n          <span class='ico small italic'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a title='Blockquote' href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n          <span class='ico small quote'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='List' data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n          <span class='ico small list'></span>\n        </a>\n      </li>\n      <li>\n        <a href='#' title='Numbered List' data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n          <span class='ico small numbered-list'></span>\n        </a>\n      </li>\n    </ul>\n    <ul class='group round clearfix'>\n      <li>\n        <a class='round' href='#' data-key='help' data-snippet=false data-dialog=true>\n          <span class='ico small question'></span>\n        </a>\n      </li>\n    </ul>\n  <% } %>\n</div>\n<div id='dialog'></div>\n","upgrade":"<div class='start'>\n  <div class='round splash'>\n    <h2 class='icon landing'>Prose</h2>\n    <div class='inner'>\n      <p><%= t('main.upgrade.content') %></p>\n      <a class='round button' href='https://www.google.com/intl/en/chrome/browser'><%= t('main.upgrade.download') %></a>\n    </div>\n  </div>\n</div>\n","verticalNav":"<%\n  var editMode;\n  if (mode === 'edit' || mode === 'blob' || mode === 'new') editMode = true;\n%>\n\n<% if (!noMenu && window.authenticated) { %>\n  <ul class='mobile-menu nav clearfix'>\n    <li>\n      <a href='#' class='toggle ico menu round'></a>\n    </li>\n  </ul>\n<% } %>\n\n<% if (repo && window.authenticated) { %>\n  <ul class='project nav clearfix'>\n    <li>\n      <a href='#<%= user %>/<%= repo %>/new/<%= branch %><%= path ? \"/\"+path : \"\"%>' class='ico round new new-file'>\n        <span class='popup round arrow-right'><%= t('navigation.newFile') %></span>\n      </a>\n    </li>\n  </ul>\n<% } %>\n\n<% if (editMode) { %>\n  <ul class='post-views nav clearfix'>\n    <li>\n      <a href='#' class='ico round pencil edit' data-state='edit'>\n        <span class='popup round arrow-right'><%= t('navigation.edit') %></span>\n      </a>\n    </li>\n    <% if (markdown || mode === 'new') { %>\n      <li>\n        <a href='#' class='ico round eye blob preview' data-state='preview'<% if (jekyll) { %>data-jekyll=true<% } %>>\n          <span class='popup round arrow-right'><%= t('navigation.preview') %></span>\n        </a>\n      </li>\n    <% } %>\n\n    <% if (window.authenticated) { %>\n      <% if (jekyll && lang !== 'yaml') { %>\n        <li>\n          <a href='#' class='ico round metadata meta' data-state='meta'>\n            <span class='popup round arrow-right'><%= t('navigation.meta') %></span>\n          </a>\n        </li>\n      <% } %>\n\n      <% if (app.state.mode !== 'new') { %>\n        <li>\n          <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n            <span class='popup round arrow-right'><%= t('navigation.settings') %></span>\n          </a>\n        </li>\n      <% } %>\n\n      <li>\n        <a href='#' class='ico round save'>\n          <span class='popup round arrow-right'><%= t('navigation.save') %></span>\n        </a>\n      </li>\n    <% } %>\n  </ul>\n<% } %>\n\n<% if (!window.authenticated) { %>\n<ul class='auth nav clearfix'>\n  <li>\n    <a class='ico round switch login' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo&redirect_uri=<%= encodeURIComponent(window.location.href) %>'>\n      <span class='popup round arrow-right'><%= t('login') %></span>\n    </a>\n  </li>\n</ul>\n<% } %>\n"};
-},{}],5:[function(require,module,exports){
-module.exports={
-  "api": "https://api.github.com",
-  "site": "https://github.com",
-  "clientId": "c602a8bd54b1e774f864",
-  "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
-}
+(function(){var LOCALES = require('../translations/locales');
+var en = require('../dist/en.js');
 
-},{}],6:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var cookie = require('./cookie');
-var Backbone = require('backbone');
-var LOCALES = require('../../translations/locales');
-var en = require('../../dist/en.js');
-
+// Set locale as global variable
 window.locale.en = en;
 window.locale.current('en');
+window.app = {};
 
-window.app = {
-    config: {},
-    models: require('./models'),
-    views: {
-      App: require('./views/app'),
-      Notification: require('./views/notification'),
-      Start: require('./views/start'),
-      Preview: require('./views/preview'),
-      Profile: require('./views/profile'),
-      Posts: require('./views/posts'),
-      Post: require('./views/post'),
-      Documentation: require('./views/documentation'),
-      ChooseLanguage: require('./views/chooselanguage')
-    },
-    templates: require('../../dist/templates'),
-    router: require('./router'),
-    utils: {},
-    state: {'repo': ''},
-    instance: {},
-    eventRegister: _.extend({}, Backbone.Events)
-};
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Router = require('./Router');
+var User = require('./models/user');
+var NotificationView = require('./views/notification');
+var config = require('./config');
+var cookie = require('./cookie');
+var auth = require('./config');
+var status = require('./status');
 
 // Set up translations
 var setLanguage = (cookie.get('lang')) ? true : false;
@@ -10015,178 +10238,117 @@ var setLanguage = (cookie.get('lang')) ? true : false;
 if (setLanguage) app.locale = cookie.get('lang');
 
 if (app.locale && app.locale !== 'en') {
-    $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
-        window.locale[app.locale] = result;
-        window.locale.current(app.locale);
-    });
-}
-
-// Bootup
-// test the browser supports CORS and return a boolean for an oauth token.
-if ('withCredentials' in new XMLHttpRequest()) {
-  if (app.models.authenticate()) {
-    app.models.loadApplication(function(err, data) {
-      if (err) {
-        var view = new window.app.views.Notification({
-          'type': 'error',
-          'message': t('notification.error.github')
-        }).render();
-
-        $('#prose').empty().append(view.el);
-      } else {
-
-        // Initialize router
-        window.router = new app.router({
-          model: data
-        });
-
-        // Start responding to routes
-        Backbone.history.start();
-      }
-    });
-  }
-} else {
-  // Display an upgrade notice.
-  var tmpl = _(window.app.templates.upgrade).template();
-
-  _.defer(function() {
-    $('#prose').empty().append(tmpl);
+  $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+    window.locale[app.locale] = result;
+    window.locale.current(app.locale);
   });
 }
 
-},{"../../dist/en.js":1,"./cookie":2,"../../translations/locales":3,"./models":7,"./views/app":8,"./views/notification":9,"./views/start":10,"./views/preview":11,"./views/profile":12,"./views/posts":13,"./views/post":14,"./views/documentation":15,"./views/chooselanguage":16,"../../dist/templates":4,"./router":17,"jquery-browserify":18,"underscore":19,"backbone":20}],21:[function(require,module,exports){
-module.exports = {
-  help: [
-    {
-      menuName: t('dialogs.help.blockElements.title'),
-      content: [{
-          menuName: t('dialogs.help.blockElements.content.paragraphs.title'),
-          data: t('dialogs.help.blockElements.content.paragraphs.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.headers.title'),
-          data: t('dialogs.help.blockElements.content.headers.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.blockquotes.title'),
-          data: t('dialogs.help.blockElements.content.blockquotes.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.lists.title'),
-          data: t('dialogs.help.blockElements.content.lists.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.codeBlocks.title'),
-          data: t('dialogs.help.blockElements.content.codeBlocks.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.horizontalRules.title'),
-          data: t('dialogs.help.blockElements.content.horizontalRules.content')
-        }
-      ]
-    },
+var user = new User();
 
-    {
-      menuName: t('dialogs.help.spanElements.title'),
-      content: [{
-          menuName: t('dialogs.help.spanElements.content.links.title'),
-          data: t('dialogs.help.spanElements.content.links.content')
-        },
-        {
-          menuName: t('dialogs.help.spanElements.content.emphasis.title'),
-          data: t('dialogs.help.spanElements.content.emphasis.content')
-        },
-        {
-          menuName: t('dialogs.help.spanElements.content.code.title'),
-          data: t('dialogs.help.spanElements.content.code.content')
-        },
-        {
-          menuName: t('dialogs.help.spanElements.content.images.title'),
-          data: t('dialogs.help.spanElements.content.images.content')
+user.authenticate({
+  success: function() {
+    if ('withCredentials' in new XMLHttpRequest()) {
+      // Set OAuth header for all CORS requests
+      $.ajaxSetup({
+        headers: {
+          'Authorization': config.auth === 'oauth' ?
+            'token ' + cookie.get('oauth-token') :
+            'Basic ' + Base64.encode(config.username + ':' + config.password)
         }
-      ]
-    },
+      });
 
-    {
-      menuName: t('dialogs.help.miscellaneous.title'),
-      content: [{
-          menuName: t('dialogs.help.miscellaneous.content.automaticLinks.title'),
-          data: t('dialogs.help.miscellaneous.content.automaticLinks.content')
+      // Set an 'authenticated' class to #prose
+      $('#prose').addClass('authenticated');
+
+      // Set User model id and login from cookies
+      var id = cookie.get('id');
+      if (id) user.set('id', id);
+
+      var login = cookie.get('login');
+      if (login) user.set('login', login);
+
+      user.fetch({
+        success: function(model, res, options) {
+          // Set authenticated user id and login cookies
+          cookie.set('id', user.get('id'));
+          cookie.set('login', user.get('login'));
+
+          // Initialize router
+          window.router = new Router({ user: model });
+
+          // Start responding to routes
+          Backbone.history.start();
         },
-        {
-          menuName: t('dialogs.help.miscellaneous.content.escaping.title'),
-          data: t('dialogs.help.miscellaneous.content.escaping.content')
+        error: function(model, res, options) {
+          var apiStatus = status.githubApi(function(res) {
+
+            var error = new NotificationView({
+              'message': t('notification.error.github'),
+              'options': [
+                {
+                  'title': t('notification.back'),
+                  'link': '/'
+                },
+                {
+                  'title': t('notification.githubStatus', {
+                    status: res.status
+                  }),
+                  'link': '//status.github.com',
+                  'className': res.status
+                }
+              ]
+            });
+
+            $('#prose').html(error.render().el);
+          });
         }
-      ]
+      });
+    } else {
+      var upgrade = new NotificationView({
+        'message': t('main.upgrade.content'),
+        'options': [{
+          'title': t('main.upgrade.download'),
+          'link': 'https://www.google.com/intl/en/chrome/browser'
+        }]
+      });
+
+      $('#prose').html(upgrade.render().el);
     }
-  ]
-}
-
-},{}],22:[function(require,module,exports){
-module.exports = {
-  dragEnter: function(e, $el) {
-    $el.addClass('drag-over');
-    e.stopPropagation();
-    e.preventDefault();
-    return false;
   },
+  error: function() {
+    // Initialize router
+    window.router = new Router();
 
-  dragOver: function(e) {
-    e.originalEvent.dataTransfer.dropEffect = 'copy';
-    e.stopPropagation();
-    e.preventDefault();
-    return false;
-  },
-
-  dragLeave: function(e, $el) {
-    $el.removeClass('drag-over');
-    e.stopPropagation();
-    e.preventDefault();
-    return false;
-  },
-
-  dragDrop: function($el, cb) {
-    var that = this;
-    $el.on('dragenter', function(e) {
-          that.dragEnter(e, $el);
-        }).
-        on('dragover', that.dragOver).
-        on('dragleave', function(e) {
-          that.dragLeave(e, $el);
-        }).
-        on('drop', function(e) {
-          that.drop(e, cb);
-        });
-  },
-
-  fileSelect: function(e, cb) {
-    var files = e.target.files;
-    this.compileResult(files, cb);
-  },
-
-  drop: function(e, cb) {
-    e.preventDefault();
-    $(e.target).removeClass('drag-over');
-
-    e = e.originalEvent
-    var files = e.dataTransfer.files;
-    this.compileResult(files, cb);
-  },
-
-  compileResult: function(files, cb) {
-    for (var i = 0, f; f = files[i]; i++) {
-      // Only upload images
-      if (/image/.test(f.type)) {
-        var reader = new FileReader();
-
-        reader.onload = (function(currentFile) {
-          return function(e) {
-            cb(e, currentFile, window.btoa(e.target.result));
-          };
-        })(f);
-      }
-
-      reader.readAsBinaryString(f);
-    };
+    // Start responding to routes
+    Backbone.history.start();
   }
+});
+
+})()
+},{"../dist/en.js":1,"../translations/locales":2,"./Router":5,"./models/user":6,"./views/notification":7,"./config":8,"./cookie":3,"./status":9,"jquery-browserify":10,"underscore":11,"backbone":12}],8:[function(require,module,exports){
+var cookie = require('./cookie');
+var oauth = require('../oauth.json');
+
+module.exports = {
+  api: oauth.api || 'https://api.github.com',
+  apiStatus: oauth.status || 'https://status.github.com/api/status.json',
+  site: oauth.site || 'https://github.com',
+  id: oauth.clientId,
+  url: oauth.gatekeeperUrl,
+  username: cookie.get('username'),
+  auth: 'oauth'
+};
+
+},{"../oauth.json":13,"./cookie":3}],13:[function(require,module,exports){
+module.exports={
+  "api": "https://api.github.com",
+  "site": "https://github.com",
+  "clientId": "c602a8bd54b1e774f864",
+  "gatekeeperUrl": "http://prose-gatekeeper.herokuapp.com"
 }
 
-},{}],19:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11415,7 +11577,7 @@ module.exports = {
 }).call(this);
 
 })()
-},{}],18:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -20750,917 +20912,39 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],7:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var queue = require('queue-async');
-var cookie = require('./cookie');
-var Github = require('../libs/github');
-var queue = require('queue-async');
-var oauth = require('../../oauth.json');
-
-// Set up a GitHub object
-// -------
-window.auth = {
-  api: oauth.api || 'https://api.github.com',
-  site: oauth.site || 'https://github.com',
-  raw: oauth.raw || 'https://raw.github.com',
-  id: oauth.clientId,
-  url: oauth.gatekeeperUrl
-};
-
-function github() {
-  return new Github({
-    api: auth.api,
-    token: cookie.get('oauth-token'),
-    username: cookie.get('username'),
-    auth: 'oauth'
-  });
-}
-
-var currentRepo = {
-  user: null,
-  repo: null,
-  instance: null
-};
-
-module.exports = {
-
-  // Smart caching (needed for managing subsequent updates)
-  // -------
-
-  getRepo: function(user, repo) {
-    if (currentRepo.user === user && currentRepo.repo === repo) {
-      return currentRepo.instance; // Cached
-    }
-
-    currentRepo = {
-      user: user,
-      repo: repo,
-      instance: github().getRepo(user, repo)
-    };
-
-    return currentRepo.instance;
-  },
-
-  // Authentication
-  // -------
-
-  authenticate: function() {
-    if (cookie.get('oauth-token')) return window.authenticated = true;
-    var match = window.location.href.match(/\?code=([a-z0-9]*)/);
-
-    // Handle Code
-    if (match) {
-      $.getJSON(auth.url + '/authenticate/' + match[1], function (data) {
-        cookie.set('oauth-token', data.token);
-        window.authenticated = true;
-
-        // Adjust URL
-        var regex = new RegExp("\\?code=" + match[1]);
-        window.location.href = window.location.href.replace(regex, '').replace('&state=', '');
-      });
-      return false;
-    } else {
-      return true;
-    }
-  },
-
-  logout: function() {
-    window.authenticated = false;
-    cookie.unset('oauth-token');
-  },
-
-  // Load Application
-  // -------
-  //
-  // Load everything that's needed for the app + header
-
-  loadApplication: function(cb) {
-    if (window.authenticated) {
-      $.ajax({
-        type: 'GET',
-        url: auth.api + '/user',
-        dataType: 'json',
-        contentType: 'application/x-www-form-urlencoded',
-        headers: {
-          Authorization: 'token ' + cookie.get('oauth-token')
-        },
-        success: function (res) {
-          cookie.set('avatar', res.avatar_url);
-          cookie.set('username', res.login);
-          app.username = res.login;
-          app.avatar = res.avatar_url;
-
-          var user = github().getUser();
-          var owners = {};
-
-          user.repos(function (err, repos) {
-            user.orgs(function (err, orgs) {
-              _.each(repos, function (r) {
-                owners[r.owner.login] = owners[r.owner.login] ? owners[r.owner.login].concat([r]) : [r];
-              });
-
-              cb(null, {
-                'available_repos': repos,
-                'organizations': orgs,
-                'owners': owners
-              });
-            });
-          });
-
-        },
-        error: function (err) {
-          cb('error', {
-            'available_repos': [],
-            'owners': {}
-          });
-        }
-      });
-
-    } else {
-      cb(null, {
-        'available_repos': [],
-        'owners': {}
-      });
-    }
-  },
-
-  // Creating or updating a File
-  // -------
-  //
-  // Fired when uploading images via file selection or drag and drop
-
-  uploadFile: function(username, repo, path, data, cb) {
-    var file = github().getFile();
-    file.uploadFile(username, repo, path, data, function(err, res) {
-      (err) ? cb('error', err) : cb('sucess', res);
-    });
-  },
-
-  // Load Repos
-  // -------
-  //
-  // List all available repositories for a certain user
-
-  loadRepos: function(username, cb) {
-    var user = github().getUser();
-    user.show(username, function(err, u) {
-      if (err) return router.navigate('error/' + err.error, true);
-
-      // TODO if error, bring up the notification to
-      // say, "You need to be a logged in user to do this!"
-      // if (err) ...
-      var owners = {};
-      if (u.type && u.type.toLowerCase() === 'user') {
-        user.userRepos(username, function (err, repos) {
-          cb(null, {
-            'repos': repos,
-            user: u
-          });
-        });
-      } else {
-        user.orgRepos(username, function (err, repos) {
-          cb(null, {
-            'repos': repos,
-            user: u
-          });
-        });
-      }
-    });
-  },
-
-  // Load Branches
-  // -------
-  //
-  // List all available branches of a repository
-
-  loadBranches: function(user, repo, cb) {
-    repo = this.getRepo(user, repo);
-
-    repo.listBranches(function(err, branches) {
-      cb(err, branches);
-    });
-  },
-
-  // Filter on projects based on a searchstr
-  // -------
-  filterProjects: function(repos, searchstr) {
-
-    var matchSearch = new RegExp('(' + searchstr + ')', 'i');
-    var listings;
-
-    // Dive into repos.owners and pull each match into a new owners array.
-    if (repos.user.name === app.username) {
-
-      var owners = {};
-      var owner = _(repos.owners).filter(function(ownerRepos, owns) {
-        listings = _(ownerRepos).filter(function(r) {
-
-          if (searchstr && searchstr.length) {
-            r.name = r.name.replace(matchSearch, '$1');
-          }
-
-          if (!searchstr) return true;
-          return r.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
-        });
-
-        return owners[owns] = listings;
-      });
-
-      return {
-        title: repos.user.name,
-        owners: owners
-      };
-
-    } else {
-      listings = _(repos.repos).filter(function(repo) {
-        if (searchstr && searchstr.length) {
-          repo.name = repo.name.replace(matchSearch, '$1');
-        }
-        if (!searchstr) return true;
-        return repo.name.toLowerCase().search(searchstr.toLowerCase()) >= 0;
-      });
-
-      // TODO sort by name eg: listigs = _(listings).sortby( ...
-      return {
-        repos: listings
-      };
-    }
-  },
-
-  // Get files from a tree based on a given path and searchstr
-  // -------
-
-  getFiles: function(tree, path, searchstr) {
-    // catch undefined path
-    path = path || '';
-
-    var pathMatches = 0;
-
-    function matchesPath(file) {
-      if (file.path === path) return false; // skip current path
-      var length = path.length;
-      // Append trailing slash if path exists and not already present
-      if (length && path[length - 1] !== '/') {
-        path += '/';
-      }
-      var match = file.path.match(new RegExp('^' + path + '(.*)$'));
-      if (match) {
-        return !!searchstr || match[1].split('/').length <= 1;
-      }
-      return false;
-    }
-
-    // Filter
-    var files = _(tree).filter(function(file) {
-      var matchSearch = new RegExp('(' + searchstr + ')', 'i');
-
-      // Depending on search use full path or filename
-      file.name = searchstr ? file.path : _.extractFilename(file.path)[1];
-
-      // Scope name to current path
-      file.name = file.name.replace(new RegExp('^' + path + '/?'), '');
-
-      // Mark match if searchstr not empty
-      if (searchstr && searchstr.length) {
-        file.name = file.name.replace(matchSearch, "<strong>$1</strong>");
-      }
-
-      function matchesSearch(file, string) {
-        if (!string) return true;
-        // Insert crazy search pattern match algorithm
-        return file.path.toLowerCase().search(string.toLowerCase()) >= 0;
-      }
-
-      if (!matchesPath(file)) return false;
-      pathMatches += 1;
-      return matchesSearch(file, searchstr);
-    });
-
-    // Sort by name
-    files = _.sortBy(files, function (entry) {
-      return (entry.type === 'tree' ? 'A' : 'B') + entry.path;
-    });
-
-    return {
-      tree: tree,
-      files: files,
-      total: pathMatches
-    };
-  },
-
-  // Load Config
-  // -------
-  //
-  // Load _config.yml or prose.yml
-
-  loadConfig: function(user, reponame, branch, file, cb) {
-    if (file) {
-      if (reponame === app.state.currentRepo) {
-        cb(app.state.config);
-      } else {
-        var repo = this.getRepo(user, reponame);
-        app.state.currentRepo = reponame;
-        repo.contents(branch, file, function(err, data) {
-          if (err) return cb(err);
-          app.state.config = jsyaml.load(data);
-          cb(app.state.config, err);
-        });
-      }
-    } else {
-      cb(false);
-    }
-  },
-
-  // Load Posts
-  // -------
-  //
-  // List all postings for a given repo+branch+path
-  // plus load _config.yml or prose.yml
-
-  loadPosts: function(user, reponame, branch, path, cb) {
-    var models = this;
-    var repo = this.getRepo(user, reponame);
-
-    function load(repodata) {
-      repo.getTree(branch + '?recursive=true', function(err, tree) {
-
-        // TODO This could be better. It would be great to
-        // avoid the callback dependency and order when
-        // we refacor models.
-
-        // Check for prose.yml or _config.yml
-        var configName = _(tree).find(function(t) {
-          if (t.path === 'prose.yml') {
-            return t.path;
-          } else if (t.path === '_config.yml') {
-            return t.path;
-          } else {
-            return false;
-          }
-        });
-
-        var file = configName ? configName.path : false;
-
-        models.loadConfig(user, reponame, branch, file, function(config, err) {
-          if (err) return cb('Not found');
-
-          var root = config && config.prose && config.prose.rooturl ? config.prose.rooturl : '';
-          if (!path) path = root;
-
-          var paths = _.pluck(tree, 'path');
-
-          models.loadBranches(user, reponame, function(err, branches) {
-            if (err) return cb('Branches could not be fetched');
-            app.state.path = path ? path : '';
-
-            app.state.branches = _.filter(branches, function(b) {
-              return b !== branch;
-            });
-
-            repo.getSha(branch, app.state.path, function(err, sha) {
-              app.state.sha = sha;
-            });
-
-            var store = window.sessionStorage;
-            var historyStore;
-            var history;
-            var lastModified;
-
-            if (store) {
-              historyStore = store.getItem('history');
-
-              if (historyStore) {
-                history = JSON.parse(historyStore);
-
-                if (history && history.user === user && history.repo === reponame && history.branch === branch) {
-                  lastModified = history.modified;
-
-                  history.recent[app.username] = _.filter(history.recent[app.username], function(value) {
-                    return history.commits[value][0].status === 'removed' ||
-                      _.pluck(tree, 'path').indexOf(value) > -1;
-                  });
-
-                  app.state.history = history;
-                }
-              }
-            }
-
-            repo.getCommits(branch, lastModified, function(err, commits, xhr) {
-              if (err) return cb('Not found');
-
-              if (xhr.status !== 304) {
-                var q = queue();
-
-                // build list of recently edited files
-                _.each(_.pluck(commits, 'sha'), function(sha) {
-                  q.defer(repo.getCommit, sha);
-                });
-
-                q.awaitAll(function(err, res) {
-                  if (err) return err;
-
-                  var state = {};
-                  var recent = {};
-
-                  var commit;
-                  var file;
-                  var filename;
-                  var author;
-
-                  for (var i = 0; i < res.length; i++) {
-                    commit = res[i];
-
-                    if (commit.files) {
-                      for (var j = 0; j < commit.files.length; j++) {
-                        file = commit.files[j];
-                        filename = file.filename;
-
-                        var fileCommit = {
-                          status: file.status,
-                          url: file.contents_url
-                        };
-
-                        if (state[filename]) {
-                          state[filename].push(fileCommit);
-                        } else {
-                          state[filename] = [fileCommit];
-                        }
-
-                        // some malformed commit data requires this
-                        if (commit.author) {
-                          author = commit.author.login;
-
-                          if (recent[author]) {
-                            recent[author] = _.union(recent[author], filename);
-                          } else {
-                            recent[author] = [filename];
-                          }
-                        }
-                      }
-                    }
-                  }
-
-                  recent[app.username] = _.filter(recent[app.username], function(value) {
-                    return state[value][0].status === 'removed' ||
-                      _.pluck(tree, 'path').indexOf(value) > -1;
-                  });
-
-                  var history = app.state.history = {
-                    'user': user,
-                    'repo': reponame,
-                    'branch': branch,
-                    'modified': xhr.getResponseHeader('Last-Modified'),
-                    'commits': state,
-                    'recent': recent,
-                    'link': xhr.getResponseHeader('link')
-                  };
-
-                  var store = window.sessionStorage;
-                  if (store) {
-                    try {
-                      store.setItem('history', JSON.stringify(history));
-                    } catch(err) {
-                      console.log(err);
-                    }
-                  }
-
-                  if (app.state.mode === 'tree') {
-                    // TODO: temporary fix, break history sidebar into a discrete view
-                    app.eventRegister.trigger('sidebarContext', app.state);
-                  }
-                });
-              }
-            });
-
-            cb(null, models.getFiles(tree, path, ''));
-          });
-        });
-      });
-    }
-
-    repo.show(function(err, repodata) {
-      if (err) return router.navigate('error/' + err.error, true);
-      if (!branch) app.state.branch = branch = repodata.master_branch;
-      app.state.isPrivate = repodata.private;
-      app.state.permissions = repodata.permissions;
-      load();
-    });
-  },
-
-  // Save File
-  // -------
-  //
-  // Store a file to GitHub
-
-  saveFile: function(user, repo, branch, path, content, message, cb) {
-    // add newline to eof if not present to make git happy
-    if (!content.match(/\n$/)) {
-      content = content + '\n';
-    }
-
-    repo = this.getRepo(user, repo);
-    repo.write(branch, path, content, message, cb);
-  },
-
-  // Fork repository
-  // -------
-  //
-  // Creates a fork for the current user
-
-  forkRepo: function(user, reponame, branch, cb) {
-    var repo = this.getRepo(user, reponame);
-    var forkedRepo = this.getRepo(app.username, reponame);
-
-    // Wait until contents are ready.
-
-    function onceReady(cb) {
-      _.delay(function() {
-        forkedRepo.contents(branch, '', function(err, contents) {
-          if (contents) {
-            cb();
-          } else {
-            onceReady(cb);
-          }
-        });
-      }, 500);
-    }
-
-    repo.fork(function (err) {
-      onceReady(function () {
-        repo.getRef('heads/' + branch, function (err, commitSha) {
-          // Create temp branch
-          forkedRepo.listBranches(function (unused, branches) {
-            //find the lowest patch number
-            i = 1;
-            while ($.inArray('prose-patch-' + i, branches) != -1) {
-              i++;
-            }
-            var refSpec = {
-              'ref': 'refs/heads/prose-patch-' + i,
-              'sha': commitSha
-            };
-            forkedRepo.createRef(refSpec, cb);
-          });
-        });
-      });
-    });
-  },
-
-  // New pull request
-  // -------
-  //
-  // Creates a new pull request
-
-  createPullRequest: function(user, repo, pull, cb) {
-    repo = this.getRepo(user, repo);
-    repo.createPullRequest(pull, function(err) {
-      if (err) return cb(err);
-      cb();
-    });
-  },
-
-  // Patch File
-  // -------
-  //
-  // Send a pull request on GitHub
-
-  patchFile: function(user, repo, branch, path, content, message, cb) {
-    var models = this;
-    this.forkRepo(user, repo, branch, function (err, info) {
-      branch = info.ref.substring(info.ref.lastIndexOf('/') + 1);
-      models.saveFile(app.username, repo, branch, path, content, message, function (err) {
-        if (err) return cb(err);
-        var pull = {
-          title: message,
-          body: 'This pull request has been automatically generated by prose.io.',
-          base: app.state.branch,
-          head: app.username + ':' + branch
-        };
-        models.createPullRequest(app.state.user, app.state.repo, pull, cb);
-      });
-    });
-  },
-
-  // Delete Post
-  // -------
-
-  deletePost: function(user, repo, branch, path, file, cb) {
-    repo = this.getRepo(user, repo);
-    repo.remove(branch, _.filepath(path, file), cb);
-  },
-
-  // Move Post
-  // -------
-
-  movePost: function(user, repo, branch, path, newPath, cb) {
-    repo = this.getRepo(user, repo);
-    repo.move(branch, path, newPath, cb);
-  },
-
-  // New Post
-  // -------
-  //
-  // Prepare new empty post
-
-  emptyPost: function(user, repo, branch, path, cb) {
-    var file = new Date().format('Y-m-d') + '-your-filename.md';
-    var rawMetadata = 'layout: default\npublished: false';
-    var defaultMetadata;
-    var metadata = {
-      'layout': 'default',
-      'published': false
-    };
-
-    repo = this.getRepo(user, repo);
-
-    // load default metadata
-    var cfg = app.state.config;
-    var q = queue();
-
-    if (cfg && cfg.prose && cfg.prose.metadata) {
-      // match nearest parent directory default metadata
-      var nearestPath = path;
-      var nearestDir = /\/(?!.*\/).*$/;
-      while (cfg.prose.metadata[nearestPath] === undefined && nearestPath.match( nearestDir )) {
-        nearestPath = nearestPath.replace( nearestDir, '' );
-      }
-
-      if (cfg.prose.metadata[nearestPath]) {
-        defaultMetadata = cfg.prose.metadata[nearestPath];
-
-        if (typeof defaultMetadata === 'object') {
-          _.each(defaultMetadata, function(data, key) {
-            if (data && data.field) {
-              if (typeof data.field.options === 'string' && data.field.options.match(/^https?:\/\//)) {
-
-                q.defer(function(cb){
-                  $.ajax({
-                    cache: true,
-                    dataType: 'jsonp',
-                    jsonp: false,
-                    jsonpCallback: data.field.options.split('?callback=')[1] || 'callback',
-                    url: data.field.options,
-                    success: function(d) {
-                      data.field.options = d;
-                      cb();
-                    }
-                  });
-                });
-              }
-
-              switch(data.field.element) {
-                case 'boolean':
-                case 'text':
-                  metadata[data.name] = data.field.value;
-                  break;
-                case 'select':
-                case 'multiselect':
-                  metadata[data.name] = data.field.selected ? data.field.selected : null;
-                  break;
-              }
-            } else {
-              metadata[key] = data;
-            }
-          });
-
-          rawMetadata = jsyaml.dump(metadata);
-        } else if (typeof defaultMetadata === 'string') {
-          rawMetadata = defaultMetadata;
-
-          try {
-            defaultMetadata = jsyaml.load(rawMetadata);
-
-            _.each(defaultMetadata, function(data, key) {
-              metadata[key] = data;
-            });
-
-            if (metadata.date === 'CURRENT_DATETIME') {
-              var current = (new Date()).format('Y-m-d H:i');
-              metadata.date = current;
-              rawMetadata = rawMetadata.replace('CURRENT_DATETIME', current);
-            }
-          } catch(err) {
-            console.log('ERROR encoding YAML');
-            // No-op
-          }
-        }
-      }
-    }
-
-    q.await(function() {
-      var query = path.split('?')[1];
-      var translate = false;
-      var lang;
-
-      // remove query string and trailing slash
-      path = path.split('?')[0].replace(/\/$/, '');
-
-      if (query) {
-        // If file= in path, use it as file name
-        if (query.indexOf('file=') !== -1) {
-          file = query.match(/file=([^&]*)/)[1];
-
-          // remove filename and trailing slash
-          path = path.split(file)[0].replace(/\/$/, '');
-        }
-
-        // If lang= in path, set lang and add to categories
-        if (query.indexOf('lang=') !== -1) {
-          lang = query.match(/lang=([^&]*)/)[1];
-          metadata.lang = lang;
-          metadata.categories = !_.isUndefined(metadata.categories) && !_.isNull(metadata.categories) ? _.union(metadata.categories, lang) : [lang];
-        }
-
-        translate = query.indexOf('translate=true') !== -1 ? true : false;
-      }
-
-      cb(null, {
-        'metadata': metadata,
-        'default_metadata': defaultMetadata,
-        'content': t('main.new.body'),
-        'repo': repo,
-        'path': path,
-        'published': false,
-        'persisted': false,
-        'writable': true,
-        'file': file,
-        'translate': translate
-      });
-    });
-  },
-
-  // breaks the err first pattern because of use by _.partial
-  _loadPostData: function(repo, path, file, cb, err, data, xhr) {
-    if (err) return cb(err);
-
-    function published(metadata) {
-      // Given a YAML front matter, determines published or not
-      // default to published unless explicitly set to false
-      return !metadata.match(/published: false/);
-    }
-
-    function parse(content) {
-      // Extract YAML from a post, trims whitespace
-      content = content.replace(/\r\n/g, '\n'); // normalize a little bit
-
-      function writable() {
-        return !!(app.state.permissions && app.state.permissions.push);
-      }
-
-      var hasMetadata = !!_.hasMetadata(content);
-
-      if (!hasMetadata) return {
-        content: content,
-        published: true,
-        writable: writable(),
-        jekyll: hasMetadata
-      };
-
-      var res = {
-        writable: writable(),
-        jekyll: hasMetadata
-      };
-
-      res.content = content.replace(/^(---\n)((.|\n)*?)---\n?/, function (match, dashes, frontmatter) {
-        try {
-          res.metadata = jsyaml.load(frontmatter);
-          res.metadata.published = published(frontmatter);
-        } catch(err) {
-          console.log('ERROR encoding YAML');
-        }
-
-        return '';
-      }).trim();
-
-      return res;
-    }
-
-    var post = parse(data);
-    var rawMetadata;
-    var defaultMetadata;
-
-    // load default metadata
-    var cfg = app.state.config;
-    var q = queue();
-
-    if (cfg && cfg.prose && cfg.prose.metadata) {
-      // match nearest parent directory default metadata
-      var nearestPath = path;
-      var nearestDir = /\/(?!.*\/).*$/;
-      while (cfg.prose.metadata[nearestPath] === undefined && nearestPath.match( nearestDir )) {
-        nearestPath = nearestPath.replace( nearestDir, '' );
-      }
-
-      if (cfg.prose.metadata[nearestPath]) {
-        defaultMetadata = cfg.prose.metadata[nearestPath];
-        if (typeof defaultMetadata === 'object') {
-          _(defaultMetadata).each(function(value) {
-            if (value.field && value.field.options &&
-                typeof value.field.options === 'string' &&
-                value.field.options.match(/^https?:\/\//)) {
-
-              q.defer(function(cb) {
-                $.ajax({
-                  cache: true,
-                  dataType: 'jsonp',
-                  jsonp: false,
-                  jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
-                  url: value.field.options,
-                  success: function(d) {
-                    value.field.options = d;
-                    cb();
-                  }
-                });
-              });
-            }
-          });
-        } else if (typeof defaultMetadata === 'string') {
-          rawMetadata = defaultMetadata;
-
-          try {
-            defaultMetadata = jsyaml.load(rawMetadata);
-            if (defaultMetadata.date === "CURRENT_DATETIME") {
-              var current = (new Date()).format('Y-m-d H:i');
-              defaultMetadata.date = current;
-              rawMetadata = rawMetadata.replace("CURRENT_DATETIME", current);
-            }
-          } catch(err) {
-            console.log('ERROR encoding YAML');
-            // No-op
-          }
-        }
-      }
-    }
-
-    q.await((function() {
-      cb(err, _.extend(post, {
-        'default_metadata': defaultMetadata,
-        'markdown': _.markdown(file.split('?')[0]),
-        'repo': repo,
-        'path': path,
-        'file': file.split('?')[0],
-        'persisted': true
-      }));
-    }).bind(this));
-  },
-
-  // Load Post
-  // -------
-  //
-  // List all postings for a given repository
-  // Looks into _posts/blog
-
-  loadPost: function(user, repo, branch, path, file, cb) {
-    repo = this.getRepo(user, repo);
-
-    repo.contents(branch, path ? path + '/' + file : file, _.partial(
-      this._loadPostData,
-      repo,
-      path,
-      file,
-      cb
-    ));
-  },
-
-  restoreFile: function(user, repo, branch, path, url, cb) {
-    $.ajax({
-      type: 'GET',
-      url: url,
-      headers: {
-        Authorization: 'token ' + cookie.get('oauth-token'),
-        Accept: 'application/vnd.github.raw'
-      },
-      success: (function(res) {
-        this.saveFile(user, repo, branch, path, res, 'Restored ' + path, function(err) {
-          if (err) {
-            cb(err);
-          } else {
-            cb();
-          }
-        });
-      }).bind(this),
-      error: function(err) {
-        cb(err);
-      }
-    });
-  }
-};
-
-},{"../../oauth.json":5,"./cookie":2,"../libs/github":23,"jquery-browserify":18,"underscore":19,"js-yaml":24,"queue-async":25}],17:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
+module.exports = {"app":"<div id='drawer' class='sidebar'></div>\n<nav id='navigation'></nav>\n<div id='main'></div>\n\n<div class='prose-menu dropdown-menu'>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose</a></li>\n      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>\n      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>\n      <li><a href='./#chooselanguage'><%= t('navigation.language') %></a></li>\n      <li class='divider'></li>\n      <li><a href='#' class='logout'><%= t('navigation.logout') %></a></li>\n    </ul>\n  </div>\n</div>\n","breadcrumb":"<span class='slash'>/</span>\n<a class='path' href='#<%= trail %>/<%= url %>'><%= name %></a>\n","chooselanguage":"<h1><%= t('chooselanguage.title') %></h1>\n<ul class='fat-list round'>\n  <% _(chooseLanguage.languages).each(function(l) { %>\n    <li>\n    <a href='#' data-code='<%= l.code %>' class='language<% if (l.code === chooseLanguage.active) { %> active<% } %>'>\n        <% if (l.code === chooseLanguage.active) { %><span class='ico checkmark fr'></span><% } %>\n        <%= l.name %>\n        <small>(<%= l.code %>)</small>\n      </a>\n    </li>\n  <% }); %>\n</ul>\n<p><%= t('chooselanguage.description') %></p>\n","dialogs":{"help":"<%\n  function formattedClass(str) {\n    return str.toLowerCase().replace(/\\s/g, '-').replace('&amp;', '');\n  };\n%>\n\n<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","link":"<div class='inner'>\n  <label><%= t('dialogs.link.title') %></label>\n  <input type='text' name='href' placeholder='Link URL' />\n  <input type='text' name='text' placeholder='Link Name' />\n  <input type='text' name='title' placeholder='Title (optional)' />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder='Insert a local link' class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>\n</div>\n","media":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label><%= t('dialogs.media.title') %></label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        <%= description %>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder='Image URL' />\n    <input type='text' name='alt' placeholder='Alt text (optional)' />\n    <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>\n      <% if (!assetsDirectory) { %>\n        <small class='caption deemphasize'><%= t('dialogs.media.help') %></small>\n      <% } %>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label><%= t('dialogs.media.choose') %></label>\n      <ul id='media'></ul>\n      <small class='caption deemphasize'><%= t('dialogs.media.helpMedia') %></small>\n    </div>\n  <% } %>\n</div>\n","mediadirectory":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (isMedia) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n"},"drawer":"<div id='orgs'></div>\n<div id='branches'></div>\n<div id='history'></div>\n<div id='drafts'></div>\n<div id='save'></div>\n<div id='settings'></div>\n","file":"<header id='heading' class='heading limiter clearfix'></header>\n<div id='modal'></div>\n\n<div id='post' class='post limiter'>\n  <div class='editor views<% if (file.markdown) { %> markdown<% } %>'>\n    <div id='diff' class='view prose diff'>\n      <h2><%= t('main.file.metaTitle') %><br />\n        <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>\n      </h2>\n      <div class='diff-content inner'></div>\n    </div>\n    <div id='meta' class='view round meta'></div>\n    <div id='edit' class='view active edit'>\n      <div class='topbar-wrapper'>\n        <div class='topbar'>\n          <div id='toolbar' class='containment toolbar round'></div>\n        </div>\n      </div>\n      <div id='drop' class='drop-mask'></div>\n      <div id='code' class='code round inner'></div>\n    </div>\n    <div id='preview' class='view preview prose'></div>\n  </div>\n</div>\n","files":"<% if (data.path && data.path !== data.rooturl) { %>\n  <div class='breadcrumb'>\n    <a class='branch' href='#<%= data.url %>'>..</a>\n    <% _.each(data.parts, function(part) { %>\n      <% if (part.name !== data.rooturl) { %>\n        <span class='slash'>/</span>\n        <a class='path' href='#<%= [data.url, part.url].join(\"/\") %>'><%= part.name %></a>\n      <% } %>\n    <% }); %>\n  </div>\n<% } %>\n\n<ul class='listing'></ul>\n","header":"<% if (data.alterable) { %>\n  <div class='round avatar'>\n    <%= data.avatar %>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><a href='#<%= data.user %>'><%= data.user %></a> / <a href='#<%= data.user %>/<%= data.repo.name %>'><%= data.repo.name %></a><% if (data.isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n    <!-- if (isNew() && !translate) placeholder, not value -->\n    <input type='text' class='headerinput' data-mode='<%= data.mode %>' <% print((data.placeholder ? 'placeholder=' : 'value=') + '\"' + data.input + '\"') %>>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round'><%= data.avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= data.user %>'><%= data.user %></a></h4>\n    <h2><a class='repo' href='#<%= data.path %>'><%= data.title %></a></h2>\n  </div>\n<% } %>\n","li":{"file":"<% if (file.binary) { %>\n  <div class='listing-icon icon round <%= file.extension %> <% if (file.media) { %>media<% } %>'></div>\n<% } else { %>\n  <a href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>' class='listing-icon'>\n    <span class='icon round <%= file.extension %> <% if (file.markdown) { %> md<% } %> <% if (file.media) { %> media<% } %>'></span>\n  </a>\n<% } %>\n\n<div class='details'>\n  <div class='actions fr clearfix'>\n    <% if (!file.binary) { %>\n      <a class='clearfix'\n        title=\"<%= t('main.repo.edit') %>\"\n        href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'>\n        <%= t('main.repo.edit') %>\n      </a>\n    <% } %>\n    <% if (file.writable) { %>\n      <a\n        class='delete'\n        title=\"<%= t('main.repo.delete') %>\"\n        href='#'>\n        <span class='ico rubbish small'></span>\n      </a>\n    <% } %>\n  </div>\n  <% if (file.binary) { %>\n    <h3 class='title' title='<%= file.name %>'><%= file.name %></h3>\n  <% } else { %>\n    <h3 class='title' title='<%= file.name %>'><a class='clearfix'href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'><%= file.name %></a></h3>\n  <% } %>\n</div>\n","folder":"<a href='#<%= folder.repo.owner.login %>/<%= folder.repo.name %>/tree/<%= folder.branch %>/<%= folder.path %>' class='listing-icon'>\n  <span class='icon round folder'></span>\n</a>\n\n<span class='details'>\n  <h3 class='title' title='<%= folder.name %>'>\n    <a href='#<%= folder.repo.owner.login %>/<%= folder.repo.name %>/tree/<%= folder.branch %>/<%= folder.path %>'>\n      <%= folder.name %>\n    </a>\n  </h3>\n</span>\n","repo":"<a\n  class='listing-icon'\n  data-user='<%= repo.owner.login %>'\n  data-repo='<%= repo.name %>'\n  href='#<%= repo.owner.login %>/<%= repo.name %>'>\n  <% if ((repo.owner.login !== repo.login) && repo.private) { %>\n    <span class='icon round repo owner private' title=\"<%= t('main.repos.sharedFrom') %> (<%= repo.owner.login %>)\"></span>\n  <% } else if (repo.owner.login !== repo.login) { %>\n    <span class='icon round repo owner' title=\"<%= t('main.repos.sharedFrom') %> (<%= repo.owner.login %>)\"></span>\n  <% } else if (repo.fork && repo.private) { %>\n    <span class='icon round repo private fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n  <% } else if (repo.fork) { %>\n    <span class='icon round repo fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n  <% } else if (repo.private) { %>\n    <span class='icon round repo private'></span>\n  <% } else { %>\n    <span class='icon round repo'></span>\n  <% } %>\n</a>\n\n<div class='details'>\n  <div class='actions fr clearfix'>\n    <a\n      data-user='<%= repo.owner.login %>'\n      data-repo='<%= repo.name %>'\n      href='#<%= repo.owner.login %>/<%= repo.name %>'>\n      <%= t('main.repos.repo') %>\n    </a>\n    <% if (repo.homepage) { %>\n      <a href='<%= repo.homepage %>'><%= t('main.repos.site') %></a>\n    <% } %>\n  </div>\n  <a\n    data-user='<%= repo.owner.login %>'\n    data-repo='<%= repo.name %>'\n    href='#<%= repo.owner.login %>/<%= repo.name %>'>\n    <h3<% if (!repo.description) { %> class='title'<% } %>><%= repo.name %></h3>\n    <span class='deemphasize'><%= repo.description %></span>\n  </a>\n</div>\n"},"loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <%= loading.message %>\n</div>\n","meta":{"button":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <button class='round <%= meta.name %>' type='button' name='<%= meta.name %>' value='<%= meta.value %>' data-on='<%= meta.on %>' data-off='<%= meta.off %>'>\n    <% print(value ? meta.on : meta.off); %>\n  </button>\n</div>\n","checkbox":"<div class='form-item'>\n  <input type='checkbox' name='<%= meta.name %>' value='<%= meta.value %>'<% print(meta.checked ? 'checked' : '') %> />\n  <label class='aside' for='<%= meta.name %>'><%= meta.label %></label>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <select id='<%= meta.name %>' name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' multiple class='chzn-select'>\n    <% _(meta.options).each(function(o) { %>\n      <% if (!o.lang || o.lang === meta.lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n\n  <% if (meta.alterable) { %>\n    <div class='create'>\n      <input type='text' class='inline' />\n      <a href='#' class='round create-select inline button' data-select='<%= meta.name %>' title=\"<%= t('main.file.createMeta') %>\"><%= t('main.file.createMeta') %></a>\n    </div>\n  <% } %>\n</div>\n","raw":"<div class='form-item'>\n  <label for='raw'><%= t('main.file.rawMeta') %></label>\n  <div name='raw' id='raw' class='inner'></div>\n</div>\n","select":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <select name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' class='chzn-select'>\n    <% _(meta.options).each(function(o) { %>\n      <% if (!o.lang || o.lang === meta.lang) { %>\n        <% if (o.name) { %>\n         <option value='<%= o.value %>'><%= o.name %></option>\n        <% } else if (o.value) { %>\n         <option value='<%= o.value %>'><%= o.value %></option>\n        <% } else { %>\n         <option value='<%= o %>'><%= o %></option>\n        <% } %>\n      <% } %>\n    <% }); %>\n  </select>\n</div>\n","text":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <input type='text' name='<%= meta.name %>' value='<%= meta.value %>' data-type='<%= meta.type %>' />\n</div>\n","textarea":"<div class='form-item yaml-block'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <textarea id='<%= meta.id %>' type='text' name='<%= meta.name %>' data-type='<%= meta.type %>'><%= meta.value %></textarea>\n</div>\n"},"metadata":"<div class='form'></div>\n<a href='#' class='button round finish'><%= t('main.file.back') %></a>\n","modal":"<div class='modal-content round'>\n  <div class='modal-heading inner'>\n    <%= t('modal.errorHeading') %>\n  </div>\n  <div class='prose inner'>\n    <p><%= modal.message %></p>\n  </div>\n  <div class='modal-footer inner'>\n    <a href='#' class='button round got-it'><%= t('modal.confirm') %></a>\n  </div>\n</div>\n","nav":"<!-- if !noMenu and authenticated -->\n<ul class='mobile nav clearfix'>\n  <li>\n    <a href='#' class='toggle ico menu round'></a>\n  </li>\n</ul>\n\n<ul class='file nav clearfix'>\n  <li>\n    <a href='#' class='ico round pencil edit' data-state='edit'>\n      <span class='popup round arrow-right'><%= t('navigation.edit') %></span>\n    </a>\n  </li>\n\n  <!-- if markdown or new -->\n  <li>\n    <a href='#' class='ico round eye blob preview' data-state='blob'>\n      <span class='popup round arrow-right'><%= t('navigation.preview') %></span>\n    </a>\n  </li>\n\n  <!-- if authenticated -->\n  <!-- if lang == yaml -->\n  <li>\n    <a href='#' class='ico round metadata meta' data-state='meta'>\n      <span class='popup round arrow-right'><%= t('navigation.meta') %></span>\n    </a>\n  </li>\n  <li>\n    <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n      <span class='popup round arrow-right'><%= t('navigation.settings') %></span>\n    </a>\n  </li>\n  <li>\n    <a href='#' class='ico round save' data-state='save'>\n      <div class='status'></div>\n      <span class='popup round arrow-right'>\n        <%= t('navigation.save') %>\n      </span>\n    </a>\n  </li>\n</ul>\n\n<ul class='auth nav clearfix'>\n  <li>\n    <a class='ico round switch login' href='<%= data.login %>'>\n      <span class='popup round arrow-right'><%= t('login') %></span>\n    </a>\n  </li>\n</ul>\n","notification":"<div class='notify'>\n  <h2 class='icon landing error'>Prose</h2>\n  <div class='inner'>\n    <p><%= data.message %></p>\n\n    <% _(data.options).each(function(options) { %>\n    <div>\n      <a class='button round <% if(options.className) { %><%= options.className %><% } %>' href='<%= options.link %>'><%= options.title %></a>\n    </div>\n    <% }); %>\n  </div>\n</div>\n","profile":"<header id='heading' class='heading limiter clearfix'></header>\n\n<div id='content' class='application content limiter'>\n  <div class='topbar'>\n    <div id='search' class='content-search round'></div>\n  </div>\n  <ul id='repos' class='projects listing'></ul>\n</div>\n","repo":"<header id='heading' class='heading limiter clearfix'></header>\n\n<div id='content' class='application content limiter'>\n  <div class='topbar clearfix'>\n    <!-- if repo and authenticated -->\n    <!-- #user/repo/new/branch/path -->\n    <div id='search' class='fl content-search round'></div>\n    <a href='#' class='fl button round new new-file' data-state='new'>\n      <%= t('navigation.newFile') %>\n    </a>\n  </div>\n\n  <div id='files'></div>\n</div>\n","search":"<span class='ico search'></span>\n<input type='text' id='filter' placeholder=\"<%= search.placeholder %>\" />\n","sidebar":{"branches":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.repo.branch') %></h2>\n  <select class='chzn-select'></select>\n</div>\n","drafts":"<a class='button round' href='#<%= link %>'><%= t('sidebar.repo.drafts') %></a>\n","history":"<div class='inner'>\n  <h2 class='label inner'><%= t('sidebar.repo.history.label') %></h2>\n</div>\n\n<ul id='commits' class='listing'></ul>\n","li":{"commit":"<a class='item <%= commit.status %>' title='<% print(commit.status.charAt(0).toUpperCase() + commit.status.slice(1)) %>: <%= commit.file.filename %>' href='#<%= [commit.repo.owner.login, commit.repo.name, \"edit\", commit.branch, commit.file.filename].join(\"/\") %>'>\n  <span class='ico small inline <%= commit.status %>'></span>\n  <span class='message'><%= commit.file.filename %></span>\n</a>\n"},"orgs":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.repos.groups') %></h2>\n</div>\n<ul class='listing'>\n  <li>\n    <a href='#<%= orgs.login.user %>' title='<%= orgs.login.user %>' data-id='<%= orgs.login.id %>'>\n      <%= orgs.login.user %>\n    </a>\n  </li>\n  <% orgs.orgs.each(function(org) {  %>\n  <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>' data-id='<%= org.id %>'>\n      <%= org.login %>\n    </a>\n  </li>\n  <% }); %>\n</ul>\n","save":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.save.label') %></h2>\n</div>\n<div class='inner authoring'>\n  <div class='commit'>\n    <textarea class='commit-message' placeholder></textarea>\n    <a class='ico small cancel round' href='#' data-action='cancel'>\n      <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>\n    </a>\n  </div>\n  <a class='confirm button round' href='#' data-action='confirm'><%= save.action %></a>\n</div>\n","settings":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.settings.title') %></h2>\n</div>\n<div class='inner authoring'>\n  <!-- if metadata and !draft -->\n  <a class='draft button round' href='#' data-action='draft'><%= t('sidebar.settings.draft') %></a>\n  \n  <% if (settings.languages && settings.lang !== 'yaml') { %>\n    <% _.each(settings.languages, function(l) { %>\n      <% if (l.value && (settings.metadata && (settings.metadata.lang !== l.value))) { %>\n        <a class='translate round button' href='#<%= l.value %>' data-action='translate'><%= t('sidebar.settings.translate') + ' ' + l.name %></a>\n      <% } %>\n    <% }); %>\n  <% } %>\n\n  <!-- if !isNew() and is writable -->\n  <a class='delete button round' href='#' data-action='destroy'><%= t('sidebar.settings.delete') %></a>\n</div>\n\n<% if (settings.fileInput) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.settings.fileInputLabel') %></h2>\n    <input type='text' class='filepath' placeholder='<%= settings.path %>' value='<%= settings.path %>'>\n  </div>\n<% } %>\n"},"start":"<div class='round splash'>\n  <h2 class='icon landing'>Prose</h2>\n  <div class='inner'>\n    <p><%= t('main.start.content') %></p>\n    <p><a href='#about'><%= t('main.start.learn') %></a></p>\n    <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>\n  </div>\n</div>\n","toolbar":"<% if (toolbar.draft) { %>\n  <a href='#' class='draft-to-post round contain'>\n    <%= t('actions.draft.toPost') %><span class='ico small checkmark'></span>\n    <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>\n  </a>\n<% } else { %>\n  <% if (toolbar.metadata && toolbar.metadata.published) { %>\n    <a href='#' class='publish-flag published round contain' data-state='true'>\n      <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>\n    </a>\n  <% } else if (toolbar.metadata && !toolbar.metadata.published) { %>\n    <a href='#' class='publish-flag round contain' data-state='false'>\n      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>\n    </a>\n  <% } %>\n<% } %>\n\n<% if (toolbar.markdown) { %>\n<div class='options clearfix'>\n  <ul class='group round clearfix'>\n    <li><a href='#' title=\"<%= t('toolbar.heading') %>\" data-key='heading' data-snippet='<% print(\"##\\n\\n\") %>'>h2</a></li>\n    <li><a href='#' title=\"<%= t('toolbar.subHeading') %>\" data-key='sub-heading' data-snippet='<% print(\"###\\n\\n\") %>'>h3</a></li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n      <a title=\"<%= t('toolbar.link') %>\" href='#' data-key='link' data-snippet=false data-dialog=true>\n        <span class='ico small link'></span>\n      </a>\n    </li>\n    <li>\n      <a title=\"<%= t('toolbar.image') %>\" href='#' data-key='media' data-snippet=false data-dialog=true>\n        <span class='ico small picture'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li><a href='#' title=\"<%= t('toolbar.bold') %>\" data-key='bold' data-snippet='****'>B</a></li>\n    <li>\n      <a data-key='italic' href='#' title=\"<%= t('toolbar.italic') %>\" data-snippet='__'>\n        <span class='ico small italic'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n      <a title=\"<%= t('toolbar.blockquote') %>\"  href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n        <span class='ico small quote'></span>\n      </a>\n    </li>\n    <li>\n      <a href='#' title=\"<%= t('toolbar.list') %>\" data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n        <span class='ico small list'></span>\n      </a>\n    </li>\n    <li>\n      <a href='#' title=\"<%= t('toolbar.numberedList') %>\" data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n        <span class='ico small numbered-list'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n    <a class='round' title=\"<%= t('toolbar.help') %>\" href='#' data-key='help' data-snippet=false data-dialog=true>\n        <span class='ico small question'></span>\n      </a>\n    </li>\n  </ul>\n</div>\n<% } %>\n<div id='dialog'></div>\n"};
+},{}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('./util');
+
+var User = require('./models/user');
+var Users = require('./collections/users');
+var Orgs = require('./collections/orgs');
+
+var Repo = require('./models/repo');
+var File = require('./models/file');
+
+var AppView = require('./views/app');
+var NotificationView = require('./views/notification');
+var StartView = require('./views/start');
+var ProfileView = require('./views/profile');
+var SearchView = require('./views/search');
+var ReposView = require('./views/repos');
+var RepoView = require('./views/repo');
+var FileView = require('./views/file');
+var DocumentationView = require('./views/documentation');
+var ChooseLanguageView = require('./views/chooselanguage');
+
+var templates = require('../dist/templates');
+var util = require('./util');
 
 module.exports = Backbone.Router.extend({
 
   routes: {
     'about(/)': 'about',
     'chooselanguage(/)': 'chooseLanguage',
-    'error/:code': 'error',
     ':user(/)': 'profile',
     ':user/:repo(/)': 'repo',
     ':user/:repo/*path(/)': 'path',
@@ -21668,811 +20952,650 @@ module.exports = Backbone.Router.extend({
   },
 
   initialize: function(options) {
-    this.model = options.model;
-    this.eventRegister = app.eventRegister;
+    options = _.clone(options) || {};
+
+    this.users = new Users();
+
+    if (options.user) {
+      this.user = options.user;
+      this.users.add(this.user);
+    }
 
     // Load up the main layout
-    this.application = new app.views.App({
+    this.app = new AppView({
       el: '#prose',
-      model: this.model
+      model: {},
+      user: this.user
     });
-  },
 
-  resetState: function() {
-    app.state = {
-      user: '',
-      repo: '',
-      mode: 'page',
-      branch: '',
-      path: '',
-      file: ''
-    };
-  },
-
-  about: function() {
-    this.minimalPage();
-    var view = new app.views.Documentation({
-      page: 'about'
-    }).render();
-    $('#content').empty().append(view.el);
+    this.app.render();
   },
 
   chooseLanguage: function() {
-    this.minimalPage();
-    var view = new app.views.ChooseLanguage({
-      page: 'about'
-    }).render();
-    $('#content').empty().append(view.el);
+    if (this.view) this.view.remove();
+
+    this.view = new ChooseLanguageView();
+    this.app.$el.find('#main').html(this.view.render().el);
   },
 
-  minimalPage: function() {
-    this.resetState();
-    router.application.render({
-      noMenu: true
-    });
+  about: function() {
+    if (this.view) this.view.remove();
+
+    this.view = new DocumentationView();
+    this.app.$el.find('#main').html(this.view.render().el);
   },
 
   // #example-user
   // #example-organization
-  profile: function(user) {
-    var router = this;
-    utils.loader.loading(t('loading.repos'));
+  profile: function(login) {
+    if (this.view) this.view.remove();
 
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
+    util.documentTitle(login)
+    util.loader.loading(t('loading.repos'));
+    this.app.nav.mode('repos');
 
-    app.state = app.state || {};
-    app.state.user = user;
-    app.state.title = user;
-    app.state.repo = '';
-    app.state.mode = '';
-    app.state.branch = '';
-    app.state.path = '';
-    app.state.file = '';
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
 
-    app.models.loadRepos(user, function(err, data) {
-      data.authenticated = !! window.authenticated;
+    var search = new SearchView({
+      model: user.repos,
+      mode: 'repos'
+    });
 
-      router.application.render();
-      var view = new app.views.Profile({
-        model: _.extend(router.model, data)
-      }).render();
+    var repos = new ReposView({
+      model: user.repos,
+      search: search
+    });
 
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
+    var content = new ProfileView({
+      auth: this.user,
+      user: user,
+      search: search,
+      sidebar: this.app.sidebar,
+      repos: repos
+    });
+
+    user.fetch({
+      success: (function(model, res, options) {
+        this.view = content;
+        this.app.$el.find('#main').html(this.view.render().el);
+
+        model.repos.fetch({ success: repos.render });
+
+        // TODO: build event-driven loader queue
+        util.loader.loaded();
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
+      }).bind(this)
     });
   },
 
   // #example-user/example-repo
-  repo: function(user, repo) {
-    var router = this;
-    utils.loader.loading(t('loading.repo'));
+  // #example-user/example-repo/tree/example-branch/example-path
+  repo: function(login, repoName, branch, path) {
+    if (this.view) this.view.remove();
 
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
+    var title = repoName;
+    if (branch) title = repoName + ': /' + path + ' at ' + branch;
+    util.documentTitle(title);
+    util.loader.loading(t('loading.repo'));
+    this.app.nav.mode('repo');
 
-    app.state = {
-      user: user,
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
+
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
+        }
+      });
+      user.repos.add(repo);
+    }
+
+    repo.fetch({
+      success: (function(model, res, options) {
+        var content = new RepoView({
+          branch: branch,
+          model: repo,
+          nav: this.app.nav,
+          path: path,
+          router: this,
+          sidebar: this.app.sidebar,
+          user: user
+        });
+
+        this.view = content;
+        this.app.$el.find('#main').html(this.view.render().el);
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
+      }).bind(this)
+    });
+
+    util.loader.loaded();
+  },
+
+  path: function(login, repoName, path) {
+    var url = util.extractURL(path);
+
+    switch(url.mode) {
+      case 'tree':
+        this.repo(login, repoName, url.branch, url.path);
+        break;
+      case 'new':
+      case 'blob':
+      case 'edit':
+      case 'preview':
+        this.post(login, repoName, url.mode, url.branch, url.path);
+        break;
+      default:
+        throw url.mode;
+        break;
+    }
+  },
+
+  post: function(login, repoName, mode, branch, path) {
+    if (this.view) this.view.remove();
+
+    this.app.nav.mode('file');
+
+    switch(mode) {
+      case 'new':
+        util.loader.loading(t('loading.creating'));
+        break;
+      case 'edit':
+        util.loader.loading(t('loading.file'));
+        break;
+      case 'preview':
+        util.loader.loading(t('preview.file'));
+        break;
+    }
+
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
+
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
+        }
+      });
+      user.repos.add(repo);
+    }
+
+    var file = {
+      branch: branch,
+      branches: repo.branches,
+      mode: mode,
+      nav: this.app.nav,
+      name: util.extractFilename(path)[1],
+      path: path,
       repo: repo,
-      mode: 'tree',
-      branch: '',
-      path: '',
-      file: ''
+      router: this,
+      sidebar: this.app.sidebar
     };
 
-    app.models.loadPosts(user, repo, app.state.branch, app.state.path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('notification.error.exists'));
+    // TODO: defer this success function until both user and repo have been fetched
+    // in paralell rather than in series
+    user.fetch({
+      success: (function(model, res, options) {
+        repo.fetch({
+          success: (function(model, res, options) {
+            this.view = new FileView(file);
+            this.app.$el.find('#main').html(this.view.el);
 
-      router.application.render();
-      var view = new app.views.Posts({
-        model: data
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    }, this));
-  },
-
-  // #example-user/example-repo/tree/BRANCH
-  repoBranch: function(user, repo, branch, path) {
-
-    var router = this;
-    utils.loader.loading(t('loading.repo'));
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('notification.error.exists'));
-      router.application.render();
-
-      var view = new app.views.Posts({
-        model: data
-      }).render();
-
-      utils.loader.loaded();
-      $('#content').empty().append(view.el);
-    }, this));
-  },
-
-  path: function(user, repo, path) {
-    var parts;
-    app.state.user = user;
-    app.state.repo = repo;
-
-    // Clean any previous view
-    this.eventRegister.trigger('remove');
-    url = _.extractURL(path);
-
-    if (url.mode === 'tree') {
-      this.repoBranch(user, repo, url.branch, url.path);
-    } else if (url.mode === 'new') {
-      this.newPost(user, repo, url.branch, url.path);
-    } else if (url.mode === 'preview') {
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.preview(user, repo, url.branch, parts[0], parts[1], url.mode);
-    } else { // blob or edit ..
-      parts = _.extractFilename(url.path);
-      app.state.file = parts[1];
-      this.post(user, repo, url.branch, parts[0], parts[1], url.mode);
-    }
-  },
-
-  newPost: function (user, repo, branch, path) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-    app.state.markdown = true;
-
-    utils.loader.loading(t('loading.creating'));
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      app.models.emptyPost(user, repo, branch, path, _.bind(function (err, data) {
-
-        data.jekyll = _.jekyll(path, data.file);
-        data.preview = false;
-        data.markdown = _.markdown(data.file);
-        data.lang = _.mode(data.file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
+            util.loader.loaded();
+          }).bind(this),
+          error: (function(model, xhr, options) {
+            this.error(xhr);
+          }).bind(this)
         });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        utils.loader.loaded();
-        $('#content').empty().append(view.el);
-        app.state.file = data.file;
-
-      }, this));
-    }, this));
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
+      }).bind(this)
+    });
   },
 
-  post: function(user, repo, branch, path, file, mode) {
-    if (mode === 'edit') {
-      utils.loader.loading(t('loading.file'));
-    } else {
-      utils.loader.loading(t('loading.preview'));
+  preview: function(login, repoName, mode, branch, path) {
+    if (this.view) this.view.remove();
+
+    util.loader.loading(t('preview.file'));
+
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
     }
 
-    app.models.loadPosts(user, repo, branch, path, _.bind(function(err, data) {
-      if (err) return this.notify('error', t('notification.error.exists'));
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function(err, data) {
-        if (err) return this.notify('error', t('notification.error.exists'));
-
-        app.state.markdown = data.markdown;
-        data.jekyll = !!data.metadata;
-        data.lang = _.mode(file);
-
-        this.application.render({
-          jekyll: data.jekyll,
-          noMenu: true
-        });
-
-        var view = new app.views.Post({
-          model: data
-        }).render();
-
-        utils.loader.loaded();
-        $('#content').empty().html(view.el);
-      }, this));
-    }, this));
-  },
-
-  preview: function(user, repo, branch, path, file, mode) {
-    var router = this;
-    utils.loader.loading(t('loading.preview'));
-
-    app.models.loadPosts(user, repo, branch, path, _.bind(function (err, data) {
-      if (err) return router.notify('error', t('notification.error.exists'));
-      app.models.loadPost(user, repo, branch, path, file, _.bind(function (err, data) {
-        if (err) {
-          app.models.emptyPost(user, repo, branch, path, _.bind(cb, this));
-        } else {
-          cb(err, data);
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
         }
+      });
+      user.repos.add(repo);
+    }
 
-        function cb(err, data) {
-          var view = new app.views.Preview({
-            model: data
-          }).render();
-        }
-      }, this));
-    }, this));
+    var file = {
+      branch: branch,
+      branches: repo.branches,
+      mode: mode,
+      nav: this.app.nav,
+      name: util.extractFilename(path)[1],
+      path: path,
+      repo: repo,
+      router: this,
+      sidebar: this.app.sidebar
+    };
+
+    repo.fetch({
+      success: (function(model, res, options) {
+        // TODO: should this still pass through File view?
+        this.view = new Preview(file);
+        this.app.$el.find('#main').html(this.view.el);
+
+        util.loader.loaded();
+      }).bind(this),
+      error: (function() {
+        this.notify('error', t('notification.error.exists'));
+      }).bind(this)
+    });
   },
 
   start: function() {
-    if (window.authenticated) {
-      $('#start').remove();
+    if (this.view) this.view.remove();
 
-      // Redirect
-      router.navigate(app.username, {trigger: true});
+    // If user has authenticated
+    if (this.user) {
+      router.navigate(this.user.get('login'), {
+        trigger: true,
+        replace: true
+      });
     } else {
-      this.application.render({
-        hideInterface: true
-      });
+      this.app.nav.mode('start');
+      this.view = new StartView();
+      this.app.$el.html(this.view.render().el);
+    }
+  },
 
-      var view = new app.views.Start({
-        model: _.extend(this.model, {
-          authenticated: !! window.authenticated
+  notify: function(message, options) {
+    if (this.view) this.view.remove();
+
+    this.view = new NotificationView({
+      'message': message,
+      'options': options
+    });
+
+    this.app.$el.find('#main').html(this.view.render().el);
+    util.loader.loaded();
+  },
+
+  error: function(xhr) {
+    var message = [
+      xhr.status,
+      xhr.statusText
+    ].join(' ');
+
+    var error = JSON.parse(xhr.responseText).message;
+
+    var options = [
+      {
+        'title': t('notification.home'),
+        'link': '/'
+      }
+    ];
+
+    this.notify(message, options)
+  }
+});
+
+},{"./models/user":6,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":7,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"../dist/templates":14,"./util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],9:[function(require,module,exports){
+var config = require('./config'); 
+var $ = require('jquery-browserify'); 
+
+module.exports = {
+  githubApi: function(cb) {
+    $.ajax({
+      type: 'GET',
+      url: config.apiStatus + '?callback=?',
+      dataType: 'jsonp',
+      success: function(res) {
+        return cb(res);
+      }
+    });
+  }
+}
+
+},{"./config":8,"jquery-browserify":10}],29:[function(require,module,exports){
+module.exports = function() {
+  Liquid.readTemplateFile = (function(path) {
+    var file = this.collection.findWhere({ path: '_includes/' + path });
+    return file.getContentSync().responseText;
+  }).bind(this);
+
+  Liquid.Template.registerTag( 'include', Liquid.Tag.extend({
+
+    tagSyntax: /((?:"[^"]+"|'[^']+'|[^\s,|]+)+)(\s+(?:with|for)\s+((?:"[^"]+"|'[^']+'|[^\s,|]+)+))?/,
+
+    init: function(tag, markup, tokens) {
+      var matches = (markup || '').match(this.tagSyntax);
+      if(matches) {
+        this.templateName = matches[1];
+        this.templateNameVar = this.templateName.substring(1, this.templateName.length - 1);
+        this.variableName = matches[3];
+        this.attributes = {};
+
+        var attMatchs = markup.match(/(\w*?)\s*\:\s*("[^"]+"|'[^']+'|[^\s,|]+)/g);
+        if(attMatchs) {
+          attMatchs.each(function(pair){
+            pair = pair.split(":");
+            this.attributes[pair[0].strip()] = pair[1].strip();
+          }, this);
+        }
+      } else {
+        throw ("Error in tag 'include' - Valid syntax: include '[template]' (with|for) [object|collection]");
+      }
+      this._super(tag, markup, tokens);
+    },
+
+    render: function(context) {
+      var self     = this,
+          source   = Liquid.readTemplateFile( this.templateName ),
+          partial  = Liquid.parse(source),
+          variable = context.get((this.variableName || this.templateNameVar)),
+          output   = '';
+      context.stack(function(){
+        self.attributes.each = hackObjectEach;
+        self.attributes.each(function(pair){
+          context.set(pair.key, context.get(pair.value));
         })
-      }).render();
 
-      $('#content').empty();
-      $('#prose').append(view.el);
-    }
-  },
-
-  // if the application after routing
-  // hits an error code router.navigate('error' + err.error)
-  // sends the route here.
-  error: function(code) {
-    code = (code && code === '404') ?
-      t('notification.error.notFound') :
-      t('notification.error.label');
-
-    this.application.render({
-      error: true
-    });
-
-    var view = new app.views.Notification({
-      'type': 'Error',
-      'key': 'error',
-      'message': code
-    }).render();
-
-    utils.loader.loaded();
-    $('#content').empty().append(view.el);
-  },
-
-  notify: function(type, message) {
-    // TODO Fix this, shouldn't have to pass
-    // something like this here.
-    app.state.markdown = false;
-    this.application.render({
-      error: true
-    });
-
-    var view = new app.views.Notification({
-      'type': type,
-      'key': 'page-error',
-      'message': message
-    }).render();
-
-    utils.loader.loaded();
-    $('#content').empty().append(view.el);
-  }
-});
-
-},{"./util":26,"jquery-browserify":18,"underscore":19,"backbone":20}],25:[function(require,module,exports){
-(function() {
-  if (typeof module === "undefined") self.queue = queue;
-  else module.exports = queue;
-  queue.version = "1.0.3";
-
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var queue = {},
-        deferrals = [],
-        started = 0, // number of deferrals that have been started (and perhaps finished)
-        active = 0, // number of deferrals currently being executed (started but not finished)
-        remaining = 0, // number of deferrals not yet finished
-        popping, // inside a synchronous deferral callback?
-        error,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    queue.defer = function() {
-      if (!error) {
-        deferrals.push(arguments);
-        ++remaining;
-        pop();
-      }
-      return queue;
-    };
-
-    queue.await = function(f) {
-      await = f;
-      all = false;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    queue.awaitAll = function(f) {
-      await = f;
-      all = true;
-      if (!remaining) notify();
-      return queue;
-    };
-
-    function pop() {
-      while (popping = started < deferrals.length && active < parallelism) {
-        var i = started++,
-            d = deferrals[i],
-            a = slice.call(d, 1);
-        a.push(callback(i));
-        ++active;
-        d[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new deferrals and squelch active callbacks
-          started = remaining = NaN; // stop queued deferrals from starting
-          notify();
-        } else {
-          deferrals[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(null, deferrals);
-      else await.apply(null, [null].concat(deferrals));
-    }
-
-    return queue;
-  }
-
-  function noop() {}
-})();
-
-},{}],8:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-    className: 'application',
-
-    events: {
-      'click .post-views .edit': 'edit',
-      'click .post-views .preview': 'preview',
-      'click .post-views .settings': 'settings',
-      'click .post-views .meta': 'meta',
-      'click .logout': 'logout',
-      'click a.item.removed': 'restoreFile',
-      'click a.save': 'save',
-      'click a.cancel': 'cancel',
-      'click a.confirm': 'updateFile',
-      'click a.delete': 'deleteFile',
-      'click a.translate': 'translate',
-      'click a.draft': 'draft',
-      'click .mobile-menu .toggle': 'toggleMobileClass',
-      'focus input.filepath': 'checkPlaceholder',
-      'keypress input.filepath': 'saveFilePath'
-    },
-
-    initialize: function(options) {
-
-      // Key Binding support accross the application.
-      if (!window.shortcutsRegistered) {
-        key('j, k, enter, o, ctrl+s', _.bind(function(e, handler) {
-          if (!app.state.mode || app.state.mode === 'tree') {
-            // We are in any navigation view
-            if (handler.key === 'j' || handler.key === 'k') {
-              utils.pageListing(handler.key);
-            } else {
-              utils.goToFile();
-            }
-          } else {
-            // We are in state of the application
-            // where we can edit a file
-            if (handler.key === 'ctrl+s') {
-              this.updateFile();
-            }
-          }
-        }, this));
-
-        window.shortcutsRegistered = true;
-      }
-
-      app.state = {
-        user: '',
-        repo: '',
-        mode: '',
-        branch: '',
-        path: ''
-      };
-
-      this.eventRegister = app.eventRegister;
-
-      _.bindAll(this, 'documentTitle', 'headerContext', 'sidebarContext', 'recentFiles', 'updateSaveState', 'closeSettings', 'filenameInput', 'renderNav');
-      this.eventRegister.bind('documentTitle', this.documentTitle);
-      this.eventRegister.bind('headerContext', this.headerContext);
-      this.eventRegister.bind('sidebarContext', this.sidebarContext);
-      this.eventRegister.bind('recentFiles', this.recentFiles);
-      this.eventRegister.bind('updateSaveState', this.updateSaveState);
-      this.eventRegister.bind('filenameInput', this.filenameInput);
-      this.eventRegister.bind('closeSettings', this.closeSettings);
-      this.eventRegister.bind('renderNav', this.renderNav);
-    },
-
-    render: function(options) {
-      var view = this;
-      var tmpl = _(app.templates.app).template();
-      var isJekyll = false;
-      var errorPage = false;
-      var hideInterface = false; // Flag for unauthenticated landing
-      this.noMenu = false; // Prevents a mobile toggle from appearing when nto required.
-
-      if (options) {
-        if (options.hideInterface) hideInterface = options.hideInterface;
-        if (options.jekyll) isJekyll = options.jekyll;
-        if (options.noMenu) this.noMenu = options.noMenu;
-        if (options.error) errorPage = options.error;
-      }
-
-      if (hideInterface) {
-        $(this.el).toggleClass('disable-interface', true);
-      } else {
-        $(this.el).toggleClass('disable-interface', false);
-      }
-
-      this.data = _.extend(this.model, app.state, {
-        error: errorPage,
-        version: 'v1',
-        jekyll: isJekyll,
-        noMenu: view.noMenu,
-        lang: (app.state.file) ? _.mode(app.state.file) : undefined
-      });
-
-      this.$el.empty().append(tmpl(this.data));
-
-      // Render the vertical Navigation
-      this.renderNav();
-
-      // When the sidebar should be open.
-      // Fix this in re-factor, could be much tighter
-      if (app.state.mode === 'tree' ||
-          app.state.mode === '' && window.authenticated && app.state.user) {
-        $('#prose').toggleClass('open', true);
-        $('#prose').toggleClass('mobile', false);
-      } else {
-        $('#prose').toggleClass('open mobile', false);
-      }
-
-      return this;
-    },
-
-    renderNav: function() {
-      var tmpl = _(app.templates.verticalNav).template();
-      this.$el.find('#vert').empty().append(tmpl(this.data));
-    },
-
-    toggleMobileClass: function(e) {
-      $(e.target).toggleClass('active');
-      $(this.el).toggleClass('mobile');
-      return false;
-    },
-
-    documentTitle: function(title) {
-      document.title = title + ' · Prose';
-    },
-
-    headerContext: function(data, alterable) {
-      var heading = _(window.app.templates.heading).template();
-
-      if (data.writable) this.writable = true;
-      if (data.lang) this.lang = data.lang;
-      if (data.metadata) this.metadata = data.metadata;
-
-      $('#heading').empty().append(heading(_.extend(data, {
-        alterable: alterable ? true : false
-      })));
-    },
-
-    filenameInput: function() {
-      $('.filepath', this.el).focus();
-    },
-
-    sidebarContext: function(data) {
-      if (app.state.mode === 'tree') {
-        var tmpl = _(app.templates.sidebarProject).template();
-
-        // Branch Switching
-        _.defer(function() {
-          $('.chzn-select', this.el).chosen().change(function() {
-              router.navigate($(this).val(), true);
+        if(variable instanceof Array) {
+          output = variable.map(function(variable){
+            context.set( self.templateNameVar, variable );
+            return partial.render(context);
           });
-        });
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl(data));
-      }
-    },
-
-    recentFiles: function(data) {
-      var sidebarTmpl = _(window.app.templates.recentFiles).template();
-      $('#drawer', this.el).empty().append(sidebarTmpl(data));
-    },
-
-    // Event Triggering to other files
-    edit: function(e) {
-      this.eventRegister.trigger('edit', e);
-      return false;
-    },
-
-    preview: function(e) {
-      if ($(e.target).data('jekyll')) {
-        this.eventRegister.trigger('preview', e);
-      } else {
-        this.eventRegister.trigger('preview', e);
-        // Cancel propagation
-        return false;
-      }
-    },
-
-    // Event Triggering to other files
-    meta: function(e) {
-      if ($(e.target).hasClass('active')) {
-        this.cancel();
-      } else {
-        this.eventRegister.trigger('meta', e);
-      }
-
-      return false;
-    },
-
-    settings: function(e) {
-      var tmpl = _(app.templates.settings).template();
-      var $navItems = $('.navigation a', this.el);
-
-      if ($(e.target).hasClass('active')) {
-        this.cancel();
-      } else {
-        $navItems.removeClass('active');
-        $(e.target, this.el).addClass('active');
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl({
-            lang: this.lang,
-            writable: this.writable,
-            metadata: this.metadata,
-            jekyll: this.model.jekyll,
-            draft: (app.state.path.split('/')[0] === '_drafts') ? true : false
-          }));
-
-        $('#prose').toggleClass('open mobile', true);
-      }
-
-      return false;
-    },
-
-    closeSettings: function() {
-      $('.post-views a', this.el).removeClass('active');
-
-      if (app.state.mode === 'blob') {
-        $('.post-views .preview', this.el).addClass('active');
-      } else {
-        $('.post-views .edit', this.el).addClass('active');
-      }
-
-      $('#prose').toggleClass('open mobile', false);
-    },
-
-    restoreFile: function(e) {
-      var $target = $(e.currentTarget);
-      var $overlay = $(e.currentTarget).find('.overlay');
-      var path = $target.data('path');
-
-      // Spinning icon
-      var message = '<span class="ico small inline saving"></span>' + t('actions.restore.restoring') + path;
-      $overlay.html(message);
-
-      app.models.restoreFile(app.state.user, app.state.repo, app.state.branch, path, app.state.history.commits[path][0].url, function(err) {
-        if (err) {
-          message = '<span class="ico small inline error"></span> ' + t('actions.error');
-          $overlay.html(message);
         } else {
-          message = '<span class="ico small inline checkmark"></span> ' + t('actions.restore.restored') + path;
-          $overlay.html(message);
-          $overlay.removeClass('removed').addClass('restored');
-
-          // Update the listing anchor link
-          $target
-            .removeClass('removed')
-            .attr('title', 'Restored ' + path)
-            .addClass('added');
-
-          // Update the anchor listing icon
-          $target.find('.removed')
-            .removeClass('removed')
-            .addClass('added');
+          context.set(self.templateNameVar, variable);
+          output = partial.render(context);
         }
       });
-
-      return false;
-    },
-
-    deleteFile: function(e) {
-      this.eventRegister.trigger('deleteFile', e);
-      return false;
-    },
-
-    translate: function(e) {
-      this.eventRegister.trigger('translate', e);
-      return false;
-    },
-    
-    draft: function(e) {
-      this.eventRegister.trigger('draft', e);
-      return false;
-    },
-
-    save: function(e) {
-      var tmpl = _(app.templates.sidebarSave).template();
-      this.eventRegister.trigger('showDiff', e);
-
-      if ($(e.target, this.el).hasClass('active')) {
-        this.cancel();
-      } else {
-        $('.navigation a', this.el).removeClass('active');
-        $(e.target, this.el).addClass('active');
-
-        $('#drawer', this.el)
-          .empty()
-          .append(tmpl({
-            writable: this.writable
-        }));
-
-        $('#prose').toggleClass('open mobile', true);
-
-        var $message = $('.commit-message', this.el);
-        var filepath = $('input.filepath').val();
-        var filename = _.extractFilename(filepath)[1];
-        var placeholder = t('actions.commits.updated', { filename: filename });
-        if (app.state.mode === 'new') {
-          placeholder = t('actions.commits.created', { filename: filename });
-        }
-
-        $message.attr('placeholder', placeholder).focus();
-      }
-
-      return false;
-    },
-
-    cancel: function(e) {
-      $('.navigation a', this.el).removeClass('active');
-      $('.navigation .' + app.state.mode, this.el).addClass('active');
-      $('#prose').toggleClass('open mobile', false);
-      this.eventRegister.trigger('cancel', e);
-      return false;
-    },
-
-    updateFile: function(e) {
-      this.eventRegister.trigger('updateFile', e);
-      return false;
-    },
-
-    saveFilePath: function(e) {
-      // Trigger updateFile when a return button has been pressed.
-      if (e.which === 13) this.eventRegister.trigger('updateFile', e);
-    },
-
-    checkPlaceholder: function(e) {
-      if (app.state.mode === 'new') {
-        var $target = $(e.target, this.el);
-        if (!$target.val()) {
-          $target.val($target.attr('placeholder'));
-        }
-      }
-    },
-
-    logout: function() {
-      app.models.logout();
-      window.location.reload();
-      return false;
-    },
-
-    updateSaveState: function(label, classes, kill) {
-      var view = this;
-
-      // Cancel if this condition is met
-      if (classes === 'save' && $(this.el).hasClass('saving')) return;
-      $('.button.save', this.el).html(label);
-
-      // Pass a popover span to the avatar icon
-      $('#heading', this.el).find('.popup').html(label);
-      $('.action').find('.popup').html(label);
-
-      $(this.el)
-        .removeClass('error saving saved save')
-        .addClass(classes);
-
-      if (kill) {
-        _.delay(function() {
-          $(view.el).removeClass(classes);
-        }, 1000);
-      }
-    },
-
-    remove: function() {
-      // Unbind pagehide event handler when View is removed
-      this.eventRegister.unbind('documentTitle', this.documentTitle);
-      this.eventRegister.unbind('sidebarContext', this.sidebarContext);
-      this.eventRegister.unbind('headerContext', this.headerContext);
-      this.eventRegister.unbind('recentFiles', this.recentFiles);
-      this.eventRegister.unbind('updateSaveState', this.updateSaveState);
-      this.eventRegister.unbind('filenameInput', this.filenameInput);
-      this.eventRegister.unbind('closeSettings', this.closeSettings);
-      this.eventRegister.unbind('renderNav', this.renderNav);
-      Backbone.View.prototype.remove.call(this);
+      output = [output].flatten().join('');
+      return output;
     }
+  }));
+
+
+  Liquid.Block.prototype.renderAll = function(list, context) {
+    return (list || []).map(function(token, i){
+      var output = '';
+      try { // hmmm... feels a little heavy
+        output = ( token['render'] ) ? token.render(context) : token;
+      } catch(e) {
+        console.log(context.handleError(e));
+      }
+      return output;
+    });
+  };
+
+  Liquid.Template.registerTag( 'highlight', Liquid.Block.extend({
+    tagSyntax: /(\w+)/,
+
+    init: function(tagName, markup, tokens) {
+      var parts = markup.match(this.tagSyntax);
+      if( parts ) {
+        this.to = parts[1];
+      } else {
+        throw ("Syntax error in 'highlight' - Valid syntax: hightlight [language]");
+      }
+      this._super(tagName, markup, tokens);
+    },
+    render: function(context) {
+      var output = this._super(context);
+      return '<pre>' + output[0] + '</pre>';
+    }
+  }));
+
+  // Unless tag wasn't properly returning output
+  Liquid.Template.registerTag( 'unless', Liquid.Template.tags['if'].extend({
+
+    render: function(context) {
+      var self = this,
+          output = '';
+      context.stack(function(){
+        var block = self.blocks[0];
+        if( !block.evaluate(context) ) {
+          output = self.renderAll(block.attachment, context);
+          return;
+        }
+        for (var i=1; i < self.blocks.length; i++) {
+          var block = self.blocks[i];
+          if( block.evaluate(context) ) {
+            output = self.renderAll(block.attachment, context);
+            return;
+          }
+        };
+      })
+      return [output].flatten().join('');
+    }
+  }));
+
+  Liquid.Block.prototype.unknownTag = function(tag, params, tokens) {
+    switch(tag) {
+      case 'else': console.log(this.blockName +" tag does not expect else tag"); break;
+      case 'end':  console.log("'end' is not a valid delimiter for "+ this.blockName +" tags. use "+ this.blockDelimiter); break;
+      default:     console.log("Unknown tag: "+ tag);
+    }
+  };
+
+  // Contains should work with strings or arrays
+  Liquid.Condition.operators.contains = function(l,r) {
+    if (typeof l === 'object') {
+      return l.include(r);
+    } else {
+      return (l.indexOf(r) !== -1);
+    }
+  }
+
+  // Don't use regex for replace functions. Messes up '.'
+  Liquid.Template.registerFilter({
+    replace: function(input, string, replacement) {
+      replacement = replacement || '';
+      return input.toString().split(string).join(replacement);
+    },
+
+    replace_first: function(input, string, replacement) {
+      replacement = replacement || '';
+      return input.toString().replace(string, replacement);
+    }
+  });
+}
+
+},{}],30:[function(require,module,exports){
+module.exports = {
+  dragEnter: function(e) {
+    $(e.currentTarget).addClass('drag-over');
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
+  },
+
+  dragOver: function(e) {
+    e.originalEvent.dataTransfer.dropEffect = 'copy';
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
+  },
+
+  dragLeave: function($el, e) {
+    $el.removeClass('drag-over');
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
+  },
+
+  dragDrop: function($el, cb) {
+    $el.on('dragenter', (function(e) {
+      this.dragEnter(e);
+    }).bind(this))
+    .on('dragover', this.dragOver);
+
+    $el.find('#drop').on('dragleave', (function(e) {
+      this.dragLeave($el, e);
+    }).bind(this))
+    .on('drop', (function(e) {
+      this.drop(e, cb);
+    }).bind(this));
+  },
+
+  fileSelect: function(e, cb) {
+    var files = e.target.files;
+    this.compileResult(files, cb);
+  },
+
+  drop: function(e, cb) {
+    e.preventDefault();
+    $(e.currentTarget).removeClass('drag-over');
+
+    e = e.originalEvent
+    var files = e.dataTransfer.files;
+    this.compileResult(files, cb);
+  },
+
+  compileResult: function(files, cb) {
+    for (var i = 0, f; f = files[i]; i++) {
+      // TODO: add size validation, warn > 50MB, reject > 100MB
+      // https://help.github.com/articles/working-with-large-files
+
+      // Only upload images
+      // TODO: remove this filter, allow uploading any binary file?
+      if (/image/.test(f.type)) {
+        var reader = new FileReader();
+
+        reader.onload = (function(currentFile) {
+          return function(e) {
+            cb(e, currentFile, e.target.result);
+          };
+        })(f);
+
+        reader.readAsBinaryString(f);
+      }
+    };
+  }
+}
+
+},{}],6:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+
+var Backbone = require('backbone');
+var Repos = require('../collections/repos');
+var Orgs = require('../collections/orgs');
+
+// TODO Pass Notification view here if something goes wrong?
+var NotificationView = require('../views/notification');
+
+var auth = require('../config');
+var cookie = require('../cookie');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.Model.extend({
+  initialize: function(attributes, options) {
+    this.repos = new Repos([], { user: this });
+    this.orgs = new Orgs([], { user: this });
+  },
+
+  authenticate: function(options) {
+    var match;
+
+    if (cookie.get('oauth-token')) {
+      if (_.isFunction(options.success)) options.success();
+    } else {
+      match = window.location.href.match(/\?code=([a-z0-9]*)/);
+
+      if (match) {
+        var ajax = $.ajax(auth.url + '/authenticate/' + match[1], {
+          success: function(data) {
+            cookie.set('oauth-token', data.token);
+
+            var regex = new RegExp("(?:\\/)?\\?code=" + match[1]);
+            window.location.href = window.location.href.replace(regex, '');
+
+            if (_.isFunction(options.success)) options.success();
+          }
+        });
+      } else {
+        if (_.isFunction(options.error)) options.error();
+      }
+    }
+  },
+
+  url: function() {
+    var id = cookie.get('id');
+    var token = cookie.get('oauth-token');
+
+    // Return '/user' if authenticated but no user id cookie has been set yet
+    // or if this model's id matches authenticated user id
+    return auth.api + ((token && _.isUndefined(id)) || (id && this.get('id') === id) ?
+      '/user' : '/users/' + this.get('login'));
+  }
 });
 
-},{".././util":26,"underscore":19,"jquery-browserify":18,"backbone":20}],9:[function(require,module,exports){
+},{"../collections/repos":31,"../collections/orgs":16,"../views/notification":7,"../config":8,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+var util = require('../util');
 
 module.exports = Backbone.View.extend({
-
   id: 'notification',
+
   className: 'notification round',
+
+  template: templates.notification,
 
   events: {
     'click .create': 'createPost'
   },
 
-  initialize: function() {
-    this.model = this.options;
+  initialize: function(options) {
+    options = _.clone(options) || {};
+    _.bindAll(this);
+
+    this.message = options.message;
+    this.options = options.options;
   },
 
   render: function() {
-    var view = this;
-    this.eventRegister = app.eventRegister;
+    util.documentTitle(t('docheader.error'));
 
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', t('docheader.error') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    var tmpl = _(window.app.templates.notification).template();
+    var data = {
+      message: this.message,
+      options: this.options
+    }
 
-    // Basically for any previous path we want to try
-    // and bring a user back to the directory tree.
-    var hash = document.location.hash.split('/');
-    var parts = hash.slice(0, hash.length -1);
-    if (parts[2]) parts[2] = 'tree';
-
-    var previous = parts.join('/');
-
-    $(this.el).html(tmpl(_.extend(this.model, {
-      key: view.model.key,
-      message: view.model.message,
-      previous: previous,
-      pathFromFile: (app.state.file) ? true : false
-    })));
+    this.$el.html(_.template(this.template, data, {
+      variable: 'data'
+    }));
 
     return this;
   },
@@ -22489,2151 +21612,12 @@ module.exports = Backbone.View.extend({
       hash[hash.length - 1]  += '&' + path[1];
     }
 
-    router.navigate(_(hash).compact().join('/'), true);
-    return false;
-  }
-
-});
-
-},{"jquery-browserify":18,"underscore":19,"backbone":20}],10:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  id: 'start',
-  className: 'start',
-
-  render: function() {
-    var tmpl = _(window.app.templates.start).template();
-    $(this.el).empty().append(tmpl(this.model));
-    return this;
-  }
-});
-
-},{"jquery-browserify":18,"underscore":19,"backbone":20}],11:[function(require,module,exports){
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var Backbone = require('backbone');
-var marked = require('marked');
-
-module.exports = Backbone.View.extend({
-  render: function() {
-    this.eventRegister = app.eventRegister;
-
-    var pathTitle = (app.state.path) ? app.state.path : '';
-    this.eventRegister.trigger('documentTitle', t('docheader.preview') + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-    this.stashApply();
-
-    // Needs access to marked, so it's registered here.
-    Liquid.Template.registerFilter({
-      'markdownify': function(input) {
-        return marked(input || '');
-      }
-    });
-
-    _.preview(this);
-    return this;
-  },
-
-  stashApply: function() {
-    if (!window.sessionStorage) return false;
-
-    var storage = window.sessionStorage;
-    var filepath = window.location.hash.split('/').slice(4).join('/');
-    var stash = JSON.parse(storage.getItem(filepath));
-
-    if (stash) {
-      this.model.content = stash.content;
-      this.model.metadata = stash.metadata;
-    }
-  }
-});
-
-},{"underscore":19,"js-yaml":24,"backbone":20,"marked":27}],12:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-    id: 'profile',
-
-    events: {
-      'mouseover .item': 'activeListing',
-      'mouseover .item a': 'parentActiveListing',
-      'keyup #filter': 'search'
-    },
-
-    render: function () {
-      var data = this.model;
-      this.eventRegister = app.eventRegister;
-
-      // Listen for button clicks from the vertical nav
-       _.bindAll(this, 'remove');
-      this.eventRegister.bind('remove', this.remove);
-
-      var header = {
-          avatar: '<img class="round" src="' + data.user.avatar_url + '" width="40" height="40" alt="Avatar" />',
-          parent: data.user.name || data.user.login,
-          parentUrl: data.user.login,
-          title: t('heading.explore'),
-          titleUrl: data.user.login
-      };
-
-      this.eventRegister.trigger('documentTitle', app.state.user);
-      this.eventRegister.trigger('headerContext', header);
-
-      var tmpl = _(window.app.templates.profile).template();
-      var sidebar = _(window.app.templates.sidebarOrganizations).template();
-
-      $(this.el).empty().append(tmpl(data));
-      this.renderResults();
-
-      $('#drawer')
-        .empty()
-        .append(sidebar(data));
-
-      _.delay(function () {
-        utils.fixedScroll($('.topbar'));
-        $('#filter').focus();
-      }, 1);
-
-      // Cache to perform autocompletion on it
-      this.cache = this.model;
-
-      return this;
-    },
-
-    search: function(e) {
-      // If this is the ESC key
-      if (e.which === 27) {
-        _.delay(_.bind(function () {
-          $('#filter', this.el).val('');
-          this.model = window.app.models.filterProjects(this.cache, '');
-          this.renderResults();
-        }, this), 10);
-      } else if (e.which === 40 && $('.item').length > 0) {
-          utils.pageListing('down'); // Arrow Down
-          e.preventDefault();
-          e.stopPropagation();
-          $('#filter').blur();
-      } else {
-        _.delay(_.bind(function () {
-          var searchstr = $('#filter', this.el).val();
-          this.model = window.app.models.filterProjects(this.cache, searchstr);
-          this.renderResults();
-        }, this), 10);
-      }
-    },
-
-    activeListing: function (e) {
-      if ($(e.target, this.el).hasClass('item')) {
-        $listings = $('.item', this.el);
-        $listing = $(e.target, this.el);
-
-        $listings.removeClass('active');
-        $listing.addClass('active');
-
-        // Blur out search if its selected
-        $('#filter').blur();
-      }
-    },
-
-    parentActiveListing: function (e) {
-      $listings = $('.item', this.el);
-      $listing = $(e.target, this.el).closest('li');
-
-      $listings.removeClass('active');
-      $listing.addClass('active');
-
-      // Blur out search if its selected
-      $('#filter').blur();
-    },
-
-    renderResults: function () {
-      var tmpl = _(window.app.templates.projects).template();
-      var repos;
-      var $projects = $('#projects', this.el);
-          $projects.empty();
-
-      // Flatten the listing if app.username === state.user
-      if (this.model.title === app.username) {
-        repos = _(this.model.owners).flatten();
-      } else {
-        repos = this.model.repos;
-      }
-
-      _(repos).each(function(r, i) {
-        $projects.append(tmpl(_.extend(r, {
-          index: i
-        })));
-      });
-    }
-});
-
-},{".././util":26,"jquery-browserify":18,"underscore":19,"backbone":20}],13:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var Backbone = require('backbone');
-var utils = require('.././util');
-
-module.exports = Backbone.View.extend({
-
-  id: 'posts',
-
-  events: {
-    'mouseover .item': 'activeListing',
-    'mouseover .item a': 'parentActiveListing',
-    'click .delete': 'deleteFile',
-    'keyup #filter': 'search'
-  },
-
-  render: function () {
-    var that = this;
-    var jailed;
-
-    // Pass a check to template whether we should
-    // stagger the output of a breadcrumb trail
-    if (app.state.config && app.state.config.prose && app.state.config.prose.rooturl) {
-      jailed = app.state.config.prose.rooturl;
-    }
-
-    var data = _.extend(this.model, app.state, {
-      currentPath: app.state.path,
-      jailed: jailed
-    });
-
-    // If this repo is writable to the current user we use
-    // this check to provide a deletion option to the user
-    this.writePermissions = this.model.permissions && this.model.permissions.push;
-
-    this.eventRegister = app.eventRegister;
-
-    // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'remove');
-    this.eventRegister.bind('remove', this.remove);
-
-    var isPrivate = app.state.isPrivate ? ' private' : '';
-    var header = {
-      avatar: '<span class="icon round repo' + isPrivate +  '"></span>',
-      parent: data.user,
-      parentUrl: data.user,
-      title: data.repo,
-      titleUrl: data.user + '/' + data.repo
-    };
-
-    var pathTitle = (app.state.path) ? '/' + app.state.path : '';
-    this.eventRegister.trigger('documentTitle', app.state.user + '/' + app.state.repo + pathTitle);
-
-    this.eventRegister.trigger('sidebarContext', app.state);
-    this.eventRegister.trigger('headerContext', header);
-
-    var tmpl = _(app.templates.posts).template();
-    $(this.el).empty().append(tmpl(data));
-
-    _.delay(function () {
-      that.renderResults();
-      $('#filter').focus();
-      utils.fixedScroll($('.topbar'));
-    }, 1);
-
-    return this;
-  },
-
-  search: function (e) {
-    if (e.which === 27) { // ESC
-      _.delay(_.bind(function () {
-        $('#filter', this.el).val('');
-        this.model = app.models.getFiles(this.model.tree, app.state.path, '');
-        this.renderResults();
-      }, this), 10);
-    } else if (e.which === 40 && $('.item').length > 0) {
-        utils.pageListing('down'); // Arrow Down
-        e.preventDefault();
-        e.stopPropagation();
-        $('#filter').blur();
-    } else {
-      _.delay(_.bind(function () {
-        var searchstr = $('#filter', this.el).val();
-        this.model = app.models.getFiles(this.model.tree, app.state.path, searchstr);
-        this.renderResults();
-      }, this), 10);
-    }
-  },
-
-  renderResults: function () {
-    var view = this;
-    var files = _(app.templates.files).template();
-    var directories = _(app.templates.directories).template();
-    var data = _.extend(this.model, app.state, { currentPath: app.state.path });
-    var $files = $('#files', this.el);
-    $files.empty();
-
-    _(this.model.files).each(function(f, i) {
-      // Directories ..
-      if (f.type === 'tree') {
-        $files.append(directories({
-          index: i,
-          user: data.user,
-          repo: data.repo,
-          path: (f.path) ? '/' + f.path : '',
-          branch: data.branch,
-          name: (f.path === _.parentPath(data.currentPath) ? '..' : f.name)
-        }));
-      } else {
-        // Files ..
-        $files.append(files({
-          index: i,
-          extension: _.extension(f.path),
-          isBinary: _.isBinary(_.extension(f.path)),
-          isMedia: _.isMedia(_.extension(f.path)),
-          isMarkdown: _.markdown(_.extension(f.path)),
-          writePermissions: view.writePermissions,
-          repo: data.repo,
-          branch: data.branch,
-          path: f.path,
-          filename: _.filename(f.name) || 'Untitled',
-          file: f.path.match(/[^\/]*$/)[0],
-          name: f.name,
-          user: data.user
-        }));
-      }
-    });
-  },
-
-  // Creates human readable versions of _posts/paths
-  semantifyPaths: function (paths) {
-    return _.map(paths, function (path) {
-      return {
-        path: path,
-        name: path
-      };
-    });
-  },
-
-  activeListing: function (e) {
-    if ($(e.target, this.el).hasClass('item')) {
-      $listings = $('.item', this.el);
-      $listing = $(e.target, this.el);
-
-      $listings.removeClass('active');
-      $listing.addClass('active');
-
-      // Blur out search if its selected
-      $('#filter').blur();
-    }
-  },
-
-  parentActiveListing: function (e) {
-    $listings = $('.item', this.el);
-    $listing = $(e.target, this.el).closest('li');
-
-    $listings.removeClass('active');
-    $listing.addClass('active');
-
-    // Blur out search if its selected
-    $('#filter').blur();
-  },
-
-  deleteFile: function(e) {
-    var $file = $(e.target, this.el).closest('a');
-    var $ico = $file.find('.ico');
-
-    var file = {
-      user: $file.data('user'),
-      repo: $file.data('repo'),
-      branch: $file.data('branch'),
-      fileName: $file.data('file')
-    };
-
-    if (confirm(t('actions.delete.warn'))) {
-      $file.addClass('working');
-      $ico.addClass('saving');
-
-      // Change the icon to a spinning one
-      app.models.deletePost(file.user, file.repo, file.branch, this.model.currentPath, file.fileName, _.bind(function(err) {
-
-        if (err) {
-          $file
-            .removeClass('working')
-            .attr('title', t('actions.delete.error'))
-            .addClass('error');
-
-          $ico.removeClass('rubbish saving');
-          return;
-        }
-
-        // On Success
-        $file.closest('.item').fadeOut('fast');
-
-        // Capture the filename and make sure the enty
-        // does not exist in the model object
-        for (var i = 0; i < this.model.tree.length; i++) {
-          if (this.model.tree[i] && this.model.tree[i].name === file.fileName) {
-            delete this.model.tree[i];
-          }
-        }
-
-        // TODO Bring this back in. Currently hitting githubs api this fast
-        // does not return an updated file listing.
-        // router.navigate([file.user, file.repo, 'tree', file.branch].join('/'), true);
-      }, this));
-    }
-
+    router.navigate(_(hash).compact().join('/'), { trigger: true });
     return false;
   }
 });
 
-},{".././util":26,"jquery-browserify":18,"underscore":19,"js-yaml":24,"keymaster":28,"backbone":20}],15:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var marked = require('marked');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  className: 'inner deep prose',
-
-  render: function() {
-    this.$el.empty()
-      .append(marked(t('about.content')));
-    return this;
-  }
-});
-
-},{"jquery-browserify":18,"marked":27,"backbone":20}],16:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var Backbone = require('backbone');
-var _ = require('underscore');
-var cookie = require('../cookie');
-var LOCALES = require('../../../translations/locales');
-
-module.exports = Backbone.View.extend({
-  className: 'inner deep prose',
-
-  events: {
-    'click .language': 'setLanguage' 
-  },
-
-  render: function() {
-    var tmpl = _.template(window.app.templates.chooselanguage);
-
-    this.$el
-      .empty()
-      .append(tmpl({
-        languages: LOCALES,
-        active: app.locale
-      }));
-    return this;
-  },
-
-  setLanguage: function(e) {
-    if (!$(e.target).hasClass('active')) {
-      var code = $(e.target).data('code');
-      cookie.set('lang', code);
-
-      // Check if the browsers language is supported
-      app.locale = code;
-
-      if (app.locale && app.locale !== 'en') {
-          $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
-              window.locale[app.locale] = result;
-              window.locale.current(app.locale);
-          });
-      }
-
-      // Reflect changes. Could be more elegant.
-      window.location.reload();
-    }
-
-    return false;
-  }
-});
-
-},{"../cookie":2,"../../../translations/locales":3,"jquery-browserify":18,"backbone":20,"underscore":19}],14:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var chosen = require('chosen-jquery-browserify');
-var _ = require('underscore');
-_.merge = require('deepmerge');
-var jsyaml = require('js-yaml');
-var key = require('keymaster');
-var marked = require('marked');
-var diff = require('diff');
-var Backbone = require('backbone');
-var utils = require('.././util');
-var upload = require('.././upload');
-var cookie = require('.././cookie');
-var toolbar = require('.././toolbar/markdown.js');
-
-module.exports = Backbone.View.extend({
-
-  id: 'post',
-  className: 'post',
-
-  events: {
-    'click .group a': 'markdownSnippet',
-    'click .dialog .insert': 'dialogInsert',
-    'click .save-action': 'updateFile',
-    'click .publish-flag': 'togglePublishing',
-    'click .draft-to-post': 'draft',
-    'click .create-select': 'createSelect',
-    'click .meta .finish': 'backToMode',
-    'change #upload': 'fileInput',
-    'change .meta input': 'makeDirty'
-  },
-
-  initialize: function() {
-    this.prevFile = this.serialize();
-    this.config = {};
-    this.recentlyUploadedFiles = [];
-
-    if (app.state.config && app.state.config.prose) {
-      this.config.siteurl = app.state.config.prose.siteurl || false;
-      this.config.relativeLinks = app.state.config.prose.relativeLinks || false;
-      this.config.media = app.state.config.prose.media || false;
-    }
-
-    this.newFile = (app.state.mode === 'new') ? true : false;
-
-    // Stash editor and metadataEditor content to sessionStorage on pagehide event
-    // Always run stashFile in context of view
-    $(window).on('pagehide', _.bind(this.stashFile, this));
-  },
-
-  render: function() {
-    var view = this;
-
-    // Link Dialog
-    if (app.state.markdown && this.config.relativeLinks) {
-      $.ajax({
-        cache: true,
-        dataType: 'jsonp',
-        jsonp: false,
-        jsonpCallback: this.config.relativeLinks.split('?callback=')[1] || 'callback',
-        url: this.config.relativeLinks,
-        success: function(links) {
-          view.relativeLinks = links;
-        }
-      });
-    }
-
-    // Assets Listing for the Media Dialog
-    if (app.state.markdown && this.config.media) {
-      this.assetsDirectory = this.config.media;
-      app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, this.config.media, function(err, data) {
-        view.assets = data.files;
-      });
-    }
-
-    this.data = _.extend(this.model, {
-      mode: app.state.mode,
-      preview: this.model.markdown ? marked(this.compilePreview(this.model.content)) : '',
-      metadata: this.model.metadata
-    });
-
-    this.eventRegister = app.eventRegister;
-
-    // Listen for button clicks from the vertical nav
-    _.bindAll(this, 'edit', 'preview', 'deleteFile', 'showDiff', 'translate', 'draft', 'updateFile', 'meta', 'remove', 'cancel');
-    this.eventRegister.bind('edit', this.edit);
-    this.eventRegister.bind('preview', this.preview);
-    this.eventRegister.bind('deleteFile', this.deleteFile);
-    this.eventRegister.bind('showDiff', this.showDiff);
-    this.eventRegister.bind('updateFile', this.updateFile);
-    this.eventRegister.bind('translate', this.translate);
-    this.eventRegister.bind('draft', this.draft);
-    this.eventRegister.bind('meta', this.meta);
-    this.eventRegister.bind('remove', this.remove);
-    this.eventRegister.bind('cancel', this.cancel);
-
-    var tmpl = _(window.app.templates.post).template();
-
-    $(this.el).empty().append(tmpl(_.extend(this.model, {
-      mode: app.state.mode
-    })));
-
-    this.renderHeading();
-    this.renderToolbar();
-
-    if (this.model.markdown && app.state.mode === 'blob') {
-      this.preview();
-    } else {
-      // Editor is first up so trigger an active class for it
-      $('#edit', this.el).toggleClass('active', true);
-      $('.post-views .edit').addClass('active');
-
-      this.initEditor();
-      _.delay(function() {
-        utils.fixedScroll($('.topbar', view.el));
-      }, 1);
-    }
-
-    this.updateDocumentTitle();
-
-    // Prevent exit when there are unsaved changes
-    window.onbeforeunload = function() {
-      if (app.state.file && view.dirty) return t('actions.unsaved');
-    };
-
-    return this;
-  },
-
-  updateDocumentTitle: function() {
-    var context = t('docheader.editing');
-    var pathTitle = (app.state.path) ? app.state.path : '';
-
-    if (app.state.mode === 'blob') context = t('docheader.preview');
-    this.eventRegister.trigger('documentTitle', context + ' ' + pathTitle + '/' + app.state.file + ' at ' + app.state.branch);
-  },
-
-  renderHeading: function() {
-    // Render heading
-    var isPrivate = app.state.isPrivate ? true : false;
-    var parentTrail = '<a href="#' + app.state.user + '">' + app.state.user + '</a> / <a href="#' + app.state.user + '/' + app.state.repo + '">' + app.state.repo + '</a>';
-
-    this.header = {
-      avatar: '<span class="ico round document ' + this.data.lang + '"></span>',
-      parentTrail: parentTrail,
-      isPrivate: isPrivate,
-      title: _.filepath(this.data.path, this.data.file),
-      writable: this.model.writable,
-      alterable: true,
-      translate: this.data.translate,
-      lang: this.data.lang,
-      metadata: this.data.metadata
-    };
-
-    this.eventRegister.trigger('headerContext', this.header, true);
-  },
-
-  renderToolbar: function() {
-    var tmpl = _(window.app.templates.toolbar).template();
-
-    this.$el.find('#toolbar').empty().append(tmpl(_.extend(this.model, {
-      metadata: this.model.metadata,
-      avatar: this.model.lang,
-      draft: (this.model.path.split('/')[0] === '_drafts') ? true : false
-    })));
-  },
-
-  edit: function(e) {
-    var view = this;
-    // If preview was hit on load this.editor
-    // was not initialized.
-    if (!this.editor) {
-      this.initEditor();
-      _.delay(function() {
-        utils.fixedScroll($('.topbar', view.el));
-      }, 1);
-    }
-
-    app.state.mode = this.newFile ? 'new' : 'edit';
-    this.updateURL();
-
-    $('.post-views a').removeClass('active');
-    $('.post-views .edit').addClass('active');
-    $('#prose').toggleClass('open', false);
-
-    $('.views .view', this.el).removeClass('active');
-    $('#edit', this.el).addClass('active');
-
-    return false;
-  },
-
-  preview: function(e) {
-    $('#prose').toggleClass('open', false);
-    if (this.config.siteurl && this.model.metadata && this.model.metadata.layout) {
-      var hash = window.location.hash.split('/');
-      hash[2] = 'preview';
-      if (!_(hash).last().match(/^\d{4}-\d{2}-\d{2}-(?:.+)/)) {
-        hash.push(_($('input.filepath').val().split('/')).last());
-      }
-      this.stashFile();
-
-      $(e.currentTarget).attr({
-        target: '_blank',
-        href: hash.join('/')
-      });
-      return true;
-    } else {
-      if (e) e.preventDefault();
-
-      // Vertical Nav
-      $('.post-views a').removeClass('active');
-      $('.post-views .preview').addClass('active');
-
-      // Content Window
-      $('.views .view', this.el).removeClass('active');
-      $('#preview', this.el).addClass('active').html(marked(this.compilePreview(this.model.content)));
-
-      app.state.mode = 'blob';
-      this.updateURL();
-    }
-  },
-
-  compilePreview: function(content) {
-    // Scan the content search for ![]()
-    // grab the path and file and form a RAW github aboslute request for it
-    var scan = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
-    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
-    var titleAttribute = /".*?"/;
-
-    // Build an array of found images
-    var result = content.match(scan);
-
-    // Iterate over the results and replace
-    _(result).each(function(r) {
-        var parts = (image).exec(r);
-
-        if (parts !== null) {
-          var path = parts[2];
-
-          if (!_.absolutePath(path)) {
-            // Remove any title attribute in the image tag is there is one.
-            if (titleAttribute.test(path)) {
-              path = path.split(titleAttribute)[0];
-            }
-
-            var raw = auth.raw + '/' + app.state.user + '/' + app.state.repo + '/' + app.state.branch + '/' + path;
-            if (app.state.isPrivate) {
-              // append auth param
-              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
-            }
-
-            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
-          }
-        }
-    });
-
-    return content;
-  },
-
-  meta: function() {
-    var view = this;
-    $('#prose').toggleClass('open', false);
-
-    // Vertical Nav
-    $('.post-views a').removeClass('active');
-    $('.post-views .meta').addClass('active');
-
-    // Content Window
-    $('.views .view', this.el).removeClass('active');
-    $('#meta', this.el).addClass('active');
-
-    // Refresh CodeMirror
-    if (this.rawEditor) this.rawEditor.refresh();
-
-    // Refresh any textarea's in the frontmatter form that use codemirror
-    $('.yaml-block').each(function() {
-      var editor = $(this).find('.CodeMirror').attr('id');
-      if (view[editor]) view[editor].refresh();
-    });
-
-    return false;
-  },
-
-  backToMode: function() {
-    if (app.state.mode === 'preview') {
-      this.preview();
-    } else {
-      this.edit();
-    }
-
-    return false;
-  },
-
-  deleteFile: function() {
-    if (confirm(t('actions.delete.warn'))) {
-      window.app.models.deletePost(app.state.user, app.state.repo, app.state.branch, this.model.path, this.model.file, _.bind(function(err) {
-        if (err) return alert(t('actions.delete.error'));
-        router.navigate([app.state.user, app.state.repo, 'tree', app.state.branch].join('/'), true);
-      }, this));
-    }
-    return false;
-  },
-
-  updateURL: function() {
-    var url = _.compact([app.state.user, app.state.repo, app.state.mode, app.state.branch, this.model.path, this.model.file]);
-    this.updateDocumentTitle();
-    router.navigate(url.join('/'), {
-      trigger: false,
-      replace: true
-    });
-
-    $('.chzn-select', this.el).trigger('liszt:updated');
-  },
-
-  makeDirty: function(e) {
-    this.dirty = true;
-    if (this.editor && this.editor.getValue) this.model.content = this.editor.getValue();
-    if (this.metadataEditor) this.model.metadata = this.metadataEditor.getValue();
-
-    var label = this.model.writable ? t('actions.change.save') : t('actions.change.submit');
-    this.eventRegister.trigger('updateSaveState', label, 'save');
-
-    // Pass a popover span to the avatar icon
-    $('.save-action', this.el).find('.popup').html(this.model.alterable ? t('actions.change.save') : t('actions.change.submit'));
-  },
-
-  togglePublishing: function(e) {
-    var $target = $(e.target).hasClass('checkmark') ? $(e.target).parent() : $(e.target);
-
-    if ($target.hasClass('published')) {
-      $target
-        .empty()
-        .html(t('actions.publishing.unpublish') +
-              '<span class="ico small checkmark"></span>' +
-              '<span class="popup round arrow-top">' +
-              t('actions.publishing.unpublishInfo') +
-              '</span>')
-        .removeClass('published')
-        .attr('data-state', false);
-    } else {
-      $target
-        .empty()
-        .html(t('actions.publishing.publish') +
-              '<span class="ico small checkmark"></span>' +
-              '<span class="popup round arrow-top">' +
-              t('actions.publishing.publishInfo') +
-              '</span>')
-        .addClass('published')
-        .attr('data-state', true);
-    }
-
-    this.makeDirty();
-    return false;
-  },
-
-  showDiff: function() {
-    var $diff = this.$el.find('#diff');
-    var text1 = this.model.persisted ? _.escape(this.prevFile) : '';
-    var text2 = _.escape(this.serialize());
-    var d = diff.diffWords(text1, text2);
-    var compare = '';
-
-    for (var i = 0; i < d.length; i++) {
-      if (d[i].removed) {
-        compare += '<del>' + d[i].value + '</del>';
-      } else if (d[i].added) {
-        compare += '<ins>' + d[i].value + '</ins>';
-      } else {
-        compare += d[i].value;
-      }
-    }
-
-    // Content Window
-    this.$el.find('.views .view').removeClass('active');
-    $diff.addClass('active');
-    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
-  },
-
-  closeSettings: function() {
-    $('.views .view', this.el).removeClass('active');
-
-    if (app.state.mode === 'blob') {
-      $('#preview', this.el).addClass('active');
-    } else {
-      $('#edit', this.el).addClass('active');
-    }
-
-    this.eventRegister.trigger('closeSettings');
-  },
-
-  cancel: function() {
-    this.$el.find('.views .view').removeClass('active');
-    this.$el.find('.' + app.state.mode).addClass('active');
-  },
-
-  refreshCodeMirror: function() {
-    if (typeof this.editor.refresh === 'function') this.editor.refresh();
-  },
-
-  updateMetaData: function() {
-    if (!this.model.jekyll) return true; // metadata -> skip
-    this.model.metadata = this.metadataEditor.getValue();
-    return true;
-  },
-
-  updateFilename: function(filepath, cb) {
-    var view = this;
-
-    if (!_.validPathname(filepath)) return cb('error');
-    app.state.path = this.model.path; // ?
-    app.state.file = _.extractFilename(filepath)[1];
-    app.state.path = _.extractFilename(filepath)[0];
-
-    function finish() {
-      view.model.path = app.state.path;
-      view.model.file = app.state.file;
-    }
-
-    if (this.model.persisted) {
-      window.app.models.movePost(app.state.user, app.state.repo, app.state.branch, _.filepath(this.model.path, this.model.file), filepath, _.bind(function(err) {
-        if (!err) finish();
-        if (err) {
-          cb('error');
-        } else {
-          cb(null);
-        }
-      }, this));
-    } else {
-      finish();
-      cb(null);
-    }
-  },
-
-  serialize: function() {
-    var metadata = this.metadataEditor ? this.metadataEditor.getRaw() : jsyaml.dump(this.model.metadata).trim();
-    if (this.model.jekyll) {
-      return ['---', metadata, '---'].join('\n') + '\n\n' + this.model.content;
-    } else {
-      return this.model.content;
-    }
-  },
-
-  sendPatch: function(filepath, filename, filecontent, message) {
-    // Submits a patch (fork + pull request workflow)
-    var view = this;
-
-    function patch() {
-      if (view.updateMetaData()) {
-        view.model.content = view.prevFile;
-        view.editor.setValue(view.prevFile);
-
-        app.models.patchFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-
-          if (err) {
-            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
-            return;
-          }
-
-          view.dirty = false;
-          view.model.persisted = true;
-          view.model.file = filename;
-
-          view.updateURL();
-          view.prevFile = filecontent;
-          view.closeSettings();
-          view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', t('actions.save.submission'), 'saved');
-        });
-      } else {
-        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
-      }
-    }
-
-    view.eventRegister.trigger('updateSaveState', t('actions.save.saving.patch'), 'saving');
-    patch();
-
-    return false;
-  },
-
-  saveFile: function(filepath, filename, filecontent, message) {
-    var view = this;
-
-    function save() {
-      if (view.updateMetaData()) {
-        window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-          if (err) {
-            view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
-            return;
-          }
-          view.dirty = false;
-          view.model.persisted = true;
-          view.model.file = filename;
-
-          if (app.state.mode === 'new') {
-            app.state.mode = 'edit';
-            view.eventRegister.trigger('renderNav');
-          }
-
-          view.renderHeading();
-          view.updateURL();
-          view.prevFile = filecontent;
-          view.closeSettings();
-          view.updatePublishState();
-          view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
-        });
-      } else {
-        view.eventRegister.trigger('updateSaveState', t('actions.save.metaError'), 'error');
-      }
-    }
-
-    view.eventRegister.trigger('updateSaveState', t('actions.save.saving'), 'saving');
-
-    if (filepath === _.filepath(this.model.path, this.model.file)) return save();
-
-    // Move or create file
-    this.updateFilename(filepath, function(err) {
-      if (err) {
-        view.eventRegister.trigger('filenameInput');
-        view.eventRegister.trigger('updateSaveState', t('actions.save.fileNameError'), 'error');
-      } else {
-        save();
-      }
-    });
-  },
-
-  saveDraft: function(filepath, filename, filecontent, message) {
-    var view = this;
-    view.eventRegister.trigger('updateSaveState', t('actions.save.saving'), 'saving');
-    window.app.models.saveFile(app.state.user, app.state.repo, app.state.branch, filepath, filecontent, message, function(err) {
-      if (err) {
-        view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
-        return;
-      }
-      view.dirty = false;
-      view.model.persisted = true;
-      view.model.file = filename;
-
-      if (app.state.mode === 'new') app.state.mode = 'edit';
-      view.renderHeading();
-      view.updateURL();
-      view.prevFile = filecontent;
-      view.closeSettings();
-      view.updatePublishState();
-      view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
-    });
-  },
-
-  updatePublishState: function() {
-    // Update the publish key wording depening on what was saved
-    var $publishKey = $('.publish-flag', this.el);
-    var key = $publishKey.attr('data-state');
-
-    if (key === 'true') {
-      $publishKey
-        .empty()
-        .html(t('actions.publishing.published') + '<span class="ico small checkmark"></span>');
-    } else {
-      $publishKey
-        .empty()
-        .html(t('actions.publishing.unpublished') + '<span class="ico small checkmark"></span>');
-    }
-  },
-
-  stashFile: function(e) {
-    if (e) e.preventDefault();
-    if (!window.sessionStorage) return false;
-
-    var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
-
-    // Don't stash if filepath is undefined
-    if (filepath) {
-      try {
-        store.setItem(filepath, JSON.stringify({
-          sha: app.state.sha,
-          content: this.editor ? this.editor.getValue() : null,
-          metadata: this.model.jekyll && this.metadataEditor ? this.metadataEditor.getValue() : null
-        }));
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  },
-
-  stashApply: function() {
-    if (!window.sessionStorage) return false;
-
-    var store = window.sessionStorage;
-    var filepath = $('input.filepath').val();
-    var item = store.getItem(filepath);
-    var stash = JSON.parse(item);
-
-    if (stash && stash.sha === window.app.state.sha) {
-      // Restore from stash if file sha hasn't changed
-      if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
-      if (this.metadataEditor) {
-        this.rawEditor.setValue('');
-        this.metadataEditor.setValue(stash.metadata);
-      }
-    } else if (item) {
-      // Remove expired content
-      store.removeItem(filepath);
-    }
-  },
-
-  updateFile: function() {
-    var filepath = $('input.filepath').val();
-    var filename = _.extractFilename(filepath)[1];
-    var filecontent = this.serialize();
-    var $message = $('.commit-message');
-    var defaultMessage;
-
-    if (app.state.mode === 'new') {
-      defaultMessage = t('actions.commits.created', { filename: filename });
-    } else {
-      defaultMessage = t('actions.commits.updated', { filename: filename });
-    }
-
-    var message = $message.val() || defaultMessage;
-    var method = this.model.writable ? this.saveFile : this.sendPatch;
-
-    // Update content
-    this.model.content = (this.editor) ? this.editor.getValue() : '';
-
-    // Delegate
-    method.call(this, filepath, filename, filecontent, message);
-    return false;
-  },
-
-  draft: function() {
-    var filepath = _.extractFilename($('input.filepath').val());
-    var basepath = filepath[0].split('/');
-    var filename = filepath[1];
-    var postType = basepath[0];
-    var filecontent = this.serialize();
-    var message = t('actions.commits.toDraft', { filename: filename });
-
-    if (postType === '_posts') {
-      basepath.splice(0, 1, '_drafts');
-      filepath.splice(0, 1, basepath.join('/'));
-      this.saveDraft(filepath.join('/'), filename, filecontent, message);
-      app.state.path = this.model.path = filepath[0];
-    } else {
-      basepath.splice(0, 1, '_posts');
-      filepath.splice(0, 1, basepath.join('/'));
-      message = t('actions.commits.fromDraft', { filename: filename });
-      this.saveFile(filepath.join('/'), filename, filecontent, message);
-      app.state.path = this.model.path = filepath[0];
-    }
-
-    this.renderToolbar();
-    return false;
-  },
-
-  keyMap: function() {
-    var view = this;
-
-    if (this.model.markdown) {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.updateFile();
-        },
-        'Cmd-B': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
-        },
-        'Ctrl-B': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.bold(view.editor.getSelection());
-        },
-        'Cmd-I': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
-        },
-        'Ctrl-I': function(codemirror) {
-          if (view.editor.getSelection() !== '') view.italic(view.editor.getSelection());
-        }
-      };
-    } else {
-      return {
-        'Ctrl-S': function(codemirror) {
-          view.updateFile();
-        }
-      };
-    }
-  },
-
-  translate: function(e) {
-    // TODO Drop the 'EN' requirement.
-    var hash = window.location.hash.split('/'),
-      href = $(e.currentTarget).attr('href').substr(1);
-
-    // If current page is not english and target page is english
-    if (href === 'en') {
-      hash.splice(-2, 2, hash[hash.length - 1]);
-      // If current page is english and target page is not english
-    } else if (this.model.metadata.lang === 'en') {
-      hash.splice(-1, 1, href, hash[hash.length - 1]);
-      // If current page is not english and target page is not english
-    } else {
-      hash.splice(-2, 2, href, hash[hash.length - 1]);
-    }
-
-    router.navigate(_(hash).compact().join('/') + '?lang=' + href + '&translate=true', true);
-
-    return false;
-  },
-
-  buildMeta: function() {
-    var view = this;
-    var $metadataEditor = $('#meta', this.el).find('.form');
-    $metadataEditor.empty();
-
-    function initialize(model) {
-      var tmpl;
-
-      _(model.default_metadata).each(function(data, key) {
-        if (data && typeof data.field === 'object') {
-          switch (data.field.element) {
-            case 'button':
-              tmpl = _(window.app.templates.button).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value,
-                on: data.field.on,
-                off: data.field.off
-              }));
-              break;
-            case 'checkbox':
-              tmpl = _(window.app.templates.checkbox).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.name,
-                checked: data.field.value
-              }));
-              break;
-            case 'text':
-              tmpl = _(window.app.templates.text).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value,
-                type: 'text'
-              }));
-              break;
-            case 'textarea':
-              tmpl = _(window.app.templates.textarea).template();
-              var id = _.stringToUrl(data.name);
-
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                id: id,
-                value: data.field.value,
-                label: data.field.label,
-                type: 'textarea'
-              }));
-
-              _.defer(function() {
-                var textarea = document.getElementById(id);
-                view[id] = CodeMirror(function(el) {
-                  textarea.parentNode.replaceChild(el, textarea);
-                  el.id = id;
-                  el.className += ' inner ';
-                  el.setAttribute('data-name', data.name);
-                }, {
-                  mode: id,
-                  value: textarea.value,
-                  lineWrapping: true,
-                  theme: 'prose-bright'
-                });
-              });
-              break;
-            case 'number':
-              tmpl = _(window.app.templates.text).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                value: data.field.value,
-                type: 'number'
-              }));
-              break;
-            case 'select':
-              tmpl = _(window.app.templates.select).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: model.metadata.lang || 'en'
-              }));
-              break;
-            case 'multiselect':
-              tmpl = _(window.app.templates.multiselect).template();
-              $metadataEditor.append(tmpl({
-                name: data.name,
-                label: data.field.label,
-                alterable: data.field.alterable,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: model.metadata.lang || 'en'
-              }));
-              break;
-            case 'hidden':
-              tmpl = {};
-              tmpl[data.name] = data.field.value;
-              view.model.metadata = _.merge(tmpl, view.model.metadata);
-              view.model.hidden = _.merge(tmpl, view.model.hidden || {});
-              break;
-          }
-        } else {
-          tmpl = _(window.app.templates.text).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: key,
-            value: data,
-            type: 'text'
-          }));
-        }
-      });
-
-      $('<div class="form-item"><div name="raw" id="raw" class="inner"></div></div>').prepend('<label for="raw">' + t('main.file.rawMeta') + '</label>').appendTo($metadataEditor);
-
-      var rawContainer = (view.model.lang === 'yaml') ? 'code' : 'raw';
-      view.rawEditor = CodeMirror(document.getElementById(rawContainer), {
-        mode: 'yaml',
-        value: '',
-        lineWrapping: true,
-        extraKeys: view.keyMap(),
-        theme: 'prose-bright'
-      });
-
-      view.rawEditor.on('change', _.bind(view.makeDirty, view));
-
-      setValue(model.metadata);
-      $('.chzn-select').chosen();
-    }
-
-    function getValue() {
-      var metadata = {};
-
-      if ($('.publish-flag').attr('data-state') === 'true') {
-        metadata.published = true;
-      } else {
-        metadata.published = false;
-      }
-
-      _.each($metadataEditor.find('[name]'), function(item) {
-        var $item = $(item);
-        var value = $item.val();
-
-        switch (item.type) {
-          case 'select-multiple':
-          case 'select-one':
-          case 'textarea':
-          case 'text':
-            if (value) {
-              value = $item.data('type') === 'number' ? Number(value) : value;
-              if (metadata.hasOwnProperty(item.name)) {
-                metadata[item.name] = _.union(metadata[item.name], value);
-              } else {
-                metadata[item.name] = value;
-              }
-            }
-            break;
-          case 'checkbox':
-            if (item.checked) {
-
-              if (metadata.hasOwnProperty(item.name)) {
-                metadata[item.name] = _.union(metadata[item.name], item.value);
-              } else if (item.value === item.name) {
-                metadata[item.name] = item.checked;
-              } else {
-                metadata[item.name] = item.value;
-              }
-
-            } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
-              metadata[item.name] = item.checked;
-            } else {
-              metadata[item.name] = item.checked;
-            }
-            break;
-          case 'button':
-            if (value === 'true') {
-              metadata[item.name] = true;
-            } else if (value === 'false') {
-              metadata[item.name] = false;
-            }
-            break;
-        }
-      });
-
-      // Load any data coming from a yaml-block of content.
-      $('.yaml-block').each(function() {
-        var editor = $(this).find('.CodeMirror').attr('id');
-        var name = $('#' + editor).data('name');
-
-        if (view[editor]) {
-          metadata[name] = jsyaml.load('|\n' + view[editor].getValue());
-        }
-      });
-
-      // Load any data coming from not defined raw yaml front matter.
-      if (view.rawEditor) {
-        try {
-          metadata = _.merge(metadata, jsyaml.load(view.rawEditor.getValue()) || {});
-        } catch (err) {
-          console.log(err);
-        }
-      }
-
-      return _.merge(view.model.hidden || {}, metadata);
-    }
-
-    function getRaw() {
-      return jsyaml.dump(getValue()).trim();
-    }
-
-    function setValue(data) {
-      var missing = {};
-      var raw;
-
-      _(data).each(function(value, key) {
-        var matched = false;
-        var input = $metadataEditor.find('[name="' + key + '"]');
-        var length = input.length;
-        var options;
-        var tmpl;
-
-        if (length) {
-
-          // iterate over matching fields
-          for (var i = 0; i < length; i++) {
-
-            // if value is an array
-            if (value !== null && typeof value === 'object' && value.length) {
-
-              // iterate over values in array
-              for (var j = 0; j < value.length; j++) {
-                switch (input[i].type) {
-                case 'select-multiple':
-                case 'select-one':
-                  options = $(input[i]).find('option[value="' + value[j] + '"]');
-                  if (options.length) {
-                    for (var k = 0; k < options.length; k++) {
-                      options[k].selected = 'selected';
-                    }
-
-                    matched = true;
-                  }
-                  break;
-                case 'text':
-                case 'textarea':
-                  input[i].value = value;
-                  matched = true;
-                  break;
-                case 'checkbox':
-                  if (input[i].value === value) {
-                    input[i].checked = 'checked';
-                    matched = true;
-                  }
-                  break;
-                }
-              }
-
-            } else {
-              switch (input[i].type) {
-              case 'select-multiple':
-              case 'select-one':
-                options = $(input[i]).find('option[value="' + value + '"]');
-                if (options.length) {
-                  for (var m = 0; m < options.length; m++) {
-                    options[m].selected = 'selected';
-                  }
-
-                  matched = true;
-                }
-                break;
-              case 'text':
-              case 'textarea':
-                input[i].value = value;
-                matched = true;
-                break;
-              case 'checkbox':
-                input[i].checked = value ? 'checked' : false;
-                matched = true;
-                break;
-              case 'button':
-                input[i].value = value ? true : false;
-                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
-                matched = true;
-                break;
-              }
-
-            }
-          }
-
-          if (!matched && value !== null) {
-            if (missing.hasOwnProperty(key)) {
-              missing[key] = _.union(missing[key], value);
-            } else {
-              missing[key] = value;
-            }
-          }
-
-        } else {
-          // Don't render the 'publish?ed' field or hidden metadata
-          var defaults = _.find(view.model.default_metadata, function(data) { return data.name === key; });
-          var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
-
-          if (key !== 'published' && !defaults) {
-            raw = {};
-            raw[key] = value;
-
-            if (view.rawEditor) {
-              view.rawEditor.setValue(view.rawEditor.getValue() + jsyaml.dump(raw));
-            }
-          }
-        }
-      });
-
-      _.each(missing, function(value, key) {
-        if (value === null) return;
-
-        switch (typeof value) {
-        case 'boolean':
-          tmpl = _(window.app.templates.checkbox).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: value,
-            value: value,
-            checked: value ? 'checked' : false
-          }));
-          break;
-        case 'string':
-          tmpl = _(window.app.templates.text).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: value,
-            value: value,
-            type: 'text'
-          }));
-          break;
-        case 'object':
-          tmpl = _(window.app.templates.multiselect).template();
-          $metadataEditor.append(tmpl({
-            name: key,
-            label: key,
-            placeholder: key,
-            options: value,
-            lang: data.lang || 'en'
-          }));
-          break;
-        default:
-          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
-          break;
-        }
-      });
-    }
-
-    function setRaw(data) {
-      try {
-        setValue(jsyaml.load(data));
-      } catch (err) {
-        console.log('ERROR encoding YAML');
-        // No-op
-      }
-    }
-
-    initialize(this.model);
-
-    return {
-      el: $metadataEditor,
-      getRaw: getRaw,
-      setRaw: setRaw,
-      getValue: getValue,
-      setValue: setValue
-    };
-  },
-
-  createSelect: function(e) {
-    var $parent = $(e.target).parent();
-    var $input = $parent.find('input');
-    var selectTarget = $(e.target).data('select');
-    var $select = this.$el.find('#' + selectTarget);
-    var value = $input.val();
-
-    if (value.length > 0) {
-      var option = '<option value="' + value + '" selected="selected">' + value + '</option>';
-
-      // Append this new option to the select list.
-      $select.append(option);
-
-      // Clear the now added value.
-      $input.attr('value', '');
-
-      // Update the list
-      $select.trigger('liszt:updated');
-    }
-
-    return false;
-  },
-
-  fileInput: function(e) {
-    var view = this;
-    upload.fileSelect(e, function(e, file, content) {
-      view.updateImageInsert(e, file, content);
-    });
-
-    return false;
-  },
-
-  updateImageInsert: function(e, file, content) {
-    var view = this;
-    var path = (this.assetsDirectory) ? this.assetsDirectory : this.model.path;
-
-    var src = path + '/' + encodeURIComponent(file.name);
-    $('input[name="url"]').val(src);
-    $('input[name="alt"]').val('');
-
-    view.queue = {
-      e: e,
-      file: file,
-      content: content
-    };
-  },
-
-  initEditor: function() {
-    var view = this;
-
-    // TODO Remove setTimeout
-    setTimeout(function() {
-      if (view.model.jekyll) {
-        view.metadataEditor = view.buildMeta();
-      }
-
-      var lang = view.model.lang;
-      view.editor = CodeMirror(document.getElementById('code'), {
-        mode: view.model.lang,
-        value: view.model.content,
-        lineWrapping: true,
-        lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
-        extraKeys: view.keyMap(),
-        matchBrackets: true,
-        dragDrop: false,
-        theme: 'prose-bright'
-      });
-
-      // Bind Drag and Drop work on the editor
-      if (app.state.markdown && view.model.writable) {
-        upload.dragDrop($('#edit'), function(e, file, content) {
-          if ($('#dialog').hasClass('dialog')) {
-            view.updateImageInsert(e, file, content);
-          } else {
-            view.createAndUpload(e, file, content);
-          }
-        });
-      }
-
-      // Monitor the current selection and apply
-      // an active class to any snippet links
-      if (view.model.lang === 'gfm') {
-        var $snippetLinks = $('.toolbar .group a', view.el);
-        view.editor.on('cursorActivity', _.bind(function() {
-
-          var selection = _.trim(view.editor.getSelection());
-          $snippetLinks.removeClass('active');
-
-          var match = {
-            lineBreak: /\n/,
-            h1: /^#{1}/,
-            h2: /^#{2}/,
-            h3: /^#{3}/,
-            h4: /^#{4}/,
-            strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-            italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-            isNumber: parseInt(selection.charAt(0), 10)
-          };
-
-          if (!match.isNumber) {
-            switch (selection.charAt(0)) {
-              case '#':
-                if (!match.lineBreak.test(selection)) {
-                  if (match.h3.test(selection) && !match.h4.test(selection)) {
-                    $('[data-key="sub-heading"]').addClass('active');
-                  } else if (match.h2.test(selection) && !match.h3.test(selection)) {
-                    $('[data-key="heading"]').addClass('active');
-                  }
-                }
-                break;
-              case '>':
-                $('[data-key="quote"]').addClass('active');
-                break;
-              case '*':
-              case '_':
-                if (!match.lineBreak.test(selection)) {
-                  if (match.strong.test(selection)) {
-                    $('[data-key="bold"]').addClass('active');
-                  } else if (match.italic.test(selection)) {
-                    $('[data-key="italic"]').addClass('active');
-                  }
-                }
-                break;
-              case '!':
-                if (!match.lineBreak.test(selection) &&
-                    selection.charAt(1) === '[' &&
-                    selection.charAt(selection.length - 1) === ')') {
-                  $('[data-key="media"]').addClass('active');
-                }
-                break;
-              case '[':
-                if (!match.lineBreak.test(selection) &&
-                    selection.charAt(selection.length - 1) === ')') {
-                  $('[data-key="link"]').addClass('active');
-                }
-                break;
-              case '-':
-                if (selection.charAt(1) === ' ') {
-                  $('[data-key="list"]').addClass('active');
-                }
-              break;
-            }
-          } else {
-            if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
-              $('[data-key="numbered-list"]').addClass('active');
-            }
-          }
-        }, view));
-      }
-
-      view.editor.on('change', _.bind(view.makeDirty, view));
-      view.editor.on('focus', _.bind(function() {
-
-        // If an upload queue is set, we want to clear it.
-        this.queue = undefined;
-
-        // If a dialog window is open and the editor is in focus, close it.
-        $('.toolbar .group a', this.el).removeClass('on');
-        $('#dialog', view.el).empty().removeClass();
-      }, view));
-
-      view.refreshCodeMirror();
-
-      // Check sessionStorage for existing stash
-      // Apply if stash exists and is current, remove if expired
-      view.stashApply();
-    }, 100);
-  },
-
-  createAndUpload: function(e, file, content, userDefinedPath) {
-    var view = this;
-
-    // Loading State
-    this.eventRegister.trigger('updateSaveState', t('actions.upload.uploading', { file: file.name }), 'saving');
-
-    // Base64 Encode the file content
-    var extension = file.type.split('/').pop();
-    var path;
-
-    if (userDefinedPath) {
-      // Unique Filename
-      path = userDefinedPath;
-    } else {
-      var uid = encodeURIComponent(file.name);
-      path = this.assetsDirectory ?
-             this.assetsDirectory + '/' + uid :
-             (this.model.path) ?
-               this.model.path + '/' + uid :
-               uid;
-    }
-
-    var data = {};
-        data.message = t('actions.upload.uploaded', { file: file.name });
-        data.content = content;
-        data.branch = app.state.branch;
-
-    // Read through the filenames of path. If there is a filename that
-    // exists, we want to pass data.sha to update the existing one.
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, _.extractFilename(path)[0], function(err, res) {
-      if (err) return view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
-
-      // Check whether the current (or media) directory
-      // contains the same filename as the one a user wishes
-      // to upload. we want to update the file by passing the sha
-      // to the data object in this case.
-      _(res.files).each(function(f) {
-        var parts = _.extractFilename(f.path);
-        var structuredPath = [parts[0], encodeURIComponent(parts[1])].join('/');
-        if (structuredPath === path) {
-          data.sha = f.sha;
-        }
-      });
-
-      // Stored in memory to test as GitHub may have not
-      // picked up on the change fast enough.
-      _(view.recentlyUploadedFiles).each(function(f) {
-        if (f.path === path) {
-          data.sha = f.sha;
-        }
-      });
-
-      app.models.uploadFile(app.state.user, app.state.repo, path, data, function(type, res) {
-        if (type === 'error') {
-          view.eventRegister.trigger('updateSaveState', t('actions.error'), 'error');
-        } else {
-          var $alt = $('input[name="alt"]');
-          var image = ($alt.val() && $alt.val() !== undefined) ?
-            '\n![' + $alt.val() + '](/' + path + ')' :
-            '\n![' + file.name + '](/' + path + ')';
-
-          view.editor.focus();
-          view.editor.replaceSelection(image);
-          view.eventRegister.trigger('updateSaveState', t('actions.save.saved'), 'saved', true);
-
-          // Update the media directory with the
-          // newly uploaded image.
-          if (!data.sha && view.assets) {
-            view.assets.push({
-              name: file.name,
-              type: 'blob',
-              path: path
-            });
-          }
-
-          // Store a record of recently uploaded files in memory
-          var fileParts = _.extractFilename(res.content.path);
-          var structuredPath = [fileParts[0], encodeURIComponent(fileParts[1])].join('/');
-
-          view.recentlyUploadedFiles.push({
-            path: structuredPath,
-            sha: res.content.sha
-          });
-        }
-      });
-    });
-  },
-
-  markdownSnippet: function(e) {
-    var view = this;
-    var $target = $(e.target, this.el).closest('a');
-    var $dialog = $('#dialog', this.el);
-    var $snippets = $('.toolbar .group a', this.el);
-    var key = $target.data('key');
-    var snippet = $target.data('snippet');
-    var selection = _.trim(this.editor.getSelection());
-
-    $dialog.removeClass().empty();
-
-    if (snippet) {
-      $snippets.removeClass('on');
-
-      if (selection) {
-        switch (key) {
-        case 'bold':
-          this.bold(selection);
-          break;
-        case 'italic':
-          this.italic(selection);
-          break;
-        case 'heading':
-          this.heading(selection);
-          break;
-        case 'sub-heading':
-          this.subHeading(selection);
-          break;
-        case 'quote':
-          this.quote(selection);
-          break;
-        default:
-          this.editor.replaceSelection(snippet);
-          break;
-        }
-        this.editor.focus();
-      } else {
-        this.editor.replaceSelection(snippet);
-        this.editor.focus();
-      }
-    } else if ($target.data('dialog')) {
-
-      var tmpl, className;
-      if (key === 'media' && !this.assets) {
-          className = key + ' no-directory';
-      } else {
-          className = key;
-      }
-
-      // This condition handles the link and media link in the toolbar.
-      if ($target.hasClass('on')) {
-        $target.removeClass('on');
-        $dialog.removeClass().empty();
-      } else {
-        $snippets.removeClass('on');
-        $target.addClass('on');
-        $dialog
-          .removeClass()
-          .addClass('dialog ' + className)
-          .empty();
-
-        switch(key) {
-          case 'link':
-            tmpl = _(app.templates.linkDialog).template();
-
-            $dialog.append(tmpl({
-              relativeLinks: view.relativeLinks
-            }));
-
-            if (view.relativeLinks) {
-              $('.chzn-select', $dialog).chosen().change(function() {
-                $('.chzn-single span').text(t('dialogs.link.insertLocal'));
-
-                var parts = $(this).val().split(',');
-                $('input[name=href]', $dialog).val(parts[0]);
-                $('input[name=text]', $dialog).val(parts[1]);
-              });
-            }
-
-            if (selection) {
-              // test if this is a markdown link: [text](link)
-              var link = /\[([^\]]+)\]\(([^)]+)\)/;
-              var quoted = /".*?"/;
-
-              var text = selection;
-              var href;
-              var title;
-
-              if (link.test(selection)) {
-                var parts = link.exec(selection);
-                text = parts[1];
-                href = parts[2];
-
-                // Search for a title attrbute within the url string
-                if (quoted.test(parts[2])) {
-                  href = parts[2].split(quoted)[0];
-
-                  // TODO could be improved
-                  title = parts[2].match(quoted)[0].replace(/"/g, '');
-                }
-              }
-
-              $('input[name=text]', $dialog).val(text);
-              if (href) $('input[name=href]', $dialog).val(href);
-              if (title) $('input[name=title]', $dialog).val(title);
-            }
-          break;
-          case 'media':
-            tmpl = _(app.templates.mediaDialog).template();
-            $dialog.append(tmpl({
-              description: t('dialogs.media.description', {
-                input: '<input id="upload" class="upload" type="file" />'
-              }),
-              writable: view.data.writable,
-              assetsDirectory: (view.assets) ? true : false
-            }));
-
-            if (view.assets) view.renderAssets(view.assets);
-
-            if (selection) {
-              var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
-              var src;
-              var alt;
-
-              if (image.test(selection)) {
-                var imageParts = image.exec(selection);
-                alt = imageParts[1];
-                src = imageParts[2];
-
-                $('input[name=url]', $dialog).val(src);
-                if (alt) $('input[name=alt]', $dialog).val(alt);
-              }
-            }
-          break;
-          case 'help':
-            tmpl = _(app.templates.helpDialog).template();
-            $dialog.append(tmpl({
-              help: toolbar.help
-            }));
-
-            // Page through different help sections
-            var $mainMenu = $('.main-menu a', this.el);
-            var $subMenu = $('.sub-menu', this.el);
-            var $content = $('.help-content', this.el);
-
-            $mainMenu.on('click', function() {
-              if (!$(this).hasClass('active')) {
-
-                $mainMenu.removeClass('active');
-                $content.removeClass('active');
-                $subMenu
-                    .removeClass('active')
-                    .find('a')
-                    .removeClass('active');
-
-                $(this).addClass('active');
-
-                // Add the relavent sub menu
-                var parent = $(this).data('id');
-                $('.' + parent).addClass('active');
-
-                // Add an active class and populate the
-                // content of the first list item.
-                var $firstSubElement = $('.' + parent + ' a:first', this.el);
-                $firstSubElement.addClass('active');
-
-                var subParent = $firstSubElement.data('id');
-                $('.help-' + subParent).addClass('active');
-              }
-              return false;
-            });
-
-            $subMenu.find('a').on('click', function() {
-              if (!$(this).hasClass('active')) {
-
-                $subMenu.find('a').removeClass('active');
-                $content.removeClass('active');
-                $(this).addClass('active');
-
-                // Add the relavent content section
-                var parent = $(this).data('id');
-                $('.help-' + parent).addClass('active');
-              }
-
-              return false;
-            });
-
-          break;
-        }
-      }
-    }
-
-    return false;
-  },
-
-  renderAssets: function(data, back) {
-    var view = this;
-    var $media = $('#media', this.el);
-    var tmpl = _(app.templates.asset).template();
-
-    // Reset some stuff
-    $('.directory a', $media).off('click', this.assetDirectory);
-    $media.empty();
-
-    if (back && (back.join() !== this.assetsDirectory)) {
-      var link = back.slice(0, back.length - 1).join('/');
-      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>' + t('dialogs.media.back') + '</a></li>');
-    }
-
-    _(data).each(function(asset) {
-      var parts = asset.path.split('/');
-      var path = parts.slice(0, parts.length - 1).join('/');
-
-      $media.append(tmpl({
-        name: asset.name,
-        type: asset.type,
-        path: path + '/' + encodeURIComponent(asset.name)
-      }));
-    });
-
-    $('.asset a', $media).on('click', function(e) {
-      var href = $(this).attr('href');
-      var alt = _.trim($(this).text());
-
-      if (_.isImage(href)) {
-        $('input[name="url"]').val(href);
-        $('input[name="alt"]').val(alt);
-      } else {
-        view.editor.replaceSelection(href);
-        view.editor.focus();
-      }
-      return false;
-    });
-
-    $('.directory a', $media).on('click', function(e) {
-      view.assetDirectory($(e.target), view);
-      return false;
-    });
-  },
-
-  assetDirectory: function(dir, view) {
-    var path = dir.attr('href');
-    app.models.loadPosts(app.state.user, app.state.repo, app.state.branch, path, function(err, data) {
-      view.renderAssets(data.files, path.split('/'));
-    });
-  },
-
-  dialogInsert: function(e) {
-    var $dialog = $('#dialog', this.el);
-    var $target = $(e.target, this.el);
-    var type = $target.data('type');
-
-    if (type === 'link') {
-      var href = $('input[name="href"]').val();
-      var text = $('input[name="text"]').val();
-      var title = $('input[name="title"]').val();
-
-      if (!text) text = href;
-
-      if (title) {
-        this.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
-      } else {
-        this.editor.replaceSelection('[' + text + '](' + href + ')');
-      }
-
-      this.editor.focus();
-    }
-
-    if (type === 'media') {
-      if (this.queue) {
-        var userDefinedPath = $('input[name="url"]').val();
-        this.createAndUpload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
-
-        // Finally, clear the queue object
-        this.queue = undefined;
-      } else {
-        var src = $('input[name="url"]').val();
-        var alt = $('input[name="alt"]').val();
-        this.editor.replaceSelection('\n![' + alt + '](/' + src + ')');
-        this.editor.focus();
-      }
-    }
-
-    return false;
-  },
-
-  heading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
-    } else {
-      this.editor.replaceSelection('## ' + s.replace(/#/g, ''));
-    }
-  },
-
-  subHeading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(3) !== '#') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
-    } else {
-      this.editor.replaceSelection('### ' + s.replace(/#/g, ''));
-    }
-  },
-
-  italic: function(s) {
-    if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
-      this.editor.replaceSelection(s.replace(/_/g, ''));
-    } else {
-      this.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
-    }
-  },
-
-  bold: function(s) {
-    if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
-      this.editor.replaceSelection(s.replace(/\*/g, ''));
-    } else {
-      this.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
-    }
-  },
-
-  quote: function(s) {
-    if (s.charAt(0) === '>') {
-      this.editor.replaceSelection(_.lTrim(s.replace(/\>/g, '')));
-    } else {
-      this.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
-    }
-  },
-
-  remove: function() {
-    this.stashFile();
-
-    this.eventRegister.unbind('edit', this.postViews);
-    this.eventRegister.unbind('preview', this.preview);
-    this.eventRegister.unbind('deleteFile', this.deleteFile);
-    this.eventRegister.unbind('showDiff', this.showDiff);
-    this.eventRegister.unbind('translate', this.translate);
-    this.eventRegister.unbind('draft', this.draft);
-    this.eventRegister.unbind('updateFile', this.updateFile);
-    this.eventRegister.unbind('meta', this.updateFile);
-    this.eventRegister.unbind('remove', this.remove);
-    this.eventRegister.unbind('cancel', this.cancel);
-
-    // Clear any file state classes in #prose
-    this.eventRegister.trigger('updateSaveState', '', '');
-
-    $(window).off('pagehide');
-    Backbone.View.prototype.remove.call(this);
-  }
-});
-
-},{".././toolbar/markdown.js":21,".././util":26,".././upload":22,".././cookie":2,"jquery-browserify":18,"chosen-jquery-browserify":29,"underscore":19,"js-yaml":24,"keymaster":28,"marked":27,"backbone":20,"deepmerge":30,"diff":31}],20:[function(require,module,exports){
+},{"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],12:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -26207,10 +23191,2553 @@ module.exports = Backbone.View.extend({
 }).call(this);
 
 })()
-},{"underscore":19}],24:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
+},{"underscore":11}],28:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var templates = require('../dist/templates');
+var chrono = require('chrono');
 
-},{"./lib/js-yaml.js":32}],27:[function(require,module,exports){
+module.exports = {
+
+  // Cleans up a string for use in urls
+  stringToUrl: function(string) {
+    return string.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  },
+
+  // Extract a Jekyll date format from a filename
+  extractDate: function(string) {
+    var match = string.match(/^\d{4}-\d{2}-\d{2}/);
+    return match ? match[0] : '';
+  },
+
+  // Extract filename from a given path
+  // -------
+  //
+  // this.extractFilename('path/to/foo.md')
+  // => ['path/to', 'foo.md']
+
+  extractFilename: function(path) {
+    var regex = /\//;
+    if (!regex.test(path)) return ['', path];
+    var matches = path.match(/(.*)\/(.*)$/);
+    return [matches[1], matches[2]];
+  },
+
+  validPathname: function(path) {
+    var regex = /^([a-zA-Z0-9_\-]|\.)+$/;
+    return _.all(path.split('/'), function(filename) {
+      return !!regex.test(filename);
+    });
+  },
+
+  parentPath: function(path) {
+    return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
+  },
+
+  // Extract parts of the path
+  // into a state from the router
+  // -------
+
+  extractURL: function(url) {
+    url = url.split('/');
+
+    return {
+      mode: url[0],
+      branch: url[1],
+      path: (url.slice(2) || []).join('/')
+    };
+  },
+
+  // Determine mode for CodeMirror
+  // -------
+
+  mode: function(extension) {
+    if (this.isMarkdown(extension)) return 'gfm';
+    if (_.include(['js', 'json'], extension)) return 'javascript';
+    if (extension === 'html') return 'htmlmixed';
+    if (extension === 'rb') return 'ruby';
+    if (/(yml|yaml)/.test(extension)) return 'yaml';
+    if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
+
+    return extension;
+  },
+
+  // Check if a given file has YAML frontmater
+  // -------
+
+  hasMetadata: function(content) {
+    var regex = /^(---\n)((.|\n)*?)\n---\n?/;
+    content = content.replace(/\r\n/g, '\n'); // normalize a little bit
+    return regex.test(content);
+  },
+
+  // Extract file extension
+  // -------
+
+  extension: function(file) {
+    var match = file.match(/\.(\w+)$/);
+    return match ? match[1] : null;
+  },
+
+  // Does the root of the path === _drafts?
+  // -------
+
+  draft: function(path) {
+    return (path.split('/')[0] === '_drafts') ? true : false
+  },
+
+  // Determine types
+  // -------
+
+  markdown: function(file) {
+    var regex = new RegExp(/.(md|mkdn?|mdown|markdown)$/);
+    return !!(regex.test(file));
+  },
+
+  // chunked path
+  // -------
+  //
+  // this.chunkedPath('path/to/foo')
+  // =>
+  // [
+  //   { url: 'path',        name: 'path' },
+  //   { url: 'path/to',     name: 'to' },
+  //   { url: 'path/to/foo', name: 'foo' }
+  // ]
+
+  chunkedPath: function(path) {
+    var chunks = path.split('/');
+    return _.map(chunks, function(chunk, index) {
+      var url = [];
+      for (var i = 0; i <= index; i++) {
+        url.push(chunks[i]);
+      }
+      return {
+        url: url.join('/'),
+        name: chunk
+      };
+    });
+  },
+
+  isBinary: function(extension) {
+    var regex = new RegExp(/^(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$/);
+    return !!(regex.test(extension));
+  },
+
+  isMarkdown: function(extension) {
+    var regex = new RegExp(/^(md|mkdn?|mdown|markdown)$/);
+    return !!(regex.test(extension));
+  },
+
+  isMedia: function(extension) {
+    var regex = new RegExp(/^(jpeg|jpg|gif|png|swf|mov)$/);
+    return !!(regex.test(extension));
+  },
+
+  isImage: function(extension) {
+    var regex = new RegExp(/^(jpeg|jpg|gif|png)$/);
+    return !!(regex.test(extension));
+  },
+
+  // Return a true or false boolean if a path
+  // a absolute or not.
+  // -------
+
+  absolutePath: function(path) {
+    return /^https?:\/\//i.test(path);
+  },
+
+  // Concatenate path + file to full filepath
+  // -------
+
+  filepath: function(path, file) {
+    return (path ? path + '/' : '') + file;
+  },
+
+  // Returns a filename without the file extension
+  // -------
+
+  filename: function(file) {
+    return file.replace(/\.[^\/.]+$/, '');
+  },
+
+  // String Manipulations
+  // -------
+  trim: function(str) {
+    return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+  },
+
+  lTrim: function(str) {
+    return str.replace(/^\s\s*/, '');
+  },
+
+  // UI Stuff
+  // -------
+
+  documentTitle: function(title) {
+    document.title = title + ' · Prose';
+  },
+
+  fixedScroll: function($el, offset) {
+    $(window).scroll(function(e) {
+      var y = $(this).scrollTop();
+      if (y >= offset) {
+        $el.addClass('fixed');
+      } else {
+        $el.removeClass('fixed');
+      }
+    });
+  },
+
+  pageListing: function(handler) {
+    if ($('.item').hasClass('active')) {
+      var index = parseInt($('.item.active').data('index'), 10);
+      var offset;
+
+      $('.item.active').removeClass('active');
+
+      function inView(el) {
+          var curTop = el.offset().top;
+          var screenHeight = $(window).height();
+          return (curTop > screenHeight) ? false : true;
+      }
+
+      // UP
+      if (handler === 'k') {
+        if (index !== 0) --index;
+        var $prev = $('.item[data-index=' + index + ']');
+        var prevTop = $prev.offset().top + $prev.height();
+
+        if (!inView($prev)) {
+          // Offset is the list height minus the difference between the
+          // height and .content-search (60) that is fixed down the page
+          offset = $prev.height();
+
+          $('html, body').animate({
+            scrollTop: $prev.offset().top + ($prev.height() - offset)
+          }, 0);
+        } else {
+          $('html, body').animate({
+            scrollTop: 0
+          }, 0);
+        }
+
+        $prev.addClass('active');
+
+      // DOWN
+      } else {
+        if (index < $('#content li').length - 1) ++index;
+        var $next = $('.item[data-index=' + index + ']');
+        var nextTop = $next.offset().top + $next.height();
+        offset = $next.height();
+
+        if (!inView($next)) {
+          $('html, body').animate({
+             scrollTop: $next.offset().top + ($next.height() - offset)
+          }, 0);
+        }
+
+        $next.addClass('active');
+      }
+    } else {
+      $('.item[data-index=0]').addClass('active');
+    }
+  },
+
+  goToFile: function() {
+    var path = $('.item.active').data('navigate');
+    if (path) router.navigate(path, true);
+    return false;
+  },
+
+  loader: {
+    loading: function(message) {
+      var tmpl = _(templates.loading).template();
+      var loading = {
+        message: message
+      };
+
+      $('#loader').empty().append(_.template(templates.loading, loading, {
+        variable: 'loading'
+      }));
+    },
+
+    loaded: function() {
+      $('#loader').find('.loading').fadeOut(150, function() {
+        $(this).remove();
+      });
+    }
+  },
+
+  autoSelect: function($el) {
+    $el.on('click', function() {
+      $el.select();
+    });
+  }
+};
+
+},{"../dist/templates":14,"jquery-browserify":10,"underscore":11,"chrono":32}],33:[function(require,module,exports){
+module.exports = {
+  help: [
+    {
+      menuName: t('dialogs.help.blockElements.title'),
+      content: [{
+          menuName: t('dialogs.help.blockElements.content.paragraphs.title'),
+          data: t('dialogs.help.blockElements.content.paragraphs.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.headers.title'),
+          data: t('dialogs.help.blockElements.content.headers.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.blockquotes.title'),
+          data: t('dialogs.help.blockElements.content.blockquotes.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.lists.title'),
+          data: t('dialogs.help.blockElements.content.lists.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.codeBlocks.title'),
+          data: t('dialogs.help.blockElements.content.codeBlocks.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.horizontalRules.title'),
+          data: t('dialogs.help.blockElements.content.horizontalRules.content')
+        }
+      ]
+    },
+
+    {
+      menuName: t('dialogs.help.spanElements.title'),
+      content: [{
+          menuName: t('dialogs.help.spanElements.content.links.title'),
+          data: t('dialogs.help.spanElements.content.links.content')
+        },
+        {
+          menuName: t('dialogs.help.spanElements.content.emphasis.title'),
+          data: t('dialogs.help.spanElements.content.emphasis.content')
+        },
+        {
+          menuName: t('dialogs.help.spanElements.content.code.title'),
+          data: t('dialogs.help.spanElements.content.code.content')
+        },
+        {
+          menuName: t('dialogs.help.spanElements.content.images.title'),
+          data: t('dialogs.help.spanElements.content.images.content')
+        }
+      ]
+    },
+
+    {
+      menuName: t('dialogs.help.miscellaneous.title'),
+      content: [{
+          menuName: t('dialogs.help.miscellaneous.content.automaticLinks.title'),
+          data: t('dialogs.help.miscellaneous.content.automaticLinks.content')
+        },
+        {
+          menuName: t('dialogs.help.miscellaneous.content.escaping.title'),
+          data: t('dialogs.help.miscellaneous.content.escaping.content')
+        }
+      ]
+    }
+  ]
+}
+
+},{}],15:[function(require,module,exports){
+var Backbone = require('backbone');
+var User = require('../models/user');
+var config = require('../config');
+
+module.exports = Backbone.Collection.extend({
+  model: User
+});
+
+},{"../models/user":6,"../config":8,"backbone":12}],16:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Org = require('../models/org');
+var config = require('../config');
+
+module.exports = Backbone.Collection.extend({
+  model: Org,
+
+  initialize: function(models, options) {
+    options = _.clone(options) || {};
+    _.bindAll(this);
+
+    this.user = options.user;
+  },
+
+  url: function() {
+    return this.user ? config.api + '/users/' + this.user.get('login') + '/orgs' :
+      '/user/orgs';
+  }
+});
+
+},{"../models/org":34,"../config":8,"underscore":11,"backbone":12}],17:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Branches = require('../collections/branches');
+var Commits = require('../collections/commits');
+var config = require('../config');
+
+module.exports = Backbone.Model.extend({
+  constructor: function(attributes, options) {
+    Backbone.Model.call(this, {
+      id: attributes.id,
+      description: attributes.description,
+      fork: attributes.fork,
+      homepage: attributes.homepage,
+      master_branch: attributes.master_branch,
+      name: attributes.name,
+      owner: {
+        id: attributes.owner.id,
+        login: attributes.owner.login
+      },
+      permissions: attributes.permissions,
+      private: attributes.private,
+      updated_at: attributes.updated_at
+    });
+  },
+
+  initialize: function(attributes, options) {
+    this.branches = new Branches([], { repo: this });
+    this.commits = new Commits([], { repo: this, branch: this.branch })
+  },
+
+  ref: function(options) {
+    options = _.clone(options) || {};
+
+    $.ajax({
+      type: 'POST',
+      url: this.url() + '/git/refs',
+      data: JSON.stringify({
+        ref: options.ref,
+        sha: options.sha
+      }),
+      success: options.success,
+      error: options.error
+    });
+  },
+
+  fork: function(options) {
+    options = _.clone(options) || {};
+
+    var success = options.success;
+
+    $.ajax({
+      type: 'POST',
+      url: this.url() + '/forks',
+      success: (function(res) {
+        // Initialize new Repo model
+        // TODO: is referencing module.exports in this manner acceptable?
+        var repo = new module.exports(res);
+
+        // TODO: Forking is async, retry if request fails
+        repo.branches.fetch({
+          success: (function(collection, res, options) {
+            var prefix = 'prose-patch-';
+
+            var branches = collection.filter(function(model) {
+              return model.get('name').indexOf(prefix) === 0;
+            }).map(function(model) {
+              return parseInt(model.get('name').split(prefix)[1]);
+            });
+
+            var branch = prefix + (branches.length ? _.max(branches) + 1 : 1);
+
+            if (_.isFunction(success)) success(repo, branch);
+          }).bind(this),
+          error: options.error
+        })
+      }).bind(this),
+      error: options.error
+    });
+  },
+
+  url: function() {
+    return config.api + '/repos/' + this.get('owner').login + '/' + this.get('name');
+  }
+});
+
+},{"../collections/branches":35,"../collections/commits":36,"../config":8,"underscore":11,"backbone":12}],18:[function(require,module,exports){
+var _ = require('underscore');
+var marked = require('marked');
+var Backbone = require('backbone');
+var jsyaml = require('js-yaml');
+var util = require('.././util');
+
+module.exports = Backbone.Model.extend({
+  idAttribute: 'path',
+
+  initialize: function(attributes, options) {
+    options = _.clone(options) || {};
+    _.bindAll(this);
+
+    this.placeholder = new Date().format('Y-m-d') + '-your-filename.md';
+    var path = attributes.path.split('?')[0];
+
+    // Append placeholder name if file is new and
+    // path matches a directory in collection or is empty string
+    var dir = attributes.collection.findWhere({ path: path });
+    if (this.isNew() && (!path || (dir && dir.get('type') === 'tree'))) {
+      path = path ? path + '/' + this.placeholder : this.placeholder;
+    }
+
+    var extension = util.extension(path);
+    var permissions = attributes.repo ?
+      attributes.repo.get('permissions') : undefined;
+    var type;
+
+    this.branch = attributes.branch;
+    this.collection = attributes.collection;
+    this.repo = attributes.repo;
+
+    if (this.isNew() || attributes.type === 'blob') {
+      type = 'file';
+    } else {
+      type = attributes.type;
+    }
+
+    this.set({
+      'binary': util.isBinary(extension),
+      'content': this.isNew() && _.isUndefined(attributes.content) ? t('main.new.body') : attributes.content,
+      'content_url': attributes.url,
+      'draft': function() {
+        var path = this.get('path');
+        return util.draft(path);
+      },
+      'extension': extension,
+      'lang': util.mode(extension),
+      'media': util.isMedia(extension),
+      'markdown': util.isMarkdown(extension),
+      'name': util.extractFilename(path)[1],
+      'path': path,
+      'type': type,
+      'writable': permissions ? permissions.push : false
+    });
+  },
+
+  get: function(attr) {
+    // Return result of functions set on model
+    var value = Backbone.Model.prototype.get.call(this, attr);
+    return _.isFunction(value) ? value.call(this) : value;
+  },
+
+  isNew: function() {
+    return this.get('sha') == null;
+  },
+
+  parse: function(resp, options) {
+    if (typeof resp === 'string') {
+      return this.parseContent(resp);
+    } else if (typeof resp === 'object') {
+      // TODO: whitelist resp JSON
+      return _.omit(resp, 'content');
+    }
+  },
+
+  parseContent: function(resp, options) {
+    // Extract YAML from a post, trims whitespace
+    resp = resp.replace(/\r\n/g, '\n'); // normalize a little bit
+
+    var hasMetadata = !!util.hasMetadata(resp);
+
+    if (!hasMetadata) return {
+      content: resp,
+      metadata: false,
+      previous: resp
+    };
+
+    var res = {
+      previous: resp
+    };
+
+    res.content = resp.replace(/^(---\n)((.|\n)*?)---\n?/, function(match, dashes, frontmatter) {
+      var regex = /published: false/;
+
+      try {
+        // TODO: _.defaults for each key
+        res.metadata = jsyaml.load(frontmatter);
+
+        // Default to published unless explicitly set to false
+        res.metadata.published = !regex.test(frontmatter);
+      } catch(err) {
+        console.log('ERROR encoding YAML');
+      }
+
+      return '';
+    }).trim();
+
+    return res;
+  },
+
+  getContent: function(options) {
+    options = options ? _.clone(options) : {};
+
+    Backbone.Model.prototype.fetch.call(this, _.extend(options, {
+      dataType: 'text',
+      headers: {
+        'Accept': 'application/vnd.github.raw'
+      },
+      url: this.get('content_url')
+    }));
+  },
+
+  getContentSync: function(options) {
+    options = options ? _.clone(options) : {};
+
+    return Backbone.Model.prototype.fetch.call(this, _.extend(options, {
+      async: false,
+      dataType: 'text',
+      headers: {
+        'Accept': 'application/vnd.github.raw'
+      },
+      url: this.get('content_url')
+    }));
+  },
+
+  serialize: function() {
+    var metadata = this.get('metadata');
+
+    var content = this.get('content') || '';
+    var frontmatter;
+
+    if (metadata) {
+      try {
+        frontmatter = jsyaml.dump(metadata).trim();
+      } catch(err) {
+        throw err;
+      }
+
+      return ['---', frontmatter, '---'].join('\n') + '\n\n' + content;
+    } else {
+      return content;
+    }
+  },
+
+  encode: function(content) {
+    // Encode UTF-8 to Base64
+    // https://developer.mozilla.org/en-US/docs/Web/API/window.btoa#Unicode_Strings
+    return window.btoa(window.unescape(window.encodeURIComponent(content)));
+  },
+
+  decode: function(content) {
+    // Decode Base64 to UTF-8
+    // https://developer.mozilla.org/en-US/docs/Web/API/window.btoa#Unicode_Strings
+    return window.decodeURIComponent(window.escape(window.atob(content)));
+  },
+
+  getAttributes: function() {
+    var data = {};
+
+    _.each(this.attributes, function(value, key) {
+      data[key] = this.get(key);
+    }, this);
+
+    return data;
+  },
+
+  toJSON: function() {
+    // override default toJSON method to only send necessary data to GitHub
+    var path = this.get('path');
+    var content = this.serialize();
+
+    // TODO: check if commit message has been set
+    var data = {
+      path: path,
+      message: (this.isNew() ?
+        t('actions.commits.created', { filename: path }) :
+        t('actions.commits.updated', { filename: path })),
+      content: this.get('binary') ? window.btoa(content) : this.encode(content),
+      branch: this.branch.get('name')
+    };
+
+    // Set sha if modifying existing file
+    if (!this.isNew()) data.sha = this.get('sha');
+
+    return data;
+  },
+
+  clone: function(attributes, options) {
+    options = options ? _.clone(options) : {};
+
+    attributes = _.extend(_.pick(this.attributes, [
+      'branch',
+      'collection',
+      'content',
+      'metadata',
+      'repo'
+    ]), attributes);
+
+    return new this.constructor(attributes, { clone: true });
+  },
+
+  fetch: function(options) {
+    options = options ? _.clone(options) : {};
+
+    // Series necessary for accurate isNew() check in getContent
+    if (this.isNew()) {
+      if (_.isFunction(options.success)) options.success();
+      if (_.isFunction(options.complete)) options.complete();
+    } else {
+      // TODO: use deffered to fire callbacks when both functions complete
+      Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
+      this.getContent.apply(this, arguments);
+    }
+  },
+
+  save: function(options) {
+    options = options ? _.clone(options) : {};
+
+    // set method to PUT even when this.isNew()
+    if (this.isNew()) {
+      options = _.extend(options, {
+        type: 'PUT'
+      });
+    }
+
+    // Call save method with undefined attributes
+    Backbone.Model.prototype.save.call(this, undefined, options);
+  },
+
+  // patch: function(user, repo, branch, path, content, message, cb) {
+  patch: function(options) {
+    options = _.clone(options) || {};
+
+    var success = options.success;
+    var error = options.error;
+
+    this.repo.fork({
+      success: (function(repo, branch) {
+        repo.ref({
+          'ref': 'refs/heads/' + branch,
+          'sha': this.branch.get('sha'),
+          'success': (function(res) {
+            repo.branches.fetch({
+              success: (function(collection, res, options) {
+                branch = collection.findWhere({ name: branch });
+
+                // Create new File model in forked repo
+                // TODO: serialize metadata, set raw content
+                var file = new module.exports({
+                  branch: branch,
+                  collection: collection,
+                  content: this.get('content'),
+                  path: this.get('path'),
+                  repo: repo,
+                  sha: this.get('sha')
+                });
+
+                // Add to collection on save
+                file.save({
+                  success: (function(model, res, options) {
+                    // Update model attributes and add to collection
+                    model.set(res.content);
+                    branch.files.add(model);
+
+                    $.ajax({
+                      type: 'POST',
+                      url: this.repo.url() + '/pulls',
+                      data: JSON.stringify({
+                        title: res.commit.message,
+                        body: 'This pull request has been automatically generated by prose.io.',
+                        base: this.branch.get('name'),
+                        head: repo.get('owner').login + ':' + branch.get('name')
+                      }),
+                      success: success,
+                      error: error
+                    });
+                  }).bind(this),
+                  error: error
+                });
+              }).bind(this),
+              error: error
+            });
+          }).bind(this),
+          'error': options.error
+        });
+      }).bind(this),
+      error: options.error
+    });
+  },
+
+  destroy: function(options) {
+    options = _.clone(options) || {};
+
+    var path = this.get('path');
+
+    var data = {
+      path: path,
+      message: t('actions.commits.deleted', { filename: path }),
+      sha: this.get('sha'),
+      branch: this.branch.get('name')
+    };
+
+    var url = this.url().split('?')[0];
+    var params = _.map(_.pairs(data), function(param) { return param.join('='); }).join('&');
+
+    Backbone.Model.prototype.destroy.call(this, _.extend(options, {
+      url: url + '?' + params,
+      error: function(model, xhr, options) {
+        // TODO: handle 422 Unprocessable Entity error
+        console.log(model, xhr, options);
+      },
+      wait: true
+    }));
+  },
+
+  url: function() {
+    return this.repo.url() + '/contents/' + this.get('path') + '?ref=' + this.branch.get('name');
+  },
+
+  validate: function(attributes, options) {
+
+    // For testing:
+    // if (attributes) return 'uh oh spaghetti o'
+    // Fail validation if path conflicts with another file in repo
+    if (this.collection.where({ path: attributes.path }).length > 1) return t('actions.save.fileNameExists');
+
+    // Fail validation if name matches default
+    var name = util.extractFilename(this.get('path'));
+    if (name === this.placeholder) return 'File name is default';
+
+    // Fail validation if marked returns an error
+    // TODO: does this work as callback?
+    marked(attributes.content, {}, function(err, content) {
+      if (err) return err;
+    });
+  }
+});
+
+},{".././util":28,"underscore":11,"marked":37,"backbone":12,"js-yaml":38}],19:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var SidebarView = require('./sidebar');
+var NavView = require('./nav');
+var cookie = require('../cookie');
+var templates = require('../../dist/templates');
+var util = require('../util');
+
+module.exports = Backbone.View.extend({
+  className: 'application',
+
+  template: templates.app,
+
+  subviews: {},
+
+  events: {
+    'click a.logout': 'logout'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    key('j, k, enter, o', (function(e, handler) {
+      if (this.$el.find('.listing')[0]) {
+        if (handler.key === 'j' || handler.key === 'k') {
+          util.pageListing(handler.key);
+        } else {
+          util.goToFile();
+        }
+      }
+    }).bind(this));
+
+    this.user = options.user;
+
+    // Sidebar
+    this.sidebar = new SidebarView({
+      app: this,
+      user: this.user
+    });
+    this.subviews['sidebar'] = this.sidebar;
+
+    // Nav
+    this.nav = new NavView({
+      app: this,
+      sidebar: this.sidebar,
+      user: this.user
+    });
+    this.subviews['nav'] = this.nav;
+  },
+
+  render: function() {
+    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
+
+    this.sidebar.setElement(this.$el.find('#drawer')).render();
+    this.nav.setElement(this.$el.find('nav')).render();
+
+    return this;
+  },
+
+  logout: function() {
+    cookie.unset('oauth-token');
+    cookie.unset('id');
+    window.location.reload();
+    return false;
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./sidebar":39,"./nav":40,"../cookie":3,"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],20:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+var auth = require('../config');
+
+module.exports = Backbone.View.extend({
+  id: 'start',
+
+  template: templates.start,
+
+  render: function() {
+    this.$el.html(_.template(this.template, auth, { variable: 'auth' }));
+    return this;
+  }
+});
+
+},{"../../dist/templates":14,"../config":8,"jquery-browserify":10,"underscore":11,"backbone":12}],21:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var HeaderView = require('./header');
+var OrgsView = require('./sidebar/orgs');
+var utils = require('.././util');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.profile,
+
+  subviews: {},
+
+  initialize: function(options) {
+    this.auth = options.auth;
+    this.user = options.user;
+    this.search = options.search;
+    this.sidebar = options.sidebar;
+    this.repos = options.repos;
+  },
+
+  render: function() {
+    this.$el.empty().append(_.template(this.template));
+
+    this.search.setElement(this.$el.find('#search')).render();
+    this.repos.setElement(this.$el.find('#repos'));
+
+    var header = new HeaderView({ user: this.user, alterable: false });
+    header.setElement(this.$el.find('#heading')).render();
+    this.subviews['header'] = header;
+
+    if (this.auth) {
+      var orgs = this.sidebar.initSubview('orgs', {
+        model: this.auth.orgs,
+        sidebar: this.sidebar,
+        user: this.user
+      });
+      
+      this.subviews['orgs'] = orgs;
+    }
+
+    return this;
+  },
+
+  remove: function() {
+    this.sidebar.close();
+
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./header":41,"./sidebar/orgs":42,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],22:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+var util = require('../util');
+
+module.exports = Backbone.View.extend({
+  template: templates.search,
+
+  events: {
+    'keyup input': 'keyup'
+  },
+
+  initialize: function(options) {
+    this.mode = options.mode;
+    this.model = options.model;
+  },
+
+  render: function() {
+    var placeholder = t('main.repos.filter');
+    if (this.mode === 'repo') placeholder = t('main.repo.filter');
+
+    var search = {
+      placeholder: placeholder
+    };
+
+    this.$el.empty().append(_.template(this.template, search, {
+      variable: 'search'
+    }));
+
+    this.input = this.$el.find('input');
+    this.input.focus();
+    return this;
+  },
+
+  keyup: function(e) {
+    if (e && e.which === 27) {
+      // ESC key
+      this.input.val('');
+      this.trigger('search');
+    } else if (e && e.which === 40) {
+      // Down Arrow
+      util.pageListing('down');
+      e.preventDefault();
+      e.stopPropagation();
+      this.input.blur();
+    } else {
+      this.trigger('search');
+    }
+  },
+
+  search: function() {
+    var searchstr = this.input ? this.input.val() : '';
+    return this.model.filter(function(model) {
+      return model.get('name').indexOf(searchstr) > -1;
+    });
+  }
+});
+
+},{"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],23:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var RepoView = require('./li/repo');
+
+module.exports = Backbone.View.extend({
+  subviews: {},
+
+  events: {
+    'mouseover .item': 'activeListing',
+    'mouseover .item a': 'activeListing'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.model = options.model;
+    this.search = options.search;
+
+    this.listenTo(this.search, 'search', this.render);
+  },
+
+  render: function() {
+    var collection = this.search ? this.search.search() : this.model;
+    var frag = document.createDocumentFragment();
+
+    collection.each((function(repo, i) {
+      var view = new RepoView({
+        index: i,
+        model: repo
+      });
+
+      frag.appendChild(view.render().el);
+      this.subviews[repo.id] = view;
+    }).bind(this));
+
+    this.$el.html(frag);
+
+    this.$listings = this.$el.find('.item');
+    this.$search = this.$el.find('#filter');
+
+    return this;
+  },
+
+  activeListing: function(e) {
+    var $listing = $(e.target);
+
+    if (!$listing.hasClass('item')) {
+      $listing = $(e.target).closest('li');
+    }
+
+    this.$listings.removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    this.$search.blur();
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./li/repo":43,"jquery-browserify":10,"underscore":11,"backbone":12}],24:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var FilesView = require('./files');
+var HeaderView = require('./header');
+var SearchView = require('./search');
+var util = require('.././util');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.repo,
+
+  events: {
+    'click a.new': 'create'
+  },
+
+  subviews: {},
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.branch = options.branch || this.model.get('master_branch');
+    this.model = options.model;
+    this.nav = options.nav;
+    this.path = options.path || '';
+    this.router = options.router;
+    this.sidebar = options.sidebar;
+    this.user = options.user;
+
+    // Init subviews
+    this.initHeader();
+    this.initSearch();
+    this.initBranches();
+    this.initHistory();
+
+    // Events from sidebar
+    this.listenTo(this.sidebar, 'destroy', this.destroy);
+    this.listenTo(this.sidebar, 'cancel', this.cancel);
+    this.listenTo(this.sidebar, 'confirm', this.updateFile);
+  },
+
+  render: function() {
+    this.$el.html(_.template(this.template, {}, {variable: 'data'}));
+
+    this.header.setElement(this.$el.find('#heading')).render();
+    this.search.setElement(this.$el.find('#search')).render();
+    this.files.setElement(this.$el.find('#files'));
+
+    return this;
+  },
+
+  initHeader: function() {
+    this.header = new HeaderView({
+      repo: this.model,
+      alterable: false
+    });
+
+    this.subviews['header'] = this.header;
+  },
+
+  initSearch: function() {
+    this.search = new SearchView({
+      mode: 'repo'
+    });
+
+    this.subviews['search'] = this.search;
+    this.initFiles();
+  },
+
+  initFiles: function() {
+    this.files = new FilesView({
+      branch: this.branch,
+      branches: this.model.branches,
+      nav: this.nav,
+      path: this.path,
+      repo: this.model,
+      router: this.router,
+      search: this.search,
+      sidebar: this.sidebar
+    });
+
+    this.subviews['files'] = this.files;
+  },
+
+  initBranches: function() {
+    this.branches = this.sidebar.initSubview('branches', {
+      model: this.model.branches,
+      repo: this.model,
+      branch: this.branch,
+      router: this.router,
+      sidebar: this.sidebar
+    });
+
+    this.subviews['branches'] = this.branches;
+  },
+
+  initHistory: function() {
+    this.history = this.sidebar.initSubview('history', {
+      user: this.user,
+      repo: this.model,
+      branch: this.branch,
+      commits: this.model.commits,
+      sidebar: this.sidebar,
+      view: this
+    });
+
+    this.subviews['history'] = this.history;
+  },
+
+  create: function() {
+    this.files.newFile();
+    return false;
+  },
+
+  remove: function() {
+    this.sidebar.close();
+
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./files":44,"./header":41,"./search":22,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],26:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var marked = require('marked');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  className: 'inner deep prose limiter',
+
+  render: function() {
+    this.$el.empty()
+      .append(marked(t('about.content')));
+    return this;
+  }
+});
+
+},{"jquery-browserify":10,"marked":37,"backbone":12}],27:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var Backbone = require('backbone');
+var _ = require('underscore');
+var cookie = require('../cookie');
+var templates = require('../../dist/templates');
+var LOCALES = require('../../translations/locales');
+
+module.exports = Backbone.View.extend({
+  className: 'inner deep prose limiter',
+
+  template: templates.chooselanguage,
+
+  events: {
+    'click .language': 'setLanguage' 
+  },
+
+  render: function() {
+    var chooseLanguages = {
+      languages: LOCALES,
+      active: app.locale ? app.locale : window.locale._current
+    };
+
+    this.$el.empty().append(_.template(this.template, chooseLanguages, {
+      variable: 'chooseLanguage'
+    }));
+    return this;
+  },
+
+  setLanguage: function(e) {
+    if (!$(e.target).hasClass('active')) {
+      var code = $(e.target).data('code');
+      cookie.set('lang', code);
+
+      // Check if the browsers language is supported
+      app.locale = code;
+
+      if (app.locale && app.locale !== 'en') {
+          $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+              window.locale[app.locale] = result;
+              window.locale.current(app.locale);
+          });
+      }
+
+      // Reflect changes. Could be more elegant.
+      window.location.reload();
+    }
+
+    return false;
+  }
+});
+
+},{"../cookie":3,"../../dist/templates":14,"../../translations/locales":2,"jquery-browserify":10,"backbone":12,"underscore":11}],25:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var queue = require('queue-async');
+var jsyaml = require('js-yaml');
+var patch = require('../../vendor/liquid.patch');
+
+var ModalView = require('./modal');
+var key = require('keymaster');
+var marked = require('marked');
+var diff = require('diff');
+var Backbone = require('backbone');
+var File = require('../models/file');
+var HeaderView = require('./header');
+var ToolbarView = require('./toolbar');
+var MetadataView = require('./metadata');
+var util = require('../util');
+var upload = require('../upload');
+var cookie = require('../cookie');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  id: 'post',
+
+  template: templates.file,
+
+  subviews: {},
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    // Patch Liquid
+    patch.apply(this);
+
+    this.branch = options.branch || options.repo.get('master_branch');
+    this.branches = options.branches;
+    this.mode = options.mode;
+    this.nav = options.nav;
+    this.path = options.path || '';
+    this.repo = options.repo;
+    this.router = options.router;
+    this.sidebar = options.sidebar;
+
+    // Set the active nav element established by this.mode
+    this.nav.setFileState(this.mode);
+
+    // Events from vertical nav
+    this.listenTo(this.nav, 'edit', this.edit);
+    this.listenTo(this.nav, 'blob', this.blob);
+    this.listenTo(this.nav, 'meta', this.meta);
+    this.listenTo(this.nav, 'settings', this.settings);
+    this.listenTo(this.nav, 'save', this.showDiff);
+
+    // Events from sidebar
+    this.listenTo(this.sidebar, 'destroy', this.destroy);
+    this.listenTo(this.sidebar, 'draft', this.draft);
+    this.listenTo(this.sidebar, 'cancel', this.cancel);
+    this.listenTo(this.sidebar, 'confirm', this.updateFile);
+    this.listenTo(this.sidebar, 'translate', this.translate);
+
+    // Stash editor and metadataEditor content to sessionStorage on pagehide event
+    this.listenTo($(window), 'pagehide', this.stashFile);
+
+    // Prevent exit when there are unsaved changes
+    // jQuery won't bind to 'beforeunload' event
+    // e.returnValue for Firefox compatibility
+    // https://developer.mozilla.org/en-US/docs/Web/Reference/Events/beforeunload
+    window.onbeforeunload = (function(e) {
+      if (this.dirty) {
+        var message = t('actions.unsaved');
+        (e || window.event).returnValue = message;
+
+        return message;
+      }
+    }).bind(this);
+
+    this.branches.fetch({ success: this.setCollection });
+  },
+
+  setCollection: function(collection, res, options) {
+    this.collection = collection.findWhere({ name: this.branch }).files;
+    this.collection.fetch({ success: this.setModel, args: arguments });
+  },
+
+  setModel: function(model, res, options) {
+    // Set default metadata from collection
+    var defaults = this.collection.defaults;
+    var path;
+
+    // Set model either by calling directly for new File models
+    // or by filtering collection for existing File models
+    switch(this.mode) {
+      case 'edit':
+      case 'blob':
+      case 'preview':
+        this.model = this.collection.findWhere({ path: this.path });
+        break;
+      case 'new':
+        this.model = new File({
+          branch: this.branches.findWhere({ name: this.branch }),
+          collection: this.collection,
+          path: this.path,
+          repo: this.repo
+        });
+        break;
+    }
+
+    if (this.model) {
+      if (defaults) {
+        path = this.nearestPath(defaults);
+        this.model.set('defaults', defaults[path]);
+      }
+
+      // Render on complete to render even if model does not exist on remote yet
+      this.model.fetch({
+        complete: this.render
+      });
+    } else {
+      this.router.notify(
+        t('notification.error.exists'),
+        [
+          {
+            'title': t('notification.create'),
+            'className': 'create',
+            'link': '#'
+          },
+          {
+            'title': t('notification.back'),
+            'link': '#' + _.compact([
+              this.repo.get('owner').login,
+              this.repo.get('name'),
+              'tree',
+              this.branch,
+              util.extractFilename(this.path)[0]
+            ]).join('/')
+          }
+        ]
+      );
+    }
+  },
+
+  nearestPath: function(defaults) {
+    // Match nearest parent directory default metadata
+    // Match paths in _drafts to corresponding defaults set at _posts
+    var path = this.model.get('path').replace(/^(_drafts)/, '_posts');
+    var nearestDir = /\/(?!.*\/).*$/;
+
+    while (defaults[path] === undefined && nearestDir.test(path)) {
+      path = path.replace( nearestDir, '' );
+    }
+
+    return path;
+  },
+
+  cursor: function() {
+    var view = this;
+    var selection = util.trim(this.editor.getSelection());
+
+    var match = {
+      lineBreak: /\n/,
+      h1: /^#{1}/,
+      h2: /^#{2}/,
+      h3: /^#{3}/,
+      h4: /^#{4}/,
+      strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+      italic: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+      isNumber: parseInt(selection.charAt(0), 10)
+    };
+
+    if (!match.isNumber) {
+      switch (selection.charAt(0)) {
+        case '#':
+          if (!match.lineBreak.test(selection)) {
+            if (match.h3.test(selection) && !match.h4.test(selection)) {
+              this.toolbar.highlight('sub-heading');
+            } else if (match.h2.test(selection) && !match.h3.test(selection)) {
+              this.toolbar.highlight('heading');
+            }
+          }
+          break;
+        case '>':
+          this.toolbar.highlight('quote');
+          break;
+        case '*':
+        case '_':
+          if (!match.lineBreak.test(selection)) {
+            if (match.strong.test(selection)) {
+              // trigger a change
+              this.toolbar.highlight('bold');
+            } else if (match.italic.test(selection)) {
+              this.toolbar.highlight('italic');
+            }
+          }
+          break;
+        case '!':
+          if (!match.lineBreak.test(selection) &&
+              selection.charAt(1) === '[' &&
+              selection.charAt(selection.length - 1) === ')') {
+              this.toolbar.highlight('media');
+          }
+          break;
+        case '[':
+          if (!match.lineBreak.test(selection) &&
+              selection.charAt(selection.length - 1) === ')') {
+              this.toolbar.highlight('link');
+          }
+          break;
+        case '-':
+          if (selection.charAt(1) === ' ') {
+            this.toolbar.highlight('list');
+          }
+        break;
+        default:
+          if (this.toolbar) this.toolbar.highlight();
+        break;
+      }
+    } else {
+      if (selection.charAt(1) === '.' && selection.charAt(2) === ' ') {
+        this.toolbar.highlight('numbered-list');
+      }
+    }
+  },
+
+  compilePreview: function(content) {
+    // Scan the content search for ![]()
+    // grab the path and file and form a RAW github aboslute request for it
+    var scan = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
+    var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
+    var titleAttribute = /".*?"/;
+
+    // Build an array of found images
+    var result = content.match(scan);
+
+    // Iterate over the results and replace
+    _(result).each(function(r) {
+        var parts = (image).exec(r);
+
+        if (parts !== null) {
+          path = parts[2];
+
+          if (!util.absolutePath(path)) {
+            // Remove any title attribute in the image tag is there is one.
+            if (titleAttribute.test(path)) {
+              path = path.split(titleAttribute)[0];
+            }
+
+            path = this.model.get('path');
+            var raw = auth.raw + '/' + this.repo.get('owner').login + '/' + this.repo.get('name') + '/' + this.branch + '/' + (path ? path  + '/' : '') + this.model.get('name');
+
+            if (this.repo.get('private')) {
+              // append auth param
+              // TODO This is not correct. See #491
+              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
+            }
+
+            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+          }
+        }
+    });
+
+    return content;
+  },
+
+  initEditor: function() {
+    var lang = this.model.get('lang');
+
+    // TODO: set default content for CodeMirror
+    this.editor = CodeMirror(this.$el.find('#code')[0], {
+      mode: lang,
+      value: this.model.get('content') || '',
+      lineWrapping: true,
+      lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
+      extraKeys: this.keyMap(),
+      matchBrackets: true,
+      dragDrop: false,
+      theme: 'prose-bright'
+    });
+
+    // Bind Drag and Drop work on the editor
+    if (this.model.get('markdown') && this.model.get('writable')) {
+      upload.dragDrop(this.$el, (function(e, file, content) {
+        if (this.$el.find('#dialog').hasClass('dialog')) {
+          this.updateImageInsert(e, file, content);
+        } else {
+          // Clear selection
+          this.editor.focus();
+          this.editor.replaceSelection('');
+
+          // Append images links in this.upload()
+          this.upload(e, file, content);
+        }
+      }).bind(this));
+    }
+
+    // Monitor the current selection and apply
+    // an active class to any snippet links
+    if (lang === 'gfm') {
+      this.listenTo(this.editor, 'cursorActivity', this.cursor, this);
+    }
+
+    this.listenTo(this.editor, 'change', this.makeDirty, this);
+    this.listenTo(this.editor, 'focus', this.focus, this);
+
+    this.refreshCodeMirror();
+
+    // Check sessionStorage for existing stash
+    // Apply if stash exists and is current, remove if expired
+    this.stashApply();
+  },
+
+  keyMap: function() {
+    var self = this;
+
+    if (this.model.get('markdown')) {
+      return {
+        'Ctrl-S': function(codemirror) {
+          self.updateFile();
+        },
+        'Cmd-B': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.bold(self.editor.getSelection());
+        },
+        'Ctrl-B': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.bold(self.editor.getSelection());
+        },
+        'Cmd-I': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.italic(self.editor.getSelection());
+        },
+        'Ctrl-I': function(codemirror) {
+          if (self.editor.getSelection() !== '') self.toolbar.italic(self.editor.getSelection());
+        }
+      };
+    } else {
+      return {
+        'Ctrl-S': function(codemirror) {
+          self.updateFile();
+        }
+      };
+    }
+  },
+
+  focus: function() {
+    // If an upload queue is set, we want to clear it.
+    this.queue = undefined;
+
+    // If a dialog window is open and the editor is in focus, close it.
+    this.$el.find('.toolbar .group a').removeClass('on');
+    this.$el.find('#dialog').empty().removeClass();
+  },
+
+  initToolbar: function() {
+    this.toolbar = new ToolbarView({
+      view: this,
+      file: this.model,
+      collection: this.collection,
+      config: this.config
+    });
+
+    this.subviews['toolbar'] = this.toolbar;
+    this.toolbar.setElement(this.$el.find('#toolbar')).render();
+
+    this.listenTo(this.toolbar, 'updateImageInsert', this.updateImageInsert);
+
+    // TODO: deprecated?
+    // this.listenTo(this.toolbar, 'draft', this.draft);
+  },
+
+  titleAsHeading: function() {
+    // If the file is Markdown, has metadata for a title,
+    // the editable field in the header should be
+    // the title of the Markdown document.
+    var metadata = this.model.get('metadata');
+
+    if (this.model.get('markdown')) {
+
+      // 1. A title exists in a files current metadata
+      if (metadata && metadata.title) {
+        return metadata.title;
+
+      // 2. A title does not exist and should be checked in the defaults
+      } else if (this.model.get('defaults')) {
+
+        var defaultTitle = _(this.model.get('defaults')).find(function(t) {
+          return t.name == 'title';
+        });
+
+        if (defaultTitle) {
+          if (defaultTitle.field && defaultTitle.field.value) {
+            return defaultTitle.field.value;
+          } else {
+
+            // 3. If a title entry is in the defaults but with no
+            // default value, use an untitled placeholder message.
+            // return t('main.file.noTitle');
+            return t('main.file.noTitle');
+          }
+        } else {
+          return false;
+        }
+      } else {
+
+        // This is not a markdownn post, bounce
+        // TODO Should this handle _posts/name.html?
+        return false;
+      }
+    }
+  },
+
+  initSidebar: function() {
+    // Settings sidebar panel
+    this.settings = this.sidebar.initSubview('settings', {
+      sidebar: this.sidebar,
+      config: this.collection.config,
+      file: this.model,
+      fileInput: this.titleAsHeading()
+    }).render();
+    this.subviews['settings'] = this.settings;
+
+    this.listenTo(this.sidebar, 'makeDirty', this.makeDirty);
+
+    // Commit message sidebar panel
+    this.save = this.sidebar.initSubview('save', {
+      sidebar: this.sidebar,
+      file: this.model
+    }).render();
+    this.subviews['save'] = this.save;
+
+    // Re-render updated path in commit message
+    this.listenTo(this.model, 'change:path', this.subviews['save'].render);
+  },
+
+  initHeader: function() {
+    var title = this.titleAsHeading();
+    var input = title ?
+      title :
+      this.model.get('path');
+
+    this.header = new HeaderView({
+      input: input,
+      title: title ? true : false,
+      file: this.model,
+      repo: this.repo,
+      alterable: true,
+      placeholder: this.model.isNew() && !this.model.translate
+    });
+
+    this.subviews['header'] = this.header;
+    this.header.setElement(this.$el.find('#heading')).render();
+    this.listenTo(this.header, 'makeDirty', this.makeDirty);
+  },
+
+  renderMetadata: function() {
+    this.metadataEditor = new MetadataView({
+      model: this.model,
+      titleAsHeading: this.titleAsHeading(),
+      view: this
+    });
+
+    this.metadataEditor.setElement(this.$el.find('#meta')).render();
+    this.subviews['metadata'] = this.metadataEditor;
+  },
+
+  render: function() {
+    if (this.mode === 'preview') {
+      this.preview();
+    } else {
+      var content = this.model.get('content');
+
+      if (this.model.get('markdown' && content)) {
+        this.model.set('preview', marked(this.compilePreview(content)));
+      }
+
+      var file = {
+        markdown: this.model.get('markdown')
+      };
+
+      this.$el.empty().append(_.template(this.template, file, {
+        variable: 'file'
+      }));
+
+      // Store the configuration object from the collection
+      this.config = this.model.get('collection').config;
+
+      // initialize the subviews
+      this.initEditor();
+      this.initHeader();
+      this.initToolbar();
+      this.initSidebar();
+
+      // Update the navigation view with menu options
+      // if certain conditions pass:
+
+      // 1. A file contains metadata but is not new.
+      if (this.model.get('metadata') || this.model.get('defaults') && !this.model.isNew()) {
+        this.renderMetadata();
+        this.nav.mode('file settings meta');
+
+      // 2. A file contains metadata and is new
+      } else if (this.model.isNew() && this.model.get('defaults')) {
+        this.renderMetadata();
+        // this.nav.mode('file meta');
+
+        // TODO swap for the one above
+        this.nav.mode('file settings meta');
+      }
+
+      this.updateDocumentTitle();
+
+      // Preview needs access to marked, so it's registered here
+      Liquid.Template.registerFilter({
+        'markdownify': function(input) {
+          return marked(input || '');
+        }
+      });
+
+      if (this.model.get('markdown') && this.mode === 'blob') {
+        this.blob();
+      } else {
+        // Editor is first up so trigger an active class for it
+        this.$el.find('#edit').toggleClass('active', true);
+        this.$el.find('.file .edit').addClass('active');
+
+        if (this.model.get('markdown')) {
+          util.fixedScroll(this.$el.find('.topbar'), 90);
+        }
+      }
+
+      if (this.mode === 'blob') {
+        this.blob();
+      }
+    }
+
+    return this;
+  },
+
+  updateDocumentTitle: function() {
+    var context = (this.mode === 'blob' ? t('docheader.preview') : t('docheader.editing'));
+
+    var path = this.model.get('path');
+    var pathTitle = path ? path : '';
+
+    util.documentTitle(context + ' ' + pathTitle + '/' + this.model.get('name') + ' at ' + this.branch);
+  },
+
+  edit: function() {
+    var view = this;
+    this.sidebar.close();
+
+    // If preview was hit on load this.editor
+    // was not initialized.
+    if (!this.editor) {
+      this.initEditor();
+
+      if (this.model.get('markdown')) {
+        _.delay(function() {
+          util.fixedScroll($('.topbar', view.el), 90);
+        }, 1);
+      }
+    }
+
+    $('#prose').toggleClass('open', false);
+
+    this.contentMode('edit');
+    this.mode = this.model.isNew() ? 'new' : 'edit';
+    this.nav.setFileState(this.mode);
+    this.updateURL();
+  },
+
+  blob: function(e) {
+    this.sidebar.close();
+
+    var metadata = this.model.get('metadata');
+    var jekyll = this.config && this.config.siteurl && metadata && metadata.layout;
+
+    if (jekyll) {
+      // TODO: this could all be removed if preview button listened to
+      // change:path event on model
+      var hash = window.location.hash.split('/');
+      hash[2] = 'preview';
+
+      // TODO: How should this change to handle new files in collection?
+      // If last item in hash array does not begin with Jekyll YYYY-MM-DD format,
+      // append filename from input
+      var regex = /^\d{4}-\d{2}-\d{2}-(?:.+)/;
+      if (!regex.test(_.last(hash))) {
+        hash.push(_.last(this.filepath().split('/')));
+      }
+
+      this.stashFile();
+
+      $(e.currentTarget).attr({
+        target: '_blank',
+        href: hash.join('/')
+      });
+    } else {
+      if (e) e.preventDefault();
+
+      this.$el.find('#preview').html(marked(this.compilePreview(this.model.get('content'))));
+
+      this.mode = 'blob';
+      this.contentMode('preview');
+      this.nav.setFileState('blob');
+      this.updateURL();
+    }
+  },
+
+  preview: function() {
+    var q = queue(1);
+    var metadata = this.model.get('metadata');
+
+    var p = {
+      site: this.collection.config,
+      post: metadata,
+      page: metadata,
+      content: Liquid.parse(marked(this.model.get('content'))).render({
+        site: this.collection.config,
+        post: metadata,
+        page: metadata
+      }) || ''
+    };
+
+    // Grab a date from the filename
+    // and add this post to be evaluated as {{post.date}}
+    var parts = util.extractFilename(this.path)[1].split('-');
+    var year = parts[0];
+    var month = parts[1];
+    var day = parts[2];
+
+    // TODO: remove EST specific time adjustment
+    var date = [year, month, day].join('-') + ' 05:00:00';
+
+    p.post.date = jsyaml.load(date).toDateString();
+
+    // Parse JSONP links
+    if (p.site && p.site.site) {
+      _(p.site.site).each(function(file, key) {
+        q.defer(function(cb){
+          var next = false;
+          $.ajax({
+            cache: true,
+            dataType: 'jsonp',
+            jsonp: false,
+            jsonpCallback: 'callback',
+            url: file,
+            timeout: 5000,
+            success: function(d) {
+              p.site[key] = d;
+              next = true;
+              cb();
+            },
+            error: function(msg, b, c) {
+              if (!next) cb();
+            }
+          });
+        });
+      });
+    }
+
+    function getLayout(cb) {
+      var file = p.page.layout;
+      var layout = this.collection.findWhere({ path: '_layouts/' + file + '.html' });
+
+      layout.fetch({
+        success: (function(model, res, options) {
+          model.getContent({
+            success: (function(model, res, options) {
+              var meta = model.get('metadata');
+              var content = model.get('content');
+              var template = Liquid.parse(content);
+
+              p.page = _.extend(metadata, meta);
+
+              p.content = template.render({
+                site: p.site,
+                post: p.post,
+                page: p.page,
+                content: p.content
+              });
+
+              // Handle nested layouts
+              if (meta && meta.layout) q.defer(getLayout.bind(this));
+
+              cb();
+            }).bind(this)
+          });
+        }).bind(this)
+      })
+    }
+
+    if (p.page.layout) {
+      q.defer(getLayout.bind(this));
+    }
+
+    q.await((function() {
+      var config = this.collection.config;
+      var content = p.content;
+
+      // Set base URL to public site
+      if (config && config.siteurl) {
+        content = content.replace(/(<head(?:.*)>)/, (function() {
+          return arguments[1] + '<base href="' + config.siteurl + '">';
+        }).bind(this));
+      }
+
+      document.write(content);
+      document.close();
+    }).bind(this));
+  },
+
+  contentMode: function(mode) {
+    this.$el.find('.views .view').removeClass('active');
+    if (mode) {
+      this.$el.find('#' + mode).addClass('active');
+    } else {
+      if (this.mode === 'blob') {
+        this.$el.find('#preview').addClass('active');
+      } else {
+        this.$el.find('#edit').addClass('active');
+      }
+    }
+  },
+
+  meta: function() {
+    this.sidebar.close();
+    this.contentMode('meta');
+
+    // Refresh any textarea's in the frontmatter form that use codemirror
+    this.metadataEditor.refresh();
+  },
+
+  destroy: function() {
+    if (confirm(t('actions.delete.warn'))) {
+      this.model.destroy({
+        success: (function() {
+          this.router.navigate([
+            this.repo.get('owner').login,
+            this.repo.get('name'),
+            'tree',
+            this.branch
+          ].join('/'), true);
+        }).bind(this),
+        error: function() {
+          return alert(t('actions.delete.error'));
+        }
+      });
+    }
+  },
+
+  updateURL: function() {
+    var url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
+      trigger: false,
+      replace: true
+    });
+
+    this.updateDocumentTitle();
+
+    // TODO: what is this updating?
+    this.$el.find('.chzn-select').trigger('liszt:updated');
+  },
+
+  makeDirty: function(e) {
+    this.dirty = true;
+
+    // Update Content.
+    if (this.editor && this.editor.getValue) {
+      this.model.set('content', this.editor.getValue());
+    }
+
+    // Update MetaData
+    if (this.metadataEditor) {
+      this.model.set('metadata', this.metadataEditor.getValue());
+    }
+
+    if (this.model.isNew()) {
+      this.sidebar.updateFilepath(this.model.get('path'));
+    }
+
+    var label = this.model.get('writable') ?
+      t('actions.change.save') :
+      t('actions.change.submit');
+
+    this.updateSaveState(label, 'save');
+  },
+
+  settings: function() {
+    this.contentMode();
+    this.sidebar.mode('settings');
+    this.sidebar.open();
+  },
+
+  showDiff: function() {
+    this.contentMode('diff');
+    this.sidebar.mode('save');
+    this.sidebar.open();
+
+    var $diff = this.$el.find('#diff');
+
+    // Use _.escape() to prevent rendering HTML tags
+    var text1 = this.model.isNew() ? '' : _.escape(this.model.get('previous'));
+    var text2 = _.escape(this.model.serialize());
+
+    var d = diff.diffWords(text1, text2);
+    var length = d.length;
+    var compare = '';
+
+    for (var i = 0; i < length; i++) {
+      if (d[i].removed) {
+        compare += '<del>' + d[i].value + '</del>';
+      } else if (d[i].added) {
+        compare += '<ins>' + d[i].value + '</ins>';
+      } else {
+        compare += d[i].value;
+      }
+    }
+
+    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
+  },
+
+  cancel: function() {
+
+    // Close the sidebar and return the
+    // active nav item to the current file mode.
+    this.sidebar.close();
+    this.nav.active(this.mode);
+
+    // Return back to old mode.
+    this.contentMode();
+  },
+
+  refreshCodeMirror: function() {
+    if (typeof this.editor.refresh === 'function') this.editor.refresh();
+  },
+
+  updateMetaData: function() {
+    if (!this.model.jekyll) return true; // metadata -> skip
+    this.model.metadata = this.metadataEditor.getValue();
+    return true;
+  },
+
+  patch: function() {
+    // Submit a patch (fork + pull request workflow)
+    this.updateSaveState(t('actions.save.patch'), 'saving');
+
+    // view.updateMetaData();
+
+    this.model.patch({
+      success: (function(res) {
+        /*
+        // TODO: revert to previous state?
+        var previous = view.model.get('previous');
+        this.model.content = previous;
+        this.editor.setValue(previous);
+        this.dirty = false;
+        this.model.persisted = true;
+        this.model.file = filename;
+        this.model.set('previous', filecontent);
+        */
+
+        // TODO: why is this breaking?
+        // this.toolbar.updatePublishState();
+
+        this.updateURL();
+        this.sidebar.close();
+        this.updateSaveState(t('actions.save.submission'), 'saved');
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        var res = JSON.parse(xhr.responseText);
+        this.updateSaveState(res.message, 'error');
+      }).bind(this)
+    });
+  },
+
+  filepath: function() {
+    if (this.titleAsHeading()) {
+      return this.sidebar.filepathGet();
+    } else {
+      return this.header.inputGet();
+    }
+  },
+
+  draft: function() {
+    var path = this.model.get('path');
+    var draft = path.replace(/^(_posts)/, '_drafts');
+    var url;
+
+    // Create File model clone with metadata and content
+    // Reassign this.model to clone and re-render
+    this.model = this.model.clone({
+      path: draft
+    });
+
+    // Update view properties
+    this.path = draft;
+
+    url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
+      trigger: false
+    });
+
+    this.sidebar.close();
+    this.render();
+  },
+
+  stashFile: function(e) {
+    if (e) e.preventDefault();
+    if (!window.sessionStorage) return false;
+
+    var store = window.sessionStorage;
+    var filepath = this.filepath();
+
+    // Don't stash if filepath is undefined
+    if (filepath) {
+      try {
+        store.setItem(filepath, JSON.stringify({
+          sha: this.model.get('sha'),
+          content: this.editor ? this.editor.getValue() : null,
+          metadata: this.metadataEditor ? this.metadataEditor.getValue() : null
+        }));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  },
+
+  stashApply: function() {
+    if (!window.sessionStorage) return false;
+    var store = window.sessionStorage;
+    var filepath = this.model.get('path');
+    var item = store.getItem(filepath);
+    var stash = JSON.parse(item);
+
+    if (stash && stash.sha === this.model.get('sha')) {
+      // Restore from stash if file sha hasn't changed
+      if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
+      if (this.metadataEditor) {
+        // this.rawEditor.setValue('');
+        this.metadataEditor.setValue(stash.metadata);
+      }
+    } else if (item) {
+      // Remove expired content
+      store.removeItem(filepath);
+    }
+  },
+
+  updateFile: function() {
+    var view = this;
+
+    // Trigger the save event
+    this.updateSaveState(t('actions.save.saving'), 'saving');
+    var filepath = this.filepath();
+    var filename = util.extractFilename(filepath)[1];
+    var filecontent = this.model.serialize();
+    var $message = $('.commit-message');
+
+    var noVal = this.model.isNew() ?
+      t('actions.commits.created', {
+        filename: filename
+      }) :
+      t('actions.commits.updated', {
+        filename: filename
+      });
+
+    var message = $message.val() || noVal;
+    var method = this.model.get('writable') ? this.model.save : this.patch;
+
+    //this.updateSaveState(t('actions.save.metaError'), 'error');
+    //this.updateSaveState(t('actions.error'), 'error');
+    //this.updateSaveState(t('actions.save.saved'), 'saved', true);
+    //this.updateSaveState(t('actions.save.fileNameError'), 'error');
+
+    // Validation checking
+    this.model.on('invalid', (function(model, error) {
+      this.updateSaveState(error, 'error');
+
+      view.modal = new ModalView({
+        message: error
+      });
+
+      view.$el.find('#modal').empty().append(view.modal.el);
+      view.modal.render();
+    }).bind(this));
+
+    // Update content
+    this.model.content = (this.editor) ? this.editor.getValue() : '';
+
+    // Delegate
+    method.call(this, {
+      success: (function(model, res, options) {
+        this.sidebar.close();
+        this.updateSaveState(t('actions.save.saved'), 'saved');
+
+        // Unset dirty, return to edit view
+        this.dirty = false;
+        this.edit();
+
+        // Navigate to edit path for new files
+        if (this.model.isNew()) {
+          this.router.navigate(_.compact([
+            this.repo.get('owner').login,
+            this.repo.get('name'),
+            'edit',
+            this.model.branch.get('name'),
+            this.model.get('path')
+          ]).join('/'));
+        }
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        var res = JSON.parse(xhr.responseText);
+        this.updateSaveState(res.message, 'error');
+      }).bind(this)
+    });
+
+    return false;
+  },
+
+  updateSaveState: function(label, classes, kill) {
+    // Cancel if this condition is met
+    if (classes === 'save' && $(this.el).hasClass('saving')) return;
+
+    // Update the Sidebar save button
+    if (this.sidebar) this.sidebar.updateState(label);
+
+    // Update the avatar in the toolbar
+    if (this.nav) this.nav.updateState(label, classes, kill);
+  },
+
+  translate: function(e) {
+    var defaults = this.collection.defaults;
+    var metadata = this.model.get('metadata');
+    var lang = $(e.currentTarget).attr('href').substr(1);
+    var path = this.model.get('path').split('/');
+    var model;
+    var url;
+
+    // TODO: Drop the 'en' requirement.
+    if (lang === 'en') {
+      // If current page is not english and target page is english
+      path.splice(-2, 2, path[path.length - 1]);
+    } else if (metadata.lang === 'en') {
+      // If current page is english and target page is not english
+      path.splice(-1, 1, lang, path[path.length - 1]);
+    } else {
+      // If current page is not english and target page is not english
+      path.splice(-2, 2, lang, path[path.length - 1]);
+    }
+
+    path = _.compact(path).join('/');
+
+    var categories = (metadata.categories || []);
+    categories.push(lang);
+
+    this.model = this.collection.get(path) || this.model.clone({
+      metadata: {
+        categories: categories,
+        lang: lang
+      },
+      path: path
+    });
+    
+    // Set default metadata for new path
+    if (this.model && defaults) {
+      this.model.set('defaults', defaults[this.nearestPath(defaults)]);
+    }
+
+    // Update view properties
+    this.path = path;
+
+    url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
+      trigger: false
+    });
+
+    this.sidebar.close();
+    this.model.fetch({ complete: this.render });
+  },
+
+  updateImageInsert: function(e, file, content) {
+    this.queue = {
+      e: e,
+      file: file,
+      content: content
+    };
+  },
+
+  upload: function(e, file, content, path) {
+    // Loading State
+    this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
+
+    // Default to current directory if no path specified
+    var parts = util.extractFilename(this.path);
+    path = path || [parts[0], file.name].join('/');
+
+    this.collection.upload(file, content, path, {
+      success: (function(model, res, options) {
+        var name = res.content.name;
+        var path = res.content.path;
+
+        // TODO: where does $alt exist in the UI?
+        var $alt = $('input[name="alt"]');
+        var value = $alt.val();
+        var image = (value) ?
+          '![' + value + '](/' + path + ')' :
+          '![' + name + '](/' + path + ')';
+
+        this.editor.focus();
+        this.editor.replaceSelection(image + '\n', 'end');
+        this.updateSaveState('Saved', 'saved', true);
+
+        // Update the media directory
+        if (this.assets) {
+          this.assets[res.content.sha]({
+            name: name,
+            type: 'blob', // TODO: type: 'file'?
+            path: path
+          });
+        }
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        // Display error message returned by XHR
+        var res = JSON.parse(xhr.responseText);
+        this.updateSaveState(res.message, 'error');
+      }).bind(this)
+    });
+  },
+
+  remove: function() {
+    // Unbind beforeunload prompt
+    window.onbeforeunload = null;
+
+    // Reset dirty models on navigation
+    if (this.dirty) {
+      this.stashFile();
+      this.model.fetch();
+    }
+
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    // Clear any file state classes in #prose
+    this.updateSaveState('', '');
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"../../vendor/liquid.patch":29,"./modal":45,"../models/file":18,"./header":41,"./toolbar":46,"./metadata":47,"../util":28,"../upload":30,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"queue-async":48,"js-yaml":38,"keymaster":49,"marked":37,"backbone":12,"diff":50}],31:[function(require,module,exports){
+var _ = require('underscore');
+
+var Backbone = require('backbone');
+var Repo = require('../models/repo');
+
+var auth = require('../config');
+var cookie = require('../cookie');
+
+module.exports = Backbone.Collection.extend({
+  model: Repo,
+
+  initialize: function(models, options) {
+    _.bindAll(this);
+
+    this.user = options.user;
+
+    this.comparator = function(repo) {
+      return -(new Date(repo.get('updated_at')).getTime());
+    };
+  },
+
+  parseLinkHeader: function(xhr, options) {
+    options = _.clone(options) || {};
+
+    var header = xhr.getResponseHeader('link');
+
+    if (header) {
+      var parts = header.split(',');
+      var links = {};
+
+      _.each(parts, function(link) {
+        var section = link.split(';');
+
+        var url = section[0].replace(/<(.*)>/, '$1').trim();
+        var name = section[1].replace(/rel="(.*)"/, '$1').trim();
+
+        links[name] = url;
+      });
+
+      if (links.next) {
+        $.ajax({
+          type: 'GET',
+          url: links.next,
+          success: options.success,
+          error: options.error
+        });
+      } else {
+        if (_.isFunction(options.complete)) options.complete();
+      }
+    } else {
+      if (_.isFunction(options.error)) options.error();
+    }
+  },
+
+  fetch: function(options) {
+    options = _.clone(options) || {};
+
+    var cb = options.success;
+
+    var success = (function(res, statusText, xhr) {
+      this.add(res);
+      this.parseLinkHeader(xhr, {
+        success: success,
+        complete: cb
+      });
+    }).bind(this);
+
+    Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+      success: (function(model, res, options) {
+        this.parseLinkHeader(options.xhr, {
+          success: success,
+          error: cb
+        });
+      }).bind(this)
+    }));
+  },
+
+  url: function() {
+    var id = cookie.get('id');
+    var type = this.user.get('type');
+    var path;
+
+    switch(type) {
+      case 'User':
+        path = (id && this.user.get('id') === id) ? '/user' :
+          ('/users/' + this.user.get('login'))
+        break;
+      case 'Organization':
+        path = '/orgs/' + this.user.get('login');
+        break;
+    }
+
+    return auth.api + path + '/repos?per_page=100';
+  }
+});
+
+},{"../models/repo":17,"../config":8,"../cookie":3,"underscore":11,"backbone":12}],37:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -27364,7 +26891,90 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
-},{}],28:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
+(function() {
+  if (typeof module === "undefined") self.queue = queue;
+  else module.exports = queue;
+  queue.version = "1.0.3";
+
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var queue = {},
+        deferrals = [],
+        started = 0, // number of deferrals that have been started (and perhaps finished)
+        active = 0, // number of deferrals currently being executed (started but not finished)
+        remaining = 0, // number of deferrals not yet finished
+        popping, // inside a synchronous deferral callback?
+        error,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    queue.defer = function() {
+      if (!error) {
+        deferrals.push(arguments);
+        ++remaining;
+        pop();
+      }
+      return queue;
+    };
+
+    queue.await = function(f) {
+      await = f;
+      all = false;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    queue.awaitAll = function(f) {
+      await = f;
+      all = true;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    function pop() {
+      while (popping = started < deferrals.length && active < parallelism) {
+        var i = started++,
+            d = deferrals[i],
+            a = slice.call(d, 1);
+        a.push(callback(i));
+        ++active;
+        d[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new deferrals and squelch active callbacks
+          started = remaining = NaN; // stop queued deferrals from starting
+          notify();
+        } else {
+          deferrals[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(null, deferrals);
+      else await.apply(null, [null].concat(deferrals));
+    }
+
+    return queue;
+  }
+
+  function noop() {}
+})();
+
+},{}],49:[function(require,module,exports){
 (function(){//     keymaster.js
 //     (c) 2011-2012 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
@@ -27655,49 +27265,7 @@ if (typeof exports === 'object') {
 })(this);
 
 })()
-},{}],30:[function(require,module,exports){
-module.exports = function merge (target, src) {
-    var array = Array.isArray(src)
-    var dst = array && [] || {}
-
-    if (array) {
-        target = target || []
-        dst = dst.concat(target)
-        src.forEach(function(e, i) {
-            if (typeof target[i] === 'undefined') {
-                dst[i] = e
-            } else if (typeof e === 'object') {
-                dst[i] = merge(target[i], e)
-            } else {
-                if (target.indexOf(e) === -1) {
-                    dst.push(e)
-                }
-            }
-        })
-    } else {
-        if (target && typeof target === 'object') {
-            Object.keys(target).forEach(function (key) {
-                dst[key] = target[key]
-            })
-        }
-        Object.keys(src).forEach(function (key) {
-            if (typeof src[key] !== 'object' || !src[key]) {
-                dst[key] = src[key]
-            }
-            else {
-                if (!target[key]) {
-                    dst[key] = src[key]
-                } else {
-                    dst[key] = merge(target[key], src[key])
-                }
-            }
-        })
-    }
-
-    return dst
-}
-
-},{}],31:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /* See LICENSE file for terms of use */
 
 /*
@@ -28048,2322 +27616,13 @@ if (typeof module !== "undefined") {
     module.exports = JsDiff;
 }
 
-},{}],23:[function(require,module,exports){
-// Github.js (Modified for prose.io)
-// (c) 2012 Michael Aufreiter, Development Seed
-// Github.js is freely distributable under the MIT license.
-// For all details and documentation:
-// http://substance.io/michael/github
-
-var _ = require('underscore');
-
-(function() {
-  var Github;
-
-  Github = window.Github = function(options) {
-
-    var API_URL = options.api || 'https://api.github.com';
-
-    // HTTP Request Abstraction
-    // =======
-    //
-    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
-
-    function _request(method, path, data, cb, raw, sync, headers) {
-      function getURL() {
-        return url = API_URL + path;
-      }
-
-      var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
-
-      xhr.open(method, getURL(), !sync);
-      if (!sync) {
-        xhr.onreadystatechange = function () {
-          if (this.readyState == 4) {
-            if (this.status >= 200 && this.status < 300 || this.status === 304) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
-            } else {
-              cb({request: this, error: this.status});
-            }
-          }
-        };
-      }
-      xhr.setRequestHeader('Accept','application/vnd.github.raw');
-      xhr.setRequestHeader('Content-Type','application/json');
-
-      if (headers) {
-        for (var i = 0; i < headers.length; i++) {
-          header = headers[i];
-          xhr.setRequestHeader(header[0], header[1]);
-        }
-      }
-
-      if (
-         (options.auth == 'oauth' && options.token) ||
-         (options.auth == 'basic' && options.username && options.password)
-         ) {
-           xhr.setRequestHeader('Authorization',options.auth == 'oauth' ?
-            'token '+ options.token :
-            'Basic ' + Base64.encode(options.username + ':' + options.password)
-           );
-         }
-      if (data) {
-        xhr.send(JSON.stringify(data));
-      } else {
-        xhr.send();
-      }
-      if (sync) return xhr.response;
-    }
-
-    function _parseLinkHeader(err, response, xhr, cb) {
-      var link = xhr.getResponseHeader('link');
-
-      if (!err && link) {
-        var parts = link.split(',');
-        var length = parts.length;
-
-        var links = {};
-
-        var section;
-        var url;
-        var name;
-
-        for (var i = 0; i < length; i++) {
-          section = parts[i].split(';');
-
-          if (section.length !== 2) {
-            throw new Error("section could not be split on ';'");
-          }
-
-          url = section[0].replace(/<(.*)>/, '$1').trim();
-          name = section[1].replace(/rel="(.*)"/, '$1').trim();
-
-          links[name] = url;
-        }
-
-        if (links.next) {
-          _request('GET', links.next.split(API_URL)[1], null, function(err, res, xhr) {
-            if (typeof response.concat === 'function') {
-              response = response.concat(res);
-            } else if (typeof response === 'string') {
-              response += res;
-            }
-
-            _parseLinkHeader(err, response, xhr, cb);
-          });
-        } else {
-          cb(err, response);
-        }
-      } else {
-        cb(err, response);
-      }
-    }
-
-    // File API
-    // =======
-    Github.File = function() {
-      // Manages file creation or updating depending on the data obnect passed.
-      this.uploadFile = function(username, repo, path, data, cb) {
-        _request('PUT', '/repos/' + username + '/' + repo + '/contents/' + path, data, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      this.deleteFile = function(cb) {
-        _request('DELETE', '/repos/' + username + '/' + repo + '/contents/' + path, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-    };
-
-    // User API
-    // =======
-
-    Github.User = function() {
-      this.repos = function(cb) {
-        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user organizations
-      // -------
-
-      this.orgs = function(cb) {
-        _request("GET", "/user/orgs", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List authenticated user's gists
-      // -------
-
-      this.gists = function(cb) {
-        _request("GET", "/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // Show user information
-      // -------
-
-      this.show = function(username, cb) {
-        var command = username ? "/users/"+username : "/user";
-
-        _request("GET", command, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List user repositories
-      // -------
-
-      this.userRepos = function(username, cb) {
-        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // List a user's gists
-      // -------
-
-      this.userGists = function(username, cb) {
-        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
-          cb(err,res);
-        });
-      };
-
-      // List organization repositories
-      // -------
-
-      this.orgRepos = function(orgname, cb) {
-        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res, xhr) {
-          _parseLinkHeader(err, res, xhr, cb);
-        });
-      };
-
-      // Follow user
-      // -------
-
-      this.follow = function(username, cb) {
-        _request("PUT", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-
-      // Unfollow user
-      // -------
-
-      this.unfollow = function(username, cb) {
-        _request("DELETE", "/user/following/"+username, null, function(err, res) {
-          cb(err, res);
-        });
-      };
-    };
-
-
-    // Repository API
-    // =======
-
-    Github.Repository = function(options) {
-      var repo = options.name;
-      var user = options.user;
-
-      var that = this;
-      var repoPath = "/repos/" + user + "/" + repo;
-
-      var currentTree = {
-        "branch": null,
-        "sha": null
-      };
-
-      // Uses the cache if branch has not been changed
-      // -------
-
-      function updateTree(branch, cb) {
-        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
-        that.getRef("heads/"+branch, function(err, sha) {
-          currentTree.branch = branch;
-          currentTree.sha = sha;
-          cb(err, sha);
-        });
-      }
-
-      // Get a particular reference
-      // -------
-
-      this.getRef = function(ref, cb) {
-        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.object.sha);
-        });
-      };
-
-      // Create a new reference
-      // --------
-      //
-      // {
-      //   "ref": "refs/heads/my-new-branch-name",
-      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
-      // }
-
-      this.createRef = function(options, cb) {
-        _request("POST", repoPath + "/git/refs", options, cb);
-      };
-
-      // Delete a reference
-      // --------
-      //
-      // repo.deleteRef('heads/gh-pages')
-      // repo.deleteRef('tags/v1.0')
-
-      this.deleteRef = function(ref, cb) {
-        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
-      };
-
-      // List all branches of a repository
-      // -------
-
-      this.listBranches = function(cb) {
-        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
-          if (err) return cb(err);
-          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
-        });
-      };
-
-      // Retrieve the contents of a blob
-      // -------
-
-      this.getBlob = function(sha, cb) {
-        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
-      };
-
-      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
-      // -------
-
-      this.getSha = function(branch, path, cb) {
-        // Just use head if path is empty
-        if (path === "") return that.getRef("heads/"+branch, cb);
-        that.getTree(branch+"?recursive=true", function(err, tree) {
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
-          cb(null, file ? file.sha : null);
-        });
-      };
-
-      // Retrieve the tree a commit points to
-      // -------
-
-      this.getTree = function(tree, cb) {
-        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.tree);
-        });
-      };
-
-      // Post a new blob object, getting a blob SHA back
-      // -------
-
-      this.postBlob = function(content, cb) {
-        if (typeof(content) === "string") {
-          content = {
-            "content": content,
-            "encoding": "utf-8"
-          };
-        }
-
-        _request("POST", repoPath + "/git/blobs", content, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update an existing tree adding a new blob object getting a tree SHA back
-      // -------
-
-      this.updateTree = function(baseTree, path, blob, cb) {
-        var data = {
-          "base_tree": baseTree,
-          "tree": [
-            {
-              "path": path,
-              "mode": "100644",
-              "type": "blob",
-              "sha": blob
-            }
-          ]
-        };
-        _request("POST", repoPath + "/git/trees", data, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Post a new tree object having a file path pointer replaced
-      // with a new blob SHA getting a tree SHA back
-      // -------
-
-      this.postTree = function(tree, cb) {
-        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Create a new commit object with the current commit SHA as the parent
-      // and the new tree SHA, getting a commit SHA back
-      // -------
-
-      this.commit = function(parent, tree, message, cb) {
-        var data = {
-          "message": message,
-          "author": {
-            "name": options.username
-          },
-          "parents": [
-            parent
-          ],
-          "tree": tree
-        };
-
-        _request("POST", repoPath + "/git/commits", data, function(err, res) {
-          currentTree.sha = res.sha; // update latest commit
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update the reference of your head to point to the new commit SHA
-      // -------
-
-      this.updateHead = function(head, commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
-          cb(err);
-        });
-      };
-
-      // Show repository information
-      // -------
-
-      this.show = function(cb) {
-        _request("GET", repoPath, null, cb);
-      };
-
-      // Get commits
-      // --------
-
-      this.getCommit = function(sha, cb) {
-        _request("GET", repoPath + "/commits/" + sha, null, cb);
-      };
-
-      this.getCommits = function(branch, lastModified, cb) {
-        _request("GET", repoPath + "/commits" + "?sha=" + branch, null, cb, false, false, [
-          ['If-Modified-Since', lastModified]
-        ]);
-      };
-
-      // Get contents
-      // --------
-
-      this.contents = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, cb, 'raw');
-      };
-
-      this.contentsSync = function(branch, path) {
-        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
-      };
-
-      // Fork repository
-      // -------
-
-      this.fork = function(cb) {
-        _request("POST", repoPath + "/forks", null, cb);
-      };
-
-      // Create pull request
-      // --------
-
-      this.createPullRequest = function(options, cb) {
-        _request("POST", repoPath + "/pulls", options, cb);
-      };
-
-      // Read file at given path
-      // -------
-
-      this.read = function(branch, path, cb) {
-        that.getSha(branch, path, function(err, sha) {
-          if (!sha) return cb("not found", null);
-          that.getBlob(sha, function(err, content) {
-            cb(err, content, sha);
-          });
-        });
-      };
-
-      // Remove a file from the tree
-      // -------
-
-      this.remove = function(branch, path, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
-            _.each(newTree, function(ref) {
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(newTree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Move a file to a new location
-      // -------
-
-      this.move = function(branch, path, newPath, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            _.each(tree, function(ref) {
-              if (ref.path === path) ref.path = newPath;
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(tree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Write file contents to a given branch and path
-      // -------
-
-      this.write = function(branch, path, content, message, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          if (err) return cb(err);
-          that.postBlob(content, function(err, blob) {
-            if (err) return cb(err);
-            that.updateTree(latestCommit, path, blob, function(err, tree) {
-              if (err) return cb(err);
-              that.commit(latestCommit, tree, message, function(err, commit) {
-                if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
-              });
-            });
-          });
-        });
-      };
-    };
-
-    // Gists API
-    // =======
-
-    Github.Gist = function(options) {
-      var id = options.id;
-      var gistPath = "/gists/"+id;
-
-      // Read the gist
-      // --------
-
-      this.read = function(cb) {
-        _request("GET", gistPath, null, function(err, gist) {
-          cb(err, gist);
-        });
-      };
-
-      // Create the gist
-      // --------
-      // {
-      //  "description": "the description for this gist",
-      //    "public": true,
-      //    "files": {
-      //      "file1.txt": {
-      //        "content": "String file contents"
-      //      }
-      //    }
-      // }
-
-      this.create = function(options, cb){
-        _request("POST","/gists", options, cb);
-      };
-
-      // Delete the gist
-      // --------
-
-      this.removeGist = function(cb) {
-        _request("DELETE", gistPath, null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Fork a gist
-      // --------
-
-      this.fork = function(cb) {
-        _request("POST", gistPath+"/fork", null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Update a gist with the new stuff
-      // --------
-
-      this.update = function(options, cb) {
-        _request("PATCH", gistPath, options, function(err,res) {
-          cb(err,res);
-        });
-      };
-    };
-
-    // Top Level API
-    // -------
-
-    this.getRepo = function(user, repo) {
-      return new Github.Repository({user: user, name: repo});
-    };
-
-    this.getUser = function() {
-      return new Github.User();
-    };
-
-    this.getFile = function() {
-      return new Github.File();
-    };
-
-    this.getGist = function(id) {
-      return new Github.Gist({id: id});
-    };
-  };
-  module.exports = Github;
-}).call(this);
-
-},{"underscore":19}],26:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var marked = require('marked');
-var queue = require('queue-async');
-var chrono = require('chrono');
-
-// Cleans up a string for use in urls
-// -------
-_.stringToUrl = function(string) {
-  return string.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-},
-
-
-// Run an array of functions in serial
-// -------
-
-_.serial = function () {
-  (_(arguments).reduceRight(_.wrap, function() {}))();
-};
-
-
-// Parent path
-// -------
-
-_.parentPath = function(path) {
-  return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
-};
-
-
-// Topmost path
-// -------
-
-_.topPath = function(path) {
-  var match = path.match(/\/?([a-zA-Z0-9_\-]*)$/);
-  return match[1];
-};
-
-
-// Valid filename check
-// -------
-
-_.validFilename = function(filename) {
-  return !!filename.match(/^([a-zA-Z0-9_\-]|\.)+$/);
-  // Disabled for now: the Jekyll post format layout
-  // return !!filename.match(/^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9_-]+\.md$/);
-};
-
-
-// Valid pathname check
-// -------
-
-_.validPathname = function(path) {
-  return _.all(path.split('/'), function(filename) {
-    return _.validFilename(filename);
-  });
-};
-
-
-// Extract filename from a given path
-// -------
-//
-// _.extractFilename('path/to/foo.md')
-// => ['path/to', 'foo.md']
-
-_.extractFilename = function(path) {
-  if (!path.match(/\//)) return ['', path];
-  var matches = path.match(/(.*)\/(.*)$/);
-  return [ matches[1], matches[2] ];
-};
-
-
-// Extract parts of the path
-// into a state from the router
-// -------
-
-_.extractURL = function(url) {
-  url = url.split('/');
-  app.state.mode = url[0];
-  app.state.branch = url[1];
-  app.state.path = (url.slice(2) || []).join('/');
-  return app.state;
-};
-
-// Determine mode for CodeMirror
-// -------
-
-_.mode = function(file) {
-  if (_.markdown(file)) return 'gfm';
-  var extension = _.extension(file);
-
-  if (_.include(['js', 'json'], extension)) return 'javascript';
-  if (extension === 'html') return 'htmlmixed';
-  if (extension === 'rb') return 'ruby';
-  if (/(yml|yaml)/.test(extension)) return 'yaml';
-  if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
-
-  return extension;
-};
-
-
-// Check if a given file is a Jekyll post
-// -------
-
-_.jekyll = function(path, file) {
-  return !!(path.match('_posts') && _.markdown(file));
-};
-
-// check if a given file has YAML frontmater
-// -------
-
-_.hasMetadata = function(content) {
-  content = content.replace(/\r\n/g, '\n'); // normalize a little bit
-  return content.match( /^(---\n)((.|\n)*?)\n---\n?/ );
-};
-
-// Extract file extension
-// -------
-
-_.extension = function(file) {
-  var match = file.match(/\.(\w+)$/);
-  return match ? match[1] : null;
-};
-
-
-// Determine types
-// -------
-
-_.markdown = function(file) {
-  var regex = new RegExp(/.(md|mkdn?|mdown|markdown)$/);
-  return !!(regex.test(file));
-};
-
-_.isBinary = function(file) {
-  var regex = new RegExp(/(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$/);
-  return regex.test(file);
-};
-
-_.isMedia = function(file) {
-  var regex = new RegExp(/(jpeg|jpg|gif|png|swf|mov)$/);
-  return regex.test(file);
-};
-
-_.isImage = function(file) {
-  var regex = new RegExp(/(jpeg|jpg|gif|png)$/);
-  return regex.test(file);
-};
-
-// Returns a filename without the file extension
-// -------
-
-_.filename = function(file) {
-  return file.replace(/\.[^\/.]+$/, '');
-};
-
-// String Manipulations
-// -------
-_.trim = function(str) {
-  return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-};
-
-_.rTrim = function(str) {
-  return str.replace(/\s\s*$/, '');
-};
-
-_.lTrim = function(str) {
-  return str.replace(/^\s\s*/, '');
-};
-
-// Concatenate path + file to full filepath
-// -------
-
-_.filepath = function(path, file) {
-  return (path ? path + '/' : '') + file;
-};
-
-
-// Return a true or false boolean if a path
-// a absolute or not.
-// -------
-
-_.absolutePath = function(path) {
-  return /^https?:\/\//i.test(path);
-};
-
-// Converts a javascript object to YAML
-// Does not support nested objects
-// Multiline values are serialized as Blocks
-
-_.toYAML = function(metadata) {
-  var res = [];
-  _.each(metadata, function(value, property) {
-    if (value.match(/\n/)) {
-      var str = property+': |\n';
-
-      _.each(value.split('\n'), function(line) {
-        str += '  ' + line;
-      });
-
-      res.push();
-    } else {
-      res.push(property + ': ' + value);
-    }
-  });
-
-  return res.join('\n');
-};
-
-
-// Only parses first level of YAML file
-// Considers the whole thing as a key-value pair party
-//
-// name: "michael"
-// age: 25
-// friends:
-// - Michael
-// - John
-// block: |
-//   Hello World
-//   Another line
-//   24123
-//
-// =>
-// {
-//   name: 'michael',
-//   age: "25",
-//   friends: "- Michael\n- John",
-//   block: "Hello World\nAnother line\n24123"
-// }
-//
-// var yaml = 'name:     "michael"\nage: 25\nfriends:\n- Michael\n- John\nblock: |\n  hey ho\n  some text\n  yay';
-// console.log(_.fromYAML(yaml));
-
-_.fromYAML = function(rawYAML) {
-  var data = {};
-
-  var lines = rawYAML.split('\n');
-  var key = null;
-  var value = '';
-  var blockValue = false;
-
-  function add() {
-    data[key] = _.isArray(value) ? value.join('\n') : value;
-    key = null;
-    value = '';
-  }
-
-  _.each(lines, function(line) {
-    var match = line.match(/^([A-Za-z_][A-Za-z0-9_]*):\s*(.*)$/);
-
-    if (match && key) add();
-    if (match) { // New Top Level key found
-      key = match[1];
-      value = match[2];
-      if (value.match(/\|$/)) {
-        blockValue = true;
-        value = '';
-      }
-    } else {
-      if (!_.isArray(value)) value = [];
-      if (blockValue) {
-        value.push(line.trim());
-      } else {
-        value.push(line.replace(/^\s\s/, ''));
-      }
-    }
-  });
-
-  add();
-  return data;
-};
-
-// chunked path
-// -------
-//
-// _.chunkedPath('path/to/foo')
-// =>
-// [
-//   { url: 'path',        name: 'path' },
-//   { url: 'path/to',     name: 'to' },
-//   { url: 'path/to/foo', name: 'foo' }
-// ]
-
-_.chunkedPath = function(path) {
-  var chunks = path.split('/');
-  return _.map(chunks, function(chunk, index) {
-    var url = [];
-    for (var i=0; i<=index; i++) {
-      url.push(chunks[i]);
-    }
-    return {
-      url: url.join('/'),
-      name: chunk
-    };
-  });
-};
-
-// Full Layout Preview
-// -------
-
-_.preview = function(view) {
-  var model = view.model;
-  var q = queue(1);
-  var p = {
-        site: app.state.config,
-        post: model.metadata,
-        page: model.metadata,
-        content: Liquid.parse(marked(model.content)).render({
-          site: app.state.config,
-          post: model.metadata,
-          page: model.metadata
-        }) || ''
-      };
-
-  // Grab a date from the filename
-  // and add this post to be evaluated as {{post.date}}
-  var parts = app.state.file.split('-');
-  var year = parts[0];
-  var month = parts[1];
-  var day = parts[2];
-  var date = [year, month, day].join('-') + ' 05:00:00';
-
-  p.post.date = jsyaml.load(date).toDateString();
-
-  if (p.site.prose && p.site.prose.site) {
-    _(p.site.prose.site).each(function(file, key) {
-      q.defer(function(cb){
-        var next = false;
-        $.ajax({
-          cache: true,
-          dataType: 'jsonp',
-          jsonp: false,
-          jsonpCallback: 'callback',
-          url: file,
-          timeout: 5000,
-          success: function(d) {
-            p.site[key] = d;
-            next = true;
-            cb();
-          },
-          error: function(msg, b, c) {
-            if (!next) cb();
-          }
-        });
-      });
-    });
-  }
-
-  q.defer(getLayout);
-  q.await(function() {
-    var content = p.content;
-
-    // Set base URL to public site
-    if (app.state.config.prose && app.state.config.prose.siteurl) {
-      content = content.replace(/(<head(?:.*)>)/, function() {
-        return arguments[1] + '<base href="' + app.state.config.prose.siteurl + '">';
-      });
-    }
-
-    document.write(content);
-    document.close();
-  });
-
-  function getLayout(cb) {
-    var file = p.page.layout;
-
-    model.repo.read(app.state.branch, '_layouts/' + file + '.html', function(err, d) {
-      if (err) return cb(err);
-
-      var meta = (d.split('---')[1]) ? jsyaml.load(d.split('---')[1]) : {};
-      var content = (d.split('---')[2]) ? d.split('---')[2] : d;
-      var template = Liquid.parse(content);
-
-      p.page = _(p.page).extend(meta);
-      p.content = template.render({
-        site: p.site,
-        post: p.post,
-        page: p.page,
-        content: p.content
-      });
-
-      if (meta && meta.layout) q.defer(getLayout);
-      cb();
-    });
-
-  }
-};
-
-// Strip out whitespace and replace 
-// whitespace with hyphens for a nice class name.
-// -------
-
-_.formattedClass = function(str) {
-  return str.toLowerCase().replace(/\s/g, '-').replace('&amp;', '');
-};
-
-// UI Stuff
-// -------
-module.exports = {
-  fixedScroll: function($el) {
-    var top = $el.offset().top;
-
-    $(window).scroll(function (e) {
-      var y = $(this).scrollTop();
-      if (y >= top) {
-        $el.addClass('fixed');
-      } else {
-        $el.removeClass('fixed');
-      }
-    });
-  },
-
-  pageListing: function(handler) {
-    if ($('.item').hasClass('active')) {
-      var index = parseInt($('.item.active').data('index'), 10);
-      var offset;
-
-      $('.item.active').removeClass('active');
-
-      function inView(el) {
-          var curTop = el.offset().top;
-          var screenHeight = $(window).height();
-          return (curTop > screenHeight) ? false : true;
-      }
-
-      // UP
-      if (handler === 'k') {
-        if (index !== 0) --index;
-        var $prev = $('.item[data-index=' + index + ']');
-        var prevTop = $prev.offset().top + $prev.height();
-
-        if (!inView($prev)) {
-          // Offset is the list height minus the difference between the
-          // height and .content-search (60) that is fixed down the page
-          offset = $prev.height() + 60;
-
-          $('html, body').animate({
-            scrollTop: $prev.offset().top + ($prev.height() - offset)
-          }, 0);
-        } else {
-          $('html, body').animate({
-            scrollTop: 0
-          }, 0);
-        }
-
-        $prev.addClass('active');
-
-      // DOWN
-      } else {
-        if (index < $('#content li').length - 1) ++index;
-        var $next = $('.item[data-index=' + index + ']');
-        var nextTop = $next.offset().top + $next.height();
-        offset = $next.height() + 60;
-
-        if (!inView($next)) {
-          $('html, body').animate({
-             scrollTop: $next.offset().top + ($next.height() - offset)
-          }, 0);
-        }
-
-        $next.addClass('active');
-      }
-    } else {
-      $('.item[data-index=0]').addClass('active');
-    }
-  },
-
-  goToFile: function() {
-    var path = $('.item.active').data('navigate');
-    if (path) router.navigate(path, true);
-    return false;
-  },
-
-  loader: {
-    loading: function(message) {
-      var tmpl = _(window.app.templates.loading).template();
-      $('#loader').empty().append(tmpl({
-        message: message
-      }));
-    },
-
-    loaded: function() {
-      $('#loader').find('.loading').fadeOut(150, function() {
-        $(this).remove();
-      });
-    }
-  },
-
-  autoSelect: function($el) {
-    $el.on('click', function() {
-      $el.select();
-    });
-  }
-};
-
-},{"underscore":19,"jquery-browserify":18,"js-yaml":24,"marked":27,"queue-async":25,"chrono":33}],32:[function(require,module,exports){
-'use strict';
-
-
-var loader = require('./js-yaml/loader');
-var dumper = require('./js-yaml/dumper');
-
-
-function deprecated(name) {
-  return function () {
-    throw new Error('Function ' + name + ' is deprecated and cannot be used.');
-  };
-}
-
-
-module.exports.NIL                 = require('./js-yaml/common').NIL;
-module.exports.Type                = require('./js-yaml/type');
-module.exports.Schema              = require('./js-yaml/schema');
-module.exports.FAILSAFE_SCHEMA     = require('./js-yaml/schema/failsafe');
-module.exports.JSON_SCHEMA         = require('./js-yaml/schema/json');
-module.exports.CORE_SCHEMA         = require('./js-yaml/schema/core');
-module.exports.DEFAULT_SAFE_SCHEMA = require('./js-yaml/schema/default_safe');
-module.exports.DEFAULT_FULL_SCHEMA = require('./js-yaml/schema/default_full');
-module.exports.load                = loader.load;
-module.exports.loadAll             = loader.loadAll;
-module.exports.safeLoad            = loader.safeLoad;
-module.exports.safeLoadAll         = loader.safeLoadAll;
-module.exports.dump                = dumper.dump;
-module.exports.safeDump            = dumper.safeDump;
-module.exports.YAMLException       = require('./js-yaml/exception');
-
-// Deprecared schema names from JS-YAML 2.0.x
-module.exports.MINIMAL_SCHEMA = require('./js-yaml/schema/failsafe');
-module.exports.SAFE_SCHEMA    = require('./js-yaml/schema/default_safe');
-module.exports.DEFAULT_SCHEMA = require('./js-yaml/schema/default_full');
-
-// Deprecated functions from JS-YAML 1.x.x
-module.exports.scan           = deprecated('scan');
-module.exports.parse          = deprecated('parse');
-module.exports.compose        = deprecated('compose');
-module.exports.addConstructor = deprecated('addConstructor');
-
-
-require('./js-yaml/require');
-
-},{"./js-yaml/loader":34,"./js-yaml/dumper":35,"./js-yaml/common":36,"./js-yaml/type":37,"./js-yaml/schema":38,"./js-yaml/schema/failsafe":39,"./js-yaml/schema/json":40,"./js-yaml/schema/core":41,"./js-yaml/schema/default_safe":42,"./js-yaml/schema/default_full":43,"./js-yaml/exception":44,"./js-yaml/require":45}],33:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
-},{"./lib/chrono":46}],36:[function(require,module,exports){
-'use strict';
+},{"./lib/chrono":51}],38:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
 
-
-var NIL = {};
-
-
-function isNothing(subject) {
-  return (undefined === subject) || (null === subject);
-}
-
-
-function isObject(subject) {
-  return ('object' === typeof subject) && (null !== subject);
-}
-
-
-function toArray(sequence) {
-  if (Array.isArray(sequence)) {
-    return sequence;
-  } else if (isNothing(sequence)) {
-    return [];
-  } else {
-    return [ sequence ];
-  }
-}
-
-
-function extend(target, source) {
-  var index, length, key, sourceKeys;
-
-  if (source) {
-    sourceKeys = Object.keys(source);
-
-    for (index = 0, length = sourceKeys.length; index < length; index += 1) {
-      key = sourceKeys[index];
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-
-function repeat(string, count) {
-  var result = '', cycle;
-
-  for (cycle = 0; cycle < count; cycle += 1) {
-    result += string;
-  }
-
-  return result;
-}
-
-
-module.exports.NIL        = NIL;
-module.exports.isNothing  = isNothing;
-module.exports.isObject   = isObject;
-module.exports.toArray    = toArray;
-module.exports.repeat     = repeat;
-module.exports.extend     = extend;
-
-},{}],44:[function(require,module,exports){
-'use strict';
-
-
-function YAMLException(reason, mark) {
-  this.name    = 'YAMLException';
-  this.reason  = reason;
-  this.mark    = mark;
-  this.message = this.toString(false);
-}
-
-
-YAMLException.prototype.toString = function toString(compact) {
-  var result;
-
-  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
-
-  if (!compact && this.mark) {
-    result += ' ' + this.mark.toString();
-  }
-
-  return result;
-};
-
-
-module.exports = YAMLException;
-
-},{}],29:[function(require,module,exports){
-(function(global){(function() {
-  var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  AbstractChosen = (function() {
-    function AbstractChosen(form_field, options) {
-      this.form_field = form_field;
-      this.options = options != null ? options : {};
-      this.is_multiple = this.form_field.multiple;
-      this.set_default_text();
-      this.set_default_values();
-      this.setup();
-      this.set_up_html();
-      this.register_observers();
-      this.finish_setup();
-    }
-
-    AbstractChosen.prototype.set_default_values = function() {
-      var _this = this;
-
-      this.click_test_action = function(evt) {
-        return _this.test_active_click(evt);
-      };
-      this.activate_action = function(evt) {
-        return _this.activate_field(evt);
-      };
-      this.active_field = false;
-      this.mouse_on_container = false;
-      this.results_showing = false;
-      this.result_highlighted = null;
-      this.result_single_selected = null;
-      this.allow_single_deselect = (this.options.allow_single_deselect != null) && (this.form_field.options[0] != null) && this.form_field.options[0].text === "" ? this.options.allow_single_deselect : false;
-      this.disable_search_threshold = this.options.disable_search_threshold || 0;
-      this.disable_search = this.options.disable_search || false;
-      this.enable_split_word_search = this.options.enable_split_word_search != null ? this.options.enable_split_word_search : true;
-      this.search_contains = this.options.search_contains || false;
-      this.choices = 0;
-      this.single_backstroke_delete = this.options.single_backstroke_delete || false;
-      this.max_selected_options = this.options.max_selected_options || Infinity;
-      return this.inherit_select_classes = this.options.inherit_select_classes || false;
-    };
-
-    AbstractChosen.prototype.set_default_text = function() {
-      if (this.form_field.getAttribute("data-placeholder")) {
-        this.default_text = this.form_field.getAttribute("data-placeholder");
-      } else if (this.is_multiple) {
-        this.default_text = this.options.placeholder_text_multiple || this.options.placeholder_text || "Select Some Options";
-      } else {
-        this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || "Select an Option";
-      }
-      return this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || "No results match";
-    };
-
-    AbstractChosen.prototype.mouse_enter = function() {
-      return this.mouse_on_container = true;
-    };
-
-    AbstractChosen.prototype.mouse_leave = function() {
-      return this.mouse_on_container = false;
-    };
-
-    AbstractChosen.prototype.input_focus = function(evt) {
-      var _this = this;
-
-      if (this.is_multiple) {
-        if (!this.active_field) {
-          return setTimeout((function() {
-            return _this.container_mousedown();
-          }), 50);
-        }
-      } else {
-        if (!this.active_field) {
-          return this.activate_field();
-        }
-      }
-    };
-
-    AbstractChosen.prototype.input_blur = function(evt) {
-      var _this = this;
-
-      if (!this.mouse_on_container) {
-        this.active_field = false;
-        return setTimeout((function() {
-          return _this.blur_test();
-        }), 100);
-      }
-    };
-
-    AbstractChosen.prototype.result_add_option = function(option) {
-      var classes, style;
-
-      if (!option.disabled) {
-        option.dom_id = this.container_id + "_o_" + option.array_index;
-        classes = option.selected && this.is_multiple ? [] : ["active-result"];
-        if (option.selected) {
-          classes.push("result-selected");
-        }
-        if (option.group_array_index != null) {
-          classes.push("group-option");
-        }
-        if (option.classes !== "") {
-          classes.push(option.classes);
-        }
-        style = option.style.cssText !== "" ? " style=\"" + option.style + "\"" : "";
-        return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
-      } else {
-        return "";
-      }
-    };
-
-    AbstractChosen.prototype.results_update_field = function() {
-      if (!this.is_multiple) {
-        this.results_reset_cleanup();
-      }
-      this.result_clear_highlight();
-      this.result_single_selected = null;
-      return this.results_build();
-    };
-
-    AbstractChosen.prototype.results_toggle = function() {
-      if (this.results_showing) {
-        return this.results_hide();
-      } else {
-        return this.results_show();
-      }
-    };
-
-    AbstractChosen.prototype.results_search = function(evt) {
-      if (this.results_showing) {
-        return this.winnow_results();
-      } else {
-        return this.results_show();
-      }
-    };
-
-    AbstractChosen.prototype.keyup_checker = function(evt) {
-      var stroke, _ref;
-
-      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
-      this.search_field_scale();
-      switch (stroke) {
-        case 8:
-          if (this.is_multiple && this.backstroke_length < 1 && this.choices > 0) {
-            return this.keydown_backstroke();
-          } else if (!this.pending_backstroke) {
-            this.result_clear_highlight();
-            return this.results_search();
-          }
-          break;
-        case 13:
-          evt.preventDefault();
-          if (this.results_showing) {
-            return this.result_select(evt);
-          }
-          break;
-        case 27:
-          if (this.results_showing) {
-            this.results_hide();
-          }
-          return true;
-        case 9:
-        case 38:
-        case 40:
-        case 16:
-        case 91:
-        case 17:
-          break;
-        default:
-          return this.results_search();
-      }
-    };
-
-    AbstractChosen.prototype.generate_field_id = function() {
-      var new_id;
-
-      new_id = this.generate_random_id();
-      this.form_field.id = new_id;
-      return new_id;
-    };
-
-    AbstractChosen.prototype.generate_random_char = function() {
-      var chars, newchar, rand;
-
-      chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      rand = Math.floor(Math.random() * chars.length);
-      return newchar = chars.substring(rand, rand + 1);
-    };
-
-    return AbstractChosen;
-
-  })();
-
-  $ = global.$;
-
-  $ || ($ = require('jquery-browserify'));
-
-  get_side_border_padding = function(elmt) {
-    var side_border_padding;
-
-    return side_border_padding = elmt.outerWidth() - elmt.width();
-  };
-
-  $.fn.extend({
-    chosen: function(options) {
-      var browser, match, ua;
-
-      ua = window.navigator.userAgent.toLowerCase();
-      match = /(msie) ([\w.]+)/.exec(ua) || [];
-      browser = {
-        name: match[1] || "",
-        version: match[2] || "0"
-      };
-      if (browser.name === "msie" && (browser.version === "6.0" || (browser.version === "7.0" && document.documentMode === 7))) {
-        return this;
-      }
-      return this.each(function(input_field) {
-        var $this;
-
-        $this = $(this);
-        if (!$this.hasClass("chzn-done")) {
-          return $this.data('chosen', new Chosen(this, options));
-        }
-      });
-    }
-  });
-
-  Chosen = (function(_super) {
-    __extends(Chosen, _super);
-
-    function Chosen() {
-      _ref = Chosen.__super__.constructor.apply(this, arguments);
-      return _ref;
-    }
-
-    Chosen.prototype.setup = function() {
-      this.form_field_jq = $(this.form_field);
-      this.current_value = this.form_field_jq.val();
-      return this.is_rtl = this.form_field_jq.hasClass("chzn-rtl");
-    };
-
-    Chosen.prototype.finish_setup = function() {
-      return this.form_field_jq.addClass("chzn-done");
-    };
-
-    Chosen.prototype.set_up_html = function() {
-      var container_classes, container_div, container_props, dd_top, dd_width, sf_width;
-
-      this.container_id = this.form_field.id.length ? this.form_field.id.replace(/[^\w]/g, '_') : this.generate_field_id();
-      this.container_id += "_chzn";
-      container_classes = ["chzn-container"];
-      container_classes.push("chzn-container-" + (this.is_multiple ? "multi" : "single"));
-      if (this.inherit_select_classes && this.form_field.className) {
-        container_classes.push(this.form_field.className);
-      }
-      if (this.is_rtl) {
-        container_classes.push("chzn-rtl");
-      }
-      this.f_width = this.form_field_jq.outerWidth();
-      container_props = {
-        id: this.container_id,
-        "class": container_classes.join(' '),
-        style: 'width: ' + this.f_width + 'px;',
-        title: this.form_field.title
-      };
-      container_div = $("<div />", container_props);
-      if (this.is_multiple) {
-        container_div.html('<ul class="chzn-choices"><li class="search-field"><input type="text" value="' + this.default_text + '" class="default" autocomplete="off" style="width:25px;" /></li></ul><div class="chzn-drop" style="left:-9000px;"><ul class="chzn-results"></ul></div>');
-      } else {
-        container_div.html('<a href="javascript:void(0)" class="chzn-single chzn-default" tabindex="-1"><span>' + this.default_text + '</span><div><b></b></div></a><div class="chzn-drop" style="left:-9000px;"><div class="chzn-search"><input type="text" autocomplete="off" /></div><ul class="chzn-results"></ul></div>');
-      }
-      this.form_field_jq.hide().after(container_div);
-      this.container = $('#' + this.container_id);
-      this.dropdown = this.container.find('div.chzn-drop').first();
-      dd_top = this.container.height();
-      dd_width = this.f_width - get_side_border_padding(this.dropdown);
-      this.dropdown.css({
-        "width": dd_width + "px",
-        "top": dd_top + "px"
-      });
-      this.search_field = this.container.find('input').first();
-      this.search_results = this.container.find('ul.chzn-results').first();
-      this.search_field_scale();
-      this.search_no_results = this.container.find('li.no-results').first();
-      if (this.is_multiple) {
-        this.search_choices = this.container.find('ul.chzn-choices').first();
-        this.search_container = this.container.find('li.search-field').first();
-      } else {
-        this.search_container = this.container.find('div.chzn-search').first();
-        this.selected_item = this.container.find('.chzn-single').first();
-        sf_width = dd_width - get_side_border_padding(this.search_container) - get_side_border_padding(this.search_field);
-        this.search_field.css({
-          "width": sf_width + "px"
-        });
-      }
-      this.results_build();
-      this.set_tab_index();
-      return this.form_field_jq.trigger("liszt:ready", {
-        chosen: this
-      });
-    };
-
-    Chosen.prototype.register_observers = function() {
-      var _this = this;
-
-      this.container.mousedown(function(evt) {
-        return _this.container_mousedown(evt);
-      });
-      this.container.mouseup(function(evt) {
-        return _this.container_mouseup(evt);
-      });
-      this.container.mouseenter(function(evt) {
-        return _this.mouse_enter(evt);
-      });
-      this.container.mouseleave(function(evt) {
-        return _this.mouse_leave(evt);
-      });
-      this.search_results.mouseup(function(evt) {
-        return _this.search_results_mouseup(evt);
-      });
-      this.search_results.mouseover(function(evt) {
-        return _this.search_results_mouseover(evt);
-      });
-      this.search_results.mouseout(function(evt) {
-        return _this.search_results_mouseout(evt);
-      });
-      this.form_field_jq.bind("liszt:updated", function(evt) {
-        return _this.results_update_field(evt);
-      });
-      this.form_field_jq.bind("liszt:activate", function(evt) {
-        return _this.activate_field(evt);
-      });
-      this.form_field_jq.bind("liszt:open", function(evt) {
-        return _this.container_mousedown(evt);
-      });
-      this.search_field.blur(function(evt) {
-        return _this.input_blur(evt);
-      });
-      this.search_field.keyup(function(evt) {
-        return _this.keyup_checker(evt);
-      });
-      this.search_field.keydown(function(evt) {
-        return _this.keydown_checker(evt);
-      });
-      this.search_field.focus(function(evt) {
-        return _this.input_focus(evt);
-      });
-      if (this.is_multiple) {
-        return this.search_choices.click(function(evt) {
-          return _this.choices_click(evt);
-        });
-      } else {
-        return this.container.click(function(evt) {
-          return evt.preventDefault();
-        });
-      }
-    };
-
-    Chosen.prototype.search_field_disabled = function() {
-      this.is_disabled = this.form_field_jq[0].disabled;
-      if (this.is_disabled) {
-        this.container.addClass('chzn-disabled');
-        this.search_field[0].disabled = true;
-        if (!this.is_multiple) {
-          this.selected_item.unbind("focus", this.activate_action);
-        }
-        return this.close_field();
-      } else {
-        this.container.removeClass('chzn-disabled');
-        this.search_field[0].disabled = false;
-        if (!this.is_multiple) {
-          return this.selected_item.bind("focus", this.activate_action);
-        }
-      }
-    };
-
-    Chosen.prototype.container_mousedown = function(evt) {
-      var target_closelink;
-
-      if (!this.is_disabled) {
-        target_closelink = evt != null ? $(evt.target).hasClass("search-choice-close") : false;
-        if ((evt != null ? evt.type : void 0) === "mousedown" && !this.results_showing) {
-          evt.preventDefault();
-        }
-        if (!this.pending_destroy_click && !target_closelink) {
-          if (!this.active_field) {
-            if (this.is_multiple) {
-              this.search_field.val("");
-            }
-            $(document).click(this.click_test_action);
-            this.results_show();
-          } else if (!this.is_multiple && evt && (($(evt.target)[0] === this.selected_item[0]) || $(evt.target).parents("a.chzn-single").length)) {
-            evt.preventDefault();
-            this.results_toggle();
-          }
-          return this.activate_field();
-        } else {
-          return this.pending_destroy_click = false;
-        }
-      }
-    };
-
-    Chosen.prototype.container_mouseup = function(evt) {
-      if (evt.target.nodeName === "ABBR" && !this.is_disabled) {
-        return this.results_reset(evt);
-      }
-    };
-
-    Chosen.prototype.blur_test = function(evt) {
-      if (!this.active_field && this.container.hasClass("chzn-container-active")) {
-        return this.close_field();
-      }
-    };
-
-    Chosen.prototype.close_field = function() {
-      $(document).unbind("click", this.click_test_action);
-      this.active_field = false;
-      this.results_hide();
-      this.container.removeClass("chzn-container-active");
-      this.winnow_results_clear();
-      this.clear_backstroke();
-      this.show_search_field_default();
-      return this.search_field_scale();
-    };
-
-    Chosen.prototype.activate_field = function() {
-      this.container.addClass("chzn-container-active");
-      this.active_field = true;
-      this.search_field.val(this.search_field.val());
-      return this.search_field.focus();
-    };
-
-    Chosen.prototype.test_active_click = function(evt) {
-      if ($(evt.target).parents('#' + this.container_id).length) {
-        return this.active_field = true;
-      } else {
-        return this.close_field();
-      }
-    };
-
-    Chosen.prototype.results_build = function() {
-      var content, data, _i, _len, _ref1;
-
-      this.parsing = true;
-      this.results_data = SelectParser.select_to_array(this.form_field);
-      if (this.is_multiple && this.choices > 0) {
-        this.search_choices.find("li.search-choice").remove();
-        this.choices = 0;
-      } else if (!this.is_multiple) {
-        this.selected_item.addClass("chzn-default").find("span").text(this.default_text);
-        if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
-          this.container.addClass("chzn-container-single-nosearch");
-        } else {
-          this.container.removeClass("chzn-container-single-nosearch");
-        }
-      }
-      content = '';
-      _ref1 = this.results_data;
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        data = _ref1[_i];
-        if (data.group) {
-          content += this.result_add_group(data);
-        } else if (!data.empty) {
-          content += this.result_add_option(data);
-          if (data.selected && this.is_multiple) {
-            this.choice_build(data);
-          } else if (data.selected && !this.is_multiple) {
-            this.selected_item.removeClass("chzn-default").find("span").text(data.text);
-            if (this.allow_single_deselect) {
-              this.single_deselect_control_build();
-            }
-          }
-        }
-      }
-      this.search_field_disabled();
-      this.show_search_field_default();
-      this.search_field_scale();
-      this.search_results.html(content);
-      return this.parsing = false;
-    };
-
-    Chosen.prototype.result_add_group = function(group) {
-      if (!group.disabled) {
-        group.dom_id = this.container_id + "_g_" + group.array_index;
-        return '<li id="' + group.dom_id + '" class="group-result">' + $("<div />").text(group.label).html() + '</li>';
-      } else {
-        return "";
-      }
-    };
-
-    Chosen.prototype.result_do_highlight = function(el) {
-      var high_bottom, high_top, maxHeight, visible_bottom, visible_top;
-
-      if (el.length) {
-        this.result_clear_highlight();
-        this.result_highlight = el;
-        this.result_highlight.addClass("highlighted");
-        maxHeight = parseInt(this.search_results.css("maxHeight"), 10);
-        visible_top = this.search_results.scrollTop();
-        visible_bottom = maxHeight + visible_top;
-        high_top = this.result_highlight.position().top + this.search_results.scrollTop();
-        high_bottom = high_top + this.result_highlight.outerHeight();
-        if (high_bottom >= visible_bottom) {
-          return this.search_results.scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
-        } else if (high_top < visible_top) {
-          return this.search_results.scrollTop(high_top);
-        }
-      }
-    };
-
-    Chosen.prototype.result_clear_highlight = function() {
-      if (this.result_highlight) {
-        this.result_highlight.removeClass("highlighted");
-      }
-      return this.result_highlight = null;
-    };
-
-    Chosen.prototype.results_show = function() {
-      var dd_top;
-
-      if (!this.is_multiple) {
-        this.selected_item.addClass("chzn-single-with-drop");
-        if (this.result_single_selected) {
-          this.result_do_highlight(this.result_single_selected);
-        }
-      } else if (this.max_selected_options <= this.choices) {
-        this.form_field_jq.trigger("liszt:maxselected", {
-          chosen: this
-        });
-        false;
-      }
-      dd_top = this.is_multiple ? this.container.height() : this.container.height() - 1;
-      this.form_field_jq.trigger("liszt:showing_dropdown", {
-        chosen: this
-      });
-      this.dropdown.css({
-        "top": dd_top + "px",
-        "left": 0
-      });
-      this.results_showing = true;
-      this.search_field.focus();
-      this.search_field.val(this.search_field.val());
-      return this.winnow_results();
-    };
-
-    Chosen.prototype.results_hide = function() {
-      if (!this.is_multiple) {
-        this.selected_item.removeClass("chzn-single-with-drop");
-      }
-      this.result_clear_highlight();
-      this.form_field_jq.trigger("liszt:hiding_dropdown", {
-        chosen: this
-      });
-      this.dropdown.css({
-        left: "-9000px"
-      });
-      return this.results_showing = false;
-    };
-
-    Chosen.prototype.set_tab_index = function(el) {
-      var ti;
-
-      if (this.form_field_jq.attr("tabindex")) {
-        ti = this.form_field_jq.attr("tabindex");
-        this.form_field_jq.attr("tabindex", -1);
-        return this.search_field.attr("tabindex", ti);
-      }
-    };
-
-    Chosen.prototype.show_search_field_default = function() {
-      if (this.is_multiple && this.choices < 1 && !this.active_field) {
-        this.search_field.val(this.default_text);
-        return this.search_field.addClass("default");
-      } else {
-        this.search_field.val("");
-        return this.search_field.removeClass("default");
-      }
-    };
-
-    Chosen.prototype.search_results_mouseup = function(evt) {
-      var target;
-
-      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
-      if (target.length) {
-        this.result_highlight = target;
-        this.result_select(evt);
-        return this.search_field.focus();
-      }
-    };
-
-    Chosen.prototype.search_results_mouseover = function(evt) {
-      var target;
-
-      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
-      if (target) {
-        return this.result_do_highlight(target);
-      }
-    };
-
-    Chosen.prototype.search_results_mouseout = function(evt) {
-      if ($(evt.target).hasClass("active-result" || $(evt.target).parents('.active-result').first())) {
-        return this.result_clear_highlight();
-      }
-    };
-
-    Chosen.prototype.choices_click = function(evt) {
-      evt.preventDefault();
-      if (this.active_field && !($(evt.target).hasClass("search-choice" || $(evt.target).parents('.search-choice').first)) && !this.results_showing) {
-        return this.results_show();
-      }
-    };
-
-    Chosen.prototype.choice_build = function(item) {
-      var choice_id, html, link,
-        _this = this;
-
-      if (this.is_multiple && this.max_selected_options <= this.choices) {
-        this.form_field_jq.trigger("liszt:maxselected", {
-          chosen: this
-        });
-        false;
-      }
-      choice_id = this.container_id + "_c_" + item.array_index;
-      this.choices += 1;
-      if (item.disabled) {
-        html = '<li class="search-choice search-choice-disabled" id="' + choice_id + '"><span>' + item.html + '</span></li>';
-      } else {
-        html = '<li class="search-choice" id="' + choice_id + '"><span>' + item.html + '</span><a href="javascript:void(0)" class="search-choice-close" rel="' + item.array_index + '"></a></li>';
-      }
-      this.search_container.before(html);
-      link = $('#' + choice_id).find("a").first();
-      return link.click(function(evt) {
-        return _this.choice_destroy_link_click(evt);
-      });
-    };
-
-    Chosen.prototype.choice_destroy_link_click = function(evt) {
-      evt.preventDefault();
-      if (!this.is_disabled) {
-        this.pending_destroy_click = true;
-        return this.choice_destroy($(evt.target));
-      } else {
-        return evt.stopPropagation;
-      }
-    };
-
-    Chosen.prototype.choice_destroy = function(link) {
-      if (this.result_deselect(link.attr("rel"))) {
-        this.choices -= 1;
-        this.show_search_field_default();
-        if (this.is_multiple && this.choices > 0 && this.search_field.val().length < 1) {
-          this.results_hide();
-        }
-        link.parents('li').first().remove();
-        return this.search_field_scale();
-      }
-    };
-
-    Chosen.prototype.results_reset = function() {
-      this.form_field.options[0].selected = true;
-      this.selected_item.find("span").text(this.default_text);
-      if (!this.is_multiple) {
-        this.selected_item.addClass("chzn-default");
-      }
-      this.show_search_field_default();
-      this.results_reset_cleanup();
-      this.form_field_jq.trigger("change");
-      if (this.active_field) {
-        return this.results_hide();
-      }
-    };
-
-    Chosen.prototype.results_reset_cleanup = function() {
-      this.current_value = this.form_field_jq.val();
-      return this.selected_item.find("abbr").remove();
-    };
-
-    Chosen.prototype.result_select = function(evt) {
-      var high, high_id, item, position;
-
-      if (this.result_highlight) {
-        high = this.result_highlight;
-        high_id = high.attr("id");
-        this.result_clear_highlight();
-        if (this.is_multiple) {
-          this.result_deactivate(high);
-        } else {
-          this.search_results.find(".result-selected").removeClass("result-selected");
-          this.result_single_selected = high;
-          this.selected_item.removeClass("chzn-default");
-        }
-        high.addClass("result-selected");
-        position = high_id.substr(high_id.lastIndexOf("_") + 1);
-        item = this.results_data[position];
-        item.selected = true;
-        this.form_field.options[item.options_index].selected = true;
-        if (this.is_multiple) {
-          this.choice_build(item);
-        } else {
-          this.selected_item.find("span").first().text(item.text);
-          if (this.allow_single_deselect) {
-            this.single_deselect_control_build();
-          }
-        }
-        if (!((evt.metaKey || evt.ctrlKey) && this.is_multiple)) {
-          this.results_hide();
-        }
-        this.search_field.val("");
-        if (this.is_multiple || this.form_field_jq.val() !== this.current_value) {
-          this.form_field_jq.trigger("change", {
-            'selected': this.form_field.options[item.options_index].value
-          });
-        }
-        this.current_value = this.form_field_jq.val();
-        return this.search_field_scale();
-      }
-    };
-
-    Chosen.prototype.result_activate = function(el) {
-      return el.addClass("active-result");
-    };
-
-    Chosen.prototype.result_deactivate = function(el) {
-      return el.removeClass("active-result");
-    };
-
-    Chosen.prototype.result_deselect = function(pos) {
-      var result, result_data;
-
-      result_data = this.results_data[pos];
-      if (!this.form_field.options[result_data.options_index].disabled) {
-        result_data.selected = false;
-        this.form_field.options[result_data.options_index].selected = false;
-        result = $("#" + this.container_id + "_o_" + pos);
-        result.removeClass("result-selected").addClass("active-result").show();
-        this.result_clear_highlight();
-        this.winnow_results();
-        this.form_field_jq.trigger("change", {
-          deselected: this.form_field.options[result_data.options_index].value
-        });
-        this.search_field_scale();
-        return true;
-      } else {
-        return false;
-      }
-    };
-
-    Chosen.prototype.single_deselect_control_build = function() {
-      if (this.allow_single_deselect && this.selected_item.find("abbr").length < 1) {
-        return this.selected_item.find("span").first().after("<abbr class=\"search-choice-close\"></abbr>");
-      }
-    };
-
-    Chosen.prototype.winnow_results = function() {
-      var found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref1;
-
-      this.no_results_clear();
-      results = 0;
-      searchText = this.search_field.val() === this.default_text ? "" : $('<div/>').text($.trim(this.search_field.val())).html();
-      regexAnchor = this.search_contains ? "" : "^";
-      regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
-      zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
-      _ref1 = this.results_data;
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        option = _ref1[_i];
-        if (!option.disabled && !option.empty) {
-          if (option.group) {
-            $('#' + option.dom_id).css('display', 'none');
-          } else if (!(this.is_multiple && option.selected)) {
-            found = false;
-            result_id = option.dom_id;
-            result = $("#" + result_id);
-            if (regex.test(option.html)) {
-              found = true;
-              results += 1;
-            } else if (this.enable_split_word_search && (option.html.indexOf(" ") >= 0 || option.html.indexOf("[") === 0)) {
-              parts = option.html.replace(/\[|\]/g, "").split(" ");
-              if (parts.length) {
-                for (_j = 0, _len1 = parts.length; _j < _len1; _j++) {
-                  part = parts[_j];
-                  if (!(regex.test(part))) {
-                    continue;
-                  }
-                  found = true;
-                  results += 1;
-                }
-              }
-            }
-            if (found) {
-              if (searchText.length) {
-                startpos = option.html.search(zregex);
-                text = option.html.substr(0, startpos + searchText.length) + '</em>' + option.html.substr(startpos + searchText.length);
-                text = text.substr(0, startpos) + '<em>' + text.substr(startpos);
-              } else {
-                text = option.html;
-              }
-              result.html(text);
-              this.result_activate(result);
-              if (option.group_array_index != null) {
-                $("#" + this.results_data[option.group_array_index].dom_id).css('display', 'list-item');
-              }
-            } else {
-              if (this.result_highlight && result_id === this.result_highlight.attr('id')) {
-                this.result_clear_highlight();
-              }
-              this.result_deactivate(result);
-            }
-          }
-        }
-      }
-      if (results < 1 && searchText.length) {
-        return this.no_results(searchText);
-      } else {
-        return this.winnow_results_set_highlight();
-      }
-    };
-
-    Chosen.prototype.winnow_results_clear = function() {
-      var li, lis, _i, _len, _results;
-
-      this.search_field.val("");
-      lis = this.search_results.find("li");
-      _results = [];
-      for (_i = 0, _len = lis.length; _i < _len; _i++) {
-        li = lis[_i];
-        li = $(li);
-        if (li.hasClass("group-result")) {
-          _results.push(li.css('display', 'auto'));
-        } else if (!this.is_multiple || !li.hasClass("result-selected")) {
-          _results.push(this.result_activate(li));
-        } else {
-          _results.push(void 0);
-        }
-      }
-      return _results;
-    };
-
-    Chosen.prototype.winnow_results_set_highlight = function() {
-      var do_high, selected_results;
-
-      if (!this.result_highlight) {
-        selected_results = !this.is_multiple ? this.search_results.find(".result-selected.active-result") : [];
-        do_high = selected_results.length ? selected_results.first() : this.search_results.find(".active-result").first();
-        if (do_high != null) {
-          return this.result_do_highlight(do_high);
-        }
-      }
-    };
-
-    Chosen.prototype.no_results = function(terms) {
-      var no_results_html;
-
-      no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
-      no_results_html.find("span").first().html(terms);
-      return this.search_results.append(no_results_html);
-    };
-
-    Chosen.prototype.no_results_clear = function() {
-      return this.search_results.find(".no-results").remove();
-    };
-
-    Chosen.prototype.keydown_arrow = function() {
-      var first_active, next_sib;
-
-      if (!this.result_highlight) {
-        first_active = this.search_results.find("li.active-result").first();
-        if (first_active) {
-          this.result_do_highlight($(first_active));
-        }
-      } else if (this.results_showing) {
-        next_sib = this.result_highlight.nextAll("li.active-result").first();
-        if (next_sib) {
-          this.result_do_highlight(next_sib);
-        }
-      }
-      if (!this.results_showing) {
-        return this.results_show();
-      }
-    };
-
-    Chosen.prototype.keyup_arrow = function() {
-      var prev_sibs;
-
-      if (!this.results_showing && !this.is_multiple) {
-        return this.results_show();
-      } else if (this.result_highlight) {
-        prev_sibs = this.result_highlight.prevAll("li.active-result");
-        if (prev_sibs.length) {
-          return this.result_do_highlight(prev_sibs.first());
-        } else {
-          if (this.choices > 0) {
-            this.results_hide();
-          }
-          return this.result_clear_highlight();
-        }
-      }
-    };
-
-    Chosen.prototype.keydown_backstroke = function() {
-      var next_available_destroy;
-
-      if (this.pending_backstroke) {
-        this.choice_destroy(this.pending_backstroke.find("a").first());
-        return this.clear_backstroke();
-      } else {
-        next_available_destroy = this.search_container.siblings("li.search-choice").last();
-        if (next_available_destroy.length && !next_available_destroy.hasClass("search-choice-disabled")) {
-          this.pending_backstroke = next_available_destroy;
-          if (this.single_backstroke_delete) {
-            return this.keydown_backstroke();
-          } else {
-            return this.pending_backstroke.addClass("search-choice-focus");
-          }
-        }
-      }
-    };
-
-    Chosen.prototype.clear_backstroke = function() {
-      if (this.pending_backstroke) {
-        this.pending_backstroke.removeClass("search-choice-focus");
-      }
-      return this.pending_backstroke = null;
-    };
-
-    Chosen.prototype.keydown_checker = function(evt) {
-      var stroke, _ref1;
-
-      stroke = (_ref1 = evt.which) != null ? _ref1 : evt.keyCode;
-      this.search_field_scale();
-      if (stroke !== 8 && this.pending_backstroke) {
-        this.clear_backstroke();
-      }
-      switch (stroke) {
-        case 8:
-          return this.backstroke_length = this.search_field.val().length;
-        case 9:
-          if (this.results_showing && !this.is_multiple) {
-            this.result_select(evt);
-          }
-          return this.mouse_on_container = false;
-        case 13:
-          return evt.preventDefault();
-        case 38:
-          evt.preventDefault();
-          return this.keyup_arrow();
-        case 40:
-          return this.keydown_arrow();
-      }
-    };
-
-    Chosen.prototype.search_field_scale = function() {
-      var dd_top, div, h, style, style_block, styles, w, _i, _len;
-
-      if (this.is_multiple) {
-        h = 0;
-        w = 0;
-        style_block = "position:absolute; left: -1000px; top: -1000px; display:none;";
-        styles = ['font-size', 'font-style', 'font-weight', 'font-family', 'line-height', 'text-transform', 'letter-spacing'];
-        for (_i = 0, _len = styles.length; _i < _len; _i++) {
-          style = styles[_i];
-          style_block += style + ":" + this.search_field.css(style) + ";";
-        }
-        div = $('<div />', {
-          'style': style_block
-        });
-        div.text(this.search_field.val());
-        $('body').append(div);
-        w = div.width() + 25;
-        div.remove();
-        if (w > this.f_width - 10) {
-          w = this.f_width - 10;
-        }
-        this.search_field.css({
-          'width': w + 'px'
-        });
-        dd_top = this.container.height();
-        return this.dropdown.css({
-          "top": dd_top + "px"
-        });
-      }
-    };
-
-    Chosen.prototype.generate_random_id = function() {
-      var string;
-
-      string = "sel" + this.generate_random_char() + this.generate_random_char() + this.generate_random_char();
-      while ($("#" + string).length > 0) {
-        string += this.generate_random_char();
-      }
-      return string;
-    };
-
-    return Chosen;
-
-  })(AbstractChosen);
-
-  exports.Chosen = Chosen;
-
-  SelectParser = (function() {
-    function SelectParser() {
-      this.options_index = 0;
-      this.parsed = [];
-    }
-
-    SelectParser.prototype.add_node = function(child) {
-      if (child.nodeName.toUpperCase() === "OPTGROUP") {
-        return this.add_group(child);
-      } else {
-        return this.add_option(child);
-      }
-    };
-
-    SelectParser.prototype.add_group = function(group) {
-      var group_position, option, _i, _len, _ref1, _results;
-
-      group_position = this.parsed.length;
-      this.parsed.push({
-        array_index: group_position,
-        group: true,
-        label: group.label,
-        children: 0,
-        disabled: group.disabled
-      });
-      _ref1 = group.childNodes;
-      _results = [];
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        option = _ref1[_i];
-        _results.push(this.add_option(option, group_position, group.disabled));
-      }
-      return _results;
-    };
-
-    SelectParser.prototype.add_option = function(option, group_position, group_disabled) {
-      if (option.nodeName.toUpperCase() === "OPTION") {
-        if (option.text !== "") {
-          if (group_position != null) {
-            this.parsed[group_position].children += 1;
-          }
-          this.parsed.push({
-            array_index: this.parsed.length,
-            options_index: this.options_index,
-            value: option.value,
-            text: option.text,
-            html: option.innerHTML,
-            selected: option.selected,
-            disabled: group_disabled === true ? group_disabled : option.disabled,
-            group_array_index: group_position,
-            classes: option.className,
-            style: option.style.cssText
-          });
-        } else {
-          this.parsed.push({
-            array_index: this.parsed.length,
-            options_index: this.options_index,
-            empty: true
-          });
-        }
-        return this.options_index += 1;
-      }
-    };
-
-    return SelectParser;
-
-  })();
-
-  SelectParser.select_to_array = function(select) {
-    var child, parser, _i, _len, _ref1;
-
-    parser = new SelectParser();
-    _ref1 = select.childNodes;
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      child = _ref1[_i];
-      parser.add_node(child);
-    }
-    return parser.parsed;
-  };
-
-}).call(this);
-
-})(window)
-},{"jquery-browserify":18}],46:[function(require,module,exports){
+},{"./lib/js-yaml.js":52}],51:[function(require,module,exports){
 (function(){
 
 // CommonJS exports.
@@ -30769,10 +28028,2339 @@ Date.prototype.setTimezone = function(val) {
 
 })();
 
-},{}],47:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
+var Backbone = require('backbone');
+
+module.exports = Backbone.Model.extend({
+});
+
+},{"backbone":12}],35:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Branch = require('../models/branch');
+
+module.exports = Backbone.Collection.extend({
+  model: Branch,
+
+  initialize: function(models, options) {
+    this.repo = options.repo;
+  },
+
+  parse: function(resp, options) {
+    return map = _.map(resp, (function(branch) {
+     return  _.extend(branch, {
+        repo: this.repo
+      })
+    }).bind(this));
+  },
+
+  url: function() {
+    return this.repo.url() + '/branches';
+  }
+});
+
+},{"../models/branch":53,"underscore":11,"backbone":12}],36:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Commit = require('../models/commit');
+
+module.exports = Backbone.Collection.extend({
+  model: Commit,
+
+  initialize: function(models, options) {
+    this.repo = options.repo;
+  },
+
+  setBranch: function(branch, options) {
+    this.branch = branch;
+    this.fetch(options);
+  },
+
+  parse: function(resp, options) {
+    return map = _.map(resp, (function(commit) {
+     return  _.extend(commit, {
+        repo: this.repo
+      })
+    }).bind(this));
+  },
+
+  url: function() {
+    return this.repo.url() + '/commits?sha=' + this.branch;
+  }
+});
+
+},{"../models/commit":54,"underscore":11,"backbone":12}],39:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var util = require('../util');
+
+var views = {
+  branches: require('./sidebar/branches'),
+  history: require('./sidebar/history'),
+  drafts: require('./sidebar/drafts'),
+  orgs: require('./sidebar/orgs'),
+  save: require('./sidebar/save'),
+  settings: require('./sidebar/settings')
+};
+
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.drawer,
+
+  subviews: {},
+
+  initialize: function(options) {
+    _.bindAll(this);
+  },
+
+  render: function(options) {
+    this.$el.html(_.template(this.template, {}, { variable: 'sidebar' }));
+    _.invoke(this.subviews, 'render');
+    return this;
+  },
+
+  initSubview: function(subview, options) {
+    if (!views[subview]) return false;
+
+    options = _.clone(options) || {};
+
+    var view = new views[subview](options);
+    this.$el.find('#' + subview).html(view.el);
+
+    this.subviews[subview] = view;
+
+    return view;
+  },
+
+  filepathGet: function() {
+    return this.$el.find('.filepath').val();
+  },
+
+  updateFilepath: function(name) {
+    var path = this.$el.find('.filepath').val();
+    var parts = path.split('/');
+    var old = parts.pop();
+
+    // preserve the date and the extension
+    var date = util.extractDate(old);
+    var extension = old.split('.').pop();
+
+    var newPath = parts.join('/') + date + '-' + util.stringToUrl(name) + '.' + extension;
+
+    this.$el.find('.filepath').attr('value', newPath);
+  },
+
+  updateState: function(label) {
+    this.$el.find('.button.save').html(label);
+  },
+
+  open: function() {
+    this.$el.toggleClass('open', true);
+  },
+
+  close: function() {
+    this.$el.toggleClass('open', false);
+  },
+
+  toggle: function() {
+    this.$el.toggleClass('open');
+  },
+
+  toggleMobile: function() {
+    this.$el.toggleClass('mobile');
+  },
+
+  mode: function(mode) {
+    // Set data-mode attribute to toggle nav buttons in CSS
+    this.$el.attr('data-sidebar', mode);
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"../util":28,"./sidebar/branches":55,"./sidebar/history":56,"./sidebar/drafts":57,"./sidebar/orgs":42,"./sidebar/save":58,"./sidebar/settings":59,"../../dist/templates":14,"underscore":11,"backbone":12}],40:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var config = require('../config');
+var utils = require('../util');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.nav,
+
+  events: {
+    'click a.edit': 'emit',
+    'click a.preview': 'emit',
+    'click a.meta': 'emit',
+    'click a.settings': 'emit',
+    'click a.save': 'emit',
+    'click .mobile .toggle': 'toggleMobile'
+  },
+
+  initialize: function(options) {
+    this.app = options.app;
+    this.sidebar = options.sidebar;
+    this.user = options.user;
+  },
+
+  render: function() {
+    this.$el.html(_.template(this.template, {
+      login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=repo'
+    }, { variable: 'data' }));
+
+    this.$save = this.$el.find('.file .save .popup');
+    return this;
+  },
+
+  emit: function(e) {
+    // TODO: get rid of this hack exception
+    if (e && !$(e.currentTarget).hasClass('preview')) e.preventDefault();
+
+    var state = $(e.currentTarget).data('state');
+    if ($(e.currentTarget).hasClass('active')) {
+      // return to file state
+      state = this.state;
+    }
+
+    this.active(state);
+    this.toggle(state, e);
+  },
+
+  setFileState: function(state) {
+    this.state = state;
+    this.active(state);
+  },
+
+  updateState: function(label, classes, kill) {
+
+    if (!label) label = t('navigation.save');
+    this.$save.html(label);
+
+    // Add, remove classes to the file nav group
+    this.$el.find('.file')
+      .removeClass('error saving saved save')
+      .addClass(classes);
+
+    if (kill) {
+      _.delay((function() {
+        this.$el.find('.file').removeClass(classes);
+      }).bind(this), 1000);
+    }
+  },
+
+  mode: function(mode) {
+    this.$el.attr('class', mode);
+  },
+
+  active: function(state) {
+    // Coerce 'new' to 'edit' to activate correct icon
+    state = (state === 'new' ? 'edit' : state);
+    this.$el.find('.file a').removeClass('active');
+    this.$el.find('.file a[data-state=' + state + ']').toggleClass('active');
+  },
+
+  toggle: function(state, e) {
+    this.trigger(state, e);
+  },
+
+  toggleMobile: function(e) {
+    this.sidebar.toggleMobile();
+    $(e.target).toggleClass('active');
+    return false;
+  }
+});
+
+},{"../config":8,"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],41:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var utils = require('../util');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.header,
+
+  events: {
+    'focus input': 'checkPlaceholder',
+    'change input[data-mode="path"]': 'updatePath',
+    'change input[data-mode="title"]': 'updateTitle'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.user = options.user;
+    this.repo = options.repo;
+    this.file = options.file;
+    this.input = options.input;
+    this.title = options.title;
+    this.placeholder = options.placeholder;
+    this.alterable = options.alterable;
+  },
+
+  render: function() {
+    var user = this.user ? this.user.get('login') : this.repo.get('owner').login;
+    var permissions = this.repo ? this.repo.get('permissions') : undefined;
+    var isPrivate = this.repo && this.repo.get('private') ? true : false;
+    var title = t('heading.explore');
+    var avatar;
+    var path = user;
+
+    if (this.user) {
+      avatar = '<img src="' + this.user.get('avatar_url') + '" width="40" height="40" alt="Avatar" />';
+    } else if (this.file) {
+      // File View
+      avatar = '<span class="ico round document ' + this.file.get('lang') + '"></span>';
+      title = this.file.get('path');
+    } else {
+      // Repo View
+      var lock = (isPrivate) ? ' private' : '';
+
+      title = this.repo.get('name');
+      path = path + '/' + title;
+      avatar = '<div class="avatar round"><span class="icon round repo' + lock + '"></span></div>';
+    }
+
+    var data = {
+      alterable: this.alterable,
+      avatar: avatar,
+      repo: this.repo ? this.repo.attributes : undefined,
+      isPrivate: isPrivate,
+      input: this.input,
+      path: path,
+      placeholder: this.placeholder,
+      user: user,
+      title: title,
+      mode: this.title ? 'title' : 'path',
+      translate: this.file ? this.file.get('translate') : undefined
+    };
+
+    this.$el.empty().append(_.template(this.template, data, {
+      variable: 'data'
+    }));
+
+    return this;
+  },
+
+  checkPlaceholder: function(e) {
+    if (this.file.isNew()) {
+      var $target = $(e.target, this.el);
+      if (!$target.val()) {
+        $target.val($target.attr('placeholder'));
+      }
+    }
+  },
+
+  updatePath: function(e) {
+    this.file.set('path', e.currentTarget.value);
+    this.trigger('makeDirty');
+    return false;
+  },
+
+  updateTitle: function(e) {
+    // makeDirty updates the metadata so there's no
+    // need to set it in the model here.
+    this.trigger('makeDirty');
+    return false;
+  },
+
+  inputGet: function() {
+    return this.$el.find('.headerinput').val();
+  },
+
+  headerInputFocus: function() {
+    this.$el.find('.headerinput').focus();
+  }
+});
+
+},{"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],44:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var File = require('../models/file');
+var Folder = require('../models/folder');
+var FileView = require('./li/file');
+var FolderView = require('./li/folder');
+var templates = require('../../dist/templates');
+var util = require('.././util');
+
+module.exports = Backbone.View.extend({
+  className: 'listings',
+
+  template: templates.files,
+
+  subviews: {},
+
+  events: {
+    'mouseover .item': 'activeListing',
+    'mouseover .item a': 'activeListing'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.branch = options.branch || options.repo.get('master_branch');
+    this.branches = options.branches;
+    this.nav = options.nav;
+    this.path = options.path || '';
+    this.repo = options.repo;
+    this.router = options.router;
+    this.search = options.search;
+    this.sidebar = options.sidebar;
+
+    this.branches.fetch({ success: this.setModel });
+  },
+
+  setModel: function() {
+    this.model = this.branches.findWhere({ name: this.branch }).files;
+    this.search.model = this.model;
+
+    this.model.fetch({ success: (function() {
+      // Update this.path with rooturl
+      var config = this.model.config;
+      this.rooturl = config && config.rooturl ? config.rooturl : '';
+
+      // Render on fetch and on search
+      this.listenTo(this.search, 'search', this.render);
+      this.render();
+    }).bind(this), reset: true });
+  },
+
+  newFile: function() {
+    var path = [
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      'new',
+      this.branch,
+      this.path ? this.path : this.rooturl
+    ]
+
+    this.router.navigate(_.compact(path).join('/'), true);
+  },
+
+  render: function() {
+    var search = this.search && this.search.input && this.search.input.val();
+    var rooturl = this.rooturl ? this.rooturl + '/' : '';
+    var path = this.path ? this.path + '/' : '';
+    var drafts;
+
+    var url = [
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      'tree',
+      this.branch
+    ].join('/');
+
+    // Set rooturl jail from collection config
+    var regex = new RegExp('^' + (path ? path : rooturl) + '[^\/]*$');
+
+    // Render drafts link in sidebar as subview
+    // if path does not begin with _drafts
+    if (/^(?!_drafts)/.test(this.path)) {
+      drafts = this.sidebar.initSubview('drafts', {
+        link: [url, '_drafts'].join('/'),
+        sidebar: this.sidebar
+      });
+
+      this.subviews['drafts'] = drafts;
+      drafts.render();
+    }
+
+    var data = {
+      path: path,
+      parts: util.chunkedPath(this.path),
+      rooturl: rooturl,
+      url: url
+    };
+
+    this.$el.html(_.template(this.template, data, {variable: 'data'}));
+
+    // if not searching, filter to only show current level
+    var collection = search ? this.search.search() : this.model.filter((function(file) {
+      return regex.test(file.get('path'));
+    }).bind(this));
+
+    var frag = document.createDocumentFragment();
+
+    collection.each((function(file, index) {
+      var view;
+
+      if (file instanceof File) {
+        view = new FileView({
+          model: file,
+          index: index,
+          repo: this.repo,
+          branch: this.branch
+        });
+      } else if (file instanceof Folder) {
+        view = new FolderView({
+          model: file,
+          index: index,
+          repo: this.repo,
+          branch: this.branch
+        });
+      }
+
+      frag.appendChild(view.render().el);
+      this.subviews[file.id] = view;
+    }).bind(this));
+
+    this.$el.find('ul').html(frag);
+
+    return this;
+  },
+
+  activeListing: function(e) {
+    var $listing = $(e.target);
+
+    if (!$listing.hasClass('item')) {
+      $listing = $(e.target).closest('li');
+    }
+
+    this.$el.find('.item').removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    this.search.$el.blur();
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"../models/file":18,"../models/folder":60,"./li/file":61,"./li/folder":62,"../../dist/templates":14,".././util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],45:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  className: 'modal overlay',
+
+  template: templates.modal,
+
+  events: {
+    'click .got-it': 'confirm'
+  },
+
+  initialize: function() {
+    this.message = this.options.message;
+  },
+
+  render: function() {
+    var modal = {
+      message: this.message
+    };
+    this.$el.empty().append(_.template(templates.modal, modal, {
+      variable: 'modal'
+    }));
+
+    return this;
+  },
+
+  confirm: function() {
+    var view = this;
+    this.$el.fadeOut('fast', function() {
+      view.remove();
+    });
+    return false;
+  }
+});
+
+},{"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],46:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
+var util = require('../util');
+var Backbone = require('backbone');
+var toolbar = require('../toolbar/markdown.js');
+var upload = require('../upload');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.toolbar,
+
+  events: {
+    'click .group a': 'markdownSnippet',
+    'click .publish-flag': 'togglePublishing',
+    'change #upload': 'fileInput',
+    'click .dialog .insert': 'dialogInsert',
+    'click .draft-to-post': 'draft'
+  },
+
+  initialize: function(options) {
+    var self = this;
+    this.file = options.file;
+    this.view = options.view;
+    this.collection = options.collection;
+    var config = options.config;
+
+    if (config && config.prose) {
+      this.hasMedia = (config.media) ? true : false;
+      this.siteUrl = (config.siteUrl) ? true : false;
+
+      if (config.prose.media) {
+        // Fetch the media directory to display its contents
+        this.mediaDirectoryPath = config.prose.media;
+        var match = new RegExp(this.mediaDirectoryPath);
+
+        this.media = this.collection.filter(function(m) {
+          if (m.attributes.type === 'blob') {
+            return match.test(m.attributes.path);
+          }
+        });
+      }
+
+      if (config.prose.relativeLinks) {
+        $.ajax({
+          cache: true,
+          dataType: 'jsonp',
+          jsonp: false,
+          jsonpCallback: config.prose.relativeLinks.split('?callback=')[1] || 'callback',
+          url: config.prose.relativeLinks,
+          success: function(links) {
+            self.relativeLinks = links;
+          }
+        });
+      }
+    }
+  },
+
+  render: function() {
+
+    var toolbar = {
+      markdown: this.file.get('markdown'),
+      writable: this.file.get('writable'),
+      lang: this.file.get('lang'),
+      draft: this.file.get('draft'),
+      metadata: this.file.get('metadata')
+    };
+
+    this.$el.html(_.template(this.template, toolbar, { variable: 'toolbar' }));
+    return this;
+  },
+
+  fileInput: function(e) {
+    var view = this;
+    upload.fileSelect(e, function(e, file, content) {
+      var path = (view.mediaDirectoryPath) ? view.mediaDirectoryPath : util.extractFilename(view.file.attributes.path)[0];
+      var src = path + '/' + encodeURIComponent(file.name);
+
+      view.$el.find('input[name="url"]').val(src);
+      view.$el.find('input[name="alt"]').val('');
+      view.trigger('updateImageInsert', e);
+    });
+
+    return false;
+  },
+
+  highlight: function(type) {
+    this.$el.find('.group a').removeClass('active');
+    if (arguments) this.$el.find('[data-key="' + type + '"]').addClass('active');
+  },
+
+  draft: function(e) {
+    view.trigger('draft', e);
+    return false;
+  },
+
+  markdownSnippet: function(e) {
+    var self = this;
+    var $target = $(e.target).closest('a');
+    var $dialog = this.$el.find('#dialog');
+    var $snippets = this.$el.find('.group a');
+    var key = $target.data('key');
+    var snippet = $target.data('snippet');
+    var selection = util.trim(this.view.editor.getSelection());
+
+    $dialog.removeClass().empty();
+
+    if (snippet) {
+      $snippets.removeClass('on');
+
+      if (selection) {
+        switch (key) {
+        case 'bold':
+          this.bold(selection);
+          break;
+        case 'italic':
+          this.italic(selection);
+          break;
+        case 'heading':
+          this.heading(selection);
+          break;
+        case 'sub-heading':
+          this.subHeading(selection);
+          break;
+        case 'quote':
+          this.quote(selection);
+          break;
+        default:
+          this.view.editor.replaceSelection(snippet);
+          break;
+        }
+        this.view.editor.focus();
+      } else {
+        this.view.editor.replaceSelection(snippet);
+        this.view.editor.focus();
+      }
+    } else if ($target.data('dialog')) {
+
+      var tmpl, className;
+      if (key === 'media' && !this.mediaDirectoryPath ||
+          key === 'media' && !this.media.length) {
+          className = key + ' no-directory';
+      } else {
+          className = key;
+      }
+
+      // This condition handles the link and media link in the toolbar.
+      if ($target.hasClass('on')) {
+        $target.removeClass('on');
+        $dialog.removeClass().empty();
+      } else {
+        $snippets.removeClass('on');
+        $target.addClass('on');
+        $dialog
+          .removeClass()
+          .addClass('dialog ' + className)
+          .empty();
+
+        switch(key) {
+          case 'link':
+            tmpl = _(templates.dialogs.link).template();
+
+            $dialog.append(tmpl({
+              relativeLinks: self.relativeLinks
+            }));
+
+            if (self.relativeLinks) {
+              $('.chzn-select', $dialog).chosen().change(function() {
+                $('.chzn-single span').text('Insert a local link.');
+
+                var parts = $(this).val().split(',');
+                $('input[name=href]', $dialog).val(parts[0]);
+                $('input[name=text]', $dialog).val(parts[1]);
+              });
+            }
+
+            if (selection) {
+              // test if this is a markdown link: [text](link)
+              var link = /\[([^\]]+)\]\(([^)]+)\)/;
+              var quoted = /".*?"/;
+
+              var text = selection;
+              var href;
+              var title;
+
+              if (link.test(selection)) {
+                var parts = link.exec(selection);
+                text = parts[1];
+                href = parts[2];
+
+                // Search for a title attrbute within the url string
+                if (quoted.test(parts[2])) {
+                  href = parts[2].split(quoted)[0];
+
+                  // TODO: could be improved
+                  title = parts[2].match(quoted)[0].replace(/"/g, '');
+                }
+              }
+
+              $('input[name=text]', $dialog).val(text);
+              if (href) $('input[name=href]', $dialog).val(href);
+              if (title) $('input[name=title]', $dialog).val(title);
+            }
+          break;
+          case 'media':
+            tmpl = _(templates.dialogs.media).template();
+            $dialog.append(tmpl({
+              description: t('dialogs.media.description', {
+                input: '<input id="upload" class="upload" type="file" />'
+              }),
+              assetsDirectory: (self.media && self.media.length) ? true : false,
+              writable: self.file.get('writable')
+            }));
+
+            if (self.media && self.media.length) self.renderMedia(self.media);
+
+            if (selection) {
+              var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
+              var src;
+              var alt;
+
+              if (image.test(selection)) {
+                var imageParts = image.exec(selection);
+                alt = imageParts[1];
+                src = imageParts[2];
+
+                $('input[name=url]', $dialog).val(src);
+                if (alt) $('input[name=alt]', $dialog).val(alt);
+              }
+            }
+          break;
+          case 'help':
+            tmpl = _(templates.dialogs.help).template();
+            $dialog.append(tmpl({
+              help: toolbar.help
+            }));
+
+            // Page through different help sections
+            var $mainMenu = this.$el.find('.main-menu a');
+            var $subMenu = this.$el.find('.sub-menu');
+            var $content = this.$el.find('.help-content');
+
+            $mainMenu.on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $mainMenu.removeClass('active');
+                $content.removeClass('active');
+                $subMenu
+                    .removeClass('active')
+                    .find('a')
+                    .removeClass('active');
+
+                $(this).addClass('active');
+
+                // Add the relavent sub menu
+                var parent = $(this).data('id');
+                $('.' + parent).addClass('active');
+
+                // Add an active class and populate the
+                // content of the first list item.
+                var $firstSubElement = $('.' + parent + ' a:first', this.el);
+                $firstSubElement.addClass('active');
+
+                var subParent = $firstSubElement.data('id');
+                $('.help-' + subParent).addClass('active');
+              }
+              return false;
+            });
+
+            $subMenu.find('a').on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $subMenu.find('a').removeClass('active');
+                $content.removeClass('active');
+                $(this).addClass('active');
+
+                // Add the relavent content section
+                var parent = $(this).data('id');
+                $('.help-' + parent).addClass('active');
+              }
+
+              return false;
+            });
+
+          break;
+        }
+      }
+    }
+
+    return false;
+  },
+
+  publishState: function() {
+    if (this.$el.find('publish-state') === 'true') {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  updatePublishState: function() {
+    // Update the publish key wording depening on what was saved
+    var $publishkey = this.$el.find('.publish-flag');
+    var key = $publishKey.attr('data-state');
+
+    if (key === 'true') {
+      $publishKey.html(t('actions.publishing.published') +
+                      '<span class="ico small checkmark"></span>');
+    } else {
+      $publishKey.html(t('actions.publishing.unpublished') +
+                      '<span class="ico small checkmark"></span>');
+    }
+  },
+
+  togglePublishing: function(e) {
+    var $target = $(e.target).hasClass('checkmark') ? $(e.target).parent() : $(e.target);
+
+    // TODO: remove HTML from view
+    // Toggling publish state when the current file is published live
+    if (this.file.get('metadata').published) {
+      if ($target.hasClass('published')) {
+        $target
+          .empty()
+          .append(t('actions.publishing.unpublish') +
+                '<span class="ico small checkmark"></span>' +
+                '<span class="popup round arrow-top">' +
+                t('actions.publishing.unpublishInfo') +
+                '</span>')
+          .removeClass('published')
+          .attr('data-state', false);
+      } else {
+        $target
+          .empty()
+          .append(t('actions.publishing.published') +
+                '<span class="ico small checkmark"></span>')
+          .addClass('published')
+          .attr('data-state', true);
+      }
+    } else {
+      if ($target.hasClass('published')) {
+        $target
+          .empty()
+          .append(t('actions.publishing.unpublished') +
+                '<span class="ico small checkmark"></span>')
+          .removeClass('published')
+          .attr('data-state', false);
+      } else {
+        $target
+          .empty()
+          .append(t('actions.publishing.publish') +
+                '<span class="ico small checkmark"></span>' +
+                '<span class="popup round arrow-top">' +
+                t('actions.publishing.publishInfo') +
+                '</span>')
+          .addClass('published')
+          .attr('data-state', true);
+      }
+    }
+
+    this.view.makeDirty();
+    return false;
+  },
+
+  dialogInsert: function(e) {
+    var $dialog = $('#dialog', this.el);
+    var $target = $(e.target, this.el);
+    var type = $target.data('type');
+
+    if (type === 'link') {
+      var href = $('input[name="href"]').val();
+      var text = $('input[name="text"]').val();
+      var title = $('input[name="title"]').val();
+
+      if (!text) text = href;
+
+      if (title) {
+        this.view.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
+      } else {
+        this.view.editor.replaceSelection('[' + text + '](' + href + ')');
+      }
+
+      this.view.editor.focus();
+    }
+
+    if (type === 'media') {
+      if (this.queue) {
+        var userDefinedPath = $('input[name="url"]').val();
+        this.view.upload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
+
+        // Finally, clear the queue object
+        this.queue = undefined;
+      } else {
+        var src = $('input[name="url"]').val();
+        var alt = $('input[name="alt"]').val();
+        this.view.editor.replaceSelection('![' + alt + '](/' + src + ')');
+        this.view.editor.focus();
+      }
+    }
+
+    return false;
+  },
+
+  heading: function(s) {
+    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
+      this.view.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
+    } else {
+      this.view.editor.replaceSelection('## ' + s.replace(/#/g, ''));
+    }
+  },
+
+  subHeading: function(s) {
+    if (s.charAt(0) === '#' && s.charAt(3) !== '#') {
+      this.view.editor.replaceSelection(_.lTrim(s.replace(/#/g, '')));
+    } else {
+      this.view.editor.replaceSelection('### ' + s.replace(/#/g, ''));
+    }
+  },
+
+  italic: function(s) {
+    if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
+      this.view.editor.replaceSelection(s.replace(/_/g, ''));
+    } else {
+      this.view.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
+    }
+  },
+
+  bold: function(s) {
+    if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
+      this.view.editor.replaceSelection(s.replace(/\*/g, ''));
+    } else {
+      this.view.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
+    }
+  },
+
+  quote: function(s) {
+    if (s.charAt(0) === '>') {
+      this.view.editor.replaceSelection(util.lTrim(s.replace(/\>/g, '')));
+    } else {
+      this.view.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
+    }
+  },
+
+  renderMedia: function(data, back) {
+    var self = this;
+    var $media = this.$el.find('#media');
+    var tmpl = _(templates.dialogs.mediadirectory).template();
+
+    // Reset some stuff
+    $media.empty();
+
+    if (back && (back.join() !== this.assetsDirectory)) {
+      var link = back.slice(0, back.length - 1).join('/');
+      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
+    }
+
+    data.each(function(d) {
+      var parts = d.get('path').split('/');
+      var path = parts.slice(0, parts.length - 1).join('/');
+
+      $media.append(tmpl({
+        name: d.get('name'),
+        type: d.get('type'),
+        path: path + '/' + encodeURIComponent(d.get('name')),
+        isMedia: util.isMedia(d.get('name').split('.').pop())
+      }));
+    });
+
+    $('.asset a', $media).on('click', function(e) {
+      var href = $(this).attr('href');
+      var alt = util.trim($(this).text());
+
+      if (util.isImage(href.split('.').pop())) {
+        self.$el.find('input[name="url"]').val(href);
+        self.$el.find('input[name="alt"]').val(alt);
+      } else {
+        self.view.editor.replaceSelection(href);
+        self.view.editor.focus();
+      }
+      return false;
+    });
+  }
+});
+
+},{"../toolbar/markdown.js":33,"../util":28,"../upload":30,"../../dist/templates":14,"jquery-browserify":10,"chosen-jquery-browserify":63,"underscore":11,"backbone":12}],47:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
+_.merge = require('deepmerge');
+var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+var util = require('.././util');
+
+module.exports = Backbone.View.extend({
+  template: templates.metadata,
+
+  events: {
+    'change input': 'updateModel',
+    'click .create-select': 'createSelect',
+    'click .finish': 'exit'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.model = options.model;
+    this.titleAsHeading = options.titleAsHeading;
+    this.view = options.view;
+  },
+
+  render: function() {
+    this.$el.empty().append(_.template(this.template));
+
+    var form = this.$el.find('.form');
+
+    var metadata = this.model.get('metadata');
+    var lang = metadata && metadata.lang ? metadata.lang : 'en';
+
+    // This renders any fields defined in the metadata entry
+    // of a given prose configuration file.
+    _.each(this.model.get('defaults'), (function(data, key) {
+      var renderTitle = true;
+
+      if (data && data.name === 'title' && this.titleAsHeading) {
+        renderTitle = false;
+      };
+
+      if (renderTitle) {
+        if (data && data.field) {
+          switch (data.field.element) {
+            case 'button':
+              var button = {
+                name: data.name,
+                label: data.field.label,
+                on: data.field.on,
+                off: data.field.off
+              };
+
+              form.append(_.template(templates.meta.button, button, {
+                variable: 'meta'
+              }));
+              break;
+            case 'checkbox':
+              var checkbox = {
+                name: data.name,
+                label: data.field.label,
+                value: data.name,
+                checked: data.field.value
+              };
+
+              form.append(_.template(templates.meta.checkbox, checkbox, {
+                variable: 'meta'
+              }));
+              break;
+            case 'text':
+              var text = {
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                type: 'text'
+              };
+
+              form.append(_.template(templates.meta.text, text, {
+                variable: 'meta'
+              }));
+              break;
+            case 'textarea':
+              var id = util.stringToUrl(data.name);
+              var textarea = {
+                name: data.name,
+                id: id,
+                value: data.field.value,
+                label: data.field.label,
+                type: 'textarea'
+              };
+
+              form.append(_.template(templates.meta.textarea, textarea, {
+                variable: 'meta'
+              }));
+
+              var textElement = document.getElementById(id);
+
+              this[id] = CodeMirror(function(el) {
+                textElement.parentNode.replaceChild(el, textElement);
+                el.id = id;
+                el.className += ' inner ';
+                el.setAttribute('data-name', data.name);
+              }, {
+                mode: id,
+                value: textElement.value,
+                lineWrapping: true,
+                theme: 'prose-bright'
+              });
+
+              break;
+            case 'number':
+              var number = {
+                name: data.name,
+                label: data.field.label,
+                value: data.field.value,
+                type: 'number'
+              };
+
+              form.append(_.template(templates.meta.text, number, {
+                variable: 'meta'
+              }));
+              break;
+            case 'select':
+              var select = {
+                name: data.name,
+                label: data.field.label,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: lang
+              };
+
+              form.append(_.template(templates.meta.select, select, {
+                variable: 'meta'
+              }));
+              break;
+            case 'multiselect':
+              var multiselect = {
+                name: data.name,
+                label: data.field.label,
+                alterable: data.field.alterable,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: lang
+              };
+
+              form.append(_.template(templates.meta.multiselect, multiselect, {
+                variable: 'meta'
+              }));
+
+              break;
+            case 'hidden':
+              var tmpl = {};
+              tmpl[data.name] = data.field.value;
+              this.model.set('metadata', _.merge(tmpl, this.model.get('metadata') || {}));
+              this.model.set('hidden', _.merge(tmpl, this.model.get('hidden') || {}));
+              break;
+          }
+        } else {
+          var txt = {
+            name: key,
+            label: key,
+            value: data,
+            type: 'text'
+          };
+
+          form.append(_.template(templates.meta.text, txt, {
+            variable: 'meta'
+          }));
+        }
+      }
+    }).bind(this));
+
+    this.$el.find('.chzn-select').chosen().change(this.updateModel);
+
+    this.renderRaw();
+
+    return this;
+  },
+
+  updateModel: function(e) {
+    var target = e.currentTarget;
+    var key = target.name;
+    var value = target.value;
+
+    var delta = {};
+    delta[key] = value;
+
+    var metadata = this.model.get('metadata');
+    this.model.set('metadata', _.extend(metadata, delta));
+
+    this.view.makeDirty();
+  },
+
+  rawKeyMap: function() {
+    return {
+      'Ctrl-S': this.view.updateFile
+    };
+  },
+
+  renderRaw: function() {
+    var selector = this.model.get('lang') === 'yaml' ? 'code' : 'raw';
+
+    if (selector === 'raw') {
+      this.$el.find('.form').append(_.template(templates.meta.raw));
+    }
+
+    this.raw = CodeMirror(this.$el.find('#' + selector)[0], {
+      mode: 'yaml',
+      value: '',
+      lineWrapping: true,
+      extraKeys: this.rawKeyMap(),
+      theme: 'prose-bright'
+    });
+
+    this.listenTo(this.raw, 'blur', (function(cm) {
+      var value = cm.getValue();
+      var raw;
+
+      try {
+        raw = jsyaml.load(value);
+      } catch(err) {
+        console.log(err);
+      }
+
+      if (raw) {
+        var metadata = this.model.get('metadata');
+        this.model.set('metadata', _.extend(metadata, raw));
+
+        this.view.makeDirty();
+      }
+    }).bind(this));
+
+    this.setValue(this.model.get('metadata'));
+  },
+
+  getValue: function() {
+    var view = this;
+    var metadata = {};
+
+    if (this.view.toolbar &&
+       this.view.toolbar.publishState() ||
+       this.model.get('metadata').published) {
+      metadata.published = true;
+    } else {
+      metadata.published = false;
+    }
+
+    // Get the title value from heading if we need to.
+    if (this.titleAsHeading) {
+      metadata.title = (this.view.header) ?
+        this.view.header.inputGet() :
+        this.model.get('metadata').title[0];
+    }
+
+    _.each(this.$el.find('[name]'), function(item) {
+      var $item = $(item);
+      var value = $item.val();
+
+      switch (item.type) {
+        case 'select-multiple':
+        case 'select-one':
+        case 'textarea':
+        case 'text':
+          if (value) {
+            value = $item.data('type') === 'number' ? Number(value) : value;
+            if (metadata.hasOwnProperty(item.name)) {
+              metadata[item.name] = _.union(metadata[item.name], value);
+            } else {
+              metadata[item.name] = value;
+            }
+          }
+          break;
+        case 'checkbox':
+          if (item.checked) {
+
+            if (metadata.hasOwnProperty(item.name)) {
+              metadata[item.name] = _.union(metadata[item.name], item.value);
+            } else if (item.value === item.name) {
+              metadata[item.name] = item.checked;
+            } else {
+              metadata[item.name] = item.value;
+            }
+
+          } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
+            metadata[item.name] = item.checked;
+          } else {
+            metadata[item.name] = item.checked;
+          }
+          break;
+        case 'button':
+          if (value === 'true') {
+            metadata[item.name] = true;
+          } else if (value === 'false') {
+            metadata[item.name] = false;
+          }
+          break;
+      }
+    });
+
+    // Load any data coming from a yaml-block of content.
+    this.$el.find('.yaml-block').each(function() {
+      var editor = $(this).find('.CodeMirror').attr('id');
+      var name = $('#' + editor).data('name');
+
+      if (view[editor]) {
+        metadata[name] = jsyaml.load(view[editor].getValue());
+      }
+    });
+
+    // Load any data coming from not defined raw yaml front matter.
+    if (this.raw) {
+      try {
+        metadata = _.merge(metadata, jsyaml.load(this.raw.getValue()) || {});
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    return _.merge(this.model.get('hidden') || {}, metadata);
+  },
+
+  setValue: function(data) {
+    var form = this.$el.find('.form');
+
+    var missing = {};
+    var raw;
+
+    _.each(data, (function(value, key) {
+      var matched = false;
+      var input = this.$el.find('[name="' + key + '"]');
+      var length = input.length;
+      var options;
+
+      if (length) {
+
+        // iterate over matching fields
+        for (var i = 0; i < length; i++) {
+
+          // if value is an array
+          if (_.isArray(value)) {
+
+            // iterate over values in array
+            for (var j = 0; j < value.length; j++) {
+              switch (input[i].type) {
+                case 'select-multiple':
+                case 'select-one':
+                  options = $(input[i]).find('option[value="' + value[j] + '"]');
+                  if (options.length) {
+                    for (var k = 0; k < options.length; k++) {
+                      options[k].selected = 'selected';
+                    }
+
+                    matched = true;
+                  }
+                  break;
+                case 'text':
+                case 'textarea':
+                  input[i].value = value;
+                  matched = true;
+                  break;
+                case 'checkbox':
+                  if (input[i].value === value) {
+                    input[i].checked = 'checked';
+                    matched = true;
+                  }
+                  break;
+              }
+            }
+
+          } else {
+
+            switch (input[i].type) {
+              case 'select-multiple':
+              case 'select-one':
+                options = $(input[i]).find('option[value="' + value + '"]');
+                if (options.length) {
+                  for (var m = 0; m < options.length; m++) {
+                    options[m].selected = 'selected';
+                  }
+
+                  matched = true;
+                }
+                break;
+              case 'text':
+              case 'textarea':
+                input[i].value = value;
+                matched = true;
+                break;
+              case 'checkbox':
+                input[i].checked = value ? 'checked' : false;
+                matched = true;
+                break;
+              case 'button':
+                input[i].value = value ? true : false;
+                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
+                matched = true;
+                break;
+            }
+
+          }
+        }
+
+        if (!matched && value !== null) {
+          if (missing.hasOwnProperty(key)) {
+            missing[key] = _.union(missing[key], value);
+          } else {
+            missing[key] = value;
+          }
+        }
+
+      } else {
+        // Don't render the 'published' field or hidden metadata
+        // TODO: render metadata values that share a key with a hidden value
+        var defaults = _.find(this.model.get('defaults'), function(data) { return data && (data.name === key); });
+        var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
+
+        if (key !== 'published' && key !== 'title' && !defaults) {
+          raw = {};
+          raw[key] = value;
+
+          if (this.raw) {
+            this.raw.setValue(this.raw.getValue() + jsyaml.dump(raw));
+          }
+        }
+      }
+    }).bind(this));
+
+    _.each(missing, (function(value, key) {
+      if (value === null) return;
+
+      switch (typeof value) {
+        case 'boolean':
+          var bool = {
+            name: key,
+            label: value,
+            value: value,
+            checked: value ? 'checked' : false
+          };
+
+          form.append(_.template(templates.meta.checkbox, bool, {
+            variable: 'meta'
+          }));
+          break;
+        case 'string':
+          var string = {
+            name: key,
+            label: value,
+            value: value,
+            type: 'text'
+          };
+
+          form.append(_.template(templates.meta.text, string, {
+            variable: 'meta'
+          }));
+          break;
+        case 'object':
+          var obj = {
+            name: key,
+            label: key,
+            placeholder: key,
+            options: value,
+            lang: data.lang || 'en'
+          };
+
+          form.append(_.template(templates.meta.multiselect, obj, {
+            variable: 'meta'
+          }));
+          break;
+        default:
+          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
+          break;
+      }
+
+      this.$el.find('.chzn-select').chosen().change(this.updateModel);
+    }).bind(this));
+
+    this.$el.find('.chzn-select').trigger('liszt:updated');
+
+    // Update model with defaults
+    // TODO: should this makeDirty if any differences?
+    this.model.set('metadata', this.getValue());
+  },
+
+  getRaw: function() {
+    return jsyaml.dump(this.getValue()).trim();
+  },
+
+  setRaw: function(data) {
+    try {
+      this.raw.setValue(jsyaml.dump(data));
+      this.refresh;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  refresh: function() {
+    var view = this;
+    this.$el.find('.yaml-block').each(function() {
+      var editor = $(this).find('.CodeMirror').attr('id');
+      if (view[editor]) view[editor].refresh();
+    });
+
+    // Refresh CodeMirror
+    if (this.raw) this.raw.refresh();
+  },
+
+  createSelect: function(e) {
+    var $parent = $(e.target).parent();
+    var $input = $parent.find('input');
+    var selectTarget = $(e.target).data('select');
+    var $select = this.$el.find('#' + selectTarget);
+    var value = $input.val();
+
+    if (value.length > 0) {
+      var option = '<option value="' + value + '" selected="selected">' + value + '</option>';
+
+      // Append this new option to the select list.
+      $select.append(option);
+
+      // Clear the now added value.
+      $input.attr('value', '');
+
+      // Update the list
+      $select.trigger('liszt:updated');
+    }
+
+    return false;
+  },
+
+  exit: function() {
+    this.view.nav.active(this.view.mode);
+
+    if (this.view.mode === 'blob') {
+      this.view.blob();
+    } else {
+      this.view.edit();
+    }
+
+    return false;
+  }
+});
+
+},{"../../dist/templates":14,".././util":28,"jquery-browserify":10,"chosen-jquery-browserify":63,"underscore":11,"js-yaml":38,"backbone":12,"deepmerge":64}],64:[function(require,module,exports){
+module.exports = function merge (target, src) {
+    var array = Array.isArray(src)
+    var dst = array && [] || {}
+
+    if (array) {
+        target = target || []
+        dst = dst.concat(target)
+        src.forEach(function(e, i) {
+            if (typeof target[i] === 'undefined') {
+                dst[i] = e
+            } else if (typeof e === 'object') {
+                dst[i] = merge(target[i], e)
+            } else {
+                if (target.indexOf(e) === -1) {
+                    dst.push(e)
+                }
+            }
+        })
+    } else {
+        if (target && typeof target === 'object') {
+            Object.keys(target).forEach(function (key) {
+                dst[key] = target[key]
+            })
+        }
+        Object.keys(src).forEach(function (key) {
+            if (typeof src[key] !== 'object' || !src[key]) {
+                dst[key] = src[key]
+            }
+            else {
+                if (!target[key]) {
+                    dst[key] = src[key]
+                } else {
+                    dst[key] = merge(target[key], src[key])
+                }
+            }
+        })
+    }
+
+    return dst
+}
+
+},{}],42:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../../dist/templates');
+var cookie = require('../../cookie');
+
+module.exports = Backbone.View.extend({
+  template: templates.sidebar.orgs,
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.model = options.model;
+    this.sidebar = options.sidebar;
+    this.user = options.user;
+
+    this.model.fetch({
+      success: this.render
+    });
+  },
+
+  render: function() {
+    var orgs = {
+      login: {
+        user: cookie.get('login'),
+        id: cookie.get('id')
+      },
+      user: this.user.toJSON(),
+      orgs: this.model.toJSON()
+    };
+
+    this.$el.html(_.template(this.template, orgs, {
+      variable: 'orgs'
+    }));
+
+    // Update active user or organization
+    this.$el.find('li a').removeClass('active');
+    this.$el.find('li a[data-id="' + this.user.get('id') + '"]').addClass('active');
+    this.sidebar.open();
+
+    return this;
+  }
+});
+
+},{"../../../dist/templates":14,"../../cookie":3,"jquery-browserify":10,"underscore":11,"backbone":12}],43:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var cookie = require('../../cookie');
+var templates = require('../../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  tagName: 'li',
+
+  className: 'item clearfix',
+
+  template: templates.li.repo,
+
+  initialize: function(options) {
+    this.model = options.model;
+    this.$el.attr('data-index', options.index);
+    this.$el.attr('data-id', this.model.id);
+    this.$el.attr('data-navigate', '#' + this.model.get('owner').login + '/' + this.model.get('name'));
+    this.listenTo(this.model, 'sync', this.render, this);
+  },
+
+  render: function() {
+    var data = _.extend(this.model.attributes, {
+      login: cookie.get('login')
+    });
+
+    this.$el.empty().append(_.template(this.template, data, {
+      variable: 'repo'
+    }));
+
+    return this;
+  }
+});
+
+},{"../../cookie":3,"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],52:[function(require,module,exports){
+'use strict';
+
+
+var loader = require('./js-yaml/loader');
+var dumper = require('./js-yaml/dumper');
+
+
+function deprecated(name) {
+  return function () {
+    throw new Error('Function ' + name + ' is deprecated and cannot be used.');
+  };
+}
+
+
+module.exports.NIL                 = require('./js-yaml/common').NIL;
+module.exports.Type                = require('./js-yaml/type');
+module.exports.Schema              = require('./js-yaml/schema');
+module.exports.FAILSAFE_SCHEMA     = require('./js-yaml/schema/failsafe');
+module.exports.JSON_SCHEMA         = require('./js-yaml/schema/json');
+module.exports.CORE_SCHEMA         = require('./js-yaml/schema/core');
+module.exports.DEFAULT_SAFE_SCHEMA = require('./js-yaml/schema/default_safe');
+module.exports.DEFAULT_FULL_SCHEMA = require('./js-yaml/schema/default_full');
+module.exports.load                = loader.load;
+module.exports.loadAll             = loader.loadAll;
+module.exports.safeLoad            = loader.safeLoad;
+module.exports.safeLoadAll         = loader.safeLoadAll;
+module.exports.dump                = dumper.dump;
+module.exports.safeDump            = dumper.safeDump;
+module.exports.YAMLException       = require('./js-yaml/exception');
+
+// Deprecared schema names from JS-YAML 2.0.x
+module.exports.MINIMAL_SCHEMA = require('./js-yaml/schema/failsafe');
+module.exports.SAFE_SCHEMA    = require('./js-yaml/schema/default_safe');
+module.exports.DEFAULT_SCHEMA = require('./js-yaml/schema/default_full');
+
+// Deprecated functions from JS-YAML 1.x.x
+module.exports.scan           = deprecated('scan');
+module.exports.parse          = deprecated('parse');
+module.exports.compose        = deprecated('compose');
+module.exports.addConstructor = deprecated('addConstructor');
+
+
+require('./js-yaml/require');
+
+},{"./js-yaml/loader":65,"./js-yaml/dumper":66,"./js-yaml/common":67,"./js-yaml/type":68,"./js-yaml/schema":69,"./js-yaml/schema/failsafe":70,"./js-yaml/schema/json":71,"./js-yaml/schema/core":72,"./js-yaml/schema/default_safe":73,"./js-yaml/schema/default_full":74,"./js-yaml/exception":75,"./js-yaml/require":76}],53:[function(require,module,exports){
+var Backbone = require('backbone');
+var Files = require('../collections/files');
+var config = require('../config');
+
+module.exports = Backbone.Model.extend({
+  initialize: function(attributes, options) {
+    this.repo = attributes.repo;
+
+    this.set('name', attributes.name);
+
+    var sha = attributes.commit.sha;
+    this.set('sha', sha);
+
+    this.files = new Files([], {
+      repo: this.repo,
+      branch: this,
+      sha: sha
+    });
+  },
+
+  url: function() {
+    return this.repo.url() + '/branches/' + this.get('name');
+  }
+});
+
+},{"../collections/files":77,"../config":8,"backbone":12}],54:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.Model.extend({
+  initialize: function(attributes, options) {
+    _.bindAll(this);
+
+    this.repo = attributes.repo;
+  },
+
+  url: function() {
+    return this.repo.url() + '/commits/' + this.get('sha');
+  }
+});
+
+},{"underscore":11,"backbone":12}],67:[function(require,module,exports){
+'use strict';
+
+
+var NIL = {};
+
+
+function isNothing(subject) {
+  return (undefined === subject) || (null === subject);
+}
+
+
+function isObject(subject) {
+  return ('object' === typeof subject) && (null !== subject);
+}
+
+
+function toArray(sequence) {
+  if (Array.isArray(sequence)) {
+    return sequence;
+  } else if (isNothing(sequence)) {
+    return [];
+  } else {
+    return [ sequence ];
+  }
+}
+
+
+function extend(target, source) {
+  var index, length, key, sourceKeys;
+
+  if (source) {
+    sourceKeys = Object.keys(source);
+
+    for (index = 0, length = sourceKeys.length; index < length; index += 1) {
+      key = sourceKeys[index];
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+
+function repeat(string, count) {
+  var result = '', cycle;
+
+  for (cycle = 0; cycle < count; cycle += 1) {
+    result += string;
+  }
+
+  return result;
+}
+
+
+module.exports.NIL        = NIL;
+module.exports.isNothing  = isNothing;
+module.exports.isObject   = isObject;
+module.exports.toArray    = toArray;
+module.exports.repeat     = repeat;
+module.exports.extend     = extend;
+
+},{}],75:[function(require,module,exports){
+'use strict';
+
+
+function YAMLException(reason, mark) {
+  this.name    = 'YAMLException';
+  this.reason  = reason;
+  this.mark    = mark;
+  this.message = this.toString(false);
+}
+
+
+YAMLException.prototype.toString = function toString(compact) {
+  var result;
+
+  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
+
+  if (!compact && this.mark) {
+    result += ' ' + this.mark.toString();
+  }
+
+  return result;
+};
+
+
+module.exports = YAMLException;
+
+},{}],60:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var util = require('.././util');
+
+module.exports = Backbone.Model.extend({
+  idAttribute: 'path',
+
+  initialize: function(attributes, options) {
+    _.bindAll(this);
+
+    this.branch = attributes.branch;
+    this.collection = attributes.collection;
+    this.repo = attributes.repo;
+
+    this.set({
+      'name': util.extractFilename(attributes.path)[1],
+      'path': attributes.path,
+      'type': attributes.type
+    });
+  },
+
+  url: function() {
+    return this.repo.url() + '/contents/' + this.get('path') + '?ref=' + this.branch.get('name');
+  }
+});
+
+},{".././util":28,"underscore":11,"backbone":12}],78:[function(require,module,exports){
 // nothing to see here... no file methods for the browser
 
-},{}],34:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var BranchView = require('./branch');
+var templates = require('../../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.sidebar.branches,
+
+  subviews: {},
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.model = options.model;
+    this.repo = options.repo;
+    this.branch = options.branch || this.repo.get('master_branch');
+    this.router = options.router;
+    this.sidebar = options.sidebar;
+
+    this.model.fetch({ success: this.render });
+  },
+
+  render: function() {
+    // only render branches selector if two or more branches
+    if (this.model.length < 2) return;
+
+    this.$el.empty().append(_.template(this.template));
+    var frag = document.createDocumentFragment();
+
+    this.model.each((function(branch, index) {
+      var view = new BranchView({
+        model: branch,
+        repo: this.repo,
+        branch: this.branch
+      });
+
+      frag.appendChild(view.render().el);
+      this.subviews[branch.get('name')] = view;
+    }).bind(this));
+
+    this.$el.find('select').html(frag);
+
+    var router = this.router;
+    this.$el.find('.chzn-select').chosen().change(function() {
+      router.navigate($(this).val(), true);
+    });
+
+    this.sidebar.open();
+
+    return this;
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./branch":79,"../../../dist/templates":14,"jquery-browserify":10,"chosen-jquery-browserify":63,"underscore":11,"backbone":12}],56:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var CommitView = require('./li/commit');
+
+var queue = require('queue-async');
+
+var templates = require('../../../dist/templates');
+var utils = require('../../util');
+
+module.exports = Backbone.View.extend({
+  subviews: {},
+
+  template: templates.sidebar.history,
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.user = options.user;
+    this.repo = options.repo;
+    this.branch = options.branch;
+    this.commits = options.commits;
+    this.sidebar = options.sidebar;
+    this.view = options.view;
+
+    this.commits.setBranch(this.branch, {
+      success: this.render
+    });
+  },
+
+  render: function(options) {
+    this.$el.empty().append(_.template(this.template));
+
+    // Filter on commit.get('author').id === this.user.get('id')
+    var id = this.user ? this.user.get('id') : false;
+
+    // Group and deduplicate commits by authenticated user
+    var history = this.commits.groupBy(function(commit) {
+      // Handle malformed commit data
+      var author = commit.get('author') || commit.get('commit').author;
+      return author.id === id ? 'author' : 'all';
+    });
+
+    // TODO: how many commits should be fetched initially?
+    // TODO: option to load more?
+
+    // TODO: display list of recent updates by all other users
+    this.history = (history.all || []).slice(0, 15);
+
+    // Recent commits by authenticated user
+    this.recent = (history.author || []).slice(0, 15);
+
+    var q = queue();
+
+    // _.union(this.history, this.recent).each(function(commit) {
+    this.recent.each(function(commit) {
+      q.defer(function(cb) {
+        commit.fetch({
+          success: function(model, res, options) {
+            // This is necessary instead of success: cb for some reason
+            cb();
+          }
+        });
+      });
+    });
+
+    q.awaitAll((function(err, res) {
+      if (err) return err;
+
+      // Shallow flatten mapped array of all commit files
+      var files = _.flatten(_.map(this.recent, function(commit) {
+        return commit.get('files');
+      }), true);
+
+      /*
+      // TODO: jail files to rooturl
+      if (rooturl) {
+        files = files.filter(function(file) {
+          return file.filename.indexOf(rooturl) === 0;
+        });
+      }
+      */
+
+      var map = _.groupBy(files, function(file) {
+        return file.filename;
+      });
+
+      var list = _.uniq(_.map(files, function(file) {
+        return file.filename;
+      }));
+
+      // Iterate over files and build fragment to append
+      var frag = document.createDocumentFragment();
+
+      list.slice(0,5).each((function(file, index) {
+        var commits = map[file];
+        var commit = commits[0];
+
+        var view = new CommitView({
+          branch: this.branch,
+          file: commit,
+          repo: this.repo,
+          view: this.view
+        });
+
+        frag.appendChild(view.render().el);
+
+        this.subviews[commit.sha] = view;
+      }).bind(this));
+
+      this.$el.find('#commits').html(frag);
+
+      this.sidebar.open();
+    }).bind(this));
+
+    return this;
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./li/commit":80,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12,"queue-async":48}],57:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  className: 'inner',
+
+  template: templates.sidebar.drafts,
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.link = options.link;
+    this.sidebar = options.sidebar;
+  },
+
+  render: function() {
+    this.$el.html(_.template(this.template, this.link, {
+      variable: 'link'
+    }));
+
+    this.sidebar.open();
+
+    return this;
+  }
+});
+
+},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],58:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var NavView = require('../nav');
+var templates = require('../../../dist/templates');
+var utils = require('../../util');
+
+module.exports = Backbone.View.extend({
+  template: templates.sidebar.save,
+
+  events: {
+    'click a.cancel': 'emit',
+    'click a.confirm': 'emit'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.sidebar = options.sidebar;
+    this.file = options.file;
+  },
+
+  emit: function(e) {
+    var action = $(e.currentTarget).data('action');
+    this.sidebar.trigger(action, e);
+    return false;
+  },
+
+  render: function() {
+    var save = {
+      action: this.file.get('writable') ?
+        t('sidebar.save.save') :
+        t('sidebar.save.submit')
+    };
+
+    this.$el.empty().append(_.template(this.template, save, {
+      variable: 'save'
+    }));
+
+    // TODO: util.extractFilename()
+    var placeholder = (this.file.isNew() ? 'Created ' : 'Updated ') + this.file.get('path');
+    this.$el.find('.commit-message').attr('placeholder', placeholder).focus();
+
+    return this;
+  }
+});
+
+},{"../nav":40,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],59:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var NavView = require('../nav');
+var templates = require('../../../dist/templates');
+var utils = require('../../util');
+
+module.exports = Backbone.View.extend({
+  template: templates.sidebar.settings,
+
+  events: {
+    'click a.delete': 'emit',
+    'click a.translate': 'emit',
+    'click a.draft': 'emit',
+    'change input.filepath': 'saveFilePath'
+  },
+
+  saveFilePath: function(e) {
+    this.file.set('path', e.currentTarget.value);
+    this.trigger('makeDirty');
+    return false;
+  },
+
+  initialize: function(options) {
+    this.sidebar = options.sidebar;
+    this.config = options.config;
+    this.file = options.file;
+
+    // fileInput is passed if a title replaces where it
+    // normally is shown in the heading of the file.
+    this.fileInput = options.fileInput;
+  },
+
+  emit: function(e) {
+    if (e) e.preventDefault();
+
+    var action = $(e.currentTarget).data('action');
+    this.sidebar.trigger(action, e);
+  },
+
+  render: function() {
+    // this.file.get('lang') is programming language
+    // this.file.get('metadata').lang is ISO 639-1 language code
+    var settings = {
+      languages: this.config ? this.config.languages : [],
+      lang: this.file.get('lang'),
+      metadata: this.file.get('metadata'),
+      fileInput: this.fileInput,
+      path: this.file.get('path')
+    };
+
+    this.$el.empty().append(_.template(this.template, settings, {
+      variable: 'settings'
+    }));
+
+    utils.autoSelect(this.$el.find('input.filepath'));
+    return this;
+  }
+});
+
+},{"../nav":40,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],61:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.li.file,
+
+  tagName: 'li',
+
+  className: 'item clearfix',
+
+  events: {
+    'click a.delete': 'destroy'
+  },
+
+  initialize: function(options) {
+    this.model = options.model;
+    this.repo = options.repo;
+    this.branch = options.branch;
+
+    this.$el.attr('data-index', options.index);
+
+    if (!this.model.get('binary')) {
+      this.$el.attr('data-navigate', '#' + this.repo.get('owner').login + '/' +
+        this.repo.get('name') + '/edit/' + this.branch + '/' +
+        this.model.get('path'));
+    }
+
+    this.listenTo(this.model, 'sync', this.render, this);
+  },
+
+  render: function() {
+    var data = _.extend(this.model.attributes, {
+        branch: this.branch,
+        repo: this.repo.attributes
+    });
+
+    this.$el.empty().append(_.template(this.template, data, {
+      variable: 'file'
+    }));
+
+    return this;
+  },
+
+  destroy: function(e) {
+    if (confirm(t('actions.delete.warn'))) {
+      // TODO: on success, either reload recent commits (expensive) or append
+      // to recent commits el
+      this.model.destroy();
+      this.$el.fadeOut('fast');
+    }
+
+    return false;
+  }
+});
+
+},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],62:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  tagName: 'li',
+
+  className: 'item clearfix',
+
+  template: templates.li.folder,
+
+  initialize: function(options) {
+    this.model = options.model;
+    this.repo = options.repo;
+    this.branch = options.branch;
+
+    this.$el.attr('data-index', options.index);
+    this.$el.attr('data-navigate', '#' + this.repo.get('owner').login + '/' +
+      this.repo.get('name') + '/tree/' + this.branch + '/' +
+      this.model.get('path'));
+
+    this.listenTo(this.model, 'sync', this.render, this);
+  },
+
+  render: function() {
+    var data = _.extend(this.model.attributes, {
+      branch: this.branch,
+      repo: this.repo.attributes
+    });
+
+    this.$el.empty().append(_.template(this.template, data, {
+      variable: 'folder'
+    }));
+
+    return this;
+  }
+});
+
+},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],65:[function(require,module,exports){
 'use strict';
 
 
@@ -32323,7 +31911,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./exception":44,"./common":36,"./mark":48,"./schema/default_safe":42,"./schema/default_full":43}],35:[function(require,module,exports){
+},{"./common":67,"./exception":75,"./mark":81,"./schema/default_safe":73,"./schema/default_full":74}],66:[function(require,module,exports){
 (function(){'use strict';
 
 
@@ -32804,7 +32392,7 @@ module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
 })()
-},{"./common":36,"./exception":44,"./schema/default_full":43,"./schema/default_safe":42}],37:[function(require,module,exports){
+},{"./common":67,"./exception":75,"./schema/default_full":74,"./schema/default_safe":73}],68:[function(require,module,exports){
 'use strict';
 
 
@@ -32888,7 +32476,7 @@ Type.Dumper = function TypeDumper(options) {
 
 module.exports = Type;
 
-},{"./exception":44}],38:[function(require,module,exports){
+},{"./exception":75}],69:[function(require,module,exports){
 'use strict';
 
 
@@ -32993,7 +32581,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":36,"./exception":44,"./type":37}],45:[function(require,module,exports){
+},{"./common":67,"./exception":75,"./type":68}],76:[function(require,module,exports){
 'use strict';
 
 
@@ -33018,7 +32606,7 @@ if (undefined !== require.extensions) {
 
 module.exports = require;
 
-},{"fs":47,"./loader":34}],39:[function(require,module,exports){
+},{"fs":78,"./loader":65}],70:[function(require,module,exports){
 // Standard YAML's Failsafe schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2802346
 
@@ -33037,7 +32625,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":38,"../type/str":49,"../type/seq":50,"../type/map":51}],40:[function(require,module,exports){
+},{"../schema":69,"../type/str":82,"../type/seq":83,"../type/map":84}],71:[function(require,module,exports){
 // Standard YAML's JSON schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2803231
 //
@@ -33064,7 +32652,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":38,"./failsafe":39,"../type/null":52,"../type/bool":53,"../type/int":54,"../type/float":55}],41:[function(require,module,exports){
+},{"../schema":69,"./failsafe":70,"../type/null":85,"../type/bool":86,"../type/int":87,"../type/float":88}],72:[function(require,module,exports){
 // Standard YAML's Core schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2804923
 //
@@ -33084,7 +32672,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":38,"./json":40}],42:[function(require,module,exports){
+},{"../schema":69,"./json":71}],73:[function(require,module,exports){
 // JS-YAML's default schema for `safeLoad` function.
 // It is not described in the YAML specification.
 //
@@ -33114,7 +32702,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":38,"./core":41,"../type/timestamp":56,"../type/merge":57,"../type/binary":58,"../type/omap":59,"../type/pairs":60,"../type/set":61}],43:[function(require,module,exports){
+},{"../schema":69,"./core":72,"../type/timestamp":89,"../type/merge":90,"../type/binary":91,"../type/omap":92,"../type/pairs":93,"../type/set":94}],74:[function(require,module,exports){
 // JS-YAML's default schema for `load` function.
 // It is not described in the YAML specification.
 //
@@ -33141,7 +32729,1396 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":38,"./default_safe":42,"../type/js/undefined":62,"../type/js/regexp":63,"../type/js/function":64}],48:[function(require,module,exports){
+},{"../schema":69,"./default_safe":73,"../type/js/undefined":95,"../type/js/regexp":96,"../type/js/function":97}],63:[function(require,module,exports){
+(function(global){(function() {
+  var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  AbstractChosen = (function() {
+    function AbstractChosen(form_field, options) {
+      this.form_field = form_field;
+      this.options = options != null ? options : {};
+      this.is_multiple = this.form_field.multiple;
+      this.set_default_text();
+      this.set_default_values();
+      this.setup();
+      this.set_up_html();
+      this.register_observers();
+      this.finish_setup();
+    }
+
+    AbstractChosen.prototype.set_default_values = function() {
+      var _this = this;
+
+      this.click_test_action = function(evt) {
+        return _this.test_active_click(evt);
+      };
+      this.activate_action = function(evt) {
+        return _this.activate_field(evt);
+      };
+      this.active_field = false;
+      this.mouse_on_container = false;
+      this.results_showing = false;
+      this.result_highlighted = null;
+      this.result_single_selected = null;
+      this.allow_single_deselect = (this.options.allow_single_deselect != null) && (this.form_field.options[0] != null) && this.form_field.options[0].text === "" ? this.options.allow_single_deselect : false;
+      this.disable_search_threshold = this.options.disable_search_threshold || 0;
+      this.disable_search = this.options.disable_search || false;
+      this.enable_split_word_search = this.options.enable_split_word_search != null ? this.options.enable_split_word_search : true;
+      this.search_contains = this.options.search_contains || false;
+      this.choices = 0;
+      this.single_backstroke_delete = this.options.single_backstroke_delete || false;
+      this.max_selected_options = this.options.max_selected_options || Infinity;
+      return this.inherit_select_classes = this.options.inherit_select_classes || false;
+    };
+
+    AbstractChosen.prototype.set_default_text = function() {
+      if (this.form_field.getAttribute("data-placeholder")) {
+        this.default_text = this.form_field.getAttribute("data-placeholder");
+      } else if (this.is_multiple) {
+        this.default_text = this.options.placeholder_text_multiple || this.options.placeholder_text || "Select Some Options";
+      } else {
+        this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || "Select an Option";
+      }
+      return this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || "No results match";
+    };
+
+    AbstractChosen.prototype.mouse_enter = function() {
+      return this.mouse_on_container = true;
+    };
+
+    AbstractChosen.prototype.mouse_leave = function() {
+      return this.mouse_on_container = false;
+    };
+
+    AbstractChosen.prototype.input_focus = function(evt) {
+      var _this = this;
+
+      if (this.is_multiple) {
+        if (!this.active_field) {
+          return setTimeout((function() {
+            return _this.container_mousedown();
+          }), 50);
+        }
+      } else {
+        if (!this.active_field) {
+          return this.activate_field();
+        }
+      }
+    };
+
+    AbstractChosen.prototype.input_blur = function(evt) {
+      var _this = this;
+
+      if (!this.mouse_on_container) {
+        this.active_field = false;
+        return setTimeout((function() {
+          return _this.blur_test();
+        }), 100);
+      }
+    };
+
+    AbstractChosen.prototype.result_add_option = function(option) {
+      var classes, style;
+
+      if (!option.disabled) {
+        option.dom_id = this.container_id + "_o_" + option.array_index;
+        classes = option.selected && this.is_multiple ? [] : ["active-result"];
+        if (option.selected) {
+          classes.push("result-selected");
+        }
+        if (option.group_array_index != null) {
+          classes.push("group-option");
+        }
+        if (option.classes !== "") {
+          classes.push(option.classes);
+        }
+        style = option.style.cssText !== "" ? " style=\"" + option.style + "\"" : "";
+        return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
+      } else {
+        return "";
+      }
+    };
+
+    AbstractChosen.prototype.results_update_field = function() {
+      if (!this.is_multiple) {
+        this.results_reset_cleanup();
+      }
+      this.result_clear_highlight();
+      this.result_single_selected = null;
+      return this.results_build();
+    };
+
+    AbstractChosen.prototype.results_toggle = function() {
+      if (this.results_showing) {
+        return this.results_hide();
+      } else {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.results_search = function(evt) {
+      if (this.results_showing) {
+        return this.winnow_results();
+      } else {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.keyup_checker = function(evt) {
+      var stroke, _ref;
+
+      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
+      this.search_field_scale();
+      switch (stroke) {
+        case 8:
+          if (this.is_multiple && this.backstroke_length < 1 && this.choices > 0) {
+            return this.keydown_backstroke();
+          } else if (!this.pending_backstroke) {
+            this.result_clear_highlight();
+            return this.results_search();
+          }
+          break;
+        case 13:
+          evt.preventDefault();
+          if (this.results_showing) {
+            return this.result_select(evt);
+          }
+          break;
+        case 27:
+          if (this.results_showing) {
+            this.results_hide();
+          }
+          return true;
+        case 9:
+        case 38:
+        case 40:
+        case 16:
+        case 91:
+        case 17:
+          break;
+        default:
+          return this.results_search();
+      }
+    };
+
+    AbstractChosen.prototype.generate_field_id = function() {
+      var new_id;
+
+      new_id = this.generate_random_id();
+      this.form_field.id = new_id;
+      return new_id;
+    };
+
+    AbstractChosen.prototype.generate_random_char = function() {
+      var chars, newchar, rand;
+
+      chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      rand = Math.floor(Math.random() * chars.length);
+      return newchar = chars.substring(rand, rand + 1);
+    };
+
+    return AbstractChosen;
+
+  })();
+
+  $ = global.$;
+
+  $ || ($ = require('jquery-browserify'));
+
+  get_side_border_padding = function(elmt) {
+    var side_border_padding;
+
+    return side_border_padding = elmt.outerWidth() - elmt.width();
+  };
+
+  $.fn.extend({
+    chosen: function(options) {
+      var browser, match, ua;
+
+      ua = window.navigator.userAgent.toLowerCase();
+      match = /(msie) ([\w.]+)/.exec(ua) || [];
+      browser = {
+        name: match[1] || "",
+        version: match[2] || "0"
+      };
+      if (browser.name === "msie" && (browser.version === "6.0" || (browser.version === "7.0" && document.documentMode === 7))) {
+        return this;
+      }
+      return this.each(function(input_field) {
+        var $this;
+
+        $this = $(this);
+        if (!$this.hasClass("chzn-done")) {
+          return $this.data('chosen', new Chosen(this, options));
+        }
+      });
+    }
+  });
+
+  Chosen = (function(_super) {
+    __extends(Chosen, _super);
+
+    function Chosen() {
+      _ref = Chosen.__super__.constructor.apply(this, arguments);
+      return _ref;
+    }
+
+    Chosen.prototype.setup = function() {
+      this.form_field_jq = $(this.form_field);
+      this.current_value = this.form_field_jq.val();
+      return this.is_rtl = this.form_field_jq.hasClass("chzn-rtl");
+    };
+
+    Chosen.prototype.finish_setup = function() {
+      return this.form_field_jq.addClass("chzn-done");
+    };
+
+    Chosen.prototype.set_up_html = function() {
+      var container_classes, container_div, container_props, dd_top, dd_width, sf_width;
+
+      this.container_id = this.form_field.id.length ? this.form_field.id.replace(/[^\w]/g, '_') : this.generate_field_id();
+      this.container_id += "_chzn";
+      container_classes = ["chzn-container"];
+      container_classes.push("chzn-container-" + (this.is_multiple ? "multi" : "single"));
+      if (this.inherit_select_classes && this.form_field.className) {
+        container_classes.push(this.form_field.className);
+      }
+      if (this.is_rtl) {
+        container_classes.push("chzn-rtl");
+      }
+      this.f_width = this.form_field_jq.outerWidth();
+      container_props = {
+        id: this.container_id,
+        "class": container_classes.join(' '),
+        style: 'width: ' + this.f_width + 'px;',
+        title: this.form_field.title
+      };
+      container_div = $("<div />", container_props);
+      if (this.is_multiple) {
+        container_div.html('<ul class="chzn-choices"><li class="search-field"><input type="text" value="' + this.default_text + '" class="default" autocomplete="off" style="width:25px;" /></li></ul><div class="chzn-drop" style="left:-9000px;"><ul class="chzn-results"></ul></div>');
+      } else {
+        container_div.html('<a href="javascript:void(0)" class="chzn-single chzn-default" tabindex="-1"><span>' + this.default_text + '</span><div><b></b></div></a><div class="chzn-drop" style="left:-9000px;"><div class="chzn-search"><input type="text" autocomplete="off" /></div><ul class="chzn-results"></ul></div>');
+      }
+      this.form_field_jq.hide().after(container_div);
+      this.container = $('#' + this.container_id);
+      this.dropdown = this.container.find('div.chzn-drop').first();
+      dd_top = this.container.height();
+      dd_width = this.f_width - get_side_border_padding(this.dropdown);
+      this.dropdown.css({
+        "width": dd_width + "px",
+        "top": dd_top + "px"
+      });
+      this.search_field = this.container.find('input').first();
+      this.search_results = this.container.find('ul.chzn-results').first();
+      this.search_field_scale();
+      this.search_no_results = this.container.find('li.no-results').first();
+      if (this.is_multiple) {
+        this.search_choices = this.container.find('ul.chzn-choices').first();
+        this.search_container = this.container.find('li.search-field').first();
+      } else {
+        this.search_container = this.container.find('div.chzn-search').first();
+        this.selected_item = this.container.find('.chzn-single').first();
+        sf_width = dd_width - get_side_border_padding(this.search_container) - get_side_border_padding(this.search_field);
+        this.search_field.css({
+          "width": sf_width + "px"
+        });
+      }
+      this.results_build();
+      this.set_tab_index();
+      return this.form_field_jq.trigger("liszt:ready", {
+        chosen: this
+      });
+    };
+
+    Chosen.prototype.register_observers = function() {
+      var _this = this;
+
+      this.container.mousedown(function(evt) {
+        return _this.container_mousedown(evt);
+      });
+      this.container.mouseup(function(evt) {
+        return _this.container_mouseup(evt);
+      });
+      this.container.mouseenter(function(evt) {
+        return _this.mouse_enter(evt);
+      });
+      this.container.mouseleave(function(evt) {
+        return _this.mouse_leave(evt);
+      });
+      this.search_results.mouseup(function(evt) {
+        return _this.search_results_mouseup(evt);
+      });
+      this.search_results.mouseover(function(evt) {
+        return _this.search_results_mouseover(evt);
+      });
+      this.search_results.mouseout(function(evt) {
+        return _this.search_results_mouseout(evt);
+      });
+      this.form_field_jq.bind("liszt:updated", function(evt) {
+        return _this.results_update_field(evt);
+      });
+      this.form_field_jq.bind("liszt:activate", function(evt) {
+        return _this.activate_field(evt);
+      });
+      this.form_field_jq.bind("liszt:open", function(evt) {
+        return _this.container_mousedown(evt);
+      });
+      this.search_field.blur(function(evt) {
+        return _this.input_blur(evt);
+      });
+      this.search_field.keyup(function(evt) {
+        return _this.keyup_checker(evt);
+      });
+      this.search_field.keydown(function(evt) {
+        return _this.keydown_checker(evt);
+      });
+      this.search_field.focus(function(evt) {
+        return _this.input_focus(evt);
+      });
+      if (this.is_multiple) {
+        return this.search_choices.click(function(evt) {
+          return _this.choices_click(evt);
+        });
+      } else {
+        return this.container.click(function(evt) {
+          return evt.preventDefault();
+        });
+      }
+    };
+
+    Chosen.prototype.search_field_disabled = function() {
+      this.is_disabled = this.form_field_jq[0].disabled;
+      if (this.is_disabled) {
+        this.container.addClass('chzn-disabled');
+        this.search_field[0].disabled = true;
+        if (!this.is_multiple) {
+          this.selected_item.unbind("focus", this.activate_action);
+        }
+        return this.close_field();
+      } else {
+        this.container.removeClass('chzn-disabled');
+        this.search_field[0].disabled = false;
+        if (!this.is_multiple) {
+          return this.selected_item.bind("focus", this.activate_action);
+        }
+      }
+    };
+
+    Chosen.prototype.container_mousedown = function(evt) {
+      var target_closelink;
+
+      if (!this.is_disabled) {
+        target_closelink = evt != null ? $(evt.target).hasClass("search-choice-close") : false;
+        if ((evt != null ? evt.type : void 0) === "mousedown" && !this.results_showing) {
+          evt.preventDefault();
+        }
+        if (!this.pending_destroy_click && !target_closelink) {
+          if (!this.active_field) {
+            if (this.is_multiple) {
+              this.search_field.val("");
+            }
+            $(document).click(this.click_test_action);
+            this.results_show();
+          } else if (!this.is_multiple && evt && (($(evt.target)[0] === this.selected_item[0]) || $(evt.target).parents("a.chzn-single").length)) {
+            evt.preventDefault();
+            this.results_toggle();
+          }
+          return this.activate_field();
+        } else {
+          return this.pending_destroy_click = false;
+        }
+      }
+    };
+
+    Chosen.prototype.container_mouseup = function(evt) {
+      if (evt.target.nodeName === "ABBR" && !this.is_disabled) {
+        return this.results_reset(evt);
+      }
+    };
+
+    Chosen.prototype.blur_test = function(evt) {
+      if (!this.active_field && this.container.hasClass("chzn-container-active")) {
+        return this.close_field();
+      }
+    };
+
+    Chosen.prototype.close_field = function() {
+      $(document).unbind("click", this.click_test_action);
+      this.active_field = false;
+      this.results_hide();
+      this.container.removeClass("chzn-container-active");
+      this.winnow_results_clear();
+      this.clear_backstroke();
+      this.show_search_field_default();
+      return this.search_field_scale();
+    };
+
+    Chosen.prototype.activate_field = function() {
+      this.container.addClass("chzn-container-active");
+      this.active_field = true;
+      this.search_field.val(this.search_field.val());
+      return this.search_field.focus();
+    };
+
+    Chosen.prototype.test_active_click = function(evt) {
+      if ($(evt.target).parents('#' + this.container_id).length) {
+        return this.active_field = true;
+      } else {
+        return this.close_field();
+      }
+    };
+
+    Chosen.prototype.results_build = function() {
+      var content, data, _i, _len, _ref1;
+
+      this.parsing = true;
+      this.results_data = SelectParser.select_to_array(this.form_field);
+      if (this.is_multiple && this.choices > 0) {
+        this.search_choices.find("li.search-choice").remove();
+        this.choices = 0;
+      } else if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-default").find("span").text(this.default_text);
+        if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
+          this.container.addClass("chzn-container-single-nosearch");
+        } else {
+          this.container.removeClass("chzn-container-single-nosearch");
+        }
+      }
+      content = '';
+      _ref1 = this.results_data;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        data = _ref1[_i];
+        if (data.group) {
+          content += this.result_add_group(data);
+        } else if (!data.empty) {
+          content += this.result_add_option(data);
+          if (data.selected && this.is_multiple) {
+            this.choice_build(data);
+          } else if (data.selected && !this.is_multiple) {
+            this.selected_item.removeClass("chzn-default").find("span").text(data.text);
+            if (this.allow_single_deselect) {
+              this.single_deselect_control_build();
+            }
+          }
+        }
+      }
+      this.search_field_disabled();
+      this.show_search_field_default();
+      this.search_field_scale();
+      this.search_results.html(content);
+      return this.parsing = false;
+    };
+
+    Chosen.prototype.result_add_group = function(group) {
+      if (!group.disabled) {
+        group.dom_id = this.container_id + "_g_" + group.array_index;
+        return '<li id="' + group.dom_id + '" class="group-result">' + $("<div />").text(group.label).html() + '</li>';
+      } else {
+        return "";
+      }
+    };
+
+    Chosen.prototype.result_do_highlight = function(el) {
+      var high_bottom, high_top, maxHeight, visible_bottom, visible_top;
+
+      if (el.length) {
+        this.result_clear_highlight();
+        this.result_highlight = el;
+        this.result_highlight.addClass("highlighted");
+        maxHeight = parseInt(this.search_results.css("maxHeight"), 10);
+        visible_top = this.search_results.scrollTop();
+        visible_bottom = maxHeight + visible_top;
+        high_top = this.result_highlight.position().top + this.search_results.scrollTop();
+        high_bottom = high_top + this.result_highlight.outerHeight();
+        if (high_bottom >= visible_bottom) {
+          return this.search_results.scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
+        } else if (high_top < visible_top) {
+          return this.search_results.scrollTop(high_top);
+        }
+      }
+    };
+
+    Chosen.prototype.result_clear_highlight = function() {
+      if (this.result_highlight) {
+        this.result_highlight.removeClass("highlighted");
+      }
+      return this.result_highlight = null;
+    };
+
+    Chosen.prototype.results_show = function() {
+      var dd_top;
+
+      if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-single-with-drop");
+        if (this.result_single_selected) {
+          this.result_do_highlight(this.result_single_selected);
+        }
+      } else if (this.max_selected_options <= this.choices) {
+        this.form_field_jq.trigger("liszt:maxselected", {
+          chosen: this
+        });
+        false;
+      }
+      dd_top = this.is_multiple ? this.container.height() : this.container.height() - 1;
+      this.form_field_jq.trigger("liszt:showing_dropdown", {
+        chosen: this
+      });
+      this.dropdown.css({
+        "top": dd_top + "px",
+        "left": 0
+      });
+      this.results_showing = true;
+      this.search_field.focus();
+      this.search_field.val(this.search_field.val());
+      return this.winnow_results();
+    };
+
+    Chosen.prototype.results_hide = function() {
+      if (!this.is_multiple) {
+        this.selected_item.removeClass("chzn-single-with-drop");
+      }
+      this.result_clear_highlight();
+      this.form_field_jq.trigger("liszt:hiding_dropdown", {
+        chosen: this
+      });
+      this.dropdown.css({
+        left: "-9000px"
+      });
+      return this.results_showing = false;
+    };
+
+    Chosen.prototype.set_tab_index = function(el) {
+      var ti;
+
+      if (this.form_field_jq.attr("tabindex")) {
+        ti = this.form_field_jq.attr("tabindex");
+        this.form_field_jq.attr("tabindex", -1);
+        return this.search_field.attr("tabindex", ti);
+      }
+    };
+
+    Chosen.prototype.show_search_field_default = function() {
+      if (this.is_multiple && this.choices < 1 && !this.active_field) {
+        this.search_field.val(this.default_text);
+        return this.search_field.addClass("default");
+      } else {
+        this.search_field.val("");
+        return this.search_field.removeClass("default");
+      }
+    };
+
+    Chosen.prototype.search_results_mouseup = function(evt) {
+      var target;
+
+      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
+      if (target.length) {
+        this.result_highlight = target;
+        this.result_select(evt);
+        return this.search_field.focus();
+      }
+    };
+
+    Chosen.prototype.search_results_mouseover = function(evt) {
+      var target;
+
+      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
+      if (target) {
+        return this.result_do_highlight(target);
+      }
+    };
+
+    Chosen.prototype.search_results_mouseout = function(evt) {
+      if ($(evt.target).hasClass("active-result" || $(evt.target).parents('.active-result').first())) {
+        return this.result_clear_highlight();
+      }
+    };
+
+    Chosen.prototype.choices_click = function(evt) {
+      evt.preventDefault();
+      if (this.active_field && !($(evt.target).hasClass("search-choice" || $(evt.target).parents('.search-choice').first)) && !this.results_showing) {
+        return this.results_show();
+      }
+    };
+
+    Chosen.prototype.choice_build = function(item) {
+      var choice_id, html, link,
+        _this = this;
+
+      if (this.is_multiple && this.max_selected_options <= this.choices) {
+        this.form_field_jq.trigger("liszt:maxselected", {
+          chosen: this
+        });
+        false;
+      }
+      choice_id = this.container_id + "_c_" + item.array_index;
+      this.choices += 1;
+      if (item.disabled) {
+        html = '<li class="search-choice search-choice-disabled" id="' + choice_id + '"><span>' + item.html + '</span></li>';
+      } else {
+        html = '<li class="search-choice" id="' + choice_id + '"><span>' + item.html + '</span><a href="javascript:void(0)" class="search-choice-close" rel="' + item.array_index + '"></a></li>';
+      }
+      this.search_container.before(html);
+      link = $('#' + choice_id).find("a").first();
+      return link.click(function(evt) {
+        return _this.choice_destroy_link_click(evt);
+      });
+    };
+
+    Chosen.prototype.choice_destroy_link_click = function(evt) {
+      evt.preventDefault();
+      if (!this.is_disabled) {
+        this.pending_destroy_click = true;
+        return this.choice_destroy($(evt.target));
+      } else {
+        return evt.stopPropagation;
+      }
+    };
+
+    Chosen.prototype.choice_destroy = function(link) {
+      if (this.result_deselect(link.attr("rel"))) {
+        this.choices -= 1;
+        this.show_search_field_default();
+        if (this.is_multiple && this.choices > 0 && this.search_field.val().length < 1) {
+          this.results_hide();
+        }
+        link.parents('li').first().remove();
+        return this.search_field_scale();
+      }
+    };
+
+    Chosen.prototype.results_reset = function() {
+      this.form_field.options[0].selected = true;
+      this.selected_item.find("span").text(this.default_text);
+      if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-default");
+      }
+      this.show_search_field_default();
+      this.results_reset_cleanup();
+      this.form_field_jq.trigger("change");
+      if (this.active_field) {
+        return this.results_hide();
+      }
+    };
+
+    Chosen.prototype.results_reset_cleanup = function() {
+      this.current_value = this.form_field_jq.val();
+      return this.selected_item.find("abbr").remove();
+    };
+
+    Chosen.prototype.result_select = function(evt) {
+      var high, high_id, item, position;
+
+      if (this.result_highlight) {
+        high = this.result_highlight;
+        high_id = high.attr("id");
+        this.result_clear_highlight();
+        if (this.is_multiple) {
+          this.result_deactivate(high);
+        } else {
+          this.search_results.find(".result-selected").removeClass("result-selected");
+          this.result_single_selected = high;
+          this.selected_item.removeClass("chzn-default");
+        }
+        high.addClass("result-selected");
+        position = high_id.substr(high_id.lastIndexOf("_") + 1);
+        item = this.results_data[position];
+        item.selected = true;
+        this.form_field.options[item.options_index].selected = true;
+        if (this.is_multiple) {
+          this.choice_build(item);
+        } else {
+          this.selected_item.find("span").first().text(item.text);
+          if (this.allow_single_deselect) {
+            this.single_deselect_control_build();
+          }
+        }
+        if (!((evt.metaKey || evt.ctrlKey) && this.is_multiple)) {
+          this.results_hide();
+        }
+        this.search_field.val("");
+        if (this.is_multiple || this.form_field_jq.val() !== this.current_value) {
+          this.form_field_jq.trigger("change", {
+            'selected': this.form_field.options[item.options_index].value
+          });
+        }
+        this.current_value = this.form_field_jq.val();
+        return this.search_field_scale();
+      }
+    };
+
+    Chosen.prototype.result_activate = function(el) {
+      return el.addClass("active-result");
+    };
+
+    Chosen.prototype.result_deactivate = function(el) {
+      return el.removeClass("active-result");
+    };
+
+    Chosen.prototype.result_deselect = function(pos) {
+      var result, result_data;
+
+      result_data = this.results_data[pos];
+      if (!this.form_field.options[result_data.options_index].disabled) {
+        result_data.selected = false;
+        this.form_field.options[result_data.options_index].selected = false;
+        result = $("#" + this.container_id + "_o_" + pos);
+        result.removeClass("result-selected").addClass("active-result").show();
+        this.result_clear_highlight();
+        this.winnow_results();
+        this.form_field_jq.trigger("change", {
+          deselected: this.form_field.options[result_data.options_index].value
+        });
+        this.search_field_scale();
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    Chosen.prototype.single_deselect_control_build = function() {
+      if (this.allow_single_deselect && this.selected_item.find("abbr").length < 1) {
+        return this.selected_item.find("span").first().after("<abbr class=\"search-choice-close\"></abbr>");
+      }
+    };
+
+    Chosen.prototype.winnow_results = function() {
+      var found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref1;
+
+      this.no_results_clear();
+      results = 0;
+      searchText = this.search_field.val() === this.default_text ? "" : $('<div/>').text($.trim(this.search_field.val())).html();
+      regexAnchor = this.search_contains ? "" : "^";
+      regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
+      zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
+      _ref1 = this.results_data;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        option = _ref1[_i];
+        if (!option.disabled && !option.empty) {
+          if (option.group) {
+            $('#' + option.dom_id).css('display', 'none');
+          } else if (!(this.is_multiple && option.selected)) {
+            found = false;
+            result_id = option.dom_id;
+            result = $("#" + result_id);
+            if (regex.test(option.html)) {
+              found = true;
+              results += 1;
+            } else if (this.enable_split_word_search && (option.html.indexOf(" ") >= 0 || option.html.indexOf("[") === 0)) {
+              parts = option.html.replace(/\[|\]/g, "").split(" ");
+              if (parts.length) {
+                for (_j = 0, _len1 = parts.length; _j < _len1; _j++) {
+                  part = parts[_j];
+                  if (!(regex.test(part))) {
+                    continue;
+                  }
+                  found = true;
+                  results += 1;
+                }
+              }
+            }
+            if (found) {
+              if (searchText.length) {
+                startpos = option.html.search(zregex);
+                text = option.html.substr(0, startpos + searchText.length) + '</em>' + option.html.substr(startpos + searchText.length);
+                text = text.substr(0, startpos) + '<em>' + text.substr(startpos);
+              } else {
+                text = option.html;
+              }
+              result.html(text);
+              this.result_activate(result);
+              if (option.group_array_index != null) {
+                $("#" + this.results_data[option.group_array_index].dom_id).css('display', 'list-item');
+              }
+            } else {
+              if (this.result_highlight && result_id === this.result_highlight.attr('id')) {
+                this.result_clear_highlight();
+              }
+              this.result_deactivate(result);
+            }
+          }
+        }
+      }
+      if (results < 1 && searchText.length) {
+        return this.no_results(searchText);
+      } else {
+        return this.winnow_results_set_highlight();
+      }
+    };
+
+    Chosen.prototype.winnow_results_clear = function() {
+      var li, lis, _i, _len, _results;
+
+      this.search_field.val("");
+      lis = this.search_results.find("li");
+      _results = [];
+      for (_i = 0, _len = lis.length; _i < _len; _i++) {
+        li = lis[_i];
+        li = $(li);
+        if (li.hasClass("group-result")) {
+          _results.push(li.css('display', 'auto'));
+        } else if (!this.is_multiple || !li.hasClass("result-selected")) {
+          _results.push(this.result_activate(li));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Chosen.prototype.winnow_results_set_highlight = function() {
+      var do_high, selected_results;
+
+      if (!this.result_highlight) {
+        selected_results = !this.is_multiple ? this.search_results.find(".result-selected.active-result") : [];
+        do_high = selected_results.length ? selected_results.first() : this.search_results.find(".active-result").first();
+        if (do_high != null) {
+          return this.result_do_highlight(do_high);
+        }
+      }
+    };
+
+    Chosen.prototype.no_results = function(terms) {
+      var no_results_html;
+
+      no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
+      no_results_html.find("span").first().html(terms);
+      return this.search_results.append(no_results_html);
+    };
+
+    Chosen.prototype.no_results_clear = function() {
+      return this.search_results.find(".no-results").remove();
+    };
+
+    Chosen.prototype.keydown_arrow = function() {
+      var first_active, next_sib;
+
+      if (!this.result_highlight) {
+        first_active = this.search_results.find("li.active-result").first();
+        if (first_active) {
+          this.result_do_highlight($(first_active));
+        }
+      } else if (this.results_showing) {
+        next_sib = this.result_highlight.nextAll("li.active-result").first();
+        if (next_sib) {
+          this.result_do_highlight(next_sib);
+        }
+      }
+      if (!this.results_showing) {
+        return this.results_show();
+      }
+    };
+
+    Chosen.prototype.keyup_arrow = function() {
+      var prev_sibs;
+
+      if (!this.results_showing && !this.is_multiple) {
+        return this.results_show();
+      } else if (this.result_highlight) {
+        prev_sibs = this.result_highlight.prevAll("li.active-result");
+        if (prev_sibs.length) {
+          return this.result_do_highlight(prev_sibs.first());
+        } else {
+          if (this.choices > 0) {
+            this.results_hide();
+          }
+          return this.result_clear_highlight();
+        }
+      }
+    };
+
+    Chosen.prototype.keydown_backstroke = function() {
+      var next_available_destroy;
+
+      if (this.pending_backstroke) {
+        this.choice_destroy(this.pending_backstroke.find("a").first());
+        return this.clear_backstroke();
+      } else {
+        next_available_destroy = this.search_container.siblings("li.search-choice").last();
+        if (next_available_destroy.length && !next_available_destroy.hasClass("search-choice-disabled")) {
+          this.pending_backstroke = next_available_destroy;
+          if (this.single_backstroke_delete) {
+            return this.keydown_backstroke();
+          } else {
+            return this.pending_backstroke.addClass("search-choice-focus");
+          }
+        }
+      }
+    };
+
+    Chosen.prototype.clear_backstroke = function() {
+      if (this.pending_backstroke) {
+        this.pending_backstroke.removeClass("search-choice-focus");
+      }
+      return this.pending_backstroke = null;
+    };
+
+    Chosen.prototype.keydown_checker = function(evt) {
+      var stroke, _ref1;
+
+      stroke = (_ref1 = evt.which) != null ? _ref1 : evt.keyCode;
+      this.search_field_scale();
+      if (stroke !== 8 && this.pending_backstroke) {
+        this.clear_backstroke();
+      }
+      switch (stroke) {
+        case 8:
+          return this.backstroke_length = this.search_field.val().length;
+        case 9:
+          if (this.results_showing && !this.is_multiple) {
+            this.result_select(evt);
+          }
+          return this.mouse_on_container = false;
+        case 13:
+          return evt.preventDefault();
+        case 38:
+          evt.preventDefault();
+          return this.keyup_arrow();
+        case 40:
+          return this.keydown_arrow();
+      }
+    };
+
+    Chosen.prototype.search_field_scale = function() {
+      var dd_top, div, h, style, style_block, styles, w, _i, _len;
+
+      if (this.is_multiple) {
+        h = 0;
+        w = 0;
+        style_block = "position:absolute; left: -1000px; top: -1000px; display:none;";
+        styles = ['font-size', 'font-style', 'font-weight', 'font-family', 'line-height', 'text-transform', 'letter-spacing'];
+        for (_i = 0, _len = styles.length; _i < _len; _i++) {
+          style = styles[_i];
+          style_block += style + ":" + this.search_field.css(style) + ";";
+        }
+        div = $('<div />', {
+          'style': style_block
+        });
+        div.text(this.search_field.val());
+        $('body').append(div);
+        w = div.width() + 25;
+        div.remove();
+        if (w > this.f_width - 10) {
+          w = this.f_width - 10;
+        }
+        this.search_field.css({
+          'width': w + 'px'
+        });
+        dd_top = this.container.height();
+        return this.dropdown.css({
+          "top": dd_top + "px"
+        });
+      }
+    };
+
+    Chosen.prototype.generate_random_id = function() {
+      var string;
+
+      string = "sel" + this.generate_random_char() + this.generate_random_char() + this.generate_random_char();
+      while ($("#" + string).length > 0) {
+        string += this.generate_random_char();
+      }
+      return string;
+    };
+
+    return Chosen;
+
+  })(AbstractChosen);
+
+  exports.Chosen = Chosen;
+
+  SelectParser = (function() {
+    function SelectParser() {
+      this.options_index = 0;
+      this.parsed = [];
+    }
+
+    SelectParser.prototype.add_node = function(child) {
+      if (child.nodeName.toUpperCase() === "OPTGROUP") {
+        return this.add_group(child);
+      } else {
+        return this.add_option(child);
+      }
+    };
+
+    SelectParser.prototype.add_group = function(group) {
+      var group_position, option, _i, _len, _ref1, _results;
+
+      group_position = this.parsed.length;
+      this.parsed.push({
+        array_index: group_position,
+        group: true,
+        label: group.label,
+        children: 0,
+        disabled: group.disabled
+      });
+      _ref1 = group.childNodes;
+      _results = [];
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        option = _ref1[_i];
+        _results.push(this.add_option(option, group_position, group.disabled));
+      }
+      return _results;
+    };
+
+    SelectParser.prototype.add_option = function(option, group_position, group_disabled) {
+      if (option.nodeName.toUpperCase() === "OPTION") {
+        if (option.text !== "") {
+          if (group_position != null) {
+            this.parsed[group_position].children += 1;
+          }
+          this.parsed.push({
+            array_index: this.parsed.length,
+            options_index: this.options_index,
+            value: option.value,
+            text: option.text,
+            html: option.innerHTML,
+            selected: option.selected,
+            disabled: group_disabled === true ? group_disabled : option.disabled,
+            group_array_index: group_position,
+            classes: option.className,
+            style: option.style.cssText
+          });
+        } else {
+          this.parsed.push({
+            array_index: this.parsed.length,
+            options_index: this.options_index,
+            empty: true
+          });
+        }
+        return this.options_index += 1;
+      }
+    };
+
+    return SelectParser;
+
+  })();
+
+  SelectParser.select_to_array = function(select) {
+    var child, parser, _i, _len, _ref1;
+
+    parser = new SelectParser();
+    _ref1 = select.childNodes;
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      child = _ref1[_i];
+      parser.add_node(child);
+    }
+    return parser.parsed;
+  };
+
+}).call(this);
+
+})(window)
+},{"jquery-browserify":10}],77:[function(require,module,exports){
+(function(){var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var queue = require('queue-async');
+
+var Backbone = require('backbone');
+var File = require('../models/file');
+var Folder = require('../models/folder');
+
+var cookie = require('../cookie');
+
+module.exports = Backbone.Collection.extend({
+  model: function(attributes, options) {
+    // TODO: handle 'symlink' and 'submodule' type
+    // TODO: coerce tree/folder to a single type
+    switch(attributes.type) {
+      case 'tree':
+        return new Folder(attributes, options);
+        break;
+      case 'blob':
+        return new File(attributes, options);
+        break;
+      default:
+        return new File(attributes, options);
+        break;
+    }
+  },
+
+  initialize: function(models, options) {
+    _.bindAll(this);
+
+    this.repo = options.repo;
+    this.branch = options.branch;
+    this.sha = options.sha;
+
+    // Sort files reverse alphabetically if path begins with '_posts/'
+    this.comparator = function(a, b) {
+      var typeA = a.get('type');
+      var typeB = b.get('type');
+
+      var pathA = a.get('path');
+      var pathB = b.get('path');
+
+      var regex = /^_posts\/.*$/
+
+      if (typeA === typeB && typeA === 'file' && regex.test(pathA) && regex.test(pathB)) {
+        // Reverse alphabetical
+        return pathA < pathB ? 1 : -1;
+      } else if (typeA === typeB) {
+        // Alphabetical
+        return pathA < pathB ? -1 : 1;
+      } else {
+        switch(typeA) {
+          case 'tree':
+          case 'folder':
+            return -1;
+            break;
+          case 'file':
+            return typeB === 'folder' || typeB === 'tree' ? 1 : -1;
+            break;
+        }
+      }
+    };
+  },
+
+  parse: function(resp, options) {
+    return _.map(resp.tree, (function(file) {
+      return  _.extend(file, {
+        branch: this.branch,
+        collection: this,
+        repo: this.repo
+      })
+    }).bind(this));
+  },
+
+  parseConfig: function(config, options) {
+    var content = config.get('content');
+
+    // Attempt to parse YAML
+    try {
+      config = jsyaml.load(content);
+    } catch(err) {
+      throw err;
+    }
+
+    if (config && config.prose) {
+      // Load _config.yml, set parsed value on collection
+      // Extend to capture settings from outside config.prose
+      // while allowing override
+      this.config = _.extend({
+        baseurl: config.baseurl,
+        languages: config.languages
+      }, config.prose);
+
+      if (config.prose.metadata) {
+        var metadata = config.prose.metadata;
+
+        // Serial queue to not break global scope JSONP callbacks
+        var q = queue(1);
+
+        _.each(metadata, function(raw, key) {
+          q.defer(function(cb) {
+            var subq = queue();
+            var defaults;
+
+            if (_.isObject(raw)) {
+              defaults = raw;
+
+              _.each(defaults, function(value, key) {
+                var regex = /^https?:\/\//;
+
+                // Parse JSON URL values
+                if (value && value.field && value.field.options &&
+                    _.isString(value.field.options) &&
+                    regex.test(value.field.options)) {
+
+                  subq.defer(function(cb) {
+                    $.ajax({
+                      cache: true,
+                      dataType: 'jsonp',
+                      jsonp: false,
+                      jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
+                      timeout: 5000,
+                      url: value.field.options,
+                      success: (function(d) {
+                        value.field.options = _.compact(d);
+                        cb();
+                      }).bind(this)
+                    });
+                  });
+                }
+              });
+            } else if (_.isString(raw)) {
+              try {
+                defaults = jsyaml.load(raw);
+
+                if (defaults.date === "CURRENT_DATETIME") {
+                  var current = (new Date()).format('Y-m-d H:i');
+                  defaults.date = current;
+                  raw = raw.replace("CURRENT_DATETIME", current);
+                }
+              } catch(err) {
+                throw err;
+              }
+            }
+
+            subq.awaitAll(function() {
+              metadata[key] = defaults;
+              cb();
+            });
+          });
+        });
+      }
+
+      q.awaitAll((function() {
+        // Save parsed config to the collection as it's used accross
+        // files of the same collection and shouldn't be re-parsed each time
+        this.defaults = metadata;
+
+        if (_.isFunction(options.success)) options.success.apply(this, options.args);
+      }).bind(this));
+    } else {
+      if (_.isFunction(options.success)) options.success.apply(this, options.args);
+    }
+  },
+
+  fetch: function(options) {
+    options = _.clone(options) || {};
+
+    var success = options.success;
+    var args = options.args;
+
+    Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+      success: (function(model, res, options) {
+        var config = this.findWhere({ path: '_prose.yml' }) ||
+          this.findWhere({ path: '_config.yml' });
+
+        if (config) {
+          config.fetch({
+            complete: (function() {
+              this.parseConfig(config, { success: success, args: args });
+            }).bind(this)
+          });
+        } else {
+          if (_.isFunction(success)) success.apply(this, args);
+        }
+
+      }).bind(this)
+    }));
+  },
+
+  restore: function(file, options) {
+    options = options ? _.clone(options) : {};
+
+    var path = file.filename;
+    var success = options.success;
+
+    $.ajax({
+      type: 'GET',
+      url: file.contents_url,
+      headers: {
+        Accept: 'application/vnd.github.raw'
+      },
+      success: (function(res) {
+        // initialize new File model with content
+        var model = new File({
+          branch: this.branch,
+          collection: this,
+          content: res,
+          path: path,
+          repo: this.repo
+        });
+
+        // add to collection on save
+        model.save({
+          success: (function(model, res, options) {
+            // Update model attributes and add to collection
+            model.set(res.content);
+            this.add(model);
+
+            if (_.isFunction(success)) success(model, res, options);
+          }).bind(this),
+          error: options.error
+        });
+      }).bind(this),
+      error: options.error
+    });
+  },
+
+  upload: function(file, content, path, options) {
+    var success = options.success;
+
+    var extension = file.type.split('/').pop();
+    var uid;
+
+    if (!path) {
+      uid = file.name;
+
+      if (this.assetsDirectory) {
+        path = this.assetsDirectory + '/' + uid;
+      } else {
+        path = this.model.path ? this.model.path + '/' + uid : uid;
+      }
+    }
+
+    // If path matches an existing file, confirm the overwrite is intentional
+    // then set new content and update the existing file
+    var model = this.findWhere({ path: path });
+
+    if (model) {
+      // TODO: confirm overwrite with UI prompt
+      model.set('content', content);
+    } else {
+      // initialize new File model with content
+      model = new File({
+        branch: this.branch,
+        collection: this,
+        content: content,
+        path: path,
+        repo: this.repo
+      });
+    }
+
+    // add to collection on save
+    model.save({
+      success: (function(model, res, options) {
+        // Update model attributes and add to collection
+        model.set(res.content);
+        this.add(model);
+
+        if (_.isFunction(success)) success(model, res, options);
+      }).bind(this),
+      error: options.error
+    });
+  },
+
+  url: function() {
+    return this.repo.url() + '/git/trees/' + this.sha + '?recursive=1';
+  }
+});
+
+})()
+},{"../models/file":18,"../models/folder":60,"../cookie":3,"underscore":11,"js-yaml":38,"queue-async":48,"backbone":12}],79:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  tagName: 'option',
+
+  initialize: function(options) {
+    this.model = options.model;
+    this.repo = options.repo;
+    this.branch = options.branch;
+
+    this.listenTo(this.model, 'sync', this.render, this);
+  },
+
+  render: function() {
+    this.$el.val('#' + [ this.repo.get('owner').login, this.repo.get('name'), 'tree', this.model.get('name') ].join('/'));
+    this.el.selected = this.branch && this.branch === this.model.get('name');
+
+    this.$el.html(this.model.get('name'));
+
+    return this;
+  }
+});
+
+},{"jquery-browserify":10,"underscore":11,"backbone":12}],81:[function(require,module,exports){
 'use strict';
 
 
@@ -33221,7 +34198,7 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":36}],65:[function(require,module,exports){
+},{"./common":67}],98:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -33538,7 +34515,7 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":66,"buffer":67}],49:[function(require,module,exports){
+},{"util":99,"buffer":100}],82:[function(require,module,exports){
 'use strict';
 
 
@@ -33551,7 +34528,7 @@ module.exports = new Type('tag:yaml.org,2002:str', {
   }
 });
 
-},{"../type":37}],50:[function(require,module,exports){
+},{"../type":68}],83:[function(require,module,exports){
 'use strict';
 
 
@@ -33564,7 +34541,7 @@ module.exports = new Type('tag:yaml.org,2002:seq', {
   }
 });
 
-},{"../type":37}],51:[function(require,module,exports){
+},{"../type":68}],84:[function(require,module,exports){
 'use strict';
 
 
@@ -33577,7 +34554,7 @@ module.exports = new Type('tag:yaml.org,2002:map', {
   }
 });
 
-},{"../type":37}],52:[function(require,module,exports){
+},{"../type":68}],85:[function(require,module,exports){
 'use strict';
 
 
@@ -33615,7 +34592,7 @@ module.exports = new Type('tag:yaml.org,2002:null', {
   }
 });
 
-},{"../common":36,"../type":37}],53:[function(require,module,exports){
+},{"../common":67,"../type":68}],86:[function(require,module,exports){
 'use strict';
 
 
@@ -33691,7 +34668,7 @@ module.exports = new Type('tag:yaml.org,2002:bool', {
   }
 });
 
-},{"../common":36,"../type":37}],54:[function(require,module,exports){
+},{"../common":67,"../type":68}],87:[function(require,module,exports){
 'use strict';
 
 
@@ -33778,7 +34755,7 @@ module.exports = new Type('tag:yaml.org,2002:int', {
   }
 });
 
-},{"../common":36,"../type":37}],55:[function(require,module,exports){
+},{"../common":67,"../type":68}],88:[function(require,module,exports){
 'use strict';
 
 
@@ -33882,7 +34859,7 @@ module.exports = new Type('tag:yaml.org,2002:float', {
   }
 });
 
-},{"../common":36,"../type":37}],56:[function(require,module,exports){
+},{"../common":67,"../type":68}],89:[function(require,module,exports){
 'use strict';
 
 
@@ -33975,7 +34952,7 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
   }
 });
 
-},{"../common":36,"../type":37}],57:[function(require,module,exports){
+},{"../common":67,"../type":68}],90:[function(require,module,exports){
 'use strict';
 
 
@@ -33995,7 +34972,7 @@ module.exports = new Type('tag:yaml.org,2002:merge', {
   }
 });
 
-},{"../common":36,"../type":37}],58:[function(require,module,exports){
+},{"../common":67,"../type":68}],91:[function(require,module,exports){
 (function(){// Modified from:
 // https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
 
@@ -34116,7 +35093,7 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
 });
 
 })()
-},{"buffer":67,"../common":36,"../type":37}],59:[function(require,module,exports){
+},{"buffer":100,"../common":67,"../type":68}],92:[function(require,module,exports){
 'use strict';
 
 
@@ -34171,7 +35148,7 @@ module.exports = new Type('tag:yaml.org,2002:omap', {
   }
 });
 
-},{"../common":36,"../type":37}],60:[function(require,module,exports){
+},{"../common":67,"../type":68}],93:[function(require,module,exports){
 'use strict';
 
 
@@ -34214,7 +35191,7 @@ module.exports = new Type('tag:yaml.org,2002:pairs', {
   }
 });
 
-},{"../common":36,"../type":37}],61:[function(require,module,exports){
+},{"../common":67,"../type":68}],94:[function(require,module,exports){
 'use strict';
 
 
@@ -34247,7 +35224,7 @@ module.exports = new Type('tag:yaml.org,2002:set', {
   }
 });
 
-},{"../common":36,"../type":37}],62:[function(require,module,exports){
+},{"../common":67,"../type":68}],95:[function(require,module,exports){
 'use strict';
 
 
@@ -34277,7 +35254,7 @@ module.exports = new Type('tag:yaml.org,2002:js/undefined', {
   }
 });
 
-},{"../../type":37}],63:[function(require,module,exports){
+},{"../../type":68}],96:[function(require,module,exports){
 (function(){'use strict';
 
 
@@ -34336,7 +35313,7 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
 });
 
 })()
-},{"../../common":36,"../../type":37}],66:[function(require,module,exports){
+},{"../../common":67,"../../type":68}],99:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -34689,7 +35666,100 @@ exports.format = function(f) {
   return str;
 };
 
-},{"events":68}],69:[function(require,module,exports){
+},{"events":101}],80:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.sidebar.li.commit,
+
+  tagName: 'li',
+
+  events: {
+    'mouseenter a.removed': 'eventMessage',
+    'mouseleave a.removed': 'eventMessage',
+    'click a.removed': 'restore'
+  },
+
+  initialize: function(options) {
+    this.branch = options.branch;
+    this.file = options.file;
+    this.files = options.repo.branches.findWhere({ name: options.branch }).files;
+    this.repo = options.repo;
+    this.view  = options.view;
+  },
+
+  render: function() {
+    var data = {
+      file: this.file,
+      repo: this.repo.toJSON(),
+      branch: this.branch,
+      status: this.file.status
+    };
+
+    this.$el.empty().append(_.template(this.template, data, { variable: 'commit' }));
+    return this;
+  },
+
+  message: function(message) {
+    this.$el.find('.message').html(message);
+    this.$el.attr('title', message);
+  },
+
+  eventMessage: function(e) {
+    switch(e.type) {
+      case 'mouseenter':
+        this.message(t('sidebar.repo.history.actions.restore'));
+        break;
+      case 'mouseleave':
+        this.message(this.file.filename);
+        break;
+    }
+
+    return false;
+  },
+
+  state: function(state) {
+    // TODO: Set data-state attribute to toggle icon in CSS?
+    // this.$el.attr('data-state', state);
+
+    var $icon = this.$el.find('.ico');
+    $icon.removeClass('added modified renamed removed saving checkmark error')
+      .addClass(state);
+  },
+
+  restore: function(e) {
+    var path = this.file.filename;
+
+    // Spinning icon
+    this.message('Restoring ' + path);
+    this.state('saving');
+
+    this.files.restore(this.file, {
+      success: (function(model, res, options) {
+        this.message('Restored: ' + path);
+        this.state('checkmark');
+
+        this.$el.find('a')
+          .removeClass('removed')
+          .attr('title', 'Restored: ' + this.file.filename);
+
+        // TODO: re-render Files view once collection has updated
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        // log actual error message
+        this.message(['Error', xhr.status, xhr.statusText].join(' '));
+        this.state('error');
+      }).bind(this)
+    });
+
+    return false;
+  }
+});
+
+},{"../../../../dist/templates":14,"jquery-browserify":10,"backbone":12,"underscore":11}],102:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -34775,7 +35845,7 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],67:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -36095,7 +37165,7 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":65,"./buffer_ieee754":69,"base64-js":70}],71:[function(require,module,exports){
+},{"assert":98,"./buffer_ieee754":102,"base64-js":103}],104:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -36149,7 +37219,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],68:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 (function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
 
 var EventEmitter = exports.EventEmitter = process.EventEmitter;
@@ -36335,7 +37405,7 @@ EventEmitter.prototype.listeners = function(type) {
 };
 
 })(require("__browserify_process"))
-},{"__browserify_process":71}],70:[function(require,module,exports){
+},{"__browserify_process":104}],103:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -36421,7 +37491,7 @@ EventEmitter.prototype.listeners = function(type) {
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],64:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 'use strict';
 
 
@@ -36479,7 +37549,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":36,"../../type":37,"esprima":72}],72:[function(require,module,exports){
+},{"../../common":67,"../../type":68,"esprima":105}],105:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -40390,5 +41460,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}]},{},[6])
+},{}]},{},[4])
 ;
