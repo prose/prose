@@ -26,8 +26,6 @@ module.exports = Backbone.View.extend({
         this.repo.get('name') + '/edit/' + this.branch + '/' +
         this.model.get('path'));
     }
-
-    this.listenTo(this.model, 'sync', this.render, this);
   },
 
   render: function() {

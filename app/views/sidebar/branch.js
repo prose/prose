@@ -9,8 +9,6 @@ module.exports = Backbone.View.extend({
     this.model = options.model;
     this.repo = options.repo;
     this.branch = options.branch;
-
-    this.listenTo(this.model, 'sync', this.render, this);
   },
 
   render: function() {
