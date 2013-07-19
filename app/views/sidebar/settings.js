@@ -9,7 +9,6 @@ module.exports = Backbone.View.extend({
   template: templates.sidebar.settings,
 
   events: {
-    'click a.save': 'emit',
     'click a.delete': 'emit',
     'click a.translate': 'emit',
     'click a.draft': 'emit',
@@ -36,7 +35,7 @@ module.exports = Backbone.View.extend({
     if (e) e.preventDefault();
 
     var action = $(e.currentTarget).data('action');
-    this.sidebar.trigger(action);
+    this.sidebar.trigger(action, e);
   },
 
   render: function() {
