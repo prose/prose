@@ -240,7 +240,8 @@ module.exports = Backbone.View.extend({
 
     if (this.view.toolbar &&
        this.view.toolbar.publishState() ||
-       this.model.get('metadata').published) {
+       (this.model.get('metadata') &&
+       this.model.get('metadata').published)) {
       metadata.published = true;
     } else {
       metadata.published = false;
