@@ -1,6 +1,6 @@
 module.exports = {
-  dragEnter: function(e, $el) {
-    $el.addClass('drag-over');
+  dragEnter: function(e) {
+    $(e.currentTarget).addClass('drag-over');
     e.stopPropagation();
     e.preventDefault();
     return false;
@@ -13,7 +13,7 @@ module.exports = {
     return false;
   },
 
-  dragLeave: function(e, $el) {
+  dragLeave: function($el, e) {
     $el.removeClass('drag-over');
     e.stopPropagation();
     e.preventDefault();
@@ -22,11 +22,12 @@ module.exports = {
 
   dragDrop: function($el, cb) {
     $el.on('dragenter', (function(e) {
-      this.dragEnter(e, $el);
+      this.dragEnter(e);
     }).bind(this))
-    .on('dragover', this.dragOver)
-    .on('dragleave', (function(e) {
-      this.dragLeave(e, $el);
+    .on('dragover', this.dragOver);
+
+    $el.find('#drop').on('dragleave', (function(e) {
+      this.dragLeave($el, e);
     }).bind(this))
     .on('drop', (function(e) {
       this.drop(e, cb);
@@ -40,7 +41,7 @@ module.exports = {
 
   drop: function(e, cb) {
     e.preventDefault();
-    $(e.target).removeClass('drag-over');
+    $(e.currentTarget).removeClass('drag-over');
 
     e = e.originalEvent
     var files = e.dataTransfer.files;
