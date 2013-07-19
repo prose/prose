@@ -1152,9 +1152,11 @@ ins {
   position:relative;
   z-index:1000;
   width:100%;
-  min-height:40px;
-  height:auto;
   }
+  .markdown .topbar-wrapper {
+    min-height:40px;
+    height:auto;
+    }
 .topbar {
   margin:8px 0 15px;
   }
@@ -1694,10 +1696,16 @@ ins {
     padding:15px 0;
     }
 
-  /*.drag-over .code {*/
-    /*-webkit-box-shadow:0 0 8px #e6c740;*/
-            /*box-shadow:0 0 8px #e6c740;*/
-    /*}*/
+  .edit .drop-mask {
+    background:rgba(255,255,255,0.25);
+    position:absolute;
+    width:100%;
+    height:100%;
+    z-index:5000;
+    display:none;
+    }
+    .drag-over .drop-mask       { display:block; }
+    .drag-over .ico.picture-add { color:#90bb74; }
 
   .post .view.diff pre {
     background:transparent;
