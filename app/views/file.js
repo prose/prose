@@ -1007,13 +1007,13 @@ module.exports = Backbone.View.extend({
         this.edit();
 
         // Navigate to edit path for new files
-        if (this.model.isNew()) {
+        if (!model.previous('sha')) {
           this.router.navigate(_.compact([
             this.repo.get('owner').login,
             this.repo.get('name'),
             'edit',
             this.collection.branch.get('name'),
-            this.model.get('path')
+            model.get('path')
           ]).join('/'));
         }
       }).bind(this),
