@@ -32,8 +32,7 @@
         },
         "change": {
             "noChange": "尚无改动",
-            "submit": "将提交的修改",
-            "save": "保存"
+            "submit": "将提交的修改"
         },
         "delete": {
             "title": "删除",
@@ -87,9 +86,6 @@
         "repo": {
             "filter": "过滤文件",
             "edit": "编辑"
-        },
-        "new": {
-            "body": "## 新帖子\\n\\n 用 [Markdown][md] 语法编写. 可以使用上面的工具栏，或点击 **?** 查看语法帮助.\\n\\n[md]: http://wowubuntu.com/markdown/\\n\\n"
         },
         "file": {
             "metaTitle": "查看所做修改",

@@ -37,8 +37,7 @@
         },
         "change": {
             "noChange": "Keine Änderungen",
-            "submit": "Änderungen zu verschicken",
-            "save": "Speichern"
+            "submit": "Änderungen zu verschicken"
         },
         "delete": {
             "title": "Löschen",
@@ -93,9 +92,6 @@
         "repo": {
             "filter": "Dateien filtern",
             "edit": "Bearbeiten"
-        },
-        "new": {
-            "body": "## Ein neuer Beitrag\\n\\nGeben Text in [Markdown](http://daringfireball.net/projects/markdown/). Verwenden Sie die Symbolleiste oben, oder klicken Sie auf die **?** Taste um Hilfe mit de Formatierung zu erhalten.\n"
         },
         "file": {
             "metaTitle": "Überprüfen Sie Ihre Änderungen:",

@@ -18,6 +18,18 @@
         "logout": "Đăng xuất",
         "language": "Ngôn ngữ"
     },
+    "toolbar": {
+        "heading": "Phần nhập đề",
+        "subHeading": "Phần nhập đề con",
+        "link": "Chèn đường liên kết",
+        "image": "Chèn đường liên kết",
+        "bold": "In đậm",
+        "italic": "In nghiêng",
+        "blockquote": "Đánh dấu trích dẫn",
+        "list": "Danh sách",
+        "numberedlist": "Danh sách dạng thứ tự",
+        "help": "Trợ giúp"
+    },
     "heading": {
         "explore": "Khám phá các dự án"
     },
@@ -38,7 +50,7 @@
         "change": {
             "noChange": "Không có thay đổi nào",
             "submit": "Các thay đổi để cập nhật",
-            "save": "Lưu"
+            "save": "Lưu các thay đổi"
         },
         "delete": {
             "title": "Xóa",
@@ -56,7 +68,8 @@
             "patch": "Gửi yêu cầu",
             "fileNameError": "Cần tên cho tập tin",
             "submission": "Đã gửi Yêu Cầu",
-            "metaError": "Lỗi! Không tìm thấy thông tin chi tiết"
+            "metaError": "Lỗi! Không tìm thấy thông tin chi tiết",
+            "fileNameExists": "Một tên tập tin với cùng đường dẫn tương tự đã có trước đó"
         },
         "error": "Lỗi. Thử lại lần nữa trong 30 giây",
         "restore": {
@@ -78,6 +91,10 @@
         "preview": "Xem trước tập tin",
         "creating": "Tạo bản tin mới"
     },
+    "modal": {
+        "errorHeading": "Lỗi",
+        "confirm": "Đã nhận được"
+    },
     "main": {
         "start": {
             "content": "Prose là một chương trình chỉnh sửa nội dung dành cho việc quản lý các website từ GitHub, dịch bởi Phan Anh.",
@@ -92,12 +109,14 @@
         },
         "repo": {
             "filter": "Lọc tập tin",
-            "edit": "Chỉnh sửa"
+            "edit": "Chỉnh sửa",
+            "delete": "Xóa tập tin này"
         },
         "new": {
-            "body": "## Một bản tin mới\\n\\nĐiền nội dung vào [Markdown](http://daringfireball.net/projects/markdown/). Sử dụng thanh công cụ phía trên, hoặc click vào nút **?** để có tìm hiểu về định dạng chỉnh sửa.\n"
+            "body": "## Một bài đăng mới\\nĐiền đoạn văn bản vào [Markdown](http://daringfireball.net/projects/markdown/). Sử dụng thanh công cụ phía bên trên, hoặc click vào nút **?** để nhận các trợ giúp về định dạng.\n"
         },
         "file": {
+            "noTitle": "Chưa đặt tiêu đề",
             "metaTitle": "Xem lại các thay đổi bạn đã thao tác:",
             "rawMeta": "Thông tin bổ sung thô",
             "metaDescription": "Phần thêm vào được đánh dấu màu xanh. Phần xóa được gạch lằn.",
@@ -114,6 +133,7 @@
         "create": "Tạo ",
         "home": "Quay về trang chủ",
         "back": "Quay về",
+        "githubStatus": "Trạng thái trên GitHub ({status})",
         "error": {
             "label": "Lỗi",
             "github": "Lỗi khi tải dữ liệu từ GitHub. Điều này dường như chỉ mang tính tạm thời. Hãy thử lại sau.",
@@ -144,6 +164,7 @@
         },
         "settings": {
             "title": "Tùy chọn",
+            "fileInputLabel": "Đường dẫn tập tin",
             "delete": "Xóa tập tin này",
             "translate": "Được dịch sang",
             "draft": "Tạo bản nháp"
