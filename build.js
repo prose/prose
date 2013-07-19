@@ -34,6 +34,10 @@ var templates = glob.sync('templates/**/*.html').reduce(function(memo, file) {
   return memo;
 }, {});
 
+if(!fs.exists('dist')) {
+    fs.mkdirSync('dist');
+}
+
 fs.writeFileSync('dist/templates.js', 'module.exports = ' + JSON.stringify(templates) + ';');
 
 // Default language is english. Cache this as a data for speed.
