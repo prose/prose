@@ -96,7 +96,9 @@ en:
       delete: "Delete this File"
     new:
       body: |
-        ## A New Post\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.
+        ## A New Post
+
+        Enter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.
     file:
       noTitle: "Untitled"
       metaTitle: "Review your changes:"

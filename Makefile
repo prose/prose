@@ -18,7 +18,7 @@ translations:
 	node build
 
 dist/templates.js: $(TEMPLATES)
-	node build
+	mkdir -p dist && node build
 
 oauth.json:
 	test -s oauth.json || curl 'https://raw.github.com/prose/prose/gh-pages/oauth.json' > oauth.json

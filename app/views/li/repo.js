@@ -16,7 +16,6 @@ module.exports = Backbone.View.extend({
     this.$el.attr('data-index', options.index);
     this.$el.attr('data-id', this.model.id);
     this.$el.attr('data-navigate', '#' + this.model.get('owner').login + '/' + this.model.get('name'));
-    this.listenTo(this.model, 'sync', this.render, this);
   },
 
   render: function() {

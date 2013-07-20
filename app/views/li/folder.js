@@ -19,8 +19,6 @@ module.exports = Backbone.View.extend({
     this.$el.attr('data-navigate', '#' + this.repo.get('owner').login + '/' +
       this.repo.get('name') + '/tree/' + this.branch + '/' +
       this.model.get('path'));
-
-    this.listenTo(this.model, 'sync', this.render, this);
   },
 
   render: function() {

@@ -236,11 +236,11 @@ module.exports = Backbone.View.extend({
 
   getValue: function() {
     var view = this;
-    var metadata = {};
+    var metadata = this.model.get('metadata');
 
     if (this.view.toolbar &&
        this.view.toolbar.publishState() ||
-       this.model.get('metadata').published) {
+       (metadata && metadata.published)) {
       metadata.published = true;
     } else {
       metadata.published = false;
@@ -264,7 +264,7 @@ module.exports = Backbone.View.extend({
         case 'text':
           if (value) {
             value = $item.data('type') === 'number' ? Number(value) : value;
-            if (metadata.hasOwnProperty(item.name)) {
+            if (metadata.hasOwnProperty(item.name) && metadata[item.name] !== value) {
               metadata[item.name] = _.union(metadata[item.name], value);
             } else {
               metadata[item.name] = value;
@@ -274,7 +274,7 @@ module.exports = Backbone.View.extend({
         case 'checkbox':
           if (item.checked) {
 
-            if (metadata.hasOwnProperty(item.name)) {
+            if (metadata.hasOwnProperty(item.name) && metadata[item.name] !== value) {
               metadata[item.name] = _.union(metadata[item.name], item.value);
             } else if (item.value === item.name) {
               metadata[item.name] = item.checked;
@@ -402,7 +402,7 @@ module.exports = Backbone.View.extend({
         }
 
         if (!matched && value !== null) {
-          if (missing.hasOwnProperty(key)) {
+          if (missing.hasOwnProperty(key) && missing[key] !== value) {
             missing[key] = _.union(missing[key], value);
           } else {
             missing[key] = value;

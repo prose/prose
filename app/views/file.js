@@ -294,7 +294,7 @@ module.exports = Backbone.View.extend({
     // Monitor the current selection and apply
     // an active class to any snippet links
     if (lang === 'gfm') {
-      this.listenTo(this.editor, 'cursorActivity', this.cursor, this);
+      this.listenTo(this.editor, 'cursorActivity', this.cursor);
     }
 
     this.listenTo(this.editor, 'change', this.makeDirty, this);
@@ -1007,13 +1007,13 @@ module.exports = Backbone.View.extend({
         this.edit();
 
         // Navigate to edit path for new files
-        if (this.model.isNew()) {
+        if (!model.previous('sha')) {
           this.router.navigate(_.compact([
             this.repo.get('owner').login,
             this.repo.get('name'),
             'edit',
-            this.model.branch.get('name'),
-            this.model.get('path')
+            this.collection.branch.get('name'),
+            model.get('path')
           ]).join('/'));
         }
       }).bind(this),

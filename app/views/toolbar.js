@@ -25,13 +25,13 @@ module.exports = Backbone.View.extend({
     this.collection = options.collection;
     var config = options.config;
 
-    if (config && config.prose) {
+    if (config) {
       this.hasMedia = (config.media) ? true : false;
       this.siteUrl = (config.siteUrl) ? true : false;
 
-      if (config.prose.media) {
+      if (config.media) {
         // Fetch the media directory to display its contents
-        this.mediaDirectoryPath = config.prose.media;
+        this.mediaDirectoryPath = config.media;
         var match = new RegExp(this.mediaDirectoryPath);
 
         this.media = this.collection.filter(function(m) {
@@ -41,13 +41,13 @@ module.exports = Backbone.View.extend({
         });
       }
 
-      if (config.prose.relativeLinks) {
+      if (config.relativeLinks) {
         $.ajax({
           cache: true,
           dataType: 'jsonp',
           jsonp: false,
-          jsonpCallback: config.prose.relativeLinks.split('?callback=')[1] || 'callback',
-          url: config.prose.relativeLinks,
+          jsonpCallback: config.relativeLinks.split('?callback=')[1] || 'callback',
+          url: config.relativeLinks,
           success: function(links) {
             self.relativeLinks = links;
           }

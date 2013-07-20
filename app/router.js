@@ -56,6 +56,7 @@ module.exports = Backbone.Router.extend({
 
   chooseLanguage: function() {
     if (this.view) this.view.remove();
+    this.app.nav.mode('');
 
     this.view = new ChooseLanguageView();
     this.app.$el.find('#main').html(this.view.render().el);
@@ -63,6 +64,7 @@ module.exports = Backbone.Router.extend({
 
   about: function() {
     if (this.view) this.view.remove();
+    this.app.nav.mode('');
 
     this.view = new DocumentationView();
     this.app.$el.find('#main').html(this.view.render().el);

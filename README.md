@@ -6,7 +6,7 @@ Prose provides a beatifully simple content authoring environment for [CMS-free w
 
 ### Setting up Prose with your site
 
-Prose supports configuration settings with a variety of options making it easy to adjust the application to support your needs on a project. You can see a list of [options on the wiki page](https://github.com/prose/prose/wiki/Configuration).
+Prose supports configuration settings with a variety of options making it easy to adjust the application to support your needs on a project. Read the [Getting Started Guide](https://github.com/prose/prose/wiki/Getting-Started) to learn more.
 
 ### Installation and developing
 
