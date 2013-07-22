@@ -113,7 +113,7 @@
             "delete": "Xóa tập tin này"
         },
         "new": {
-            "body": "## Một bài đăng mới\\nĐiền đoạn văn bản vào [Markdown](http://daringfireball.net/projects/markdown/). Sử dụng thanh công cụ phía bên trên, hoặc click vào nút **?** để nhận các trợ giúp về định dạng.\n"
+            "body": "## Một bài đăng maowí\n\nĐiền phần văn bản vào [Markdown](http://daringfireball.net/projects/markdown/). Sử dụng thanh công cụ phía bên trên, hoặc click vào nút **?** để nhận trợ giúp về định dạng.\n"
         },
         "file": {
             "noTitle": "Chưa đặt tiêu đề",
