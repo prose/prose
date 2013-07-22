@@ -113,7 +113,7 @@
             "delete": "Delete this File"
         },
         "new": {
-            "body": "## A New Post\\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"
+            "body": "## A New Post\n\nEnter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.\n"
         },
         "file": {
             "noTitle": "Untitled",
