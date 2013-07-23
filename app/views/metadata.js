@@ -200,15 +200,18 @@ module.exports = Backbone.View.extend({
 
   renderRaw: function() {
     var yaml = this.model.get('lang') === 'yaml';
-    var $el = yaml ? this.view.$el.find('#code') : this.$el.find('#raw');
+    var $el;
 
     if (yaml) {
+      $el = this.view.$el.find('#code');
       $el.empty();
     } else {
       this.$el.find('.form').append(_.template(templates.meta.raw));
     }
 
-    this.raw = CodeMirror($el[0], {
+    var el = (yaml ? $el : this.$el.find('#raw'))[0];
+
+    this.raw = CodeMirror(el, {
       mode: 'yaml',
       value: '',
       lineWrapping: true,
