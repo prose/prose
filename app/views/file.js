@@ -1072,9 +1072,12 @@ module.exports = Backbone.View.extend({
 
     path = _.compact(path).join('/');
 
+    var categories = (metadata.categories || []);
+    categories.unshift(lang);
+
     this.model = this.collection.get(path) || this.model.clone({
       metadata: {
-        categories: (metadata.categories || []).unshift(lang),
+        categories: categories,
         lang: lang
       },
       path: path
