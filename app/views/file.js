@@ -422,9 +422,6 @@ module.exports = Backbone.View.extend({
       file: this.model
     }).render();
     this.subviews['save'] = this.save;
-
-    // Re-render updated path in commit message
-    this.listenTo(this.model, 'change:path', this.subviews['save'].render);
   },
 
   initHeader: function() {
@@ -777,10 +774,6 @@ module.exports = Backbone.View.extend({
       this.model.set('metadata', this.metadataEditor.getValue());
     }
 
-    if (this.model.isNew()) {
-      this.sidebar.updateFilepath(this.model.get('path'));
-    }
-
     var label = this.model.get('writable') ?
       t('actions.change.save') :
       t('actions.change.submit');
@@ -819,11 +812,10 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
+    $diff.find('.diff-content').html('<pre>' + compare + '</pre>');
   },
 
   cancel: function() {
-
     // Close the sidebar and return the
     // active nav item to the current file mode.
     this.sidebar.close();
@@ -960,20 +952,7 @@ module.exports = Backbone.View.extend({
 
     // Trigger the save event
     this.updateSaveState(t('actions.save.saving'), 'saving');
-    var filepath = this.filepath();
-    var filename = util.extractFilename(filepath)[1];
-    var filecontent = this.model.serialize();
-    var $message = $('.commit-message');
 
-    var noVal = this.model.isNew() ?
-      t('actions.commits.created', {
-        filename: filename
-      }) :
-      t('actions.commits.updated', {
-        filename: filename
-      });
-
-    var message = $message.val() || noVal;
     var method = this.model.get('writable') ? this.model.save : this.patch;
 
     //this.updateSaveState(t('actions.save.metaError'), 'error');
@@ -989,7 +968,7 @@ module.exports = Backbone.View.extend({
         message: error
       });
 
-      view.$el.find('#modal').empty().append(view.modal.el);
+      view.$el.find('#modal').html(view.modal.el);
       view.modal.render();
     }).bind(this));
 

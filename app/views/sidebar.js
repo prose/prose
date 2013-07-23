@@ -45,20 +45,6 @@ module.exports = Backbone.View.extend({
     return this.$el.find('.filepath').val();
   },
 
-  updateFilepath: function(name) {
-    var path = this.$el.find('.filepath').val();
-    var parts = path.split('/');
-    var old = parts.pop();
-
-    // preserve the date and the extension
-    var date = util.extractDate(old);
-    var extension = old.split('.').pop();
-
-    var newPath = parts.join('/') + date + '-' + util.stringToUrl(name) + '.' + extension;
-
-    this.$el.find('.filepath').attr('value', newPath);
-  },
-
   updateState: function(label) {
     this.$el.find('.button.save').html(label);
   },

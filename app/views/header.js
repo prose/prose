@@ -1,7 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../util');
+var util = require('../util');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
@@ -79,16 +79,34 @@ module.exports = Backbone.View.extend({
   },
 
   updatePath: function(e) {
-    this.file.set('path', e.currentTarget.value);
+    var value = e.currentTarget.value;
+
+    this.file.set('path', value);
     this.trigger('makeDirty');
     return false;
   },
 
   updateTitle: function(e) {
-    // makeDirty updates the metadata so there's no
-    // need to set it in the model here.
+    // Only update path on new files
+    if (!this.file.isNew()) return false;
+
+    if (e) e.preventDefault();
+    var value = e.currentTarget.value;
+
+    var path = this.file.get('path');
+    var parts = path.split('/');
+    var name = parts.pop();
+
+    // Preserve the date and the extension
+    var date = util.extractDate(name);
+    var extension = name.split('.').pop();
+
+    path = parts.join('/') + '/' + date + '-' +
+      util.stringToUrl(value) + '.' + extension;
+
+    this.file.set('path', path);
+
     this.trigger('makeDirty');
-    return false;
   },
 
   inputGet: function() {
