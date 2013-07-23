@@ -253,7 +253,7 @@ module.exports = Backbone.View.extend({
 
   getValue: function() {
     var view = this;
-    var metadata = this.model.get('metadata');
+    var metadata = this.model.get('metadata') || {};
 
     if (this.view.toolbar &&
        this.view.toolbar.publishState() ||
