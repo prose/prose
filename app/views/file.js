@@ -483,20 +483,14 @@ module.exports = Backbone.View.extend({
       this.initSidebar();
 
       // Update the navigation view with menu options
-      // if certain conditions pass:
-
-      // 1. A file contains metadata but is not new.
-      if (this.model.get('metadata') || this.model.get('defaults') && !this.model.isNew()) {
+      // if a file contains metadata, has default metadata or is Markdown
+      if (this.model.get('metadata') || this.model.get('defaults') || this.model.get('markdown')) {
         this.renderMetadata();
-        this.nav.mode('file settings meta');
 
-      // 2. A file contains metadata and is new
-      } else if (this.model.isNew() && this.model.get('defaults')) {
-        this.renderMetadata();
-        // this.nav.mode('file meta');
+        var mode = ['file', 'meta'];
+        if (!this.model.isNew()) mode.push('settings');
 
-        // TODO swap for the one above
-        this.nav.mode('file settings meta');
+        this.nav.mode(mode.join(' '));
       }
 
       this.updateDocumentTitle();

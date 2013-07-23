@@ -35,7 +35,7 @@ module.exports = Backbone.View.extend({
     // This renders any fields defined in the metadata entry
     // of a given prose configuration file.
     _.each(this.model.get('defaults'), (function(data, key) {
-      var metadata = this.model.get('metadata');
+      var metadata = this.model.get('metadata') || {};
       var renderTitle = true;
 
       if (data && data.name === 'title' && this.titleAsHeading) {
