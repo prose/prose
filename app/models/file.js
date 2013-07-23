@@ -193,17 +193,13 @@ module.exports = Backbone.Model.extend({
   },
 
   clone: function(attributes, options) {
-    options = options ? _.clone(options) : {};
-
-    attributes = _.extend(_.pick(this.attributes, [
+    return new this.constructor(_.extend(_.pick(this.attributes, [
       'branch',
       'collection',
       'content',
       'metadata',
       'repo'
-    ]), attributes);
-
-    return new this.constructor(attributes, { clone: true });
+    ]), attributes), options);
   },
 
   fetch: function(options) {

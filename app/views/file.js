@@ -106,7 +106,7 @@ module.exports = Backbone.View.extend({
 
     if (this.model) {
       if (defaults) {
-        path = this.nearestPath(defaults);
+        path = this.nearestPath(this.model.get('path'), defaults);
         this.model.set('defaults', defaults[path]);
       }
 
@@ -138,10 +138,10 @@ module.exports = Backbone.View.extend({
     }
   },
 
-  nearestPath: function(defaults) {
+  nearestPath: function(path, defaults) {
     // Match nearest parent directory default metadata
     // Match paths in _drafts to corresponding defaults set at _posts
-    var path = this.model.get('path').replace(/^(_drafts)/, '_posts');
+    path = path.replace(/^(_drafts)/, '_posts');
     var nearestDir = /\/(?!.*\/).*$/;
 
     while (defaults[path] === undefined && nearestDir.test(path)) {
@@ -871,6 +871,7 @@ module.exports = Backbone.View.extend({
   },
 
   draft: function() {
+    var defaults = this.collection.defaults || {};
     var path = this.model.get('path');
     var draft = path.replace(/^(_posts)/, '_drafts');
     var url;
@@ -878,7 +879,8 @@ module.exports = Backbone.View.extend({
     // Create File model clone with metadata and content
     // Reassign this.model to clone and re-render
     this.model = this.model.clone({
-      path: draft
+      path: draft,
+      defaults: defaults[this.nearestPath(draft, defaults)]
     });
 
     // Update view properties
@@ -1045,8 +1047,8 @@ module.exports = Backbone.View.extend({
   },
 
   translate: function(e) {
-    var defaults = this.collection.defaults;
-    var metadata = this.model.get('metadata');
+    var defaults = this.collection.defaults || {};
+    var metadata = this.model.get('metadata') || {};
     var lang = $(e.currentTarget).attr('href').substr(1);
     var path = this.model.get('path').split('/');
     var model;
@@ -1079,7 +1081,7 @@ module.exports = Backbone.View.extend({
     
     // Set default metadata for new path
     if (this.model && defaults) {
-      this.model.set('defaults', defaults[this.nearestPath(defaults)]);
+      this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
     }
 
     // Update view properties
