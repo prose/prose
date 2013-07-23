@@ -106,7 +106,7 @@ module.exports = Backbone.View.extend({
 
     if (this.model) {
       if (defaults) {
-        path = this.nearestPath(defaults);
+        path = this.nearestPath(this.model.get('path'), defaults);
         this.model.set('defaults', defaults[path]);
       }
 
@@ -138,10 +138,10 @@ module.exports = Backbone.View.extend({
     }
   },
 
-  nearestPath: function(defaults) {
+  nearestPath: function(path, defaults) {
     // Match nearest parent directory default metadata
     // Match paths in _drafts to corresponding defaults set at _posts
-    var path = this.model.get('path').replace(/^(_drafts)/, '_posts');
+    path = path.replace(/^(_drafts)/, '_posts');
     var nearestDir = /\/(?!.*\/).*$/;
 
     while (defaults[path] === undefined && nearestDir.test(path)) {
@@ -483,20 +483,14 @@ module.exports = Backbone.View.extend({
       this.initSidebar();
 
       // Update the navigation view with menu options
-      // if certain conditions pass:
-
-      // 1. A file contains metadata but is not new.
-      if (this.model.get('metadata') || this.model.get('defaults') && !this.model.isNew()) {
+      // if a file contains metadata, has default metadata or is Markdown
+      if (this.model.get('metadata') || this.model.get('defaults') || this.model.get('markdown')) {
         this.renderMetadata();
-        this.nav.mode('file settings meta');
 
-      // 2. A file contains metadata and is new
-      } else if (this.model.isNew() && this.model.get('defaults')) {
-        this.renderMetadata();
-        // this.nav.mode('file meta');
+        var mode = ['file', 'meta'];
+        if (!this.model.isNew()) mode.push('settings');
 
-        // TODO swap for the one above
-        this.nav.mode('file settings meta');
+        this.nav.mode(mode.join(' '));
       }
 
       this.updateDocumentTitle();
@@ -877,6 +871,7 @@ module.exports = Backbone.View.extend({
   },
 
   draft: function() {
+    var defaults = this.collection.defaults || {};
     var path = this.model.get('path');
     var draft = path.replace(/^(_posts)/, '_drafts');
     var url;
@@ -884,7 +879,8 @@ module.exports = Backbone.View.extend({
     // Create File model clone with metadata and content
     // Reassign this.model to clone and re-render
     this.model = this.model.clone({
-      path: draft
+      path: draft,
+      defaults: defaults[this.nearestPath(draft, defaults)]
     });
 
     // Update view properties
@@ -1051,8 +1047,8 @@ module.exports = Backbone.View.extend({
   },
 
   translate: function(e) {
-    var defaults = this.collection.defaults;
-    var metadata = this.model.get('metadata');
+    var defaults = this.collection.defaults || {};
+    var metadata = this.model.get('metadata') || {};
     var lang = $(e.currentTarget).attr('href').substr(1);
     var path = this.model.get('path').split('/');
     var model;
@@ -1085,7 +1081,7 @@ module.exports = Backbone.View.extend({
     
     // Set default metadata for new path
     if (this.model && defaults) {
-      this.model.set('defaults', defaults[this.nearestPath(defaults)]);
+      this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
     }
 
     // Update view properties

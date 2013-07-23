@@ -57,7 +57,6 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-
     var toolbar = {
       markdown: this.file.get('markdown'),
       writable: this.file.get('writable'),
@@ -67,6 +66,7 @@ module.exports = Backbone.View.extend({
     };
 
     this.$el.html(_.template(this.template, toolbar, { variable: 'toolbar' }));
+
     return this;
   },
 
@@ -313,11 +313,13 @@ module.exports = Backbone.View.extend({
   },
 
   togglePublishing: function(e) {
-    var $target = $(e.target).hasClass('checkmark') ? $(e.target).parent() : $(e.target);
+    var $target = $(e.currentTarget);
+    var metadata = this.file.get('metadata');
+    var published = metadata.published;
 
     // TODO: remove HTML from view
     // Toggling publish state when the current file is published live
-    if (this.file.get('metadata').published) {
+    if (published) {
       if ($target.hasClass('published')) {
         $target
           .empty()
@@ -356,6 +358,10 @@ module.exports = Backbone.View.extend({
           .attr('data-state', true);
       }
     }
+
+    this.file.set('metadata', _.extend(metadata, {
+      published: !published
+    }));
 
     this.view.makeDirty();
     return false;
