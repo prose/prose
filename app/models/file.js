@@ -179,9 +179,6 @@ module.exports = Backbone.Model.extend({
     var path = this.get('oldpath') || this.get('path');
     var content = this.serialize();
 
-    // TODO: check if commit message has been set
-    debugger;
-
     var data = {
       path: path,
       message: this.get('message') || this.get('placeholder'),
