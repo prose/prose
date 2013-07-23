@@ -199,16 +199,20 @@ module.exports = Backbone.View.extend({
   },
 
   renderRaw: function() {
-    var selector = this.model.get('lang') === 'yaml' ? 'code' : 'raw';
+    var yaml = this.model.get('lang') === 'yaml';
+    var $el = yaml ? this.view.$el.find('#code') : this.$el.find('#raw');
 
-    if (selector === 'raw') {
+    if (yaml) {
+      $el.empty();
+    } else {
       this.$el.find('.form').append(_.template(templates.meta.raw));
     }
 
-    this.raw = CodeMirror(this.$el.find('#' + selector)[0], {
+    this.raw = CodeMirror($el[0], {
       mode: 'yaml',
       value: '',
       lineWrapping: true,
+      lineNumbers: yaml,
       extraKeys: this.rawKeyMap(),
       theme: 'prose-bright'
     });
