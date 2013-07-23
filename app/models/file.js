@@ -47,6 +47,7 @@ module.exports = Backbone.Model.extend({
       'media': util.isMedia(extension),
       'markdown': util.isMarkdown(extension),
       'name': util.extractFilename(path)[1],
+      'oldpath': path,
       'path': path,
       'type': type,
       'writable': permissions ? permissions.push : false
@@ -174,16 +175,13 @@ module.exports = Backbone.Model.extend({
   },
 
   toJSON: function() {
-    // override default toJSON method to only send necessary data to GitHub
-    var path = this.get('path');
+    // Override default toJSON method to only send necessary data to GitHub
+    var path = this.get('oldpath') || this.get('path');
     var content = this.serialize();
 
-    // TODO: check if commit message has been set
     var data = {
       path: path,
-      message: (this.isNew() ?
-        t('actions.commits.created', { filename: path }) :
-        t('actions.commits.updated', { filename: path })),
+      message: this.get('message') || this.get('placeholder'),
       content: this.get('binary') ? window.btoa(content) : this.encode(content),
       branch: this.collection.branch.get('name')
     };

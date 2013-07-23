@@ -7,7 +7,8 @@ module.exports = {
 
   // Cleans up a string for use in urls
   stringToUrl: function(string) {
-    return string.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    // Change non-alphanumeric characters to dashes, trim excess dashes
+    return string.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-*$/, '');
   },
 
   // Extract a Jekyll date format from a filename

@@ -422,9 +422,6 @@ module.exports = Backbone.View.extend({
       file: this.model
     }).render();
     this.subviews['save'] = this.save;
-
-    // Re-render updated path in commit message
-    this.listenTo(this.model, 'change:path', this.subviews['save'].render);
   },
 
   initHeader: function() {
@@ -777,10 +774,6 @@ module.exports = Backbone.View.extend({
       this.model.set('metadata', this.metadataEditor.getValue());
     }
 
-    if (this.model.isNew()) {
-      this.sidebar.updateFilepath(this.model.get('path'));
-    }
-
     var label = this.model.get('writable') ?
       t('actions.change.save') :
       t('actions.change.submit');
@@ -819,11 +812,10 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    $diff.find('.diff-content').empty().append('<pre>' + compare + '</pre>');
+    $diff.find('.diff-content').html('<pre>' + compare + '</pre>');
   },
 
   cancel: function() {
-
     // Close the sidebar and return the
     // active nav item to the current file mode.
     this.sidebar.close();
@@ -960,20 +952,7 @@ module.exports = Backbone.View.extend({
 
     // Trigger the save event
     this.updateSaveState(t('actions.save.saving'), 'saving');
-    var filepath = this.filepath();
-    var filename = util.extractFilename(filepath)[1];
-    var filecontent = this.model.serialize();
-    var $message = $('.commit-message');
 
-    var noVal = this.model.isNew() ?
-      t('actions.commits.created', {
-        filename: filename
-      }) :
-      t('actions.commits.updated', {
-        filename: filename
-      });
-
-    var message = $message.val() || noVal;
     var method = this.model.get('writable') ? this.model.save : this.patch;
 
     //this.updateSaveState(t('actions.save.metaError'), 'error');
@@ -989,7 +968,7 @@ module.exports = Backbone.View.extend({
         message: error
       });
 
-      view.$el.find('#modal').empty().append(view.modal.el);
+      view.$el.find('#modal').html(view.modal.el);
       view.modal.render();
     }).bind(this));
 
@@ -997,8 +976,17 @@ module.exports = Backbone.View.extend({
     this.model.content = (this.editor) ? this.editor.getValue() : '';
 
     // Delegate
+    var error = (function(model, xhr, options) {
+      var res = JSON.parse(xhr.responseText);
+      this.updateSaveState(res.message, 'error');
+    }).bind(this);
+
     method.call(this, {
       success: (function(model, res, options) {
+        var url;
+        var data;
+        var params;
+
         this.sidebar.close();
         this.updateSaveState(t('actions.save.saved'), 'saved');
 
@@ -1006,8 +994,13 @@ module.exports = Backbone.View.extend({
         this.dirty = false;
         this.edit();
 
+        var path = model.get('path');
+        var old = model.get('oldpath');
+        var name = util.extractFilename(old)[1];
+        var pathChange = path !== old;
+
         // Navigate to edit path for new files
-        if (!model.previous('sha')) {
+        if (!model.previous('sha') || pathChange) {
           this.router.navigate(_.compact([
             this.repo.get('owner').login,
             this.repo.get('name'),
@@ -1016,11 +1009,31 @@ module.exports = Backbone.View.extend({
             model.get('path')
           ]).join('/'));
         }
+
+        // Remove old file if renamed
+        // TODO: remove this when Repo Contents API supports renaming
+        if (pathChange) {
+          url = model.url().replace(path, old).split('?')[0];
+
+          data = {
+            path: old,
+            message: t('actions.commits.deleted', { filename: name }),
+            sha: model.previous('sha'),
+            branch: this.collection.branch.get('name')
+          };
+
+          params = _.map(_.pairs(data), function(param) {
+            return param.join('=');
+          }).join('&');
+
+          $.ajax({
+            type: 'DELETE',
+            url: url + '?' + params,
+            error: error
+          });
+        }
       }).bind(this),
-      error: (function(model, xhr, options) {
-        var res = JSON.parse(xhr.responseText);
-        this.updateSaveState(res.message, 'error');
-      }).bind(this)
+      error: error
     });
 
     return false;
@@ -1060,7 +1073,7 @@ module.exports = Backbone.View.extend({
     path = _.compact(path).join('/');
 
     var categories = (metadata.categories || []);
-    categories.push(lang);
+    categories.unshift(lang);
 
     this.model = this.collection.get(path) || this.model.clone({
       metadata: {

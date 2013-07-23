@@ -2,8 +2,8 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var NavView = require('../nav');
+var util = require('../../util');
 var templates = require('../../../dist/templates');
-var utils = require('../../util');
 
 module.exports = Backbone.View.extend({
   template: templates.sidebar.settings,
@@ -12,13 +12,7 @@ module.exports = Backbone.View.extend({
     'click a.delete': 'emit',
     'click a.translate': 'emit',
     'click a.draft': 'emit',
-    'change input.filepath': 'saveFilePath'
-  },
-
-  saveFilePath: function(e) {
-    this.file.set('path', e.currentTarget.value);
-    this.trigger('makeDirty');
-    return false;
+    'change input.filepath': 'setPath'
   },
 
   initialize: function(options) {
@@ -29,6 +23,8 @@ module.exports = Backbone.View.extend({
     // fileInput is passed if a title replaces where it
     // normally is shown in the heading of the file.
     this.fileInput = options.fileInput;
+
+    this.listenTo(this.file, 'change:path', this.updatePath);
   },
 
   emit: function(e) {
@@ -36,6 +32,17 @@ module.exports = Backbone.View.extend({
 
     var action = $(e.currentTarget).data('action');
     this.sidebar.trigger(action, e);
+  },
+
+  updatePath: function(model, value, options) {
+    // Set path value from path attr in file model
+    this.$el.find('input.filepath').attr('value', value);
+  },
+
+  setPath: function(e) {
+    this.file.set('path', e.currentTarget.value);
+    this.trigger('makeDirty');
+    return false;
   },
 
   render: function() {
@@ -49,11 +56,11 @@ module.exports = Backbone.View.extend({
       path: this.file.get('path')
     };
 
-    this.$el.empty().append(_.template(this.template, settings, {
+    this.$el.html(_.template(this.template, settings, {
       variable: 'settings'
     }));
 
-    utils.autoSelect(this.$el.find('input.filepath'));
+    util.autoSelect(this.$el.find('input.filepath'));
     return this;
   }
 });

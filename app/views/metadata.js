@@ -35,6 +35,7 @@ module.exports = Backbone.View.extend({
     // This renders any fields defined in the metadata entry
     // of a given prose configuration file.
     _.each(this.model.get('defaults'), (function(data, key) {
+      var metadata = this.model.get('metadata');
       var renderTitle = true;
 
       if (data && data.name === 'title' && this.titleAsHeading) {
@@ -151,9 +152,18 @@ module.exports = Backbone.View.extend({
               break;
             case 'hidden':
               var tmpl = {};
-              tmpl[data.name] = data.field.value;
-              this.model.set('metadata', _.merge(tmpl, this.model.get('metadata') || {}));
-              this.model.set('hidden', _.merge(tmpl, this.model.get('hidden') || {}));
+              var value = metadata[data.name];
+
+              if (_.isArray(value)) {
+                // Any defaults not currently in metadata?
+                var diff = _.difference(data.field.value, value);
+                tmpl[data.name] = diff.length ?
+                  _.union(data.field.value, value) : value;
+              } else {
+                tmpl[data.name] = data.field.value;
+              }
+
+              this.model.set('metadata', _.extend(tmpl, this.model.get('metadata') || {}));
               break;
           }
         } else {
@@ -199,16 +209,23 @@ module.exports = Backbone.View.extend({
   },
 
   renderRaw: function() {
-    var selector = this.model.get('lang') === 'yaml' ? 'code' : 'raw';
+    var yaml = this.model.get('lang') === 'yaml';
+    var $el;
 
-    if (selector === 'raw') {
+    if (yaml) {
+      $el = this.view.$el.find('#code');
+      $el.empty();
+    } else {
       this.$el.find('.form').append(_.template(templates.meta.raw));
     }
 
-    this.raw = CodeMirror(this.$el.find('#' + selector)[0], {
+    var el = (yaml ? $el : this.$el.find('#raw'))[0];
+
+    this.raw = CodeMirror(el, {
       mode: 'yaml',
       value: '',
       lineWrapping: true,
+      lineNumbers: yaml,
       extraKeys: this.rawKeyMap(),
       theme: 'prose-bright'
     });
@@ -317,7 +334,7 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    return _.merge(this.model.get('hidden') || {}, metadata);
+    return metadata;
   },
 
   setValue: function(data) {
