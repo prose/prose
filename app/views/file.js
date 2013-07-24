@@ -878,9 +878,13 @@ module.exports = Backbone.View.extend({
     // Create File model clone with metadata and content
     // Reassign this.model to clone and re-render
     this.model = this.collection.get(path) || this.model.clone({
-      path: path,
-      defaults: defaults[this.nearestPath(path, defaults)]
+      path: path
     });
+
+    // Set default metadata for new path
+    if (this.model && defaults) {
+      this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
+    }
 
     // Update view properties
     this.path = path;
@@ -898,7 +902,7 @@ module.exports = Backbone.View.extend({
     });
 
     this.sidebar.close();
-    this.render();
+    this.model.fetch({ complete: this.render });
   },
 
   translate: function(e) {
