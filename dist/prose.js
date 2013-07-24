@@ -21269,7 +21269,7 @@ module.exports = Backbone.Router.extend({
   }
 });
 
-},{"./models/user":6,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":7,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"../dist/templates":14,"./util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],9:[function(require,module,exports){
+},{"./models/user":6,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":7,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"../dist/templates":14,"./util":28,"jquery-browserify":10,"backbone":12,"underscore":11}],9:[function(require,module,exports){
 var config = require('./config'); 
 var $ = require('jquery-browserify'); 
 
@@ -23135,7 +23135,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"../collections/repos":32,"../collections/orgs":16,"../views/notification":7,"../config":8,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],7:[function(require,module,exports){
+},{"../collections/repos":32,"../views/notification":7,"../collections/orgs":16,"../config":8,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -25649,7 +25649,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./files":45,"./search":22,"./header":42,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],26:[function(require,module,exports){
+},{"./files":45,"./header":42,"./search":22,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],26:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -29552,7 +29552,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../util":28,"../../dist/templates":14,"underscore":11,"jquery-browserify":10,"backbone":12}],45:[function(require,module,exports){
+},{"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],45:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -29711,7 +29711,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../models/file":18,"../models/folder":61,"./li/file":62,"../../dist/templates":14,".././util":28,"./li/folder":63,"jquery-browserify":10,"underscore":11,"backbone":12}],46:[function(require,module,exports){
+},{"../models/file":18,"../models/folder":61,"./li/file":62,"./li/folder":63,"../../dist/templates":14,".././util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],46:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30240,7 +30240,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../toolbar/markdown.js":34,"../util":28,"../upload":31,"../../dist/templates":14,"chosen-jquery-browserify":64,"jquery-browserify":10,"underscore":11,"backbone":12}],48:[function(require,module,exports){
+},{"../toolbar/markdown.js":34,"../util":28,"../upload":31,"../../dist/templates":14,"jquery-browserify":10,"chosen-jquery-browserify":64,"underscore":11,"backbone":12}],48:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -30923,7 +30923,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../cookie":3,"../../../dist/templates":14,"underscore":11,"jquery-browserify":10,"backbone":12}],53:[function(require,module,exports){
+},{"../../cookie":3,"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],53:[function(require,module,exports){
 'use strict';
 
 
@@ -31360,7 +31360,7 @@ module.exports = Backbone.View.extend({
   template: templates.sidebar.save,
 
   events: {
-    'change input.commit-message': 'setMessage',
+    'change .commit-message': 'setMessage',
     'click a.cancel': 'emit',
     'click a.confirm': 'emit'
   },
@@ -35306,7 +35306,7 @@ module.exports = Backbone.Collection.extend({
 });
 
 })()
-},{"../models/file":18,"../models/folder":61,"../cookie":3,"js-yaml":39,"underscore":11,"queue-async":49,"backbone":12}],80:[function(require,module,exports){
+},{"../models/file":18,"../models/folder":61,"../cookie":3,"underscore":11,"js-yaml":39,"queue-async":49,"backbone":12}],80:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -35330,7 +35330,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"underscore":11,"jquery-browserify":10,"backbone":12}],82:[function(require,module,exports){
+},{"jquery-browserify":10,"underscore":11,"backbone":12}],82:[function(require,module,exports){
 'use strict';
 
 
@@ -36164,6 +36164,26 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
   }
 });
 
+},{"../common":68,"../type":69}],91:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
 },{"../common":68,"../type":69}],92:[function(require,module,exports){
 (function(){// Modified from:
 // https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
@@ -36285,70 +36305,7 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
 });
 
 })()
-},{"buffer":101,"../common":68,"../type":69}],91:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":68,"../type":69}],94:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
-  }
-});
-
-},{"../common":68,"../type":69}],93:[function(require,module,exports){
+},{"buffer":101,"../common":68,"../type":69}],93:[function(require,module,exports){
 'use strict';
 
 
@@ -36400,6 +36357,49 @@ module.exports = new Type('tag:yaml.org,2002:omap', {
   loader: {
     kind: 'array',
     resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":68,"../type":69}],94:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
   }
 });
 
@@ -36525,7 +36525,7 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
 });
 
 })()
-},{"../../type":69,"../../common":68}],100:[function(require,module,exports){
+},{"../../common":68,"../../type":69}],100:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
