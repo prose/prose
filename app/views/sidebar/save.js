@@ -9,7 +9,7 @@ module.exports = Backbone.View.extend({
   template: templates.sidebar.save,
 
   events: {
-    'change input.commit-message': 'setMessage',
+    'change .commit-message': 'setMessage',
     'click a.cancel': 'emit',
     'click a.confirm': 'emit'
   },
