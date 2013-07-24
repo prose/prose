@@ -144,7 +144,7 @@ module.exports = Backbone.View.extend({
     path = path.replace(/^(_drafts)/, '_posts');
     var nearestDir = /\/(?!.*\/).*$/;
 
-    while (defaults[path] === undefined && nearestDir.test(path)) {
+    while (!_.has(defaults, path) && nearestDir.test(path)) {
       path = path.replace( nearestDir, '' );
     }
 
@@ -358,9 +358,7 @@ module.exports = Backbone.View.extend({
     this.toolbar.setElement(this.$el.find('#toolbar')).render();
 
     this.listenTo(this.toolbar, 'updateImageInsert', this.updateImageInsert);
-
-    // TODO: deprecated?
-    // this.listenTo(this.toolbar, 'draft', this.draft);
+    this.listenTo(this.toolbar, 'post', this.post);
   },
 
   titleAsHeading: function() {
@@ -872,19 +870,22 @@ module.exports = Backbone.View.extend({
 
   draft: function() {
     var defaults = this.collection.defaults || {};
-    var path = this.model.get('path');
-    var draft = path.replace(/^(_posts)/, '_drafts');
+    var path = this.model.get('path').replace(/^(_posts)/, '_drafts');
     var url;
 
     // Create File model clone with metadata and content
     // Reassign this.model to clone and re-render
-    this.model = this.model.clone({
-      path: draft,
-      defaults: defaults[this.nearestPath(draft, defaults)]
+    this.model = this.collection.get(path) || this.model.clone({
+      path: path
     });
 
+    // Set default metadata for new path
+    if (this.model && defaults) {
+      this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
+    }
+
     // Update view properties
-    this.path = draft;
+    this.path = path;
 
     url = _.compact([
       this.repo.get('owner').login,
@@ -899,7 +900,113 @@ module.exports = Backbone.View.extend({
     });
 
     this.sidebar.close();
-    this.render();
+    this.nav.active('edit');
+
+    this.model.fetch({ complete: this.render });
+  },
+
+  post: function(e) {
+    var defaults = this.collection.defaults || {};
+    var metadata = this.model.get('metadata') || {};
+    var content = this.model.get('content') || '';
+    var path = this.model.get('path').replace(/^(_drafts)/, '_posts');
+    var url;
+
+    // Create File model clone with metadata and content
+    // Reassign this.model to clone and re-render
+    this.model = this.collection.get(path) || this.model.clone({
+      path: path
+    });
+
+    // Set default metadata for new path
+    if (this.model && defaults) {
+      this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
+    }
+
+    // Update view properties
+    this.path = path;
+
+    url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
+      trigger: false
+    });
+
+    this.model.fetch({
+      complete: (function(model, res, options) {
+        // Set metadata and content from draft on post model
+        this.model.set('metadata', metadata);
+        this.model.set('content', content);
+
+        this.render();
+
+        this.nav.active('save');
+        this.showDiff();
+      }).bind(this)
+    });
+  },
+
+  translate: function(e) {
+    var defaults = this.collection.defaults || {};
+    var metadata = this.model.get('metadata') || {};
+    var lang = $(e.currentTarget).attr('href').substr(1);
+    var path = this.model.get('path').split('/');
+    var model;
+    var url;
+
+    // TODO: Drop the 'en' requirement.
+    if (lang === 'en') {
+      // If current page is not english and target page is english
+      path.splice(-2, 2, path[path.length - 1]);
+    } else if (metadata.lang === 'en') {
+      // If current page is english and target page is not english
+      path.splice(-1, 1, lang, path[path.length - 1]);
+    } else {
+      // If current page is not english and target page is not english
+      path.splice(-2, 2, lang, path[path.length - 1]);
+    }
+
+    path = _.compact(path).join('/');
+
+    var categories = (metadata.categories || []);
+    categories.unshift(lang);
+
+    this.model = this.collection.get(path) || this.model.clone({
+      metadata: {
+        categories: categories,
+        lang: lang
+      },
+      path: path
+    });
+    
+    // Set default metadata for new path
+    if (this.model && defaults) {
+      this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
+    }
+
+    // Update view properties
+    this.path = path;
+
+    url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
+      trigger: false
+    });
+
+    this.sidebar.close();
+    this.model.fetch({ complete: this.render });
   },
 
   stashFile: function(e) {
@@ -972,11 +1079,6 @@ module.exports = Backbone.View.extend({
     this.model.content = (this.editor) ? this.editor.getValue() : '';
 
     // Delegate
-    var error = (function(model, xhr, options) {
-      var res = JSON.parse(xhr.responseText);
-      this.updateSaveState(res.message, 'error');
-    }).bind(this);
-
     method.call(this, {
       success: (function(model, res, options) {
         var url;
@@ -1008,7 +1110,7 @@ module.exports = Backbone.View.extend({
 
         // Remove old file if renamed
         // TODO: remove this when Repo Contents API supports renaming
-        if (pathChange) {
+        if (model.previous('sha') && pathChange) {
           url = model.url().replace(path, old).split('?')[0];
 
           data = {
@@ -1025,11 +1127,17 @@ module.exports = Backbone.View.extend({
           $.ajax({
             type: 'DELETE',
             url: url + '?' + params,
-            error: error
+            error: (function(xhr, textStatus, errorThrown) {
+              var res = JSON.parse(xhr.responseText);
+              this.updateSaveState(res.message, 'error');
+            }).bind(this)
           });
         }
       }).bind(this),
-      error: error
+      error: (function(model, xhr, options) {
+        var res = JSON.parse(xhr.responseText);
+        this.updateSaveState(res.message, 'error');
+      }).bind(this)
     });
 
     return false;
@@ -1044,63 +1152,6 @@ module.exports = Backbone.View.extend({
 
     // Update the avatar in the toolbar
     if (this.nav) this.nav.updateState(label, classes, kill);
-  },
-
-  translate: function(e) {
-    var defaults = this.collection.defaults || {};
-    var metadata = this.model.get('metadata') || {};
-    var lang = $(e.currentTarget).attr('href').substr(1);
-    var path = this.model.get('path').split('/');
-    var model;
-    var url;
-
-    // TODO: Drop the 'en' requirement.
-    if (lang === 'en') {
-      // If current page is not english and target page is english
-      path.splice(-2, 2, path[path.length - 1]);
-    } else if (metadata.lang === 'en') {
-      // If current page is english and target page is not english
-      path.splice(-1, 1, lang, path[path.length - 1]);
-    } else {
-      // If current page is not english and target page is not english
-      path.splice(-2, 2, lang, path[path.length - 1]);
-    }
-
-    path = _.compact(path).join('/');
-
-    var categories = (metadata.categories || []);
-    categories.unshift(lang);
-
-    this.model = this.collection.get(path) || this.model.clone({
-      metadata: {
-        categories: categories,
-        lang: lang
-      },
-      path: path
-    });
-    
-    // Set default metadata for new path
-    if (this.model && defaults) {
-      this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
-    }
-
-    // Update view properties
-    this.path = path;
-
-    url = _.compact([
-      this.repo.get('owner').login,
-      this.repo.get('name'),
-      this.mode,
-      this.branch,
-      this.path
-    ]);
-
-    this.router.navigate(url.join('/'), {
-      trigger: false
-    });
-
-    this.sidebar.close();
-    this.model.fetch({ complete: this.render });
   },
 
   updateImageInsert: function(e, file, content) {

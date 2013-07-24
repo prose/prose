@@ -87,24 +87,27 @@ module.exports = Backbone.View.extend({
   },
 
   updateTitle: function(e) {
-    // Only update path on new files
-    if (!this.file.isNew()) return false;
-
     if (e) e.preventDefault();
-    var value = e.currentTarget.value;
 
-    var path = this.file.get('path');
-    var parts = path.split('/');
-    var name = parts.pop();
+    // TODO: update metadata title here, don't rely on makeDi
 
-    // Preserve the date and the extension
-    var date = util.extractDate(name);
-    var extension = name.split('.').pop();
+    // Only update path on new files that are not cloned
+    if (this.file.isNew() && !this.file.isClone()) {
+      var value = e.currentTarget.value;
 
-    path = parts.join('/') + '/' + date + '-' +
-      util.stringToUrl(value) + '.' + extension;
+      var path = this.file.get('path');
+      var parts = path.split('/');
+      var name = parts.pop();
 
-    this.file.set('path', path);
+      // Preserve the date and the extension
+      var date = util.extractDate(name);
+      var extension = name.split('.').pop();
+
+      path = parts.join('/') + '/' + date + '-' +
+        util.stringToUrl(value) + '.' + extension;
+
+      this.file.set('path', path);
+    }
 
     this.trigger('makeDirty');
   },
