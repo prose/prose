@@ -872,19 +872,18 @@ module.exports = Backbone.View.extend({
 
   draft: function() {
     var defaults = this.collection.defaults || {};
-    var path = this.model.get('path');
-    var draft = path.replace(/^(_posts)/, '_drafts');
+    var path = this.model.get('path').replace(/^(_posts)/, '_drafts');
     var url;
 
     // Create File model clone with metadata and content
     // Reassign this.model to clone and re-render
-    this.model = this.model.clone({
-      path: draft,
-      defaults: defaults[this.nearestPath(draft, defaults)]
+    this.model = this.collection.get(path) || this.model.clone({
+      path: path,
+      defaults: defaults[this.nearestPath(path, defaults)]
     });
 
     // Update view properties
-    this.path = draft;
+    this.path = path;
 
     url = _.compact([
       this.repo.get('owner').login,
@@ -900,6 +899,63 @@ module.exports = Backbone.View.extend({
 
     this.sidebar.close();
     this.render();
+  },
+
+  translate: function(e) {
+    var defaults = this.collection.defaults || {};
+    var metadata = this.model.get('metadata') || {};
+    var lang = $(e.currentTarget).attr('href').substr(1);
+    var path = this.model.get('path').split('/');
+    var model;
+    var url;
+
+    // TODO: Drop the 'en' requirement.
+    if (lang === 'en') {
+      // If current page is not english and target page is english
+      path.splice(-2, 2, path[path.length - 1]);
+    } else if (metadata.lang === 'en') {
+      // If current page is english and target page is not english
+      path.splice(-1, 1, lang, path[path.length - 1]);
+    } else {
+      // If current page is not english and target page is not english
+      path.splice(-2, 2, lang, path[path.length - 1]);
+    }
+
+    path = _.compact(path).join('/');
+
+    var categories = (metadata.categories || []);
+    categories.unshift(lang);
+
+    this.model = this.collection.get(path) || this.model.clone({
+      metadata: {
+        categories: categories,
+        lang: lang
+      },
+      path: path
+    });
+    
+    // Set default metadata for new path
+    if (this.model && defaults) {
+      this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
+    }
+
+    // Update view properties
+    this.path = path;
+
+    url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
+      trigger: false
+    });
+
+    this.sidebar.close();
+    this.model.fetch({ complete: this.render });
   },
 
   stashFile: function(e) {
@@ -1045,63 +1101,6 @@ module.exports = Backbone.View.extend({
 
     // Update the avatar in the toolbar
     if (this.nav) this.nav.updateState(label, classes, kill);
-  },
-
-  translate: function(e) {
-    var defaults = this.collection.defaults || {};
-    var metadata = this.model.get('metadata') || {};
-    var lang = $(e.currentTarget).attr('href').substr(1);
-    var path = this.model.get('path').split('/');
-    var model;
-    var url;
-
-    // TODO: Drop the 'en' requirement.
-    if (lang === 'en') {
-      // If current page is not english and target page is english
-      path.splice(-2, 2, path[path.length - 1]);
-    } else if (metadata.lang === 'en') {
-      // If current page is english and target page is not english
-      path.splice(-1, 1, lang, path[path.length - 1]);
-    } else {
-      // If current page is not english and target page is not english
-      path.splice(-2, 2, lang, path[path.length - 1]);
-    }
-
-    path = _.compact(path).join('/');
-
-    var categories = (metadata.categories || []);
-    categories.unshift(lang);
-
-    this.model = this.collection.get(path) || this.model.clone({
-      metadata: {
-        categories: categories,
-        lang: lang
-      },
-      path: path
-    });
-    
-    // Set default metadata for new path
-    if (this.model && defaults) {
-      this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
-    }
-
-    // Update view properties
-    this.path = path;
-
-    url = _.compact([
-      this.repo.get('owner').login,
-      this.repo.get('name'),
-      this.mode,
-      this.branch,
-      this.path
-    ]);
-
-    this.router.navigate(url.join('/'), {
-      trigger: false
-    });
-
-    this.sidebar.close();
-    this.model.fetch({ complete: this.render });
   },
 
   updateImageInsert: function(e, file, content) {
