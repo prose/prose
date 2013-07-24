@@ -973,6 +973,7 @@ module.exports = Backbone.View.extend({
 
     // Delegate
     var error = (function(model, xhr, options) {
+      debugger;
       var res = JSON.parse(xhr.responseText);
       this.updateSaveState(res.message, 'error');
     }).bind(this);
@@ -1008,7 +1009,7 @@ module.exports = Backbone.View.extend({
 
         // Remove old file if renamed
         // TODO: remove this when Repo Contents API supports renaming
-        if (pathChange) {
+        if (model.previous('sha') && pathChange) {
           url = model.url().replace(path, old).split('?')[0];
 
           data = {
@@ -1025,11 +1026,17 @@ module.exports = Backbone.View.extend({
           $.ajax({
             type: 'DELETE',
             url: url + '?' + params,
-            error: error
+            error: (function(xhr, textStatus, errorThrown) {
+              var res = JSON.parse(xhr.responseText);
+              this.updateSaveState(res.message, 'error');
+            }).bind(this)
           });
         }
       }).bind(this),
-      error: error
+      error: (function(model, xhr, options) {
+        var res = JSON.parse(xhr.responseText);
+        this.updateSaveState(res.message, 'error');
+      }).bind(this)
     });
 
     return false;

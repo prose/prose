@@ -93,8 +93,6 @@ module.exports = Backbone.View.extend({
 
     // Only update path on new files that are not cloned
     if (this.file.isNew() && !this.file.isClone()) {
-      debugger;
-
       var value = e.currentTarget.value;
 
       var path = this.file.get('path');
