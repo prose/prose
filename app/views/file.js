@@ -973,7 +973,6 @@ module.exports = Backbone.View.extend({
 
     // Delegate
     var error = (function(model, xhr, options) {
-      debugger;
       var res = JSON.parse(xhr.responseText);
       this.updateSaveState(res.message, 'error');
     }).bind(this);
