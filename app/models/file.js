@@ -11,6 +11,10 @@ module.exports = Backbone.Model.extend({
     options = _.clone(options) || {};
     _.bindAll(this);
 
+    this.isClone = function() {
+      return !!options.clone;
+    };
+
     this.placeholder = new Date().format('Y-m-d') + '-your-filename.md';
     var path = attributes.path.split('?')[0];
 
@@ -193,13 +197,17 @@ module.exports = Backbone.Model.extend({
   },
 
   clone: function(attributes, options) {
+    options = _.clone(options) || {};
+
     return new this.constructor(_.extend(_.pick(this.attributes, [
       'branch',
       'collection',
       'content',
       'metadata',
       'repo'
-    ]), attributes), options);
+    ]), attributes), _.extend(options, {
+      clone: true
+    }));
   },
 
   fetch: function(options) {
