@@ -144,7 +144,7 @@ module.exports = Backbone.View.extend({
     path = path.replace(/^(_drafts)/, '_posts');
     var nearestDir = /\/(?!.*\/).*$/;
 
-    while (defaults[path] === undefined && nearestDir.test(path)) {
+    while (_.has(defaults, path) && nearestDir.test(path)) {
       path = path.replace( nearestDir, '' );
     }
 
@@ -972,11 +972,6 @@ module.exports = Backbone.View.extend({
     this.model.content = (this.editor) ? this.editor.getValue() : '';
 
     // Delegate
-    var error = (function(model, xhr, options) {
-      var res = JSON.parse(xhr.responseText);
-      this.updateSaveState(res.message, 'error');
-    }).bind(this);
-
     method.call(this, {
       success: (function(model, res, options) {
         var url;
