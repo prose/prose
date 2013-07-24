@@ -15,7 +15,7 @@ module.exports = Backbone.View.extend({
     'click .publish-flag': 'togglePublishing',
     'change #upload': 'fileInput',
     'click .dialog .insert': 'dialogInsert',
-    'click .draft-to-post': 'draft'
+    'click .draft-to-post': 'post'
   },
 
   initialize: function(options) {
@@ -89,9 +89,9 @@ module.exports = Backbone.View.extend({
     if (arguments) this.$el.find('[data-key="' + type + '"]').addClass('active');
   },
 
-  draft: function(e) {
-    view.trigger('draft', e);
-    return false;
+  post: function(e) {
+    if (e) e.preventDefault();
+    this.trigger('post', e);
   },
 
   markdownSnippet: function(e) {

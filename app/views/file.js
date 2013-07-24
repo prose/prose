@@ -358,9 +358,7 @@ module.exports = Backbone.View.extend({
     this.toolbar.setElement(this.$el.find('#toolbar')).render();
 
     this.listenTo(this.toolbar, 'updateImageInsert', this.updateImageInsert);
-
-    // TODO: deprecated?
-    // this.listenTo(this.toolbar, 'draft', this.draft);
+    this.listenTo(this.toolbar, 'post', this.post);
   },
 
   titleAsHeading: function() {
@@ -903,6 +901,51 @@ module.exports = Backbone.View.extend({
 
     this.sidebar.close();
     this.model.fetch({ complete: this.render });
+  },
+
+  post: function(e) {
+    var defaults = this.collection.defaults || {};
+    var metadata = this.model.get('metadata') || {};
+    var content = this.model.get('content') || '';
+    var path = this.model.get('path').replace(/^(_drafts)/, '_posts');
+    var url;
+
+    // Create File model clone with metadata and content
+    // Reassign this.model to clone and re-render
+    this.model = this.collection.get(path) || this.model.clone({
+      path: path
+    });
+
+    // Set default metadata for new path
+    if (this.model && defaults) {
+      this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
+    }
+
+    // Update view properties
+    this.path = path;
+
+    url = _.compact([
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.mode,
+      this.branch,
+      this.path
+    ]);
+
+    this.router.navigate(url.join('/'), {
+      trigger: false
+    });
+
+    this.model.fetch({
+      complete: (function(model, res, options) {
+        // Set metadata and content from draft on post model
+        this.model.set('metadata', metadata);
+        this.model.set('content', content);
+
+        this.render();
+        this.showDiff();
+      }).bind(this)
+    });
   },
 
   translate: function(e) {
