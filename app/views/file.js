@@ -144,7 +144,7 @@ module.exports = Backbone.View.extend({
     path = path.replace(/^(_drafts)/, '_posts');
     var nearestDir = /\/(?!.*\/).*$/;
 
-    while (_.has(defaults, path) && nearestDir.test(path)) {
+    while (!_.has(defaults, path) && nearestDir.test(path)) {
       path = path.replace( nearestDir, '' );
     }
 
