@@ -900,6 +900,8 @@ module.exports = Backbone.View.extend({
     });
 
     this.sidebar.close();
+    this.nav.active('edit');
+
     this.model.fetch({ complete: this.render });
   },
 
@@ -943,6 +945,8 @@ module.exports = Backbone.View.extend({
         this.model.set('content', content);
 
         this.render();
+
+        this.nav.active('save');
         this.showDiff();
       }).bind(this)
     });
