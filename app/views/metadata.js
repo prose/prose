@@ -281,7 +281,7 @@ module.exports = Backbone.View.extend({
         case 'text':
           if (value) {
             value = $item.data('type') === 'number' ? Number(value) : value;
-            if (metadata.hasOwnProperty(item.name) && metadata[item.name] !== value) {
+            if (_.has(metadata, item.name) && metadata[item.name] !== value) {
               metadata[item.name] = _.union(metadata[item.name], value);
             } else {
               metadata[item.name] = value;
@@ -291,7 +291,7 @@ module.exports = Backbone.View.extend({
         case 'checkbox':
           if (item.checked) {
 
-            if (metadata.hasOwnProperty(item.name) && metadata[item.name] !== value) {
+            if (_.has(metadata, item.name) && item.name !== item.value) {
               metadata[item.name] = _.union(metadata[item.name], item.value);
             } else if (item.value === item.name) {
               metadata[item.name] = item.checked;
@@ -299,7 +299,7 @@ module.exports = Backbone.View.extend({
               metadata[item.name] = item.value;
             }
 
-          } else if (!metadata.hasOwnProperty(item.name) && item.value === item.name) {
+          } else if (!_.has(metadata, item.name) && item.name === item.value) {
             metadata[item.name] = item.checked;
           } else {
             metadata[item.name] = item.checked;
