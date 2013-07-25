@@ -57,7 +57,7 @@ APPLICATION = \
 	app/views/file.js \
 	app/views/files.js \
 	app/views/header.js \
-	app/views/toolbar.js \
+	app/views/loader.js \
 	app/views/metadata.js \
 	app/views/nav.js \
 	app/views/notification.js \
@@ -66,6 +66,7 @@ APPLICATION = \
 	app/views/repos.js \
 	app/views/search.js \
 	app/views/start.js \
+	app/views/toolbar.js \
 	app/views/li/file.js \
 	app/views/li/folder.js \
 	app/views/li/repo.js \

@@ -19,6 +19,10 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this);
 
+    var app = options.app;
+    app.loader.start();
+
+    this.app = app;
     this.branch = options.branch || this.model.get('master_branch');
     this.model = options.model;
     this.nav = options.nav;
@@ -37,6 +41,8 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'destroy', this.destroy);
     this.listenTo(this.sidebar, 'cancel', this.cancel);
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
+
+    app.loader.done();
   },
 
   render: function() {
@@ -69,6 +75,7 @@ module.exports = Backbone.View.extend({
 
   initFiles: function() {
     this.files = new FilesView({
+      app: this.app,
       branch: this.branch,
       branches: this.model.branches,
       nav: this.nav,
@@ -84,6 +91,7 @@ module.exports = Backbone.View.extend({
 
   initBranches: function() {
     this.branches = this.sidebar.initSubview('branches', {
+      app: this.app,
       model: this.model.branches,
       repo: this.model,
       branch: this.branch,
@@ -96,6 +104,7 @@ module.exports = Backbone.View.extend({
 
   initHistory: function() {
     this.history = this.sidebar.initSubview('history', {
+      app: this.app,
       user: this.user,
       repo: this.model,
       branch: this.branch,

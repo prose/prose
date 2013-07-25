@@ -13,18 +13,27 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this);
 
+    var app = options.app;
+    app.loader.start();
+
+    this.app = app;
     this.model = options.model;
     this.repo = options.repo;
     this.branch = options.branch || this.repo.get('master_branch');
     this.router = options.router;
     this.sidebar = options.sidebar;
 
-    this.model.fetch({ success: this.render });
+    this.model.fetch({
+      success: this.render,
+      complete: this.app.loader.done
+    });
   },
 
   render: function() {
     // only render branches selector if two or more branches
     if (this.model.length < 2) return;
+
+    this.app.loader.start();
 
     this.$el.empty().append(_.template(this.template));
     var frag = document.createDocumentFragment();
@@ -48,6 +57,8 @@ module.exports = Backbone.View.extend({
     });
 
     this.sidebar.open();
+
+    this.app.loader.done();
 
     return this;
   },

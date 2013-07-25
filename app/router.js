@@ -75,9 +75,10 @@ module.exports = Backbone.Router.extend({
   profile: function(login) {
     if (this.view) this.view.remove();
 
-    util.documentTitle(login)
     this.app.loader.start(t('loading.repos'));
     this.app.nav.mode('repos');
+
+    util.documentTitle(login);
 
     var user = this.users.findWhere({ login: login });
     if (_.isUndefined(user)) {
@@ -108,10 +109,10 @@ module.exports = Backbone.Router.extend({
         this.view = content;
         this.app.$el.find('#main').html(this.view.render().el);
 
-        model.repos.fetch({ success: repos.render });
-
-        // TODO: build event-driven loader queue
-        this.app.loader.stop();
+        model.repos.fetch({
+          success: repos.render,
+          complete: this.app.loader.done
+        });
       }).bind(this),
       error: (function(model, xhr, options) {
         this.error(xhr);
@@ -124,11 +125,12 @@ module.exports = Backbone.Router.extend({
   repo: function(login, repoName, branch, path) {
     if (this.view) this.view.remove();
 
+    this.app.loader.start(t('loading.repo'));
+    this.app.nav.mode('repo');
+
     var title = repoName;
     if (branch) title = repoName + ': /' + path + ' at ' + branch;
     util.documentTitle(title);
-    this.app.loader.start(t('loading.repo'));
-    this.app.nav.mode('repo');
 
     var user = this.users.findWhere({ login: login });
     if (_.isUndefined(user)) {
@@ -150,6 +152,7 @@ module.exports = Backbone.Router.extend({
     repo.fetch({
       success: (function(model, res, options) {
         var content = new RepoView({
+          app: this.app,
           branch: branch,
           model: repo,
           nav: this.app.nav,
@@ -164,10 +167,9 @@ module.exports = Backbone.Router.extend({
       }).bind(this),
       error: (function(model, xhr, options) {
         this.error(xhr);
-      }).bind(this)
+      }).bind(this),
+      complete: this.app.loader.done
     });
-
-    this.app.loader.stop();
   },
 
   path: function(login, repoName, path) {
@@ -224,6 +226,7 @@ module.exports = Backbone.Router.extend({
     }
 
     var file = {
+      app: this.app,
       branch: branch,
       branches: repo.branches,
       mode: mode,
@@ -243,12 +246,11 @@ module.exports = Backbone.Router.extend({
           success: (function(model, res, options) {
             this.view = new FileView(file);
             this.app.$el.find('#main').html(this.view.el);
-
-            this.app.loader.stop();
           }).bind(this),
           error: (function(model, xhr, options) {
             this.error(xhr);
-          }).bind(this)
+          }).bind(this),
+          complete: this.app.loader.done
         });
       }).bind(this),
       error: (function(model, xhr, options) {
@@ -296,12 +298,11 @@ module.exports = Backbone.Router.extend({
         // TODO: should this still pass through File view?
         this.view = new Preview(file);
         this.app.$el.find('#main').html(this.view.el);
-
-        this.app.loader.stop();
       }).bind(this),
       error: (function() {
         this.notify('error', t('notification.error.exists'));
-      }).bind(this)
+      }).bind(this),
+      complete: this.app.loader.done
     });
   },
 

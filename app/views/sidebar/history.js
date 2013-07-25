@@ -16,6 +16,10 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this);
 
+    var app = options.app;
+    app.loader.start();
+
+    this.app = app;
     this.user = options.user;
     this.repo = options.repo;
     this.branch = options.branch;
@@ -24,11 +28,14 @@ module.exports = Backbone.View.extend({
     this.view = options.view;
 
     this.commits.setBranch(this.branch, {
-      success: this.render
+      success: this.render,
+      complete: this.app.loader.done
     });
   },
 
   render: function(options) {
+    this.app.loader.start();
+
     this.$el.empty().append(_.template(this.template));
 
     // Filter on commit.get('author').id === this.user.get('id')
@@ -111,6 +118,8 @@ module.exports = Backbone.View.extend({
       this.$el.find('#commits').html(frag);
 
       this.sidebar.open();
+
+      this.app.loader.done();
     }).bind(this));
 
     return this;

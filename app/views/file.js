@@ -28,9 +28,13 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this);
 
+    var app = options.app;
+    app.loader.start();
+
     // Patch Liquid
     patch.apply(this);
 
+    this.app = app;
     this.branch = options.branch || options.repo.get('master_branch');
     this.branches = options.branches;
     this.mode = options.mode;
@@ -73,15 +77,26 @@ module.exports = Backbone.View.extend({
       }
     }).bind(this);
 
-    this.branches.fetch({ success: this.setCollection });
+    this.branches.fetch({
+      success: this.setCollection,
+      complete: app.loader.done
+    });
   },
 
   setCollection: function(collection, res, options) {
+    this.app.loader.start();
+
     this.collection = collection.findWhere({ name: this.branch }).files;
-    this.collection.fetch({ success: this.setModel, args: arguments });
+    this.collection.fetch({
+      success: this.setModel,
+      complete: this.app.loader.done,
+      args: arguments
+    });
   },
 
   setModel: function(model, res, options) {
+    this.app.loader.start();
+
     // Set default metadata from collection
     var defaults = this.collection.defaults;
     var path;
@@ -112,7 +127,10 @@ module.exports = Backbone.View.extend({
 
       // Render on complete to render even if model does not exist on remote yet
       this.model.fetch({
-        complete: this.render
+        complete: (function() {
+          this.app.loader.done();
+          this.render();
+        }).bind(this)
       });
     } else {
       this.router.notify(
@@ -135,6 +153,8 @@ module.exports = Backbone.View.extend({
           }
         ]
       );
+
+      this.app.loader.done();
     }
   },
 
@@ -454,6 +474,8 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
+    this.app.loader.start();
+
     if (this.mode === 'preview') {
       this.preview();
     } else {
@@ -516,6 +538,8 @@ module.exports = Backbone.View.extend({
         this.blob();
       }
     }
+
+    this.app.loader.done();
 
     return this;
   },
