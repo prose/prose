@@ -76,7 +76,7 @@ module.exports = Backbone.Router.extend({
     if (this.view) this.view.remove();
 
     util.documentTitle(login)
-    util.loader.loading(t('loading.repos'));
+    this.app.loader.start(t('loading.repos'));
     this.app.nav.mode('repos');
 
     var user = this.users.findWhere({ login: login });
@@ -111,7 +111,7 @@ module.exports = Backbone.Router.extend({
         model.repos.fetch({ success: repos.render });
 
         // TODO: build event-driven loader queue
-        util.loader.loaded();
+        this.app.loader.stop();
       }).bind(this),
       error: (function(model, xhr, options) {
         this.error(xhr);
@@ -127,7 +127,7 @@ module.exports = Backbone.Router.extend({
     var title = repoName;
     if (branch) title = repoName + ': /' + path + ' at ' + branch;
     util.documentTitle(title);
-    util.loader.loading(t('loading.repo'));
+    this.app.loader.start(t('loading.repo'));
     this.app.nav.mode('repo');
 
     var user = this.users.findWhere({ login: login });
@@ -167,7 +167,7 @@ module.exports = Backbone.Router.extend({
       }).bind(this)
     });
 
-    util.loader.loaded();
+    this.app.loader.stop();
   },
 
   path: function(login, repoName, path) {
@@ -196,13 +196,13 @@ module.exports = Backbone.Router.extend({
 
     switch(mode) {
       case 'new':
-        util.loader.loading(t('loading.creating'));
+        this.app.loader.start(t('loading.creating'));
         break;
       case 'edit':
-        util.loader.loading(t('loading.file'));
+        this.app.loader.start(t('loading.file'));
         break;
       case 'preview':
-        util.loader.loading(t('preview.file'));
+        this.app.loader.start(t('preview.file'));
         break;
     }
 
@@ -244,7 +244,7 @@ module.exports = Backbone.Router.extend({
             this.view = new FileView(file);
             this.app.$el.find('#main').html(this.view.el);
 
-            util.loader.loaded();
+            this.app.loader.stop();
           }).bind(this),
           error: (function(model, xhr, options) {
             this.error(xhr);
@@ -260,7 +260,7 @@ module.exports = Backbone.Router.extend({
   preview: function(login, repoName, mode, branch, path) {
     if (this.view) this.view.remove();
 
-    util.loader.loading(t('preview.file'));
+    this.app.loader.start(t('preview.file'));
 
     var user = this.users.findWhere({ login: login });
     if (_.isUndefined(user)) {
@@ -297,7 +297,7 @@ module.exports = Backbone.Router.extend({
         this.view = new Preview(file);
         this.app.$el.find('#main').html(this.view.el);
 
-        util.loader.loaded();
+        this.app.loader.stop();
       }).bind(this),
       error: (function() {
         this.notify('error', t('notification.error.exists'));
@@ -330,7 +330,7 @@ module.exports = Backbone.Router.extend({
     });
 
     this.app.$el.find('#main').html(this.view.render().el);
-    util.loader.loaded();
+    this.app.loader.stop();
   },
 
   error: function(xhr) {

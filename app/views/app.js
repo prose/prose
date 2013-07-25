@@ -1,6 +1,7 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var LoaderView = require('./loader');
 var SidebarView = require('./sidebar');
 var NavView = require('./nav');
 var cookie = require('../cookie');
@@ -33,6 +34,10 @@ module.exports = Backbone.View.extend({
 
     this.user = options.user;
 
+    // Loader
+    this.loader = new LoaderView();
+    this.subviews['loader'] = this.loader;
+
     // Sidebar
     this.sidebar = new SidebarView({
       app: this,
@@ -52,6 +57,7 @@ module.exports = Backbone.View.extend({
   render: function() {
     this.$el.html(_.template(this.template, {}, { variable: 'data' }));
 
+    this.loader.setElement(this.$el.find('#loader')).render();
     this.sidebar.setElement(this.$el.find('#drawer')).render();
     this.nav.setElement(this.$el.find('nav')).render();
 

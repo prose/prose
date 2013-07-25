@@ -248,7 +248,6 @@ module.exports = Backbone.Model.extend({
     Backbone.Model.prototype.save.call(this, undefined, options);
   },
 
-  // patch: function(user, repo, branch, path, content, message, cb) {
   patch: function(options) {
     options = _.clone(options) || {};
 
