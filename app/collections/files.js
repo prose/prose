@@ -150,15 +150,17 @@ module.exports = Backbone.Collection.extend({
             });
           });
         });
-      }
 
-      q.awaitAll((function() {
-        // Save parsed config to the collection as it's used accross
-        // files of the same collection and shouldn't be re-parsed each time
-        this.defaults = metadata;
+        q.awaitAll((function() {
+          // Save parsed config to the collection as it's used accross
+          // files of the same collection and shouldn't be re-parsed each time
+          this.defaults = metadata;
 
+          if (_.isFunction(options.success)) options.success.apply(this, options.args);
+        }).bind(this));
+      } else {
         if (_.isFunction(options.success)) options.success.apply(this, options.args);
-      }).bind(this));
+      }
     } else {
       if (_.isFunction(options.success)) options.success.apply(this, options.args);
     }
