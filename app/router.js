@@ -126,7 +126,10 @@ module.exports = Backbone.Router.extend({
     if (this.view instanceof RepoView &&
       this.view.model.get('owner').login === login &&
       this.view.model.get('name') === repoName &&
-      this.view.branch === branch) {
+      (this.view.branch === branch ||
+        (_.isUndefined(branch) &&
+        this.view.branch === this.view.model.get('master_branch'))
+      )) {
       this.view.files.path = path || '';
       return this.view.files.render();
     } else if (this.view) this.view.remove();
