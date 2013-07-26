@@ -79,6 +79,9 @@ module.exports = Backbone.View.extend({
 
     this.branches.fetch({
       success: this.setCollection,
+      error: (function(model, xhr, options) {
+        this.router.error(xhr);
+      }).bind(this),
       complete: app.loader.done
     });
   },
@@ -89,6 +92,9 @@ module.exports = Backbone.View.extend({
     this.collection = collection.findWhere({ name: this.branch }).files;
     this.collection.fetch({
       success: this.setModel,
+      error: (function(model, xhr, options) {
+        this.router.error(xhr);
+      }).bind(this),
       complete: this.app.loader.done,
       args: arguments
     });
@@ -692,9 +698,15 @@ module.exports = Backbone.View.extend({
               if (meta && meta.layout) q.defer(getLayout.bind(this));
 
               cb();
-            }).bind(this)
+            }).bind(this),
+            error: (function(model, xhr, options) {
+              this.router.error(xhr);
+            }).bind(this),
           });
-        }).bind(this)
+        }).bind(this),
+        error: (function(model, xhr, options) {
+          this.router.error(xhr);
+        }).bind(this),
       })
     }
 
@@ -750,9 +762,9 @@ module.exports = Backbone.View.extend({
             this.branch
           ].join('/'), true);
         }).bind(this),
-        error: function() {
-          return alert(t('actions.delete.error'));
-        }
+        error: (function(model, xhr, options) {
+          this.router.error(xhr);
+        }).bind(this)
       });
     }
   },

@@ -98,10 +98,11 @@ module.exports = Backbone.Router.extend({
 
     var content = new ProfileView({
       auth: this.user,
-      user: user,
       search: search,
       sidebar: this.app.sidebar,
-      repos: repos
+      repos: repos,
+      router: this,
+      user: user
     });
 
     user.fetch({
@@ -111,6 +112,9 @@ module.exports = Backbone.Router.extend({
 
         model.repos.fetch({
           success: repos.render,
+          error: (function(model, xhr, options) {
+            this.error(xhr);
+          }).bind(this),
           complete: this.app.loader.done
         });
       }).bind(this),
@@ -308,8 +312,8 @@ module.exports = Backbone.Router.extend({
         this.view = new Preview(file);
         this.app.$el.find('#main').html(this.view.el);
       }).bind(this),
-      error: (function() {
-        this.notify('error', t('notification.error.exists'));
+      error: (function(model, xhr, options) {
+        this.error(xhr);
       }).bind(this),
       complete: this.app.loader.done
     });
@@ -331,11 +335,12 @@ module.exports = Backbone.Router.extend({
     }
   },
 
-  notify: function(message, options) {
+  notify: function(message, error, options) {
     if (this.view) this.view.remove();
 
     this.view = new NotificationView({
       'message': message,
+      'error': error,
       'options': options
     });
 
@@ -358,6 +363,6 @@ module.exports = Backbone.Router.extend({
       }
     ];
 
-    this.notify(message, options)
+    this.notify(message, error, options)
   }
 });
