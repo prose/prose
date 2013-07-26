@@ -179,16 +179,18 @@ module.exports = Backbone.View.extend({
   },
 
   navigate: function(e) {
-    if (e) e.preventDefault();
-
     var target = e.currentTarget;
     var path = target.href.split('#')[1];
     var match = path.match(/tree\/([^\/]*)\/?(.*)$/);
 
-    this.path = match ? match[2] : path;
-    this.render();
+    if (e && match) {
+      e.preventDefault();
 
-    this.router.navigate(path);
+      this.path = match ? match[2] : path;
+      this.render();
+
+      this.router.navigate(path);
+    }
   },
 
   remove: function() {
