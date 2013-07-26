@@ -30,7 +30,7 @@ module.exports = Backbone.View.extend({
       status: this.file.status
     };
 
-    this.$el.empty().append(_.template(this.template, data, { variable: 'commit' }));
+    this.$el.html(_.template(this.template, data, { variable: 'commit' }));
     return this;
   },
 

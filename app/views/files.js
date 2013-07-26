@@ -29,6 +29,7 @@ module.exports = Backbone.View.extend({
     this.app = app;
     this.branch = options.branch || options.repo.get('master_branch');
     this.branches = options.branches;
+    this.history = options.history;
     this.nav = options.nav;
     this.path = options.path || '';
     this.repo = options.repo;
@@ -126,17 +127,19 @@ module.exports = Backbone.View.extend({
 
       if (file instanceof File) {
         view = new FileView({
-          model: file,
+          branch: this.branch,
+          history: this.history,
           index: index,
-          repo: this.repo,
-          branch: this.branch
+          model: file,
+          repo: this.repo
         });
       } else if (file instanceof Folder) {
         view = new FolderView({
-          model: file,
+          branch: this.branch,
+          history: this.history,
           index: index,
-          repo: this.repo,
-          branch: this.branch
+          model: file,
+          repo: this.repo
         });
       }
 

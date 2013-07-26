@@ -1,5 +1,6 @@
 var $ = require('jquery-browserify');
 var _ = require('underscore');
+var queue = require('queue-async');
 var Backbone = require('backbone');
 var FilesView = require('./files');
 var HeaderView = require('./header');
@@ -32,10 +33,13 @@ module.exports = Backbone.View.extend({
     this.user = options.user;
 
     // Init subviews
-    this.initHeader();
-    this.initSearch();
     this.initBranches();
-    this.initHistory();
+    this.initHeader();
+
+    var q = queue();
+    q.defer(this.initSearch);
+    q.defer(this.initHistory);
+    q.awaitAll(this.initFiles);
 
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
@@ -64,13 +68,14 @@ module.exports = Backbone.View.extend({
     this.subviews['header'] = this.header;
   },
 
-  initSearch: function() {
+  initSearch: function(cb) {
     this.search = new SearchView({
       mode: 'repo'
     });
 
     this.subviews['search'] = this.search;
-    this.initFiles();
+
+    if (_.isFunction(cb)) cb.apply(this);
   },
 
   initFiles: function() {
@@ -78,6 +83,7 @@ module.exports = Backbone.View.extend({
       app: this.app,
       branch: this.branch,
       branches: this.model.branches,
+      history: this.history,
       nav: this.nav,
       path: this.path,
       repo: this.model,
@@ -102,7 +108,7 @@ module.exports = Backbone.View.extend({
     this.subviews['branches'] = this.branches;
   },
 
-  initHistory: function() {
+  initHistory: function(cb) {
     this.history = this.sidebar.initSubview('history', {
       app: this.app,
       user: this.user,
@@ -114,6 +120,8 @@ module.exports = Backbone.View.extend({
     });
 
     this.subviews['history'] = this.history;
+
+    if (_.isFunction(cb)) cb.apply(this);
   },
 
   create: function() {
