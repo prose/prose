@@ -111,11 +111,12 @@ module.exports = Backbone.View.extend({
   initHistory: function(cb) {
     this.history = this.sidebar.initSubview('history', {
       app: this.app,
-      user: this.user,
-      repo: this.model,
       branch: this.branch,
       commits: this.model.commits,
+      repo: this.model,
+      router: this.router,
       sidebar: this.sidebar,
+      user: this.user,
       view: this
     });
 

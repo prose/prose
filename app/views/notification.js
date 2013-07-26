@@ -20,6 +20,7 @@ module.exports = Backbone.View.extend({
     _.bindAll(this);
 
     this.message = options.message;
+    this.error = options.error;
     this.options = options.options;
   },
 
@@ -28,6 +29,7 @@ module.exports = Backbone.View.extend({
 
     var data = {
       message: this.message,
+      error: this.error,
       options: this.options
     }
 

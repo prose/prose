@@ -41,6 +41,9 @@ module.exports = Backbone.View.extend({
 
     this.branches.fetch({
       success: this.setModel,
+      error: (function(model, xhr, options) {
+        this.router.error(xhr);
+      }).bind(this),
       complete: this.app.loader.done
     });
   },
@@ -60,6 +63,9 @@ module.exports = Backbone.View.extend({
         // Render on fetch and on search
         this.listenTo(this.search, 'search', this.render);
         this.render();
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.router.error(xhr);
       }).bind(this),
       complete: this.app.loader.done,
       reset: true
@@ -133,7 +139,8 @@ module.exports = Backbone.View.extend({
           history: this.history,
           index: index,
           model: file,
-          repo: this.repo
+          repo: this.repo,
+          router: this.router
         });
       } else if (file instanceof Folder) {
         view = new FolderView({
@@ -141,7 +148,8 @@ module.exports = Backbone.View.extend({
           history: this.history,
           index: index,
           model: file,
-          repo: this.repo
+          repo: this.repo,
+          router: this.router
         });
       }
 
@@ -171,16 +179,18 @@ module.exports = Backbone.View.extend({
   },
 
   navigate: function(e) {
-    if (e) e.preventDefault();
-
     var target = e.currentTarget;
     var path = target.href.split('#')[1];
     var match = path.match(/tree\/([^\/]*)\/?(.*)$/);
 
-    this.path = match ? match[2] : path;
-    this.render();
+    if (e && match) {
+      e.preventDefault();
 
-    this.router.navigate(path);
+      this.path = match ? match[2] : path;
+      this.render();
+
+      this.router.navigate(path);
+    }
   },
 
   remove: function() {

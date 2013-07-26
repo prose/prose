@@ -13,10 +13,11 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     this.auth = options.auth;
-    this.user = options.user;
+    this.repos = options.repos;
+    this.router = options.router;
     this.search = options.search;
     this.sidebar = options.sidebar;
-    this.repos = options.repos;
+    this.user = options.user;
   },
 
   render: function() {
@@ -32,6 +33,7 @@ module.exports = Backbone.View.extend({
     if (this.auth) {
       var orgs = this.sidebar.initSubview('orgs', {
         model: this.auth.orgs,
+        router: this.router,
         sidebar: this.sidebar,
         user: this.user
       });

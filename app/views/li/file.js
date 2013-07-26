@@ -21,6 +21,7 @@ module.exports = Backbone.View.extend({
     this.history = options.history;
     this.model = options.model;
     this.repo = options.repo;
+    this.router = options.router;
 
     this.$el.attr('data-index', options.index);
 
@@ -65,6 +66,9 @@ module.exports = Backbone.View.extend({
           this.history.subviews[commit.sha] = view;
 
           this.$el.fadeOut('fast');
+        }).bind(this),
+        error: (function(model, xhr, options) {
+          this.router.error(xhr);
         }).bind(this)
       });
     }

@@ -20,15 +20,19 @@ module.exports = Backbone.View.extend({
     app.loader.start();
 
     this.app = app;
-    this.user = options.user;
-    this.repo = options.repo;
     this.branch = options.branch;
     this.commits = options.commits;
+    this.repo = options.repo;
+    this.router = options.router;
     this.sidebar = options.sidebar;
+    this.user = options.user;
     this.view = options.view;
 
     this.commits.setBranch(this.branch, {
       success: this.render,
+      error: (function(model, xhr, options) {
+        this.router.error(xhr);
+      }).bind(this),
       complete: this.app.loader.done
     });
   },
@@ -66,7 +70,10 @@ module.exports = Backbone.View.extend({
           success: function(model, res, options) {
             // This is necessary instead of success: cb for some reason
             cb();
-          }
+          },
+          error: (function(model, xhr, options) {
+            this.router.error(xhr);
+          }).bind(this),
         });
       });
     });

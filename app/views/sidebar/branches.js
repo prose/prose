@@ -25,6 +25,9 @@ module.exports = Backbone.View.extend({
 
     this.model.fetch({
       success: this.render,
+      error: (function(model, xhr, options) {
+        this.router.error(xhr);
+      }).bind(this),
       complete: this.app.loader.done
     });
   },

@@ -81,7 +81,7 @@ module.exports = Backbone.View.extend({
         this.view.files.render();
       }).bind(this),
       error: (function(model, xhr, options) {
-        // log actual error message
+        // Log actual error message
         this.message(['Error', xhr.status, xhr.statusText].join(' '));
         this.state('error');
       }).bind(this)

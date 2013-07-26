@@ -11,11 +11,15 @@ module.exports = Backbone.View.extend({
     _.bindAll(this);
 
     this.model = options.model;
+    this.router = options.router;
     this.sidebar = options.sidebar;
     this.user = options.user;
 
     this.model.fetch({
-      success: this.render
+      success: this.render,
+      error: (function(model, xhr, options) {
+        this.router.error(xhr);
+      }).bind(this)
     });
   },
 
