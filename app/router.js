@@ -123,7 +123,13 @@ module.exports = Backbone.Router.extend({
   // #example-user/example-repo
   // #example-user/example-repo/tree/example-branch/example-path
   repo: function(login, repoName, branch, path) {
-    if (this.view) this.view.remove();
+    if (this.view instanceof RepoView &&
+      this.view.model.get('owner').login === login &&
+      this.view.model.get('name') === repoName &&
+      this.view.branch === branch) {
+      this.view.files.path = path || '';
+      return this.view.files.render();
+    } else if (this.view) this.view.remove();
 
     this.app.loader.start(t('loading.repo'));
     this.app.nav.mode('repo');

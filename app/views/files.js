@@ -17,7 +17,9 @@ module.exports = Backbone.View.extend({
 
   events: {
     'mouseover .item': 'activeListing',
-    'mouseover .item a': 'activeListing'
+    'mouseover .item a': 'activeListing',
+    'click .breadcrumb a': 'navigate',
+    'click .item a': 'navigate'
   },
 
   initialize: function(options) {
@@ -166,6 +168,19 @@ module.exports = Backbone.View.extend({
 
     // Blur out search if its selected
     this.search.$el.blur();
+  },
+
+  navigate: function(e) {
+    if (e) e.preventDefault();
+
+    var target = e.currentTarget;
+    var path = target.href.split('#')[1];
+    var match = path.match(/tree\/([^\/]*)\/?(.*)$/);
+
+    this.path = match ? match[2] : path;
+    this.render();
+
+    this.router.navigate(path);
   },
 
   remove: function() {
