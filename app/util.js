@@ -257,25 +257,6 @@ module.exports = {
     return false;
   },
 
-  loader: {
-    loading: function(message) {
-      var tmpl = _(templates.loading).template();
-      var loading = {
-        message: message
-      };
-
-      $('#loader').empty().append(_.template(templates.loading, loading, {
-        variable: 'loading'
-      }));
-    },
-
-    loaded: function() {
-      $('#loader').find('.loading').fadeOut(150, function() {
-        $(this).remove();
-      });
-    }
-  },
-
   autoSelect: function($el) {
     $el.on('click', function() {
       $el.select();

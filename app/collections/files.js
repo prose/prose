@@ -7,6 +7,7 @@ var File = require('../models/file');
 var Folder = require('../models/folder');
 
 var cookie = require('../cookie');
+var util = require('../util');
 
 module.exports = Backbone.Collection.extend({
   model: function(attributes, options) {
@@ -209,6 +210,9 @@ module.exports = Backbone.Collection.extend({
           path: path,
           repo: this.repo
         });
+
+        var name = util.extractFilename(path)[1];
+        model.set('placeholder', t('actions.commits.created', { filename: name }));
 
         // add to collection on save
         model.save({

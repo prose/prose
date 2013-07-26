@@ -17,14 +17,21 @@ module.exports = Backbone.View.extend({
 
   events: {
     'mouseover .item': 'activeListing',
-    'mouseover .item a': 'activeListing'
+    'mouseover .item a': 'activeListing',
+    'click .breadcrumb a': 'navigate',
+    'click .item a': 'navigate'
   },
 
   initialize: function(options) {
     _.bindAll(this);
 
+    var app = options.app;
+    app.loader.start();
+
+    this.app = app;
     this.branch = options.branch || options.repo.get('master_branch');
     this.branches = options.branches;
+    this.history = options.history;
     this.nav = options.nav;
     this.path = options.path || '';
     this.repo = options.repo;
@@ -32,22 +39,31 @@ module.exports = Backbone.View.extend({
     this.search = options.search;
     this.sidebar = options.sidebar;
 
-    this.branches.fetch({ success: this.setModel });
+    this.branches.fetch({
+      success: this.setModel,
+      complete: this.app.loader.done
+    });
   },
 
   setModel: function() {
+    this.app.loader.start();
+
     this.model = this.branches.findWhere({ name: this.branch }).files;
     this.search.model = this.model;
 
-    this.model.fetch({ success: (function() {
-      // Update this.path with rooturl
-      var config = this.model.config;
-      this.rooturl = config && config.rooturl ? config.rooturl : '';
+    this.model.fetch({
+      success: (function() {
+        // Update this.path with rooturl
+        var config = this.model.config;
+        this.rooturl = config && config.rooturl ? config.rooturl : '';
 
-      // Render on fetch and on search
-      this.listenTo(this.search, 'search', this.render);
-      this.render();
-    }).bind(this), reset: true });
+        // Render on fetch and on search
+        this.listenTo(this.search, 'search', this.render);
+        this.render();
+      }).bind(this),
+      complete: this.app.loader.done,
+      reset: true
+    });
   },
 
   newFile: function() {
@@ -63,6 +79,8 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
+    this.app.loader.start();
+
     var search = this.search && this.search.input && this.search.input.val();
     var rooturl = this.rooturl ? this.rooturl + '/' : '';
     var path = this.path ? this.path + '/' : '';
@@ -111,17 +129,19 @@ module.exports = Backbone.View.extend({
 
       if (file instanceof File) {
         view = new FileView({
-          model: file,
+          branch: this.branch,
+          history: this.history,
           index: index,
-          repo: this.repo,
-          branch: this.branch
+          model: file,
+          repo: this.repo
         });
       } else if (file instanceof Folder) {
         view = new FolderView({
-          model: file,
+          branch: this.branch,
+          history: this.history,
           index: index,
-          repo: this.repo,
-          branch: this.branch
+          model: file,
+          repo: this.repo
         });
       }
 
@@ -130,6 +150,8 @@ module.exports = Backbone.View.extend({
     }).bind(this));
 
     this.$el.find('ul').html(frag);
+
+    this.app.loader.done();
 
     return this;
   },
@@ -146,6 +168,19 @@ module.exports = Backbone.View.extend({
 
     // Blur out search if its selected
     this.search.$el.blur();
+  },
+
+  navigate: function(e) {
+    if (e) e.preventDefault();
+
+    var target = e.currentTarget;
+    var path = target.href.split('#')[1];
+    var match = path.match(/tree\/([^\/]*)\/?(.*)$/);
+
+    this.path = match ? match[2] : path;
+    this.render();
+
+    this.router.navigate(path);
   },
 
   remove: function() {

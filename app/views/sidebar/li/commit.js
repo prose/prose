@@ -30,7 +30,7 @@ module.exports = Backbone.View.extend({
       status: this.file.status
     };
 
-    this.$el.empty().append(_.template(this.template, data, { variable: 'commit' }));
+    this.$el.html(_.template(this.template, data, { variable: 'commit' }));
     return this;
   },
 
@@ -65,19 +65,20 @@ module.exports = Backbone.View.extend({
     var path = this.file.filename;
 
     // Spinning icon
-    this.message('Restoring ' + path);
+    this.message(t('actions.restore.restoring') + ' ' + path);
     this.state('saving');
 
     this.files.restore(this.file, {
       success: (function(model, res, options) {
-        this.message('Restored: ' + path);
+        this.message(t('actions.restore.restored') + ': ' + path);
         this.state('checkmark');
 
         this.$el.find('a')
           .removeClass('removed')
-          .attr('title', 'Restored: ' + this.file.filename);
+          .attr('title', t('actions.restore.restored') + ': ' + this.file.filename);
 
-        // TODO: re-render Files view once collection has updated
+        // Re-render Files view once collection has updated
+        this.view.files.render();
       }).bind(this),
       error: (function(model, xhr, options) {
         // log actual error message
