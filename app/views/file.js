@@ -588,7 +588,7 @@ module.exports = Backbone.View.extend({
     var metadata = this.model.get('metadata');
     var jekyll = this.config && this.config.siteurl && metadata && metadata.layout;
 
-    if (jekyll) {
+    if (jekyll && e) {
       // TODO: this could all be removed if preview button listened to
       // change:path event on model
       var hash = window.location.hash.split('/');
