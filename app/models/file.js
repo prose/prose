@@ -98,7 +98,7 @@ module.exports = Backbone.Model.extend({
 
       try {
         // TODO: _.defaults for each key
-        res.metadata = jsyaml.load(frontmatter);
+        res.metadata = jsyaml.safeLoad(frontmatter);
 
         // Default to published unless explicitly set to false
         res.metadata.published = !regex.test(frontmatter);
@@ -145,7 +145,7 @@ module.exports = Backbone.Model.extend({
 
     if (metadata) {
       try {
-        frontmatter = jsyaml.dump(metadata).trim();
+        frontmatter = jsyaml.safeDump(metadata).trim();
       } catch(err) {
         throw err;
       }

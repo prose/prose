@@ -78,7 +78,7 @@ module.exports = Backbone.Collection.extend({
 
     // Attempt to parse YAML
     try {
-      config = jsyaml.load(content);
+      config = jsyaml.safeLoad(content);
     } catch(err) {
       throw err;
     }
@@ -132,7 +132,7 @@ module.exports = Backbone.Collection.extend({
               });
             } else if (_.isString(raw)) {
               try {
-                defaults = jsyaml.load(raw);
+                defaults = jsyaml.safeLoad(raw);
 
                 if (defaults.date === "CURRENT_DATETIME") {
                   var current = (new Date()).format('Y-m-d H:i');
