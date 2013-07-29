@@ -169,7 +169,7 @@ module.exports = Backbone.View.extend({
     // Match nearest parent directory default metadata
     // Match paths in _drafts to corresponding defaults set at _posts
     path = path.replace(/^(_drafts)/, '_posts');
-    var nearestDir = /\/(?!.*\/).*$/;
+    var nearestDir = /\/?(?!.*\/).*$/;
 
     while (!_.has(defaults, path) && nearestDir.test(path)) {
       path = path.replace( nearestDir, '' );
