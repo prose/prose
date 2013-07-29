@@ -47,7 +47,10 @@ module.exports = Backbone.View.extend({
     }), true);
 
     /*
-    // TODO: jail files to rooturl
+    // TODO: jail files to rooturl #541
+    // This is difficult, as rooturl is set in Files collection
+    // on a successful fetch
+
     if (rooturl) {
       files = files.filter(function(file) {
         return file.filename.indexOf(rooturl) === 0;
