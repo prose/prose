@@ -13,6 +13,7 @@ var File = require('../models/file');
 var HeaderView = require('./header');
 var ToolbarView = require('./toolbar');
 var MetadataView = require('./metadata');
+var auth = require('../config');
 var util = require('../util');
 var upload = require('../upload');
 var cookie = require('../cookie');
@@ -254,34 +255,32 @@ module.exports = Backbone.View.extend({
     var titleAttribute = /".*?"/;
 
     // Build an array of found images
-    var result = content.match(scan);
+    var results = content.match(scan);
 
     // Iterate over the results and replace
-    _(result).each(function(r) {
-        var parts = (image).exec(r);
+    _.each(results, (function(r) {
+      var parts = (image).exec(r);
+      var path;
 
-        if (parts !== null) {
-          path = parts[2];
+      if (parts !== null) {
+        path = parts[2];
 
-          if (!util.absolutePath(path)) {
-            // Remove any title attribute in the image tag is there is one.
-            if (titleAttribute.test(path)) {
-              path = path.split(titleAttribute)[0];
-            }
-
-            path = this.model.get('path');
-            var raw = auth.raw + '/' + this.repo.get('owner').login + '/' + this.repo.get('name') + '/' + this.branch + '/' + (path ? path  + '/' : '') + this.model.get('name');
-
-            if (this.repo.get('private')) {
-              // append auth param
-              // TODO This is not correct. See #491
-              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
-            }
-
-            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+        if (!util.absolutePath(path)) {
+          // Remove any title attribute in the image tag is there is one.
+          if (titleAttribute.test(path)) {
+            path = path.split(titleAttribute)[0];
           }
+
+          // Prepend directory path if not site root relative
+          path = /^\//.test(path) ? path.slice(1) :
+            util.extractFilename(this.model.get('path'))[0] + '/' + path;
+
+          var raw = auth.site + '/' + this.repo.get('owner').login + '/' + this.repo.get('name') + '/blob/' +  this.branch + '/' + path + '?raw=true';
+
+          content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
         }
-    });
+      }
+    }).bind(this));
 
     return content;
   },
@@ -487,7 +486,7 @@ module.exports = Backbone.View.extend({
     } else {
       var content = this.model.get('content');
 
-      if (this.model.get('markdown' && content)) {
+      if (this.model.get('markdown') && content) {
         this.model.set('preview', marked(this.compilePreview(content)));
       }
 
@@ -624,12 +623,13 @@ module.exports = Backbone.View.extend({
   preview: function() {
     var q = queue(1);
     var metadata = this.model.get('metadata');
+    var content = this.model.get('content');
 
     var p = {
       site: this.collection.config,
       post: metadata,
       page: metadata,
-      content: Liquid.parse(marked(this.model.get('content'))).render({
+      content: Liquid.parse(marked(this.compilePreview(content))).render({
         site: this.collection.config,
         post: metadata,
         page: metadata
