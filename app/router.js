@@ -171,8 +171,7 @@ module.exports = Backbone.Router.extend({
           nav: this.app.nav,
           path: path,
           router: this,
-          sidebar: this.app.sidebar,
-          user: user
+          sidebar: this.app.sidebar
         });
 
         this.view = content;

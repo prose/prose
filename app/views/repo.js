@@ -30,7 +30,6 @@ module.exports = Backbone.View.extend({
     this.path = options.path || '';
     this.router = options.router;
     this.sidebar = options.sidebar;
-    this.user = options.user;
 
     // Init subviews
     this.initBranches();
@@ -50,7 +49,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(_.template(this.template, {}, {variable: 'data'}));
+    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
 
     this.header.setElement(this.$el.find('#heading')).render();
     this.search.setElement(this.$el.find('#search')).render();
@@ -116,7 +115,6 @@ module.exports = Backbone.View.extend({
       repo: this.model,
       router: this.router,
       sidebar: this.sidebar,
-      user: this.user,
       view: this
     });
 
