@@ -5,6 +5,7 @@ var CommitView = require('./li/commit');
 
 var queue = require('queue-async');
 
+var cookie = require('../../cookie');
 var templates = require('../../../dist/templates');
 var utils = require('../../util');
 
@@ -97,13 +98,13 @@ module.exports = Backbone.View.extend({
     this.$el.empty();
 
     // Filter on commit.get('author').id === this.user.get('id')
-    var id = this.user ? this.user.get('id') : false;
+    var id = cookie.get('id') || false;
 
     // Group and deduplicate commits by authenticated user
     var history = this.commits.groupBy(function(commit) {
       // Handle malformed commit data
       var author = commit.get('author') || commit.get('commit').author;
-      return author.id === id ? 'author' : 'all';
+      return author && author.id === id ? 'author' : 'all';
     });
 
     // TODO: how many commits should be fetched initially?

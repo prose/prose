@@ -179,7 +179,7 @@ module.exports = Backbone.Collection.extend({
 
         if (config) {
           config.fetch({
-            complete: (function() {
+            success: (function() {
               this.parseConfig(config, { success: success, args: args });
             }).bind(this)
           });
