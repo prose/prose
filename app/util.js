@@ -126,9 +126,9 @@ module.exports = {
     });
   },
 
-  isBinary: function(extension) {
-    var regex = new RegExp(/^(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$/);
-    return !!(regex.test(extension));
+  isBinary: function(path) {
+    var regex = new RegExp(/.(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$/);
+    return !!(regex.test(path));
   },
 
   isMarkdown: function(extension) {

@@ -2,41 +2,56 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var templates = require('../../../../dist/templates');
+var util = require('../../../util');
 
 module.exports = Backbone.View.extend({
   template: templates.sidebar.li.commit,
 
   tagName: 'li',
 
+  className: 'item',
+
   events: {
-    'mouseenter a.removed': 'eventMessage',
-    'mouseleave a.removed': 'eventMessage',
-    'click a.removed': 'restore'
+    'mouseenter .removed': 'eventMessage',
+    'mouseleave .removed': 'eventMessage',
+    'click .removed': 'restore'
   },
 
   initialize: function(options) {
+    var file = options.file;
+
     this.branch = options.branch;
-    this.file = options.file;
+    this.file = file;
     this.files = options.repo.branches.findWhere({ name: options.branch }).files;
     this.repo = options.repo;
     this.view  = options.view;
   },
 
   render: function() {
+    var file = this.file;
+    var binary = util.isBinary(file.filename);
+
     var data = {
-      file: this.file,
-      repo: this.repo.toJSON(),
       branch: this.branch,
-      status: this.file.status
+      file: file,
+      mode: binary ? 'tree' : 'edit',
+      path: binary ?
+        util.extractFilename(file.filename)[0] : file.filename,
+      repo: this.repo.toJSON(),
+      status: file.status
     };
 
-    this.$el.html(_.template(this.template, data, { variable: 'commit' }));
+    var title = file.status.charAt(0).toUpperCase() + file.status.slice(1) +
+      ': ' + file.filename;
+
+    this.$el.attr('title', title)
+      .html(_.template(this.template, data, { variable: 'data' }));
+
     return this;
   },
 
   message: function(message) {
     this.$el.find('.message').html(message);
-    this.$el.attr('title', message);
   },
 
   eventMessage: function(e) {
@@ -73,9 +88,10 @@ module.exports = Backbone.View.extend({
         this.message(t('actions.restore.restored') + ': ' + path);
         this.state('checkmark');
 
-        this.$el.find('a')
-          .removeClass('removed')
+        this.$el
           .attr('title', t('actions.restore.restored') + ': ' + this.file.filename);
+
+        this.$el.find('a').removeClass('removed');
 
         // Re-render Files view once collection has updated
         this.view.files.render();
