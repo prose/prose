@@ -420,8 +420,8 @@ module.exports = Backbone.View.extend({
         }
       } else {
 
-        // This is not a markdownn post, bounce
-        // TODO Should this handle _posts/name.html?
+        // This is not a Markdown post, bounce
+        // TODO: Should this handle _posts/name.html?
         return false;
       }
     }
@@ -520,7 +520,7 @@ module.exports = Backbone.View.extend({
         mode.push('meta');
       }
 
-      if (markdown || jekyll) mode.push('preview');
+      if (markdown || (jekyll && this.model.get('extension') === 'html')) mode.push('preview');
       if (!this.model.isNew()) mode.push('settings');
 
       this.nav.mode(mode.join(' '));
@@ -1130,6 +1130,9 @@ module.exports = Backbone.View.extend({
 
         this.sidebar.close();
         this.updateSaveState(t('actions.save.saved'), 'saved');
+
+        // Enable settings sidebar item
+        this.nav.$el.addClass('settings');
 
         // Unset dirty, return to edit view
         this.dirty = false;
