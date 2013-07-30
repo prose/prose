@@ -507,16 +507,23 @@ module.exports = Backbone.View.extend({
       this.initToolbar();
       this.initSidebar();
 
+      var mode = ['file'];
+      var markdown = this.model.get('markdown');
+      var jekyll = /^(_posts|_drafts)/.test(this.model.get('path'));
+
       // Update the navigation view with menu options
       // if a file contains metadata, has default metadata or is Markdown
-      if (this.model.get('metadata') || this.model.get('defaults') || this.model.get('markdown')) {
+      if (this.model.get('metadata') || this.model.get('defaults') ||
+        (markdown && jekyll)) {
         this.renderMetadata();
 
-        var mode = ['file', 'meta'];
-        if (!this.model.isNew()) mode.push('settings');
-
-        this.nav.mode(mode.join(' '));
+        mode.push('meta');
       }
+
+      if (markdown || jekyll) mode.push('preview');
+      if (!this.model.isNew()) mode.push('settings');
+
+      this.nav.mode(mode.join(' '));
 
       this.updateDocumentTitle();
 

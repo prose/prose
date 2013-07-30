@@ -1,4 +1,3 @@
-<!-- if !noMenu and authenticated -->
 <ul class='mobile nav clearfix'>
   <li>
     <a href='#' class='toggle ico menu round'></a>
@@ -12,25 +11,24 @@
     </a>
   </li>
 
-  <!-- if markdown or new -->
   <li>
     <a href='#' class='ico round eye blob preview' data-state='blob'>
       <span class='popup round arrow-right'><%= t('navigation.preview') %></span>
     </a>
   </li>
 
-  <!-- if authenticated -->
-  <!-- if lang == yaml -->
   <li>
     <a href='#' class='ico round metadata meta' data-state='meta'>
       <span class='popup round arrow-right'><%= t('navigation.meta') %></span>
     </a>
   </li>
+
   <li>
     <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>
       <span class='popup round arrow-right'><%= t('navigation.settings') %></span>
     </a>
   </li>
+
   <li>
     <a href='#' class='ico round save' data-state='save'>
       <div class='status'></div>

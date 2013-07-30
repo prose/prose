@@ -654,6 +654,9 @@ ins {
 .file .meta      { display:none; }
 .file.meta .meta { display:block; }
 
+.file .preview      { display:none; }
+.file.preview .preview { display:block; }
+
 .file .settings          { display:none; }
 .file.settings .settings { display:block; }
 
