@@ -255,6 +255,7 @@ module.exports = Backbone.Collection.extend({
     if (model) {
       // TODO: confirm overwrite with UI prompt
       model.set('content', content);
+      model.set('placeholder', t('actions.commits.updated', { filename: file.name }));
     } else {
       // initialize new File model with content
       model = new File({
@@ -264,6 +265,8 @@ module.exports = Backbone.Collection.extend({
         path: path,
         repo: this.repo
       });
+
+      model.set('placeholder', t('actions.commits.created', { filename: file.name }));
     }
 
     // add to collection on save
