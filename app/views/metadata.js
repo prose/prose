@@ -235,7 +235,7 @@ module.exports = Backbone.View.extend({
       var raw;
 
       try {
-        raw = jsyaml.load(value);
+        raw = jsyaml.safeLoad(value);
       } catch(err) {
         console.log(err);
       }
@@ -321,14 +321,14 @@ module.exports = Backbone.View.extend({
       var name = $('#' + editor).data('name');
 
       if (view[editor]) {
-        metadata[name] = jsyaml.load(view[editor].getValue());
+        metadata[name] = jsyaml.safeLoad(view[editor].getValue());
       }
     });
 
     // Load any data coming from not defined raw yaml front matter.
     if (this.raw) {
       try {
-        metadata = _.merge(metadata, jsyaml.load(this.raw.getValue()) || {});
+        metadata = _.merge(metadata, jsyaml.safeLoad(this.raw.getValue()) || {});
       } catch (err) {
         throw err;
       }
@@ -437,7 +437,7 @@ module.exports = Backbone.View.extend({
           raw[key] = value;
 
           if (this.raw) {
-            this.raw.setValue(this.raw.getValue() + jsyaml.dump(raw));
+            this.raw.setValue(this.raw.getValue() + jsyaml.safeDump(raw));
           }
         }
       }
@@ -500,12 +500,12 @@ module.exports = Backbone.View.extend({
   },
 
   getRaw: function() {
-    return jsyaml.dump(this.getValue()).trim();
+    return jsyaml.safeDump(this.getValue()).trim();
   },
 
   setRaw: function(data) {
     try {
-      this.raw.setValue(jsyaml.dump(data));
+      this.raw.setValue(jsyaml.safeDump(data));
       this.refresh;
     } catch (err) {
       throw err;

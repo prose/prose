@@ -78,7 +78,7 @@ module.exports = Backbone.Collection.extend({
 
     // Attempt to parse YAML
     try {
-      config = jsyaml.load(content);
+      config = jsyaml.safeLoad(content);
     } catch(err) {
       throw err;
     }
@@ -132,7 +132,7 @@ module.exports = Backbone.Collection.extend({
               });
             } else if (_.isString(raw)) {
               try {
-                defaults = jsyaml.load(raw);
+                defaults = jsyaml.safeLoad(raw);
 
                 if (defaults.date === "CURRENT_DATETIME") {
                   var current = (new Date()).format('Y-m-d H:i');
@@ -179,7 +179,7 @@ module.exports = Backbone.Collection.extend({
 
         if (config) {
           config.fetch({
-            complete: (function() {
+            success: (function() {
               this.parseConfig(config, { success: success, args: args });
             }).bind(this)
           });
@@ -255,6 +255,7 @@ module.exports = Backbone.Collection.extend({
     if (model) {
       // TODO: confirm overwrite with UI prompt
       model.set('content', content);
+      model.set('placeholder', t('actions.commits.updated', { filename: file.name }));
     } else {
       // initialize new File model with content
       model = new File({
@@ -264,6 +265,8 @@ module.exports = Backbone.Collection.extend({
         path: path,
         repo: this.repo
       });
+
+      model.set('placeholder', t('actions.commits.created', { filename: file.name }));
     }
 
     // add to collection on save

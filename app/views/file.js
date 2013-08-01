@@ -13,6 +13,7 @@ var File = require('../models/file');
 var HeaderView = require('./header');
 var ToolbarView = require('./toolbar');
 var MetadataView = require('./metadata');
+var auth = require('../config');
 var util = require('../util');
 var upload = require('../upload');
 var cookie = require('../cookie');
@@ -168,7 +169,7 @@ module.exports = Backbone.View.extend({
     // Match nearest parent directory default metadata
     // Match paths in _drafts to corresponding defaults set at _posts
     path = path.replace(/^(_drafts)/, '_posts');
-    var nearestDir = /\/(?!.*\/).*$/;
+    var nearestDir = /\/?(?!.*\/).*$/;
 
     while (!_.has(defaults, path) && nearestDir.test(path)) {
       path = path.replace( nearestDir, '' );
@@ -254,34 +255,32 @@ module.exports = Backbone.View.extend({
     var titleAttribute = /".*?"/;
 
     // Build an array of found images
-    var result = content.match(scan);
+    var results = content.match(scan);
 
     // Iterate over the results and replace
-    _(result).each(function(r) {
-        var parts = (image).exec(r);
+    _.each(results, (function(r) {
+      var parts = (image).exec(r);
+      var path;
 
-        if (parts !== null) {
-          path = parts[2];
+      if (parts !== null) {
+        path = parts[2];
 
-          if (!util.absolutePath(path)) {
-            // Remove any title attribute in the image tag is there is one.
-            if (titleAttribute.test(path)) {
-              path = path.split(titleAttribute)[0];
-            }
-
-            path = this.model.get('path');
-            var raw = auth.raw + '/' + this.repo.get('owner').login + '/' + this.repo.get('name') + '/' + this.branch + '/' + (path ? path  + '/' : '') + this.model.get('name');
-
-            if (this.repo.get('private')) {
-              // append auth param
-              // TODO This is not correct. See #491
-              raw += '?login=' + cookie.get('username') + '&token=' + cookie.get('oauth-token');
-            }
-
-            content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+        if (!util.absolutePath(path)) {
+          // Remove any title attribute in the image tag is there is one.
+          if (titleAttribute.test(path)) {
+            path = path.split(titleAttribute)[0];
           }
+
+          // Prepend directory path if not site root relative
+          path = /^\//.test(path) ? path.slice(1) :
+            util.extractFilename(this.model.get('path'))[0] + '/' + path;
+
+          var raw = auth.site + '/' + this.repo.get('owner').login + '/' + this.repo.get('name') + '/blob/' +  this.branch + '/' + path + '?raw=true';
+
+          content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
         }
-    });
+      }
+    }).bind(this));
 
     return content;
   },
@@ -421,8 +420,8 @@ module.exports = Backbone.View.extend({
         }
       } else {
 
-        // This is not a markdownn post, bounce
-        // TODO Should this handle _posts/name.html?
+        // This is not a Markdown post, bounce
+        // TODO: Should this handle _posts/name.html?
         return false;
       }
     }
@@ -487,7 +486,7 @@ module.exports = Backbone.View.extend({
     } else {
       var content = this.model.get('content');
 
-      if (this.model.get('markdown' && content)) {
+      if (this.model.get('markdown') && content) {
         this.model.set('preview', marked(this.compilePreview(content)));
       }
 
@@ -508,16 +507,23 @@ module.exports = Backbone.View.extend({
       this.initToolbar();
       this.initSidebar();
 
+      var mode = ['file'];
+      var markdown = this.model.get('markdown');
+      var jekyll = /^(_posts|_drafts)/.test(this.model.get('path'));
+
       // Update the navigation view with menu options
       // if a file contains metadata, has default metadata or is Markdown
-      if (this.model.get('metadata') || this.model.get('defaults') || this.model.get('markdown')) {
+      if (this.model.get('metadata') || this.model.get('defaults') ||
+        (markdown && jekyll)) {
         this.renderMetadata();
 
-        var mode = ['file', 'meta'];
-        if (!this.model.isNew()) mode.push('settings');
-
-        this.nav.mode(mode.join(' '));
+        mode.push('meta');
       }
+
+      if (markdown || (jekyll && this.model.get('extension') === 'html')) mode.push('preview');
+      if (!this.model.isNew()) mode.push('settings');
+
+      this.nav.mode(mode.join(' '));
 
       this.updateDocumentTitle();
 
@@ -589,7 +595,7 @@ module.exports = Backbone.View.extend({
     var metadata = this.model.get('metadata');
     var jekyll = this.config && this.config.siteurl && metadata && metadata.layout;
 
-    if (jekyll) {
+    if (jekyll && e) {
       // TODO: this could all be removed if preview button listened to
       // change:path event on model
       var hash = window.location.hash.split('/');
@@ -624,12 +630,13 @@ module.exports = Backbone.View.extend({
   preview: function() {
     var q = queue(1);
     var metadata = this.model.get('metadata');
+    var content = this.model.get('content');
 
     var p = {
       site: this.collection.config,
       post: metadata,
       page: metadata,
-      content: Liquid.parse(marked(this.model.get('content'))).render({
+      content: Liquid.parse(marked(this.compilePreview(content))).render({
         site: this.collection.config,
         post: metadata,
         page: metadata
@@ -646,7 +653,7 @@ module.exports = Backbone.View.extend({
     // TODO: remove EST specific time adjustment
     var date = [year, month, day].join('-') + ' 05:00:00';
 
-    p.post.date = jsyaml.load(date).toDateString();
+    p.post.date = jsyaml.safeLoad(date).toDateString();
 
     // Parse JSONP links
     if (p.site && p.site.site) {
@@ -1123,6 +1130,9 @@ module.exports = Backbone.View.extend({
 
         this.sidebar.close();
         this.updateSaveState(t('actions.save.saved'), 'saved');
+
+        // Enable settings sidebar item
+        this.nav.$el.addClass('settings');
 
         // Unset dirty, return to edit view
         this.dirty = false;

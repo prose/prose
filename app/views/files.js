@@ -103,8 +103,8 @@ module.exports = Backbone.View.extend({
     var regex = new RegExp('^' + (path ? path : rooturl) + '[^\/]*$');
 
     // Render drafts link in sidebar as subview
-    // if path does not begin with _drafts
-    if (/^(?!_drafts)/.test(this.path)) {
+    // if _posts directory exists and path does not begin with _drafts
+    if (this.model.get('_posts') && /^(?!_drafts)/.test(this.path)) {
       drafts = this.sidebar.initSubview('drafts', {
         link: [url, '_drafts'].join('/'),
         sidebar: this.sidebar

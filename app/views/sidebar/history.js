@@ -5,13 +5,14 @@ var CommitView = require('./li/commit');
 
 var queue = require('queue-async');
 
+var cookie = require('../../cookie');
 var templates = require('../../../dist/templates');
 var utils = require('../../util');
 
 module.exports = Backbone.View.extend({
   subviews: {},
 
-  template: templates.sidebar.history,
+  template: templates.sidebar.label,
 
   initialize: function(options) {
     _.bindAll(this);
@@ -37,25 +38,82 @@ module.exports = Backbone.View.extend({
     });
   },
 
+  renderFiles: function(commits, label) {
+    this.app.loader.start();
+
+    // Shallow flatten mapped array of all commit files
+    var files = _.flatten(_.map(commits, function(commit) {
+      return commit.get('files');
+    }), true);
+
+    /*
+    // TODO: jail files to rooturl #541
+    // This is difficult, as rooturl is set in Files collection
+    // on a successful fetch
+
+    if (rooturl) {
+      files = files.filter(function(file) {
+        return file.filename.indexOf(rooturl) === 0;
+      });
+    }
+    */
+
+    var map = _.groupBy(files, function(file) {
+      return file.filename;
+    });
+
+    var list = _.uniq(_.map(files, function(file) {
+      return file.filename;
+    }));
+
+    if (list.length) {
+      // Iterate over files and build fragment to append
+      var frag = document.createDocumentFragment();
+      var ul = frag.appendChild(document.createElement('ul'));
+      ul.className = 'listing';
+
+      list.slice(0,5).each((function(file, index) {
+        var commits = map[file];
+        var commit = commits[0];
+
+        var view = new CommitView({
+          branch: this.branch,
+          file: commit,
+          repo: this.repo,
+          view: this.view
+        });
+
+        ul.appendChild(view.render().el);
+
+        this.subviews[commit.sha] = view;
+      }).bind(this));
+
+      var tmpl = _.template(this.template, label, { variable: 'label' });
+      this.$el.append(tmpl, frag);
+    }
+
+    this.app.loader.done();
+  },
+
   render: function(options) {
     this.app.loader.start();
 
-    this.$el.empty().append(_.template(this.template));
+    this.$el.empty();
 
     // Filter on commit.get('author').id === this.user.get('id')
-    var id = this.user ? this.user.get('id') : false;
+    var id = cookie.get('id') || false;
 
     // Group and deduplicate commits by authenticated user
     var history = this.commits.groupBy(function(commit) {
       // Handle malformed commit data
       var author = commit.get('author') || commit.get('commit').author;
-      return author.id === id ? 'author' : 'all';
+      return author && author.id === id ? 'author' : 'all';
     });
 
     // TODO: how many commits should be fetched initially?
     // TODO: option to load more?
 
-    // TODO: display list of recent updates by all other users
+    // List of recent updates by all other users
     this.history = (history.all || []).slice(0, 15);
 
     // Recent commits by authenticated user
@@ -63,8 +121,7 @@ module.exports = Backbone.View.extend({
 
     var q = queue();
 
-    // _.union(this.history, this.recent).each(function(commit) {
-    this.recent.each(function(commit) {
+    _.union(this.history, this.recent).each(function(commit) {
       q.defer(function(cb) {
         commit.fetch({
           success: function(model, res, options) {
@@ -81,48 +138,8 @@ module.exports = Backbone.View.extend({
     q.awaitAll((function(err, res) {
       if (err) return err;
 
-      // Shallow flatten mapped array of all commit files
-      var files = _.flatten(_.map(this.recent, function(commit) {
-        return commit.get('files');
-      }), true);
-
-      /*
-      // TODO: jail files to rooturl
-      if (rooturl) {
-        files = files.filter(function(file) {
-          return file.filename.indexOf(rooturl) === 0;
-        });
-      }
-      */
-
-      var map = _.groupBy(files, function(file) {
-        return file.filename;
-      });
-
-      var list = _.uniq(_.map(files, function(file) {
-        return file.filename;
-      }));
-
-      // Iterate over files and build fragment to append
-      var frag = document.createDocumentFragment();
-
-      list.slice(0,5).each((function(file, index) {
-        var commits = map[file];
-        var commit = commits[0];
-
-        var view = new CommitView({
-          branch: this.branch,
-          file: commit,
-          repo: this.repo,
-          view: this.view
-        });
-
-        frag.appendChild(view.render().el);
-
-        this.subviews[commit.sha] = view;
-      }).bind(this));
-
-      this.$el.find('#commits').html(frag);
+      this.renderFiles(this.history, 'History');
+      this.renderFiles(this.recent, t('sidebar.repo.history.label'));
 
       this.sidebar.open();
 

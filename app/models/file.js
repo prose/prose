@@ -19,9 +19,11 @@ module.exports = Backbone.Model.extend({
     var path = attributes.path.split('?')[0];
 
     // Append placeholder name if file is new and
-    // path matches a directory in collection or is empty string
-    var dir = attributes.collection.findWhere({ path: path });
-    if (this.isNew() && (!path || (dir && dir.get('type') === 'tree'))) {
+    // path is an empty string, matches _drafts
+    // or matches a directory in collection
+    var dir = attributes.collection.get(path);
+    if (this.isNew() && (!path || path === '_drafts' ||
+      (dir && dir.get('type') === 'tree'))) {
       path = path ? path + '/' + this.placeholder : this.placeholder;
     }
 
@@ -98,7 +100,7 @@ module.exports = Backbone.Model.extend({
 
       try {
         // TODO: _.defaults for each key
-        res.metadata = jsyaml.load(frontmatter);
+        res.metadata = jsyaml.safeLoad(frontmatter);
 
         // Default to published unless explicitly set to false
         res.metadata.published = !regex.test(frontmatter);
@@ -145,7 +147,7 @@ module.exports = Backbone.Model.extend({
 
     if (metadata) {
       try {
-        frontmatter = jsyaml.dump(metadata).trim();
+        frontmatter = jsyaml.safeDump(metadata).trim();
       } catch(err) {
         throw err;
       }

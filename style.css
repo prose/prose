@@ -654,6 +654,9 @@ ins {
 .file .meta      { display:none; }
 .file.meta .meta { display:block; }
 
+.file .preview      { display:none; }
+.file.preview .preview { display:block; }
+
 .file .settings          { display:none; }
 .file.settings .settings { display:block; }
 
@@ -1641,6 +1644,12 @@ ins {
     .dropdown li.divider {
       border-bottom:1px solid #202020;
       margin:10px 0;
+      }
+    .dropdown li.authenticated {
+      display: none;
+      }
+    .authenticated .dropdown li.authenticated {
+      display: block;
       }
     .dropdown > li > a {
       background:transparent;
