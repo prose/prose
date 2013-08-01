@@ -2468,7 +2468,7 @@ ins {
 ---------------------------------------------*/
 
 /* Screen sizes < 1200px --------------------- */
-@media all and (max-width:1200px) {
+@media all and (max-width:1240px) {
   .icon.branding {
     background-position:0 -115px;
     }
@@ -2514,6 +2514,7 @@ ins {
       float:left;
       padding:0 0 8px;
       }
+      .authenticated .prose-menu .dropdown .divider,
       .prose-menu .dropdown .divider {
         display:none;
         }
