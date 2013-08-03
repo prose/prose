@@ -25,6 +25,9 @@ asyncMap(['application'], getResource, function(err, locales) {
     });
 
     for (var i in locale) {
+
+        // Make some expections
+        if (i === 'pt-BR') i = 'pt';
         fs.writeFileSync('./translations/locales/' + i + '.json', JSON.stringify(locale[i], null, 4));
     }
 });
@@ -39,7 +42,9 @@ function getResource(resource, callback) {
             var locale = {};
 
             results.forEach(function(result, i) {
-                locale[lang[i].code] = yaml.load(result)[lang[i].code];
+                var code = lang[i].code;
+                if (code === 'pt-BR') code = 'pt'
+                locale[code] = yaml.load(result)[lang[i].code];
             });
 
             callback(null, locale);
