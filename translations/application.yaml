@@ -163,7 +163,7 @@ en:
           paragraphs:
             title: "Paragraphs &amp; Breaks"
             content: |
-              <p>To create a paragraph, simply create a block of text that is not separated by one or more blank lines. Blocks of text separated by one or more blank lines will be parsed as paragraphs.</p><p>If you want to create a line break, end a line with two or more spaces, then hit Return/Enter.</p>
+              <p>To create a paragraph, simply create a block of text that is separated by one or more blank lines. Blocks of text separated by one or more blank lines will be parsed as paragraphs.</p><p>If you want to create a line break, end a line with two or more spaces, then hit Return/Enter.</p>
           headers:
             title: "Headers"
             content: |
