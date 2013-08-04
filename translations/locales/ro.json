@@ -156,8 +156,7 @@
                 "title": "Elemente bloc",
                 "content": {
                     "paragraphs": {
-                        "title": "Paragrafe și pauze de linie",
-                        "content": "<p>Pentru paragrafe, creează un bloc de text fără linii goale. Blocurile de text separate de linii goale vor fi procesate ca paragrafe separate.</p><p>Pentru pauze de linie, termină linia cu două sau mai multe spații si apasă Return/Enter</p>\n"
+                        "title": "Paragrafe și pauze de linie"
                     },
                     "headers": {
                         "title": "Antete",

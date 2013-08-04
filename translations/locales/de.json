@@ -18,6 +18,17 @@
         "logout": "Abmelden",
         "language": "Sprache"
     },
+    "toolbar": {
+        "heading": "Titel",
+        "subHeading": "Untertitel",
+        "link": "Link Einfügen",
+        "image": "Link einfügen",
+        "italic": "Kursiv",
+        "blockquote": "Zitat",
+        "list": "Liste",
+        "numberedlist": "Nummerierte Liste",
+        "help": "Hilfe"
+    },
     "heading": {
         "explore": "Projekte erkunden"
     },
@@ -77,6 +88,9 @@
         "preview": "Dateivorschau",
         "creating": "Erstelle neue Beitrag"
     },
+    "modal": {
+        "errorHeading": "Fehler"
+    },
     "main": {
         "start": {
             "content": "Prose ist ein Content-Editor für GitHub zur Verwaltung von Websites.",
@@ -91,9 +105,11 @@
         },
         "repo": {
             "filter": "Dateien filtern",
-            "edit": "Bearbeiten"
+            "edit": "Bearbeiten",
+            "delete": "Datei löschen"
         },
         "file": {
+            "noTitle": "Ohne Titel",
             "metaTitle": "Überprüfen Sie Ihre Änderungen:",
             "rawMeta": "Rohe Metainformation",
             "metaDescription": "Ergänzungen sind grün hervorgehoben. Löschungen sind durchgestrichen.",
@@ -110,6 +126,7 @@
         "create": "Erstelle es",
         "home": "Zurück zur Hauptseite",
         "back": "Zurück",
+        "githubStatus": "Status auf Github ({status})",
         "error": {
             "label": "Fehler",
             "github": "Fehler die Daten von GitHub zu laden. Dies könnte ein vorübergehendes Problem sein. Bitte versuchen Sie es später erneut.",
@@ -140,6 +157,7 @@
         },
         "settings": {
             "title": "Optionen",
+            "fileInputLabel": "Datei Pfad",
             "delete": "Diese Datei löschen",
             "translate": "Übersetzen auf",
             "draft": "Entwurf erstellen"
@@ -164,8 +182,7 @@
                 "title": "Block-Elemente",
                 "content": {
                     "paragraphs": {
-                        "title": "Absätze  &amp; Umbrüche",
-                        "content": "<p>Um einen Absatz zu erstellen, erstellen Sie einfach einen Text, der nicht durch eine oder mehrere Leerzeilen getrennt ist. Textblöcke, die von einem oder mehreren Leerzeilen getrennt werden als Absätze betrachtet.</p><p>Wenn Sie einen Zeilenumbruch erstellen möchten, beenden Sie eine Zeile mit zwei oder mehr Leerzeichen, dann drücken Sie Return / Eingabe.</p>\n"
+                        "title": "Absätze  &amp; Umbrüche"
                     },
                     "headers": {
                         "title": "Überschriften",
