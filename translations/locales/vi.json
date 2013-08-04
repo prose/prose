@@ -190,7 +190,7 @@
                 "content": {
                     "paragraphs": {
                         "title": "Đoạn văn &amp; Ngắt trang",
-                        "content": "<p>Để tạo một đoạn văn, cứ đơn giản tạo một khối văn bản không bị tách biệt bởi một hay nhiều dòng trống. Các khối văn bản được tách biệt từng phần một hoặc các dòng trống sẽ được kết dính lại thành một đoạn văn.</p><p>Nếu bạn muốn tạo một dấu ngắt trang, nhấn phím khoảng cách từ hai hay nhiều lần trở lên ở cuối dòng, sau đó click vào Quay lại/Enter.</p>\n"
+                        "content": "<p>Để tạo một đoạn văn, cứ đơn giản tạo một khối văn bản bị tách biệt bởi một hay nhiều dòng trống. Các khối văn bản được tách biệt từng phần một hoặc các dòng trống sẽ được kết dính lại thành một đoạn văn.</p><p>Nếu bạn muốn tạo một dấu ngắt trang, nhấn phím khoảng cách từ hai hay nhiều lần trở lên ở cuối dòng, sau đó click vào Quay lại/Enter.</p>\n"
                     },
                     "headers": {
                         "title": "Headers",

@@ -182,8 +182,7 @@
                 "title": "Block-Elemente",
                 "content": {
                     "paragraphs": {
-                        "title": "Absätze  &amp; Umbrüche",
-                        "content": "<p>Um einen Absatz zu erstellen, erstellen Sie einfach einen Text, der nicht durch eine oder mehrere Leerzeilen getrennt ist. Textblöcke, die von einem oder mehreren Leerzeilen getrennt werden als Absätze betrachtet.</p><p>Wenn Sie einen Zeilenumbruch erstellen möchten, beenden Sie eine Zeile mit zwei oder mehr Leerzeichen, dann drücken Sie Return / Eingabe.</p>\n"
+                        "title": "Absätze  &amp; Umbrüche"
                     },
                     "headers": {
                         "title": "Überschriften",

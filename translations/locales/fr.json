@@ -189,8 +189,7 @@
                 "title": "Éléments de bloc",
                 "content": {
                     "paragraphs": {
-                        "title": "Paragraphes et Sauts de ligne",
-                        "content": "<p>Pour créer un paragraphe, écrivez simplement un bloc de texte sans séparation par une ou plusieurs lignes vides. Des blocs de texte séparés par une ou plusieurs lignes vides seront considérés comme plusieurs paragraphes.</p><p>Si vous voulez créer un saut de ligne, vous n’avez qu’à terminer la ligne par deux espaces, ou plus, puis taper « retour ».</p>\n"
+                        "title": "Paragraphes et Sauts de ligne"
                     },
                     "headers": {
                         "title": "Titres",
