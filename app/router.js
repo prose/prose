@@ -56,18 +56,26 @@ module.exports = Backbone.Router.extend({
 
   chooseLanguage: function() {
     if (this.view) this.view.remove();
+
+    this.app.loader.start(t('loading.file'));
     this.app.nav.mode('');
 
     this.view = new ChooseLanguageView();
     this.app.$el.find('#main').html(this.view.render().el);
+
+    this.app.loader.done();
   },
 
   about: function() {
     if (this.view) this.view.remove();
+
+    this.app.loader.start(t('loading.file'));
     this.app.nav.mode('');
 
     this.view = new DocumentationView();
     this.app.$el.find('#main').html(this.view.render().el);
+
+    this.app.loader.done();
   },
 
   // #example-user
