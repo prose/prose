@@ -1213,8 +1213,8 @@ module.exports = Backbone.View.extend({
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
     // Default to current directory if no path specified
-    var parts = util.extractFilename(this.path);
-    path = path || [parts[0], file.name].join('/');
+    var parts = util.extractFilename(this.model.get('path'));
+    path = path || _.compact([parts[0], file.name]).join('/');
 
     this.collection.upload(file, content, path, {
       success: (function(model, res, options) {
