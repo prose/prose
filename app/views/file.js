@@ -276,9 +276,9 @@ module.exports = Backbone.View.extend({
           path = /^\//.test(path) ? path.slice(1) :
             util.extractFilename(this.model.get('path'))[0] + '/' + path;
 
-          var raw = auth.site + '/' + this.repo.get('owner').login + '/' + this.repo.get('name') + '/blob/' +  this.branch + '/' + path + '?raw=true';
+          var url = auth.site + '/' + this.repo.get('owner').login + '/' + this.repo.get('name') + '/blob/' +  this.branch + '/' + window.escape(path) + '?raw=true';
 
-          content = content.replace(r, '![' + parts[1] + '](' + raw + ')');
+          content = content.replace(r, '![' + parts[1] + '](' + url + ')');
         }
       }
     }).bind(this));
@@ -486,10 +486,6 @@ module.exports = Backbone.View.extend({
       this.preview();
     } else {
       var content = this.model.get('content');
-
-      if (this.model.get('markdown') && content) {
-        this.model.set('preview', marked(this.compilePreview(content)));
-      }
 
       var file = {
         markdown: this.model.get('markdown')
