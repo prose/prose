@@ -142,6 +142,7 @@ module.exports = Backbone.View.extend({
     } else {
       this.router.notify(
         t('notification.error.exists'),
+        undefined,
         [
           {
             'title': t('notification.create'),
