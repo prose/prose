@@ -41,7 +41,7 @@ module.exports = Backbone.Model.extend({
     }
 
     this.set({
-      'binary': util.isBinary(extension),
+      'binary': util.isBinary(path),
       'content': this.isNew() && _.isUndefined(attributes.content) ? t('main.new.body') : attributes.content,
       'content_url': attributes.url,
       'draft': function() {
