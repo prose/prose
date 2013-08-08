@@ -1209,9 +1209,11 @@ module.exports = Backbone.View.extend({
     // Loading State
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
-    // Default to current directory if no path specified
-    var parts = util.extractFilename(this.model.get('path'));
-    path = path || _.compact([parts[0], file.name]).join('/');
+    // Default to media directory if defined in config, 
+    // current directory if no path specified
+    var dir = this.config.media ? this.config.media :
+      util.extractFilename(this.model.get('path'))[0];
+    path = path || _.compact([dir, file.name]).join('/');
 
     this.collection.upload(file, content, path, {
       success: (function(model, res, options) {
@@ -1228,15 +1230,6 @@ module.exports = Backbone.View.extend({
         this.editor.focus();
         this.editor.replaceSelection(image + '\n', 'end');
         this.updateSaveState('Saved', 'saved', true);
-
-        // Update the media directory
-        if (this.assets) {
-          this.assets[res.content.sha]({
-            name: name,
-            type: 'blob', // TODO: type: 'file'?
-            path: path
-          });
-        }
       }).bind(this),
       error: (function(model, xhr, options) {
         // Display error message returned by XHR

@@ -142,7 +142,7 @@ module.exports = {
   },
 
   isImage: function(extension) {
-    var regex = new RegExp(/^(jpeg|jpg|gif|png)$/);
+    var regex = new RegExp(/^(jpeg|jpg|gif|png|svg*)$/);
     return !!(regex.test(extension));
   },
 

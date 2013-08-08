@@ -32,12 +32,13 @@ module.exports = Backbone.View.extend({
       if (config.media) {
         // Fetch the media directory to display its contents
         this.mediaDirectoryPath = config.media;
-        var match = new RegExp(this.mediaDirectoryPath);
+        var match = new RegExp('^' + this.mediaDirectoryPath);
 
         this.media = this.collection.filter(function(m) {
-          if (m.attributes.type === 'blob') {
-            return match.test(m.attributes.path);
-          }
+          var path = m.get('path');
+
+          return m.get('type') === 'file' && match.test(path) &&
+            (util.isBinary(path) || util.isImage(m.get('extension')));
         });
       }
 
