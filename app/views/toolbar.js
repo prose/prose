@@ -38,7 +38,7 @@ module.exports = Backbone.View.extend({
           var path = m.get('path');
 
           return m.get('type') === 'file' && match.test(path) &&
-            util.isBinary(path);
+            (util.isBinary(path) || util.isImage(m.get('extension')));
         });
       }
 
