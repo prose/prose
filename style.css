@@ -1156,7 +1156,6 @@ ins {
 ---------------------------------------------*/
 .topbar-wrapper {
   position:relative;
-  z-index:1000;
   width:100%;
   }
   .markdown .topbar-wrapper {
