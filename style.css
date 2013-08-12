@@ -1220,6 +1220,7 @@ ins {
 
 .topbar.fixed {
   position:fixed;
+  z-index: 100;
   width:100%;
   top:0;left:0;
   }
@@ -1300,6 +1301,7 @@ ins {
 .dialog {
   background:#fff;
   position:absolute;
+  z-index: 100;
   top:100%;
   width:100%;
   margin:0 auto;
