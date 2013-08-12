@@ -1301,6 +1301,7 @@ ins {
 .dialog {
   background:#fff;
   position:absolute;
+  z-index: 100;
   top:100%;
   width:100%;
   margin:0 auto;
