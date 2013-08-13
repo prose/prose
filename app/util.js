@@ -127,22 +127,22 @@ module.exports = {
   },
 
   isBinary: function(path) {
-    var regex = new RegExp(/.(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$/);
+    var regex = new RegExp(".(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$", 'i');
     return !!(regex.test(path));
   },
 
   isMarkdown: function(extension) {
-    var regex = new RegExp(/^(md|mkdn?|mdown|markdown)$/);
+    var regex = new RegExp("^(md|mkdn?|mdown|markdown)$", 'i');
     return !!(regex.test(extension));
   },
 
   isMedia: function(extension) {
-    var regex = new RegExp(/^(jpeg|jpg|gif|png|swf|mov)$/);
+    var regex = new RegExp("^(jpeg|jpg|gif|png|swf|mov)$", 'i');
     return !!(regex.test(extension));
   },
 
   isImage: function(extension) {
-    var regex = new RegExp(/^(jpeg|jpg|gif|png|svg*)$/);
+    var regex = new RegExp("^(jpeg|jpg|gif|png|svg*)$", 'i');
     return !!(regex.test(extension));
   },
 
