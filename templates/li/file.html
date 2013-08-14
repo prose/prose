@@ -29,4 +29,5 @@
   <% } else { %>
     <h3 class='title' title='<%= file.name %>'><a class='clearfix'href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'><%= file.name %></a></h3>
   <% } %>
+  <span class='deemphasize'><%= file.jailpath %></span>
 </div>
