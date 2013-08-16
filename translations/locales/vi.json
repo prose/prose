@@ -174,11 +174,17 @@
         "link": {
             "title": "Chèn đường dẫn",
             "insertLocal": "Chèn một liên kết ở máy hiện tại",
-            "insert": "Chèn"
+            "insert": "Chèn",
+            "hrefPlaceholder": "Đường dẫn liên kết",
+            "textPlaceholder": "Tên đường dẫn",
+            "titlePlaceholder": "Tiêu đề (có hoặc không)",
+            "insertPlaceholder": "Chèn vào một đường dẫn từ máy hiện tại"
         },
         "media": {
             "title": "Chèn hình ảnh",
             "back": "Quay lại",
+            "hrefPlaceholder": "Đường dẫn liên kết đến hình ảnh",
+            "altPlaceholder": "Văn bản Alt (có hoặc không)",
             "description": "Tải lên hình ảnh bằng cách Kéo &amp; Thả chuột hoặc </br>\n{input} <a>chọn hình ảnh</a>\n",
             "help": "Hình ảnh được tải lên sẽ được thêm vào thự mục hiện tại hoặc với đường dẫn URL đến hình ảnh được cung cấp ở đường dẫn trên.",
             "helpMedia": "Hình ảnh được tải lên sẽ thêm vào phần thư mục 'Chọn có sẵn' hoặc một đường dẫn URL được xác định.",
