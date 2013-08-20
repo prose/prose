@@ -27,7 +27,15 @@ module.exports = Backbone.Model.extend({
     this.branches = new Branches([], { repo: this });
     this.commits = new Commits([], { repo: this, branch: this.branch })
   },
-
+  
+  isBook: function() {
+    return this.get('content_type') == "book";
+  },
+  
+  isDocument: function() {
+    return this.get('content_type') == "document";
+  },
+ 
   ref: function(options) {
     options = _.clone(options) || {};
 

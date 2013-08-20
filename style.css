@@ -555,16 +555,42 @@ ins {
   position: fixed;
   z-index: 9999;
   top: 0;
-  left: -100%;
+  left: -230px;
   width: 230px;
   height: 100%;
-  overflow: auto;
-  overflow-x: hidden;
+  overflow: visible;
   padding: 15px;
-  -webkit-transition: right 150ms ease-out;
-     -moz-transition: right 150ms ease-out;
-       -o-transition: right 150ms ease-out;
-          transition: right 150ms ease-out;
+  -webkit-transition: left 150ms ease-out;
+     -moz-transition: left 150ms ease-out;
+       -o-transition: left 150ms ease-out;
+          transition: left 150ms ease-out;
+}
+
+.filebar.open {
+  left: 0;
+}
+
+.filebar-close-btn, .filebar-open-btn {
+  position: absolute;
+  right: 5px;
+  padding: 3px 7px;
+  background: #f9f9f9;
+  border-radius: 5px;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.filebar-open-btn {
+  right: -46px;
+  padding: 8px 12px;
+}
+
+.filebar.open .filebar-open-btn {
+  display: none;
+}
+
+.filebar-close-btn:hover, .filebar-open-btn:hover {
+  color: #516066;
 }
 
 .filebar .project-title {
@@ -577,10 +603,6 @@ ins {
 
 .filebar .project-title span {
   margin-right: 10px;
-}
-
-.filebar.open {
-  left: 0;
 }
 
 .filebar .details {

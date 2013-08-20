@@ -1,3 +1,6 @@
+<span class="filebar-close-btn glyphicon glyphicon-chevron-left"></span>
+<span class="filebar-open-btn glyphicon glyphicon-list"></span>
+
 <div class="project-title">
   <h3><span class="glyphicon glyphicon-book"></span><%= data.project_name %></h3>
 </div>
@@ -16,8 +19,10 @@
 
 <ul class='listing'></ul>
 
+<% if (data.type == "book") { %>
 <div class="new-file-wrapper">
 <a href="#" class="fl button round new new-file" data-state="new">
   New File
 </a>
 </div>
+<% } %>

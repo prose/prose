@@ -13,9 +13,11 @@ module.exports = Backbone.View.extend({
   subviews: {},
   
   events: {
-    'click a.new': 'create'
+    'click a.new': 'create',
+    'click .filebar-close-btn': 'toggleClose',
+    'click .filebar-open-btn': 'toggleOpen'
   },
-
+  
   initialize: function(options) {
     _.bindAll(this);
     
@@ -42,6 +44,14 @@ module.exports = Backbone.View.extend({
     
   },
   
+  toggleOpen: function(){
+    this.$el.addClass('open');
+  },
+  
+  toggleClose: function(){
+    this.$el.removeClass('open');
+  },
+  
   setModel: function() {
     
     this.model = this.branches.findWhere({ name: this.branch }).files;
@@ -54,6 +64,10 @@ module.exports = Backbone.View.extend({
 
         this.render();
         
+        if (this.repo.isBook()) {
+          this.toggleOpen()
+        }
+          
         this.setCurrentFile(this.currentFile);
         
       }).bind(this),
@@ -79,6 +93,7 @@ module.exports = Backbone.View.extend({
     ].join('/');
     
     var name = this.repo.get('full_name');
+    var type = this.repo.get('content_type');
 
     // Set rooturl jail from collection config
     var regex = new RegExp('^' + (path ? path : rooturl) + '[^\/]*$');
@@ -94,46 +109,47 @@ module.exports = Backbone.View.extend({
       this.subviews['drafts'] = drafts;
       drafts.render();
     }
-    
+            
 
     var data = {
       project_name: name,
       path: path,
       parts: util.chunkedPath(this.path),
       rooturl: rooturl,
-      url: url
+      url: url,
+      type: type
     };
 
     this.$el.html(_.template(this.template, data, {variable: 'data'}));
     
     // if not searching, filter to only show current level
     var collection = this.model.filter((function(file) {
-      return regex.test(file.get('path'));
+      if (this.repo.isBook()) {
+        return regex.test(file.get('path'));
+      } else {
+        // for a document, only show the folders.. not the files
+        return regex.test(file.get('path')) && file.get('type') == "tree";
+      }
     }).bind(this));
 
     var frag = document.createDocumentFragment();
 
     collection.each((function(file, index) {
       var view;
-
+      
+      fileOpts = {
+        branch: this.branch,
+        history: this.history,
+        index: index,
+        model: file,
+        repo: this.repo,
+        router: this.router
+      }
+      
       if (file instanceof File) {
-        view = new FileView({
-          branch: this.branch,
-          history: this.history,
-          index: index,
-          model: file,
-          repo: this.repo,
-          router: this.router
-        });
+        view = new FileView(fileOpts);
       } else if (file instanceof Folder) {
-        view = new FolderView({
-          branch: this.branch,
-          history: this.history,
-          index: index,
-          model: file,
-          repo: this.repo,
-          router: this.router
-        });
+        view = new FolderView(fileOpts);
       }
 
       frag.appendChild(view.render().el);
@@ -143,7 +159,7 @@ module.exports = Backbone.View.extend({
     this.$el.find('ul').html(frag);
 
     this.app.loader.done();
-
+    
     return this;
     
   },

@@ -1190,7 +1190,6 @@ module.exports = Backbone.View.extend({
         
     generate.call(this, {
       success: (function(model, file, options) {
-        console.log('preview generated')
         
         fileOpts = {
           app: this.app,
@@ -1200,13 +1199,15 @@ module.exports = Backbone.View.extend({
           repo: this.repo,
           router: this.router
         };
-        
+              
         var previews = this.app.filebar.subviews.previews;
         
         previews.addFile(file, fileOpts);
         previews.renderSubviews();
         previews.toggleOpen();
         
+        this.app.filebar.toggleOpen();
+                
         this.edit();
         
       }).bind(this),
