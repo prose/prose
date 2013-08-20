@@ -15,32 +15,31 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.Model.extend({
   initialize: function(attributes, options) {
     this.repos = new Repos([], { user: this });
-    this.orgs = new Orgs([], { user: this });
+    // this.orgs = new Orgs([], { user: this });
   },
 
   authenticate: function(options) {
-    var match;
-
+    
+    console.log(">>> authenticating...")
+    
     if (cookie.get('oauth-token')) {
+      console.log(">>> we have the oauth token")
       if (_.isFunction(options.success)) options.success();
     } else {
-      match = window.location.href.match(/\?code=([a-z0-9]*)/);
-
-      if (match) {
-        var ajax = $.ajax(auth.url + '/authenticate/' + match[1], {
-          success: function(data) {
-            cookie.set('oauth-token', data.token);
-
-            var regex = new RegExp("(?:\\/)?\\?code=" + match[1]);
-            window.location.href = window.location.href.replace(regex, '');
-
-            if (_.isFunction(options.success)) options.success();
-          }
-        });
-      } else {
-        if (_.isFunction(options.error)) options.error();
-      }
+      console.log(">>> no oauth token, making request")
+      var ajax = $.ajax(auth.api + '/user', {
+        success: function(data) {
+          console.log(">>> successful request...")
+          cookie.set('oauth-token', data.token);
+          if (_.isFunction(options.success)) options.success();
+        },
+        error: function() {
+          console.log(">>> error request")
+          if (_.isFunction(options.error)) options.error();
+        }
+      });
     }
+    
   },
 
   url: function() {

@@ -23,12 +23,12 @@ module.exports = Backbone.View.extend({
     this.repo = options.repo;
     this.router = options.router;
 
-    this.$el.attr('data-index', options.index);
-
     if (!this.model.get('binary')) {
       this.$el.attr('data-navigate', '#' + this.repo.get('owner').login + '/' +
         this.repo.get('name') + '/edit/' + this.branch + '/' +
         this.model.get('path'));
+        
+      this.$el.attr('data-path',this.model.get('path'));
     }
   },
 
@@ -49,7 +49,10 @@ module.exports = Backbone.View.extend({
     if (confirm(t('actions.delete.warn'))) {
       this.model.destroy({
         success: (function(model, res, options) {
-          var commit = res.commit;
+          
+          console.log('got here, successful destroy');
+          
+          var commit = res.commit_details;
 
           var view = new CommitView({
             branch: this.branch,
@@ -62,8 +65,8 @@ module.exports = Backbone.View.extend({
             view: this.view
           });
 
-          this.history.$el.find('#commits').prepend(view.render().el);
-          this.history.subviews[commit.sha] = view;
+          // this.history.$el.find('#commits').prepend(view.render().el);
+          // this.history.subviews[commit.sha] = view;
 
           this.$el.fadeOut('fast');
         }).bind(this),

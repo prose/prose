@@ -1,15 +1,8 @@
-<% if (file.binary) { %>
-  <div class='listing-icon icon round <%= file.extension %> <% if (file.media) { %>media<% } %>'></div>
-<% } else { %>
-  <a href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>' class='listing-icon'>
-    <span class='icon round <%= file.extension %> <% if (file.markdown) { %> md<% } %> <% if (file.media) { %> media<% } %>'></span>
-  </a>
-<% } %>
-
 <div class='details'>
+    
   <div class='actions fr clearfix'>
     <% if (!file.binary) { %>
-      <a class='clearfix'
+      <a class='clearfix edit-file-button'
         title="<%= t('main.repo.edit') %>"
         href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'>
         <%= t('main.repo.edit') %>
@@ -24,9 +17,22 @@
       </a>
     <% } %>
   </div>
+  
   <% if (file.binary) { %>
-    <h3 class='title' title='<%= file.name %>'><%= file.name %></h3>
+    <span class='file-icon glyphicon <%= file.extension %> <% if (file.media) { %>media<% } %>'></span>
+    <%= file.name %>
   <% } else { %>
-    <h3 class='title' title='<%= file.name %>'><a class='clearfix'href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'><%= file.name %></a></h3>
+    
+    <% if (file.pdf) {
+        var fileLink = file.raw_url;
+        var linkTarget = "_blank";
+      } else {
+        var fileLink = "#" + file.repo.owner.login + "/" + file.repo.name + "/edit/" + file.branch + "/" + file.path;
+        var linkTarget = "_self";
+      } 
+    %>
+    
+      <span class='file-icon glyphicon <%= file.extension %> <% if (file.markdown || file.pdf) { %> glyphicon-file <% } %> <% if (file.media) { %> media<% } %>'></span>
+      <a class='clearfix' href='<%= fileLink %>' target='<%= linkTarget %>'><%= file.name %><i class="file-updated-icon glyphicon glyphicon-circle-arrow-left"></i></a>
   <% } %>
 </div>

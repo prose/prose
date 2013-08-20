@@ -30,16 +30,16 @@ module.exports = Backbone.View.extend({
     header.setElement(this.$el.find('#heading')).render();
     this.subviews['header'] = header;
 
-    if (this.auth) {
-      var orgs = this.sidebar.initSubview('orgs', {
-        model: this.auth.orgs,
-        router: this.router,
-        sidebar: this.sidebar,
-        user: this.user
-      });
-      
-      this.subviews['orgs'] = orgs;
-    }
+    // if (this.auth) {
+    //   var orgs = this.sidebar.initSubview('orgs', {
+    //     model: this.auth.orgs,
+    //     router: this.router,
+    //     sidebar: this.sidebar,
+    //     user: this.user
+    //   });
+    //   
+    //   this.subviews['orgs'] = orgs;
+    // }
 
     return this;
   },

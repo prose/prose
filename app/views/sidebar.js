@@ -46,6 +46,9 @@ module.exports = Backbone.View.extend({
   },
 
   updateState: function(label) {
+    if (label == 'Saved') {
+      this.$el.find('.commit-message').val('');
+    }
     this.$el.find('.button.save').html(label);
   },
 

@@ -32,17 +32,27 @@ if (app.locale && app.locale !== 'en') {
 
 var user = new User();
 
+$.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
+  options.xhrFields = {
+    withCredentials: true 
+  };
+});
+
 user.authenticate({
   success: function() {
+    
+    console.log(">>> SUCCESSS!!")
+    
     if ('withCredentials' in new XMLHttpRequest()) {
       // Set OAuth header for all CORS requests
-      $.ajaxSetup({
-        headers: {
-          'Authorization': config.auth === 'oauth' ?
-            'token ' + cookie.get('oauth-token') :
-            'Basic ' + Base64.encode(config.username + ':' + config.password)
-        }
-      });
+      
+      // $.ajaxSetup({
+      //   headers: {
+      //     'Authorization': config.auth === 'oauth' ?
+      //       'token ' + cookie.get('oauth-token') :
+      //       'Basic ' + Base64.encode(config.username + ':' + config.password)
+      //   }
+      // });
 
       // Set an 'authenticated' class to #prose
       $('#prose').addClass('authenticated');
@@ -103,6 +113,7 @@ user.authenticate({
     }
   },
   error: function() {
+    console.log('error.. building router')
     // Initialize router
     window.router = new Router();
 

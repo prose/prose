@@ -132,7 +132,12 @@ module.exports = {
   },
 
   isMarkdown: function(extension) {
-    var regex = new RegExp(/^(md|mkdn?|mdown|markdown)$/);
+    var regex = new RegExp(/^(md|mkdn?|mdown|markdown|txt)$/);
+    return !!(regex.test(extension));
+  },
+
+  isPDF: function(extension) {
+    var regex = new RegExp(/^(pdf)$/);
     return !!(regex.test(extension));
   },
 

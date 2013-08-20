@@ -1,4 +1,3 @@
-var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var File = require('../models/file');
@@ -9,52 +8,43 @@ var templates = require('../../dist/templates');
 var util = require('.././util');
 
 module.exports = Backbone.View.extend({
-  className: 'listings',
-
-  template: templates.files,
-
+  template: templates.filebar,
+  
   subviews: {},
-
+  
   events: {
-    'mouseover .item': 'activeListing',
-    'mouseover .item a': 'activeListing',
-    'click .breadcrumb a': 'navigate',
-    'click .item a': 'navigate'
+    'click a.new': 'create'
   },
 
   initialize: function(options) {
     _.bindAll(this);
-
+    
     var app = options.app;
-    app.loader.start();
-
+    
+    this.$els = {};
+    
     this.app = app;
     this.branch = options.branch || options.repo.get('master_branch');
     this.branches = options.branches;
     this.history = options.history;
-    this.nav = options.nav;
     this.path = options.path || '';
     this.repo = options.repo;
     this.router = options.router;
-    this.search = options.search;
     this.sidebar = options.sidebar;
-
+    this.currentFile = options.currentFile;
+    
     this.branches.fetch({
       success: this.setModel,
       error: (function(model, xhr, options) {
         this.router.error(xhr);
-      }).bind(this),
-      complete: this.app.loader.done
+      }).bind(this)
     });
+    
   },
-
+  
   setModel: function() {
-    this.app.loader.start();
-
+    
     this.model = this.branches.findWhere({ name: this.branch }).files;
-    if (this.search) {
-      this.search.model = this.model;
-    }
 
     this.model.fetch({
       success: (function() {
@@ -62,9 +52,10 @@ module.exports = Backbone.View.extend({
         var config = this.model.config;
         this.rooturl = config && config.rooturl ? config.rooturl : '';
 
-        // Render on fetch and on search
-        this.listenTo(this.search, 'search', this.render);
         this.render();
+        
+        this.setCurrentFile(this.currentFile);
+        
       }).bind(this),
       error: (function(model, xhr, options) {
         this.router.error(xhr);
@@ -74,32 +65,20 @@ module.exports = Backbone.View.extend({
     });
   },
 
-  newFile: function() {
-    var path = [
-      this.repo.get('owner').login,
-      this.repo.get('name'),
-      'new',
-      this.branch,
-      this.path ? this.path : this.rooturl
-    ]
-
-    this.router.navigate(_.compact(path).join('/'), true);
-  },
-
-  render: function() {
-    this.app.loader.start();
-
-    var search = this.search && this.search.input && this.search.input.val();
+  render: function(options) {
+    
     var rooturl = this.rooturl ? this.rooturl + '/' : '';
     var path = this.path ? this.path + '/' : '';
     var drafts;
-
+    
     var url = [
       this.repo.get('owner').login,
       this.repo.get('name'),
       'tree',
       this.branch
     ].join('/');
+    
+    var name = this.repo.get('full_name');
 
     // Set rooturl jail from collection config
     var regex = new RegExp('^' + (path ? path : rooturl) + '[^\/]*$');
@@ -115,8 +94,10 @@ module.exports = Backbone.View.extend({
       this.subviews['drafts'] = drafts;
       drafts.render();
     }
+    
 
     var data = {
+      project_name: name,
       path: path,
       parts: util.chunkedPath(this.path),
       rooturl: rooturl,
@@ -124,9 +105,9 @@ module.exports = Backbone.View.extend({
     };
 
     this.$el.html(_.template(this.template, data, {variable: 'data'}));
-
+    
     // if not searching, filter to only show current level
-    var collection = search ? this.search.search() : this.model.filter((function(file) {
+    var collection = this.model.filter((function(file) {
       return regex.test(file.get('path'));
     }).bind(this));
 
@@ -164,35 +145,58 @@ module.exports = Backbone.View.extend({
     this.app.loader.done();
 
     return this;
+    
+  },
+  
+  makeCurrentDirty: function() {
+    this.$els.currentFile.addClass('dirty-file');
+  },
+  
+  makeCurrentClean: function() {
+    this.$els.currentFile.removeClass('dirty-file');
+  },
+  
+  setCurrentFile: function(targetFile) {
+    this.currentFile = targetFile;
+    var activePath = this.currentFile.get('path');
+    this.$els.currentFile = this.$el.find('[data-path="' + activePath + '"]');
+    this.$els.currentFile.addClass('current');
   },
 
-  activeListing: function(e) {
-    var $listing = $(e.target);
-
-    if (!$listing.hasClass('item')) {
-      $listing = $(e.target).closest('li');
-    }
-
-    this.$el.find('.item').removeClass('active');
-    $listing.addClass('active');
-
-    // Blur out search if its selected
-    this.search.$el.blur();
+  open: function() {
+    this.$el.toggleClass('open', true);
   },
 
-  navigate: function(e) {
-    var target = e.currentTarget;
-    var path = target.href.split('#')[1];
-    var match = path.match(/tree\/([^\/]*)\/?(.*)$/);
+  close: function() {
+    this.$el.toggleClass('open', false);
+  },
 
-    if (e && match) {
-      e.preventDefault();
+  toggle: function() {
+    this.$el.toggleClass('open');
+  },
 
-      this.path = match ? match[2] : path;
-      this.render();
+  toggleMobile: function() {
+    this.$el.toggleClass('mobile');
+  },
 
-      this.router.navigate(path);
-    }
+  mode: function(mode) {
+    // Set data-mode attribute to toggle nav buttons in CSS
+    this.$el.attr('data-sidebar', mode);
+  },
+  
+  create: function() {
+    
+    var path = [
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      'new',
+      this.branch,
+      this.path ? this.path : this.rooturl
+    ]
+
+    this.router.navigate(_.compact(path).join('/'), true);
+    
+    return false;
   },
 
   remove: function() {

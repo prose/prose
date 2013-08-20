@@ -10,7 +10,7 @@ module.exports = Backbone.Model.extend({
   initialize: function(attributes, options) {
     options = _.clone(options) || {};
     _.bindAll(this);
-
+    
     this.isClone = function() {
       return !!options.clone;
     };
@@ -52,6 +52,7 @@ module.exports = Backbone.Model.extend({
       'lang': util.mode(extension),
       'media': util.isMedia(extension),
       'markdown': util.isMarkdown(extension),
+      'pdf': util.isPDF(extension),
       'name': util.extractFilename(path)[1],
       'oldpath': path,
       'path': path,
@@ -172,7 +173,7 @@ module.exports = Backbone.Model.extend({
 
   getAttributes: function() {
     var data = {};
-
+    
     _.each(this.attributes, function(value, key) {
       data[key] = this.get(key);
     }, this);
@@ -224,6 +225,31 @@ module.exports = Backbone.Model.extend({
       Backbone.Model.prototype.fetch.call(this, _.omit(options, 'success', 'error', 'complete'));
       this.getContent.apply(this, arguments);
     }
+  },
+  
+  generatePreview: function(options) {
+    console.log('going to generate a preview!!!')
+    
+    options = options ? _.clone(options) : {};
+    
+    var success = options.success;
+    
+    var ref = this.get('branch').get('name');
+    var url = this.get('repo').get('preview_url') + "?ref=" + ref;
+                
+    options = _.extend(options, {
+      type: 'PUT',
+      url: url
+    });
+    
+    options.success = (function(model, res, options) {
+      if (_.isFunction(success)) success.apply(this, arguments);
+    }).bind(this);
+    
+    // Call save method with undefined attributes
+    Backbone.Model.prototype.save.call(this, undefined, options);
+    
+    
   },
 
   save: function(options) {

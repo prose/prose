@@ -106,7 +106,7 @@ module.exports = Backbone.View.extend({
     // Group and deduplicate commits by authenticated user
     var history = this.commits.groupBy(function(commit) {
       // Handle malformed commit data
-      var author = commit.get('author') || commit.get('commit').author;
+      var author = commit.get('author') || commit.get('commit_details').author;
       return author && author.id === id ? 'author' : 'all';
     });
 

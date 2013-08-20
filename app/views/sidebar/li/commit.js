@@ -30,7 +30,7 @@ module.exports = Backbone.View.extend({
   render: function() {
     var file = this.file;
     var binary = util.isBinary(file.filename);
-
+            
     var data = {
       branch: this.branch,
       file: file,
@@ -41,7 +41,10 @@ module.exports = Backbone.View.extend({
       status: file.status
     };
 
-    var title = file.status.charAt(0).toUpperCase() + file.status.slice(1) +
+    // var title = file.status.charAt(0).toUpperCase() + file.status.slice(1) +
+    //   ': ' + file.filename;
+
+    var title = "New " + "File " +
       ': ' + file.filename;
 
     this.$el.attr('title', title)

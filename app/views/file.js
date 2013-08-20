@@ -11,6 +11,7 @@ var diff = require('diff');
 var Backbone = require('backbone');
 var File = require('../models/file');
 var HeaderView = require('./header');
+var FilebarView = require('./filebar');
 var ToolbarView = require('./toolbar');
 var MetadataView = require('./metadata');
 var auth = require('../config');
@@ -44,7 +45,7 @@ module.exports = Backbone.View.extend({
     this.repo = options.repo;
     this.router = options.router;
     this.sidebar = options.sidebar;
-
+    
     // Set the active nav element established by this.mode
     this.nav.setFileState(this.mode);
 
@@ -53,7 +54,8 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.nav, 'blob', this.blob);
     this.listenTo(this.nav, 'meta', this.meta);
     this.listenTo(this.nav, 'settings', this.settings);
-    this.listenTo(this.nav, 'save', this.showDiff);
+    this.listenTo(this.nav, 'save', this.saveClicked);
+    this.listenTo(this.nav, 'generate-preview', this.generatePreview);
 
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
@@ -85,8 +87,9 @@ module.exports = Backbone.View.extend({
       }).bind(this),
       complete: app.loader.done
     });
+    
   },
-
+  
   setCollection: function(collection, res, options) {
     this.app.loader.start();
 
@@ -293,7 +296,8 @@ module.exports = Backbone.View.extend({
       mode: lang,
       value: this.model.get('content') || '',
       lineWrapping: true,
-      lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
+      // lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
+      lineNumbers: false,
       extraKeys: this.keyMap(),
       matchBrackets: true,
       dragDrop: false,
@@ -322,7 +326,8 @@ module.exports = Backbone.View.extend({
       this.listenTo(this.editor, 'cursorActivity', this.cursor);
     }
 
-    this.listenTo(this.editor, 'change', this.makeDirty, this);
+    this.listenTo(this.editor, 'change', this.makeDirtyOrClean, this);
+    this.listenTo(this.editor, 'keyup', this.wordCounter, this);
     this.listenTo(this.editor, 'focus', this.focus, this);
 
     this.refreshCodeMirror();
@@ -330,6 +335,16 @@ module.exports = Backbone.View.extend({
     // Check sessionStorage for existing stash
     // Apply if stash exists and is current, remove if expired
     this.stashApply();
+  
+    this.wordCounter();
+  },
+  
+  wordCounter: function() {
+    var content = this.editor.getValue();
+    var words = content.trim().replace(/\s+/gi, ' ').split(' ').length;
+    var chars = content.length;
+    if(chars===0){words=0;}
+    $('#word-counter').html(words+ ' words');
   },
 
   keyMap: function() {
@@ -426,6 +441,31 @@ module.exports = Backbone.View.extend({
       }
     }
   },
+  
+  
+  initFilebar: function() {
+    
+    if (!this.app.filebar) {
+      
+      this.app.filebar = new FilebarView({
+        app: this.app,
+        branch: this.branch,
+        branches: this.repo.branches,
+        history: this.history,
+        path: this.repo.fullname,
+        repo: this.repo,
+        router: this.router,
+        sidebar: this.sidebar,
+        currentFile: this.model,
+      });
+      
+      this.app.filebar.setElement(this.app.$el.find('#filebar'));
+    
+    }
+    
+    this.app.filebar.setCurrentFile(this.model);
+
+  },
 
   initSidebar: function() {
     // Settings sidebar panel
@@ -487,7 +527,7 @@ module.exports = Backbone.View.extend({
       var content = this.model.get('content');
 
       if (this.model.get('markdown') && content) {
-        this.model.set('preview', marked(this.compilePreview(content)));
+        this.model.set('compilePreview', marked(this.compilePreview(content)));
       }
 
       var file = {
@@ -503,6 +543,7 @@ module.exports = Backbone.View.extend({
 
       // initialize the subviews
       this.initEditor();
+      this.initFilebar();
       this.initHeader();
       this.initToolbar();
       this.initSidebar();
@@ -795,10 +836,45 @@ module.exports = Backbone.View.extend({
     // TODO: what is this updating?
     this.$el.find('.chzn-select').trigger('liszt:updated');
   },
+  
+  makeDirtyOrClean: function(e) {
 
-  makeDirty: function(e) {
+    var unchanged = this.model.get('previous') == this.editor.getValue();
+    
+    unchanged ? this.makeClean() : this.makeDirty();
+    
+  },
+  
+  makeClean: function() {
+
+    this.dirty = false;
+    
+    this.updateContent();
+    
+    this.app.filebar.makeCurrentClean();
+    
+    this.updateSaveState(t('actions.save.saved'), 'saved');
+    
+  },
+
+  makeDirty: function() {
+
     this.dirty = true;
+    
+    this.updateContent();
+    
+    if (this.app.filebar) {
+      this.app.filebar.makeCurrentDirty();
+    }
+            
+    var label = this.model.get('writable') ?
+      t('actions.change.save') :
+      t('actions.change.submit');
 
+    this.updateSaveState(label, 'save');
+  },
+  
+  updateContent: function() {
     // Update Content.
     if (this.editor && this.editor.getValue) {
       this.model.set('content', this.editor.getValue());
@@ -808,21 +884,35 @@ module.exports = Backbone.View.extend({
     if (this.metadataEditor) {
       this.model.set('metadata', this.metadataEditor.getValue());
     }
-
-    var label = this.model.get('writable') ?
-      t('actions.change.save') :
-      t('actions.change.submit');
-
-    this.updateSaveState(label, 'save');
   },
-
+  
   settings: function() {
     this.contentMode();
     this.sidebar.mode('settings');
     this.sidebar.open();
   },
+  
+  saveClicked: function(e) {
+    
+    console.log('saveclicked')
+    
+    var changed = this.model.get('previous') != this.editor.getValue();
+    
+    if (changed) {
+      this.showDiff();
+    } else {
+      console.log('unchaged.. return false')
+      e.stopPropagation();
+      e.preventDefault();
+      return false;
+    }
 
+  },
+  
   showDiff: function() {
+    
+    console.log('showdiff');
+    
     this.contentMode('diff');
     this.sidebar.mode('save');
     this.sidebar.open();
@@ -949,6 +1039,7 @@ module.exports = Backbone.View.extend({
   },
 
   post: function(e) {
+        
     var defaults = this.collection.defaults || {};
     var metadata = this.model.get('metadata') || {};
     var content = this.model.get('content') || '';
@@ -1092,10 +1183,43 @@ module.exports = Backbone.View.extend({
       store.removeItem(filepath);
     }
   },
-
+  
+  generatePreview: function() {
+    
+    var generate = this.model.generatePreview;
+        
+    generate.call(this, {
+      success: (function(model, file, options) {
+        console.log('preview generated')
+        
+        fileOpts = {
+          app: this.app,
+          branch: this.branch,
+          branches: this.repo.branches,
+          history: this.history,
+          repo: this.repo,
+          router: this.router
+        };
+        
+        var previews = this.app.filebar.subviews.previews;
+        
+        previews.addFile(file, fileOpts);
+        previews.renderSubviews();
+        previews.toggleOpen();
+        
+        this.edit();
+        
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        console.log('something went wrong')
+      }).bind(this)
+    });
+    
+  },
+  
   updateFile: function() {
     var view = this;
-
+    
     // Trigger the save event
     this.updateSaveState(t('actions.save.saving'), 'saving');
 
@@ -1129,22 +1253,27 @@ module.exports = Backbone.View.extend({
         var params;
 
         this.sidebar.close();
-        this.updateSaveState(t('actions.save.saved'), 'saved');
+        
+        // reset diffs by setting previous content to new content
+        this.model.set('previous', this.model.get('content'));
 
         // Enable settings sidebar item
         this.nav.$el.addClass('settings');
 
         // Unset dirty, return to edit view
-        this.dirty = false;
+        this.makeClean();
+        
         this.edit();
 
         var path = model.get('path');
+        // var old = model.isNew() ? model.get('path') : model.get('oldpath');
         var old = model.get('oldpath');
         var name = util.extractFilename(old)[1];
         var pathChange = path !== old;
 
-        // Navigate to edit path for new files
         if (!model.previous('sha') || pathChange) {
+          
+          // Navigate to edit path for new files
           this.router.navigate(_.compact([
             this.repo.get('owner').login,
             this.repo.get('name'),
@@ -1152,6 +1281,13 @@ module.exports = Backbone.View.extend({
             this.collection.branch.get('name'),
             model.get('path')
           ]).join('/'));
+          
+          // add the new file to filebar
+          
+          this.app.filebar.model.add(model);
+          this.app.filebar.render();
+          this.app.filebar.setCurrentFile(model);
+          
         }
 
         // Remove old file if renamed
@@ -1188,7 +1324,7 @@ module.exports = Backbone.View.extend({
 
     return false;
   },
-
+  
   updateSaveState: function(label, classes, kill) {
     // Cancel if this condition is met
     if (classes === 'save' && $(this.el).hasClass('saving')) return;

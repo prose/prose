@@ -218,7 +218,7 @@ h2 {
     }
 
 h3 {
-  font-size:16px;
+  font-size:20px;
   font-weight:700;
   }
 
@@ -328,9 +328,38 @@ ins {
 /* ------------------------------------------
   Styled Content
 ---------------------------------------------*/
+  
+#word-counter {
+  position: fixed;
+  width: auto;
+  bottom: 0;
+  right: 0;
+  color: #ccc;
+  padding: 15px 30px;
+  font-family: "freight-sans-pro","Myriad Pro","Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+  text-transform: uppercase;
+  z-index: 999999;
+  min-width: 120px;
+  white-space: nowrap;
+}
+
 .prose {
+	font-family: palatino, georgia, serif;
   word-wrap:break-word;
-  }
+}
+  
+.prose h1,
+.prose h2,
+.prose h3, 
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-family: "freight-sans-pro","Myriad Pro","Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+  font-weight: bold;
+}
+
 .prose h1 {
   font-size:26px;
   margin:15px 0;
@@ -370,7 +399,7 @@ ins {
 .prose ul,
 .prose ol,
 .prose li {
-  font-size:16px;
+  font-size:20px;
 	line-height:1.5em;
   }
 .prose.small p {
@@ -520,6 +549,137 @@ ins {
   min-height:500px;
   }
 
+.filebar {
+  background: #eee;
+  border-right: 1px solid #ddd;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: -100%;
+  width: 230px;
+  height: 100%;
+  overflow: auto;
+  overflow-x: hidden;
+  padding: 15px;
+  -webkit-transition: right 150ms ease-out;
+     -moz-transition: right 150ms ease-out;
+       -o-transition: right 150ms ease-out;
+          transition: right 150ms ease-out;
+}
+
+.filebar .project-title {
+  margin-bottom: 5px;
+}
+
+.filebar .project-title h3 {
+  font-size: 15px;
+}
+
+.filebar .project-title span {
+  margin-right: 10px;
+}
+
+.filebar.open {
+  left: 0;
+}
+
+.filebar .details {
+  position: relative;
+  width: 100%;
+  padding: 0 15px 0 35px;
+}
+
+.filebar .listing {
+  margin-bottom: 10px;
+}
+
+.filebar .listing li:first-child {
+  border: 0;
+}
+
+.filebar .file-icon {
+  position: absolute;
+  left: 15px;
+  top: 5px;
+  width: 20px;
+}
+
+.filebar .details a {
+  display: block;
+  padding: 5px 0;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.filebar .file-updated-icon {
+  margin-left: 8px;
+  font-size: 15px;
+  display: none;
+  margin-top: 1px;
+  position: absolute;
+  color: #687C82;
+}
+
+
+/*.filebar .item a,
+.filebar .item .file-icon {
+  color: #687C82;
+}
+
+.filebar .item.current a,
+.filebar .item.current .file-icon {
+  color: #3d494e;
+}
+*/
+.filebar .dirty-file .file-updated-icon {
+  display: inline;
+}
+
+.filebar .actions {
+  margin: 0;
+}
+
+.filebar .listing .actions a {
+  height: 26px;
+}
+
+.filebar .actions a.delete {
+  background: none;
+  border: none;
+}
+
+.filebar .actions a.edit-file-button {
+  display: none;
+  line-height: 30px;
+}
+
+/*.filebar span.icon {
+  display: none;
+}
+*/
+
+.filebar .actions {
+  display: none;
+}
+
+.filebar .details:hover .actions {
+  display: block;
+}
+
+.filebar .new-file {
+  padding: 5px 20px;
+}
+
+.filebar .item .subfolder-contents {
+  padding-left: 15px;
+  display: none;
+}
+
+.filebar .item.open-folder .subfolder-contents {
+  display: block;
+}
+  
+
 .sidebar {
   position:fixed;
   z-index:1000;
@@ -555,6 +715,7 @@ ins {
   }
 
 .dropdown-menu.prose-menu {
+  display: none;
   width:120px;
   position:fixed;
   z-index:5000;
@@ -695,6 +856,9 @@ ins {
       -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
               box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
       }
+.nav li a.generate-preview {
+  line-height: 48px;
+}
 
 .icon {
   background:transparent url('img/sprite.png') no-repeat 0 0;
@@ -2221,7 +2385,7 @@ ins {
   min-height:360px;
   }
   .markdown .CodeMirror {
-    font-size:14px;
+    font-size:16px;
     line-height:1.75em
     }
 
@@ -2468,7 +2632,7 @@ ins {
 ---------------------------------------------*/
 
 /* Screen sizes < 1200px --------------------- */
-@media all and (max-width:1240px) {
+@media all and (max-width:800px) {
   .icon.branding {
     background-position:0 -115px;
     }
@@ -2734,3 +2898,4 @@ only screen and (min-device-pixel-ratio:2) {
     background-size:55px 55px;
     }
 }
+

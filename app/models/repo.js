@@ -79,6 +79,6 @@ module.exports = Backbone.Model.extend({
   },
 
   url: function() {
-    return config.api + '/repos/' + this.get('owner').login + '/' + this.get('name');
+    return config.api + '/projects/' + this.get('owner').login + '/' + this.get('name');
   }
 });
