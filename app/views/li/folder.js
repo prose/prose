@@ -80,7 +80,6 @@ module.exports = Backbone.View.extend({
     }
         
     var collection = this.files;
-    
     var that = this;
     
     collection.each((function(file, index) {
@@ -99,6 +98,16 @@ module.exports = Backbone.View.extend({
       
     }).bind(this));
                   
+  },
+  
+  resetFiles: function() {
+    
+    this.model.set('tree',[]);
+    
+    this.files.reset();
+            
+    this.subviews = {};
+    
   },
   
   addFile: function(file, options) {

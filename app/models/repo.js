@@ -35,6 +35,31 @@ module.exports = Backbone.Model.extend({
   isDocument: function() {
     return this.get('content_type') == "document";
   },
+  
+  updateSettings: function(options) {
+    
+    options = options ? _.clone(options) : {};
+    
+    var success = options.success;
+
+    var url = this.get('settings_url');
+                    
+    options = _.extend(options, {
+      type: 'PUT',
+      url: url,
+      contentType: 'application/json'
+    });
+    
+    options.success = (function(model, res, options) {
+      this.set('project_setting', res);
+      if (_.isFunction(success)) success.apply(this, arguments);
+    }).bind(this);
+    
+    // Call save method with undefined attributes
+    Backbone.Model.prototype.save.call(this, undefined, options);
+    
+  },
+  
  
   ref: function(options) {
     options = _.clone(options) || {};

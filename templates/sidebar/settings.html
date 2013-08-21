@@ -1,8 +1,23 @@
-<div class='inner'>
-  <h2 class='label'><%= t('sidebar.settings.title') %></h2>
+<div class='inner formatting'>
+  <form class="project-settings">
+    <h2 class='label'>Formatting Options:</h2>
+    <input type="checkbox" name="toc" value="true" <% if (settings.project_setting.toc) print("checked") %>>Table of Contents<br>
+    <input type="checkbox" name="pagebreaks" value="true" <% if (settings.project_setting.pagebreaks) print("checked") %>>Page Breaks<br>
+    <h2 class='label'>Project Options:</h2>
+    <input type="checkbox" name="preview_cleanup" value="true" <% if (settings.project_setting.preview_cleanup) print("checked") %>>Preview Cleanup<br>
+    <input type="checkbox" name="auto_sections" value="true" <% if (settings.project_setting.auto_sections) print("checked") %>>Auto-add New Sections<br>
+  </form>
+  
+  <a class='update-settings button round' href='#' data-action='update-settings'>Update Project</a>
+  
 </div>
+
+<div class='inner'>
+  <h2 class='label'>Misc Options:</h2>
+</div>
+
 <div class='inner authoring'>
-  <% if (/^_posts/.test(settings.path)) { %>
+  <!-- <% if (/^_posts/.test(settings.path)) { %>
     <a class='draft button round' href='#' data-action='draft'><%= t('sidebar.settings.draft') %></a>
   <% } %>
   
@@ -12,15 +27,14 @@
         <a class='translate round button' href='#<%= l.value %>' data-action='translate'><%= t('sidebar.settings.translate') + ' ' + l.name %></a>
       <% } %>
     <% }); %>
-  <% } %>
-
-  <!-- if !isNew() and is writable -->
+  <% } %> -->
+  
   <a class='delete button round' href='#' data-action='destroy'><%= t('sidebar.settings.delete') %></a>
 </div>
 
-<% if (settings.fileInput) { %>
+<!-- <% if (settings.fileInput) { %>
   <div class='inner'>
     <h2 class='label'><%= t('sidebar.settings.fileInputLabel') %></h2>
     <input type='text' class='filepath' placeholder='<%= settings.path %>' value='<%= settings.path %>'>
   </div>
-<% } %>
+<% } %> -->

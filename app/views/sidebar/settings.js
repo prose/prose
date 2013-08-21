@@ -10,6 +10,7 @@ module.exports = Backbone.View.extend({
 
   events: {
     'click a.delete': 'emit',
+    'click a.update-settings': 'emit',
     'click a.translate': 'emit',
     'click a.draft': 'emit',
     'change input.filepath': 'setPath'
@@ -19,6 +20,7 @@ module.exports = Backbone.View.extend({
     this.sidebar = options.sidebar;
     this.config = options.config;
     this.file = options.file;
+    this.repo = options.repo;
 
     // fileInput is passed if a title replaces where it
     // normally is shown in the heading of the file.
@@ -48,12 +50,14 @@ module.exports = Backbone.View.extend({
   render: function() {
     // this.file.get('lang') is programming language
     // this.file.get('metadata').lang is ISO 639-1 language code
+    
     var settings = {
       languages: this.config ? this.config.languages : [],
       lang: this.file.get('lang'),
       metadata: this.file.get('metadata'),
       fileInput: this.fileInput,
-      path: this.file.get('path')
+      path: this.file.get('path'),
+      project_setting: this.repo.get('project_setting')
     };
 
     this.$el.html(_.template(this.template, settings, {

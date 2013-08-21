@@ -63,6 +63,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'cancel', this.cancel);
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
     this.listenTo(this.sidebar, 'translate', this.translate);
+    this.listenTo(this.sidebar, 'update-settings', this.updateSettings);
 
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
     this.listenTo($(window), 'pagehide', this.stashFile);
@@ -473,6 +474,7 @@ module.exports = Backbone.View.extend({
       sidebar: this.sidebar,
       config: this.collection.config,
       file: this.model,
+      repo: this.repo,
       fileInput: this.titleAsHeading()
     }).render();
     this.subviews['settings'] = this.settings;
@@ -1184,6 +1186,36 @@ module.exports = Backbone.View.extend({
     }
   },
   
+  updateSettings: function() {
+        
+    var that = this;
+        
+    var $sidebar = this.sidebar.$el;
+        
+    var data = {};
+    
+    data['project_settings'] = {
+      'toc': $sidebar.find('[name="toc"]').prop('checked'),
+      'pagebreaks': $sidebar.find('[name="pagebreaks"]').prop('checked'),
+      'preview_cleanup': $sidebar.find('[name="preview_cleanup"]').prop('checked'),
+      'auto_sections': $sidebar.find('[name="auto_sections"]').prop('checked')
+    }
+  
+    this.repo.updateSettings({
+      data: JSON.stringify(data),
+      success: (function(model, file, options) {
+                        
+        that.edit();
+        
+      }).bind(that),
+      error: (function(model, xhr, options) {
+        console.log('something went wrong')
+      }).bind(that)
+      
+    });
+    
+  },
+  
   generatePreview: function() {
     
     var generate = this.model.generatePreview;
@@ -1201,6 +1233,10 @@ module.exports = Backbone.View.extend({
         };
               
         var previews = this.app.filebar.subviews.previews;
+        
+        if (this.repo.get('project_setting').preview_cleanup) {
+          previews.resetFiles();
+        }
         
         previews.addFile(file, fileOpts);
         previews.renderSubviews();

@@ -228,7 +228,6 @@ module.exports = Backbone.Model.extend({
   },
   
   generatePreview: function(options) {
-    console.log('going to generate a preview!!!')
     
     options = options ? _.clone(options) : {};
     
