@@ -658,7 +658,9 @@ ins {
 }
 
 .filebar .actions {
+  position: absolute;
   margin: 0;
+  right: 0;
 }
 
 .filebar .listing .actions a {

@@ -221,7 +221,8 @@ module.exports = Backbone.Router.extend({
         this.app.loader.start(t('loading.creating'));
         break;
       case 'edit':
-        this.app.loader.start(t('loading.file'));
+        NProgress.start();
+        // this.app.loader.start(t('loading.file'));
         break;
       case 'preview':
         this.app.loader.start(t('preview.file'));

@@ -92,7 +92,10 @@ module.exports = Backbone.View.extend({
   },
   
   setCollection: function(collection, res, options) {
-    this.app.loader.start();
+    // this.app.loader.start();
+    
+    console.log('setCollection, .33');
+    NProgress.set(0.33);
 
     this.collection = collection.findWhere({ name: this.branch }).files;
     this.collection.fetch({
@@ -106,7 +109,10 @@ module.exports = Backbone.View.extend({
   },
 
   setModel: function(model, res, options) {
-    this.app.loader.start();
+    // this.app.loader.start();
+    
+    console.log('setModel, .66');
+    NProgress.set(0.66);
 
     // Set default metadata from collection
     var defaults = this.collection.defaults;
@@ -139,7 +145,8 @@ module.exports = Backbone.View.extend({
       // Render on complete to render even if model does not exist on remote yet
       this.model.fetch({
         complete: (function() {
-          this.app.loader.done();
+          NProgress.done();
+          // this.app.loader.done();
           this.render();
         }).bind(this)
       });
@@ -928,8 +935,85 @@ module.exports = Backbone.View.extend({
     var d = diff.diffWords(text1, text2);
     var length = d.length;
     var compare = '';
-
+                
+    var skip, ary = [];
+    
+    var space = {
+      value: ' '
+    }
+    
     for (var i = 0; i < length; i++) {
+      
+      if (skip) {
+        skip -=1
+        continue;
+      }
+      
+      var numleft = length - i;
+      var wanted_next = 'added';
+      var added = [];
+      var removed = [];
+      var full_sets = 0;
+      var skip = 0;
+      
+            
+      for (var c = 0; c < numleft; c++) {
+        
+        if (wanted_next == 'removed' && d[i+c].removed) {
+          removed.push(d[i+c].value);
+          wanted_next = 'space';
+          skip++;
+          full_sets++;
+          continue;
+        } else if (wanted_next == 'space' && d[i+c].value == ' ' && !d[i+c].added && !d[i+c].removed) {
+          wanted_next = 'added';
+          skip++;
+          continue;
+        } else if (wanted_next == 'added' && d[i+c].added) {
+          added.push(d[i+c].value);
+          wanted_next = 'removed';
+          skip++;
+          continue;
+        } else {
+          break;
+        }
+                        
+      }
+      
+      
+      if (full_sets) {
+                
+        var add_val = added.join(' ');
+        
+        var add = {
+          added: true,
+          value: add_val
+        };
+        
+        var rem_val = removed.join(' ');
+        
+        var rem = {
+          removed: true,
+          value: rem_val
+        };
+        
+        ary.push(add, space, rem);
+      
+        skip = skip - 1;
+        
+      } else {
+        
+        ary.push(d[i])
+      
+      }
+                  
+    }
+        
+    d = ary;
+
+    newlen = d.length;
+
+    for (var i = 0; i < newlen; i++) {
       if (d[i].removed) {
         compare += '<del>' + d[i].value + '</del>';
       } else if (d[i].added) {
