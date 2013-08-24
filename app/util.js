@@ -29,6 +29,11 @@ module.exports = {
     var matches = path.match(/(.*)\/(.*)$/);
     return [matches[1], matches[2]];
   },
+  
+  extractSHA: function(path) {
+    var parts = path.split('/');
+    return parts[1];
+  },
 
   validPathname: function(path) {
     var regex = /^([a-zA-Z0-9_\-]|\.)+$/;

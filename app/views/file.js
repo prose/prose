@@ -11,6 +11,7 @@ var diff = require('diff');
 var Backbone = require('backbone');
 var File = require('../models/file');
 var HeaderView = require('./header');
+var CommitsView = require('./commits');
 var FilebarView = require('./filebar');
 var ToolbarView = require('./toolbar');
 var MetadataView = require('./metadata');
@@ -56,6 +57,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.nav, 'settings', this.settings);
     this.listenTo(this.nav, 'save', this.saveClicked);
     this.listenTo(this.nav, 'generate-preview', this.generatePreview);
+    this.listenTo(this.nav, 'commits', this.showCommits);
 
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
@@ -93,8 +95,6 @@ module.exports = Backbone.View.extend({
   
   setCollection: function(collection, res, options) {
     // this.app.loader.start();
-    
-    console.log('setCollection, .33');
     NProgress.set(0.33);
 
     this.collection = collection.findWhere({ name: this.branch }).files;
@@ -110,8 +110,6 @@ module.exports = Backbone.View.extend({
 
   setModel: function(model, res, options) {
     // this.app.loader.start();
-    
-    console.log('setModel, .66');
     NProgress.set(0.66);
 
     // Set default metadata from collection
@@ -124,6 +122,7 @@ module.exports = Backbone.View.extend({
       case 'edit':
       case 'blob':
       case 'preview':
+      case 'commits':
         this.model = this.collection.findWhere({ path: this.path });
         break;
       case 'new':
@@ -474,6 +473,16 @@ module.exports = Backbone.View.extend({
     this.app.filebar.setCurrentFile(this.model);
 
   },
+  
+  initCommits: function() {
+            
+    this.commitsView = new CommitsView({
+      file: this.model
+    });
+        
+    this.commitsView.setElement(this.$el.find('#commits'));
+            
+  },
 
   initSidebar: function() {
     // Settings sidebar panel
@@ -556,7 +565,8 @@ module.exports = Backbone.View.extend({
       this.initHeader();
       this.initToolbar();
       this.initSidebar();
-
+      this.initCommits();
+      
       var mode = ['file'];
       var markdown = this.model.get('markdown');
       var jekyll = /^(_posts|_drafts)/.test(this.model.get('path'));
@@ -598,6 +608,8 @@ module.exports = Backbone.View.extend({
 
       if (this.mode === 'blob') {
         this.blob();
+      } else if (this.mode === 'commits') {
+        this.showCommits();
       }
     }
 
@@ -824,6 +836,15 @@ module.exports = Backbone.View.extend({
         }).bind(this)
       });
     }
+  },
+  
+  showCommits: function() {
+    
+    this.mode = 'commits';
+    this.contentMode('commits');
+    // this.nav.setFileState('blob');
+    this.updateURL();
+    
   },
 
   updateURL: function() {
@@ -1369,10 +1390,18 @@ module.exports = Backbone.View.extend({
     // Delegate
     method.call(this, {
       success: (function(model, res, options) {
+        
+        console.log('model:')
+        console.log(model)
+        console.log('res:')
+        console.log(res)
+        
+        this.commitsView.addCommit(res.commit);
+        
         var url;
         var data;
         var params;
-
+        
         this.sidebar.close();
         
         // reset diffs by setting previous content to new content
@@ -1432,14 +1461,14 @@ module.exports = Backbone.View.extend({
             url: url + '?' + params,
             error: (function(xhr, textStatus, errorThrown) {
               var res = JSON.parse(xhr.responseText);
-              this.updateSaveState(res.message, 'error');
+              this.updateSaveState(res.blob.message, 'error');
             }).bind(this)
           });
         }
       }).bind(this),
       error: (function(model, xhr, options) {
         var res = JSON.parse(xhr.responseText);
-        this.updateSaveState(res.message, 'error');
+        this.updateSaveState(res.blob.message, 'error');
       }).bind(this)
     });
 

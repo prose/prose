@@ -17,6 +17,7 @@ var SearchView = require('./views/search');
 var ReposView = require('./views/repos');
 var RepoView = require('./views/repo');
 var FileView = require('./views/file');
+var CommitView = require('./views/commit')
 var DocumentationView = require('./views/documentation');
 var ChooseLanguageView = require('./views/chooselanguage');
 
@@ -191,18 +192,28 @@ module.exports = Backbone.Router.extend({
       complete: this.app.loader.done
     });
   },
-
+  
   path: function(login, repoName, path) {
     var url = util.extractURL(path);
 
+    console.log('path')
+    console.log(path)
+    
+    console.log('url:')
+    console.log(url)
+  
     switch(url.mode) {
       case 'tree':
         this.repo(login, repoName, url.branch, url.path);
+        break;
+      case 'commit':
+        this.commit(login, repoName, path);
         break;
       case 'new':
       case 'blob':
       case 'edit':
       case 'preview':
+      case 'commits':
         this.post(login, repoName, url.mode, url.branch, url.path);
         break;
       default:
@@ -210,6 +221,69 @@ module.exports = Backbone.Router.extend({
         break;
     }
   },
+  
+  commit: function(login, repoName, path) {
+    
+    console.log('router commit');
+    
+    if (this.view) this.view.remove();
+    
+    this.app.nav.mode('commit');
+    
+    NProgress.start();
+    
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
+
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
+        }
+      });
+      user.repos.add(repo);
+    }
+            
+    var commit = {
+      app: this.app,
+      nav: this.app.nav,
+      path: path,
+      repo: repo,
+      router: this,
+      sidebar: this.app.sidebar,
+      sha: util.extractSHA(path)
+    };
+    
+
+    // TODO: defer this success function until both user and repo have been fetched
+    // in paralell rather than in series
+    user.fetch({
+      success: (function(model, res, options) {
+        NProgress.set(0.33);
+        repo.fetch({
+          success: (function(model, res, options) {
+            NProgress.set(0.66);
+            this.view = new CommitView(commit);
+            this.app.$el.find('#main').html(this.view.el);
+          }).bind(this),
+          error: (function(model, xhr, options) {
+            this.error(xhr);
+          }).bind(this),
+          complete: this.app.loader.done
+        });
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
+      }).bind(this)
+    });
+    
+  },
+  
 
   post: function(login, repoName, mode, branch, path) {
     if (this.view) this.view.remove();

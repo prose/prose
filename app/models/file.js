@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var marked = require('marked');
 var Backbone = require('backbone');
+var Commits = require('../collections/commits');
 var jsyaml = require('js-yaml');
 var util = require('.././util');
 
@@ -59,6 +60,12 @@ module.exports = Backbone.Model.extend({
       'type': type,
       'writable': permissions ? permissions.push : false
     });
+    
+    this.commits = new Commits([], { 
+      repo: this.get('repo'), 
+      file: this
+    });
+    
   },
 
   get: function(attr) {
@@ -264,7 +271,13 @@ module.exports = Backbone.Model.extend({
     }
 
     options.success = (function(model, res, options) {
-      this.set(_.extend(res.content, {
+      
+      console.log('model:')
+      console.log(model)
+      console.log('res:')
+      console.log(res)
+      
+      this.set(_.extend(res.blob.content, {
         previous: this.serialize()
       }));
 

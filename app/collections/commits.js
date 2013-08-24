@@ -6,7 +6,9 @@ module.exports = Backbone.Collection.extend({
   model: Commit,
 
   initialize: function(models, options) {
+    console.log('initializing commits')
     this.repo = options.repo;
+    this.file = options.file;
   },
 
   setBranch: function(branch, options) {
@@ -23,6 +25,10 @@ module.exports = Backbone.Collection.extend({
   },
 
   url: function() {
-    return this.repo.url() + '/commits?sha=' + this.branch;
+    if (this.file) {
+      return this.repo.url() + '/commits?sha=' + this.file.get('branch').get('name') + '&path=' + this.file.get('path');
+    } else {
+      return this.repo.url() + '/commits?sha=' + this.branch;
+    }
   }
 });

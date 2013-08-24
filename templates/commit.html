@@ -1,0 +1,11 @@
+<header id='heading' class='heading limiter clearfix'></header>
+<div id='modal'></div>
+
+<div id='commit' class='commit limiter'>
+  <h2>Changes:</h2>
+  <div id="diffs-wrapper" class='diffs-wrapper'>
+    <% for (var i=0; i < data.sections.length; i++) { %>
+      <p><%= data.sections[i] %></p>
+    <% } %>
+  </div>
+</div>

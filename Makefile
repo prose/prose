@@ -69,7 +69,10 @@ APPLICATION = \
 	app/views/toolbar.js \
 	app/views/li/file.js \
 	app/views/li/folder.js \
+	app/views/li/commit.js \
 	app/views/li/repo.js \
+	app/views/commit.js \
+	app/views/commits.js \
 	app/views/filebar.js \
 	app/views/sidebar.js \
 	app/views/sidebar/branch.js \

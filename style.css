@@ -549,6 +549,41 @@ ins {
   min-height:500px;
   }
 
+.diffs-wrapper .idiff.removed {
+  color: red;
+  text-decoration: line-through;
+}
+
+.diffs-wrapper .idiff.added {
+  background: #D4ECB6;
+  text-decoration: none;
+  color: #73955c;
+  padding: 1px 0;
+}
+
+.commits {
+  
+}
+
+.commits ul {
+  border-top: 1px solid #f0f0f0;
+}
+
+.commit-avatar {
+  position: absolute;
+}
+
+.commit-item {
+  display: block;
+  list-style-type: none;
+  padding: 12px 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.commit-item h3 {
+  font-size: 16px;
+}
+
 .filebar {
   background: #eee;
   border-right: 1px solid #ddd;
@@ -880,7 +915,7 @@ ins {
       -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
               box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);
       }
-.nav li a.generate-preview {
+.nav li a.glyphicon {
   line-height: 48px;
 }
 
