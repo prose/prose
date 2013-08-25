@@ -548,6 +548,11 @@ ins {
   height:auto!important;
   min-height:500px;
   }
+  
+.diffs-wrapper {
+  font-size: 16px;
+  line-height: 150%;
+}
 
 .diffs-wrapper .idiff.removed {
   color: red;

@@ -7,7 +7,11 @@ module.exports = Backbone.Model.extend({
 
     this.repo = attributes.repo;
   },
-
+  
+  link: function() {
+    return "#" + this.repo.get('full_name') + '/commit/' + this.get('sha');
+  },
+  
   url: function() {
     return this.repo.url() + '/commits/' + this.get('sha');
   }

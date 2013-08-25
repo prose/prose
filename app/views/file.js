@@ -1396,7 +1396,13 @@ module.exports = Backbone.View.extend({
         console.log('res:')
         console.log(res)
         
-        this.commitsView.addCommit(res.commit);
+        var commit_data = res.commit;
+        
+        _.extend(commit_data, {
+          repo: this.repo
+        })
+        
+        this.commitsView.addCommit(commit_data);
         
         var url;
         var data;

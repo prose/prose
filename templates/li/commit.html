@@ -1,8 +1,8 @@
 <img class="icon round commit-avatar" src="<%= commit.commit_details.committer.avatar_url%>">
 
-<div class="details">
+<a class="details" href="<%= commit.link %>">
   
   <h3><%= commit.commit_details.message %></h3>
   <span class="deemphasize"><%= commit.commit_details.committer.name %> authored <%= commit.timeago %> (<%= commit.time %>)</span>
     
-</div>
+</a>

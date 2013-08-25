@@ -28,7 +28,8 @@ module.exports = Backbone.View.extend({
         
     var data = _.extend(this.model.attributes, {
       time: committed_at,
-      timeago: timeago
+      timeago: timeago,
+      link: this.model.link()
     });
 
     this.$el.html(_.template(this.template, data, {

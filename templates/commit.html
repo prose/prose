@@ -5,7 +5,15 @@
   <h2>Changes:</h2>
   <div id="diffs-wrapper" class='diffs-wrapper'>
     <% for (var i=0; i < data.sections.length; i++) { %>
-      <p><%= data.sections[i] %></p>
+      <span>
+        <% if (data.sections[i] == "" || data.sections[i] == "<span class='idiff added'></span>") { %>
+          <p></p>
+        <% } else if (data.sections[i] == "...") { %>
+          <p>...</p>
+        <% } else { %>
+          <%= data.sections[i] %>
+        <% } %>
+      </span>
     <% } %>
   </div>
 </div>
