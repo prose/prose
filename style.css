@@ -566,6 +566,20 @@ ins {
   padding: 1px 0;
 }
 
+.single-file-diffs {
+  border: 1px solid #e5e5e5;
+  margin-bottom: 15px;
+}
+
+.single-file-diffs h3 {
+  padding: 10px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.single-file-diffs-content {
+  padding: 10px;
+}
+
 .commits {
   
 }

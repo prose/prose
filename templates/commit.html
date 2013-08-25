@@ -4,16 +4,15 @@
 <div id='commit' class='commit limiter'>
   <h2>Changes:</h2>
   <div id="diffs-wrapper" class='diffs-wrapper'>
-    <% for (var i=0; i < data.sections.length; i++) { %>
-      <span>
-        <% if (data.sections[i] == "" || data.sections[i] == "<span class='idiff added'></span>") { %>
-          <p></p>
-        <% } else if (data.sections[i] == "...") { %>
-          <p>...</p>
-        <% } else { %>
-          <%= data.sections[i] %>
-        <% } %>
-      </span>
-    <% } %>
+    
+    <% Object.keys(data.files).forEach(function (filename) { %>
+      <div class="single-file-diffs">
+        <h3><%= filename %></h3>
+        <div class=single-file-diffs-content>
+          <%= data.files[filename].diff_html %>
+        </div>
+      </div>
+    <% }) %>
+
   </div>
 </div>

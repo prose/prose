@@ -49,18 +49,46 @@ module.exports = Backbone.View.extend({
   render: function() {
     
     var data = this.model.attributes;
-        
-    console.log('diffs');
-    console.log(data.diffs);
-        
+            
+    var files = data.diffs;
+    var file_frags = {};
+    
+    var that = this;
+    
+    Object.keys(files).forEach(function (filename) { 
+        var file_diffs = files[filename];
+        var file_html = that.compileDiffs(file_diffs);
+        var diff_hash = {};
+        diff_hash['diff_html'] = file_html;
+        file_frags[filename] = diff_hash;
+    });
+    
+    console.log('file_frags:')
+    console.log(file_frags)
+    
+    data = _.extend(data, {
+      files: file_frags
+    });
+      
+    this.$el.html(_.template(this.template, data, { variable: 'data' }));
+
+    this.header.setElement(this.$el.find('#heading')).render();
+
+    NProgress.done();
+
+    return this;
+  },
+  
+  compileDiffs: function(diffs) {
+    
     var sections = {};
     
     var section_numbers = [];
     
     var diffRegex = /<span class='idiff'>.*<\/span>/;
         
-    for (var i=0; i < data.diffs.length; i++) {
-      var diff = data.diffs[i];
+    for (var i=0; i < diffs.length; i++) {
+      var diff = diffs[i];
       
       var prev_line_clean = null;
       var this_line_clean = null;
@@ -72,10 +100,10 @@ module.exports = Backbone.View.extend({
         // check the previous section.. if it matches, add to prev section instead
         
         // if there is a previous seciton                
-        if (data.diffs[i-1]) {
+        if (diffs[i-1]) {
                     
-          var prev_line = data.diffs[i-1].line;
-          var this_line = data.diffs[i].line;
+          var prev_line = diffs[i-1].line;
+          var this_line = diffs[i].line;
           
           var prev_diff = prev_line.match(diffRegex);
           
@@ -92,7 +120,7 @@ module.exports = Backbone.View.extend({
         }
                 
         if (this_line_clean && prev_line_clean && (this_line_clean == prev_line_clean)) {
-          sections[data.diffs[i-1].line_old].segments.push(diff.line)
+          sections[diffs[i-1].line_old].segments.push(diff.line)
         } else {
           sections[line_num] = {'segments':[]};
           sections[line_num].segments.push(diff.line);
@@ -103,10 +131,7 @@ module.exports = Backbone.View.extend({
         sections[line_num].segments.push(diff.line);
       }
     }
-    
-    console.log('sections:');
-    console.log(sections);
-    
+      
     var getCleanSection = function(segment) {
       
       var modifier = segment[0];
@@ -189,22 +214,31 @@ module.exports = Backbone.View.extend({
             
     }
     
-    console.log('new_secitons:');
-    console.log(new_sections);
-    
-    data = _.extend(data, {
-      sections: new_sections
-    });
+    var file_html_arr = [];
+            
+    for (var i=0; i < new_sections.length; i++) {
       
-    this.$el.html(_.template(this.template, data, { variable: 'data' }));
-
-    this.header.setElement(this.$el.find('#heading')).render();
-    // this.search.setElement(this.$el.find('#search')).render();
-    // this.files.setElement(this.$el.find('#files'));
-
-    NProgress.done();
-
-    return this;
+      var span, inner;
+      
+      $el = $("<span></span>");
+        if (new_sections[i] == "" || new_sections[i] == "<span class='idiff added'></span>") {
+          inner = "<p></p>";
+        } else if (new_sections[i] == "...") {
+          inner = "<p>...</p>";
+        } else {
+          inner = new_sections[i];
+        }
+        
+        span = "<span>" + inner + "</span>";
+        
+        file_html_arr.push(span);
+        
+    }
+    
+    var file_html_str = file_html_arr.join('');
+    
+    return file_html_str;
+    
   },
 
   initHeader: function() {
