@@ -938,6 +938,18 @@ ins {
   line-height: 48px;
 }
 
+.nav li a.branches {
+  background: #f8f8f8 url('img/icons/branch.png') no-repeat center center;
+  background-size: 20px;
+}
+
+.nav li a.branches.active {
+  background: #526066 url('img/icons/branch-white.png') no-repeat center center;
+  background-size: 20px;
+}
+
+
+
 .icon {
   background:transparent url('img/sprite.png') no-repeat 0 0;
   width:40px;
@@ -2053,11 +2065,13 @@ ins {
 
 /* Sidebar content on the file page */
 .sidebar #save,
-.sidebar #settings {
+.sidebar #settings,
+.sidebar #branches {
   display:none;
   }
 .sidebar[data-sidebar='save'] #save,
-.sidebar[data-sidebar='settings'] #settings {
+.sidebar[data-sidebar='settings'] #settings,
+.sidebar[data-sidebar='branches'] #branches {
   display:block;
   }
 

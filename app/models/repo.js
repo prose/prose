@@ -36,6 +36,33 @@ module.exports = Backbone.Model.extend({
     return this.get('content_type') == "document";
   },
   
+  createBranch: function(options) {
+    
+    options = options ? _.clone(options) : {};
+    
+    var success = options.success;
+    var base_url = this.get('branches_url');    
+    var url = base_url + '/' + options.branch_name;
+    delete options.branch_name;
+                          
+    options = _.extend(options, {
+      type: 'PUT',
+      url: url,
+      contentType: 'application/json'
+    });
+    
+    options.success = (function(res) {
+      console.log('success createbranch');
+      console.log('res:')
+      console.log(res);
+      if (_.isFunction(success)) success.apply(this, arguments);
+    });
+    
+    $.ajax(options);
+        
+  },
+  
+  
   updateSettings: function(options) {
     
     options = options ? _.clone(options) : {};

@@ -41,6 +41,7 @@ APPLICATION = \
 	app/collections/branches.js \
 	app/collections/commits.js \
 	app/collections/files.js \
+	app/collections/merge_requests.js \
 	app/collections/orgs.js \
 	app/collections/repos.js \
 	app/collections/users.js \
@@ -48,6 +49,7 @@ APPLICATION = \
 	app/models/commit.js \
 	app/models/file.js \
 	app/models/folder.js \
+	app/models/merge_request.js \
 	app/models/org.js \
 	app/models/repo.js \
 	app/models/user.js \
@@ -59,6 +61,8 @@ APPLICATION = \
 	app/views/header.js \
 	app/views/loader.js \
 	app/views/metadata.js \
+	app/views/merge_request.js \
+	app/views/merge_requests.js \
 	app/views/nav.js \
 	app/views/notification.js \
 	app/views/profile.js \
@@ -67,9 +71,10 @@ APPLICATION = \
 	app/views/search.js \
 	app/views/start.js \
 	app/views/toolbar.js \
+	app/views/li/commit.js \
 	app/views/li/file.js \
 	app/views/li/folder.js \
-	app/views/li/commit.js \
+	app/views/li/merge_request.js \
 	app/views/li/repo.js \
 	app/views/commit.js \
 	app/views/commits.js \

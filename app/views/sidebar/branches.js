@@ -9,6 +9,10 @@ module.exports = Backbone.View.extend({
   template: templates.sidebar.branches,
 
   subviews: {},
+  
+  events: {
+    'click a.create-branch': 'emit',
+  },
 
   initialize: function(options) {
     _.bindAll(this);
@@ -31,7 +35,7 @@ module.exports = Backbone.View.extend({
       complete: this.app.loader.done
     });
   },
-
+  
   render: function() {
     // only render branches selector if two or more branches
     if (this.model.length < 2) return;
@@ -59,12 +63,20 @@ module.exports = Backbone.View.extend({
       router.navigate($(this).val(), true);
     });
 
-    this.sidebar.open();
+    // this.sidebar.open();
 
     this.app.loader.done();
 
     return this;
   },
+
+  emit: function(e) {
+    if (e) e.preventDefault();
+
+    var action = $(e.currentTarget).data('action');
+    this.sidebar.trigger(action, e);
+  },
+  
 
   remove: function() {
     _.invoke(this.subviews, 'remove');

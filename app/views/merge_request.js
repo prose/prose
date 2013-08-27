@@ -2,16 +2,16 @@ var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');
 var Backbone = require('backbone');
-var Commit = require('../models/commit');
+var MergeRequest = require('../models/merge_request');
 var HeaderView = require('./header');
 var util = require('.././util');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
   
-  id: 'commit',
+  id: 'merge-request',
   
-  template: templates.commit,
+  template: templates.merge_request,
 
   events: {
   },
@@ -25,10 +25,8 @@ module.exports = Backbone.View.extend({
     app.loader.start();
 
     this.app = app;
-    this.nav = options.nav;
     this.path = options.path || '';
     this.router = options.router;
-    this.sidebar = options.sidebar;
     this.repo = options.repo;
 
     // Init subviews
@@ -37,7 +35,7 @@ module.exports = Backbone.View.extend({
     // Events from sidebar
     // this.listenTo(this.sidebar, 'destroy', this.destroy);
     
-    this.model = new Commit(options, { 
+    this.model = new MergeRequest(options, { 
       repo: this.repo
     });
     
@@ -57,12 +55,12 @@ module.exports = Backbone.View.extend({
     
     Object.keys(files).forEach(function (filename) { 
         var file_diffs = files[filename];
-        var file_html = utl.compileDiffs(file_diffs);
+        var file_html = util.compileDiffs(file_diffs);
         var diff_hash = {};
         diff_hash['diff_html'] = file_html;
         file_frags[filename] = diff_hash;
     });
-    
+        
     data = _.extend(data, {
       files: file_frags
     });

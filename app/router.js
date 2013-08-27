@@ -17,7 +17,9 @@ var SearchView = require('./views/search');
 var ReposView = require('./views/repos');
 var RepoView = require('./views/repo');
 var FileView = require('./views/file');
-var CommitView = require('./views/commit')
+var CommitView = require('./views/commit');
+var MergeRequestsView = require('./views/merge_requests');
+var MergeRequestView = require('./views/merge_request');
 var DocumentationView = require('./views/documentation');
 var ChooseLanguageView = require('./views/chooselanguage');
 
@@ -206,6 +208,12 @@ module.exports = Backbone.Router.extend({
       case 'tree':
         this.repo(login, repoName, url.branch, url.path);
         break;
+      case 'merge-requests':
+        this.merge_requests(login, repoName, path);
+        break;
+      case 'merge-request':
+        this.merge_request(login, repoName, path);
+        break;
       case 'commit':
         this.commit(login, repoName, path);
         break;
@@ -221,6 +229,114 @@ module.exports = Backbone.Router.extend({
         break;
     }
   },
+  
+  merge_requests: function(login, repoName, path) {
+    
+    if (this.view) this.view.remove();
+    
+    NProgress.start();
+    
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
+
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
+        }
+      });
+      user.repos.add(repo);
+    }
+    
+    var merge_request = {
+      app: this.app,
+      repo: repo,
+      router: this
+    };
+                
+    // TODO: defer this success function until both user and repo have been fetched
+    // in paralell rather than in series
+    user.fetch({
+      success: (function(model, res, options) {
+        NProgress.set(0.33);
+        repo.fetch({
+          success: (function(model, res, options) {
+            NProgress.set(0.66);
+            this.view = new MergeRequestsView(merge_request);
+            this.app.$el.find('#main').html(this.view.el);
+          }).bind(this),
+          error: (function(model, xhr, options) {
+            this.error(xhr);
+          }).bind(this),
+          complete: this.app.loader.done
+        });
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
+      }).bind(this)
+    });
+    
+  },
+  
+  merge_request: function(login, repoName, path) {
+    
+    if (this.view) this.view.remove();
+    
+    NProgress.start();
+    
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
+
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
+        }
+      });
+      user.repos.add(repo);
+    }
+    
+    var merge_request = {
+      app: this.app,
+      repo: repo,
+      router: this,
+      id: util.extractID(path)
+    };
+                
+    // TODO: defer this success function until both user and repo have been fetched
+    // in paralell rather than in series
+    user.fetch({
+      success: (function(model, res, options) {
+        NProgress.set(0.33);
+        repo.fetch({
+          success: (function(model, res, options) {
+            NProgress.set(0.66);
+            this.view = new MergeRequestView(merge_request);
+            this.app.$el.find('#main').html(this.view.el);
+          }).bind(this),
+          error: (function(model, xhr, options) {
+            this.error(xhr);
+          }).bind(this),
+          complete: this.app.loader.done
+        });
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
+      }).bind(this)
+    });
+    
+  },
+
   
   commit: function(login, repoName, path) {
     
@@ -256,7 +372,7 @@ module.exports = Backbone.Router.extend({
       repo: repo,
       router: this,
       sidebar: this.app.sidebar,
-      sha: util.extractSHA(path)
+      sha: util.extractID(path)
     };
     
 

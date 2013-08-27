@@ -10,6 +10,7 @@ module.exports = Backbone.View.extend({
 
   events: {
     'click a.generate-preview': 'emit',
+    'click a.branches': 'emit',
     'click a.commits': 'emit',
     'click a.edit': 'emit',
     'click a.preview': 'emit',

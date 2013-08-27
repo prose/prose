@@ -10,6 +10,7 @@ var marked = require('marked');
 var diff = require('diff');
 var Backbone = require('backbone');
 var File = require('../models/file');
+var Branch = require('../models/branch');
 var HeaderView = require('./header');
 var CommitsView = require('./commits');
 var FilebarView = require('./filebar');
@@ -54,6 +55,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.nav, 'edit', this.edit);
     this.listenTo(this.nav, 'blob', this.blob);
     this.listenTo(this.nav, 'meta', this.meta);
+    this.listenTo(this.nav, 'branches', this.openBranches);
     this.listenTo(this.nav, 'settings', this.settings);
     this.listenTo(this.nav, 'save', this.saveClicked);
     this.listenTo(this.nav, 'generate-preview', this.generatePreview);
@@ -66,6 +68,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
     this.listenTo(this.sidebar, 'translate', this.translate);
     this.listenTo(this.sidebar, 'update-settings', this.updateSettings);
+    this.listenTo(this.sidebar, 'create-branch', this.createBranch);
 
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
     this.listenTo($(window), 'pagehide', this.stashFile);
@@ -452,7 +455,7 @@ module.exports = Backbone.View.extend({
   
   initFilebar: function() {
     
-    if (!this.app.filebar) {
+    if (!this.app.filebar || this.app.filebar.branch != this.branch) {
       
       this.app.filebar = new FilebarView({
         app: this.app,
@@ -494,6 +497,18 @@ module.exports = Backbone.View.extend({
       fileInput: this.titleAsHeading()
     }).render();
     this.subviews['settings'] = this.settings;
+    
+    
+    this.branchesView = this.sidebar.initSubview('branches', {
+      app: this.app,
+      model: this.branches,
+      repo: this.repo,
+      branch: this.branch,
+      router: this.router,
+      sidebar: this.sidebar
+    }).render();
+    this.subviews['branches'] = this.branchesView;
+
 
     this.listenTo(this.sidebar, 'makeDirty', this.makeDirty);
 
@@ -915,6 +930,12 @@ module.exports = Backbone.View.extend({
       this.model.set('metadata', this.metadataEditor.getValue());
     }
   },
+
+  openBranches: function() {
+    this.contentMode();
+    this.sidebar.mode('branches');
+    this.sidebar.open();
+  },
   
   settings: function() {
     this.contentMode();
@@ -1289,6 +1310,56 @@ module.exports = Backbone.View.extend({
       // Remove expired content
       store.removeItem(filepath);
     }
+  },
+  
+  createBranch: function() {
+    
+    var that = this;
+        
+    var $sidebar = this.sidebar.$el;
+            
+    var data = {
+      'ref': that.branch
+    }
+  
+    this.repo.createBranch({
+      branch_name: $sidebar.find('[name="branch_name"]').val(),
+      data: JSON.stringify(data),
+      success: (function(branch) {
+        
+        console.log('repo.name = '+ that.repo.get('name'));
+        
+        console.log('branch created');
+        console.log(branch)
+        
+        console.log('>> repo.name = '+ that.repo.get('name'));
+                
+        _.extend(branch,{
+          repo: that.repo
+        })
+        
+        console.log('>>>> repo.name = '+ that.repo.get('name'));
+        
+        that.model.collection.branch = new Branch(branch);
+        
+        console.log('>>??>> repo.name = '+ that.repo.get('name'));
+        
+        that.branch = branch.name;
+        
+        console.log('<<< repo.name = '+ that.repo.get('name'));
+      
+        that.updateURL();
+        that.initFilebar();
+        that.edit();
+        
+      }),
+      error: (function(model, xhr, options) {
+        console.log('something went wrong')
+      })
+      
+    });
+    
+    
   },
   
   updateSettings: function() {
