@@ -25,7 +25,7 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     this.$el.html(_.template(this.template, {
-      login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=repo'
+      login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=public_repo'
     }, { variable: 'data' }));
 
     this.$save = this.$el.find('.file .save .popup');

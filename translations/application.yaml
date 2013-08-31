@@ -16,6 +16,7 @@ en:
     develop: "Developers"
     logout: "Logout"
     language: "Language"
+    private_repo: "Authorize private repos"
   toolbar:
     heading: "Heading"
     subHeading: "Sub Heading"
