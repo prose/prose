@@ -27,8 +27,10 @@ module.exports = Backbone.View.extend({
       repo: this.repo.attributes
     });
 
-    var regex = new RegExp('^' + this.model.collection.config.rooturl + '(.*)');
-    var jailpath = data.path.match(regex);
+    var rooturl = this.model.collection.config &&
+      this.model.collection.config.rooturl;
+    var regex = new RegExp('^' + rooturl + '(.*)');
+    var jailpath = rooturl ? data.path.match(regex) : false;
 
     data.jailpath = jailpath ? jailpath[1] : data.path;
 
