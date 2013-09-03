@@ -34,7 +34,7 @@
         "explore": "Explorar Projetos"
     },
     "actions": {
-        "unsaved": "Você tem Mudanças não salvas Tem certeza que deseja sair?",
+        "unsaved": "Você tem Mudanças não salvas. Tem certeza que deseja sair?",
         "draft": {
             "toPost": "Rascunho para Post",
             "toPostInfo": "Converter este rascunho para um post publicado"
@@ -174,11 +174,17 @@
         "link": {
             "title": "Inserir Link",
             "insertLocal": "Inserir um Link Local",
-            "insert": "Inserir"
+            "insert": "Inserir",
+            "hrefPlaceholder": "URL do Link",
+            "textPlaceholder": "Nome do Link",
+            "titlePlaceholder": "Título (opcional)",
+            "insertPlaceholder": "Insira um link local"
         },
         "media": {
             "title": "Inserir Imagem",
             "back": "Voltar",
+            "hrefPlaceholder": "URL da Imagem",
+            "altPlaceholder": "Texto Alternativo (opcional)",
             "description": "Envie imagens Clicando &amp; Arrastando ou </br>\\n\n{input} <a>selecionando uma</a>\\n",
             "help": "Imagem enviadas são adicionadas ao diretório atual ou ao especificado no caminho Image URL acima.",
             "helpMedia": "Imagens enviadas são adicionadas ao diretório 'Escolha Existente' ou algum especificado no campo URL da Imagem.",
@@ -253,5 +259,8 @@
     "chooselanguage": {
         "title": "Escolha um Idioma",
         "description": "Prose é um aplicativo traduzido. Se você não vê seu idioma na lista, encontrar erros de digitação, ou traduções que estejam faltando, considere <a href='https://www.transifex.com/projects/p/prose'>colaborar para as traduções do projeto</a>.\\n"
+    },
+    "about": {
+        "content": "# Sobre\\n\n\nProse é um bonito e simples ambiente para autoração de conteúdo para\\n\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\\n\nÉ uma interface baseada na web para gerenciar conteúdo no\\n\n[GitHub](http://github.com). Use para criar, editar, remover arquivos\\n\ne salvar suas mudanças diretamente no GitHub. Hospede seu website como\\n\n[GitHub Pages](http://pages.github.com) de graça, ou configure seu próprio\\n\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\\n\n\nProse tem suporte avançado para sites com [Jekyll](http://jekyllrb.com/) e\\n\n[conteúdo markdown](http://daringfireball.net/projects/markdown/).\\n\nProse detecta posts com Markdown em sites Jekyll e prove destaque de\\n\nsintaxe, uma barra de formatação, e prévia de rascunhos no layout\\n\ncompleto do site.\\n\n\nDesenvolvedores podem configurar sites jekyll para utilizar estes e\\n\nmuitos outros recursos que personalizem a experiência de edição de conteúdo.\\n\n\n## Configurando\\n\n\nProse poder ser configurado por repositório com metadados adicionais em um\\n\n`_config.yml` de um jekyll siteou em um `prose.yml` separado. Oferecemos\\n\nProse.io como um serviço hospedado com a versão mais recente, ou você pode baixar\\n\no código fonte e hospedar por conta própria. Para a documentação para desenvolvedores\\n\nveja [a página wiki no GitHub](https://github.com/prose/prose/wiki).\\n\n\n## Desenvolvendo\\n\n\nProse é um projeto de código aberto. Nós encorajamos que você contribua e\\n\najude-nos a melhora esta aplicação ou adaptá-la a suas necessidades. Para\\n\ninstruções em desenvolver o Prose, veja\\n\n[Guia de Contribuição do Prose](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Pedindo Ajuda\\n\n\nNão oferecemos suporte para o Prose no momento, no entanto se você for um\\n\neditor de conteúdo usando o Prose, você deveria contactar o desenvolvedor que\\n\nlhe deu acesso a ele. Para relatar problemas técnicos com o Prose, por favor\\n\n[crie um issue no GitHub](https://github.com/prose/prose/issues).\\n\n\n## Créditos\\n\n\nProse é desenvolvido e mantido por\\n\n[Development Seed](http://developmentseed.org), uma equipe\\n\nde visualização de dados criativa e mapeamento baseada em Washington, DC.\\n"
     }
 }
