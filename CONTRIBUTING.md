@@ -85,7 +85,9 @@ to the root directory. when you run `make` this file is created automatically.
 __Note__ You should not commit the `oauth.json` file to a remote repo or along with a pull
 request.
 
-Finally, If you have python handy, from the project root run `python -m SimpleHTTPServer`
+__Note__ When you authorize the application the public gatekeeper will redirect to prose.io. You can manually set the URL back to your prose instance. Alternatively you can setup your own Gatekeeper instance. 
+
+If you have python handy, from the project root run `python -m SimpleHTTPServer`
 to start a server and run the site locally. By default prose will be set up 
 on [http://localhost:8000](http://localhost:8000).
 
