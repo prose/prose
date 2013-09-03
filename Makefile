@@ -1,4 +1,13 @@
 # See the README for installation instructions.
+OS=(lsb_release -si)
+VER=(lsb_release -sr)
+
+ifeq ($(OS), Ubuntu)
+	NODE=nodejs
+else
+	NODE=node
+endif
+
 UGLIFY = node_modules/.bin/uglifyjs
 BROWSERIFY = node_modules/.bin/browserify
 TEMPLATES = $(shell find templates -type f -name '*.html')
@@ -14,11 +23,11 @@ clean:
 	rm -f dist/*
 
 translations:
-	node translations/update_locales
-	node build
+	$(NODE) translations/update_locales
+	$(NODE) build
 
 dist/templates.js: $(TEMPLATES)
-	mkdir -p dist && node build
+	mkdir -p dist && $(NODE) build
 
 oauth.json:
 	test -s oauth.json || curl 'https://raw.github.com/prose/prose/gh-pages/oauth.json' > oauth.json
