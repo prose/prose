@@ -1051,10 +1051,6 @@ ins {
       margin-left:5px;
       }
 
-    .content .details .title {
-      position:relative;
-      top:8px;
-      }
       .content .item .details .title {
         text-overflow:ellipsis;
         white-space:nowrap;

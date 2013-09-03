@@ -10,8 +10,8 @@
       </div>
     <% } %>
 
-    <input type='text' name='url' placeholder='Image URL' />
-    <input type='text' name='alt' placeholder='Alt text (optional)' />
+    <input type='text' name='url' placeholder="t('dialogs.media.hrefPlaceholder')" />
+    <input type='text' name='alt' placeholder="t('dialogs.media.altPlaceholder')" />
     <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>
       <% if (!assetsDirectory) { %>
         <small class='caption deemphasize'><%= t('dialogs.media.help') %></small>

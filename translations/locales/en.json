@@ -22,7 +22,7 @@
         "heading": "Heading",
         "subHeading": "Sub Heading",
         "link": "Insert Link",
-        "image": "Insert Link",
+        "image": "Insert Image",
         "bold": "Bold",
         "italic": "Italic",
         "blockquote": "Blockquote",
@@ -174,11 +174,17 @@
         "link": {
             "title": "Insert Link",
             "insertLocal": "Insert a Local Link",
-            "insert": "Insert"
+            "insert": "Insert",
+            "hrefPlaceholder": "Link URL",
+            "textPlaceholder": "Link Name",
+            "titlePlaceholder": "Title (optional)",
+            "insertPlaceholder": "Insert a local link"
         },
         "media": {
             "title": "Insert Image",
             "back": "Back",
+            "hrefPlaceholder": "Image URL",
+            "altPlaceholder": "Alt text (optional)",
             "description": "Upload images by Dragging &amp; Dropping or </br>\n{input} <a>selecting one</a>\n",
             "help": "Images uploaded are added to the current directory or one specified in the Image URL path above.",
             "helpMedia": "Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field.",

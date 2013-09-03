@@ -38,6 +38,11 @@ module.exports = Backbone.View.extend({
       repo: this.repo.attributes
     });
 
+    var regex = new RegExp('^' + this.model.collection.config.rooturl + '(.*)');
+    var jailpath = data.path.match(regex);
+
+    data.jailpath = jailpath ? jailpath[1] : data.path;
+
     this.$el.html(_.template(this.template, data, {
       variable: 'file'
     }));

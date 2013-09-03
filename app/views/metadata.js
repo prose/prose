@@ -74,6 +74,7 @@ module.exports = Backbone.View.extend({
                 name: data.name,
                 label: data.field.label,
                 value: data.field.value,
+                placeholder: data.field.placeholder,
                 type: 'text'
               };
 
@@ -88,6 +89,7 @@ module.exports = Backbone.View.extend({
                 id: id,
                 value: data.field.value,
                 label: data.field.label,
+                placeholder: data.field.placeholder,
                 type: 'textarea'
               };
 

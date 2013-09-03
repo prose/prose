@@ -1,12 +1,12 @@
 <div class='inner'>
   <label><%= t('dialogs.link.title') %></label>
-  <input type='text' name='href' placeholder='Link URL' />
-  <input type='text' name='text' placeholder='Link Name' />
-  <input type='text' name='title' placeholder='Title (optional)' />
+  <input type='text' name='href' placeholder="<%= t('dialogs.link.hrefPlaceholder') %>" />
+  <input type='text' name='text' placeholder="<%= t('dialogs.link.textPlaceholder') %>" />
+  <input type='text' name='title' placeholder="<%= t('dialogs.link.titlePlaceholder') %>" />
 
   <% if (relativeLinks) { %>
     <div class='collapsible'>
-      <select data-placeholder='Insert a local link' class='chzn-select'>
+      <select data-placeholder="<%= t('dialogs.link.insertPlaceholder') %>" class='chzn-select'>
         <option value></option>
         <% _(relativeLinks).each(function(link) { %>
         <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>

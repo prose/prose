@@ -19,6 +19,8 @@
         "language": "Idioma"
     },
     "toolbar": {
+        "heading": "Título",
+        "subHeading": "Sub Título",
         "link": "Inserir Link",
         "image": "Inserir Link",
         "bold": "Negrito",
@@ -39,9 +41,11 @@
         },
         "publishing": {
             "publish": "Publicar",
+            "publishInfo": "Este post será publicado na próxima vez que você salvar",
             "published": "Publicado",
             "unpublish": "Despublicar",
-            "unpublished": "Despublicado"
+            "unpublished": "Despublicado",
+            "unpublishInfo": "Este post será despublicado na próxima vez que você salvar"
         },
         "change": {
             "noChange": "Sem Mudanças",
@@ -175,7 +179,9 @@
         "media": {
             "title": "Inserir Imagem",
             "back": "Voltar",
+            "description": "Envie imagens Clicando &amp; Arrastando ou </br>\\n\n{input} <a>selecionando uma</a>\\n",
             "help": "Imagem enviadas são adicionadas ao diretório atual ou ao especificado no caminho Image URL acima.",
+            "helpMedia": "Imagens enviadas são adicionadas ao diretório 'Escolha Existente' ou algum especificado no campo URL da Imagem.",
             "choose": "Escolher Existente"
         },
         "help": {
@@ -183,7 +189,8 @@
                 "title": "Bloquear Elementos",
                 "content": {
                     "paragraphs": {
-                        "title": "Paragráfos &amp; Quebras de Linha"
+                        "title": "Paragráfos &amp; Quebras de Linha",
+                        "content": "<p>Para criar um parágrafo, simplesmente crie um bloco de texto que esteja separado por uma ou mais linhas em branco. Blocos de texto separados por uma ou mais linhas em branco serão tratados como parágrafos.</p><p>Se você deseja criar uma quebra de linha, termine a linha com dois ou mais espaços e aperte Return/Enter.</p>\\n"
                     },
                     "headers": {
                         "title": "Títulos",
@@ -200,6 +207,10 @@
                     "codeBlocks": {
                         "title": "Blocos de Código",
                         "content": "<p>Markdown envolve blocos de código em tags pré-formatadas para preservar a indentação dos seus blocos de código. Para criar um bloco de código, indente um bloco inteiro por pelo menos 4 espaços ou um tab. Markdown irá remover a identação extra que você adicionou ao bloco de código.</p>\\n"
+                    },
+                    "horizontalRules": {
+                        "title": "Linhas Horizontais",
+                        "content": "<p>Linhas Horizontais são criadas usando três ou mais hífens, asteriscos ou sublinhas em uma linha sozinhos. Espaços são permitidos entre os hífens, asteriscos ou sublinhas.</p>\\n"
                     }
                 }
             },
@@ -207,7 +218,8 @@
                 "title": "Elementos Span",
                 "content": {
                     "links": {
-                        "title": "Links"
+                        "title": "Links",
+                        "content": "<p>Markdown possui dois tipos de links: <strong>inline</strong> e <strong>referência</strong>. Para ambos tipos de links, o texto que você quer exibir ao usuário deve colocado entre colchetes. Por exemplo, se você deseja que seu link exiba o texto &ldquo;GitHub&rdquo;, você deve escrever <code>[GitHub]</code>.</p><p>Para criar um link inline, crie parênteses imediatamente após os colchetes e escreva sua URL dentro dos parenteses. (ex.: <code>[GitHub](http://github.com/)</code>). Caminhos relativos são permitidos em links inline.</p><p>Para criar um link de referência, use dois conjuntos de colchetes. <code>[meu link interno][ref-interna]</code> irá produzir um link para a referência interna <code>ref-interna</code>.</p>\\n"
                     },
                     "emphasis": {
                         "title": "Ênfase",
@@ -229,12 +241,17 @@
                     "automaticLinks": {
                         "title": "Links Automáticos",
                         "content": "<p>Se você deseja criar um link que exiba a URL, markdown permite a você rapidamente envolver a URL em <code>&lt;</code> e <code>&gt;</code> para isso. Por exemplo, o link <a href=\"javascript:void(0);\">http://github.com/</a> é facilmente produzido ao escrever <code>&lt;http://github.com/&gt;</code>.</p>\n"
+                    },
+                    "escaping": {
+                        "title": "Ignorando",
+                        "content": "<p>Se você deseja usar algum dos caracteres especiais do Markdown em seu documento (como exibir asteriscos) você pode ignorá-los utilizando o caracter de barra invertida (<code>\\\\</code>). Markdown irá ignorar o caracter diretamente após a barra invertida.\\n"
                     }
                 }
             }
         }
     },
     "chooselanguage": {
-        "title": "Escolha um Idioma"
+        "title": "Escolha um Idioma",
+        "description": "Prose é um aplicativo traduzido. Se você não vê seu idioma na lista, encontrar erros de digitação, ou traduções que estejam faltando, considere <a href='https://www.transifex.com/projects/p/prose'>colaborar para as traduções do projeto</a>.\\n"
     }
 }
