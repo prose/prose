@@ -246,11 +246,11 @@
                 "content": {
                     "automaticLinks": {
                         "title": "Links Automáticos",
-                        "content": "<p>Se você deseja criar um link que exiba a URL, markdown permite a você rapidamente envolver a URL em <code>&lt;</code> e <code>&gt;</code> para isso. Por exemplo, o link <a href=\"javascript:void(0);\">http://github.com/</a> é facilmente produzido ao escrever <code>&lt;http://github.com/&gt;</code>.</p>\n"
+                        "content": "<p>Se você deseja criar um link que exiba a URL, Markdown permite a você rapidamente envolver a URL em <code>&lt;</code> e <code>&gt;</code> para isso. Por exemplo, o link <a href=\"javascript:void(0);\">http://github.com/</a> é facilmente produzido ao escrever <code>&lt;http://github.com/&gt;</code>.</p>\n"
                     },
                     "escaping": {
                         "title": "Ignorando",
-                        "content": "<p>Se você deseja usar algum dos caracteres especiais do Markdown em seu documento (como exibir asteriscos) você pode ignorá-los utilizando o caracter de barra invertida (<code>\\\\</code>). Markdown irá ignorar o caracter diretamente após a barra invertida.\\n"
+                        "content": "<p>Se você deseja usar algum dos caracteres especiais do Markdown em seu documento (como exibir asteriscos) você pode ignorá-los utilizando o caracter de barra invertida (<code>\\\\</code>). Markdown irá ignorar o caracter diretamente após a barra invertida.</p>\\n"
                     }
                 }
             }

@@ -246,11 +246,11 @@
                 "content": {
                     "automaticLinks": {
                         "title": "Liên kết tự động",
-                        "content": "<p>Nếu bạn muốn tạo một liên kết hiển thị đường dẫn URL thật sự, markdown cho phép bạn nhanh chóng lấy thông tin về đường dẫn trong <code>&lt;</code> và <code>&gt;</code> để thực hiện điều đó. Lấy ví dụ, liên kết <a href=\"javascript:void(0);\">http://github.com/</a> có thể được dễ dàng được tạo ra bằng cách viết <code>&lt;http://github.com/&gt;</code>.</p>\n"
+                        "content": "<p>Nếu bạn muốn tạo một đường liên kết để hiển thị chính xác đường dẫn liên kết trực tiếp, Markdown cho phép bạn nhanh chóng bọc lại đường dẫn liên kết trực tiếp đó trong cặp <code>&lt;</code> và <code>&gt;</code> . Lấy thí dụ đối với liên kết <a href=\"javascript:void(0);\">http://github.com/</a> có thể được thực hiện dễ dàng bằng cách viết <code>&lt;http://github.com/&gt;</code>.</p>\n"
                     },
                     "escaping": {
                         "title": "Đang thoát",
-                        "content": "<p>Nếu bạn muốn sử dụng một ký tự đặc biệt trong Markdown tại tài liệu của mình (chẳng hạn như việc thể hiện các dấu hình sao), ở cuối phần ký tự đó bạn có thể thêm vào hai dấu chéo ngược (<code>\\\\</code>). Markdown sẽ bỏ qua ký tự này trực tiếp sau mỗi dấu chéo ngược.\n"
+                        "content": "<p>Nếu bạn muốn sử dụng một ký tự đặc biệt trong Markdown tại tài liệu của mình (chẳng hạn như việc thể hiện các dấu hình sao), ở cuối phần ký tự đó bạn có thể thêm vào hai dấu chéo ngược (<code>\\\\</code>). Markdown sẽ bỏ qua ký tự này trực tiếp sau mỗi dấu chéo ngược.</p>\n\n"
                     }
                 }
             }

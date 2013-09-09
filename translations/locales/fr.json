@@ -238,12 +238,10 @@
                 "title": "Divers",
                 "content": {
                     "automaticLinks": {
-                        "title": "Liens automatiques",
-                        "content": "<p>Markdown comprend dans sa syntaxe un raccourci permettant de créer des liens « automatiquement » pour les URL et les adresses de courrier électronique : entourez tout simplement l’adresse par des chevrons. Par exemple, le lien <a href=\"javascript:void(0);\">http://github.com/</a> est produit en écrivant simplement <code>&lt;http://github.com/&gt;</code>.</p>\n"
+                        "title": "Liens automatiques"
                     },
                     "escaping": {
-                        "title": "Échappement",
-                        "content": "<p>Markdown vous permet d’utiliser une barre oblique inverse (<code>\\\\</code>) pour générer des caractères littéraux qui auraient autrement une autre signification dans la syntaxe de Markdown. Par exemple, si vous voulez entourer un mot avec des astérisques (sans créer de balise HTML <em>), ajoutez une barre oblique inverse devant l’astérisque.</p>\n"
+                        "title": "Échappement"
                     }
                 }
             }

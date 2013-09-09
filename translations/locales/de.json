@@ -231,12 +231,10 @@
                 "title": "Vermischtes",
                 "content": {
                     "automaticLinks": {
-                        "title": "Automatische Links",
-                        "content": "<p>Wenn Sie einen Link, der die tatsächlichen URL zeigt erstellen möchten, können Sie umgeben Sie die URL mit  <code>&lt;</code> und <code>&gt;</code>. Zum Beispiel: der Link <a href=\"javascript:void(0);\">http://github.com/</a> ist einfach durch das Schreiben schreiben von <code>&lt;http://github.com/&gt;</code> erzeugt.</p>\n"
+                        "title": "Automatische Links"
                     },
                     "escaping": {
-                        "title": "Escape-Sequenz",
-                        "content": "<p>Wenn Sie einen speziellen Markdown Charakter in Ihrem Dokument (z. B. die Anzeigen eines Sternchen) verwenden wollen, können Sie das Zeichen mit dem Backslash (<code>\\\\</code>). Markdown wird das Zeichen direkt nach einem Backslash zu ignorieren.</p>\n"
+                        "title": "Escape-Sequenz"
                     }
                 }
             }
