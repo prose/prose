@@ -1,0 +1,263 @@
+{
+    "login": "Aanmelden op GitHub",
+    "docheader": {
+        "editing": "Wijzigen",
+        "error": "Fout",
+        "preview": "Voorvertonen"
+    },
+    "navigation": {
+        "newFile": "Nieuw bestand",
+        "edit": "Wijzig",
+        "preview": "Voorvertonen",
+        "settings": "Instellingen",
+        "meta": "Metadata",
+        "save": "Opslaan",
+        "login": "Aanmelden met GitHub",
+        "about": "Over",
+        "develop": "Ontwikkelaars",
+        "logout": "Afmelden",
+        "language": "Taal"
+    },
+    "toolbar": {
+        "heading": "Hoofding",
+        "subHeading": "Sub hoofding",
+        "link": "Link invoegen",
+        "image": "Link invoegen",
+        "bold": "Vet",
+        "italic": "Schuin",
+        "blockquote": "Blockquote",
+        "list": "Lijst",
+        "numberedlist": "Genummerde lijst",
+        "help": "Hulp"
+    },
+    "heading": {
+        "explore": "Verken projecten"
+    },
+    "actions": {
+        "unsaved": "Je wijzigingen zijn nog niet opgeslagen. Ben je zeker dat je verder wil gaan?",
+        "draft": {
+            "toPost": "Concept naar artikel",
+            "toPostInfo": "Zet dit concept om in een gepubliceerd artikel"
+        },
+        "publishing": {
+            "publish": "Publiceer",
+            "publishInfo": "Dit artikel zal de volgende keer dat je opslaat gepubliceerd worden",
+            "published": "Gepubliceerd",
+            "unpublish": "Publicatie ongedaan maken",
+            "unpublished": "Ongepubliceerd",
+            "unpublishInfo": "Dit artikel zal de volgende keer dat je opslaat ongepubliceerd worden"
+        },
+        "change": {
+            "noChange": "Geen wijzigingen",
+            "submit": "In te dienen wijzigingen",
+            "save": "Wijzigingen"
+        },
+        "delete": {
+            "title": "Verwijder",
+            "warn": "Ben je zeker dat je dit bestand wil verwijderen?",
+            "error": "Fout tijdens het verwijderen. Gelieve 30 seconden te wachten en opnieuw te proberen."
+        },
+        "upload": {
+            "uploading": "Bestand {file} uploaden",
+            "uploaded": "{file} is geüpload"
+        },
+        "save": {
+            "title": "Opslaan",
+            "saved": "Opgeslagen",
+            "saving": "Opslaan",
+            "patch": "Aanvraag indienen",
+            "fileNameError": "Heeft een bestandsnaam nodig",
+            "submission": "Aanvraag ingediend",
+            "metaError": "Fout! Metadata niet gevonden",
+            "fileNameExists": "Een bestandsnaam met dit pad bestaat reeds"
+        },
+        "error": "Fout. Probeer opnieuw in 30 seconden",
+        "restore": {
+            "restoring": "Herstellen",
+            "restored": "Hersteld"
+        },
+        "commits": {
+            "created": "{filename} aangemaakt",
+            "updated": "{filename} gewijzigd",
+            "deleted": "{filename} verwijderd",
+            "toDraft": "Concept van {filename} toegevoegd",
+            "fromDraft": "Artikel gemaakt van een concept van {filename}"
+        }
+    },
+    "loading": {
+        "repos": "Profiel laden",
+        "repo": "Project laden",
+        "file": "Bestand laden",
+        "preview": "Bestand voorvertonen",
+        "creating": "Nieuw artikel toevoegen"
+    },
+    "modal": {
+        "errorHeading": "Fout",
+        "confirm": "Gelukt"
+    },
+    "main": {
+        "start": {
+            "content": "Prose is een content editor voor GitHub, ontworpen om websites te beheren.",
+            "learn": "Lees meer"
+        },
+        "repos": {
+            "filter": "Projecten filteren",
+            "repo": "Bekijk project",
+            "site": "Bekijk site",
+            "sharedFrom": "Gedeeld van een account",
+            "forkedFrom": "Forked van een andere project"
+        },
+        "repo": {
+            "filter": "Filter bestanden",
+            "edit": "Wijzig",
+            "delete": "Verwijder dit bestand"
+        },
+        "new": {
+            "body": "## Een nieuw artikel\n\nVoor tekst in  [Markdown](http://daringfireball.net/projects/markdown/) in. Gebruik de toolbar bovenaan, of klik op de  **?** knop voor meer hulp.\n"
+        },
+        "file": {
+            "noTitle": "Geen titel",
+            "metaTitle": "Bekijk je wijzigingen:",
+            "rawMeta": "Ruwe metadata",
+            "metaDescription": "Toevoegingen zijn in het groen gemarkeerd. Verwijderde tekst is doorkruist.",
+            "back": "Klaar",
+            "createMeta": "Maak nieuw"
+        },
+        "upgrade": {
+            "content": "Prose wordt niet door je browser ondersteund",
+            "download": "Download een moderne browser"
+        }
+    },
+    "notification": {
+        "loginDescription": "Log in met je GitHub account om dit project te bekijken.",
+        "create": "Aanmaken",
+        "home": "Terug naar de voorpagina",
+        "back": "Ga terug",
+        "githubStatus": "Status op GitHub ({status})",
+        "error": {
+            "label": "Fout",
+            "github": "Fout bij het laden van data van GitHub. Dit kan een tijdelijk probleem zijn. Probeer later opnieuw.",
+            "exists": "Dit bestand bestaat niet",
+            "notFound": "Pagina niet gevonden"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "Groepen"
+        },
+        "repo": {
+            "branch": "Wijzig branch",
+            "drafts": "Bekijk concepten",
+            "history": {
+                "label": "Recente geschiedenis",
+                "actions": {
+                    "restore": "Herstellen?"
+                }
+            },
+            "create": "Nieuw bestand maken"
+        },
+        "save": {
+            "label": "Beschrijf je wijzigingen",
+            "cancel": "Annuleren",
+            "save": "Commit",
+            "submit": "Change request indienen"
+        },
+        "settings": {
+            "title": "Opties",
+            "fileInputLabel": "Bestandspad",
+            "delete": "Verwijder dit bestand",
+            "translate": "Vertaal naar",
+            "draft": "Maak concept"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Link invoegen",
+            "insertLocal": "Voeg een lokale link in",
+            "insert": "Invoegen",
+            "hrefPlaceholder": "Link URL",
+            "textPlaceholder": "Link naam",
+            "titlePlaceholder": "Titel (optioneel)",
+            "insertPlaceholder": "Voeg een lokale link in"
+        },
+        "media": {
+            "title": "Afbeelding invoegen",
+            "back": "Terug",
+            "hrefPlaceholder": "Afbeeldingsurl",
+            "altPlaceholder": "Alt tekst (optioneel)",
+            "description": "Upload afbeeldingen door ze te slepen of <br />\ndoor te {input} <a>selecteren</a>\n",
+            "help": "Geüploade afbeeldingen worden aan de huidige map toegevoegd of aan de map ingesteld in het afbeeldingspad hierboven.",
+            "helpMedia": "Geüploade afbeeldingen worden aan de 'Kies bestaande' map toegevoegd of aan de map ingesteld in het afbeeldingspad.",
+            "choose": "Kies bestaande"
+        },
+        "help": {
+            "blockElements": {
+                "title": "Block elementen",
+                "content": {
+                    "paragraphs": {
+                        "title": "Alinea's &amp; Nieuwe regels",
+                        "content": "<p>Maak een nieuwe blok tekst, gescheiden door een of meerdere lege lijnen om een nieuwe alinea te beginnen. Blokken tekst, gescheiden door een of meerdere lege lijnen worden in alinea's omgezet.</p><p>Als je een enkele nieuwe lijn wil beëindig dan de lijn met twee of meer spaties en gebruik dan Enter.</p>\n"
+                    },
+                    "headers": {
+                        "title": "Hoofdingen",
+                        "content": "<p>Markdown ondersteunt twee soorten hoofdingen. De wiki editor gebruikt de &ldquo;atx&rsquo; hoofdingen. Begin je hoofding met het aantal <code>#</code> karakters om de diepte van hoofding te kiezen. Voorbeeld: <code># Hoofding 1</code>, <code>## Hoofding 2</code> en <code>### Hoofding 3</code> zijn kleinere opeenvolgende hoofdingen. Je kan je hoofdingen beëindigen met zoveel <code>#</code> symbolen als je wil.\n"
+                    },
+                    "blockquotes": {
+                        "title": "Blockquotes",
+                        "content": "<p>Markdown maakt blockquotes zoals bij emails door iedere lijn te beginnen met <code>&gt;</code>. Dit wordt best gedaan door iedere lijn te starten met een <code>&gt;</code> karakter, maar Markdown ondersteunt ook een enkel <code>&gt;</code> karakter voor een alinea.</p>\n"
+                    },
+                    "lists": {
+                        "title": "Lijsten",
+                        "content": "<p>Markdown ondersteunt zowel gewone als genummerde lijsten. Om een genummerde lijst te maken begin je iedere lijn met een nummer (gebruik om het even welk nummer &mdash; daarom gebruikt de editor slechts één nummer). Om een gewone lijst te maken kan je iedere lijn starten met  <code>*</code>, <code>+</code> of <code>-</code>.</p> Punten in een lijst kunnen meerdere alinea's bevatten maar iedere alinea moet ingesprongen zijn met ten minste 4 spaties of een tab.\n"
+                    },
+                    "codeBlocks": {
+                        "title": "Code blokken",
+                        "content": "<p>Markdown zet code blokken in pregeformatteerde tags om inspringingen te behouden. Om een code blok te maken moet je de ganse blok met ten minste 4 spaties of een tab doen inspringen. Markdown zal de extra inspringing verwijderen.</p>\n"
+                    },
+                    "horizontalRules": {
+                        "title": "Horizontale regels",
+                        "content": "<p>Maak een horizontale lijn door drie of meer liggende streepjes, asterisken of underscores op een enkele lijn te plaatsen. Spaties zijn toegestaan tussen de liggende streepjes, asterisken of underscores.</p>\n"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "Span Elementen",
+                "content": {
+                    "links": {
+                        "title": "Links",
+                        "content": "<p>Markdown heeft twee soorten links: <strong>inline</strong> en <strong>reference</strong>. Voor beide soorten wordt de tekst die je wil weergeven tussen vierkante haken geplaatst. Als je bijvoorbeeld een link wil met de tekst &ldquo;GitHub&rdquo; schrijf je <code>[GitHub]</code>.</p><p>Om een inline link te maken moet je ronde haakjes plaatsen na de vierkante, waarin je je URL plaatst (bvb. <code>[GitHub](http://github.com/)</code>). Relatieve paden zijn toegelaten in inline links.</p><p>Om een reference link to maken moet je twee vierkante haken gebruiken. <code>[my internal link][internal-ref]</code> zal naar de <code>internal-ref</code> interne referentie linken.</p>\n"
+                    },
+                    "emphasis": {
+                        "title": "Benadrukking",
+                        "content": "<p>Asterisken (<code>*</code>) en underscores (<code>_</code>)  worden als benadrukking gebruikt en worden omgezet in een <code>&lt;em&gt;</code> tag, wat meestal als schuine tekst wordt weergegeven. Dubbele asterisken (<code>**</code>) of dubbele underscores  (<code>__</code>) worden vet weergegeven en worden vervangen door de <code>&lt;strong&gt;</code> tag. Om schuine of vette tekst te maken moet je je tekst tussen enkele/dubbele asterisken/underscores plaatsen. Voorbeeld: <code>**Mijn dubbele benadrukking tekst**</code> wordt <strong>Mijn dubbele benadrukking tekst</strong>, en <code>*Mijn enkele benadrukking tekst*</code> wordt <em>Mijn enkele benadrukking tekst</em>.</p>\n"
+                    },
+                    "code": {
+                        "title": "Code",
+                        "content": "<p>Om inline code te maken moet je de code tussen backticks plaatsen  (<code>`</code>). Markdown zet <code>`myFunction`</code> om in <code>myFunction</code>.</p>\n"
+                    },
+                    "images": {
+                        "title": "Afbeeldingen",
+                        "content": "<p>Markdown afbeelding syntax is gebaseerd op de syntax van links; het is exact dezelfde syntax met een uitroepingsteken (<code>!</code>) aan het begin. Als je bijvoorbeeld een afbeelding op <code>http://github.com/unicorn.png</code> wil linken met de alternatieve tekst <code>My Unicorn</code>, moet je volgende code gebruiken: <code>![My Unicorn](http://github.com/unicorn.png)</code>.</p>\n"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "Andere",
+                "content": {
+                    "automaticLinks": {
+                        "title": "Automatische links",
+                        "content": "<p>Als je een link wil invoegen die de URL toont laat Markdown toe je tekst tussen <code>&lt;</code> en <code>&gt;</code> te zetten. Voorbeeld: <a href=\"javascript:void(0);\">http://github.com/</a> kan gemaakt worden met de code <code>&lt;http://github.com/&gt;</code>.</p>\n\n"
+                    },
+                    "escaping": {
+                        "title": "Escapen",
+                        "content": "<p>Als je een speciaal Markdown karakter in je document wil gebruiken (bijvoorbeeld een asterisk), kan je het karakter escapen met een backslash (<code>\\\\</code>). Markdown zal het karakter direct na de backslash negeren.</p>\n"
+                    }
+                }
+            }
+        }
+    },
+    "chooselanguage": {
+        "title": "Kies een taal",
+        "description": "Prose is een vertaald programma. Als je je taal niet in de lijst ziet, als er spelfouten zijn, of als er vertalingen ontbreken, overweeg <a href='https://www.transifex.com/projects/p/prose'>mee te werken aan vertalingen van dit project</a>.\n"
+    }
+}

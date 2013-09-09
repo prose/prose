@@ -246,7 +246,7 @@
                 "content": {
                     "automaticLinks": {
                         "title": "Automatiska länkar",
-                        "content": "<p>Om du skapa en länk vars text består av länkens aktuella URL, kan du enkelt åstadkomma detta med Markdown genom att omsluta URL-adressen med <code>&lt;</code> och <code>&gt;</code>. Till exempel, länken <a href=\"javascript:void(0);\">http://github.com/</a> kan lätt återskapas genom att du skriver <code>&lt;http://github.com/&gt;</code>.</p>\n"
+                        "content": "<p>Om du vill skapa en länk som visar länkens URL som länktext, kan du enkelt göra detta genom att omsluta URL-adressen med <code>&lt;</code> och <code>&gt;</code>. Till exempel, länken <a href=\"javascript:void(0);\">http://github.com/</a> kan enkelt göras till länktext om du skriver <code>&lt;http://github.com/&gt;</code>.</p>\n"
                     },
                     "escaping": {
                         "title": "Kodade tecken (Escaping)",
