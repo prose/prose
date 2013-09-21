@@ -22,7 +22,7 @@
         "heading": "Titre",
         "subHeading": "Sous-titre",
         "link": "Insérer un lien",
-        "image": "Insérer un lien",
+        "image": "Insérer une image",
         "bold": "Gras",
         "italic": "Italique",
         "blockquote": "Bloc de citation",
@@ -68,7 +68,7 @@
             "patch": "Soummission de la requête",
             "fileNameError": "Nécessite un nom de fichier",
             "submission": "Requête envoyée",
-            "metaError": "Erreur! Métadonnées introuvables",
+            "metaError": "Erreur! Méta-données introuvables",
             "fileNameExists": "Un fichier avec ce chemin existe déjà"
         },
         "error": "Erreur. Merci de ré-essayer dans 30 secondes",
@@ -113,7 +113,7 @@
             "delete": "Supprimer ce fichier"
         },
         "new": {
-            "body": "## Nouvel article\n\nEntrez votre contenu en [Markdown](http://daringfireball.net/projects/markdown/). Utilisez la barre d'outils ci-dessus, ou appuyer sur le bouton **?** pour voir l'aide sur la syntaxe.\n"
+            "body": "## Nouvel article\n\nEntrez votre contenu en [Markdown](http://daringfireball.net/projects/markdown/). Utilisez la barre d'outils ci-dessus, ou appuyez sur le bouton **?** pour voir l'aide sur la syntaxe.\n"
         },
         "file": {
             "noTitle": "Sans nom",
@@ -129,7 +129,7 @@
         }
     },
     "notification": {
-        "loginDescription": "Veuillez vous connecter avec votre compte GItHub pour accéder à ce projet.",
+        "loginDescription": "Veuillez vous connecter avec votre compte GitHub pour accéder à ce projet.",
         "create": "Créer",
         "home": "Retour à la page principale",
         "back": "Retour",
@@ -179,9 +179,9 @@
         "media": {
             "title": "Insérer une image",
             "back": "Retour",
-            "description": "Ajouter des images par glisser-déposer ou </br>\n{input} <a>sélectionnez en une</a>\n",
-            "help": "Les images téléchargés sont ajouter dans le répertoire courant ou celui spécifié dans le champs Image URL ci-dessus.",
-            "helpMedia": "Les images téléchargés sont ajouter dans le répertoire 'Choose Existing' ou celui spécifié dans le champs Image URL.",
+            "description": "Ajoutez des images par glisser-déposer ou </br>\n{input} <a>sélectionnez en une</a>\n",
+            "help": "Les images téléchargées sont ajoutées dans le répertoire courant ou celui spécifié dans le champ Image URL ci-dessus.",
+            "helpMedia": "Les images téléchargées sont ajoutées dans le répertoire 'Choisir un existant' ou celui spécifié dans le champ Image URL.",
             "choose": "Choisir un existant"
         },
         "help": {
@@ -249,9 +249,9 @@
     },
     "chooselanguage": {
         "title": "Sélectionnez une langue",
-        "description": "Prose est une application traduite. Si votre langue n'apparaît pas dans la liste ou si vous constatez des erreurs de traductions ou typographiques, vous pouvez <a href='https://www.transifex.com/projects/p/prose'>contribuez à la traduction de ce projet</a>.\n"
+        "description": "Prose est une application traduite. Si votre langue n'apparaît pas dans la liste ou si vous constatez des erreurs de traductions ou typographiques, vous pouvez <a href='https://www.transifex.com/projects/p/prose'>contribuer à la traduction de ce projet</a>.\n"
     },
     "about": {
-        "content": "# A propos\nProse fournit un environnement simple et élégant d'édition de contenu pour des sites web sans \"système de gestion de contenu\" [CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nC'est un outil  Web pour gérer du contenu présent sur [GitHub](http://github.com).\nUtilisez le pour créer, modifier et supprimer des fichiers puis enregister vos modification directement sur GitHub.\nHébergez votre site web gratuitement sur [GitHub Pages](http://pages.github.com), \nou alors configuré votre propre solution grâce au\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse possède un support avancé pour les sites basés sur [Jekyll](http://jekyllrb.com/) et la\n[syntaxe Markdown](http://daringfireball.net/projects/markdown/).\nProse détecte les articles écrtis en Markdown dans un site Jekyll et apporte la coloration syntaxique, une barre d'outils de formatage de texte, la pré-visualisation des brouillons avec le thème final du site.\n\nLes développeurs peuvent configurer les sites Jekyll pour profiter de ces avantages et de beaucoup d'autres fonctionnallités qui personalise l'édition de contenu.\n\n## Configuration\n\nProse peut être configuré par dépôt à l'aide de méta-données soit en complément des propriétés Jekyll dans le fichier `_config.yml` ou alors dans un fichier à part `prose.yml`. \nNous mettons Prose.io à votre disposition sous forme de service hébergé avec la dernière version, ou vous pouvez télécharger le code source et héberger l'application par vous même. La documentation pour développeur se trouve sur [notre wiki sur GitHub](https://github.com/prose/prose/wiki).\n\n## Developpement\n\nProse est un projet open source. \nNous vous encourageons à contribuer et nous aider à améliorer l'application ou l'adapter à vos besoins.\nPour les instructions en rapport avec le développement de Prose, vous pouvez consultez\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Aide et Support\n\nNous n'offrons pas à ce moment un support spécifique pour Prose.\nSi vous êtes un éditeur de contenu utilisant Prose, prenez contact \navec le développeur qui l'a configuré et vous y a donné accès.\nPour soummettre des soucis techniques liés à Prose, merci de \n[crèer un rapport d'erreur sur GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"
+        "content": "# A propos\nProse fournit un environnement simple et élégant d'édition de contenu pour des sites web sans \"système de gestion de contenu\" [CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nC'est un outil  Web pour gérer du contenu présent sur [GitHub](http://github.com).\nUtilisez le pour créer, modifier et supprimer des fichiers puis enregister vos modification directement sur GitHub.\nHébergez votre site web gratuitement sur [GitHub Pages](http://pages.github.com), \nou alors configuré votre propre solution grâce au\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse possède un support avancé pour les sites basés sur [Jekyll](http://jekyllrb.com/) et la\n[syntaxe Markdown](http://daringfireball.net/projects/markdown/).\nProse détecte les articles écrtis en Markdown dans un site Jekyll et apporte la coloration syntaxique, une barre d'outils de formatage de texte, la pré-visualisation des brouillons avec le thème final du site.\n\nLes développeurs peuvent configurer les sites Jekyll pour profiter de ces avantages et de beaucoup d'autres fonctionnallités qui personalise l'édition de contenu.\n\n## Configuration\n\nProse peut être configuré par dépôt à l'aide de méta-données soit en complément des propriétés Jekyll dans le fichier `_config.yml` ou alors dans un fichier à part `prose.yml`. \nNous mettons Prose.io à votre disposition sous forme de service hébergé avec la dernière version, ou vous pouvez télécharger le code source et héberger l'application par vous même. La documentation pour développeur se trouve sur [notre wiki sur GitHub](https://github.com/prose/prose/wiki).\n\n## Developpement\n\nProse est un projet open source. \nNous vous encourageons à contribuer et nous aider à améliorer l'application ou l'adapter à vos besoins.\nPour les instructions en rapport avec le développement de Prose, vous pouvez consultez\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Aide et Support\n\nNous n'offrons pas à ce moment un support spécifique pour Prose.\nSi vous êtes un éditeur de contenu utilisant Prose, prenez contact \navec le développeur qui l'a configuré et vous y a donné accès.\nPour soummettre des soucis techniques liés à Prose, merci de \n[créer un rapport d'erreur sur GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"
     }
 }
