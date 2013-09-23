@@ -76,6 +76,7 @@
         "save": {
             "label": "Describe lo cambios",
             "cancel": "Cancelar",
+            "save": "Confirmar",
             "submit": "Enviar propuesta de cambio"
         },
         "settings": {
@@ -102,6 +103,12 @@
                     },
                     "blockquotes": {
                         "title": "Bloques de citas"
+                    },
+                    "lists": {
+                        "title": "Listas"
+                    },
+                    "codeBlocks": {
+                        "title": "Bloques de código"
                     }
                 }
             }
