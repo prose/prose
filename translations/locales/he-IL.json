@@ -1,0 +1,242 @@
+{
+    "login": "לאשר בGitHub",
+    "docheader": {
+        "editing": "בעריכה",
+        "error": "שגיאה",
+        "preview": "תצוגה מקדימה"
+    },
+    "navigation": {
+        "newFile": "קובץ חדש",
+        "edit": "עריכה",
+        "preview": "תצוגה מקדימה",
+        "settings": "הגדרות",
+        "meta": "נתוני מאטה",
+        "save": "שמירה",
+        "login": "להסמיך עם GitHub",
+        "about": "אודות",
+        "develop": "מפתחים",
+        "logout": "יציאה",
+        "language": "שפה"
+    },
+    "toolbar": {
+        "heading": "כותרת",
+        "subHeading": "תת כותרת",
+        "link": "הוסף קישור",
+        "image": "הוסף קישור",
+        "bold": "מודגש",
+        "italic": "נטוי",
+        "blockquote": "ציטוט",
+        "list": "רשימה",
+        "numberedlist": "רשימה ממוספרת",
+        "help": "עזרה"
+    },
+    "heading": {
+        "explore": "חקור פרויקטים"
+    },
+    "actions": {
+        "unsaved": "ישנם שינויים שלא נשמרו. האם אתם רוצים לעזוב?",
+        "draft": {
+            "toPost": "טיוטה לפוסט",
+            "toPostInfo": "המר טיוטה זו לפוסט מפורסם"
+        },
+        "publishing": {
+            "publish": "פרסם",
+            "published": "פורסם",
+            "unpublish": "בטל פרסום",
+            "unpublished": "לא מפורסם",
+            "unpublishInfo": "פוסט זה יהיה לא מפורסם בפעם הבאה שאתה שומר"
+        },
+        "change": {
+            "noChange": "אין שינויים",
+            "submit": "שינויים להגשה",
+            "save": "שינויים לשמירה"
+        },
+        "delete": {
+            "title": "מחק",
+            "warn": "האם ברצונך למחוק קובץ זה?",
+            "error": "ארעה שגיאה במהלך המחיקה. נסו שוב עוד 30 שניות."
+        },
+        "upload": {
+            "uploading": "מעלה {file}",
+            "uploaded": "{file} הועלה"
+        },
+        "save": {
+            "title": "שמירה",
+            "saved": "נשמר",
+            "saving": "שומר",
+            "patch": "מגיש בקשה",
+            "fileNameError": "דרוש שם קובץ",
+            "submission": "הבקשה הוגשה",
+            "metaError": "שגיאה! לא נמצאו נתוני מאטה",
+            "fileNameExists": "קיים כבר קובץ בעל שם זהה בנתיב הזה"
+        },
+        "error": "שגיאה. נסו שוב בעוד 30 שניות",
+        "restore": {
+            "restoring": "בשחזור",
+            "restored": "שוחזר"
+        },
+        "commits": {
+            "updated": "{filename} עודכן",
+            "deleted": "{filename} נמחק",
+            "toDraft": "נוצרה טיוטה של {filename}",
+            "fromDraft": "נוצר פוסט מטיוטה של {filename}"
+        }
+    },
+    "loading": {
+        "repos": "טוען פרופיל",
+        "repo": "טוען פרויקט",
+        "file": "טוען קובץ",
+        "preview": "מציג תצוגה מקדימה לקובץ",
+        "creating": "יוצר פוסט חדש"
+    },
+    "modal": {
+        "confirm": "הבנתי"
+    },
+    "main": {
+        "start": {
+            "content": "Prose הוא עורך תוכן בשביל GitHub המיועד לניהול אתרים",
+            "learn": "למד עוד"
+        },
+        "repos": {
+            "filter": "סנן פרויקטים",
+            "repo": "הצג פרויקטים",
+            "site": "הצג אתר",
+            "sharedFrom": "משותף מחשבון",
+            "forkedFrom": "התפצל מפרויקט אחר"
+        },
+        "repo": {
+            "filter": "סנן קבצים",
+            "edit": "עריכה",
+            "delete": "מחק קובץ זה"
+        },
+        "file": {
+            "noTitle": "ללא כותרת",
+            "metaTitle": "סקירת שינויים:",
+            "rawMeta": "נתוני מאטה גולמיים",
+            "metaDescription": "תוספות מסומנות בירוק. מחיקות מסומנות עם קו עליהן.",
+            "back": "סיום",
+            "createMeta": "צור חדש"
+        },
+        "upgrade": {
+            "content": "Prose דורש תכונות שאינן זמינות לדפדפן שלך",
+            "download": "הורד דפדפן עדכני"
+        }
+    },
+    "notification": {
+        "loginDescription": "יש להתחבר לאתר עם ​​החשבון GitHub שלך כדי לגשת פרויקט זה.",
+        "create": "צור אותו",
+        "home": "חזרה לעמוד הראשי",
+        "back": "חזור",
+        "githubStatus": "סטטוס ב-GitHub ({status})",
+        "error": {
+            "label": "שגיאה",
+            "github": "שגיאה בעת טעינת נתונים מGithub. זו עשויה להיות בעיה זמנית. אנא נסו שוב מאוחר יותר.",
+            "exists": "קובץ זה לא קיים",
+            "notFound": "עמוד לא נמצא"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "קבוצות"
+        },
+        "repo": {
+            "branch": "החלף ענף",
+            "drafts": "הצג טיוטות",
+            "history": {
+                "label": "ההיסטוריה האחרונה ביותר",
+                "actions": {
+                    "restore": "האם לשחזר?"
+                }
+            },
+            "create": "צור קובץ חדש"
+        },
+        "save": {
+            "label": "תאר את השינויים שעשית",
+            "cancel": "ביטול",
+            "save": "בצע",
+            "submit": "הגש בקשה לשינוי"
+        },
+        "settings": {
+            "title": "אפשרויות",
+            "fileInputLabel": "נתיב הקובץ",
+            "delete": "מחק קובץ זה",
+            "translate": "תרגם ל-",
+            "draft": "צור טיוטה"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "הכנס קישור",
+            "insertLocal": "הכנס קישור מקומי",
+            "insert": "הכנס",
+            "hrefPlaceholder": "קישור לכתובת",
+            "textPlaceholder": "שם הקישור",
+            "titlePlaceholder": "כותרת (אופציונלי)"
+        },
+        "media": {
+            "title": "הכנס תמונה",
+            "back": "אחורה",
+            "hrefPlaceholder": "כתובת התמונה",
+            "altPlaceholder": "טקסט אלטרנטיבי (אופציונלי)",
+            "help": "תמונות שהועלו מתווספות לספרייה הנוכחית או זו שצוינה בנתיב כתובת התמונה לעיל.",
+            "helpMedia": "תמונות שהועלו מתווספות לספרייה \"בחר קיימת' או אחד שצוין בשדה כתובת של התמונה.",
+            "choose": "בחר קיימת"
+        },
+        "help": {
+            "blockElements": {
+                "title": "רכיבי בלוק",
+                "content": {
+                    "paragraphs": {
+                        "title": "פסקאות ומעברים"
+                    },
+                    "headers": {
+                        "title": "Headers"
+                    },
+                    "blockquotes": {
+                        "title": "ציטוט"
+                    },
+                    "lists": {
+                        "title": "רשימות"
+                    },
+                    "codeBlocks": {
+                        "title": "גושי קוד"
+                    },
+                    "horizontalRules": {
+                        "title": "קווים אופקיים"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "אלמנטי span",
+                "content": {
+                    "links": {
+                        "title": "קישורים"
+                    },
+                    "emphasis": {
+                        "title": "דגש"
+                    },
+                    "code": {
+                        "title": "קוד"
+                    },
+                    "images": {
+                        "title": "תמונות"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "שונות",
+                "content": {
+                    "automaticLinks": {
+                        "title": "קישורים אוטומטיים"
+                    },
+                    "escaping": {
+                        "title": "בריחה"
+                    }
+                }
+            }
+        }
+    },
+    "chooselanguage": {
+        "title": "בחר שפה"
+    }
+}
