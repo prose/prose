@@ -10138,7 +10138,7 @@ module.exports = {"login":"Authorize on GitHub","docheader":{"editing":"Editing"
 },{}],2:[function(require,module,exports){
 // Automatically Generated
 
-module.exports = [{"name":"Chinese","code":"zh"},{"name":"Dutch","code":"nl"},{"name":"English","code":"en"},{"name":"French","code":"fr"},{"name":"German","code":"de"},{"name":"Portuguese (Brazil)","code":"pt-BR"},{"name":"Romanian","code":"ro"},{"name":"Russian","code":"ru"},{"name":"Spanish","code":"es"},{"name":"Swedish","code":"sv"},{"name":"Vietnamese","code":"vi"}];
+module.exports = [{"name":"Chinese","code":"zh"},{"name":"Dutch","code":"nl"},{"name":"English","code":"en"},{"name":"French","code":"fr"},{"name":"German","code":"de"},{"name":"Hebrew (Israel)","code":"he-IL"},{"name":"Portuguese (Brazil)","code":"pt-BR"},{"name":"Romanian","code":"ro"},{"name":"Russian","code":"ru"},{"name":"Spanish","code":"es"},{"name":"Swedish","code":"sv"},{"name":"Vietnamese","code":"vi"}];
 },{}],3:[function(require,module,exports){
 function tryParse(obj) {
   try {
@@ -21583,7 +21583,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"../collections/repos":31,"../collections/orgs":16,"../views/notification":7,"../config":8,"../cookie":3,"../../dist/templates":14,"underscore":11,"jquery-browserify":10,"backbone":12}],7:[function(require,module,exports){
+},{"../collections/repos":31,"../collections/orgs":16,"../views/notification":7,"../config":8,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24309,7 +24309,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./li/repo":44,"jquery-browserify":10,"underscore":11,"backbone":12}],24:[function(require,module,exports){
+},{"./li/repo":44,"underscore":11,"jquery-browserify":10,"backbone":12}],24:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');
