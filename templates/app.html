@@ -1,9 +1,13 @@
-<div id='loader' class='loader'></div>
-<div id='drawer' class='sidebar'></div>
-<nav id='navigation'></nav>
-<div id='main'></div>
+<% if (locale.current() === 'he-IL') { %>
+  <link rel='stylesheet' href='./style-rtl.css'>
+<% } %>
 
-<div class='prose-menu dropdown-menu'>
+<div id='loader' class='loader'></div>
+<div id='drawer' class='sidebar' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>></div>
+<nav id='navigation'></nav>
+<div id='main' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>></div>
+
+<div class='prose-menu dropdown-menu' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>>
   <div class='inner clearfix'>
     <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>
     <ul class='dropdown clearfix'>

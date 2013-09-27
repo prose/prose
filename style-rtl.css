@@ -1,0 +1,27 @@
+/* Global */
+.icon.branding  { float:left; }
+.content-search { margin-right:10px; }
+
+/* Listings */
+.listing .listing-icon      { right:15px; left:auto; }
+.listing .actions a         { float:right; }
+.details                    { padding-right:55px; padding-left:0; }
+.heading .details           { padding-right:70px; padding-left:0; }
+.details .parent-trail span { margin-right:5px; margin-left:5px; }
+
+/* Editor */
+.toolbar .group       { margin-right:15px; margin-left:0; }
+.dialog.link          { right:23px; left:auto; }
+.dialog.no-directory  { right:50px; left:auto; }
+
+
+/* Helper Classes Reversed */
+.fl     { float:right; }
+.fr     { float:left; }
+.inline { margin-left:8px; margin-right:0; }
+
+/* Media Rules */
+@media all and (max-width:1240px) {
+  #heading { margin-right:15px; }
+  .fixed .containment, .limiter { padding-right: 30%; }
+}
