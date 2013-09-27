@@ -2,7 +2,7 @@
 <div id='modal'></div>
 
 <div id='post' class='post limiter'>
-  <div class='editor views<% if (file.markdown) { %> markdown<% } %>' <% if (locale.current() === 'he-IL') { %>dir='ltr'<% } %>>
+  <div class='editor views<% if (file.markdown) { %> markdown<% } %>'>
     <div id='diff' class='view prose diff'>
       <h2><%= t('main.file.metaTitle') %><br />
         <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>
