@@ -49,6 +49,7 @@ module.exports = Backbone.View.extend({
               var button = {
                 name: data.name,
                 label: data.field.label,
+                help: data.field.help,
                 on: data.field.on,
                 off: data.field.off
               };
@@ -61,6 +62,7 @@ module.exports = Backbone.View.extend({
               var checkbox = {
                 name: data.name,
                 label: data.field.label,
+                help: data.field.help,
                 value: data.name,
                 checked: data.field.value
               };
@@ -73,6 +75,7 @@ module.exports = Backbone.View.extend({
               var text = {
                 name: data.name,
                 label: data.field.label,
+                help: data.field.help,
                 value: data.field.value,
                 placeholder: data.field.placeholder,
                 type: 'text'
@@ -89,6 +92,7 @@ module.exports = Backbone.View.extend({
                 id: id,
                 value: data.field.value,
                 label: data.field.label,
+                help: data.field.help,
                 placeholder: data.field.placeholder,
                 type: 'textarea'
               };
@@ -116,6 +120,7 @@ module.exports = Backbone.View.extend({
               var number = {
                 name: data.name,
                 label: data.field.label,
+                help: data.field.help,
                 value: data.field.value,
                 type: 'number'
               };
@@ -128,6 +133,7 @@ module.exports = Backbone.View.extend({
               var select = {
                 name: data.name,
                 label: data.field.label,
+                help: data.field.help,
                 placeholder: data.field.placeholder,
                 options: data.field.options,
                 lang: lang
@@ -141,6 +147,7 @@ module.exports = Backbone.View.extend({
               var multiselect = {
                 name: data.name,
                 label: data.field.label,
+                help: data.field.help,
                 alterable: data.field.alterable,
                 placeholder: data.field.placeholder,
                 options: data.field.options,
