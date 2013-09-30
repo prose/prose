@@ -1,4 +1,7 @@
 <div class='form-item'>
   <label for='raw'><%= t('main.file.rawMeta') %></label>
-  <div name='raw' id='raw' class='inner'></div>
+  <% if (meta.help) { %><small><%= meta.help %></small><% } %>
+  <fieldset>
+    <div name='raw' id='raw' class='inner'></div>
+  </fieldset>
 </div>

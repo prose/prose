@@ -144,7 +144,7 @@ button,
   display:block;
   position:relative;
   padding:10px 15px;
-  margin-top:10px;
+  margin:0 0 5px;
   text-transform:uppercase;
   font-size:11px;
   font-weight:700;
@@ -249,7 +249,6 @@ label {
   line-height:20px;
   font-weight:700;
   display:block;
-  margin:0 0 5px;
   }
   label.aside {
     display:inline-block;
@@ -258,6 +257,9 @@ label {
     top:1px;
     }
 
+fieldset {
+  margin:5px 0 0;
+  }
 select,
 textarea,
 input[type=text] {
