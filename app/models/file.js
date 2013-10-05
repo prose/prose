@@ -280,7 +280,7 @@ module.exports = Backbone.Model.extend({
 
                 // Backbone expects these to be top level,
                 // not in _attributes for some reason
-                // TODO: Don't do actually do this, but hey, YOLO.
+                // TODO: Don't actually do this, but hey, YOLO.
                 file.branch = branch;
                 file.collection = collection;
                 file.collection.branch = branch;
