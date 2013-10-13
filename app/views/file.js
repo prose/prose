@@ -705,13 +705,13 @@ module.exports = Backbone.View.extend({
             }).bind(this),
             error: (function(model, xhr, options) {
               this.router.error(xhr);
-            }).bind(this),
+            }).bind(this)
           });
         }).bind(this),
         error: (function(model, xhr, options) {
           this.router.error(xhr);
-        }).bind(this),
-      })
+        }).bind(this)
+      });
     }
 
     if (p.page.layout) {

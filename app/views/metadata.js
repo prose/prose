@@ -40,7 +40,7 @@ module.exports = Backbone.View.extend({
 
       if (data && data.name === 'title' && this.titleAsHeading) {
         renderTitle = false;
-      };
+      }
 
       if (renderTitle) {
         if (data && data.field) {
@@ -191,7 +191,6 @@ module.exports = Backbone.View.extend({
     }).bind(this));
 
     this.$el.find('.chzn-select').chosen().change(this.updateModel);
-
     this.renderRaw();
 
     return this;
@@ -199,16 +198,19 @@ module.exports = Backbone.View.extend({
 
   updateModel: function(e) {
     var target = e.currentTarget;
-    var key = target.name;
-    var value = target.value;
 
-    var delta = {};
-    delta[key] = value;
+    // Check first this is not coming from an input that
+    // receives user input. Its paired with another form field.
+    if (!target.getAttribute('data-select')) {
+      var key = target.name;
+      var value = target.value;
+      var delta = {};
+      delta[key] = value;
 
-    var metadata = this.model.get('metadata');
-    this.model.set('metadata', _.extend(metadata, delta));
-
-    this.view.makeDirty();
+      var metadata = this.model.get('metadata');
+      this.model.set('metadata', _.extend(metadata, delta));
+      this.view.makeDirty();
+    }
   },
 
   rawKeyMap: function() {
@@ -348,7 +350,6 @@ module.exports = Backbone.View.extend({
 
   setValue: function(data) {
     var form = this.$el.find('.form');
-
     var missing = {};
     var raw;
 
@@ -537,7 +538,7 @@ module.exports = Backbone.View.extend({
     var $input = $parent.find('input');
     var selectTarget = $(e.target).data('select');
     var $select = this.$el.find('#' + selectTarget);
-    var value = $input.val();
+    var value = _($input.val()).escape();
 
     if (value.length > 0) {
       var option = '<option value="' + value + '" selected="selected">' + value + '</option>';
@@ -550,6 +551,7 @@ module.exports = Backbone.View.extend({
 
       // Update the list
       $select.trigger('liszt:updated');
+      $select.trigger('change');
     }
 
     return false;

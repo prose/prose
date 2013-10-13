@@ -223,7 +223,7 @@ module.exports = Backbone.Router.extend({
         this.app.loader.start(t('loading.file'));
         break;
       case 'preview':
-        this.app.loader.start(t('preview.file'));
+        this.app.loader.start(t('loading.preview'));
         break;
     }
 
@@ -281,7 +281,7 @@ module.exports = Backbone.Router.extend({
   preview: function(login, repoName, mode, branch, path) {
     if (this.view) this.view.remove();
 
-    this.app.loader.start(t('preview.file'));
+    this.app.loader.start(t('loading.preview'));
 
     var user = this.users.findWhere({ login: login });
     if (_.isUndefined(user)) {
