@@ -10212,6 +10212,121 @@ cookie.clear = function() {
 module.exports = cookie;
 
 },{}],4:[function(require,module,exports){
+(function(){var LOCALES = require('../translations/locales');
+var en = require('../dist/en.js');
+
+// Set locale as global variable
+window.locale.en = en;
+window.locale.current('en');
+window.app = {};
+
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Router = require('./router');
+var User = require('./models/user');
+var NotificationView = require('./views/notification');
+var config = require('./config');
+var cookie = require('./cookie');
+var auth = require('./config');
+var status = require('./status');
+
+// Set up translations
+var setLanguage = (cookie.get('lang')) ? true : false;
+
+// Check if the browsers language is supported
+if (setLanguage) app.locale = cookie.get('lang');
+
+if (app.locale && app.locale !== 'en') {
+  $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+    window.locale[app.locale] = result;
+    window.locale.current(app.locale);
+  });
+}
+
+var user = new User();
+
+user.authenticate({
+  success: function() {
+    if ('withCredentials' in new XMLHttpRequest()) {
+      // Set OAuth header for all CORS requests
+      $.ajaxSetup({
+        headers: {
+          'Authorization': config.auth === 'oauth' ?
+            'token ' + cookie.get('oauth-token') :
+            'Basic ' + Base64.encode(config.username + ':' + config.password)
+        }
+      });
+
+      // Set an 'authenticated' class to #prose
+      $('#prose').addClass('authenticated');
+
+      // Set User model id and login from cookies
+      var id = cookie.get('id');
+      if (id) user.set('id', id);
+
+      var login = cookie.get('login');
+      if (login) user.set('login', login);
+
+      user.fetch({
+        success: function(model, res, options) {
+          // Set authenticated user id and login cookies
+          cookie.set('id', user.get('id'));
+          cookie.set('login', user.get('login'));
+
+          // Initialize router
+          window.router = new Router({ user: model });
+
+          // Start responding to routes
+          Backbone.history.start();
+        },
+        error: function(model, res, options) {
+          var apiStatus = status.githubApi(function(res) {
+
+            var error = new NotificationView({
+              'message': t('notification.error.github'),
+              'options': [
+                {
+                  'title': t('notification.back'),
+                  'link': '/'
+                },
+                {
+                  'title': t('notification.githubStatus', {
+                    status: res.status
+                  }),
+                  'link': '//status.github.com',
+                  'className': res.status
+                }
+              ]
+            });
+
+            $('#prose').html(error.render().el);
+          });
+        }
+      });
+    } else {
+      var upgrade = new NotificationView({
+        'message': t('main.upgrade.content'),
+        'options': [{
+          'title': t('main.upgrade.download'),
+          'link': 'https://www.google.com/intl/en/chrome/browser'
+        }]
+      });
+
+      $('#prose').html(upgrade.render().el);
+    }
+  },
+  error: function() {
+    // Initialize router
+    window.router = new Router();
+
+    // Start responding to routes
+    Backbone.history.start();
+  }
+});
+
+})()
+},{"../dist/en.js":1,"../translations/locales":2,"./router":5,"./models/user":6,"./views/notification":7,"./config":8,"./cookie":3,"./status":9,"jquery-browserify":10,"underscore":11,"backbone":12}],8:[function(require,module,exports){
 var cookie = require('./cookie');
 var oauth = require('../oauth.json');
 
@@ -10225,7 +10340,15 @@ module.exports = {
   auth: 'oauth'
 };
 
-},{"../oauth.json":5,"./cookie":3}],6:[function(require,module,exports){
+},{"../oauth.json":13,"./cookie":3}],13:[function(require,module,exports){
+module.exports={
+  "api": "https://api.github.com",
+  "site": "https://github.com",
+  "clientId": "c602a8bd54b1e774f864",
+  "gatekeeperUrl": "https://prose-gatekeeper.herokuapp.com"
+}
+
+},{}],11:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11454,132 +11577,7 @@ module.exports = {
 }).call(this);
 
 })()
-},{}],7:[function(require,module,exports){
-module.exports = {"app":"<% if (locale.current() === 'he-IL') { %>\n  <link rel='stylesheet' href='./style-rtl.css'>\n<% } %>\n\n<div id='loader' class='loader'></div>\n<div id='drawer' class='sidebar' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>></div>\n<nav id='navigation'></nav>\n<div id='main' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>></div>\n\n<div class='prose-menu dropdown-menu' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose</a></li>\n      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>\n      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>\n      <li><a href='./#chooselanguage'><%= t('navigation.language') %></a></li>\n      <li class='divider authenticated'></li>\n      <li class='authenticated'>\n        <a href='#' class='logout'><%= t('navigation.logout') %></a>\n      </li>\n    </ul>\n  </div>\n</div>\n","breadcrumb":"<span class='slash'>/</span>\n<a class='path' href='#<%= trail %>/<%= url %>'><%= name %></a>\n","chooselanguage":"<h1><%= t('chooselanguage.title') %></h1>\n<ul class='fat-list round'>\n  <% _(chooseLanguage.languages).each(function(l) { %>\n    <li>\n    <a href='#' data-code='<%= l.code %>' class='language<% if (l.code === chooseLanguage.active) { %> active<% } %>'>\n        <% if (l.code === chooseLanguage.active) { %><span class='ico checkmark fr'></span><% } %>\n        <%= l.name %>\n        <small>(<%= l.code %>)</small>\n      </a>\n    </li>\n  <% }); %>\n</ul>\n<p><%= t('chooselanguage.description') %></p>\n","dialogs":{"help":"<%\n  function formattedClass(str) {\n    return str.toLowerCase().replace(/\\s/g, '-').replace('&amp;', '');\n  };\n%>\n\n<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","link":"<div class='inner'>\n  <label><%= t('dialogs.link.title') %></label>\n  <input type='text' name='href' placeholder=\"<%= t('dialogs.link.hrefPlaceholder') %>\" />\n  <input type='text' name='text' placeholder=\"<%= t('dialogs.link.textPlaceholder') %>\" />\n  <input type='text' name='title' placeholder=\"<%= t('dialogs.link.titlePlaceholder') %>\" />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder=\"<%= t('dialogs.link.insertPlaceholder') %>\" class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>\n</div>\n","media":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label><%= t('dialogs.media.title') %></label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        <%= description %>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder=\"<%= t('dialogs.media.hrefPlaceholder')%>\" />\n    <input type='text' name='alt' placeholder=\"<%= t('dialogs.media.altPlaceholder')%>\" />\n    <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>\n      <% if (!assetsDirectory) { %>\n        <small class='caption deemphasize'><%= t('dialogs.media.help') %></small>\n      <% } %>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label><%= t('dialogs.media.choose') %></label>\n      <ul id='media'></ul>\n      <small class='caption deemphasize'><%= t('dialogs.media.helpMedia') %></small>\n    </div>\n  <% } %>\n</div>\n","mediadirectory":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (isMedia) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n"},"drawer":"<div id='orgs'></div>\n<div id='branches'></div>\n<div id='history'></div>\n<div id='drafts'></div>\n<div id='save'></div>\n<div id='settings'></div>\n","file":"<header id='heading' class='heading limiter clearfix'></header>\n<div id='modal'></div>\n\n<div id='post' class='post limiter'>\n  <div class='editor views<% if (file.markdown) { %> markdown<% } %>'>\n    <div id='diff' class='view prose diff'>\n      <h2><%= t('main.file.metaTitle') %><br />\n        <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>\n      </h2>\n      <div class='diff-content inner'></div>\n    </div>\n    <div id='meta' class='view round meta'></div>\n    <div id='edit' class='view active edit'>\n      <div class='topbar-wrapper'>\n        <div class='topbar'>\n          <div id='toolbar' class='containment toolbar round'></div>\n        </div>\n      </div>\n      <div id='drop' class='drop-mask'></div>\n      <div id='code' class='code round inner'></div>\n    </div>\n    <div id='preview' class='view preview prose'></div>\n  </div>\n</div>\n","files":"<% if (data.path && data.path !== data.rooturl) { %>\n  <div class='breadcrumb'>\n    <a class='branch' href='#<%= data.url %>'>..</a>\n    <% _.each(data.parts, function(part) { %>\n      <% if (part.name !== data.rooturl) { %>\n        <span class='slash'>/</span>\n        <a class='path' href='#<%= [data.url, part.url].join(\"/\") %>'><%= part.name %></a>\n      <% } %>\n    <% }); %>\n  </div>\n<% } %>\n\n<ul class='listing'></ul>\n","header":"<% if (data.alterable) { %>\n  <div class='round avatar'>\n    <%= data.avatar %>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><a href='#<%= data.user %>'><%= data.user %></a> / <a href='#<%= data.user %>/<%= data.repo.name %>'><%= data.repo.name %></a><% if (data.isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n    <!-- if (isNew() && !translate) placeholder, not value -->\n    <input type='text' class='headerinput' data-mode='<%= data.mode %>' <% print((data.placeholder ? 'placeholder=' : 'value=') + '\"' + data.input + '\"') %>>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round'><%= data.avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= data.user %>'><%= data.user %></a></h4>\n    <h2><a class='repo' href='#<%= data.path %>'><%= data.title %></a></h2>\n  </div>\n<% } %>\n","li":{"file":"<% if (file.binary) { %>\n  <div class='listing-icon icon round <%= file.extension %> <% if (file.media) { %>media<% } %>'></div>\n<% } else { %>\n  <a href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>' class='listing-icon'>\n    <span class='icon round <%= file.extension %> <% if (file.markdown) { %> md<% } %> <% if (file.media) { %> media<% } %>'></span>\n  </a>\n<% } %>\n\n<div class='details'>\n  <div class='actions fr clearfix'>\n    <% if (!file.binary) { %>\n      <a class='clearfix'\n        title=\"<%= t('main.repo.edit') %>\"\n        href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'>\n        <%= t('main.repo.edit') %>\n      </a>\n    <% } %>\n    <% if (file.writable) { %>\n      <a\n        class='delete'\n        title=\"<%= t('main.repo.delete') %>\"\n        href='#'>\n        <span class='ico rubbish small'></span>\n      </a>\n    <% } %>\n  </div>\n  <% if (file.binary) { %>\n    <h3 class='title' title='<%= file.name %>'><%= file.name %></h3>\n  <% } else { %>\n    <h3 class='title' title='<%= file.name %>'><a class='clearfix'href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'><%= file.name %></a></h3>\n  <% } %>\n  <span class='deemphasize'><%= file.jailpath %></span>\n</div>\n","folder":"<a href='#<%= folder.repo.owner.login %>/<%= folder.repo.name %>/tree/<%= folder.branch %>/<%= folder.path %>' class='listing-icon'>\n  <span class='icon round folder'></span>\n</a>\n\n<span class='details'>\n  <h3 class='title' title='<%= folder.name %>'>\n    <a href='#<%= folder.repo.owner.login %>/<%= folder.repo.name %>/tree/<%= folder.branch %>/<%= folder.path %>'>\n      <%= folder.name %>\n    </a>\n  </h3>\n  <span class='deemphasize'><%= folder.jailpath %></span>\n</span>\n","repo":"<a\n  class='listing-icon'\n  data-user='<%= repo.owner.login %>'\n  data-repo='<%= repo.name %>'\n  href='#<%= repo.owner.login %>/<%= repo.name %>'>\n  <% if ((repo.owner.login !== repo.login) && repo.private) { %>\n    <span class='icon round repo owner private' title=\"<%= t('main.repos.sharedFrom') %> (<%= repo.owner.login %>)\"></span>\n  <% } else if (repo.owner.login !== repo.login) { %>\n    <span class='icon round repo owner' title=\"<%= t('main.repos.sharedFrom') %> (<%= repo.owner.login %>)\"></span>\n  <% } else if (repo.fork && repo.private) { %>\n    <span class='icon round repo private fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n  <% } else if (repo.fork) { %>\n    <span class='icon round repo fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n  <% } else if (repo.private) { %>\n    <span class='icon round repo private'></span>\n  <% } else { %>\n    <span class='icon round repo'></span>\n  <% } %>\n</a>\n\n<div class='details'>\n  <div class='actions fr clearfix'>\n    <a\n      data-user='<%= repo.owner.login %>'\n      data-repo='<%= repo.name %>'\n      href='#<%= repo.owner.login %>/<%= repo.name %>'>\n      <%= t('main.repos.repo') %>\n    </a>\n    <% if (repo.homepage) { %>\n      <a href='<%= repo.homepage %>'><%= t('main.repos.site') %></a>\n    <% } %>\n  </div>\n  <a\n    data-user='<%= repo.owner.login %>'\n    data-repo='<%= repo.name %>'\n    href='#<%= repo.owner.login %>/<%= repo.name %>'>\n    <h3<% if (!repo.description) { %> class='title'<% } %>><%= repo.name %></h3>\n    <span class='deemphasize'><%= repo.description %></span>\n  </a>\n</div>\n"},"loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <span class=\"message\"></span>\n</div>\n","meta":{"button":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <button class='round <%= meta.name %>' type='button' name='<%= meta.name %>' value='<%= meta.value %>' data-on='<%= meta.on %>' data-off='<%= meta.off %>'>\n      <% print(value ? meta.on : meta.off); %>\n    </button>\n  </fieldset>\n</div>\n","checkbox":"<div class='form-item'>\n  <fieldset>\n    <input type='checkbox' name='<%= meta.name %>' value='<%= meta.value %>'<% print(meta.checked ? 'checked' : '') %> />\n    <label class='aside' for='<%= meta.name %>'><%= meta.label %></label>\n  </fieldset>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n\n  <fieldset>\n    <select id='<%= meta.name %>' name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' multiple class='chzn-select'>\n      <% _(meta.options).each(function(o) { %>\n        <% if (!o.lang || o.lang === meta.lang) { %>\n          <% if (o.name) { %>\n           <option value='<%= o.value %>'><%= o.name %></option>\n          <% } else if (o.value) { %>\n           <option value='<%= o.value %>'><%= o.value %></option>\n          <% } else { %>\n           <option value='<%= o %>'><%= o %></option>\n          <% } %>\n        <% } %>\n      <% }); %>\n    </select>\n  </fieldset>\n\n  <% if (meta.alterable) { %>\n    <div class='create'>\n      <input type='text' class='inline' />\n      <a href='#' class='round create-select inline button' data-select='<%= meta.name %>' title=\"<%= t('main.file.createMeta') %>\"><%= t('main.file.createMeta') %></a>\n    </div>\n  <% } %>\n</div>\n","raw":"<div class='form-item'>\n  <label for='raw'><%= t('main.file.rawMeta') %></label>\n  <% if (meta.help) { %><small><%= meta.help %></small><% } %>\n  <fieldset>\n    <div name='raw' id='raw' class='inner'></div>\n  </fieldset>\n</div>\n","select":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n\n  <fieldset>\n    <select name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' class='chzn-select'>\n      <% _(meta.options).each(function(o) { %>\n        <% if (!o.lang || o.lang === meta.lang) { %>\n          <% if (o.name) { %>\n           <option value='<%= o.value %>'><%= o.name %></option>\n          <% } else if (o.value) { %>\n           <option value='<%= o.value %>'><%= o.value %></option>\n          <% } else { %>\n           <option value='<%= o %>'><%= o %></option>\n          <% } %>\n        <% } %>\n      <% }); %>\n    </select>\n  </fieldset>\n</div>\n","text":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <input type='text' name='<%= meta.name %>' value='<%= meta.value %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>' />\n  </fieldset>\n</div>\n","textarea":"<div class='form-item yaml-block'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <textarea id='<%= meta.id %>' type='text' name='<%= meta.name %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>'><%= meta.value %></textarea>\n  </fieldset>\n</div>\n"},"metadata":"<div class='form'></div>\n<a href='#' class='button round finish'><%= t('main.file.back') %></a>\n","modal":"<div class='modal-content round'>\n  <div class='modal-heading inner'>\n    <%= t('modal.errorHeading') %>\n  </div>\n  <div class='prose inner'>\n    <p><%= modal.message %></p>\n  </div>\n  <div class='modal-footer inner'>\n    <a href='#' class='button round got-it'><%= t('modal.confirm') %></a>\n  </div>\n</div>\n","nav":"<ul class='mobile nav clearfix'>\n  <li>\n    <a href='#' class='toggle ico menu round'></a>\n  </li>\n</ul>\n\n<ul class='file nav clearfix'>\n  <li>\n    <a href='#' class='ico round pencil edit' data-state='edit'>\n      <span class='popup round arrow-right'><%= t('navigation.edit') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' class='ico round eye blob preview' data-state='blob'>\n      <span class='popup round arrow-right'><%= t('navigation.preview') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' class='ico round metadata meta' data-state='meta'>\n      <span class='popup round arrow-right'><%= t('navigation.meta') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n      <span class='popup round arrow-right'><%= t('navigation.settings') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' class='ico round save' data-state='save'>\n      <div class='status'></div>\n      <span class='popup round arrow-right'>\n        <%= t('navigation.save') %>\n      </span>\n    </a>\n  </li>\n</ul>\n\n<ul class='auth nav clearfix'>\n  <li>\n    <a class='ico round switch login' href='<%= data.login %>'>\n      <span class='popup round arrow-right'><%= t('login') %></span>\n    </a>\n  </li>\n</ul>\n","notification":"<div class='notify'>\n  <h2 class='icon landing error'>Prose</h2>\n  <div class='inner'>\n    <p><%= data.message %></p>\n    <p class='error'><%= data.error %></p>\n\n    <% _(data.options).each(function(options) { %>\n    <div>\n      <a class='button round <% if(options.className) { %><%= options.className %><% } %>' href='<%= options.link %>'><%= options.title %></a>\n    </div>\n    <% }); %>\n  </div>\n</div>\n","profile":"<header id='heading' class='heading limiter clearfix'></header>\n\n<div id='content' class='application content limiter'>\n  <div class='topbar'>\n    <div id='search' class='content-search round'></div>\n  </div>\n  <ul id='repos' class='projects listing'></ul>\n</div>\n","repo":"<header id='heading' class='heading limiter clearfix'></header>\n\n<div id='content' class='application content limiter'>\n  <div class='topbar clearfix'>\n    <!-- if repo and authenticated -->\n    <!-- #user/repo/new/branch/path -->\n    <div id='search' class='fl content-search round'></div>\n    <a href='#' class='fl button round new new-file' data-state='new'>\n      <%= t('navigation.newFile') %>\n    </a>\n  </div>\n\n  <div id='files'></div>\n</div>\n","search":"<span class='ico search'></span>\n<input type='text' id='filter' placeholder=\"<%= search.placeholder %>\" />\n","sidebar":{"branches":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.repo.branch') %></h2>\n  <select class='chzn-select'></select>\n</div>\n","drafts":"<a class='button round' href='#<%= link %>'><%= t('sidebar.repo.drafts') %></a>\n","label":"<div class='inner'>\n  <h2 class='label inner'><%= label %></h2>\n</div>\n","li":{"commit":"<a class='<%= data.status %>' href='#<%= [data.repo.owner.login, data.repo.name, data.mode, data.branch, data.path].join(\"/\") %>'>\n  <span class='ico small inline <%= data.status %>'></span>\n  <span class='message'><%= data.file.filename %></span>\n</a>\n"},"orgs":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.repos.groups') %></h2>\n</div>\n<ul class='listing'>\n  <li>\n    <a href='#<%= orgs.login.user %>' title='<%= orgs.login.user %>' data-id='<%= orgs.login.id %>'>\n      <%= orgs.login.user %>\n    </a>\n  </li>\n  <% orgs.orgs.each(function(org) {  %>\n  <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>' data-id='<%= org.id %>'>\n      <%= org.login %>\n    </a>\n  </li>\n  <% }); %>\n</ul>\n","save":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.save.label') %></h2>\n</div>\n<div class='inner authoring'>\n  <div class='commit'>\n    <textarea class='commit-message' placeholder></textarea>\n    <a class='ico small cancel round' href='#' data-action='cancel'>\n      <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>\n    </a>\n  </div>\n  <a class='confirm button round' href='#' data-action='confirm'><%= writable %></a>\n</div>\n","settings":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.settings.title') %></h2>\n</div>\n<div class='inner authoring'>\n  <% if (/^_posts/.test(settings.path)) { %>\n    <a class='draft button round' href='#' data-action='draft'><%= t('sidebar.settings.draft') %></a>\n  <% } %>\n  \n  <% if (settings.languages && settings.lang !== 'yaml') { %>\n    <% _.each(settings.languages, function(l) { %>\n      <% if (l.value && (settings.metadata && (settings.metadata.lang !== l.value))) { %>\n        <a class='translate round button' href='#<%= l.value %>' data-action='translate'><%= t('sidebar.settings.translate') + ' ' + l.name %></a>\n      <% } %>\n    <% }); %>\n  <% } %>\n\n  <!-- if !isNew() and is writable -->\n  <a class='delete button round' href='#' data-action='destroy'><%= t('sidebar.settings.delete') %></a>\n</div>\n\n<% if (settings.fileInput) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.settings.fileInputLabel') %></h2>\n    <input type='text' class='filepath' placeholder='<%= settings.path %>' value='<%= settings.path %>'>\n  </div>\n<% } %>\n"},"start":"<div class='round splash'>\n  <h2 class='icon landing'>Prose</h2>\n  <div class='inner'>\n    <p><%= t('main.start.content') %></p>\n    <p><a href='#about'><%= t('main.start.learn') %></a></p>\n    <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>\n  </div>\n</div>\n","toolbar":"<% if (toolbar.draft) { %>\n  <a href='#' class='draft-to-post round contain'>\n    <%= t('actions.draft.toPost') %><span class='ico small checkmark'></span>\n    <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>\n  </a>\n<% } else { %>\n  <% if (toolbar.metadata && toolbar.metadata.published) { %>\n    <a href='#' class='publish-flag published round contain' data-state='true'>\n      <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>\n    </a>\n  <% } else if (toolbar.metadata && !toolbar.metadata.published) { %>\n    <a href='#' class='publish-flag round contain' data-state='false'>\n      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>\n    </a>\n  <% } %>\n<% } %>\n\n<% if (toolbar.markdown) { %>\n<div class='options clearfix'>\n  <ul class='group round clearfix'>\n    <li><a href='#' title=\"<%= t('toolbar.heading') %>\" data-key='heading' data-snippet='<% print(\"##\\n\\n\") %>'>h2</a></li>\n    <li><a href='#' title=\"<%= t('toolbar.subHeading') %>\" data-key='sub-heading' data-snippet='<% print(\"###\\n\\n\") %>'>h3</a></li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n      <a title=\"<%= t('toolbar.link') %>\" href='#' data-key='link' data-snippet=false data-dialog=true>\n        <span class='ico small link'></span>\n      </a>\n    </li>\n    <li>\n      <a title=\"<%= t('toolbar.image') %>\" href='#' data-key='media' data-snippet=false data-dialog=true>\n        <span class='ico small picture'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li><a href='#' title=\"<%= t('toolbar.bold') %>\" data-key='bold' data-snippet='****'>B</a></li>\n    <li>\n      <a data-key='italic' href='#' title=\"<%= t('toolbar.italic') %>\" data-snippet='__'>\n        <span class='ico small italic'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n      <a title=\"<%= t('toolbar.blockquote') %>\"  href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n        <span class='ico small quote'></span>\n      </a>\n    </li>\n    <li>\n      <a href='#' title=\"<%= t('toolbar.list') %>\" data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n        <span class='ico small list'></span>\n      </a>\n    </li>\n    <li>\n      <a href='#' title=\"<%= t('toolbar.numberedlist') %>\" data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n        <span class='ico small numbered-list'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n    <a class='round' title=\"<%= t('toolbar.help') %>\" href='#' data-key='help' data-snippet=false data-dialog=true>\n        <span class='ico small question'></span>\n      </a>\n    </li>\n  </ul>\n</div>\n<% } %>\n<div id='dialog'></div>\n"};
-},{}],5:[function(require,module,exports){
-module.exports={
-  "api": "https://api.github.com",
-  "site": "https://github.com",
-  "clientId": "c602a8bd54b1e774f864",
-  "gatekeeperUrl": "https://prose-gatekeeper.herokuapp.com"
-}
-
-},{}],8:[function(require,module,exports){
-(function(){var LOCALES = require('../translations/locales');
-var en = require('../dist/en.js');
-
-// Set locale as global variable
-window.locale.en = en;
-window.locale.current('en');
-window.app = {};
-
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Router = require('./router');
-var User = require('./models/user');
-var NotificationView = require('./views/notification');
-var config = require('./config');
-var cookie = require('./cookie');
-var auth = require('./config');
-var status = require('./status');
-
-// Set up translations
-var setLanguage = (cookie.get('lang')) ? true : false;
-
-// Check if the browsers language is supported
-if (setLanguage) app.locale = cookie.get('lang');
-
-if (app.locale && app.locale !== 'en') {
-  $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
-    window.locale[app.locale] = result;
-    window.locale.current(app.locale);
-  });
-}
-
-var user = new User();
-
-user.authenticate({
-  success: function() {
-    if ('withCredentials' in new XMLHttpRequest()) {
-      // Set OAuth header for all CORS requests
-      $.ajaxSetup({
-        headers: {
-          'Authorization': config.auth === 'oauth' ?
-            'token ' + cookie.get('oauth-token') :
-            'Basic ' + Base64.encode(config.username + ':' + config.password)
-        }
-      });
-
-      // Set an 'authenticated' class to #prose
-      $('#prose').addClass('authenticated');
-
-      // Set User model id and login from cookies
-      var id = cookie.get('id');
-      if (id) user.set('id', id);
-
-      var login = cookie.get('login');
-      if (login) user.set('login', login);
-
-      user.fetch({
-        success: function(model, res, options) {
-          // Set authenticated user id and login cookies
-          cookie.set('id', user.get('id'));
-          cookie.set('login', user.get('login'));
-
-          // Initialize router
-          window.router = new Router({ user: model });
-
-          // Start responding to routes
-          Backbone.history.start();
-        },
-        error: function(model, res, options) {
-          var apiStatus = status.githubApi(function(res) {
-
-            var error = new NotificationView({
-              'message': t('notification.error.github'),
-              'options': [
-                {
-                  'title': t('notification.back'),
-                  'link': '/'
-                },
-                {
-                  'title': t('notification.githubStatus', {
-                    status: res.status
-                  }),
-                  'link': '//status.github.com',
-                  'className': res.status
-                }
-              ]
-            });
-
-            $('#prose').html(error.render().el);
-          });
-        }
-      });
-    } else {
-      var upgrade = new NotificationView({
-        'message': t('main.upgrade.content'),
-        'options': [{
-          'title': t('main.upgrade.download'),
-          'link': 'https://www.google.com/intl/en/chrome/browser'
-        }]
-      });
-
-      $('#prose').html(upgrade.render().el);
-    }
-  },
-  error: function() {
-    // Initialize router
-    window.router = new Router();
-
-    // Start responding to routes
-    Backbone.history.start();
-  }
-});
-
-})()
-},{"../dist/en.js":1,"../translations/locales":2,"./router":9,"./models/user":10,"./views/notification":11,"./config":4,"./cookie":3,"./status":12,"underscore":6,"jquery-browserify":13,"backbone":14}],13:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -20914,7 +20912,9 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],9:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
+module.exports = {"app":"<% if (locale.current() === 'he-IL') { %>\n  <link rel='stylesheet' href='./style-rtl.css'>\n<% } %>\n\n<div id='loader' class='loader'></div>\n<div id='drawer' class='sidebar' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>></div>\n<nav id='navigation'></nav>\n<div id='main' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>></div>\n\n<div class='prose-menu dropdown-menu' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose</a></li>\n      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>\n      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>\n      <li><a href='./#chooselanguage'><%= t('navigation.language') %></a></li>\n      <li class='divider authenticated'></li>\n      <li class='authenticated'>\n        <a href='#' class='logout'><%= t('navigation.logout') %></a>\n      </li>\n    </ul>\n  </div>\n</div>\n","breadcrumb":"<span class='slash'>/</span>\n<a class='path' href='#<%= trail %>/<%= url %>'><%= name %></a>\n","chooselanguage":"<h1><%= t('chooselanguage.title') %></h1>\n<ul class='fat-list round'>\n  <% _(chooseLanguage.languages).each(function(l) { %>\n    <li>\n    <a href='#' data-code='<%= l.code %>' class='language<% if (l.code === chooseLanguage.active) { %> active<% } %>'>\n        <% if (l.code === chooseLanguage.active) { %><span class='ico checkmark fr'></span><% } %>\n        <%= l.name %>\n        <small>(<%= l.code %>)</small>\n      </a>\n    </li>\n  <% }); %>\n</ul>\n<p><%= t('chooselanguage.description') %></p>\n","dialogs":{"help":"<%\n  function formattedClass(str) {\n    return str.toLowerCase().replace(/\\s/g, '-').replace('&amp;', '');\n  };\n%>\n\n<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","link":"<div class='inner'>\n  <label><%= t('dialogs.link.title') %></label>\n  <input type='text' name='href' placeholder=\"<%= t('dialogs.link.hrefPlaceholder') %>\" />\n  <input type='text' name='text' placeholder=\"<%= t('dialogs.link.textPlaceholder') %>\" />\n  <input type='text' name='title' placeholder=\"<%= t('dialogs.link.titlePlaceholder') %>\" />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder=\"<%= t('dialogs.link.insertPlaceholder') %>\" class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>\n</div>\n","media":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label><%= t('dialogs.media.title') %></label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        <%= description %>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder=\"<%= t('dialogs.media.hrefPlaceholder')%>\" />\n    <input type='text' name='alt' placeholder=\"<%= t('dialogs.media.altPlaceholder')%>\" />\n    <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>\n      <% if (!assetsDirectory) { %>\n        <small class='caption deemphasize'><%= t('dialogs.media.help') %></small>\n      <% } %>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label><%= t('dialogs.media.choose') %></label>\n      <ul id='media'></ul>\n      <small class='caption deemphasize'><%= t('dialogs.media.helpMedia') %></small>\n    </div>\n  <% } %>\n</div>\n","mediadirectory":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (isMedia) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n"},"drawer":"<div id='orgs'></div>\n<div id='branches'></div>\n<div id='history'></div>\n<div id='drafts'></div>\n<div id='save'></div>\n<div id='settings'></div>\n","file":"<header id='heading' class='heading limiter clearfix'></header>\n<div id='modal'></div>\n\n<div id='post' class='post limiter'>\n  <div class='editor views<% if (file.markdown) { %> markdown<% } %>'>\n    <div id='diff' class='view prose diff'>\n      <h2><%= t('main.file.metaTitle') %><br />\n        <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>\n      </h2>\n      <div class='diff-content inner'></div>\n    </div>\n    <div id='meta' class='view round meta'></div>\n    <div id='edit' class='view active edit'>\n      <div class='topbar-wrapper'>\n        <div class='topbar'>\n          <div id='toolbar' class='containment toolbar round'></div>\n        </div>\n      </div>\n      <div id='drop' class='drop-mask'></div>\n      <div id='code' class='code round inner'></div>\n    </div>\n    <div id='preview' class='view preview prose'></div>\n  </div>\n</div>\n","files":"<% if (data.path && data.path !== data.rooturl) { %>\n  <div class='breadcrumb'>\n    <a class='branch' href='#<%= data.url %>'>..</a>\n    <% _.each(data.parts, function(part) { %>\n      <% if (part.name !== data.rooturl) { %>\n        <span class='slash'>/</span>\n        <a class='path' href='#<%= [data.url, part.url].join(\"/\") %>'><%= part.name %></a>\n      <% } %>\n    <% }); %>\n  </div>\n<% } %>\n\n<ul class='listing'></ul>\n","header":"<% if (data.alterable) { %>\n  <div class='round avatar'>\n    <%= data.avatar %>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><a href='#<%= data.user %>'><%= data.user %></a> / <a href='#<%= data.user %>/<%= data.repo.name %>'><%= data.repo.name %></a><% if (data.isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n    <!-- if (isNew() && !translate) placeholder, not value -->\n    <input type='text' class='headerinput' data-mode='<%= data.mode %>' <% print((data.placeholder ? 'placeholder=' : 'value=') + '\"' + data.input + '\"') %>>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round'><%= data.avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= data.user %>'><%= data.user %></a></h4>\n    <h2><a class='repo' href='#<%= data.path %>'><%= data.title %></a></h2>\n  </div>\n<% } %>\n","li":{"file":"<% if (file.binary) { %>\n  <div class='listing-icon icon round <%= file.extension %> <% if (file.media) { %>media<% } %>'></div>\n<% } else { %>\n  <a href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>' class='listing-icon'>\n    <span class='icon round <%= file.extension %> <% if (file.markdown) { %> md<% } %> <% if (file.media) { %> media<% } %>'></span>\n  </a>\n<% } %>\n\n<div class='details'>\n  <div class='actions fr clearfix'>\n    <% if (!file.binary) { %>\n      <a class='clearfix'\n        title=\"<%= t('main.repo.edit') %>\"\n        href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'>\n        <%= t('main.repo.edit') %>\n      </a>\n    <% } %>\n    <% if (file.writable) { %>\n      <a\n        class='delete'\n        title=\"<%= t('main.repo.delete') %>\"\n        href='#'>\n        <span class='ico rubbish small'></span>\n      </a>\n    <% } %>\n  </div>\n  <% if (file.binary) { %>\n    <h3 class='title' title='<%= file.name %>'><%= file.name %></h3>\n  <% } else { %>\n    <h3 class='title' title='<%= file.name %>'><a class='clearfix'href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'><%= file.name %></a></h3>\n  <% } %>\n  <span class='deemphasize'><%= file.jailpath %></span>\n</div>\n","folder":"<a href='#<%= folder.repo.owner.login %>/<%= folder.repo.name %>/tree/<%= folder.branch %>/<%= folder.path %>' class='listing-icon'>\n  <span class='icon round folder'></span>\n</a>\n\n<span class='details'>\n  <h3 class='title' title='<%= folder.name %>'>\n    <a href='#<%= folder.repo.owner.login %>/<%= folder.repo.name %>/tree/<%= folder.branch %>/<%= folder.path %>'>\n      <%= folder.name %>\n    </a>\n  </h3>\n  <span class='deemphasize'><%= folder.jailpath %></span>\n</span>\n","repo":"<a\n  class='listing-icon'\n  data-user='<%= repo.owner.login %>'\n  data-repo='<%= repo.name %>'\n  href='#<%= repo.owner.login %>/<%= repo.name %>'>\n  <% if ((repo.owner.login !== repo.login) && repo.private) { %>\n    <span class='icon round repo owner private' title=\"<%= t('main.repos.sharedFrom') %> (<%= repo.owner.login %>)\"></span>\n  <% } else if (repo.owner.login !== repo.login) { %>\n    <span class='icon round repo owner' title=\"<%= t('main.repos.sharedFrom') %> (<%= repo.owner.login %>)\"></span>\n  <% } else if (repo.fork && repo.private) { %>\n    <span class='icon round repo private fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n  <% } else if (repo.fork) { %>\n    <span class='icon round repo fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n  <% } else if (repo.private) { %>\n    <span class='icon round repo private'></span>\n  <% } else { %>\n    <span class='icon round repo'></span>\n  <% } %>\n</a>\n\n<div class='details'>\n  <div class='actions fr clearfix'>\n    <a\n      data-user='<%= repo.owner.login %>'\n      data-repo='<%= repo.name %>'\n      href='#<%= repo.owner.login %>/<%= repo.name %>'>\n      <%= t('main.repos.repo') %>\n    </a>\n    <% if (repo.homepage) { %>\n      <a href='<%= repo.homepage %>'><%= t('main.repos.site') %></a>\n    <% } %>\n  </div>\n  <a\n    data-user='<%= repo.owner.login %>'\n    data-repo='<%= repo.name %>'\n    href='#<%= repo.owner.login %>/<%= repo.name %>'>\n    <h3<% if (!repo.description) { %> class='title'<% } %>><%= repo.name %></h3>\n    <span class='deemphasize'><%= repo.description %></span>\n  </a>\n</div>\n"},"loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <span class=\"message\"></span>\n</div>\n","meta":{"button":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <button class='round <%= meta.name %>' type='button' name='<%= meta.name %>' value='<%= meta.value %>' data-on='<%= meta.on %>' data-off='<%= meta.off %>'>\n      <% print(value ? meta.on : meta.off); %>\n    </button>\n  </fieldset>\n</div>\n","checkbox":"<div class='form-item'>\n  <fieldset>\n    <input type='checkbox' name='<%= meta.name %>' value='<%= meta.value %>'<% print(meta.checked ? 'checked' : '') %> />\n    <label class='aside' for='<%= meta.name %>'><%= meta.label %></label>\n  </fieldset>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n\n  <fieldset>\n    <select id='<%= meta.name %>' name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' multiple class='chzn-select'>\n      <% _(meta.options).each(function(o) { %>\n        <% if (!o.lang || o.lang === meta.lang) { %>\n          <% if (o.name) { %>\n           <option value='<%= o.value %>'><%= o.name %></option>\n          <% } else if (o.value) { %>\n           <option value='<%= o.value %>'><%= o.value %></option>\n          <% } else { %>\n           <option value='<%= o %>'><%= o %></option>\n          <% } %>\n        <% } %>\n      <% }); %>\n    </select>\n  </fieldset>\n\n  <% if (meta.alterable) { %>\n    <div class='create'>\n      <input type='text' class='inline' />\n      <a href='#' class='round create-select inline button' data-select='<%= meta.name %>' title=\"<%= t('main.file.createMeta') %>\"><%= t('main.file.createMeta') %></a>\n    </div>\n  <% } %>\n</div>\n","raw":"<div class='form-item'>\n  <label for='raw'><%= t('main.file.rawMeta') %></label>\n  <% if (meta.help) { %><small><%= meta.help %></small><% } %>\n  <fieldset>\n    <div name='raw' id='raw' class='inner'></div>\n  </fieldset>\n</div>\n","select":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n\n  <fieldset>\n    <select name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' class='chzn-select'>\n      <% _(meta.options).each(function(o) { %>\n        <% if (!o.lang || o.lang === meta.lang) { %>\n          <% if (o.name) { %>\n           <option value='<%= o.value %>'><%= o.name %></option>\n          <% } else if (o.value) { %>\n           <option value='<%= o.value %>'><%= o.value %></option>\n          <% } else { %>\n           <option value='<%= o %>'><%= o %></option>\n          <% } %>\n        <% } %>\n      <% }); %>\n    </select>\n  </fieldset>\n</div>\n","text":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <input type='text' name='<%= meta.name %>' value='<%= meta.value %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>' />\n  </fieldset>\n</div>\n","textarea":"<div class='form-item yaml-block'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <textarea id='<%= meta.id %>' type='text' name='<%= meta.name %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>'><%= meta.value %></textarea>\n  </fieldset>\n</div>\n"},"metadata":"<div class='form'></div>\n<a href='#' class='button round finish'><%= t('main.file.back') %></a>\n","modal":"<div class='modal-content round'>\n  <div class='modal-heading inner'>\n    <%= t('modal.errorHeading') %>\n  </div>\n  <div class='prose inner'>\n    <p><%= modal.message %></p>\n  </div>\n  <div class='modal-footer inner'>\n    <a href='#' class='button round got-it'><%= t('modal.confirm') %></a>\n  </div>\n</div>\n","nav":"<ul class='mobile nav clearfix'>\n  <li>\n    <a href='#' class='toggle ico menu round'></a>\n  </li>\n</ul>\n\n<ul class='file nav clearfix'>\n  <li>\n    <a href='#' class='ico round pencil edit' data-state='edit'>\n      <span class='popup round arrow-right'><%= t('navigation.edit') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' class='ico round eye blob preview' data-state='blob'>\n      <span class='popup round arrow-right'><%= t('navigation.preview') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' class='ico round metadata meta' data-state='meta'>\n      <span class='popup round arrow-right'><%= t('navigation.meta') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>\n      <span class='popup round arrow-right'><%= t('navigation.settings') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' class='ico round save' data-state='save'>\n      <div class='status'></div>\n      <span class='popup round arrow-right'>\n        <%= t('navigation.save') %>\n      </span>\n    </a>\n  </li>\n</ul>\n\n<ul class='auth nav clearfix'>\n  <li>\n    <a class='ico round switch login' href='<%= data.login %>'>\n      <span class='popup round arrow-right'><%= t('login') %></span>\n    </a>\n  </li>\n</ul>\n","notification":"<div class='notify'>\n  <h2 class='icon landing error'>Prose</h2>\n  <div class='inner'>\n    <p><%= data.message %></p>\n    <p class='error'><%= data.error %></p>\n\n    <% _(data.options).each(function(options) { %>\n    <div>\n      <a class='button round <% if(options.className) { %><%= options.className %><% } %>' href='<%= options.link %>'><%= options.title %></a>\n    </div>\n    <% }); %>\n  </div>\n</div>\n","profile":"<header id='heading' class='heading limiter clearfix'></header>\n\n<div id='content' class='application content limiter'>\n  <div class='topbar'>\n    <div id='search' class='content-search round'></div>\n  </div>\n  <ul id='repos' class='projects listing'></ul>\n</div>\n","repo":"<header id='heading' class='heading limiter clearfix'></header>\n\n<div id='content' class='application content limiter'>\n  <div class='topbar clearfix'>\n    <!-- if repo and authenticated -->\n    <!-- #user/repo/new/branch/path -->\n    <div id='search' class='fl content-search round'></div>\n    <a href='#' class='fl button round new new-file' data-state='new'>\n      <%= t('navigation.newFile') %>\n    </a>\n  </div>\n\n  <div id='files'></div>\n</div>\n","search":"<span class='ico search'></span>\n<input type='text' id='filter' placeholder=\"<%= search.placeholder %>\" />\n","sidebar":{"branches":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.repo.branch') %></h2>\n  <select class='chzn-select'></select>\n</div>\n","drafts":"<a class='button round' href='#<%= link %>'><%= t('sidebar.repo.drafts') %></a>\n","label":"<div class='inner'>\n  <h2 class='label inner'><%= label %></h2>\n</div>\n","li":{"commit":"<a class='<%= data.status %>' href='#<%= [data.repo.owner.login, data.repo.name, data.mode, data.branch, data.path].join(\"/\") %>'>\n  <span class='ico small inline <%= data.status %>'></span>\n  <span class='message'><%= data.file.filename %></span>\n</a>\n"},"orgs":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.repos.groups') %></h2>\n</div>\n<ul class='listing'>\n  <li>\n    <a href='#<%= orgs.login.user %>' title='<%= orgs.login.user %>' data-id='<%= orgs.login.id %>'>\n      <%= orgs.login.user %>\n    </a>\n  </li>\n  <% orgs.orgs.each(function(org) {  %>\n  <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>' data-id='<%= org.id %>'>\n      <%= org.login %>\n    </a>\n  </li>\n  <% }); %>\n</ul>\n","save":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.save.label') %></h2>\n</div>\n<div class='inner authoring'>\n  <div class='commit'>\n    <textarea class='commit-message' placeholder></textarea>\n    <a class='ico small cancel round' href='#' data-action='cancel'>\n      <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>\n    </a>\n  </div>\n  <a class='confirm button round' href='#' data-action='confirm'><%= writable %></a>\n</div>\n","settings":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.settings.title') %></h2>\n</div>\n<div class='inner authoring'>\n  <% if (/^_posts/.test(settings.path)) { %>\n    <a class='draft button round' href='#' data-action='draft'><%= t('sidebar.settings.draft') %></a>\n  <% } %>\n  \n  <% if (settings.languages && settings.lang !== 'yaml') { %>\n    <% _.each(settings.languages, function(l) { %>\n      <% if (l.value && (settings.metadata && (settings.metadata.lang !== l.value))) { %>\n        <a class='translate round button' href='#<%= l.value %>' data-action='translate'><%= t('sidebar.settings.translate') + ' ' + l.name %></a>\n      <% } %>\n    <% }); %>\n  <% } %>\n\n  <!-- if !isNew() and is writable -->\n  <a class='delete button round' href='#' data-action='destroy'><%= t('sidebar.settings.delete') %></a>\n</div>\n\n<% if (settings.fileInput) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.settings.fileInputLabel') %></h2>\n    <input type='text' class='filepath' placeholder='<%= settings.path %>' value='<%= settings.path %>'>\n  </div>\n<% } %>\n"},"start":"<div class='round splash'>\n  <h2 class='icon landing'>Prose</h2>\n  <div class='inner'>\n    <p><%= t('main.start.content') %></p>\n    <p><a href='#about'><%= t('main.start.learn') %></a></p>\n    <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>\n  </div>\n</div>\n","toolbar":"<% if (toolbar.draft) { %>\n  <a href='#' class='draft-to-post round contain'>\n    <%= t('actions.draft.toPost') %><span class='ico small checkmark'></span>\n    <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>\n  </a>\n<% } else { %>\n  <% if (toolbar.metadata && toolbar.metadata.published) { %>\n    <a href='#' class='publish-flag published round contain' data-state='true'>\n      <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>\n    </a>\n  <% } else if (toolbar.metadata && !toolbar.metadata.published) { %>\n    <a href='#' class='publish-flag round contain' data-state='false'>\n      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>\n    </a>\n  <% } %>\n<% } %>\n\n<% if (toolbar.markdown) { %>\n<div class='options clearfix'>\n  <ul class='group round clearfix'>\n    <li><a href='#' title=\"<%= t('toolbar.heading') %>\" data-key='heading' data-snippet='<% print(\"##\\n\\n\") %>'>h2</a></li>\n    <li><a href='#' title=\"<%= t('toolbar.subHeading') %>\" data-key='sub-heading' data-snippet='<% print(\"###\\n\\n\") %>'>h3</a></li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n      <a title=\"<%= t('toolbar.link') %>\" href='#' data-key='link' data-snippet=false data-dialog=true>\n        <span class='ico small link'></span>\n      </a>\n    </li>\n    <li>\n      <a title=\"<%= t('toolbar.image') %>\" href='#' data-key='media' data-snippet=false data-dialog=true>\n        <span class='ico small picture'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li><a href='#' title=\"<%= t('toolbar.bold') %>\" data-key='bold' data-snippet='****'>B</a></li>\n    <li>\n      <a data-key='italic' href='#' title=\"<%= t('toolbar.italic') %>\" data-snippet='__'>\n        <span class='ico small italic'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n      <a title=\"<%= t('toolbar.blockquote') %>\"  href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n        <span class='ico small quote'></span>\n      </a>\n    </li>\n    <li>\n      <a href='#' title=\"<%= t('toolbar.list') %>\" data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n        <span class='ico small list'></span>\n      </a>\n    </li>\n    <li>\n      <a href='#' title=\"<%= t('toolbar.numberedlist') %>\" data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n        <span class='ico small numbered-list'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n    <a class='round' title=\"<%= t('toolbar.help') %>\" href='#' data-key='help' data-snippet=false data-dialog=true>\n        <span class='ico small question'></span>\n      </a>\n    </li>\n  </ul>\n</div>\n<% } %>\n<div id='dialog'></div>\n"};
+},{}],5:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21124,7 +21124,6 @@ module.exports = Backbone.Router.extend({
         break;
       default:
         throw url.mode;
-        break;
     }
   },
 
@@ -21255,7 +21254,7 @@ module.exports = Backbone.Router.extend({
     } else {
       this.app.nav.mode('start');
       this.view = new StartView();
-      this.app.$el.html(this.view.render().el);
+      this.app.$el.find('#main').html(this.view.render().el);
     }
   },
 
@@ -21287,11 +21286,11 @@ module.exports = Backbone.Router.extend({
       }
     ];
 
-    this.notify(message, error, options)
+    this.notify(message, error, options);
   }
 });
 
-},{"./models/user":10,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":11,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"../dist/templates":7,"./util":28,"jquery-browserify":13,"underscore":6,"backbone":14}],12:[function(require,module,exports){
+},{"./models/user":6,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":7,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"../dist/templates":14,"./util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],9:[function(require,module,exports){
 var config = require('./config'); 
 var $ = require('jquery-browserify'); 
 
@@ -21308,7 +21307,7 @@ module.exports = {
   }
 }
 
-},{"./config":4,"jquery-browserify":13}],29:[function(require,module,exports){
+},{"./config":8,"jquery-browserify":10}],29:[function(require,module,exports){
 module.exports = function() {
   Liquid.readTemplateFile = (function(path) {
     var file = this.collection.findWhere({ path: '_includes/' + path });
@@ -21526,7 +21525,7 @@ module.exports = {
   }
 }
 
-},{}],10:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 
@@ -21583,7 +21582,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"../collections/repos":31,"../collections/orgs":16,"../views/notification":11,"../config":4,"../cookie":3,"../../dist/templates":7,"jquery-browserify":13,"underscore":6,"backbone":14}],11:[function(require,module,exports){
+},{"../collections/repos":31,"../collections/orgs":16,"../views/notification":7,"../config":8,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21643,274 +21642,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":7,"../util":28,"jquery-browserify":13,"underscore":6,"backbone":14}],28:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var templates = require('../dist/templates');
-var chrono = require('chrono');
-
-module.exports = {
-
-  // Cleans up a string for use in urls
-  stringToUrl: function(string) {
-    // Change non-alphanumeric characters to dashes, trim excess dashes
-    return string.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-*$/, '');
-  },
-
-  // Extract a Jekyll date format from a filename
-  extractDate: function(string) {
-    var match = string.match(/^\d{4}-\d{2}-\d{2}/);
-    return match ? match[0] : '';
-  },
-
-  // Extract filename from a given path
-  // -------
-  //
-  // this.extractFilename('path/to/foo.md')
-  // => ['path/to', 'foo.md']
-
-  extractFilename: function(path) {
-    var regex = /\//;
-    if (!regex.test(path)) return ['', path];
-    var matches = path.match(/(.*)\/(.*)$/);
-    return [matches[1], matches[2]];
-  },
-
-  validPathname: function(path) {
-    var regex = /^([a-zA-Z0-9_\-]|\.)+$/;
-    return _.all(path.split('/'), function(filename) {
-      return !!regex.test(filename);
-    });
-  },
-
-  parentPath: function(path) {
-    return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
-  },
-
-  // Extract parts of the path
-  // into a state from the router
-  // -------
-
-  extractURL: function(url) {
-    url = url.split('/');
-
-    return {
-      mode: url[0],
-      branch: url[1],
-      path: (url.slice(2) || []).join('/')
-    };
-  },
-
-  // Determine mode for CodeMirror
-  // -------
-
-  mode: function(extension) {
-    if (this.isMarkdown(extension)) return 'gfm';
-    if (_.include(['js', 'json'], extension)) return 'javascript';
-    if (extension === 'html') return 'htmlmixed';
-    if (extension === 'rb') return 'ruby';
-    if (/(yml|yaml)/.test(extension)) return 'yaml';
-    if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
-
-    return extension;
-  },
-
-  // Check if a given file has YAML frontmater
-  // -------
-
-  hasMetadata: function(content) {
-    var regex = /^(---\n)((.|\n)*?)\n---\n?/;
-    content = content.replace(/\r\n/g, '\n'); // normalize a little bit
-    return regex.test(content);
-  },
-
-  // Extract file extension
-  // -------
-
-  extension: function(file) {
-    var match = file.match(/\.(\w+)$/);
-    return match ? match[1] : null;
-  },
-
-  // Does the root of the path === _drafts?
-  // -------
-
-  draft: function(path) {
-    return (path.split('/')[0] === '_drafts') ? true : false
-  },
-
-  // Determine types
-  // -------
-
-  markdown: function(file) {
-    var regex = new RegExp(/.(md|mkdn?|mdown|markdown)$/);
-    return !!(regex.test(file));
-  },
-
-  // chunked path
-  // -------
-  //
-  // this.chunkedPath('path/to/foo')
-  // =>
-  // [
-  //   { url: 'path',        name: 'path' },
-  //   { url: 'path/to',     name: 'to' },
-  //   { url: 'path/to/foo', name: 'foo' }
-  // ]
-
-  chunkedPath: function(path) {
-    var chunks = path.split('/');
-    return _.map(chunks, function(chunk, index) {
-      var url = [];
-      for (var i = 0; i <= index; i++) {
-        url.push(chunks[i]);
-      }
-      return {
-        url: url.join('/'),
-        name: chunk
-      };
-    });
-  },
-
-  isBinary: function(path) {
-    var regex = new RegExp(".(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$", 'i');
-    return !!(regex.test(path));
-  },
-
-  isMarkdown: function(extension) {
-    var regex = new RegExp("^(md|mkdn?|mdown|markdown)$", 'i');
-    return !!(regex.test(extension));
-  },
-
-  isMedia: function(extension) {
-    var regex = new RegExp("^(jpeg|jpg|gif|png|swf|mov)$", 'i');
-    return !!(regex.test(extension));
-  },
-
-  isImage: function(extension) {
-    var regex = new RegExp("^(jpeg|jpg|gif|png|svg*)$", 'i');
-    return !!(regex.test(extension));
-  },
-
-  // Return a true or false boolean if a path
-  // a absolute or not.
-  // -------
-
-  absolutePath: function(path) {
-    return /^https?:\/\//i.test(path);
-  },
-
-  // Concatenate path + file to full filepath
-  // -------
-
-  filepath: function(path, file) {
-    return (path ? path + '/' : '') + file;
-  },
-
-  // Returns a filename without the file extension
-  // -------
-
-  filename: function(file) {
-    return file.replace(/\.[^\/.]+$/, '');
-  },
-
-  // String Manipulations
-  // -------
-  trim: function(str) {
-    return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-  },
-
-  lTrim: function(str) {
-    return str.replace(/^\s\s*/, '');
-  },
-
-  // UI Stuff
-  // -------
-
-  documentTitle: function(title) {
-    document.title = title + ' · Prose';
-  },
-
-  fixedScroll: function($el, offset) {
-    $(window).scroll(function(e) {
-      var y = $(this).scrollTop();
-      if (y >= offset) {
-        $el.addClass('fixed');
-      } else {
-        $el.removeClass('fixed');
-      }
-    });
-  },
-
-  pageListing: function(handler) {
-    if ($('.item').hasClass('active')) {
-      var index = parseInt($('.item.active').data('index'), 10);
-      var offset;
-
-      $('.item.active').removeClass('active');
-
-      function inView(el) {
-          var curTop = el.offset().top;
-          var screenHeight = $(window).height();
-          return (curTop > screenHeight) ? false : true;
-      }
-
-      // UP
-      if (handler === 'k') {
-        if (index !== 0) --index;
-        var $prev = $('.item[data-index=' + index + ']');
-        var prevTop = $prev.offset().top + $prev.height();
-
-        if (!inView($prev)) {
-          // Offset is the list height minus the difference between the
-          // height and .content-search (60) that is fixed down the page
-          offset = $prev.height();
-
-          $('html, body').animate({
-            scrollTop: $prev.offset().top + ($prev.height() - offset)
-          }, 0);
-        } else {
-          $('html, body').animate({
-            scrollTop: 0
-          }, 0);
-        }
-
-        $prev.addClass('active');
-
-      // DOWN
-      } else {
-        if (index < $('#content li').length - 1) ++index;
-        var $next = $('.item[data-index=' + index + ']');
-        var nextTop = $next.offset().top + $next.height();
-        offset = $next.height();
-
-        if (!inView($next)) {
-          $('html, body').animate({
-             scrollTop: $next.offset().top + ($next.height() - offset)
-          }, 0);
-        }
-
-        $next.addClass('active');
-      }
-    } else {
-      $('.item[data-index=0]').addClass('active');
-    }
-  },
-
-  goToFile: function() {
-    var path = $('.item.active').data('navigate');
-    if (path) router.navigate(path, true);
-    return false;
-  },
-
-  autoSelect: function($el) {
-    $el.on('click', function() {
-      $el.select();
-    });
-  }
-};
-
-},{"../dist/templates":7,"jquery-browserify":13,"underscore":6,"chrono":32}],14:[function(require,module,exports){
+},{"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],12:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -23484,7 +23216,274 @@ module.exports = {
 }).call(this);
 
 })()
-},{"underscore":33}],34:[function(require,module,exports){
+},{"underscore":11}],28:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var templates = require('../dist/templates');
+var chrono = require('chrono');
+
+module.exports = {
+
+  // Cleans up a string for use in urls
+  stringToUrl: function(string) {
+    // Change non-alphanumeric characters to dashes, trim excess dashes
+    return string.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-*$/, '');
+  },
+
+  // Extract a Jekyll date format from a filename
+  extractDate: function(string) {
+    var match = string.match(/^\d{4}-\d{2}-\d{2}/);
+    return match ? match[0] : '';
+  },
+
+  // Extract filename from a given path
+  // -------
+  //
+  // this.extractFilename('path/to/foo.md')
+  // => ['path/to', 'foo.md']
+
+  extractFilename: function(path) {
+    var regex = /\//;
+    if (!regex.test(path)) return ['', path];
+    var matches = path.match(/(.*)\/(.*)$/);
+    return [matches[1], matches[2]];
+  },
+
+  validPathname: function(path) {
+    var regex = /^([a-zA-Z0-9_\-]|\.)+$/;
+    return _.all(path.split('/'), function(filename) {
+      return !!regex.test(filename);
+    });
+  },
+
+  parentPath: function(path) {
+    return path.replace(/\/?[a-zA-Z0-9_\-]*$/, '');
+  },
+
+  // Extract parts of the path
+  // into a state from the router
+  // -------
+
+  extractURL: function(url) {
+    url = url.split('/');
+
+    return {
+      mode: url[0],
+      branch: url[1],
+      path: (url.slice(2) || []).join('/')
+    };
+  },
+
+  // Determine mode for CodeMirror
+  // -------
+
+  mode: function(extension) {
+    if (this.isMarkdown(extension)) return 'gfm';
+    if (_.include(['js', 'json'], extension)) return 'javascript';
+    if (extension === 'html') return 'htmlmixed';
+    if (extension === 'rb') return 'ruby';
+    if (/(yml|yaml)/.test(extension)) return 'yaml';
+    if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
+
+    return extension;
+  },
+
+  // Check if a given file has YAML frontmater
+  // -------
+
+  hasMetadata: function(content) {
+    var regex = /^(---\n)((.|\n)*?)\n---\n?/;
+    content = content.replace(/\r\n/g, '\n'); // normalize a little bit
+    return regex.test(content);
+  },
+
+  // Extract file extension
+  // -------
+
+  extension: function(file) {
+    var match = file.match(/\.(\w+)$/);
+    return match ? match[1] : null;
+  },
+
+  // Does the root of the path === _drafts?
+  // -------
+
+  draft: function(path) {
+    return (path.split('/')[0] === '_drafts') ? true : false
+  },
+
+  // Determine types
+  // -------
+
+  markdown: function(file) {
+    var regex = new RegExp(/.(md|mkdn?|mdown|markdown)$/);
+    return !!(regex.test(file));
+  },
+
+  // chunked path
+  // -------
+  //
+  // this.chunkedPath('path/to/foo')
+  // =>
+  // [
+  //   { url: 'path',        name: 'path' },
+  //   { url: 'path/to',     name: 'to' },
+  //   { url: 'path/to/foo', name: 'foo' }
+  // ]
+
+  chunkedPath: function(path) {
+    var chunks = path.split('/');
+    return _.map(chunks, function(chunk, index) {
+      var url = [];
+      for (var i = 0; i <= index; i++) {
+        url.push(chunks[i]);
+      }
+      return {
+        url: url.join('/'),
+        name: chunk
+      };
+    });
+  },
+
+  isBinary: function(path) {
+    var regex = new RegExp(".(jpeg|jpg|gif|png|ico|eot|ttf|woff|otf|zip|swf|mov|dbf|index|prj|shp|shx|DS_Store|crx|glyphs)$", 'i');
+    return !!(regex.test(path));
+  },
+
+  isMarkdown: function(extension) {
+    var regex = new RegExp("^(md|mkdn?|mdown|markdown)$", 'i');
+    return !!(regex.test(extension));
+  },
+
+  isMedia: function(extension) {
+    var regex = new RegExp("^(jpeg|jpg|gif|png|swf|mov)$", 'i');
+    return !!(regex.test(extension));
+  },
+
+  isImage: function(extension) {
+    var regex = new RegExp("^(jpeg|jpg|gif|png|svg*)$", 'i');
+    return !!(regex.test(extension));
+  },
+
+  // Return a true or false boolean if a path
+  // a absolute or not.
+  // -------
+
+  absolutePath: function(path) {
+    return /^https?:\/\//i.test(path);
+  },
+
+  // Concatenate path + file to full filepath
+  // -------
+
+  filepath: function(path, file) {
+    return (path ? path + '/' : '') + file;
+  },
+
+  // Returns a filename without the file extension
+  // -------
+
+  filename: function(file) {
+    return file.replace(/\.[^\/.]+$/, '');
+  },
+
+  // String Manipulations
+  // -------
+  trim: function(str) {
+    return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+  },
+
+  lTrim: function(str) {
+    return str.replace(/^\s\s*/, '');
+  },
+
+  // UI Stuff
+  // -------
+
+  documentTitle: function(title) {
+    document.title = title + ' · Prose';
+  },
+
+  fixedScroll: function($el, offset) {
+    $(window).scroll(function(e) {
+      var y = $(this).scrollTop();
+      if (y >= offset) {
+        $el.addClass('fixed');
+      } else {
+        $el.removeClass('fixed');
+      }
+    });
+  },
+
+  pageListing: function(handler) {
+    if ($('.item').hasClass('active')) {
+      var index = parseInt($('.item.active').data('index'), 10);
+      var offset;
+
+      $('.item.active').removeClass('active');
+
+      function inView(el) {
+          var curTop = el.offset().top;
+          var screenHeight = $(window).height();
+          return (curTop > screenHeight) ? false : true;
+      }
+
+      // UP
+      if (handler === 'k') {
+        if (index !== 0) --index;
+        var $prev = $('.item[data-index=' + index + ']');
+        var prevTop = $prev.offset().top + $prev.height();
+
+        if (!inView($prev)) {
+          // Offset is the list height minus the difference between the
+          // height and .content-search (60) that is fixed down the page
+          offset = $prev.height();
+
+          $('html, body').animate({
+            scrollTop: $prev.offset().top + ($prev.height() - offset)
+          }, 0);
+        } else {
+          $('html, body').animate({
+            scrollTop: 0
+          }, 0);
+        }
+
+        $prev.addClass('active');
+
+      // DOWN
+      } else {
+        if (index < $('#content li').length - 1) ++index;
+        var $next = $('.item[data-index=' + index + ']');
+        var nextTop = $next.offset().top + $next.height();
+        offset = $next.height();
+
+        if (!inView($next)) {
+          $('html, body').animate({
+             scrollTop: $next.offset().top + ($next.height() - offset)
+          }, 0);
+        }
+
+        $next.addClass('active');
+      }
+    } else {
+      $('.item[data-index=0]').addClass('active');
+    }
+  },
+
+  goToFile: function() {
+    var path = $('.item.active').data('navigate');
+    if (path) router.navigate(path, true);
+    return false;
+  },
+
+  autoSelect: function($el) {
+    $el.on('click', function() {
+      $el.select();
+    });
+  }
+};
+
+},{"../dist/templates":14,"jquery-browserify":10,"underscore":11,"chrono":32}],33:[function(require,module,exports){
 module.exports = {
   help: [
     {
@@ -23556,7 +23555,7 @@ module.exports = Backbone.Collection.extend({
   model: User
 });
 
-},{"../models/user":10,"../config":4,"backbone":14}],16:[function(require,module,exports){
+},{"../models/user":6,"../config":8,"backbone":12}],16:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Org = require('../models/org');
@@ -23578,7 +23577,7 @@ module.exports = Backbone.Collection.extend({
   }
 });
 
-},{"../models/org":35,"../config":4,"underscore":6,"backbone":14}],17:[function(require,module,exports){
+},{"../models/org":34,"../config":8,"underscore":11,"backbone":12}],17:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Branches = require('../collections/branches');
@@ -23664,1520 +23663,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"../collections/branches":36,"../collections/commits":37,"../config":4,"underscore":6,"backbone":14}],19:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var LoaderView = require('./loader');
-var SidebarView = require('./sidebar');
-var NavView = require('./nav');
-var cookie = require('../cookie');
-var templates = require('../../dist/templates');
-var util = require('../util');
-
-module.exports = Backbone.View.extend({
-  className: 'application',
-
-  template: templates.app,
-
-  subviews: {},
-
-  events: {
-    'click a.logout': 'logout'
-  },
-
-  initialize: function(options) {
-    _.bindAll(this);
-
-    key('j, k, enter, o', (function(e, handler) {
-      if (this.$el.find('.listing')[0]) {
-        if (handler.key === 'j' || handler.key === 'k') {
-          util.pageListing(handler.key);
-        } else {
-          util.goToFile();
-        }
-      }
-    }).bind(this));
-
-    this.user = options.user;
-
-    // Loader
-    this.loader = new LoaderView();
-    this.subviews['loader'] = this.loader;
-
-    // Sidebar
-    this.sidebar = new SidebarView({
-      app: this,
-      user: this.user
-    });
-    this.subviews['sidebar'] = this.sidebar;
-
-    // Nav
-    this.nav = new NavView({
-      app: this,
-      sidebar: this.sidebar,
-      user: this.user
-    });
-    this.subviews['nav'] = this.nav;
-  },
-
-  render: function() {
-    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
-
-    this.loader.setElement(this.$el.find('#loader')).render();
-    this.sidebar.setElement(this.$el.find('#drawer')).render();
-    this.nav.setElement(this.$el.find('nav')).render();
-
-    return this;
-  },
-
-  logout: function() {
-    cookie.unset('oauth-token');
-    cookie.unset('id');
-    window.location.reload();
-    return false;
-  },
-
-  remove: function() {
-    _.invoke(this.subviews, 'remove');
-    this.subviews = {};
-
-    Backbone.View.prototype.remove.apply(this, arguments);
-  }
-});
-
-},{"./loader":38,"./sidebar":39,"./nav":40,"../cookie":3,"../../dist/templates":7,"../util":28,"jquery-browserify":13,"underscore":6,"backbone":14}],20:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var templates = require('../../dist/templates');
-var auth = require('../config');
-
-module.exports = Backbone.View.extend({
-  id: 'start',
-
-  template: templates.start,
-
-  render: function() {
-    this.$el.html(_.template(this.template, auth, { variable: 'auth' }));
-    return this;
-  }
-});
-
-},{"../../dist/templates":7,"../config":4,"jquery-browserify":13,"underscore":6,"backbone":14}],21:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var HeaderView = require('./header');
-var OrgsView = require('./sidebar/orgs');
-var utils = require('.././util');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  template: templates.profile,
-
-  subviews: {},
-
-  initialize: function(options) {
-    this.auth = options.auth;
-    this.repos = options.repos;
-    this.router = options.router;
-    this.search = options.search;
-    this.sidebar = options.sidebar;
-    this.user = options.user;
-  },
-
-  render: function() {
-    this.$el.empty().append(_.template(this.template));
-
-    this.search.setElement(this.$el.find('#search')).render();
-    this.repos.setElement(this.$el.find('#repos'));
-
-    var header = new HeaderView({ user: this.user, alterable: false });
-    header.setElement(this.$el.find('#heading')).render();
-    this.subviews['header'] = header;
-
-    if (this.auth) {
-      var orgs = this.sidebar.initSubview('orgs', {
-        model: this.auth.orgs,
-        router: this.router,
-        sidebar: this.sidebar,
-        user: this.user
-      });
-      
-      this.subviews['orgs'] = orgs;
-    }
-
-    return this;
-  },
-
-  remove: function() {
-    this.sidebar.close();
-
-    _.invoke(this.subviews, 'remove');
-    this.subviews = {};
-
-    Backbone.View.prototype.remove.apply(this, arguments);
-  }
-});
-
-},{"./header":41,"./sidebar/orgs":42,".././util":28,"../../dist/templates":7,"jquery-browserify":13,"underscore":6,"backbone":14}],22:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var templates = require('../../dist/templates');
-var util = require('../util');
-
-module.exports = Backbone.View.extend({
-  template: templates.search,
-
-  events: {
-    'keyup input': 'keyup'
-  },
-
-  initialize: function(options) {
-    this.mode = options.mode;
-    this.model = options.model;
-  },
-
-  render: function() {
-    var placeholder = t('main.repos.filter');
-    if (this.mode === 'repo') placeholder = t('main.repo.filter');
-
-    var search = {
-      placeholder: placeholder
-    };
-
-    this.$el.empty().append(_.template(this.template, search, {
-      variable: 'search'
-    }));
-
-    this.input = this.$el.find('input');
-    this.input.focus();
-    return this;
-  },
-
-  keyup: function(e) {
-    if (e && e.which === 27) {
-      // ESC key
-      this.input.val('');
-      this.trigger('search');
-    } else if (e && e.which === 40) {
-      // Down Arrow
-      util.pageListing('down');
-      e.preventDefault();
-      e.stopPropagation();
-      this.input.blur();
-    } else {
-      this.trigger('search');
-    }
-  },
-
-  search: function() {
-    var searchstr = this.input ? this.input.val() : '';
-    return this.model.filter(function(model) {
-      return model.get('name').indexOf(searchstr) > -1;
-    });
-  }
-});
-
-},{"../../dist/templates":7,"../util":28,"jquery-browserify":13,"underscore":6,"backbone":14}],23:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var RepoView = require('./li/repo');
-
-module.exports = Backbone.View.extend({
-  subviews: {},
-
-  events: {
-    'mouseover .item': 'activeListing',
-    'mouseover .item a': 'activeListing'
-  },
-
-  initialize: function(options) {
-    _.bindAll(this);
-
-    this.model = options.model;
-    this.search = options.search;
-
-    this.listenTo(this.search, 'search', this.render);
-  },
-
-  render: function() {
-    var collection = this.search ? this.search.search() : this.model;
-    var frag = document.createDocumentFragment();
-
-    collection.each((function(repo, i) {
-      var view = new RepoView({
-        index: i,
-        model: repo
-      });
-
-      frag.appendChild(view.render().el);
-      this.subviews[repo.id] = view;
-    }).bind(this));
-
-    this.$el.html(frag);
-
-    this.$listings = this.$el.find('.item');
-    this.$search = this.$el.find('#filter');
-
-    return this;
-  },
-
-  activeListing: function(e) {
-    var $listing = $(e.target);
-
-    if (!$listing.hasClass('item')) {
-      $listing = $(e.target).closest('li');
-    }
-
-    this.$listings.removeClass('active');
-    $listing.addClass('active');
-
-    // Blur out search if its selected
-    this.$search.blur();
-  },
-
-  remove: function() {
-    _.invoke(this.subviews, 'remove');
-    this.subviews = {};
-
-    Backbone.View.prototype.remove.apply(this, arguments);
-  }
-});
-
-},{"./li/repo":43,"jquery-browserify":13,"underscore":6,"backbone":14}],33:[function(require,module,exports){
-(function(){//     Underscore.js 1.4.4
-//     http://underscorejs.org
-//     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
-//     Underscore may be freely distributed under the MIT license.
-
-(function() {
-
-  // Baseline setup
-  // --------------
-
-  // Establish the root object, `window` in the browser, or `global` on the server.
-  var root = this;
-
-  // Save the previous value of the `_` variable.
-  var previousUnderscore = root._;
-
-  // Establish the object that gets returned to break out of a loop iteration.
-  var breaker = {};
-
-  // Save bytes in the minified (but not gzipped) version:
-  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
-
-  // Create quick reference variables for speed access to core prototypes.
-  var push             = ArrayProto.push,
-      slice            = ArrayProto.slice,
-      concat           = ArrayProto.concat,
-      toString         = ObjProto.toString,
-      hasOwnProperty   = ObjProto.hasOwnProperty;
-
-  // All **ECMAScript 5** native function implementations that we hope to use
-  // are declared here.
-  var
-    nativeForEach      = ArrayProto.forEach,
-    nativeMap          = ArrayProto.map,
-    nativeReduce       = ArrayProto.reduce,
-    nativeReduceRight  = ArrayProto.reduceRight,
-    nativeFilter       = ArrayProto.filter,
-    nativeEvery        = ArrayProto.every,
-    nativeSome         = ArrayProto.some,
-    nativeIndexOf      = ArrayProto.indexOf,
-    nativeLastIndexOf  = ArrayProto.lastIndexOf,
-    nativeIsArray      = Array.isArray,
-    nativeKeys         = Object.keys,
-    nativeBind         = FuncProto.bind;
-
-  // Create a safe reference to the Underscore object for use below.
-  var _ = function(obj) {
-    if (obj instanceof _) return obj;
-    if (!(this instanceof _)) return new _(obj);
-    this._wrapped = obj;
-  };
-
-  // Export the Underscore object for **Node.js**, with
-  // backwards-compatibility for the old `require()` API. If we're in
-  // the browser, add `_` as a global object via a string identifier,
-  // for Closure Compiler "advanced" mode.
-  if (typeof exports !== 'undefined') {
-    if (typeof module !== 'undefined' && module.exports) {
-      exports = module.exports = _;
-    }
-    exports._ = _;
-  } else {
-    root._ = _;
-  }
-
-  // Current version.
-  _.VERSION = '1.4.4';
-
-  // Collection Functions
-  // --------------------
-
-  // The cornerstone, an `each` implementation, aka `forEach`.
-  // Handles objects with the built-in `forEach`, arrays, and raw objects.
-  // Delegates to **ECMAScript 5**'s native `forEach` if available.
-  var each = _.each = _.forEach = function(obj, iterator, context) {
-    if (obj == null) return;
-    if (nativeForEach && obj.forEach === nativeForEach) {
-      obj.forEach(iterator, context);
-    } else if (obj.length === +obj.length) {
-      for (var i = 0, l = obj.length; i < l; i++) {
-        if (iterator.call(context, obj[i], i, obj) === breaker) return;
-      }
-    } else {
-      for (var key in obj) {
-        if (_.has(obj, key)) {
-          if (iterator.call(context, obj[key], key, obj) === breaker) return;
-        }
-      }
-    }
-  };
-
-  // Return the results of applying the iterator to each element.
-  // Delegates to **ECMAScript 5**'s native `map` if available.
-  _.map = _.collect = function(obj, iterator, context) {
-    var results = [];
-    if (obj == null) return results;
-    if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
-    each(obj, function(value, index, list) {
-      results[results.length] = iterator.call(context, value, index, list);
-    });
-    return results;
-  };
-
-  var reduceError = 'Reduce of empty array with no initial value';
-
-  // **Reduce** builds up a single result from a list of values, aka `inject`,
-  // or `foldl`. Delegates to **ECMAScript 5**'s native `reduce` if available.
-  _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
-    var initial = arguments.length > 2;
-    if (obj == null) obj = [];
-    if (nativeReduce && obj.reduce === nativeReduce) {
-      if (context) iterator = _.bind(iterator, context);
-      return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
-    }
-    each(obj, function(value, index, list) {
-      if (!initial) {
-        memo = value;
-        initial = true;
-      } else {
-        memo = iterator.call(context, memo, value, index, list);
-      }
-    });
-    if (!initial) throw new TypeError(reduceError);
-    return memo;
-  };
-
-  // The right-associative version of reduce, also known as `foldr`.
-  // Delegates to **ECMAScript 5**'s native `reduceRight` if available.
-  _.reduceRight = _.foldr = function(obj, iterator, memo, context) {
-    var initial = arguments.length > 2;
-    if (obj == null) obj = [];
-    if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
-      if (context) iterator = _.bind(iterator, context);
-      return initial ? obj.reduceRight(iterator, memo) : obj.reduceRight(iterator);
-    }
-    var length = obj.length;
-    if (length !== +length) {
-      var keys = _.keys(obj);
-      length = keys.length;
-    }
-    each(obj, function(value, index, list) {
-      index = keys ? keys[--length] : --length;
-      if (!initial) {
-        memo = obj[index];
-        initial = true;
-      } else {
-        memo = iterator.call(context, memo, obj[index], index, list);
-      }
-    });
-    if (!initial) throw new TypeError(reduceError);
-    return memo;
-  };
-
-  // Return the first value which passes a truth test. Aliased as `detect`.
-  _.find = _.detect = function(obj, iterator, context) {
-    var result;
-    any(obj, function(value, index, list) {
-      if (iterator.call(context, value, index, list)) {
-        result = value;
-        return true;
-      }
-    });
-    return result;
-  };
-
-  // Return all the elements that pass a truth test.
-  // Delegates to **ECMAScript 5**'s native `filter` if available.
-  // Aliased as `select`.
-  _.filter = _.select = function(obj, iterator, context) {
-    var results = [];
-    if (obj == null) return results;
-    if (nativeFilter && obj.filter === nativeFilter) return obj.filter(iterator, context);
-    each(obj, function(value, index, list) {
-      if (iterator.call(context, value, index, list)) results[results.length] = value;
-    });
-    return results;
-  };
-
-  // Return all the elements for which a truth test fails.
-  _.reject = function(obj, iterator, context) {
-    return _.filter(obj, function(value, index, list) {
-      return !iterator.call(context, value, index, list);
-    }, context);
-  };
-
-  // Determine whether all of the elements match a truth test.
-  // Delegates to **ECMAScript 5**'s native `every` if available.
-  // Aliased as `all`.
-  _.every = _.all = function(obj, iterator, context) {
-    iterator || (iterator = _.identity);
-    var result = true;
-    if (obj == null) return result;
-    if (nativeEvery && obj.every === nativeEvery) return obj.every(iterator, context);
-    each(obj, function(value, index, list) {
-      if (!(result = result && iterator.call(context, value, index, list))) return breaker;
-    });
-    return !!result;
-  };
-
-  // Determine if at least one element in the object matches a truth test.
-  // Delegates to **ECMAScript 5**'s native `some` if available.
-  // Aliased as `any`.
-  var any = _.some = _.any = function(obj, iterator, context) {
-    iterator || (iterator = _.identity);
-    var result = false;
-    if (obj == null) return result;
-    if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
-    each(obj, function(value, index, list) {
-      if (result || (result = iterator.call(context, value, index, list))) return breaker;
-    });
-    return !!result;
-  };
-
-  // Determine if the array or object contains a given value (using `===`).
-  // Aliased as `include`.
-  _.contains = _.include = function(obj, target) {
-    if (obj == null) return false;
-    if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
-    return any(obj, function(value) {
-      return value === target;
-    });
-  };
-
-  // Invoke a method (with arguments) on every item in a collection.
-  _.invoke = function(obj, method) {
-    var args = slice.call(arguments, 2);
-    var isFunc = _.isFunction(method);
-    return _.map(obj, function(value) {
-      return (isFunc ? method : value[method]).apply(value, args);
-    });
-  };
-
-  // Convenience version of a common use case of `map`: fetching a property.
-  _.pluck = function(obj, key) {
-    return _.map(obj, function(value){ return value[key]; });
-  };
-
-  // Convenience version of a common use case of `filter`: selecting only objects
-  // containing specific `key:value` pairs.
-  _.where = function(obj, attrs, first) {
-    if (_.isEmpty(attrs)) return first ? null : [];
-    return _[first ? 'find' : 'filter'](obj, function(value) {
-      for (var key in attrs) {
-        if (attrs[key] !== value[key]) return false;
-      }
-      return true;
-    });
-  };
-
-  // Convenience version of a common use case of `find`: getting the first object
-  // containing specific `key:value` pairs.
-  _.findWhere = function(obj, attrs) {
-    return _.where(obj, attrs, true);
-  };
-
-  // Return the maximum element or (element-based computation).
-  // Can't optimize arrays of integers longer than 65,535 elements.
-  // See: https://bugs.webkit.org/show_bug.cgi?id=80797
-  _.max = function(obj, iterator, context) {
-    if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
-      return Math.max.apply(Math, obj);
-    }
-    if (!iterator && _.isEmpty(obj)) return -Infinity;
-    var result = {computed : -Infinity, value: -Infinity};
-    each(obj, function(value, index, list) {
-      var computed = iterator ? iterator.call(context, value, index, list) : value;
-      computed >= result.computed && (result = {value : value, computed : computed});
-    });
-    return result.value;
-  };
-
-  // Return the minimum element (or element-based computation).
-  _.min = function(obj, iterator, context) {
-    if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
-      return Math.min.apply(Math, obj);
-    }
-    if (!iterator && _.isEmpty(obj)) return Infinity;
-    var result = {computed : Infinity, value: Infinity};
-    each(obj, function(value, index, list) {
-      var computed = iterator ? iterator.call(context, value, index, list) : value;
-      computed < result.computed && (result = {value : value, computed : computed});
-    });
-    return result.value;
-  };
-
-  // Shuffle an array.
-  _.shuffle = function(obj) {
-    var rand;
-    var index = 0;
-    var shuffled = [];
-    each(obj, function(value) {
-      rand = _.random(index++);
-      shuffled[index - 1] = shuffled[rand];
-      shuffled[rand] = value;
-    });
-    return shuffled;
-  };
-
-  // An internal function to generate lookup iterators.
-  var lookupIterator = function(value) {
-    return _.isFunction(value) ? value : function(obj){ return obj[value]; };
-  };
-
-  // Sort the object's values by a criterion produced by an iterator.
-  _.sortBy = function(obj, value, context) {
-    var iterator = lookupIterator(value);
-    return _.pluck(_.map(obj, function(value, index, list) {
-      return {
-        value : value,
-        index : index,
-        criteria : iterator.call(context, value, index, list)
-      };
-    }).sort(function(left, right) {
-      var a = left.criteria;
-      var b = right.criteria;
-      if (a !== b) {
-        if (a > b || a === void 0) return 1;
-        if (a < b || b === void 0) return -1;
-      }
-      return left.index < right.index ? -1 : 1;
-    }), 'value');
-  };
-
-  // An internal function used for aggregate "group by" operations.
-  var group = function(obj, value, context, behavior) {
-    var result = {};
-    var iterator = lookupIterator(value || _.identity);
-    each(obj, function(value, index) {
-      var key = iterator.call(context, value, index, obj);
-      behavior(result, key, value);
-    });
-    return result;
-  };
-
-  // Groups the object's values by a criterion. Pass either a string attribute
-  // to group by, or a function that returns the criterion.
-  _.groupBy = function(obj, value, context) {
-    return group(obj, value, context, function(result, key, value) {
-      (_.has(result, key) ? result[key] : (result[key] = [])).push(value);
-    });
-  };
-
-  // Counts instances of an object that group by a certain criterion. Pass
-  // either a string attribute to count by, or a function that returns the
-  // criterion.
-  _.countBy = function(obj, value, context) {
-    return group(obj, value, context, function(result, key) {
-      if (!_.has(result, key)) result[key] = 0;
-      result[key]++;
-    });
-  };
-
-  // Use a comparator function to figure out the smallest index at which
-  // an object should be inserted so as to maintain order. Uses binary search.
-  _.sortedIndex = function(array, obj, iterator, context) {
-    iterator = iterator == null ? _.identity : lookupIterator(iterator);
-    var value = iterator.call(context, obj);
-    var low = 0, high = array.length;
-    while (low < high) {
-      var mid = (low + high) >>> 1;
-      iterator.call(context, array[mid]) < value ? low = mid + 1 : high = mid;
-    }
-    return low;
-  };
-
-  // Safely convert anything iterable into a real, live array.
-  _.toArray = function(obj) {
-    if (!obj) return [];
-    if (_.isArray(obj)) return slice.call(obj);
-    if (obj.length === +obj.length) return _.map(obj, _.identity);
-    return _.values(obj);
-  };
-
-  // Return the number of elements in an object.
-  _.size = function(obj) {
-    if (obj == null) return 0;
-    return (obj.length === +obj.length) ? obj.length : _.keys(obj).length;
-  };
-
-  // Array Functions
-  // ---------------
-
-  // Get the first element of an array. Passing **n** will return the first N
-  // values in the array. Aliased as `head` and `take`. The **guard** check
-  // allows it to work with `_.map`.
-  _.first = _.head = _.take = function(array, n, guard) {
-    if (array == null) return void 0;
-    return (n != null) && !guard ? slice.call(array, 0, n) : array[0];
-  };
-
-  // Returns everything but the last entry of the array. Especially useful on
-  // the arguments object. Passing **n** will return all the values in
-  // the array, excluding the last N. The **guard** check allows it to work with
-  // `_.map`.
-  _.initial = function(array, n, guard) {
-    return slice.call(array, 0, array.length - ((n == null) || guard ? 1 : n));
-  };
-
-  // Get the last element of an array. Passing **n** will return the last N
-  // values in the array. The **guard** check allows it to work with `_.map`.
-  _.last = function(array, n, guard) {
-    if (array == null) return void 0;
-    if ((n != null) && !guard) {
-      return slice.call(array, Math.max(array.length - n, 0));
-    } else {
-      return array[array.length - 1];
-    }
-  };
-
-  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
-  // Especially useful on the arguments object. Passing an **n** will return
-  // the rest N values in the array. The **guard**
-  // check allows it to work with `_.map`.
-  _.rest = _.tail = _.drop = function(array, n, guard) {
-    return slice.call(array, (n == null) || guard ? 1 : n);
-  };
-
-  // Trim out all falsy values from an array.
-  _.compact = function(array) {
-    return _.filter(array, _.identity);
-  };
-
-  // Internal implementation of a recursive `flatten` function.
-  var flatten = function(input, shallow, output) {
-    each(input, function(value) {
-      if (_.isArray(value)) {
-        shallow ? push.apply(output, value) : flatten(value, shallow, output);
-      } else {
-        output.push(value);
-      }
-    });
-    return output;
-  };
-
-  // Return a completely flattened version of an array.
-  _.flatten = function(array, shallow) {
-    return flatten(array, shallow, []);
-  };
-
-  // Return a version of the array that does not contain the specified value(s).
-  _.without = function(array) {
-    return _.difference(array, slice.call(arguments, 1));
-  };
-
-  // Produce a duplicate-free version of the array. If the array has already
-  // been sorted, you have the option of using a faster algorithm.
-  // Aliased as `unique`.
-  _.uniq = _.unique = function(array, isSorted, iterator, context) {
-    if (_.isFunction(isSorted)) {
-      context = iterator;
-      iterator = isSorted;
-      isSorted = false;
-    }
-    var initial = iterator ? _.map(array, iterator, context) : array;
-    var results = [];
-    var seen = [];
-    each(initial, function(value, index) {
-      if (isSorted ? (!index || seen[seen.length - 1] !== value) : !_.contains(seen, value)) {
-        seen.push(value);
-        results.push(array[index]);
-      }
-    });
-    return results;
-  };
-
-  // Produce an array that contains the union: each distinct element from all of
-  // the passed-in arrays.
-  _.union = function() {
-    return _.uniq(concat.apply(ArrayProto, arguments));
-  };
-
-  // Produce an array that contains every item shared between all the
-  // passed-in arrays.
-  _.intersection = function(array) {
-    var rest = slice.call(arguments, 1);
-    return _.filter(_.uniq(array), function(item) {
-      return _.every(rest, function(other) {
-        return _.indexOf(other, item) >= 0;
-      });
-    });
-  };
-
-  // Take the difference between one array and a number of other arrays.
-  // Only the elements present in just the first array will remain.
-  _.difference = function(array) {
-    var rest = concat.apply(ArrayProto, slice.call(arguments, 1));
-    return _.filter(array, function(value){ return !_.contains(rest, value); });
-  };
-
-  // Zip together multiple lists into a single array -- elements that share
-  // an index go together.
-  _.zip = function() {
-    var args = slice.call(arguments);
-    var length = _.max(_.pluck(args, 'length'));
-    var results = new Array(length);
-    for (var i = 0; i < length; i++) {
-      results[i] = _.pluck(args, "" + i);
-    }
-    return results;
-  };
-
-  // Converts lists into objects. Pass either a single array of `[key, value]`
-  // pairs, or two parallel arrays of the same length -- one of keys, and one of
-  // the corresponding values.
-  _.object = function(list, values) {
-    if (list == null) return {};
-    var result = {};
-    for (var i = 0, l = list.length; i < l; i++) {
-      if (values) {
-        result[list[i]] = values[i];
-      } else {
-        result[list[i][0]] = list[i][1];
-      }
-    }
-    return result;
-  };
-
-  // If the browser doesn't supply us with indexOf (I'm looking at you, **MSIE**),
-  // we need this function. Return the position of the first occurrence of an
-  // item in an array, or -1 if the item is not included in the array.
-  // Delegates to **ECMAScript 5**'s native `indexOf` if available.
-  // If the array is large and already in sort order, pass `true`
-  // for **isSorted** to use binary search.
-  _.indexOf = function(array, item, isSorted) {
-    if (array == null) return -1;
-    var i = 0, l = array.length;
-    if (isSorted) {
-      if (typeof isSorted == 'number') {
-        i = (isSorted < 0 ? Math.max(0, l + isSorted) : isSorted);
-      } else {
-        i = _.sortedIndex(array, item);
-        return array[i] === item ? i : -1;
-      }
-    }
-    if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item, isSorted);
-    for (; i < l; i++) if (array[i] === item) return i;
-    return -1;
-  };
-
-  // Delegates to **ECMAScript 5**'s native `lastIndexOf` if available.
-  _.lastIndexOf = function(array, item, from) {
-    if (array == null) return -1;
-    var hasIndex = from != null;
-    if (nativeLastIndexOf && array.lastIndexOf === nativeLastIndexOf) {
-      return hasIndex ? array.lastIndexOf(item, from) : array.lastIndexOf(item);
-    }
-    var i = (hasIndex ? from : array.length);
-    while (i--) if (array[i] === item) return i;
-    return -1;
-  };
-
-  // Generate an integer Array containing an arithmetic progression. A port of
-  // the native Python `range()` function. See
-  // [the Python documentation](http://docs.python.org/library/functions.html#range).
-  _.range = function(start, stop, step) {
-    if (arguments.length <= 1) {
-      stop = start || 0;
-      start = 0;
-    }
-    step = arguments[2] || 1;
-
-    var len = Math.max(Math.ceil((stop - start) / step), 0);
-    var idx = 0;
-    var range = new Array(len);
-
-    while(idx < len) {
-      range[idx++] = start;
-      start += step;
-    }
-
-    return range;
-  };
-
-  // Function (ahem) Functions
-  // ------------------
-
-  // Create a function bound to a given object (assigning `this`, and arguments,
-  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
-  // available.
-  _.bind = function(func, context) {
-    if (func.bind === nativeBind && nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
-    var args = slice.call(arguments, 2);
-    return function() {
-      return func.apply(context, args.concat(slice.call(arguments)));
-    };
-  };
-
-  // Partially apply a function by creating a version that has had some of its
-  // arguments pre-filled, without changing its dynamic `this` context.
-  _.partial = function(func) {
-    var args = slice.call(arguments, 1);
-    return function() {
-      return func.apply(this, args.concat(slice.call(arguments)));
-    };
-  };
-
-  // Bind all of an object's methods to that object. Useful for ensuring that
-  // all callbacks defined on an object belong to it.
-  _.bindAll = function(obj) {
-    var funcs = slice.call(arguments, 1);
-    if (funcs.length === 0) funcs = _.functions(obj);
-    each(funcs, function(f) { obj[f] = _.bind(obj[f], obj); });
-    return obj;
-  };
-
-  // Memoize an expensive function by storing its results.
-  _.memoize = function(func, hasher) {
-    var memo = {};
-    hasher || (hasher = _.identity);
-    return function() {
-      var key = hasher.apply(this, arguments);
-      return _.has(memo, key) ? memo[key] : (memo[key] = func.apply(this, arguments));
-    };
-  };
-
-  // Delays a function for the given number of milliseconds, and then calls
-  // it with the arguments supplied.
-  _.delay = function(func, wait) {
-    var args = slice.call(arguments, 2);
-    return setTimeout(function(){ return func.apply(null, args); }, wait);
-  };
-
-  // Defers a function, scheduling it to run after the current call stack has
-  // cleared.
-  _.defer = function(func) {
-    return _.delay.apply(_, [func, 1].concat(slice.call(arguments, 1)));
-  };
-
-  // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time.
-  _.throttle = function(func, wait) {
-    var context, args, timeout, result;
-    var previous = 0;
-    var later = function() {
-      previous = new Date;
-      timeout = null;
-      result = func.apply(context, args);
-    };
-    return function() {
-      var now = new Date;
-      var remaining = wait - (now - previous);
-      context = this;
-      args = arguments;
-      if (remaining <= 0) {
-        clearTimeout(timeout);
-        timeout = null;
-        previous = now;
-        result = func.apply(context, args);
-      } else if (!timeout) {
-        timeout = setTimeout(later, remaining);
-      }
-      return result;
-    };
-  };
-
-  // Returns a function, that, as long as it continues to be invoked, will not
-  // be triggered. The function will be called after it stops being called for
-  // N milliseconds. If `immediate` is passed, trigger the function on the
-  // leading edge, instead of the trailing.
-  _.debounce = function(func, wait, immediate) {
-    var timeout, result;
-    return function() {
-      var context = this, args = arguments;
-      var later = function() {
-        timeout = null;
-        if (!immediate) result = func.apply(context, args);
-      };
-      var callNow = immediate && !timeout;
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-      if (callNow) result = func.apply(context, args);
-      return result;
-    };
-  };
-
-  // Returns a function that will be executed at most one time, no matter how
-  // often you call it. Useful for lazy initialization.
-  _.once = function(func) {
-    var ran = false, memo;
-    return function() {
-      if (ran) return memo;
-      ran = true;
-      memo = func.apply(this, arguments);
-      func = null;
-      return memo;
-    };
-  };
-
-  // Returns the first function passed as an argument to the second,
-  // allowing you to adjust arguments, run code before and after, and
-  // conditionally execute the original function.
-  _.wrap = function(func, wrapper) {
-    return function() {
-      var args = [func];
-      push.apply(args, arguments);
-      return wrapper.apply(this, args);
-    };
-  };
-
-  // Returns a function that is the composition of a list of functions, each
-  // consuming the return value of the function that follows.
-  _.compose = function() {
-    var funcs = arguments;
-    return function() {
-      var args = arguments;
-      for (var i = funcs.length - 1; i >= 0; i--) {
-        args = [funcs[i].apply(this, args)];
-      }
-      return args[0];
-    };
-  };
-
-  // Returns a function that will only be executed after being called N times.
-  _.after = function(times, func) {
-    if (times <= 0) return func();
-    return function() {
-      if (--times < 1) {
-        return func.apply(this, arguments);
-      }
-    };
-  };
-
-  // Object Functions
-  // ----------------
-
-  // Retrieve the names of an object's properties.
-  // Delegates to **ECMAScript 5**'s native `Object.keys`
-  _.keys = nativeKeys || function(obj) {
-    if (obj !== Object(obj)) throw new TypeError('Invalid object');
-    var keys = [];
-    for (var key in obj) if (_.has(obj, key)) keys[keys.length] = key;
-    return keys;
-  };
-
-  // Retrieve the values of an object's properties.
-  _.values = function(obj) {
-    var values = [];
-    for (var key in obj) if (_.has(obj, key)) values.push(obj[key]);
-    return values;
-  };
-
-  // Convert an object into a list of `[key, value]` pairs.
-  _.pairs = function(obj) {
-    var pairs = [];
-    for (var key in obj) if (_.has(obj, key)) pairs.push([key, obj[key]]);
-    return pairs;
-  };
-
-  // Invert the keys and values of an object. The values must be serializable.
-  _.invert = function(obj) {
-    var result = {};
-    for (var key in obj) if (_.has(obj, key)) result[obj[key]] = key;
-    return result;
-  };
-
-  // Return a sorted list of the function names available on the object.
-  // Aliased as `methods`
-  _.functions = _.methods = function(obj) {
-    var names = [];
-    for (var key in obj) {
-      if (_.isFunction(obj[key])) names.push(key);
-    }
-    return names.sort();
-  };
-
-  // Extend a given object with all the properties in passed-in object(s).
-  _.extend = function(obj) {
-    each(slice.call(arguments, 1), function(source) {
-      if (source) {
-        for (var prop in source) {
-          obj[prop] = source[prop];
-        }
-      }
-    });
-    return obj;
-  };
-
-  // Return a copy of the object only containing the whitelisted properties.
-  _.pick = function(obj) {
-    var copy = {};
-    var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
-    each(keys, function(key) {
-      if (key in obj) copy[key] = obj[key];
-    });
-    return copy;
-  };
-
-   // Return a copy of the object without the blacklisted properties.
-  _.omit = function(obj) {
-    var copy = {};
-    var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
-    for (var key in obj) {
-      if (!_.contains(keys, key)) copy[key] = obj[key];
-    }
-    return copy;
-  };
-
-  // Fill in a given object with default properties.
-  _.defaults = function(obj) {
-    each(slice.call(arguments, 1), function(source) {
-      if (source) {
-        for (var prop in source) {
-          if (obj[prop] == null) obj[prop] = source[prop];
-        }
-      }
-    });
-    return obj;
-  };
-
-  // Create a (shallow-cloned) duplicate of an object.
-  _.clone = function(obj) {
-    if (!_.isObject(obj)) return obj;
-    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
-  };
-
-  // Invokes interceptor with the obj, and then returns obj.
-  // The primary purpose of this method is to "tap into" a method chain, in
-  // order to perform operations on intermediate results within the chain.
-  _.tap = function(obj, interceptor) {
-    interceptor(obj);
-    return obj;
-  };
-
-  // Internal recursive comparison function for `isEqual`.
-  var eq = function(a, b, aStack, bStack) {
-    // Identical objects are equal. `0 === -0`, but they aren't identical.
-    // See the Harmony `egal` proposal: http://wiki.ecmascript.org/doku.php?id=harmony:egal.
-    if (a === b) return a !== 0 || 1 / a == 1 / b;
-    // A strict comparison is necessary because `null == undefined`.
-    if (a == null || b == null) return a === b;
-    // Unwrap any wrapped objects.
-    if (a instanceof _) a = a._wrapped;
-    if (b instanceof _) b = b._wrapped;
-    // Compare `[[Class]]` names.
-    var className = toString.call(a);
-    if (className != toString.call(b)) return false;
-    switch (className) {
-      // Strings, numbers, dates, and booleans are compared by value.
-      case '[object String]':
-        // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
-        // equivalent to `new String("5")`.
-        return a == String(b);
-      case '[object Number]':
-        // `NaN`s are equivalent, but non-reflexive. An `egal` comparison is performed for
-        // other numeric values.
-        return a != +a ? b != +b : (a == 0 ? 1 / a == 1 / b : a == +b);
-      case '[object Date]':
-      case '[object Boolean]':
-        // Coerce dates and booleans to numeric primitive values. Dates are compared by their
-        // millisecond representations. Note that invalid dates with millisecond representations
-        // of `NaN` are not equivalent.
-        return +a == +b;
-      // RegExps are compared by their source patterns and flags.
-      case '[object RegExp]':
-        return a.source == b.source &&
-               a.global == b.global &&
-               a.multiline == b.multiline &&
-               a.ignoreCase == b.ignoreCase;
-    }
-    if (typeof a != 'object' || typeof b != 'object') return false;
-    // Assume equality for cyclic structures. The algorithm for detecting cyclic
-    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
-    var length = aStack.length;
-    while (length--) {
-      // Linear search. Performance is inversely proportional to the number of
-      // unique nested structures.
-      if (aStack[length] == a) return bStack[length] == b;
-    }
-    // Add the first object to the stack of traversed objects.
-    aStack.push(a);
-    bStack.push(b);
-    var size = 0, result = true;
-    // Recursively compare objects and arrays.
-    if (className == '[object Array]') {
-      // Compare array lengths to determine if a deep comparison is necessary.
-      size = a.length;
-      result = size == b.length;
-      if (result) {
-        // Deep compare the contents, ignoring non-numeric properties.
-        while (size--) {
-          if (!(result = eq(a[size], b[size], aStack, bStack))) break;
-        }
-      }
-    } else {
-      // Objects with different constructors are not equivalent, but `Object`s
-      // from different frames are.
-      var aCtor = a.constructor, bCtor = b.constructor;
-      if (aCtor !== bCtor && !(_.isFunction(aCtor) && (aCtor instanceof aCtor) &&
-                               _.isFunction(bCtor) && (bCtor instanceof bCtor))) {
-        return false;
-      }
-      // Deep compare objects.
-      for (var key in a) {
-        if (_.has(a, key)) {
-          // Count the expected number of properties.
-          size++;
-          // Deep compare each member.
-          if (!(result = _.has(b, key) && eq(a[key], b[key], aStack, bStack))) break;
-        }
-      }
-      // Ensure that both objects contain the same number of properties.
-      if (result) {
-        for (key in b) {
-          if (_.has(b, key) && !(size--)) break;
-        }
-        result = !size;
-      }
-    }
-    // Remove the first object from the stack of traversed objects.
-    aStack.pop();
-    bStack.pop();
-    return result;
-  };
-
-  // Perform a deep comparison to check if two objects are equal.
-  _.isEqual = function(a, b) {
-    return eq(a, b, [], []);
-  };
-
-  // Is a given array, string, or object empty?
-  // An "empty" object has no enumerable own-properties.
-  _.isEmpty = function(obj) {
-    if (obj == null) return true;
-    if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
-    for (var key in obj) if (_.has(obj, key)) return false;
-    return true;
-  };
-
-  // Is a given value a DOM element?
-  _.isElement = function(obj) {
-    return !!(obj && obj.nodeType === 1);
-  };
-
-  // Is a given value an array?
-  // Delegates to ECMA5's native Array.isArray
-  _.isArray = nativeIsArray || function(obj) {
-    return toString.call(obj) == '[object Array]';
-  };
-
-  // Is a given variable an object?
-  _.isObject = function(obj) {
-    return obj === Object(obj);
-  };
-
-  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp.
-  each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'], function(name) {
-    _['is' + name] = function(obj) {
-      return toString.call(obj) == '[object ' + name + ']';
-    };
-  });
-
-  // Define a fallback version of the method in browsers (ahem, IE), where
-  // there isn't any inspectable "Arguments" type.
-  if (!_.isArguments(arguments)) {
-    _.isArguments = function(obj) {
-      return !!(obj && _.has(obj, 'callee'));
-    };
-  }
-
-  // Optimize `isFunction` if appropriate.
-  if (typeof (/./) !== 'function') {
-    _.isFunction = function(obj) {
-      return typeof obj === 'function';
-    };
-  }
-
-  // Is a given object a finite number?
-  _.isFinite = function(obj) {
-    return isFinite(obj) && !isNaN(parseFloat(obj));
-  };
-
-  // Is the given value `NaN`? (NaN is the only number which does not equal itself).
-  _.isNaN = function(obj) {
-    return _.isNumber(obj) && obj != +obj;
-  };
-
-  // Is a given value a boolean?
-  _.isBoolean = function(obj) {
-    return obj === true || obj === false || toString.call(obj) == '[object Boolean]';
-  };
-
-  // Is a given value equal to null?
-  _.isNull = function(obj) {
-    return obj === null;
-  };
-
-  // Is a given variable undefined?
-  _.isUndefined = function(obj) {
-    return obj === void 0;
-  };
-
-  // Shortcut function for checking if an object has a given property directly
-  // on itself (in other words, not on a prototype).
-  _.has = function(obj, key) {
-    return hasOwnProperty.call(obj, key);
-  };
-
-  // Utility Functions
-  // -----------------
-
-  // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
-  // previous owner. Returns a reference to the Underscore object.
-  _.noConflict = function() {
-    root._ = previousUnderscore;
-    return this;
-  };
-
-  // Keep the identity function around for default iterators.
-  _.identity = function(value) {
-    return value;
-  };
-
-  // Run a function **n** times.
-  _.times = function(n, iterator, context) {
-    var accum = Array(n);
-    for (var i = 0; i < n; i++) accum[i] = iterator.call(context, i);
-    return accum;
-  };
-
-  // Return a random integer between min and max (inclusive).
-  _.random = function(min, max) {
-    if (max == null) {
-      max = min;
-      min = 0;
-    }
-    return min + Math.floor(Math.random() * (max - min + 1));
-  };
-
-  // List of HTML entities for escaping.
-  var entityMap = {
-    escape: {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#x27;',
-      '/': '&#x2F;'
-    }
-  };
-  entityMap.unescape = _.invert(entityMap.escape);
-
-  // Regexes containing the keys and values listed immediately above.
-  var entityRegexes = {
-    escape:   new RegExp('[' + _.keys(entityMap.escape).join('') + ']', 'g'),
-    unescape: new RegExp('(' + _.keys(entityMap.unescape).join('|') + ')', 'g')
-  };
-
-  // Functions for escaping and unescaping strings to/from HTML interpolation.
-  _.each(['escape', 'unescape'], function(method) {
-    _[method] = function(string) {
-      if (string == null) return '';
-      return ('' + string).replace(entityRegexes[method], function(match) {
-        return entityMap[method][match];
-      });
-    };
-  });
-
-  // If the value of the named property is a function then invoke it;
-  // otherwise, return it.
-  _.result = function(object, property) {
-    if (object == null) return null;
-    var value = object[property];
-    return _.isFunction(value) ? value.call(object) : value;
-  };
-
-  // Add your own custom functions to the Underscore object.
-  _.mixin = function(obj) {
-    each(_.functions(obj), function(name){
-      var func = _[name] = obj[name];
-      _.prototype[name] = function() {
-        var args = [this._wrapped];
-        push.apply(args, arguments);
-        return result.call(this, func.apply(_, args));
-      };
-    });
-  };
-
-  // Generate a unique integer id (unique within the entire client session).
-  // Useful for temporary DOM ids.
-  var idCounter = 0;
-  _.uniqueId = function(prefix) {
-    var id = ++idCounter + '';
-    return prefix ? prefix + id : id;
-  };
-
-  // By default, Underscore uses ERB-style template delimiters, change the
-  // following template settings to use alternative delimiters.
-  _.templateSettings = {
-    evaluate    : /<%([\s\S]+?)%>/g,
-    interpolate : /<%=([\s\S]+?)%>/g,
-    escape      : /<%-([\s\S]+?)%>/g
-  };
-
-  // When customizing `templateSettings`, if you don't want to define an
-  // interpolation, evaluation or escaping regex, we need one that is
-  // guaranteed not to match.
-  var noMatch = /(.)^/;
-
-  // Certain characters need to be escaped so that they can be put into a
-  // string literal.
-  var escapes = {
-    "'":      "'",
-    '\\':     '\\',
-    '\r':     'r',
-    '\n':     'n',
-    '\t':     't',
-    '\u2028': 'u2028',
-    '\u2029': 'u2029'
-  };
-
-  var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
-
-  // JavaScript micro-templating, similar to John Resig's implementation.
-  // Underscore templating handles arbitrary delimiters, preserves whitespace,
-  // and correctly escapes quotes within interpolated code.
-  _.template = function(text, data, settings) {
-    var render;
-    settings = _.defaults({}, settings, _.templateSettings);
-
-    // Combine delimiters into one regular expression via alternation.
-    var matcher = new RegExp([
-      (settings.escape || noMatch).source,
-      (settings.interpolate || noMatch).source,
-      (settings.evaluate || noMatch).source
-    ].join('|') + '|$', 'g');
-
-    // Compile the template source, escaping string literals appropriately.
-    var index = 0;
-    var source = "__p+='";
-    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
-      source += text.slice(index, offset)
-        .replace(escaper, function(match) { return '\\' + escapes[match]; });
-
-      if (escape) {
-        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
-      }
-      if (interpolate) {
-        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
-      }
-      if (evaluate) {
-        source += "';\n" + evaluate + "\n__p+='";
-      }
-      index = offset + match.length;
-      return match;
-    });
-    source += "';\n";
-
-    // If a variable is not specified, place data values in local scope.
-    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
-
-    source = "var __t,__p='',__j=Array.prototype.join," +
-      "print=function(){__p+=__j.call(arguments,'');};\n" +
-      source + "return __p;\n";
-
-    try {
-      render = new Function(settings.variable || 'obj', '_', source);
-    } catch (e) {
-      e.source = source;
-      throw e;
-    }
-
-    if (data) return render(data, _);
-    var template = function(data) {
-      return render.call(this, data, _);
-    };
-
-    // Provide the compiled function source as a convenience for precompilation.
-    template.source = 'function(' + (settings.variable || 'obj') + '){\n' + source + '}';
-
-    return template;
-  };
-
-  // Add a "chain" function, which will delegate to the wrapper.
-  _.chain = function(obj) {
-    return _(obj).chain();
-  };
-
-  // OOP
-  // ---------------
-  // If Underscore is called as a function, it returns a wrapped object that
-  // can be used OO-style. This wrapper holds altered versions of all the
-  // underscore functions. Wrapped objects may be chained.
-
-  // Helper function to continue chaining intermediate results.
-  var result = function(obj) {
-    return this._chain ? _(obj).chain() : obj;
-  };
-
-  // Add all of the Underscore functions to the wrapper object.
-  _.mixin(_);
-
-  // Add all mutator Array functions to the wrapper.
-  each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
-    var method = ArrayProto[name];
-    _.prototype[name] = function() {
-      var obj = this._wrapped;
-      method.apply(obj, arguments);
-      if ((name == 'shift' || name == 'splice') && obj.length === 0) delete obj[0];
-      return result.call(this, obj);
-    };
-  });
-
-  // Add all accessor Array functions to the wrapper.
-  each(['concat', 'join', 'slice'], function(name) {
-    var method = ArrayProto[name];
-    _.prototype[name] = function() {
-      return result.call(this, method.apply(this._wrapped, arguments));
-    };
-  });
-
-  _.extend(_.prototype, {
-
-    // Start chaining a wrapped Underscore object.
-    chain: function() {
-      this._chain = true;
-      return this;
-    },
-
-    // Extracts the result from a wrapped and chained object.
-    value: function() {
-      return this._wrapped;
-    }
-
-  });
-
-}).call(this);
-
-})()
-},{}],18:[function(require,module,exports){
+},{"../collections/branches":35,"../collections/commits":36,"../config":8,"underscore":11,"backbone":12}],18:[function(require,module,exports){
 var _ = require('underscore');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -25538,171 +24024,291 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{".././util":28,"underscore":6,"backbone":14,"js-yaml":44,"marked":45}],26:[function(require,module,exports){
+},{".././util":28,"underscore":11,"marked":37,"backbone":12,"js-yaml":38}],19:[function(require,module,exports){
 var $ = require('jquery-browserify');
-var marked = require('marked');
-var Backbone = require('backbone');
-
-module.exports = Backbone.View.extend({
-  className: 'inner deep prose limiter',
-
-  render: function() {
-    this.$el.empty()
-      .append(marked(t('about.content')));
-    return this;
-  }
-});
-
-},{"jquery-browserify":13,"backbone":14,"marked":45}],27:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var Backbone = require('backbone');
 var _ = require('underscore');
+var Backbone = require('backbone');
+var LoaderView = require('./loader');
+var SidebarView = require('./sidebar');
+var NavView = require('./nav');
 var cookie = require('../cookie');
 var templates = require('../../dist/templates');
-var LOCALES = require('../../translations/locales');
+var util = require('../util');
 
 module.exports = Backbone.View.extend({
-  className: 'inner deep prose limiter',
+  className: 'application',
 
-  template: templates.chooselanguage,
+  template: templates.app,
+
+  subviews: {},
 
   events: {
-    'click .language': 'setLanguage' 
+    'click a.logout': 'logout'
   },
 
-  render: function() {
-    var chooseLanguages = {
-      languages: LOCALES,
-      active: app.locale ? app.locale : window.locale._current
-    };
-
-    this.$el.empty().append(_.template(this.template, chooseLanguages, {
-      variable: 'chooseLanguage'
-    }));
-    return this;
-  },
-
-  setLanguage: function(e) {
-    if (!$(e.target).hasClass('active')) {
-      var code = $(e.target).data('code');
-      cookie.set('lang', code);
-
-      // Check if the browsers language is supported
-      app.locale = code;
-
-      if (app.locale && app.locale !== 'en') {
-          $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
-              window.locale[app.locale] = result;
-              window.locale.current(app.locale);
-          });
-      }
-
-      // Reflect changes. Could be more elegant.
-      window.location.reload();
-    }
-
-    return false;
-  }
-});
-
-},{"../cookie":3,"../../dist/templates":7,"../../translations/locales":2,"jquery-browserify":13,"backbone":14,"underscore":6}],31:[function(require,module,exports){
-var _ = require('underscore');
-
-var Backbone = require('backbone');
-var Repo = require('../models/repo');
-
-var auth = require('../config');
-var cookie = require('../cookie');
-
-module.exports = Backbone.Collection.extend({
-  model: Repo,
-
-  initialize: function(models, options) {
+  initialize: function(options) {
     _.bindAll(this);
+
+    key('j, k, enter, o', (function(e, handler) {
+      if (this.$el.find('.listing')[0]) {
+        if (handler.key === 'j' || handler.key === 'k') {
+          util.pageListing(handler.key);
+        } else {
+          util.goToFile();
+        }
+      }
+    }).bind(this));
 
     this.user = options.user;
 
-    this.comparator = function(repo) {
-      return -(new Date(repo.get('updated_at')).getTime());
-    };
+    // Loader
+    this.loader = new LoaderView();
+    this.subviews['loader'] = this.loader;
+
+    // Sidebar
+    this.sidebar = new SidebarView({
+      app: this,
+      user: this.user
+    });
+    this.subviews['sidebar'] = this.sidebar;
+
+    // Nav
+    this.nav = new NavView({
+      app: this,
+      sidebar: this.sidebar,
+      user: this.user
+    });
+    this.subviews['nav'] = this.nav;
   },
 
-  parseLinkHeader: function(xhr, options) {
-    options = _.clone(options) || {};
+  render: function() {
+    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
 
-    var header = xhr.getResponseHeader('link');
+    this.loader.setElement(this.$el.find('#loader')).render();
+    this.sidebar.setElement(this.$el.find('#drawer')).render();
+    this.nav.setElement(this.$el.find('nav')).render();
 
-    if (header) {
-      var parts = header.split(',');
-      var links = {};
-
-      _.each(parts, function(link) {
-        var section = link.split(';');
-
-        var url = section[0].replace(/<(.*)>/, '$1').trim();
-        var name = section[1].replace(/rel="(.*)"/, '$1').trim();
-
-        links[name] = url;
-      });
-
-      if (links.next) {
-        $.ajax({
-          type: 'GET',
-          url: links.next,
-          success: options.success,
-          error: options.error
-        });
-      } else {
-        if (_.isFunction(options.complete)) options.complete();
-      }
-    } else {
-      if (_.isFunction(options.error)) options.error();
-    }
+    return this;
   },
 
-  fetch: function(options) {
-    options = _.clone(options) || {};
-
-    var cb = options.success;
-
-    var success = (function(res, statusText, xhr) {
-      this.add(res);
-      this.parseLinkHeader(xhr, {
-        success: success,
-        complete: cb
-      });
-    }).bind(this);
-
-    Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-      success: (function(model, res, options) {
-        this.parseLinkHeader(options.xhr, {
-          success: success,
-          error: cb
-        });
-      }).bind(this)
-    }));
+  logout: function() {
+    cookie.unset('oauth-token');
+    cookie.unset('id');
+    window.location.reload();
+    return false;
   },
 
-  url: function() {
-    var id = cookie.get('id');
-    var type = this.user.get('type');
-    var path;
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
 
-    switch(type) {
-      case 'User':
-        path = (id && this.user.get('id') === id) ? '/user' :
-          ('/users/' + this.user.get('login'))
-        break;
-      case 'Organization':
-        path = '/orgs/' + this.user.get('login');
-        break;
-    }
-
-    return auth.api + path + '/repos?per_page=100';
+    Backbone.View.prototype.remove.apply(this, arguments);
   }
 });
 
-},{"../config":4,"../models/repo":17,"../cookie":3,"underscore":6,"backbone":14}],24:[function(require,module,exports){
+},{"./loader":39,"./sidebar":40,"./nav":41,"../cookie":3,"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],20:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+var auth = require('../config');
+
+module.exports = Backbone.View.extend({
+  id: 'start',
+
+  template: templates.start,
+
+  render: function() {
+    this.$el.html(_.template(this.template, auth, { variable: 'auth' }));
+    return this;
+  }
+});
+
+},{"../../dist/templates":14,"../config":8,"jquery-browserify":10,"underscore":11,"backbone":12}],21:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var HeaderView = require('./header');
+var OrgsView = require('./sidebar/orgs');
+var utils = require('.././util');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.profile,
+
+  subviews: {},
+
+  initialize: function(options) {
+    this.auth = options.auth;
+    this.repos = options.repos;
+    this.router = options.router;
+    this.search = options.search;
+    this.sidebar = options.sidebar;
+    this.user = options.user;
+  },
+
+  render: function() {
+    this.$el.empty().append(_.template(this.template));
+
+    this.search.setElement(this.$el.find('#search')).render();
+    this.repos.setElement(this.$el.find('#repos'));
+
+    var header = new HeaderView({ user: this.user, alterable: false });
+    header.setElement(this.$el.find('#heading')).render();
+    this.subviews['header'] = header;
+
+    if (this.auth) {
+      var orgs = this.sidebar.initSubview('orgs', {
+        model: this.auth.orgs,
+        router: this.router,
+        sidebar: this.sidebar,
+        user: this.user
+      });
+      
+      this.subviews['orgs'] = orgs;
+    }
+
+    return this;
+  },
+
+  remove: function() {
+    this.sidebar.close();
+
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./header":42,"./sidebar/orgs":43,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],22:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+var util = require('../util');
+
+module.exports = Backbone.View.extend({
+  template: templates.search,
+
+  events: {
+    'keyup input': 'keyup'
+  },
+
+  initialize: function(options) {
+    this.mode = options.mode;
+    this.model = options.model;
+  },
+
+  render: function() {
+    var placeholder = t('main.repos.filter');
+    if (this.mode === 'repo') placeholder = t('main.repo.filter');
+
+    var search = {
+      placeholder: placeholder
+    };
+
+    this.$el.empty().append(_.template(this.template, search, {
+      variable: 'search'
+    }));
+
+    this.input = this.$el.find('input');
+    this.input.focus();
+    return this;
+  },
+
+  keyup: function(e) {
+    if (e && e.which === 27) {
+      // ESC key
+      this.input.val('');
+      this.trigger('search');
+    } else if (e && e.which === 40) {
+      // Down Arrow
+      util.pageListing('down');
+      e.preventDefault();
+      e.stopPropagation();
+      this.input.blur();
+    } else {
+      this.trigger('search');
+    }
+  },
+
+  search: function() {
+    var searchstr = this.input ? this.input.val() : '';
+    return this.model.filter(function(model) {
+      return model.get('name').indexOf(searchstr) > -1;
+    });
+  }
+});
+
+},{"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],23:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var RepoView = require('./li/repo');
+
+module.exports = Backbone.View.extend({
+  subviews: {},
+
+  events: {
+    'mouseover .item': 'activeListing',
+    'mouseover .item a': 'activeListing'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.model = options.model;
+    this.search = options.search;
+
+    this.listenTo(this.search, 'search', this.render);
+  },
+
+  render: function() {
+    var collection = this.search ? this.search.search() : this.model;
+    var frag = document.createDocumentFragment();
+
+    collection.each((function(repo, i) {
+      var view = new RepoView({
+        index: i,
+        model: repo
+      });
+
+      frag.appendChild(view.render().el);
+      this.subviews[repo.id] = view;
+    }).bind(this));
+
+    this.$el.html(frag);
+
+    this.$listings = this.$el.find('.item');
+    this.$search = this.$el.find('#filter');
+
+    return this;
+  },
+
+  activeListing: function(e) {
+    var $listing = $(e.target);
+
+    if (!$listing.hasClass('item')) {
+      $listing = $(e.target).closest('li');
+    }
+
+    this.$listings.removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    this.$search.blur();
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./li/repo":44,"jquery-browserify":10,"underscore":11,"backbone":12}],24:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');
@@ -25843,7 +24449,171 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./files":46,"./header":41,"./search":22,".././util":28,"../../dist/templates":7,"jquery-browserify":13,"underscore":6,"backbone":14,"queue-async":47}],25:[function(require,module,exports){
+},{"./files":45,"./header":42,"./search":22,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"queue-async":46,"backbone":12}],26:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var marked = require('marked');
+var Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  className: 'inner deep prose limiter',
+
+  render: function() {
+    this.$el.empty()
+      .append(marked(t('about.content')));
+    return this;
+  }
+});
+
+},{"jquery-browserify":10,"marked":37,"backbone":12}],27:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var Backbone = require('backbone');
+var _ = require('underscore');
+var cookie = require('../cookie');
+var templates = require('../../dist/templates');
+var LOCALES = require('../../translations/locales');
+
+module.exports = Backbone.View.extend({
+  className: 'inner deep prose limiter',
+
+  template: templates.chooselanguage,
+
+  events: {
+    'click .language': 'setLanguage' 
+  },
+
+  render: function() {
+    var chooseLanguages = {
+      languages: LOCALES,
+      active: app.locale ? app.locale : window.locale._current
+    };
+
+    this.$el.empty().append(_.template(this.template, chooseLanguages, {
+      variable: 'chooseLanguage'
+    }));
+    return this;
+  },
+
+  setLanguage: function(e) {
+    if (!$(e.target).hasClass('active')) {
+      var code = $(e.target).data('code');
+      cookie.set('lang', code);
+
+      // Check if the browsers language is supported
+      app.locale = code;
+
+      if (app.locale && app.locale !== 'en') {
+          $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+              window.locale[app.locale] = result;
+              window.locale.current(app.locale);
+          });
+      }
+
+      // Reflect changes. Could be more elegant.
+      window.location.reload();
+    }
+
+    return false;
+  }
+});
+
+},{"../cookie":3,"../../dist/templates":14,"../../translations/locales":2,"jquery-browserify":10,"backbone":12,"underscore":11}],31:[function(require,module,exports){
+var _ = require('underscore');
+
+var Backbone = require('backbone');
+var Repo = require('../models/repo');
+
+var auth = require('../config');
+var cookie = require('../cookie');
+
+module.exports = Backbone.Collection.extend({
+  model: Repo,
+
+  initialize: function(models, options) {
+    _.bindAll(this);
+
+    this.user = options.user;
+
+    this.comparator = function(repo) {
+      return -(new Date(repo.get('updated_at')).getTime());
+    };
+  },
+
+  parseLinkHeader: function(xhr, options) {
+    options = _.clone(options) || {};
+
+    var header = xhr.getResponseHeader('link');
+
+    if (header) {
+      var parts = header.split(',');
+      var links = {};
+
+      _.each(parts, function(link) {
+        var section = link.split(';');
+
+        var url = section[0].replace(/<(.*)>/, '$1').trim();
+        var name = section[1].replace(/rel="(.*)"/, '$1').trim();
+
+        links[name] = url;
+      });
+
+      if (links.next) {
+        $.ajax({
+          type: 'GET',
+          url: links.next,
+          success: options.success,
+          error: options.error
+        });
+      } else {
+        if (_.isFunction(options.complete)) options.complete();
+      }
+    } else {
+      if (_.isFunction(options.error)) options.error();
+    }
+  },
+
+  fetch: function(options) {
+    options = _.clone(options) || {};
+
+    var cb = options.success;
+
+    var success = (function(res, statusText, xhr) {
+      this.add(res);
+      this.parseLinkHeader(xhr, {
+        success: success,
+        complete: cb
+      });
+    }).bind(this);
+
+    Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+      success: (function(model, res, options) {
+        this.parseLinkHeader(options.xhr, {
+          success: success,
+          error: cb
+        });
+      }).bind(this)
+    }));
+  },
+
+  url: function() {
+    var id = cookie.get('id');
+    var type = this.user.get('type');
+    var path;
+
+    switch(type) {
+      case 'User':
+        path = (id && this.user.get('id') === id) ? '/user' :
+          ('/users/' + this.user.get('login'))
+        break;
+      case 'Organization':
+        path = '/orgs/' + this.user.get('login');
+        break;
+    }
+
+    return auth.api + path + '/repos?per_page=100';
+  }
+});
+
+},{"../models/repo":17,"../config":8,"../cookie":3,"underscore":11,"backbone":12}],25:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');
@@ -27105,7 +25875,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../vendor/liquid.patch":29,"./modal":48,"../models/file":18,"./header":41,"./toolbar":49,"./metadata":50,"../config":4,"../util":28,"../upload":30,"../cookie":3,"../../dist/templates":7,"jquery-browserify":13,"underscore":6,"js-yaml":44,"keymaster":51,"marked":45,"backbone":14,"diff":52,"queue-async":47}],45:[function(require,module,exports){
+},{"../../vendor/liquid.patch":29,"./modal":47,"../models/file":18,"./header":42,"./toolbar":48,"./metadata":49,"../config":8,"../util":28,"../upload":30,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"queue-async":46,"js-yaml":38,"keymaster":50,"marked":37,"backbone":12,"diff":51}],37:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -28259,9 +27029,92 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
-},{}],51:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
+(function() {
+  if (typeof module === "undefined") self.queue = queue;
+  else module.exports = queue;
+  queue.version = "1.0.3";
+
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var queue = {},
+        deferrals = [],
+        started = 0, // number of deferrals that have been started (and perhaps finished)
+        active = 0, // number of deferrals currently being executed (started but not finished)
+        remaining = 0, // number of deferrals not yet finished
+        popping, // inside a synchronous deferral callback?
+        error,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    queue.defer = function() {
+      if (!error) {
+        deferrals.push(arguments);
+        ++remaining;
+        pop();
+      }
+      return queue;
+    };
+
+    queue.await = function(f) {
+      await = f;
+      all = false;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    queue.awaitAll = function(f) {
+      await = f;
+      all = true;
+      if (!remaining) notify();
+      return queue;
+    };
+
+    function pop() {
+      while (popping = started < deferrals.length && active < parallelism) {
+        var i = started++,
+            d = deferrals[i],
+            a = slice.call(d, 1);
+        a.push(callback(i));
+        ++active;
+        d[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new deferrals and squelch active callbacks
+          started = remaining = NaN; // stop queued deferrals from starting
+          notify();
+        } else {
+          deferrals[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(null, deferrals);
+      else await.apply(null, [null].concat(deferrals));
+    }
+
+    return queue;
+  }
+
+  function noop() {}
+})();
+
+},{}],50:[function(require,module,exports){
 (function(){//     keymaster.js
-//     (c) 2011 Thomas Fuchs
+//     (c) 2011-2012 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
 
 ;(function(global){
@@ -28290,9 +27143,13 @@ if (typeof exports === 'object') {
       '`': 192, '-': 189, '=': 187,
       ';': 186, '\'': 222,
       '[': 219, ']': 221, '\\': 220
-    };
+    },
+    code = function(x){
+      return _MAP[x] || x.toUpperCase().charCodeAt(0);
+    },
+    _downKeys = [];
 
-  for(k=1;k<20;k++) _MODIFIERS['f'+k] = 111+k;
+  for(k=1;k<20;k++) _MAP['f'+k] = 111+k;
 
   // IE doesn't support Array#indexOf, so have a simple replacement
   function index(array, item){
@@ -28301,11 +27158,33 @@ if (typeof exports === 'object') {
     return -1;
   }
 
+  // for comparing mods before unassignment
+  function compareArray(a1, a2) {
+    if (a1.length != a2.length) return false;
+    for (var i = 0; i < a1.length; i++) {
+        if (a1[i] !== a2[i]) return false;
+    }
+    return true;
+  }
+
+  var modifierMap = {
+      16:'shiftKey',
+      18:'altKey',
+      17:'ctrlKey',
+      91:'metaKey'
+  };
+  function updateModifierKey(event) {
+      for(k in _mods) _mods[k] = event[modifierMap[k]];
+  };
+
   // handle keydown event
-  function dispatch(event){
-    var key, tagName, handler, k, i, modifiersMatch;
-    tagName = (event.target || event.srcElement).tagName;
+  function dispatch(event, scope){
+    var key, handler, k, i, modifiersMatch;
     key = event.keyCode;
+
+    if (index(_downKeys, key) == -1) {
+        _downKeys.push(key);
+    }
 
     // if a modifier key, set the key.<modifierkeyname> property to true and return
     if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
@@ -28315,9 +27194,11 @@ if (typeof exports === 'object') {
       for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
       return;
     }
+    updateModifierKey(event);
 
-    // ignore keypressed in any elements that support keyboard data input
-    if (tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA') return;
+    // see if we need to ignore the keypress (filter() can can be overridden)
+    // by default ignore key presses if a select, textarea, or input is focused
+    if(!assignKey.filter.call(this, event)) return;
 
     // abort if no potentially matching shortcuts found
     if (!(key in _handlers)) return;
@@ -28327,7 +27208,7 @@ if (typeof exports === 'object') {
       handler = _handlers[key][i];
 
       // see if it's in the current scope
-      if(handler.scope == _scope || handler.scope == 'all'){
+      if(handler.scope == scope || handler.scope == 'all'){
         // check if modifiers match if any
         modifiersMatch = handler.mods.length > 0;
         for(k in _mods)
@@ -28343,12 +27224,19 @@ if (typeof exports === 'object') {
           }
         }
       }
-	}
+    }
   };
 
   // unset modifier keys on keyup
   function clearModifier(event){
-    var key = event.keyCode, k;
+    var key = event.keyCode, k,
+        i = index(_downKeys, key);
+
+    // remove key from _downKeys
+    if (i >= 0) {
+        _downKeys.splice(i, 1);
+    }
+
     if(key == 93 || key == 224) key = 91;
     if(key in _mods) {
       _mods[key] = false;
@@ -28356,43 +27244,123 @@ if (typeof exports === 'object') {
     }
   };
 
+  function resetModifiers() {
+    for(k in _mods) _mods[k] = false;
+    for(k in _MODIFIERS) assignKey[k] = false;
+  };
+
   // parse and assign shortcut
   function assignKey(key, scope, method){
-    var keys, mods, i, mi;
+    var keys, mods;
+    keys = getKeys(key);
     if (method === undefined) {
       method = scope;
       scope = 'all';
     }
-    key = key.replace(/\s/g,'');
-    keys = key.split(',');
 
-    if((keys[keys.length-1])=='')
-      keys[keys.length-2] += ',';
     // for each shortcut
-    for (i = 0; i < keys.length; i++) {
+    for (var i = 0; i < keys.length; i++) {
       // set modifier keys if any
       mods = [];
       key = keys[i].split('+');
-      if(key.length > 1){
-        mods = key.slice(0,key.length-1);
-        for (mi = 0; mi < mods.length; mi++)
-          mods[mi] = _MODIFIERS[mods[mi]];
+      if (key.length > 1){
+        mods = getMods(key);
         key = [key[key.length-1]];
       }
       // convert to keycode and...
       key = key[0]
-      key = _MAP[key] || key.toUpperCase().charCodeAt(0);
+      key = code(key);
       // ...store handler
       if (!(key in _handlers)) _handlers[key] = [];
       _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
     }
   };
 
+  // unbind all handlers for given key in current scope
+  function unbindKey(key, scope) {
+    var keys = key.split('+'),
+      mods = [],
+      i, obj;
+
+    if (keys.length > 1) {
+      mods = getMods(keys);
+      key = keys[keys.length - 1];
+    }
+
+    key = code(key);
+
+    if (scope === undefined) {
+      scope = getScope();
+    }
+    if (!_handlers[key]) {
+      return;
+    }
+    for (i in _handlers[key]) {
+      obj = _handlers[key][i];
+      // only clear handlers if correct scope and mods match
+      if (obj.scope === scope && compareArray(obj.mods, mods)) {
+        _handlers[key][i] = {};
+      }
+    }
+  };
+
+  // Returns true if the key with code 'keyCode' is currently down
+  // Converts strings into key codes.
+  function isPressed(keyCode) {
+      if (typeof(keyCode)=='string') {
+        keyCode = code(keyCode);
+      }
+      return index(_downKeys, keyCode) != -1;
+  }
+
+  function getPressedKeyCodes() {
+      return _downKeys.slice(0);
+  }
+
+  function filter(event){
+    var tagName = (event.target || event.srcElement).tagName;
+    // ignore keypressed in any elements that support keyboard data input
+    return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+  }
+
   // initialize key.<modifier> to false
   for(k in _MODIFIERS) assignKey[k] = false;
 
   // set current scope (default 'all')
   function setScope(scope){ _scope = scope || 'all' };
+  function getScope(){ return _scope || 'all' };
+
+  // delete all handlers for a given scope
+  function deleteScope(scope){
+    var key, handlers, i;
+
+    for (key in _handlers) {
+      handlers = _handlers[key];
+      for (i = 0; i < handlers.length; ) {
+        if (handlers[i].scope === scope) handlers.splice(i, 1);
+        else i++;
+      }
+    }
+  };
+
+  // abstract key logic for assign and unassign
+  function getKeys(key) {
+    var keys;
+    key = key.replace(/\s/g, '');
+    keys = key.split(',');
+    if ((keys[keys.length - 1]) == '') {
+      keys[keys.length - 2] += ',';
+    }
+    return keys;
+  }
+
+  // abstract mods logic for assign and unassign
+  function getMods(key) {
+    var mods = key.slice(0, key.length - 1);
+    for (var mi = 0; mi < mods.length; mi++)
+    mods[mi] = _MODIFIERS[mods[mi]];
+    return mods;
+  }
 
   // cross-browser events
   function addEvent(object, event, method) {
@@ -28403,19 +27371,39 @@ if (typeof exports === 'object') {
   };
 
   // set the handlers globally on document
-  addEvent(document, 'keydown', dispatch);
+  addEvent(document, 'keydown', function(event) { dispatch(event, _scope) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
   addEvent(document, 'keyup', clearModifier);
 
-  // set window.key and window.key.setScope
+  // reset modifiers to false whenever the window is (re)focused.
+  addEvent(window, 'focus', resetModifiers);
+
+  // store previously defined key
+  var previousKey = global.key;
+
+  // restore previously defined key and return reference to our key object
+  function noConflict() {
+    var k = global.key;
+    global.key = previousKey;
+    return k;
+  }
+
+  // set window.key and window.key.set/get/deleteScope, and the default filter
   global.key = assignKey;
   global.key.setScope = setScope;
+  global.key.getScope = getScope;
+  global.key.deleteScope = deleteScope;
+  global.key.filter = filter;
+  global.key.isPressed = isPressed;
+  global.key.getPressedKeyCodes = getPressedKeyCodes;
+  global.key.noConflict = noConflict;
+  global.key.unbind = unbindKey;
 
   if(typeof module !== 'undefined') module.exports = key;
 
 })(this);
 
 })()
-},{}],52:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /* See LICENSE file for terms of use */
 
 /*
@@ -28769,91 +27757,10 @@ if (typeof module !== "undefined") {
 },{}],32:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
-},{"./lib/chrono":53}],47:[function(require,module,exports){
-(function() {
-  if (typeof module === "undefined") self.queue = queue;
-  else module.exports = queue;
-  queue.version = "1.0.4";
-
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var q,
-        tasks = [],
-        started = 0, // number of tasks that have been started (and perhaps finished)
-        active = 0, // number of tasks currently being executed (started but not finished)
-        remaining = 0, // number of tasks not yet finished
-        popping, // inside a synchronous task callback?
-        error = null,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    function pop() {
-      while (popping = started < tasks.length && active < parallelism) {
-        var i = started++,
-            t = tasks[i],
-            a = slice.call(t, 1);
-        a.push(callback(i));
-        ++active;
-        t[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new tasks and squelch active callbacks
-          started = remaining = NaN; // stop queued tasks from starting
-          notify();
-        } else {
-          tasks[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(error, tasks);
-      else await.apply(null, [error].concat(tasks));
-    }
-
-    return q = {
-      defer: function() {
-        if (!error) {
-          tasks.push(arguments);
-          ++remaining;
-          pop();
-        }
-        return q;
-      },
-      await: function(f) {
-        await = f;
-        all = false;
-        if (!remaining) notify();
-        return q;
-      },
-      awaitAll: function(f) {
-        await = f;
-        all = true;
-        if (!remaining) notify();
-        return q;
-      }
-    };
-  }
-
-  function noop() {}
-})();
-
-},{}],44:[function(require,module,exports){
+},{"./lib/chrono":52}],38:[function(require,module,exports){
 module.exports = require('./lib/js-yaml.js');
 
-},{"./lib/js-yaml.js":54}],53:[function(require,module,exports){
+},{"./lib/js-yaml.js":53}],52:[function(require,module,exports){
 (function(){
 
 // CommonJS exports.
@@ -29259,13 +28166,13 @@ Date.prototype.setTimezone = function(val) {
 
 })();
 
-},{}],35:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 var Backbone = require('backbone');
 
 module.exports = Backbone.Model.extend({
 });
 
-},{"backbone":14}],36:[function(require,module,exports){
+},{"backbone":12}],35:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Branch = require('../models/branch');
@@ -29290,7 +28197,7 @@ module.exports = Backbone.Collection.extend({
   }
 });
 
-},{"../models/branch":55,"underscore":6,"backbone":14}],37:[function(require,module,exports){
+},{"../models/branch":54,"underscore":11,"backbone":12}],36:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Commit = require('../models/commit');
@@ -29320,7 +28227,7 @@ module.exports = Backbone.Collection.extend({
   }
 });
 
-},{"../models/commit":56,"underscore":6,"backbone":14}],38:[function(require,module,exports){
+},{"../models/commit":55,"underscore":11,"backbone":12}],39:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -29363,7 +28270,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":7,"jquery-browserify":13,"underscore":6,"backbone":14}],39:[function(require,module,exports){
+},{"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],40:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var util = require('../util');
@@ -29444,7 +28351,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../util":28,"./sidebar/branches":57,"./sidebar/history":58,"./sidebar/drafts":59,"./sidebar/orgs":42,"./sidebar/save":60,"./sidebar/settings":61,"../../dist/templates":7,"underscore":6,"backbone":14}],40:[function(require,module,exports){
+},{"../util":28,"./sidebar/branches":56,"./sidebar/history":57,"./sidebar/drafts":58,"./sidebar/orgs":43,"./sidebar/save":59,"./sidebar/settings":60,"../../dist/templates":14,"underscore":11,"backbone":12}],41:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -29537,7 +28444,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../config":4,"../util":28,"../../dist/templates":7,"jquery-browserify":13,"backbone":14,"underscore":6}],41:[function(require,module,exports){
+},{"../config":8,"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],42:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -29661,7 +28568,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../util":28,"../../dist/templates":7,"jquery-browserify":13,"underscore":6,"backbone":14}],46:[function(require,module,exports){
+},{"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],45:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -29865,7 +28772,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../models/file":18,"../models/folder":62,"./li/file":63,"./li/folder":64,"../../dist/templates":7,".././util":28,"jquery-browserify":13,"underscore":6,"backbone":14}],48:[function(require,module,exports){
+},{"../models/file":18,"../models/folder":61,"./li/file":62,"./li/folder":63,"../../dist/templates":14,".././util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],47:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -29904,7 +28811,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":7,"jquery-browserify":13,"underscore":6,"backbone":14}],49:[function(require,module,exports){
+},{"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],48:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -30395,7 +29302,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../toolbar/markdown.js":34,"../util":28,"../upload":30,"../../dist/templates":7,"jquery-browserify":13,"backbone":14,"underscore":6,"chosen-jquery-browserify":65}],50:[function(require,module,exports){
+},{"../toolbar/markdown.js":33,"../util":28,"../upload":30,"../../dist/templates":14,"jquery-browserify":10,"chosen-jquery-browserify":64,"underscore":11,"backbone":12}],49:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -30966,7 +29873,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":7,".././util":28,"jquery-browserify":13,"underscore":6,"js-yaml":44,"backbone":14,"deepmerge":66,"chosen-jquery-browserify":65}],66:[function(require,module,exports){
+},{"../../dist/templates":14,".././util":28,"chosen-jquery-browserify":64,"jquery-browserify":10,"underscore":11,"js-yaml":38,"backbone":12,"deepmerge":65}],65:[function(require,module,exports){
 module.exports = function merge (target, src) {
     var array = Array.isArray(src)
     var dst = array && [] || {}
@@ -31008,7 +29915,7 @@ module.exports = function merge (target, src) {
     return dst
 }
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -31057,7 +29964,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":7,"../../cookie":3,"jquery-browserify":13,"underscore":6,"backbone":14}],43:[function(require,module,exports){
+},{"../../../dist/templates":14,"../../cookie":3,"jquery-browserify":10,"underscore":11,"backbone":12}],44:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -31091,7 +29998,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../cookie":3,"../../../dist/templates":7,"underscore":6,"jquery-browserify":13,"backbone":14}],54:[function(require,module,exports){
+},{"../../cookie":3,"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],53:[function(require,module,exports){
 'use strict';
 
 
@@ -31136,7 +30043,7 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":67,"./js-yaml/dumper":68,"./js-yaml/schema":69,"./js-yaml/common":70,"./js-yaml/type":71,"./js-yaml/schema/failsafe":72,"./js-yaml/schema/json":73,"./js-yaml/schema/core":74,"./js-yaml/schema/default_safe":75,"./js-yaml/schema/default_full":76,"./js-yaml/exception":77,"./js-yaml/require":78}],55:[function(require,module,exports){
+},{"./js-yaml/loader":66,"./js-yaml/dumper":67,"./js-yaml/common":68,"./js-yaml/type":69,"./js-yaml/schema":70,"./js-yaml/schema/failsafe":71,"./js-yaml/schema/json":72,"./js-yaml/schema/core":73,"./js-yaml/schema/default_safe":74,"./js-yaml/schema/default_full":75,"./js-yaml/exception":76,"./js-yaml/require":77}],54:[function(require,module,exports){
 var Backbone = require('backbone');
 var Files = require('../collections/files');
 var config = require('../config');
@@ -31162,7 +30069,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"../collections/files":79,"../config":4,"backbone":14}],56:[function(require,module,exports){
+},{"../collections/files":78,"../config":8,"backbone":12}],55:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 
@@ -31178,61 +30085,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"underscore":6,"backbone":14}],77:[function(require,module,exports){
-'use strict';
-
-
-function YAMLException(reason, mark) {
-  this.name    = 'YAMLException';
-  this.reason  = reason;
-  this.mark    = mark;
-  this.message = this.toString(false);
-}
-
-
-YAMLException.prototype.toString = function toString(compact) {
-  var result;
-
-  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
-
-  if (!compact && this.mark) {
-    result += ' ' + this.mark.toString();
-  }
-
-  return result;
-};
-
-
-module.exports = YAMLException;
-
-},{}],62:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var util = require('.././util');
-
-module.exports = Backbone.Model.extend({
-  idAttribute: 'path',
-
-  initialize: function(attributes, options) {
-    _.bindAll(this);
-
-    this.branch = attributes.branch;
-    this.collection = attributes.collection;
-    this.repo = attributes.repo;
-
-    this.set({
-      'name': util.extractFilename(attributes.path)[1],
-      'path': attributes.path,
-      'type': attributes.type
-    });
-  },
-
-  url: function() {
-    return this.repo.url() + '/contents/' + this.get('path') + '?ref=' + this.branch.get('name');
-  }
-});
-
-},{".././util":28,"underscore":6,"backbone":14}],70:[function(require,module,exports){
+},{"underscore":11,"backbone":12}],68:[function(require,module,exports){
 'use strict';
 
 
@@ -31294,10 +30147,64 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],80:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
+'use strict';
+
+
+function YAMLException(reason, mark) {
+  this.name    = 'YAMLException';
+  this.reason  = reason;
+  this.mark    = mark;
+  this.message = this.toString(false);
+}
+
+
+YAMLException.prototype.toString = function toString(compact) {
+  var result;
+
+  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
+
+  if (!compact && this.mark) {
+    result += ' ' + this.mark.toString();
+  }
+
+  return result;
+};
+
+
+module.exports = YAMLException;
+
+},{}],61:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var util = require('.././util');
+
+module.exports = Backbone.Model.extend({
+  idAttribute: 'path',
+
+  initialize: function(attributes, options) {
+    _.bindAll(this);
+
+    this.branch = attributes.branch;
+    this.collection = attributes.collection;
+    this.repo = attributes.repo;
+
+    this.set({
+      'name': util.extractFilename(attributes.path)[1],
+      'path': attributes.path,
+      'type': attributes.type
+    });
+  },
+
+  url: function() {
+    return this.repo.url() + '/contents/' + this.get('path') + '?ref=' + this.branch.get('name');
+  }
+});
+
+},{".././util":28,"underscore":11,"backbone":12}],79:[function(require,module,exports){
 // nothing to see here... no file methods for the browser
 
-},{}],57:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -31374,7 +30281,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./branch":81,"../../../dist/templates":7,"chosen-jquery-browserify":65,"underscore":6,"jquery-browserify":13,"backbone":14}],58:[function(require,module,exports){
+},{"./branch":80,"../../../dist/templates":14,"jquery-browserify":10,"chosen-jquery-browserify":64,"underscore":11,"backbone":12}],57:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -31534,7 +30441,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./li/commit":82,"../../cookie":3,"../../../dist/templates":7,"../../util":28,"jquery-browserify":13,"underscore":6,"backbone":14,"queue-async":47}],59:[function(require,module,exports){
+},{"./li/commit":81,"../../cookie":3,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12,"queue-async":46}],58:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -31563,7 +30470,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":7,"jquery-browserify":13,"underscore":6,"backbone":14}],60:[function(require,module,exports){
+},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],59:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -31627,7 +30534,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":7,"../../util":28,"../nav":40,"underscore":6,"jquery-browserify":13,"backbone":14}],61:[function(require,module,exports){
+},{"../nav":41,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],60:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -31695,7 +30602,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../nav":40,"../../util":28,"../../../dist/templates":7,"jquery-browserify":13,"underscore":6,"backbone":14}],63:[function(require,module,exports){
+},{"../nav":41,"../../util":28,"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],62:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -31782,7 +30689,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../sidebar/li/commit":82,"../../../dist/templates":7,"../../util":28,"jquery-browserify":13,"underscore":6,"backbone":14}],64:[function(require,module,exports){
+},{"../sidebar/li/commit":81,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],63:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -31827,7 +30734,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":7,"jquery-browserify":13,"underscore":6,"backbone":14}],67:[function(require,module,exports){
+},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],66:[function(require,module,exports){
 'use strict';
 
 
@@ -33378,7 +32285,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":70,"./exception":77,"./mark":83,"./schema/default_safe":75,"./schema/default_full":76}],68:[function(require,module,exports){
+},{"./common":68,"./exception":76,"./mark":82,"./schema/default_safe":74,"./schema/default_full":75}],67:[function(require,module,exports){
 (function(){'use strict';
 
 
@@ -33859,7 +32766,91 @@ module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
 })()
-},{"./common":70,"./exception":77,"./schema/default_full":76,"./schema/default_safe":75}],69:[function(require,module,exports){
+},{"./common":68,"./exception":76,"./schema/default_full":75,"./schema/default_safe":74}],69:[function(require,module,exports){
+'use strict';
+
+
+var YAMLException = require('./exception');
+
+
+// TODO: Add tag format check.
+function Type(tag, options) {
+  options = options || {};
+
+  this.tag    = tag;
+  this.loader = options['loader'] || null;
+  this.dumper = options['dumper'] || null;
+
+  if (null === this.loader && null === this.dumper) {
+    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
+  }
+
+  if (null !== this.loader) {
+    this.loader = new Type.Loader(this.loader);
+  }
+
+  if (null !== this.dumper) {
+    this.dumper = new Type.Dumper(this.dumper);
+  }
+}
+
+
+Type.Loader = function TypeLoader(options) {
+  options = options || {};
+
+  this.kind     = options['kind']     || null;
+  this.resolver = options['resolver'] || null;
+
+  if ('string' !== this.kind &&
+      'array'  !== this.kind &&
+      'object' !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
+  }
+};
+
+
+function compileAliases(map) {
+  var result = {};
+
+  if (null !== map) {
+    Object.keys(map).forEach(function (style) {
+      map[style].forEach(function (alias) {
+        result[String(alias)] = style;
+      });
+    });
+  }
+
+  return result;
+}
+
+
+Type.Dumper = function TypeDumper(options) {
+  options = options || {};
+
+  this.kind         = options['kind']         || null;
+  this.defaultStyle = options['defaultStyle'] || null;
+  this.instanceOf   = options['instanceOf']   || null;
+  this.predicate    = options['predicate']    || null;
+  this.representer  = options['representer']  || null;
+  this.styleAliases = compileAliases(options['styleAliases'] || null);
+
+  if ('undefined' !== this.kind &&
+      'null'      !== this.kind &&
+      'boolean'   !== this.kind &&
+      'integer'   !== this.kind &&
+      'float'     !== this.kind &&
+      'string'    !== this.kind &&
+      'array'     !== this.kind &&
+      'object'    !== this.kind &&
+      'function'  !== this.kind) {
+    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
+  }
+};
+
+
+module.exports = Type;
+
+},{"./exception":76}],70:[function(require,module,exports){
 'use strict';
 
 
@@ -33964,7 +32955,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":70,"./exception":77,"./type":71}],78:[function(require,module,exports){
+},{"./common":68,"./exception":76,"./type":69}],77:[function(require,module,exports){
 'use strict';
 
 
@@ -33989,7 +32980,7 @@ if (undefined !== require.extensions) {
 
 module.exports = require;
 
-},{"fs":80,"./loader":67}],72:[function(require,module,exports){
+},{"fs":79,"./loader":66}],71:[function(require,module,exports){
 // Standard YAML's Failsafe schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2802346
 
@@ -34008,7 +32999,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":69,"../type/str":84,"../type/seq":85,"../type/map":86}],73:[function(require,module,exports){
+},{"../schema":70,"../type/str":83,"../type/seq":84,"../type/map":85}],72:[function(require,module,exports){
 // Standard YAML's JSON schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2803231
 //
@@ -34035,7 +33026,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":69,"./failsafe":72,"../type/null":87,"../type/bool":88,"../type/int":89,"../type/float":90}],74:[function(require,module,exports){
+},{"../schema":70,"./failsafe":71,"../type/null":86,"../type/bool":87,"../type/int":88,"../type/float":89}],73:[function(require,module,exports){
 // Standard YAML's Core schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2804923
 //
@@ -34055,7 +33046,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":69,"./json":73}],75:[function(require,module,exports){
+},{"../schema":70,"./json":72}],74:[function(require,module,exports){
 // JS-YAML's default schema for `safeLoad` function.
 // It is not described in the YAML specification.
 //
@@ -34085,7 +33076,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":69,"./core":74,"../type/timestamp":91,"../type/merge":92,"../type/binary":93,"../type/omap":94,"../type/pairs":95,"../type/set":96}],76:[function(require,module,exports){
+},{"../schema":70,"./core":73,"../type/timestamp":90,"../type/merge":91,"../type/binary":92,"../type/omap":93,"../type/pairs":94,"../type/set":95}],75:[function(require,module,exports){
 // JS-YAML's default schema for `load` function.
 // It is not described in the YAML specification.
 //
@@ -34112,382 +33103,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":69,"./default_safe":75,"../type/js/undefined":97,"../type/js/regexp":98,"../type/js/function":99}],71:[function(require,module,exports){
-'use strict';
-
-
-var YAMLException = require('./exception');
-
-
-// TODO: Add tag format check.
-function Type(tag, options) {
-  options = options || {};
-
-  this.tag    = tag;
-  this.loader = options['loader'] || null;
-  this.dumper = options['dumper'] || null;
-
-  if (null === this.loader && null === this.dumper) {
-    throw new YAMLException('Incomplete YAML type definition. "loader" or "dumper" setting must be specified.');
-  }
-
-  if (null !== this.loader) {
-    this.loader = new Type.Loader(this.loader);
-  }
-
-  if (null !== this.dumper) {
-    this.dumper = new Type.Dumper(this.dumper);
-  }
-}
-
-
-Type.Loader = function TypeLoader(options) {
-  options = options || {};
-
-  this.kind     = options['kind']     || null;
-  this.resolver = options['resolver'] || null;
-
-  if ('string' !== this.kind &&
-      'array'  !== this.kind &&
-      'object' !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type loader.');
-  }
-};
-
-
-function compileAliases(map) {
-  var result = {};
-
-  if (null !== map) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-
-Type.Dumper = function TypeDumper(options) {
-  options = options || {};
-
-  this.kind         = options['kind']         || null;
-  this.defaultStyle = options['defaultStyle'] || null;
-  this.instanceOf   = options['instanceOf']   || null;
-  this.predicate    = options['predicate']    || null;
-  this.representer  = options['representer']  || null;
-  this.styleAliases = compileAliases(options['styleAliases'] || null);
-
-  if ('undefined' !== this.kind &&
-      'null'      !== this.kind &&
-      'boolean'   !== this.kind &&
-      'integer'   !== this.kind &&
-      'float'     !== this.kind &&
-      'string'    !== this.kind &&
-      'array'     !== this.kind &&
-      'object'    !== this.kind &&
-      'function'  !== this.kind) {
-    throw new YAMLException('Unacceptable "kind" setting of a type dumper.');
-  }
-};
-
-
-module.exports = Type;
-
-},{"./exception":77}],79:[function(require,module,exports){
-(function(){var _ = require('underscore');
-var jsyaml = require('js-yaml');
-var queue = require('queue-async');
-
-var Backbone = require('backbone');
-var File = require('../models/file');
-var Folder = require('../models/folder');
-
-var cookie = require('../cookie');
-var util = require('../util');
-
-module.exports = Backbone.Collection.extend({
-  model: function(attributes, options) {
-    // TODO: handle 'symlink' and 'submodule' type
-    // TODO: coerce tree/folder to a single type
-    switch(attributes.type) {
-      case 'tree':
-        return new Folder(attributes, options);
-        break;
-      case 'blob':
-        return new File(attributes, options);
-        break;
-      default:
-        return new File(attributes, options);
-        break;
-    }
-  },
-
-  initialize: function(models, options) {
-    _.bindAll(this);
-
-    this.repo = options.repo;
-    this.branch = options.branch;
-    this.sha = options.sha;
-
-    // Sort files reverse alphabetically if path begins with '_posts/'
-    this.comparator = function(a, b) {
-      var typeA = a.get('type');
-      var typeB = b.get('type');
-
-      var pathA = a.get('path');
-      var pathB = b.get('path');
-
-      var regex = /^_posts\/.*$/
-
-      if (typeA === typeB && typeA === 'file' && regex.test(pathA) && regex.test(pathB)) {
-        // Reverse alphabetical
-        return pathA < pathB ? 1 : -1;
-      } else if (typeA === typeB) {
-        // Alphabetical
-        return pathA < pathB ? -1 : 1;
-      } else {
-        switch(typeA) {
-          case 'tree':
-          case 'folder':
-            return -1;
-            break;
-          case 'file':
-            return typeB === 'folder' || typeB === 'tree' ? 1 : -1;
-            break;
-        }
-      }
-    };
-  },
-
-  parse: function(resp, options) {
-    return _.map(resp.tree, (function(file) {
-      return  _.extend(file, {
-        branch: this.branch,
-        collection: this,
-        repo: this.repo
-      })
-    }).bind(this));
-  },
-
-  parseConfig: function(config, options) {
-    var content = config.get('content');
-
-    // Attempt to parse YAML
-    try {
-      config = jsyaml.safeLoad(content);
-    } catch(err) {
-      throw err;
-    }
-
-    if (config && config.prose) {
-      // Load _config.yml, set parsed value on collection
-      // Extend to capture settings from outside config.prose
-      // while allowing override
-      this.config = _.extend({
-        baseurl: config.baseurl,
-        languages: config.languages
-      }, config.prose);
-
-      if (config.prose.metadata) {
-        var metadata = config.prose.metadata;
-
-        // Serial queue to not break global scope JSONP callbacks
-        var q = queue(1);
-
-        _.each(metadata, function(raw, key) {
-          q.defer(function(cb) {
-            var subq = queue();
-            var defaults;
-
-            if (_.isObject(raw)) {
-              defaults = raw;
-
-              _.each(defaults, function(value, key) {
-                var regex = /^https?:\/\//;
-
-                // Parse JSON URL values
-                if (value && value.field && value.field.options &&
-                    _.isString(value.field.options) &&
-                    regex.test(value.field.options)) {
-
-                  subq.defer(function(cb) {
-                    $.ajax({
-                      cache: true,
-                      dataType: 'jsonp',
-                      jsonp: false,
-                      jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
-                      timeout: 5000,
-                      url: value.field.options,
-                      success: (function(d) {
-                        value.field.options = _.compact(d);
-                        cb();
-                      }).bind(this)
-                    });
-                  });
-                }
-              });
-            } else if (_.isString(raw)) {
-              try {
-                defaults = jsyaml.safeLoad(raw);
-
-                if (defaults.date === "CURRENT_DATETIME") {
-                  var current = (new Date()).format('Y-m-d H:i');
-                  defaults.date = current;
-                  raw = raw.replace("CURRENT_DATETIME", current);
-                }
-              } catch(err) {
-                throw err;
-              }
-            }
-
-            subq.awaitAll(function() {
-              metadata[key] = defaults;
-              cb();
-            });
-          });
-        });
-
-        q.awaitAll((function() {
-          // Save parsed config to the collection as it's used accross
-          // files of the same collection and shouldn't be re-parsed each time
-          this.defaults = metadata;
-
-          if (_.isFunction(options.success)) options.success.apply(this, options.args);
-        }).bind(this));
-      } else {
-        if (_.isFunction(options.success)) options.success.apply(this, options.args);
-      }
-    } else {
-      if (_.isFunction(options.success)) options.success.apply(this, options.args);
-    }
-  },
-
-  fetch: function(options) {
-    options = _.clone(options) || {};
-
-    var success = options.success;
-    var args = options.args;
-
-    Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-      success: (function(model, res, options) {
-        var config = this.findWhere({ path: '_prose.yml' }) ||
-          this.findWhere({ path: '_config.yml' });
-
-        if (config) {
-          config.fetch({
-            success: (function() {
-              this.parseConfig(config, { success: success, args: args });
-            }).bind(this)
-          });
-        } else {
-          if (_.isFunction(success)) success.apply(this, args);
-        }
-
-      }).bind(this)
-    }));
-  },
-
-  restore: function(file, options) {
-    options = options ? _.clone(options) : {};
-
-    var path = file.filename;
-    var success = options.success;
-
-    $.ajax({
-      type: 'GET',
-      url: file.contents_url,
-      headers: {
-        Accept: 'application/vnd.github.raw'
-      },
-      success: (function(res) {
-        // initialize new File model with content
-        var model = new File({
-          branch: this.branch,
-          collection: this,
-          content: res,
-          path: path,
-          repo: this.repo
-        });
-
-        var name = util.extractFilename(path)[1];
-        model.set('placeholder', t('actions.commits.created', { filename: name }));
-
-        // add to collection on save
-        model.save({
-          success: (function(model, res, options) {
-            // Update model attributes and add to collection
-            model.set(res.content);
-            this.add(model);
-
-            if (_.isFunction(success)) success(model, res, options);
-          }).bind(this),
-          error: options.error
-        });
-      }).bind(this),
-      error: options.error
-    });
-  },
-
-  upload: function(file, content, path, options) {
-    var success = options.success;
-
-    var extension = file.type.split('/').pop();
-    var uid;
-
-    if (!path) {
-      uid = file.name;
-
-      if (this.assetsDirectory) {
-        path = this.assetsDirectory + '/' + uid;
-      } else {
-        path = this.model.path ? this.model.path + '/' + uid : uid;
-      }
-    }
-
-    // If path matches an existing file, confirm the overwrite is intentional
-    // then set new content and update the existing file
-    var model = this.findWhere({ path: path });
-
-    if (model) {
-      // TODO: confirm overwrite with UI prompt
-      model.set('content', content);
-      model.set('placeholder', t('actions.commits.updated', { filename: file.name }));
-    } else {
-      // initialize new File model with content
-      model = new File({
-        branch: this.branch,
-        collection: this,
-        content: content,
-        path: path,
-        repo: this.repo
-      });
-
-      model.set('placeholder', t('actions.commits.created', { filename: file.name }));
-    }
-
-    // add to collection on save
-    model.save({
-      success: (function(model, res, options) {
-        // Update model attributes and add to collection
-        model.set(res.content);
-        this.add(model);
-
-        if (_.isFunction(success)) success(model, res, options);
-      }).bind(this),
-      error: options.error
-    });
-  },
-
-  url: function() {
-    return this.repo.url() + '/git/trees/' + this.sha + '?recursive=1';
-  }
-});
-
-})()
-},{"../models/file":18,"../models/folder":62,"../util":28,"../cookie":3,"js-yaml":44,"queue-async":47,"underscore":6,"backbone":14}],65:[function(require,module,exports){
+},{"../schema":70,"./default_safe":74,"../type/js/undefined":96,"../type/js/regexp":97,"../type/js/function":98}],64:[function(require,module,exports){
 (function(global){(function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -35568,7 +34184,298 @@ module.exports = Backbone.Collection.extend({
 }).call(this);
 
 })(window)
-},{"jquery-browserify":13}],81:[function(require,module,exports){
+},{"jquery-browserify":10}],78:[function(require,module,exports){
+(function(){var _ = require('underscore');
+var jsyaml = require('js-yaml');
+var queue = require('queue-async');
+
+var Backbone = require('backbone');
+var File = require('../models/file');
+var Folder = require('../models/folder');
+
+var cookie = require('../cookie');
+var util = require('../util');
+
+module.exports = Backbone.Collection.extend({
+  model: function(attributes, options) {
+    // TODO: handle 'symlink' and 'submodule' type
+    // TODO: coerce tree/folder to a single type
+    switch(attributes.type) {
+      case 'tree':
+        return new Folder(attributes, options);
+        break;
+      case 'blob':
+        return new File(attributes, options);
+        break;
+      default:
+        return new File(attributes, options);
+        break;
+    }
+  },
+
+  initialize: function(models, options) {
+    _.bindAll(this);
+
+    this.repo = options.repo;
+    this.branch = options.branch;
+    this.sha = options.sha;
+
+    // Sort files reverse alphabetically if path begins with '_posts/'
+    this.comparator = function(a, b) {
+      var typeA = a.get('type');
+      var typeB = b.get('type');
+
+      var pathA = a.get('path');
+      var pathB = b.get('path');
+
+      var regex = /^_posts\/.*$/
+
+      if (typeA === typeB && typeA === 'file' && regex.test(pathA) && regex.test(pathB)) {
+        // Reverse alphabetical
+        return pathA < pathB ? 1 : -1;
+      } else if (typeA === typeB) {
+        // Alphabetical
+        return pathA < pathB ? -1 : 1;
+      } else {
+        switch(typeA) {
+          case 'tree':
+          case 'folder':
+            return -1;
+            break;
+          case 'file':
+            return typeB === 'folder' || typeB === 'tree' ? 1 : -1;
+            break;
+        }
+      }
+    };
+  },
+
+  parse: function(resp, options) {
+    return _.map(resp.tree, (function(file) {
+      return  _.extend(file, {
+        branch: this.branch,
+        collection: this,
+        repo: this.repo
+      })
+    }).bind(this));
+  },
+
+  parseConfig: function(config, options) {
+    var content = config.get('content');
+
+    // Attempt to parse YAML
+    try {
+      config = jsyaml.safeLoad(content);
+    } catch(err) {
+      throw err;
+    }
+
+    if (config && config.prose) {
+      // Load _config.yml, set parsed value on collection
+      // Extend to capture settings from outside config.prose
+      // while allowing override
+      this.config = _.extend({
+        baseurl: config.baseurl,
+        languages: config.languages
+      }, config.prose);
+
+      if (config.prose.metadata) {
+        var metadata = config.prose.metadata;
+
+        // Serial queue to not break global scope JSONP callbacks
+        var q = queue(1);
+
+        _.each(metadata, function(raw, key) {
+          q.defer(function(cb) {
+            var subq = queue();
+            var defaults;
+
+            if (_.isObject(raw)) {
+              defaults = raw;
+
+              _.each(defaults, function(value, key) {
+                var regex = /^https?:\/\//;
+
+                // Parse JSON URL values
+                if (value && value.field && value.field.options &&
+                    _.isString(value.field.options) &&
+                    regex.test(value.field.options)) {
+
+                  subq.defer(function(cb) {
+                    $.ajax({
+                      cache: true,
+                      dataType: 'jsonp',
+                      jsonp: false,
+                      jsonpCallback: value.field.options.split('?callback=')[1] || 'callback',
+                      timeout: 5000,
+                      url: value.field.options,
+                      success: (function(d) {
+                        value.field.options = _.compact(d);
+                        cb();
+                      }).bind(this)
+                    });
+                  });
+                }
+              });
+            } else if (_.isString(raw)) {
+              try {
+                defaults = jsyaml.safeLoad(raw);
+
+                if (defaults.date === "CURRENT_DATETIME") {
+                  var current = (new Date()).format('Y-m-d H:i');
+                  defaults.date = current;
+                  raw = raw.replace("CURRENT_DATETIME", current);
+                }
+              } catch(err) {
+                throw err;
+              }
+            }
+
+            subq.awaitAll(function() {
+              metadata[key] = defaults;
+              cb();
+            });
+          });
+        });
+
+        q.awaitAll((function() {
+          // Save parsed config to the collection as it's used accross
+          // files of the same collection and shouldn't be re-parsed each time
+          this.defaults = metadata;
+
+          if (_.isFunction(options.success)) options.success.apply(this, options.args);
+        }).bind(this));
+      } else {
+        if (_.isFunction(options.success)) options.success.apply(this, options.args);
+      }
+    } else {
+      if (_.isFunction(options.success)) options.success.apply(this, options.args);
+    }
+  },
+
+  fetch: function(options) {
+    options = _.clone(options) || {};
+
+    var success = options.success;
+    var args = options.args;
+
+    Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+      success: (function(model, res, options) {
+        var config = this.findWhere({ path: '_prose.yml' }) ||
+          this.findWhere({ path: '_config.yml' });
+
+        if (config) {
+          config.fetch({
+            success: (function() {
+              this.parseConfig(config, { success: success, args: args });
+            }).bind(this)
+          });
+        } else {
+          if (_.isFunction(success)) success.apply(this, args);
+        }
+
+      }).bind(this)
+    }));
+  },
+
+  restore: function(file, options) {
+    options = options ? _.clone(options) : {};
+
+    var path = file.filename;
+    var success = options.success;
+
+    $.ajax({
+      type: 'GET',
+      url: file.contents_url,
+      headers: {
+        Accept: 'application/vnd.github.raw'
+      },
+      success: (function(res) {
+        // initialize new File model with content
+        var model = new File({
+          branch: this.branch,
+          collection: this,
+          content: res,
+          path: path,
+          repo: this.repo
+        });
+
+        var name = util.extractFilename(path)[1];
+        model.set('placeholder', t('actions.commits.created', { filename: name }));
+
+        // add to collection on save
+        model.save({
+          success: (function(model, res, options) {
+            // Update model attributes and add to collection
+            model.set(res.content);
+            this.add(model);
+
+            if (_.isFunction(success)) success(model, res, options);
+          }).bind(this),
+          error: options.error
+        });
+      }).bind(this),
+      error: options.error
+    });
+  },
+
+  upload: function(file, content, path, options) {
+    var success = options.success;
+
+    var extension = file.type.split('/').pop();
+    var uid;
+
+    if (!path) {
+      uid = file.name;
+
+      if (this.assetsDirectory) {
+        path = this.assetsDirectory + '/' + uid;
+      } else {
+        path = this.model.path ? this.model.path + '/' + uid : uid;
+      }
+    }
+
+    // If path matches an existing file, confirm the overwrite is intentional
+    // then set new content and update the existing file
+    var model = this.findWhere({ path: path });
+
+    if (model) {
+      // TODO: confirm overwrite with UI prompt
+      model.set('content', content);
+      model.set('placeholder', t('actions.commits.updated', { filename: file.name }));
+    } else {
+      // initialize new File model with content
+      model = new File({
+        branch: this.branch,
+        collection: this,
+        content: content,
+        path: path,
+        repo: this.repo
+      });
+
+      model.set('placeholder', t('actions.commits.created', { filename: file.name }));
+    }
+
+    // add to collection on save
+    model.save({
+      success: (function(model, res, options) {
+        // Update model attributes and add to collection
+        model.set(res.content);
+        this.add(model);
+
+        if (_.isFunction(success)) success(model, res, options);
+      }).bind(this),
+      error: options.error
+    });
+  },
+
+  url: function() {
+    return this.repo.url() + '/git/trees/' + this.sha + '?recursive=1';
+  }
+});
+
+})()
+},{"../models/file":18,"../models/folder":61,"../cookie":3,"../util":28,"js-yaml":38,"underscore":11,"queue-async":46,"backbone":12}],80:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -35592,7 +34499,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":13,"underscore":6,"backbone":14}],83:[function(require,module,exports){
+},{"jquery-browserify":10,"underscore":11,"backbone":12}],82:[function(require,module,exports){
 'use strict';
 
 
@@ -35672,7 +34579,7 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":70}],100:[function(require,module,exports){
+},{"./common":68}],99:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -35989,7 +34896,7 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":101,"buffer":102}],84:[function(require,module,exports){
+},{"util":100,"buffer":101}],83:[function(require,module,exports){
 'use strict';
 
 
@@ -36002,7 +34909,7 @@ module.exports = new Type('tag:yaml.org,2002:str', {
   }
 });
 
-},{"../type":71}],85:[function(require,module,exports){
+},{"../type":69}],84:[function(require,module,exports){
 'use strict';
 
 
@@ -36015,7 +34922,20 @@ module.exports = new Type('tag:yaml.org,2002:seq', {
   }
 });
 
-},{"../type":71}],87:[function(require,module,exports){
+},{"../type":69}],85:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:map', {
+  loader: {
+    kind: 'object'
+  }
+});
+
+},{"../type":69}],86:[function(require,module,exports){
 'use strict';
 
 
@@ -36053,7 +34973,7 @@ module.exports = new Type('tag:yaml.org,2002:null', {
   }
 });
 
-},{"../common":70,"../type":71}],88:[function(require,module,exports){
+},{"../common":68,"../type":69}],87:[function(require,module,exports){
 'use strict';
 
 
@@ -36129,20 +35049,94 @@ module.exports = new Type('tag:yaml.org,2002:bool', {
   }
 });
 
-},{"../common":70,"../type":71}],86:[function(require,module,exports){
+},{"../common":68,"../type":69}],88:[function(require,module,exports){
 'use strict';
 
 
+var NIL  = require('../common').NIL;
 var Type = require('../type');
 
 
-module.exports = new Type('tag:yaml.org,2002:map', {
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
   loader: {
-    kind: 'object'
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
   }
 });
 
-},{"../type":71}],90:[function(require,module,exports){
+},{"../common":68,"../type":69}],89:[function(require,module,exports){
 'use strict';
 
 
@@ -36246,94 +35240,7 @@ module.exports = new Type('tag:yaml.org,2002:float', {
   }
 });
 
-},{"../common":70,"../type":71}],89:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":70,"../type":71}],91:[function(require,module,exports){
+},{"../common":68,"../type":69}],90:[function(require,module,exports){
 'use strict';
 
 
@@ -36426,7 +35333,7 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
   }
 });
 
-},{"../common":70,"../type":71}],92:[function(require,module,exports){
+},{"../common":68,"../type":69}],91:[function(require,module,exports){
 'use strict';
 
 
@@ -36446,7 +35353,7 @@ module.exports = new Type('tag:yaml.org,2002:merge', {
   }
 });
 
-},{"../common":70,"../type":71}],93:[function(require,module,exports){
+},{"../common":68,"../type":69}],92:[function(require,module,exports){
 (function(){// Modified from:
 // https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
 
@@ -36567,7 +35474,7 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
 });
 
 })()
-},{"buffer":102,"../common":70,"../type":71}],94:[function(require,module,exports){
+},{"buffer":101,"../common":68,"../type":69}],93:[function(require,module,exports){
 'use strict';
 
 
@@ -36622,7 +35529,7 @@ module.exports = new Type('tag:yaml.org,2002:omap', {
   }
 });
 
-},{"../common":70,"../type":71}],95:[function(require,module,exports){
+},{"../common":68,"../type":69}],94:[function(require,module,exports){
 'use strict';
 
 
@@ -36665,7 +35572,7 @@ module.exports = new Type('tag:yaml.org,2002:pairs', {
   }
 });
 
-},{"../common":70,"../type":71}],96:[function(require,module,exports){
+},{"../common":68,"../type":69}],95:[function(require,module,exports){
 'use strict';
 
 
@@ -36698,7 +35605,7 @@ module.exports = new Type('tag:yaml.org,2002:set', {
   }
 });
 
-},{"../common":70,"../type":71}],97:[function(require,module,exports){
+},{"../common":68,"../type":69}],96:[function(require,module,exports){
 'use strict';
 
 
@@ -36728,7 +35635,7 @@ module.exports = new Type('tag:yaml.org,2002:js/undefined', {
   }
 });
 
-},{"../../type":71}],98:[function(require,module,exports){
+},{"../../type":69}],97:[function(require,module,exports){
 (function(){'use strict';
 
 
@@ -36787,7 +35694,7 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
 });
 
 })()
-},{"../../common":70,"../../type":71}],101:[function(require,module,exports){
+},{"../../common":68,"../../type":69}],100:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -37140,7 +36047,7 @@ exports.format = function(f) {
   return str;
 };
 
-},{"events":103}],82:[function(require,module,exports){
+},{"events":102}],81:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -37250,7 +36157,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../../dist/templates":7,"../../../util":28,"jquery-browserify":13,"backbone":14,"underscore":6}],104:[function(require,module,exports){
+},{"../../../../dist/templates":14,"../../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],103:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -37336,247 +36243,7 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],105:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],103:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
-
-var EventEmitter = exports.EventEmitter = process.EventEmitter;
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
-
-// By default EventEmitters will print a warning if more than
-// 10 listeners are added to it. This is a useful default which
-// helps finding memory leaks.
-//
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-var defaultMaxListeners = 10;
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!this._events) this._events = {};
-  this._events.maxListeners = n;
-};
-
-
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
-      return false;
-    }
-  }
-
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
-
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-    return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
-    return false;
-  }
-};
-
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
-  }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-
-    // Check for listener leak
-    if (!this._events[type].warned) {
-      var m;
-      if (this._events.maxListeners !== undefined) {
-        m = this._events.maxListeners;
-      } else {
-        m = defaultMaxListeners;
-      }
-
-      if (m && m > 0 && this._events[type].length > m) {
-        this._events[type].warned = true;
-        console.error('(node) warning: possible EventEmitter memory ' +
-                      'leak detected. %d listeners added. ' +
-                      'Use emitter.setMaxListeners() to increase limit.',
-                      this._events[type].length);
-        console.trace();
-      }
-    }
-
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
-};
-
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
-
-})(require("__browserify_process"))
-},{"__browserify_process":105}],102:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -38896,7 +37563,247 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":100,"./buffer_ieee754":104,"base64-js":106}],106:[function(require,module,exports){
+},{"assert":99,"./buffer_ieee754":103,"base64-js":104}],105:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],102:[function(require,module,exports){
+(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
+
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
+//
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
+};
+
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
+    }
+  }
+
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
+
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
+
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
+
+  } else {
+    return false;
+  }
+};
+
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
+
+  if (!this._events) this._events = {};
+
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
+
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
+
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
+
+  return this;
+};
+
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
+};
+
+})(require("__browserify_process"))
+},{"__browserify_process":105}],104:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -38982,7 +37889,7 @@ SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],99:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 'use strict';
 
 
@@ -39040,7 +37947,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":70,"../../type":71,"esprima":107}],107:[function(require,module,exports){
+},{"../../common":68,"../../type":69,"esprima":106}],106:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -42951,5 +41858,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}]},{},[8])
+},{}]},{},[4])
 ;
