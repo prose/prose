@@ -15,7 +15,20 @@
         "login": "Autorizare cu GitHub",
         "about": "Despre",
         "develop": "Dezvoltatori",
-        "logout": "Deconectare"
+        "logout": "Deconectare",
+        "language": "Limbă"
+    },
+    "toolbar": {
+        "heading": "Rubrică",
+        "subHeading": "Rubrică secundară",
+        "link": "Adaugă legătură",
+        "image": "Adaugă legătură",
+        "bold": "Reliefat",
+        "italic": "Cursiv",
+        "blockquote": "Citat",
+        "list": "Listă",
+        "numberedlist": "Listă numerotată",
+        "help": "Ajutor"
     },
     "heading": {
         "explore": "Explorează proiecte"
@@ -27,13 +40,16 @@
         },
         "publishing": {
             "publish": "Publică",
+            "publishInfo": "Aceasta postare va fi publicată când salvați data viitoare",
             "published": "Publicat",
             "unpublish": "Retrage conținut",
-            "unpublished": "Nepublicat"
+            "unpublished": "Nepublicat",
+            "unpublishInfo": "Această postare va fi nepublicată când salvați data viitoare"
         },
         "change": {
             "noChange": "Nici o modificare",
-            "submit": "Schimbări pentru trimitere"
+            "submit": "Schimbări pentru trimitere",
+            "save": "Schimbări pentru salvare"
         },
         "delete": {
             "title": "Șterge",
@@ -51,7 +67,8 @@
             "patch": "Cererea se trimite",
             "fileNameError": "Nume fișier lipsă",
             "submission": "Cerere transmisă",
-            "metaError": "Eroare! Metadatele nu au fost găsite"
+            "metaError": "Eroare! Metadatele nu au fost găsite",
+            "fileNameExists": "Un nume de fișier cu această cale există deja"
         },
         "error": "Eroare. Încercați din nou în 30 secunde",
         "restore": {
@@ -61,6 +78,7 @@
         "commits": {
             "created": "{filename} creat",
             "updated": "{filename} actualizat",
+            "deleted": "{filename} eliminat",
             "toDraft": "Ciorna {filename} creată",
             "fromDraft": "Articol creat din ciorna {filename}"
         }
@@ -69,7 +87,12 @@
         "repos": "Se încarcă profilul",
         "repo": "Se încarcă proiectul",
         "file": "Se încarcă fișierul",
+        "preview": "Previzualizare fișier",
         "creating": "Se creează un articol nou"
+    },
+    "modal": {
+        "errorHeading": "Eroare",
+        "confirm": "Am înțeles"
     },
     "main": {
         "start": {
@@ -85,13 +108,19 @@
         },
         "repo": {
             "filter": "Filtrează fișiere",
-            "edit": "Editează"
+            "edit": "Editează",
+            "delete": "Șterge acest fișier"
+        },
+        "new": {
+            "body": "## Articol nou\n\nIntroduceți textul în format [Markdown](http://daringfireball.net/projects/markdown/). Folosiți meniul de unelte sau apăsați butonul **?** pentru instrucțiuni de formatare.\n"
         },
         "file": {
+            "noTitle": "Fără titlu",
             "metaTitle": "Revizuie schimbările",
             "rawMeta": "Metadate neprelucrate",
             "metaDescription": "Adăugăril sunt evidențiate cu verde. Ștergerile sunt tăiate.",
-            "back": "Terminat"
+            "back": "Terminat",
+            "createMeta": "Creează nou"
         },
         "upgrade": {
             "content": "Prose necesită caractestici ce nu sunt disponibile pentru browser-ul dumneavoastră",
@@ -103,6 +132,7 @@
         "create": "Creează",
         "home": "Înapoi la pagina principală",
         "back": "Înapoi",
+        "githubStatus": "Starea pe GitHub ({status})",
         "error": {
             "label": "Eroare",
             "github": "S-a produs o eroare în timpul încărcării de date de la GitHub. Posibil e o problemă temporară. Încercați din nou mai târziu.",
@@ -133,6 +163,7 @@
         },
         "settings": {
             "title": "Opțiuni",
+            "fileInputLabel": "Cale fișier",
             "delete": "Șterge acest fișier",
             "translate": "Traduce în",
             "draft": "Creează ciornă"
@@ -142,11 +173,18 @@
         "link": {
             "title": "Adaugă legătură",
             "insertLocal": "Adaugă legătură locală",
-            "insert": "Adaugă"
+            "insert": "Adaugă",
+            "hrefPlaceholder": "URL legătură",
+            "textPlaceholder": "Denumire legătură",
+            "titlePlaceholder": "Titlu (opțional)",
+            "insertPlaceholder": "Adaugă legătură locală"
         },
         "media": {
             "title": "Adaugă imagine",
             "back": "Înapoi",
+            "hrefPlaceholder": "URL imagine",
+            "altPlaceholder": "Text alternativ (opțional)",
+            "description": "Încărcați imagini prin Drag &amp; Drop sau </br>\n{input} <a>selectați</a>\n",
             "help": "Imaginile încarcate sunt salvate în directorul curent sau în directorul specificat în calea URL imagine de mai sus.",
             "helpMedia": "Imaginile încărcate sunt adăugate la directorul  'Alege existente' sau în directorul specific în câmpul URL imagine.",
             "choose": "Alege existente"
@@ -156,7 +194,8 @@
                 "title": "Elemente bloc",
                 "content": {
                     "paragraphs": {
-                        "title": "Paragrafe și pauze de linie"
+                        "title": "Paragrafe și pauze de linie",
+                        "content": "<p>Pentru paragrafe, creează un bloc de text fără linii goale. Blocurile de text separate de linii goale vor fi procesate ca paragrafe separate.</p><p>Pentru pauze de linie, termină linia cu două sau mai multe spații si apasă Return/Enter</p>\n"
                     },
                     "headers": {
                         "title": "Antete",
@@ -167,7 +206,8 @@
                         "content": "<p>Markdown creează citate în stil email prin prefixarea fiecărei linii cu <code>&gt;</code>. Cea mai eficientă metodă, vizual, este să începeți fiecare linie cu <code>&gt;</code>, dar Markdown suportă și doar un caracter <code>&gt;</code> la începutul paragrafului.</p>\n"
                     },
                     "lists": {
-                        "title": "Liste"
+                        "title": "Liste",
+                        "content": "<p>Markdown suportă liste ordonate și neordonate. Prefixează \nfiecare linie cu un număr pentru liste ordonate (orice număr e suficient &mdash; acesta este motivul pentru care editorul folosește doar o cifră). Pentru liste neordonate, prefixează fiecare linie cu <code>*</code>, <code>+</code> sau <code>-</code>.</p> Elementele de listă pot conține paragrafe multiple atât timp cât sunt indentate cu cel puțin 4 spații sau un tab.\n"
                     },
                     "codeBlocks": {
                         "title": "Blocuri de cod"
@@ -192,7 +232,8 @@
                         "title": "Cod"
                     },
                     "images": {
-                        "title": "Imagini"
+                        "title": "Imagini",
+                        "content": "<p>Sintaxa Markdown pentru imagini e similară cu cea pentru link-uri. Este în esență aceeași sintaxă, precedată de un semn de exclamare (<code>!</code>). De exemplu, dacă doriți să vă legați la <code>http://github.com/unicorn.png</code> cu textul alternativ <code>Unicornul meu</code>, scrieți <code>![Unicornul meu](http://github.com/unicorn.png)</code>.</p>\n"
                     }
                 }
             },
@@ -205,5 +246,9 @@
                 }
             }
         }
+    },
+    "chooselanguage": {
+        "title": "Selectează limba",
+        "description": "Prose este o aplicație tradusă. <a href='https://www.transifex.com/projects/p/prose'>Contribuiți cu traduceri la proiect</a> dacă nu vedeți limba dvs. în listă, găsiți  greșeli de ortografie sau traduceri lipsă.\n"
     }
 }

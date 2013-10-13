@@ -1232,8 +1232,9 @@ ins {
     }
   .toolbar .group {
     background:#fff;
-    margin:8px 0 5px 15px;
-    display:inline-block
+    margin:10px 0 10px 10px;
+    display:inline-block;
+    float:left;
     }
     .toolbar .group li {
       float:left;
@@ -1334,14 +1335,14 @@ ins {
     }
   .dialog.no-directory {
     width:240px;
-    left:50px;
+    left:45px;
     }
     .fixed .dialog.no-directory {
-      left:105px;
+      left:100px;
       }
   .dialog.link {
     width:210px;
-    left:23px;
+    left:20px;
     }
     .fixed .dialog.link {
       left:78px;
@@ -1683,8 +1684,8 @@ ins {
 ---------------------------------------------*/
 .publish-flag, .draft-to-post {
   color:#a8afb2;
-  height:42px;
-  line-height:42px;
+  height:45px;
+  line-height:45px;
   padding:0 15px;
   float:right;
   }
