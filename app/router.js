@@ -207,7 +207,6 @@ module.exports = Backbone.Router.extend({
         break;
       default:
         throw url.mode;
-        break;
     }
   },
 
@@ -338,7 +337,7 @@ module.exports = Backbone.Router.extend({
     } else {
       this.app.nav.mode('start');
       this.view = new StartView();
-      this.app.$el.html(this.view.render().el);
+      this.app.$el.find('#main').html(this.view.render().el);
     }
   },
 
@@ -370,6 +369,6 @@ module.exports = Backbone.Router.extend({
       }
     ];
 
-    this.notify(message, error, options)
+    this.notify(message, error, options);
   }
 });
