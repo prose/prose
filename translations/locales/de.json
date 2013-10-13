@@ -23,6 +23,7 @@
         "subHeading": "Untertitel",
         "link": "Link Einfügen",
         "image": "Link einfügen",
+        "bold": "Fett",
         "italic": "Kursiv",
         "blockquote": "Zitat",
         "list": "Liste",
@@ -48,7 +49,8 @@
         },
         "change": {
             "noChange": "Keine Änderungen",
-            "submit": "Änderungen zu verschicken"
+            "submit": "Änderungen zu verschicken",
+            "save": "Änderungen speichern"
         },
         "delete": {
             "title": "Löschen",
@@ -66,7 +68,8 @@
             "patch": "Verschicke Anfrage",
             "fileNameError": "Dateiname benötigt",
             "submission": "Anfrage verschickt",
-            "metaError": "Fehler! Metainformationen nicht gefunden"
+            "metaError": "Fehler! Metainformationen nicht gefunden",
+            "fileNameExists": "Eine Datei mit diesem Namen und Speicherort existiert bereits!"
         },
         "error": "Fehler. Versuchen Sie es erneut in 30 Sekunden",
         "restore": {
@@ -89,7 +92,8 @@
         "creating": "Erstelle neue Beitrag"
     },
     "modal": {
-        "errorHeading": "Fehler"
+        "errorHeading": "Fehler",
+        "confirm": "Ok einverstanden"
     },
     "main": {
         "start": {
@@ -107,6 +111,9 @@
             "filter": "Dateien filtern",
             "edit": "Bearbeiten",
             "delete": "Datei löschen"
+        },
+        "new": {
+            "body": "## Ein neuer Beitrag\n\nGeben Sie Ihren Text im [Markdown] (http://daringfireball.net/projects/markdown/) Format ein. Verwenden Sie die Symbolleiste oben, oder klicken Sie auf die **?** Taste um Hilfe für die Formatierung zu erhalten.\n"
         },
         "file": {
             "noTitle": "Ohne Titel",
@@ -167,11 +174,17 @@
         "link": {
             "title": "Link einfügen",
             "insertLocal": "Einfügen eines lokalen Links",
-            "insert": "Einfügen"
+            "insert": "Einfügen",
+            "hrefPlaceholder": "Link URL",
+            "textPlaceholder": "Link Name",
+            "titlePlaceholder": "Titel (optional)",
+            "insertPlaceholder": "Einen lokalen Link einfügen"
         },
         "media": {
             "title": "Bild einfügen ",
             "back": "Zurück",
+            "hrefPlaceholder": "Bild URL",
+            "altPlaceholder": "Alt Text (optional)",
             "description": "Laden Sie Bilder per Drag & Drop oder </br>\n{input} <a>Wählen Sie eins aus</a>\n",
             "help": "Hochgeladene Bilder werden dem aktuelle Verzeichnis oder dem oben angegeben Bild URL-Pfad hinzugefügt.",
             "helpMedia": "Hochgeladene Bilder werden dem \"Wählen Sie vorhandene Verzeichnis\" oder dem angegeben Bild URL-Pfad hinzugefügt.",
@@ -182,7 +195,8 @@
                 "title": "Block-Elemente",
                 "content": {
                     "paragraphs": {
-                        "title": "Absätze  &amp; Umbrüche"
+                        "title": "Absätze  &amp; Umbrüche",
+                        "content": "<p>Um einen Absatz zu erstellen, erstellen Sie einfach einen Text, der nicht durch eine oder mehrere Leerzeilen getrennt ist. Textblöcke, die von einem oder mehreren Leerzeilen getrennt werden als Absätze betrachtet.</p><p>Wenn Sie einen Zeilenumbruch erstellen möchten, beenden Sie eine Zeile mit zwei oder mehr Leerzeichen, dann drücken Sie die Return / Eingabetaste.</p>\n"
                     },
                     "headers": {
                         "title": "Überschriften",
@@ -231,10 +245,12 @@
                 "title": "Vermischtes",
                 "content": {
                     "automaticLinks": {
-                        "title": "Automatische Links"
+                        "title": "Automatische Links",
+                        "content": "<p>Wenn Sie einen Link, der die tatsächlichen URL zeigt erstellen möchten, fassen Sie die URL mit <code>&lt;</code> und <code>&gt;</code> ein. Zum Bespiel: der Link: <a href=\"javascript:void(0);\">http://github.com/</a> kann einfach durch das schreiben von <code>&lt;http://github.com/&gt;</code> erzeugt werden.</p>\n"
                     },
                     "escaping": {
-                        "title": "Escape-Sequenz"
+                        "title": "Escape-Sequenz",
+                        "content": "<p>Wenn Sie ein spezielles Markdown Zeichen in Ihrem Dokument (z. B. das Anzeigen eines Sternchen) verwenden möchten, können Sie das Zeichen mit dem Backslash (<code>\\\\</code>) einfügen. Markdown wird das Zeichen direkt nach einem Backslash zu ignorieren.</p>\n"
                     }
                 }
             }

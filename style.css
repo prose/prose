@@ -1684,8 +1684,8 @@ ins {
 ---------------------------------------------*/
 .publish-flag, .draft-to-post {
   color:#a8afb2;
-  height:42px;
-  line-height:42px;
+  height:45px;
+  line-height:45px;
   padding:0 15px;
   float:right;
   }
