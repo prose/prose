@@ -3,7 +3,7 @@
   <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>
 
   <fieldset>
-    <select name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' class='chzn-select'>
+    <select name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' class='metafield chzn-select'>
       <% _(meta.options).each(function(o) { %>
         <% if (!o.lang || o.lang === meta.lang) { %>
           <% if (o.name) { %>

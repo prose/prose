@@ -2,6 +2,6 @@
   <label for='<%= meta.name %>'><%= meta.label %></label>
   <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>
   <fieldset>
-    <input type='text' name='<%= meta.name %>' value='<%= meta.value %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>' />
+    <input class='metafield' type='text' name='<%= meta.name %>' value='<%= meta.value %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>' />
   </fieldset>
 </div>

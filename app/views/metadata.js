@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
   template: templates.metadata,
 
   events: {
-    'change input': 'updateModel',
+    'change .metafield': 'updateModel',
     'click .create-select': 'createSelect',
     'click .finish': 'exit'
   },
@@ -198,19 +198,14 @@ module.exports = Backbone.View.extend({
 
   updateModel: function(e) {
     var target = e.currentTarget;
+    var key = target.name;
+    var value = target.value;
+    var delta = {};
+    delta[key] = value;
 
-    // Check first this is not coming from an input that
-    // receives user input. Its paired with another form field.
-    if (!target.getAttribute('data-select')) {
-      var key = target.name;
-      var value = target.value;
-      var delta = {};
-      delta[key] = value;
-
-      var metadata = this.model.get('metadata');
-      this.model.set('metadata', _.extend(metadata, delta));
-      this.view.makeDirty();
-    }
+    var metadata = this.model.get('metadata');
+    this.model.set('metadata', _.extend(metadata, delta));
+    this.view.makeDirty();
   },
 
   rawKeyMap: function() {
