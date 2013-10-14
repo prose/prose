@@ -248,6 +248,7 @@ module.exports = Backbone.View.extend({
       try {
         raw = jsyaml.safeLoad(value);
       } catch(err) {
+        console.log("Error parsing CodeMirror editor text");
         console.log(err);
       }
 
@@ -332,7 +333,12 @@ module.exports = Backbone.View.extend({
       var name = $('#' + editor).data('name');
 
       if (view[editor]) {
-        metadata[name] = jsyaml.safeLoad(view[editor].getValue());
+        try {
+          metadata[name] = jsyaml.safeLoad(view[editor].getValue());
+        } catch(err) {
+          console.log("Error parsing yaml front matter");
+          console.log(err);
+        }
       }
     });
 
@@ -341,7 +347,8 @@ module.exports = Backbone.View.extend({
       try {
         metadata = _.merge(metadata, jsyaml.safeLoad(this.raw.getValue()) || {});
       } catch (err) {
-        throw err;
+        console.log("Error parsing not defined raw yaml front matter");
+        console.log(err);
       }
     }
 

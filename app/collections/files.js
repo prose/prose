@@ -80,7 +80,8 @@ module.exports = Backbone.Collection.extend({
     try {
       config = jsyaml.safeLoad(content);
     } catch(err) {
-      throw err;
+      console.log("Error parsing YAML");
+      console.log(err);
     }
 
     if (config && config.prose) {
@@ -140,7 +141,8 @@ module.exports = Backbone.Collection.extend({
                   raw = raw.replace("CURRENT_DATETIME", current);
                 }
               } catch(err) {
-                throw err;
+                console.log("Error parsing default values.");
+                console.log(err);
               }
             }
 
