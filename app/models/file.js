@@ -106,6 +106,7 @@ module.exports = Backbone.Model.extend({
         res.metadata.published = !regex.test(frontmatter);
       } catch(err) {
         console.log('ERROR encoding YAML');
+        console.log(err);
       }
 
       return '';
