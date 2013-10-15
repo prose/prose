@@ -37,7 +37,6 @@ user.authenticate({
     if ('withCredentials' in new XMLHttpRequest()) {
       // Set OAuth header for all CORS requests
       $.ajaxSetup({
-        cache: false,
         headers: {
           'Authorization': config.auth === 'oauth' ?
             'token ' + cookie.get('oauth-token') :

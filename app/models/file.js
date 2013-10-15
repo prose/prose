@@ -264,6 +264,7 @@ module.exports = Backbone.Model.extend({
           'sha': this.collection.branch.get('sha'),
           'success': (function(res) {
             repo.branches.fetch({
+              cache: false,
               success: (function(collection, res, options) {
                 branch = collection.findWhere({ name: branch });
 
@@ -276,7 +277,7 @@ module.exports = Backbone.Model.extend({
                   path: this.get('path'),
                   repo: repo,
                   sha: this.get('sha'),
-                  message: this.get('message')
+                  message: this.get('message') || this.get('placeholder')
                 });
 
                 // Backbone expects these to be top level,
