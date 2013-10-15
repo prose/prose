@@ -650,7 +650,12 @@ module.exports = Backbone.View.extend({
     // TODO: remove EST specific time adjustment
     var date = [year, month, day].join('-') + ' 05:00:00';
 
-    p.post.date = jsyaml.safeLoad(date).toDateString();
+    try {
+      p.post.date = jsyaml.safeLoad(date).toDateString();
+    } catch(err) {
+      console.log("Error parsing date");
+      console.log(err);
+    }
 
     // Parse JSONP links
     if (p.site && p.site.site) {

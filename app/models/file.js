@@ -106,6 +106,7 @@ module.exports = Backbone.Model.extend({
         res.metadata.published = !regex.test(frontmatter);
       } catch(err) {
         console.log('ERROR encoding YAML');
+        console.log(err);
       }
 
       return '';
@@ -263,6 +264,7 @@ module.exports = Backbone.Model.extend({
           'sha': this.collection.branch.get('sha'),
           'success': (function(res) {
             repo.branches.fetch({
+              cache: false,
               success: (function(collection, res, options) {
                 branch = collection.findWhere({ name: branch });
 
@@ -274,8 +276,16 @@ module.exports = Backbone.Model.extend({
                   content: this.get('content'),
                   path: this.get('path'),
                   repo: repo,
-                  sha: this.get('sha')
+                  sha: this.get('sha'),
+                  message: this.get('message') || this.get('placeholder')
                 });
+
+                // Backbone expects these to be top level,
+                // not in _attributes for some reason
+                // TODO: Don't actually do this, but hey, YOLO.
+                file.branch = branch;
+                file.collection = collection;
+                file.collection.branch = branch;
 
                 // Add to collection on save
                 file.save({
@@ -336,7 +346,8 @@ module.exports = Backbone.Model.extend({
   },
 
   url: function() {
-    return this.collection.repo.url() + '/contents/' + this.get('path') + '?ref=' + this.collection.branch.get('name');
+    branch = this.collection.branch || this.branch || this.get("branch");
+    return this.collection.repo.url() + '/contents/' + this.get('path') + '?ref=' + branch.get('name');
   },
 
   validate: function(attributes, options) {
