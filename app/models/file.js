@@ -278,7 +278,8 @@ module.exports = Backbone.Model.extend({
                   repo: repo,
                   sha: this.get('sha'),
                   message: this.get('message') || this.get('placeholder'),
-                  metadata: this.get('metadata')
+                  metadata: this.get('metadata'),
+                  defaults: this.get('defaults')
                 });
 
                 // Backbone expects these to be top level,
