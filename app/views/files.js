@@ -52,14 +52,14 @@ module.exports = Backbone.View.extend({
     this.app.loader.start();
 
     this.model = this.branches.findWhere({ name: this.branch }).files;
-    this.search.model = this.model;
 
     this.model.fetch({
       success: (function() {
         // Update this.path with rooturl
         var config = this.model.config;
         this.rooturl = config && config.rooturl ? config.rooturl : '';
-
+        this.presentationModel = this.model.filteredModel || this.model;
+        this.search.model = this.presentationModel;
         // Render on fetch and on search
         this.listenTo(this.search, 'search', this.render);
         this.render();
@@ -104,7 +104,7 @@ module.exports = Backbone.View.extend({
 
     // Render drafts link in sidebar as subview
     // if _posts directory exists and path does not begin with _drafts
-    if (this.model.get('_posts') && /^(?!_drafts)/.test(this.path)) {
+    if (this.presentationModel.get('_posts') && /^(?!_drafts)/.test(this.path)) {
       drafts = this.sidebar.initSubview('drafts', {
         link: [url, '_drafts'].join('/'),
         sidebar: this.sidebar
@@ -124,7 +124,7 @@ module.exports = Backbone.View.extend({
     this.$el.html(_.template(this.template, data, {variable: 'data'}));
 
     // if not searching, filter to only show current level
-    var collection = search ? this.search.search() : this.model.filter((function(file) {
+    var collection = search ? this.search.search() : this.presentationModel.filter((function(file) {
       return regex.test(file.get('path'));
     }).bind(this));
 

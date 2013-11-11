@@ -8,6 +8,7 @@ var Folder = require('../models/folder');
 
 var cookie = require('../cookie');
 var util = require('../util');
+var ignore = require('ignore');
 
 module.exports = Backbone.Collection.extend({
   model: function(attributes, options) {
@@ -168,6 +169,15 @@ module.exports = Backbone.Collection.extend({
     }
   },
 
+  parseIgnores: function(ignores) {
+    var ignoreFile = ignores.get('content');
+    var ignorePatterns = ignoreFile.split(/\r\n|\n/);
+    var ignoreFilter = ignore().addPattern(ignorePatterns).createFilter();
+    this.filteredModel = new Backbone.Collection(this.filter(function(file) {
+      return ignoreFilter(file.id);
+    }));
+  },
+
   fetch: function(options) {
     options = _.clone(options) || {};
 
@@ -176,19 +186,35 @@ module.exports = Backbone.Collection.extend({
 
     Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
       success: (function(model, res, options) {
+        // Currently files.fetch() doesn't return a promise so we can
+        // resolve our own promises in the success function
+        var fetchPromises = [];
         var config = this.findWhere({ path: '_prose.yml' }) ||
-          this.findWhere({ path: '_config.yml' });
-
+              this.findWhere({ path: '_config.yml' });
         if (config) {
+          var configPromise = new $.Deferred();
+          fetchPromises.push(configPromise);
           config.fetch({
             success: (function() {
-              this.parseConfig(config, { success: success, args: args });
+              this.parseConfig(config, {});
+              configPromise.resolve();
             }).bind(this)
           });
-        } else {
-          if (_.isFunction(success)) success.apply(this, args);
         }
-
+        var ignores = this.findWhere({ path: '.proseignore' });
+        if (ignores) {
+          var ignorePromise = new $.Deferred();
+          fetchPromises.push(ignorePromise);
+          ignores.fetch({
+            success: (function() {
+              this.parseIgnores(ignores);
+              ignorePromise.resolve();
+            }).bind(this)
+          });
+        }
+        $.when.apply($, fetchPromises).done((function () {
+            if (_.isFunction(success)) success.apply(this, args);
+        }).bind(this));
       }).bind(this)
     }));
   },
