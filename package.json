@@ -14,7 +14,8 @@
     "marked": "~0.2.8",
     "queue-async": "~1.0.3",
     "diff": "~1.0.4",
-    "deepmerge": "~0.2.7"
+    "deepmerge": "~0.2.7",
+    "ignore": "~2.2.7"
   },
   "keywords": [
     "editor",
