@@ -8,6 +8,7 @@ var Folder = require('../models/folder');
 
 var cookie = require('../cookie');
 var util = require('../util');
+var ignore = require('ignore');
 
 module.exports = Backbone.Collection.extend({
   model: function(attributes, options) {
@@ -168,6 +169,15 @@ module.exports = Backbone.Collection.extend({
     }
   },
 
+  parseIgnores: function(ignores) {
+    var ignoreFile = ignores.get('content');
+    var ignorePatterns = ignoreFile.split(/\r\n|\n/);
+    var ignoreFilter = ignore().addPattern(ignorePatterns).createFilter();
+    this.filteredModel = new Backbone.Collection(this.filter(function(file) {
+      return ignoreFilter(file.id);
+    }));
+  },
+
   fetch: function(options) {
     options = _.clone(options) || {};
 
@@ -176,19 +186,33 @@ module.exports = Backbone.Collection.extend({
 
     Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
       success: (function(model, res, options) {
+        var q = queue();
         var config = this.findWhere({ path: '_prose.yml' }) ||
-          this.findWhere({ path: '_config.yml' });
-
+              this.findWhere({ path: '_config.yml' });
         if (config) {
-          config.fetch({
-            success: (function() {
-              this.parseConfig(config, { success: success, args: args });
-            }).bind(this)
-          });
-        } else {
-          if (_.isFunction(success)) success.apply(this, args);
+          q.defer((function(cb) {
+            config.fetch({
+              success: (function() {
+                this.parseConfig(config, {});
+                cb();
+              }).bind(this)
+            });
+          }).bind(this));
         }
-
+        var ignores = this.findWhere({ path: '.proseignore' });
+        if (ignores) {
+          q.defer((function(cb) {
+            ignores.fetch({
+              success: (function() {
+                this.parseIgnores(ignores);
+                cb();
+              }).bind(this)
+            });
+          }).bind(this));
+        }
+        q.awaitAll((function () {
+          if (_.isFunction(success)) success.apply(this, args);
+        }).bind(this));
       }).bind(this)
     }));
   },
