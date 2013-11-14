@@ -186,34 +186,32 @@ module.exports = Backbone.Collection.extend({
 
     Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
       success: (function(model, res, options) {
-        // Currently files.fetch() doesn't return a promise so we can
-        // resolve our own promises in the success function
-        var fetchPromises = [];
+        var q = queue();
         var config = this.findWhere({ path: '_prose.yml' }) ||
               this.findWhere({ path: '_config.yml' });
         if (config) {
-          var configPromise = new $.Deferred();
-          fetchPromises.push(configPromise);
-          config.fetch({
-            success: (function() {
-              this.parseConfig(config, {});
-              configPromise.resolve();
-            }).bind(this)
-          });
+          q.defer((function(cb) {
+            config.fetch({
+              success: (function() {
+                this.parseConfig(config, {});
+                cb();
+              }).bind(this)
+            });
+          }).bind(this));
         }
         var ignores = this.findWhere({ path: '.proseignore' });
         if (ignores) {
-          var ignorePromise = new $.Deferred();
-          fetchPromises.push(ignorePromise);
-          ignores.fetch({
-            success: (function() {
-              this.parseIgnores(ignores);
-              ignorePromise.resolve();
-            }).bind(this)
-          });
+          q.defer((function(cb) {
+            ignores.fetch({
+              success: (function() {
+                this.parseIgnores(ignores);
+                cb();
+              }).bind(this)
+            });
+          }).bind(this));
         }
-        $.when.apply($, fetchPromises).done((function () {
-            if (_.isFunction(success)) success.apply(this, args);
+        q.awaitAll((function () {
+          if (_.isFunction(success)) success.apply(this, args);
         }).bind(this));
       }).bind(this)
     }));
