@@ -257,6 +257,32 @@ module.exports = Backbone.Router.extend({
       sidebar: this.app.sidebar
     };
 
+    // node's url library is full of fail
+    var href = window.location.href;
+    var query = href.slice(href.indexOf('?') + 1);
+
+    var querystring = require('querystring');
+    querystring.unescape = function(qs, ds){ return decodeUri(qs); };
+    query = querystring.parse(query);
+
+    file.queryStringData = {};
+
+    if(query.filename){
+      file.queryStringData.newFileName = query.filename;
+    }else if(query.metadata && query.metadata.title){
+      var filename = new Date().format('Y-m-d-');
+      filename += query.metadata.title.replace(/\W/ig, '-').replace(/--+/g, '-').substring(0,100);
+      if(!filename.match(/\.\w+$/))
+        filename += '.md';
+      file.queryStringData.newFileName = filename;
+    }
+
+    if(query.content)
+      file.queryStringData.content = query.content;
+
+    if(query.metadata)
+      file.queryStringData.metadata = query.metadata;
+
     // TODO: defer this success function until both user and repo have been fetched
     // in paralell rather than in series
     user.fetch({

@@ -24,7 +24,8 @@ module.exports = Backbone.Model.extend({
     var dir = attributes.collection.get(path);
     if (this.isNew() && (!path || path === '_drafts' ||
       (dir && dir.get('type') === 'tree'))) {
-      path = path ? path + '/' + this.placeholder : this.placeholder;
+      var newFileName = attributes.newFileName ? attributes.newFileName : this.placeholder;
+      path = path ? path + '/' + newFileName : newFileName;
     }
 
     var extension = util.extension(path);
@@ -40,6 +41,10 @@ module.exports = Backbone.Model.extend({
       type = attributes.type;
     }
 
+    var metadata = false;
+    if(this.isNew() && attributes.metadata)
+      metadata = attributes.metadata;
+
     this.set({
       'binary': util.isBinary(path),
       'content': this.isNew() && _.isUndefined(attributes.content) ? t('main.new.body') : attributes.content,
@@ -48,6 +53,7 @@ module.exports = Backbone.Model.extend({
         var path = this.get('path');
         return util.draft(path);
       },
+      'metadata': metadata,
       'extension': extension,
       'lang': util.mode(extension),
       'media': util.isMedia(extension),

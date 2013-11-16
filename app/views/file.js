@@ -44,6 +44,7 @@ module.exports = Backbone.View.extend({
     this.repo = options.repo;
     this.router = options.router;
     this.sidebar = options.sidebar;
+    this.queryStringData = options.queryStringData;
 
     // Set the active nav element established by this.mode
     this.nav.setFileState(this.mode);
@@ -117,12 +118,18 @@ module.exports = Backbone.View.extend({
         this.model = this.collection.findWhere({ path: this.path });
         break;
       case 'new':
-        this.model = new File({
+        var newFileData = {
           branch: this.branches.findWhere({ name: this.branch }),
           collection: this.collection,
           path: this.path,
           repo: this.repo
-        });
+        };
+        if(!_.isUndefined(this.queryStringData)){
+          newFileData.newFileName = this.queryStringData.newFileName;
+          newFileData.content = this.queryStringData.content;
+          newFileData.metadata = this.queryStringData.metadata;
+        }
+        this.model = new File(newFileData);
         break;
     }
 
