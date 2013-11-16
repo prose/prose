@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
   template: templates.metadata,
 
   events: {
-    'change .metafield': 'updateModel',
+    'change input': 'updateModel',
     'click .create-select': 'createSelect',
     'click .finish': 'exit'
   },
