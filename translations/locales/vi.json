@@ -1,0 +1,266 @@
+{
+    "login": "Đồng bộ hóa với GitHub",
+    "docheader": {
+        "editing": "Đang chỉnh sửa",
+        "error": "Lỗi",
+        "preview": "Xem sơ lược"
+    },
+    "navigation": {
+        "newFile": "Tập tin mới",
+        "edit": "Chỉnh sửa",
+        "preview": "Xem thử",
+        "settings": "Thiết lập",
+        "meta": "Thông tin bổ sung",
+        "save": "Lưu",
+        "login": "Đồng bộ hóa với GitHub",
+        "about": "Dịch bởi Phan Anh",
+        "develop": "Nhà Phát triển",
+        "logout": "Đăng xuất",
+        "language": "Ngôn ngữ"
+    },
+    "toolbar": {
+        "heading": "Phần nhập đề",
+        "subHeading": "Phần nhập đề con",
+        "link": "Chèn đường liên kết",
+        "image": "Chèn đường liên kết",
+        "bold": "In đậm",
+        "italic": "In nghiêng",
+        "blockquote": "Đánh dấu trích dẫn",
+        "list": "Danh sách",
+        "numberedlist": "Danh sách dạng thứ tự",
+        "help": "Trợ giúp"
+    },
+    "heading": {
+        "explore": "Khám phá các dự án"
+    },
+    "actions": {
+        "unsaved": "Bạn vẫn chưa lưu các thay đổi. Bạn có chắc muốn đóng lại phần này?",
+        "draft": {
+            "toPost": "Lưu bài đăng dưới dạng nháp",
+            "toPostInfo": "Chuyển phần nháp này thành tin được xuất bản"
+        },
+        "publishing": {
+            "publish": "Xuất bản",
+            "publishInfo": "Phần bài đăng này sẽ được xuất bản vào lần tới khi bạn lưu",
+            "published": "Đã xuất bản",
+            "unpublish": "Gỡ xuất bản",
+            "unpublished": "Đã gỡ xuất bản",
+            "unpublishInfo": "Phần bài đăng này sẽ không được xuất bản vào lần tới khi bạn lưu"
+        },
+        "change": {
+            "noChange": "Không có thay đổi nào",
+            "submit": "Các thay đổi để cập nhật",
+            "save": "Lưu các thay đổi"
+        },
+        "delete": {
+            "title": "Xóa",
+            "warn": "Bạn có chắc muốn xóa tập tin này?",
+            "error": "Lỗi xảy ra khi xóa. Xin vui lòng đợi 30 giây và thử lại lần nữa."
+        },
+        "upload": {
+            "uploading": "Đang tải {file}",
+            "uploaded": "Đã tải {file}"
+        },
+        "save": {
+            "title": "Lưu",
+            "saved": "Đã lưu",
+            "saving": "Đã lưu",
+            "patch": "Gửi yêu cầu",
+            "fileNameError": "Cần tên cho tập tin",
+            "submission": "Đã gửi Yêu Cầu",
+            "metaError": "Lỗi! Không tìm thấy thông tin chi tiết",
+            "fileNameExists": "Một tên tập tin với cùng đường dẫn tương tự đã có trước đó"
+        },
+        "error": "Lỗi. Thử lại lần nữa trong 30 giây",
+        "restore": {
+            "restoring": "Đang khôi phục lại",
+            "restored": "Đã khôi phục lại"
+        },
+        "commits": {
+            "created": "Đã Tạo {filename}",
+            "updated": "Đã cập nhật {filename}",
+            "deleted": "Xóa {filename}",
+            "toDraft": "Đã tạo bản nháp của {filename}",
+            "fromDraft": "Đã tạo một bản tin từ bản nháp {filename}"
+        }
+    },
+    "loading": {
+        "repos": "Đang tải Hồ Sơ",
+        "repo": "Đang tải Dự Án",
+        "file": "Đang tải tập tin",
+        "preview": "Xem trước tập tin",
+        "creating": "Tạo bản tin mới"
+    },
+    "modal": {
+        "errorHeading": "Lỗi",
+        "confirm": "Đã nhận được"
+    },
+    "main": {
+        "start": {
+            "content": "Prose là một chương trình chỉnh sửa nội dung dành cho việc quản lý các website từ GitHub, dịch bởi Phan Anh.",
+            "learn": "Tìm hiểu thêm"
+        },
+        "repos": {
+            "filter": "Lọc các dự án",
+            "repo": "Xem dự án",
+            "site": "Xem trang",
+            "sharedFrom": "Đã chia sẻ từ một tài khoản",
+            "forkedFrom": "Gắn với một dự án khác"
+        },
+        "repo": {
+            "filter": "Lọc tập tin",
+            "edit": "Chỉnh sửa",
+            "delete": "Xóa tập tin này"
+        },
+        "new": {
+            "body": "## Một bài đăng maowí\n\nĐiền phần văn bản vào [Markdown](http://daringfireball.net/projects/markdown/). Sử dụng thanh công cụ phía bên trên, hoặc click vào nút **?** để nhận trợ giúp về định dạng.\n"
+        },
+        "file": {
+            "noTitle": "Chưa đặt tiêu đề",
+            "metaTitle": "Xem lại các thay đổi bạn đã thao tác:",
+            "rawMeta": "Thông tin bổ sung thô",
+            "metaDescription": "Phần thêm vào được đánh dấu màu xanh. Phần xóa được gạch lằn.",
+            "back": "Hoàn tất",
+            "createMeta": "Tạo mới"
+        },
+        "upgrade": {
+            "content": "Các tính năng cần có từ chương trình hiện không có trong trình duyệt của bạn",
+            "download": "Tải một trình duyệt khác"
+        }
+    },
+    "notification": {
+        "loginDescription": "Hãy đăng nhập với tài khoản trên GitHub để truy cập dự án đó.",
+        "create": "Tạo ",
+        "home": "Quay về trang chủ",
+        "back": "Quay về",
+        "githubStatus": "Trạng thái trên GitHub ({status})",
+        "error": {
+            "label": "Lỗi",
+            "github": "Lỗi khi tải dữ liệu từ GitHub. Điều này dường như chỉ mang tính tạm thời. Hãy thử lại sau.",
+            "exists": "Tập tin này không tồn tại",
+            "notFound": "Không tìm thấy trang"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "Nhóm"
+        },
+        "repo": {
+            "branch": "Chuyển đổi nhánh",
+            "drafts": "Xem Phần Nháp",
+            "history": {
+                "label": "Lịch sử hoạt động gần đây",
+                "actions": {
+                    "restore": "Khôi phục?"
+                }
+            },
+            "create": "Tạo tập tin mới"
+        },
+        "save": {
+            "label": "Mô tả thay đổi của bạn",
+            "cancel": "Hủy bỏ",
+            "save": "Gửi",
+            "submit": "Gửi đi yêu cầu thay đổi"
+        },
+        "settings": {
+            "title": "Tùy chọn",
+            "fileInputLabel": "Đường dẫn tập tin",
+            "delete": "Xóa tập tin này",
+            "translate": "Được dịch sang",
+            "draft": "Tạo bản nháp"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Chèn đường dẫn",
+            "insertLocal": "Chèn một liên kết ở máy hiện tại",
+            "insert": "Chèn",
+            "hrefPlaceholder": "Đường dẫn liên kết",
+            "textPlaceholder": "Tên đường dẫn",
+            "titlePlaceholder": "Tiêu đề (có hoặc không)",
+            "insertPlaceholder": "Chèn vào một đường dẫn từ máy hiện tại"
+        },
+        "media": {
+            "title": "Chèn hình ảnh",
+            "back": "Quay lại",
+            "hrefPlaceholder": "Đường dẫn liên kết đến hình ảnh",
+            "altPlaceholder": "Văn bản Alt (có hoặc không)",
+            "description": "Tải lên hình ảnh bằng cách Kéo &amp; Thả chuột hoặc </br>\n{input} <a>chọn hình ảnh</a>\n",
+            "help": "Hình ảnh được tải lên sẽ được thêm vào thự mục hiện tại hoặc với đường dẫn URL đến hình ảnh được cung cấp ở đường dẫn trên.",
+            "helpMedia": "Hình ảnh được tải lên sẽ thêm vào phần thư mục 'Chọn có sẵn' hoặc một đường dẫn URL được xác định.",
+            "choose": "Chọn có sẵn"
+        },
+        "help": {
+            "blockElements": {
+                "title": "Khóa đối tượng",
+                "content": {
+                    "paragraphs": {
+                        "title": "Đoạn văn &amp; Ngắt trang",
+                        "content": "<p>Để tạo một đoạn văn, cứ đơn giản tạo một khối văn bản bị tách biệt bởi một hay nhiều dòng trống. Các khối văn bản được tách biệt từng phần một hoặc các dòng trống sẽ được kết dính lại thành một đoạn văn.</p><p>Nếu bạn muốn tạo một dấu ngắt trang, nhấn phím khoảng cách từ hai hay nhiều lần trở lên ở cuối dòng, sau đó click vào Quay lại/Enter.</p>\n"
+                    },
+                    "headers": {
+                        "title": "Headers",
+                        "content": "<p>Đánh dấu hỗ trợ hai loại định dạng header. Trình biên soạn wiki sử dụng &ldquo;atx&rsquo;-style headers. Chỉ cần đặt phía trước phần văn bản header với nội dung là ký tự <code>#</code> số để xác định độ dài. Ví dụ: <code># Header 1</code>, <code>## Header 2</code> và <code>### Header 3</code> sẽ tạo các header nhỏ hơn. Bạn có thể đặt ở cuối phần tên header của bạn bất kỳ con số gì.</p>\n"
+                    },
+                    "blockquotes": {
+                        "title": "Khóa trích dẫn",
+                        "content": "<p>Đánh dấu nhằm tạo khóa trích dẫn kiểu email bằng cách đặt tiền tố ở mỗi dòng với <code>&gt;</code>. Thao tác này sẽ cho sự hiển thị tốt nhất nếu bạn quyết định phân cách khi xuống hàng các đoạn văn bản và mỗi đặt mỗi tiền tố cho mỗi dòng với một <code>&gt;</code> ký tự, tuy nhiên hỗ trợ đánh dấu chỉ hỗ trợ việc đặt <code>&gt;</code> phía trước đoạn văn của bạn.</p>\n"
+                    },
+                    "lists": {
+                        "title": "Danh sách",
+                        "content": "<p>Markdown hỗ trợ cả danh sách đã sắp xếp và chưa sắp xếp. Để tạo một danh sách sắp xếp, đặt vào phần đằng trước mỗi dòng một con số (bất kỳ con số nào cũng sẽ thực hiện &mdash; đây là lý do vì sao trình chỉnh sửa này hoạt động rất tốt.) Để tạo một danh sách không sắp xếp, bạn đặt vào phần trước mỗi dòng <code>*</code>, <code>+</code> hoặc <code>-</code>.</p> Đối tượng dạng danh sách có thể chứa nhiều đoạn văn, tuy nhiên mỗi đoạn phải được lùi vào ít nhất 4 ký tự khoảng trắng hoặc một tab.\n"
+                    },
+                    "codeBlocks": {
+                        "title": "Khối mã lệnh",
+                        "content": "<p>Markdown bao bọc khối mã lệnh trong những thẻ được định dạng từ trước để bảo toàn tính chất định danh cho dòng mã lệnh. Để tạo một khối mã lệnh, cách vào 4 khoảng trắng hoặc một tab với toàn bộ khối lệnh. Markdown sẽ bỏ qua các khoảng trống you&rsquo;ve mà bạn đã thêm vào khối mã.</p>\n"
+                    },
+                    "horizontalRules": {
+                        "title": "Quy tắc chiều dọc",
+                        "content": "<p>Horizontal rules are created by placing three or more hyphens, asterisks or underscores on a line by themselves. Spaces are allowed between the hyphens, asterisks or underscores.</p>\n"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "Mở rộng đối tượng",
+                "content": {
+                    "links": {
+                        "title": "Liên kết",
+                        "content": "<p>Markdown has two types of links: <strong>inline</strong> and <strong>reference</strong>. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text &ldquo;GitHub&rdquo;, you write <code>[GitHub]</code>.</p><p>To create an inline link, create a set of parentheses immediately after the brackets and write your URL within the parentheses. (e.g., <code>[GitHub](http://github.com/)</code>). Relative paths are allowed in inline links.</p><p>To create a reference link, use two sets of square brackets. <code>[my internal link][internal-ref]</code> will link to the internal reference <code>internal-ref</code>.</p>\n"
+                    },
+                    "emphasis": {
+                        "title": "Nhấn mạnh",
+                        "content": "<p>Dấu sao (<code>*</code>) và gạch dưới (<code>_</code>) được sử dụng để nhấn mạnh và được bọc trong một <code>&lt;em&gt;</code> thẻ đánh dấu, luôn hiển thị dưới dạng in nghiêng trong hầu hết các trình duyệt. Hai dấu sao (<code>**</code>) hoặc hai dấu gạch dưới dính liền nhau (<code>__</code>) được dùng để in đậm <code>&lt;strong&gt;</code> trong thẻ đánh dấu. Để in nghiêng hoặc in đậm đoạn văn bản, chỉ cần bao bọc đoạn văn bản trong dấu sao/gạch dưới có số lượng đơn/đôi. Thí dụ, <code>**Đoạn văn bản cần được nhấn mạnh**</code> trở thành <strong>Đoạn văn bản được nhấn mạnh gấp đôi</strong>, và <code>*Đoạn văn bản được nhấn mạnh đơn giản*</code> trở thành <em>Đoạn văn bản được nhấn mạnh đơn giản</em>.</p>\n"
+                    },
+                    "code": {
+                        "title": "Mã",
+                        "content": "<p>To create inline spans of code, simply wrap the code in backticks (<code>`</code>). Markdown will turn <code>`myFunction`</code> into <code>myFunction</code>.</p>\n"
+                    },
+                    "images": {
+                        "title": "Hình ảnh",
+                        "content": "<p>Markdown image syntax looks a lot like the syntax for links; it is essentially the same syntax preceded by an exclamation point (<code>!</code>). For example, if you want to link to an image at <code>http://github.com/unicorn.png</code> with the alternate text <code>My Unicorn</code>, you would write <code>![My Unicorn](http://github.com/unicorn.png)</code>.</p>\n"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "Các phần khác",
+                "content": {
+                    "automaticLinks": {
+                        "title": "Liên kết tự động",
+                        "content": "<p>Nếu bạn muốn tạo một đường liên kết để hiển thị chính xác đường dẫn liên kết trực tiếp, Markdown cho phép bạn nhanh chóng bọc lại đường dẫn liên kết trực tiếp đó trong cặp <code>&lt;</code> và <code>&gt;</code> . Lấy thí dụ đối với liên kết <a href=\"javascript:void(0);\">http://github.com/</a> có thể được thực hiện dễ dàng bằng cách viết <code>&lt;http://github.com/&gt;</code>.</p>\n"
+                    },
+                    "escaping": {
+                        "title": "Đang thoát",
+                        "content": "<p>Nếu bạn muốn sử dụng một ký tự đặc biệt trong Markdown tại tài liệu của mình (chẳng hạn như việc thể hiện các dấu hình sao), ở cuối phần ký tự đó bạn có thể thêm vào hai dấu chéo ngược (<code>\\\\</code>). Markdown sẽ bỏ qua ký tự này trực tiếp sau mỗi dấu chéo ngược.</p>\n\n"
+                    }
+                }
+            }
+        }
+    },
+    "chooselanguage": {
+        "title": "Chọn một ngôn ngữ hiển thị",
+        "description": "Prose được phiên dịch ra nhiều phiên bản ngôn ngữ khác nhau. Nếu bạn thấy phần ngôn ngữ mà bạn mong muốn chưa có trên danh sách, hoặc phần phiên dịch này bị lỗi về mặt cú pháp và ý nghĩa hay chính tả, hãy tham gia  <a href='https://www.transifex.com/projects/p/prose'>cộng tác phần dịch thuật của bạn vào dự án, prose được dịch và chuyển ngữ bởi Phan Anh</a>.\n"
+    },
+    "about": {
+        "content": "# Thông tin thêm - Dịch bởi Phan Anh\nProse provides a beatifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"
+    }
+}

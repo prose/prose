@@ -1,0 +1,4 @@
+<a class='<%= data.status %>' href='#<%= [data.repo.owner.login, data.repo.name, data.mode, data.branch, data.path].join("/") %>'>
+  <span class='ico small inline <%= data.status %>'></span>
+  <span class='message'><%= data.file.filename %></span>
+</a>

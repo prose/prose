@@ -1,0 +1,24 @@
+<header id='heading' class='heading limiter clearfix'></header>
+<div id='modal'></div>
+
+<div id='post' class='post limiter'>
+  <div class='editor views<% if (file.markdown) { %> markdown<% } %>'>
+    <div id='diff' class='view prose diff'>
+      <h2><%= t('main.file.metaTitle') %><br />
+        <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>
+      </h2>
+      <div class='diff-content inner'></div>
+    </div>
+    <div id='meta' class='view round meta'></div>
+    <div id='edit' class='view active edit'>
+      <div class='topbar-wrapper'>
+        <div class='topbar'>
+          <div id='toolbar' class='containment toolbar round'></div>
+        </div>
+      </div>
+      <div id='drop' class='drop-mask'></div>
+      <div id='code' class='code round inner'></div>
+    </div>
+    <div id='preview' class='view preview prose'></div>
+  </div>
+</div>

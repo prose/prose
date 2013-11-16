@@ -1,0 +1,202 @@
+{
+    "login": "前往 Github 授权",
+    "docheader": {
+        "editing": "正在编辑",
+        "error": "出错了",
+        "preview": "正在预览"
+    },
+    "navigation": {
+        "newFile": "新文件",
+        "edit": "编辑",
+        "preview": "预览",
+        "settings": "设置",
+        "save": "保存",
+        "login": "前往 Github 授权",
+        "about": "关于",
+        "develop": "开发者",
+        "logout": "登出"
+    },
+    "heading": {
+        "explore": "浏览项目"
+    },
+    "actions": {
+        "unsaved": "您有修改尚未提交。确认离开？",
+        "draft": {
+            "toPost": "变草搞为帖"
+        },
+        "publishing": {
+            "publish": "发布",
+            "published": "已发布",
+            "unpublish": "撤销发布",
+            "unpublished": "已撤销发布"
+        },
+        "change": {
+            "noChange": "尚无改动",
+            "submit": "将提交的修改"
+        },
+        "delete": {
+            "title": "删除",
+            "warn": "确认要删除此文件吗？",
+            "error": "删除时出现错误。请稍等30秒再试"
+        },
+        "upload": {
+            "uploading": "正在上传 {file}",
+            "uploaded": "已上传 {file}"
+        },
+        "save": {
+            "title": "保存",
+            "saved": "以保存",
+            "saving": "正在保存",
+            "patch": "正在提交申请",
+            "fileNameError": "需要文件名称",
+            "submission": "已提交请求",
+            "metaError": "出现错误！未找到元数据"
+        },
+        "error": "出错了。30秒后再试",
+        "restore": {
+            "restoring": "正在恢复",
+            "restored": "已恢复"
+        },
+        "commits": {
+            "created": "新建了 {filename}",
+            "updated": "更新了 {filename}",
+            "deleted": "已删除 {filename}",
+            "toDraft": "新建了草稿 {filename}",
+            "fromDraft": "用草稿 {filename} 新建了帖子"
+        }
+    },
+    "loading": {
+        "repos": "正在加载资料",
+        "repo": "正在加载项目",
+        "file": "正在加载文件",
+        "creating": "正在新建帖子"
+    },
+    "main": {
+        "start": {
+            "content": "Prose 是一个 Github 文字编辑器，专为管理网站而设计。",
+            "learn": "了解更多"
+        },
+        "repos": {
+            "filter": "过滤项目",
+            "repo": "查看项目",
+            "site": "查看网站",
+            "sharedFrom": "从另一账户共享",
+            "forkedFrom": "从另一项目派生的"
+        },
+        "repo": {
+            "filter": "过滤文件",
+            "edit": "编辑"
+        },
+        "file": {
+            "metaTitle": "查看所做修改",
+            "rawMeta": "原始元数据",
+            "metaDescription": "新加的有绿色高光。删除的有划线。",
+            "back": "完成"
+        },
+        "upgrade": {
+            "content": "Prose 所需功能你的浏览器未能提供 ",
+            "download": "请下载现代化的浏览器"
+        }
+    },
+    "notification": {
+        "loginDescription": "请用 Github 账户登陆以访问项目。",
+        "home": "回到主页",
+        "back": "返回",
+        "error": {
+            "label": "出错了",
+            "github": "从 Github 加载信息时出现了错误。也许仅为暂时问题。请过后再试。",
+            "exists": "此文件不存在",
+            "notFound": "未找到此页面"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "团体"
+        },
+        "repo": {
+            "branch": "切换分支",
+            "history": {
+                "label": "最近历史记录"
+            },
+            "create": "新建文件"
+        },
+        "save": {
+            "label": "描述所做修改",
+            "cancel": "取消",
+            "save": "提交修改",
+            "submit": "提交修改申请"
+        },
+        "settings": {
+            "title": "选项",
+            "delete": "删除此文件",
+            "translate": "翻译为",
+            "draft": "新建草稿"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "插入链接",
+            "insertLocal": "插入本站的一个链接",
+            "insert": "插入"
+        },
+        "media": {
+            "title": "插入图片",
+            "back": "返回",
+            "help": "上传的图片将被添加到现所在文件夹中，或者上面所填写 URL 路径所指定的文件夹中。",
+            "helpMedia": "上传的图片将被添加到「选取现有」所指定的文件夹中，或者上面所填写 URL 路径所指定的文件夹中。",
+            "choose": "选取现有"
+        },
+        "help": {
+            "blockElements": {
+                "title": "段落元素",
+                "content": {
+                    "paragraphs": {
+                        "title": "文字段落与断行符"
+                    },
+                    "headers": {
+                        "title": "标题",
+                        "content": "<p>Markdown 支持两种标题格式。百科的编辑器使用的是 &ldquo;atx&rsquo;-式标题。只需在标题文字前端添加数个 <code>#</code> 符号来表示标题等级。 例如：<code># 标题 1</code>, <code>## 标题 2</code> 以及 <code>### 标题 3</code> 会被编译为逐步降低的标题等级。标题文字末尾可以留有任意数量的井号</p>\\n"
+                    },
+                    "blockquotes": {
+                        "title": "引用段落"
+                    },
+                    "lists": {
+                        "title": "列表"
+                    },
+                    "codeBlocks": {
+                        "title": "代码段落"
+                    },
+                    "horizontalRules": {
+                        "title": "分隔横线",
+                        "content": "<p>分隔横线由一行3个或更多的连字符，星号或下划线表示。符号之间可以包含空格</p>\\n"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "行内元素",
+                "content": {
+                    "links": {
+                        "title": "链接"
+                    },
+                    "emphasis": {
+                        "title": "强调"
+                    },
+                    "code": {
+                        "title": "代码"
+                    },
+                    "images": {
+                        "title": "图片"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "杂项",
+                "content": {
+                    "escaping": {
+                        "title": "编译脱离"
+                    }
+                }
+            }
+        }
+    }
+}

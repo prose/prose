@@ -1,0 +1,70 @@
+<% if (toolbar.draft) { %>
+  <a href='#' class='draft-to-post round contain'>
+    <%= t('actions.draft.toPost') %><span class='ico small checkmark'></span>
+    <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>
+  </a>
+<% } else { %>
+  <% if (toolbar.metadata && toolbar.metadata.published) { %>
+    <a href='#' class='publish-flag published round contain' data-state='true'>
+      <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>
+    </a>
+  <% } else if (toolbar.metadata && !toolbar.metadata.published) { %>
+    <a href='#' class='publish-flag round contain' data-state='false'>
+      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>
+    </a>
+  <% } %>
+<% } %>
+
+<% if (toolbar.markdown) { %>
+<div class='options clearfix'>
+  <ul class='group round clearfix'>
+    <li><a href='#' title="<%= t('toolbar.heading') %>" data-key='heading' data-snippet='<% print("##\n\n") %>'>h2</a></li>
+    <li><a href='#' title="<%= t('toolbar.subHeading') %>" data-key='sub-heading' data-snippet='<% print("###\n\n") %>'>h3</a></li>
+  </ul>
+  <ul class='group round clearfix'>
+    <li>
+      <a title="<%= t('toolbar.link') %>" href='#' data-key='link' data-snippet=false data-dialog=true>
+        <span class='ico small link'></span>
+      </a>
+    </li>
+    <li>
+      <a title="<%= t('toolbar.image') %>" href='#' data-key='media' data-snippet=false data-dialog=true>
+        <span class='ico small picture'></span>
+      </a>
+    </li>
+  </ul>
+  <ul class='group round clearfix'>
+    <li><a href='#' title="<%= t('toolbar.bold') %>" data-key='bold' data-snippet='****'>B</a></li>
+    <li>
+      <a data-key='italic' href='#' title="<%= t('toolbar.italic') %>" data-snippet='__'>
+        <span class='ico small italic'></span>
+      </a>
+    </li>
+  </ul>
+  <ul class='group round clearfix'>
+    <li>
+      <a title="<%= t('toolbar.blockquote') %>"  href='#' data-key='quote' data-snippet='<% print("> We loved with a love that was more than love\n\n"); %>'>
+        <span class='ico small quote'></span>
+      </a>
+    </li>
+    <li>
+      <a href='#' title="<%= t('toolbar.list') %>" data-key='list' data-snippet='<% print("- item\n- item\n- item\n\n"); %>'>
+        <span class='ico small list'></span>
+      </a>
+    </li>
+    <li>
+      <a href='#' title="<%= t('toolbar.numberedlist') %>" data-key='numbered-list' data-snippet='<% print("1. item\n2. item\n3. item\n\n"); %>'>
+        <span class='ico small numbered-list'></span>
+      </a>
+    </li>
+  </ul>
+  <ul class='group round clearfix'>
+    <li>
+    <a class='round' title="<%= t('toolbar.help') %>" href='#' data-key='help' data-snippet=false data-dialog=true>
+        <span class='ico small question'></span>
+      </a>
+    </li>
+  </ul>
+</div>
+<% } %>
+<div id='dialog'></div>

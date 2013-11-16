@@ -1,0 +1,19 @@
+<div class='inner'>
+  <label><%= t('dialogs.link.title') %></label>
+  <input type='text' name='href' placeholder="<%= t('dialogs.link.hrefPlaceholder') %>" />
+  <input type='text' name='text' placeholder="<%= t('dialogs.link.textPlaceholder') %>" />
+  <input type='text' name='title' placeholder="<%= t('dialogs.link.titlePlaceholder') %>" />
+
+  <% if (relativeLinks) { %>
+    <div class='collapsible'>
+      <select data-placeholder="<%= t('dialogs.link.insertPlaceholder') %>" class='chzn-select'>
+        <option value></option>
+        <% _(relativeLinks).each(function(link) { %>
+        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>
+        <% }); %>
+      </select>
+    </div>
+  <% } %>
+
+  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>
+</div>

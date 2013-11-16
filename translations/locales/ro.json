@@ -1,0 +1,254 @@
+{
+    "login": "Autorizare pe GitHub",
+    "docheader": {
+        "editing": "Editare",
+        "error": "Eroare",
+        "preview": "Previzualizare"
+    },
+    "navigation": {
+        "newFile": "Fișier nou",
+        "edit": "Editare",
+        "preview": "Previzualizare",
+        "settings": "Setări",
+        "meta": "Date meta",
+        "save": "Salvează",
+        "login": "Autorizare cu GitHub",
+        "about": "Despre",
+        "develop": "Dezvoltatori",
+        "logout": "Deconectare",
+        "language": "Limbă"
+    },
+    "toolbar": {
+        "heading": "Rubrică",
+        "subHeading": "Rubrică secundară",
+        "link": "Adaugă legătură",
+        "image": "Adaugă legătură",
+        "bold": "Reliefat",
+        "italic": "Cursiv",
+        "blockquote": "Citat",
+        "list": "Listă",
+        "numberedlist": "Listă numerotată",
+        "help": "Ajutor"
+    },
+    "heading": {
+        "explore": "Explorează proiecte"
+    },
+    "actions": {
+        "unsaved": "Sunt modificări nesalvate. Sigur doriți să plecați?",
+        "draft": {
+            "toPost": "Articol din ciornă"
+        },
+        "publishing": {
+            "publish": "Publică",
+            "publishInfo": "Aceasta postare va fi publicată când salvați data viitoare",
+            "published": "Publicat",
+            "unpublish": "Retrage conținut",
+            "unpublished": "Nepublicat",
+            "unpublishInfo": "Această postare va fi nepublicată când salvați data viitoare"
+        },
+        "change": {
+            "noChange": "Nici o modificare",
+            "submit": "Schimbări pentru trimitere",
+            "save": "Schimbări pentru salvare"
+        },
+        "delete": {
+            "title": "Șterge",
+            "warn": "Sigur doriți să ștergeți acest fișier?",
+            "error": "Eroare în timpul ștergerii. Încercați din nou în 30 secunde."
+        },
+        "upload": {
+            "uploading": "{file} se încarcă",
+            "uploaded": "{file} s-a încărcat"
+        },
+        "save": {
+            "title": "Salvează",
+            "saved": "Salvat",
+            "saving": "Se salvează",
+            "patch": "Cererea se trimite",
+            "fileNameError": "Nume fișier lipsă",
+            "submission": "Cerere transmisă",
+            "metaError": "Eroare! Metadatele nu au fost găsite",
+            "fileNameExists": "Un nume de fișier cu această cale există deja"
+        },
+        "error": "Eroare. Încercați din nou în 30 secunde",
+        "restore": {
+            "restoring": "Se restabilește",
+            "restored": "Restabilit"
+        },
+        "commits": {
+            "created": "{filename} creat",
+            "updated": "{filename} actualizat",
+            "deleted": "{filename} eliminat",
+            "toDraft": "Ciorna {filename} creată",
+            "fromDraft": "Articol creat din ciorna {filename}"
+        }
+    },
+    "loading": {
+        "repos": "Se încarcă profilul",
+        "repo": "Se încarcă proiectul",
+        "file": "Se încarcă fișierul",
+        "preview": "Previzualizare fișier",
+        "creating": "Se creează un articol nou"
+    },
+    "modal": {
+        "errorHeading": "Eroare",
+        "confirm": "Am înțeles"
+    },
+    "main": {
+        "start": {
+            "content": "Prose este un editor de conținut pentru GitHub, proiectat pentru gestionare de situri.",
+            "learn": "Află mai multe"
+        },
+        "repos": {
+            "filter": "Filtrează proiecte",
+            "repo": "Vezi proiect",
+            "site": "Vezi sit",
+            "sharedFrom": "Împărtășit de un cont",
+            "forkedFrom": "Ramificat de la un alt proiect"
+        },
+        "repo": {
+            "filter": "Filtrează fișiere",
+            "edit": "Editează",
+            "delete": "Șterge acest fișier"
+        },
+        "new": {
+            "body": "## Articol nou\n\nIntroduceți textul în format [Markdown](http://daringfireball.net/projects/markdown/). Folosiți meniul de unelte sau apăsați butonul **?** pentru instrucțiuni de formatare.\n"
+        },
+        "file": {
+            "noTitle": "Fără titlu",
+            "metaTitle": "Revizuie schimbările",
+            "rawMeta": "Metadate neprelucrate",
+            "metaDescription": "Adăugăril sunt evidențiate cu verde. Ștergerile sunt tăiate.",
+            "back": "Terminat",
+            "createMeta": "Creează nou"
+        },
+        "upgrade": {
+            "content": "Prose necesită caractestici ce nu sunt disponibile pentru browser-ul dumneavoastră",
+            "download": "Descarcă un navigator modern"
+        }
+    },
+    "notification": {
+        "loginDescription": "Autentificați-vă cu contul de GitHub pentru a accesa proiectul.",
+        "create": "Creează",
+        "home": "Înapoi la pagina principală",
+        "back": "Înapoi",
+        "githubStatus": "Starea pe GitHub ({status})",
+        "error": {
+            "label": "Eroare",
+            "github": "S-a produs o eroare în timpul încărcării de date de la GitHub. Posibil e o problemă temporară. Încercați din nou mai târziu.",
+            "exists": "Acest fișier nu există",
+            "notFound": "Pagina nu a fost găsită"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "Grupuri"
+        },
+        "repo": {
+            "branch": "Schimbă ramură",
+            "drafts": "Vezi ciorne",
+            "history": {
+                "label": "Istorie recentă",
+                "actions": {
+                    "restore": "Restabilește?"
+                }
+            },
+            "create": "Creează fișier nou"
+        },
+        "save": {
+            "label": "Descrie modificaările",
+            "cancel": "Anulează",
+            "save": "Comite",
+            "submit": "Trimite cerere de schimbare"
+        },
+        "settings": {
+            "title": "Opțiuni",
+            "fileInputLabel": "Cale fișier",
+            "delete": "Șterge acest fișier",
+            "translate": "Traduce în",
+            "draft": "Creează ciornă"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Adaugă legătură",
+            "insertLocal": "Adaugă legătură locală",
+            "insert": "Adaugă",
+            "hrefPlaceholder": "URL legătură",
+            "textPlaceholder": "Denumire legătură",
+            "titlePlaceholder": "Titlu (opțional)",
+            "insertPlaceholder": "Adaugă legătură locală"
+        },
+        "media": {
+            "title": "Adaugă imagine",
+            "back": "Înapoi",
+            "hrefPlaceholder": "URL imagine",
+            "altPlaceholder": "Text alternativ (opțional)",
+            "description": "Încărcați imagini prin Drag &amp; Drop sau </br>\n{input} <a>selectați</a>\n",
+            "help": "Imaginile încarcate sunt salvate în directorul curent sau în directorul specificat în calea URL imagine de mai sus.",
+            "helpMedia": "Imaginile încărcate sunt adăugate la directorul  'Alege existente' sau în directorul specific în câmpul URL imagine.",
+            "choose": "Alege existente"
+        },
+        "help": {
+            "blockElements": {
+                "title": "Elemente bloc",
+                "content": {
+                    "paragraphs": {
+                        "title": "Paragrafe și pauze de linie",
+                        "content": "<p>Pentru paragrafe, creează un bloc de text fără linii goale. Blocurile de text separate de linii goale vor fi procesate ca paragrafe separate.</p><p>Pentru pauze de linie, termină linia cu două sau mai multe spații si apasă Return/Enter</p>\n"
+                    },
+                    "headers": {
+                        "title": "Antete",
+                        "content": "<p>Markodown suportă două tipuri de antete. Editorul wiki folosește antete de tip &ldquo;atx&rsquo;. Adaugă ca prefix numărul de caractere <code>#</code> corespunzător nivelului de antet. Spre exemplu: <code># Antet de nivel 1</code>, <code>## Antet nivel 2</code> și <code>### Antet nivel 3</code> vor fi progresiv mai mici. Puteți să terminați antetele cu orice număr de <code>#</code>.\n"
+                    },
+                    "blockquotes": {
+                        "title": "Citate",
+                        "content": "<p>Markdown creează citate în stil email prin prefixarea fiecărei linii cu <code>&gt;</code>. Cea mai eficientă metodă, vizual, este să începeți fiecare linie cu <code>&gt;</code>, dar Markdown suportă și doar un caracter <code>&gt;</code> la începutul paragrafului.</p>\n"
+                    },
+                    "lists": {
+                        "title": "Liste",
+                        "content": "<p>Markdown suportă liste ordonate și neordonate. Prefixează \nfiecare linie cu un număr pentru liste ordonate (orice număr e suficient &mdash; acesta este motivul pentru care editorul folosește doar o cifră). Pentru liste neordonate, prefixează fiecare linie cu <code>*</code>, <code>+</code> sau <code>-</code>.</p> Elementele de listă pot conține paragrafe multiple atât timp cât sunt indentate cu cel puțin 4 spații sau un tab.\n"
+                    },
+                    "codeBlocks": {
+                        "title": "Blocuri de cod"
+                    },
+                    "horizontalRules": {
+                        "title": "Linii orizontale",
+                        "content": "<p>Adaugă trei sau mai multe cratime, asteriscuri sau liniuțe de subliniere pentru a creea linii orizontale. Spații sunt permise între cratime, asteriscuri și linuțele de subliniere.</p>\n"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "Element span",
+                "content": {
+                    "links": {
+                        "title": "Legături",
+                        "content": "<p>Markdown suportă două tipuri de legături: <strong>în linie</strong> și <strong>prin referință</strong>. Textul afișat utlizatorului se află între paranteze patrate. Spre exemplu, dacă doriți să afișați &ldquo;GitHub&rdquo;, adaugați <code>[GitHub]</code>.</p><p>Pentru legături în linie, introduceți adresa într-un un set de paranteze rotunde imediat după parantezele patrate. (e.g., <code>[GitHub](http://github.com/)</code>). Se permit căi relative în legăturile inline.</p><p>Pentru legături prin referință, folosiți două seturi de paranteze patrate. <code>[legătură internă][referință-internă]</code> corespunde cu referința internă <code>referință-internă</code>.</p>\n\n"
+                    },
+                    "emphasis": {
+                        "title": "Accentuare"
+                    },
+                    "code": {
+                        "title": "Cod"
+                    },
+                    "images": {
+                        "title": "Imagini",
+                        "content": "<p>Sintaxa Markdown pentru imagini e similară cu cea pentru link-uri. Este în esență aceeași sintaxă, precedată de un semn de exclamare (<code>!</code>). De exemplu, dacă doriți să vă legați la <code>http://github.com/unicorn.png</code> cu textul alternativ <code>Unicornul meu</code>, scrieți <code>![Unicornul meu](http://github.com/unicorn.png)</code>.</p>\n"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "Diverse",
+                "content": {
+                    "automaticLinks": {
+                        "title": "Legături automate"
+                    }
+                }
+            }
+        }
+    },
+    "chooselanguage": {
+        "title": "Selectează limba",
+        "description": "Prose este o aplicație tradusă. <a href='https://www.transifex.com/projects/p/prose'>Contribuiți cu traduceri la proiect</a> dacă nu vedeți limba dvs. în listă, găsiți  greșeli de ortografie sau traduceri lipsă.\n"
+    }
+}

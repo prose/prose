@@ -1,0 +1,17 @@
+<% if (data.alterable) { %>
+  <div class='round avatar'>
+    <%= data.avatar %>
+  </div>
+  <div class='fl details'>
+    <h4 class='parent-trail'><a href='#<%= data.user %>'><%= data.user %></a> / <a href='#<%= data.user %>/<%= data.repo.name %>'><%= data.repo.name %></a><% if (data.isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>
+    <!-- if (isNew() && !translate) placeholder, not value -->
+    <input type='text' class='headerinput' data-mode='<%= data.mode %>' <% print((data.placeholder ? 'placeholder=' : 'value=') + '"' + data.input + '"') %>>
+    <div class='mask'></div>
+  </div>
+<% } else { %>
+  <div class='avatar round'><%= data.avatar %></div>
+  <div class='fl details'>
+    <h4><a class='user' href='#<%= data.user %>'><%= data.user %></a></h4>
+    <h2><a class='repo' href='#<%= data.path %>'><%= data.title %></a></h2>
+  </div>
+<% } %>

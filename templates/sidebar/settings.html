@@ -1,0 +1,26 @@
+<div class='inner'>
+  <h2 class='label'><%= t('sidebar.settings.title') %></h2>
+</div>
+<div class='inner authoring'>
+  <% if (/^_posts/.test(settings.path)) { %>
+    <a class='draft button round' href='#' data-action='draft'><%= t('sidebar.settings.draft') %></a>
+  <% } %>
+  
+  <% if (settings.languages && settings.lang !== 'yaml') { %>
+    <% _.each(settings.languages, function(l) { %>
+      <% if (l.value && (settings.metadata && (settings.metadata.lang !== l.value))) { %>
+        <a class='translate round button' href='#<%= l.value %>' data-action='translate'><%= t('sidebar.settings.translate') + ' ' + l.name %></a>
+      <% } %>
+    <% }); %>
+  <% } %>
+
+  <!-- if !isNew() and is writable -->
+  <a class='delete button round' href='#' data-action='destroy'><%= t('sidebar.settings.delete') %></a>
+</div>
+
+<% if (settings.fileInput) { %>
+  <div class='inner'>
+    <h2 class='label'><%= t('sidebar.settings.fileInputLabel') %></h2>
+    <input type='text' class='filepath' placeholder='<%= settings.path %>' value='<%= settings.path %>'>
+  </div>
+<% } %>

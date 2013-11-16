@@ -1,0 +1,263 @@
+{
+    "login": "Auktorisera på GitHub",
+    "docheader": {
+        "editing": "Redigering",
+        "error": "Fel",
+        "preview": "Förhandsgranskning"
+    },
+    "navigation": {
+        "newFile": "Ny fil",
+        "edit": "Redigera",
+        "preview": "Förhandsgranska",
+        "settings": "Inställningar",
+        "meta": "Meta-data",
+        "save": "Spara",
+        "login": "Auktorisera med GitHub",
+        "about": "Om",
+        "develop": "Utvecklare",
+        "logout": "Logga ut",
+        "language": "Språk"
+    },
+    "toolbar": {
+        "heading": "Rubrik",
+        "subHeading": "Underrubrik",
+        "link": "Infoga länk",
+        "image": "Infoga länk",
+        "bold": "Fet",
+        "italic": "Kursiv",
+        "blockquote": "Blockcitat",
+        "list": "Lista",
+        "numberedlist": "Numrerad lista",
+        "help": "Hjälp"
+    },
+    "heading": {
+        "explore": "Utforska projekt"
+    },
+    "actions": {
+        "unsaved": "Dina ändringar har ännu inte sparats. Är du säker på att du vill lämna dessa osparade?",
+        "draft": {
+            "toPost": "Utkast att posta",
+            "toPostInfo": "Omvandla detta utkast till en publicerad post"
+        },
+        "publishing": {
+            "publish": "Publicera",
+            "publishInfo": "Denna post kommer publiceras nästa gång du sparar den",
+            "published": "Publicerat",
+            "unpublish": "Avpublicera",
+            "unpublished": "Opublicerat",
+            "unpublishInfo": "Denna post kommer avpubliceras nästa gång du sparar den"
+        },
+        "change": {
+            "noChange": "Inga ändringar",
+            "submit": "Ändringar att skicka",
+            "save": "Ändringar att spara"
+        },
+        "delete": {
+            "title": "Radera",
+            "warn": "Är du säker på att du vill radera denna fil?",
+            "error": "Fel vid radering. Vänta 30 sekunder eller försök igen."
+        },
+        "upload": {
+            "uploading": "Laddar upp {file}",
+            "uploaded": "Laddade upp {file}"
+        },
+        "save": {
+            "title": "Spara",
+            "saved": "Sparat",
+            "saving": "Sparar",
+            "patch": "Skickar förfrågan",
+            "fileNameError": "Behöver filnamn",
+            "submission": "Förfrågan skickad",
+            "metaError": "Fel! Metadata saknas",
+            "fileNameExists": "Ett filnamn med denna sökväg finns redan"
+        },
+        "error": "Fel. Försök igen om 30 sekunder",
+        "restore": {
+            "restoring": "Återskapar",
+            "restored": "Återskapat"
+        },
+        "commits": {
+            "created": "Skapad {filnamn}",
+            "updated": "Uppdaterat {filnamn}",
+            "deleted": "Raderade {filename}",
+            "toDraft": "Skapade utkast för {filnamn}",
+            "fromDraft": "Post skapad från ett utkast av {filnamn}"
+        }
+    },
+    "loading": {
+        "repos": "Laddar profil",
+        "repo": "Laddar projekt",
+        "file": "Laddar fil",
+        "preview": "Förhandsgranskar fil",
+        "creating": "Skapar ny post"
+    },
+    "modal": {
+        "errorHeading": "Fel",
+        "confirm": "Förstår"
+    },
+    "main": {
+        "start": {
+            "content": "Prose är en innehållsredigerare för GitHub som skapats för att redigera webbsidor.",
+            "learn": "Lär dig mer"
+        },
+        "repos": {
+            "filter": "Filtrera projekt",
+            "repo": "Visa projekt",
+            "site": "Visa hemsida",
+            "sharedFrom": "Delas från ett konto",
+            "forkedFrom": "Förgrenat (\"forked\") från annat projekt"
+        },
+        "repo": {
+            "filter": "Filtrera filer",
+            "edit": "Redigera",
+            "delete": "Radera denna fil"
+        },
+        "new": {
+            "body": "## En ny post\n\nSkriv text i [Markdown](http://daringfireball.net/projects/markdown/). Använd verktygsfältet ovan, eller klicka på **?**-knappen för formateringshjälp.\n"
+        },
+        "file": {
+            "noTitle": "Utan titel",
+            "metaTitle": "Beskriv dina ändringar:",
+            "rawMeta": "Rå meta-data",
+            "metaDescription": "Tillägg är markerade med grön färg. Borttagningar är överkryssade.",
+            "back": "Klart",
+            "createMeta": "Skapa ny"
+        },
+        "upgrade": {
+            "content": "Prose kräver funktioner som inte stöds av din webbläsare",
+            "download": "Ladda ner en modern webbläsare"
+        }
+    },
+    "notification": {
+        "loginDescription": "Vänligen logga in med ditt GitHub-konto för att få tillgång till detta projekt.",
+        "create": "Skapa den",
+        "home": "Tillbaka till huvudsida",
+        "back": "Gå tillbaka",
+        "githubStatus": "Status på GitHub ({status})",
+        "error": {
+            "label": "Fel",
+            "github": "Fel vid inladdning av data från GitHub. Detta kan vara ett tillfälligt problem. Vänligen försök igen senare.",
+            "exists": "Denna fil existerar inte",
+            "notFound": "Sidan kunde inte hittas"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "Grupper"
+        },
+        "repo": {
+            "branch": "Växla gren",
+            "drafts": "Visa utkast",
+            "history": {
+                "label": "Senaste historik",
+                "actions": {
+                    "restore": "Återskapa?"
+                }
+            },
+            "create": "Skapa ny fil"
+        },
+        "save": {
+            "label": "Beskriv dina ändringar",
+            "cancel": "Avbryt",
+            "save": "Incheckning",
+            "submit": "Skicka ändringsförfrågan"
+        },
+        "settings": {
+            "title": "Alternativ",
+            "fileInputLabel": "Filsökväg",
+            "delete": "Radera denna fil",
+            "translate": "Översätt till",
+            "draft": "Skapa utkast"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Infoga länk",
+            "insertLocal": "Infoga en lokal länk",
+            "insert": "Infoga",
+            "hrefPlaceholder": "Länk-URL",
+            "textPlaceholder": "Länknamn",
+            "titlePlaceholder": "Titel (valfritt)",
+            "insertPlaceholder": "Infoga en lokal länk"
+        },
+        "media": {
+            "title": "Infoga en bild",
+            "back": "Tillbaka",
+            "hrefPlaceholder": "Bild-URL",
+            "altPlaceholder": "Alt-text (valfritt)",
+            "description": "Ladda upp bilder genom dra-och-släpp eller </br>\n{input} <a>väljer en</a>\n",
+            "help": "Bilder laddas upp till aktuell katalog alternativt specificerad katalog i bild-URL:ens sökväg ovan.",
+            "helpMedia": "Uppladdade bilder läggs till i 'Välj befintlig' katalog alternativt specificerad katalog i bild-URL:ens inmatningsfält.",
+            "choose": "Välj befintlig"
+        },
+        "help": {
+            "blockElements": {
+                "title": "Block-element",
+                "content": {
+                    "paragraphs": {
+                        "title": "Paragrafer &amp; radbrytningar",
+                        "content": "<p>För att skapa en paragraf, skapa ett textblock som separeras med en eller flera blanka rader. Textblock som separeras med en eller flera blanka rader tolkas av Markdown som paragrafer.</p><p>Om du vill skapa en radbrytning, avsluta en rad med två eller flera mellanslag, tryck sedan på Retur/Enter.</p>\n"
+                    },
+                    "headers": {
+                        "title": "Rubriker",
+                        "content": "<p>Markdown stöder två alternativ för att formatera rubriker. Wiki-redigeraren använder &ldquo;atx&rsquo;-stilen för rubriker. Inled rubrikrader med <code>#</code>-tecken för att specificera rubrikers djup. Till exempel: <code># Rubrik 1</code>, <code>## Rubrik 2</code> och <code>### Rubrik 3</code> resulterar i progressivt mindre rubriker. Om du vill kan du avsluta dina rubriker med valfritt antal nummertecken.</p>\n"
+                    },
+                    "blockquotes": {
+                        "title": "Blockcitat",
+                        "content": "<p>Markdown skapar blockcitat i samma stil som är brukligt i epost-meddelanden, genom att inleda varje rad med <code>&gt;</code>. Detta ser bäst ut om du bestämmer dig för att hård-omslå &#40;eng. hard-wrap&#41; texten och inleda varje rad med <code>&gt;</code>-tecknet. Däremot är det även möjligt i Markdown att bara skriva <code>&gt;</code> i början av blockcitatets paragraf.</p>\n"
+                    },
+                    "lists": {
+                        "title": "Listor",
+                        "content": "<p>Markdown stöder både ordnade listor och punktlistor. För att skapa en ordnad lista, inled varje rad i listan med ett nummer (det går bra med vilket nummer som helst &mdash; vilket för övrigt är anledningen till varför editorn bara använder ett och samma nummer). För att skapa en punktlista kan du inleda varje rad i listan med <code>*</code>, <code>+</code> or <code>-</code>.</p> Listpunkterna kan innehålla flera paragrafer, men varje paragraf måste i så fall indenteras med 4 mellanslag eller en tabb.\n"
+                    },
+                    "codeBlocks": {
+                        "title": "Kodblock",
+                        "content": "<p>Markdown omsluter kodblock med förformaterade taggar för att bevara indentering i dina kodblock. För att skapa ett kodblock, indentera hela blocket med minst 4 mellanslag eller en tabb. Markdown rensar eventuell extra indentering som kan ha lagts in i kodblock.</p>\n"
+                    },
+                    "horizontalRules": {
+                        "title": "Horisontella avgränsare",
+                        "content": "<p>Horisontella avgränsare/skiljelinjer (hr-taggar) skapas genom att placera tre eller fler bindestreck, asterisker eller understreck tillsammans för sig själva, på en egen rad. Tecknen kan separeras med mellanslag (valfritt), vilket inte gör någon skillnad.</p>\n"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "Span-element",
+                "content": {
+                    "links": {
+                        "title": "Länkar",
+                        "content": "<p>Markdown har två typer av länkar: <strong>ordinära länkar</strong> och <strong>interna referenser</strong>. För båda länktyperna placeras den text du vill att länken ska visa inom hakparenteser. Till exempel, om du vill att din länk ska visa texten &ldquo;GitHub&rdquo;, skriver du <code>[GitHub]</code>.</p><p>För att infoga en vanlig ordinär länk, skapa ett parentespar direkt efter hakparenteserna och skriv din URL inom parenteserna (t.ex. <code>[GitHub](http://github.com/)</code>). Relativa sökvägar tillåts i ordinära länkar.</p><p>För att skapa en intern referenslänk, använd två hakparentespar. <code>[min interna länk][intern-ref]</code> kommer länka till den interna referensen <code>intern-ref</code>.</p>\n"
+                    },
+                    "emphasis": {
+                        "title": "Emfas",
+                        "content": "<p>Asterisker (<code>*</code>) och understreck (<code>_</code>) behandlas som emfas och omsluts med en <code>&lt;em&gt;</code>-tagg, vilket normalt visas som kursiv stil i de flesta webbläsare. Dubbla asterisker (<code>**</code>) eller dubbla understreck (<code>__</code>) resulterar i fet text eftersom de omsluts med <code>&lt;strong&gt;</code>-tagg. För att skapa kursiv eller fet stil, omslut texten med enkla eller dubbla asterisker/understreck. Till exempel, <code>**Min dubbelt betonade text**</code> resulterar i <strong>Min dubbelt betonade text</strong>, och <code>*Min enkelt betonade text*</code> omvandlas till<em>Min enkelt betonade text</em>.</p>\n"
+                    },
+                    "code": {
+                        "title": "Kod",
+                        "content": "<p>För att infoga kod i din text, omslut koden med <code>`</code>-tecken (grav accent/backtick). Markdown omvandlar <code>`myFunction`</code> till <code>myFunction</code>.</p>\n"
+                    },
+                    "images": {
+                        "title": "Bilder",
+                        "content": "<p>Markdown's syntax för bilder är i princip identisk med länk-syntax, frånsett tillägget av ett inledande utropstecken (<code>!</code>). Till exempel, om du vill länka till en bild på adressen <code>http://github.com/unicorn.png</code> med den alternativa texten <code>Min enhörning</code>, skriver du <code>![Min enhörning](http://github.com/unicorn.png)</code>.</p>\n"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "Diverse",
+                "content": {
+                    "automaticLinks": {
+                        "title": "Automatiska länkar",
+                        "content": "<p>Om du vill skapa en länk som visar länkens URL som länktext, kan du enkelt göra detta genom att omsluta URL-adressen med <code>&lt;</code> och <code>&gt;</code>. Till exempel, länken <a href=\"javascript:void(0);\">http://github.com/</a> kan enkelt göras till länktext om du skriver <code>&lt;http://github.com/&gt;</code>.</p>\n"
+                    },
+                    "escaping": {
+                        "title": "Kodade tecken (Escaping)",
+                        "content": "<p>Om du vill använda ett särskilt Markdown-tecken i ditt dokument (såsom att visa en asterisk), kan du koda tecknet ifråga med ett omvänt snedstreck (<code>\\\\</code>). Markdown ignorerar det första tecknet som kommer efter ett omvänt snedstreck.\n"
+                    }
+                }
+            }
+        }
+    },
+    "chooselanguage": {
+        "title": "Välj ett språk",
+        "description": "Prose är en flerspråkig applikation. Om du inte kan se ditt språk i listan, om du ser stavfel eller saknade översättningar, tveka inte att <a href='https://www.transifex.com/projects/p/prose'>bidra med dina översättningar till projektet</a>.\n"
+    }
+}

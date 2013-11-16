@@ -1,0 +1,266 @@
+{
+    "login": "Autorizar no GitHub",
+    "docheader": {
+        "editing": "Editando",
+        "error": "Erro",
+        "preview": "Pré-visualizando"
+    },
+    "navigation": {
+        "newFile": "Novo Arquivo",
+        "edit": "Editar",
+        "preview": "Pré-Visualizar",
+        "settings": "Configurações",
+        "meta": "Meta Dados",
+        "save": "Salvar",
+        "login": "Autorizat com GitHub",
+        "about": "Sobre",
+        "develop": "Desenvolvedores",
+        "logout": "Sair",
+        "language": "Idioma"
+    },
+    "toolbar": {
+        "heading": "Título",
+        "subHeading": "Sub Título",
+        "link": "Inserir Link",
+        "image": "Inserir Link",
+        "bold": "Negrito",
+        "italic": "Itálico",
+        "blockquote": "Citação",
+        "list": "Lista",
+        "numberedlist": "Lista Numerada",
+        "help": "Ajuda"
+    },
+    "heading": {
+        "explore": "Explorar Projetos"
+    },
+    "actions": {
+        "unsaved": "Você tem Mudanças não salvas. Tem certeza que deseja sair?",
+        "draft": {
+            "toPost": "Rascunho para Post",
+            "toPostInfo": "Converter este rascunho para um post publicado"
+        },
+        "publishing": {
+            "publish": "Publicar",
+            "publishInfo": "Este post será publicado na próxima vez que você salvar",
+            "published": "Publicado",
+            "unpublish": "Despublicar",
+            "unpublished": "Despublicado",
+            "unpublishInfo": "Este post será despublicado na próxima vez que você salvar"
+        },
+        "change": {
+            "noChange": "Sem Mudanças",
+            "submit": "Mudanças a Enviar",
+            "save": "Mudanças a Salvar"
+        },
+        "delete": {
+            "title": "Remover",
+            "warn": "Tem certeza que deseja remover este arquivo?",
+            "error": "Erro durante remoção. Por favor, aguarde 30 segundos e tente de novo."
+        },
+        "upload": {
+            "uploading": "Enviando {file}",
+            "uploaded": "Enviado {file}"
+        },
+        "save": {
+            "title": "Salvar",
+            "saved": "Salvo",
+            "saving": "Salvando",
+            "patch": "Solicitação Enviada",
+            "fileNameError": "Precisa de um nome de arquivo",
+            "submission": "Solicitação Enviada",
+            "metaError": "Erro! Metadados não Encontrados",
+            "fileNameExists": "Um nome de arquivo com este caminho já existe"
+        },
+        "error": "Erro. Tente de novo em 30 segundos",
+        "restore": {
+            "restoring": "Restaurando",
+            "restored": "Restaurado"
+        },
+        "commits": {
+            "created": "Criado {filename}",
+            "updated": "Atualizado {filename}",
+            "deleted": "Removido {filename}",
+            "toDraft": "Criado rascunho para {filename}",
+            "fromDraft": "Criado post a partir de um rascunho de {filename}"
+        }
+    },
+    "loading": {
+        "repos": "Carregando Perfil",
+        "repo": "Carregando Projeto",
+        "file": "Carregando Arquivo",
+        "preview": "Pré-visualizando Arquivo",
+        "creating": "Criando novo post"
+    },
+    "modal": {
+        "errorHeading": "Erro",
+        "confirm": "Entendi"
+    },
+    "main": {
+        "start": {
+            "content": "Prose é um editor de conteúdo para GitHub feito para gerenciar websites.",
+            "learn": "Saiba mais"
+        },
+        "repos": {
+            "filter": "Filtrar Projetos",
+            "repo": "Ver Projeto",
+            "site": "Ver Site",
+            "sharedFrom": "Compartilhado de uma conta",
+            "forkedFrom": "Fork de um outro projeto"
+        },
+        "repo": {
+            "filter": "Filtrar Arquivos",
+            "edit": "Editar",
+            "delete": "Remover este Arquivo"
+        },
+        "new": {
+            "body": "## Um Novo Post\n\nInsira texto em [Markdown](http://daringfireball.net/projects/markdown/). Use a barra acima ou clique no botão **?** para obter ajuda com formatação.\n"
+        },
+        "file": {
+            "noTitle": "Sem Título",
+            "metaTitle": "Revisar suas mudanças:",
+            "rawMeta": "Metadados brutos",
+            "metaDescription": "Adições estão destacadas em verde. Remoções estão riscadas.",
+            "back": "Concluído",
+            "createMeta": "Criar Novo"
+        },
+        "upgrade": {
+            "content": "Prose precisa de recursos não disponíveis em seu navegador",
+            "download": "Obtenha um Navegador Moderno"
+        }
+    },
+    "notification": {
+        "loginDescription": "Por favor, entre com sua conta do GitHub para acessar este projeto.",
+        "create": "Criar",
+        "home": "Voltar à Página Principal",
+        "back": "Voltar",
+        "githubStatus": "Status no GitHub ({status})",
+        "error": {
+            "label": "Erro",
+            "github": "Erro ao carregar dados do GitHub. Isto pode ser um problema temporário. Por favor, tente novamente mais tarde.",
+            "exists": "Este arquivo não existe",
+            "notFound": "Página não Encontrada"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "Grupos"
+        },
+        "repo": {
+            "branch": "Mudar de Branch",
+            "drafts": "Ver Rascunhos",
+            "history": {
+                "label": "Histórico Mais Recente",
+                "actions": {
+                    "restore": "Restaurar?"
+                }
+            },
+            "create": "Criar Novo Arquivo"
+        },
+        "save": {
+            "label": "Descreva suas Mudanças",
+            "cancel": "Cancelar",
+            "save": "Commit",
+            "submit": "Enviar Solicitação de Mudança"
+        },
+        "settings": {
+            "title": "Opções",
+            "fileInputLabel": "Caminho do Arquivo",
+            "delete": "Remover este Arquivo",
+            "translate": "Traduzir para",
+            "draft": "Criar Rascunho"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Inserir Link",
+            "insertLocal": "Inserir um Link Local",
+            "insert": "Inserir",
+            "hrefPlaceholder": "URL do Link",
+            "textPlaceholder": "Nome do Link",
+            "titlePlaceholder": "Título (opcional)",
+            "insertPlaceholder": "Insira um link local"
+        },
+        "media": {
+            "title": "Inserir Imagem",
+            "back": "Voltar",
+            "hrefPlaceholder": "URL da Imagem",
+            "altPlaceholder": "Texto Alternativo (opcional)",
+            "description": "Envie imagens Clicando &amp; Arrastando ou </br>\\n\n{input} <a>selecionando uma</a>\\n",
+            "help": "Imagem enviadas são adicionadas ao diretório atual ou ao especificado no caminho Image URL acima.",
+            "helpMedia": "Imagens enviadas são adicionadas ao diretório 'Escolha Existente' ou algum especificado no campo URL da Imagem.",
+            "choose": "Escolher Existente"
+        },
+        "help": {
+            "blockElements": {
+                "title": "Bloquear Elementos",
+                "content": {
+                    "paragraphs": {
+                        "title": "Paragráfos &amp; Quebras de Linha",
+                        "content": "<p>Para criar um parágrafo, simplesmente crie um bloco de texto que esteja separado por uma ou mais linhas em branco. Blocos de texto separados por uma ou mais linhas em branco serão tratados como parágrafos.</p><p>Se você deseja criar uma quebra de linha, termine a linha com dois ou mais espaços e aperte Return/Enter.</p>\\n"
+                    },
+                    "headers": {
+                        "title": "Títulos",
+                        "content": "<p>Markdown suporta dois formatos de títulos. O editor wiki usa títulos no estilo &ldquo;atx&rsquo;. Simplesmente inicie seu título com um número de caracteres <code>#</code> para especificar a profundidade do título. Por exemplo: <code># Título 1</code>, <code>## Título 2</code> e <code>### Título 3</code> serão títulos menores progressivamente. Você pode terminar seus títulos com qualquer número de sinais <strong>#</strong>.</p>\n"
+                    },
+                    "blockquotes": {
+                        "title": "Citações",
+                        "content": "<p>Markdown citações estilo email ao iniciar cada linha com <code>&gt;</code>. Isto vai aparecer melhor se você decidir inserir o prefixo em cada linha com o caracter <code>&gt;</code>, mas o Markdown suporta a inserção de apenas um <code>&gt;</code> antes do parágrafo.</p>\n"
+                    },
+                    "lists": {
+                        "title": "Listas",
+                        "content": "<p>Markdown suporta ambas listas ordenadas e não-ordenadas. Para criar uma lista ordenanad, apenas inicie cada linha com um número (qualquer número é aceito &mdash; isto é porque o editor usa apenas um número.) Para criar uma lista não-ordenada, você pode inserir em cada linha os prefixos <code>*</code>, <code>+</code> ou <code>-</code>.</p> Itens de lista podem conter múltiplos parágrafos, no entando cada parágrafo deve ser identado por pelo menos 4 espaços ou um tab.\n"
+                    },
+                    "codeBlocks": {
+                        "title": "Blocos de Código",
+                        "content": "<p>Markdown envolve blocos de código em tags pré-formatadas para preservar a indentação dos seus blocos de código. Para criar um bloco de código, indente um bloco inteiro por pelo menos 4 espaços ou um tab. Markdown irá remover a identação extra que você adicionou ao bloco de código.</p>\\n"
+                    },
+                    "horizontalRules": {
+                        "title": "Linhas Horizontais",
+                        "content": "<p>Linhas Horizontais são criadas usando três ou mais hífens, asteriscos ou sublinhas em uma linha sozinhos. Espaços são permitidos entre os hífens, asteriscos ou sublinhas.</p>\\n"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "Elementos Span",
+                "content": {
+                    "links": {
+                        "title": "Links",
+                        "content": "<p>Markdown possui dois tipos de links: <strong>inline</strong> e <strong>referência</strong>. Para ambos tipos de links, o texto que você quer exibir ao usuário deve colocado entre colchetes. Por exemplo, se você deseja que seu link exiba o texto &ldquo;GitHub&rdquo;, você deve escrever <code>[GitHub]</code>.</p><p>Para criar um link inline, crie parênteses imediatamente após os colchetes e escreva sua URL dentro dos parenteses. (ex.: <code>[GitHub](http://github.com/)</code>). Caminhos relativos são permitidos em links inline.</p><p>Para criar um link de referência, use dois conjuntos de colchetes. <code>[meu link interno][ref-interna]</code> irá produzir um link para a referência interna <code>ref-interna</code>.</p>\\n"
+                    },
+                    "emphasis": {
+                        "title": "Ênfase",
+                        "content": "<p>Asteriscos (<code>*</code>) e sublinhas (<code>_</code>) são tratados como ênfases e representam a tag <code>&lt;em&gt;</code>, que normalmente aparece como itálico nos navegadores. Asteriscos Duplos (<code>**</code>) ou sublinhas duplas (<code>__</code>) são tratados como negrito usando a tag <code>&lt;strong&gt;</code>. Para criar texto itálico ou negrito, simplesmente envolva suas palavras com astericos/sublinhas simples/duplos. Por exemplo, <code>**Meu texto com ênfase dupla**</code> se transforma em <strong>Meu texto com ênfase dupla</strong>, e <code>*Meu texto com ênfase simples*</code> se transforma em <em>Meu texto com ênfase simples</em>.</p>\n"
+                    },
+                    "code": {
+                        "title": "Código",
+                        "content": "<p>Para escrever código, simplesmente envolva o código com o sinal grave (<code>`</code>). Markdown irá converter <code>`myFunction`</code> em <code>myFunction</code>.</p>\n"
+                    },
+                    "images": {
+                        "title": "Imagens",
+                        "content": "<p>A sintaxe de imagens no Markdown se parece muito com a sintaxe de links; é essencialmente a mesma sintaxe precedida de um ponto de exclamação (<code>!</code>). Por exemplo, se você deseja referenciar uma imagem em <code>http://github.com/unicorn.png</code> com o texto alternativo <code>Meu Unicórnio</code>, você escreveria <code>![Meu Unicórnio](http://github.com/unicorn.png)</code>.</p>\n"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "Diversos",
+                "content": {
+                    "automaticLinks": {
+                        "title": "Links Automáticos",
+                        "content": "<p>Se você deseja criar um link que exiba a URL, Markdown permite a você rapidamente envolver a URL em <code>&lt;</code> e <code>&gt;</code> para isso. Por exemplo, o link <a href=\"javascript:void(0);\">http://github.com/</a> é facilmente produzido ao escrever <code>&lt;http://github.com/&gt;</code>.</p>\n"
+                    },
+                    "escaping": {
+                        "title": "Ignorando",
+                        "content": "<p>Se você deseja usar algum dos caracteres especiais do Markdown em seu documento (como exibir asteriscos) você pode ignorá-los utilizando o caracter de barra invertida (<code>\\\\</code>). Markdown irá ignorar o caracter diretamente após a barra invertida.</p>\\n"
+                    }
+                }
+            }
+        }
+    },
+    "chooselanguage": {
+        "title": "Escolha um Idioma",
+        "description": "Prose é um aplicativo traduzido. Se você não vê seu idioma na lista, encontrar erros de digitação, ou traduções que estejam faltando, considere <a href='https://www.transifex.com/projects/p/prose'>colaborar para as traduções do projeto</a>.\\n"
+    },
+    "about": {
+        "content": "# Sobre\\n\n\nProse é um bonito e simples ambiente para autoração de conteúdo para\\n\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\\n\nÉ uma interface baseada na web para gerenciar conteúdo no\\n\n[GitHub](http://github.com). Use para criar, editar, remover arquivos\\n\ne salvar suas mudanças diretamente no GitHub. Hospede seu website como\\n\n[GitHub Pages](http://pages.github.com) de graça, ou configure seu próprio\\n\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\\n\n\nProse tem suporte avançado para sites com [Jekyll](http://jekyllrb.com/) e\\n\n[conteúdo markdown](http://daringfireball.net/projects/markdown/).\\n\nProse detecta posts com Markdown em sites Jekyll e prove destaque de\\n\nsintaxe, uma barra de formatação, e prévia de rascunhos no layout\\n\ncompleto do site.\\n\n\nDesenvolvedores podem configurar sites jekyll para utilizar estes e\\n\nmuitos outros recursos que personalizem a experiência de edição de conteúdo.\\n\n\n## Configurando\\n\n\nProse poder ser configurado por repositório com metadados adicionais em um\\n\n`_config.yml` de um jekyll siteou em um `prose.yml` separado. Oferecemos\\n\nProse.io como um serviço hospedado com a versão mais recente, ou você pode baixar\\n\no código fonte e hospedar por conta própria. Para a documentação para desenvolvedores\\n\nveja [a página wiki no GitHub](https://github.com/prose/prose/wiki).\\n\n\n## Desenvolvendo\\n\n\nProse é um projeto de código aberto. Nós encorajamos que você contribua e\\n\najude-nos a melhora esta aplicação ou adaptá-la a suas necessidades. Para\\n\ninstruções em desenvolver o Prose, veja\\n\n[Guia de Contribuição do Prose](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Pedindo Ajuda\\n\n\nNão oferecemos suporte para o Prose no momento, no entanto se você for um\\n\neditor de conteúdo usando o Prose, você deveria contactar o desenvolvedor que\\n\nlhe deu acesso a ele. Para relatar problemas técnicos com o Prose, por favor\\n\n[crie um issue no GitHub](https://github.com/prose/prose/issues).\\n\n\n## Créditos\\n\n\nProse é desenvolvido e mantido por\\n\n[Development Seed](http://developmentseed.org), uma equipe\\n\nde visualização de dados criativa e mapeamento baseada em Washington, DC.\\n"
+    }
+}

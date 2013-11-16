@@ -5,7 +5,7 @@
   "dependencies": {
     "jquery-browserify": "~1.8.1",
     "chosen-jquery-browserify": "~0.9.15",
-    "js-yaml": "~2.0.4",
+    "js-yaml": "git://github.com/prose/js-yaml.git",
     "backbone": "~1.0.0",
     "underscore": "~1.4.4",
     "chrono": "~1.0.4",
@@ -13,12 +13,18 @@
     "keymaster": "git://github.com/madrobby/keymaster.git#ddcb72eceb033db",
     "marked": "~0.2.8",
     "queue-async": "~1.0.3",
-    "diff": "~1.0.4"
+    "diff": "~1.0.4",
+    "deepmerge": "~0.2.7"
   },
+  "keywords": [
+    "editor",
+    "github"
+  ],
   "devDependencies": {
     "mocha": "~1.9.0",
     "glob": "~3.1.21",
     "chai": "~1.5.0",
+    "request": "~2.16.2",
     "uglify-js": "~2.2.5",
     "browserify": "~2.12.0"
   },

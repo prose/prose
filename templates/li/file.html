@@ -1,0 +1,33 @@
+<% if (file.binary) { %>
+  <div class='listing-icon icon round <%= file.extension %> <% if (file.media) { %>media<% } %>'></div>
+<% } else { %>
+  <a href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>' class='listing-icon'>
+    <span class='icon round <%= file.extension %> <% if (file.markdown) { %> md<% } %> <% if (file.media) { %> media<% } %>'></span>
+  </a>
+<% } %>
+
+<div class='details'>
+  <div class='actions fr clearfix'>
+    <% if (!file.binary) { %>
+      <a class='clearfix'
+        title="<%= t('main.repo.edit') %>"
+        href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'>
+        <%= t('main.repo.edit') %>
+      </a>
+    <% } %>
+    <% if (file.writable) { %>
+      <a
+        class='delete'
+        title="<%= t('main.repo.delete') %>"
+        href='#'>
+        <span class='ico rubbish small'></span>
+      </a>
+    <% } %>
+  </div>
+  <% if (file.binary) { %>
+    <h3 class='title' title='<%= file.name %>'><%= file.name %></h3>
+  <% } else { %>
+    <h3 class='title' title='<%= file.name %>'><a class='clearfix'href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'><%= file.name %></a></h3>
+  <% } %>
+  <span class='deemphasize'><%= file.jailpath %></span>
+</div>

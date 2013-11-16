@@ -1,0 +1,117 @@
+{
+    "docheader": {
+        "editing": "Editando",
+        "preview": "Vista preliminar"
+    },
+    "actions": {
+        "unsaved": "Hay cambios sin guardar. Seguro que quiere salir?",
+        "publishing": {
+            "publish": "Publicar",
+            "published": "Publicado",
+            "unpublish": "Deshacer publicación",
+            "unpublished": "No publicado"
+        },
+        "change": {
+            "noChange": "Sin cambios"
+        },
+        "delete": {
+            "title": "Borrar",
+            "warn": "Está seguro que quiere borrar este archivo?",
+            "error": "Error durante el borrado. Por favor espere 30 segundos y vuelva a intentarlo"
+        },
+        "save": {
+            "title": "Guardar",
+            "fileNameError": "Necesita nombre de archivo",
+            "submission": "Petición enviada",
+            "metaError": "Error! Metadatos no encontrados"
+        },
+        "restore": {
+            "restoring": "Recuperando",
+            "restored": "Recuperado"
+        },
+        "commits": {
+            "created": "{filename} creado",
+            "updated": "{filename} actualizado",
+            "toDraft": "Borrado de {filename} creado",
+            "fromDraft": "Creada entrada desde borrador de {filename} "
+        }
+    },
+    "loading": {
+        "repos": "Cargando perfi",
+        "repo": "Cargando projecto",
+        "file": "Cargando archivo",
+        "creating": "Creando nuevo archivo"
+    },
+    "main": {
+        "start": {
+            "content": "Prose es un editor de contenido para GitHub diseñado para mantener sitios web",
+            "learn": "Aprender más"
+        },
+        "repos": {
+            "filter": "Filtrar proyectos",
+            "repo": "Ver proyecto",
+            "site": "Ver página"
+        },
+        "repo": {
+            "filter": "Filtrar archivos",
+            "edit": "Editar"
+        },
+        "upgrade": {
+            "content": "Prose requiere recursos no disponibles en su navegador",
+            "download": "Descargar un navegador moderno"
+        }
+    },
+    "sidebar": {
+        "repo": {
+            "branch": "Cambiar Rama",
+            "drafts": "Ver Borradores",
+            "history": {
+                "label": "Historial reciente",
+                "actions": {
+                    "restore": "Recuperar?"
+                }
+            },
+            "create": "Crear nuevo archivo"
+        },
+        "save": {
+            "label": "Describe lo cambios",
+            "cancel": "Cancelar",
+            "save": "Confirmar",
+            "submit": "Enviar propuesta de cambio"
+        },
+        "settings": {
+            "title": "Opciones",
+            "delete": "Borrar este archivo",
+            "draft": "Crear borrador"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Insertar enlace",
+            "insert": "Insertar"
+        },
+        "help": {
+            "blockElements": {
+                "title": "Elementos en bloque",
+                "content": {
+                    "paragraphs": {
+                        "title": "Párrafos &amp; Saltos"
+                    },
+                    "headers": {
+                        "title": "Cabeceras",
+                        "content": "<p>Markdown permite 2 formatos de encabezado. El editor de wiki usa &ldquo;atx&rsquo; estilos de cabecera. Simplemente añade al prefijo de tu texto de encabezado con el número de caracteres que especifica la profundidad. Por ejemplo: <code># Encabezado 1</code>, <code>## Encabezado 2</code> and <code>### Encabezado 3</code> serán encabezados progresivamente más pequeños.  Puedes terminar los encabezados con cualquier número de almohadillas -#-.</p> \n"
+                    },
+                    "blockquotes": {
+                        "title": "Bloques de citas"
+                    },
+                    "lists": {
+                        "title": "Listas"
+                    },
+                    "codeBlocks": {
+                        "title": "Bloques de código"
+                    }
+                }
+            }
+        }
+    }
+}

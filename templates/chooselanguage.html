@@ -1,0 +1,13 @@
+<h1><%= t('chooselanguage.title') %></h1>
+<ul class='fat-list round'>
+  <% _(chooseLanguage.languages).each(function(l) { %>
+    <li>
+    <a href='#' data-code='<%= l.code %>' class='language<% if (l.code === chooseLanguage.active) { %> active<% } %>'>
+        <% if (l.code === chooseLanguage.active) { %><span class='ico checkmark fr'></span><% } %>
+        <%= l.name %>
+        <small>(<%= l.code %>)</small>
+      </a>
+    </li>
+  <% }); %>
+</ul>
+<p><%= t('chooselanguage.description') %></p>

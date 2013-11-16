@@ -1,0 +1,20 @@
+<div class='form-item'>
+  <label for='<%= meta.name %>'><%= meta.label %></label>
+  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>
+
+  <fieldset>
+    <select name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' class='metafield chzn-select'>
+      <% _(meta.options).each(function(o) { %>
+        <% if (!o.lang || o.lang === meta.lang) { %>
+          <% if (o.name) { %>
+           <option value='<%= o.value %>'><%= o.name %></option>
+          <% } else if (o.value) { %>
+           <option value='<%= o.value %>'><%= o.value %></option>
+          <% } else { %>
+           <option value='<%= o %>'><%= o %></option>
+          <% } %>
+        <% } %>
+      <% }); %>
+    </select>
+  </fieldset>
+</div>
