@@ -197,15 +197,16 @@ module.exports = Backbone.View.extend({
   },
 
   updateModel: function(e) {
-    var target = e.currentTarget;
-    var key = target.name;
-    var value = target.value;
     var delta = {};
-    delta[key] = value;
+    var target = e.currentTarget;
+    var name = target.name;
+    var value = target.value;
 
-    var metadata = this.model.get('metadata');
-    this.model.set('metadata', _.extend(metadata, delta));
-    this.view.makeDirty();
+    if (name && value) {
+      delta[name] = value;
+      this.model.set('metadata', _.extend(this.model.get('metadata'), delta));
+      this.view.makeDirty();
+    }
   },
 
   rawKeyMap: function() {
