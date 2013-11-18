@@ -333,6 +333,16 @@ module.exports = Backbone.View.extend({
     this.stashApply();
   },
 
+  initMetadata: function() {
+    this.metadataEditor = new MetadataView({
+      model: this.model,
+      titleAsHeading: this.titleAsHeading(),
+      view: this
+    });
+
+    this.listenTo(this.metadataEditor.raw, 'change', this.makeDirty, this);
+  },
+
   keyMap: function() {
     var self = this;
 
@@ -469,12 +479,6 @@ module.exports = Backbone.View.extend({
   },
 
   renderMetadata: function() {
-    this.metadataEditor = new MetadataView({
-      model: this.model,
-      titleAsHeading: this.titleAsHeading(),
-      view: this
-    });
-
     this.metadataEditor.setElement(this.$el.find('#meta')).render();
     this.subviews['metadata'] = this.metadataEditor;
   },
@@ -501,6 +505,7 @@ module.exports = Backbone.View.extend({
       // initialize the subviews
       this.initEditor();
       this.initHeader();
+      this.initMetadata();
       this.initToolbar();
       this.initSidebar();
 
@@ -1029,7 +1034,7 @@ module.exports = Backbone.View.extend({
       },
       path: path
     });
-    
+
     // Set default metadata for new path
     if (this.model && defaults) {
       this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
@@ -1214,7 +1219,7 @@ module.exports = Backbone.View.extend({
     // Loading State
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
-    // Default to media directory if defined in config, 
+    // Default to media directory if defined in config,
     // current directory if no path specified
     var dir = this.config.media ? this.config.media :
       util.extractFilename(this.model.get('path'))[0];
