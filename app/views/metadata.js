@@ -241,13 +241,14 @@ module.exports = Backbone.View.extend({
       var isChanged = false;
 
       try {
-        isChanged = !_.isEqual(this.model.get('metadata'), jsyaml.safeLoad(value));
+        // Compare the current metadata to the new metadata
+        isChanged = !_.isEqual(this.model.get('metadata'), this.getValue());
       } catch(err) {
         console.log("Error parsing CodeMirror editor text");
         console.log(err);
       }
 
-      // Only make dirty if the metadata has changed
+      // Only make the file dirty if the metadata has changed
       if (isChanged) {
         this.view.makeDirty();
       }
