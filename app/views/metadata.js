@@ -260,7 +260,17 @@ module.exports = Backbone.View.extend({
 
   getValue: function() {
     var view = this;
-    var metadata = this.model.get('metadata') || {};
+    var metadata = {};
+
+    // Load any data coming from not defined raw yaml front matter.
+    if (this.raw) {
+      try {
+        metadata = _.extend(metadata, jsyaml.safeLoad(this.raw.getValue()) || {});
+      } catch (err) {
+        console.log("Error parsing not defined raw yaml front matter");
+        console.log(err);
+      }
+    }
 
     if (this.view.toolbar &&
        this.view.toolbar.publishState() ||
@@ -336,16 +346,6 @@ module.exports = Backbone.View.extend({
         }
       }
     });
-
-    // Load any data coming from not defined raw yaml front matter.
-    if (this.raw) {
-      try {
-        metadata = _.merge(metadata, jsyaml.safeLoad(this.raw.getValue()) || {});
-      } catch (err) {
-        console.log("Error parsing not defined raw yaml front matter");
-        console.log(err);
-      }
-    }
 
     return metadata;
   },
