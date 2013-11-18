@@ -1029,7 +1029,7 @@ module.exports = Backbone.View.extend({
       },
       path: path
     });
-    
+
     // Set default metadata for new path
     if (this.model && defaults) {
       this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
@@ -1214,7 +1214,7 @@ module.exports = Backbone.View.extend({
     // Loading State
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
-    // Default to media directory if defined in config, 
+    // Default to media directory if defined in config,
     // current directory if no path specified
     var dir = this.config.media ? this.config.media :
       util.extractFilename(this.model.get('path'))[0];

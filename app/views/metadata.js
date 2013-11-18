@@ -238,19 +238,17 @@ module.exports = Backbone.View.extend({
 
     this.listenTo(this.raw, 'blur', (function(cm) {
       var value = cm.getValue();
-      var raw;
+      var isChanged = false;
 
       try {
-        raw = jsyaml.safeLoad(value);
+        isChanged = !_.isEqual(this.model.get('metadata'), jsyaml.safeLoad(value));
       } catch(err) {
         console.log("Error parsing CodeMirror editor text");
         console.log(err);
       }
 
-      if (raw) {
-        var metadata = this.model.get('metadata');
-        this.model.set('metadata', _.extend(metadata, raw));
-
+      // Only make dirty if the metadata has changed
+      if (isChanged) {
         this.view.makeDirty();
       }
     }).bind(this));
