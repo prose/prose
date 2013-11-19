@@ -44,7 +44,7 @@ module.exports = Backbone.View.extend({
         // Append the siteurl if it exists
         if (config.siteurl) {
           this.media.each(function(m) {
-            [config.siteurl, m].join('/');
+            m.set('path', util.appendFilename(config.siteurl, m.get('path')));
           });
         }
       }
@@ -406,7 +406,7 @@ module.exports = Backbone.View.extend({
       } else {
         var src = $('input[name="url"]').val();
         var alt = $('input[name="alt"]').val();
-        this.view.editor.replaceSelection('![' + alt + '](/' + src + ')');
+        this.view.editor.replaceSelection('![' + alt + '](' + src + ')');
         this.view.editor.focus();
       }
     }
