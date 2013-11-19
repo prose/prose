@@ -237,12 +237,11 @@ module.exports = Backbone.View.extend({
       theme: 'prose-bright'
     });
 
-    this.listenTo(this.raw, 'blur', (function(cm) {
-      var value = cm.getValue();
+    this.listenTo(this.raw, 'blur', (function() {
       var isChanged = false;
 
       try {
-        // Compare the current metadata to the new metadata
+        // Check if the metadata has changed after merging in the raw content.
         isChanged = !_.isEqual(this.model.get('metadata'), this.getValue());
       } catch(err) {
         console.log("Error parsing CodeMirror editor text");
@@ -250,6 +249,7 @@ module.exports = Backbone.View.extend({
       }
 
       // Only make the file dirty if the metadata has changed
+      // to avoid a blank commit.
       if (isChanged) {
         this.view.makeDirty();
       }
