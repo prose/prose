@@ -40,6 +40,13 @@ module.exports = Backbone.View.extend({
           return m.get('type') === 'file' && match.test(path) &&
             (util.isBinary(path) || util.isImage(m.get('extension')));
         });
+
+        // Append the siteurl if it exists
+        if (config.siteurl) {
+          this.media.each(function(m) {
+            [config.siteurl, m].join('/');
+          });
+        }
       }
 
       if (config.relativeLinks) {
