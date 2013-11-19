@@ -274,9 +274,11 @@ module.exports = Backbone.View.extend({
 
     // Get the title value from heading if we need to.
     if (this.titleAsHeading) {
-      newMetadata.title = (this.view.header) ?
-        this.view.header.inputGet() :
-        metadata.title[0];
+      if (this.view.header) {
+        newMetadata.title = this.view.header.inputGet();
+      } else if (metadata && metadata.title) {
+        newMetadata.title = metadata.title;
+      }
     }
 
     // Load any data coming from a metafield (that has a name)
