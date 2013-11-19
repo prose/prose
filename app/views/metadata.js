@@ -263,10 +263,11 @@ module.exports = Backbone.View.extend({
     var metadata = this.model.get('metadata') || {};
     var newMetadata = {};
 
-    if (this.view.toolbar &&
-       this.view.toolbar.publishState() ||
+    // If the current published state is true then keep it that way
+    if (this.view.toolbar && this.view.toolbar.publishState() ||
        (metadata && metadata.published)) {
       newMetadata.published = true;
+    // Else default to unpublished state
     } else {
       newMetadata.published = false;
     }
@@ -275,10 +276,11 @@ module.exports = Backbone.View.extend({
     if (this.titleAsHeading) {
       newMetadata.title = (this.view.header) ?
         this.view.header.inputGet() :
-        this.model.get('metadata').title[0];
+        metadata.title[0];
     }
 
-    _.each(this.$el.find('[name]'), function(item) {
+    // Load any data coming from a metafield (that has a name)
+    _.each(this.$el.find('.metafield[name]'), function(item) {
       var $item = $(item);
       var value = $item.val();
 
