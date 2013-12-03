@@ -8,6 +8,7 @@ var Folder = require('../models/folder');
 
 var cookie = require('../cookie');
 var util = require('../util');
+var ignore = require('ignore');
 
 module.exports = Backbone.Collection.extend({
   model: function(attributes, options) {
@@ -93,6 +94,10 @@ module.exports = Backbone.Collection.extend({
         languages: config.languages
       }, config.prose);
 
+      if (config.prose.ignore) {
+        this.parseIgnore(config.prose.ignore);
+      }
+
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
 
@@ -166,6 +171,13 @@ module.exports = Backbone.Collection.extend({
     } else {
       if (_.isFunction(options.success)) options.success.apply(this, options.args);
     }
+  },
+
+  parseIgnore: function(ignorePatterns) {
+    var ignoreFilter = ignore().addPattern(ignorePatterns).createFilter();
+    this.filteredModel = new Backbone.Collection(this.filter(function(file) {
+      return ignoreFilter(file.id);
+    }));
   },
 
   fetch: function(options) {
