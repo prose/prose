@@ -73,8 +73,10 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 5. `make clean && make`
 6. `git add dist/`
 7. `git commit`
-8.  Tag the release using `git tag` in the format `vX.Y.Z`
-9. `git push`
+8. `git push`
+9. `git checkout master`
+10.  Tag the release in `master` using `git tag` in the format `vX.Y.Z`
+11. Push tag to GitHub using `git push --tags` 
 
 ## Building / Installing
 
