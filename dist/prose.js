@@ -10326,7 +10326,7 @@ user.authenticate({
 });
 
 })()
-},{"../dist/en.js":1,"../translations/locales":2,"./router":5,"./models/user":6,"./views/notification":7,"./config":8,"./cookie":3,"./status":9,"underscore":10,"jquery-browserify":11,"backbone":12}],8:[function(require,module,exports){
+},{"../dist/en.js":1,"../translations/locales":2,"./router":5,"./models/user":6,"./views/notification":7,"./config":8,"./cookie":3,"./status":9,"jquery-browserify":10,"underscore":11,"backbone":12}],8:[function(require,module,exports){
 var cookie = require('./cookie');
 var oauth = require('../oauth.json');
 
@@ -10348,7 +10348,7 @@ module.exports={
   "gatekeeperUrl": "https://prose-gatekeeper.herokuapp.com"
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11577,7 +11577,7 @@ module.exports={
 }).call(this);
 
 })()
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -21290,7 +21290,7 @@ module.exports = Backbone.Router.extend({
   }
 });
 
-},{"./models/user":6,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":7,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"../dist/templates":14,"./util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],9:[function(require,module,exports){
+},{"./models/user":6,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":7,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"../dist/templates":14,"./util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],9:[function(require,module,exports){
 var config = require('./config'); 
 var $ = require('jquery-browserify'); 
 
@@ -21307,7 +21307,7 @@ module.exports = {
   }
 }
 
-},{"./config":8,"jquery-browserify":11}],29:[function(require,module,exports){
+},{"./config":8,"jquery-browserify":10}],29:[function(require,module,exports){
 module.exports = function() {
   Liquid.readTemplateFile = (function(path) {
     var file = this.collection.findWhere({ path: '_includes/' + path });
@@ -21452,7 +21452,124 @@ module.exports = function() {
   });
 }
 
-},{}],30:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+var util = require('../util');
+
+module.exports = Backbone.View.extend({
+  id: 'notification',
+
+  className: 'notification round',
+
+  template: templates.notification,
+
+  events: {
+    'click .create': 'createPost'
+  },
+
+  initialize: function(options) {
+    options = _.clone(options) || {};
+    _.bindAll(this);
+
+    this.message = options.message;
+    this.error = options.error;
+    this.options = options.options;
+  },
+
+  render: function() {
+    util.documentTitle(t('docheader.error'));
+
+    var data = {
+      message: this.message,
+      error: this.error,
+      options: this.options
+    }
+
+    this.$el.html(_.template(this.template, data, {
+      variable: 'data'
+    }));
+
+    return this;
+  },
+
+  createPost: function (e) {
+    var hash = window.location.hash.split('/');
+    hash[2] = 'new';
+
+    var path = hash[hash.length - 1].split('?');
+    hash[hash.length - 1] = path[0] + '?file=' + path[0];
+
+    // append query string
+    if (path.length > 1) {
+      hash[hash.length - 1]  += '&' + path[1];
+    }
+
+    router.navigate(_(hash).compact().join('/'), { trigger: true });
+    return false;
+  }
+});
+
+},{"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],6:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+
+var Backbone = require('backbone');
+var Repos = require('../collections/repos');
+var Orgs = require('../collections/orgs');
+
+// TODO Pass Notification view here if something goes wrong?
+var NotificationView = require('../views/notification');
+
+var auth = require('../config');
+var cookie = require('../cookie');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.Model.extend({
+  initialize: function(attributes, options) {
+    this.repos = new Repos([], { user: this });
+    this.orgs = new Orgs([], { user: this });
+  },
+
+  authenticate: function(options) {
+    var match;
+
+    if (cookie.get('oauth-token')) {
+      if (_.isFunction(options.success)) options.success();
+    } else {
+      match = window.location.href.match(/\?code=([a-z0-9]*)/);
+
+      if (match) {
+        var ajax = $.ajax(auth.url + '/authenticate/' + match[1], {
+          success: function(data) {
+            cookie.set('oauth-token', data.token);
+
+            var regex = new RegExp("(?:\\/)?\\?code=" + match[1]);
+            window.location.href = window.location.href.replace(regex, '');
+
+            if (_.isFunction(options.success)) options.success();
+          }
+        });
+      } else {
+        if (_.isFunction(options.error)) options.error();
+      }
+    }
+  },
+
+  url: function() {
+    var id = cookie.get('id');
+    var token = cookie.get('oauth-token');
+
+    // Return '/user' if authenticated but no user id cookie has been set yet
+    // or if this model's id matches authenticated user id
+    return auth.api + ((token && _.isUndefined(id)) || (id && this.get('id') === id) ?
+      '/user' : '/users/' + this.get('login'));
+  }
+});
+
+},{"../collections/repos":30,"../collections/orgs":16,"../views/notification":7,"../config":8,"../cookie":3,"../../dist/templates":14,"underscore":11,"backbone":12,"jquery-browserify":10}],31:[function(require,module,exports){
 module.exports = {
   dragEnter: function(e) {
     $(e.currentTarget).addClass('drag-over');
@@ -21525,124 +21642,7 @@ module.exports = {
   }
 }
 
-},{}],6:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-
-var Backbone = require('backbone');
-var Repos = require('../collections/repos');
-var Orgs = require('../collections/orgs');
-
-// TODO Pass Notification view here if something goes wrong?
-var NotificationView = require('../views/notification');
-
-var auth = require('../config');
-var cookie = require('../cookie');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.Model.extend({
-  initialize: function(attributes, options) {
-    this.repos = new Repos([], { user: this });
-    this.orgs = new Orgs([], { user: this });
-  },
-
-  authenticate: function(options) {
-    var match;
-
-    if (cookie.get('oauth-token')) {
-      if (_.isFunction(options.success)) options.success();
-    } else {
-      match = window.location.href.match(/\?code=([a-z0-9]*)/);
-
-      if (match) {
-        var ajax = $.ajax(auth.url + '/authenticate/' + match[1], {
-          success: function(data) {
-            cookie.set('oauth-token', data.token);
-
-            var regex = new RegExp("(?:\\/)?\\?code=" + match[1]);
-            window.location.href = window.location.href.replace(regex, '');
-
-            if (_.isFunction(options.success)) options.success();
-          }
-        });
-      } else {
-        if (_.isFunction(options.error)) options.error();
-      }
-    }
-  },
-
-  url: function() {
-    var id = cookie.get('id');
-    var token = cookie.get('oauth-token');
-
-    // Return '/user' if authenticated but no user id cookie has been set yet
-    // or if this model's id matches authenticated user id
-    return auth.api + ((token && _.isUndefined(id)) || (id && this.get('id') === id) ?
-      '/user' : '/users/' + this.get('login'));
-  }
-});
-
-},{"../collections/repos":31,"../collections/orgs":16,"../views/notification":7,"../config":8,"../cookie":3,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],7:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var templates = require('../../dist/templates');
-var util = require('../util');
-
-module.exports = Backbone.View.extend({
-  id: 'notification',
-
-  className: 'notification round',
-
-  template: templates.notification,
-
-  events: {
-    'click .create': 'createPost'
-  },
-
-  initialize: function(options) {
-    options = _.clone(options) || {};
-    _.bindAll(this);
-
-    this.message = options.message;
-    this.error = options.error;
-    this.options = options.options;
-  },
-
-  render: function() {
-    util.documentTitle(t('docheader.error'));
-
-    var data = {
-      message: this.message,
-      error: this.error,
-      options: this.options
-    }
-
-    this.$el.html(_.template(this.template, data, {
-      variable: 'data'
-    }));
-
-    return this;
-  },
-
-  createPost: function (e) {
-    var hash = window.location.hash.split('/');
-    hash[2] = 'new';
-
-    var path = hash[hash.length - 1].split('?');
-    hash[hash.length - 1] = path[0] + '?file=' + path[0];
-
-    // append query string
-    if (path.length > 1) {
-      hash[hash.length - 1]  += '&' + path[1];
-    }
-
-    router.navigate(_(hash).compact().join('/'), { trigger: true });
-    return false;
-  }
-});
-
-},{"../../dist/templates":14,"../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],12:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -23216,7 +23216,7 @@ module.exports = Backbone.View.extend({
 }).call(this);
 
 })()
-},{"underscore":10}],28:[function(require,module,exports){
+},{"underscore":11}],28:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var templates = require('../dist/templates');
@@ -23483,187 +23483,7 @@ module.exports = {
   }
 };
 
-},{"../dist/templates":14,"jquery-browserify":11,"underscore":10,"chrono":32}],33:[function(require,module,exports){
-module.exports = {
-  help: [
-    {
-      menuName: t('dialogs.help.blockElements.title'),
-      content: [{
-          menuName: t('dialogs.help.blockElements.content.paragraphs.title'),
-          data: t('dialogs.help.blockElements.content.paragraphs.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.headers.title'),
-          data: t('dialogs.help.blockElements.content.headers.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.blockquotes.title'),
-          data: t('dialogs.help.blockElements.content.blockquotes.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.lists.title'),
-          data: t('dialogs.help.blockElements.content.lists.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.codeBlocks.title'),
-          data: t('dialogs.help.blockElements.content.codeBlocks.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.horizontalRules.title'),
-          data: t('dialogs.help.blockElements.content.horizontalRules.content')
-        }
-      ]
-    },
-
-    {
-      menuName: t('dialogs.help.spanElements.title'),
-      content: [{
-          menuName: t('dialogs.help.spanElements.content.links.title'),
-          data: t('dialogs.help.spanElements.content.links.content')
-        },
-        {
-          menuName: t('dialogs.help.spanElements.content.emphasis.title'),
-          data: t('dialogs.help.spanElements.content.emphasis.content')
-        },
-        {
-          menuName: t('dialogs.help.spanElements.content.code.title'),
-          data: t('dialogs.help.spanElements.content.code.content')
-        },
-        {
-          menuName: t('dialogs.help.spanElements.content.images.title'),
-          data: t('dialogs.help.spanElements.content.images.content')
-        }
-      ]
-    },
-
-    {
-      menuName: t('dialogs.help.miscellaneous.title'),
-      content: [{
-          menuName: t('dialogs.help.miscellaneous.content.automaticLinks.title'),
-          data: t('dialogs.help.miscellaneous.content.automaticLinks.content')
-        },
-        {
-          menuName: t('dialogs.help.miscellaneous.content.escaping.title'),
-          data: t('dialogs.help.miscellaneous.content.escaping.content')
-        }
-      ]
-    }
-  ]
-}
-
-},{}],15:[function(require,module,exports){
-var Backbone = require('backbone');
-var User = require('../models/user');
-var config = require('../config');
-
-module.exports = Backbone.Collection.extend({
-  model: User
-});
-
-},{"../models/user":6,"../config":8,"backbone":12}],16:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Org = require('../models/org');
-var config = require('../config');
-
-module.exports = Backbone.Collection.extend({
-  model: Org,
-
-  initialize: function(models, options) {
-    options = _.clone(options) || {};
-    _.bindAll(this);
-
-    this.user = options.user;
-  },
-
-  url: function() {
-    return this.user ? config.api + '/users/' + this.user.get('login') + '/orgs' :
-      '/user/orgs';
-  }
-});
-
-},{"../models/org":34,"../config":8,"underscore":10,"backbone":12}],17:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Branches = require('../collections/branches');
-var Commits = require('../collections/commits');
-var config = require('../config');
-
-module.exports = Backbone.Model.extend({
-  constructor: function(attributes, options) {
-    Backbone.Model.call(this, {
-      id: attributes.id,
-      description: attributes.description,
-      fork: attributes.fork,
-      homepage: attributes.homepage,
-      master_branch: attributes.master_branch,
-      name: attributes.name,
-      owner: {
-        id: attributes.owner.id,
-        login: attributes.owner.login
-      },
-      permissions: attributes.permissions,
-      private: attributes.private,
-      updated_at: attributes.updated_at
-    });
-  },
-
-  initialize: function(attributes, options) {
-    this.branches = new Branches([], { repo: this });
-    this.commits = new Commits([], { repo: this, branch: this.branch })
-  },
-
-  ref: function(options) {
-    options = _.clone(options) || {};
-
-    $.ajax({
-      type: 'POST',
-      url: this.url() + '/git/refs',
-      data: JSON.stringify({
-        ref: options.ref,
-        sha: options.sha
-      }),
-      success: options.success,
-      error: options.error
-    });
-  },
-
-  fork: function(options) {
-    options = _.clone(options) || {};
-
-    var success = options.success;
-
-    $.ajax({
-      type: 'POST',
-      url: this.url() + '/forks',
-      success: (function(res) {
-        // Initialize new Repo model
-        // TODO: is referencing module.exports in this manner acceptable?
-        var repo = new module.exports(res);
-
-        // TODO: Forking is async, retry if request fails
-        repo.branches.fetch({
-          success: (function(collection, res, options) {
-            var prefix = 'prose-patch-';
-
-            var branches = collection.filter(function(model) {
-              return model.get('name').indexOf(prefix) === 0;
-            }).map(function(model) {
-              return parseInt(model.get('name').split(prefix)[1]);
-            });
-
-            var branch = prefix + (branches.length ? _.max(branches) + 1 : 1);
-
-            if (_.isFunction(success)) success(repo, branch);
-          }).bind(this),
-          error: options.error
-        })
-      }).bind(this),
-      error: options.error
-    });
-  },
-
-  url: function() {
-    return config.api + '/repos/' + this.get('owner').login + '/' + this.get('name');
-  }
-});
-
-},{"../collections/branches":35,"../collections/commits":36,"../config":8,"underscore":10,"backbone":12}],18:[function(require,module,exports){
+},{"../dist/templates":14,"jquery-browserify":10,"underscore":11,"chrono":32}],18:[function(require,module,exports){
 var _ = require('underscore');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -24037,7 +23857,29 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{".././util":28,"underscore":10,"marked":37,"backbone":12,"js-yaml":38}],19:[function(require,module,exports){
+},{".././util":28,"underscore":11,"marked":33,"backbone":12,"js-yaml":34}],16:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Org = require('../models/org');
+var config = require('../config');
+
+module.exports = Backbone.Collection.extend({
+  model: Org,
+
+  initialize: function(models, options) {
+    options = _.clone(options) || {};
+    _.bindAll(this);
+
+    this.user = options.user;
+  },
+
+  url: function() {
+    return this.user ? config.api + '/users/' + this.user.get('login') + '/orgs' :
+      '/user/orgs';
+  }
+});
+
+},{"../models/org":35,"../config":8,"underscore":11,"backbone":12}],19:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24119,7 +23961,165 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./loader":39,"./sidebar":40,"./nav":41,"../cookie":3,"../../dist/templates":14,"../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],20:[function(require,module,exports){
+},{"./loader":36,"./sidebar":37,"./nav":38,"../cookie":3,"../../dist/templates":14,"../util":28,"underscore":11,"jquery-browserify":10,"backbone":12}],39:[function(require,module,exports){
+module.exports = {
+  help: [
+    {
+      menuName: t('dialogs.help.blockElements.title'),
+      content: [{
+          menuName: t('dialogs.help.blockElements.content.paragraphs.title'),
+          data: t('dialogs.help.blockElements.content.paragraphs.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.headers.title'),
+          data: t('dialogs.help.blockElements.content.headers.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.blockquotes.title'),
+          data: t('dialogs.help.blockElements.content.blockquotes.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.lists.title'),
+          data: t('dialogs.help.blockElements.content.lists.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.codeBlocks.title'),
+          data: t('dialogs.help.blockElements.content.codeBlocks.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.horizontalRules.title'),
+          data: t('dialogs.help.blockElements.content.horizontalRules.content')
+        }
+      ]
+    },
+
+    {
+      menuName: t('dialogs.help.spanElements.title'),
+      content: [{
+          menuName: t('dialogs.help.spanElements.content.links.title'),
+          data: t('dialogs.help.spanElements.content.links.content')
+        },
+        {
+          menuName: t('dialogs.help.spanElements.content.emphasis.title'),
+          data: t('dialogs.help.spanElements.content.emphasis.content')
+        },
+        {
+          menuName: t('dialogs.help.spanElements.content.code.title'),
+          data: t('dialogs.help.spanElements.content.code.content')
+        },
+        {
+          menuName: t('dialogs.help.spanElements.content.images.title'),
+          data: t('dialogs.help.spanElements.content.images.content')
+        }
+      ]
+    },
+
+    {
+      menuName: t('dialogs.help.miscellaneous.title'),
+      content: [{
+          menuName: t('dialogs.help.miscellaneous.content.automaticLinks.title'),
+          data: t('dialogs.help.miscellaneous.content.automaticLinks.content')
+        },
+        {
+          menuName: t('dialogs.help.miscellaneous.content.escaping.title'),
+          data: t('dialogs.help.miscellaneous.content.escaping.content')
+        }
+      ]
+    }
+  ]
+}
+
+},{}],17:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Branches = require('../collections/branches');
+var Commits = require('../collections/commits');
+var config = require('../config');
+
+module.exports = Backbone.Model.extend({
+  constructor: function(attributes, options) {
+    Backbone.Model.call(this, {
+      id: attributes.id,
+      description: attributes.description,
+      fork: attributes.fork,
+      homepage: attributes.homepage,
+      master_branch: attributes.master_branch,
+      name: attributes.name,
+      owner: {
+        id: attributes.owner.id,
+        login: attributes.owner.login
+      },
+      permissions: attributes.permissions,
+      private: attributes.private,
+      updated_at: attributes.updated_at
+    });
+  },
+
+  initialize: function(attributes, options) {
+    this.branches = new Branches([], { repo: this });
+    this.commits = new Commits([], { repo: this, branch: this.branch })
+  },
+
+  ref: function(options) {
+    options = _.clone(options) || {};
+
+    $.ajax({
+      type: 'POST',
+      url: this.url() + '/git/refs',
+      data: JSON.stringify({
+        ref: options.ref,
+        sha: options.sha
+      }),
+      success: options.success,
+      error: options.error
+    });
+  },
+
+  fork: function(options) {
+    options = _.clone(options) || {};
+
+    var success = options.success;
+
+    $.ajax({
+      type: 'POST',
+      url: this.url() + '/forks',
+      success: (function(res) {
+        // Initialize new Repo model
+        // TODO: is referencing module.exports in this manner acceptable?
+        var repo = new module.exports(res);
+
+        // TODO: Forking is async, retry if request fails
+        repo.branches.fetch({
+          success: (function(collection, res, options) {
+            var prefix = 'prose-patch-';
+
+            var branches = collection.filter(function(model) {
+              return model.get('name').indexOf(prefix) === 0;
+            }).map(function(model) {
+              return parseInt(model.get('name').split(prefix)[1]);
+            });
+
+            var branch = prefix + (branches.length ? _.max(branches) + 1 : 1);
+
+            if (_.isFunction(success)) success(repo, branch);
+          }).bind(this),
+          error: options.error
+        })
+      }).bind(this),
+      error: options.error
+    });
+  },
+
+  url: function() {
+    return config.api + '/repos/' + this.get('owner').login + '/' + this.get('name');
+  }
+});
+
+},{"../collections/branches":40,"../collections/commits":41,"../config":8,"underscore":11,"backbone":12}],15:[function(require,module,exports){
+var Backbone = require('backbone');
+var User = require('../models/user');
+var config = require('../config');
+
+module.exports = Backbone.Collection.extend({
+  model: User
+});
+
+},{"../models/user":6,"../config":8,"backbone":12}],20:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24137,7 +24137,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":14,"../config":8,"jquery-browserify":11,"underscore":10,"backbone":12}],21:[function(require,module,exports){
+},{"../../dist/templates":14,"../config":8,"jquery-browserify":10,"underscore":11,"backbone":12}],21:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24194,7 +24194,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./header":42,"./sidebar/orgs":43,".././util":28,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],22:[function(require,module,exports){
+},{"./header":42,"./sidebar/orgs":43,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],22:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24254,74 +24254,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":14,"../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],23:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var RepoView = require('./li/repo');
-
-module.exports = Backbone.View.extend({
-  subviews: {},
-
-  events: {
-    'mouseover .item': 'activeListing',
-    'mouseover .item a': 'activeListing'
-  },
-
-  initialize: function(options) {
-    _.bindAll(this);
-
-    this.model = options.model;
-    this.search = options.search;
-
-    this.listenTo(this.search, 'search', this.render);
-  },
-
-  render: function() {
-    var collection = this.search ? this.search.search() : this.model;
-    var frag = document.createDocumentFragment();
-
-    collection.each((function(repo, i) {
-      var view = new RepoView({
-        index: i,
-        model: repo
-      });
-
-      frag.appendChild(view.render().el);
-      this.subviews[repo.id] = view;
-    }).bind(this));
-
-    this.$el.html(frag);
-
-    this.$listings = this.$el.find('.item');
-    this.$search = this.$el.find('#filter');
-
-    return this;
-  },
-
-  activeListing: function(e) {
-    var $listing = $(e.target);
-
-    if (!$listing.hasClass('item')) {
-      $listing = $(e.target).closest('li');
-    }
-
-    this.$listings.removeClass('active');
-    $listing.addClass('active');
-
-    // Blur out search if its selected
-    this.$search.blur();
-  },
-
-  remove: function() {
-    _.invoke(this.subviews, 'remove');
-    this.subviews = {};
-
-    Backbone.View.prototype.remove.apply(this, arguments);
-  }
-});
-
-},{"./li/repo":44,"jquery-browserify":11,"underscore":10,"backbone":12}],24:[function(require,module,exports){
+},{"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],24:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');
@@ -24462,7 +24395,74 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./files":45,"./header":42,"./search":22,".././util":28,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"queue-async":46,"backbone":12}],26:[function(require,module,exports){
+},{"./files":44,"./header":42,"./search":22,".././util":28,"../../dist/templates":14,"underscore":11,"queue-async":45,"backbone":12,"jquery-browserify":10}],23:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var RepoView = require('./li/repo');
+
+module.exports = Backbone.View.extend({
+  subviews: {},
+
+  events: {
+    'mouseover .item': 'activeListing',
+    'mouseover .item a': 'activeListing'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.model = options.model;
+    this.search = options.search;
+
+    this.listenTo(this.search, 'search', this.render);
+  },
+
+  render: function() {
+    var collection = this.search ? this.search.search() : this.model;
+    var frag = document.createDocumentFragment();
+
+    collection.each((function(repo, i) {
+      var view = new RepoView({
+        index: i,
+        model: repo
+      });
+
+      frag.appendChild(view.render().el);
+      this.subviews[repo.id] = view;
+    }).bind(this));
+
+    this.$el.html(frag);
+
+    this.$listings = this.$el.find('.item');
+    this.$search = this.$el.find('#filter');
+
+    return this;
+  },
+
+  activeListing: function(e) {
+    var $listing = $(e.target);
+
+    if (!$listing.hasClass('item')) {
+      $listing = $(e.target).closest('li');
+    }
+
+    this.$listings.removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    this.$search.blur();
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./li/repo":46,"jquery-browserify":10,"underscore":11,"backbone":12}],26:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -24477,7 +24477,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":11,"marked":37,"backbone":12}],27:[function(require,module,exports){
+},{"jquery-browserify":10,"marked":33,"backbone":12}],27:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -24529,7 +24529,104 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../cookie":3,"../../dist/templates":14,"../../translations/locales":2,"jquery-browserify":11,"backbone":12,"underscore":10}],25:[function(require,module,exports){
+},{"../cookie":3,"../../dist/templates":14,"../../translations/locales":2,"backbone":12,"jquery-browserify":10,"underscore":11}],30:[function(require,module,exports){
+var _ = require('underscore');
+
+var Backbone = require('backbone');
+var Repo = require('../models/repo');
+
+var auth = require('../config');
+var cookie = require('../cookie');
+
+module.exports = Backbone.Collection.extend({
+  model: Repo,
+
+  initialize: function(models, options) {
+    _.bindAll(this);
+
+    this.user = options.user;
+
+    this.comparator = function(repo) {
+      return -(new Date(repo.get('updated_at')).getTime());
+    };
+  },
+
+  parseLinkHeader: function(xhr, options) {
+    options = _.clone(options) || {};
+
+    var header = xhr.getResponseHeader('link');
+
+    if (header) {
+      var parts = header.split(',');
+      var links = {};
+
+      _.each(parts, function(link) {
+        var section = link.split(';');
+
+        var url = section[0].replace(/<(.*)>/, '$1').trim();
+        var name = section[1].replace(/rel="(.*)"/, '$1').trim();
+
+        links[name] = url;
+      });
+
+      if (links.next) {
+        $.ajax({
+          type: 'GET',
+          url: links.next,
+          success: options.success,
+          error: options.error
+        });
+      } else {
+        if (_.isFunction(options.complete)) options.complete();
+      }
+    } else {
+      if (_.isFunction(options.error)) options.error();
+    }
+  },
+
+  fetch: function(options) {
+    options = _.clone(options) || {};
+
+    var cb = options.success;
+
+    var success = (function(res, statusText, xhr) {
+      this.add(res);
+      this.parseLinkHeader(xhr, {
+        success: success,
+        complete: cb
+      });
+    }).bind(this);
+
+    Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+      success: (function(model, res, options) {
+        this.parseLinkHeader(options.xhr, {
+          success: success,
+          error: cb
+        });
+      }).bind(this)
+    }));
+  },
+
+  url: function() {
+    var id = cookie.get('id');
+    var type = this.user.get('type');
+    var path;
+
+    switch(type) {
+      case 'User':
+        path = (id && this.user.get('id') === id) ? '/user' :
+          ('/users/' + this.user.get('login'))
+        break;
+      case 'Organization':
+        path = '/orgs/' + this.user.get('login');
+        break;
+    }
+
+    return auth.api + path + '/repos?per_page=100';
+  }
+});
+
+},{"../models/repo":17,"../config":8,"../cookie":3,"underscore":11,"backbone":12}],25:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');
@@ -25796,104 +25893,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../vendor/liquid.patch":29,"./modal":47,"../models/file":18,"./header":42,"./toolbar":48,"./metadata":49,"../config":8,"../util":28,"../upload":30,"../cookie":3,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"queue-async":46,"js-yaml":38,"keymaster":50,"marked":37,"backbone":12,"diff":51}],31:[function(require,module,exports){
-var _ = require('underscore');
-
-var Backbone = require('backbone');
-var Repo = require('../models/repo');
-
-var auth = require('../config');
-var cookie = require('../cookie');
-
-module.exports = Backbone.Collection.extend({
-  model: Repo,
-
-  initialize: function(models, options) {
-    _.bindAll(this);
-
-    this.user = options.user;
-
-    this.comparator = function(repo) {
-      return -(new Date(repo.get('updated_at')).getTime());
-    };
-  },
-
-  parseLinkHeader: function(xhr, options) {
-    options = _.clone(options) || {};
-
-    var header = xhr.getResponseHeader('link');
-
-    if (header) {
-      var parts = header.split(',');
-      var links = {};
-
-      _.each(parts, function(link) {
-        var section = link.split(';');
-
-        var url = section[0].replace(/<(.*)>/, '$1').trim();
-        var name = section[1].replace(/rel="(.*)"/, '$1').trim();
-
-        links[name] = url;
-      });
-
-      if (links.next) {
-        $.ajax({
-          type: 'GET',
-          url: links.next,
-          success: options.success,
-          error: options.error
-        });
-      } else {
-        if (_.isFunction(options.complete)) options.complete();
-      }
-    } else {
-      if (_.isFunction(options.error)) options.error();
-    }
-  },
-
-  fetch: function(options) {
-    options = _.clone(options) || {};
-
-    var cb = options.success;
-
-    var success = (function(res, statusText, xhr) {
-      this.add(res);
-      this.parseLinkHeader(xhr, {
-        success: success,
-        complete: cb
-      });
-    }).bind(this);
-
-    Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-      success: (function(model, res, options) {
-        this.parseLinkHeader(options.xhr, {
-          success: success,
-          error: cb
-        });
-      }).bind(this)
-    }));
-  },
-
-  url: function() {
-    var id = cookie.get('id');
-    var type = this.user.get('type');
-    var path;
-
-    switch(type) {
-      case 'User':
-        path = (id && this.user.get('id') === id) ? '/user' :
-          ('/users/' + this.user.get('login'))
-        break;
-      case 'Organization':
-        path = '/orgs/' + this.user.get('login');
-        break;
-    }
-
-    return auth.api + path + '/repos?per_page=100';
-  }
-});
-
-},{"../models/repo":17,"../config":8,"../cookie":3,"underscore":10,"backbone":12}],37:[function(require,module,exports){
+},{"../../vendor/liquid.patch":29,"./modal":47,"../models/file":18,"./header":42,"./toolbar":48,"./metadata":49,"../config":8,"../util":28,"../upload":31,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"queue-async":45,"js-yaml":34,"keymaster":50,"marked":33,"backbone":12,"diff":51}],33:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -27061,7 +27061,7 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
-},{}],46:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function() {
   if (typeof module === "undefined") self.queue = queue;
   else module.exports = queue;
@@ -27792,7 +27792,7 @@ if (typeof module !== 'undefined') {
 },{}],32:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
-},{"./lib/chrono":52}],38:[function(require,module,exports){
+},{"./lib/chrono":52}],34:[function(require,module,exports){
 module.exports = require('./lib/js-yaml.js');
 
 },{"./lib/js-yaml.js":53}],52:[function(require,module,exports){
@@ -28201,68 +28201,13 @@ Date.prototype.setTimezone = function(val) {
 
 })();
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 var Backbone = require('backbone');
 
 module.exports = Backbone.Model.extend({
 });
 
-},{"backbone":12}],35:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Branch = require('../models/branch');
-
-module.exports = Backbone.Collection.extend({
-  model: Branch,
-
-  initialize: function(models, options) {
-    this.repo = options.repo;
-  },
-
-  parse: function(resp, options) {
-    return map = _.map(resp, (function(branch) {
-     return  _.extend(branch, {
-        repo: this.repo
-      })
-    }).bind(this));
-  },
-
-  url: function() {
-    return this.repo.url() + '/branches';
-  }
-});
-
-},{"../models/branch":54,"underscore":10,"backbone":12}],36:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Commit = require('../models/commit');
-
-module.exports = Backbone.Collection.extend({
-  model: Commit,
-
-  initialize: function(models, options) {
-    this.repo = options.repo;
-  },
-
-  setBranch: function(branch, options) {
-    this.branch = branch;
-    this.fetch(options);
-  },
-
-  parse: function(resp, options) {
-    return map = _.map(resp, (function(commit) {
-     return  _.extend(commit, {
-        repo: this.repo
-      })
-    }).bind(this));
-  },
-
-  url: function() {
-    return this.repo.url() + '/commits?sha=' + this.branch;
-  }
-});
-
-},{"../models/commit":55,"underscore":10,"backbone":12}],39:[function(require,module,exports){
+},{"backbone":12}],36:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -28305,7 +28250,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],40:[function(require,module,exports){
+},{"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],37:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var util = require('../util');
@@ -28386,7 +28331,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../util":28,"./sidebar/branches":56,"./sidebar/history":57,"./sidebar/drafts":58,"./sidebar/orgs":43,"./sidebar/save":59,"./sidebar/settings":60,"../../dist/templates":14,"underscore":10,"backbone":12}],41:[function(require,module,exports){
+},{"../util":28,"./sidebar/branches":54,"./sidebar/history":55,"./sidebar/drafts":56,"./sidebar/orgs":43,"./sidebar/save":57,"./sidebar/settings":58,"../../dist/templates":14,"underscore":11,"backbone":12}],38:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -28479,7 +28424,62 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../config":8,"../util":28,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],42:[function(require,module,exports){
+},{"../config":8,"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],40:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Branch = require('../models/branch');
+
+module.exports = Backbone.Collection.extend({
+  model: Branch,
+
+  initialize: function(models, options) {
+    this.repo = options.repo;
+  },
+
+  parse: function(resp, options) {
+    return map = _.map(resp, (function(branch) {
+     return  _.extend(branch, {
+        repo: this.repo
+      })
+    }).bind(this));
+  },
+
+  url: function() {
+    return this.repo.url() + '/branches';
+  }
+});
+
+},{"../models/branch":59,"underscore":11,"backbone":12}],41:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Commit = require('../models/commit');
+
+module.exports = Backbone.Collection.extend({
+  model: Commit,
+
+  initialize: function(models, options) {
+    this.repo = options.repo;
+  },
+
+  setBranch: function(branch, options) {
+    this.branch = branch;
+    this.fetch(options);
+  },
+
+  parse: function(resp, options) {
+    return map = _.map(resp, (function(commit) {
+     return  _.extend(commit, {
+        repo: this.repo
+      })
+    }).bind(this));
+  },
+
+  url: function() {
+    return this.repo.url() + '/commits?sha=' + this.branch;
+  }
+});
+
+},{"../models/commit":60,"underscore":11,"backbone":12}],42:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -28603,7 +28603,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../util":28,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],45:[function(require,module,exports){
+},{"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],44:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -28658,14 +28658,15 @@ module.exports = Backbone.View.extend({
     this.app.loader.start();
 
     this.model = this.branches.findWhere({ name: this.branch }).files;
-    this.search.model = this.model;
 
     this.model.fetch({
       success: (function() {
         // Update this.path with rooturl
         var config = this.model.config;
         this.rooturl = config && config.rooturl ? config.rooturl : '';
-
+        
+        this.presentationModel = this.model.filteredModel || this.model;
+        this.search.model = this.presentationModel;
         // Render on fetch and on search
         this.listenTo(this.search, 'search', this.render);
         this.render();
@@ -28710,7 +28711,7 @@ module.exports = Backbone.View.extend({
 
     // Render drafts link in sidebar as subview
     // if _posts directory exists and path does not begin with _drafts
-    if (this.model.get('_posts') && /^(?!_drafts)/.test(this.path)) {
+    if (this.presentationModel.get('_posts') && /^(?!_drafts)/.test(this.path)) {
       drafts = this.sidebar.initSubview('drafts', {
         link: [url, '_drafts'].join('/'),
         sidebar: this.sidebar
@@ -28730,7 +28731,7 @@ module.exports = Backbone.View.extend({
     this.$el.html(_.template(this.template, data, {variable: 'data'}));
 
     // if not searching, filter to only show current level
-    var collection = search ? this.search.search() : this.model.filter((function(file) {
+    var collection = search ? this.search.search() : this.presentationModel.filter((function(file) {
       return regex.test(file.get('path'));
     }).bind(this));
 
@@ -28807,7 +28808,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../models/file":18,"../models/folder":61,"./li/file":62,"./li/folder":63,"../../dist/templates":14,".././util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],47:[function(require,module,exports){
+},{"../models/file":18,"../models/folder":61,"./li/file":62,"./li/folder":63,"../../dist/templates":14,".././util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],47:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -28846,7 +28847,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],48:[function(require,module,exports){
+},{"../../dist/templates":14,"underscore":11,"jquery-browserify":10,"backbone":12}],48:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -29337,7 +29338,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../toolbar/markdown.js":33,"../util":28,"../upload":30,"../../dist/templates":14,"jquery-browserify":11,"chosen-jquery-browserify":64,"underscore":10,"backbone":12}],49:[function(require,module,exports){
+},{"../toolbar/markdown.js":39,"../util":28,"../upload":31,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"chosen-jquery-browserify":64,"backbone":12}],49:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -29912,7 +29913,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":14,".././util":28,"jquery-browserify":11,"chosen-jquery-browserify":64,"underscore":10,"js-yaml":38,"backbone":12,"deepmerge":65}],65:[function(require,module,exports){
+},{"../../dist/templates":14,".././util":28,"jquery-browserify":10,"chosen-jquery-browserify":64,"underscore":11,"backbone":12,"js-yaml":34,"deepmerge":65}],65:[function(require,module,exports){
 module.exports = function merge (target, src) {
     var array = Array.isArray(src)
     var dst = array && [] || {}
@@ -30003,7 +30004,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":14,"../../cookie":3,"jquery-browserify":11,"underscore":10,"backbone":12}],44:[function(require,module,exports){
+},{"../../../dist/templates":14,"../../cookie":3,"jquery-browserify":10,"underscore":11,"backbone":12}],46:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30037,7 +30038,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../cookie":3,"../../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],53:[function(require,module,exports){
+},{"../../cookie":3,"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],53:[function(require,module,exports){
 'use strict';
 
 
@@ -30082,49 +30083,7 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":66,"./js-yaml/dumper":67,"./js-yaml/common":68,"./js-yaml/type":69,"./js-yaml/schema":70,"./js-yaml/schema/failsafe":71,"./js-yaml/schema/json":72,"./js-yaml/schema/core":73,"./js-yaml/schema/default_safe":74,"./js-yaml/schema/default_full":75,"./js-yaml/exception":76,"./js-yaml/require":77}],54:[function(require,module,exports){
-var Backbone = require('backbone');
-var Files = require('../collections/files');
-var config = require('../config');
-
-module.exports = Backbone.Model.extend({
-  initialize: function(attributes, options) {
-    this.repo = attributes.repo;
-
-    this.set('name', attributes.name);
-
-    var sha = attributes.commit.sha;
-    this.set('sha', sha);
-
-    this.files = new Files([], {
-      repo: this.repo,
-      branch: this,
-      sha: sha
-    });
-  },
-
-  url: function() {
-    return this.repo.url() + '/branches/' + this.get('name');
-  }
-});
-
-},{"../collections/files":78,"../config":8,"backbone":12}],55:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-module.exports = Backbone.Model.extend({
-  initialize: function(attributes, options) {
-    _.bindAll(this);
-
-    this.repo = attributes.repo;
-  },
-
-  url: function() {
-    return this.repo.url() + '/commits/' + this.get('sha');
-  }
-});
-
-},{"underscore":10,"backbone":12}],68:[function(require,module,exports){
+},{"./js-yaml/loader":66,"./js-yaml/dumper":67,"./js-yaml/common":68,"./js-yaml/type":69,"./js-yaml/schema":70,"./js-yaml/schema/failsafe":71,"./js-yaml/schema/json":72,"./js-yaml/schema/core":73,"./js-yaml/schema/default_safe":74,"./js-yaml/schema/default_full":75,"./js-yaml/exception":76,"./js-yaml/require":77}],68:[function(require,module,exports){
 'use strict';
 
 
@@ -30213,7 +30172,49 @@ YAMLException.prototype.toString = function toString(compact) {
 
 module.exports = YAMLException;
 
-},{}],61:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
+var Backbone = require('backbone');
+var Files = require('../collections/files');
+var config = require('../config');
+
+module.exports = Backbone.Model.extend({
+  initialize: function(attributes, options) {
+    this.repo = attributes.repo;
+
+    this.set('name', attributes.name);
+
+    var sha = attributes.commit.sha;
+    this.set('sha', sha);
+
+    this.files = new Files([], {
+      repo: this.repo,
+      branch: this,
+      sha: sha
+    });
+  },
+
+  url: function() {
+    return this.repo.url() + '/branches/' + this.get('name');
+  }
+});
+
+},{"../collections/files":78,"../config":8,"backbone":12}],60:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.Model.extend({
+  initialize: function(attributes, options) {
+    _.bindAll(this);
+
+    this.repo = attributes.repo;
+  },
+
+  url: function() {
+    return this.repo.url() + '/commits/' + this.get('sha');
+  }
+});
+
+},{"underscore":11,"backbone":12}],61:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var util = require('.././util');
@@ -30240,10 +30241,10 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{".././util":28,"underscore":10,"backbone":12}],79:[function(require,module,exports){
+},{".././util":28,"backbone":12,"underscore":11}],79:[function(require,module,exports){
 // nothing to see here... no file methods for the browser
 
-},{}],56:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -30320,7 +30321,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./branch":80,"../../../dist/templates":14,"jquery-browserify":11,"chosen-jquery-browserify":64,"underscore":10,"backbone":12}],57:[function(require,module,exports){
+},{"./branch":80,"../../../dist/templates":14,"jquery-browserify":10,"chosen-jquery-browserify":64,"underscore":11,"backbone":12}],55:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30480,7 +30481,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./li/commit":81,"../../cookie":3,"../../../dist/templates":14,"../../util":28,"jquery-browserify":11,"underscore":10,"backbone":12,"queue-async":46}],58:[function(require,module,exports){
+},{"./li/commit":81,"../../cookie":3,"../../../dist/templates":14,"../../util":28,"underscore":11,"jquery-browserify":10,"backbone":12,"queue-async":45}],56:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30509,7 +30510,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],59:[function(require,module,exports){
+},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],57:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30573,7 +30574,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../nav":41,"../../../dist/templates":14,"../../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],60:[function(require,module,exports){
+},{"../nav":38,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],58:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30641,7 +30642,52 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../nav":41,"../../util":28,"../../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],62:[function(require,module,exports){
+},{"../../util":28,"../nav":38,"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],63:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  tagName: 'li',
+
+  className: 'item clearfix',
+
+  template: templates.li.folder,
+
+  initialize: function(options) {
+    this.model = options.model;
+    this.repo = options.repo;
+    this.branch = options.branch;
+
+    this.$el.attr('data-index', options.index);
+    this.$el.attr('data-navigate', '#' + this.repo.get('owner').login + '/' +
+      this.repo.get('name') + '/tree/' + this.branch + '/' +
+      this.model.get('path'));
+  },
+
+  render: function() {
+    var data = _.extend(this.model.attributes, {
+      branch: this.branch,
+      repo: this.repo.attributes
+    });
+
+    var rooturl = this.model.collection.config &&
+      this.model.collection.config.rooturl;
+    var regex = new RegExp('^' + rooturl + '(.*)');
+    var jailpath = rooturl ? data.path.match(regex) : false;
+
+    data.jailpath = jailpath ? jailpath[1] : data.path;
+
+    this.$el.empty().append(_.template(this.template, data, {
+      variable: 'folder'
+    }));
+
+    return this;
+  }
+});
+
+},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],62:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30728,52 +30774,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../sidebar/li/commit":81,"../../../dist/templates":14,"../../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],63:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var templates = require('../../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  tagName: 'li',
-
-  className: 'item clearfix',
-
-  template: templates.li.folder,
-
-  initialize: function(options) {
-    this.model = options.model;
-    this.repo = options.repo;
-    this.branch = options.branch;
-
-    this.$el.attr('data-index', options.index);
-    this.$el.attr('data-navigate', '#' + this.repo.get('owner').login + '/' +
-      this.repo.get('name') + '/tree/' + this.branch + '/' +
-      this.model.get('path'));
-  },
-
-  render: function() {
-    var data = _.extend(this.model.attributes, {
-      branch: this.branch,
-      repo: this.repo.attributes
-    });
-
-    var rooturl = this.model.collection.config &&
-      this.model.collection.config.rooturl;
-    var regex = new RegExp('^' + rooturl + '(.*)');
-    var jailpath = rooturl ? data.path.match(regex) : false;
-
-    data.jailpath = jailpath ? jailpath[1] : data.path;
-
-    this.$el.empty().append(_.template(this.template, data, {
-      variable: 'folder'
-    }));
-
-    return this;
-  }
-});
-
-},{"../../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],66:[function(require,module,exports){
+},{"../sidebar/li/commit":81,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],66:[function(require,module,exports){
 'use strict';
 
 
@@ -33115,7 +33116,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":70,"./core":73,"../type/timestamp":90,"../type/merge":91,"../type/binary":92,"../type/omap":93,"../type/pairs":94,"../type/set":95}],75:[function(require,module,exports){
+},{"../schema":70,"./core":73,"../type/timestamp":90,"../type/merge":91,"../type/binary":92,"../type/omap":93,"../type/set":94,"../type/pairs":95}],75:[function(require,module,exports){
 // JS-YAML's default schema for `load` function.
 // It is not described in the YAML specification.
 //
@@ -34223,7 +34224,7 @@ module.exports = Schema.DEFAULT = new Schema({
 }).call(this);
 
 })(window)
-},{"jquery-browserify":11}],78:[function(require,module,exports){
+},{"jquery-browserify":10}],78:[function(require,module,exports){
 (function(){var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var queue = require('queue-async');
@@ -34234,6 +34235,7 @@ var Folder = require('../models/folder');
 
 var cookie = require('../cookie');
 var util = require('../util');
+var ignore = require('ignore');
 
 module.exports = Backbone.Collection.extend({
   model: function(attributes, options) {
@@ -34319,6 +34321,10 @@ module.exports = Backbone.Collection.extend({
         languages: config.languages
       }, config.prose);
 
+      if (config.prose.ignore) {
+        this.parseIgnore(config.prose.ignore);
+      }
+
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
 
@@ -34392,6 +34398,13 @@ module.exports = Backbone.Collection.extend({
     } else {
       if (_.isFunction(options.success)) options.success.apply(this, options.args);
     }
+  },
+
+  parseIgnore: function(ignorePatterns) {
+    var ignoreFilter = ignore().addPattern(ignorePatterns).createFilter();
+    this.filteredModel = new Backbone.Collection(this.filter(function(file) {
+      return ignoreFilter(file.id);
+    }));
   },
 
   fetch: function(options) {
@@ -34516,7 +34529,316 @@ module.exports = Backbone.Collection.extend({
 });
 
 })()
-},{"../models/file":18,"../models/folder":61,"../cookie":3,"../util":28,"underscore":10,"js-yaml":38,"queue-async":46,"backbone":12}],80:[function(require,module,exports){
+},{"../models/file":18,"../models/folder":61,"../cookie":3,"../util":28,"underscore":11,"js-yaml":34,"queue-async":45,"backbone":12,"ignore":99}],99:[function(require,module,exports){
+'use strict';
+
+module.exports = ignore;
+ignore.Ignore = Ignore;
+
+var EE        = require('events').EventEmitter;
+var node_util = require('util');
+var node_fs   = require('fs');
+
+function ignore (options){
+    return new Ignore(options);
+}
+
+var exists = node_fs.existsSync ?
+    function (file) {
+        return node_fs.existsSync(file);
+    } :
+
+    // if node <= 0.6, there's no fs.existsSync method.
+    function (file) {
+        try {
+            node_fs.statSync(file);
+            return true;
+        } catch(e) {
+            return false;
+        }
+    };
+
+// Select the first existing file of the file list
+ignore.select = function (files) {
+    var selected;
+
+    files.some(function (file) {
+        if( exists(file) ){
+            selected = file;
+            return true;
+        }
+    });
+
+    return selected;
+};
+
+
+// @param {Object} options
+// - ignore: {Array}
+// - twoGlobstars: {boolean=false} enable pattern `'**'` (two consecutive asterisks), default to `false`.
+//      If false, ignore patterns with two globstars will be omitted
+// - matchCase: {boolean=true} case sensitive.
+//      By default, git is case-insensitive
+function Ignore (options){
+    options = options || {};
+
+    this.options = options;
+    this._patterns = [];
+    this._rules = [];
+    this._ignoreFiles = [];
+
+    options.ignore = options.ignore || [
+        // Some files or directories which we should ignore for most cases.
+        '.git',
+        '.svn',
+        '.DS_Store'
+    ];
+
+    this.addPattern(options.ignore);
+}
+
+// Events:
+// 'warn': , 
+//      will warn when encounter '`**`' (two consecutive asterisks)
+//      which is not compatible with all platforms (not works on Mac OS for example)
+node_util.inherits(Ignore, EE);
+
+function makeArray (subject) {
+    return Array.isArray(subject) ? 
+        subject :
+        subject === undefined || subject === null ?
+            [] :
+            [subject];
+}
+
+
+// @param {Array.<string>|string} pattern
+Ignore.prototype.addPattern = function(pattern) {
+    makeArray(pattern).forEach(this._addPattern, this);
+    return this;
+};
+
+
+Ignore.prototype._addPattern = function(pattern) {
+    if(this._simpleTest(pattern)){
+        var rule = this._createRule(pattern);
+        this._rules.push(rule);
+    }
+};
+
+
+Ignore.prototype.filter = function(paths) {
+    return paths.filter(this._filter, this);
+};
+
+
+Ignore.prototype._simpleTest = function(pattern) {
+    var pass = 
+        // Whitespace dirs are allowed, so only filter blank pattern.
+        pattern && 
+        // And not start with a '#'
+        pattern.indexOf('#') !== 0 && 
+
+        ! ~ this._patterns.indexOf(pattern);
+
+    this._patterns.push(pattern);
+
+    if( ~ pattern.indexOf('**') ){
+        this.emit('warn', {
+            code: 'WGLOBSTARS',
+            data: {
+                origin: pattern
+            },
+            message: '`**` found, which is not compatible cross all platforms.' 
+        });
+
+        if(!this.options.twoGlobstars){
+            return false;
+        }
+    }
+
+    return pass;
+};
+
+var REGEX_LEADING_EXCLAMATION = /^\\\!/;
+var REGEX_LEADING_HASH = /^\\#/;
+
+Ignore.prototype._createRule = function(pattern) {
+    var rule_object = {
+        origin: pattern
+    };
+
+    var match_start;
+
+    if(pattern.indexOf('!') === 0){
+        rule_object.negative = true;
+        pattern = pattern.substr(1);
+    }
+
+    pattern = pattern
+        .replace(REGEX_LEADING_EXCLAMATION, '!')
+        .replace(REGEX_LEADING_HASH, '#');
+
+    rule_object.pattern = pattern;
+
+    rule_object.regex = this.makeRegex(pattern);
+
+    return rule_object;
+};
+
+// > If the pattern ends with a slash, it is removed for the purpose of the following description, but it would only find a match with a directory. In other words, foo/ will match a directory foo and paths underneath it, but will not match a regular file or a symbolic link foo (this is consistent with the way how pathspec works in general in Git).
+// '`foo/`' will not match regular file '`foo`' or symbolic link '`foo`'
+// -> ignore-rules will not deal with it, because it costs extra `fs.stat` call
+//      you could use option `mark: true` with `glob`
+
+// '`foo/`' should not continue with the '`..`'
+var REPLACERS = [
+    // leading slash
+    [
+
+        // > A leading slash matches the beginning of the pathname. For example, "/*.c" matches "cat-file.c" but not "mozilla-sha1/sha1.c".
+        // A leading slash matches the beginning of the pathname 
+        /^\//,
+        '^'
+    ],
+
+    [
+        // > A leading "**" followed by a slash means match in all directories. For example, "**/foo" matches file or directory "foo" anywhere, the same as pattern "foo". "**/foo/bar" matches file or directory "bar" anywhere that is directly under directory "foo".
+        /\*\*\//,
+
+        // '**/foo' <-> 'foo'
+        // just remove it
+        '' 
+    ],
+
+    // 'f'
+    // matches
+    // - /f(end)
+    // - /f/
+    // - (start)f(end)
+    // - (start)f/
+    // doesn't match
+    // - oof
+    // - foo
+    // pseudo:
+    // -> (^|/)f(/|$)
+
+    // ending
+    [
+        // 'js' will not match 'js.'
+        /(?:[^*\/])$/,
+        function (match1) {
+            return match1 + '(?=$|\\/)';
+        }
+    ],
+
+    // starting
+    [
+        // there will be no leading '/' (which has been replaced by the first replacer)
+        // If starts with '**', adding a '^' to the regular expression also works
+        /^(?=[^\^])/,
+        '(?:^|\\/)'
+    ],
+
+    // two globstars
+    [
+        // > A slash followed by two consecutive asterisks then a slash matches zero or more directories. For example, "a/**/b" matches "a/b", "a/x/b", "a/x/y/b" and so on.
+        // '/**/'
+        /\/\*\*\//g,
+
+        // Zero, one or several directories
+        // should not use '*', or it will be replaced by the next replacer
+        '(?:\\/[^\\/]+){0,}\\/'
+    ], 
+
+    // wildcard
+    [
+        /\*+/g,
+
+        // 'abc/*.js' matches 'abc/...js'
+        '[^\\/]*'
+    ]
+];
+
+
+// @param {pattern}
+Ignore.prototype.makeRegex = function(pattern) {
+    var source = REPLACERS.reduce(function (prev, current) {
+        return prev.replace( current[0], current[1] );
+
+    }, pattern);
+
+    return new RegExp(source, this.options.matchCase ? '' : 'i');
+};
+
+
+Ignore.prototype._filter = function(path) {
+    var rules = this._rules;
+    var i = 0;
+    var length = rules.length;
+    var matched;
+    var rule;
+
+    for(; i < length; i ++){
+        rule = rules[i];
+
+        // if matched = true, then we only test negative rules
+        // if matched = false, then we test non-negative rules
+        if( !( matched ^ rule.negative ) ){
+            matched = rule.negative ^ rule.regex.test(path);
+
+        }else{
+            continue;
+        }
+    }
+
+    return !matched;
+};
+
+
+Ignore.prototype.createFilter = function() {
+    var self = this;
+
+    return function (path) {
+        return self._filter(path);
+    };
+};
+
+
+// @param {Array.<path>|path} a
+Ignore.prototype.addIgnoreFile = function(files) {
+    makeArray(files).forEach(this._addIgnoreFile, this);
+    return this;
+};
+
+
+Ignore.prototype._addIgnoreFile = function (file) {
+    if(this._checkRuleFile(file)){
+        this._ignoreFiles.push(file);
+
+        var content;
+
+        try {
+            content = node_fs.readFileSync(file);
+        } catch(e) {
+        }
+
+        if(content){
+            this.addPattern( content.toString().split(/\r?\n/) );
+        }
+    }
+};
+
+
+Ignore.prototype._checkRuleFile = function(file) {
+    return file !== '.' &&
+           file !== '..' &&
+           ! ~ this._ignoreFiles.indexOf(file);
+};
+
+
+
+},{"events":100,"util":101,"fs":79}],80:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -34540,7 +34862,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":11,"underscore":10,"backbone":12}],82:[function(require,module,exports){
+},{"underscore":11,"jquery-browserify":10,"backbone":12}],82:[function(require,module,exports){
 'use strict';
 
 
@@ -34620,1122 +34942,247 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":68}],99:[function(require,module,exports){
-(function(){// UTILITY
-var util = require('util');
-var Buffer = require("buffer").Buffer;
-var pSlice = Array.prototype.slice;
+},{"./common":68}],102:[function(require,module,exports){
+// shim for using process in browser
 
-function objectKeys(object) {
-  if (Object.keys) return Object.keys(object);
-  var result = [];
-  for (var name in object) {
-    if (Object.prototype.hasOwnProperty.call(object, name)) {
-      result.push(name);
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],100:[function(require,module,exports){
+(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
+
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
+//
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
+};
+
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
     }
   }
-  return result;
-}
 
-// 1. The assert module provides functions that throw
-// AssertionError's when particular conditions are not met. The
-// assert module must conform to the following interface.
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
 
-var assert = module.exports = ok;
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
 
-// 2. The AssertionError is defined in assert.
-// new assert.AssertionError({ message: message,
-//                             actual: actual,
-//                             expected: expected })
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
 
-assert.AssertionError = function AssertionError(options) {
-  this.name = 'AssertionError';
-  this.message = options.message;
-  this.actual = options.actual;
-  this.expected = options.expected;
-  this.operator = options.operator;
-  var stackStartFunction = options.stackStartFunction || fail;
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
 
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(this, stackStartFunction);
-  }
-};
-util.inherits(assert.AssertionError, Error);
-
-function replacer(key, value) {
-  if (value === undefined) {
-    return '' + value;
-  }
-  if (typeof value === 'number' && (isNaN(value) || !isFinite(value))) {
-    return value.toString();
-  }
-  if (typeof value === 'function' || value instanceof RegExp) {
-    return value.toString();
-  }
-  return value;
-}
-
-function truncate(s, n) {
-  if (typeof s == 'string') {
-    return s.length < n ? s : s.slice(0, n);
   } else {
-    return s;
-  }
-}
-
-assert.AssertionError.prototype.toString = function() {
-  if (this.message) {
-    return [this.name + ':', this.message].join(' ');
-  } else {
-    return [
-      this.name + ':',
-      truncate(JSON.stringify(this.actual, replacer), 128),
-      this.operator,
-      truncate(JSON.stringify(this.expected, replacer), 128)
-    ].join(' ');
+    return false;
   }
 };
 
-// assert.AssertionError instanceof Error
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
 
-assert.AssertionError.__proto__ = Error.prototype;
+  if (!this._events) this._events = {};
 
-// At present only the three keys mentioned above are used and
-// understood by the spec. Implementations or sub modules can pass
-// other keys to the AssertionError's constructor - they will be
-// ignored.
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
 
-// 3. All of the following functions must throw an AssertionError
-// when a corresponding condition is not met, with a message that
-// may be undefined if not provided.  All assertion methods provide
-// both the actual and expected values to the assertion error for
-// display purposes.
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
 
-function fail(actual, expected, message, operator, stackStartFunction) {
-  throw new assert.AssertionError({
-    message: message,
-    actual: actual,
-    expected: expected,
-    operator: operator,
-    stackStartFunction: stackStartFunction
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
   });
-}
 
-// EXTENSION! allows for well behaved errors defined elsewhere.
-assert.fail = fail;
-
-// 4. Pure assertion tests whether a value is truthy, as determined
-// by !!guard.
-// assert.ok(guard, message_opt);
-// This statement is equivalent to assert.equal(true, guard,
-// message_opt);. To test strictly for the value true, use
-// assert.strictEqual(true, guard, message_opt);.
-
-function ok(value, message) {
-  if (!!!value) fail(value, true, message, '==', assert.ok);
-}
-assert.ok = ok;
-
-// 5. The equality assertion tests shallow, coercive equality with
-// ==.
-// assert.equal(actual, expected, message_opt);
-
-assert.equal = function equal(actual, expected, message) {
-  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
+  return this;
 };
 
-// 6. The non-equality assertion tests for whether two objects are not equal
-// with != assert.notEqual(actual, expected, message_opt);
-
-assert.notEqual = function notEqual(actual, expected, message) {
-  if (actual == expected) {
-    fail(actual, expected, message, '!=', assert.notEqual);
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
   }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
 };
 
-// 7. The equivalence assertion tests a deep equality relation.
-// assert.deepEqual(actual, expected, message_opt);
-
-assert.deepEqual = function deepEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected)) {
-    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
   }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
 };
 
-function _deepEqual(actual, expected) {
-  // 7.1. All identical values are equivalent, as determined by ===.
-  if (actual === expected) {
-    return true;
-
-  } else if (Buffer.isBuffer(actual) && Buffer.isBuffer(expected)) {
-    if (actual.length != expected.length) return false;
-
-    for (var i = 0; i < actual.length; i++) {
-      if (actual[i] !== expected[i]) return false;
-    }
-
-    return true;
-
-  // 7.2. If the expected value is a Date object, the actual value is
-  // equivalent if it is also a Date object that refers to the same time.
-  } else if (actual instanceof Date && expected instanceof Date) {
-    return actual.getTime() === expected.getTime();
-
-  // 7.3. Other pairs that do not both pass typeof value == 'object',
-  // equivalence is determined by ==.
-  } else if (typeof actual != 'object' && typeof expected != 'object') {
-    return actual == expected;
-
-  // 7.4. For all other Object pairs, including Array objects, equivalence is
-  // determined by having the same number of owned properties (as verified
-  // with Object.prototype.hasOwnProperty.call), the same set of keys
-  // (although not necessarily the same order), equivalent values for every
-  // corresponding key, and an identical 'prototype' property. Note: this
-  // accounts for both named and indexed properties on Arrays.
-  } else {
-    return objEquiv(actual, expected);
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
   }
-}
-
-function isUndefinedOrNull(value) {
-  return value === null || value === undefined;
-}
-
-function isArguments(object) {
-  return Object.prototype.toString.call(object) == '[object Arguments]';
-}
-
-function objEquiv(a, b) {
-  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
-    return false;
-  // an identical 'prototype' property.
-  if (a.prototype !== b.prototype) return false;
-  //~~~I've managed to break Object.keys through screwy arguments passing.
-  //   Converting to array solves the problem.
-  if (isArguments(a)) {
-    if (!isArguments(b)) {
-      return false;
-    }
-    a = pSlice.call(a);
-    b = pSlice.call(b);
-    return _deepEqual(a, b);
-  }
-  try {
-    var ka = objectKeys(a),
-        kb = objectKeys(b),
-        key, i;
-  } catch (e) {//happens when one is a string literal and the other isn't
-    return false;
-  }
-  // having the same number of owned properties (keys incorporates
-  // hasOwnProperty)
-  if (ka.length != kb.length)
-    return false;
-  //the same set of keys (although not necessarily the same order),
-  ka.sort();
-  kb.sort();
-  //~~~cheap key test
-  for (i = ka.length - 1; i >= 0; i--) {
-    if (ka[i] != kb[i])
-      return false;
-  }
-  //equivalent values for every corresponding key, and
-  //~~~possibly expensive deep test
-  for (i = ka.length - 1; i >= 0; i--) {
-    key = ka[i];
-    if (!_deepEqual(a[key], b[key])) return false;
-  }
-  return true;
-}
-
-// 8. The non-equivalence assertion tests for any deep inequality.
-// assert.notDeepEqual(actual, expected, message_opt);
-
-assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected)) {
-    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
-  }
+  return this._events[type];
 };
 
-// 9. The strict equality assertion tests strict equality, as determined by ===.
-// assert.strictEqual(actual, expected, message_opt);
-
-assert.strictEqual = function strictEqual(actual, expected, message) {
-  if (actual !== expected) {
-    fail(actual, expected, message, '===', assert.strictEqual);
-  }
-};
-
-// 10. The strict non-equality assertion tests for strict inequality, as
-// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
-
-assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
-  if (actual === expected) {
-    fail(actual, expected, message, '!==', assert.notStrictEqual);
-  }
-};
-
-function expectedException(actual, expected) {
-  if (!actual || !expected) {
-    return false;
-  }
-
-  if (expected instanceof RegExp) {
-    return expected.test(actual);
-  } else if (actual instanceof expected) {
-    return true;
-  } else if (expected.call({}, actual) === true) {
-    return true;
-  }
-
-  return false;
-}
-
-function _throws(shouldThrow, block, expected, message) {
-  var actual;
-
-  if (typeof expected === 'string') {
-    message = expected;
-    expected = null;
-  }
-
-  try {
-    block();
-  } catch (e) {
-    actual = e;
-  }
-
-  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
-            (message ? ' ' + message : '.');
-
-  if (shouldThrow && !actual) {
-    fail('Missing expected exception' + message);
-  }
-
-  if (!shouldThrow && expectedException(actual, expected)) {
-    fail('Got unwanted exception' + message);
-  }
-
-  if ((shouldThrow && actual && expected &&
-      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
-    throw actual;
-  }
-}
-
-// 11. Expected to throw an error:
-// assert.throws(block, Error_opt, message_opt);
-
-assert.throws = function(block, /*optional*/error, /*optional*/message) {
-  _throws.apply(this, [true].concat(pSlice.call(arguments)));
-};
-
-// EXTENSION! This is annoying to write outside this module.
-assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
-  _throws.apply(this, [false].concat(pSlice.call(arguments)));
-};
-
-assert.ifError = function(err) { if (err) {throw err;}};
-
-})()
-},{"util":100,"buffer":101}],83:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:str', {
-  loader: {
-    kind: 'string'
-  }
-});
-
-},{"../type":69}],84:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:seq', {
-  loader: {
-    kind: 'array'
-  }
-});
-
-},{"../type":69}],86:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
-};
-
-
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
-    }
-  }
-});
-
-},{"../common":68,"../type":69}],85:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:map', {
-  loader: {
-    kind: 'object'
-  }
-});
-
-},{"../type":69}],87:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
-  }
-});
-
-},{"../common":68,"../type":69}],88:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":68,"../type":69}],89:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
-  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
-  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  '|\\.(?:nan|NaN|NAN))$');
-
-
-function resolveYamlFloat(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_FLOAT_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '').toLowerCase();
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('.inf' === value) {
-    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if ('.nan' === value) {
-    return NaN;
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseFloat(v, 10));
-    });
-
-    value = 0.0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += d * base;
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseFloat(value, 10);
-  }
-}
-
-
-function representYamlFloat(object, style) {
-  if (isNaN(object)) {
-    switch (style) {
-    case 'lowercase':
-      return '.nan';
-    case 'uppercase':
-      return '.NAN';
-    case 'camelcase':
-      return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '.inf';
-    case 'uppercase':
-      return '.INF';
-    case 'camelcase':
-      return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '-.inf';
-    case 'uppercase':
-      return '-.INF';
-    case 'camelcase':
-      return '-.Inf';
-    }
-  } else {
-    return object.toString(10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlFloat
-  },
-  dumper: {
-    kind: 'float',
-    defaultStyle: 'lowercase',
-    representer: representYamlFloat
-  }
-});
-
-},{"../common":68,"../type":69}],90:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_TIMESTAMP_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9]?)'                   + // [2] month
-  '-([0-9][0-9]?)'                   + // [3] day
-  '(?:(?:[Tt]|[ \\t]+)'              + // ...
-  '([0-9][0-9]?)'                    + // [4] hour
-  ':([0-9][0-9])'                    + // [5] minute
-  ':([0-9][0-9])'                    + // [6] second
-  '(?:\\.([0-9]*))?'                 + // [7] fraction
-  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
-  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
-
-
-function resolveYamlTimestamp(object /*, explicit*/) {
-  var match, year, month, day, hour, minute, second, fraction = 0,
-      delta = null, tz_hour, tz_minute, data;
-
-  match = YAML_TIMESTAMP_REGEXP.exec(object);
-
-  if (null === match) {
-    return NIL;
-  }
-
-  // match: [1] year [2] month [3] day
-
-  year = +(match[1]);
-  month = +(match[2]) - 1; // JS month starts with 0
-  day = +(match[3]);
-
-  if (!match[4]) { // no hour
-    return new Date(Date.UTC(year, month, day));
-  }
-
-  // match: [4] hour [5] minute [6] second [7] fraction
-
-  hour = +(match[4]);
-  minute = +(match[5]);
-  second = +(match[6]);
-
-  if (match[7]) {
-    fraction = match[7].slice(0, 3);
-    while (fraction.length < 3) { // milli-seconds
-      fraction += '0';
-    }
-    fraction = +fraction;
-  }
-
-  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
-
-  if (match[9]) {
-    tz_hour = +(match[10]);
-    tz_minute = +(match[11] || 0);
-    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-    if ('-' === match[9]) {
-      delta = -delta;
-    }
-  }
-
-  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
-
-  if (delta) {
-    data.setTime(data.getTime() - delta);
-  }
-
-  return data;
-}
-
-
-function representYamlTimestamp(object /*, style*/) {
-  return object.toISOString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:timestamp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlTimestamp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: Date,
-    representer: representYamlTimestamp
-  }
-});
-
-},{"../common":68,"../type":69}],91:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
-  }
-});
-
-},{"../common":68,"../type":69}],92:[function(require,module,exports){
-(function(){// Modified from:
-// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
-
-'use strict';
-
-
-var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
-var common     = require('../common');
-var NIL        = common.NIL;
-var Type       = require('../type');
-
-
-
-var BASE64_PADDING = '=';
-
-var BASE64_BINTABLE = [
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
-  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
-];
-
-var BASE64_CHARTABLE =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
-
-
-function resolveYamlBinary(object /*, explicit*/) {
-  var value, code, idx = 0, result = [], leftbits, leftdata;
-
-  leftbits = 0; // number of bits decoded, but yet to be appended
-  leftdata = 0; // bits decoded, but yet to be appended
-
-  // Convert one by one.
-  for (idx = 0; idx < object.length; idx += 1) {
-    code = object.charCodeAt(idx);
-    value = BASE64_BINTABLE[code & 0x7F];
-
-    // Skip LF(NL) || CR
-    if (0x0A !== code && 0x0D !== code) {
-      // Fail on illegal characters
-      if (-1 === value) {
-        return NIL;
-      }
-
-      // Collect data into leftdata, update bitcount
-      leftdata = (leftdata << 6) | value;
-      leftbits += 6;
-
-      // If we have 8 or more bits, append 8 bits to the result
-      if (leftbits >= 8) {
-        leftbits -= 8;
-
-        // Append if not padding.
-        if (BASE64_PADDING !== object.charAt(idx)) {
-          result.push((leftdata >> leftbits) & 0xFF);
-        }
-
-        leftdata &= (1 << leftbits) - 1;
-      }
-    }
-  }
-
-  // If there are any bits left, the base64 string was corrupted
-  if (leftbits) {
-    return NIL;
-  } else {
-    return new NodeBuffer(result);
-  }
-}
-
-
-function representYamlBinary(object /*, style*/) {
-  var result = '', index, length, rest;
-
-  // Convert every three bytes to 4 ASCII characters.
-  for (index = 0, length = object.length - 2; index < length; index += 3) {
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
-    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
-  }
-
-  rest = object.length % 3;
-
-  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
-  if (0 !== rest) {
-    index = object.length - rest;
-    result += BASE64_CHARTABLE[object[index + 0] >> 2];
-
-    if (2 === rest) {
-      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
-      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
-      result += BASE64_PADDING;
-    } else {
-      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
-      result += BASE64_PADDING + BASE64_PADDING;
-    }
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:binary', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBinary
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: NodeBuffer,
-    representer: representYamlBinary
-  }
-});
-
-})()
-},{"buffer":101,"../common":68,"../type":69}],93:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-
-function resolveYamlOmap(object /*, explicit*/) {
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) {
-          pairHasKey = true;
-        } else {
-          return NIL;
-        }
-      }
-    }
-
-    if (!pairHasKey) {
-      return NIL;
-    }
-
-    if (-1 === objectKeys.indexOf(pairKey)) {
-      objectKeys.push(pairKey);
-    } else {
-      return NIL;
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlOmap
-  }
-});
-
-},{"../common":68,"../type":69}],94:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _toString = Object.prototype.toString;
-
-
-function resolveYamlPairs(object /*, explicit*/) {
-  var index, length, pair, keys, result;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if ('[object Object]' !== _toString.call(pair)) {
-      return NIL;
-    }
-
-    keys = Object.keys(pair);
-
-    if (1 !== keys.length) {
-      return NIL;
-    }
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  loader: {
-    kind: 'array',
-    resolver: resolveYamlPairs
-  }
-});
-
-},{"../common":68,"../type":69}],95:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-function resolveYamlSet(object /*, explicit*/) {
-  var key;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (null !== object[key]) {
-        return NIL;
-      }
-    }
-  }
-
-  return object;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  loader: {
-    kind: 'object',
-    resolver: resolveYamlSet
-  }
-});
-
-},{"../common":68,"../type":69}],96:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../../type');
-
-
-function resolveJavascriptUndefined(/*object, explicit*/) {
-  var undef;
-
-  return undef;
-}
-
-
-function representJavascriptUndefined(/*object, explicit*/) {
-  return '';
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/undefined', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptUndefined
-  },
-  dumper: {
-    kind: 'undefined',
-    representer: representJavascriptUndefined
-  }
-});
-
-},{"../../type":69}],97:[function(require,module,exports){
-(function(){'use strict';
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptRegExp(object /*, explicit*/) {
-  var regexp = object,
-      tail   = /\/([gim]*)$/.exec(object),
-      modifiers;
-
-  // `/foo/gim` - tail can be maximum 4 chars
-  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
-    regexp = regexp.slice(1, regexp.length - tail[0].length);
-    modifiers = tail[1];
-  }
-
-  try {
-    return new RegExp(regexp, modifiers);
-  } catch (error) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptRegExp(object /*, style*/) {
-  var result = '/' + object.source + '/';
-
-  if (object.global) {
-    result += 'g';
-  }
-
-  if (object.multiline) {
-    result += 'm';
-  }
-
-  if (object.ignoreCase) {
-    result += 'i';
-  }
-
-  return result;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/regexp', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptRegExp
-  },
-  dumper: {
-    kind: 'object',
-    instanceOf: RegExp,
-    representer: representJavascriptRegExp
-  }
-});
-
-})()
-},{"../../common":68,"../../type":69}],100:[function(require,module,exports){
+})(require("__browserify_process"))
+},{"__browserify_process":102}],101:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -36088,7 +35535,1122 @@ exports.format = function(f) {
   return str;
 };
 
-},{"events":102}],81:[function(require,module,exports){
+},{"events":100}],103:[function(require,module,exports){
+(function(){// UTILITY
+var util = require('util');
+var Buffer = require("buffer").Buffer;
+var pSlice = Array.prototype.slice;
+
+function objectKeys(object) {
+  if (Object.keys) return Object.keys(object);
+  var result = [];
+  for (var name in object) {
+    if (Object.prototype.hasOwnProperty.call(object, name)) {
+      result.push(name);
+    }
+  }
+  return result;
+}
+
+// 1. The assert module provides functions that throw
+// AssertionError's when particular conditions are not met. The
+// assert module must conform to the following interface.
+
+var assert = module.exports = ok;
+
+// 2. The AssertionError is defined in assert.
+// new assert.AssertionError({ message: message,
+//                             actual: actual,
+//                             expected: expected })
+
+assert.AssertionError = function AssertionError(options) {
+  this.name = 'AssertionError';
+  this.message = options.message;
+  this.actual = options.actual;
+  this.expected = options.expected;
+  this.operator = options.operator;
+  var stackStartFunction = options.stackStartFunction || fail;
+
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, stackStartFunction);
+  }
+};
+util.inherits(assert.AssertionError, Error);
+
+function replacer(key, value) {
+  if (value === undefined) {
+    return '' + value;
+  }
+  if (typeof value === 'number' && (isNaN(value) || !isFinite(value))) {
+    return value.toString();
+  }
+  if (typeof value === 'function' || value instanceof RegExp) {
+    return value.toString();
+  }
+  return value;
+}
+
+function truncate(s, n) {
+  if (typeof s == 'string') {
+    return s.length < n ? s : s.slice(0, n);
+  } else {
+    return s;
+  }
+}
+
+assert.AssertionError.prototype.toString = function() {
+  if (this.message) {
+    return [this.name + ':', this.message].join(' ');
+  } else {
+    return [
+      this.name + ':',
+      truncate(JSON.stringify(this.actual, replacer), 128),
+      this.operator,
+      truncate(JSON.stringify(this.expected, replacer), 128)
+    ].join(' ');
+  }
+};
+
+// assert.AssertionError instanceof Error
+
+assert.AssertionError.__proto__ = Error.prototype;
+
+// At present only the three keys mentioned above are used and
+// understood by the spec. Implementations or sub modules can pass
+// other keys to the AssertionError's constructor - they will be
+// ignored.
+
+// 3. All of the following functions must throw an AssertionError
+// when a corresponding condition is not met, with a message that
+// may be undefined if not provided.  All assertion methods provide
+// both the actual and expected values to the assertion error for
+// display purposes.
+
+function fail(actual, expected, message, operator, stackStartFunction) {
+  throw new assert.AssertionError({
+    message: message,
+    actual: actual,
+    expected: expected,
+    operator: operator,
+    stackStartFunction: stackStartFunction
+  });
+}
+
+// EXTENSION! allows for well behaved errors defined elsewhere.
+assert.fail = fail;
+
+// 4. Pure assertion tests whether a value is truthy, as determined
+// by !!guard.
+// assert.ok(guard, message_opt);
+// This statement is equivalent to assert.equal(true, guard,
+// message_opt);. To test strictly for the value true, use
+// assert.strictEqual(true, guard, message_opt);.
+
+function ok(value, message) {
+  if (!!!value) fail(value, true, message, '==', assert.ok);
+}
+assert.ok = ok;
+
+// 5. The equality assertion tests shallow, coercive equality with
+// ==.
+// assert.equal(actual, expected, message_opt);
+
+assert.equal = function equal(actual, expected, message) {
+  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
+};
+
+// 6. The non-equality assertion tests for whether two objects are not equal
+// with != assert.notEqual(actual, expected, message_opt);
+
+assert.notEqual = function notEqual(actual, expected, message) {
+  if (actual == expected) {
+    fail(actual, expected, message, '!=', assert.notEqual);
+  }
+};
+
+// 7. The equivalence assertion tests a deep equality relation.
+// assert.deepEqual(actual, expected, message_opt);
+
+assert.deepEqual = function deepEqual(actual, expected, message) {
+  if (!_deepEqual(actual, expected)) {
+    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
+  }
+};
+
+function _deepEqual(actual, expected) {
+  // 7.1. All identical values are equivalent, as determined by ===.
+  if (actual === expected) {
+    return true;
+
+  } else if (Buffer.isBuffer(actual) && Buffer.isBuffer(expected)) {
+    if (actual.length != expected.length) return false;
+
+    for (var i = 0; i < actual.length; i++) {
+      if (actual[i] !== expected[i]) return false;
+    }
+
+    return true;
+
+  // 7.2. If the expected value is a Date object, the actual value is
+  // equivalent if it is also a Date object that refers to the same time.
+  } else if (actual instanceof Date && expected instanceof Date) {
+    return actual.getTime() === expected.getTime();
+
+  // 7.3. Other pairs that do not both pass typeof value == 'object',
+  // equivalence is determined by ==.
+  } else if (typeof actual != 'object' && typeof expected != 'object') {
+    return actual == expected;
+
+  // 7.4. For all other Object pairs, including Array objects, equivalence is
+  // determined by having the same number of owned properties (as verified
+  // with Object.prototype.hasOwnProperty.call), the same set of keys
+  // (although not necessarily the same order), equivalent values for every
+  // corresponding key, and an identical 'prototype' property. Note: this
+  // accounts for both named and indexed properties on Arrays.
+  } else {
+    return objEquiv(actual, expected);
+  }
+}
+
+function isUndefinedOrNull(value) {
+  return value === null || value === undefined;
+}
+
+function isArguments(object) {
+  return Object.prototype.toString.call(object) == '[object Arguments]';
+}
+
+function objEquiv(a, b) {
+  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
+    return false;
+  // an identical 'prototype' property.
+  if (a.prototype !== b.prototype) return false;
+  //~~~I've managed to break Object.keys through screwy arguments passing.
+  //   Converting to array solves the problem.
+  if (isArguments(a)) {
+    if (!isArguments(b)) {
+      return false;
+    }
+    a = pSlice.call(a);
+    b = pSlice.call(b);
+    return _deepEqual(a, b);
+  }
+  try {
+    var ka = objectKeys(a),
+        kb = objectKeys(b),
+        key, i;
+  } catch (e) {//happens when one is a string literal and the other isn't
+    return false;
+  }
+  // having the same number of owned properties (keys incorporates
+  // hasOwnProperty)
+  if (ka.length != kb.length)
+    return false;
+  //the same set of keys (although not necessarily the same order),
+  ka.sort();
+  kb.sort();
+  //~~~cheap key test
+  for (i = ka.length - 1; i >= 0; i--) {
+    if (ka[i] != kb[i])
+      return false;
+  }
+  //equivalent values for every corresponding key, and
+  //~~~possibly expensive deep test
+  for (i = ka.length - 1; i >= 0; i--) {
+    key = ka[i];
+    if (!_deepEqual(a[key], b[key])) return false;
+  }
+  return true;
+}
+
+// 8. The non-equivalence assertion tests for any deep inequality.
+// assert.notDeepEqual(actual, expected, message_opt);
+
+assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
+  if (_deepEqual(actual, expected)) {
+    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
+  }
+};
+
+// 9. The strict equality assertion tests strict equality, as determined by ===.
+// assert.strictEqual(actual, expected, message_opt);
+
+assert.strictEqual = function strictEqual(actual, expected, message) {
+  if (actual !== expected) {
+    fail(actual, expected, message, '===', assert.strictEqual);
+  }
+};
+
+// 10. The strict non-equality assertion tests for strict inequality, as
+// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
+
+assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
+  if (actual === expected) {
+    fail(actual, expected, message, '!==', assert.notStrictEqual);
+  }
+};
+
+function expectedException(actual, expected) {
+  if (!actual || !expected) {
+    return false;
+  }
+
+  if (expected instanceof RegExp) {
+    return expected.test(actual);
+  } else if (actual instanceof expected) {
+    return true;
+  } else if (expected.call({}, actual) === true) {
+    return true;
+  }
+
+  return false;
+}
+
+function _throws(shouldThrow, block, expected, message) {
+  var actual;
+
+  if (typeof expected === 'string') {
+    message = expected;
+    expected = null;
+  }
+
+  try {
+    block();
+  } catch (e) {
+    actual = e;
+  }
+
+  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
+            (message ? ' ' + message : '.');
+
+  if (shouldThrow && !actual) {
+    fail('Missing expected exception' + message);
+  }
+
+  if (!shouldThrow && expectedException(actual, expected)) {
+    fail('Got unwanted exception' + message);
+  }
+
+  if ((shouldThrow && actual && expected &&
+      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
+    throw actual;
+  }
+}
+
+// 11. Expected to throw an error:
+// assert.throws(block, Error_opt, message_opt);
+
+assert.throws = function(block, /*optional*/error, /*optional*/message) {
+  _throws.apply(this, [true].concat(pSlice.call(arguments)));
+};
+
+// EXTENSION! This is annoying to write outside this module.
+assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
+  _throws.apply(this, [false].concat(pSlice.call(arguments)));
+};
+
+assert.ifError = function(err) { if (err) {throw err;}};
+
+})()
+},{"util":101,"buffer":104}],85:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:map', {
+  loader: {
+    kind: 'object'
+  }
+});
+
+},{"../type":69}],84:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:seq', {
+  loader: {
+    kind: 'array'
+  }
+});
+
+},{"../type":69}],86:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
+    }
+  }
+});
+
+},{"../common":68,"../type":69}],87:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
+};
+
+
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
+
+},{"../common":68,"../type":69}],88:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":68,"../type":69}],89:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_FLOAT_PATTERN = new RegExp(
+  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
+  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
+  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
+  '|[-+]?\\.(?:inf|Inf|INF)' +
+  '|\\.(?:nan|NaN|NAN))$');
+
+
+function resolveYamlFloat(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_FLOAT_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '').toLowerCase();
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('.inf' === value) {
+    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+
+  } else if ('.nan' === value) {
+    return NaN;
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseFloat(v, 10));
+    });
+
+    value = 0.0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += d * base;
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseFloat(value, 10);
+  }
+}
+
+
+function representYamlFloat(object, style) {
+  if (isNaN(object)) {
+    switch (style) {
+    case 'lowercase':
+      return '.nan';
+    case 'uppercase':
+      return '.NAN';
+    case 'camelcase':
+      return '.NaN';
+    }
+  } else if (Number.POSITIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '.inf';
+    case 'uppercase':
+      return '.INF';
+    case 'camelcase':
+      return '.Inf';
+    }
+  } else if (Number.NEGATIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '-.inf';
+    case 'uppercase':
+      return '-.INF';
+    case 'camelcase':
+      return '-.Inf';
+    }
+  } else {
+    return object.toString(10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:float', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlFloat
+  },
+  dumper: {
+    kind: 'float',
+    defaultStyle: 'lowercase',
+    representer: representYamlFloat
+  }
+});
+
+},{"../common":68,"../type":69}],91:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
+},{"../common":68,"../type":69}],90:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_TIMESTAMP_REGEXP = new RegExp(
+  '^([0-9][0-9][0-9][0-9])'          + // [1] year
+  '-([0-9][0-9]?)'                   + // [2] month
+  '-([0-9][0-9]?)'                   + // [3] day
+  '(?:(?:[Tt]|[ \\t]+)'              + // ...
+  '([0-9][0-9]?)'                    + // [4] hour
+  ':([0-9][0-9])'                    + // [5] minute
+  ':([0-9][0-9])'                    + // [6] second
+  '(?:\\.([0-9]*))?'                 + // [7] fraction
+  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
+  '(?::([0-9][0-9]))?))?)?$');         // [11] tz_minute
+
+
+function resolveYamlTimestamp(object /*, explicit*/) {
+  var match, year, month, day, hour, minute, second, fraction = 0,
+      delta = null, tz_hour, tz_minute, data;
+
+  match = YAML_TIMESTAMP_REGEXP.exec(object);
+
+  if (null === match) {
+    return NIL;
+  }
+
+  // match: [1] year [2] month [3] day
+
+  year = +(match[1]);
+  month = +(match[2]) - 1; // JS month starts with 0
+  day = +(match[3]);
+
+  if (!match[4]) { // no hour
+    return new Date(Date.UTC(year, month, day));
+  }
+
+  // match: [4] hour [5] minute [6] second [7] fraction
+
+  hour = +(match[4]);
+  minute = +(match[5]);
+  second = +(match[6]);
+
+  if (match[7]) {
+    fraction = match[7].slice(0, 3);
+    while (fraction.length < 3) { // milli-seconds
+      fraction += '0';
+    }
+    fraction = +fraction;
+  }
+
+  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
+
+  if (match[9]) {
+    tz_hour = +(match[10]);
+    tz_minute = +(match[11] || 0);
+    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
+    if ('-' === match[9]) {
+      delta = -delta;
+    }
+  }
+
+  data = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
+
+  if (delta) {
+    data.setTime(data.getTime() - delta);
+  }
+
+  return data;
+}
+
+
+function representYamlTimestamp(object /*, style*/) {
+  return object.toISOString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:timestamp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlTimestamp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: Date,
+    representer: representYamlTimestamp
+  }
+});
+
+},{"../common":68,"../type":69}],92:[function(require,module,exports){
+(function(){// Modified from:
+// https://raw.github.com/kanaka/noVNC/d890e8640f20fba3215ba7be8e0ff145aeb8c17c/include/base64.js
+
+'use strict';
+
+
+var NodeBuffer = require('buffer').Buffer; // A trick for browserified version.
+var common     = require('../common');
+var NIL        = common.NIL;
+var Type       = require('../type');
+
+
+
+var BASE64_PADDING = '=';
+
+var BASE64_BINTABLE = [
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
+  -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+  -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
+];
+
+var BASE64_CHARTABLE =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+
+
+function resolveYamlBinary(object /*, explicit*/) {
+  var value, code, idx = 0, result = [], leftbits, leftdata;
+
+  leftbits = 0; // number of bits decoded, but yet to be appended
+  leftdata = 0; // bits decoded, but yet to be appended
+
+  // Convert one by one.
+  for (idx = 0; idx < object.length; idx += 1) {
+    code = object.charCodeAt(idx);
+    value = BASE64_BINTABLE[code & 0x7F];
+
+    // Skip LF(NL) || CR
+    if (0x0A !== code && 0x0D !== code) {
+      // Fail on illegal characters
+      if (-1 === value) {
+        return NIL;
+      }
+
+      // Collect data into leftdata, update bitcount
+      leftdata = (leftdata << 6) | value;
+      leftbits += 6;
+
+      // If we have 8 or more bits, append 8 bits to the result
+      if (leftbits >= 8) {
+        leftbits -= 8;
+
+        // Append if not padding.
+        if (BASE64_PADDING !== object.charAt(idx)) {
+          result.push((leftdata >> leftbits) & 0xFF);
+        }
+
+        leftdata &= (1 << leftbits) - 1;
+      }
+    }
+  }
+
+  // If there are any bits left, the base64 string was corrupted
+  if (leftbits) {
+    return NIL;
+  } else {
+    return new NodeBuffer(result);
+  }
+}
+
+
+function representYamlBinary(object /*, style*/) {
+  var result = '', index, length, rest;
+
+  // Convert every three bytes to 4 ASCII characters.
+  for (index = 0, length = object.length - 2; index < length; index += 3) {
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+    result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+    result += BASE64_CHARTABLE[((object[index + 1] & 0x0F) << 2) + (object[index + 2] >> 6)];
+    result += BASE64_CHARTABLE[object[index + 2] & 0x3F];
+  }
+
+  rest = object.length % 3;
+
+  // Convert the remaining 1 or 2 bytes, padding out to 4 characters.
+  if (0 !== rest) {
+    index = object.length - rest;
+    result += BASE64_CHARTABLE[object[index + 0] >> 2];
+
+    if (2 === rest) {
+      result += BASE64_CHARTABLE[((object[index + 0] & 0x03) << 4) + (object[index + 1] >> 4)];
+      result += BASE64_CHARTABLE[(object[index + 1] & 0x0F) << 2];
+      result += BASE64_PADDING;
+    } else {
+      result += BASE64_CHARTABLE[(object[index + 0] & 0x03) << 4];
+      result += BASE64_PADDING + BASE64_PADDING;
+    }
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:binary', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBinary
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: NodeBuffer,
+    representer: representYamlBinary
+  }
+});
+
+})()
+},{"buffer":104,"../common":68,"../type":69}],93:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+
+function resolveYamlOmap(object /*, explicit*/) {
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) {
+          pairHasKey = true;
+        } else {
+          return NIL;
+        }
+      }
+    }
+
+    if (!pairHasKey) {
+      return NIL;
+    }
+
+    if (-1 === objectKeys.indexOf(pairKey)) {
+      objectKeys.push(pairKey);
+    } else {
+      return NIL;
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlOmap
+  }
+});
+
+},{"../common":68,"../type":69}],94:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+function resolveYamlSet(object /*, explicit*/) {
+  var key;
+
+  for (key in object) {
+    if (_hasOwnProperty.call(object, key)) {
+      if (null !== object[key]) {
+        return NIL;
+      }
+    }
+  }
+
+  return object;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:set', {
+  loader: {
+    kind: 'object',
+    resolver: resolveYamlSet
+  }
+});
+
+},{"../common":68,"../type":69}],83:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:str', {
+  loader: {
+    kind: 'string'
+  }
+});
+
+},{"../type":69}],95:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var _toString = Object.prototype.toString;
+
+
+function resolveYamlPairs(object /*, explicit*/) {
+  var index, length, pair, keys, result;
+
+  result = new Array(object.length);
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+
+    if ('[object Object]' !== _toString.call(pair)) {
+      return NIL;
+    }
+
+    keys = Object.keys(pair);
+
+    if (1 !== keys.length) {
+      return NIL;
+    }
+
+    result[index] = [ keys[0], pair[keys[0]] ];
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:pairs', {
+  loader: {
+    kind: 'array',
+    resolver: resolveYamlPairs
+  }
+});
+
+},{"../common":68,"../type":69}],97:[function(require,module,exports){
+(function(){'use strict';
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptRegExp(object /*, explicit*/) {
+  var regexp = object,
+      tail   = /\/([gim]*)$/.exec(object),
+      modifiers;
+
+  // `/foo/gim` - tail can be maximum 4 chars
+  if ('/' === regexp[0] && tail && 4 >= tail[0].length) {
+    regexp = regexp.slice(1, regexp.length - tail[0].length);
+    modifiers = tail[1];
+  }
+
+  try {
+    return new RegExp(regexp, modifiers);
+  } catch (error) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptRegExp(object /*, style*/) {
+  var result = '/' + object.source + '/';
+
+  if (object.global) {
+    result += 'g';
+  }
+
+  if (object.multiline) {
+    result += 'm';
+  }
+
+  if (object.ignoreCase) {
+    result += 'i';
+  }
+
+  return result;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/regexp', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptRegExp
+  },
+  dumper: {
+    kind: 'object',
+    instanceOf: RegExp,
+    representer: representJavascriptRegExp
+  }
+});
+
+})()
+},{"../../common":68,"../../type":69}],96:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../../type');
+
+
+function resolveJavascriptUndefined(/*object, explicit*/) {
+  var undef;
+
+  return undef;
+}
+
+
+function representJavascriptUndefined(/*object, explicit*/) {
+  return '';
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/undefined', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptUndefined
+  },
+  dumper: {
+    kind: 'undefined',
+    representer: representJavascriptUndefined
+  }
+});
+
+},{"../../type":69}],81:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -36198,7 +36760,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../../dist/templates":14,"../../../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],103:[function(require,module,exports){
+},{"../../../../dist/templates":14,"../../../util":28,"jquery-browserify":10,"backbone":12,"underscore":11}],105:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -36284,7 +36846,7 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],101:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -37604,247 +38166,7 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":99,"./buffer_ieee754":103,"base64-js":104}],105:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],102:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
-
-var EventEmitter = exports.EventEmitter = process.EventEmitter;
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
-
-// By default EventEmitters will print a warning if more than
-// 10 listeners are added to it. This is a useful default which
-// helps finding memory leaks.
-//
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-var defaultMaxListeners = 10;
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!this._events) this._events = {};
-  this._events.maxListeners = n;
-};
-
-
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
-      return false;
-    }
-  }
-
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
-
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-    return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
-    return false;
-  }
-};
-
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
-  }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-
-    // Check for listener leak
-    if (!this._events[type].warned) {
-      var m;
-      if (this._events.maxListeners !== undefined) {
-        m = this._events.maxListeners;
-      } else {
-        m = defaultMaxListeners;
-      }
-
-      if (m && m > 0 && this._events[type].length > m) {
-        this._events[type].warned = true;
-        console.error('(node) warning: possible EventEmitter memory ' +
-                      'leak detected. %d listeners added. ' +
-                      'Use emitter.setMaxListeners() to increase limit.',
-                      this._events[type].length);
-        console.trace();
-      }
-    }
-
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
-};
-
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
-
-})(require("__browserify_process"))
-},{"__browserify_process":105}],104:[function(require,module,exports){
+},{"assert":103,"./buffer_ieee754":105,"base64-js":106}],106:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -37988,7 +38310,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   }
 });
 
-},{"../../common":68,"../../type":69,"esprima":106}],106:[function(require,module,exports){
+},{"../../common":68,"../../type":69,"esprima":107}],107:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
