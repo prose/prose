@@ -63,7 +63,7 @@ If you run `make translate` you will be warned to include a `transifex.auth` fil
 
 ## Submitting Pull Requests
 
-All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. The `gh-pages` branch manages rebuilds to the server.
+All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. The `gh-pages` branch manages rebuilds to the server. All pull requests should include an update to the version in `package.json` according to [semver](http://semver.org/).
 
 ## Deploying
 1. `git checkout master && git pull`
@@ -71,11 +71,10 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 3. `git merge master`
 4. `npm install`
 5. `make clean && make`
-6. Update the version in `package.json` according to [semver](http://semver.org/).
-6. `git add dist/ package.json`
+6. `git add dist/`
 7. `git commit`
 8.  Tag the release using `git tag` in the format `vX.Y.Z`
-8. `git push`
+9. `git push`
 
 ## Building / Installing
 
