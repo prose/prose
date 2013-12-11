@@ -65,6 +65,15 @@ If you run `make translate` you will be warned to include a `transifex.auth` fil
 
 All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. The `gh-pages` branch manages rebuilds to the server.
 
+## Deploying
+1. `git checkout master && git pull`
+2. `git checkout gh-pages && git pull`
+3. `git merge master`
+4. `npm install`
+5. `make clean && make`
+6. `git add dist/`
+7. `git commit`
+8. `git push`
 
 ## Building / Installing
 
