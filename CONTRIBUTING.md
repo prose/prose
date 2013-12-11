@@ -75,7 +75,7 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 7. `git commit`
 8. `git push`
 9. `git checkout master`
-10.  Tag the release in `master` using `git tag` in the format `vX.Y.Z`
+10.  Tag the release in `master` using `git tag` according to [semver](http://semver.org/) in the format `vX.Y.Z`. This should match the version in `package.json`.
 11. Push tag to GitHub using `git push --tags` 
 
 ## Building / Installing
