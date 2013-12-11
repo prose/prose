@@ -73,6 +73,7 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 5. `make clean && make`
 6. `git add dist/`
 7. `git commit`
+8. Tag the release using `git tag` and the [semver](http://semver.org/) release in the format `vX.Y.Z`
 8. `git push`
 
 ## Building / Installing
