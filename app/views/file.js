@@ -626,8 +626,16 @@ module.exports = Backbone.View.extend({
 
   preview: function() {
     var q = queue(1);
-    var metadata = this.model.get('metadata');
-    var content = this.model.get('content');
+    var stash = this.getStashForPath(this.path);
+    var metadata = '';
+    var content = '';
+    if (stash && stash.content) {
+      content = stash.content;
+      metadata = stash.metadata;
+    } else if (this.model.get('content')) {
+      content = this.model.get('content');
+      metadata = this.model.get('metadata');
+    }
 
     var p = {
       site: this.collection.config,
@@ -1076,23 +1084,33 @@ module.exports = Backbone.View.extend({
   },
 
   stashApply: function() {
-    if (!window.sessionStorage) return false;
-    var store = window.sessionStorage;
     var filepath = this.model.get('path');
-    var item = store.getItem(filepath);
-    var stash = JSON.parse(item);
-
-    if (stash && stash.sha === this.model.get('sha')) {
+    var stash = this.getStashForPath(filepath);
+    if (!stash) return false;
+    if (stash.sha === this.model.get('sha')) {
       // Restore from stash if file sha hasn't changed
       if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
       if (this.metadataEditor) {
         // this.rawEditor.setValue('');
         this.metadataEditor.setValue(stash.metadata);
       }
-    } else if (item) {
+    } else {
       // Remove expired content
-      store.removeItem(filepath);
+      this.clearStashForPath(filepath);
     }
+  },
+
+  getStashForPath: function(filepath) {
+    if (!window.sessionStorage) return false;
+    var store = window.sessionStorage;
+    var item = store.getItem(filepath);
+    return JSON.parse(item);
+  },
+
+  clearStashForPath: function(filepath) {
+    if (!window.sessionStorage) return;
+    var store = window.sessionStorage;
+    store.removeItem(filepath);
   },
 
   updateFile: function() {
