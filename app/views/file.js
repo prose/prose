@@ -113,16 +113,20 @@ module.exports = Backbone.View.extend({
     switch(this.mode) {
       case 'edit':
       case 'blob':
-      case 'preview':
         this.model = this.collection.findWhere({ path: this.path });
         break;
+      case 'preview':
+        this.model = this.collection.findWhere({ path: this.path });
+        if (!this.model) {
+          // We may be trying to preview a new file that only has
+          // stashed information lets check and create a dummy model
+          if (this.getStashForPath(this.path)) {
+            this.model = this.newEmptyFile();
+          }
+        }
+        break;
       case 'new':
-        this.model = new File({
-          branch: this.branches.findWhere({ name: this.branch }),
-          collection: this.collection,
-          path: this.path,
-          repo: this.repo
-        });
+        this.model = this.newEmptyFile();
         break;
     }
 
@@ -164,6 +168,15 @@ module.exports = Backbone.View.extend({
 
       this.app.loader.done();
     }
+  },
+
+  newEmptyFile: function() {
+    return new File({
+      branch: this.branches.findWhere({ name: this.branch }),
+      collection: this.collection,
+      path: this.path,
+      repo: this.repo
+    });
   },
 
   nearestPath: function(path, defaults) {
@@ -598,12 +611,10 @@ module.exports = Backbone.View.extend({
       var hash = window.location.hash.split('/');
       hash[2] = 'preview';
 
-      // TODO: How should this change to handle new files in collection?
-      // If last item in hash array does not begin with Jekyll YYYY-MM-DD format,
-      // append filename from input
-      var regex = /^\d{4}-\d{2}-\d{2}-(?:.+)/;
-      if (!regex.test(_.last(hash))) {
-        hash.push(_.last(this.filepath().split('/')));
+      if (this.model.isNew()) {
+        // new files are stashed this way, even in the rare event
+        // there is a name conflict, this should still work ok
+        hash.push('new-file');
       }
 
       this.stashFile();
@@ -1071,6 +1082,16 @@ module.exports = Backbone.View.extend({
 
     // Don't stash if filepath is undefined
     if (filepath) {
+      if (this.model.isNew()) {
+        // replace filename with 'new' designation
+        // TODO: This assumes that the filepath will always have a filename,
+        //       which is usually true because the header view appends one
+        //       immediately. However, there should probably be a more robust
+        //       way to handle this for new files.
+        var lastComponent = /[^\/]*$/;
+        filepath = filepath.replace(lastComponent, 'new-file');
+        console.log('stashing new: ' + filepath);
+      }
       try {
         store.setItem(filepath, JSON.stringify({
           sha: this.model.get('sha'),
