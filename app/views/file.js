@@ -1145,17 +1145,6 @@ module.exports = Backbone.View.extend({
         var name = util.extractFilename(old)[1];
         var pathChange = path !== old;
 
-        // Navigate to edit path for new files
-        if (!model.previous('sha') || pathChange) {
-          this.router.navigate(_.compact([
-            this.repo.get('owner').login,
-            this.repo.get('name'),
-            'edit',
-            this.collection.branch.get('name'),
-            model.get('path')
-          ]).join('/'));
-        }
-
         // Remove old file if renamed
         // TODO: remove this when Repo Contents API supports renaming
         if (model.previous('sha') && pathChange) {
