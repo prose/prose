@@ -598,11 +598,9 @@ module.exports = Backbone.View.extend({
       var hash = window.location.hash.split('/');
       hash[2] = 'preview';
 
-      // TODO: How should this change to handle new files in collection?
-      // If last item in hash array does not begin with Jekyll YYYY-MM-DD format,
-      // append filename from input
-      var regex = /^\d{4}-\d{2}-\d{2}-(?:.+)/;
-      if (!regex.test(_.last(hash))) {
+      // If the file is new, append the current path, it exists in backbone
+      // it just hasn't been saved yet
+      if (this.mode == 'new') {
         hash.push(_.last(this.filepath().split('/')));
       }
 
