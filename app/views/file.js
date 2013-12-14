@@ -627,14 +627,14 @@ module.exports = Backbone.View.extend({
   preview: function() {
     var q = queue(1);
     var stash = this.getStashForPath(this.path);
-    var metadata = '';
+    var metadata = {};
     var content = '';
     if (stash && stash.content) {
-      content = stash.content;
       metadata = stash.metadata;
-    } else if (this.model.get('content')) {
-      content = this.model.get('content');
-      metadata = this.model.get('metadata');
+      content = stash.content;
+    } else {
+      metadata = this.model.get('metadata') || {};
+      content = this.model.get('content') || '';
     }
 
     var p = {
