@@ -1090,7 +1090,6 @@ module.exports = Backbone.View.extend({
         //       way to handle this for new files.
         var lastComponent = /[^\/]*$/;
         filepath = filepath.replace(lastComponent, 'new-file');
-        console.log('stashing new: ' + filepath);
       }
       try {
         store.setItem(filepath, JSON.stringify({
