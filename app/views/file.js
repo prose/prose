@@ -607,7 +607,7 @@ module.exports = Backbone.View.extend({
       }
 
       this.stashFile();
-
+      this.nav.setFileState('edit'); // Return to edit because we are creating a new window
       $(e.currentTarget).attr({
         target: '_blank',
         href: hash.join('/')
