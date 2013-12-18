@@ -120,7 +120,13 @@ module.exports = Backbone.View.extend({
         if (!this.model) {
           // We may be trying to preview a new file that only has
           // stashed information lets check and create a dummy model
-          if (this.getStashForPath(this.path)) {
+          var path = this.absolutePathFromComponents (
+            this.repo.get('owner').login,
+            this.repo.get('name'),
+            this.branch,
+            this.path
+          );
+          if (this.getStashForPath(path)) {
             this.model = this.newEmptyFile();
           }
         }
@@ -608,20 +614,14 @@ module.exports = Backbone.View.extend({
     if (jekyll && e) {
       // TODO: this could all be removed if preview button listened to
       // change:path event on model
-      var hash = window.location.hash.split('/');
-      hash[2] = 'preview';
-
-      if (this.model.isNew()) {
-        // new files are stashed this way, even in the rare event
-        // there is a name conflict, this should still work ok
-        hash.push('new-file');
-      }
-
-      this.stashFile();
       this.nav.setFileState('edit'); // Return to edit because we are creating a new window
+      this.stashFile();
+
+      var hash = this.absoluteFilepath().split('/');
+      hash.splice(2, 0, 'preview');
       $(e.currentTarget).attr({
         target: '_blank',
-        href: hash.join('/')
+        href: '#' + hash.join('/')
       });
     } else {
       if (e) e.preventDefault();
@@ -637,7 +637,9 @@ module.exports = Backbone.View.extend({
 
   preview: function() {
     var q = queue(1);
-    var stash = this.getStashForPath(this.path);
+    // Retrieve the stash from the model path because thats what would
+    // have been stored when the preview button is clicked
+    var stash = this.getStashForPath(this.absolutePathFromFile(this.model));
     var metadata = {};
     var content = '';
     if (stash && stash.content) {
@@ -932,6 +934,29 @@ module.exports = Backbone.View.extend({
     }
   },
 
+  absoluteFilepath: function() {
+    return this.absolutePathFromComponents(
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.branch,
+      this.filepath()
+    );
+  },
+
+  absolutePathFromFile: function(file) {
+    return this.absolutePathFromComponents(
+      file.collection.repo.get('owner').login,
+      file.collection.repo.get('name'),
+      file.collection.branch.get('name'),
+      file.get('path')
+    );
+  },
+
+  absolutePathFromComponents: function(user, repo, branch, path) {
+    var url = _.compact([ user, repo, branch, path ]);
+    return url.join('/');
+  },
+
   draft: function() {
     var defaults = this.collection.defaults || {};
     var path = this.model.get('path').replace(/^(_posts)/, '_drafts');
@@ -1078,19 +1103,9 @@ module.exports = Backbone.View.extend({
     if (!window.sessionStorage) return false;
 
     var store = window.sessionStorage;
-    var filepath = this.filepath();
-
+    var filepath = this.absoluteFilepath();
     // Don't stash if filepath is undefined
     if (filepath) {
-      if (this.model.isNew()) {
-        // replace filename with 'new' designation
-        // TODO: This assumes that the filepath will always have a filename,
-        //       which is usually true because the header view appends one
-        //       immediately. However, there should probably be a more robust
-        //       way to handle this for new files.
-        var lastComponent = /[^\/]*$/;
-        filepath = filepath.replace(lastComponent, 'new-file');
-      }
       try {
         store.setItem(filepath, JSON.stringify({
           sha: this.model.get('sha'),
@@ -1104,7 +1119,7 @@ module.exports = Backbone.View.extend({
   },
 
   stashApply: function() {
-    var filepath = this.model.get('path');
+    var filepath = this.absolutePathFromFile(this.model);
     var stash = this.getStashForPath(filepath);
     if (!stash) return false;
     if (stash.sha === this.model.get('sha')) {
