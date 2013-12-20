@@ -1189,25 +1189,17 @@ module.exports = Backbone.View.extend({
         // Enable settings sidebar item
         this.nav.$el.addClass('settings');
 
+        // Update current path
+        var path = model.get('path');
+        this.path = path;
+
         // Unset dirty, return to edit view
         this.dirty = false;
         this.edit();
 
-        var path = model.get('path');
         var old = model.get('oldpath');
         var name = util.extractFilename(old)[1];
         var pathChange = path !== old;
-
-        // Navigate to edit path for new files
-        if (!model.previous('sha') || pathChange) {
-          this.router.navigate(_.compact([
-            this.repo.get('owner').login,
-            this.repo.get('name'),
-            'edit',
-            this.collection.branch.get('name'),
-            model.get('path')
-          ]).join('/'));
-        }
 
         // Remove old file if renamed
         // TODO: remove this when Repo Contents API supports renaming
