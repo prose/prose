@@ -104,10 +104,6 @@ module.exports = Backbone.View.extend({
   setModel: function(model, res, options) {
     this.app.loader.start();
 
-    // Set default metadata from collection
-    var defaults = this.collection.defaults;
-    var path;
-
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
     switch(this.mode) {
@@ -120,13 +116,13 @@ module.exports = Backbone.View.extend({
         if (!this.model) {
           // We may be trying to preview a new file that only has
           // stashed information lets check and create a dummy model
-          var path = this.absolutePathFromComponents (
+          var previewPath = this.absolutePathFromComponents (
             this.repo.get('owner').login,
             this.repo.get('name'),
             this.branch,
             this.path
           );
-          if (this.getStashForPath(path)) {
+          if (this.getStashForPath(previewPath)) {
             this.model = this.newEmptyFile();
           }
         }
@@ -135,7 +131,10 @@ module.exports = Backbone.View.extend({
         this.model = this.newEmptyFile();
         break;
     }
-
+    
+    // Set default metadata from collection
+    var defaults = this.collection.defaults;
+    var path;
     if (this.model) {
       if (defaults) {
         path = this.nearestPath(this.model.get('path'), defaults);
