@@ -8,7 +8,7 @@ outlines on how to get started.
 
 Here's a quick list of things to consider before submitting an issue:
 
-* Please [search for your issue before filing it: many bugs and improvements have already been reported](https://github.com/prose/prose/issues/search?q=)
+* Please [search for your issue before filing it: many bugs and improvements have already been reported](https://github.com/prose/prose/issues)
 * Write specifically what browser this is reported to be found in
 * Write out the steps to replicate the error: when did it happen? What did you expect to happen? What happened instead?
 * Please keep bug reports professional and straightforward: trust us, we share your dismay of software breaking.
