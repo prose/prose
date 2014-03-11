@@ -6,31 +6,31 @@
 
 <ul class='file nav clearfix'>
   <li>
-    <a href='#' class='ico round pencil edit' data-state='edit'>
+    <a href='#' title="<%= t('navigation.edit') %>" class='ico round pencil edit' data-state='edit'>
       <span class='popup round arrow-right'><%= t('navigation.edit') %></span>
     </a>
   </li>
 
   <li>
-    <a href='#' class='ico round eye blob preview' data-state='blob'>
+    <a href='#' title="<%= t('navigation.preview') %>" class='ico round eye blob preview' data-state='blob'>
       <span class='popup round arrow-right'><%= t('navigation.preview') %></span>
     </a>
   </li>
 
   <li>
-    <a href='#' class='ico round metadata meta' data-state='meta'>
+    <a href='#' title="<%= t('navigation.meta') %>" class='ico round metadata meta' data-state='meta'>
       <span class='popup round arrow-right'><%= t('navigation.meta') %></span>
     </a>
   </li>
 
   <li>
-    <a href='#' class='ico round sprocket settings' data-state='settings' data-drawer=true>
+    <a href='#' title="<%= t('navigation.settings') %>" class='ico round sprocket settings' data-state='settings' data-drawer=true>
       <span class='popup round arrow-right'><%= t('navigation.settings') %></span>
     </a>
   </li>
 
   <li>
-    <a href='#' class='ico round save' data-state='save'>
+    <a href='#' title="<%= t('navigation.save') %>" class='ico round save' data-state='save'>
       <div class='status'></div>
       <span class='popup round arrow-right'>
         <%= t('navigation.save') %>
@@ -41,7 +41,7 @@
 
 <ul class='auth nav clearfix'>
   <li>
-    <a class='ico round switch login' href='<%= data.login %>'>
+    <a class='ico round switch login' href='<%= data.login %>' title="<%= t('login') %>">
       <span class='popup round arrow-right'><%= t('login') %></span>
     </a>
   </li>
