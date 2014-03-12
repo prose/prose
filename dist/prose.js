@@ -10326,7 +10326,7 @@ user.authenticate({
 });
 
 })()
-},{"../dist/en.js":1,"../translations/locales":2,"./router":5,"./models/user":6,"./views/notification":7,"./config":8,"./cookie":3,"./status":9,"underscore":10,"jquery-browserify":11,"backbone":12}],8:[function(require,module,exports){
+},{"../dist/en.js":1,"../translations/locales":2,"./router":5,"./models/user":6,"./views/notification":7,"./config":8,"./cookie":3,"./status":9,"jquery-browserify":10,"underscore":11,"backbone":12}],8:[function(require,module,exports){
 var cookie = require('./cookie');
 var oauth = require('../oauth.json');
 
@@ -10348,7 +10348,7 @@ module.exports={
   "gatekeeperUrl": "https://prose-gatekeeper.herokuapp.com"
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11577,7 +11577,7 @@ module.exports={
 }).call(this);
 
 })()
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -21057,7 +21057,7 @@ module.exports = Backbone.Router.extend({
       this.view.model.get('name') === repoName &&
       (this.view.branch === branch ||
         (_.isUndefined(branch) &&
-        this.view.branch === this.view.model.get('master_branch'))
+        this.view.branch === this.view.model.get('default_branch'))
       )) {
       this.view.files.path = path || '';
       return this.view.files.render();
@@ -21290,7 +21290,7 @@ module.exports = Backbone.Router.extend({
   }
 });
 
-},{"./models/user":6,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":7,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"../dist/templates":14,"./util":28,"jquery-browserify":11,"backbone":12,"underscore":10}],9:[function(require,module,exports){
+},{"./models/user":6,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":7,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"./util":28,"../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],9:[function(require,module,exports){
 var config = require('./config'); 
 var $ = require('jquery-browserify'); 
 
@@ -21307,7 +21307,7 @@ module.exports = {
   }
 }
 
-},{"./config":8,"jquery-browserify":11}],29:[function(require,module,exports){
+},{"./config":8,"jquery-browserify":10}],29:[function(require,module,exports){
 module.exports = function() {
   Liquid.readTemplateFile = (function(path) {
     var file = this.collection.findWhere({ path: '_includes/' + path });
@@ -21525,7 +21525,64 @@ module.exports = {
   }
 }
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+
+var Backbone = require('backbone');
+var Repos = require('../collections/repos');
+var Orgs = require('../collections/orgs');
+
+// TODO Pass Notification view here if something goes wrong?
+var NotificationView = require('../views/notification');
+
+var auth = require('../config');
+var cookie = require('../cookie');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.Model.extend({
+  initialize: function(attributes, options) {
+    this.repos = new Repos([], { user: this });
+    this.orgs = new Orgs([], { user: this });
+  },
+
+  authenticate: function(options) {
+    var match;
+
+    if (cookie.get('oauth-token')) {
+      if (_.isFunction(options.success)) options.success();
+    } else {
+      match = window.location.href.match(/\?code=([a-z0-9]*)/);
+
+      if (match) {
+        var ajax = $.ajax(auth.url + '/authenticate/' + match[1], {
+          success: function(data) {
+            cookie.set('oauth-token', data.token);
+
+            var regex = new RegExp("(?:\\/)?\\?code=" + match[1]);
+            window.location.href = window.location.href.replace(regex, '');
+
+            if (_.isFunction(options.success)) options.success();
+          }
+        });
+      } else {
+        if (_.isFunction(options.error)) options.error();
+      }
+    }
+  },
+
+  url: function() {
+    var id = cookie.get('id');
+    var token = cookie.get('oauth-token');
+
+    // Return '/user' if authenticated but no user id cookie has been set yet
+    // or if this model's id matches authenticated user id
+    return auth.api + ((token && _.isUndefined(id)) || (id && this.get('id') === id) ?
+      '/user' : '/users/' + this.get('login'));
+  }
+});
+
+},{"../collections/repos":31,"../collections/orgs":16,"../views/notification":7,"../config":8,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],7:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21585,64 +21642,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":14,"../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],6:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-
-var Backbone = require('backbone');
-var Repos = require('../collections/repos');
-var Orgs = require('../collections/orgs');
-
-// TODO Pass Notification view here if something goes wrong?
-var NotificationView = require('../views/notification');
-
-var auth = require('../config');
-var cookie = require('../cookie');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.Model.extend({
-  initialize: function(attributes, options) {
-    this.repos = new Repos([], { user: this });
-    this.orgs = new Orgs([], { user: this });
-  },
-
-  authenticate: function(options) {
-    var match;
-
-    if (cookie.get('oauth-token')) {
-      if (_.isFunction(options.success)) options.success();
-    } else {
-      match = window.location.href.match(/\?code=([a-z0-9]*)/);
-
-      if (match) {
-        var ajax = $.ajax(auth.url + '/authenticate/' + match[1], {
-          success: function(data) {
-            cookie.set('oauth-token', data.token);
-
-            var regex = new RegExp("(?:\\/)?\\?code=" + match[1]);
-            window.location.href = window.location.href.replace(regex, '');
-
-            if (_.isFunction(options.success)) options.success();
-          }
-        });
-      } else {
-        if (_.isFunction(options.error)) options.error();
-      }
-    }
-  },
-
-  url: function() {
-    var id = cookie.get('id');
-    var token = cookie.get('oauth-token');
-
-    // Return '/user' if authenticated but no user id cookie has been set yet
-    // or if this model's id matches authenticated user id
-    return auth.api + ((token && _.isUndefined(id)) || (id && this.get('id') === id) ?
-      '/user' : '/users/' + this.get('login'));
-  }
-});
-
-},{"../collections/repos":31,"../collections/orgs":16,"../views/notification":7,"../config":8,"../cookie":3,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],12:[function(require,module,exports){
+},{"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],12:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -23216,7 +23216,7 @@ module.exports = Backbone.Model.extend({
 }).call(this);
 
 })()
-},{"underscore":10}],28:[function(require,module,exports){
+},{"underscore":11}],28:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var templates = require('../dist/templates');
@@ -23483,7 +23483,7 @@ module.exports = {
   }
 };
 
-},{"../dist/templates":14,"jquery-browserify":11,"underscore":10,"chrono":32}],33:[function(require,module,exports){
+},{"../dist/templates":14,"jquery-browserify":10,"underscore":11,"chrono":32}],33:[function(require,module,exports){
 module.exports = {
   help: [
     {
@@ -23577,7 +23577,7 @@ module.exports = Backbone.Collection.extend({
   }
 });
 
-},{"../models/org":34,"../config":8,"underscore":10,"backbone":12}],17:[function(require,module,exports){
+},{"../models/org":34,"../config":8,"underscore":11,"backbone":12}],17:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Branches = require('../collections/branches');
@@ -23591,7 +23591,7 @@ module.exports = Backbone.Model.extend({
       description: attributes.description,
       fork: attributes.fork,
       homepage: attributes.homepage,
-      master_branch: attributes.master_branch,
+      default_branch: attributes.default_branch,
       name: attributes.name,
       owner: {
         id: attributes.owner.id,
@@ -23663,7 +23663,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"../collections/branches":35,"../collections/commits":36,"../config":8,"underscore":10,"backbone":12}],18:[function(require,module,exports){
+},{"../collections/branches":35,"../collections/commits":36,"../config":8,"underscore":11,"backbone":12}],18:[function(require,module,exports){
 var _ = require('underscore');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -24037,7 +24037,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{".././util":28,"underscore":10,"marked":37,"backbone":12,"js-yaml":38}],19:[function(require,module,exports){
+},{".././util":28,"underscore":11,"marked":37,"backbone":12,"js-yaml":38}],19:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24119,7 +24119,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./loader":39,"./sidebar":40,"./nav":41,"../cookie":3,"../../dist/templates":14,"../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],20:[function(require,module,exports){
+},{"./loader":39,"./sidebar":40,"./nav":41,"../cookie":3,"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],20:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24137,7 +24137,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":14,"../config":8,"jquery-browserify":11,"underscore":10,"backbone":12}],21:[function(require,module,exports){
+},{"../../dist/templates":14,"../config":8,"jquery-browserify":10,"underscore":11,"backbone":12}],21:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24194,7 +24194,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./header":42,"./sidebar/orgs":43,".././util":28,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],22:[function(require,module,exports){
+},{"./header":42,"./sidebar/orgs":43,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],22:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24254,7 +24254,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":14,"../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],23:[function(require,module,exports){
+},{"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],23:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24321,7 +24321,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./li/repo":44,"jquery-browserify":11,"underscore":10,"backbone":12}],24:[function(require,module,exports){
+},{"./li/repo":44,"jquery-browserify":10,"underscore":11,"backbone":12}],24:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');
@@ -24348,7 +24348,7 @@ module.exports = Backbone.View.extend({
     app.loader.start();
 
     this.app = app;
-    this.branch = options.branch || this.model.get('master_branch');
+    this.branch = options.branch || this.model.get('default_branch');
     this.model = options.model;
     this.nav = options.nav;
     this.path = options.path || '';
@@ -24462,7 +24462,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./files":45,"./header":42,"./search":22,".././util":28,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"queue-async":46,"backbone":12}],26:[function(require,module,exports){
+},{"./files":45,"./header":42,"./search":22,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"queue-async":46,"backbone":12}],26:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -24477,7 +24477,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":11,"marked":37,"backbone":12}],27:[function(require,module,exports){
+},{"jquery-browserify":10,"marked":37,"backbone":12}],27:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -24529,7 +24529,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../cookie":3,"../../dist/templates":14,"../../translations/locales":2,"jquery-browserify":11,"backbone":12,"underscore":10}],25:[function(require,module,exports){
+},{"../cookie":3,"../../dist/templates":14,"../../translations/locales":2,"jquery-browserify":10,"backbone":12,"underscore":11}],25:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');
@@ -24568,7 +24568,7 @@ module.exports = Backbone.View.extend({
     patch.apply(this);
 
     this.app = app;
-    this.branch = options.branch || options.repo.get('master_branch');
+    this.branch = options.branch || options.repo.get('default_branch');
     this.branches = options.branches;
     this.mode = options.mode;
     this.nav = options.nav;
@@ -25796,7 +25796,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../vendor/liquid.patch":29,"./modal":47,"../models/file":18,"./header":42,"./toolbar":48,"./metadata":49,"../config":8,"../util":28,"../upload":30,"../cookie":3,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"queue-async":46,"js-yaml":38,"keymaster":50,"marked":37,"backbone":12,"diff":51}],31:[function(require,module,exports){
+},{"../../vendor/liquid.patch":29,"./modal":47,"../models/file":18,"./header":42,"./toolbar":48,"./metadata":49,"../config":8,"../util":28,"../upload":30,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"queue-async":46,"js-yaml":38,"keymaster":50,"marked":37,"backbone":12,"diff":51}],31:[function(require,module,exports){
 var _ = require('underscore');
 
 var Backbone = require('backbone');
@@ -25893,2098 +25893,7 @@ module.exports = Backbone.Collection.extend({
   }
 });
 
-},{"../models/repo":17,"../config":8,"../cookie":3,"underscore":10,"backbone":12}],46:[function(require,module,exports){
-(function() {
-  var slice = [].slice;
-
-  function queue(parallelism) {
-    var q,
-        tasks = [],
-        started = 0, // number of tasks that have been started (and perhaps finished)
-        active = 0, // number of tasks currently being executed (started but not finished)
-        remaining = 0, // number of tasks not yet finished
-        popping, // inside a synchronous task callback?
-        error = null,
-        await = noop,
-        all;
-
-    if (!parallelism) parallelism = Infinity;
-
-    function pop() {
-      while (popping = started < tasks.length && active < parallelism) {
-        var i = started++,
-            t = tasks[i],
-            a = slice.call(t, 1);
-        a.push(callback(i));
-        ++active;
-        t[0].apply(null, a);
-      }
-    }
-
-    function callback(i) {
-      return function(e, r) {
-        --active;
-        if (error != null) return;
-        if (e != null) {
-          error = e; // ignore new tasks and squelch active callbacks
-          started = remaining = NaN; // stop queued tasks from starting
-          notify();
-        } else {
-          tasks[i] = r;
-          if (--remaining) popping || pop();
-          else notify();
-        }
-      };
-    }
-
-    function notify() {
-      if (error != null) await(error);
-      else if (all) await(error, tasks);
-      else await.apply(null, [error].concat(tasks));
-    }
-
-    return q = {
-      defer: function() {
-        if (!error) {
-          tasks.push(arguments);
-          ++remaining;
-          pop();
-        }
-        return q;
-      },
-      await: function(f) {
-        await = f;
-        all = false;
-        if (!remaining) notify();
-        return q;
-      },
-      awaitAll: function(f) {
-        await = f;
-        all = true;
-        if (!remaining) notify();
-        return q;
-      }
-    };
-  }
-
-  function noop() {}
-
-  queue.version = "1.0.7";
-  if (typeof define === "function" && define.amd) define(function() { return queue; });
-  else if (typeof module === "object" && module.exports) module.exports = queue;
-  else this.queue = queue;
-})();
-
-},{}],50:[function(require,module,exports){
-(function(){//     keymaster.js
-//     (c) 2011-2012 Thomas Fuchs
-//     keymaster.js may be freely distributed under the MIT license.
-
-;(function(global){
-  var k,
-    _handlers = {},
-    _mods = { 16: false, 18: false, 17: false, 91: false },
-    _scope = 'all',
-    // modifier keys
-    _MODIFIERS = {
-      '⇧': 16, shift: 16,
-      '⌥': 18, alt: 18, option: 18,
-      '⌃': 17, ctrl: 17, control: 17,
-      '⌘': 91, command: 91
-    },
-    // special keys
-    _MAP = {
-      backspace: 8, tab: 9, clear: 12,
-      enter: 13, 'return': 13,
-      esc: 27, escape: 27, space: 32,
-      left: 37, up: 38,
-      right: 39, down: 40,
-      del: 46, 'delete': 46,
-      home: 36, end: 35,
-      pageup: 33, pagedown: 34,
-      ',': 188, '.': 190, '/': 191,
-      '`': 192, '-': 189, '=': 187,
-      ';': 186, '\'': 222,
-      '[': 219, ']': 221, '\\': 220
-    },
-    code = function(x){
-      return _MAP[x] || x.toUpperCase().charCodeAt(0);
-    },
-    _downKeys = [];
-
-  for(k=1;k<20;k++) _MAP['f'+k] = 111+k;
-
-  // IE doesn't support Array#indexOf, so have a simple replacement
-  function index(array, item){
-    var i = array.length;
-    while(i--) if(array[i]===item) return i;
-    return -1;
-  }
-
-  // for comparing mods before unassignment
-  function compareArray(a1, a2) {
-    if (a1.length != a2.length) return false;
-    for (var i = 0; i < a1.length; i++) {
-        if (a1[i] !== a2[i]) return false;
-    }
-    return true;
-  }
-
-  var modifierMap = {
-      16:'shiftKey',
-      18:'altKey',
-      17:'ctrlKey',
-      91:'metaKey'
-  };
-  function updateModifierKey(event) {
-      for(k in _mods) _mods[k] = event[modifierMap[k]];
-  };
-
-  // handle keydown event
-  function dispatch(event, scope){
-    var key, handler, k, i, modifiersMatch;
-    key = event.keyCode;
-
-    if (index(_downKeys, key) == -1) {
-        _downKeys.push(key);
-    }
-
-    // if a modifier key, set the key.<modifierkeyname> property to true and return
-    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
-    if(key in _mods) {
-      _mods[key] = true;
-      // 'assignKey' from inside this closure is exported to window.key
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
-      return;
-    }
-    updateModifierKey(event);
-
-    // see if we need to ignore the keypress (filter() can can be overridden)
-    // by default ignore key presses if a select, textarea, or input is focused
-    if(!assignKey.filter.call(this, event)) return;
-
-    // abort if no potentially matching shortcuts found
-    if (!(key in _handlers)) return;
-
-    // for each potential shortcut
-    for (i = 0; i < _handlers[key].length; i++) {
-      handler = _handlers[key][i];
-
-      // see if it's in the current scope
-      if(handler.scope == scope || handler.scope == 'all'){
-        // check if modifiers match if any
-        modifiersMatch = handler.mods.length > 0;
-        for(k in _mods)
-          if((!_mods[k] && index(handler.mods, +k) > -1) ||
-            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
-        // call the handler and stop the event if neccessary
-        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
-          if(handler.method(event, handler)===false){
-            if(event.preventDefault) event.preventDefault();
-              else event.returnValue = false;
-            if(event.stopPropagation) event.stopPropagation();
-            if(event.cancelBubble) event.cancelBubble = true;
-          }
-        }
-      }
-    }
-  };
-
-  // unset modifier keys on keyup
-  function clearModifier(event){
-    var key = event.keyCode, k,
-        i = index(_downKeys, key);
-
-    // remove key from _downKeys
-    if (i >= 0) {
-        _downKeys.splice(i, 1);
-    }
-
-    if(key == 93 || key == 224) key = 91;
-    if(key in _mods) {
-      _mods[key] = false;
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
-    }
-  };
-
-  function resetModifiers() {
-    for(k in _mods) _mods[k] = false;
-    for(k in _MODIFIERS) assignKey[k] = false;
-  };
-
-  // parse and assign shortcut
-  function assignKey(key, scope, method){
-    var keys, mods;
-    keys = getKeys(key);
-    if (method === undefined) {
-      method = scope;
-      scope = 'all';
-    }
-
-    // for each shortcut
-    for (var i = 0; i < keys.length; i++) {
-      // set modifier keys if any
-      mods = [];
-      key = keys[i].split('+');
-      if (key.length > 1){
-        mods = getMods(key);
-        key = [key[key.length-1]];
-      }
-      // convert to keycode and...
-      key = key[0]
-      key = code(key);
-      // ...store handler
-      if (!(key in _handlers)) _handlers[key] = [];
-      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
-    }
-  };
-
-  // unbind all handlers for given key in current scope
-  function unbindKey(key, scope) {
-    var keys = key.split('+'),
-      mods = [],
-      i, obj;
-
-    if (keys.length > 1) {
-      mods = getMods(keys);
-      key = keys[keys.length - 1];
-    }
-
-    key = code(key);
-
-    if (scope === undefined) {
-      scope = getScope();
-    }
-    if (!_handlers[key]) {
-      return;
-    }
-    for (i in _handlers[key]) {
-      obj = _handlers[key][i];
-      // only clear handlers if correct scope and mods match
-      if (obj.scope === scope && compareArray(obj.mods, mods)) {
-        _handlers[key][i] = {};
-      }
-    }
-  };
-
-  // Returns true if the key with code 'keyCode' is currently down
-  // Converts strings into key codes.
-  function isPressed(keyCode) {
-      if (typeof(keyCode)=='string') {
-        keyCode = code(keyCode);
-      }
-      return index(_downKeys, keyCode) != -1;
-  }
-
-  function getPressedKeyCodes() {
-      return _downKeys.slice(0);
-  }
-
-  function filter(event){
-    var tagName = (event.target || event.srcElement).tagName;
-    // ignore keypressed in any elements that support keyboard data input
-    return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
-  }
-
-  // initialize key.<modifier> to false
-  for(k in _MODIFIERS) assignKey[k] = false;
-
-  // set current scope (default 'all')
-  function setScope(scope){ _scope = scope || 'all' };
-  function getScope(){ return _scope || 'all' };
-
-  // delete all handlers for a given scope
-  function deleteScope(scope){
-    var key, handlers, i;
-
-    for (key in _handlers) {
-      handlers = _handlers[key];
-      for (i = 0; i < handlers.length; ) {
-        if (handlers[i].scope === scope) handlers.splice(i, 1);
-        else i++;
-      }
-    }
-  };
-
-  // abstract key logic for assign and unassign
-  function getKeys(key) {
-    var keys;
-    key = key.replace(/\s/g, '');
-    keys = key.split(',');
-    if ((keys[keys.length - 1]) == '') {
-      keys[keys.length - 2] += ',';
-    }
-    return keys;
-  }
-
-  // abstract mods logic for assign and unassign
-  function getMods(key) {
-    var mods = key.slice(0, key.length - 1);
-    for (var mi = 0; mi < mods.length; mi++)
-    mods[mi] = _MODIFIERS[mods[mi]];
-    return mods;
-  }
-
-  // cross-browser events
-  function addEvent(object, event, method) {
-    if (object.addEventListener)
-      object.addEventListener(event, method, false);
-    else if(object.attachEvent)
-      object.attachEvent('on'+event, function(){ method(window.event) });
-  };
-
-  // set the handlers globally on document
-  addEvent(document, 'keydown', function(event) { dispatch(event, _scope) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
-  addEvent(document, 'keyup', clearModifier);
-
-  // reset modifiers to false whenever the window is (re)focused.
-  addEvent(window, 'focus', resetModifiers);
-
-  // store previously defined key
-  var previousKey = global.key;
-
-  // restore previously defined key and return reference to our key object
-  function noConflict() {
-    var k = global.key;
-    global.key = previousKey;
-    return k;
-  }
-
-  // set window.key and window.key.set/get/deleteScope, and the default filter
-  global.key = assignKey;
-  global.key.setScope = setScope;
-  global.key.getScope = getScope;
-  global.key.deleteScope = deleteScope;
-  global.key.filter = filter;
-  global.key.isPressed = isPressed;
-  global.key.getPressedKeyCodes = getPressedKeyCodes;
-  global.key.noConflict = noConflict;
-  global.key.unbind = unbindKey;
-
-  if(typeof module !== 'undefined') module.exports = key;
-
-})(this);
-
-})()
-},{}],32:[function(require,module,exports){
-module.exports = require('./lib/chrono');
-
-},{"./lib/chrono":52}],38:[function(require,module,exports){
-module.exports = require('./lib/js-yaml.js');
-
-},{"./lib/js-yaml.js":53}],34:[function(require,module,exports){
-var Backbone = require('backbone');
-
-module.exports = Backbone.Model.extend({
-});
-
-},{"backbone":12}],35:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Branch = require('../models/branch');
-
-module.exports = Backbone.Collection.extend({
-  model: Branch,
-
-  initialize: function(models, options) {
-    this.repo = options.repo;
-  },
-
-  parse: function(resp, options) {
-    return map = _.map(resp, (function(branch) {
-     return  _.extend(branch, {
-        repo: this.repo
-      })
-    }).bind(this));
-  },
-
-  url: function() {
-    return this.repo.url() + '/branches';
-  }
-});
-
-},{"../models/branch":54,"underscore":10,"backbone":12}],36:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Commit = require('../models/commit');
-
-module.exports = Backbone.Collection.extend({
-  model: Commit,
-
-  initialize: function(models, options) {
-    this.repo = options.repo;
-  },
-
-  setBranch: function(branch, options) {
-    this.branch = branch;
-    this.fetch(options);
-  },
-
-  parse: function(resp, options) {
-    return map = _.map(resp, (function(commit) {
-     return  _.extend(commit, {
-        repo: this.repo
-      })
-    }).bind(this));
-  },
-
-  url: function() {
-    return this.repo.url() + '/commits?sha=' + this.branch;
-  }
-});
-
-},{"../models/commit":55,"underscore":10,"backbone":12}],39:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  template: templates.loading,
-
-  queue: 0,
-
-  initialize: function() {
-    _.bindAll(this);
-  },
-
-  start: function(message) {
-    this.queue++;
-
-    if (message) {
-      this.$el.find('.message').html(message);
-    }
-
-    this.$el.show();
-  },
-
-  stop: function() {
-    this.queue = 0;
-    this.$el.fadeOut(150);
-  },
-
-  done: function() {
-    _.defer((function() {
-      this.queue--;
-      if (this.queue < 1) this.stop();
-    }).bind(this));
-  },
-
-  render: function() {
-    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
-    return this;
-  }
-});
-
-},{"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],40:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var util = require('../util');
-
-var views = {
-  branches: require('./sidebar/branches'),
-  history: require('./sidebar/history'),
-  drafts: require('./sidebar/drafts'),
-  orgs: require('./sidebar/orgs'),
-  save: require('./sidebar/save'),
-  settings: require('./sidebar/settings')
-};
-
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  template: templates.drawer,
-
-  subviews: {},
-
-  initialize: function(options) {
-    _.bindAll(this);
-  },
-
-  render: function(options) {
-    this.$el.html(_.template(this.template, {}, { variable: 'sidebar' }));
-    _.invoke(this.subviews, 'render');
-    return this;
-  },
-
-  initSubview: function(subview, options) {
-    if (!views[subview]) return false;
-
-    options = _.clone(options) || {};
-
-    var view = new views[subview](options);
-    this.$el.find('#' + subview).html(view.el);
-
-    this.subviews[subview] = view;
-
-    return view;
-  },
-
-  filepathGet: function() {
-    return this.$el.find('.filepath').val();
-  },
-
-  updateState: function(label) {
-    this.$el.find('.button.save').html(label);
-  },
-
-  open: function() {
-    this.$el.toggleClass('open', true);
-  },
-
-  close: function() {
-    this.$el.toggleClass('open', false);
-  },
-
-  toggle: function() {
-    this.$el.toggleClass('open');
-  },
-
-  toggleMobile: function() {
-    this.$el.toggleClass('mobile');
-  },
-
-  mode: function(mode) {
-    // Set data-mode attribute to toggle nav buttons in CSS
-    this.$el.attr('data-sidebar', mode);
-  },
-
-  remove: function() {
-    _.invoke(this.subviews, 'remove');
-    this.subviews = {};
-
-    Backbone.View.prototype.remove.apply(this, arguments);
-  }
-});
-
-},{"../util":28,"./sidebar/branches":56,"./sidebar/history":57,"./sidebar/drafts":58,"./sidebar/orgs":43,"./sidebar/save":59,"./sidebar/settings":60,"../../dist/templates":14,"underscore":10,"backbone":12}],41:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var config = require('../config');
-var utils = require('../util');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  template: templates.nav,
-
-  events: {
-    'click a.edit': 'emit',
-    'click a.preview': 'emit',
-    'click a.meta': 'emit',
-    'click a.settings': 'emit',
-    'click a.save': 'emit',
-    'click .mobile .toggle': 'toggleMobile'
-  },
-
-  initialize: function(options) {
-    this.app = options.app;
-    this.sidebar = options.sidebar;
-    this.user = options.user;
-  },
-
-  render: function() {
-    this.$el.html(_.template(this.template, {
-      login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=repo'
-    }, { variable: 'data' }));
-
-    this.$save = this.$el.find('.file .save .popup');
-    return this;
-  },
-
-  emit: function(e) {
-    // TODO: get rid of this hack exception
-    if (e && !$(e.currentTarget).hasClass('preview')) e.preventDefault();
-
-    var state = $(e.currentTarget).data('state');
-    if ($(e.currentTarget).hasClass('active')) {
-      // return to file state
-      state = this.state;
-    }
-
-    this.active(state);
-    this.toggle(state, e);
-  },
-
-  setFileState: function(state) {
-    this.state = state;
-    this.active(state);
-  },
-
-  updateState: function(label, classes, kill) {
-
-    if (!label) label = t('navigation.save');
-    this.$save.html(label);
-
-    // Add, remove classes to the file nav group
-    this.$el.find('.file')
-      .removeClass('error saving saved save')
-      .addClass(classes);
-
-    if (kill) {
-      _.delay((function() {
-        this.$el.find('.file').removeClass(classes);
-      }).bind(this), 1000);
-    }
-  },
-
-  mode: function(mode) {
-    this.$el.attr('class', mode);
-  },
-
-  active: function(state) {
-    // Coerce 'new' to 'edit' to activate correct icon
-    state = (state === 'new' ? 'edit' : state);
-    this.$el.find('.file a').removeClass('active');
-    this.$el.find('.file a[data-state=' + state + ']').toggleClass('active');
-  },
-
-  toggle: function(state, e) {
-    this.trigger(state, e);
-  },
-
-  toggleMobile: function(e) {
-    this.sidebar.toggleMobile();
-    $(e.target).toggleClass('active');
-    return false;
-  }
-});
-
-},{"../config":8,"../util":28,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],42:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var util = require('../util');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  template: templates.header,
-
-  events: {
-    'focus input': 'checkPlaceholder',
-    'change input[data-mode="path"]': 'updatePath',
-    'change input[data-mode="title"]': 'updateTitle'
-  },
-
-  initialize: function(options) {
-    _.bindAll(this);
-
-    this.user = options.user;
-    this.repo = options.repo;
-    this.file = options.file;
-    this.input = options.input;
-    this.title = options.title;
-    this.placeholder = options.placeholder;
-    this.alterable = options.alterable;
-  },
-
-  render: function() {
-    var user = this.user ? this.user.get('login') : this.repo.get('owner').login;
-    var permissions = this.repo ? this.repo.get('permissions') : undefined;
-    var isPrivate = this.repo && this.repo.get('private') ? true : false;
-    var title = t('heading.explore');
-    var avatar;
-    var path = user;
-
-    if (this.user) {
-      avatar = '<img src="' + this.user.get('avatar_url') + '" width="40" height="40" alt="Avatar" />';
-    } else if (this.file) {
-      // File View
-      avatar = '<span class="ico round document ' + this.file.get('lang') + '"></span>';
-      title = this.file.get('path');
-    } else {
-      // Repo View
-      var lock = (isPrivate) ? ' private' : '';
-
-      title = this.repo.get('name');
-      path = path + '/' + title;
-      avatar = '<div class="avatar round"><span class="icon round repo' + lock + '"></span></div>';
-    }
-
-    var data = {
-      alterable: this.alterable,
-      avatar: avatar,
-      repo: this.repo ? this.repo.attributes : undefined,
-      isPrivate: isPrivate,
-      input: this.input,
-      path: path,
-      placeholder: this.placeholder,
-      user: user,
-      title: title,
-      mode: this.title ? 'title' : 'path',
-      translate: this.file ? this.file.get('translate') : undefined
-    };
-
-    this.$el.empty().append(_.template(this.template, data, {
-      variable: 'data'
-    }));
-
-    return this;
-  },
-
-  checkPlaceholder: function(e) {
-    if (this.file.isNew()) {
-      var $target = $(e.target, this.el);
-      if (!$target.val()) {
-        $target.val($target.attr('placeholder'));
-      }
-    }
-  },
-
-  updatePath: function(e) {
-    var value = e.currentTarget.value;
-
-    this.file.set('path', value);
-    this.trigger('makeDirty');
-    return false;
-  },
-
-  updateTitle: function(e) {
-    if (e) e.preventDefault();
-
-    // TODO: update metadata title here, don't rely on makeDi
-
-    // Only update path on new files that are not cloned
-    if (this.file.isNew() && !this.file.isClone()) {
-      var value = e.currentTarget.value;
-
-      var path = this.file.get('path');
-      var parts = path.split('/');
-      var name = parts.pop();
-
-      // Preserve the date and the extension
-      var date = util.extractDate(name);
-      var extension = name.split('.').pop();
-
-      path = parts.join('/') + '/' + date + '-' +
-        util.stringToUrl(value) + '.' + extension;
-
-      this.file.set('path', path);
-    }
-
-    this.trigger('makeDirty');
-  },
-
-  inputGet: function() {
-    return this.$el.find('.headerinput').val();
-  },
-
-  headerInputFocus: function() {
-    this.$el.find('.headerinput').focus();
-  }
-});
-
-},{"../util":28,"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],45:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var File = require('../models/file');
-var Folder = require('../models/folder');
-var FileView = require('./li/file');
-var FolderView = require('./li/folder');
-var templates = require('../../dist/templates');
-var util = require('.././util');
-
-module.exports = Backbone.View.extend({
-  className: 'listings',
-
-  template: templates.files,
-
-  subviews: {},
-
-  events: {
-    'mouseover .item': 'activeListing',
-    'mouseover .item a': 'activeListing',
-    'click .breadcrumb a': 'navigate',
-    'click .item a': 'navigate'
-  },
-
-  initialize: function(options) {
-    _.bindAll(this);
-
-    var app = options.app;
-    app.loader.start();
-
-    this.app = app;
-    this.branch = options.branch || options.repo.get('master_branch');
-    this.branches = options.branches;
-    this.history = options.history;
-    this.nav = options.nav;
-    this.path = options.path || '';
-    this.repo = options.repo;
-    this.router = options.router;
-    this.search = options.search;
-    this.sidebar = options.sidebar;
-
-    this.branches.fetch({
-      success: this.setModel,
-      error: (function(model, xhr, options) {
-        this.router.error(xhr);
-      }).bind(this),
-      complete: this.app.loader.done
-    });
-  },
-
-  setModel: function() {
-    this.app.loader.start();
-
-    this.model = this.branches.findWhere({ name: this.branch }).files;
-
-    this.model.fetch({
-      success: (function() {
-        // Update this.path with rooturl
-        var config = this.model.config;
-        this.rooturl = config && config.rooturl ? config.rooturl : '';
-        
-        this.presentationModel = this.model.filteredModel || this.model;
-        this.search.model = this.presentationModel;
-        // Render on fetch and on search
-        this.listenTo(this.search, 'search', this.render);
-        this.render();
-      }).bind(this),
-      error: (function(model, xhr, options) {
-        this.router.error(xhr);
-      }).bind(this),
-      complete: this.app.loader.done,
-      reset: true
-    });
-  },
-
-  newFile: function() {
-    var path = [
-      this.repo.get('owner').login,
-      this.repo.get('name'),
-      'new',
-      this.branch,
-      this.path ? this.path : this.rooturl
-    ]
-
-    this.router.navigate(_.compact(path).join('/'), true);
-  },
-
-  render: function() {
-    this.app.loader.start();
-
-    var search = this.search && this.search.input && this.search.input.val();
-    var rooturl = this.rooturl ? this.rooturl + '/' : '';
-    var path = this.path ? this.path + '/' : '';
-    var drafts;
-
-    var url = [
-      this.repo.get('owner').login,
-      this.repo.get('name'),
-      'tree',
-      this.branch
-    ].join('/');
-
-    // Set rooturl jail from collection config
-    var regex = new RegExp('^' + (path ? path : rooturl) + '[^\/]*$');
-
-    // Render drafts link in sidebar as subview
-    // if _posts directory exists and path does not begin with _drafts
-    if (this.presentationModel.get('_posts') && /^(?!_drafts)/.test(this.path)) {
-      drafts = this.sidebar.initSubview('drafts', {
-        link: [url, '_drafts'].join('/'),
-        sidebar: this.sidebar
-      });
-
-      this.subviews['drafts'] = drafts;
-      drafts.render();
-    }
-
-    var data = {
-      path: path,
-      parts: util.chunkedPath(this.path),
-      rooturl: rooturl,
-      url: url
-    };
-
-    this.$el.html(_.template(this.template, data, {variable: 'data'}));
-
-    // if not searching, filter to only show current level
-    var collection = search ? this.search.search() : this.presentationModel.filter((function(file) {
-      return regex.test(file.get('path'));
-    }).bind(this));
-
-    var frag = document.createDocumentFragment();
-
-    collection.each((function(file, index) {
-      var view;
-
-      if (file instanceof File) {
-        view = new FileView({
-          branch: this.branch,
-          history: this.history,
-          index: index,
-          model: file,
-          repo: this.repo,
-          router: this.router
-        });
-      } else if (file instanceof Folder) {
-        view = new FolderView({
-          branch: this.branch,
-          history: this.history,
-          index: index,
-          model: file,
-          repo: this.repo,
-          router: this.router
-        });
-      }
-
-      frag.appendChild(view.render().el);
-      this.subviews[file.id] = view;
-    }).bind(this));
-
-    this.$el.find('ul').html(frag);
-
-    this.app.loader.done();
-
-    return this;
-  },
-
-  activeListing: function(e) {
-    var $listing = $(e.target);
-
-    if (!$listing.hasClass('item')) {
-      $listing = $(e.target).closest('li');
-    }
-
-    this.$el.find('.item').removeClass('active');
-    $listing.addClass('active');
-
-    // Blur out search if its selected
-    this.search.$el.blur();
-  },
-
-  navigate: function(e) {
-    var target = e.currentTarget;
-    var path = target.href.split('#')[1];
-    var match = path.match(/tree\/([^\/]*)\/?(.*)$/);
-
-    if (e && match) {
-      e.preventDefault();
-
-      this.path = match ? match[2] : path;
-      this.render();
-
-      this.router.navigate(path);
-    }
-  },
-
-  remove: function() {
-    _.invoke(this.subviews, 'remove');
-    this.subviews = {};
-
-    Backbone.View.prototype.remove.apply(this, arguments);
-  }
-});
-
-},{"../models/file":18,"../models/folder":61,"./li/file":62,"./li/folder":63,"../../dist/templates":14,".././util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],47:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  className: 'modal overlay',
-
-  template: templates.modal,
-
-  events: {
-    'click .got-it': 'confirm'
-  },
-
-  initialize: function() {
-    this.message = this.options.message;
-  },
-
-  render: function() {
-    var modal = {
-      message: this.message
-    };
-    this.$el.empty().append(_.template(templates.modal, modal, {
-      variable: 'modal'
-    }));
-
-    return this;
-  },
-
-  confirm: function() {
-    var view = this;
-    this.$el.fadeOut('fast', function() {
-      view.remove();
-    });
-    return false;
-  }
-});
-
-},{"../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],48:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var chosen = require('chosen-jquery-browserify');
-var _ = require('underscore');
-var util = require('../util');
-var Backbone = require('backbone');
-var toolbar = require('../toolbar/markdown.js');
-var upload = require('../upload');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  template: templates.toolbar,
-
-  events: {
-    'click .group a': 'markdownSnippet',
-    'click .publish-flag': 'togglePublishing',
-    'change #upload': 'fileInput',
-    'click .dialog .insert': 'dialogInsert',
-    'click .draft-to-post': 'post'
-  },
-
-  initialize: function(options) {
-    var self = this;
-    this.file = options.file;
-    this.view = options.view;
-    this.collection = options.collection;
-    var config = options.config;
-
-    if (config) {
-      this.hasMedia = (config.media) ? true : false;
-      this.siteUrl = (config.siteUrl) ? true : false;
-
-      if (config.media) {
-        // Fetch the media directory to display its contents
-        this.mediaDirectoryPath = config.media;
-        var match = new RegExp('^' + this.mediaDirectoryPath);
-
-        this.media = this.collection.filter(function(m) {
-          var path = m.get('path');
-
-          return m.get('type') === 'file' && match.test(path) &&
-            (util.isBinary(path) || util.isImage(m.get('extension')));
-        });
-      }
-
-      if (config.relativeLinks) {
-        $.ajax({
-          cache: true,
-          dataType: 'jsonp',
-          jsonp: false,
-          jsonpCallback: config.relativeLinks.split('?callback=')[1] || 'callback',
-          url: config.relativeLinks,
-          success: function(links) {
-            self.relativeLinks = links;
-          }
-        });
-      }
-    }
-  },
-
-  render: function() {
-    var toolbar = {
-      markdown: this.file.get('markdown'),
-      writable: this.file.get('writable'),
-      lang: this.file.get('lang'),
-      draft: this.file.get('draft'),
-      metadata: this.file.get('metadata')
-    };
-
-    this.$el.html(_.template(this.template, toolbar, { variable: 'toolbar' }));
-
-    return this;
-  },
-
-  fileInput: function(e) {
-    var view = this;
-    upload.fileSelect(e, function(e, file, content) {
-      var path = (view.mediaDirectoryPath) ? view.mediaDirectoryPath : util.extractFilename(view.file.attributes.path)[0];
-      var src = path + '/' + encodeURIComponent(file.name);
-
-      view.$el.find('input[name="url"]').val(src);
-      view.$el.find('input[name="alt"]').val('');
-      view.trigger('updateImageInsert', e);
-    });
-
-    return false;
-  },
-
-  highlight: function(type) {
-    this.$el.find('.group a').removeClass('active');
-    if (arguments) this.$el.find('[data-key="' + type + '"]').addClass('active');
-  },
-
-  post: function(e) {
-    if (e) e.preventDefault();
-    this.trigger('post', e);
-  },
-
-  markdownSnippet: function(e) {
-    var self = this;
-    var $target = $(e.target).closest('a');
-    var $dialog = this.$el.find('#dialog');
-    var $snippets = this.$el.find('.group a');
-    var key = $target.data('key');
-    var snippet = $target.data('snippet');
-    var selection = util.trim(this.view.editor.getSelection());
-
-    $dialog.removeClass().empty();
-
-    if (snippet) {
-      $snippets.removeClass('on');
-
-      if (selection) {
-        switch (key) {
-        case 'bold':
-          this.bold(selection);
-          break;
-        case 'italic':
-          this.italic(selection);
-          break;
-        case 'heading':
-          this.heading(selection);
-          break;
-        case 'sub-heading':
-          this.subHeading(selection);
-          break;
-        case 'quote':
-          this.quote(selection);
-          break;
-        default:
-          this.view.editor.replaceSelection(snippet);
-          break;
-        }
-        this.view.editor.focus();
-      } else {
-        this.view.editor.replaceSelection(snippet);
-        this.view.editor.focus();
-      }
-    } else if ($target.data('dialog')) {
-
-      var tmpl, className;
-      if (key === 'media' && !this.mediaDirectoryPath ||
-          key === 'media' && !this.media.length) {
-          className = key + ' no-directory';
-      } else {
-          className = key;
-      }
-
-      // This condition handles the link and media link in the toolbar.
-      if ($target.hasClass('on')) {
-        $target.removeClass('on');
-        $dialog.removeClass().empty();
-      } else {
-        $snippets.removeClass('on');
-        $target.addClass('on');
-        $dialog
-          .removeClass()
-          .addClass('dialog ' + className)
-          .empty();
-
-        switch(key) {
-          case 'link':
-            tmpl = _(templates.dialogs.link).template();
-
-            $dialog.append(tmpl({
-              relativeLinks: self.relativeLinks
-            }));
-
-            if (self.relativeLinks) {
-              $('.chzn-select', $dialog).chosen().change(function() {
-                $('.chzn-single span').text('Insert a local link.');
-
-                var parts = $(this).val().split(',');
-                $('input[name=href]', $dialog).val(parts[0]);
-                $('input[name=text]', $dialog).val(parts[1]);
-              });
-            }
-
-            if (selection) {
-              // test if this is a markdown link: [text](link)
-              var link = /\[([^\]]+)\]\(([^)]+)\)/;
-              var quoted = /".*?"/;
-
-              var text = selection;
-              var href;
-              var title;
-
-              if (link.test(selection)) {
-                var parts = link.exec(selection);
-                text = parts[1];
-                href = parts[2];
-
-                // Search for a title attrbute within the url string
-                if (quoted.test(parts[2])) {
-                  href = parts[2].split(quoted)[0];
-
-                  // TODO: could be improved
-                  title = parts[2].match(quoted)[0].replace(/"/g, '');
-                }
-              }
-
-              $('input[name=text]', $dialog).val(text);
-              if (href) $('input[name=href]', $dialog).val(href);
-              if (title) $('input[name=title]', $dialog).val(title);
-            }
-          break;
-          case 'media':
-            tmpl = _(templates.dialogs.media).template();
-            $dialog.append(tmpl({
-              description: t('dialogs.media.description', {
-                input: '<input id="upload" class="upload" type="file" />'
-              }),
-              assetsDirectory: (self.media && self.media.length) ? true : false,
-              writable: self.file.get('writable')
-            }));
-
-            if (self.media && self.media.length) self.renderMedia(self.media);
-
-            if (selection) {
-              var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
-              var src;
-              var alt;
-
-              if (image.test(selection)) {
-                var imageParts = image.exec(selection);
-                alt = imageParts[1];
-                src = imageParts[2];
-
-                $('input[name=url]', $dialog).val(src);
-                if (alt) $('input[name=alt]', $dialog).val(alt);
-              }
-            }
-          break;
-          case 'help':
-            tmpl = _(templates.dialogs.help).template();
-            $dialog.append(tmpl({
-              help: toolbar.help
-            }));
-
-            // Page through different help sections
-            var $mainMenu = this.$el.find('.main-menu a');
-            var $subMenu = this.$el.find('.sub-menu');
-            var $content = this.$el.find('.help-content');
-
-            $mainMenu.on('click', function() {
-              if (!$(this).hasClass('active')) {
-
-                $mainMenu.removeClass('active');
-                $content.removeClass('active');
-                $subMenu
-                    .removeClass('active')
-                    .find('a')
-                    .removeClass('active');
-
-                $(this).addClass('active');
-
-                // Add the relavent sub menu
-                var parent = $(this).data('id');
-                $('.' + parent).addClass('active');
-
-                // Add an active class and populate the
-                // content of the first list item.
-                var $firstSubElement = $('.' + parent + ' a:first', this.el);
-                $firstSubElement.addClass('active');
-
-                var subParent = $firstSubElement.data('id');
-                $('.help-' + subParent).addClass('active');
-              }
-              return false;
-            });
-
-            $subMenu.find('a').on('click', function() {
-              if (!$(this).hasClass('active')) {
-
-                $subMenu.find('a').removeClass('active');
-                $content.removeClass('active');
-                $(this).addClass('active');
-
-                // Add the relavent content section
-                var parent = $(this).data('id');
-                $('.help-' + parent).addClass('active');
-              }
-
-              return false;
-            });
-
-          break;
-        }
-      }
-    }
-
-    return false;
-  },
-
-  publishState: function() {
-    if (this.$el.find('publish-state') === 'true') {
-      return true;
-    } else {
-      return false;
-    }
-  },
-
-  updatePublishState: function() {
-    // Update the publish key wording depening on what was saved
-    var $publishkey = this.$el.find('.publish-flag');
-    var key = $publishKey.attr('data-state');
-
-    if (key === 'true') {
-      $publishKey.html(t('actions.publishing.published') +
-                      '<span class="ico small checkmark"></span>');
-    } else {
-      $publishKey.html(t('actions.publishing.unpublished') +
-                      '<span class="ico small checkmark"></span>');
-    }
-  },
-
-  togglePublishing: function(e) {
-    var $target = $(e.currentTarget);
-    var metadata = this.file.get('metadata');
-    var published = metadata.published;
-
-    // TODO: remove HTML from view
-    // Toggling publish state when the current file is published live
-    if (published) {
-      if ($target.hasClass('published')) {
-        $target
-          .empty()
-          .append(t('actions.publishing.unpublish') +
-                '<span class="ico small checkmark"></span>' +
-                '<span class="popup round arrow-top">' +
-                t('actions.publishing.unpublishInfo') +
-                '</span>')
-          .removeClass('published')
-          .attr('data-state', false);
-      } else {
-        $target
-          .empty()
-          .append(t('actions.publishing.published') +
-                '<span class="ico small checkmark"></span>')
-          .addClass('published')
-          .attr('data-state', true);
-      }
-    } else {
-      if ($target.hasClass('published')) {
-        $target
-          .empty()
-          .append(t('actions.publishing.unpublished') +
-                '<span class="ico small checkmark"></span>')
-          .removeClass('published')
-          .attr('data-state', false);
-      } else {
-        $target
-          .empty()
-          .append(t('actions.publishing.publish') +
-                '<span class="ico small checkmark"></span>' +
-                '<span class="popup round arrow-top">' +
-                t('actions.publishing.publishInfo') +
-                '</span>')
-          .addClass('published')
-          .attr('data-state', true);
-      }
-    }
-
-    this.file.set('metadata', _.extend(metadata, {
-      published: !published
-    }));
-
-    this.view.makeDirty();
-    return false;
-  },
-
-  dialogInsert: function(e) {
-    var $dialog = $('#dialog', this.el);
-    var $target = $(e.target, this.el);
-    var type = $target.data('type');
-
-    if (type === 'link') {
-      var href = $('input[name="href"]').val();
-      var text = $('input[name="text"]').val();
-      var title = $('input[name="title"]').val();
-
-      if (!text) text = href;
-
-      if (title) {
-        this.view.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
-      } else {
-        this.view.editor.replaceSelection('[' + text + '](' + href + ')');
-      }
-
-      this.view.editor.focus();
-    }
-
-    if (type === 'media') {
-      if (this.queue) {
-        var userDefinedPath = $('input[name="url"]').val();
-        this.view.upload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
-
-        // Finally, clear the queue object
-        this.queue = undefined;
-      } else {
-        var src = $('input[name="url"]').val();
-        var alt = $('input[name="alt"]').val();
-        this.view.editor.replaceSelection('![' + alt + '](/' + src + ')');
-        this.view.editor.focus();
-      }
-    }
-
-    return false;
-  },
-
-  heading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
-      this.view.editor.replaceSelection(util.lTrim(s.replace(/#/g, '')));
-    } else {
-      this.view.editor.replaceSelection('## ' + s.replace(/#/g, ''));
-    }
-  },
-
-  subHeading: function(s) {
-    if (s.charAt(0) === '#' && s.charAt(3) !== '#') {
-      this.view.editor.replaceSelection(util.lTrim(s.replace(/#/g, '')));
-    } else {
-      this.view.editor.replaceSelection('### ' + s.replace(/#/g, ''));
-    }
-  },
-
-  italic: function(s) {
-    if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
-      this.view.editor.replaceSelection(s.replace(/_/g, ''));
-    } else {
-      this.view.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
-    }
-  },
-
-  bold: function(s) {
-    if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
-      this.view.editor.replaceSelection(s.replace(/\*/g, ''));
-    } else {
-      this.view.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
-    }
-  },
-
-  quote: function(s) {
-    if (s.charAt(0) === '>') {
-      this.view.editor.replaceSelection(util.lTrim(s.replace(/\>/g, '')));
-    } else {
-      this.view.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
-    }
-  },
-
-  renderMedia: function(data, back) {
-    var self = this;
-    var $media = this.$el.find('#media');
-    var tmpl = _(templates.dialogs.mediadirectory).template();
-
-    // Reset some stuff
-    $media.empty();
-
-    if (back && (back.join() !== this.assetsDirectory)) {
-      var link = back.slice(0, back.length - 1).join('/');
-      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
-    }
-
-    data.each(function(d) {
-      var parts = d.get('path').split('/');
-      var path = parts.slice(0, parts.length - 1).join('/');
-
-      $media.append(tmpl({
-        name: d.get('name'),
-        type: d.get('type'),
-        path: path + '/' + encodeURIComponent(d.get('name')),
-        isMedia: util.isMedia(d.get('name').split('.').pop())
-      }));
-    });
-
-    $('.asset a', $media).on('click', function(e) {
-      var href = $(this).attr('href');
-      var alt = util.trim($(this).text());
-
-      if (util.isImage(href.split('.').pop())) {
-        self.$el.find('input[name="url"]').val(href);
-        self.$el.find('input[name="alt"]').val(alt);
-      } else {
-        self.view.editor.replaceSelection(href);
-        self.view.editor.focus();
-      }
-      return false;
-    });
-  }
-});
-
-},{"../toolbar/markdown.js":33,"../util":28,"../upload":30,"../../dist/templates":14,"jquery-browserify":11,"chosen-jquery-browserify":64,"underscore":10,"backbone":12}],49:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var chosen = require('chosen-jquery-browserify');
-var _ = require('underscore');
-_.merge = require('deepmerge');
-var jsyaml = require('js-yaml');
-var Backbone = require('backbone');
-var templates = require('../../dist/templates');
-var util = require('.././util');
-
-module.exports = Backbone.View.extend({
-  template: templates.metadata,
-
-  events: {
-    'change .metafield': 'updateModel',
-    'click .create-select': 'createSelect',
-    'click .finish': 'exit'
-  },
-
-  initialize: function(options) {
-    _.bindAll(this);
-
-    this.model = options.model;
-    this.titleAsHeading = options.titleAsHeading;
-    this.view = options.view;
-  },
-
-  render: function() {
-    this.$el.empty().append(_.template(this.template));
-
-    var form = this.$el.find('.form');
-
-    var metadata = this.model.get('metadata');
-    var lang = metadata && metadata.lang ? metadata.lang : 'en';
-
-    // This renders any fields defined in the metadata entry
-    // of a given prose configuration file.
-    _.each(this.model.get('defaults'), (function(data, key) {
-      var metadata = this.model.get('metadata') || {};
-      var renderTitle = true;
-
-      if (data && data.name === 'title' && this.titleAsHeading) {
-        renderTitle = false;
-      }
-
-      if (renderTitle) {
-        if (data && data.field) {
-          switch (data.field.element) {
-            case 'button':
-              var button = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                on: data.field.on,
-                off: data.field.off
-              };
-
-              form.append(_.template(templates.meta.button, button, {
-                variable: 'meta'
-              }));
-              break;
-            case 'checkbox':
-              var checkbox = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                value: data.name,
-                checked: data.field.value
-              };
-
-              form.append(_.template(templates.meta.checkbox, checkbox, {
-                variable: 'meta'
-              }));
-              break;
-            case 'text':
-              var text = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                value: data.field.value,
-                placeholder: data.field.placeholder,
-                type: 'text'
-              };
-
-              form.append(_.template(templates.meta.text, text, {
-                variable: 'meta'
-              }));
-              break;
-            case 'textarea':
-              var id = util.stringToUrl(data.name);
-              var textarea = {
-                name: data.name,
-                id: id,
-                value: data.field.value,
-                label: data.field.label,
-                help: data.field.help,
-                placeholder: data.field.placeholder,
-                type: 'textarea'
-              };
-
-              form.append(_.template(templates.meta.textarea, textarea, {
-                variable: 'meta'
-              }));
-
-              var textElement = document.getElementById(id);
-
-              this[id] = CodeMirror(function(el) {
-                textElement.parentNode.replaceChild(el, textElement);
-                el.id = id;
-                el.className += ' inner ';
-                el.setAttribute('data-name', data.name);
-              }, {
-                mode: id,
-                value: textElement.value,
-                lineWrapping: true,
-                theme: 'prose-bright'
-              });
-
-              break;
-            case 'number':
-              var number = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                value: data.field.value,
-                type: 'number'
-              };
-
-              form.append(_.template(templates.meta.text, number, {
-                variable: 'meta'
-              }));
-              break;
-            case 'select':
-              var select = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: lang
-              };
-
-              form.append(_.template(templates.meta.select, select, {
-                variable: 'meta'
-              }));
-              break;
-            case 'multiselect':
-              var multiselect = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                alterable: data.field.alterable,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: lang
-              };
-
-              form.append(_.template(templates.meta.multiselect, multiselect, {
-                variable: 'meta'
-              }));
-
-              break;
-            case 'hidden':
-              var tmpl = {};
-              var value = metadata[data.name];
-
-              if (_.isArray(value)) {
-                // Any defaults not currently in metadata?
-                var diff = _.difference(data.field.value, value);
-                tmpl[data.name] = diff.length ?
-                  _.union(data.field.value, value) : value;
-              } else {
-                tmpl[data.name] = data.field.value;
-              }
-
-              this.model.set('metadata', _.extend(tmpl, this.model.get('metadata') || {}));
-              break;
-          }
-        } else {
-          var txt = {
-            name: key,
-            label: key,
-            value: data,
-            type: 'text'
-          };
-
-          form.append(_.template(templates.meta.text, txt, {
-            variable: 'meta'
-          }));
-        }
-      }
-    }).bind(this));
-
-    this.$el.find('.chzn-select').chosen().change(this.updateModel);
-    this.renderRaw();
-
-    return this;
-  },
-
-  updateModel: function(e) {
-    var target = e.currentTarget;
-    var key = target.name;
-    var value = target.value;
-    var delta = {};
-    delta[key] = value;
-
-    var metadata = this.model.get('metadata');
-    this.model.set('metadata', _.extend(metadata, delta));
-    this.view.makeDirty();
-  },
-
-  rawKeyMap: function() {
-    return {
-      'Ctrl-S': this.view.updateFile
-    };
-  },
-
-  renderRaw: function() {
-    var yaml = this.model.get('lang') === 'yaml';
-    var $el;
-
-    if (yaml) {
-      $el = this.view.$el.find('#code');
-      $el.empty();
-    } else {
-      this.$el.find('.form').append(_.template(templates.meta.raw));
-    }
-
-    var el = (yaml ? $el : this.$el.find('#raw'))[0];
-
-    this.raw = CodeMirror(el, {
-      mode: 'yaml',
-      value: '',
-      lineWrapping: true,
-      lineNumbers: yaml,
-      extraKeys: this.rawKeyMap(),
-      theme: 'prose-bright'
-    });
-
-    this.listenTo(this.raw, 'blur', (function(cm) {
-      var value = cm.getValue();
-      var raw;
-
-      try {
-        raw = jsyaml.safeLoad(value);
-      } catch(err) {
-        console.log("Error parsing CodeMirror editor text");
-        console.log(err);
-      }
-
-      if (raw) {
-        var metadata = this.model.get('metadata');
-        this.model.set('metadata', _.extend(metadata, raw));
-
-        this.view.makeDirty();
-      }
-    }).bind(this));
-
-    this.setValue(this.model.get('metadata'));
-  },
-
-  getValue: function() {
-    var view = this;
-    var metadata = this.model.get('metadata') || {};
-
-    if (this.view.toolbar &&
-       this.view.toolbar.publishState() ||
-       (metadata && metadata.published)) {
-      metadata.published = true;
-    } else {
-      metadata.published = false;
-    }
-
-    // Get the title value from heading if we need to.
-    if (this.titleAsHeading) {
-      metadata.title = (this.view.header) ?
-        this.view.header.inputGet() :
-        this.model.get('metadata').title[0];
-    }
-
-    _.each(this.$el.find('[name]'), function(item) {
-      var $item = $(item);
-      var value = $item.val();
-
-      switch (item.type) {
-        case 'select-multiple':
-        case 'select-one':
-        case 'textarea':
-        case 'text':
-          if (value) {
-            value = $item.data('type') === 'number' ? Number(value) : value;
-            if (_.has(metadata, item.name) && metadata[item.name] !== value) {
-              metadata[item.name] = _.union(metadata[item.name], value);
-            } else {
-              metadata[item.name] = value;
-            }
-          }
-          break;
-        case 'checkbox':
-          if (item.checked) {
-
-            if (_.has(metadata, item.name) && item.name !== item.value) {
-              metadata[item.name] = _.union(metadata[item.name], item.value);
-            } else if (item.value === item.name) {
-              metadata[item.name] = item.checked;
-            } else {
-              metadata[item.name] = item.value;
-            }
-
-          } else if (!_.has(metadata, item.name) && item.name === item.value) {
-            metadata[item.name] = item.checked;
-          } else {
-            metadata[item.name] = item.checked;
-          }
-          break;
-        case 'button':
-          if (value === 'true') {
-            metadata[item.name] = true;
-          } else if (value === 'false') {
-            metadata[item.name] = false;
-          }
-          break;
-      }
-    });
-
-    // Load any data coming from a yaml-block of content.
-    this.$el.find('.yaml-block').each(function() {
-      var editor = $(this).find('.CodeMirror').attr('id');
-      var name = $('#' + editor).data('name');
-
-      if (view[editor]) {
-        try {
-          metadata[name] = jsyaml.safeLoad(view[editor].getValue());
-        } catch(err) {
-          console.log("Error parsing yaml front matter");
-          console.log(err);
-        }
-      }
-    });
-
-    // Load any data coming from not defined raw yaml front matter.
-    if (this.raw) {
-      try {
-        metadata = _.merge(metadata, jsyaml.safeLoad(this.raw.getValue()) || {});
-      } catch (err) {
-        console.log("Error parsing not defined raw yaml front matter");
-        console.log(err);
-      }
-    }
-
-    return metadata;
-  },
-
-  setValue: function(data) {
-    var form = this.$el.find('.form');
-    var missing = {};
-    var raw;
-
-    _.each(data, (function(value, key) {
-      var matched = false;
-      var input = this.$el.find('[name="' + key + '"]');
-      var length = input.length;
-      var options;
-
-      if (length) {
-
-        // iterate over matching fields
-        for (var i = 0; i < length; i++) {
-
-          // if value is an array
-          if (_.isArray(value)) {
-
-            // iterate over values in array
-            for (var j = 0; j < value.length; j++) {
-              switch (input[i].type) {
-                case 'select-multiple':
-                case 'select-one':
-                  options = $(input[i]).find('option[value="' + value[j] + '"]');
-                  if (options.length) {
-                    for (var k = 0; k < options.length; k++) {
-                      options[k].selected = 'selected';
-                    }
-
-                    matched = true;
-                  }
-                  break;
-                case 'text':
-                case 'textarea':
-                  input[i].value = value;
-                  matched = true;
-                  break;
-                case 'checkbox':
-                  if (input[i].value === value) {
-                    input[i].checked = 'checked';
-                    matched = true;
-                  }
-                  break;
-              }
-            }
-
-          } else {
-
-            switch (input[i].type) {
-              case 'select-multiple':
-              case 'select-one':
-                options = $(input[i]).find('option[value="' + value + '"]');
-                if (options.length) {
-                  for (var m = 0; m < options.length; m++) {
-                    options[m].selected = 'selected';
-                  }
-
-                  matched = true;
-                }
-                break;
-              case 'text':
-              case 'textarea':
-                input[i].value = value;
-                matched = true;
-                break;
-              case 'checkbox':
-                input[i].checked = value ? 'checked' : false;
-                matched = true;
-                break;
-              case 'button':
-                input[i].value = value ? true : false;
-                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
-                matched = true;
-                break;
-            }
-
-          }
-        }
-
-        if (!matched && value !== null) {
-          if (missing.hasOwnProperty(key) && missing[key] !== value) {
-            missing[key] = _.union(missing[key], value);
-          } else {
-            missing[key] = value;
-          }
-        }
-
-      } else {
-        // Don't render the 'published' field or hidden metadata
-        // TODO: render metadata values that share a key with a hidden value
-        var defaults = _.find(this.model.get('defaults'), function(data) { return data && (data.name === key); });
-        var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
-
-        if (key !== 'published' && key !== 'title' && !defaults) {
-          raw = {};
-          raw[key] = value;
-
-          if (this.raw) {
-            this.raw.setValue(this.raw.getValue() + jsyaml.safeDump(raw));
-          }
-        }
-      }
-    }).bind(this));
-
-    _.each(missing, (function(value, key) {
-      if (value === null) return;
-
-      switch (typeof value) {
-        case 'boolean':
-          var bool = {
-            name: key,
-            label: value,
-            value: value,
-            checked: value ? 'checked' : false
-          };
-
-          form.append(_.template(templates.meta.checkbox, bool, {
-            variable: 'meta'
-          }));
-          break;
-        case 'string':
-          var string = {
-            name: key,
-            label: value,
-            value: value,
-            type: 'text'
-          };
-
-          form.append(_.template(templates.meta.text, string, {
-            variable: 'meta'
-          }));
-          break;
-        case 'object':
-          var obj = {
-            name: key,
-            label: key,
-            placeholder: key,
-            options: value,
-            lang: data.lang || 'en'
-          };
-
-          form.append(_.template(templates.meta.multiselect, obj, {
-            variable: 'meta'
-          }));
-          break;
-        default:
-          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
-          break;
-      }
-
-      this.$el.find('.chzn-select').chosen().change(this.updateModel);
-    }).bind(this));
-
-    this.$el.find('.chzn-select').trigger('liszt:updated');
-
-    // Update model with defaults
-    // TODO: should this makeDirty if any differences?
-    this.model.set('metadata', this.getValue());
-  },
-
-  getRaw: function() {
-    return jsyaml.safeDump(this.getValue()).trim();
-  },
-
-  setRaw: function(data) {
-    try {
-      this.raw.setValue(jsyaml.safeDump(data));
-      this.refresh;
-    } catch (err) {
-      throw err;
-    }
-  },
-
-  refresh: function() {
-    var view = this;
-    this.$el.find('.yaml-block').each(function() {
-      var editor = $(this).find('.CodeMirror').attr('id');
-      if (view[editor]) view[editor].refresh();
-    });
-
-    // Refresh CodeMirror
-    if (this.raw) this.raw.refresh();
-  },
-
-  createSelect: function(e) {
-    var $parent = $(e.target).parent();
-    var $input = $parent.find('input');
-    var selectTarget = $(e.target).data('select');
-    var $select = this.$el.find('#' + selectTarget);
-    var value = _($input.val()).escape();
-
-    if (value.length > 0) {
-      var option = '<option value="' + value + '" selected="selected">' + value + '</option>';
-
-      // Append this new option to the select list.
-      $select.append(option);
-
-      // Clear the now added value.
-      $input.attr('value', '');
-
-      // Update the list
-      $select.trigger('liszt:updated');
-      $select.trigger('change');
-    }
-
-    return false;
-  },
-
-  exit: function() {
-    this.view.nav.active(this.view.mode);
-
-    if (this.view.mode === 'blob') {
-      this.view.blob();
-    } else {
-      this.view.edit();
-    }
-
-    return false;
-  }
-});
-
-},{"../../dist/templates":14,".././util":28,"jquery-browserify":11,"chosen-jquery-browserify":64,"underscore":10,"js-yaml":38,"backbone":12,"deepmerge":65}],37:[function(require,module,exports){
+},{"../models/repo":17,"../config":8,"../cookie":3,"underscore":11,"backbone":12}],37:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -29152,6 +27061,379 @@ if (typeof exports === 'object') {
 }());
 
 })(window)
+},{}],46:[function(require,module,exports){
+(function() {
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var q,
+        tasks = [],
+        started = 0, // number of tasks that have been started (and perhaps finished)
+        active = 0, // number of tasks currently being executed (started but not finished)
+        remaining = 0, // number of tasks not yet finished
+        popping, // inside a synchronous task callback?
+        error = null,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    function pop() {
+      while (popping = started < tasks.length && active < parallelism) {
+        var i = started++,
+            t = tasks[i],
+            a = slice.call(t, 1);
+        a.push(callback(i));
+        ++active;
+        t[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new tasks and squelch active callbacks
+          started = remaining = NaN; // stop queued tasks from starting
+          notify();
+        } else {
+          tasks[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(error, tasks);
+      else await.apply(null, [error].concat(tasks));
+    }
+
+    return q = {
+      defer: function() {
+        if (!error) {
+          tasks.push(arguments);
+          ++remaining;
+          pop();
+        }
+        return q;
+      },
+      await: function(f) {
+        await = f;
+        all = false;
+        if (!remaining) notify();
+        return q;
+      },
+      awaitAll: function(f) {
+        await = f;
+        all = true;
+        if (!remaining) notify();
+        return q;
+      }
+    };
+  }
+
+  function noop() {}
+
+  queue.version = "1.0.7";
+  if (typeof define === "function" && define.amd) define(function() { return queue; });
+  else if (typeof module === "object" && module.exports) module.exports = queue;
+  else this.queue = queue;
+})();
+
+},{}],50:[function(require,module,exports){
+(function(){//     keymaster.js
+//     (c) 2011-2012 Thomas Fuchs
+//     keymaster.js may be freely distributed under the MIT license.
+
+;(function(global){
+  var k,
+    _handlers = {},
+    _mods = { 16: false, 18: false, 17: false, 91: false },
+    _scope = 'all',
+    // modifier keys
+    _MODIFIERS = {
+      '⇧': 16, shift: 16,
+      '⌥': 18, alt: 18, option: 18,
+      '⌃': 17, ctrl: 17, control: 17,
+      '⌘': 91, command: 91
+    },
+    // special keys
+    _MAP = {
+      backspace: 8, tab: 9, clear: 12,
+      enter: 13, 'return': 13,
+      esc: 27, escape: 27, space: 32,
+      left: 37, up: 38,
+      right: 39, down: 40,
+      del: 46, 'delete': 46,
+      home: 36, end: 35,
+      pageup: 33, pagedown: 34,
+      ',': 188, '.': 190, '/': 191,
+      '`': 192, '-': 189, '=': 187,
+      ';': 186, '\'': 222,
+      '[': 219, ']': 221, '\\': 220
+    },
+    code = function(x){
+      return _MAP[x] || x.toUpperCase().charCodeAt(0);
+    },
+    _downKeys = [];
+
+  for(k=1;k<20;k++) _MAP['f'+k] = 111+k;
+
+  // IE doesn't support Array#indexOf, so have a simple replacement
+  function index(array, item){
+    var i = array.length;
+    while(i--) if(array[i]===item) return i;
+    return -1;
+  }
+
+  // for comparing mods before unassignment
+  function compareArray(a1, a2) {
+    if (a1.length != a2.length) return false;
+    for (var i = 0; i < a1.length; i++) {
+        if (a1[i] !== a2[i]) return false;
+    }
+    return true;
+  }
+
+  var modifierMap = {
+      16:'shiftKey',
+      18:'altKey',
+      17:'ctrlKey',
+      91:'metaKey'
+  };
+  function updateModifierKey(event) {
+      for(k in _mods) _mods[k] = event[modifierMap[k]];
+  };
+
+  // handle keydown event
+  function dispatch(event, scope){
+    var key, handler, k, i, modifiersMatch;
+    key = event.keyCode;
+
+    if (index(_downKeys, key) == -1) {
+        _downKeys.push(key);
+    }
+
+    // if a modifier key, set the key.<modifierkeyname> property to true and return
+    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
+    if(key in _mods) {
+      _mods[key] = true;
+      // 'assignKey' from inside this closure is exported to window.key
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
+      return;
+    }
+    updateModifierKey(event);
+
+    // see if we need to ignore the keypress (filter() can can be overridden)
+    // by default ignore key presses if a select, textarea, or input is focused
+    if(!assignKey.filter.call(this, event)) return;
+
+    // abort if no potentially matching shortcuts found
+    if (!(key in _handlers)) return;
+
+    // for each potential shortcut
+    for (i = 0; i < _handlers[key].length; i++) {
+      handler = _handlers[key][i];
+
+      // see if it's in the current scope
+      if(handler.scope == scope || handler.scope == 'all'){
+        // check if modifiers match if any
+        modifiersMatch = handler.mods.length > 0;
+        for(k in _mods)
+          if((!_mods[k] && index(handler.mods, +k) > -1) ||
+            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
+        // call the handler and stop the event if neccessary
+        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
+          if(handler.method(event, handler)===false){
+            if(event.preventDefault) event.preventDefault();
+              else event.returnValue = false;
+            if(event.stopPropagation) event.stopPropagation();
+            if(event.cancelBubble) event.cancelBubble = true;
+          }
+        }
+      }
+    }
+  };
+
+  // unset modifier keys on keyup
+  function clearModifier(event){
+    var key = event.keyCode, k,
+        i = index(_downKeys, key);
+
+    // remove key from _downKeys
+    if (i >= 0) {
+        _downKeys.splice(i, 1);
+    }
+
+    if(key == 93 || key == 224) key = 91;
+    if(key in _mods) {
+      _mods[key] = false;
+      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
+    }
+  };
+
+  function resetModifiers() {
+    for(k in _mods) _mods[k] = false;
+    for(k in _MODIFIERS) assignKey[k] = false;
+  };
+
+  // parse and assign shortcut
+  function assignKey(key, scope, method){
+    var keys, mods;
+    keys = getKeys(key);
+    if (method === undefined) {
+      method = scope;
+      scope = 'all';
+    }
+
+    // for each shortcut
+    for (var i = 0; i < keys.length; i++) {
+      // set modifier keys if any
+      mods = [];
+      key = keys[i].split('+');
+      if (key.length > 1){
+        mods = getMods(key);
+        key = [key[key.length-1]];
+      }
+      // convert to keycode and...
+      key = key[0]
+      key = code(key);
+      // ...store handler
+      if (!(key in _handlers)) _handlers[key] = [];
+      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
+    }
+  };
+
+  // unbind all handlers for given key in current scope
+  function unbindKey(key, scope) {
+    var keys = key.split('+'),
+      mods = [],
+      i, obj;
+
+    if (keys.length > 1) {
+      mods = getMods(keys);
+      key = keys[keys.length - 1];
+    }
+
+    key = code(key);
+
+    if (scope === undefined) {
+      scope = getScope();
+    }
+    if (!_handlers[key]) {
+      return;
+    }
+    for (i in _handlers[key]) {
+      obj = _handlers[key][i];
+      // only clear handlers if correct scope and mods match
+      if (obj.scope === scope && compareArray(obj.mods, mods)) {
+        _handlers[key][i] = {};
+      }
+    }
+  };
+
+  // Returns true if the key with code 'keyCode' is currently down
+  // Converts strings into key codes.
+  function isPressed(keyCode) {
+      if (typeof(keyCode)=='string') {
+        keyCode = code(keyCode);
+      }
+      return index(_downKeys, keyCode) != -1;
+  }
+
+  function getPressedKeyCodes() {
+      return _downKeys.slice(0);
+  }
+
+  function filter(event){
+    var tagName = (event.target || event.srcElement).tagName;
+    // ignore keypressed in any elements that support keyboard data input
+    return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+  }
+
+  // initialize key.<modifier> to false
+  for(k in _MODIFIERS) assignKey[k] = false;
+
+  // set current scope (default 'all')
+  function setScope(scope){ _scope = scope || 'all' };
+  function getScope(){ return _scope || 'all' };
+
+  // delete all handlers for a given scope
+  function deleteScope(scope){
+    var key, handlers, i;
+
+    for (key in _handlers) {
+      handlers = _handlers[key];
+      for (i = 0; i < handlers.length; ) {
+        if (handlers[i].scope === scope) handlers.splice(i, 1);
+        else i++;
+      }
+    }
+  };
+
+  // abstract key logic for assign and unassign
+  function getKeys(key) {
+    var keys;
+    key = key.replace(/\s/g, '');
+    keys = key.split(',');
+    if ((keys[keys.length - 1]) == '') {
+      keys[keys.length - 2] += ',';
+    }
+    return keys;
+  }
+
+  // abstract mods logic for assign and unassign
+  function getMods(key) {
+    var mods = key.slice(0, key.length - 1);
+    for (var mi = 0; mi < mods.length; mi++)
+    mods[mi] = _MODIFIERS[mods[mi]];
+    return mods;
+  }
+
+  // cross-browser events
+  function addEvent(object, event, method) {
+    if (object.addEventListener)
+      object.addEventListener(event, method, false);
+    else if(object.attachEvent)
+      object.attachEvent('on'+event, function(){ method(window.event) });
+  };
+
+  // set the handlers globally on document
+  addEvent(document, 'keydown', function(event) { dispatch(event, _scope) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
+  addEvent(document, 'keyup', clearModifier);
+
+  // reset modifiers to false whenever the window is (re)focused.
+  addEvent(window, 'focus', resetModifiers);
+
+  // store previously defined key
+  var previousKey = global.key;
+
+  // restore previously defined key and return reference to our key object
+  function noConflict() {
+    var k = global.key;
+    global.key = previousKey;
+    return k;
+  }
+
+  // set window.key and window.key.set/get/deleteScope, and the default filter
+  global.key = assignKey;
+  global.key.setScope = setScope;
+  global.key.getScope = getScope;
+  global.key.deleteScope = deleteScope;
+  global.key.filter = filter;
+  global.key.isPressed = isPressed;
+  global.key.getPressedKeyCodes = getPressedKeyCodes;
+  global.key.noConflict = noConflict;
+  global.key.unbind = unbindKey;
+
+  if(typeof module !== 'undefined') module.exports = key;
+
+})(this);
+
+})()
 },{}],51:[function(require,module,exports){
 /* See LICENSE file for terms of use */
 
@@ -29523,7 +27805,13 @@ if (typeof module !== 'undefined') {
     module.exports = JsDiff;
 }
 
-},{}],52:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
+module.exports = require('./lib/chrono');
+
+},{"./lib/chrono":52}],38:[function(require,module,exports){
+module.exports = require('./lib/js-yaml.js');
+
+},{"./lib/js-yaml.js":53}],52:[function(require,module,exports){
 (function(){
 
 // CommonJS exports.
@@ -29924,7 +28212,1719 @@ Date.prototype.setTimezone = function(val) {
 
 })();
 
-},{}],65:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
+var Backbone = require('backbone');
+
+module.exports = Backbone.Model.extend({
+});
+
+},{"backbone":12}],35:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Branch = require('../models/branch');
+
+module.exports = Backbone.Collection.extend({
+  model: Branch,
+
+  initialize: function(models, options) {
+    this.repo = options.repo;
+  },
+
+  parse: function(resp, options) {
+    return map = _.map(resp, (function(branch) {
+     return  _.extend(branch, {
+        repo: this.repo
+      })
+    }).bind(this));
+  },
+
+  url: function() {
+    return this.repo.url() + '/branches';
+  }
+});
+
+},{"../models/branch":54,"underscore":11,"backbone":12}],36:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Commit = require('../models/commit');
+
+module.exports = Backbone.Collection.extend({
+  model: Commit,
+
+  initialize: function(models, options) {
+    this.repo = options.repo;
+  },
+
+  setBranch: function(branch, options) {
+    this.branch = branch;
+    this.fetch(options);
+  },
+
+  parse: function(resp, options) {
+    return map = _.map(resp, (function(commit) {
+     return  _.extend(commit, {
+        repo: this.repo
+      })
+    }).bind(this));
+  },
+
+  url: function() {
+    return this.repo.url() + '/commits?sha=' + this.branch;
+  }
+});
+
+},{"../models/commit":55,"underscore":11,"backbone":12}],39:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.loading,
+
+  queue: 0,
+
+  initialize: function() {
+    _.bindAll(this);
+  },
+
+  start: function(message) {
+    this.queue++;
+
+    if (message) {
+      this.$el.find('.message').html(message);
+    }
+
+    this.$el.show();
+  },
+
+  stop: function() {
+    this.queue = 0;
+    this.$el.fadeOut(150);
+  },
+
+  done: function() {
+    _.defer((function() {
+      this.queue--;
+      if (this.queue < 1) this.stop();
+    }).bind(this));
+  },
+
+  render: function() {
+    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
+    return this;
+  }
+});
+
+},{"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],40:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var util = require('../util');
+
+var views = {
+  branches: require('./sidebar/branches'),
+  history: require('./sidebar/history'),
+  drafts: require('./sidebar/drafts'),
+  orgs: require('./sidebar/orgs'),
+  save: require('./sidebar/save'),
+  settings: require('./sidebar/settings')
+};
+
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.drawer,
+
+  subviews: {},
+
+  initialize: function(options) {
+    _.bindAll(this);
+  },
+
+  render: function(options) {
+    this.$el.html(_.template(this.template, {}, { variable: 'sidebar' }));
+    _.invoke(this.subviews, 'render');
+    return this;
+  },
+
+  initSubview: function(subview, options) {
+    if (!views[subview]) return false;
+
+    options = _.clone(options) || {};
+
+    var view = new views[subview](options);
+    this.$el.find('#' + subview).html(view.el);
+
+    this.subviews[subview] = view;
+
+    return view;
+  },
+
+  filepathGet: function() {
+    return this.$el.find('.filepath').val();
+  },
+
+  updateState: function(label) {
+    this.$el.find('.button.save').html(label);
+  },
+
+  open: function() {
+    this.$el.toggleClass('open', true);
+  },
+
+  close: function() {
+    this.$el.toggleClass('open', false);
+  },
+
+  toggle: function() {
+    this.$el.toggleClass('open');
+  },
+
+  toggleMobile: function() {
+    this.$el.toggleClass('mobile');
+  },
+
+  mode: function(mode) {
+    // Set data-mode attribute to toggle nav buttons in CSS
+    this.$el.attr('data-sidebar', mode);
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"../util":28,"./sidebar/branches":56,"./sidebar/history":57,"./sidebar/drafts":58,"./sidebar/orgs":43,"./sidebar/save":59,"./sidebar/settings":60,"../../dist/templates":14,"underscore":11,"backbone":12}],41:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var config = require('../config');
+var utils = require('../util');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.nav,
+
+  events: {
+    'click a.edit': 'emit',
+    'click a.preview': 'emit',
+    'click a.meta': 'emit',
+    'click a.settings': 'emit',
+    'click a.save': 'emit',
+    'click .mobile .toggle': 'toggleMobile'
+  },
+
+  initialize: function(options) {
+    this.app = options.app;
+    this.sidebar = options.sidebar;
+    this.user = options.user;
+  },
+
+  render: function() {
+    this.$el.html(_.template(this.template, {
+      login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=repo'
+    }, { variable: 'data' }));
+
+    this.$save = this.$el.find('.file .save .popup');
+    return this;
+  },
+
+  emit: function(e) {
+    // TODO: get rid of this hack exception
+    if (e && !$(e.currentTarget).hasClass('preview')) e.preventDefault();
+
+    var state = $(e.currentTarget).data('state');
+    if ($(e.currentTarget).hasClass('active')) {
+      // return to file state
+      state = this.state;
+    }
+
+    this.active(state);
+    this.toggle(state, e);
+  },
+
+  setFileState: function(state) {
+    this.state = state;
+    this.active(state);
+  },
+
+  updateState: function(label, classes, kill) {
+
+    if (!label) label = t('navigation.save');
+    this.$save.html(label);
+
+    // Add, remove classes to the file nav group
+    this.$el.find('.file')
+      .removeClass('error saving saved save')
+      .addClass(classes);
+
+    if (kill) {
+      _.delay((function() {
+        this.$el.find('.file').removeClass(classes);
+      }).bind(this), 1000);
+    }
+  },
+
+  mode: function(mode) {
+    this.$el.attr('class', mode);
+  },
+
+  active: function(state) {
+    // Coerce 'new' to 'edit' to activate correct icon
+    state = (state === 'new' ? 'edit' : state);
+    this.$el.find('.file a').removeClass('active');
+    this.$el.find('.file a[data-state=' + state + ']').toggleClass('active');
+  },
+
+  toggle: function(state, e) {
+    this.trigger(state, e);
+  },
+
+  toggleMobile: function(e) {
+    this.sidebar.toggleMobile();
+    $(e.target).toggleClass('active');
+    return false;
+  }
+});
+
+},{"../config":8,"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],42:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var util = require('../util');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.header,
+
+  events: {
+    'focus input': 'checkPlaceholder',
+    'change input[data-mode="path"]': 'updatePath',
+    'change input[data-mode="title"]': 'updateTitle'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.user = options.user;
+    this.repo = options.repo;
+    this.file = options.file;
+    this.input = options.input;
+    this.title = options.title;
+    this.placeholder = options.placeholder;
+    this.alterable = options.alterable;
+  },
+
+  render: function() {
+    var user = this.user ? this.user.get('login') : this.repo.get('owner').login;
+    var permissions = this.repo ? this.repo.get('permissions') : undefined;
+    var isPrivate = this.repo && this.repo.get('private') ? true : false;
+    var title = t('heading.explore');
+    var avatar;
+    var path = user;
+
+    if (this.user) {
+      avatar = '<img src="' + this.user.get('avatar_url') + '" width="40" height="40" alt="Avatar" />';
+    } else if (this.file) {
+      // File View
+      avatar = '<span class="ico round document ' + this.file.get('lang') + '"></span>';
+      title = this.file.get('path');
+    } else {
+      // Repo View
+      var lock = (isPrivate) ? ' private' : '';
+
+      title = this.repo.get('name');
+      path = path + '/' + title;
+      avatar = '<div class="avatar round"><span class="icon round repo' + lock + '"></span></div>';
+    }
+
+    var data = {
+      alterable: this.alterable,
+      avatar: avatar,
+      repo: this.repo ? this.repo.attributes : undefined,
+      isPrivate: isPrivate,
+      input: this.input,
+      path: path,
+      placeholder: this.placeholder,
+      user: user,
+      title: title,
+      mode: this.title ? 'title' : 'path',
+      translate: this.file ? this.file.get('translate') : undefined
+    };
+
+    this.$el.empty().append(_.template(this.template, data, {
+      variable: 'data'
+    }));
+
+    return this;
+  },
+
+  checkPlaceholder: function(e) {
+    if (this.file.isNew()) {
+      var $target = $(e.target, this.el);
+      if (!$target.val()) {
+        $target.val($target.attr('placeholder'));
+      }
+    }
+  },
+
+  updatePath: function(e) {
+    var value = e.currentTarget.value;
+
+    this.file.set('path', value);
+    this.trigger('makeDirty');
+    return false;
+  },
+
+  updateTitle: function(e) {
+    if (e) e.preventDefault();
+
+    // TODO: update metadata title here, don't rely on makeDi
+
+    // Only update path on new files that are not cloned
+    if (this.file.isNew() && !this.file.isClone()) {
+      var value = e.currentTarget.value;
+
+      var path = this.file.get('path');
+      var parts = path.split('/');
+      var name = parts.pop();
+
+      // Preserve the date and the extension
+      var date = util.extractDate(name);
+      var extension = name.split('.').pop();
+
+      path = parts.join('/') + '/' + date + '-' +
+        util.stringToUrl(value) + '.' + extension;
+
+      this.file.set('path', path);
+    }
+
+    this.trigger('makeDirty');
+  },
+
+  inputGet: function() {
+    return this.$el.find('.headerinput').val();
+  },
+
+  headerInputFocus: function() {
+    this.$el.find('.headerinput').focus();
+  }
+});
+
+},{"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],45:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var File = require('../models/file');
+var Folder = require('../models/folder');
+var FileView = require('./li/file');
+var FolderView = require('./li/folder');
+var templates = require('../../dist/templates');
+var util = require('.././util');
+
+module.exports = Backbone.View.extend({
+  className: 'listings',
+
+  template: templates.files,
+
+  subviews: {},
+
+  events: {
+    'mouseover .item': 'activeListing',
+    'mouseover .item a': 'activeListing',
+    'click .breadcrumb a': 'navigate',
+    'click .item a': 'navigate'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    var app = options.app;
+    app.loader.start();
+
+    this.app = app;
+    this.branch = options.branch || options.repo.get('default_branch');
+    this.branches = options.branches;
+    this.history = options.history;
+    this.nav = options.nav;
+    this.path = options.path || '';
+    this.repo = options.repo;
+    this.router = options.router;
+    this.search = options.search;
+    this.sidebar = options.sidebar;
+
+    this.branches.fetch({
+      success: this.setModel,
+      error: (function(model, xhr, options) {
+        this.router.error(xhr);
+      }).bind(this),
+      complete: this.app.loader.done
+    });
+  },
+
+  setModel: function() {
+    this.app.loader.start();
+
+    this.model = this.branches.findWhere({ name: this.branch }).files;
+
+    this.model.fetch({
+      success: (function() {
+        // Update this.path with rooturl
+        var config = this.model.config;
+        this.rooturl = config && config.rooturl ? config.rooturl : '';
+        
+        this.presentationModel = this.model.filteredModel || this.model;
+        this.search.model = this.presentationModel;
+        // Render on fetch and on search
+        this.listenTo(this.search, 'search', this.render);
+        this.render();
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.router.error(xhr);
+      }).bind(this),
+      complete: this.app.loader.done,
+      reset: true
+    });
+  },
+
+  newFile: function() {
+    var path = [
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      'new',
+      this.branch,
+      this.path ? this.path : this.rooturl
+    ]
+
+    this.router.navigate(_.compact(path).join('/'), true);
+  },
+
+  render: function() {
+    this.app.loader.start();
+
+    var search = this.search && this.search.input && this.search.input.val();
+    var rooturl = this.rooturl ? this.rooturl + '/' : '';
+    var path = this.path ? this.path + '/' : '';
+    var drafts;
+
+    var url = [
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      'tree',
+      this.branch
+    ].join('/');
+
+    // Set rooturl jail from collection config
+    var regex = new RegExp('^' + (path ? path : rooturl) + '[^\/]*$');
+
+    // Render drafts link in sidebar as subview
+    // if _posts directory exists and path does not begin with _drafts
+    if (this.presentationModel.get('_posts') && /^(?!_drafts)/.test(this.path)) {
+      drafts = this.sidebar.initSubview('drafts', {
+        link: [url, '_drafts'].join('/'),
+        sidebar: this.sidebar
+      });
+
+      this.subviews['drafts'] = drafts;
+      drafts.render();
+    }
+
+    var data = {
+      path: path,
+      parts: util.chunkedPath(this.path),
+      rooturl: rooturl,
+      url: url
+    };
+
+    this.$el.html(_.template(this.template, data, {variable: 'data'}));
+
+    // if not searching, filter to only show current level
+    var collection = search ? this.search.search() : this.presentationModel.filter((function(file) {
+      return regex.test(file.get('path'));
+    }).bind(this));
+
+    var frag = document.createDocumentFragment();
+
+    collection.each((function(file, index) {
+      var view;
+
+      if (file instanceof File) {
+        view = new FileView({
+          branch: this.branch,
+          history: this.history,
+          index: index,
+          model: file,
+          repo: this.repo,
+          router: this.router
+        });
+      } else if (file instanceof Folder) {
+        view = new FolderView({
+          branch: this.branch,
+          history: this.history,
+          index: index,
+          model: file,
+          repo: this.repo,
+          router: this.router
+        });
+      }
+
+      frag.appendChild(view.render().el);
+      this.subviews[file.id] = view;
+    }).bind(this));
+
+    this.$el.find('ul').html(frag);
+
+    this.app.loader.done();
+
+    return this;
+  },
+
+  activeListing: function(e) {
+    var $listing = $(e.target);
+
+    if (!$listing.hasClass('item')) {
+      $listing = $(e.target).closest('li');
+    }
+
+    this.$el.find('.item').removeClass('active');
+    $listing.addClass('active');
+
+    // Blur out search if its selected
+    this.search.$el.blur();
+  },
+
+  navigate: function(e) {
+    var target = e.currentTarget;
+    var path = target.href.split('#')[1];
+    var match = path.match(/tree\/([^\/]*)\/?(.*)$/);
+
+    if (e && match) {
+      e.preventDefault();
+
+      this.path = match ? match[2] : path;
+      this.render();
+
+      this.router.navigate(path);
+    }
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"../models/file":18,"../models/folder":61,"./li/file":62,"./li/folder":63,"../../dist/templates":14,".././util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],47:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  className: 'modal overlay',
+
+  template: templates.modal,
+
+  events: {
+    'click .got-it': 'confirm'
+  },
+
+  initialize: function() {
+    this.message = this.options.message;
+  },
+
+  render: function() {
+    var modal = {
+      message: this.message
+    };
+    this.$el.empty().append(_.template(templates.modal, modal, {
+      variable: 'modal'
+    }));
+
+    return this;
+  },
+
+  confirm: function() {
+    var view = this;
+    this.$el.fadeOut('fast', function() {
+      view.remove();
+    });
+    return false;
+  }
+});
+
+},{"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],48:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
+var util = require('../util');
+var Backbone = require('backbone');
+var toolbar = require('../toolbar/markdown.js');
+var upload = require('../upload');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.toolbar,
+
+  events: {
+    'click .group a': 'markdownSnippet',
+    'click .publish-flag': 'togglePublishing',
+    'change #upload': 'fileInput',
+    'click .dialog .insert': 'dialogInsert',
+    'click .draft-to-post': 'post'
+  },
+
+  initialize: function(options) {
+    var self = this;
+    this.file = options.file;
+    this.view = options.view;
+    this.collection = options.collection;
+    var config = options.config;
+
+    if (config) {
+      this.hasMedia = (config.media) ? true : false;
+      this.siteUrl = (config.siteUrl) ? true : false;
+
+      if (config.media) {
+        // Fetch the media directory to display its contents
+        this.mediaDirectoryPath = config.media;
+        var match = new RegExp('^' + this.mediaDirectoryPath);
+
+        this.media = this.collection.filter(function(m) {
+          var path = m.get('path');
+
+          return m.get('type') === 'file' && match.test(path) &&
+            (util.isBinary(path) || util.isImage(m.get('extension')));
+        });
+      }
+
+      if (config.relativeLinks) {
+        $.ajax({
+          cache: true,
+          dataType: 'jsonp',
+          jsonp: false,
+          jsonpCallback: config.relativeLinks.split('?callback=')[1] || 'callback',
+          url: config.relativeLinks,
+          success: function(links) {
+            self.relativeLinks = links;
+          }
+        });
+      }
+    }
+  },
+
+  render: function() {
+    var toolbar = {
+      markdown: this.file.get('markdown'),
+      writable: this.file.get('writable'),
+      lang: this.file.get('lang'),
+      draft: this.file.get('draft'),
+      metadata: this.file.get('metadata')
+    };
+
+    this.$el.html(_.template(this.template, toolbar, { variable: 'toolbar' }));
+
+    return this;
+  },
+
+  fileInput: function(e) {
+    var view = this;
+    upload.fileSelect(e, function(e, file, content) {
+      var path = (view.mediaDirectoryPath) ? view.mediaDirectoryPath : util.extractFilename(view.file.attributes.path)[0];
+      var src = path + '/' + encodeURIComponent(file.name);
+
+      view.$el.find('input[name="url"]').val(src);
+      view.$el.find('input[name="alt"]').val('');
+      view.trigger('updateImageInsert', e);
+    });
+
+    return false;
+  },
+
+  highlight: function(type) {
+    this.$el.find('.group a').removeClass('active');
+    if (arguments) this.$el.find('[data-key="' + type + '"]').addClass('active');
+  },
+
+  post: function(e) {
+    if (e) e.preventDefault();
+    this.trigger('post', e);
+  },
+
+  markdownSnippet: function(e) {
+    var self = this;
+    var $target = $(e.target).closest('a');
+    var $dialog = this.$el.find('#dialog');
+    var $snippets = this.$el.find('.group a');
+    var key = $target.data('key');
+    var snippet = $target.data('snippet');
+    var selection = util.trim(this.view.editor.getSelection());
+
+    $dialog.removeClass().empty();
+
+    if (snippet) {
+      $snippets.removeClass('on');
+
+      if (selection) {
+        switch (key) {
+        case 'bold':
+          this.bold(selection);
+          break;
+        case 'italic':
+          this.italic(selection);
+          break;
+        case 'heading':
+          this.heading(selection);
+          break;
+        case 'sub-heading':
+          this.subHeading(selection);
+          break;
+        case 'quote':
+          this.quote(selection);
+          break;
+        default:
+          this.view.editor.replaceSelection(snippet);
+          break;
+        }
+        this.view.editor.focus();
+      } else {
+        this.view.editor.replaceSelection(snippet);
+        this.view.editor.focus();
+      }
+    } else if ($target.data('dialog')) {
+
+      var tmpl, className;
+      if (key === 'media' && !this.mediaDirectoryPath ||
+          key === 'media' && !this.media.length) {
+          className = key + ' no-directory';
+      } else {
+          className = key;
+      }
+
+      // This condition handles the link and media link in the toolbar.
+      if ($target.hasClass('on')) {
+        $target.removeClass('on');
+        $dialog.removeClass().empty();
+      } else {
+        $snippets.removeClass('on');
+        $target.addClass('on');
+        $dialog
+          .removeClass()
+          .addClass('dialog ' + className)
+          .empty();
+
+        switch(key) {
+          case 'link':
+            tmpl = _(templates.dialogs.link).template();
+
+            $dialog.append(tmpl({
+              relativeLinks: self.relativeLinks
+            }));
+
+            if (self.relativeLinks) {
+              $('.chzn-select', $dialog).chosen().change(function() {
+                $('.chzn-single span').text('Insert a local link.');
+
+                var parts = $(this).val().split(',');
+                $('input[name=href]', $dialog).val(parts[0]);
+                $('input[name=text]', $dialog).val(parts[1]);
+              });
+            }
+
+            if (selection) {
+              // test if this is a markdown link: [text](link)
+              var link = /\[([^\]]+)\]\(([^)]+)\)/;
+              var quoted = /".*?"/;
+
+              var text = selection;
+              var href;
+              var title;
+
+              if (link.test(selection)) {
+                var parts = link.exec(selection);
+                text = parts[1];
+                href = parts[2];
+
+                // Search for a title attrbute within the url string
+                if (quoted.test(parts[2])) {
+                  href = parts[2].split(quoted)[0];
+
+                  // TODO: could be improved
+                  title = parts[2].match(quoted)[0].replace(/"/g, '');
+                }
+              }
+
+              $('input[name=text]', $dialog).val(text);
+              if (href) $('input[name=href]', $dialog).val(href);
+              if (title) $('input[name=title]', $dialog).val(title);
+            }
+          break;
+          case 'media':
+            tmpl = _(templates.dialogs.media).template();
+            $dialog.append(tmpl({
+              description: t('dialogs.media.description', {
+                input: '<input id="upload" class="upload" type="file" />'
+              }),
+              assetsDirectory: (self.media && self.media.length) ? true : false,
+              writable: self.file.get('writable')
+            }));
+
+            if (self.media && self.media.length) self.renderMedia(self.media);
+
+            if (selection) {
+              var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
+              var src;
+              var alt;
+
+              if (image.test(selection)) {
+                var imageParts = image.exec(selection);
+                alt = imageParts[1];
+                src = imageParts[2];
+
+                $('input[name=url]', $dialog).val(src);
+                if (alt) $('input[name=alt]', $dialog).val(alt);
+              }
+            }
+          break;
+          case 'help':
+            tmpl = _(templates.dialogs.help).template();
+            $dialog.append(tmpl({
+              help: toolbar.help
+            }));
+
+            // Page through different help sections
+            var $mainMenu = this.$el.find('.main-menu a');
+            var $subMenu = this.$el.find('.sub-menu');
+            var $content = this.$el.find('.help-content');
+
+            $mainMenu.on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $mainMenu.removeClass('active');
+                $content.removeClass('active');
+                $subMenu
+                    .removeClass('active')
+                    .find('a')
+                    .removeClass('active');
+
+                $(this).addClass('active');
+
+                // Add the relavent sub menu
+                var parent = $(this).data('id');
+                $('.' + parent).addClass('active');
+
+                // Add an active class and populate the
+                // content of the first list item.
+                var $firstSubElement = $('.' + parent + ' a:first', this.el);
+                $firstSubElement.addClass('active');
+
+                var subParent = $firstSubElement.data('id');
+                $('.help-' + subParent).addClass('active');
+              }
+              return false;
+            });
+
+            $subMenu.find('a').on('click', function() {
+              if (!$(this).hasClass('active')) {
+
+                $subMenu.find('a').removeClass('active');
+                $content.removeClass('active');
+                $(this).addClass('active');
+
+                // Add the relavent content section
+                var parent = $(this).data('id');
+                $('.help-' + parent).addClass('active');
+              }
+
+              return false;
+            });
+
+          break;
+        }
+      }
+    }
+
+    return false;
+  },
+
+  publishState: function() {
+    if (this.$el.find('publish-state') === 'true') {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  updatePublishState: function() {
+    // Update the publish key wording depening on what was saved
+    var $publishkey = this.$el.find('.publish-flag');
+    var key = $publishKey.attr('data-state');
+
+    if (key === 'true') {
+      $publishKey.html(t('actions.publishing.published') +
+                      '<span class="ico small checkmark"></span>');
+    } else {
+      $publishKey.html(t('actions.publishing.unpublished') +
+                      '<span class="ico small checkmark"></span>');
+    }
+  },
+
+  togglePublishing: function(e) {
+    var $target = $(e.currentTarget);
+    var metadata = this.file.get('metadata');
+    var published = metadata.published;
+
+    // TODO: remove HTML from view
+    // Toggling publish state when the current file is published live
+    if (published) {
+      if ($target.hasClass('published')) {
+        $target
+          .empty()
+          .append(t('actions.publishing.unpublish') +
+                '<span class="ico small checkmark"></span>' +
+                '<span class="popup round arrow-top">' +
+                t('actions.publishing.unpublishInfo') +
+                '</span>')
+          .removeClass('published')
+          .attr('data-state', false);
+      } else {
+        $target
+          .empty()
+          .append(t('actions.publishing.published') +
+                '<span class="ico small checkmark"></span>')
+          .addClass('published')
+          .attr('data-state', true);
+      }
+    } else {
+      if ($target.hasClass('published')) {
+        $target
+          .empty()
+          .append(t('actions.publishing.unpublished') +
+                '<span class="ico small checkmark"></span>')
+          .removeClass('published')
+          .attr('data-state', false);
+      } else {
+        $target
+          .empty()
+          .append(t('actions.publishing.publish') +
+                '<span class="ico small checkmark"></span>' +
+                '<span class="popup round arrow-top">' +
+                t('actions.publishing.publishInfo') +
+                '</span>')
+          .addClass('published')
+          .attr('data-state', true);
+      }
+    }
+
+    this.file.set('metadata', _.extend(metadata, {
+      published: !published
+    }));
+
+    this.view.makeDirty();
+    return false;
+  },
+
+  dialogInsert: function(e) {
+    var $dialog = $('#dialog', this.el);
+    var $target = $(e.target, this.el);
+    var type = $target.data('type');
+
+    if (type === 'link') {
+      var href = $('input[name="href"]').val();
+      var text = $('input[name="text"]').val();
+      var title = $('input[name="title"]').val();
+
+      if (!text) text = href;
+
+      if (title) {
+        this.view.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
+      } else {
+        this.view.editor.replaceSelection('[' + text + '](' + href + ')');
+      }
+
+      this.view.editor.focus();
+    }
+
+    if (type === 'media') {
+      if (this.queue) {
+        var userDefinedPath = $('input[name="url"]').val();
+        this.view.upload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
+
+        // Finally, clear the queue object
+        this.queue = undefined;
+      } else {
+        var src = $('input[name="url"]').val();
+        var alt = $('input[name="alt"]').val();
+        this.view.editor.replaceSelection('![' + alt + '](/' + src + ')');
+        this.view.editor.focus();
+      }
+    }
+
+    return false;
+  },
+
+  heading: function(s) {
+    if (s.charAt(0) === '#' && s.charAt(2) !== '#') {
+      this.view.editor.replaceSelection(util.lTrim(s.replace(/#/g, '')));
+    } else {
+      this.view.editor.replaceSelection('## ' + s.replace(/#/g, ''));
+    }
+  },
+
+  subHeading: function(s) {
+    if (s.charAt(0) === '#' && s.charAt(3) !== '#') {
+      this.view.editor.replaceSelection(util.lTrim(s.replace(/#/g, '')));
+    } else {
+      this.view.editor.replaceSelection('### ' + s.replace(/#/g, ''));
+    }
+  },
+
+  italic: function(s) {
+    if (s.charAt(0) === '_' && s.charAt(s.length - 1 === '_')) {
+      this.view.editor.replaceSelection(s.replace(/_/g, ''));
+    } else {
+      this.view.editor.replaceSelection('_' + s.replace(/_/g, '') + '_');
+    }
+  },
+
+  bold: function(s) {
+    if (s.charAt(0) === '*' && s.charAt(s.length - 1 === '*')) {
+      this.view.editor.replaceSelection(s.replace(/\*/g, ''));
+    } else {
+      this.view.editor.replaceSelection('**' + s.replace(/\*/g, '') + '**');
+    }
+  },
+
+  quote: function(s) {
+    if (s.charAt(0) === '>') {
+      this.view.editor.replaceSelection(util.lTrim(s.replace(/\>/g, '')));
+    } else {
+      this.view.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
+    }
+  },
+
+  renderMedia: function(data, back) {
+    var self = this;
+    var $media = this.$el.find('#media');
+    var tmpl = _(templates.dialogs.mediadirectory).template();
+
+    // Reset some stuff
+    $media.empty();
+
+    if (back && (back.join() !== this.assetsDirectory)) {
+      var link = back.slice(0, back.length - 1).join('/');
+      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
+    }
+
+    data.each(function(d) {
+      var parts = d.get('path').split('/');
+      var path = parts.slice(0, parts.length - 1).join('/');
+
+      $media.append(tmpl({
+        name: d.get('name'),
+        type: d.get('type'),
+        path: path + '/' + encodeURIComponent(d.get('name')),
+        isMedia: util.isMedia(d.get('name').split('.').pop())
+      }));
+    });
+
+    $('.asset a', $media).on('click', function(e) {
+      var href = $(this).attr('href');
+      var alt = util.trim($(this).text());
+
+      if (util.isImage(href.split('.').pop())) {
+        self.$el.find('input[name="url"]').val(href);
+        self.$el.find('input[name="alt"]').val(alt);
+      } else {
+        self.view.editor.replaceSelection(href);
+        self.view.editor.focus();
+      }
+      return false;
+    });
+  }
+});
+
+},{"../toolbar/markdown.js":33,"../util":28,"../upload":30,"../../dist/templates":14,"jquery-browserify":10,"chosen-jquery-browserify":64,"underscore":11,"backbone":12}],49:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var chosen = require('chosen-jquery-browserify');
+var _ = require('underscore');
+_.merge = require('deepmerge');
+var jsyaml = require('js-yaml');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+var util = require('.././util');
+
+module.exports = Backbone.View.extend({
+  template: templates.metadata,
+
+  events: {
+    'change .metafield': 'updateModel',
+    'click .create-select': 'createSelect',
+    'click .finish': 'exit'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.model = options.model;
+    this.titleAsHeading = options.titleAsHeading;
+    this.view = options.view;
+  },
+
+  render: function() {
+    this.$el.empty().append(_.template(this.template));
+
+    var form = this.$el.find('.form');
+
+    var metadata = this.model.get('metadata');
+    var lang = metadata && metadata.lang ? metadata.lang : 'en';
+
+    // This renders any fields defined in the metadata entry
+    // of a given prose configuration file.
+    _.each(this.model.get('defaults'), (function(data, key) {
+      var metadata = this.model.get('metadata') || {};
+      var renderTitle = true;
+
+      if (data && data.name === 'title' && this.titleAsHeading) {
+        renderTitle = false;
+      }
+
+      if (renderTitle) {
+        if (data && data.field) {
+          switch (data.field.element) {
+            case 'button':
+              var button = {
+                name: data.name,
+                label: data.field.label,
+                help: data.field.help,
+                on: data.field.on,
+                off: data.field.off
+              };
+
+              form.append(_.template(templates.meta.button, button, {
+                variable: 'meta'
+              }));
+              break;
+            case 'checkbox':
+              var checkbox = {
+                name: data.name,
+                label: data.field.label,
+                help: data.field.help,
+                value: data.name,
+                checked: data.field.value
+              };
+
+              form.append(_.template(templates.meta.checkbox, checkbox, {
+                variable: 'meta'
+              }));
+              break;
+            case 'text':
+              var text = {
+                name: data.name,
+                label: data.field.label,
+                help: data.field.help,
+                value: data.field.value,
+                placeholder: data.field.placeholder,
+                type: 'text'
+              };
+
+              form.append(_.template(templates.meta.text, text, {
+                variable: 'meta'
+              }));
+              break;
+            case 'textarea':
+              var id = util.stringToUrl(data.name);
+              var textarea = {
+                name: data.name,
+                id: id,
+                value: data.field.value,
+                label: data.field.label,
+                help: data.field.help,
+                placeholder: data.field.placeholder,
+                type: 'textarea'
+              };
+
+              form.append(_.template(templates.meta.textarea, textarea, {
+                variable: 'meta'
+              }));
+
+              var textElement = document.getElementById(id);
+
+              this[id] = CodeMirror(function(el) {
+                textElement.parentNode.replaceChild(el, textElement);
+                el.id = id;
+                el.className += ' inner ';
+                el.setAttribute('data-name', data.name);
+              }, {
+                mode: id,
+                value: textElement.value,
+                lineWrapping: true,
+                theme: 'prose-bright'
+              });
+
+              break;
+            case 'number':
+              var number = {
+                name: data.name,
+                label: data.field.label,
+                help: data.field.help,
+                value: data.field.value,
+                type: 'number'
+              };
+
+              form.append(_.template(templates.meta.text, number, {
+                variable: 'meta'
+              }));
+              break;
+            case 'select':
+              var select = {
+                name: data.name,
+                label: data.field.label,
+                help: data.field.help,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: lang
+              };
+
+              form.append(_.template(templates.meta.select, select, {
+                variable: 'meta'
+              }));
+              break;
+            case 'multiselect':
+              var multiselect = {
+                name: data.name,
+                label: data.field.label,
+                help: data.field.help,
+                alterable: data.field.alterable,
+                placeholder: data.field.placeholder,
+                options: data.field.options,
+                lang: lang
+              };
+
+              form.append(_.template(templates.meta.multiselect, multiselect, {
+                variable: 'meta'
+              }));
+
+              break;
+            case 'hidden':
+              var tmpl = {};
+              var value = metadata[data.name];
+
+              if (_.isArray(value)) {
+                // Any defaults not currently in metadata?
+                var diff = _.difference(data.field.value, value);
+                tmpl[data.name] = diff.length ?
+                  _.union(data.field.value, value) : value;
+              } else {
+                tmpl[data.name] = data.field.value;
+              }
+
+              this.model.set('metadata', _.extend(tmpl, this.model.get('metadata') || {}));
+              break;
+          }
+        } else {
+          var txt = {
+            name: key,
+            label: key,
+            value: data,
+            type: 'text'
+          };
+
+          form.append(_.template(templates.meta.text, txt, {
+            variable: 'meta'
+          }));
+        }
+      }
+    }).bind(this));
+
+    this.$el.find('.chzn-select').chosen().change(this.updateModel);
+    this.renderRaw();
+
+    return this;
+  },
+
+  updateModel: function(e) {
+    var target = e.currentTarget;
+    var key = target.name;
+    var value = target.value;
+    var delta = {};
+    delta[key] = value;
+
+    var metadata = this.model.get('metadata');
+    this.model.set('metadata', _.extend(metadata, delta));
+    this.view.makeDirty();
+  },
+
+  rawKeyMap: function() {
+    return {
+      'Ctrl-S': this.view.updateFile
+    };
+  },
+
+  renderRaw: function() {
+    var yaml = this.model.get('lang') === 'yaml';
+    var $el;
+
+    if (yaml) {
+      $el = this.view.$el.find('#code');
+      $el.empty();
+    } else {
+      this.$el.find('.form').append(_.template(templates.meta.raw));
+    }
+
+    var el = (yaml ? $el : this.$el.find('#raw'))[0];
+
+    this.raw = CodeMirror(el, {
+      mode: 'yaml',
+      value: '',
+      lineWrapping: true,
+      lineNumbers: yaml,
+      extraKeys: this.rawKeyMap(),
+      theme: 'prose-bright'
+    });
+
+    this.listenTo(this.raw, 'blur', (function(cm) {
+      var value = cm.getValue();
+      var raw;
+
+      try {
+        raw = jsyaml.safeLoad(value);
+      } catch(err) {
+        console.log("Error parsing CodeMirror editor text");
+        console.log(err);
+      }
+
+      if (raw) {
+        var metadata = this.model.get('metadata');
+        this.model.set('metadata', _.extend(metadata, raw));
+
+        this.view.makeDirty();
+      }
+    }).bind(this));
+
+    this.setValue(this.model.get('metadata'));
+  },
+
+  getValue: function() {
+    var view = this;
+    var metadata = this.model.get('metadata') || {};
+
+    if (this.view.toolbar &&
+       this.view.toolbar.publishState() ||
+       (metadata && metadata.published)) {
+      metadata.published = true;
+    } else {
+      metadata.published = false;
+    }
+
+    // Get the title value from heading if we need to.
+    if (this.titleAsHeading) {
+      metadata.title = (this.view.header) ?
+        this.view.header.inputGet() :
+        this.model.get('metadata').title[0];
+    }
+
+    _.each(this.$el.find('[name]'), function(item) {
+      var $item = $(item);
+      var value = $item.val();
+
+      switch (item.type) {
+        case 'select-multiple':
+        case 'select-one':
+        case 'textarea':
+        case 'text':
+          if (value) {
+            value = $item.data('type') === 'number' ? Number(value) : value;
+            if (_.has(metadata, item.name) && metadata[item.name] !== value) {
+              metadata[item.name] = _.union(metadata[item.name], value);
+            } else {
+              metadata[item.name] = value;
+            }
+          }
+          break;
+        case 'checkbox':
+          if (item.checked) {
+
+            if (_.has(metadata, item.name) && item.name !== item.value) {
+              metadata[item.name] = _.union(metadata[item.name], item.value);
+            } else if (item.value === item.name) {
+              metadata[item.name] = item.checked;
+            } else {
+              metadata[item.name] = item.value;
+            }
+
+          } else if (!_.has(metadata, item.name) && item.name === item.value) {
+            metadata[item.name] = item.checked;
+          } else {
+            metadata[item.name] = item.checked;
+          }
+          break;
+        case 'button':
+          if (value === 'true') {
+            metadata[item.name] = true;
+          } else if (value === 'false') {
+            metadata[item.name] = false;
+          }
+          break;
+      }
+    });
+
+    // Load any data coming from a yaml-block of content.
+    this.$el.find('.yaml-block').each(function() {
+      var editor = $(this).find('.CodeMirror').attr('id');
+      var name = $('#' + editor).data('name');
+
+      if (view[editor]) {
+        try {
+          metadata[name] = jsyaml.safeLoad(view[editor].getValue());
+        } catch(err) {
+          console.log("Error parsing yaml front matter");
+          console.log(err);
+        }
+      }
+    });
+
+    // Load any data coming from not defined raw yaml front matter.
+    if (this.raw) {
+      try {
+        metadata = _.merge(metadata, jsyaml.safeLoad(this.raw.getValue()) || {});
+      } catch (err) {
+        console.log("Error parsing not defined raw yaml front matter");
+        console.log(err);
+      }
+    }
+
+    return metadata;
+  },
+
+  setValue: function(data) {
+    var form = this.$el.find('.form');
+    var missing = {};
+    var raw;
+
+    _.each(data, (function(value, key) {
+      var matched = false;
+      var input = this.$el.find('[name="' + key + '"]');
+      var length = input.length;
+      var options;
+
+      if (length) {
+
+        // iterate over matching fields
+        for (var i = 0; i < length; i++) {
+
+          // if value is an array
+          if (_.isArray(value)) {
+
+            // iterate over values in array
+            for (var j = 0; j < value.length; j++) {
+              switch (input[i].type) {
+                case 'select-multiple':
+                case 'select-one':
+                  options = $(input[i]).find('option[value="' + value[j] + '"]');
+                  if (options.length) {
+                    for (var k = 0; k < options.length; k++) {
+                      options[k].selected = 'selected';
+                    }
+
+                    matched = true;
+                  }
+                  break;
+                case 'text':
+                case 'textarea':
+                  input[i].value = value;
+                  matched = true;
+                  break;
+                case 'checkbox':
+                  if (input[i].value === value) {
+                    input[i].checked = 'checked';
+                    matched = true;
+                  }
+                  break;
+              }
+            }
+
+          } else {
+
+            switch (input[i].type) {
+              case 'select-multiple':
+              case 'select-one':
+                options = $(input[i]).find('option[value="' + value + '"]');
+                if (options.length) {
+                  for (var m = 0; m < options.length; m++) {
+                    options[m].selected = 'selected';
+                  }
+
+                  matched = true;
+                }
+                break;
+              case 'text':
+              case 'textarea':
+                input[i].value = value;
+                matched = true;
+                break;
+              case 'checkbox':
+                input[i].checked = value ? 'checked' : false;
+                matched = true;
+                break;
+              case 'button':
+                input[i].value = value ? true : false;
+                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
+                matched = true;
+                break;
+            }
+
+          }
+        }
+
+        if (!matched && value !== null) {
+          if (missing.hasOwnProperty(key) && missing[key] !== value) {
+            missing[key] = _.union(missing[key], value);
+          } else {
+            missing[key] = value;
+          }
+        }
+
+      } else {
+        // Don't render the 'published' field or hidden metadata
+        // TODO: render metadata values that share a key with a hidden value
+        var defaults = _.find(this.model.get('defaults'), function(data) { return data && (data.name === key); });
+        var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
+
+        if (key !== 'published' && key !== 'title' && !defaults) {
+          raw = {};
+          raw[key] = value;
+
+          if (this.raw) {
+            this.raw.setValue(this.raw.getValue() + jsyaml.safeDump(raw));
+          }
+        }
+      }
+    }).bind(this));
+
+    _.each(missing, (function(value, key) {
+      if (value === null) return;
+
+      switch (typeof value) {
+        case 'boolean':
+          var bool = {
+            name: key,
+            label: value,
+            value: value,
+            checked: value ? 'checked' : false
+          };
+
+          form.append(_.template(templates.meta.checkbox, bool, {
+            variable: 'meta'
+          }));
+          break;
+        case 'string':
+          var string = {
+            name: key,
+            label: value,
+            value: value,
+            type: 'text'
+          };
+
+          form.append(_.template(templates.meta.text, string, {
+            variable: 'meta'
+          }));
+          break;
+        case 'object':
+          var obj = {
+            name: key,
+            label: key,
+            placeholder: key,
+            options: value,
+            lang: data.lang || 'en'
+          };
+
+          form.append(_.template(templates.meta.multiselect, obj, {
+            variable: 'meta'
+          }));
+          break;
+        default:
+          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
+          break;
+      }
+
+      this.$el.find('.chzn-select').chosen().change(this.updateModel);
+    }).bind(this));
+
+    this.$el.find('.chzn-select').trigger('liszt:updated');
+
+    // Update model with defaults
+    // TODO: should this makeDirty if any differences?
+    this.model.set('metadata', this.getValue());
+  },
+
+  getRaw: function() {
+    return jsyaml.safeDump(this.getValue()).trim();
+  },
+
+  setRaw: function(data) {
+    try {
+      this.raw.setValue(jsyaml.safeDump(data));
+      this.refresh;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  refresh: function() {
+    var view = this;
+    this.$el.find('.yaml-block').each(function() {
+      var editor = $(this).find('.CodeMirror').attr('id');
+      if (view[editor]) view[editor].refresh();
+    });
+
+    // Refresh CodeMirror
+    if (this.raw) this.raw.refresh();
+  },
+
+  createSelect: function(e) {
+    var $parent = $(e.target).parent();
+    var $input = $parent.find('input');
+    var selectTarget = $(e.target).data('select');
+    var $select = this.$el.find('#' + selectTarget);
+    var value = _($input.val()).escape();
+
+    if (value.length > 0) {
+      var option = '<option value="' + value + '" selected="selected">' + value + '</option>';
+
+      // Append this new option to the select list.
+      $select.append(option);
+
+      // Clear the now added value.
+      $input.attr('value', '');
+
+      // Update the list
+      $select.trigger('liszt:updated');
+      $select.trigger('change');
+    }
+
+    return false;
+  },
+
+  exit: function() {
+    this.view.nav.active(this.view.mode);
+
+    if (this.view.mode === 'blob') {
+      this.view.blob();
+    } else {
+      this.view.edit();
+    }
+
+    return false;
+  }
+});
+
+},{"../../dist/templates":14,".././util":28,"jquery-browserify":10,"chosen-jquery-browserify":64,"underscore":11,"js-yaml":38,"backbone":12,"deepmerge":65}],65:[function(require,module,exports){
 module.exports = function merge (target, src) {
     var array = Array.isArray(src)
     var dst = array && [] || {}
@@ -30015,7 +30015,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":14,"../../cookie":3,"jquery-browserify":11,"underscore":10,"backbone":12}],44:[function(require,module,exports){
+},{"../../../dist/templates":14,"../../cookie":3,"jquery-browserify":10,"underscore":11,"backbone":12}],44:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30049,7 +30049,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../cookie":3,"../../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],53:[function(require,module,exports){
+},{"../../cookie":3,"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],53:[function(require,module,exports){
 'use strict';
 
 
@@ -30094,7 +30094,7 @@ module.exports.addConstructor = deprecated('addConstructor');
 
 require('./js-yaml/require');
 
-},{"./js-yaml/loader":66,"./js-yaml/dumper":67,"./js-yaml/common":68,"./js-yaml/type":69,"./js-yaml/schema":70,"./js-yaml/schema/failsafe":71,"./js-yaml/schema/json":72,"./js-yaml/schema/core":73,"./js-yaml/schema/default_safe":74,"./js-yaml/exception":75,"./js-yaml/schema/default_full":76,"./js-yaml/require":77}],54:[function(require,module,exports){
+},{"./js-yaml/loader":66,"./js-yaml/dumper":67,"./js-yaml/common":68,"./js-yaml/type":69,"./js-yaml/schema":70,"./js-yaml/schema/failsafe":71,"./js-yaml/schema/json":72,"./js-yaml/schema/core":73,"./js-yaml/schema/default_safe":74,"./js-yaml/schema/default_full":75,"./js-yaml/exception":76,"./js-yaml/require":77}],54:[function(require,module,exports){
 var Backbone = require('backbone');
 var Files = require('../collections/files');
 var config = require('../config');
@@ -30136,7 +30136,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"underscore":10,"backbone":12}],68:[function(require,module,exports){
+},{"underscore":11,"backbone":12}],68:[function(require,module,exports){
 'use strict';
 
 
@@ -30198,7 +30198,7 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 
 
@@ -30252,7 +30252,10 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{".././util":28,"underscore":10,"backbone":12}],56:[function(require,module,exports){
+},{".././util":28,"underscore":11,"backbone":12}],79:[function(require,module,exports){
+// nothing to see here... no file methods for the browser
+
+},{}],56:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -30274,7 +30277,7 @@ module.exports = Backbone.View.extend({
     this.app = app;
     this.model = options.model;
     this.repo = options.repo;
-    this.branch = options.branch || this.repo.get('master_branch');
+    this.branch = options.branch || this.repo.get('default_branch');
     this.router = options.router;
     this.sidebar = options.sidebar;
 
@@ -30329,7 +30332,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./branch":79,"../../../dist/templates":14,"jquery-browserify":11,"chosen-jquery-browserify":64,"underscore":10,"backbone":12}],57:[function(require,module,exports){
+},{"./branch":80,"../../../dist/templates":14,"chosen-jquery-browserify":64,"jquery-browserify":10,"underscore":11,"backbone":12}],57:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30489,7 +30492,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./li/commit":80,"../../cookie":3,"../../../dist/templates":14,"../../util":28,"jquery-browserify":11,"underscore":10,"backbone":12,"queue-async":46}],58:[function(require,module,exports){
+},{"./li/commit":81,"../../cookie":3,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12,"queue-async":46}],58:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30518,7 +30521,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],59:[function(require,module,exports){
+},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],59:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30582,7 +30585,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../nav":41,"../../../dist/templates":14,"../../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],60:[function(require,module,exports){
+},{"../nav":41,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],60:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30650,7 +30653,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../nav":41,"../../util":28,"../../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],62:[function(require,module,exports){
+},{"../nav":41,"../../util":28,"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],62:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30737,7 +30740,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../sidebar/li/commit":80,"../../../dist/templates":14,"../../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],63:[function(require,module,exports){
+},{"../sidebar/li/commit":81,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],63:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30782,7 +30785,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":14,"jquery-browserify":11,"underscore":10,"backbone":12}],66:[function(require,module,exports){
+},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],66:[function(require,module,exports){
 'use strict';
 
 
@@ -32333,7 +32336,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":68,"./exception":75,"./mark":81,"./schema/default_safe":74,"./schema/default_full":76}],67:[function(require,module,exports){
+},{"./common":68,"./exception":76,"./mark":82,"./schema/default_safe":74,"./schema/default_full":75}],67:[function(require,module,exports){
 (function(){'use strict';
 
 
@@ -32814,7 +32817,7 @@ module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
 })()
-},{"./common":68,"./exception":75,"./schema/default_full":76,"./schema/default_safe":74}],69:[function(require,module,exports){
+},{"./common":68,"./exception":76,"./schema/default_full":75,"./schema/default_safe":74}],69:[function(require,module,exports){
 'use strict';
 
 
@@ -32898,7 +32901,7 @@ Type.Dumper = function TypeDumper(options) {
 
 module.exports = Type;
 
-},{"./exception":75}],70:[function(require,module,exports){
+},{"./exception":76}],70:[function(require,module,exports){
 'use strict';
 
 
@@ -33003,7 +33006,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":68,"./exception":75,"./type":69}],77:[function(require,module,exports){
+},{"./common":68,"./exception":76,"./type":69}],77:[function(require,module,exports){
 'use strict';
 
 
@@ -33028,7 +33031,7 @@ if (undefined !== require.extensions) {
 
 module.exports = require;
 
-},{"fs":82,"./loader":66}],71:[function(require,module,exports){
+},{"fs":79,"./loader":66}],71:[function(require,module,exports){
 // Standard YAML's Failsafe schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2802346
 
@@ -33124,7 +33127,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":70,"./core":73,"../type/timestamp":90,"../type/merge":91,"../type/binary":92,"../type/omap":93,"../type/pairs":94,"../type/set":95}],76:[function(require,module,exports){
+},{"../schema":70,"./core":73,"../type/timestamp":90,"../type/merge":91,"../type/binary":92,"../type/omap":93,"../type/pairs":94,"../type/set":95}],75:[function(require,module,exports){
 // JS-YAML's default schema for `load` function.
 // It is not described in the YAML specification.
 //
@@ -33151,10 +33154,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":70,"./default_safe":74,"../type/js/undefined":96,"../type/js/regexp":97,"../type/js/function":98}],82:[function(require,module,exports){
-// nothing to see here... no file methods for the browser
-
-},{}],64:[function(require,module,exports){
+},{"../schema":70,"./default_safe":74,"../type/js/undefined":96,"../type/js/regexp":97,"../type/js/function":98}],64:[function(require,module,exports){
 (function(global){(function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -34235,7 +34235,7 @@ module.exports = Schema.DEFAULT = new Schema({
 }).call(this);
 
 })(window)
-},{"jquery-browserify":11}],78:[function(require,module,exports){
+},{"jquery-browserify":10}],78:[function(require,module,exports){
 (function(){var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var queue = require('queue-async');
@@ -34540,7 +34540,7 @@ module.exports = Backbone.Collection.extend({
 });
 
 })()
-},{"../models/file":18,"../models/folder":61,"../cookie":3,"../util":28,"underscore":10,"js-yaml":38,"queue-async":46,"backbone":12,"ignore":99}],99:[function(require,module,exports){
+},{"../models/file":18,"../models/folder":61,"../cookie":3,"../util":28,"js-yaml":38,"underscore":11,"queue-async":46,"backbone":12,"ignore":99}],99:[function(require,module,exports){
 'use strict';
 
 module.exports = ignore;
@@ -34902,7 +34902,7 @@ Ignore.prototype._checkRuleFile = function(file) {
 
 
 
-},{"events":100,"util":101,"fs":82}],79:[function(require,module,exports){
+},{"events":100,"util":101,"fs":79}],80:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -34926,7 +34926,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":11,"underscore":10,"backbone":12}],102:[function(require,module,exports){
+},{"underscore":11,"jquery-browserify":10,"backbone":12}],102:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -35520,7 +35520,7 @@ exports.format = function(f) {
   return str;
 };
 
-},{"events":100}],81:[function(require,module,exports){
+},{"events":100}],82:[function(require,module,exports){
 'use strict';
 
 
@@ -35600,7 +35600,324 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":68}],83:[function(require,module,exports){
+},{"./common":68}],103:[function(require,module,exports){
+(function(){// UTILITY
+var util = require('util');
+var Buffer = require("buffer").Buffer;
+var pSlice = Array.prototype.slice;
+
+function objectKeys(object) {
+  if (Object.keys) return Object.keys(object);
+  var result = [];
+  for (var name in object) {
+    if (Object.prototype.hasOwnProperty.call(object, name)) {
+      result.push(name);
+    }
+  }
+  return result;
+}
+
+// 1. The assert module provides functions that throw
+// AssertionError's when particular conditions are not met. The
+// assert module must conform to the following interface.
+
+var assert = module.exports = ok;
+
+// 2. The AssertionError is defined in assert.
+// new assert.AssertionError({ message: message,
+//                             actual: actual,
+//                             expected: expected })
+
+assert.AssertionError = function AssertionError(options) {
+  this.name = 'AssertionError';
+  this.message = options.message;
+  this.actual = options.actual;
+  this.expected = options.expected;
+  this.operator = options.operator;
+  var stackStartFunction = options.stackStartFunction || fail;
+
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, stackStartFunction);
+  }
+};
+util.inherits(assert.AssertionError, Error);
+
+function replacer(key, value) {
+  if (value === undefined) {
+    return '' + value;
+  }
+  if (typeof value === 'number' && (isNaN(value) || !isFinite(value))) {
+    return value.toString();
+  }
+  if (typeof value === 'function' || value instanceof RegExp) {
+    return value.toString();
+  }
+  return value;
+}
+
+function truncate(s, n) {
+  if (typeof s == 'string') {
+    return s.length < n ? s : s.slice(0, n);
+  } else {
+    return s;
+  }
+}
+
+assert.AssertionError.prototype.toString = function() {
+  if (this.message) {
+    return [this.name + ':', this.message].join(' ');
+  } else {
+    return [
+      this.name + ':',
+      truncate(JSON.stringify(this.actual, replacer), 128),
+      this.operator,
+      truncate(JSON.stringify(this.expected, replacer), 128)
+    ].join(' ');
+  }
+};
+
+// assert.AssertionError instanceof Error
+
+assert.AssertionError.__proto__ = Error.prototype;
+
+// At present only the three keys mentioned above are used and
+// understood by the spec. Implementations or sub modules can pass
+// other keys to the AssertionError's constructor - they will be
+// ignored.
+
+// 3. All of the following functions must throw an AssertionError
+// when a corresponding condition is not met, with a message that
+// may be undefined if not provided.  All assertion methods provide
+// both the actual and expected values to the assertion error for
+// display purposes.
+
+function fail(actual, expected, message, operator, stackStartFunction) {
+  throw new assert.AssertionError({
+    message: message,
+    actual: actual,
+    expected: expected,
+    operator: operator,
+    stackStartFunction: stackStartFunction
+  });
+}
+
+// EXTENSION! allows for well behaved errors defined elsewhere.
+assert.fail = fail;
+
+// 4. Pure assertion tests whether a value is truthy, as determined
+// by !!guard.
+// assert.ok(guard, message_opt);
+// This statement is equivalent to assert.equal(true, guard,
+// message_opt);. To test strictly for the value true, use
+// assert.strictEqual(true, guard, message_opt);.
+
+function ok(value, message) {
+  if (!!!value) fail(value, true, message, '==', assert.ok);
+}
+assert.ok = ok;
+
+// 5. The equality assertion tests shallow, coercive equality with
+// ==.
+// assert.equal(actual, expected, message_opt);
+
+assert.equal = function equal(actual, expected, message) {
+  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
+};
+
+// 6. The non-equality assertion tests for whether two objects are not equal
+// with != assert.notEqual(actual, expected, message_opt);
+
+assert.notEqual = function notEqual(actual, expected, message) {
+  if (actual == expected) {
+    fail(actual, expected, message, '!=', assert.notEqual);
+  }
+};
+
+// 7. The equivalence assertion tests a deep equality relation.
+// assert.deepEqual(actual, expected, message_opt);
+
+assert.deepEqual = function deepEqual(actual, expected, message) {
+  if (!_deepEqual(actual, expected)) {
+    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
+  }
+};
+
+function _deepEqual(actual, expected) {
+  // 7.1. All identical values are equivalent, as determined by ===.
+  if (actual === expected) {
+    return true;
+
+  } else if (Buffer.isBuffer(actual) && Buffer.isBuffer(expected)) {
+    if (actual.length != expected.length) return false;
+
+    for (var i = 0; i < actual.length; i++) {
+      if (actual[i] !== expected[i]) return false;
+    }
+
+    return true;
+
+  // 7.2. If the expected value is a Date object, the actual value is
+  // equivalent if it is also a Date object that refers to the same time.
+  } else if (actual instanceof Date && expected instanceof Date) {
+    return actual.getTime() === expected.getTime();
+
+  // 7.3. Other pairs that do not both pass typeof value == 'object',
+  // equivalence is determined by ==.
+  } else if (typeof actual != 'object' && typeof expected != 'object') {
+    return actual == expected;
+
+  // 7.4. For all other Object pairs, including Array objects, equivalence is
+  // determined by having the same number of owned properties (as verified
+  // with Object.prototype.hasOwnProperty.call), the same set of keys
+  // (although not necessarily the same order), equivalent values for every
+  // corresponding key, and an identical 'prototype' property. Note: this
+  // accounts for both named and indexed properties on Arrays.
+  } else {
+    return objEquiv(actual, expected);
+  }
+}
+
+function isUndefinedOrNull(value) {
+  return value === null || value === undefined;
+}
+
+function isArguments(object) {
+  return Object.prototype.toString.call(object) == '[object Arguments]';
+}
+
+function objEquiv(a, b) {
+  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
+    return false;
+  // an identical 'prototype' property.
+  if (a.prototype !== b.prototype) return false;
+  //~~~I've managed to break Object.keys through screwy arguments passing.
+  //   Converting to array solves the problem.
+  if (isArguments(a)) {
+    if (!isArguments(b)) {
+      return false;
+    }
+    a = pSlice.call(a);
+    b = pSlice.call(b);
+    return _deepEqual(a, b);
+  }
+  try {
+    var ka = objectKeys(a),
+        kb = objectKeys(b),
+        key, i;
+  } catch (e) {//happens when one is a string literal and the other isn't
+    return false;
+  }
+  // having the same number of owned properties (keys incorporates
+  // hasOwnProperty)
+  if (ka.length != kb.length)
+    return false;
+  //the same set of keys (although not necessarily the same order),
+  ka.sort();
+  kb.sort();
+  //~~~cheap key test
+  for (i = ka.length - 1; i >= 0; i--) {
+    if (ka[i] != kb[i])
+      return false;
+  }
+  //equivalent values for every corresponding key, and
+  //~~~possibly expensive deep test
+  for (i = ka.length - 1; i >= 0; i--) {
+    key = ka[i];
+    if (!_deepEqual(a[key], b[key])) return false;
+  }
+  return true;
+}
+
+// 8. The non-equivalence assertion tests for any deep inequality.
+// assert.notDeepEqual(actual, expected, message_opt);
+
+assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
+  if (_deepEqual(actual, expected)) {
+    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
+  }
+};
+
+// 9. The strict equality assertion tests strict equality, as determined by ===.
+// assert.strictEqual(actual, expected, message_opt);
+
+assert.strictEqual = function strictEqual(actual, expected, message) {
+  if (actual !== expected) {
+    fail(actual, expected, message, '===', assert.strictEqual);
+  }
+};
+
+// 10. The strict non-equality assertion tests for strict inequality, as
+// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
+
+assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
+  if (actual === expected) {
+    fail(actual, expected, message, '!==', assert.notStrictEqual);
+  }
+};
+
+function expectedException(actual, expected) {
+  if (!actual || !expected) {
+    return false;
+  }
+
+  if (expected instanceof RegExp) {
+    return expected.test(actual);
+  } else if (actual instanceof expected) {
+    return true;
+  } else if (expected.call({}, actual) === true) {
+    return true;
+  }
+
+  return false;
+}
+
+function _throws(shouldThrow, block, expected, message) {
+  var actual;
+
+  if (typeof expected === 'string') {
+    message = expected;
+    expected = null;
+  }
+
+  try {
+    block();
+  } catch (e) {
+    actual = e;
+  }
+
+  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
+            (message ? ' ' + message : '.');
+
+  if (shouldThrow && !actual) {
+    fail('Missing expected exception' + message);
+  }
+
+  if (!shouldThrow && expectedException(actual, expected)) {
+    fail('Got unwanted exception' + message);
+  }
+
+  if ((shouldThrow && actual && expected &&
+      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
+    throw actual;
+  }
+}
+
+// 11. Expected to throw an error:
+// assert.throws(block, Error_opt, message_opt);
+
+assert.throws = function(block, /*optional*/error, /*optional*/message) {
+  _throws.apply(this, [true].concat(pSlice.call(arguments)));
+};
+
+// EXTENSION! This is annoying to write outside this module.
+assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
+  _throws.apply(this, [false].concat(pSlice.call(arguments)));
+};
+
+assert.ifError = function(err) { if (err) {throw err;}};
+
+})()
+},{"util":101,"buffer":104}],83:[function(require,module,exports){
 'use strict';
 
 
@@ -36178,324 +36495,7 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
 });
 
 })()
-},{"buffer":103,"../common":68,"../type":69}],104:[function(require,module,exports){
-(function(){// UTILITY
-var util = require('util');
-var Buffer = require("buffer").Buffer;
-var pSlice = Array.prototype.slice;
-
-function objectKeys(object) {
-  if (Object.keys) return Object.keys(object);
-  var result = [];
-  for (var name in object) {
-    if (Object.prototype.hasOwnProperty.call(object, name)) {
-      result.push(name);
-    }
-  }
-  return result;
-}
-
-// 1. The assert module provides functions that throw
-// AssertionError's when particular conditions are not met. The
-// assert module must conform to the following interface.
-
-var assert = module.exports = ok;
-
-// 2. The AssertionError is defined in assert.
-// new assert.AssertionError({ message: message,
-//                             actual: actual,
-//                             expected: expected })
-
-assert.AssertionError = function AssertionError(options) {
-  this.name = 'AssertionError';
-  this.message = options.message;
-  this.actual = options.actual;
-  this.expected = options.expected;
-  this.operator = options.operator;
-  var stackStartFunction = options.stackStartFunction || fail;
-
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(this, stackStartFunction);
-  }
-};
-util.inherits(assert.AssertionError, Error);
-
-function replacer(key, value) {
-  if (value === undefined) {
-    return '' + value;
-  }
-  if (typeof value === 'number' && (isNaN(value) || !isFinite(value))) {
-    return value.toString();
-  }
-  if (typeof value === 'function' || value instanceof RegExp) {
-    return value.toString();
-  }
-  return value;
-}
-
-function truncate(s, n) {
-  if (typeof s == 'string') {
-    return s.length < n ? s : s.slice(0, n);
-  } else {
-    return s;
-  }
-}
-
-assert.AssertionError.prototype.toString = function() {
-  if (this.message) {
-    return [this.name + ':', this.message].join(' ');
-  } else {
-    return [
-      this.name + ':',
-      truncate(JSON.stringify(this.actual, replacer), 128),
-      this.operator,
-      truncate(JSON.stringify(this.expected, replacer), 128)
-    ].join(' ');
-  }
-};
-
-// assert.AssertionError instanceof Error
-
-assert.AssertionError.__proto__ = Error.prototype;
-
-// At present only the three keys mentioned above are used and
-// understood by the spec. Implementations or sub modules can pass
-// other keys to the AssertionError's constructor - they will be
-// ignored.
-
-// 3. All of the following functions must throw an AssertionError
-// when a corresponding condition is not met, with a message that
-// may be undefined if not provided.  All assertion methods provide
-// both the actual and expected values to the assertion error for
-// display purposes.
-
-function fail(actual, expected, message, operator, stackStartFunction) {
-  throw new assert.AssertionError({
-    message: message,
-    actual: actual,
-    expected: expected,
-    operator: operator,
-    stackStartFunction: stackStartFunction
-  });
-}
-
-// EXTENSION! allows for well behaved errors defined elsewhere.
-assert.fail = fail;
-
-// 4. Pure assertion tests whether a value is truthy, as determined
-// by !!guard.
-// assert.ok(guard, message_opt);
-// This statement is equivalent to assert.equal(true, guard,
-// message_opt);. To test strictly for the value true, use
-// assert.strictEqual(true, guard, message_opt);.
-
-function ok(value, message) {
-  if (!!!value) fail(value, true, message, '==', assert.ok);
-}
-assert.ok = ok;
-
-// 5. The equality assertion tests shallow, coercive equality with
-// ==.
-// assert.equal(actual, expected, message_opt);
-
-assert.equal = function equal(actual, expected, message) {
-  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
-};
-
-// 6. The non-equality assertion tests for whether two objects are not equal
-// with != assert.notEqual(actual, expected, message_opt);
-
-assert.notEqual = function notEqual(actual, expected, message) {
-  if (actual == expected) {
-    fail(actual, expected, message, '!=', assert.notEqual);
-  }
-};
-
-// 7. The equivalence assertion tests a deep equality relation.
-// assert.deepEqual(actual, expected, message_opt);
-
-assert.deepEqual = function deepEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected)) {
-    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
-  }
-};
-
-function _deepEqual(actual, expected) {
-  // 7.1. All identical values are equivalent, as determined by ===.
-  if (actual === expected) {
-    return true;
-
-  } else if (Buffer.isBuffer(actual) && Buffer.isBuffer(expected)) {
-    if (actual.length != expected.length) return false;
-
-    for (var i = 0; i < actual.length; i++) {
-      if (actual[i] !== expected[i]) return false;
-    }
-
-    return true;
-
-  // 7.2. If the expected value is a Date object, the actual value is
-  // equivalent if it is also a Date object that refers to the same time.
-  } else if (actual instanceof Date && expected instanceof Date) {
-    return actual.getTime() === expected.getTime();
-
-  // 7.3. Other pairs that do not both pass typeof value == 'object',
-  // equivalence is determined by ==.
-  } else if (typeof actual != 'object' && typeof expected != 'object') {
-    return actual == expected;
-
-  // 7.4. For all other Object pairs, including Array objects, equivalence is
-  // determined by having the same number of owned properties (as verified
-  // with Object.prototype.hasOwnProperty.call), the same set of keys
-  // (although not necessarily the same order), equivalent values for every
-  // corresponding key, and an identical 'prototype' property. Note: this
-  // accounts for both named and indexed properties on Arrays.
-  } else {
-    return objEquiv(actual, expected);
-  }
-}
-
-function isUndefinedOrNull(value) {
-  return value === null || value === undefined;
-}
-
-function isArguments(object) {
-  return Object.prototype.toString.call(object) == '[object Arguments]';
-}
-
-function objEquiv(a, b) {
-  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
-    return false;
-  // an identical 'prototype' property.
-  if (a.prototype !== b.prototype) return false;
-  //~~~I've managed to break Object.keys through screwy arguments passing.
-  //   Converting to array solves the problem.
-  if (isArguments(a)) {
-    if (!isArguments(b)) {
-      return false;
-    }
-    a = pSlice.call(a);
-    b = pSlice.call(b);
-    return _deepEqual(a, b);
-  }
-  try {
-    var ka = objectKeys(a),
-        kb = objectKeys(b),
-        key, i;
-  } catch (e) {//happens when one is a string literal and the other isn't
-    return false;
-  }
-  // having the same number of owned properties (keys incorporates
-  // hasOwnProperty)
-  if (ka.length != kb.length)
-    return false;
-  //the same set of keys (although not necessarily the same order),
-  ka.sort();
-  kb.sort();
-  //~~~cheap key test
-  for (i = ka.length - 1; i >= 0; i--) {
-    if (ka[i] != kb[i])
-      return false;
-  }
-  //equivalent values for every corresponding key, and
-  //~~~possibly expensive deep test
-  for (i = ka.length - 1; i >= 0; i--) {
-    key = ka[i];
-    if (!_deepEqual(a[key], b[key])) return false;
-  }
-  return true;
-}
-
-// 8. The non-equivalence assertion tests for any deep inequality.
-// assert.notDeepEqual(actual, expected, message_opt);
-
-assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected)) {
-    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
-  }
-};
-
-// 9. The strict equality assertion tests strict equality, as determined by ===.
-// assert.strictEqual(actual, expected, message_opt);
-
-assert.strictEqual = function strictEqual(actual, expected, message) {
-  if (actual !== expected) {
-    fail(actual, expected, message, '===', assert.strictEqual);
-  }
-};
-
-// 10. The strict non-equality assertion tests for strict inequality, as
-// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
-
-assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
-  if (actual === expected) {
-    fail(actual, expected, message, '!==', assert.notStrictEqual);
-  }
-};
-
-function expectedException(actual, expected) {
-  if (!actual || !expected) {
-    return false;
-  }
-
-  if (expected instanceof RegExp) {
-    return expected.test(actual);
-  } else if (actual instanceof expected) {
-    return true;
-  } else if (expected.call({}, actual) === true) {
-    return true;
-  }
-
-  return false;
-}
-
-function _throws(shouldThrow, block, expected, message) {
-  var actual;
-
-  if (typeof expected === 'string') {
-    message = expected;
-    expected = null;
-  }
-
-  try {
-    block();
-  } catch (e) {
-    actual = e;
-  }
-
-  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
-            (message ? ' ' + message : '.');
-
-  if (shouldThrow && !actual) {
-    fail('Missing expected exception' + message);
-  }
-
-  if (!shouldThrow && expectedException(actual, expected)) {
-    fail('Got unwanted exception' + message);
-  }
-
-  if ((shouldThrow && actual && expected &&
-      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
-    throw actual;
-  }
-}
-
-// 11. Expected to throw an error:
-// assert.throws(block, Error_opt, message_opt);
-
-assert.throws = function(block, /*optional*/error, /*optional*/message) {
-  _throws.apply(this, [true].concat(pSlice.call(arguments)));
-};
-
-// EXTENSION! This is annoying to write outside this module.
-assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
-  _throws.apply(this, [false].concat(pSlice.call(arguments)));
-};
-
-assert.ifError = function(err) { if (err) {throw err;}};
-
-})()
-},{"util":101,"buffer":103}],93:[function(require,module,exports){
+},{"buffer":104,"../common":68,"../type":69}],93:[function(require,module,exports){
 'use strict';
 
 
@@ -36715,7 +36715,7 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
 });
 
 })()
-},{"../../common":68,"../../type":69}],80:[function(require,module,exports){
+},{"../../common":68,"../../type":69}],81:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -36825,7 +36825,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../../dist/templates":14,"../../../util":28,"jquery-browserify":11,"underscore":10,"backbone":12}],105:[function(require,module,exports){
+},{"../../../../dist/templates":14,"../../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],105:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -36911,7 +36911,7 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],103:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -38231,7 +38231,93 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":104,"./buffer_ieee754":105,"base64-js":106}],98:[function(require,module,exports){
+},{"assert":103,"./buffer_ieee754":105,"base64-js":106}],106:[function(require,module,exports){
+(function (exports) {
+	'use strict';
+
+	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+	function b64ToByteArray(b64) {
+		var i, j, l, tmp, placeHolders, arr;
+	
+		if (b64.length % 4 > 0) {
+			throw 'Invalid string. Length must be a multiple of 4';
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		placeHolders = b64.indexOf('=');
+		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length;
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
+			arr.push((tmp & 0xFF0000) >> 16);
+			arr.push((tmp & 0xFF00) >> 8);
+			arr.push(tmp & 0xFF);
+		}
+
+		if (placeHolders === 2) {
+			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
+			arr.push(tmp & 0xFF);
+		} else if (placeHolders === 1) {
+			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
+			arr.push((tmp >> 8) & 0xFF);
+			arr.push(tmp & 0xFF);
+		}
+
+		return arr;
+	}
+
+	function uint8ToBase64(uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length;
+
+		function tripletToBase64 (num) {
+			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+		};
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+			output += tripletToBase64(temp);
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1];
+				output += lookup[temp >> 2];
+				output += lookup[(temp << 4) & 0x3F];
+				output += '==';
+				break;
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
+				output += lookup[temp >> 10];
+				output += lookup[(temp >> 4) & 0x3F];
+				output += lookup[(temp << 2) & 0x3F];
+				output += '=';
+				break;
+		}
+
+		return output;
+	}
+
+	module.exports.toByteArray = b64ToByteArray;
+	module.exports.fromByteArray = uint8ToBase64;
+}());
+
+},{}],98:[function(require,module,exports){
 'use strict';
 
 
@@ -42200,91 +42286,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}],106:[function(require,module,exports){
-(function (exports) {
-	'use strict';
-
-	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-	function b64ToByteArray(b64) {
-		var i, j, l, tmp, placeHolders, arr;
-	
-		if (b64.length % 4 > 0) {
-			throw 'Invalid string. Length must be a multiple of 4';
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		placeHolders = b64.indexOf('=');
-		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length;
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
-			arr.push((tmp & 0xFF0000) >> 16);
-			arr.push((tmp & 0xFF00) >> 8);
-			arr.push(tmp & 0xFF);
-		}
-
-		if (placeHolders === 2) {
-			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
-			arr.push(tmp & 0xFF);
-		} else if (placeHolders === 1) {
-			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
-			arr.push((tmp >> 8) & 0xFF);
-			arr.push(tmp & 0xFF);
-		}
-
-		return arr;
-	}
-
-	function uint8ToBase64(uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length;
-
-		function tripletToBase64 (num) {
-			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
-		};
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
-			output += tripletToBase64(temp);
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1];
-				output += lookup[temp >> 2];
-				output += lookup[(temp << 4) & 0x3F];
-				output += '==';
-				break;
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
-				output += lookup[temp >> 10];
-				output += lookup[(temp >> 4) & 0x3F];
-				output += lookup[(temp << 2) & 0x3F];
-				output += '=';
-				break;
-		}
-
-		return output;
-	}
-
-	module.exports.toByteArray = b64ToByteArray;
-	module.exports.fromByteArray = uint8ToBase64;
-}());
-
 },{}]},{},[4])
 ;
