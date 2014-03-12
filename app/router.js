@@ -140,7 +140,7 @@ module.exports = Backbone.Router.extend({
       this.view.model.get('name') === repoName &&
       (this.view.branch === branch ||
         (_.isUndefined(branch) &&
-        this.view.branch === this.view.model.get('master_branch'))
+        this.view.branch === this.view.model.get('default_branch'))
       )) {
       this.view.files.path = path || '';
       return this.view.files.render();

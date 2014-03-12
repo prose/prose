@@ -24,7 +24,7 @@ module.exports = Backbone.View.extend({
     app.loader.start();
 
     this.app = app;
-    this.branch = options.branch || this.model.get('master_branch');
+    this.branch = options.branch || this.model.get('default_branch');
     this.model = options.model;
     this.nav = options.nav;
     this.path = options.path || '';

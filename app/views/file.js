@@ -36,7 +36,7 @@ module.exports = Backbone.View.extend({
     patch.apply(this);
 
     this.app = app;
-    this.branch = options.branch || options.repo.get('master_branch');
+    this.branch = options.branch || options.repo.get('default_branch');
     this.branches = options.branches;
     this.mode = options.mode;
     this.nav = options.nav;
