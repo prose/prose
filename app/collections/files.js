@@ -215,7 +215,7 @@ module.exports = Backbone.Collection.extend({
       type: 'GET',
       url: file.contents_url,
       headers: {
-        Accept: 'application/vnd.github.raw'
+        Accept: 'application/vnd.github.v3.raw'
       },
       success: (function(res) {
         // initialize new File model with content
