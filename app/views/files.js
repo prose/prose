@@ -29,7 +29,7 @@ module.exports = Backbone.View.extend({
     app.loader.start();
 
     this.app = app;
-    this.branch = options.branch || options.repo.get('master_branch');
+    this.branch = options.branch || options.repo.get('default_branch');
     this.branches = options.branches;
     this.history = options.history;
     this.nav = options.nav;

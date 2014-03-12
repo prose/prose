@@ -11,7 +11,7 @@ module.exports = Backbone.Model.extend({
       description: attributes.description,
       fork: attributes.fork,
       homepage: attributes.homepage,
-      master_branch: attributes.master_branch,
+      default_branch: attributes.default_branch,
       name: attributes.name,
       owner: {
         id: attributes.owner.id,
