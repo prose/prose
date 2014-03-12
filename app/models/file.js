@@ -121,7 +121,7 @@ module.exports = Backbone.Model.extend({
     Backbone.Model.prototype.fetch.call(this, _.extend(options, {
       dataType: 'text',
       headers: {
-        'Accept': 'application/vnd.github.raw'
+        'Accept': 'application/vnd.github.v3.raw'
       },
       url: this.get('content_url')
     }));
@@ -134,7 +134,7 @@ module.exports = Backbone.Model.extend({
       async: false,
       dataType: 'text',
       headers: {
-        'Accept': 'application/vnd.github.raw'
+        'Accept': 'application/vnd.github.v3.raw'
       },
       url: this.get('content_url')
     }));
