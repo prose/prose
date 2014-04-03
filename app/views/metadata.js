@@ -103,7 +103,7 @@ module.exports = Backbone.View.extend({
 
               var textElement = document.getElementById(id);
 
-              this[id] = CodeMirror(function(el) {
+              var cm = CodeMirror(function(el) {
                 textElement.parentNode.replaceChild(el, textElement);
                 el.id = id;
                 el.className += ' inner ';
@@ -114,6 +114,13 @@ module.exports = Backbone.View.extend({
                 lineWrapping: true,
                 theme: 'prose-bright'
               });
+              cm.on('blur', (function(){
+                textElement.value = cm.getValue();
+                this.updateModel({
+                    currentTarget: textElement
+                });
+              }).bind(this));
+              this[id] = cm;
 
               break;
             case 'number':
