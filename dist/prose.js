@@ -10212,121 +10212,6 @@ cookie.clear = function() {
 module.exports = cookie;
 
 },{}],4:[function(require,module,exports){
-(function(){var LOCALES = require('../translations/locales');
-var en = require('../dist/en.js');
-
-// Set locale as global variable
-window.locale.en = en;
-window.locale.current('en');
-window.app = {};
-
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Router = require('./router');
-var User = require('./models/user');
-var NotificationView = require('./views/notification');
-var config = require('./config');
-var cookie = require('./cookie');
-var auth = require('./config');
-var status = require('./status');
-
-// Set up translations
-var setLanguage = (cookie.get('lang')) ? true : false;
-
-// Check if the browsers language is supported
-if (setLanguage) app.locale = cookie.get('lang');
-
-if (app.locale && app.locale !== 'en') {
-  $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
-    window.locale[app.locale] = result;
-    window.locale.current(app.locale);
-  });
-}
-
-var user = new User();
-
-user.authenticate({
-  success: function() {
-    if ('withCredentials' in new XMLHttpRequest()) {
-      // Set OAuth header for all CORS requests
-      $.ajaxSetup({
-        headers: {
-          'Authorization': config.auth === 'oauth' ?
-            'token ' + cookie.get('oauth-token') :
-            'Basic ' + Base64.encode(config.username + ':' + config.password)
-        }
-      });
-
-      // Set an 'authenticated' class to #prose
-      $('#prose').addClass('authenticated');
-
-      // Set User model id and login from cookies
-      var id = cookie.get('id');
-      if (id) user.set('id', id);
-
-      var login = cookie.get('login');
-      if (login) user.set('login', login);
-
-      user.fetch({
-        success: function(model, res, options) {
-          // Set authenticated user id and login cookies
-          cookie.set('id', user.get('id'));
-          cookie.set('login', user.get('login'));
-
-          // Initialize router
-          window.router = new Router({ user: model });
-
-          // Start responding to routes
-          Backbone.history.start();
-        },
-        error: function(model, res, options) {
-          var apiStatus = status.githubApi(function(res) {
-
-            var error = new NotificationView({
-              'message': t('notification.error.github'),
-              'options': [
-                {
-                  'title': t('notification.back'),
-                  'link': '/'
-                },
-                {
-                  'title': t('notification.githubStatus', {
-                    status: res.status
-                  }),
-                  'link': '//status.github.com',
-                  'className': res.status
-                }
-              ]
-            });
-
-            $('#prose').html(error.render().el);
-          });
-        }
-      });
-    } else {
-      var upgrade = new NotificationView({
-        'message': t('main.upgrade.content'),
-        'options': [{
-          'title': t('main.upgrade.download'),
-          'link': 'https://www.google.com/intl/en/chrome/browser'
-        }]
-      });
-
-      $('#prose').html(upgrade.render().el);
-    }
-  },
-  error: function() {
-    // Initialize router
-    window.router = new Router();
-
-    // Start responding to routes
-    Backbone.history.start();
-  }
-});
-
-})()
-},{"../dist/en.js":1,"../translations/locales":2,"./router":5,"./models/user":6,"./views/notification":7,"./config":8,"./cookie":3,"./status":9,"jquery-browserify":10,"underscore":11,"backbone":12}],8:[function(require,module,exports){
 var cookie = require('./cookie');
 var oauth = require('../oauth.json');
 
@@ -10340,7 +10225,7 @@ module.exports = {
   auth: 'oauth'
 };
 
-},{"../oauth.json":13,"./cookie":3}],13:[function(require,module,exports){
+},{"../oauth.json":5,"./cookie":3}],5:[function(require,module,exports){
 module.exports={
   "api": "https://api.github.com",
   "site": "https://github.com",
@@ -10348,7 +10233,7 @@ module.exports={
   "gatekeeperUrl": "https://prose-gatekeeper.herokuapp.com"
 }
 
-},{}],11:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -11577,7 +11462,500 @@ module.exports={
 }).call(this);
 
 })()
-},{}],10:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
+module.exports = {"app":"<% if (locale.current() === 'he-IL') { %>\n  <link rel='stylesheet' href='./style-rtl.css'>\n<% } %>\n\n<div id='loader' class='loader'></div>\n<div id='drawer' class='sidebar' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>></div>\n<nav id='navigation'></nav>\n<div id='main' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>></div>\n\n<div class='prose-menu dropdown-menu' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose</a></li>\n      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>\n      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>\n      <li><a href='./#chooselanguage'><%= t('navigation.language') %></a></li>\n      <li class='divider authenticated'></li>\n      <li class='authenticated'>\n        <a href='#' class='logout'><%= t('navigation.logout') %></a>\n      </li>\n    </ul>\n  </div>\n</div>\n","breadcrumb":"<span class='slash'>/</span>\n<a class='path' href='#<%= trail %>/<%= url %>'><%= name %></a>\n","chooselanguage":"<h1><%= t('chooselanguage.title') %></h1>\n<ul class='fat-list round'>\n  <% _(chooseLanguage.languages).each(function(l) { %>\n    <li>\n    <a href='#' data-code='<%= l.code %>' class='language<% if (l.code === chooseLanguage.active) { %> active<% } %>'>\n        <% if (l.code === chooseLanguage.active) { %><span class='ico checkmark fr'></span><% } %>\n        <%= l.name %>\n        <small>(<%= l.code %>)</small>\n      </a>\n    </li>\n  <% }); %>\n</ul>\n<p><%= t('chooselanguage.description') %></p>\n","dialogs":{"help":"<%\n  function formattedClass(str) {\n    return str.toLowerCase().replace(/\\s/g, '-').replace('&amp;', '');\n  };\n%>\n\n<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","link":"<div class='inner'>\n  <label><%= t('dialogs.link.title') %></label>\n  <input type='text' name='href' placeholder=\"<%= t('dialogs.link.hrefPlaceholder') %>\" />\n  <input type='text' name='text' placeholder=\"<%= t('dialogs.link.textPlaceholder') %>\" />\n  <input type='text' name='title' placeholder=\"<%= t('dialogs.link.titlePlaceholder') %>\" />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder=\"<%= t('dialogs.link.insertPlaceholder') %>\" class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>\n</div>\n","media":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label><%= t('dialogs.media.title') %></label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        <%= description %>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder=\"<%= t('dialogs.media.hrefPlaceholder')%>\" />\n    <input type='text' name='alt' placeholder=\"<%= t('dialogs.media.altPlaceholder')%>\" />\n    <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>\n      <% if (!assetsDirectory) { %>\n        <small class='caption deemphasize'><%= t('dialogs.media.help') %></small>\n      <% } %>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label><%= t('dialogs.media.choose') %></label>\n      <ul id='media'></ul>\n      <small class='caption deemphasize'><%= t('dialogs.media.helpMedia') %></small>\n    </div>\n  <% } %>\n</div>\n","mediadirectory":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (isMedia) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n"},"drawer":"<div id='orgs'></div>\n<div id='branches'></div>\n<div id='history'></div>\n<div id='drafts'></div>\n<div id='save'></div>\n<div id='settings'></div>\n","file":"<header id='heading' class='heading limiter clearfix'></header>\n<div id='modal'></div>\n\n<div id='post' class='post limiter'>\n  <div class='editor views<% if (file.markdown) { %> markdown<% } %>'>\n    <div id='diff' class='view prose diff'>\n      <h2><%= t('main.file.metaTitle') %><br />\n        <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>\n      </h2>\n      <div class='diff-content inner'></div>\n    </div>\n    <div id='meta' class='view round meta'></div>\n    <div id='edit' class='view active edit'>\n      <div class='topbar-wrapper'>\n        <div class='topbar'>\n          <div id='toolbar' class='containment toolbar round'></div>\n        </div>\n      </div>\n      <div id='drop' class='drop-mask'></div>\n      <div id='code' class='code round inner'></div>\n    </div>\n    <div id='preview' class='view preview prose'></div>\n  </div>\n</div>\n","files":"<% if (data.path && data.path !== data.rooturl) { %>\n  <div class='breadcrumb'>\n    <a class='branch' href='#<%= data.url %>'>..</a>\n    <% _.each(data.parts, function(part) { %>\n      <% if (part.name !== data.rooturl) { %>\n        <span class='slash'>/</span>\n        <a class='path' href='#<%= [data.url, part.url].join(\"/\") %>'><%= part.name %></a>\n      <% } %>\n    <% }); %>\n  </div>\n<% } %>\n\n<ul class='listing'></ul>\n","header":"<% if (data.alterable) { %>\n  <div class='round avatar'>\n    <%= data.avatar %>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><a href='#<%= data.user %>'><%= data.user %></a> / <a href='#<%= data.user %>/<%= data.repo.name %>'><%= data.repo.name %></a><% if (data.isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n    <!-- if (isNew() && !translate) placeholder, not value -->\n    <input type='text' class='headerinput' data-mode='<%= data.mode %>' <% print((data.placeholder ? 'placeholder=' : 'value=') + '\"' + data.input + '\"') %>>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round'><%= data.avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= data.user %>'><%= data.user %></a></h4>\n    <h2><a class='repo' href='#<%= data.path %>'><%= data.title %></a></h2>\n  </div>\n<% } %>\n","li":{"file":"<% if (file.binary) { %>\n  <div class='listing-icon icon round <%= file.extension %> <% if (file.media) { %>media<% } %>'></div>\n<% } else { %>\n  <a href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>' class='listing-icon'>\n    <span class='icon round <%= file.extension %> <% if (file.markdown) { %> md<% } %> <% if (file.media) { %> media<% } %>'></span>\n  </a>\n<% } %>\n\n<div class='details'>\n  <div class='actions fr clearfix'>\n    <% if (!file.binary) { %>\n      <a class='clearfix'\n        title=\"<%= t('main.repo.edit') %>\"\n        href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'>\n        <%= t('main.repo.edit') %>\n      </a>\n    <% } %>\n    <% if (file.writable) { %>\n      <a\n        class='delete'\n        title=\"<%= t('main.repo.delete') %>\"\n        href='#'>\n        <span class='ico rubbish small'></span>\n      </a>\n    <% } %>\n  </div>\n  <% if (file.binary) { %>\n    <h3 class='title' title='<%= file.name %>'><%= file.name %></h3>\n  <% } else { %>\n    <h3 class='title' title='<%= file.name %>'><a class='clearfix'href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'><%= file.name %></a></h3>\n  <% } %>\n  <span class='deemphasize'><%= file.jailpath %></span>\n</div>\n","folder":"<a href='#<%= folder.repo.owner.login %>/<%= folder.repo.name %>/tree/<%= folder.branch %>/<%= folder.path %>' class='listing-icon'>\n  <span class='icon round folder'></span>\n</a>\n\n<span class='details'>\n  <h3 class='title' title='<%= folder.name %>'>\n    <a href='#<%= folder.repo.owner.login %>/<%= folder.repo.name %>/tree/<%= folder.branch %>/<%= folder.path %>'>\n      <%= folder.name %>\n    </a>\n  </h3>\n  <span class='deemphasize'><%= folder.jailpath %></span>\n</span>\n","repo":"<a\n  class='listing-icon'\n  data-user='<%= repo.owner.login %>'\n  data-repo='<%= repo.name %>'\n  href='#<%= repo.owner.login %>/<%= repo.name %>'>\n  <% if ((repo.owner.login !== repo.login) && repo.private) { %>\n    <span class='icon round repo owner private' title=\"<%= t('main.repos.sharedFrom') %> (<%= repo.owner.login %>)\"></span>\n  <% } else if (repo.owner.login !== repo.login) { %>\n    <span class='icon round repo owner' title=\"<%= t('main.repos.sharedFrom') %> (<%= repo.owner.login %>)\"></span>\n  <% } else if (repo.fork && repo.private) { %>\n    <span class='icon round repo private fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n  <% } else if (repo.fork) { %>\n    <span class='icon round repo fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n  <% } else if (repo.private) { %>\n    <span class='icon round repo private'></span>\n  <% } else { %>\n    <span class='icon round repo'></span>\n  <% } %>\n</a>\n\n<div class='details'>\n  <div class='actions fr clearfix'>\n    <a\n      data-user='<%= repo.owner.login %>'\n      data-repo='<%= repo.name %>'\n      href='#<%= repo.owner.login %>/<%= repo.name %>'>\n      <%= t('main.repos.repo') %>\n    </a>\n    <% if (repo.homepage) { %>\n      <a href='<%= repo.homepage %>'><%= t('main.repos.site') %></a>\n    <% } %>\n  </div>\n  <a\n    data-user='<%= repo.owner.login %>'\n    data-repo='<%= repo.name %>'\n    href='#<%= repo.owner.login %>/<%= repo.name %>'>\n    <h3<% if (!repo.description) { %> class='title'<% } %>><%= repo.name %></h3>\n    <span class='deemphasize'><%= repo.description %></span>\n  </a>\n</div>\n"},"loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <span class=\"message\"></span>\n</div>\n","meta":{"button":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <button class='metafield round <%= meta.name %>' type='button' name='<%= meta.name %>' value='<%= meta.value %>' data-on='<%= meta.on %>' data-off='<%= meta.off %>'>\n      <% print(value ? meta.on : meta.off); %>\n    </button>\n  </fieldset>\n</div>\n","checkbox":"<div class='form-item'>\n  <fieldset>\n    <input class='metafield' type='checkbox' name='<%= meta.name %>' value='<%= meta.value %>'<% print(meta.checked ? 'checked' : '') %> />\n    <label class='aside' for='<%= meta.name %>'><%= meta.label %></label>\n  </fieldset>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n\n  <fieldset>\n    <select id='<%= meta.name %>' name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' multiple class='metafield chzn-select'>\n      <% _(meta.options).each(function(o) { %>\n        <% if (!o.lang || o.lang === meta.lang) { %>\n          <% if (o.name) { %>\n           <option value='<%= o.value %>'><%= o.name %></option>\n          <% } else if (o.value) { %>\n           <option value='<%= o.value %>'><%= o.value %></option>\n          <% } else { %>\n           <option value='<%= o %>'><%= o %></option>\n          <% } %>\n        <% } %>\n      <% }); %>\n    </select>\n  </fieldset>\n\n  <% if (meta.alterable) { %>\n    <div class='create'>\n      <input type='text' class='inline' data-select='<%= meta.name %>' />\n      <a href='#' class='round create-select inline button' data-select='<%= meta.name %>' title=\"<%= t('main.file.createMeta') %>\"><%= t('main.file.createMeta') %></a>\n    </div>\n  <% } %>\n</div>\n","raw":"<div class='form-item'>\n  <label for='raw'><%= t('main.file.rawMeta') %></label>\n  <% if (meta.help) { %><small><%= meta.help %></small><% } %>\n  <fieldset>\n    <div name='raw' id='raw' class='metafield inner'></div>\n  </fieldset>\n</div>\n","select":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n\n  <fieldset>\n    <select name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' class='metafield chzn-select'>\n      <% _(meta.options).each(function(o) { %>\n        <% if (!o.lang || o.lang === meta.lang) { %>\n          <% if (o.name) { %>\n           <option value='<%= o.value %>'><%= o.name %></option>\n          <% } else if (o.value) { %>\n           <option value='<%= o.value %>'><%= o.value %></option>\n          <% } else { %>\n           <option value='<%= o %>'><%= o %></option>\n          <% } %>\n        <% } %>\n      <% }); %>\n    </select>\n  </fieldset>\n</div>\n","text":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <input class='metafield' type='text' name='<%= meta.name %>' value='<%= meta.value %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>' />\n  </fieldset>\n</div>\n","textarea":"<div class='form-item yaml-block'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <textarea class='metafield' id='<%= meta.id %>' type='text' name='<%= meta.name %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>'><%= meta.value %></textarea>\n  </fieldset>\n</div>\n"},"metadata":"<div class='form'></div>\n<a href='#' class='button round finish'><%= t('main.file.back') %></a>\n","modal":"<div class='modal-content round'>\n  <div class='modal-heading inner'>\n    <%= t('modal.errorHeading') %>\n  </div>\n  <div class='prose inner'>\n    <p><%= modal.message %></p>\n  </div>\n  <div class='modal-footer inner'>\n    <a href='#' class='button round got-it'><%= t('modal.confirm') %></a>\n  </div>\n</div>\n","nav":"<ul class='mobile nav clearfix'>\n  <li>\n    <a href='#' class='toggle ico menu round'></a>\n  </li>\n</ul>\n\n<ul class='file nav clearfix'>\n  <li>\n    <a href='#' title=\"<%= t('navigation.edit') %>\" class='ico round pencil edit' data-state='edit'>\n      <span class='popup round arrow-right'><%= t('navigation.edit') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' title=\"<%= t('navigation.preview') %>\" class='ico round eye blob preview' data-state='blob'>\n      <span class='popup round arrow-right'><%= t('navigation.preview') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' title=\"<%= t('navigation.meta') %>\" class='ico round metadata meta' data-state='meta'>\n      <span class='popup round arrow-right'><%= t('navigation.meta') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' title=\"<%= t('navigation.settings') %>\" class='ico round sprocket settings' data-state='settings' data-drawer=true>\n      <span class='popup round arrow-right'><%= t('navigation.settings') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' title=\"<%= t('navigation.save') %>\" class='ico round save' data-state='save'>\n      <div class='status'></div>\n      <span class='popup round arrow-right'>\n        <%= t('navigation.save') %>\n      </span>\n    </a>\n  </li>\n</ul>\n\n<ul class='auth nav clearfix'>\n  <li>\n    <a class='ico round switch login' href='<%= data.login %>' title=\"<%= t('login') %>\">\n      <span class='popup round arrow-right'><%= t('login') %></span>\n    </a>\n  </li>\n</ul>\n","notification":"<div class='notify'>\n  <h2 class='icon landing error'>Prose</h2>\n  <div class='inner'>\n    <p><%= data.message %></p>\n    <p class='error'><%= data.error %></p>\n\n    <% _(data.options).each(function(options) { %>\n    <div>\n      <a class='button round <% if(options.className) { %><%= options.className %><% } %>' href='<%= options.link %>'><%= options.title %></a>\n    </div>\n    <% }); %>\n  </div>\n</div>\n","profile":"<header id='heading' class='heading limiter clearfix'></header>\n\n<div id='content' class='application content limiter'>\n  <div class='topbar'>\n    <div id='search' class='content-search round'></div>\n  </div>\n  <ul id='repos' class='projects listing'></ul>\n</div>\n","repo":"<header id='heading' class='heading limiter clearfix'></header>\n\n<div id='content' class='application content limiter'>\n  <div class='topbar clearfix'>\n    <!-- if repo and authenticated -->\n    <!-- #user/repo/new/branch/path -->\n    <div id='search' class='fl content-search round'></div>\n    <a href='#' class='fl button round new new-file' data-state='new'>\n      <%= t('navigation.newFile') %>\n    </a>\n  </div>\n\n  <div id='files'></div>\n</div>\n","search":"<span class='ico search'></span>\n<input type='text' id='filter' placeholder=\"<%= search.placeholder %>\" />\n","sidebar":{"branches":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.repo.branch') %></h2>\n  <select class='chzn-select'></select>\n</div>\n","drafts":"<a class='button round' href='#<%= link %>'><%= t('sidebar.repo.drafts') %></a>\n","label":"<div class='inner'>\n  <h2 class='label inner'><%= label %></h2>\n</div>\n","li":{"commit":"<a class='<%= data.status %>' href='#<%= [data.repo.owner.login, data.repo.name, data.mode, data.branch, data.path].join(\"/\") %>'>\n  <span class='ico small inline <%= data.status %>'></span>\n  <span class='message'><%= data.file.filename %></span>\n</a>\n"},"orgs":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.repos.groups') %></h2>\n</div>\n<ul class='listing'>\n  <li>\n    <a href='#<%= orgs.login.user %>' title='<%= orgs.login.user %>' data-id='<%= orgs.login.id %>'>\n      <%= orgs.login.user %>\n    </a>\n  </li>\n  <% orgs.orgs.each(function(org) {  %>\n  <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>' data-id='<%= org.id %>'>\n      <%= org.login %>\n    </a>\n  </li>\n  <% }); %>\n</ul>\n","save":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.save.label') %></h2>\n</div>\n<div class='inner authoring'>\n  <div class='commit'>\n    <textarea class='commit-message' placeholder></textarea>\n    <a class='ico small cancel round' title=\"<%= t('sidebar.save.cancel') %>\" href='#' data-action='cancel'>\n      <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>\n    </a>\n  </div>\n  <a class='confirm button round' href='#' data-action='confirm'><%= writable %></a>\n</div>\n","settings":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.settings.title') %></h2>\n</div>\n<div class='inner authoring'>\n  <% if (/^_posts/.test(settings.path)) { %>\n    <a class='draft button round' href='#' data-action='draft'><%= t('sidebar.settings.draft') %></a>\n  <% } %>\n  \n  <% if (settings.languages && settings.lang !== 'yaml') { %>\n    <% _.each(settings.languages, function(l) { %>\n      <% if (l.value && (settings.metadata && (settings.metadata.lang !== l.value))) { %>\n        <a class='translate round button' href='#<%= l.value %>' data-action='translate'><%= t('sidebar.settings.translate') + ' ' + l.name %></a>\n      <% } %>\n    <% }); %>\n  <% } %>\n\n  <!-- if !isNew() and is writable -->\n  <a class='delete button round' href='#' data-action='destroy'><%= t('sidebar.settings.delete') %></a>\n</div>\n\n<% if (settings.fileInput) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.settings.fileInputLabel') %></h2>\n    <input type='text' class='filepath' placeholder='<%= settings.path %>' value='<%= settings.path %>'>\n  </div>\n<% } %>\n"},"start":"<div class='round splash'>\n  <h2 class='icon landing'>Prose</h2>\n  <div class='inner'>\n    <p><%= t('main.start.content') %></p>\n    <p><a href='#about'><%= t('main.start.learn') %></a></p>\n    <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>\n  </div>\n</div>\n","toolbar":"<% if (toolbar.draft) { %>\n  <a href='#' class='draft-to-post round contain'>\n    <%= t('actions.draft.toPost') %><span class='ico small checkmark'></span>\n    <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>\n  </a>\n<% } else { %>\n  <% if (toolbar.metadata && toolbar.metadata.published) { %>\n    <a href='#' class='publish-flag published round contain' data-state='true'>\n      <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>\n    </a>\n  <% } else if (toolbar.metadata && !toolbar.metadata.published) { %>\n    <a href='#' class='publish-flag round contain' data-state='false'>\n      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>\n    </a>\n  <% } %>\n<% } %>\n\n<% if (toolbar.markdown) { %>\n<div class='options clearfix'>\n  <ul class='group round clearfix'>\n    <li><a href='#' title=\"<%= t('toolbar.heading') %>\" data-key='heading' data-snippet='<% print(\"##\\n\\n\") %>'>h2</a></li>\n    <li><a href='#' title=\"<%= t('toolbar.subHeading') %>\" data-key='sub-heading' data-snippet='<% print(\"###\\n\\n\") %>'>h3</a></li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n      <a title=\"<%= t('toolbar.link') %>\" href='#' data-key='link' data-snippet=false data-dialog=true>\n        <span class='ico small link'></span>\n      </a>\n    </li>\n    <li>\n      <a title=\"<%= t('toolbar.image') %>\" href='#' data-key='media' data-snippet=false data-dialog=true>\n        <span class='ico small picture'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li><a href='#' title=\"<%= t('toolbar.bold') %>\" data-key='bold' data-snippet='****'>B</a></li>\n    <li>\n      <a data-key='italic' href='#' title=\"<%= t('toolbar.italic') %>\" data-snippet='__'>\n        <span class='ico small italic'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n      <a title=\"<%= t('toolbar.blockquote') %>\"  href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n        <span class='ico small quote'></span>\n      </a>\n    </li>\n    <li>\n      <a href='#' title=\"<%= t('toolbar.list') %>\" data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n        <span class='ico small list'></span>\n      </a>\n    </li>\n    <li>\n      <a href='#' title=\"<%= t('toolbar.numberedlist') %>\" data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n        <span class='ico small numbered-list'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n    <a class='round' title=\"<%= t('toolbar.help') %>\" href='#' data-key='help' data-snippet=false data-dialog=true>\n        <span class='ico small question'></span>\n      </a>\n    </li>\n  </ul>\n</div>\n<% } %>\n<div id='dialog'></div>\n"};
+},{}],8:[function(require,module,exports){
+(function(){var LOCALES = require('../translations/locales');
+var en = require('../dist/en.js');
+
+// Set locale as global variable
+window.locale.en = en;
+window.locale.current('en');
+window.app = {};
+
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Router = require('./router');
+var User = require('./models/user');
+var NotificationView = require('./views/notification');
+var config = require('./config');
+var cookie = require('./cookie');
+var auth = require('./config');
+var status = require('./status');
+
+// Set up translations
+var setLanguage = (cookie.get('lang')) ? true : false;
+
+// Check if the browsers language is supported
+if (setLanguage) app.locale = cookie.get('lang');
+
+if (app.locale && app.locale !== 'en') {
+  $.getJSON('./translations/locales/' + app.locale + '.json', function(result) {
+    window.locale[app.locale] = result;
+    window.locale.current(app.locale);
+  });
+}
+
+var user = new User();
+
+user.authenticate({
+  success: function() {
+    if ('withCredentials' in new XMLHttpRequest()) {
+      // Set OAuth header for all CORS requests
+      $.ajaxSetup({
+        headers: {
+          'Authorization': config.auth === 'oauth' ?
+            'token ' + cookie.get('oauth-token') :
+            'Basic ' + Base64.encode(config.username + ':' + config.password)
+        }
+      });
+
+      // Set an 'authenticated' class to #prose
+      $('#prose').addClass('authenticated');
+
+      // Set User model id and login from cookies
+      var id = cookie.get('id');
+      if (id) user.set('id', id);
+
+      var login = cookie.get('login');
+      if (login) user.set('login', login);
+
+      user.fetch({
+        success: function(model, res, options) {
+          // Set authenticated user id and login cookies
+          cookie.set('id', user.get('id'));
+          cookie.set('login', user.get('login'));
+
+          // Initialize router
+          window.router = new Router({ user: model });
+
+          // Start responding to routes
+          Backbone.history.start();
+        },
+        error: function(model, res, options) {
+          var apiStatus = status.githubApi(function(res) {
+
+            var error = new NotificationView({
+              'message': t('notification.error.github'),
+              'options': [
+                {
+                  'title': t('notification.back'),
+                  'link': '/'
+                },
+                {
+                  'title': t('notification.githubStatus', {
+                    status: res.status
+                  }),
+                  'link': '//status.github.com',
+                  'className': res.status
+                }
+              ]
+            });
+
+            $('#prose').html(error.render().el);
+          });
+        }
+      });
+    } else {
+      var upgrade = new NotificationView({
+        'message': t('main.upgrade.content'),
+        'options': [{
+          'title': t('main.upgrade.download'),
+          'link': 'https://www.google.com/intl/en/chrome/browser'
+        }]
+      });
+
+      $('#prose').html(upgrade.render().el);
+    }
+  },
+  error: function() {
+    // Initialize router
+    window.router = new Router();
+
+    // Start responding to routes
+    Backbone.history.start();
+  }
+});
+
+})()
+},{"../dist/en.js":1,"../translations/locales":2,"./router":9,"./models/user":10,"./views/notification":11,"./config":4,"./cookie":3,"./status":12,"underscore":6,"backbone":13,"jquery-browserify":14}],9:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+var User = require('./models/user');
+var Users = require('./collections/users');
+var Orgs = require('./collections/orgs');
+
+var Repo = require('./models/repo');
+var File = require('./models/file');
+
+var AppView = require('./views/app');
+var NotificationView = require('./views/notification');
+var StartView = require('./views/start');
+var ProfileView = require('./views/profile');
+var SearchView = require('./views/search');
+var ReposView = require('./views/repos');
+var RepoView = require('./views/repo');
+var FileView = require('./views/file');
+var DocumentationView = require('./views/documentation');
+var ChooseLanguageView = require('./views/chooselanguage');
+
+var templates = require('../dist/templates');
+var util = require('./util');
+
+module.exports = Backbone.Router.extend({
+
+  routes: {
+    'about(/)': 'about',
+    'chooselanguage(/)': 'chooseLanguage',
+    ':user(/)': 'profile',
+    ':user/:repo(/)': 'repo',
+    ':user/:repo/*path(/)': 'path',
+    '*default': 'start'
+  },
+
+  initialize: function(options) {
+    options = _.clone(options) || {};
+
+    this.users = new Users();
+
+    if (options.user) {
+      this.user = options.user;
+      this.users.add(this.user);
+    }
+
+    // Load up the main layout
+    this.app = new AppView({
+      el: '#prose',
+      model: {},
+      user: this.user
+    });
+
+    this.app.render();
+  },
+
+  chooseLanguage: function() {
+    if (this.view) this.view.remove();
+
+    this.app.loader.start(t('loading.file'));
+    this.app.nav.mode('');
+
+    this.view = new ChooseLanguageView();
+    this.app.$el.find('#main').html(this.view.render().el);
+
+    this.app.loader.done();
+  },
+
+  about: function() {
+    if (this.view) this.view.remove();
+
+    this.app.loader.start(t('loading.file'));
+    this.app.nav.mode('');
+
+    this.view = new DocumentationView();
+    this.app.$el.find('#main').html(this.view.render().el);
+
+    this.app.loader.done();
+  },
+
+  // #example-user
+  // #example-organization
+  profile: function(login) {
+    if (this.view) this.view.remove();
+
+    this.app.loader.start(t('loading.repos'));
+    this.app.nav.mode('repos');
+
+    util.documentTitle(login);
+
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
+
+    var search = new SearchView({
+      model: user.repos,
+      mode: 'repos'
+    });
+
+    var repos = new ReposView({
+      model: user.repos,
+      search: search
+    });
+
+    var content = new ProfileView({
+      auth: this.user,
+      search: search,
+      sidebar: this.app.sidebar,
+      repos: repos,
+      router: this,
+      user: user
+    });
+
+    user.fetch({
+      success: (function(model, res, options) {
+        this.view = content;
+        this.app.$el.find('#main').html(this.view.render().el);
+
+        model.repos.fetch({
+          success: repos.render,
+          error: (function(model, xhr, options) {
+            this.error(xhr);
+          }).bind(this),
+          complete: this.app.loader.done
+        });
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
+      }).bind(this)
+    });
+  },
+
+  // #example-user/example-repo
+  // #example-user/example-repo/tree/example-branch/example-path
+  repo: function(login, repoName, branch, path) {
+    if (this.view instanceof RepoView &&
+      this.view.model.get('owner').login === login &&
+      this.view.model.get('name') === repoName &&
+      (this.view.branch === branch ||
+        (_.isUndefined(branch) &&
+        this.view.branch === this.view.model.get('default_branch'))
+      )) {
+      this.view.files.path = path || '';
+      return this.view.files.render();
+    } else if (this.view) this.view.remove();
+
+    this.app.loader.start(t('loading.repo'));
+    this.app.nav.mode('repo');
+
+    var title = repoName;
+    if (branch) title = repoName + ': /' + path + ' at ' + branch;
+    util.documentTitle(title);
+
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
+
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
+        }
+      });
+      user.repos.add(repo);
+    }
+
+    repo.fetch({
+      success: (function(model, res, options) {
+        var content = new RepoView({
+          app: this.app,
+          branch: branch,
+          model: repo,
+          nav: this.app.nav,
+          path: path,
+          router: this,
+          sidebar: this.app.sidebar
+        });
+
+        this.view = content;
+        this.app.$el.find('#main').html(this.view.render().el);
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
+      }).bind(this),
+      complete: this.app.loader.done
+    });
+  },
+
+  path: function(login, repoName, path) {
+    var url = util.extractURL(path);
+
+    switch(url.mode) {
+      case 'tree':
+        this.repo(login, repoName, url.branch, url.path);
+        break;
+      case 'new':
+      case 'blob':
+      case 'edit':
+      case 'preview':
+        this.post(login, repoName, url.mode, url.branch, url.path);
+        break;
+      default:
+        throw url.mode;
+    }
+  },
+
+  post: function(login, repoName, mode, branch, path) {
+    if (this.view) this.view.remove();
+
+    this.app.nav.mode('file');
+
+    switch(mode) {
+      case 'new':
+        this.app.loader.start(t('loading.creating'));
+        break;
+      case 'edit':
+        this.app.loader.start(t('loading.file'));
+        break;
+      case 'preview':
+        this.app.loader.start(t('loading.preview'));
+        break;
+    }
+
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
+
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
+        }
+      });
+      user.repos.add(repo);
+    }
+
+    var file = {
+      app: this.app,
+      branch: branch,
+      branches: repo.branches,
+      mode: mode,
+      nav: this.app.nav,
+      name: util.extractFilename(path)[1],
+      path: path,
+      repo: repo,
+      router: this,
+      sidebar: this.app.sidebar
+    };
+
+    // TODO: defer this success function until both user and repo have been fetched
+    // in paralell rather than in series
+    user.fetch({
+      success: (function(model, res, options) {
+        repo.fetch({
+          success: (function(model, res, options) {
+            this.view = new FileView(file);
+            this.app.$el.find('#main').html(this.view.el);
+          }).bind(this),
+          error: (function(model, xhr, options) {
+            this.error(xhr);
+          }).bind(this),
+          complete: this.app.loader.done
+        });
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
+      }).bind(this)
+    });
+  },
+
+  preview: function(login, repoName, mode, branch, path) {
+    if (this.view) this.view.remove();
+
+    this.app.loader.start(t('loading.preview'));
+
+    var user = this.users.findWhere({ login: login });
+    if (_.isUndefined(user)) {
+      user = new User({ login: login });
+      this.users.add(user);
+    }
+
+    var repo = user.repos.findWhere({ name: repoName });
+    if (_.isUndefined(repo)) {
+      repo = new Repo({
+        name: repoName,
+        owner: {
+          login: login
+        }
+      });
+      user.repos.add(repo);
+    }
+
+    var file = {
+      branch: branch,
+      branches: repo.branches,
+      mode: mode,
+      nav: this.app.nav,
+      name: util.extractFilename(path)[1],
+      path: path,
+      repo: repo,
+      router: this,
+      sidebar: this.app.sidebar
+    };
+
+    repo.fetch({
+      success: (function(model, res, options) {
+        // TODO: should this still pass through File view?
+        this.view = new Preview(file);
+        this.app.$el.find('#main').html(this.view.el);
+      }).bind(this),
+      error: (function(model, xhr, options) {
+        this.error(xhr);
+      }).bind(this),
+      complete: this.app.loader.done
+    });
+  },
+
+  start: function() {
+    if (this.view) this.view.remove();
+
+    // If user has authenticated
+    if (this.user) {
+      router.navigate(this.user.get('login'), {
+        trigger: true,
+        replace: true
+      });
+    } else {
+      this.app.nav.mode('start');
+      this.view = new StartView();
+      this.app.$el.find('#main').html(this.view.render().el);
+    }
+  },
+
+  notify: function(message, error, options) {
+    if (this.view) this.view.remove();
+
+    this.view = new NotificationView({
+      'message': message,
+      'error': error,
+      'options': options
+    });
+
+    this.app.$el.find('#main').html(this.view.render().el);
+    this.app.loader.stop();
+  },
+
+  error: function(xhr) {
+    var message = [
+      xhr.status,
+      xhr.statusText
+    ].join(' ');
+
+    var error = JSON.parse(xhr.responseText).message;
+
+    var options = [
+      {
+        'title': t('notification.home'),
+        'link': '/'
+      }
+    ];
+
+    this.notify(message, error, options);
+  }
+});
+
+},{"./models/user":10,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":11,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"../dist/templates":7,"./util":28,"jquery-browserify":14,"underscore":6,"backbone":13}],14:[function(require,module,exports){
 (function(){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -20912,385 +21290,7 @@ return jQuery;
 })( window ); }));
 
 })()
-},{}],14:[function(require,module,exports){
-module.exports = {"app":"<% if (locale.current() === 'he-IL') { %>\n  <link rel='stylesheet' href='./style-rtl.css'>\n<% } %>\n\n<div id='loader' class='loader'></div>\n<div id='drawer' class='sidebar' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>></div>\n<nav id='navigation'></nav>\n<div id='main' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>></div>\n\n<div class='prose-menu dropdown-menu' <% if (locale.current() === 'he-IL') { %>dir='rtl'<% } %>>\n  <div class='inner clearfix'>\n    <a href='#' class='icon branding dropdown-hover' data-link=true>Prose</a>\n    <ul class='dropdown clearfix'>\n      <li><a href='#'>Prose</a></li>\n      <li><a class='about' href='./#about'><%= t('navigation.about') %></a></li>\n      <li><a class='help' href='https://github.com/prose/prose'><%= t('navigation.develop') %></a></li>\n      <li><a href='./#chooselanguage'><%= t('navigation.language') %></a></li>\n      <li class='divider authenticated'></li>\n      <li class='authenticated'>\n        <a href='#' class='logout'><%= t('navigation.logout') %></a>\n      </li>\n    </ul>\n  </div>\n</div>\n","breadcrumb":"<span class='slash'>/</span>\n<a class='path' href='#<%= trail %>/<%= url %>'><%= name %></a>\n","chooselanguage":"<h1><%= t('chooselanguage.title') %></h1>\n<ul class='fat-list round'>\n  <% _(chooseLanguage.languages).each(function(l) { %>\n    <li>\n    <a href='#' data-code='<%= l.code %>' class='language<% if (l.code === chooseLanguage.active) { %> active<% } %>'>\n        <% if (l.code === chooseLanguage.active) { %><span class='ico checkmark fr'></span><% } %>\n        <%= l.name %>\n        <small>(<%= l.code %>)</small>\n      </a>\n    </li>\n  <% }); %>\n</ul>\n<p><%= t('chooselanguage.description') %></p>\n","dialogs":{"help":"<%\n  function formattedClass(str) {\n    return str.toLowerCase().replace(/\\s/g, '-').replace('&amp;', '');\n  };\n%>\n\n<div class='col col25'>\n  <ul class='main-menu'>\n    <% _(help).each(function(mainMenu, i) { %>\n      <li><a href='#' class='<% if (i === 0) { %>active <% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'><%= mainMenu.menuName %></a></li>\n    <% }); %>\n  </ul>\n</div>\n\n<div class='col col25'>\n  <% _(help).each(function(mainMenu, index) { %>\n  <ul class='sub-menu <%= formattedClass(mainMenu.menuName) %> <% if (index === 0) { %>active<% } %>' data-id='<%= formattedClass(mainMenu.menuName) %>'>\n      <% _(mainMenu.content).each(function(subMenu, i) { %>\n        <li><a href='#' data-id='<%= formattedClass(subMenu.menuName) %>' class='<% if (index === 0 && i === 0) { %> active<% } %>'><%= subMenu.menuName %></a></li>\n      <% }); %>\n    </ul>\n  <% }); %>\n</div>\n\n<div class='col col-last prose small'>\n  <% _(help).each(function(mainMenu, index) { %>\n    <% _(mainMenu.content).each(function(d, i) { %>\n    <div class='help-content inner help-<%= formattedClass(d.menuName) %><% if (index === 0 && i === 0) { %> active<% } %>'>\n      <%= d.data %>\n    </div>\n    <% }); %>\n  <% }); %>\n</div>\n","link":"<div class='inner'>\n  <label><%= t('dialogs.link.title') %></label>\n  <input type='text' name='href' placeholder=\"<%= t('dialogs.link.hrefPlaceholder') %>\" />\n  <input type='text' name='text' placeholder=\"<%= t('dialogs.link.textPlaceholder') %>\" />\n  <input type='text' name='title' placeholder=\"<%= t('dialogs.link.titlePlaceholder') %>\" />\n\n  <% if (relativeLinks) { %>\n    <div class='collapsible'>\n      <select data-placeholder=\"<%= t('dialogs.link.insertPlaceholder') %>\" class='chzn-select'>\n        <option value></option>\n        <% _(relativeLinks).each(function(link) { %>\n        <option value='<%= link.href %>,<%= link.text %>'><%= link.text %></option>\n        <% }); %>\n      </select>\n    </div>\n  <% } %>\n\n  <a href='#' class='button round insert' data-type='link'><%= t('dialogs.link.insert') %></a>\n</div>\n","media":"<div class='inner clearfix'>\n\n  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>\n    <label><%= t('dialogs.media.title') %></label>\n\n    <% if (writable) { %>\n      <div class='contain clearfix'>\n        <span class='ico picture-add fl'></span>\n        <%= description %>\n      </div>\n    <% } %>\n\n    <input type='text' name='url' placeholder=\"<%= t('dialogs.media.hrefPlaceholder')%>\" />\n    <input type='text' name='alt' placeholder=\"<%= t('dialogs.media.altPlaceholder')%>\" />\n    <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>\n      <% if (!assetsDirectory) { %>\n        <small class='caption deemphasize'><%= t('dialogs.media.help') %></small>\n      <% } %>\n  </div>\n\n  <% if (assetsDirectory) { %>\n    <div class='col col-last fl media-listing'>\n      <label><%= t('dialogs.media.choose') %></label>\n      <ul id='media'></ul>\n      <small class='caption deemphasize'><%= t('dialogs.media.helpMedia') %></small>\n    </div>\n  <% } %>\n</div>\n","mediadirectory":"<% if (type === 'tree') { %>\n  <li class='directory'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>'>\n      <span class='ico fl small inline folder'></span>\n      <%= name %>\n    </a>\n  </li>\n<% } else { %>\n  <li class='asset'>\n    <span class='mask'></span>\n    <a class='clearfix item' href='<%= path %>' title='<%= path %>'>\n      <% if (isMedia) { %>\n        <span class='ico fl small inline media'></span>\n      <% } else { %>\n        <span class='ico fl small inline document'></span>\n      <% } %>\n      <%= name %>\n    </a>\n  </li>\n<% } %>\n"},"drawer":"<div id='orgs'></div>\n<div id='branches'></div>\n<div id='history'></div>\n<div id='drafts'></div>\n<div id='save'></div>\n<div id='settings'></div>\n","file":"<header id='heading' class='heading limiter clearfix'></header>\n<div id='modal'></div>\n\n<div id='post' class='post limiter'>\n  <div class='editor views<% if (file.markdown) { %> markdown<% } %>'>\n    <div id='diff' class='view prose diff'>\n      <h2><%= t('main.file.metaTitle') %><br />\n        <span class='deemphasize small'><%= t('main.file.metaDescription') %></span>\n      </h2>\n      <div class='diff-content inner'></div>\n    </div>\n    <div id='meta' class='view round meta'></div>\n    <div id='edit' class='view active edit'>\n      <div class='topbar-wrapper'>\n        <div class='topbar'>\n          <div id='toolbar' class='containment toolbar round'></div>\n        </div>\n      </div>\n      <div id='drop' class='drop-mask'></div>\n      <div id='code' class='code round inner'></div>\n    </div>\n    <div id='preview' class='view preview prose'></div>\n  </div>\n</div>\n","files":"<% if (data.path && data.path !== data.rooturl) { %>\n  <div class='breadcrumb'>\n    <a class='branch' href='#<%= data.url %>'>..</a>\n    <% _.each(data.parts, function(part) { %>\n      <% if (part.name !== data.rooturl) { %>\n        <span class='slash'>/</span>\n        <a class='path' href='#<%= [data.url, part.url].join(\"/\") %>'><%= part.name %></a>\n      <% } %>\n    <% }); %>\n  </div>\n<% } %>\n\n<ul class='listing'></ul>\n","header":"<% if (data.alterable) { %>\n  <div class='round avatar'>\n    <%= data.avatar %>\n  </div>\n  <div class='fl details'>\n    <h4 class='parent-trail'><a href='#<%= data.user %>'><%= data.user %></a> / <a href='#<%= data.user %>/<%= data.repo.name %>'><%= data.repo.name %></a><% if (data.isPrivate) { %><span class='ico small inline private' title='Private Project'></span><% } %></h4>\n    <!-- if (isNew() && !translate) placeholder, not value -->\n    <input type='text' class='headerinput' data-mode='<%= data.mode %>' <% print((data.placeholder ? 'placeholder=' : 'value=') + '\"' + data.input + '\"') %>>\n    <div class='mask'></div>\n  </div>\n<% } else { %>\n  <div class='avatar round'><%= data.avatar %></div>\n  <div class='fl details'>\n    <h4><a class='user' href='#<%= data.user %>'><%= data.user %></a></h4>\n    <h2><a class='repo' href='#<%= data.path %>'><%= data.title %></a></h2>\n  </div>\n<% } %>\n","li":{"file":"<% if (file.binary) { %>\n  <div class='listing-icon icon round <%= file.extension %> <% if (file.media) { %>media<% } %>'></div>\n<% } else { %>\n  <a href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>' class='listing-icon'>\n    <span class='icon round <%= file.extension %> <% if (file.markdown) { %> md<% } %> <% if (file.media) { %> media<% } %>'></span>\n  </a>\n<% } %>\n\n<div class='details'>\n  <div class='actions fr clearfix'>\n    <% if (!file.binary) { %>\n      <a class='clearfix'\n        title=\"<%= t('main.repo.edit') %>\"\n        href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'>\n        <%= t('main.repo.edit') %>\n      </a>\n    <% } %>\n    <% if (file.writable) { %>\n      <a\n        class='delete'\n        title=\"<%= t('main.repo.delete') %>\"\n        href='#'>\n        <span class='ico rubbish small'></span>\n      </a>\n    <% } %>\n  </div>\n  <% if (file.binary) { %>\n    <h3 class='title' title='<%= file.name %>'><%= file.name %></h3>\n  <% } else { %>\n    <h3 class='title' title='<%= file.name %>'><a class='clearfix'href='#<%= file.repo.owner.login %>/<%= file.repo.name %>/edit/<%= file.branch %>/<%= file.path %>'><%= file.name %></a></h3>\n  <% } %>\n  <span class='deemphasize'><%= file.jailpath %></span>\n</div>\n","folder":"<a href='#<%= folder.repo.owner.login %>/<%= folder.repo.name %>/tree/<%= folder.branch %>/<%= folder.path %>' class='listing-icon'>\n  <span class='icon round folder'></span>\n</a>\n\n<span class='details'>\n  <h3 class='title' title='<%= folder.name %>'>\n    <a href='#<%= folder.repo.owner.login %>/<%= folder.repo.name %>/tree/<%= folder.branch %>/<%= folder.path %>'>\n      <%= folder.name %>\n    </a>\n  </h3>\n  <span class='deemphasize'><%= folder.jailpath %></span>\n</span>\n","repo":"<a\n  class='listing-icon'\n  data-user='<%= repo.owner.login %>'\n  data-repo='<%= repo.name %>'\n  href='#<%= repo.owner.login %>/<%= repo.name %>'>\n  <% if ((repo.owner.login !== repo.login) && repo.private) { %>\n    <span class='icon round repo owner private' title=\"<%= t('main.repos.sharedFrom') %> (<%= repo.owner.login %>)\"></span>\n  <% } else if (repo.owner.login !== repo.login) { %>\n    <span class='icon round repo owner' title=\"<%= t('main.repos.sharedFrom') %> (<%= repo.owner.login %>)\"></span>\n  <% } else if (repo.fork && repo.private) { %>\n    <span class='icon round repo private fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n  <% } else if (repo.fork) { %>\n    <span class='icon round repo fork' title=\"<%= t('main.repos.forkedFrom') %>\"></span>\n  <% } else if (repo.private) { %>\n    <span class='icon round repo private'></span>\n  <% } else { %>\n    <span class='icon round repo'></span>\n  <% } %>\n</a>\n\n<div class='details'>\n  <div class='actions fr clearfix'>\n    <a\n      data-user='<%= repo.owner.login %>'\n      data-repo='<%= repo.name %>'\n      href='#<%= repo.owner.login %>/<%= repo.name %>'>\n      <%= t('main.repos.repo') %>\n    </a>\n    <% if (repo.homepage) { %>\n      <a href='<%= repo.homepage %>'><%= t('main.repos.site') %></a>\n    <% } %>\n  </div>\n  <a\n    data-user='<%= repo.owner.login %>'\n    data-repo='<%= repo.name %>'\n    href='#<%= repo.owner.login %>/<%= repo.name %>'>\n    <h3<% if (!repo.description) { %> class='title'<% } %>><%= repo.name %></h3>\n    <span class='deemphasize'><%= repo.description %></span>\n  </a>\n</div>\n"},"loading":"<div class='loading round clearfix'>\n  <div class='loading-icon'></div>\n  <span class=\"message\"></span>\n</div>\n","meta":{"button":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <button class='metafield round <%= meta.name %>' type='button' name='<%= meta.name %>' value='<%= meta.value %>' data-on='<%= meta.on %>' data-off='<%= meta.off %>'>\n      <% print(value ? meta.on : meta.off); %>\n    </button>\n  </fieldset>\n</div>\n","checkbox":"<div class='form-item'>\n  <fieldset>\n    <input class='metafield' type='checkbox' name='<%= meta.name %>' value='<%= meta.value %>'<% print(meta.checked ? 'checked' : '') %> />\n    <label class='aside' for='<%= meta.name %>'><%= meta.label %></label>\n  </fieldset>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n</div>\n","multiselect":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n\n  <fieldset>\n    <select id='<%= meta.name %>' name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' multiple class='metafield chzn-select'>\n      <% _(meta.options).each(function(o) { %>\n        <% if (!o.lang || o.lang === meta.lang) { %>\n          <% if (o.name) { %>\n           <option value='<%= o.value %>'><%= o.name %></option>\n          <% } else if (o.value) { %>\n           <option value='<%= o.value %>'><%= o.value %></option>\n          <% } else { %>\n           <option value='<%= o %>'><%= o %></option>\n          <% } %>\n        <% } %>\n      <% }); %>\n    </select>\n  </fieldset>\n\n  <% if (meta.alterable) { %>\n    <div class='create'>\n      <input type='text' class='inline' data-select='<%= meta.name %>' />\n      <a href='#' class='round create-select inline button' data-select='<%= meta.name %>' title=\"<%= t('main.file.createMeta') %>\"><%= t('main.file.createMeta') %></a>\n    </div>\n  <% } %>\n</div>\n","raw":"<div class='form-item'>\n  <label for='raw'><%= t('main.file.rawMeta') %></label>\n  <% if (meta.help) { %><small><%= meta.help %></small><% } %>\n  <fieldset>\n    <div name='raw' id='raw' class='metafield inner'></div>\n  </fieldset>\n</div>\n","select":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n\n  <fieldset>\n    <select name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' class='metafield chzn-select'>\n      <% _(meta.options).each(function(o) { %>\n        <% if (!o.lang || o.lang === meta.lang) { %>\n          <% if (o.name) { %>\n           <option value='<%= o.value %>'><%= o.name %></option>\n          <% } else if (o.value) { %>\n           <option value='<%= o.value %>'><%= o.value %></option>\n          <% } else { %>\n           <option value='<%= o %>'><%= o %></option>\n          <% } %>\n        <% } %>\n      <% }); %>\n    </select>\n  </fieldset>\n</div>\n","text":"<div class='form-item'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <input class='metafield' type='text' name='<%= meta.name %>' value='<%= meta.value %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>' />\n  </fieldset>\n</div>\n","textarea":"<div class='form-item yaml-block'>\n  <label for='<%= meta.name %>'><%= meta.label %></label>\n  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>\n  <fieldset>\n    <textarea class='metafield' id='<%= meta.id %>' type='text' name='<%= meta.name %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>'><%= meta.value %></textarea>\n  </fieldset>\n</div>\n"},"metadata":"<div class='form'></div>\n<a href='#' class='button round finish'><%= t('main.file.back') %></a>\n","modal":"<div class='modal-content round'>\n  <div class='modal-heading inner'>\n    <%= t('modal.errorHeading') %>\n  </div>\n  <div class='prose inner'>\n    <p><%= modal.message %></p>\n  </div>\n  <div class='modal-footer inner'>\n    <a href='#' class='button round got-it'><%= t('modal.confirm') %></a>\n  </div>\n</div>\n","nav":"<ul class='mobile nav clearfix'>\n  <li>\n    <a href='#' class='toggle ico menu round'></a>\n  </li>\n</ul>\n\n<ul class='file nav clearfix'>\n  <li>\n    <a href='#' title=\"<%= t('navigation.edit') %>\" class='ico round pencil edit' data-state='edit'>\n      <span class='popup round arrow-right'><%= t('navigation.edit') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' title=\"<%= t('navigation.preview') %>\" class='ico round eye blob preview' data-state='blob'>\n      <span class='popup round arrow-right'><%= t('navigation.preview') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' title=\"<%= t('navigation.meta') %>\" class='ico round metadata meta' data-state='meta'>\n      <span class='popup round arrow-right'><%= t('navigation.meta') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' title=\"<%= t('navigation.settings') %>\" class='ico round sprocket settings' data-state='settings' data-drawer=true>\n      <span class='popup round arrow-right'><%= t('navigation.settings') %></span>\n    </a>\n  </li>\n\n  <li>\n    <a href='#' title=\"<%= t('navigation.save') %>\" class='ico round save' data-state='save'>\n      <div class='status'></div>\n      <span class='popup round arrow-right'>\n        <%= t('navigation.save') %>\n      </span>\n    </a>\n  </li>\n</ul>\n\n<ul class='auth nav clearfix'>\n  <li>\n    <a class='ico round switch login' href='<%= data.login %>' title=\"<%= t('login') %>\">\n      <span class='popup round arrow-right'><%= t('login') %></span>\n    </a>\n  </li>\n</ul>\n","notification":"<div class='notify'>\n  <h2 class='icon landing error'>Prose</h2>\n  <div class='inner'>\n    <p><%= data.message %></p>\n    <p class='error'><%= data.error %></p>\n\n    <% _(data.options).each(function(options) { %>\n    <div>\n      <a class='button round <% if(options.className) { %><%= options.className %><% } %>' href='<%= options.link %>'><%= options.title %></a>\n    </div>\n    <% }); %>\n  </div>\n</div>\n","profile":"<header id='heading' class='heading limiter clearfix'></header>\n\n<div id='content' class='application content limiter'>\n  <div class='topbar'>\n    <div id='search' class='content-search round'></div>\n  </div>\n  <ul id='repos' class='projects listing'></ul>\n</div>\n","repo":"<header id='heading' class='heading limiter clearfix'></header>\n\n<div id='content' class='application content limiter'>\n  <div class='topbar clearfix'>\n    <!-- if repo and authenticated -->\n    <!-- #user/repo/new/branch/path -->\n    <div id='search' class='fl content-search round'></div>\n    <a href='#' class='fl button round new new-file' data-state='new'>\n      <%= t('navigation.newFile') %>\n    </a>\n  </div>\n\n  <div id='files'></div>\n</div>\n","search":"<span class='ico search'></span>\n<input type='text' id='filter' placeholder=\"<%= search.placeholder %>\" />\n","sidebar":{"branches":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.repo.branch') %></h2>\n  <select class='chzn-select'></select>\n</div>\n","drafts":"<a class='button round' href='#<%= link %>'><%= t('sidebar.repo.drafts') %></a>\n","label":"<div class='inner'>\n  <h2 class='label inner'><%= label %></h2>\n</div>\n","li":{"commit":"<a class='<%= data.status %>' href='#<%= [data.repo.owner.login, data.repo.name, data.mode, data.branch, data.path].join(\"/\") %>'>\n  <span class='ico small inline <%= data.status %>'></span>\n  <span class='message'><%= data.file.filename %></span>\n</a>\n"},"orgs":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.repos.groups') %></h2>\n</div>\n<ul class='listing'>\n  <li>\n    <a href='#<%= orgs.login.user %>' title='<%= orgs.login.user %>' data-id='<%= orgs.login.id %>'>\n      <%= orgs.login.user %>\n    </a>\n  </li>\n  <% orgs.orgs.each(function(org) {  %>\n  <li>\n    <a href='#<%= org.login %>' title='<%= org.login %>' data-id='<%= org.id %>'>\n      <%= org.login %>\n    </a>\n  </li>\n  <% }); %>\n</ul>\n","save":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.save.label') %></h2>\n</div>\n<div class='inner authoring'>\n  <div class='commit'>\n    <textarea class='commit-message' placeholder></textarea>\n    <a class='ico small cancel round' title=\"<%= t('sidebar.save.cancel') %>\" href='#' data-action='cancel'>\n      <span class='popup round arrow-bottom'><%= t('sidebar.save.cancel') %></span>\n    </a>\n  </div>\n  <a class='confirm button round' href='#' data-action='confirm'><%= writable %></a>\n</div>\n","settings":"<div class='inner'>\n  <h2 class='label'><%= t('sidebar.settings.title') %></h2>\n</div>\n<div class='inner authoring'>\n  <% if (/^_posts/.test(settings.path)) { %>\n    <a class='draft button round' href='#' data-action='draft'><%= t('sidebar.settings.draft') %></a>\n  <% } %>\n  \n  <% if (settings.languages && settings.lang !== 'yaml') { %>\n    <% _.each(settings.languages, function(l) { %>\n      <% if (l.value && (settings.metadata && (settings.metadata.lang !== l.value))) { %>\n        <a class='translate round button' href='#<%= l.value %>' data-action='translate'><%= t('sidebar.settings.translate') + ' ' + l.name %></a>\n      <% } %>\n    <% }); %>\n  <% } %>\n\n  <!-- if !isNew() and is writable -->\n  <a class='delete button round' href='#' data-action='destroy'><%= t('sidebar.settings.delete') %></a>\n</div>\n\n<% if (settings.fileInput) { %>\n  <div class='inner'>\n    <h2 class='label'><%= t('sidebar.settings.fileInputLabel') %></h2>\n    <input type='text' class='filepath' placeholder='<%= settings.path %>' value='<%= settings.path %>'>\n  </div>\n<% } %>\n"},"start":"<div class='round splash'>\n  <h2 class='icon landing'>Prose</h2>\n  <div class='inner'>\n    <p><%= t('main.start.content') %></p>\n    <p><a href='#about'><%= t('main.start.learn') %></a></p>\n    <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>\n  </div>\n</div>\n","toolbar":"<% if (toolbar.draft) { %>\n  <a href='#' class='draft-to-post round contain'>\n    <%= t('actions.draft.toPost') %><span class='ico small checkmark'></span>\n    <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>\n  </a>\n<% } else { %>\n  <% if (toolbar.metadata && toolbar.metadata.published) { %>\n    <a href='#' class='publish-flag published round contain' data-state='true'>\n      <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>\n    </a>\n  <% } else if (toolbar.metadata && !toolbar.metadata.published) { %>\n    <a href='#' class='publish-flag round contain' data-state='false'>\n      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>\n    </a>\n  <% } %>\n<% } %>\n\n<% if (toolbar.markdown) { %>\n<div class='options clearfix'>\n  <ul class='group round clearfix'>\n    <li><a href='#' title=\"<%= t('toolbar.heading') %>\" data-key='heading' data-snippet='<% print(\"##\\n\\n\") %>'>h2</a></li>\n    <li><a href='#' title=\"<%= t('toolbar.subHeading') %>\" data-key='sub-heading' data-snippet='<% print(\"###\\n\\n\") %>'>h3</a></li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n      <a title=\"<%= t('toolbar.link') %>\" href='#' data-key='link' data-snippet=false data-dialog=true>\n        <span class='ico small link'></span>\n      </a>\n    </li>\n    <li>\n      <a title=\"<%= t('toolbar.image') %>\" href='#' data-key='media' data-snippet=false data-dialog=true>\n        <span class='ico small picture'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li><a href='#' title=\"<%= t('toolbar.bold') %>\" data-key='bold' data-snippet='****'>B</a></li>\n    <li>\n      <a data-key='italic' href='#' title=\"<%= t('toolbar.italic') %>\" data-snippet='__'>\n        <span class='ico small italic'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n      <a title=\"<%= t('toolbar.blockquote') %>\"  href='#' data-key='quote' data-snippet='<% print(\"> We loved with a love that was more than love\\n\\n\"); %>'>\n        <span class='ico small quote'></span>\n      </a>\n    </li>\n    <li>\n      <a href='#' title=\"<%= t('toolbar.list') %>\" data-key='list' data-snippet='<% print(\"- item\\n- item\\n- item\\n\\n\"); %>'>\n        <span class='ico small list'></span>\n      </a>\n    </li>\n    <li>\n      <a href='#' title=\"<%= t('toolbar.numberedlist') %>\" data-key='numbered-list' data-snippet='<% print(\"1. item\\n2. item\\n3. item\\n\\n\"); %>'>\n        <span class='ico small numbered-list'></span>\n      </a>\n    </li>\n  </ul>\n  <ul class='group round clearfix'>\n    <li>\n    <a class='round' title=\"<%= t('toolbar.help') %>\" href='#' data-key='help' data-snippet=false data-dialog=true>\n        <span class='ico small question'></span>\n      </a>\n    </li>\n  </ul>\n</div>\n<% } %>\n<div id='dialog'></div>\n"};
-},{}],5:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-
-var User = require('./models/user');
-var Users = require('./collections/users');
-var Orgs = require('./collections/orgs');
-
-var Repo = require('./models/repo');
-var File = require('./models/file');
-
-var AppView = require('./views/app');
-var NotificationView = require('./views/notification');
-var StartView = require('./views/start');
-var ProfileView = require('./views/profile');
-var SearchView = require('./views/search');
-var ReposView = require('./views/repos');
-var RepoView = require('./views/repo');
-var FileView = require('./views/file');
-var DocumentationView = require('./views/documentation');
-var ChooseLanguageView = require('./views/chooselanguage');
-
-var templates = require('../dist/templates');
-var util = require('./util');
-
-module.exports = Backbone.Router.extend({
-
-  routes: {
-    'about(/)': 'about',
-    'chooselanguage(/)': 'chooseLanguage',
-    ':user(/)': 'profile',
-    ':user/:repo(/)': 'repo',
-    ':user/:repo/*path(/)': 'path',
-    '*default': 'start'
-  },
-
-  initialize: function(options) {
-    options = _.clone(options) || {};
-
-    this.users = new Users();
-
-    if (options.user) {
-      this.user = options.user;
-      this.users.add(this.user);
-    }
-
-    // Load up the main layout
-    this.app = new AppView({
-      el: '#prose',
-      model: {},
-      user: this.user
-    });
-
-    this.app.render();
-  },
-
-  chooseLanguage: function() {
-    if (this.view) this.view.remove();
-
-    this.app.loader.start(t('loading.file'));
-    this.app.nav.mode('');
-
-    this.view = new ChooseLanguageView();
-    this.app.$el.find('#main').html(this.view.render().el);
-
-    this.app.loader.done();
-  },
-
-  about: function() {
-    if (this.view) this.view.remove();
-
-    this.app.loader.start(t('loading.file'));
-    this.app.nav.mode('');
-
-    this.view = new DocumentationView();
-    this.app.$el.find('#main').html(this.view.render().el);
-
-    this.app.loader.done();
-  },
-
-  // #example-user
-  // #example-organization
-  profile: function(login) {
-    if (this.view) this.view.remove();
-
-    this.app.loader.start(t('loading.repos'));
-    this.app.nav.mode('repos');
-
-    util.documentTitle(login);
-
-    var user = this.users.findWhere({ login: login });
-    if (_.isUndefined(user)) {
-      user = new User({ login: login });
-      this.users.add(user);
-    }
-
-    var search = new SearchView({
-      model: user.repos,
-      mode: 'repos'
-    });
-
-    var repos = new ReposView({
-      model: user.repos,
-      search: search
-    });
-
-    var content = new ProfileView({
-      auth: this.user,
-      search: search,
-      sidebar: this.app.sidebar,
-      repos: repos,
-      router: this,
-      user: user
-    });
-
-    user.fetch({
-      success: (function(model, res, options) {
-        this.view = content;
-        this.app.$el.find('#main').html(this.view.render().el);
-
-        model.repos.fetch({
-          success: repos.render,
-          error: (function(model, xhr, options) {
-            this.error(xhr);
-          }).bind(this),
-          complete: this.app.loader.done
-        });
-      }).bind(this),
-      error: (function(model, xhr, options) {
-        this.error(xhr);
-      }).bind(this)
-    });
-  },
-
-  // #example-user/example-repo
-  // #example-user/example-repo/tree/example-branch/example-path
-  repo: function(login, repoName, branch, path) {
-    if (this.view instanceof RepoView &&
-      this.view.model.get('owner').login === login &&
-      this.view.model.get('name') === repoName &&
-      (this.view.branch === branch ||
-        (_.isUndefined(branch) &&
-        this.view.branch === this.view.model.get('default_branch'))
-      )) {
-      this.view.files.path = path || '';
-      return this.view.files.render();
-    } else if (this.view) this.view.remove();
-
-    this.app.loader.start(t('loading.repo'));
-    this.app.nav.mode('repo');
-
-    var title = repoName;
-    if (branch) title = repoName + ': /' + path + ' at ' + branch;
-    util.documentTitle(title);
-
-    var user = this.users.findWhere({ login: login });
-    if (_.isUndefined(user)) {
-      user = new User({ login: login });
-      this.users.add(user);
-    }
-
-    var repo = user.repos.findWhere({ name: repoName });
-    if (_.isUndefined(repo)) {
-      repo = new Repo({
-        name: repoName,
-        owner: {
-          login: login
-        }
-      });
-      user.repos.add(repo);
-    }
-
-    repo.fetch({
-      success: (function(model, res, options) {
-        var content = new RepoView({
-          app: this.app,
-          branch: branch,
-          model: repo,
-          nav: this.app.nav,
-          path: path,
-          router: this,
-          sidebar: this.app.sidebar
-        });
-
-        this.view = content;
-        this.app.$el.find('#main').html(this.view.render().el);
-      }).bind(this),
-      error: (function(model, xhr, options) {
-        this.error(xhr);
-      }).bind(this),
-      complete: this.app.loader.done
-    });
-  },
-
-  path: function(login, repoName, path) {
-    var url = util.extractURL(path);
-
-    switch(url.mode) {
-      case 'tree':
-        this.repo(login, repoName, url.branch, url.path);
-        break;
-      case 'new':
-      case 'blob':
-      case 'edit':
-      case 'preview':
-        this.post(login, repoName, url.mode, url.branch, url.path);
-        break;
-      default:
-        throw url.mode;
-    }
-  },
-
-  post: function(login, repoName, mode, branch, path) {
-    if (this.view) this.view.remove();
-
-    this.app.nav.mode('file');
-
-    switch(mode) {
-      case 'new':
-        this.app.loader.start(t('loading.creating'));
-        break;
-      case 'edit':
-        this.app.loader.start(t('loading.file'));
-        break;
-      case 'preview':
-        this.app.loader.start(t('loading.preview'));
-        break;
-    }
-
-    var user = this.users.findWhere({ login: login });
-    if (_.isUndefined(user)) {
-      user = new User({ login: login });
-      this.users.add(user);
-    }
-
-    var repo = user.repos.findWhere({ name: repoName });
-    if (_.isUndefined(repo)) {
-      repo = new Repo({
-        name: repoName,
-        owner: {
-          login: login
-        }
-      });
-      user.repos.add(repo);
-    }
-
-    var file = {
-      app: this.app,
-      branch: branch,
-      branches: repo.branches,
-      mode: mode,
-      nav: this.app.nav,
-      name: util.extractFilename(path)[1],
-      path: path,
-      repo: repo,
-      router: this,
-      sidebar: this.app.sidebar
-    };
-
-    // TODO: defer this success function until both user and repo have been fetched
-    // in paralell rather than in series
-    user.fetch({
-      success: (function(model, res, options) {
-        repo.fetch({
-          success: (function(model, res, options) {
-            this.view = new FileView(file);
-            this.app.$el.find('#main').html(this.view.el);
-          }).bind(this),
-          error: (function(model, xhr, options) {
-            this.error(xhr);
-          }).bind(this),
-          complete: this.app.loader.done
-        });
-      }).bind(this),
-      error: (function(model, xhr, options) {
-        this.error(xhr);
-      }).bind(this)
-    });
-  },
-
-  preview: function(login, repoName, mode, branch, path) {
-    if (this.view) this.view.remove();
-
-    this.app.loader.start(t('loading.preview'));
-
-    var user = this.users.findWhere({ login: login });
-    if (_.isUndefined(user)) {
-      user = new User({ login: login });
-      this.users.add(user);
-    }
-
-    var repo = user.repos.findWhere({ name: repoName });
-    if (_.isUndefined(repo)) {
-      repo = new Repo({
-        name: repoName,
-        owner: {
-          login: login
-        }
-      });
-      user.repos.add(repo);
-    }
-
-    var file = {
-      branch: branch,
-      branches: repo.branches,
-      mode: mode,
-      nav: this.app.nav,
-      name: util.extractFilename(path)[1],
-      path: path,
-      repo: repo,
-      router: this,
-      sidebar: this.app.sidebar
-    };
-
-    repo.fetch({
-      success: (function(model, res, options) {
-        // TODO: should this still pass through File view?
-        this.view = new Preview(file);
-        this.app.$el.find('#main').html(this.view.el);
-      }).bind(this),
-      error: (function(model, xhr, options) {
-        this.error(xhr);
-      }).bind(this),
-      complete: this.app.loader.done
-    });
-  },
-
-  start: function() {
-    if (this.view) this.view.remove();
-
-    // If user has authenticated
-    if (this.user) {
-      router.navigate(this.user.get('login'), {
-        trigger: true,
-        replace: true
-      });
-    } else {
-      this.app.nav.mode('start');
-      this.view = new StartView();
-      this.app.$el.find('#main').html(this.view.render().el);
-    }
-  },
-
-  notify: function(message, error, options) {
-    if (this.view) this.view.remove();
-
-    this.view = new NotificationView({
-      'message': message,
-      'error': error,
-      'options': options
-    });
-
-    this.app.$el.find('#main').html(this.view.render().el);
-    this.app.loader.stop();
-  },
-
-  error: function(xhr) {
-    var message = [
-      xhr.status,
-      xhr.statusText
-    ].join(' ');
-
-    var error = JSON.parse(xhr.responseText).message;
-
-    var options = [
-      {
-        'title': t('notification.home'),
-        'link': '/'
-      }
-    ];
-
-    this.notify(message, error, options);
-  }
-});
-
-},{"./models/user":6,"./collections/users":15,"./collections/orgs":16,"./models/repo":17,"./models/file":18,"./views/app":19,"./views/notification":7,"./views/start":20,"./views/profile":21,"./views/search":22,"./views/repos":23,"./views/repo":24,"./views/file":25,"./views/documentation":26,"./views/chooselanguage":27,"./util":28,"../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],9:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var config = require('./config'); 
 var $ = require('jquery-browserify'); 
 
@@ -21307,7 +21307,7 @@ module.exports = {
   }
 }
 
-},{"./config":8,"jquery-browserify":10}],29:[function(require,module,exports){
+},{"./config":4,"jquery-browserify":14}],29:[function(require,module,exports){
 module.exports = function() {
   Liquid.readTemplateFile = (function(path) {
     var file = this.collection.findWhere({ path: '_includes/' + path });
@@ -21525,7 +21525,7 @@ module.exports = {
   }
 }
 
-},{}],6:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 
@@ -21582,7 +21582,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"../collections/repos":31,"../collections/orgs":16,"../views/notification":7,"../config":8,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],7:[function(require,module,exports){
+},{"../collections/repos":31,"../collections/orgs":16,"../views/notification":11,"../config":4,"../cookie":3,"../../dist/templates":7,"jquery-browserify":14,"underscore":6,"backbone":13}],11:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -21642,7 +21642,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],12:[function(require,module,exports){
+},{"../../dist/templates":7,"../util":28,"jquery-browserify":14,"underscore":6,"backbone":13}],13:[function(require,module,exports){
 (function(){//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -23216,7 +23216,7 @@ module.exports = Backbone.View.extend({
 }).call(this);
 
 })()
-},{"underscore":11}],28:[function(require,module,exports){
+},{"underscore":6}],28:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var templates = require('../dist/templates');
@@ -23483,70 +23483,7 @@ module.exports = {
   }
 };
 
-},{"../dist/templates":14,"jquery-browserify":10,"underscore":11,"chrono":32}],33:[function(require,module,exports){
-module.exports = {
-  help: [
-    {
-      menuName: t('dialogs.help.blockElements.title'),
-      content: [{
-          menuName: t('dialogs.help.blockElements.content.paragraphs.title'),
-          data: t('dialogs.help.blockElements.content.paragraphs.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.headers.title'),
-          data: t('dialogs.help.blockElements.content.headers.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.blockquotes.title'),
-          data: t('dialogs.help.blockElements.content.blockquotes.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.lists.title'),
-          data: t('dialogs.help.blockElements.content.lists.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.codeBlocks.title'),
-          data: t('dialogs.help.blockElements.content.codeBlocks.content')
-        }, {
-          menuName: t('dialogs.help.blockElements.content.horizontalRules.title'),
-          data: t('dialogs.help.blockElements.content.horizontalRules.content')
-        }
-      ]
-    },
-
-    {
-      menuName: t('dialogs.help.spanElements.title'),
-      content: [{
-          menuName: t('dialogs.help.spanElements.content.links.title'),
-          data: t('dialogs.help.spanElements.content.links.content')
-        },
-        {
-          menuName: t('dialogs.help.spanElements.content.emphasis.title'),
-          data: t('dialogs.help.spanElements.content.emphasis.content')
-        },
-        {
-          menuName: t('dialogs.help.spanElements.content.code.title'),
-          data: t('dialogs.help.spanElements.content.code.content')
-        },
-        {
-          menuName: t('dialogs.help.spanElements.content.images.title'),
-          data: t('dialogs.help.spanElements.content.images.content')
-        }
-      ]
-    },
-
-    {
-      menuName: t('dialogs.help.miscellaneous.title'),
-      content: [{
-          menuName: t('dialogs.help.miscellaneous.content.automaticLinks.title'),
-          data: t('dialogs.help.miscellaneous.content.automaticLinks.content')
-        },
-        {
-          menuName: t('dialogs.help.miscellaneous.content.escaping.title'),
-          data: t('dialogs.help.miscellaneous.content.escaping.content')
-        }
-      ]
-    }
-  ]
-}
-
-},{}],15:[function(require,module,exports){
+},{"../dist/templates":7,"jquery-browserify":14,"underscore":6,"chrono":32}],15:[function(require,module,exports){
 var Backbone = require('backbone');
 var User = require('../models/user');
 var config = require('../config');
@@ -23555,7 +23492,7 @@ module.exports = Backbone.Collection.extend({
   model: User
 });
 
-},{"../models/user":6,"../config":8,"backbone":12}],16:[function(require,module,exports){
+},{"../models/user":10,"../config":4,"backbone":13}],16:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Org = require('../models/org');
@@ -23577,7 +23514,7 @@ module.exports = Backbone.Collection.extend({
   }
 });
 
-},{"../models/org":34,"../config":8,"underscore":11,"backbone":12}],17:[function(require,module,exports){
+},{"../models/org":33,"../config":4,"underscore":6,"backbone":13}],17:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Branches = require('../collections/branches');
@@ -23663,7 +23600,287 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"../collections/branches":35,"../collections/commits":36,"../config":8,"underscore":11,"backbone":12}],18:[function(require,module,exports){
+},{"../collections/branches":34,"../collections/commits":35,"../config":4,"underscore":6,"backbone":13}],36:[function(require,module,exports){
+module.exports = {
+  help: [
+    {
+      menuName: t('dialogs.help.blockElements.title'),
+      content: [{
+          menuName: t('dialogs.help.blockElements.content.paragraphs.title'),
+          data: t('dialogs.help.blockElements.content.paragraphs.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.headers.title'),
+          data: t('dialogs.help.blockElements.content.headers.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.blockquotes.title'),
+          data: t('dialogs.help.blockElements.content.blockquotes.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.lists.title'),
+          data: t('dialogs.help.blockElements.content.lists.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.codeBlocks.title'),
+          data: t('dialogs.help.blockElements.content.codeBlocks.content')
+        }, {
+          menuName: t('dialogs.help.blockElements.content.horizontalRules.title'),
+          data: t('dialogs.help.blockElements.content.horizontalRules.content')
+        }
+      ]
+    },
+
+    {
+      menuName: t('dialogs.help.spanElements.title'),
+      content: [{
+          menuName: t('dialogs.help.spanElements.content.links.title'),
+          data: t('dialogs.help.spanElements.content.links.content')
+        },
+        {
+          menuName: t('dialogs.help.spanElements.content.emphasis.title'),
+          data: t('dialogs.help.spanElements.content.emphasis.content')
+        },
+        {
+          menuName: t('dialogs.help.spanElements.content.code.title'),
+          data: t('dialogs.help.spanElements.content.code.content')
+        },
+        {
+          menuName: t('dialogs.help.spanElements.content.images.title'),
+          data: t('dialogs.help.spanElements.content.images.content')
+        }
+      ]
+    },
+
+    {
+      menuName: t('dialogs.help.miscellaneous.title'),
+      content: [{
+          menuName: t('dialogs.help.miscellaneous.content.automaticLinks.title'),
+          data: t('dialogs.help.miscellaneous.content.automaticLinks.content')
+        },
+        {
+          menuName: t('dialogs.help.miscellaneous.content.escaping.title'),
+          data: t('dialogs.help.miscellaneous.content.escaping.content')
+        }
+      ]
+    }
+  ]
+}
+
+},{}],19:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var LoaderView = require('./loader');
+var SidebarView = require('./sidebar');
+var NavView = require('./nav');
+var cookie = require('../cookie');
+var templates = require('../../dist/templates');
+var util = require('../util');
+
+module.exports = Backbone.View.extend({
+  className: 'application',
+
+  template: templates.app,
+
+  subviews: {},
+
+  events: {
+    'click a.logout': 'logout'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    key('j, k, enter, o', (function(e, handler) {
+      if (this.$el.find('.listing')[0]) {
+        if (handler.key === 'j' || handler.key === 'k') {
+          util.pageListing(handler.key);
+        } else {
+          util.goToFile();
+        }
+      }
+    }).bind(this));
+
+    this.user = options.user;
+
+    // Loader
+    this.loader = new LoaderView();
+    this.subviews['loader'] = this.loader;
+
+    // Sidebar
+    this.sidebar = new SidebarView({
+      app: this,
+      user: this.user
+    });
+    this.subviews['sidebar'] = this.sidebar;
+
+    // Nav
+    this.nav = new NavView({
+      app: this,
+      sidebar: this.sidebar,
+      user: this.user
+    });
+    this.subviews['nav'] = this.nav;
+  },
+
+  render: function() {
+    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
+
+    this.loader.setElement(this.$el.find('#loader')).render();
+    this.sidebar.setElement(this.$el.find('#drawer')).render();
+    this.nav.setElement(this.$el.find('nav')).render();
+
+    return this;
+  },
+
+  logout: function() {
+    cookie.unset('oauth-token');
+    cookie.unset('id');
+    window.location.reload();
+    return false;
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./loader":37,"./sidebar":38,"./nav":39,"../cookie":3,"../../dist/templates":7,"../util":28,"jquery-browserify":14,"underscore":6,"backbone":13}],20:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+var auth = require('../config');
+
+module.exports = Backbone.View.extend({
+  id: 'start',
+
+  template: templates.start,
+
+  render: function() {
+    this.$el.html(_.template(this.template, auth, { variable: 'auth' }));
+    return this;
+  }
+});
+
+},{"../../dist/templates":7,"../config":4,"jquery-browserify":14,"underscore":6,"backbone":13}],21:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var HeaderView = require('./header');
+var OrgsView = require('./sidebar/orgs');
+var utils = require('.././util');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.profile,
+
+  subviews: {},
+
+  initialize: function(options) {
+    this.auth = options.auth;
+    this.repos = options.repos;
+    this.router = options.router;
+    this.search = options.search;
+    this.sidebar = options.sidebar;
+    this.user = options.user;
+  },
+
+  render: function() {
+    this.$el.empty().append(_.template(this.template));
+
+    this.search.setElement(this.$el.find('#search')).render();
+    this.repos.setElement(this.$el.find('#repos'));
+
+    var header = new HeaderView({ user: this.user, alterable: false });
+    header.setElement(this.$el.find('#heading')).render();
+    this.subviews['header'] = header;
+
+    if (this.auth) {
+      var orgs = this.sidebar.initSubview('orgs', {
+        model: this.auth.orgs,
+        router: this.router,
+        sidebar: this.sidebar,
+        user: this.user
+      });
+      
+      this.subviews['orgs'] = orgs;
+    }
+
+    return this;
+  },
+
+  remove: function() {
+    this.sidebar.close();
+
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"./header":40,"./sidebar/orgs":41,".././util":28,"../../dist/templates":7,"jquery-browserify":14,"underscore":6,"backbone":13}],22:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+var util = require('../util');
+
+module.exports = Backbone.View.extend({
+  template: templates.search,
+
+  events: {
+    'keyup input': 'keyup'
+  },
+
+  initialize: function(options) {
+    this.mode = options.mode;
+    this.model = options.model;
+  },
+
+  render: function() {
+    var placeholder = t('main.repos.filter');
+    if (this.mode === 'repo') placeholder = t('main.repo.filter');
+
+    var search = {
+      placeholder: placeholder
+    };
+
+    this.$el.empty().append(_.template(this.template, search, {
+      variable: 'search'
+    }));
+
+    this.input = this.$el.find('input');
+    this.input.focus();
+    return this;
+  },
+
+  keyup: function(e) {
+    if (e && e.which === 27) {
+      // ESC key
+      this.input.val('');
+      this.trigger('search');
+    } else if (e && e.which === 40) {
+      // Down Arrow
+      util.pageListing('down');
+      e.preventDefault();
+      e.stopPropagation();
+      this.input.blur();
+    } else {
+      this.trigger('search');
+    }
+  },
+
+  search: function() {
+    var searchstr = this.input ? this.input.val() : '';
+    return this.model.filter(function(model) {
+      return model.get('name').indexOf(searchstr) > -1;
+    });
+  }
+});
+
+},{"../../dist/templates":7,"../util":28,"jquery-browserify":14,"underscore":6,"backbone":13}],18:[function(require,module,exports){
 var _ = require('underscore');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -24037,224 +24254,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{".././util":28,"underscore":11,"marked":37,"backbone":12,"js-yaml":38}],19:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var LoaderView = require('./loader');
-var SidebarView = require('./sidebar');
-var NavView = require('./nav');
-var cookie = require('../cookie');
-var templates = require('../../dist/templates');
-var util = require('../util');
-
-module.exports = Backbone.View.extend({
-  className: 'application',
-
-  template: templates.app,
-
-  subviews: {},
-
-  events: {
-    'click a.logout': 'logout'
-  },
-
-  initialize: function(options) {
-    _.bindAll(this);
-
-    key('j, k, enter, o', (function(e, handler) {
-      if (this.$el.find('.listing')[0]) {
-        if (handler.key === 'j' || handler.key === 'k') {
-          util.pageListing(handler.key);
-        } else {
-          util.goToFile();
-        }
-      }
-    }).bind(this));
-
-    this.user = options.user;
-
-    // Loader
-    this.loader = new LoaderView();
-    this.subviews['loader'] = this.loader;
-
-    // Sidebar
-    this.sidebar = new SidebarView({
-      app: this,
-      user: this.user
-    });
-    this.subviews['sidebar'] = this.sidebar;
-
-    // Nav
-    this.nav = new NavView({
-      app: this,
-      sidebar: this.sidebar,
-      user: this.user
-    });
-    this.subviews['nav'] = this.nav;
-  },
-
-  render: function() {
-    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
-
-    this.loader.setElement(this.$el.find('#loader')).render();
-    this.sidebar.setElement(this.$el.find('#drawer')).render();
-    this.nav.setElement(this.$el.find('nav')).render();
-
-    return this;
-  },
-
-  logout: function() {
-    cookie.unset('oauth-token');
-    cookie.unset('id');
-    window.location.reload();
-    return false;
-  },
-
-  remove: function() {
-    _.invoke(this.subviews, 'remove');
-    this.subviews = {};
-
-    Backbone.View.prototype.remove.apply(this, arguments);
-  }
-});
-
-},{"./loader":39,"./sidebar":40,"./nav":41,"../cookie":3,"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],20:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var templates = require('../../dist/templates');
-var auth = require('../config');
-
-module.exports = Backbone.View.extend({
-  id: 'start',
-
-  template: templates.start,
-
-  render: function() {
-    this.$el.html(_.template(this.template, auth, { variable: 'auth' }));
-    return this;
-  }
-});
-
-},{"../../dist/templates":14,"../config":8,"jquery-browserify":10,"underscore":11,"backbone":12}],21:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var HeaderView = require('./header');
-var OrgsView = require('./sidebar/orgs');
-var utils = require('.././util');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  template: templates.profile,
-
-  subviews: {},
-
-  initialize: function(options) {
-    this.auth = options.auth;
-    this.repos = options.repos;
-    this.router = options.router;
-    this.search = options.search;
-    this.sidebar = options.sidebar;
-    this.user = options.user;
-  },
-
-  render: function() {
-    this.$el.empty().append(_.template(this.template));
-
-    this.search.setElement(this.$el.find('#search')).render();
-    this.repos.setElement(this.$el.find('#repos'));
-
-    var header = new HeaderView({ user: this.user, alterable: false });
-    header.setElement(this.$el.find('#heading')).render();
-    this.subviews['header'] = header;
-
-    if (this.auth) {
-      var orgs = this.sidebar.initSubview('orgs', {
-        model: this.auth.orgs,
-        router: this.router,
-        sidebar: this.sidebar,
-        user: this.user
-      });
-      
-      this.subviews['orgs'] = orgs;
-    }
-
-    return this;
-  },
-
-  remove: function() {
-    this.sidebar.close();
-
-    _.invoke(this.subviews, 'remove');
-    this.subviews = {};
-
-    Backbone.View.prototype.remove.apply(this, arguments);
-  }
-});
-
-},{"./header":42,"./sidebar/orgs":43,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],22:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var templates = require('../../dist/templates');
-var util = require('../util');
-
-module.exports = Backbone.View.extend({
-  template: templates.search,
-
-  events: {
-    'keyup input': 'keyup'
-  },
-
-  initialize: function(options) {
-    this.mode = options.mode;
-    this.model = options.model;
-  },
-
-  render: function() {
-    var placeholder = t('main.repos.filter');
-    if (this.mode === 'repo') placeholder = t('main.repo.filter');
-
-    var search = {
-      placeholder: placeholder
-    };
-
-    this.$el.empty().append(_.template(this.template, search, {
-      variable: 'search'
-    }));
-
-    this.input = this.$el.find('input');
-    this.input.focus();
-    return this;
-  },
-
-  keyup: function(e) {
-    if (e && e.which === 27) {
-      // ESC key
-      this.input.val('');
-      this.trigger('search');
-    } else if (e && e.which === 40) {
-      // Down Arrow
-      util.pageListing('down');
-      e.preventDefault();
-      e.stopPropagation();
-      this.input.blur();
-    } else {
-      this.trigger('search');
-    }
-  },
-
-  search: function() {
-    var searchstr = this.input ? this.input.val() : '';
-    return this.model.filter(function(model) {
-      return model.get('name').indexOf(searchstr) > -1;
-    });
-  }
-});
-
-},{"../../dist/templates":14,"../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],23:[function(require,module,exports){
+},{".././util":28,"underscore":6,"backbone":13,"marked":42,"js-yaml":43}],23:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -24321,7 +24321,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./li/repo":44,"jquery-browserify":10,"underscore":11,"backbone":12}],24:[function(require,module,exports){
+},{"./li/repo":44,"jquery-browserify":14,"underscore":6,"backbone":13}],24:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');
@@ -24462,7 +24462,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./files":45,"./header":42,"./search":22,".././util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"queue-async":46,"backbone":12}],26:[function(require,module,exports){
+},{"./files":45,"./header":40,"./search":22,".././util":28,"../../dist/templates":7,"jquery-browserify":14,"underscore":6,"queue-async":46,"backbone":13}],26:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -24477,7 +24477,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"jquery-browserify":10,"marked":37,"backbone":12}],27:[function(require,module,exports){
+},{"jquery-browserify":14,"marked":42,"backbone":13}],27:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -24529,7 +24529,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../cookie":3,"../../dist/templates":14,"../../translations/locales":2,"jquery-browserify":10,"backbone":12,"underscore":11}],25:[function(require,module,exports){
+},{"../cookie":3,"../../dist/templates":7,"../../translations/locales":2,"jquery-browserify":14,"underscore":6,"backbone":13}],25:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');
@@ -24636,28 +24636,37 @@ module.exports = Backbone.View.extend({
   setModel: function(model, res, options) {
     this.app.loader.start();
 
-    // Set default metadata from collection
-    var defaults = this.collection.defaults;
-    var path;
-
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
     switch(this.mode) {
       case 'edit':
       case 'blob':
-      case 'preview':
         this.model = this.collection.findWhere({ path: this.path });
         break;
+      case 'preview':
+        this.model = this.collection.findWhere({ path: this.path });
+        if (!this.model) {
+          // We may be trying to preview a new file that only has
+          // stashed information lets check and create a dummy model
+          var previewPath = this.absolutePathFromComponents (
+            this.repo.get('owner').login,
+            this.repo.get('name'),
+            this.branch,
+            this.path
+          );
+          if (this.getStashForPath(previewPath)) {
+            this.model = this.newEmptyFile();
+          }
+        }
+        break;
       case 'new':
-        this.model = new File({
-          branch: this.branches.findWhere({ name: this.branch }),
-          collection: this.collection,
-          path: this.path,
-          repo: this.repo
-        });
+        this.model = this.newEmptyFile();
         break;
     }
-
+    
+    // Set default metadata from collection
+    var defaults = this.collection.defaults;
+    var path;
     if (this.model) {
       if (defaults) {
         path = this.nearestPath(this.model.get('path'), defaults);
@@ -24696,6 +24705,15 @@ module.exports = Backbone.View.extend({
 
       this.app.loader.done();
     }
+  },
+
+  newEmptyFile: function() {
+    return new File({
+      branch: this.branches.findWhere({ name: this.branch }),
+      collection: this.collection,
+      path: this.path,
+      repo: this.repo
+    });
   },
 
   nearestPath: function(path, defaults) {
@@ -25127,22 +25145,14 @@ module.exports = Backbone.View.extend({
     if (jekyll && e) {
       // TODO: this could all be removed if preview button listened to
       // change:path event on model
-      var hash = window.location.hash.split('/');
-      hash[2] = 'preview';
-
-      // TODO: How should this change to handle new files in collection?
-      // If last item in hash array does not begin with Jekyll YYYY-MM-DD format,
-      // append filename from input
-      var regex = /^\d{4}-\d{2}-\d{2}-(?:.+)/;
-      if (!regex.test(_.last(hash))) {
-        hash.push(_.last(this.filepath().split('/')));
-      }
-
+      this.nav.setFileState('edit'); // Return to edit because we are creating a new window
       this.stashFile();
 
+      var hash = this.absoluteFilepath().split('/');
+      hash.splice(2, 0, 'preview');
       $(e.currentTarget).attr({
         target: '_blank',
-        href: hash.join('/')
+        href: '#' + hash.join('/')
       });
     } else {
       if (e) e.preventDefault();
@@ -25158,8 +25168,18 @@ module.exports = Backbone.View.extend({
 
   preview: function() {
     var q = queue(1);
-    var metadata = this.model.get('metadata');
-    var content = this.model.get('content');
+    // Retrieve the stash from the model path because thats what would
+    // have been stored when the preview button is clicked
+    var stash = this.getStashForPath(this.absolutePathFromFile(this.model));
+    var metadata = {};
+    var content = '';
+    if (stash && stash.content) {
+      metadata = stash.metadata;
+      content = stash.content;
+    } else {
+      metadata = this.model.get('metadata') || {};
+      content = this.model.get('content') || '';
+    }
 
     var p = {
       site: this.collection.config,
@@ -25445,6 +25465,29 @@ module.exports = Backbone.View.extend({
     }
   },
 
+  absoluteFilepath: function() {
+    return this.absolutePathFromComponents(
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.branch,
+      this.filepath()
+    );
+  },
+
+  absolutePathFromFile: function(file) {
+    return this.absolutePathFromComponents(
+      file.collection.repo.get('owner').login,
+      file.collection.repo.get('name'),
+      file.collection.branch.get('name'),
+      file.get('path')
+    );
+  },
+
+  absolutePathFromComponents: function(user, repo, branch, path) {
+    var url = _.compact([ user, repo, branch, path ]);
+    return url.join('/');
+  },
+
   draft: function() {
     var defaults = this.collection.defaults || {};
     var path = this.model.get('path').replace(/^(_posts)/, '_drafts');
@@ -25561,7 +25604,7 @@ module.exports = Backbone.View.extend({
       },
       path: path
     });
-    
+
     // Set default metadata for new path
     if (this.model && defaults) {
       this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
@@ -25591,8 +25634,7 @@ module.exports = Backbone.View.extend({
     if (!window.sessionStorage) return false;
 
     var store = window.sessionStorage;
-    var filepath = this.filepath();
-
+    var filepath = this.absoluteFilepath();
     // Don't stash if filepath is undefined
     if (filepath) {
       try {
@@ -25608,23 +25650,33 @@ module.exports = Backbone.View.extend({
   },
 
   stashApply: function() {
-    if (!window.sessionStorage) return false;
-    var store = window.sessionStorage;
-    var filepath = this.model.get('path');
-    var item = store.getItem(filepath);
-    var stash = JSON.parse(item);
-
-    if (stash && stash.sha === this.model.get('sha')) {
+    var filepath = this.absolutePathFromFile(this.model);
+    var stash = this.getStashForPath(filepath);
+    if (!stash) return false;
+    if (stash.sha === this.model.get('sha')) {
       // Restore from stash if file sha hasn't changed
       if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
       if (this.metadataEditor) {
         // this.rawEditor.setValue('');
         this.metadataEditor.setValue(stash.metadata);
       }
-    } else if (item) {
+    } else {
       // Remove expired content
-      store.removeItem(filepath);
+      this.clearStashForPath(filepath);
     }
+  },
+
+  getStashForPath: function(filepath) {
+    if (!window.sessionStorage) return false;
+    var store = window.sessionStorage;
+    var item = store.getItem(filepath);
+    return JSON.parse(item);
+  },
+
+  clearStashForPath: function(filepath) {
+    if (!window.sessionStorage) return;
+    var store = window.sessionStorage;
+    store.removeItem(filepath);
   },
 
   updateFile: function() {
@@ -25668,25 +25720,17 @@ module.exports = Backbone.View.extend({
         // Enable settings sidebar item
         this.nav.$el.addClass('settings');
 
+        // Update current path
+        var path = model.get('path');
+        this.path = path;
+
         // Unset dirty, return to edit view
         this.dirty = false;
         this.edit();
 
-        var path = model.get('path');
         var old = model.get('oldpath');
         var name = util.extractFilename(old)[1];
         var pathChange = path !== old;
-
-        // Navigate to edit path for new files
-        if (!model.previous('sha') || pathChange) {
-          this.router.navigate(_.compact([
-            this.repo.get('owner').login,
-            this.repo.get('name'),
-            'edit',
-            this.collection.branch.get('name'),
-            model.get('path')
-          ]).join('/'));
-        }
 
         // Remove old file if renamed
         // TODO: remove this when Repo Contents API supports renaming
@@ -25746,7 +25790,7 @@ module.exports = Backbone.View.extend({
     // Loading State
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
-    // Default to media directory if defined in config, 
+    // Default to media directory if defined in config,
     // current directory if no path specified
     var dir = this.config.media ? this.config.media :
       util.extractFilename(this.model.get('path'))[0];
@@ -25796,7 +25840,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../vendor/liquid.patch":29,"./modal":47,"../models/file":18,"./header":42,"./toolbar":48,"./metadata":49,"../config":8,"../util":28,"../upload":30,"../cookie":3,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"queue-async":46,"js-yaml":38,"keymaster":50,"marked":37,"backbone":12,"diff":51}],31:[function(require,module,exports){
+},{"../../vendor/liquid.patch":29,"./modal":47,"../models/file":18,"./header":40,"./toolbar":48,"./metadata":49,"../config":4,"../util":28,"../upload":30,"../cookie":3,"../../dist/templates":7,"jquery-browserify":14,"underscore":6,"js-yaml":43,"queue-async":46,"marked":42,"backbone":13,"keymaster":50,"diff":51}],31:[function(require,module,exports){
 var _ = require('underscore');
 
 var Backbone = require('backbone');
@@ -25893,7 +25937,7 @@ module.exports = Backbone.Collection.extend({
   }
 });
 
-},{"../models/repo":17,"../config":8,"../cookie":3,"underscore":11,"backbone":12}],37:[function(require,module,exports){
+},{"../models/repo":17,"../config":4,"../cookie":3,"underscore":6,"backbone":13}],42:[function(require,module,exports){
 (function(global){/**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
@@ -27808,10 +27852,412 @@ if (typeof module !== 'undefined') {
 },{}],32:[function(require,module,exports){
 module.exports = require('./lib/chrono');
 
-},{"./lib/chrono":52}],38:[function(require,module,exports){
+},{"./lib/chrono":52}],43:[function(require,module,exports){
 module.exports = require('./lib/js-yaml.js');
 
-},{"./lib/js-yaml.js":53}],52:[function(require,module,exports){
+},{"./lib/js-yaml.js":53}],34:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Branch = require('../models/branch');
+
+module.exports = Backbone.Collection.extend({
+  model: Branch,
+
+  initialize: function(models, options) {
+    this.repo = options.repo;
+  },
+
+  parse: function(resp, options) {
+    return map = _.map(resp, (function(branch) {
+     return  _.extend(branch, {
+        repo: this.repo
+      })
+    }).bind(this));
+  },
+
+  url: function() {
+    return this.repo.url() + '/branches';
+  }
+});
+
+},{"../models/branch":54,"underscore":6,"backbone":13}],33:[function(require,module,exports){
+var Backbone = require('backbone');
+
+module.exports = Backbone.Model.extend({
+});
+
+},{"backbone":13}],35:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Commit = require('../models/commit');
+
+module.exports = Backbone.Collection.extend({
+  model: Commit,
+
+  initialize: function(models, options) {
+    this.repo = options.repo;
+  },
+
+  setBranch: function(branch, options) {
+    this.branch = branch;
+    this.fetch(options);
+  },
+
+  parse: function(resp, options) {
+    return map = _.map(resp, (function(commit) {
+     return  _.extend(commit, {
+        repo: this.repo
+      })
+    }).bind(this));
+  },
+
+  url: function() {
+    return this.repo.url() + '/commits?sha=' + this.branch;
+  }
+});
+
+},{"../models/commit":55,"underscore":6,"backbone":13}],37:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.loading,
+
+  queue: 0,
+
+  initialize: function() {
+    _.bindAll(this);
+  },
+
+  start: function(message) {
+    this.queue++;
+
+    if (message) {
+      this.$el.find('.message').html(message);
+    }
+
+    this.$el.show();
+  },
+
+  stop: function() {
+    this.queue = 0;
+    this.$el.fadeOut(150);
+  },
+
+  done: function() {
+    _.defer((function() {
+      this.queue--;
+      if (this.queue < 1) this.stop();
+    }).bind(this));
+  },
+
+  render: function() {
+    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
+    return this;
+  }
+});
+
+},{"../../dist/templates":7,"underscore":6,"jquery-browserify":14,"backbone":13}],38:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var util = require('../util');
+
+var views = {
+  branches: require('./sidebar/branches'),
+  history: require('./sidebar/history'),
+  drafts: require('./sidebar/drafts'),
+  orgs: require('./sidebar/orgs'),
+  save: require('./sidebar/save'),
+  settings: require('./sidebar/settings')
+};
+
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.drawer,
+
+  subviews: {},
+
+  initialize: function(options) {
+    _.bindAll(this);
+  },
+
+  render: function(options) {
+    this.$el.html(_.template(this.template, {}, { variable: 'sidebar' }));
+    _.invoke(this.subviews, 'render');
+    return this;
+  },
+
+  initSubview: function(subview, options) {
+    if (!views[subview]) return false;
+
+    options = _.clone(options) || {};
+
+    var view = new views[subview](options);
+    this.$el.find('#' + subview).html(view.el);
+
+    this.subviews[subview] = view;
+
+    return view;
+  },
+
+  filepathGet: function() {
+    return this.$el.find('.filepath').val();
+  },
+
+  updateState: function(label) {
+    this.$el.find('.button.save').html(label);
+  },
+
+  open: function() {
+    this.$el.toggleClass('open', true);
+  },
+
+  close: function() {
+    this.$el.toggleClass('open', false);
+  },
+
+  toggle: function() {
+    this.$el.toggleClass('open');
+  },
+
+  toggleMobile: function() {
+    this.$el.toggleClass('mobile');
+  },
+
+  mode: function(mode) {
+    // Set data-mode attribute to toggle nav buttons in CSS
+    this.$el.attr('data-sidebar', mode);
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = {};
+
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+});
+
+},{"../util":28,"./sidebar/branches":56,"./sidebar/history":57,"./sidebar/drafts":58,"./sidebar/orgs":41,"./sidebar/save":59,"./sidebar/settings":60,"../../dist/templates":7,"underscore":6,"backbone":13}],39:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var config = require('../config');
+var utils = require('../util');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.nav,
+
+  events: {
+    'click a.edit': 'emit',
+    'click a.preview': 'emit',
+    'click a.meta': 'emit',
+    'click a.settings': 'emit',
+    'click a.save': 'emit',
+    'click .mobile .toggle': 'toggleMobile'
+  },
+
+  initialize: function(options) {
+    this.app = options.app;
+    this.sidebar = options.sidebar;
+    this.user = options.user;
+  },
+
+  render: function() {
+    this.$el.html(_.template(this.template, {
+      login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=repo'
+    }, { variable: 'data' }));
+
+    this.$save = this.$el.find('.file .save .popup');
+    return this;
+  },
+
+  emit: function(e) {
+    // TODO: get rid of this hack exception
+    if (e && !$(e.currentTarget).hasClass('preview')) e.preventDefault();
+
+    var state = $(e.currentTarget).data('state');
+    if ($(e.currentTarget).hasClass('active')) {
+      // return to file state
+      state = this.state;
+    }
+
+    this.active(state);
+    this.toggle(state, e);
+  },
+
+  setFileState: function(state) {
+    this.state = state;
+    this.active(state);
+  },
+
+  updateState: function(label, classes, kill) {
+
+    if (!label) label = t('navigation.save');
+    this.$save.html(label);
+
+    // Add, remove classes to the file nav group
+    this.$el.find('.file')
+      .removeClass('error saving saved save')
+      .addClass(classes);
+
+    if (kill) {
+      _.delay((function() {
+        this.$el.find('.file').removeClass(classes);
+      }).bind(this), 1000);
+    }
+  },
+
+  mode: function(mode) {
+    this.$el.attr('class', mode);
+  },
+
+  active: function(state) {
+    // Coerce 'new' to 'edit' to activate correct icon
+    state = (state === 'new' ? 'edit' : state);
+    this.$el.find('.file a').removeClass('active');
+    this.$el.find('.file a[data-state=' + state + ']').toggleClass('active');
+  },
+
+  toggle: function(state, e) {
+    this.trigger(state, e);
+  },
+
+  toggleMobile: function(e) {
+    this.sidebar.toggleMobile();
+    $(e.target).toggleClass('active');
+    return false;
+  }
+});
+
+},{"../config":4,"../util":28,"../../dist/templates":7,"jquery-browserify":14,"underscore":6,"backbone":13}],40:[function(require,module,exports){
+var $ = require('jquery-browserify');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var util = require('../util');
+var templates = require('../../dist/templates');
+
+module.exports = Backbone.View.extend({
+  template: templates.header,
+
+  events: {
+    'focus input': 'checkPlaceholder',
+    'change input[data-mode="path"]': 'updatePath',
+    'change input[data-mode="title"]': 'updateTitle'
+  },
+
+  initialize: function(options) {
+    _.bindAll(this);
+
+    this.user = options.user;
+    this.repo = options.repo;
+    this.file = options.file;
+    this.input = options.input;
+    this.title = options.title;
+    this.placeholder = options.placeholder;
+    this.alterable = options.alterable;
+  },
+
+  render: function() {
+    var user = this.user ? this.user.get('login') : this.repo.get('owner').login;
+    var permissions = this.repo ? this.repo.get('permissions') : undefined;
+    var isPrivate = this.repo && this.repo.get('private') ? true : false;
+    var title = t('heading.explore');
+    var avatar;
+    var path = user;
+
+    if (this.user) {
+      avatar = '<img src="' + this.user.get('avatar_url') + '" width="40" height="40" alt="Avatar" />';
+    } else if (this.file) {
+      // File View
+      avatar = '<span class="ico round document ' + this.file.get('lang') + '"></span>';
+      title = this.file.get('path');
+    } else {
+      // Repo View
+      var lock = (isPrivate) ? ' private' : '';
+
+      title = this.repo.get('name');
+      path = path + '/' + title;
+      avatar = '<div class="avatar round"><span class="icon round repo' + lock + '"></span></div>';
+    }
+
+    var data = {
+      alterable: this.alterable,
+      avatar: avatar,
+      repo: this.repo ? this.repo.attributes : undefined,
+      isPrivate: isPrivate,
+      input: this.input,
+      path: path,
+      placeholder: this.placeholder,
+      user: user,
+      title: title,
+      mode: this.title ? 'title' : 'path',
+      translate: this.file ? this.file.get('translate') : undefined
+    };
+
+    this.$el.empty().append(_.template(this.template, data, {
+      variable: 'data'
+    }));
+
+    return this;
+  },
+
+  checkPlaceholder: function(e) {
+    if (this.file.isNew()) {
+      var $target = $(e.target, this.el);
+      if (!$target.val()) {
+        $target.val($target.attr('placeholder'));
+      }
+    }
+  },
+
+  updatePath: function(e) {
+    var value = e.currentTarget.value;
+
+    this.file.set('path', value);
+    this.trigger('makeDirty');
+    return false;
+  },
+
+  updateTitle: function(e) {
+    if (e) e.preventDefault();
+
+    // TODO: update metadata title here, don't rely on makeDi
+
+    // Only update path on new files that are not cloned
+    if (this.file.isNew() && !this.file.isClone()) {
+      var value = e.currentTarget.value;
+
+      var path = this.file.get('path');
+      var parts = path.split('/');
+      var name = parts.pop();
+
+      // Preserve the date and the extension
+      var date = util.extractDate(name);
+      var extension = name.split('.').pop();
+
+      path = parts.join('/') + '/' + date + '-' +
+        util.stringToUrl(value) + '.' + extension;
+
+      this.file.set('path', path);
+    }
+
+    this.trigger('makeDirty');
+  },
+
+  inputGet: function() {
+    return this.$el.find('.headerinput').val();
+  },
+
+  headerInputFocus: function() {
+    this.$el.find('.headerinput').focus();
+  }
+});
+
+},{"../util":28,"../../dist/templates":7,"jquery-browserify":14,"underscore":6,"backbone":13}],52:[function(require,module,exports){
 (function(){
 
 // CommonJS exports.
@@ -28212,409 +28658,46 @@ Date.prototype.setTimezone = function(val) {
 
 })();
 
-},{}],34:[function(require,module,exports){
-var Backbone = require('backbone');
-
-module.exports = Backbone.Model.extend({
-});
-
-},{"backbone":12}],35:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Branch = require('../models/branch');
-
-module.exports = Backbone.Collection.extend({
-  model: Branch,
-
-  initialize: function(models, options) {
-    this.repo = options.repo;
-  },
-
-  parse: function(resp, options) {
-    return map = _.map(resp, (function(branch) {
-     return  _.extend(branch, {
-        repo: this.repo
-      })
-    }).bind(this));
-  },
-
-  url: function() {
-    return this.repo.url() + '/branches';
-  }
-});
-
-},{"../models/branch":54,"underscore":11,"backbone":12}],36:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Commit = require('../models/commit');
-
-module.exports = Backbone.Collection.extend({
-  model: Commit,
-
-  initialize: function(models, options) {
-    this.repo = options.repo;
-  },
-
-  setBranch: function(branch, options) {
-    this.branch = branch;
-    this.fetch(options);
-  },
-
-  parse: function(resp, options) {
-    return map = _.map(resp, (function(commit) {
-     return  _.extend(commit, {
-        repo: this.repo
-      })
-    }).bind(this));
-  },
-
-  url: function() {
-    return this.repo.url() + '/commits?sha=' + this.branch;
-  }
-});
-
-},{"../models/commit":55,"underscore":11,"backbone":12}],39:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var templates = require('../../dist/templates');
 
 module.exports = Backbone.View.extend({
-  template: templates.loading,
+  className: 'modal overlay',
 
-  queue: 0,
+  template: templates.modal,
+
+  events: {
+    'click .got-it': 'confirm'
+  },
 
   initialize: function() {
-    _.bindAll(this);
-  },
-
-  start: function(message) {
-    this.queue++;
-
-    if (message) {
-      this.$el.find('.message').html(message);
-    }
-
-    this.$el.show();
-  },
-
-  stop: function() {
-    this.queue = 0;
-    this.$el.fadeOut(150);
-  },
-
-  done: function() {
-    _.defer((function() {
-      this.queue--;
-      if (this.queue < 1) this.stop();
-    }).bind(this));
+    this.message = this.options.message;
   },
 
   render: function() {
-    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
-    return this;
-  }
-});
-
-},{"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],40:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var util = require('../util');
-
-var views = {
-  branches: require('./sidebar/branches'),
-  history: require('./sidebar/history'),
-  drafts: require('./sidebar/drafts'),
-  orgs: require('./sidebar/orgs'),
-  save: require('./sidebar/save'),
-  settings: require('./sidebar/settings')
-};
-
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  template: templates.drawer,
-
-  subviews: {},
-
-  initialize: function(options) {
-    _.bindAll(this);
-  },
-
-  render: function(options) {
-    this.$el.html(_.template(this.template, {}, { variable: 'sidebar' }));
-    _.invoke(this.subviews, 'render');
-    return this;
-  },
-
-  initSubview: function(subview, options) {
-    if (!views[subview]) return false;
-
-    options = _.clone(options) || {};
-
-    var view = new views[subview](options);
-    this.$el.find('#' + subview).html(view.el);
-
-    this.subviews[subview] = view;
-
-    return view;
-  },
-
-  filepathGet: function() {
-    return this.$el.find('.filepath').val();
-  },
-
-  updateState: function(label) {
-    this.$el.find('.button.save').html(label);
-  },
-
-  open: function() {
-    this.$el.toggleClass('open', true);
-  },
-
-  close: function() {
-    this.$el.toggleClass('open', false);
-  },
-
-  toggle: function() {
-    this.$el.toggleClass('open');
-  },
-
-  toggleMobile: function() {
-    this.$el.toggleClass('mobile');
-  },
-
-  mode: function(mode) {
-    // Set data-mode attribute to toggle nav buttons in CSS
-    this.$el.attr('data-sidebar', mode);
-  },
-
-  remove: function() {
-    _.invoke(this.subviews, 'remove');
-    this.subviews = {};
-
-    Backbone.View.prototype.remove.apply(this, arguments);
-  }
-});
-
-},{"../util":28,"./sidebar/branches":56,"./sidebar/history":57,"./sidebar/drafts":58,"./sidebar/orgs":43,"./sidebar/save":59,"./sidebar/settings":60,"../../dist/templates":14,"underscore":11,"backbone":12}],41:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var config = require('../config');
-var utils = require('../util');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  template: templates.nav,
-
-  events: {
-    'click a.edit': 'emit',
-    'click a.preview': 'emit',
-    'click a.meta': 'emit',
-    'click a.settings': 'emit',
-    'click a.save': 'emit',
-    'click .mobile .toggle': 'toggleMobile'
-  },
-
-  initialize: function(options) {
-    this.app = options.app;
-    this.sidebar = options.sidebar;
-    this.user = options.user;
-  },
-
-  render: function() {
-    this.$el.html(_.template(this.template, {
-      login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=repo'
-    }, { variable: 'data' }));
-
-    this.$save = this.$el.find('.file .save .popup');
-    return this;
-  },
-
-  emit: function(e) {
-    // TODO: get rid of this hack exception
-    if (e && !$(e.currentTarget).hasClass('preview')) e.preventDefault();
-
-    var state = $(e.currentTarget).data('state');
-    if ($(e.currentTarget).hasClass('active')) {
-      // return to file state
-      state = this.state;
-    }
-
-    this.active(state);
-    this.toggle(state, e);
-  },
-
-  setFileState: function(state) {
-    this.state = state;
-    this.active(state);
-  },
-
-  updateState: function(label, classes, kill) {
-
-    if (!label) label = t('navigation.save');
-    this.$save.html(label);
-
-    // Add, remove classes to the file nav group
-    this.$el.find('.file')
-      .removeClass('error saving saved save')
-      .addClass(classes);
-
-    if (kill) {
-      _.delay((function() {
-        this.$el.find('.file').removeClass(classes);
-      }).bind(this), 1000);
-    }
-  },
-
-  mode: function(mode) {
-    this.$el.attr('class', mode);
-  },
-
-  active: function(state) {
-    // Coerce 'new' to 'edit' to activate correct icon
-    state = (state === 'new' ? 'edit' : state);
-    this.$el.find('.file a').removeClass('active');
-    this.$el.find('.file a[data-state=' + state + ']').toggleClass('active');
-  },
-
-  toggle: function(state, e) {
-    this.trigger(state, e);
-  },
-
-  toggleMobile: function(e) {
-    this.sidebar.toggleMobile();
-    $(e.target).toggleClass('active');
-    return false;
-  }
-});
-
-},{"../config":8,"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],42:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var util = require('../util');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  template: templates.header,
-
-  events: {
-    'focus input': 'checkPlaceholder',
-    'change input[data-mode="path"]': 'updatePath',
-    'change input[data-mode="title"]': 'updateTitle'
-  },
-
-  initialize: function(options) {
-    _.bindAll(this);
-
-    this.user = options.user;
-    this.repo = options.repo;
-    this.file = options.file;
-    this.input = options.input;
-    this.title = options.title;
-    this.placeholder = options.placeholder;
-    this.alterable = options.alterable;
-  },
-
-  render: function() {
-    var user = this.user ? this.user.get('login') : this.repo.get('owner').login;
-    var permissions = this.repo ? this.repo.get('permissions') : undefined;
-    var isPrivate = this.repo && this.repo.get('private') ? true : false;
-    var title = t('heading.explore');
-    var avatar;
-    var path = user;
-
-    if (this.user) {
-      avatar = '<img src="' + this.user.get('avatar_url') + '" width="40" height="40" alt="Avatar" />';
-    } else if (this.file) {
-      // File View
-      avatar = '<span class="ico round document ' + this.file.get('lang') + '"></span>';
-      title = this.file.get('path');
-    } else {
-      // Repo View
-      var lock = (isPrivate) ? ' private' : '';
-
-      title = this.repo.get('name');
-      path = path + '/' + title;
-      avatar = '<div class="avatar round"><span class="icon round repo' + lock + '"></span></div>';
-    }
-
-    var data = {
-      alterable: this.alterable,
-      avatar: avatar,
-      repo: this.repo ? this.repo.attributes : undefined,
-      isPrivate: isPrivate,
-      input: this.input,
-      path: path,
-      placeholder: this.placeholder,
-      user: user,
-      title: title,
-      mode: this.title ? 'title' : 'path',
-      translate: this.file ? this.file.get('translate') : undefined
+    var modal = {
+      message: this.message
     };
-
-    this.$el.empty().append(_.template(this.template, data, {
-      variable: 'data'
+    this.$el.empty().append(_.template(templates.modal, modal, {
+      variable: 'modal'
     }));
 
     return this;
   },
 
-  checkPlaceholder: function(e) {
-    if (this.file.isNew()) {
-      var $target = $(e.target, this.el);
-      if (!$target.val()) {
-        $target.val($target.attr('placeholder'));
-      }
-    }
-  },
-
-  updatePath: function(e) {
-    var value = e.currentTarget.value;
-
-    this.file.set('path', value);
-    this.trigger('makeDirty');
+  confirm: function() {
+    var view = this;
+    this.$el.fadeOut('fast', function() {
+      view.remove();
+    });
     return false;
-  },
-
-  updateTitle: function(e) {
-    if (e) e.preventDefault();
-
-    // TODO: update metadata title here, don't rely on makeDi
-
-    // Only update path on new files that are not cloned
-    if (this.file.isNew() && !this.file.isClone()) {
-      var value = e.currentTarget.value;
-
-      var path = this.file.get('path');
-      var parts = path.split('/');
-      var name = parts.pop();
-
-      // Preserve the date and the extension
-      var date = util.extractDate(name);
-      var extension = name.split('.').pop();
-
-      path = parts.join('/') + '/' + date + '-' +
-        util.stringToUrl(value) + '.' + extension;
-
-      this.file.set('path', path);
-    }
-
-    this.trigger('makeDirty');
-  },
-
-  inputGet: function() {
-    return this.$el.find('.headerinput').val();
-  },
-
-  headerInputFocus: function() {
-    this.$el.find('.headerinput').focus();
   }
 });
 
-},{"../util":28,"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],45:[function(require,module,exports){
+},{"../../dist/templates":7,"jquery-browserify":14,"underscore":6,"backbone":13}],45:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -28675,7 +28758,7 @@ module.exports = Backbone.View.extend({
         // Update this.path with rooturl
         var config = this.model.config;
         this.rooturl = config && config.rooturl ? config.rooturl : '';
-        
+
         this.presentationModel = this.model.filteredModel || this.model;
         this.search.model = this.presentationModel;
         // Render on fetch and on search
@@ -28819,46 +28902,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../models/file":18,"../models/folder":61,"./li/file":62,"./li/folder":63,"../../dist/templates":14,".././util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],47:[function(require,module,exports){
-var $ = require('jquery-browserify');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var templates = require('../../dist/templates');
-
-module.exports = Backbone.View.extend({
-  className: 'modal overlay',
-
-  template: templates.modal,
-
-  events: {
-    'click .got-it': 'confirm'
-  },
-
-  initialize: function() {
-    this.message = this.options.message;
-  },
-
-  render: function() {
-    var modal = {
-      message: this.message
-    };
-    this.$el.empty().append(_.template(templates.modal, modal, {
-      variable: 'modal'
-    }));
-
-    return this;
-  },
-
-  confirm: function() {
-    var view = this;
-    this.$el.fadeOut('fast', function() {
-      view.remove();
-    });
-    return false;
-  }
-});
-
-},{"../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],48:[function(require,module,exports){
+},{"../models/file":18,"../models/folder":61,"./li/file":62,"./li/folder":63,"../../dist/templates":7,".././util":28,"jquery-browserify":14,"underscore":6,"backbone":13}],48:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -29349,7 +29393,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../toolbar/markdown.js":33,"../util":28,"../upload":30,"../../dist/templates":14,"jquery-browserify":10,"chosen-jquery-browserify":64,"underscore":11,"backbone":12}],49:[function(require,module,exports){
+},{"../toolbar/markdown.js":36,"../util":28,"../upload":30,"../../dist/templates":7,"jquery-browserify":14,"underscore":6,"backbone":13,"chosen-jquery-browserify":64}],49:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
 var _ = require('underscore');
@@ -29924,49 +29968,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../dist/templates":14,".././util":28,"jquery-browserify":10,"chosen-jquery-browserify":64,"underscore":11,"js-yaml":38,"backbone":12,"deepmerge":65}],65:[function(require,module,exports){
-module.exports = function merge (target, src) {
-    var array = Array.isArray(src)
-    var dst = array && [] || {}
-
-    if (array) {
-        target = target || []
-        dst = dst.concat(target)
-        src.forEach(function(e, i) {
-            if (typeof target[i] === 'undefined') {
-                dst[i] = e
-            } else if (typeof e === 'object') {
-                dst[i] = merge(target[i], e)
-            } else {
-                if (target.indexOf(e) === -1) {
-                    dst.push(e)
-                }
-            }
-        })
-    } else {
-        if (target && typeof target === 'object') {
-            Object.keys(target).forEach(function (key) {
-                dst[key] = target[key]
-            })
-        }
-        Object.keys(src).forEach(function (key) {
-            if (typeof src[key] !== 'object' || !src[key]) {
-                dst[key] = src[key]
-            }
-            else {
-                if (!target[key]) {
-                    dst[key] = src[key]
-                } else {
-                    dst[key] = merge(target[key], src[key])
-                }
-            }
-        })
-    }
-
-    return dst
-}
-
-},{}],43:[function(require,module,exports){
+},{"../../dist/templates":7,".././util":28,"jquery-browserify":14,"chosen-jquery-browserify":64,"underscore":6,"js-yaml":43,"backbone":13,"deepmerge":65}],41:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30015,7 +30017,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":14,"../../cookie":3,"jquery-browserify":10,"underscore":11,"backbone":12}],44:[function(require,module,exports){
+},{"../../../dist/templates":7,"../../cookie":3,"jquery-browserify":14,"underscore":6,"backbone":13}],44:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30049,7 +30051,49 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../cookie":3,"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],53:[function(require,module,exports){
+},{"../../cookie":3,"../../../dist/templates":7,"jquery-browserify":14,"underscore":6,"backbone":13}],65:[function(require,module,exports){
+module.exports = function merge (target, src) {
+    var array = Array.isArray(src)
+    var dst = array && [] || {}
+
+    if (array) {
+        target = target || []
+        dst = dst.concat(target)
+        src.forEach(function(e, i) {
+            if (typeof target[i] === 'undefined') {
+                dst[i] = e
+            } else if (typeof e === 'object') {
+                dst[i] = merge(target[i], e)
+            } else {
+                if (target.indexOf(e) === -1) {
+                    dst.push(e)
+                }
+            }
+        })
+    } else {
+        if (target && typeof target === 'object') {
+            Object.keys(target).forEach(function (key) {
+                dst[key] = target[key]
+            })
+        }
+        Object.keys(src).forEach(function (key) {
+            if (typeof src[key] !== 'object' || !src[key]) {
+                dst[key] = src[key]
+            }
+            else {
+                if (!target[key]) {
+                    dst[key] = src[key]
+                } else {
+                    dst[key] = merge(target[key], src[key])
+                }
+            }
+        })
+    }
+
+    return dst
+}
+
+},{}],53:[function(require,module,exports){
 'use strict';
 
 
@@ -30120,7 +30164,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"../collections/files":78,"../config":8,"backbone":12}],55:[function(require,module,exports){
+},{"../collections/files":78,"../config":4,"backbone":13}],55:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 
@@ -30136,7 +30180,7 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"underscore":11,"backbone":12}],68:[function(require,module,exports){
+},{"backbone":13,"underscore":6}],68:[function(require,module,exports){
 'use strict';
 
 
@@ -30198,33 +30242,6 @@ module.exports.toArray    = toArray;
 module.exports.repeat     = repeat;
 module.exports.extend     = extend;
 
-},{}],76:[function(require,module,exports){
-'use strict';
-
-
-function YAMLException(reason, mark) {
-  this.name    = 'YAMLException';
-  this.reason  = reason;
-  this.mark    = mark;
-  this.message = this.toString(false);
-}
-
-
-YAMLException.prototype.toString = function toString(compact) {
-  var result;
-
-  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
-
-  if (!compact && this.mark) {
-    result += ' ' + this.mark.toString();
-  }
-
-  return result;
-};
-
-
-module.exports = YAMLException;
-
 },{}],61:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30252,8 +30269,32 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{".././util":28,"underscore":11,"backbone":12}],79:[function(require,module,exports){
-// nothing to see here... no file methods for the browser
+},{".././util":28,"underscore":6,"backbone":13}],76:[function(require,module,exports){
+'use strict';
+
+
+function YAMLException(reason, mark) {
+  this.name    = 'YAMLException';
+  this.reason  = reason;
+  this.mark    = mark;
+  this.message = this.toString(false);
+}
+
+
+YAMLException.prototype.toString = function toString(compact) {
+  var result;
+
+  result = 'JS-YAML: ' + (this.reason || '(unknown reason)');
+
+  if (!compact && this.mark) {
+    result += ' ' + this.mark.toString();
+  }
+
+  return result;
+};
+
+
+module.exports = YAMLException;
 
 },{}],56:[function(require,module,exports){
 var $ = require('jquery-browserify');
@@ -30332,7 +30373,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./branch":80,"../../../dist/templates":14,"chosen-jquery-browserify":64,"jquery-browserify":10,"underscore":11,"backbone":12}],57:[function(require,module,exports){
+},{"./branch":79,"../../../dist/templates":7,"chosen-jquery-browserify":64,"jquery-browserify":14,"underscore":6,"backbone":13}],57:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30492,7 +30533,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"./li/commit":81,"../../cookie":3,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12,"queue-async":46}],58:[function(require,module,exports){
+},{"./li/commit":80,"../../cookie":3,"../../../dist/templates":7,"../../util":28,"jquery-browserify":14,"underscore":6,"queue-async":46,"backbone":13}],58:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30521,7 +30562,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],59:[function(require,module,exports){
+},{"../../../dist/templates":7,"jquery-browserify":14,"underscore":6,"backbone":13}],59:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30585,7 +30626,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../nav":41,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],60:[function(require,module,exports){
+},{"../nav":39,"../../../dist/templates":7,"../../util":28,"jquery-browserify":14,"underscore":6,"backbone":13}],60:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30653,7 +30694,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../nav":41,"../../util":28,"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],62:[function(require,module,exports){
+},{"../nav":39,"../../util":28,"../../../dist/templates":7,"jquery-browserify":14,"underscore":6,"backbone":13}],62:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30740,7 +30781,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../sidebar/li/commit":81,"../../../dist/templates":14,"../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],63:[function(require,module,exports){
+},{"../sidebar/li/commit":80,"../../../dist/templates":7,"../../util":28,"jquery-browserify":14,"backbone":13,"underscore":6}],63:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -30785,7 +30826,488 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../dist/templates":14,"jquery-browserify":10,"underscore":11,"backbone":12}],66:[function(require,module,exports){
+},{"../../../dist/templates":7,"jquery-browserify":14,"underscore":6,"backbone":13}],67:[function(require,module,exports){
+(function(){'use strict';
+
+
+var common              = require('./common');
+var NIL                 = common.NIL;
+var YAMLException       = require('./exception');
+var DEFAULT_FULL_SCHEMA = require('./schema/default_full');
+var DEFAULT_SAFE_SCHEMA = require('./schema/default_safe');
+
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+var CHAR_TAB                  = 0x09; /* Tab */
+var CHAR_LINE_FEED            = 0x0A; /* LF */
+var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
+var CHAR_SPACE                = 0x20; /* Space */
+var CHAR_EXCLAMATION          = 0x21; /* ! */
+var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
+var CHAR_SHARP                = 0x23; /* # */
+var CHAR_PERCENT              = 0x25; /* % */
+var CHAR_AMPERSAND            = 0x26; /* & */
+var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
+var CHAR_ASTERISK             = 0x2A; /* * */
+var CHAR_COMMA                = 0x2C; /* , */
+var CHAR_MINUS                = 0x2D; /* - */
+var CHAR_COLON                = 0x3A; /* : */
+var CHAR_GREATER_THAN         = 0x3E; /* > */
+var CHAR_QUESTION             = 0x3F; /* ? */
+var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
+var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
+var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
+var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
+var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
+var CHAR_VERTICAL_LINE        = 0x7C; /* | */
+var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
+
+
+var ESCAPE_SEQUENCES = {};
+
+ESCAPE_SEQUENCES[0x00]   = '\\0';
+ESCAPE_SEQUENCES[0x07]   = '\\a';
+ESCAPE_SEQUENCES[0x08]   = '\\b';
+ESCAPE_SEQUENCES[0x09]   = '\\t';
+ESCAPE_SEQUENCES[0x0A]   = '\\n';
+ESCAPE_SEQUENCES[0x0B]   = '\\v';
+ESCAPE_SEQUENCES[0x0C]   = '\\f';
+ESCAPE_SEQUENCES[0x0D]   = '\\r';
+ESCAPE_SEQUENCES[0x1B]   = '\\e';
+ESCAPE_SEQUENCES[0x22]   = '\\"';
+ESCAPE_SEQUENCES[0x5C]   = '\\\\';
+ESCAPE_SEQUENCES[0x85]   = '\\N';
+ESCAPE_SEQUENCES[0xA0]   = '\\_';
+ESCAPE_SEQUENCES[0x2028] = '\\L';
+ESCAPE_SEQUENCES[0x2029] = '\\P';
+
+
+function kindOf(object) {
+  var kind = typeof object;
+
+  if (null === object) {
+    return 'null';
+  } else if ('number' === kind) {
+    return 0 === object % 1 ? 'integer' : 'float';
+  } else if ('object' === kind && Array.isArray(object)) {
+    return 'array';
+  } else {
+    return kind;
+  }
+}
+
+
+function compileStyleMap(schema, map) {
+  var result, keys, index, length, tag, style, type;
+
+  if (null === map) {
+    return {};
+  }
+
+  result = {};
+  keys = Object.keys(map);
+
+  for (index = 0, length = keys.length; index < length; index += 1) {
+    tag = keys[index];
+    style = String(map[tag]);
+
+    if ('!!' === tag.slice(0, 2)) {
+      tag = 'tag:yaml.org,2002:' + tag.slice(2);
+    }
+
+    type = schema.compiledTypeMap[tag];
+
+    if (type && type.dumper) {
+      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
+        style = type.dumper.styleAliases[style];
+      }
+    }
+
+    result[tag] = style;
+  }
+
+  return result;
+}
+
+
+function encodeHex(character) {
+  var string, handle, length;
+
+  string = character.toString(16).toUpperCase();
+
+  if (character <= 0xFF) {
+    handle = 'x';
+    length = 2;
+  } else if (character <= 0xFFFF) {
+    handle = 'u';
+    length = 4;
+  } else if (character <= 0xFFFFFFFF) {
+    handle = 'U';
+    length = 8;
+  } else {
+    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
+  }
+
+  return '\\' + handle + common.repeat('0', length - string.length) + string;
+}
+
+
+function dump(input, options) {
+  options = options || {};
+
+  var schema      = options['schema'] || DEFAULT_FULL_SCHEMA,
+      indent      = Math.max(1, (options['indent'] || 2)),
+      skipInvalid = options['skipInvalid'] || false,
+      flowLevel   = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
+      styleMap    = compileStyleMap(schema, options['styles'] || null),
+
+      implicitTypes = schema.compiledImplicit,
+      explicitTypes = schema.compiledExplicit,
+
+      kind,
+      tag,
+      result;
+
+  function generateNextLine(level) {
+    return '\n' + common.repeat(' ', indent * level);
+  }
+
+  function testImplicitResolving(object) {
+    var index, length, type;
+
+    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
+      type = implicitTypes[index];
+
+      if (null !== type.loader &&
+          NIL !== type.loader.resolver(object, false)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function writeScalar(object) {
+    var isQuoted, checkpoint, position, length, character, booleans;
+
+    result = '';
+    isQuoted = false;
+    checkpoint = 0;
+    booleans = /^(y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)$/;
+
+    if (0          === object.length ||
+        CHAR_SPACE === object.charCodeAt(0) ||
+        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
+      isQuoted = true;
+    }
+
+    for (position = 0, length = object.length; position < length; position += 1) {
+      character = object.charCodeAt(position);
+
+      if (!isQuoted) {
+        if (CHAR_TAB                  === character ||
+            CHAR_LINE_FEED            === character ||
+            CHAR_CARRIAGE_RETURN      === character ||
+            CHAR_COMMA                === character ||
+            CHAR_LEFT_SQUARE_BRACKET  === character ||
+            CHAR_RIGHT_SQUARE_BRACKET === character ||
+            CHAR_LEFT_CURLY_BRACKET   === character ||
+            CHAR_RIGHT_CURLY_BRACKET  === character ||
+            CHAR_SHARP                === character ||
+            CHAR_AMPERSAND            === character ||
+            CHAR_ASTERISK             === character ||
+            CHAR_EXCLAMATION          === character ||
+            CHAR_VERTICAL_LINE        === character ||
+            CHAR_GREATER_THAN         === character ||
+            CHAR_SINGLE_QUOTE         === character ||
+            CHAR_DOUBLE_QUOTE         === character ||
+            CHAR_PERCENT              === character ||
+            CHAR_COMMERCIAL_AT        === character ||
+            CHAR_GRAVE_ACCENT         === character ||
+            CHAR_QUESTION             === character ||
+            CHAR_COLON                === character ||
+            CHAR_MINUS                === character) {
+          isQuoted = true;
+        }
+      }
+
+      if (ESCAPE_SEQUENCES[character] ||
+          !((0x00020 <= character && character <= 0x00007E) ||
+            (0x00085 === character)                         ||
+            (0x000A0 <= character && character <= 0x00D7FF) ||
+            (0x0E000 <= character && character <= 0x00FFFD) ||
+            (0x10000 <= character && character <= 0x10FFFF))) {
+        result += object.slice(checkpoint, position);
+        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
+        checkpoint = position + 1;
+        isQuoted = true;
+      }
+    }
+
+    if (checkpoint < position) {
+      result += object.slice(checkpoint, position);
+    }
+
+    if (!isQuoted && testImplicitResolving(result)) {
+      isQuoted = true;
+    }
+
+    if (!isQuoted && booleans.test(object)) {
+      isQuoted = true;
+    }
+
+    if (isQuoted) {
+      result = '"' + result + '"';
+    }
+  }
+
+  function writeFlowSequence(level, object) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      // Write only valid elements.
+      if (writeNode(level, object[index], false, false)) {
+        if (0 !== index) {
+          _result += ', ';
+        }
+        _result += result;
+      }
+    }
+
+    tag = _tag;
+    result = '[' + _result + ']';
+  }
+
+  function writeBlockSequence(level, object, compact) {
+    var _result = '',
+        _tag    = tag,
+        index,
+        length;
+
+    for (index = 0, length = object.length; index < length; index += 1) {
+      // Write only valid elements.
+      if (writeNode(level + 1, object[index], true, true)) {
+        if (!compact || 0 !== index) {
+          _result += generateNextLine(level);
+        }
+        _result += '- ' + result;
+      }
+    }
+
+    tag = _tag;
+    result = _result || '[]'; // Empty sequence if no valid values.
+  }
+
+  function writeFlowMapping(level, object) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        pairBuffer;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      pairBuffer = '';
+
+      if (0 !== index) {
+        pairBuffer += ', ';
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      if (!writeNode(level, objectKey, false, false)) {
+        continue; // Skip this pair because of invalid key;
+      }
+
+      if (result.length > 1024) {
+        pairBuffer += '? ';
+      }
+
+      pairBuffer += result + ': ';
+
+      if (!writeNode(level, objectValue, false, false)) {
+        continue; // Skip this pair because of invalid value.
+      }
+
+      pairBuffer += result;
+
+      // Both key and value are valid.
+      _result += pairBuffer;
+    }
+
+    tag = _tag;
+    result = '{' + _result + '}';
+  }
+
+  function writeBlockMapping(level, object, compact) {
+    var _result       = '',
+        _tag          = tag,
+        objectKeyList = Object.keys(object),
+        index,
+        length,
+        objectKey,
+        objectValue,
+        explicitPair,
+        pairBuffer;
+
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      pairBuffer = '';
+
+      if (!compact || 0 !== index) {
+        pairBuffer += generateNextLine(level);
+      }
+
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+
+      if (!writeNode(level + 1, objectKey, true, true)) {
+        continue; // Skip this pair because of invalid key.
+      }
+
+      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
+
+      if (explicitPair) {
+        pairBuffer += '? ';
+      }
+
+      pairBuffer += result;
+
+      if (explicitPair) {
+        pairBuffer += generateNextLine(level);
+      }
+
+      if (!writeNode(level + 1, objectValue, true, explicitPair)) {
+        continue; // Skip this pair because of invalid value.
+      }
+
+      pairBuffer += ': ' + result;
+
+      // Both key and value are valid.
+      _result += pairBuffer;
+    }
+
+    tag = _tag;
+    result = _result || '{}'; // Empty mapping if no valid pairs.
+  }
+
+  function detectType(object, explicit) {
+    var _result, typeList, index, length, type, style;
+
+    typeList = explicit ? explicitTypes : implicitTypes;
+    kind = kindOf(object);
+
+    for (index = 0, length = typeList.length; index < length; index += 1) {
+      type = typeList[index];
+
+      if ((null !== type.dumper) &&
+          (null === type.dumper.kind       || kind === type.dumper.kind) &&
+          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
+          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
+        tag = explicit ? type.tag : '?';
+
+        if (null !== type.dumper.representer) {
+          style = styleMap[type.tag] || type.dumper.defaultStyle;
+
+          if ('function' === typeof type.dumper.representer) {
+            _result = type.dumper.representer(object, style);
+          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
+            _result = type.dumper.representer[style](object, style);
+          } else {
+            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
+          }
+
+          if (NIL !== _result) {
+            kind = kindOf(_result);
+            result = _result;
+          } else {
+            if (explicit) {
+              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
+            } else {
+              continue;
+            }
+          }
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Serializes `object` and writes it to global `result`.
+  // Returns true on success, or false on invalid object.
+  //
+  function writeNode(level, object, block, compact) {
+    tag = null;
+    result = object;
+
+    if (!detectType(object, false)) {
+      detectType(object, true);
+    }
+
+    if (block) {
+      block = (0 > flowLevel || flowLevel > level);
+    }
+
+    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
+      compact = false;
+    }
+
+    if ('object' === kind) {
+      if (block && (0 !== Object.keys(result).length)) {
+        writeBlockMapping(level, result, compact);
+      } else {
+        writeFlowMapping(level, result);
+      }
+    } else if ('array' === kind) {
+      if (block && (0 !== result.length)) {
+        writeBlockSequence(level, result, compact);
+      } else {
+        writeFlowSequence(level, result);
+      }
+    } else if ('string' === kind) {
+      if ('?' !== tag) {
+        writeScalar(result);
+      }
+    } else if (skipInvalid) {
+      return false;
+    } else {
+      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
+    }
+
+    if (null !== tag && '?' !== tag) {
+      result = '!<' + tag + '> ' + result;
+    }
+    return true;
+  }
+
+  if (writeNode(0, input, true, true)) {
+    return result + '\n';
+  } else {
+    return '';
+  }
+}
+
+
+function safeDump(input, options) {
+  return dump(input, common.extend({ schema: DEFAULT_SAFE_SCHEMA }, options));
+}
+
+
+module.exports.dump     = dump;
+module.exports.safeDump = safeDump;
+
+})()
+},{"./common":68,"./exception":76,"./schema/default_full":75,"./schema/default_safe":74}],66:[function(require,module,exports){
 'use strict';
 
 
@@ -32336,488 +32858,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":68,"./exception":76,"./mark":82,"./schema/default_safe":74,"./schema/default_full":75}],67:[function(require,module,exports){
-(function(){'use strict';
-
-
-var common              = require('./common');
-var NIL                 = common.NIL;
-var YAMLException       = require('./exception');
-var DEFAULT_FULL_SCHEMA = require('./schema/default_full');
-var DEFAULT_SAFE_SCHEMA = require('./schema/default_safe');
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-var CHAR_TAB                  = 0x09; /* Tab */
-var CHAR_LINE_FEED            = 0x0A; /* LF */
-var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
-var CHAR_SPACE                = 0x20; /* Space */
-var CHAR_EXCLAMATION          = 0x21; /* ! */
-var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
-var CHAR_SHARP                = 0x23; /* # */
-var CHAR_PERCENT              = 0x25; /* % */
-var CHAR_AMPERSAND            = 0x26; /* & */
-var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
-var CHAR_ASTERISK             = 0x2A; /* * */
-var CHAR_COMMA                = 0x2C; /* , */
-var CHAR_MINUS                = 0x2D; /* - */
-var CHAR_COLON                = 0x3A; /* : */
-var CHAR_GREATER_THAN         = 0x3E; /* > */
-var CHAR_QUESTION             = 0x3F; /* ? */
-var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
-var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
-var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
-var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
-var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
-var CHAR_VERTICAL_LINE        = 0x7C; /* | */
-var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
-
-
-var ESCAPE_SEQUENCES = {};
-
-ESCAPE_SEQUENCES[0x00]   = '\\0';
-ESCAPE_SEQUENCES[0x07]   = '\\a';
-ESCAPE_SEQUENCES[0x08]   = '\\b';
-ESCAPE_SEQUENCES[0x09]   = '\\t';
-ESCAPE_SEQUENCES[0x0A]   = '\\n';
-ESCAPE_SEQUENCES[0x0B]   = '\\v';
-ESCAPE_SEQUENCES[0x0C]   = '\\f';
-ESCAPE_SEQUENCES[0x0D]   = '\\r';
-ESCAPE_SEQUENCES[0x1B]   = '\\e';
-ESCAPE_SEQUENCES[0x22]   = '\\"';
-ESCAPE_SEQUENCES[0x5C]   = '\\\\';
-ESCAPE_SEQUENCES[0x85]   = '\\N';
-ESCAPE_SEQUENCES[0xA0]   = '\\_';
-ESCAPE_SEQUENCES[0x2028] = '\\L';
-ESCAPE_SEQUENCES[0x2029] = '\\P';
-
-
-function kindOf(object) {
-  var kind = typeof object;
-
-  if (null === object) {
-    return 'null';
-  } else if ('number' === kind) {
-    return 0 === object % 1 ? 'integer' : 'float';
-  } else if ('object' === kind && Array.isArray(object)) {
-    return 'array';
-  } else {
-    return kind;
-  }
-}
-
-
-function compileStyleMap(schema, map) {
-  var result, keys, index, length, tag, style, type;
-
-  if (null === map) {
-    return {};
-  }
-
-  result = {};
-  keys = Object.keys(map);
-
-  for (index = 0, length = keys.length; index < length; index += 1) {
-    tag = keys[index];
-    style = String(map[tag]);
-
-    if ('!!' === tag.slice(0, 2)) {
-      tag = 'tag:yaml.org,2002:' + tag.slice(2);
-    }
-
-    type = schema.compiledTypeMap[tag];
-
-    if (type && type.dumper) {
-      if (_hasOwnProperty.call(type.dumper.styleAliases, style)) {
-        style = type.dumper.styleAliases[style];
-      }
-    }
-
-    result[tag] = style;
-  }
-
-  return result;
-}
-
-
-function encodeHex(character) {
-  var string, handle, length;
-
-  string = character.toString(16).toUpperCase();
-
-  if (character <= 0xFF) {
-    handle = 'x';
-    length = 2;
-  } else if (character <= 0xFFFF) {
-    handle = 'u';
-    length = 4;
-  } else if (character <= 0xFFFFFFFF) {
-    handle = 'U';
-    length = 8;
-  } else {
-    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
-  }
-
-  return '\\' + handle + common.repeat('0', length - string.length) + string;
-}
-
-
-function dump(input, options) {
-  options = options || {};
-
-  var schema      = options['schema'] || DEFAULT_FULL_SCHEMA,
-      indent      = Math.max(1, (options['indent'] || 2)),
-      skipInvalid = options['skipInvalid'] || false,
-      flowLevel   = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']),
-      styleMap    = compileStyleMap(schema, options['styles'] || null),
-
-      implicitTypes = schema.compiledImplicit,
-      explicitTypes = schema.compiledExplicit,
-
-      kind,
-      tag,
-      result;
-
-  function generateNextLine(level) {
-    return '\n' + common.repeat(' ', indent * level);
-  }
-
-  function testImplicitResolving(object) {
-    var index, length, type;
-
-    for (index = 0, length = implicitTypes.length; index < length; index += 1) {
-      type = implicitTypes[index];
-
-      if (null !== type.loader &&
-          NIL !== type.loader.resolver(object, false)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function writeScalar(object) {
-    var isQuoted, checkpoint, position, length, character, booleans;
-
-    result = '';
-    isQuoted = false;
-    checkpoint = 0;
-    booleans = /^(y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)$/;
-
-    if (0          === object.length ||
-        CHAR_SPACE === object.charCodeAt(0) ||
-        CHAR_SPACE === object.charCodeAt(object.length - 1)) {
-      isQuoted = true;
-    }
-
-    for (position = 0, length = object.length; position < length; position += 1) {
-      character = object.charCodeAt(position);
-
-      if (!isQuoted) {
-        if (CHAR_TAB                  === character ||
-            CHAR_LINE_FEED            === character ||
-            CHAR_CARRIAGE_RETURN      === character ||
-            CHAR_COMMA                === character ||
-            CHAR_LEFT_SQUARE_BRACKET  === character ||
-            CHAR_RIGHT_SQUARE_BRACKET === character ||
-            CHAR_LEFT_CURLY_BRACKET   === character ||
-            CHAR_RIGHT_CURLY_BRACKET  === character ||
-            CHAR_SHARP                === character ||
-            CHAR_AMPERSAND            === character ||
-            CHAR_ASTERISK             === character ||
-            CHAR_EXCLAMATION          === character ||
-            CHAR_VERTICAL_LINE        === character ||
-            CHAR_GREATER_THAN         === character ||
-            CHAR_SINGLE_QUOTE         === character ||
-            CHAR_DOUBLE_QUOTE         === character ||
-            CHAR_PERCENT              === character ||
-            CHAR_COMMERCIAL_AT        === character ||
-            CHAR_GRAVE_ACCENT         === character ||
-            CHAR_QUESTION             === character ||
-            CHAR_COLON                === character ||
-            CHAR_MINUS                === character) {
-          isQuoted = true;
-        }
-      }
-
-      if (ESCAPE_SEQUENCES[character] ||
-          !((0x00020 <= character && character <= 0x00007E) ||
-            (0x00085 === character)                         ||
-            (0x000A0 <= character && character <= 0x00D7FF) ||
-            (0x0E000 <= character && character <= 0x00FFFD) ||
-            (0x10000 <= character && character <= 0x10FFFF))) {
-        result += object.slice(checkpoint, position);
-        result += ESCAPE_SEQUENCES[character] || encodeHex(character);
-        checkpoint = position + 1;
-        isQuoted = true;
-      }
-    }
-
-    if (checkpoint < position) {
-      result += object.slice(checkpoint, position);
-    }
-
-    if (!isQuoted && testImplicitResolving(result)) {
-      isQuoted = true;
-    }
-
-    if (!isQuoted && booleans.test(object)) {
-      isQuoted = true;
-    }
-
-    if (isQuoted) {
-      result = '"' + result + '"';
-    }
-  }
-
-  function writeFlowSequence(level, object) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      // Write only valid elements.
-      if (writeNode(level, object[index], false, false)) {
-        if (0 !== index) {
-          _result += ', ';
-        }
-        _result += result;
-      }
-    }
-
-    tag = _tag;
-    result = '[' + _result + ']';
-  }
-
-  function writeBlockSequence(level, object, compact) {
-    var _result = '',
-        _tag    = tag,
-        index,
-        length;
-
-    for (index = 0, length = object.length; index < length; index += 1) {
-      // Write only valid elements.
-      if (writeNode(level + 1, object[index], true, true)) {
-        if (!compact || 0 !== index) {
-          _result += generateNextLine(level);
-        }
-        _result += '- ' + result;
-      }
-    }
-
-    tag = _tag;
-    result = _result || '[]'; // Empty sequence if no valid values.
-  }
-
-  function writeFlowMapping(level, object) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        pairBuffer;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      pairBuffer = '';
-
-      if (0 !== index) {
-        pairBuffer += ', ';
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      if (!writeNode(level, objectKey, false, false)) {
-        continue; // Skip this pair because of invalid key;
-      }
-
-      if (result.length > 1024) {
-        pairBuffer += '? ';
-      }
-
-      pairBuffer += result + ': ';
-
-      if (!writeNode(level, objectValue, false, false)) {
-        continue; // Skip this pair because of invalid value.
-      }
-
-      pairBuffer += result;
-
-      // Both key and value are valid.
-      _result += pairBuffer;
-    }
-
-    tag = _tag;
-    result = '{' + _result + '}';
-  }
-
-  function writeBlockMapping(level, object, compact) {
-    var _result       = '',
-        _tag          = tag,
-        objectKeyList = Object.keys(object),
-        index,
-        length,
-        objectKey,
-        objectValue,
-        explicitPair,
-        pairBuffer;
-
-    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-      pairBuffer = '';
-
-      if (!compact || 0 !== index) {
-        pairBuffer += generateNextLine(level);
-      }
-
-      objectKey = objectKeyList[index];
-      objectValue = object[objectKey];
-
-      if (!writeNode(level + 1, objectKey, true, true)) {
-        continue; // Skip this pair because of invalid key.
-      }
-
-      explicitPair = (null !== tag && '?' !== tag && result.length <= 1024);
-
-      if (explicitPair) {
-        pairBuffer += '? ';
-      }
-
-      pairBuffer += result;
-
-      if (explicitPair) {
-        pairBuffer += generateNextLine(level);
-      }
-
-      if (!writeNode(level + 1, objectValue, true, explicitPair)) {
-        continue; // Skip this pair because of invalid value.
-      }
-
-      pairBuffer += ': ' + result;
-
-      // Both key and value are valid.
-      _result += pairBuffer;
-    }
-
-    tag = _tag;
-    result = _result || '{}'; // Empty mapping if no valid pairs.
-  }
-
-  function detectType(object, explicit) {
-    var _result, typeList, index, length, type, style;
-
-    typeList = explicit ? explicitTypes : implicitTypes;
-    kind = kindOf(object);
-
-    for (index = 0, length = typeList.length; index < length; index += 1) {
-      type = typeList[index];
-
-      if ((null !== type.dumper) &&
-          (null === type.dumper.kind       || kind === type.dumper.kind) &&
-          (null === type.dumper.instanceOf || object instanceof type.dumper.instanceOf) &&
-          (null === type.dumper.predicate  || type.dumper.predicate(object))) {
-        tag = explicit ? type.tag : '?';
-
-        if (null !== type.dumper.representer) {
-          style = styleMap[type.tag] || type.dumper.defaultStyle;
-
-          if ('function' === typeof type.dumper.representer) {
-            _result = type.dumper.representer(object, style);
-          } else if (_hasOwnProperty.call(type.dumper.representer, style)) {
-            _result = type.dumper.representer[style](object, style);
-          } else {
-            throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
-          }
-
-          if (NIL !== _result) {
-            kind = kindOf(_result);
-            result = _result;
-          } else {
-            if (explicit) {
-              throw new YAMLException('cannot represent an object of !<' + type.tag + '> type');
-            } else {
-              continue;
-            }
-          }
-        }
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  // Serializes `object` and writes it to global `result`.
-  // Returns true on success, or false on invalid object.
-  //
-  function writeNode(level, object, block, compact) {
-    tag = null;
-    result = object;
-
-    if (!detectType(object, false)) {
-      detectType(object, true);
-    }
-
-    if (block) {
-      block = (0 > flowLevel || flowLevel > level);
-    }
-
-    if ((null !== tag && '?' !== tag) || (2 !== indent && level > 0)) {
-      compact = false;
-    }
-
-    if ('object' === kind) {
-      if (block && (0 !== Object.keys(result).length)) {
-        writeBlockMapping(level, result, compact);
-      } else {
-        writeFlowMapping(level, result);
-      }
-    } else if ('array' === kind) {
-      if (block && (0 !== result.length)) {
-        writeBlockSequence(level, result, compact);
-      } else {
-        writeFlowSequence(level, result);
-      }
-    } else if ('string' === kind) {
-      if ('?' !== tag) {
-        writeScalar(result);
-      }
-    } else if (skipInvalid) {
-      return false;
-    } else {
-      throw new YAMLException('unacceptabe kind of an object to dump (' + kind + ')');
-    }
-
-    if (null !== tag && '?' !== tag) {
-      result = '!<' + tag + '> ' + result;
-    }
-    return true;
-  }
-
-  if (writeNode(0, input, true, true)) {
-    return result + '\n';
-  } else {
-    return '';
-  }
-}
-
-
-function safeDump(input, options) {
-  return dump(input, common.extend({ schema: DEFAULT_SAFE_SCHEMA }, options));
-}
-
-
-module.exports.dump     = dump;
-module.exports.safeDump = safeDump;
-
-})()
-},{"./common":68,"./exception":76,"./schema/default_full":75,"./schema/default_safe":74}],69:[function(require,module,exports){
+},{"./common":68,"./exception":76,"./mark":81,"./schema/default_safe":74,"./schema/default_full":75}],69:[function(require,module,exports){
 'use strict';
 
 
@@ -33031,26 +33072,7 @@ if (undefined !== require.extensions) {
 
 module.exports = require;
 
-},{"fs":79,"./loader":66}],71:[function(require,module,exports){
-// Standard YAML's Failsafe schema.
-// http://www.yaml.org/spec/1.2/spec.html#id2802346
-
-
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = new Schema({
-  explicit: [
-    require('../type/str'),
-    require('../type/seq'),
-    require('../type/map')
-  ]
-});
-
-},{"../schema":70,"../type/str":83,"../type/seq":84,"../type/map":85}],72:[function(require,module,exports){
+},{"fs":82,"./loader":66}],72:[function(require,module,exports){
 // Standard YAML's JSON schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2803231
 //
@@ -33077,7 +33099,29 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":70,"./failsafe":71,"../type/null":86,"../type/bool":87,"../type/int":88,"../type/float":89}],73:[function(require,module,exports){
+},{"../schema":70,"./failsafe":71,"../type/null":83,"../type/bool":84,"../type/int":85,"../type/float":86}],82:[function(require,module,exports){
+// nothing to see here... no file methods for the browser
+
+},{}],71:[function(require,module,exports){
+// Standard YAML's Failsafe schema.
+// http://www.yaml.org/spec/1.2/spec.html#id2802346
+
+
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = new Schema({
+  explicit: [
+    require('../type/str'),
+    require('../type/seq'),
+    require('../type/map')
+  ]
+});
+
+},{"../schema":70,"../type/str":87,"../type/seq":88,"../type/map":89}],73:[function(require,module,exports){
 // Standard YAML's Core schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2804923
 //
@@ -33127,34 +33171,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":70,"./core":73,"../type/timestamp":90,"../type/merge":91,"../type/binary":92,"../type/omap":93,"../type/pairs":94,"../type/set":95}],75:[function(require,module,exports){
-// JS-YAML's default schema for `load` function.
-// It is not described in the YAML specification.
-//
-// This schema is based on JS-YAML's default safe schema and includes
-// JavaScript-specific types: !!js/undefined, !!js/regexp and !!js/function.
-//
-// Also this schema is used as default base schema at `Schema.create` function.
-
-
-'use strict';
-
-
-var Schema = require('../schema');
-
-
-module.exports = Schema.DEFAULT = new Schema({
-  include: [
-    require('./default_safe')
-  ],
-  explicit: [
-    require('../type/js/undefined'),
-    require('../type/js/regexp'),
-    require('../type/js/function')
-  ]
-});
-
-},{"../schema":70,"./default_safe":74,"../type/js/undefined":96,"../type/js/regexp":97,"../type/js/function":98}],64:[function(require,module,exports){
+},{"../schema":70,"./core":73,"../type/timestamp":90,"../type/merge":91,"../type/binary":92,"../type/omap":93,"../type/pairs":94,"../type/set":95}],64:[function(require,module,exports){
 (function(global){(function() {
   var $, AbstractChosen, Chosen, SelectParser, get_side_border_padding, _ref,
     __hasProp = {}.hasOwnProperty,
@@ -34235,7 +34252,34 @@ module.exports = Schema.DEFAULT = new Schema({
 }).call(this);
 
 })(window)
-},{"jquery-browserify":10}],78:[function(require,module,exports){
+},{"jquery-browserify":14}],75:[function(require,module,exports){
+// JS-YAML's default schema for `load` function.
+// It is not described in the YAML specification.
+//
+// This schema is based on JS-YAML's default safe schema and includes
+// JavaScript-specific types: !!js/undefined, !!js/regexp and !!js/function.
+//
+// Also this schema is used as default base schema at `Schema.create` function.
+
+
+'use strict';
+
+
+var Schema = require('../schema');
+
+
+module.exports = Schema.DEFAULT = new Schema({
+  include: [
+    require('./default_safe')
+  ],
+  explicit: [
+    require('../type/js/undefined'),
+    require('../type/js/regexp'),
+    require('../type/js/function')
+  ]
+});
+
+},{"../schema":70,"./default_safe":74,"../type/js/undefined":96,"../type/js/regexp":97,"../type/js/function":98}],78:[function(require,module,exports){
 (function(){var _ = require('underscore');
 var jsyaml = require('js-yaml');
 var queue = require('queue-async');
@@ -34540,7 +34584,7 @@ module.exports = Backbone.Collection.extend({
 });
 
 })()
-},{"../models/file":18,"../models/folder":61,"../cookie":3,"../util":28,"js-yaml":38,"underscore":11,"queue-async":46,"backbone":12,"ignore":99}],99:[function(require,module,exports){
+},{"../models/file":18,"../models/folder":61,"../cookie":3,"../util":28,"underscore":6,"js-yaml":43,"queue-async":46,"backbone":13,"ignore":99}],99:[function(require,module,exports){
 'use strict';
 
 module.exports = ignore;
@@ -34902,7 +34946,7 @@ Ignore.prototype._checkRuleFile = function(file) {
 
 
 
-},{"events":100,"util":101,"fs":79}],80:[function(require,module,exports){
+},{"events":100,"util":101,"fs":82}],79:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -34926,7 +34970,87 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"underscore":11,"jquery-browserify":10,"backbone":12}],102:[function(require,module,exports){
+},{"jquery-browserify":14,"underscore":6,"backbone":13}],81:[function(require,module,exports){
+'use strict';
+
+
+var common = require('./common');
+
+
+function Mark(name, buffer, position, line, column) {
+  this.name     = name;
+  this.buffer   = buffer;
+  this.position = position;
+  this.line     = line;
+  this.column   = column;
+}
+
+
+Mark.prototype.getSnippet = function getSnippet(indent, maxLength) {
+  var head, start, tail, end, snippet;
+
+  if (!this.buffer) {
+    return null;
+  }
+
+  indent = indent || 4;
+  maxLength = maxLength || 75;
+
+  head = '';
+  start = this.position;
+
+  while (start > 0 && -1 === '\x00\r\n\x85\u2028\u2029'.indexOf(this.buffer.charAt(start - 1))) {
+    start -= 1;
+    if (this.position - start > (maxLength / 2 - 1)) {
+      head = ' ... ';
+      start += 5;
+      break;
+    }
+  }
+
+  tail = '';
+  end = this.position;
+
+  while (end < this.buffer.length && -1 === '\x00\r\n\x85\u2028\u2029'.indexOf(this.buffer.charAt(end))) {
+    end += 1;
+    if (end - this.position > (maxLength / 2 - 1)) {
+      tail = ' ... ';
+      end -= 5;
+      break;
+    }
+  }
+
+  snippet = this.buffer.slice(start, end);
+
+  return common.repeat(' ', indent) + head + snippet + tail + '\n' +
+         common.repeat(' ', indent + this.position - start + head.length) + '^';
+};
+
+
+Mark.prototype.toString = function toString(compact) {
+  var snippet, where = '';
+
+  if (this.name) {
+    where += 'in "' + this.name + '" ';
+  }
+
+  where += 'at line ' + (this.line + 1) + ', column ' + (this.column + 1);
+
+  if (!compact) {
+    snippet = this.getSnippet();
+
+    if (snippet) {
+      where += ':\n' + snippet;
+    }
+  }
+
+  return where;
+};
+
+
+module.exports = Mark;
+
+},{"./common":68}],102:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -35520,87 +35644,325 @@ exports.format = function(f) {
   return str;
 };
 
-},{"events":100}],82:[function(require,module,exports){
+},{"events":100}],83:[function(require,module,exports){
 'use strict';
 
 
-var common = require('./common');
+var NIL  = require('../common').NIL;
+var Type = require('../type');
 
 
-function Mark(name, buffer, position, line, column) {
-  this.name     = name;
-  this.buffer   = buffer;
-  this.position = position;
-  this.line     = line;
-  this.column   = column;
+var YAML_NULL_MAP = {
+  '~'    : true,
+  'null' : true,
+  'Null' : true,
+  'NULL' : true
+};
+
+
+function resolveYamlNull(object /*, explicit*/) {
+  return YAML_NULL_MAP[object] ? null : NIL;
 }
 
 
-Mark.prototype.getSnippet = function getSnippet(indent, maxLength) {
-  var head, start, tail, end, snippet;
-
-  if (!this.buffer) {
-    return null;
-  }
-
-  indent = indent || 4;
-  maxLength = maxLength || 75;
-
-  head = '';
-  start = this.position;
-
-  while (start > 0 && -1 === '\x00\r\n\x85\u2028\u2029'.indexOf(this.buffer.charAt(start - 1))) {
-    start -= 1;
-    if (this.position - start > (maxLength / 2 - 1)) {
-      head = ' ... ';
-      start += 5;
-      break;
+module.exports = new Type('tag:yaml.org,2002:null', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlNull
+  },
+  dumper: {
+    kind: 'null',
+    defaultStyle: 'lowercase',
+    representer: {
+      canonical: function () { return '~';    },
+      lowercase: function () { return 'null'; },
+      uppercase: function () { return 'NULL'; },
+      camelcase: function () { return 'Null'; },
     }
   }
+});
 
-  tail = '';
-  end = this.position;
+},{"../common":68,"../type":69}],84:[function(require,module,exports){
+'use strict';
 
-  while (end < this.buffer.length && -1 === '\x00\r\n\x85\u2028\u2029'.indexOf(this.buffer.charAt(end))) {
-    end += 1;
-    if (end - this.position > (maxLength / 2 - 1)) {
-      tail = ' ... ';
-      end -= 5;
-      break;
-    }
-  }
 
-  snippet = this.buffer.slice(start, end);
+var NIL  = require('../common').NIL;
+var Type = require('../type');
 
-  return common.repeat(' ', indent) + head + snippet + tail + '\n' +
-         common.repeat(' ', indent + this.position - start + head.length) + '^';
+
+var YAML_IMPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false
+};
+
+var YAML_EXPLICIT_BOOLEAN_MAP = {
+  'true'  : true,
+  'True'  : true,
+  'TRUE'  : true,
+  'false' : false,
+  'False' : false,
+  'FALSE' : false,
+  'y'     : true,
+  'Y'     : true,
+  'yes'   : true,
+  'Yes'   : true,
+  'YES'   : true,
+  'n'     : false,
+  'N'     : false,
+  'no'    : false,
+  'No'    : false,
+  'NO'    : false,
+  'on'    : true,
+  'On'    : true,
+  'ON'    : true,
+  'off'   : false,
+  'Off'   : false,
+  'OFF'   : false
 };
 
 
-Mark.prototype.toString = function toString(compact) {
-  var snippet, where = '';
-
-  if (this.name) {
-    where += 'in "' + this.name + '" ';
-  }
-
-  where += 'at line ' + (this.line + 1) + ', column ' + (this.column + 1);
-
-  if (!compact) {
-    snippet = this.getSnippet();
-
-    if (snippet) {
-      where += ':\n' + snippet;
+function resolveYamlBoolean(object, explicit) {
+  if (explicit) {
+    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_EXPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
+    }
+  } else {
+    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
+      return YAML_IMPLICIT_BOOLEAN_MAP[object];
+    } else {
+      return NIL;
     }
   }
-
-  return where;
-};
+}
 
 
-module.exports = Mark;
+module.exports = new Type('tag:yaml.org,2002:bool', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlBoolean
+  },
+  dumper: {
+    kind: 'boolean',
+    defaultStyle: 'lowercase',
+    representer: {
+      lowercase: function (object) { return object ? 'true' : 'false'; },
+      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
+      camelcase: function (object) { return object ? 'True' : 'False'; }
+    }
+  }
+});
 
-},{"./common":68}],103:[function(require,module,exports){
+},{"../common":68,"../type":69}],85:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_INTEGER_PATTERN = new RegExp(
+  '^(?:[-+]?0b[0-1_]+' +
+  '|[-+]?0[0-7_]+' +
+  '|[-+]?(?:0|[1-9][0-9_]*)' +
+  '|[-+]?0x[0-9a-fA-F_]+' +
+  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
+
+
+function resolveYamlInteger(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_INTEGER_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '');
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('0' === value) {
+    return 0;
+
+  } else if (/^0b/.test(value)) {
+    return sign * parseInt(value.slice(2), 2);
+
+  } else if (/^0x/.test(value)) {
+    return sign * parseInt(value, 16);
+
+  } else if ('0' === value[0]) {
+    return sign * parseInt(value, 8);
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseInt(v, 10));
+    });
+
+    value = 0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += (d * base);
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseInt(value, 10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:int', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlInteger
+  },
+  dumper: {
+    kind: 'integer',
+    defaultStyle: 'decimal',
+    representer: {
+      binary:      function (object) { return '0b' + object.toString(2); },
+      octal:       function (object) { return '0'  + object.toString(8); },
+      decimal:     function (object) { return        object.toString(10); },
+      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
+    },
+    styleAliases: {
+      binary:      [ 2,  'bin' ],
+      octal:       [ 8,  'oct' ],
+      decimal:     [ 10, 'dec' ],
+      hexadecimal: [ 16, 'hex' ]
+    }
+  }
+});
+
+},{"../common":68,"../type":69}],86:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+var YAML_FLOAT_PATTERN = new RegExp(
+  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
+  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
+  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
+  '|[-+]?\\.(?:inf|Inf|INF)' +
+  '|\\.(?:nan|NaN|NAN))$');
+
+
+function resolveYamlFloat(object /*, explicit*/) {
+  var value, sign, base, digits;
+
+  if (!YAML_FLOAT_PATTERN.test(object)) {
+    return NIL;
+  }
+
+  value  = object.replace(/_/g, '').toLowerCase();
+  sign   = '-' === value[0] ? -1 : 1;
+  digits = [];
+
+  if (0 <= '+-'.indexOf(value[0])) {
+    value = value.slice(1);
+  }
+
+  if ('.inf' === value) {
+    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+
+  } else if ('.nan' === value) {
+    return NaN;
+
+  } else if (0 <= value.indexOf(':')) {
+    value.split(':').forEach(function (v) {
+      digits.unshift(parseFloat(v, 10));
+    });
+
+    value = 0.0;
+    base = 1;
+
+    digits.forEach(function (d) {
+      value += d * base;
+      base *= 60;
+    });
+
+    return sign * value;
+
+  } else {
+    return sign * parseFloat(value, 10);
+  }
+}
+
+
+function representYamlFloat(object, style) {
+  if (isNaN(object)) {
+    switch (style) {
+    case 'lowercase':
+      return '.nan';
+    case 'uppercase':
+      return '.NAN';
+    case 'camelcase':
+      return '.NaN';
+    }
+  } else if (Number.POSITIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '.inf';
+    case 'uppercase':
+      return '.INF';
+    case 'camelcase':
+      return '.Inf';
+    }
+  } else if (Number.NEGATIVE_INFINITY === object) {
+    switch (style) {
+    case 'lowercase':
+      return '-.inf';
+    case 'uppercase':
+      return '-.INF';
+    case 'camelcase':
+      return '-.Inf';
+    }
+  } else {
+    return object.toString(10);
+  }
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:float', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlFloat
+  },
+  dumper: {
+    kind: 'float',
+    defaultStyle: 'lowercase',
+    representer: representYamlFloat
+  }
+});
+
+},{"../common":68,"../type":69}],87:[function(require,module,exports){
+'use strict';
+
+
+var Type = require('../type');
+
+
+module.exports = new Type('tag:yaml.org,2002:str', {
+  loader: {
+    kind: 'string'
+  }
+});
+
+},{"../type":69}],103:[function(require,module,exports){
 (function(){// UTILITY
 var util = require('util');
 var Buffer = require("buffer").Buffer;
@@ -35917,20 +36279,7 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 assert.ifError = function(err) { if (err) {throw err;}};
 
 })()
-},{"util":101,"buffer":104}],83:[function(require,module,exports){
-'use strict';
-
-
-var Type = require('../type');
-
-
-module.exports = new Type('tag:yaml.org,2002:str', {
-  loader: {
-    kind: 'string'
-  }
-});
-
-},{"../type":69}],84:[function(require,module,exports){
+},{"util":101,"buffer":104}],88:[function(require,module,exports){
 'use strict';
 
 
@@ -35943,7 +36292,7 @@ module.exports = new Type('tag:yaml.org,2002:seq', {
   }
 });
 
-},{"../type":69}],85:[function(require,module,exports){
+},{"../type":69}],89:[function(require,module,exports){
 'use strict';
 
 
@@ -35956,312 +36305,7 @@ module.exports = new Type('tag:yaml.org,2002:map', {
   }
 });
 
-},{"../type":69}],86:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_NULL_MAP = {
-  '~'    : true,
-  'null' : true,
-  'Null' : true,
-  'NULL' : true
-};
-
-
-function resolveYamlNull(object /*, explicit*/) {
-  return YAML_NULL_MAP[object] ? null : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlNull
-  },
-  dumper: {
-    kind: 'null',
-    defaultStyle: 'lowercase',
-    representer: {
-      canonical: function () { return '~';    },
-      lowercase: function () { return 'null'; },
-      uppercase: function () { return 'NULL'; },
-      camelcase: function () { return 'Null'; },
-    }
-  }
-});
-
-},{"../common":68,"../type":69}],87:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_IMPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false
-};
-
-var YAML_EXPLICIT_BOOLEAN_MAP = {
-  'true'  : true,
-  'True'  : true,
-  'TRUE'  : true,
-  'false' : false,
-  'False' : false,
-  'FALSE' : false,
-  'y'     : true,
-  'Y'     : true,
-  'yes'   : true,
-  'Yes'   : true,
-  'YES'   : true,
-  'n'     : false,
-  'N'     : false,
-  'no'    : false,
-  'No'    : false,
-  'NO'    : false,
-  'on'    : true,
-  'On'    : true,
-  'ON'    : true,
-  'off'   : false,
-  'Off'   : false,
-  'OFF'   : false
-};
-
-
-function resolveYamlBoolean(object, explicit) {
-  if (explicit) {
-    if (YAML_EXPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_EXPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  } else {
-    if (YAML_IMPLICIT_BOOLEAN_MAP.hasOwnProperty(object)) {
-      return YAML_IMPLICIT_BOOLEAN_MAP[object];
-    } else {
-      return NIL;
-    }
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlBoolean
-  },
-  dumper: {
-    kind: 'boolean',
-    defaultStyle: 'lowercase',
-    representer: {
-      lowercase: function (object) { return object ? 'true' : 'false'; },
-      uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-      camelcase: function (object) { return object ? 'True' : 'False'; }
-    }
-  }
-});
-
-},{"../common":68,"../type":69}],88:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_INTEGER_PATTERN = new RegExp(
-  '^(?:[-+]?0b[0-1_]+' +
-  '|[-+]?0[0-7_]+' +
-  '|[-+]?(?:0|[1-9][0-9_]*)' +
-  '|[-+]?0x[0-9a-fA-F_]+' +
-  '|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$');
-
-
-function resolveYamlInteger(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_INTEGER_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '');
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('0' === value) {
-    return 0;
-
-  } else if (/^0b/.test(value)) {
-    return sign * parseInt(value.slice(2), 2);
-
-  } else if (/^0x/.test(value)) {
-    return sign * parseInt(value, 16);
-
-  } else if ('0' === value[0]) {
-    return sign * parseInt(value, 8);
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseInt(v, 10));
-    });
-
-    value = 0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += (d * base);
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseInt(value, 10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlInteger
-  },
-  dumper: {
-    kind: 'integer',
-    defaultStyle: 'decimal',
-    representer: {
-      binary:      function (object) { return '0b' + object.toString(2); },
-      octal:       function (object) { return '0'  + object.toString(8); },
-      decimal:     function (object) { return        object.toString(10); },
-      hexadecimal: function (object) { return '0x' + object.toString(16).toUpperCase(); }
-    },
-    styleAliases: {
-      binary:      [ 2,  'bin' ],
-      octal:       [ 8,  'oct' ],
-      decimal:     [ 10, 'dec' ],
-      hexadecimal: [ 16, 'hex' ]
-    }
-  }
-});
-
-},{"../common":68,"../type":69}],89:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  '^(?:[-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+][0-9]+)?' +
-  '|\\.[0-9_]+(?:[eE][-+][0-9]+)?' +
-  '|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*' +
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  '|\\.(?:nan|NaN|NAN))$');
-
-
-function resolveYamlFloat(object /*, explicit*/) {
-  var value, sign, base, digits;
-
-  if (!YAML_FLOAT_PATTERN.test(object)) {
-    return NIL;
-  }
-
-  value  = object.replace(/_/g, '').toLowerCase();
-  sign   = '-' === value[0] ? -1 : 1;
-  digits = [];
-
-  if (0 <= '+-'.indexOf(value[0])) {
-    value = value.slice(1);
-  }
-
-  if ('.inf' === value) {
-    return (1 === sign) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if ('.nan' === value) {
-    return NaN;
-
-  } else if (0 <= value.indexOf(':')) {
-    value.split(':').forEach(function (v) {
-      digits.unshift(parseFloat(v, 10));
-    });
-
-    value = 0.0;
-    base = 1;
-
-    digits.forEach(function (d) {
-      value += d * base;
-      base *= 60;
-    });
-
-    return sign * value;
-
-  } else {
-    return sign * parseFloat(value, 10);
-  }
-}
-
-
-function representYamlFloat(object, style) {
-  if (isNaN(object)) {
-    switch (style) {
-    case 'lowercase':
-      return '.nan';
-    case 'uppercase':
-      return '.NAN';
-    case 'camelcase':
-      return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '.inf';
-    case 'uppercase':
-      return '.INF';
-    case 'camelcase':
-      return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-    case 'lowercase':
-      return '-.inf';
-    case 'uppercase':
-      return '-.INF';
-    case 'camelcase':
-      return '-.Inf';
-    }
-  } else {
-    return object.toString(10);
-  }
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlFloat
-  },
-  dumper: {
-    kind: 'float',
-    defaultStyle: 'lowercase',
-    representer: representYamlFloat
-  }
-});
-
-},{"../common":68,"../type":69}],90:[function(require,module,exports){
+},{"../type":69}],90:[function(require,module,exports){
 'use strict';
 
 
@@ -36351,26 +36395,6 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
     kind: 'object',
     instanceOf: Date,
     representer: representYamlTimestamp
-  }
-});
-
-},{"../common":68,"../type":69}],91:[function(require,module,exports){
-'use strict';
-
-
-var NIL  = require('../common').NIL;
-var Type = require('../type');
-
-
-function resolveYamlMerge(object /*, explicit*/) {
-  return '<<' === object ? object : NIL;
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  loader: {
-    kind: 'string',
-    resolver: resolveYamlMerge
   }
 });
 
@@ -36495,7 +36519,27 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
 });
 
 })()
-},{"buffer":104,"../common":68,"../type":69}],93:[function(require,module,exports){
+},{"buffer":104,"../common":68,"../type":69}],91:[function(require,module,exports){
+'use strict';
+
+
+var NIL  = require('../common').NIL;
+var Type = require('../type');
+
+
+function resolveYamlMerge(object /*, explicit*/) {
+  return '<<' === object ? object : NIL;
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:merge', {
+  loader: {
+    kind: 'string',
+    resolver: resolveYamlMerge
+  }
+});
+
+},{"../common":68,"../type":69}],93:[function(require,module,exports){
 'use strict';
 
 
@@ -36715,7 +36759,7 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
 });
 
 })()
-},{"../../common":68,"../../type":69}],81:[function(require,module,exports){
+},{"../../common":68,"../../type":69}],80:[function(require,module,exports){
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -36825,93 +36869,7 @@ module.exports = Backbone.View.extend({
   }
 });
 
-},{"../../../../dist/templates":14,"../../../util":28,"jquery-browserify":10,"underscore":11,"backbone":12}],105:[function(require,module,exports){
-exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
-  var e, m,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      nBits = -7,
-      i = isBE ? 0 : (nBytes - 1),
-      d = isBE ? 1 : -1,
-      s = buffer[offset + i];
-
-  i += d;
-
-  e = s & ((1 << (-nBits)) - 1);
-  s >>= (-nBits);
-  nBits += eLen;
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-  m = e & ((1 << (-nBits)) - 1);
-  e >>= (-nBits);
-  nBits += mLen;
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-  if (e === 0) {
-    e = 1 - eBias;
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity);
-  } else {
-    m = m + Math.pow(2, mLen);
-    e = e - eBias;
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-};
-
-exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
-  var e, m, c,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
-      i = isBE ? (nBytes - 1) : 0,
-      d = isBE ? -1 : 1,
-      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
-
-  value = Math.abs(value);
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0;
-    e = eMax;
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2);
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--;
-      c *= 2;
-    }
-    if (e + eBias >= 1) {
-      value += rt / c;
-    } else {
-      value += rt * Math.pow(2, 1 - eBias);
-    }
-    if (value * c >= 2) {
-      e++;
-      c /= 2;
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0;
-      e = eMax;
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen);
-      e = e + eBias;
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-      e = 0;
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
-
-  e = (e << mLen) | m;
-  eLen += mLen;
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
-
-  buffer[offset + i - d] |= s * 128;
-};
-
-},{}],104:[function(require,module,exports){
+},{"../../../../dist/templates":7,"../../../util":28,"underscore":6,"jquery-browserify":14,"backbone":13}],104:[function(require,module,exports){
 (function(){function SlowBuffer (size) {
     this.length = size;
 };
@@ -38231,7 +38189,151 @@ SlowBuffer.prototype.writeDoubleLE = Buffer.prototype.writeDoubleLE;
 SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 
 })()
-},{"assert":103,"./buffer_ieee754":105,"base64-js":106}],106:[function(require,module,exports){
+},{"assert":103,"./buffer_ieee754":105,"base64-js":106}],105:[function(require,module,exports){
+exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
+  var e, m,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      nBits = -7,
+      i = isBE ? 0 : (nBytes - 1),
+      d = isBE ? 1 : -1,
+      s = buffer[offset + i];
+
+  i += d;
+
+  e = s & ((1 << (-nBits)) - 1);
+  s >>= (-nBits);
+  nBits += eLen;
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+  m = e & ((1 << (-nBits)) - 1);
+  e >>= (-nBits);
+  nBits += mLen;
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+  if (e === 0) {
+    e = 1 - eBias;
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity);
+  } else {
+    m = m + Math.pow(2, mLen);
+    e = e - eBias;
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
+};
+
+exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
+  var e, m, c,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
+      i = isBE ? (nBytes - 1) : 0,
+      d = isBE ? -1 : 1,
+      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+
+  value = Math.abs(value);
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0;
+    e = eMax;
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2);
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--;
+      c *= 2;
+    }
+    if (e + eBias >= 1) {
+      value += rt / c;
+    } else {
+      value += rt * Math.pow(2, 1 - eBias);
+    }
+    if (value * c >= 2) {
+      e++;
+      c /= 2;
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0;
+      e = eMax;
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen);
+      e = e + eBias;
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+      e = 0;
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
+
+  e = (e << mLen) | m;
+  eLen += mLen;
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
+
+  buffer[offset + i - d] |= s * 128;
+};
+
+},{}],98:[function(require,module,exports){
+'use strict';
+
+
+var esprima = require('esprima');
+
+
+var NIL  = require('../../common').NIL;
+var Type = require('../../type');
+
+
+function resolveJavascriptFunction(object /*, explicit*/) {
+  /*jslint evil:true*/
+
+  try {
+    var source = '(' + object + ')',
+        ast    = esprima.parse(source, { range: true }),
+        params = [],
+        body;
+
+    if ('Program'             !== ast.type         ||
+        1                     !== ast.body.length  ||
+        'ExpressionStatement' !== ast.body[0].type ||
+        'FunctionExpression'  !== ast.body[0].expression.type) {
+      return NIL;
+    }
+
+    ast.body[0].expression.params.forEach(function (param) {
+      params.push(param.name);
+    });
+
+    body = ast.body[0].expression.body.range;
+
+    // Esprima's ranges include the first '{' and the last '}' characters on
+    // function expressions. So cut them out.
+    return new Function(params, source.slice(body[0]+1, body[1]-1));
+  } catch (err) {
+    return NIL;
+  }
+}
+
+
+function representJavascriptFunction(object /*, style*/) {
+  return object.toString();
+}
+
+
+module.exports = new Type('tag:yaml.org,2002:js/function', {
+  loader: {
+    kind: 'string',
+    resolver: resolveJavascriptFunction
+  },
+  dumper: {
+    kind: 'function',
+    representer: representJavascriptFunction,
+  }
+});
+
+},{"../../common":68,"../../type":69,"esprima":107}],106:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -38317,65 +38419,7 @@ SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],98:[function(require,module,exports){
-'use strict';
-
-
-var esprima = require('esprima');
-
-
-var NIL  = require('../../common').NIL;
-var Type = require('../../type');
-
-
-function resolveJavascriptFunction(object /*, explicit*/) {
-  /*jslint evil:true*/
-
-  try {
-    var source = '(' + object + ')',
-        ast    = esprima.parse(source, { range: true }),
-        params = [],
-        body;
-
-    if ('Program'             !== ast.type         ||
-        1                     !== ast.body.length  ||
-        'ExpressionStatement' !== ast.body[0].type ||
-        'FunctionExpression'  !== ast.body[0].expression.type) {
-      return NIL;
-    }
-
-    ast.body[0].expression.params.forEach(function (param) {
-      params.push(param.name);
-    });
-
-    body = ast.body[0].expression.body.range;
-
-    // Esprima's ranges include the first '{' and the last '}' characters on
-    // function expressions. So cut them out.
-    return new Function(params, source.slice(body[0]+1, body[1]-1));
-  } catch (err) {
-    return NIL;
-  }
-}
-
-
-function representJavascriptFunction(object /*, style*/) {
-  return object.toString();
-}
-
-
-module.exports = new Type('tag:yaml.org,2002:js/function', {
-  loader: {
-    kind: 'string',
-    resolver: resolveJavascriptFunction
-  },
-  dumper: {
-    kind: 'function',
-    representer: representJavascriptFunction,
-  }
-});
-
-},{"../../common":68,"../../type":69,"esprima":107}],107:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 (function(){/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
@@ -42286,5 +42330,5 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 })()
-},{}]},{},[4])
+},{}]},{},[8])
 ;
