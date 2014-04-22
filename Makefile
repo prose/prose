@@ -11,8 +11,10 @@ endif
 UGLIFY = node_modules/.bin/uglifyjs
 BROWSERIFY = node_modules/.bin/browserify
 TEMPLATES = $(shell find templates -type f -name '*.html')
+TESTS = $(shell find test -type f -name '*.js' | grep -v -E '(test/lib/tests.js|test/lib/polyfill.js)')
 
 all: \
+	test/lib/tests.js \
 	dist/prose.js \
 	dist/prose.min.js
 
@@ -21,6 +23,7 @@ install:
 
 clean:
 	rm -f dist/*
+	rm -f test/lib/tests.js
 
 translations:
 	$(NODE) translations/update_locales
@@ -99,6 +102,10 @@ APPLICATION = \
 	locale.js \
 	translations/locales.js \
 	vendor/liquid.patch.js
+
+test/lib/tests.js: $(TESTS)
+	$(BROWSERIFY) test/tests.js > test/lib/tests.js
+	$(BROWSERIFY) test/polyfill.js > test/lib/polyfill.js
 
 dist/prose.js: oauth.json $(APPLICATION) $(LIBS) dist/templates.js
 	cat $(LIBS) > dist/prose.js
