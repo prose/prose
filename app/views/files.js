@@ -58,7 +58,7 @@ module.exports = Backbone.View.extend({
         // Update this.path with rooturl
         var config = this.model.config;
         this.rooturl = config && config.rooturl ? config.rooturl : '';
-        
+
         this.presentationModel = this.model.filteredModel || this.model;
         this.search.model = this.presentationModel;
         // Render on fetch and on search
