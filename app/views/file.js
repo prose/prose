@@ -104,28 +104,37 @@ module.exports = Backbone.View.extend({
   setModel: function(model, res, options) {
     this.app.loader.start();
 
-    // Set default metadata from collection
-    var defaults = this.collection.defaults;
-    var path;
-
     // Set model either by calling directly for new File models
     // or by filtering collection for existing File models
     switch(this.mode) {
       case 'edit':
       case 'blob':
-      case 'preview':
         this.model = this.collection.findWhere({ path: this.path });
         break;
+      case 'preview':
+        this.model = this.collection.findWhere({ path: this.path });
+        if (!this.model) {
+          // We may be trying to preview a new file that only has
+          // stashed information lets check and create a dummy model
+          var previewPath = this.absolutePathFromComponents (
+            this.repo.get('owner').login,
+            this.repo.get('name'),
+            this.branch,
+            this.path
+          );
+          if (this.getStashForPath(previewPath)) {
+            this.model = this.newEmptyFile();
+          }
+        }
+        break;
       case 'new':
-        this.model = new File({
-          branch: this.branches.findWhere({ name: this.branch }),
-          collection: this.collection,
-          path: this.path,
-          repo: this.repo
-        });
+        this.model = this.newEmptyFile();
         break;
     }
-
+    
+    // Set default metadata from collection
+    var defaults = this.collection.defaults;
+    var path;
     if (this.model) {
       if (defaults) {
         path = this.nearestPath(this.model.get('path'), defaults);
@@ -164,6 +173,15 @@ module.exports = Backbone.View.extend({
 
       this.app.loader.done();
     }
+  },
+
+  newEmptyFile: function() {
+    return new File({
+      branch: this.branches.findWhere({ name: this.branch }),
+      collection: this.collection,
+      path: this.path,
+      repo: this.repo
+    });
   },
 
   nearestPath: function(path, defaults) {
@@ -595,22 +613,14 @@ module.exports = Backbone.View.extend({
     if (jekyll && e) {
       // TODO: this could all be removed if preview button listened to
       // change:path event on model
-      var hash = window.location.hash.split('/');
-      hash[2] = 'preview';
-
-      // TODO: How should this change to handle new files in collection?
-      // If last item in hash array does not begin with Jekyll YYYY-MM-DD format,
-      // append filename from input
-      var regex = /^\d{4}-\d{2}-\d{2}-(?:.+)/;
-      if (!regex.test(_.last(hash))) {
-        hash.push(_.last(this.filepath().split('/')));
-      }
-
+      this.nav.setFileState('edit'); // Return to edit because we are creating a new window
       this.stashFile();
 
+      var hash = this.absoluteFilepath().split('/');
+      hash.splice(2, 0, 'preview');
       $(e.currentTarget).attr({
         target: '_blank',
-        href: hash.join('/')
+        href: '#' + hash.join('/')
       });
     } else {
       if (e) e.preventDefault();
@@ -626,8 +636,18 @@ module.exports = Backbone.View.extend({
 
   preview: function() {
     var q = queue(1);
-    var metadata = this.model.get('metadata');
-    var content = this.model.get('content');
+    // Retrieve the stash from the model path because thats what would
+    // have been stored when the preview button is clicked
+    var stash = this.getStashForPath(this.absolutePathFromFile(this.model));
+    var metadata = {};
+    var content = '';
+    if (stash && stash.content) {
+      metadata = stash.metadata;
+      content = stash.content;
+    } else {
+      metadata = this.model.get('metadata') || {};
+      content = this.model.get('content') || '';
+    }
 
     var p = {
       site: this.collection.config,
@@ -913,6 +933,29 @@ module.exports = Backbone.View.extend({
     }
   },
 
+  absoluteFilepath: function() {
+    return this.absolutePathFromComponents(
+      this.repo.get('owner').login,
+      this.repo.get('name'),
+      this.branch,
+      this.filepath()
+    );
+  },
+
+  absolutePathFromFile: function(file) {
+    return this.absolutePathFromComponents(
+      file.collection.repo.get('owner').login,
+      file.collection.repo.get('name'),
+      file.collection.branch.get('name'),
+      file.get('path')
+    );
+  },
+
+  absolutePathFromComponents: function(user, repo, branch, path) {
+    var url = _.compact([ user, repo, branch, path ]);
+    return url.join('/');
+  },
+
   draft: function() {
     var defaults = this.collection.defaults || {};
     var path = this.model.get('path').replace(/^(_posts)/, '_drafts');
@@ -1029,7 +1072,7 @@ module.exports = Backbone.View.extend({
       },
       path: path
     });
-    
+
     // Set default metadata for new path
     if (this.model && defaults) {
       this.model.set('defaults', defaults[this.nearestPath(path, defaults)]);
@@ -1059,8 +1102,7 @@ module.exports = Backbone.View.extend({
     if (!window.sessionStorage) return false;
 
     var store = window.sessionStorage;
-    var filepath = this.filepath();
-
+    var filepath = this.absoluteFilepath();
     // Don't stash if filepath is undefined
     if (filepath) {
       try {
@@ -1076,23 +1118,33 @@ module.exports = Backbone.View.extend({
   },
 
   stashApply: function() {
-    if (!window.sessionStorage) return false;
-    var store = window.sessionStorage;
-    var filepath = this.model.get('path');
-    var item = store.getItem(filepath);
-    var stash = JSON.parse(item);
-
-    if (stash && stash.sha === this.model.get('sha')) {
+    var filepath = this.absolutePathFromFile(this.model);
+    var stash = this.getStashForPath(filepath);
+    if (!stash) return false;
+    if (stash.sha === this.model.get('sha')) {
       // Restore from stash if file sha hasn't changed
       if (this.editor && this.editor.setValue) this.editor.setValue(stash.content);
       if (this.metadataEditor) {
         // this.rawEditor.setValue('');
         this.metadataEditor.setValue(stash.metadata);
       }
-    } else if (item) {
+    } else {
       // Remove expired content
-      store.removeItem(filepath);
+      this.clearStashForPath(filepath);
     }
+  },
+
+  getStashForPath: function(filepath) {
+    if (!window.sessionStorage) return false;
+    var store = window.sessionStorage;
+    var item = store.getItem(filepath);
+    return JSON.parse(item);
+  },
+
+  clearStashForPath: function(filepath) {
+    if (!window.sessionStorage) return;
+    var store = window.sessionStorage;
+    store.removeItem(filepath);
   },
 
   updateFile: function() {
@@ -1136,25 +1188,17 @@ module.exports = Backbone.View.extend({
         // Enable settings sidebar item
         this.nav.$el.addClass('settings');
 
+        // Update current path
+        var path = model.get('path');
+        this.path = path;
+
         // Unset dirty, return to edit view
         this.dirty = false;
         this.edit();
 
-        var path = model.get('path');
         var old = model.get('oldpath');
         var name = util.extractFilename(old)[1];
         var pathChange = path !== old;
-
-        // Navigate to edit path for new files
-        if (!model.previous('sha') || pathChange) {
-          this.router.navigate(_.compact([
-            this.repo.get('owner').login,
-            this.repo.get('name'),
-            'edit',
-            this.collection.branch.get('name'),
-            model.get('path')
-          ]).join('/'));
-        }
 
         // Remove old file if renamed
         // TODO: remove this when Repo Contents API supports renaming
@@ -1214,7 +1258,7 @@ module.exports = Backbone.View.extend({
     // Loading State
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
-    // Default to media directory if defined in config, 
+    // Default to media directory if defined in config,
     // current directory if no path specified
     var dir = this.config.media ? this.config.media :
       util.extractFilename(this.model.get('path'))[0];
