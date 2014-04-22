@@ -653,11 +653,11 @@ module.exports = Backbone.View.extend({
       site: this.collection.config,
       post: metadata,
       page: metadata,
-      content: Liquid.parse(marked(this.compilePreview(content))).render({
+      content: marked(Liquid.parse(this.compilePreview(content)).render({
         site: this.collection.config,
         post: metadata,
         page: metadata
-      }) || ''
+      })) || ''
     };
 
     // Grab a date from the filename
