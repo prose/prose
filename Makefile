@@ -110,7 +110,7 @@ test/lib/index.js: $(TESTS)
 
 dist/prose.js: oauth.json $(APPLICATION) $(LIBS) dist/templates.js
 	cat $(LIBS) > dist/prose.js
-	$(BROWSERIFY) app/boot.js >> dist/prose.js
+	$(BROWSERIFY) -d app/boot.js >> dist/prose.js
 
 dist/prose.min.js: dist/prose.js
 	$(UGLIFY) dist/prose.js > dist/prose.min.js
