@@ -115,7 +115,8 @@ Running `make` will also build the browser tests available at http://localhost:8
 
 You can run tests quickly from the command line with `npm test`
 
-Require any new test files in `test/tests.js`
+Create tests in the `test/spec/` directory. If possible try to mirror the `app` directory structure.
+Require any new test files in `test/index.js`
 
 ## Code Style
 
