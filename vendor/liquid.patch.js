@@ -14,7 +14,7 @@ module.exports = function() {
     paramSyntax: /([\w-]+)\s*=\s*(?:"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|([\w\.-]+))/,
 
     init: function(tag, markup, tokens) {
-      var fileParamMatches = (markup || '').strip().split(' ', 2);
+      var fileParamMatches = (markup || '').strip().split(/\s+(.+)?/);
       if (fileParamMatches) {
         this.templateName = fileParamMatches[0];
         this.rawParams = fileParamMatches[1];

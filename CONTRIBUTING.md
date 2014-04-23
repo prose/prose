@@ -109,6 +109,14 @@ code into a minified `prose.min.js` and see changes.
 __ProTip:__ You may want to install `watch` so you can run `watch make` without
 needing to execute `make` on every change.
 
+## Testing
+
+Running `make` will also build the browser tests available at http://localhost:8000/test
+
+You can run tests quickly from the command line with `npm test`
+
+Require any new test files in `test/tests.js`
+
 ## Code Style
 
 ### Javascript
