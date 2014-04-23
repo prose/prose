@@ -1,5 +1,5 @@
 var patch = require('../../../vendor/liquid.patch');
-var mocks = require('../../support/vendor/liquid.patch.mockFiles');
+var mocks = require('./liquid.patch.mockFiles');
 var expect = require('chai').expect;
 
 describe('liquid.patch', function() {
