@@ -2,3 +2,5 @@
 node_modules/
 transifex.auth
 .vimrc
+test/lib/index.js
+test/lib/polyfill.js

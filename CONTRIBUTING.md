@@ -12,7 +12,7 @@ Here's a quick list of things to consider before submitting an issue:
 * Write specifically what browser this is reported to be found in
 * Write out the steps to replicate the error: when did it happen? What did you expect to happen? What happened instead?
 * Please keep bug reports professional and straightforward: trust us, we share your dismay of software breaking.
-* For bonus points, [enable web developer extensions](http://macwright.org/enable-web-developer-extensions/) and report the
+* For bonus points, [enable web developer extensions](http://debugbrowser.com) and report the
   Javascript error message.
 
 And when in doubt, be over-descriptive of the bug and how you discovered it.
@@ -108,6 +108,15 @@ code into a minified `prose.min.js` and see changes.
 
 __ProTip:__ You may want to install `watch` so you can run `watch make` without
 needing to execute `make` on every change.
+
+## Testing
+
+Running `make` will also build the browser tests available at http://localhost:8000/test
+
+You can run tests quickly from the command line with `npm test`
+
+Create tests in the `test/spec/` directory. If possible try to mirror the `app` directory structure.
+Require any new test files in `test/index.js`
 
 ## Code Style
 
