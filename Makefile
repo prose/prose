@@ -34,7 +34,7 @@ dist/templates.js: $(TEMPLATES)
 	mkdir -p dist && $(NODE) build
 
 oauth.json:
-	test -s oauth.json || curl 'https://raw.github.com/prose/prose/gh-pages/oauth.json' > oauth.json
+	test -s oauth.json || curl 'https://raw.githubusercontent.com/prose/prose/gh-pages/oauth.json' > oauth.json
 
 LIBS = \
 	vendor/codemirror/codemirror.js \
