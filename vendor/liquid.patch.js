@@ -1,58 +1,75 @@
 module.exports = function() {
   Liquid.readTemplateFile = (function(path) {
     var file = this.collection.findWhere({ path: '_includes/' + path });
-    return file.getContentSync().responseText;
+    if (file) {
+      return file.getContentSync().responseText;
+    } else {
+      throw ("File Not Found:" + path);
+    }
   }).bind(this);
 
+  // This is the include tag from Jekyll see: http://git.io/PsVGwg
   Liquid.Template.registerTag( 'include', Liquid.Tag.extend({
 
-    tagSyntax: /((?:"[^"]+"|'[^']+'|[^\s,|]+)+)(\s+(?:with|for)\s+((?:"[^"]+"|'[^']+'|[^\s,|]+)+))?/,
+    paramSyntax: /([\w-]+)\s*=\s*(?:"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|([\w\.-]+))/,
 
     init: function(tag, markup, tokens) {
-      var matches = (markup || '').match(this.tagSyntax);
-      if(matches) {
-        this.templateName = matches[1];
-        this.templateNameVar = this.templateName.substring(1, this.templateName.length - 1);
-        this.variableName = matches[3];
-        this.attributes = {};
-
-        var attMatchs = markup.match(/(\w*?)\s*\:\s*("[^"]+"|'[^']+'|[^\s,|]+)/g);
-        if(attMatchs) {
-          attMatchs.each(function(pair){
-            pair = pair.split(":");
-            this.attributes[pair[0].strip()] = pair[1].strip();
-          }, this);
-        }
+      var fileParamMatches = (markup || '').strip().split(/\s+(.+)?/);
+      if (fileParamMatches) {
+        this.templateName = fileParamMatches[0];
+        this.rawParams = fileParamMatches[1];
       } else {
-        throw ("Error in tag 'include' - Valid syntax: include '[template]' (with|for) [object|collection]");
+        throw ("Error in tag 'include " + markup + "' - Valid syntax: {% include file.ext param='value' param2='value' %}");
       }
       this._super(tag, markup, tokens);
     },
 
     render: function(context) {
-      var self     = this,
-          source   = Liquid.readTemplateFile( this.templateName ),
-          partial  = Liquid.parse(source),
-          variable = context.get((this.variableName || this.templateNameVar)),
-          output   = '';
-      context.stack(function(){
-        self.attributes.each = hackObjectEach;
-        self.attributes.each(function(pair){
-          context.set(pair.key, context.get(pair.value));
-        })
+      var resolvedName = this.retrieve_variable(this.templateName, context) || this.templateName;
+      var targetTemplate = Liquid.readTemplateFile(resolvedName);
+      var partial = Liquid.parse(targetTemplate);
 
-        if(variable instanceof Array) {
-          output = variable.map(function(variable){
-            context.set( self.templateNameVar, variable );
-            return partial.render(context);
-          });
-        } else {
-          context.set(self.templateNameVar, variable);
-          output = partial.render(context);
-        }
-      });
+      // Load context with parameters
+      var params = this.parseParams(this.rawParams, context);
+      context.set('include', params);
+
+      var output = partial.render(context);
       output = [output].flatten().join('');
       return output;
+    },
+
+    // Test for the possibility of {{variable}} and check the context
+    retrieve_variable: function(possiblePath, context) {
+      var match = possiblePath.match(/\{\{([\w\-\.]+)\}\}/);
+      if (match) {
+        var variable = context.get(match[1]);
+        if (variable) {
+          return variable;
+        } else {
+          throw ("No variable " + match[1] + "was found in include tag");
+        }
+      }
+    },
+
+    parseParams: function(rawParams, context) {
+      var params = {};
+      var markup = rawParams || '';
+      var match;
+      while ((match = markup.match(this.paramSyntax))) {
+        // Cut off current parameter
+        markup = markup.substr(match[0].length);
+
+        var value;
+        if (match[2]) {
+          value = match[2].replace(/\\"/g, '"');
+        } else if (match[3]) {
+          value = match[3].replace(/\\'/g, "'");
+        } else if (match[4]) {
+          value = context.get(match[4]); // Its a variable most likely
+         }
+        params[match[1]] = value;
+      }
+      return params;
     }
   }));
 
@@ -106,7 +123,7 @@ module.exports = function() {
             return;
           }
         };
-      })
+      });
       return [output].flatten().join('');
     }
   }));
