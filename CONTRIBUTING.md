@@ -76,7 +76,7 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 8. `git push`
 9. `git checkout master`
 10.  Tag the release in `master` using `git tag` according to [semver](http://semver.org/) in the format `vX.Y.Z`. This should match the version in `package.json`.
-11. Push tag to GitHub using `git push --tags` 
+11. Push tag to GitHub using `git push --tags`
 
 ## Building / Installing
 
@@ -84,27 +84,34 @@ prose uses [Browserify](http://browserify.org) with [Make](http://www.gnu.org/so
 to manage dependencies and build. Development also requires you
 have [node.js](http://nodejs.org) >= v0.8 installed.
 
-To get started:
+### Prerequisites
+- [node.js](http://nodejs.org/).
 
-1. [Install node.js](http://nodejs.org/). 'Install' will download a package for
-your OS.
-2. Go to the directory where you have checked out `prose`
-3. Run `make install`
-4. Run `make`
-5. To run prose with authentication locally, a `oauth.json` file is required to the
-to the root directory. when you run `make` this file is created automatically. 
+### Install steps
 
-__Note__ You should not commit the `oauth.json` file to a remote repo or along with a pull
+1. `git clone git@github.com:prose/prose.git && cd prose/`
+2. Run `make install`
+3. To run prose with authentication locally, a `oauth.json` file is required to the
+to the root directory. When you run `make` this file is created automatically.
+4. `npm install serve -g`
+5. Run `serve` By default, prose will be set up on [http://localhost:3000](http://localhost:3000).
+
+__Note:__ You should not commit the `oauth.json` file to a remote repo or along with a pull
 request.
 
-__Note__ When you authorize the application the public gatekeeper will redirect to prose.io. You can manually set the URL back to your prose instance. Alternatively you can setup your own Gatekeeper instance. 
+__Note:__ When you authorize the application the public gatekeeper will redirect
+to prose.io with a path that looks something like `http://prose.io/?code=36f237f41bd81c1a3661`. The code
+param represents the auth string. You can manually set the URL back to your prose instance.
 
-If you have python handy, from the project root run `python -m SimpleHTTPServer`
-to start a server and run the site locally. By default prose will be set up 
-on [http://localhost:8000](http://localhost:8000).
+    Change
+    http://prose.io/?code=36f237f41bd81c1a3661
 
-For any changes you make to the codebase, you'll need to run `make` to package
-code into a minified `prose.min.js` and see changes.
+    Back to
+    http://localhost:3000/?code=36f237f41bd81c1a3661
+
+Alternatively you can setup your own Gatekeeper instance. For any changes you make
+to the codebase, you'll need to run `make` to package code into a minified `prose.min.js`
+and see changes.
 
 __ProTip:__ You may want to install `watch` so you can run `watch make` without
 needing to execute `make` on every change.
