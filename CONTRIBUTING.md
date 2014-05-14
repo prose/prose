@@ -91,8 +91,8 @@ have [node.js](http://nodejs.org) >= v0.8 installed.
 
 1. `git clone git@github.com:prose/prose.git && cd prose/`
 2. Run `make install`
-3. To run prose with authentication locally, a `oauth.json` file is required to the
-to the root directory. When you run `make` this file is created automatically.
+3. To run prose with authentication locally, a `oauth.json` file is required in the
+root directory. When you run `make` this file is created automatically.
 4. `npm install serve -g`
 5. Run `serve` By default, prose will be set up on [http://localhost:3000](http://localhost:3000).
 
