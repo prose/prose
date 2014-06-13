@@ -52,7 +52,7 @@ Then, add the new string to `translations/application.yaml`. The translation sys
 Transiflex, will automatically detect the change.
 
 Use `make` to build the translations with the local changes.
-`make translate` can be used to pull the latest translations from Transifex.
+`make translations` can be used to pull the latest translations from Transifex.
 
 If you run `make translate` you will be warned to include a `transifex.auth` file in the root directory that contains your transifex user details:
 
