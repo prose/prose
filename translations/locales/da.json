@@ -1,0 +1,266 @@
+{
+    "login": "Godkend på GitHub",
+    "docheader": {
+        "editing": "Redigerer",
+        "error": "Fejl",
+        "preview": "Gennemser"
+    },
+    "navigation": {
+        "newFile": "Ny fil",
+        "edit": "Redigér",
+        "preview": "Preview",
+        "settings": "Indstillinger",
+        "meta": "Metadata",
+        "save": "Gem",
+        "login": "Godkend hos GitHub",
+        "about": "Om",
+        "develop": "Udviklere",
+        "logout": "Log ud",
+        "language": "Sprog"
+    },
+    "toolbar": {
+        "heading": "Overskrift",
+        "subHeading": "Underoverskrift",
+        "link": "Indsæt link",
+        "image": "Indsæt billede",
+        "bold": "Fed",
+        "italic": "Kursiv",
+        "blockquote": "Citat",
+        "list": "Liste",
+        "numberedlist": "Nummereret liste",
+        "help": "Hjælp"
+    },
+    "heading": {
+        "explore": "Udforsk projekter"
+    },
+    "actions": {
+        "unsaved": "Du har ændringer, som ikke er blevet gemt. Er du sikker på, at du ønsker at forlade siden?",
+        "draft": {
+            "toPost": "Kladde til indlæg",
+            "toPostInfo": "Konvertér denne kladde til et udgivet indlæg"
+        },
+        "publishing": {
+            "publish": "Udgiv",
+            "publishInfo": "Dette indlæg udgives næste gang du gemmer",
+            "published": "Udgivet",
+            "unpublish": "Afpublicér",
+            "unpublished": "Afpubliceret",
+            "unpublishInfo": "Dette indlæg afpubliceres næste gang du gemmer"
+        },
+        "change": {
+            "noChange": "Ingen ændringer",
+            "submit": "Ændringer at indsende",
+            "save": "Ændringer at gemme"
+        },
+        "delete": {
+            "title": "Slet",
+            "warn": "Er du sikker på, at du ønsker at slette denne fil?",
+            "error": "Fejl ved sletning. Vent venligst 30 sekunder og prøv igen."
+        },
+        "upload": {
+            "uploading": "Uploader {file}",
+            "uploaded": "{file} uploadet"
+        },
+        "save": {
+            "title": "Gem",
+            "saved": "Gemt",
+            "saving": "Gemmer",
+            "patch": "Sender forespørgsel",
+            "fileNameError": "Kræver et filnavn",
+            "submission": "Forespørgsel sendt",
+            "metaError": "Fejl! Metadata ikke fundet",
+            "fileNameExists": "Der findes allerede en fil med denne sti"
+        },
+        "error": "Fejl. Prøv igen om 30 sekunder",
+        "restore": {
+            "restoring": "Gendanner",
+            "restored": "Gendannet"
+        },
+        "commits": {
+            "created": "{filename} oprettet",
+            "updated": "{filename} opdateret",
+            "deleted": "{filename} slettet",
+            "toDraft": "Kladde af {filename} oprettet",
+            "fromDraft": "Indlæg oprettet fra kladde af {filename}"
+        }
+    },
+    "loading": {
+        "repos": "Indlæser profil",
+        "repo": "Indlæser projekt",
+        "file": "Indlæser fil",
+        "preview": "Gennemser fil",
+        "creating": "Opretter nyt indlæg"
+    },
+    "modal": {
+        "errorHeading": "Fejl",
+        "confirm": "Fandt det"
+    },
+    "main": {
+        "start": {
+            "content": "Prose er en indholds-editor til GitHub designet til håndtering af websites.",
+            "learn": "Lær mere"
+        },
+        "repos": {
+            "filter": "Filtrér projekter",
+            "repo": "Vis projekt",
+            "site": "Vis site",
+            "sharedFrom": "Delt fra en konto",
+            "forkedFrom": "Forket fra en andet projekt"
+        },
+        "repo": {
+            "filter": "Filtrér filter",
+            "edit": "Redigér",
+            "delete": "Slet denne fil"
+        },
+        "new": {
+            "body": "## Et nyt indlæg\n\nIndtast teksten i [Markdown](http://daringfireball.net/projects/markdown/). Brug værktøjslinjen ovenfor eller klik på knappen **?** for hjælp til formattering.\n"
+        },
+        "file": {
+            "noTitle": "Uden titel",
+            "metaTitle": "Gennemse dine ændringer:",
+            "rawMeta": "Rå metadata",
+            "metaDescription": "Tilføjelser er markeret med grønt. Slettet tekst er streget ud.",
+            "back": "Færdig",
+            "createMeta": "Opret ny"
+        },
+        "upgrade": {
+            "content": "Prose kræver features, som ikke er tilgængelige i din browser",
+            "download": "Download en moderne browser"
+        }
+    },
+    "notification": {
+        "loginDescription": "Log venligst ind med din GitHub-konto for at tilgå projektet.",
+        "create": "Opret det",
+        "home": "Tilbage til hovedsiden",
+        "back": "Gå tilbage",
+        "githubStatus": "Status på GitHub ({status})",
+        "error": {
+            "label": "Fejl",
+            "github": "Fejl ved indlæsning af data fra GitHub. Det kan være et midlertidigt problem. Prøv venligst igen senere.",
+            "exists": "Denne fil eksisterer ikke",
+            "notFound": "Side ikke fundet"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "Grupper"
+        },
+        "repo": {
+            "branch": "Skift branch",
+            "drafts": "Vis kladder",
+            "history": {
+                "label": "Seneste historik",
+                "actions": {
+                    "restore": "Gendan?"
+                }
+            },
+            "create": "Opret ny fil"
+        },
+        "save": {
+            "label": "Beskriv dine ændringer",
+            "cancel": "Annullér",
+            "save": "Commit",
+            "submit": "Indsend ændringsanmodning"
+        },
+        "settings": {
+            "title": "Indstillinger",
+            "fileInputLabel": "Filsti",
+            "delete": "Slet denne fil",
+            "translate": "Oversæt til",
+            "draft": "Opret kladde"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Indsæt link",
+            "insertLocal": "Indsæt et lokalt link",
+            "insert": "Indsæt",
+            "hrefPlaceholder": "Link-URL",
+            "textPlaceholder": "Link-navn",
+            "titlePlaceholder": "Titel (valgfri)",
+            "insertPlaceholder": "Indsæt et lokalt link"
+        },
+        "media": {
+            "title": "Indsæt billede",
+            "back": "Tilbage",
+            "hrefPlaceholder": "Billed-URL",
+            "altPlaceholder": "Alt-tekst (valgfri)",
+            "description": "Upload billeder ved at trække og slippe eller<br />\n{input} <a>vælge ét</a>\n",
+            "help": "Uploadede billeder tilføjes enten til den aktuelle mappe eller til den mappe, som er angivet i URL-stien ovenfor.",
+            "helpMedia": "Uploadede billeder tilføjes enten til 'Vælg eksisterende' mappe eller til den mappe, som er angivet i URL-stien ovenfor.",
+            "choose": "Vælg eksisterende"
+        },
+        "help": {
+            "blockElements": {
+                "title": "Blok-elementer",
+                "content": {
+                    "paragraphs": {
+                        "title": "Afsnit &amp; linjeskift",
+                        "content": "<p>For at oprette en paragraf skal du bare lave en tekstblok adskilt af én eller flere blanke linjer. Tekstblokke adskilt af én eller flere blanke linjer vil opfattes som paragraffer.</p><p>Hvis du vil lave et linjebrud, skal du færdiggøre en linje med ét eller flere mellemrum, for dernæst at taste Retur/Enter.</p>\n"
+                    },
+                    "headers": {
+                        "title": "Headers",
+                        "content": "<p>Markdown understøtter to overksriftformater. Wiki-editoren bruger &ldquo;atx&rsquo;-overskrifter. Præfiks din overskrift med det antal <code>#</code>-tegn, der svarer til dens dybde. For eksempel vil <code># Overskrift 1</code>, <code>## Overskrift 2</code> og <code>### Overskrift 3</code> resultere i stadigt mindre overskrifter.</p>\n"
+                    },
+                    "blockquotes": {
+                        "title": "Blockquotes",
+                        "content": "<p>Markdown laver citattekster i stil med emails ved at begynde hver linje med <code>&gt;</code>-tegnet. De ser bedste ud, hvis du bruger striks tekstombrydning (\\\"hard-wrapped text\\\") begynder hver linje med et <code>&gt;</code>-tegn, men støtter også brugen med bare at indlede hver paragraf med <code>&gt;</code>.</p>\n"
+                    },
+                    "lists": {
+                        "title": "Lister",
+                        "content": "<p>Markdown støtter nummererede og unummererede lister. For at lave en nummereret liste skal du bare begynde hver linje med et tal (hvilket tal er ligemeget &mdash; dette er grunden til at skriveprogrammet kun bruger ét tal.) For at lave en unummereret liste skal du begynde hver linje med enten <code>*</code>, <code>+</code> eller <code>-</code>.</p> Hvert listeelement kan indeholde op til flere paragraffer, men hver paragraf skal indrykkes med mindst 4 mellemrum eller en tabulation.\n"
+                    },
+                    "codeBlocks": {
+                        "title": "Kodeblokke",
+                        "content": "<p>Markdown omslutter kodeblokke i præformaterede tags for at bevare indrykning i dine kodeblokke. For at lave en kodeblok indrykker du hele kodeblokken med mindst 4 mellemrum eller én tabulation. Markdown fjerner yderligere indrykning.</p>\n"
+                    },
+                    "horizontalRules": {
+                        "title": "Horisontale linjer",
+                        "content": "<p>Horisontale linjer laves ved at indsætte tre eller flere bindestreger, asterisker eller bundstreger (\\\"underscores\\\") på en linje for sig selv. Mellemrum imellem hver af dem er tilladt.</p>\n"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "Span-elementer",
+                "content": {
+                    "links": {
+                        "title": "Links",
+                        "content": "<p>Markdown har to typer links: <strong>på linje</strong> og <strong>som reference</strong>. For hver linktype skal teksten, du vil vise, omsluttes af bjælker (\\\"[ ]\\\"). Hvis du for eksempel vil have, at linket viser teksten &ldquo;GitHub&rdquo;, skriver du <code>[GitHub]</code>.</p><p>For at lave et link på linjen indsætter du et sæt parenteser (\\\"( )\\\") lige efter bjælkerne og skriver din URL inden i parenteserne. (e.g., <code>[GitHub](http://github.com/)</code>). Relative stier tillades i links på linjen.</p><p>For at lave et referencelink bruger du i stedet to sæt bjælker. <code>[mit interne link][internal-ref]</code> vil linke til en intern reference <code>internal-ref</code>.</p>\n"
+                    },
+                    "emphasis": {
+                        "title": "Fremhævning",
+                        "content": "<p>Asterisker (<code>*</code>) og bundstreger (<code>_</code>) betragtes som emfaser og omsluttes med et <code>&lt;em&gt;</code>-tag, der som regel vises som kursiv i mange browsere. Dobbelt asterisk (<code>**</code>) eller dobbelt bundstreg (<code>__</code>) betragtes som fed skrift med <code>&lt;strong&gt;</code>-tag'et. Kursiv og fed tekst laves ved henholdsvist omslutte dine ord med enkelt/dobbelt asterisk/bundstreg. For eksempel bliver <code>**Min dobbeltemfasetekst**</code> <strong>Min dobbeltemfasetekst</strong>, og <code>*Min enkeltemfasetekst*</code> bliver <em>Min enkeltemfasetekst</em>.</p>\n"
+                    },
+                    "code": {
+                        "title": "Kode",
+                        "content": "<p>For at vise noget kode på samme linje, som du skriver, omslutter du bare koden med (<code>`</code>)-tegn. Markdown vil konvertere <code>`myFunction`</code> til <code>myFunction</code>.</p>\n"
+                    },
+                    "images": {
+                        "title": "Billeder",
+                        "content": "<p>Markdowns billedsyntaks ligner til meget linksyntaksen til forveksling; den er stort set den samme med et udråbstegn foran (<code>!</code>). Hvis du for eksempel vil linke til et billede på <code>http://github.com/unicorn.png</code> med den alt-teksten <code>My Unicorn</code>, ville du taste <code>![My Unicorn](http://github.com/unicorn.png)</code>.</p>\n"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "Diverse",
+                "content": {
+                    "automaticLinks": {
+                        "title": "Automatiske links",
+                        "content": "<p>Hvis du vil lave et link, der viser selve URLen, gør Markdown det muligt, ved at kommer <code>&lt;</code> og <code>&gt;</code> uden om URLen. For eksempel er linket <a href=\\\"javascript:void(0);\\\">http://github.com/</a> nemmere at skrive som <code>&lt;http://github.com/&gt;</code>.</p>\n"
+                    },
+                    "escaping": {
+                        "title": "Escaping",
+                        "content": "<p>Hvis du bruger et tegn forbundet med Markdown i dit dokument (såsom en asterisk asterisks), kan du forhindre Markdown i at opfatte det som andet end almindelig tekst ved at ved at bruge en backslash (<code>\\\\\\\\</code>) foran tegnet. Markdown vil derved ignorere ignorere tegnet med placering lige efter din backslash.</p>\n"
+                    }
+                }
+            }
+        }
+    },
+    "chooselanguage": {
+        "title": "Vælg sprog",
+        "description": "Prose er et værktøj med flere oversættelser. Hvis du ikke ser dit sprog på listen, eller der er stavefejl, eller oversættelsen mangler, burde du overveje at <a href='https://www.transifex.com/projects/p/prose'>bidrage med oversættelser til projektet</a>.\n"
+    },
+    "about": {
+        "content": "# Om\n\nProse tilbyder et smukt, simpelt skrivemiljø til\n\n[CMS-løse sider](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\n\nDet er et webbaseret interface til at håndtere indhold på\n\n[GitHub](http://github.com). Brug det til at oprette, redigere og slette filer,\n\nog gem dine ændringer direkte hos GitHub. Opbevar (\\\"host\"\\\") dine hjemmesider på\n\n[GitHub Pages](http://pages.github.com) gratis eller opret din egen\n\n[GitHub-webhook-server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\n\n\nProse har udvidet understøttelse af [Jekyll](http://jekyllrb.com/)-sider og\n\n[Markdown-indhold](http://daringfireball.net/projects/markdown/).\n\nProse detekterer Markdown-indlæg på Jekyll-sider and udbyder syntaks-\n\nmarkering, en værktøjslinje til formatering og forhåndsvisning er uudgivede indlæg med sidens\n\nfulde layout.\n\n\n\nUdviklere kan konfigurere Jekyll-sider til at udnytte disse og\n\nmange andre funktionaliteter, der kan skræddersy skriveoplevelsen.\n\n\n\n## Konfigurering\n\n\n\nProse kan konfigureres for hvert \\\"repository\\\" med yderligere i en\n\nJekyll-sides `_config.yml`-fil eller i en separat `prose.yml`-fil. Vi tilbyder\n\nProse.io som en selvhostet tjeneste med nyeste udgave på, men du kan også downloade\n\nkildekoden og hoste det selv. Udviklerdokumentationen,\n\nkan læses på [wiki-siden på GitHub](https://github.com/prose/prose/wiki).\n\n\n\n## Udvikling\n\n\n\nProse er et open source-projekt. Vi opfordrer dig til at bidrage til og\n\nhjælpe os med at forbedre dette værktøj eller tilpasse det til dine egne behov.\n\nInstruktioner om at udvikle videre på Prose kan findes på\n\n[Proses retningslinjer for bidrag](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n\n\n## Hjælp\n\n\n\nVi udbyder ikke support til Prose på nuværende tidspunker, men hvis du skriver\n\ni Prose, bør du kontakte udvikleren, der gav\n\ndig adgang til det. For at indberette tekniske problemer med Prose bedes du\n\n[oprette en forespørgsel (\\\"issue\\\") på GitHub](https://github.com/prose/prose/issues).\n\n\n\n## Ansvarlige\n\n\n\nProse er udviklet af\n\n[Development Seed](http://developmentseed.org), som er et hold af\n\nkreativ datavisualisering- og korteksperter baseret i Washington, DC.\n"
+    }
+}

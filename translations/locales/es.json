@@ -3,6 +3,19 @@
         "editing": "Editando",
         "preview": "Vista preliminar"
     },
+    "navigation": {
+        "newFile": "Nuevo archivo",
+        "edit": "Editar",
+        "preview": "Vista previa",
+        "settings": "Configuración",
+        "save": "Guardar",
+        "login": "Autorizar con GitHub",
+        "about": "Acerca de"
+    },
+    "toolbar": {
+        "link": "Insertar enlace",
+        "help": "Ayuda"
+    },
     "actions": {
         "unsaved": "Hay cambios sin guardar. Seguro que quiere salir?",
         "publishing": {
@@ -12,7 +25,9 @@
             "unpublished": "No publicado"
         },
         "change": {
-            "noChange": "Sin cambios"
+            "noChange": "Sin cambios",
+            "submit": "Cambios para guardar",
+            "save": "Cambios para guardar"
         },
         "delete": {
             "title": "Borrar",
@@ -40,6 +55,7 @@
         "repos": "Cargando perfi",
         "repo": "Cargando projecto",
         "file": "Cargando archivo",
+        "preview": "Pré-visualizando  archivo",
         "creating": "Creando nuevo archivo"
     },
     "main": {
@@ -82,6 +98,7 @@
         "settings": {
             "title": "Opciones",
             "delete": "Borrar este archivo",
+            "translate": "Traducir a",
             "draft": "Crear borrador"
         }
     },
@@ -109,6 +126,27 @@
                     },
                     "codeBlocks": {
                         "title": "Bloques de código"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "Elementos SPAM",
+                "content": {
+                    "links": {
+                        "title": "Enlaces"
+                    },
+                    "code": {
+                        "title": "Código"
+                    },
+                    "images": {
+                        "title": "Imagenes"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "content": {
+                    "automaticLinks": {
+                        "title": "Enlaces automáticos"
                     }
                 }
             }
