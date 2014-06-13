@@ -1,0 +1,165 @@
+{
+    "docheader": {
+        "editing": "Düzenleniyor",
+        "error": "Hata",
+        "preview": "Önizleme"
+    },
+    "navigation": {
+        "newFile": "Yeni Dosya",
+        "edit": "Düzenle",
+        "preview": "Önizleme",
+        "settings": "Ayarlar",
+        "meta": "Meta Veri",
+        "save": "Kaydet",
+        "login": "GithHub ile Yetkilendir",
+        "about": "Hakkında",
+        "develop": "Geliştiriciler",
+        "logout": "Çıkış",
+        "language": "Dil"
+    },
+    "toolbar": {
+        "heading": "Başlık",
+        "subHeading": "Alt Başlık",
+        "link": "Bağlantı Ekle",
+        "image": "Görüntü Ekle",
+        "bold": "Kalın",
+        "italic": "İtalik",
+        "blockquote": "Alıntı",
+        "list": "Liste",
+        "numberedlist": "Numaralandırılmış Liste",
+        "help": "Yardım"
+    },
+    "heading": {
+        "explore": "Projelere Gözat"
+    },
+    "actions": {
+        "unsaved": "Kaydedilmemiş değişiklikler ver. Ayrılmak istediğinizden emin misiniz?",
+        "draft": {
+            "toPostInfo": "Bu taslağı yayınlanmış bir gönderiye dönüştür"
+        },
+        "publishing": {
+            "publish": "Yayınla",
+            "published": "Yayınlandı",
+            "unpublish": "Yayından Kaldır",
+            "unpublished": "Yayından Kaldırıldı"
+        },
+        "change": {
+            "noChange": "Değişiklik yok",
+            "save": "Kaydedilecek Değişiklikler"
+        },
+        "delete": {
+            "title": "Sil",
+            "warn": "Bu dosyayı silmek istediğinizden emin misiniz?",
+            "error": "Silme işleme sırasında bir hata oluştu. Lütfen 30 saniye bekleyin ve yeniden deneyin."
+        },
+        "upload": {
+            "uploading": "{file} Yükleniyor",
+            "uploaded": "{file} Yüklendi"
+        },
+        "save": {
+            "title": "Kaydet",
+            "saved": "Kaydedildi",
+            "saving": "Kaydediliyor",
+            "fileNameError": "Dosya adı Gerekli",
+            "metaError": "Hata! Metaveri bulunamadı"
+        },
+        "error": "Hata. 30 Saniye içinde yeniden deneyin.",
+        "restore": {
+            "restoring": "Geri Yükleniyor",
+            "restored": "Geri Yüklendi"
+        },
+        "commits": {
+            "created": "{filename} oluşturuldu",
+            "updated": "{filename} güncellendi",
+            "deleted": "{filename} Silindi",
+            "toDraft": "{filename} taslağı oluşturuldu",
+            "fromDraft": "{filename} taslağından gönderi oluşturuldu"
+        }
+    },
+    "loading": {
+        "repos": "Profil Yükleniyor",
+        "repo": "Proje Yükleniyor",
+        "file": "Dosya Yükleniyor",
+        "preview": "Dosya Önizleme Yapılıyor",
+        "creating": "Yeni gönderi oluşturuluyor"
+    },
+    "modal": {
+        "errorHeading": "Hata"
+    },
+    "main": {
+        "start": {
+            "learn": "Daha Fazla"
+        },
+        "repos": {
+            "filter": "Projeleri Filtrele",
+            "repo": "Projeyi Görüntüle",
+            "site": "Siteyi Görüntüle"
+        },
+        "repo": {
+            "filter": "Dosyaları Filtrele",
+            "edit": "Düzenle",
+            "delete": "Bu Dosyayı Sil"
+        },
+        "new": {
+            "body": "## Yeni Yazı\n\nMetni [Markdown](http://daringfireball.net/projects/markdown/) biçiminde giriniz. Üstteki araç çubuğunu kullanın ya da yardım almak için **?** butonuna tıklayın.\n"
+        },
+        "file": {
+            "noTitle": "Başlıksız",
+            "back": "Tamamlandı",
+            "createMeta": "Yeni Oluştur"
+        },
+        "upgrade": {
+            "content": "Prose tarayıcınızda bulunmayan özelliklere gereksinim duyuyor.",
+            "download": "Modern Bir Tarayıcı İndirin"
+        }
+    },
+    "notification": {
+        "loginDescription": "Lütfen bu projeye erişmek için GitHub hesabınız ile giriş yapın.",
+        "home": "Ana Sayfaya Dön",
+        "back": "Geri",
+        "error": {
+            "label": "Hata",
+            "exists": "Bu dosya bulunmuyor",
+            "notFound": "Sayfa Bulunamadı"
+        }
+    },
+    "sidebar": {
+        "repo": {
+            "branch": "Dal Değiştir",
+            "drafts": "Taslakları Görüntüle",
+            "history": {
+                "label": "Son Kullanılanlar",
+                "actions": {
+                    "restore": "Geri Yükle?"
+                }
+            },
+            "create": "Yeni Dosya Oluştur"
+        },
+        "save": {
+            "label": "Değişikliklerinizi Tarif Edin",
+            "cancel": "İptal"
+        },
+        "settings": {
+            "title": "Seçenekler",
+            "fileInputLabel": "Dosya Yolu",
+            "delete": "Bu Dosyayı Sil",
+            "draft": "Talak Oluştur"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Bağlantı Ekle",
+            "hrefPlaceholder": "Bağlantı Adresi",
+            "textPlaceholder": "Bağlantı Adı",
+            "titlePlaceholder": "Başlık (İsteğe Bağlı)"
+        },
+        "media": {
+            "title": "Görüntü Ekle",
+            "back": "Geri",
+            "hrefPlaceholder": "Görüntü Adresi"
+        }
+    },
+    "chooselanguage": {
+        "title": "Bir Dil Seçin"
+    }
+}

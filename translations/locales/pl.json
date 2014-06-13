@@ -1,0 +1,255 @@
+{
+    "login": "Autoryzuj na GitHub",
+    "docheader": {
+        "editing": "Edycja",
+        "error": "Błąd",
+        "preview": "Podgląd"
+    },
+    "navigation": {
+        "newFile": "Nowy plik",
+        "edit": "Edytuj",
+        "preview": "Podgląd",
+        "settings": "Ustawienia",
+        "meta": "Dane meta",
+        "save": "Zapisz",
+        "login": "Autoryzuj z GitHub",
+        "about": "O Prose",
+        "develop": "Programiści",
+        "logout": "Wyloguj się",
+        "language": "Język"
+    },
+    "toolbar": {
+        "heading": "Nagłówek",
+        "subHeading": "Podnagłówek",
+        "link": "Umieść odnośnik",
+        "image": "Umieść obraz",
+        "bold": "Pogrubienie",
+        "italic": "Kursywa",
+        "blockquote": "Cytat",
+        "list": "Lista",
+        "numberedlist": "Ponumerowana lista",
+        "help": "Pomoc"
+    },
+    "heading": {
+        "explore": "Przeglądaj projekty"
+    },
+    "actions": {
+        "unsaved": "Masz niezapisane zmiany. Czy na pewno chcesz wyjść?",
+        "draft": {
+            "toPost": "Zamień szkic na wpis",
+            "toPostInfo": "Przekształć ten szkic w opublikowany wpis"
+        },
+        "publishing": {
+            "publish": "Opublikuj",
+            "publishInfo": "Po zapisaniu, ten wpis zostanie opublikowany.",
+            "published": "Opublikowano",
+            "unpublish": "Wycofaj publikacje",
+            "unpublished": "Wycofano publikacje",
+            "unpublishInfo": "Po zapisaniu, publikacja tego wpisu zostanie wycofana."
+        },
+        "change": {
+            "noChange": "Brak zmian",
+            "submit": "Zmiany do opublikowania",
+            "save": "Zmiany do zapisania"
+        },
+        "delete": {
+            "title": "Usuń",
+            "warn": "Czy na pewno chcesz usunąć ten plik?",
+            "error": "Błąd podczas usuwania. Proszę odczekać 30 sekund i spróbować ponownie."
+        },
+        "upload": {
+            "uploading": "Wgrywanie {file}",
+            "uploaded": "Wgrano {file}"
+        },
+        "save": {
+            "title": "Zapisz",
+            "saved": "Zapisano",
+            "saving": "Zapisuje",
+            "patch": "Wysyłanie żądania",
+            "fileNameError": "Wymaga nazwy pliku",
+            "submission": "Żądanie wysłane",
+            "metaError": "Błąd! Nie znaleziono danych meta",
+            "fileNameExists": "Plik pod tą ścieżką już istnieje"
+        },
+        "error": "Błąd. Spróbuj ponownie za 30 sekund",
+        "restore": {
+            "restoring": "Przywracanie",
+            "restored": "Przywrócono"
+        },
+        "commits": {
+            "created": "Utworzono {filename}",
+            "updated": "Zaktualizowano {filename}",
+            "deleted": "Usunięto {filename}",
+            "toDraft": "Utworzono szkic {filename}",
+            "fromDraft": "Utworzono wpis ze szkicu {filename}"
+        }
+    },
+    "loading": {
+        "repos": "Ładowanie profilu",
+        "repo": "Ładowanie projektu",
+        "file": "Ładowanie pliku",
+        "preview": "Podgląd pliku",
+        "creating": "Tworzenie nowego wpisu"
+    },
+    "modal": {
+        "errorHeading": "Błąd",
+        "confirm": "Rozumiem"
+    },
+    "main": {
+        "start": {
+            "content": "Prose to edytor treści dla GitHub'a, zaprojektowany do zarządzania stronami internetowymi.",
+            "learn": "Dowiedz się więcej"
+        },
+        "repos": {
+            "filter": "Filtruj projekty",
+            "repo": "Zobacz projekt",
+            "site": "Zobacz stronę",
+            "sharedFrom": "Udostępnione z konta",
+            "forkedFrom": "Fork innego projektu"
+        },
+        "repo": {
+            "filter": "Filtruj pliki",
+            "edit": "Edytuj",
+            "delete": "Usuń ten plik"
+        },
+        "new": {
+            "body": "## Nowy wpis\n\nWprowadzaj tekst używając składni [Markdown](http://daringfireball.net/projects/markdown/). Użyj paska narzędzi powyżej lub kliknij na przycisk **?**, aby uzyskać pomoc.\n"
+        },
+        "file": {
+            "noTitle": "Bez tytułu",
+            "metaTitle": "Przejrzyj swoje zmiany:",
+            "rawMeta": "Surowe dane meta",
+            "metaDescription": "Zmiany są podświetlone na zielono. Usunięcia są przekreślone.",
+            "back": "Wykonano",
+            "createMeta": "Utwórz nowy"
+        },
+        "upgrade": {
+            "content": "Prose wymaga pewnych funkcji, których Twoja przeglądarka nie posiada",
+            "download": "Pobierz nowoczesną przeglądarkę"
+        }
+    },
+    "notification": {
+        "loginDescription": "Zaloguj się przy użyciu konta GitHub, aby uzyskać dostęp do tego projektu.",
+        "create": "Utwórz to",
+        "home": "Powrót do strony głównej",
+        "back": "Powrót",
+        "githubStatus": "Status na GitHub ({status})",
+        "error": {
+            "label": "Błąd",
+            "github": "Błąd podczas ładowania danych z GitHub. To może być tymczasowy problem. Spróbuj ponownie później.",
+            "exists": "Ten plik nie istnieje",
+            "notFound": "Nie znaleziono strony"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "Grupy"
+        },
+        "repo": {
+            "branch": "Przełącz gałąź",
+            "drafts": "Zobacz szkice",
+            "history": {
+                "label": "Ostatnie wydarzenia",
+                "actions": {
+                    "restore": "Przywrócić?"
+                }
+            },
+            "create": "Utwórz nowy plik"
+        },
+        "save": {
+            "label": "Opisz swoje zmiany",
+            "cancel": "Anuluj",
+            "save": "Zatwiedź",
+            "submit": "Wyślij żądanie zmiany"
+        },
+        "settings": {
+            "title": "Opcje",
+            "fileInputLabel": "Ścieżka pliku",
+            "delete": "Usuń ten plik",
+            "translate": "Przetłumacz do",
+            "draft": "Utwórz szkic"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Umieść odnośnik",
+            "insertLocal": "Umieść lokalny odnośnik",
+            "insert": "Umieść",
+            "hrefPlaceholder": "Adres odnośnika",
+            "textPlaceholder": "Nazwa odnośnika",
+            "titlePlaceholder": "Tytuł (opcjonalnie)",
+            "insertPlaceholder": "Umieść lokalny odnośnik"
+        },
+        "media": {
+            "title": "Umieść obraz",
+            "back": "Powrót",
+            "hrefPlaceholder": "Adres obrazu",
+            "altPlaceholder": "Tekst alternatywny (opcjonalnie)",
+            "description": "Wgraj obrazy metodą Przeciągnij &amp; upuść lub <br>\n{input} <a>wybierz je</a>\n",
+            "help": "Wgrywane obrazy są dodawane do aktualnego katalogu lub konkretnego, podanego w polu Adres obrazu powyżej.",
+            "choose": "Wybierz istniejący"
+        },
+        "help": {
+            "blockElements": {
+                "title": "Elementy blokowe",
+                "content": {
+                    "paragraphs": {
+                        "title": "Paragrafy &amp; przerwy",
+                        "content": "<p>Aby utworzyć paragraf, po prostu podziel blok tekstu pustą linią. Bloki tekstu utworzone poprzez podzielenie pustą linią, będą przetworzone jako paragrafy.</p><p>Jeżeli chcesz utworzyć przerwę, zakończ linie z jedną lub więcej spacją, a następnie naciśnij klawisz Enter.</p>\n"
+                    },
+                    "headers": {
+                        "title": "Nagłówki",
+                        "content": "<p>Składnia Markdown obsługuje dwa formaty nagłówków. Edytor używa nagłówków w stylu &ldquo;atx&rsquo;. Po prostu dodaj przed tekst nagłówka znak <code>#</code>, którego ilość będzie miała wpływ na głębie. Na przykład: <code># Nagłówek 1</code>, <code>## Nagłówek 2</code>, <code>### Nagłówek 3</code> będą w stosunku do siebie coraz mniejsze. Możesz zakończyć swój nagłówek dowolną liczbą kratek.</p>\n"
+                    },
+                    "blockquotes": {
+                        "title": "Cytaty",
+                        "content": "<p>Składnia Markdown tworzy cytaty przez poprzedzenie linii znakiem <code>&gt;</code>. Wygląda to najlepiej jeżeli zdecydujesz się opakować cały tekst i dodać przed każdą linią znak <code>&gt;</code>, jednak składnia obsługuje dodanie jednego znaku <code>&gt;</code> przed całym paragrafem.</p>\n"
+                    },
+                    "lists": {
+                        "title": "Listy",
+                        "content": "<p>Składnia Markdown obsługuje listy ponumerowane i nieuporządkowane. Aby utworzyć ponumerowaną listę, przed każdą pozycją dodaj liczbę (każda liczba jest dopuszczana). Aby utworzyć nieuporządkowaną listę, przed każdą linią dodaj znak <code>*</code>, <code>+</code> lub <code>-</code>.</p> Pozycje każdej z list mogą zawierać dowolną ilość paragrafów, jednak każdy paragraf musi zostać poprzedzony wcięciem zawierającym minimum 4 spacje lub znak tabulatora.\n"
+                    },
+                    "codeBlocks": {
+                        "title": "Bloki kodu"
+                    },
+                    "horizontalRules": {
+                        "title": "Poziome linie",
+                        "content": "<p>Poziome linie są tworzone poprzez umieszczenie trzech lub więcej: myślników, gwiazdek lub podkreśleń w danej linii. Możliwe jest umieszczenie spacji pomiędzy myślnikami, gwiazdkami czy też podkreśleniami.</p>\n"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "Elementy liniowe",
+                "content": {
+                    "links": {
+                        "title": "Odnośniki"
+                    },
+                    "emphasis": {
+                        "title": "Wyróżnienie"
+                    },
+                    "code": {
+                        "title": "Kod"
+                    },
+                    "images": {
+                        "title": "Obrazy"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "Różne",
+                "content": {
+                    "automaticLinks": {
+                        "title": "Automatyczne odnośniki"
+                    },
+                    "escaping": {
+                        "content": "<p>Jeżeli chcesz używać specjalnych znaków składni Markdown (np. wyświetlanie znaku gwiazdki), możesz poprzedzić ten znak ukośnikiem (<code>\\\\</code>). Składnia Markdown ignoruje znaki po ukośniku.</p>\n"
+                    }
+                }
+            }
+        }
+    },
+    "chooselanguage": {
+        "title": "Wybierz język",
+        "description": "Prose jest przetłumaczoną aplikacją. Jeżeli nie widzisz swojego języka na liście, występują błędy w pisowni lub brakuje niektórych tłumaczeń, rozważ <a href=\"https://www.transifex.com/projects/p/prose\">pomoc w tłumaczeniu tego projektu</a>.\n"
+    }
+}
