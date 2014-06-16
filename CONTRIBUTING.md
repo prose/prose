@@ -67,16 +67,15 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 
 ## Deploying
 1. `git checkout master && git pull`
-2. `git checkout gh-pages && git pull`
-3. `git merge master`
-4. `npm install`
-5. `make clean && make`
-6. `git add dist/`
-7. `git commit`
-8. `git push`
-9. `git checkout master`
-10.  Tag the release in `master` using `git tag` according to [semver](http://semver.org/) in the format `vX.Y.Z`. This should match the version in `package.json`.
-11. Push tag to GitHub using `git push --tags`
+2. Increment the version in `package.json`, commit and tag the release in `master` using `git tag` according to [semver](http://semver.org/) in the format `vX.Y.Z`. This should match the updated version in `package.json`.
+3. Push tag to GitHub using `git push --tags`
+4. `git checkout gh-pages && git pull`
+5. `git merge master`
+6. `npm install`
+7. `make clean && make`
+8. `git add dist/`
+9. `git commit`
+10. `git push`
 
 ## Building / Installing
 
