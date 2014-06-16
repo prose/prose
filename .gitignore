@@ -6,3 +6,4 @@ oauth.json
 .vimrc
 test/lib/index.js
 test/lib/polyfill.js
+_site/
