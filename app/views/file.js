@@ -87,10 +87,10 @@ module.exports = Backbone.View.extend({
     });
   },
 
-  setCollection: function(collection, res, options) {
+  setCollection: function() {
     this.app.loader.start();
 
-    this.collection = collection.findWhere({ name: this.branch }).files;
+    this.collection = this.branches.findWhere({ name: this.branch }).files;
     this.collection.fetch({
       success: this.setModel,
       error: (function(model, xhr, options) {
@@ -101,7 +101,7 @@ module.exports = Backbone.View.extend({
     });
   },
 
-  setModel: function(model, res, options) {
+  setModel: function() {
     this.app.loader.start();
 
     // Set model either by calling directly for new File models
