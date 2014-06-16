@@ -261,5 +261,38 @@ module.exports = {
     $el.on('click', function() {
       $el.select();
     });
+  },
+
+  parseLinkHeader: function(xhr, options) {
+    options = _.clone(options) || {};
+
+    var header = xhr.getResponseHeader('link');
+
+    if (header) {
+      var parts = header.split(',');
+      var links = {};
+
+      _.each(parts, function(link) {
+        var section = link.split(';');
+
+        var url = section[0].replace(/<(.*)>/, '$1').trim();
+        var name = section[1].replace(/rel="(.*)"/, '$1').trim();
+
+        links[name] = url;
+      });
+
+      if (links.next) {
+        $.ajax({
+          type: 'GET',
+          url: links.next,
+          success: options.success,
+          error: options.error
+        });
+      } else {
+        if (_.isFunction(options.complete)) options.complete();
+      }
+    } else {
+      if (_.isFunction(options.error)) options.error();
+    }
   }
 };
