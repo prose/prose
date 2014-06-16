@@ -6,6 +6,8 @@ var Repo = require('../models/repo');
 var auth = require('../config');
 var cookie = require('../cookie');
 
+var util = require('../util');
+
 module.exports = Backbone.Collection.extend({
   model: Repo,
 
@@ -19,39 +21,6 @@ module.exports = Backbone.Collection.extend({
     };
   },
 
-  parseLinkHeader: function(xhr, options) {
-    options = _.clone(options) || {};
-
-    var header = xhr.getResponseHeader('link');
-
-    if (header) {
-      var parts = header.split(',');
-      var links = {};
-
-      _.each(parts, function(link) {
-        var section = link.split(';');
-
-        var url = section[0].replace(/<(.*)>/, '$1').trim();
-        var name = section[1].replace(/rel="(.*)"/, '$1').trim();
-
-        links[name] = url;
-      });
-
-      if (links.next) {
-        $.ajax({
-          type: 'GET',
-          url: links.next,
-          success: options.success,
-          error: options.error
-        });
-      } else {
-        if (_.isFunction(options.complete)) options.complete();
-      }
-    } else {
-      if (_.isFunction(options.error)) options.error();
-    }
-  },
-
   fetch: function(options) {
     options = _.clone(options) || {};
 
@@ -59,7 +28,7 @@ module.exports = Backbone.Collection.extend({
 
     var success = (function(res, statusText, xhr) {
       this.add(res);
-      this.parseLinkHeader(xhr, {
+      util.parseLinkHeader(xhr, {
         success: success,
         complete: cb
       });
@@ -67,7 +36,7 @@ module.exports = Backbone.Collection.extend({
 
     Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
       success: (function(model, res, options) {
-        this.parseLinkHeader(options.xhr, {
+        util.parseLinkHeader(options.xhr, {
           success: success,
           error: cb
         });
