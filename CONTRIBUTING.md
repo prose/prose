@@ -54,20 +54,26 @@ Transifex, will automatically detect the change.
 Use `make` to build the translations with the local changes.
 `make translations` can be used to pull the latest translations from Transifex.
 
-If you run `make translate` you will be warned to include a `transifex.auth` file in the root directory that contains your Transifex user details:
+If you run `make translate` you will be warned to include a `transifex.auth` file
+in the root directory that contains your Transifex user details:
 
-  {
-      "user": "username",
-      "pass": "password"
-  }
+    {
+        "user": "username",
+        "pass": "password"
+    }
 
 ## Submitting Pull Requests
 
-All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. The `gh-pages` branch manages rebuilds to the server. All pull requests should include an update to the version in `package.json` according to [semver](http://semver.org/).
+All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch.
+The `gh-pages` branch manages rebuilds to the server.
+All pull requests should include an update to the version in `package.json` according to [semver](http://semver.org/).
 
 ## Deploying
+
 1. `git checkout master && git pull`
-2. Increment the version in `package.json`, commit and tag the release in `master` using `git tag` according to [semver](http://semver.org/) in the format `vX.Y.Z`. This should match the updated version in `package.json`.
+2. Increment the version in `package.json`, commit and tag the release in `master`
+   using `git tag` according to [semver](http://semver.org/) in the format `vX.Y.Z`.
+   This should match the updated version in `package.json`.
 3. Push tag to GitHub using `git push --tags`
 4. `git checkout gh-pages && git pull`
 5. `git merge master`
@@ -84,14 +90,15 @@ to manage dependencies and build. Development also requires you
 have [node.js](http://nodejs.org) >= v0.8 installed.
 
 ### Prerequisites
-- [node.js](http://nodejs.org/).
+
+* [node.js](http://nodejs.org/).
 
 ### Install steps
 
 1. `git clone git@github.com:prose/prose.git && cd prose/`
 2. Run `make install`
 3. To run prose with authentication locally, a `oauth.json` file is required in the
-root directory. When you run `make` this file is created automatically.
+   root directory. When you run `make` this file is created automatically.
 4. `npm install serve -g`
 5. Run `serve` By default, prose will be set up on [http://localhost:3000](http://localhost:3000).
 
@@ -135,8 +142,8 @@ space between expressions. No hard tabs, ever. Javascript code should pass
 through [JSHint](http://www.jshint.com/) with no warnings.
 
 ### CSS & Markup
-- Single Quotes
-- 2 spaces soft tabs
+
+* Single Quotes
+* 2 spaces soft tabs
 
 For CSS, use classes to target elements.
-
