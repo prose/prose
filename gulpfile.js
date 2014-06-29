@@ -76,7 +76,7 @@ gulp.task('templates', function () {
 
 
 // Creates `dist` directory if not created and 
-// creates `oauth.json` and updates locales.
+// creates `oauth.json`.
 gulp.task('oauth', function () {
   return gulp.src('')
     .pipe(
