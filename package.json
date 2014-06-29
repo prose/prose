@@ -30,7 +30,13 @@
     "browserify": "~2.12.0",
     "mocha-phantomjs": "~3.3.2",
     "phantomjs": "~1.9.7-4",
-    "function-bind": "~0.1.0"
+    "function-bind": "~0.1.0",
+    "gulp": "^3.8.2",
+    "gulp-concat": "^2.2.0",
+    "gulp-shell": "^0.2.7",
+    "gulp-uglify": "^0.3.1",
+    "gulp-clean": "^0.3.1",
+    "gulp-rename": "^1.2.0"
   },
   "scripts": {
     "test": "make && node_modules/.bin/mocha-phantomjs test/index.html"
