@@ -1,4 +1,8 @@
 // Build file.
+// Usage:
+// 
+//    $ gulp
+// 
 // See: https://github.com/prose/prose/issues/702
 
 // Require dependencies.
@@ -10,6 +14,8 @@ var browserify = require('browserify');
 var rename = require('gulp-rename');
 var clean = require('gulp-clean');
 var watch = require('gulp-watch');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
 
 // Scripts paths.
 var paths = {
@@ -61,7 +67,7 @@ gulp.task('translations', function () {
         'mkdir -p dist',
         'node translations/update_locales',
       ])
-    )
+    );
 });
 
 
@@ -75,7 +81,7 @@ gulp.task('templates', function () {
       shell([
         'mkdir -p dist && node build'
       ])
-    )
+    );
 });
 
 
@@ -88,34 +94,60 @@ gulp.task('oauth', function () {
         'mkdir -p dist',
         'curl "https://raw.githubusercontent.com/prose/prose/gh-pages/oauth.json" > oauth.json'
       ])
-    )
+    );
 });
 
 
 // Built tests.
 gulp.task('tests', function() {
-  return gulp.src('')
-    .pipe(
-    shell([
-      'browserify -d test/index.js -o test/lib/index.js',
-      'browserify test/lib/polyfill-require.js -o test/lib/polyfill.js'
-    ])  
-  )
+
+  // Browserify index.js
+  browserify('./test/index.js')
+
+    // Pass `debug` option to enable source maps.
+    .bundle({debug: true})
+
+    // Output file.
+    .pipe(source('index.js'))
+
+    // Output folder.
+    .pipe(gulp.dest('./test/lib/'));
+
+
+  // Browserify polyfill-require.js
+  browserify('./test/lib/polyfill-require.js')
+
+    // Pass `debug` option to enable source maps.
+    .bundle({debug: true})
+    .pipe(source('polyfill.js'))
+    .pipe(gulp.dest('./test/lib/'));
+
 });
 
 
-// Concatenate and browserify scripts.
+// Concatenate vendor scripts, browserify app scripts and 
+// merge they both into `prose.js`.
 gulp.task('scripts', ['templates', 'oauth'], function() {
   
-  // Concatenate scripts and pass them through `browserify`.
-  return gulp.src(paths.vendorScripts)
-    .pipe(concat('prose.js'))
-    .pipe(gulp.dest('dist/'))
-    .pipe(
-      shell([
-        'browserify -d app/boot.js >> dist/prose.js'
-      ])
-    )
+  // Concatenate vendor scripts.
+  gulp.src(paths.vendorScripts)
+    .pipe(concat('vendor.js'))
+    .pipe(gulp.dest('dist/'));
+    
+  // Browserify app scripts.
+  return browserify('./app/boot.js')
+    .bundle({debug: true})
+    .pipe(source('app.js'))
+    .pipe(gulp.dest('./dist/'))
+
+    // Concatenate scripts one browserify finishes.
+    .on('end', function() {
+
+      // Concatenate `vendor` and `app` scripts into `prose.js`.
+      return gulp.src(['dist/vendor.js', 'dist/app.js'])
+        .pipe(concat('prose.js'))
+        .pipe(gulp.dest('dist/'));
+    });
     
 });
 
@@ -126,27 +158,37 @@ gulp.task('uglify', ['scripts'], function() {
   return gulp.src('dist/prose.js')
     .pipe(rename('prose.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('dist'))
+    .pipe(gulp.dest('dist'));
 });
 
 
-// Wath changes in `app` scripts.
+// Wath for changes in `app` scripts.
+// Usage:
+//  
+//    $ gulp watch
+// 
 gulp.task('watch', ['templates'], function() {
 
   // Watch any `.js` file under `app` folder.
   return gulp.src(paths.app)
     .pipe(watch(function() {
 
-        // Concatenate vendor .
-        return gulp.src(paths.vendorScripts)
-          .pipe(concat('prose.js'))
-          .pipe(gulp.dest('dist/'))
-          .pipe(
-            shell([
-              'browserify -d app/boot.js >> dist/prose.js'
-            ])
-          )
-    }))
+      // Browserify `boot.js`
+      return browserify('./app/boot.js')
+        .bundle({debug: true})
+        .pipe(source('app.js'))
+        .pipe(gulp.dest('./dist/'))
+
+        // Concatenate scripts one browserify finishes.
+        .on('end', function() {
+
+          // Concatenate `vendor` and `app` scripts into `prose.js`.
+          return gulp.src(['dist/vendor.js', 'dist/app.js'])
+            .pipe(concat('prose.js'))
+            .pipe(gulp.dest('dist/'));
+        });
+
+    }));
 
 });
 

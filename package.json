@@ -37,7 +37,8 @@
     "mocha-phantomjs": "~3.3.2",
     "phantomjs": "~1.9.7-4",
     "request": "~2.16.2",
-    "uglify-js": "~2.2.5"
+    "uglify-js": "~2.2.5",
+    "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
     "test": "make && node_modules/.bin/mocha-phantomjs test/index.html"
