@@ -22,21 +22,22 @@
     "github"
   ],
   "devDependencies": {
-    "mocha": "~1.9.0",
-    "glob": "~3.1.21",
-    "chai": "~1.5.0",
-    "request": "~2.16.2",
-    "uglify-js": "~2.2.5",
     "browserify": "~2.12.0",
-    "mocha-phantomjs": "~3.3.2",
-    "phantomjs": "~1.9.7-4",
+    "chai": "~1.5.0",
     "function-bind": "~0.1.0",
+    "glob": "~3.1.21",
     "gulp": "^3.8.2",
+    "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.2.0",
+    "gulp-rename": "^1.2.0",
     "gulp-shell": "^0.2.7",
     "gulp-uglify": "^0.3.1",
-    "gulp-clean": "^0.3.1",
-    "gulp-rename": "^1.2.0"
+    "gulp-watch": "^0.6.8",
+    "mocha": "~1.9.0",
+    "mocha-phantomjs": "~3.3.2",
+    "phantomjs": "~1.9.7-4",
+    "request": "~2.16.2",
+    "uglify-js": "~2.2.5"
   },
   "scripts": {
     "test": "make && node_modules/.bin/mocha-phantomjs test/index.html"

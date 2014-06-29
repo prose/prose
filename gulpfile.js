@@ -9,6 +9,7 @@ var shell = require('gulp-shell');
 var browserify = require('browserify');
 var rename = require('gulp-rename');
 var clean = require('gulp-clean');
+var watch = require('gulp-watch');
 
 // Scripts paths.
 var paths = {
@@ -25,6 +26,9 @@ var paths = {
     'vendor/codemirror/css.js',
     'vendor/codemirror/gfm.js',
     'vendor/liquid.js'
+  ],
+  app: [
+    'app/**/**/*.js'
   ]
 };
 
@@ -123,6 +127,27 @@ gulp.task('uglify', ['scripts'], function() {
     .pipe(rename('prose.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('dist'))
+});
+
+
+// Wath changes in `app` scripts.
+gulp.task('watch', ['templates'], function() {
+
+  // Watch any `.js` file under `app` folder.
+  return gulp.src(paths.app)
+    .pipe(watch(function() {
+
+        // Concatenate vendor .
+        return gulp.src(paths.vendorScripts)
+          .pipe(concat('prose.js'))
+          .pipe(gulp.dest('dist/'))
+          .pipe(
+            shell([
+              'browserify -d app/boot.js >> dist/prose.js'
+            ])
+          )
+    }))
+
 });
 
 
