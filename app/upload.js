@@ -30,7 +30,7 @@ module.exports = {
       this.dragLeave($el, e);
     }).bind(this))
     .on('drop', (function(e) {
-      this.drop(e, cb);
+      this.drop($el, e, cb);
     }).bind(this));
   },
 
@@ -39,9 +39,9 @@ module.exports = {
     this.compileResult(files, cb);
   },
 
-  drop: function(e, cb) {
+  drop: function($el, e, cb) {
     e.preventDefault();
-    $(e.currentTarget).removeClass('drag-over');
+    $el.removeClass('drag-over');
 
     e = e.originalEvent
     var files = e.dataTransfer.files;
