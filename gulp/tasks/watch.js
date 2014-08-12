@@ -3,10 +3,9 @@ var browserify = require('browserify');
 var concat = require('gulp-concat');
 var watch = require('gulp-watch');
 var source = require('vinyl-source-stream');
-var debug = require('gulp-debug');
 var config = require('../config');
 
-gulp.task('watch', ['templates'], function() {
+gulp.task('watch', ['templates', 'serve'], function() {
   // Watch any `.js` file under `app` folder.
   return gulp.src(['app/**/**/*.js', './style.css'])
     .pipe(watch(function() {
