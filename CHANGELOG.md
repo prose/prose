@@ -15,5 +15,5 @@ https://github.com/prose/prose/pull/651
 
 ## 1.1.0
 
-- Add support for ignore in YAML config
+- Add support for ignore in YAML config ggg
 https://github.com/prose/prose/pull/632
