@@ -1224,15 +1224,17 @@ module.exports = Backbone.View.extend({
               this.updateSaveState(message, 'error');
             }).bind(this)
 
-            // ensure we can make multiple path changes, and not just copy the file
-            success: function(){
-                model.set('oldpath', path);
+            // Update oldpath so that if the file is renamed more than once, we
+            // don't end up with multiple copies of it
+            success: function() {
+              model.set('oldpath', path);
             }
-            ).bind(this)
+
           });
         }
-        else if (pathChange){
-          // a path change, but for a new file:
+        else if (pathChange) {
+          // Update oldpath so that if the file is renamed more than once, we
+          // don't end up with multiple copies of it
           model.set('oldpath', path);
         }
       }).bind(this),
