@@ -1222,13 +1222,13 @@ module.exports = Backbone.View.extend({
             error: (function(xhr, textStatus, errorThrown) {
               var res = JSON.parse(xhr.responseText);
               this.updateSaveState(res.message, 'error');
-            },
+            }).bind(this),
 
             // ensure we can make multiple path changes, and not just copy the file
             success: function(){
                 model.set('oldpath', path);
             }
-            ).bind(this)
+
           });
         }
         else if (pathChange){
