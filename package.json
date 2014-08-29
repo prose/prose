@@ -3,34 +3,43 @@
   "version": "1.1.9",
   "description": "[Prose](http://prose.io) is a web-based interface for managing text-based content in your GitHub repositories. Use it to create, edit, and delete files, and save your changes directly to GitHub.",
   "dependencies": {
-    "jquery-browserify": "~1.8.1",
-    "chosen-jquery-browserify": "~0.9.15",
-    "js-yaml": "git://github.com/prose/js-yaml.git",
     "backbone": "~1.0.0",
-    "underscore": "~1.4.4",
+    "chosen-jquery-browserify": "~0.9.15",
     "chrono": "~1.0.4",
+    "deepmerge": "~0.2.7",
+    "diff": "~1.0.4",
+    "ignore": "~2.2.7",
+    "jquery-browserify": "~1.8.1",
     "js-base64": "~2.1.1",
+    "js-yaml": "git://github.com/prose/js-yaml.git",
     "keymaster": "git://github.com/madrobby/keymaster.git#ddcb72eceb033db",
     "marked": "~0.2.8",
     "queue-async": "~1.0.3",
-    "diff": "~1.0.4",
-    "deepmerge": "~0.2.7",
-    "ignore": "~2.2.7"
+    "underscore": "~1.4.4"
   },
   "keywords": [
     "editor",
     "github"
   ],
   "devDependencies": {
-    "mocha": "~1.9.0",
-    "glob": "~3.1.21",
-    "chai": "~1.5.0",
-    "request": "~2.16.2",
-    "uglify-js": "~2.2.5",
     "browserify": "~2.12.0",
+    "chai": "~1.5.0",
+    "function-bind": "~0.1.0",
+    "glob": "~3.1.21",
+    "gulp": "^3.8.2",
+    "gulp-clean": "^0.3.1",
+    "gulp-concat": "^2.2.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-shell": "^0.2.7",
+    "gulp-uglify": "^0.3.1",
+    "gulp-watch": "^0.6.8",
+    "gulp-webserver": "^0.6.0",
+    "mocha": "~1.9.0",
     "mocha-phantomjs": "~3.3.2",
     "phantomjs": "~1.9.7-4",
-    "function-bind": "~0.1.0"
+    "request": "~2.16.2",
+    "uglify-js": "~2.2.5",
+    "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
     "test": "make && node_modules/.bin/mocha-phantomjs test/index.html"
