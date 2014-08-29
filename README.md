@@ -12,4 +12,6 @@ Prose supports configuration settings with a variety of options, which makes it 
 
 Prose is hosted at [Prose.io](http://prose.io), or you can use on your own server. For installation instructions and contributing guidelines, please [read contributing.md](CONTRIBUTING.md).
 
-*Prose is developed and maintained by [Development Seed](http://developmentseed.org).*
+### Help contribute
+
+Prose project is currently looking for [new maintainers](https://github.com/prose/prose/issues/743).
