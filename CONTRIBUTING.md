@@ -51,8 +51,8 @@ to prose, only display them in the interface through the `t()` function.
 Then, add the new string to `translations/application.yaml`. The translation system,
 Transifex, will automatically detect the change.
 
-Use `make` to build the translations with the local changes.
-`make translations` can be used to pull the latest translations from Transifex.
+Use `gulp` to build the translations with the local changes.
+`gulp translations` can be used to pull the latest translations from Transifex.
 
 If you run `make translate` you will be warned to include a `transifex.auth` file in the root directory that contains your Transifex user details:
 
@@ -72,7 +72,7 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 4. `git checkout gh-pages && git pull`
 5. `git merge master`
 6. `npm install`
-7. `make clean && make`
+7. `gulp clean && gulp`
 8. `git add dist/`
 9. `git commit`
 10. `git push`
@@ -89,9 +89,9 @@ have [node.js](http://nodejs.org) >= v0.8 installed.
 ### Install steps
 
 1. `git clone git@github.com:prose/prose.git && cd prose/`
-2. Run `make install`
+2. Run `npm install && mkdir -p dist && gulp`
 3. To run prose with authentication locally, a `oauth.json` file is required in the
-root directory. When you run `make` this file is created automatically.
+root directory. When you run `gulp` this file is created automatically.
 4. `npm install serve -g`
 5. Run `serve` By default, prose will be set up on [http://localhost:3000](http://localhost:3000).
 
@@ -109,15 +109,14 @@ param represents the auth string. You can manually set the URL back to your pros
     http://localhost:3000/?code=36f237f41bd81c1a3661
 
 Alternatively you can setup your own Gatekeeper instance. For any changes you make
-to the codebase, you'll need to run `make` to package code into a minified `prose.min.js`
+to the codebase, you'll need to run `gulp` to package code into a minified `prose.min.js`
 and see changes.
 
-__ProTip:__ You may want to install `watch` so you can run `watch make` without
-needing to execute `make` on every change.
+__ProTip:__ You may want to run `gulp watch` to allow the running of gulp on every change.
 
 ## Testing
 
-Running `make` will also build the browser tests available at http://localhost:8000/test
+Running `gulp` will also build the browser tests available at http://localhost:8000/test
 
 You can run tests quickly from the command line with `npm test`
 
