@@ -360,7 +360,12 @@ module.exports = Backbone.Router.extend({
       xhr.statusText
     ].join(' ');
 
-    var error = JSON.parse(xhr.responseText).message;
+    var error;
+    try {
+        error = JSON.parse(xhr.responseText).message;
+    } catch (err) {
+        error = t('notification.error.github');
+    }
 
     var options = [
       {
