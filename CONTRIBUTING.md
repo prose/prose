@@ -79,7 +79,7 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 
 ## Building / Installing
 
-Prose uses [Browserify](http://browserify.org) with [Make](http://www.gnu.org/software/make/)
+Prose uses [Browserify](http://browserify.org) with [Gulp](http://gulpjs.com/)
 to manage dependencies and build. Development also requires you
 have [node.js](http://nodejs.org) >= v0.8 installed.
 
