@@ -49,12 +49,12 @@ Prose translates strings with a `t` function - `t('foo.bar')` translate the key
 to prose, only display them in the interface through the `t()` function.
 
 Then, add the new string to `translations/application.yaml`. The translation system,
-Transiflex, will automatically detect the change.
+Transifex, will automatically detect the change.
 
 Use `make` to build the translations with the local changes.
 `make translations` can be used to pull the latest translations from Transifex.
 
-If you run `make translate` you will be warned to include a `transifex.auth` file in the root directory that contains your transifex user details:
+If you run `make translate` you will be warned to include a `transifex.auth` file in the root directory that contains your Transifex user details:
 
   {
       "user": "username",
@@ -79,7 +79,7 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 
 ## Building / Installing
 
-prose uses [Browserify](http://browserify.org) with [Make](http://www.gnu.org/software/make/)
+Prose uses [Browserify](http://browserify.org) with [Make](http://www.gnu.org/software/make/)
 to manage dependencies and build. Development also requires you
 have [node.js](http://nodejs.org) >= v0.8 installed.
 
@@ -138,5 +138,5 @@ through [JSHint](http://www.jshint.com/) with no warnings.
 - Single Quotes
 - 2 spaces soft tabs
 
-for CSS, use classes to target elements.
+For CSS, use classes to target elements.
 
