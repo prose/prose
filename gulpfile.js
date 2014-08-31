@@ -197,5 +197,4 @@ gulp.task('watch', ['templates'], function() {
 
 // Default task which builds the project when we
 // run `gulp` from the command line.
-gulp.task('default', ['tests', 'uglify']);
-gulp.task('all', ['clean', 'tests', 'scripts', 'uglify']);
+gulp.task('default', ['tests', 'scripts', 'uglify']);

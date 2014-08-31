@@ -41,7 +41,7 @@
     "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
-    "test": "gulp all && node_modules/.bin/mocha-phantomjs test/index.html"
+    "test": "gulp && node_modules/.bin/mocha-phantomjs test/index.html"
   },
   "repository": {
     "type": "git",
