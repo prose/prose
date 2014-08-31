@@ -919,12 +919,7 @@ module.exports = Backbone.View.extend({
         this.updateSaveState(t('actions.save.submission'), 'saved');
       }).bind(this),
       error: (function(model, xhr, options) {
-        var message;
-        try {
-            message = JSON.parse(xhr.responseText).message;
-        } catch (err) {
-            message = t('notification.error.github');
-        }
+        var message = util.xhrErrorMessage(xhr);
         this.updateSaveState(message, 'error');
       }).bind(this)
     });
@@ -1225,15 +1220,15 @@ module.exports = Backbone.View.extend({
             type: 'DELETE',
             url: url + '?' + params,
             error: (function(xhr, textStatus, errorThrown) {
-              var res = JSON.parse(xhr.responseText);
-              this.updateSaveState(res.message, 'error');
+              var message = util.xhrErrorMessage(xhr);
+              this.updateSaveState(message, 'error');
             }).bind(this)
           });
         }
       }).bind(this),
       error: (function(model, xhr, options) {
-        var res = JSON.parse(xhr.responseText);
-        this.updateSaveState(res.message, 'error');
+        var message = util.xhrErrorMessage(xhr);
+        this.updateSaveState(message, 'error');
       }).bind(this)
     });
 
@@ -1286,9 +1281,8 @@ module.exports = Backbone.View.extend({
         this.updateSaveState('Saved', 'saved', true);
       }).bind(this),
       error: (function(model, xhr, options) {
-        // Display error message returned by XHR
-        var res = JSON.parse(xhr.responseText);
-        this.updateSaveState(res.message, 'error');
+        var message = util.xhrErrorMessage(xhr);
+        this.updateSaveState(message, 'error');
       }).bind(this)
     });
   },
