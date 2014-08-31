@@ -74,11 +74,6 @@ module.exports = Backbone.View.extend({
   fileInput: function(e) {
     var view = this;
     upload.fileSelect(e, function(e, file, content) {
-      var path = (view.mediaDirectoryPath) ? view.mediaDirectoryPath : util.extractFilename(view.file.attributes.path)[0];
-      var src = path + '/' + encodeURIComponent(file.name);
-
-      view.$el.find('input[name="url"]').val(src);
-      view.$el.find('input[name="alt"]').val('');
       view.trigger('updateImageInsert', e, file, content);
     });
 

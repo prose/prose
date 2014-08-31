@@ -1247,6 +1247,14 @@ module.exports = Backbone.View.extend({
   },
 
   updateImageInsert: function(e, file, content) {
+    var path = (this.mediaDirectoryPath) ?
+                    this.mediaDirectoryPath :
+                    util.extractFilename(this.toolbar.file.attributes.path)[0];
+    var src = path + '/' + encodeURIComponent(file.name);
+
+    this.$el.find('input[name="url"]').val(src);
+    this.$el.find('input[name="alt"]').val('');
+
     this.toolbar.queue = {
       e: e,
       file: file,
