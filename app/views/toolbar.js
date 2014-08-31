@@ -79,7 +79,7 @@ module.exports = Backbone.View.extend({
 
       view.$el.find('input[name="url"]').val(src);
       view.$el.find('input[name="alt"]').val('');
-      view.trigger('updateImageInsert', e);
+      view.trigger('updateImageInsert', e, file, content);
     });
 
     return false;

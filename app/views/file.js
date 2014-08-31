@@ -1247,7 +1247,7 @@ module.exports = Backbone.View.extend({
   },
 
   updateImageInsert: function(e, file, content) {
-    this.queue = {
+    this.toolbar.queue = {
       e: e,
       file: file,
       content: content
