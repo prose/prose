@@ -12,7 +12,7 @@ var uglify = require('gulp-uglify');
 var shell = require('gulp-shell');
 var browserify = require('browserify');
 var rename = require('gulp-rename');
-var clean = require('gulp-clean');
+var rimraf = require('gulp-rimraf');
 var watch = require('gulp-watch');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
@@ -45,7 +45,7 @@ gulp.task('clean', function () {
 
   // Use `gulp-clean` to remove folder.
   return gulp.src('dist', {read: false})
-    .pipe(clean());
+    .pipe(rimraf());
 });
 
 
