@@ -164,7 +164,7 @@ gulp.task('uglify', ['scripts'], function() {
 });
 
 
-// Wath for changes in `app` scripts.
+// Watch for changes in `app` scripts.
 // Usage:
 //
 //    $ gulp watch
