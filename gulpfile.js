@@ -40,10 +40,9 @@ var paths = {
 };
 
 
-// Removes `build` folder.
+// Removes `dist` folder.
 gulp.task('clean', function () {
 
-  // Use `gulp-clean` to remove folder.
   return gulp.src('dist', {read: false})
     .pipe(rimraf());
 });
@@ -100,7 +99,7 @@ gulp.task('oauth', function () {
 });
 
 
-// Built tests.
+// Build tests.
 gulp.task('tests', function() {
 
   // Browserify index.js
@@ -128,7 +127,7 @@ gulp.task('tests', function() {
 
 
 // Concatenate vendor scripts, browserify app scripts and
-// merge they both into `prose.js`.
+// merge them both into `prose.js`.
 gulp.task('scripts', ['templates', 'oauth'], function() {
 
   // Concatenate vendor scripts.
@@ -142,7 +141,7 @@ gulp.task('scripts', ['templates', 'oauth'], function() {
     .pipe(source('app.js'))
     .pipe(gulp.dest('./dist/'))
 
-    // Concatenate scripts one browserify finishes.
+    // Concatenate scripts once browserify finishes.
     .on('end', function() {
 
       // Concatenate `vendor` and `app` scripts into `prose.js`.
