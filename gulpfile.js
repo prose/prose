@@ -1,8 +1,8 @@
 // Build file.
 // Usage:
-// 
+//
 //    $ gulp
-// 
+//
 // See: https://github.com/prose/prose/issues/702
 
 // Require dependencies.
@@ -16,6 +16,7 @@ var clean = require('gulp-clean');
 var watch = require('gulp-watch');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
+var nodeJS = process.platform === 'win32' ? 'node' : 'nodejs';
 
 // Scripts paths.
 var paths = {
@@ -52,20 +53,21 @@ gulp.task('clean', function () {
 // To run this task we have to have a `transifex.auth`
 // file inside `translations` folder.
 // Example file contents:
-//    
+//
 //  {
 //    "user": "",
 //    "pass": ""
 //  }
-// 
+//
 // An account can be created at https://www.transifex.com/
-// 
+//
 gulp.task('translations', function () {
   return gulp.src('')
     .pipe(
       shell([
         'mkdir -p dist',
-        'node translations/update_locales',
+        nodeJS + ' translations/update_locales',
+        nodeJS + ' build'
       ])
     );
 });
@@ -79,13 +81,13 @@ gulp.task('templates', function () {
   return gulp.src('')
     .pipe(
       shell([
-        'mkdir -p dist && node build'
+        'mkdir -p dist && ' + nodeJS + ' build'
       ])
     );
 });
 
 
-// Creates `dist` directory if not created and 
+// Creates `dist` directory if not created and
 // creates `oauth.json`.
 gulp.task('oauth', function () {
   return gulp.src('')
@@ -125,15 +127,15 @@ gulp.task('tests', function() {
 });
 
 
-// Concatenate vendor scripts, browserify app scripts and 
+// Concatenate vendor scripts, browserify app scripts and
 // merge they both into `prose.js`.
 gulp.task('scripts', ['templates', 'oauth'], function() {
-  
+
   // Concatenate vendor scripts.
   gulp.src(paths.vendorScripts)
     .pipe(concat('vendor.js'))
     .pipe(gulp.dest('dist/'));
-    
+
   // Browserify app scripts.
   return browserify('./app/boot.js')
     .bundle({debug: true})
@@ -148,7 +150,7 @@ gulp.task('scripts', ['templates', 'oauth'], function() {
         .pipe(concat('prose.js'))
         .pipe(gulp.dest('dist/'));
     });
-    
+
 });
 
 
@@ -164,9 +166,9 @@ gulp.task('uglify', ['scripts'], function() {
 
 // Wath for changes in `app` scripts.
 // Usage:
-//  
+//
 //    $ gulp watch
-// 
+//
 gulp.task('watch', ['templates'], function() {
 
   // Watch any `.js` file under `app` folder.
@@ -193,6 +195,6 @@ gulp.task('watch', ['templates'], function() {
 });
 
 
-// Default task which builds the project when we 
+// Default task which builds the project when we
 // run `gulp` from the command line.
 gulp.task('default', ['tests', 'uglify']);
