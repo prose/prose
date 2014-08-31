@@ -16,7 +16,7 @@ var clean = require('gulp-clean');
 var watch = require('gulp-watch');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
-var nodeJS = process.platform === 'win32' ? 'node' : 'nodejs';
+var nodeJS = process.execPath;
 
 // Scripts paths.
 var paths = {
