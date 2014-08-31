@@ -302,6 +302,5 @@ module.exports = {
     } catch (err) {
         return t('notification.error.github');
     }
-    return error;
   }
 };
