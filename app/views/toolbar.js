@@ -228,7 +228,7 @@ module.exports = Backbone.View.extend({
           case 'help':
             tmpl = _(templates.dialogs.help).template();
             $dialog.append(tmpl({
-              help: toolbar.help
+              help: toolbar().help
             }));
 
             // Page through different help sections
