@@ -1277,7 +1277,7 @@ module.exports = Backbone.View.extend({
         var name = res.content.name;
         var path = res.content.path;
 
-        // TODO: where does $alt exist in the UI?
+        // Take the alt text from the insert image box on the toolbar
         var $alt = $('input[name="alt"]');
         var value = $alt.val();
         var image = (value) ?
