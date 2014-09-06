@@ -360,7 +360,7 @@ module.exports = Backbone.Router.extend({
       xhr.statusText
     ].join(' ');
 
-    var error = JSON.parse(xhr.responseText).message;
+    var error = util.xhrErrorMessage(xhr);
 
     var options = [
       {
