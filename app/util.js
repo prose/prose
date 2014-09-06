@@ -294,5 +294,13 @@ module.exports = {
     } else {
       if (_.isFunction(options.error)) options.error();
     }
+  },
+
+  xhrErrorMessage: function(xhr) {
+    try {
+        return JSON.parse(xhr.responseText).message;
+    } catch (err) {
+        return t('notification.error.github');
+    }
   }
 };
