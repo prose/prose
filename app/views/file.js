@@ -1222,7 +1222,7 @@ module.exports = Backbone.View.extend({
             error: (function(xhr, textStatus, errorThrown) {
               var message = util.xhrErrorMessage(xhr);
               this.updateSaveState(message, 'error');
-            }).bind(this)
+            }).bind(this),
 
             // Update oldpath so that if the file is renamed more than once, we
             // don't end up with multiple copies of it
