@@ -60,7 +60,6 @@ module.exports = Backbone.View.extend({
       variable: 'settings'
     }));
 
-    util.autoSelect(this.$el.find('input.filepath'));
     return this;
   }
 });

@@ -257,12 +257,6 @@ module.exports = {
     return false;
   },
 
-  autoSelect: function($el) {
-    $el.on('click', function() {
-      $el.select();
-    });
-  },
-
   parseLinkHeader: function(xhr, options) {
     options = _.clone(options) || {};
 

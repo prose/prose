@@ -131,7 +131,7 @@ module.exports = Backbone.View.extend({
         this.model = this.newEmptyFile();
         break;
     }
-    
+
     // Set default metadata from collection
     var defaults = this.collection.defaults;
     var path;
@@ -1222,8 +1222,20 @@ module.exports = Backbone.View.extend({
             error: (function(xhr, textStatus, errorThrown) {
               var message = util.xhrErrorMessage(xhr);
               this.updateSaveState(message, 'error');
-            }).bind(this)
+            }).bind(this),
+
+            // Update oldpath so that if the file is renamed more than once, we
+            // don't end up with multiple copies of it
+            success: function() {
+              model.set('oldpath', path);
+            }
+
           });
+        }
+        else if (pathChange) {
+          // Update oldpath so that if the file is renamed more than once, we
+          // don't end up with multiple copies of it
+          model.set('oldpath', path);
         }
       }).bind(this),
       error: (function(model, xhr, options) {
