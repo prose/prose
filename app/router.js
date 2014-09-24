@@ -52,6 +52,7 @@ module.exports = Backbone.Router.extend({
     });
 
     this.app.render();
+    this.app.loader.done();
   },
 
   chooseLanguage: function() {
