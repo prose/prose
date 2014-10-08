@@ -535,7 +535,7 @@ module.exports = Backbone.View.extend({
         mode.push('meta');
       }
 
-      if (markdown || (jekyll && this.model.get('extension') === 'html')) mode.push('preview');
+      if (markdown || this.model.get('extension') === 'html') mode.push('preview');
       if (!this.model.isNew()) mode.push('settings');
 
       this.nav.mode(mode.join(' '));
@@ -648,16 +648,22 @@ module.exports = Backbone.View.extend({
       metadata = this.model.get('metadata') || {};
       content = this.model.get('content') || '';
     }
+    
+    // Run the liquid parsing.
+    var parsedTemplate = Liquid.parse(this.compilePreview(content)).render({
+      site: this.collection.config,
+      post: metadata,
+      page: metadata
+    });
+    
+    // If it's markdown, run it through marked; otherwise, leave it alone.
+    if(this.model.get('markdown'))  parsedTemplate = marked(parsedTemplate);
 
     var p = {
       site: this.collection.config,
       post: metadata,
       page: metadata,
-      content: marked(Liquid.parse(this.compilePreview(content)).render({
-        site: this.collection.config,
-        post: metadata,
-        page: metadata
-      })) || ''
+      content: parsedTemplate || ''
     };
 
     // Grab a date from the filename
