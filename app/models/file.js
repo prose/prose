@@ -95,15 +95,22 @@ module.exports = Backbone.Model.extend({
       previous: resp
     };
 
+    var defaults = this.get('defaults');
     res.content = resp.replace(/^(---\n)((.|\n)*?)---\n?/, function(match, dashes, frontmatter) {
-      var regex = /published: false/;
 
       try {
         // TODO: _.defaults for each key
         res.metadata = jsyaml.safeLoad(frontmatter);
-
-        // Default to published unless explicitly set to false
-        res.metadata.published = !regex.test(frontmatter);
+        
+        // Default to published unless explicitly set in metadata or defaults.
+        var defaultPublished = _(defaults).find(function(def){
+          return def.name === 'published';
+        });
+        if(defaultPublished && defaultPublished.field.value) {
+          res.metadata.published = (defaultPublished.field.value === "true");
+        } else if(res.metadata && !res.metadata.hasOwnProperty('published')) {
+          res.metadata.published = true
+        }
       } catch(err) {
         console.log('ERROR encoding YAML');
         console.log(err);
