@@ -290,6 +290,9 @@ module.exports = Backbone.View.extend({
             path = path.split(titleAttribute)[0];
           }
 
+          // Remove {{site.baseurl}}
+          path = path.replace('{{site.baseurl}}/', '/');
+
           // Prepend directory path if not site root relative
           path = /^\//.test(path) ? path.slice(1) :
             util.extractFilename(this.model.get('path'))[0] + '/' + path;
@@ -1265,8 +1268,8 @@ module.exports = Backbone.View.extend({
   },
 
   updateImageInsert: function(e, file, content) {
-    var path = (this.mediaDirectoryPath) ?
-                    this.mediaDirectoryPath :
+    var path = (this.toolbar.mediaDirectoryPath) ?
+                    this.toolbar.mediaDirectoryPath :
                     util.extractFilename(this.toolbar.file.attributes.path)[0];
     var src = path + '/' + encodeURIComponent(file.name);
 
@@ -1293,14 +1296,14 @@ module.exports = Backbone.View.extend({
     this.collection.upload(file, content, path, {
       success: (function(model, res, options) {
         var name = res.content.name;
-        var path = res.content.path;
+        var path = '{{site.baseurl}}/' + res.content.path;
 
         // Take the alt text from the insert image box on the toolbar
         var $alt = $('input[name="alt"]');
         var value = $alt.val();
         var image = (value) ?
-          '![' + value + '](/' + path + ')' :
-          '![' + name + '](/' + path + ')';
+          '![' + value + '](' + path + ')' :
+          '![' + name + '](' + path + ')';
 
         this.editor.focus();
         this.editor.replaceSelection(image + '\n', 'end');
