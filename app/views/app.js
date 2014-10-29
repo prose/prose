@@ -55,7 +55,9 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
+    this.$el.html(_.template(this.template, {
+      login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=repo'
+    }, { variable: 'data' }));
 
     this.loader.setElement(this.$el.find('#loader')).render();
     this.sidebar.setElement(this.$el.find('#drawer')).render();
