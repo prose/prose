@@ -310,10 +310,11 @@ module.exports = Backbone.View.extend({
   initEditor: function() {
     var lang = this.model.get('lang');
 
+    var code = this.$el.find('#code')[0];
+    code.value = this.model.get('content') || '';
     // TODO: set default content for CodeMirror
-    this.editor = CodeMirror(this.$el.find('#code')[0], {
+    this.editor = CodeMirror.fromTextArea(code, {
       mode: lang,
-      value: this.model.get('content') || '',
       lineWrapping: true,
       lineNumbers: (lang === 'gfm' || lang === null) ? false : true,
       extraKeys: this.keyMap(),
