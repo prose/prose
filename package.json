@@ -10,7 +10,7 @@
     "underscore": "~1.4.4",
     "chrono": "~1.0.4",
     "js-base64": "~2.1.1",
-    "keymaster": "git://github.com/madrobby/keymaster.git#ddcb72eceb033db",
+    "keymaster": "git://github.com/madrobby/keymaster.git#0f09fc1b7e66c2b7e07afe89a419366dcf2d1cd8",
     "marked": "~0.2.8",
     "queue-async": "~1.0.3",
     "diff": "~1.0.4",
@@ -22,7 +22,8 @@
     "github"
   ],
   "devDependencies": {
-    "browserify": "~2.12.0",
+    "browserify": "^6.0.0",
+    "browserify-shim": "^3.8.0",
     "chai": "~1.5.0",
     "function-bind": "~0.1.0",
     "glob": "~3.1.21",
@@ -42,6 +43,12 @@
   },
   "scripts": {
     "test": "node_modules/.bin/gulp && node_modules/.bin/mocha-phantomjs test/index.html"
+  },
+  "browserify": {
+    "transform": ["browserify-shim"]
+  },
+  "browserify-shim": {
+    "chai": "global:chai"
   },
   "repository": {
     "type": "git",

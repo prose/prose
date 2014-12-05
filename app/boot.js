@@ -9,6 +9,9 @@ window.app = {};
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
+
+Backbone.$ = $;
+
 var Router = require('./router');
 var User = require('./models/user');
 var NotificationView = require('./views/notification');
