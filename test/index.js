@@ -1,7 +1,7 @@
 
 var path = require('path');
 
-global.chair = require('chai'),
+global.chai = require('chai'),
 global.sinon = require('sinon'),
 global.sinonChai = require('sinon-chai');
 global.expect = chai.expect;
