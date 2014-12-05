@@ -5,7 +5,6 @@ var jsyaml = require('js-yaml');
 var patch = require('../../vendor/liquid.patch');
 
 var ModalView = require('./modal');
-var key = require('keymaster');
 var marked = require('marked');
 var diff = require('diff');
 var Backbone = require('backbone');

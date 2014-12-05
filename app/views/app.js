@@ -7,6 +7,7 @@ var NavView = require('./nav');
 var cookie = require('../cookie');
 var templates = require('../../dist/templates');
 var util = require('../util');
+var key = require('keymaster');
 
 module.exports = Backbone.View.extend({
   className: 'application',
