@@ -102,7 +102,7 @@ gulp.task('oauth', function () {
 
 
 // Build tests.
-gulp.task('tests', ['build'], function() {
+gulp.task('tests', function() {
 
   // Browserify index.js
   // Pass `debug` option to enable source maps.
