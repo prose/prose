@@ -1,7 +1,8 @@
 
 var Repo = require('../../../app/models/repo');
 
-var repoResponse = require('../../fixtures/get-repos-response.json');
+var mocks = require('../mocks'),
+    repoResponse = require('../../fixtures/get-repos-response.json');
 
 
 describe('repo model', function() {
@@ -33,21 +34,15 @@ describe('repo model', function() {
   
   it('fetches data from the endpoint.', function() {
     
-    var success = sinon.spy(),
-        error = sinon.spy(),
-        complete = sinon.spy();
+    var callbacks = mocks.stubs(['success', 'error', 'complete']);
     
-    repo.fetch({
-      success: success,
-      error: error,
-      complete: complete
-    });
+    repo.fetch(callbacks);
     
     server.respondWith(JSON.stringify(repoResponse));
     server.respond();
     
-    expect(success).to.have.been.calledOnce;
-    expect(complete).to.have.been.calledOnce;
+    expect(callbacks.success).to.have.been.calledOnce;
+    expect(callbacks.complete).to.have.been.calledOnce;
     
   })
 });

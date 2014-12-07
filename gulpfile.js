@@ -131,7 +131,7 @@ gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
   // Pass `debug` option to enable source maps.
   return browserify({debug: true})
     .add('./test/index.js')
-    .external('chai')
+    .external(['chai', 'mocha'])
     .bundle()
     .pipe(source('index.js')) // Output file.
     .pipe(gulp.dest('./test/lib/')); // Output folder.
