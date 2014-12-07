@@ -14,11 +14,19 @@
     <script src="lib/mocha.js"></script>
     <script src="lib/chai.js"></script>
 
+    <!-- include lib files here... -->
+    <script src="lib/polyfill.js"></script>
+    <script src='../locale.js'></script>
+    <script src="../dist/vendor.js"></script>
+    
     <!-- configure mocha here... -->
     <script>
       mocha.setup({
         ui: 'bdd'
       });
+      
+      var smhack = require('sourcemap-hack');
+      mocha._reporter = smhack(mocha._reporter);
 
       var expect = chai.expect;
 
@@ -38,11 +46,6 @@
 
     <!-- load data here... -->
     <script src="fixtures/data.js"></script>
-
-    <!-- include lib files here... -->
-    <script src="lib/polyfill.js"></script>
-    <script src='../locale.js'></script>
-    <script src="../dist/vendor.js"></script>
 
     <!-- include spec files here... -->
     <script src="lib/index.js"></script>

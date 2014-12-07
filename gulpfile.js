@@ -122,6 +122,7 @@ gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
   // Pass `debug` option to enable source maps.
   browserify({debug:true})
     .add('./test/lib/polyfill-require.js')
+    .require('./test/lib/sourcemap-hack', {expose: 'sourcemap-hack'})
     .bundle()
     .pipe(source('polyfill.js'))
     .pipe(gulp.dest('./test/lib/'));
