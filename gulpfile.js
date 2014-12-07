@@ -106,8 +106,17 @@ gulp.task('oauth', function () {
 });
 
 
+
+// Concatenate vendor scripts into dist/vendor.js
+gulp.task('vendor', function() {
+  gulp.src(paths.vendorScripts)
+  .pipe(concat('vendor.js'))
+  .pipe(gulp.dest('dist/'));
+})
+
+
 // Build tests.
-gulp.task('build-tests', function() {
+gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
 
   // Browserify polyfill-require.js
   // Pass `debug` option to enable source maps.
@@ -129,14 +138,9 @@ gulp.task('build-tests', function() {
 });
 
 
-// Concatenate vendor scripts, browserify app scripts and
-// merge them both into `prose.js`.
-gulp.task('build-app', ['templates', 'oauth'], function() {
+// Browserify app scripts, then concatenate with vendor scripts into `prose.js`.
+gulp.task('build-app', ['templates', 'oauth', 'vendor'], function() {
 
-  // Concatenate vendor scripts.
-  gulp.src(paths.vendorScripts)
-    .pipe(concat('vendor.js'))
-    .pipe(gulp.dest('dist/'));
 
   // Browserify app scripts.
   return browserify({debug: true})
