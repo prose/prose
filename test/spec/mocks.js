@@ -38,7 +38,16 @@ module.exports = function() {
     
     branches: function(repo) {
       return this._branches = this._branches ||
-        new Branches([], this.repo(repo));
+        stubs(new Branches([], { repo: this.repo(repo) }), ['fetch']);
+    },
+    
+    files: function() {
+      return this._files = this._files ||
+        stubs(new Files([], {
+          repo: this.repo(),
+          branch: this.branch(),
+          sha: 'fakesha'
+        }), ['fetch']);
     },
     
     repo: function(repo, owner) {
@@ -46,6 +55,30 @@ module.exports = function() {
       owner = owner || {id: 0, login: 'login-name'};
       return this._repos[repo] = this._repos[repo] || 
         new Repo({ name: repo, owner: owner });
+    },
+    
+    branch: function(name, repo) {
+      repo = repo || this.repo();
+      name = name || 'master';
+      var fullname = repo.get('name') + '/' + name;
+      return this._branches[fullname] = this._branches[fullname] ||
+        new Branch({
+          repo: repo,
+          name: name,
+          commit: { sha: 'fakesha' }
+        });
+    },
+    
+    file: function(content, path, repo) {
+      repo = repo || this.repo();
+      path = path || '/fake.md';
+      content = content || 'line 1\nline 2\nline 3\n';
+      return new File({
+        collection: this.files(),
+        content: content,
+        path: path,
+        repo: repo
+      });
     }
   }
 }

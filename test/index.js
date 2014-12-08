@@ -13,3 +13,4 @@ require('./spec/vendor/liquid.patch.js');
 require('./spec/boot');
 require('./spec/models/repo');
 require('./spec/models/file');
+require('./spec/views/file-edit');
