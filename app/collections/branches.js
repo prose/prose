@@ -11,7 +11,7 @@ module.exports = Backbone.Collection.extend({
   },
 
   parse: function(resp, options) {
-    return map = _.map(resp, (function(branch) {
+    return _.map(resp, (function(branch) {
      return  _.extend(branch, {
         repo: this.repo
       })
