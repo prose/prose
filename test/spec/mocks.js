@@ -60,13 +60,16 @@ module.exports = function() {
     branch: function(name, repo) {
       repo = repo || this.repo();
       name = name || 'master';
-      var fullname = repo.get('name') + '/' + name;
-      return this._branches[fullname] = this._branches[fullname] ||
-        new Branch({
+      var branch = repo.branches.findWhere({ name: name });
+      if(!branch) {
+        branch = new Branch({
           repo: repo,
           name: name,
           commit: { sha: 'fakesha' }
         });
+        repo.branches.add(branch);
+      }
+      return branch;
     },
     
     file: function(content, path, repo) {
@@ -77,7 +80,8 @@ module.exports = function() {
         collection: this.files(),
         content: content,
         path: path,
-        repo: repo
+        repo: repo,
+        sha: 'fakesha'
       });
     }
   }
