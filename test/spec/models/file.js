@@ -51,11 +51,37 @@ describe('file model', function() {
     
     expect(callbacks.success).to.have.been.calledOnce;
     
-    expect(file.get('content')).to.equal(content);
     expect(file.get('metadata')).to.deep.equal({
       layout: 'post',
       published: true
     });
+  })
+  
+  it('appends a single newline if not already present', function() {
+    var content = 'my content',
+        yaml = '---\nlayout: post\npublished: true\n---\n';
+    
+    file.fetch(callbacks);
+    server.respondWith('GET', file.get('content_url'), yaml + content);
+    server.respond();
+    
+    expect(callbacks.success).to.have.been.calledOnce;
+    
+    expect(file.get('content')).to.equal(content + '\n');
+  });
+  
+  it('trims all whitespace *except* final newline from end of content', function() {
+    var content = 'my content',
+        extraspace = '\n\t  \t\t\n   \n\t\t \n',
+        yaml = '---\nlayout: post\npublished: true\n---\n';
+    
+    file.fetch(callbacks);
+    server.respondWith('GET', file.get('content_url'), yaml + content + extraspace);
+    server.respond();
+    
+    expect(callbacks.success).to.have.been.calledOnce;
+    
+    expect(file.get('content')).to.equal(content + '\n');
   })
 
 });
