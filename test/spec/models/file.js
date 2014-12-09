@@ -7,30 +7,29 @@ var mocks = require('../mocks'),
 
 describe('file model', function() {
   var file;
-  var server;
+  var server, callbacks, fileContents;
   
   before(function () { server = sinon.fakeServer.create(); });
   after(function () { server.restore(); });
   
   beforeEach(function() {
     file = mocks().file();
+    callbacks = mocks.stubs(['success', 'error', 'complete']);
+    server.respondWith('GET', file.url(), JSON.stringify(response));
+    file.set('content_url', 'https://api.gihub.com/repos/blah/blahblah/git/blahblahblah')
   })
   
+
   it('fetches data from github api and content directly content URL', function() {
     
     var content = 'content from server';
-    var callbacks = mocks.stubs(['success', 'error', 'complete']);
-    
-    
-    server.respondWith('GET', file.url(), JSON.stringify(response));
-    file.set('content_url', 'https://api.gihub.com/repos/blah/blahblah/git/blahblahblah')
-    server.respondWith('GET', file.get('content_url'), content);
     
     expect(file.get('content')).to.not.equal(content);
     expect(file.get('sha')).to.not.equal(response.sha);
     
     file.fetch(callbacks);
     
+    server.respondWith('GET', file.get('content_url'), content);
     server.respond();
     
     expect(callbacks.success).to.have.been.calledOnce;
@@ -40,4 +39,23 @@ describe('file model', function() {
     expect(file.get('content')).to.equal(content);
     expect(file.get('sha')).to.equal(response.sha);
   })
+  
+  
+  it('parses YAML frontmatter when present', function() {
+    var content = 'my content',
+        yaml = '---\nlayout: post\npublished: true\n---\n';
+     
+    file.fetch(callbacks);
+    server.respondWith('GET', file.get('content_url'), yaml + content);
+    server.respond();
+    
+    expect(callbacks.success).to.have.been.calledOnce;
+    
+    expect(file.get('content')).to.equal(content);
+    expect(file.get('metadata')).to.deep.equal({
+      layout: 'post',
+      published: true
+    });
+  })
+
 });
