@@ -266,7 +266,7 @@ module.exports = Backbone.Model.extend({
             repo.branches.fetch({
               cache: false,
               success: (function(collection, res, options) {
-                branch = collection.findWhere({ name: branch });
+                var branch = collection.findWhere({ name: branch });
 
                 // Create new File model in forked repo
                 // TODO: serialize metadata, set raw content
@@ -348,7 +348,7 @@ module.exports = Backbone.Model.extend({
   },
 
   url: function() {
-    branch = this.collection.branch || this.branch || this.get("branch");
+    var branch = this.collection.branch || this.branch || this.get("branch");
     return this.collection.repo.url() + '/contents/' + this.get('path') + '?ref=' + branch.get('name');
   },
 
