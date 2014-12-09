@@ -75,41 +75,39 @@ describe('file model', function() {
         extraspace = '\n\t  \t\t\n   \n\t\t \n',
         yaml = '---\nlayout: post\npublished: true\n---\n';
     
-    describe('with frontmatter', function() {
+    function whitespaceTests(withYaml) {
+      var fileContent = withYaml ? (yaml + content) : content;
+      
       it('appends a single newline if not already present', function() {
-        var file = mockFile(yaml + content, filedata);
+        var file = mockFile(fileContent, filedata);
         file.fetch(callbacks);
         server.respond();
         expect(callbacks.success).to.have.been.calledOnce;
         expect(file.get('content')).to.equal(content + '\n');
       });
       
-      it('trims all whitespace *except* final newline from end of content', function() {
-        var file = mockFile(yaml + content + extraspace, filedata)
+      it('trims all EOF whitespace *except* single newline', function() {
+        var file = mockFile(fileContent + extraspace, filedata)
         file.fetch(callbacks);
         server.respond();
         expect(callbacks.success).to.have.been.calledOnce;
         expect(file.get('content')).to.equal(content + '\n');
       })
-    })
-    
-    describe('without frontmatter', function() {
-      it('appends a single newline if not already present', function() {
+      
+      it('does not trim EOL whitespace', function() {
+        var content = 'line with EOL space     \nanother line\n';
         var file = mockFile(content, filedata);
         file.fetch(callbacks);
         server.respond();
         expect(callbacks.success).to.have.been.calledOnce;
-        expect(file.get('content')).to.equal(content + '\n');
-      });
-      
-      it('trims all whitespace *except* final newline from end of content', function() {
-        var file = mockFile(content + extraspace, filedata)
-        file.fetch(callbacks);
-        server.respond();
-        expect(callbacks.success).to.have.been.calledOnce;
-        expect(file.get('content')).to.equal(content + '\n');
+        expect(file.get('content')).to.equal(content);
       })
-    })
+    }
+    
+    // run the tests both with and without yaml, since parsing code is different
+    // for those two cases.
+    describe('with frontmatter', whitespaceTests.bind(this, true));
+    describe('without frontmatter', whitespaceTests.bind(this, false));
   })
 
 
