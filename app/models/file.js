@@ -81,7 +81,9 @@ module.exports = Backbone.Model.extend({
 
   parseContent: function(resp, options) {
     // Extract YAML from a post, trims whitespace
-    resp = resp.replace(/\r\n/g, '\n'); // normalize a little bit
+    resp = resp
+      .replace(/\r\n/g, '\n') // normalize a little bit
+      .replace(/\s*$/, '\n'); // trim (or append) so that EOF has exactly one \n
 
     var hasMetadata = !!util.hasMetadata(resp);
 
@@ -110,7 +112,7 @@ module.exports = Backbone.Model.extend({
       }
 
       return '';
-    }).trim();
+    });
 
     return res;
   },
