@@ -47,7 +47,9 @@ describe('file model', function() {
     expect(callbacks.complete).to.have.been.calledOnce;
     expect(server.requests.length).to.equal(2);
 
-    expect(file.get('content')).to.equal(content);
+    // use contain assertion (weaker than strict equality) to separate this from
+    // tests that check for whitespace trimming
+    expect(file.get('content')).to.contain(content);
     expect(file.get('sha')).to.equal(filedata.sha);
   })
   
@@ -72,21 +74,41 @@ describe('file model', function() {
     var content = 'my content',
         extraspace = '\n\t  \t\t\n   \n\t\t \n',
         yaml = '---\nlayout: post\npublished: true\n---\n';
-        
-    it('appends a single newline if not already present', function() {
-      var file = mockFile(yaml + content, filedata);
-      file.fetch(callbacks);
-      server.respond();
-      expect(callbacks.success).to.have.been.calledOnce;
-      expect(file.get('content')).to.equal(content + '\n');
-    });
     
-    it('trims all whitespace *except* final newline from end of content', function() {
-      var file = mockFile(yaml + content + extraspace, filedata)
-      file.fetch(callbacks);
-      server.respond();
-      expect(callbacks.success).to.have.been.calledOnce;
-      expect(file.get('content')).to.equal(content + '\n');
+    describe('with frontmatter', function() {
+      it('appends a single newline if not already present', function() {
+        var file = mockFile(yaml + content, filedata);
+        file.fetch(callbacks);
+        server.respond();
+        expect(callbacks.success).to.have.been.calledOnce;
+        expect(file.get('content')).to.equal(content + '\n');
+      });
+      
+      it('trims all whitespace *except* final newline from end of content', function() {
+        var file = mockFile(yaml + content + extraspace, filedata)
+        file.fetch(callbacks);
+        server.respond();
+        expect(callbacks.success).to.have.been.calledOnce;
+        expect(file.get('content')).to.equal(content + '\n');
+      })
+    })
+    
+    describe('without frontmatter', function() {
+      it('appends a single newline if not already present', function() {
+        var file = mockFile(content, filedata);
+        file.fetch(callbacks);
+        server.respond();
+        expect(callbacks.success).to.have.been.calledOnce;
+        expect(file.get('content')).to.equal(content + '\n');
+      });
+      
+      it('trims all whitespace *except* final newline from end of content', function() {
+        var file = mockFile(content + extraspace, filedata)
+        file.fetch(callbacks);
+        server.respond();
+        expect(callbacks.success).to.have.been.calledOnce;
+        expect(file.get('content')).to.equal(content + '\n');
+      })
     })
   })
 
