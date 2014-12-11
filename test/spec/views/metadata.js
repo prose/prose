@@ -3,31 +3,11 @@ var _ = require('underscore');
 var sinon = require('sinon');
 var MetadataView = require('../../../app/views/metadata');
 var templates = require('../../../dist/templates');
+var mocks = require('../mocks');
 
 'use strict';
 
 describe('Metadata editor view', function() {
-
-  // first, mock the three arguments that we pass to Metadataview
-  //
-  // @param {object} model, /app/models/file.js
-  // @param {string} titleAsHeading, in /app/views/file.js returns post title or false
-  // @param {object} view, /app/views/file.js
-
-  // Fake Backbone.Model api, mocking /app/models/file.js
-  var MockFileModel = function() {
-    this.attributes = {
-      defaults: [],
-      lang: 'gfm',
-      metadata: {},
-    };
-    this.get = function(key) {
-        return this.attributes[key];
-    };
-    this.set = function(key, value) {
-        this.attributes[key] = value;
-    };
-  };
 
   // MetadataView calls this.header.inputGet when there is a title metafield.
   // Mock this function so the view doesn't throw an error.
@@ -41,9 +21,12 @@ describe('Metadata editor view', function() {
     this.makeDirty = function() { return };
   };
 
+  var view = new MockFileView();
+
   // function-level reference to model,
   // so we can clear it's attributes in beforeEach()
-  var model = new MockFileModel();
+  var mock = mocks();
+  var model = mock.file();
 
   // function-level reference to MetaDataView
   // so we can call it's remove function in afterEach()
@@ -59,11 +42,11 @@ describe('Metadata editor view', function() {
     }).appendTo($('body'));
 
     // Reset the model attributes
-    model.attributes = {
+    model.set({
       defaults: [],
       lang: 'gfm',
       metadata: {},
-    };
+    });
 
   });
 
@@ -79,9 +62,9 @@ describe('Metadata editor view', function() {
     // Without any defaults, we should only see the raw meta element
     it('shows a raw editor', function() {
       metadataEditor = new MetadataView({
-        model: new MockFileModel(),
+        model: model,
         titleAsHeading: titleAsHeading,
-        view: new MockFileView(),
+        view: view,
         el: $('#meta'),
       });
       metadataEditor.render();
@@ -117,7 +100,7 @@ describe('Metadata editor view', function() {
       metadataEditor = new MetadataView({
         model: model,
         titleAsHeading: titleAsHeading,
-        view: new MockFileView(),
+        view: view,
         el: $('#meta'),
       });
       metadataEditor.render();
@@ -142,7 +125,7 @@ describe('Metadata editor view', function() {
       metadataEditor = new MetadataView({
         model: model,
         titleAsHeading: titleAsHeading,
-        view: new MockFileView(),
+        view: view,
         el: $('#meta'),
       });
       metadataEditor.render();
@@ -162,7 +145,6 @@ describe('Metadata editor view', function() {
           }
         }
       ]);
-      var view = new MockFileView();
       metadataEditor = new MetadataView({
         model: model,
         titleAsHeading: titleAsHeading,
@@ -192,7 +174,7 @@ describe('Metadata editor view', function() {
       metadataEditor = new MetadataView({
         model: model,
         titleAsHeading: titleAsHeading,
-        view: new MockFileView(),
+        view: view,
         el: $('#meta'),
       });
       metadataEditor.render();
@@ -221,7 +203,7 @@ describe('Metadata editor view', function() {
       metadataEditor = new MetadataView({
         model: model,
         titleAsHeading: titleAsHeading,
-        view: new MockFileView(),
+        view: view,
         el: $('#meta'),
       });
       metadataEditor.render();
