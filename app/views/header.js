@@ -53,11 +53,11 @@ module.exports = Backbone.View.extend({
       avatar: avatar,
       repo: this.repo ? this.repo.attributes : undefined,
       isPrivate: isPrivate,
-      input: this.input,
-      path: path,
+      input: _.escape(this.input),
+      path: _.escape(path),
       placeholder: this.placeholder,
       user: user,
-      title: title,
+      title: _.escape(title),
       mode: this.title ? 'title' : 'path',
       translate: this.file ? this.file.get('translate') : undefined
     };
