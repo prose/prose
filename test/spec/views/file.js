@@ -1,34 +1,38 @@
 
 var FileView = require('../../../app/views/file'),
-    mocks = require('../mocks');
+    mockBranches = require('../../mocks/collections/branches'),
+    mockRepo = require('../../mocks/models/repo'),
+    mockFile = require('../../mocks/models/file'),
+    mockApp = require('../../mocks/views/app'),
+    mockRouter = require('../../mocks/router');
+    
 
 describe('File view', function() {
-  var mock, fileView;
+  var fileView;
   
   beforeEach(function() {
-    mock = mocks();
+    mockApp.reset(); // reset the DI state between tests.
   });
   
   describe('in edit mode', function() {
     
     beforeEach(function() {
-      mock = mocks();
       fileView = new FileView({
-        app: mock.app(),
+        app: mockApp(),
         branch: 'master',
-        branches: mock.branches(),
+        branches: mockBranches(),
         mode: 'edit',
-        nav: mock.app().nav,
+        nav: mockApp().nav,
         name: 'file.md',
         path: 'file.md',
-        repo: mock.repo(),
-        router: mock.router(),
-        sidebar: mock.app().sidebar
+        repo: mockRepo(),
+        router: mockRouter(),
+        sidebar: mockApp().sidebar
       });
     });
     
     it('creates the CodeMirror editor', function() {
-      fileView.model = mock.file()
+      fileView.model = mockFile()
       fileView.collection = fileView.model.collection;
       fileView.render();
       
@@ -37,7 +41,7 @@ describe('File view', function() {
     
     it('initializes CodeMirror with the file\'s contents', function() {
       var content = 'the file contents';
-      fileView.model = mock.file(content)
+      fileView.model = mockFile(content)
       fileView.collection = fileView.model.collection;
       fileView.render();
       expect(fileView.editor.getValue()).to.equal(content)

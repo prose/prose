@@ -1,19 +1,20 @@
 
 var File = require('../../../app/models/file');
 
-var mocks = require('../mocks'),
+var spies = require('../../mocks/helpers').spies,
+    fileMocker = require('../../mocks/models/file'),
     filedata = require('../../fixtures/get-file-response.json');
 
 
 describe('file model', function() {
-  var mock;
   var server, callbacks, fileContents;
   
   before(function () { server = sinon.fakeServer.create(); });
   after(function () { server.restore(); });
   beforeEach(function() {
-    mock = mocks();
-    callbacks = mocks.stubs(['success', 'error', 'complete']);
+    // reset the DI state, so no File models are cached between tests.
+    fileMocker.reset();
+    callbacks = spies(['success', 'error', 'complete']);
   })
   
   /*
@@ -22,7 +23,7 @@ describe('file model', function() {
   */
   var filecount = 0;
   function  mockFile(content, data) {
-    var file = mock.file();
+    var file = fileMocker();
     server.respondWith('GET', file.url(), JSON.stringify(data));
     file.set('content_url', 'https://api.gihub.com/repos/blah/blahblah/git/'+filecount++);
     server.respondWith('GET', file.get('content_url'), content);

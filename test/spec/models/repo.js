@@ -1,7 +1,7 @@
 
 var Repo = require('../../../app/models/repo');
 
-var mocks = require('../mocks'),
+var spies = require('../../mocks/helpers').spies,
     repoResponse = require('../../fixtures/get-repos-response.json');
 
 
@@ -34,7 +34,7 @@ describe('repo model', function() {
   
   it('fetches data from the endpoint.', function() {
     
-    var callbacks = mocks.stubs(['success', 'error', 'complete']);
+    var callbacks = spies(['success', 'error', 'complete']);
     
     repo.fetch(callbacks);
     
