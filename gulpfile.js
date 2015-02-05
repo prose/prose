@@ -15,6 +15,7 @@ var rename = require('gulp-rename');
 var rimraf = require('gulp-rimraf');
 var watch = require('gulp-watch');
 var source = require('vinyl-source-stream');
+var mkdirp = require('mkdirp');
 var nodeJS = process.execPath;
 
 // Scripts paths.
@@ -68,10 +69,10 @@ gulp.task('clean', function () {
 // An account can be created at https://www.transifex.com/
 //
 gulp.task('translations', function () {
+  mkdirp('dist');
   return gulp.src('')
     .pipe(
       shell([
-        'mkdir -p dist',
         nodeJS + ' translations/update_locales',
         nodeJS + ' build'
       ])
@@ -84,10 +85,11 @@ gulp.task('translations', function () {
 
 // Build templates.
 gulp.task('templates', function () {
+  mkdirp('dist');
   return gulp.src('')
     .pipe(
       shell([
-        'mkdir -p dist && ' + nodeJS + ' build'
+        "\"" + nodeJS + "\"" + ' build'
       ])
     );
 });
@@ -96,10 +98,10 @@ gulp.task('templates', function () {
 // Creates `dist` directory if not created and
 // creates `oauth.json`.
 gulp.task('oauth', function () {
+  mkdirp('dist');
   return gulp.src('')
     .pipe(
       shell([
-        'mkdir -p dist',
         '[ -f oauth.json ] && echo "Using existing oauth.json." || curl "https://raw.githubusercontent.com/prose/prose/gh-pages/oauth.json" > oauth.json'
       ])
     );
