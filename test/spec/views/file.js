@@ -5,17 +5,17 @@ var FileView = require('../../../app/views/file'),
     mockFile = require('../../mocks/models/file'),
     mockApp = require('../../mocks/views/app'),
     mockRouter = require('../../mocks/router');
-    
+
 
 describe('File view', function() {
   var fileView;
-  
+
   beforeEach(function() {
     mockApp.reset(); // reset the DI state between tests.
   });
-  
+
   describe('in edit mode', function() {
-    
+
     beforeEach(function() {
       fileView = new FileView({
         app: mockApp(),
@@ -30,15 +30,15 @@ describe('File view', function() {
         sidebar: mockApp().sidebar
       });
     });
-    
+
     it('creates the CodeMirror editor', function() {
       fileView.model = mockFile()
       fileView.collection = fileView.model.collection;
       fileView.render();
-      
+
       expect(fileView.editor).to.be.ok;
     })
-    
+
     it('initializes CodeMirror with the file\'s contents', function() {
       var content = 'the file contents';
       fileView.model = mockFile(content)
@@ -47,5 +47,12 @@ describe('File view', function() {
       expect(fileView.editor.getValue()).to.equal(content)
     })
   });
-  
+
+  describe('in preview mode', function() {
+      it('escapes script tags when compiling preview', function() {
+          var content = "<script>alert('pwned')</script>";
+          expect(fileView.compilePreview(content)).to.equal('&lt;script&gt;alert(&#x27;pwned&#x27;)&lt;&#x2F;script&gt;');
+      });
+  });
+
 });

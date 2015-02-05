@@ -303,7 +303,7 @@ module.exports = Backbone.View.extend({
       }
     }).bind(this));
 
-    return content;
+    return _.escape(content);
   },
 
   initEditor: function() {
@@ -651,14 +651,14 @@ module.exports = Backbone.View.extend({
       metadata = this.model.get('metadata') || {};
       content = this.model.get('content') || '';
     }
-    
+
     // Run the liquid parsing.
     var parsedTemplate = Liquid.parse(this.compilePreview(content)).render({
       site: this.collection.config,
       post: metadata,
       page: metadata
     });
-    
+
     // If it's markdown, run it through marked; otherwise, leave it alone.
     if(this.model.get('markdown'))  parsedTemplate = marked(parsedTemplate);
 
