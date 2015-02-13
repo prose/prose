@@ -23,6 +23,10 @@ var ChooseLanguageView = require('./views/chooselanguage');
 var templates = require('../dist/templates');
 var util = require('./util');
 var auth = require('./config');
+var cookie = require('./cookie');
+
+// Set scope
+auth.scope = cookie.get('scope') || 'repo';
 
 module.exports = Backbone.Router.extend({
 
@@ -376,7 +380,7 @@ module.exports = Backbone.Router.extend({
       options.unshift({
         'title': t('login'),
         'link': auth.site + '/login/oauth/authorize?client_id=' +
-          auth.id + '&scope=repo&redirect_uri=' +
+          auth.id + '&scope=' + auth.scope + '&redirect_uri=' +
           encodeURIComponent(window.location.href)
       });
     }

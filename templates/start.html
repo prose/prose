@@ -3,6 +3,13 @@
   <div class='inner'>
     <p><%= t('main.start.content') %></p>
     <p><a href='#about'><%= t('main.start.learn') %></a></p>
-    <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=repo'><%= t('login') %></a>
+    <a class='round button' href='<%= auth.site %>/login/oauth/authorize?client_id=<%= auth.id %>&scope=<%- auth.scope %>'><%= t('login') %></a>
+    <div class="toggle-hide">
+      <a href="#scopes" class="deemphasize">Set repository access</a>
+      <select>
+        <option value="repo" <% if (auth.scope === 'repo') {%>selected<% } %>>Public and private repositories</option>
+        <option value="public_repo" <% if (auth.scope === 'public_repo') {%>selected<% } %>>Only public repositories</option>
+      </select>
+    </div>
   </div>
 </div>
