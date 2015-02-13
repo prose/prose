@@ -4,6 +4,10 @@ var Backbone = require('backbone');
 var config = require('../config');
 var utils = require('../util');
 var templates = require('../../dist/templates');
+var cookie = require('../cookie');
+
+// Set scope
+config.scope = cookie.get('scope') || 'repo';
 
 module.exports = Backbone.View.extend({
   template: templates.nav,
@@ -25,7 +29,9 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     this.$el.html(_.template(this.template, {
-      login: config.site + '/login/oauth/authorize?client_id=' + config.id + '&scope=repo'
+      login: config.site + '/login/oauth/authorize' +
+        '?client_id=' + config.id + '&scope=' + config.scope + '&redirect_uri=' +
+        encodeURIComponent(window.location.href)
     }, { variable: 'data' }));
 
     this.$save = this.$el.find('.file .save .popup');
