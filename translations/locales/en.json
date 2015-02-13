@@ -132,6 +132,7 @@
         "loginDescription": "Please login with your GitHub account to access that project.",
         "create": "Create it",
         "home": "Back to Main Page",
+        "404": "This file does not exist, or you don't have access to it. Try authorizing with GitHub.",
         "back": "Go Back",
         "githubStatus": "Status on GitHub ({status})",
         "error": {
