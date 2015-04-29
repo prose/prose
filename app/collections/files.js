@@ -135,13 +135,17 @@ module.exports = Backbone.Collection.extend({
                     });
                   });
                 }
+
+                if (value && value.field && value.field.value === "CURRENT_DATETIME") {
+                  value.field.value = (new Date()).format('Y-m-d H:i:s O');
+                }
               });
             } else if (_.isString(raw)) {
               try {
                 defaults = jsyaml.safeLoad(raw);
 
                 if (defaults.date === "CURRENT_DATETIME") {
-                  var current = (new Date()).format('Y-m-d H:i');
+                  var current = (new Date()).format('Y-m-d H:i:s O');
                   defaults.date = current;
                   raw = raw.replace("CURRENT_DATETIME", current);
                 }
