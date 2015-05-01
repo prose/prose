@@ -12,7 +12,7 @@ var uglify = require('gulp-uglify');
 var shell = require('gulp-shell');
 var browserify = require('browserify');
 var rename = require('gulp-rename');
-var rimraf = require('gulp-rimraf');
+var del = require('del');
 var watch = require('gulp-watch');
 var source = require('vinyl-source-stream');
 var mkdirp = require('mkdirp');
@@ -49,10 +49,8 @@ var paths = {
 
 
 // Removes `dist` folder.
-gulp.task('clean', function () {
-
-  return gulp.src('dist', {read: false})
-    .pipe(rimraf());
+gulp.task('clean', function (cb) {
+  del(['dist'], cb);
 });
 
 
