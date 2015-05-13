@@ -10,7 +10,7 @@ module.exports.string = jsyaml.safeDump({
   }
 });
 
-module.exports.form = jsyaml.safeDump({
+module.exports.forms = jsyaml.safeDump({
   prose: {
     metadata: {
       _posts: [{

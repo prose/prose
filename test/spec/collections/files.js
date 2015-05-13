@@ -3,7 +3,7 @@ var spies = require('../../mocks/helpers').spies;
 var fileCollectionMocker = require('../../mocks/collections/files');
 var fileMocker = require('../../mocks/models/file');
 var stringMeta = require('../../fixtures/metadata.js').string;
-var metaForms = require('../../fixtures/metadata.js').form;
+var formMeta = require('../../fixtures/metadata.js').forms;
 
 describe('files collection', function() {
 
@@ -26,7 +26,7 @@ describe('files collection', function() {
 
   it('Honors CURRENT_DATETIME var when metadata is a form element', function(done) {
     var files = fileCollectionMocker();
-    files.parseConfig(fileMocker(metaForms), {
+    files.parseConfig(fileMocker(formMeta), {
       success: function() {
         var date = new Date(files.defaults._posts[0].field.value);
         expect(_.isDate(date)).to.eql(true);
