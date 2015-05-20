@@ -149,12 +149,12 @@ module.exports = function() {
   Liquid.Template.registerFilter({
     replace: function(input, string, replacement) {
       replacement = replacement || '';
-      return input.toString().split(string).join(replacement);
+      return input ? input.toString().split(string).join(replacement) : '';
     },
 
     replace_first: function(input, string, replacement) {
       replacement = replacement || '';
-      return input.toString().replace(string, replacement);
+      return input ? input.toString().replace(string, replacement) : '';
     }
   });
 }
