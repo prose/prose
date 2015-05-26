@@ -35,4 +35,15 @@ describe('files collection', function() {
     });
   });
 
+  it('Extends config object with config.prose settings', function(done) {
+    var files = fileCollectionMocker();
+    files.parseConfig(fileMocker(stringMeta), {
+      success: function() {
+        expect(files.config.proseProp).to.eql(true);
+        expect(files.config.configProp).to.eql(true);
+        done();
+      }
+    });
+  });
+
 });
