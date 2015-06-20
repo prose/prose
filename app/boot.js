@@ -5,6 +5,7 @@ var en = require('../dist/en.js');
 window.locale.en = en;
 window.locale.current('en');
 window.app = {};
+window.Backbone = Backbone;
 
 var $ = require('jquery-browserify');
 var _ = require('underscore');
