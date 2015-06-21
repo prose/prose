@@ -59,6 +59,7 @@ module.exports = Backbone.Model.extend({
         // TODO: Forking is async, retry if request fails
         repo.branches.fetch({
           success: (function(collection, res, options) {
+            collection = repo.branches;
             var prefix = 'prose-patch-';
 
             var branches = collection.filter(function(model) {
