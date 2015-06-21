@@ -123,6 +123,10 @@ You can run tests quickly from the command line with `npm test`
 Create tests in the `test/spec/` directory. If possible try to mirror the `app` directory structure.
 Require any new test files in `test/index.js`
 
+## Notes on debugging
+
+If Chrome DevTools' console reports an error and then points to an unrelated source location, the source map system might be getting confused. If you're working with an unminified `prose.js`, you can simply [disable source maps](https://developer.chrome.com/devtools/docs/javascript-debugging#source-maps).
+
 ## Code Style
 
 ### Javascript
