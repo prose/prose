@@ -387,6 +387,12 @@ module.exports = Backbone.View.extend({
     if (type === 'media') {
       if (this.queue) {
         var userDefinedPath = $('input[name="url"]').val();
+
+        // Prevent GitHub API error `422 (Unprocessable Entity)`:
+        //   `message: path cannot start with a slash`
+        userDefinedPath = userDefinedPath.replace(new RegExp('^/+'), '');
+
+        // Upload the file to the GitHub repository.
         this.view.upload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
 
         // Finally, clear the queue object
