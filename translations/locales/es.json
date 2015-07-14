@@ -72,6 +72,14 @@
             "filter": "Filtrar archivos",
             "edit": "Editar"
         },
+        "file": {
+            "noTitle": "Intitulado",
+            "metaTitle": "Revisar los cambios:",
+            "rawMeta": "Metadatos prima",
+            "metaDescription": "Las adiciones se resaltan en verde. Las supresiones están tachados.",
+            "back": "Terminado",
+            "createMeta": "Crear nuevo"
+        },
         "upgrade": {
             "content": "Prose requiere recursos no disponibles en su navegador",
             "download": "Descargar un navegador moderno"
