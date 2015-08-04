@@ -75,7 +75,7 @@ describe('Metadata editor view', function() {
     // Metadata object saves references to code-mirror'd textarea elements
     // on itself, or 'this', during render function.
     // This has the potential to overwrite native methods.
-    it('textarea names do not collide with view methods', function() {
+    it('textarea names do not collide with view methods (TODO)', function() {
       var model = mockFile();
       model.set('defaults', [{
         name: 'view',
@@ -109,7 +109,7 @@ describe('Metadata editor view', function() {
       expect(model.get('metadata').foo).to.equal(newValue);
     });
 
-    it('saves changes to model on textarea element change', function() {
+    it('saves changes to model on textarea element change (TODO)', function() {
       var model = mockFile();
       model.set('defaults', [{
         name: 'foo',
