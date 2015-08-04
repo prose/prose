@@ -42,6 +42,92 @@ describe('Metadata editor view', function() {
       expect( $('#meta').find('.form-item').length ).to.equal(1);
     });
 
+    it('creates a text input element with proper default value and label', function() {
+      var model = mockFile();
+      model.set('defaults', [{
+        name: 'text',
+        field: {
+          element: 'text',
+          value: 'hello world',
+          label: 'text label'
+        }
+      }]);
+      metadataEditor.model = model;
+      metadataEditor.render();
+      expect( $('#meta').find('input[type="text"]').length ).to.equal(1);
+      expect( $('#meta').find('input[type="text"]').val() ).to.equal('hello world');
+      expect( $('#meta').find('label[for="text"]').text() ).to.equal('text label');
+    });
+
+    it('creates a textarea element with proper default value and label', function() {
+      var model = mockFile();
+      model.set('defaults', [{
+        name: 'foo',
+        field: {
+          element: 'textarea',
+          label: 'bar',
+          value: '123'
+        }
+      }]);
+      metadataEditor.model = model;
+      metadataEditor.render();
+      expect( $('#meta').find('label[for="foo"]').text() ).to.equal('bar');
+      expect( metadataEditor.foo.getValue() ).to.equal('123');
+    });
+
+    it('creates a multiselect element with proper label and correct options', function() {
+      var model = mockFile();
+      model.set('defaults', [{
+        name: 'multiselect',
+        field: {
+          element: 'multiselect',
+          label: 'multiselect label',
+          options: [
+            {name: 'Dan', value: 'dan'},
+            {name: 'Jon', value: 'jon'}
+          ]
+        }
+      }]);
+      metadataEditor.model = model;
+      metadataEditor.render();
+      expect( $('#meta').find('label[for="multiselect"]').text() ).to.equal('multiselect label');
+      expect( $('#meta').find('ul.chzn-results').find('li').length ).to.equal(2);
+    });
+
+    it('creates a checkbox element with proper default value and label', function() {
+      var model = mockFile();
+      model.set('defaults', [{
+        name: 'checkbox',
+        field: {
+          element: 'checkbox',
+          label: 'checkbox label',
+          vale: false
+        }
+      }]);
+      metadataEditor.model = model;
+      metadataEditor.render();
+      expect( $('#meta').find('input[type="checkbox"]').length ).to.equal(1);
+      expect( $('#meta').find('input[type="checkbox"]:checked').length ).to.equal(0);
+      expect( $('#meta').find('label[for="checkbox"]').text() ).to.equal('checkbox label');
+    });
+
+    it('creates a button element (TODO)', function() {
+      // TODO this models broken behavior.
+      // https://github.com/prose/prose/issues/859
+      var model = mockFile();
+      model.set('defaults', [{
+        name: 'button',
+        field: {
+          element: 'button',
+          on: 'on',
+          off: 'off'
+        }
+      }]);
+      metadataEditor.model = model;
+      metadataEditor.render();
+      expect( $('#meta').find('input[type="button"]').length ).to.equal(1);
+    });
+
     it('does not append hidden meta elements', function() {
       var model = mockFile();
       model.set('defaults', [{
@@ -54,22 +140,6 @@ describe('Metadata editor view', function() {
       metadataEditor.model = model;
       metadataEditor.render();
       expect( $('#meta').find('.form-item').length ).to.equal(1);
-    });
-
-    it('autofills default metadata on textarea elements', function() {
-      var value = '123';
-      var model = mockFile();
-      model.set('defaults', [{
-        name: 'foo',
-        field: {
-          element: 'textarea',
-          label: 'bar',
-          value: value,
-        }
-      }]);
-      metadataEditor.model = model;
-      metadataEditor.render();
-      expect( metadataEditor.foo.getValue() ).to.equal(value);
     });
 
     // Metadata object saves references to code-mirror'd textarea elements
