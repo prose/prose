@@ -5,7 +5,19 @@ _.merge = require('deepmerge');
 var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
 var templates = require('../../dist/templates');
-var util = require('.././util');
+var util = require('../util');
+
+var forms = {
+
+  Checkbox: require('./meta/checkbox'),
+  TextForm: require('./meta/text'),
+  TextArea: require('./meta/textarea'),
+  Button: require('./meta/button'),
+  Select: require('./meta/select'),
+  Multiselect: require('./meta/multiselect'),
+
+};
+
 
 // Creates form elements that correspond to Jekyll frontmatter.
 //
@@ -36,6 +48,8 @@ module.exports = Backbone.View.extend({
     this.model = options.model;
     this.titleAsHeading = options.titleAsHeading;
     this.view = options.view;
+
+    this.subviews = [];
   },
 
   // Parent file view calls this render func immediately
@@ -43,7 +57,7 @@ module.exports = Backbone.View.extend({
   render: function() {
     this.$el.empty().append(_.template(this.template));
 
-    var form = this.$el.find('.form');
+    var $form = this.$el.find('.form');
 
     var metadata = this.model.get('metadata');
     var lang = metadata && metadata.lang ? metadata.lang : 'en';
@@ -67,157 +81,97 @@ module.exports = Backbone.View.extend({
       // TODO this is way too frustrating to read, and needs re-factoring.
       // Each UI item should be it's own function.
       if (renderTitle) {
-        if (data && data.field) {
-          switch (data.field.element) {
-            case 'button':
-              var button = {
-              name: data.name,
-              label: data.field.label,
-              help: data.field.help,
-              on: data.field.on,
-              off: data.field.off
-            };
 
-            form.append(_.template(templates.meta.button, button, {
-              variable: 'meta'
-            }));
-            break;
-            case 'checkbox':
-              var checkbox = {
-              name: data.name,
-              label: data.field.label,
-              help: data.field.help,
-              value: data.name,
-              checked: data.field.value
-            };
+        var view = null;
 
-            form.append(_.template(templates.meta.checkbox, checkbox, {
-              variable: 'meta'
-            }));
-            break;
-            case 'text':
-              var text = {
-              name: data.name,
-              label: data.field.label,
-              help: data.field.help,
-              value: data.field.value,
-              placeholder: data.field.placeholder,
-              type: 'text'
-            };
-
-            form.append(_.template(templates.meta.text, text, {
-              variable: 'meta'
-            }));
-            break;
-            case 'textarea':
-              var id = util.stringToUrl(data.name);
-            var textarea = {
-              name: data.name,
-              id: id,
-              value: data.field.value,
-              label: data.field.label,
-              help: data.field.help,
-              placeholder: data.field.placeholder,
-              type: 'textarea'
-            };
-
-            form.append(_.template(templates.meta.textarea, textarea, {
-              variable: 'meta'
-            }));
-
-            var textElement = document.getElementById(id);
-
-            var cm = CodeMirror(function(el) {
-              textElement.parentNode.replaceChild(el, textElement);
-              el.id = id;
-              el.className += ' inner ';
-              el.setAttribute('data-name', data.name);
-            }, {
-              mode: id,
-              value: textElement.value,
-              lineWrapping: true,
-              theme: 'prose-bright'
-            });
-            cm.on('blur', (function(){
-              textElement.value = cm.getValue();
-              this.updateModel({
-                currentTarget: textElement
-              });
-            }).bind(this));
-            this[id] = cm;
-
-            break;
-            case 'number':
-              var number = {
-              name: data.name,
-              label: data.field.label,
-              help: data.field.help,
-              value: data.field.value,
-              type: 'number'
-            };
-
-            form.append(_.template(templates.meta.text, number, {
-              variable: 'meta'
-            }));
-            break;
-            case 'select':
-              var select = {
-              name: data.name,
-              label: data.field.label,
-              help: data.field.help,
-              placeholder: data.field.placeholder,
-              options: data.field.options,
-              lang: lang
-            };
-
-            form.append(_.template(templates.meta.select, select, {
-              variable: 'meta'
-            }));
-            break;
-            case 'multiselect':
-              var multiselect = {
-              name: data.name,
-              label: data.field.label,
-              help: data.field.help,
-              alterable: data.field.alterable,
-              placeholder: data.field.placeholder,
-              options: data.field.options,
-              lang: lang
-            };
-
-            form.append(_.template(templates.meta.multiselect, multiselect, {
-              variable: 'meta'
-            }));
-
-            break;
-            case 'hidden':
-              var tmpl = {};
-            var value = metadata[data.name];
-
-            if (_.isArray(value)) {
-              // Any defaults not currently in metadata?
-              var diff = _.difference(data.field.value, value);
-              tmpl[data.name] = diff.length ?
-                _.union(data.field.value, value) : value;
-            } else {
-              tmpl[data.name] = data.field.value;
-            }
-
-            this.model.set('metadata', _.extend(tmpl, this.model.get('metadata') || {}));
-            break;
-          }
-        } else {
-          // This just defaults to a text element if there's no field type.
-          var txt = {
-            name: key,
+        // If there's no data field, default to text field.
+        if (!data || (data && !data.field)) {
+          var field = {
             label: key,
             value: data,
-            type: 'text'
-          };
+          }
+          view = new forms.TextForm({data: {
+            name: key,
+            type: 'text',
+            field: field
+          }});
+        }
 
-          form.append(_.template(templates.meta.text, txt, {
-            variable: 'meta'
-          }));
+        // Use the data field to determine the kind of meta form to draw.
+        else {
+          switch (data.field.element) {
+            case 'button':
+              view = new forms.Button({data: data});
+            break;
+            case 'checkbox':
+              view = new forms.Checkbox({data: data});
+            break;
+            case 'text':
+              view = new forms.TextForm({
+                data: _.extend({}, data, {type: 'text'})
+              });
+            break;
+            case 'textarea':
+              view = new forms.TextArea({
+                data: _.extend({}, data, {id: util.stringToUrl(data.name)})
+              });
+            break;
+            case 'number':
+              view = new forms.TextForm({
+                data: _.extend({}, data, {type: 'number'})
+              });
+            break;
+            case 'select':
+              view = new forms.Select({
+                data: _.extend({}, data, {lang: lang})
+              });
+            break;
+            case 'multiselect':
+              view = new forms.Multiselect({
+                data: _.extend({}, data, {lang: lang})
+              });
+            break;
+
+            // On hidden values, we obviously don't have to render anything.
+            // Just make sure this default is saved on the metadata object.
+            case 'hidden':
+              var preExisting = metadata[data.name];
+              var newDefault = data.field.value;
+              var newMeta = {};
+
+              // If the pre-existing metadata is an array,
+              // make sure we don't just override it, but we find the difference.
+              if (_.isArray(preExisting)) {
+                newMeta[data.name] = _.difference(newDefault, preExisting).length ?
+                  _.union(newDefault, preExisting) : preExisting;
+              }
+              // If pre-existing is a single property or undefined,
+              // use _.extend to default to pre-existing if it exists, or
+              // newDefault if there is no pre-existing.
+              else {
+                newMeta[data.name] = newDefault;
+              }
+              this.model.set('metadata', _.extend(newMeta, this.model.get('metadata') || {}));
+            break;
+          }
+        }
+
+        if (view !== null) {
+          $form.append(view.render());
+          this.subviews.push(view);
+
+          // If the view is a text area, we'll need to init codemirror.
+          if (data && data.field && data.field.element === 'textarea') {
+            var id = util.stringToUrl(data.name);
+
+            // TODO passing in a bound callback is not the best
+            // as it increases the debugging surface area.
+            // Find some way to get around this.
+            var codeMirror = view.initCodeMirror(this.updateModel.bind(this));
+
+            // TODO fix collision here
+            this[id] = codeMirror;
+          }
         }
       }
     }).bind(this));

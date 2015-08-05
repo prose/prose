@@ -39,10 +39,10 @@ describe('Metadata editor view', function() {
     // Without any defaults, we should only see the raw meta element
     it('shows a raw editor', function() {
       metadataEditor.render();
-      expect( $('#meta').find('.form-item').length ).to.equal(1);
+      expect($('#meta').find('.form-item').length).to.equal(1);
     });
 
-    it('creates a text input element with proper default value and label', function() {
+    it('creates a text input element with proper default value, label and data-type', function() {
       var model = mockFile();
       model.set('defaults', [{
         name: 'text',
@@ -54,9 +54,11 @@ describe('Metadata editor view', function() {
       }]);
       metadataEditor.model = model;
       metadataEditor.render();
-      expect( $('#meta').find('input[type="text"]').length ).to.equal(1);
-      expect( $('#meta').find('input[type="text"]').val() ).to.equal('hello world');
-      expect( $('#meta').find('label[for="text"]').text() ).to.equal('text label');
+      var $meta = $('#meta').find('input[type="text"]');
+      expect($meta.length).to.equal(1);
+      expect($meta.val()).to.equal('hello world');
+      expect($meta.data('type')).to.equal('text');
+      expect($('#meta').find('label[for="text"]').text()).to.equal('text label');
     });
 
     it('creates a textarea element with proper default value and label', function() {
@@ -71,8 +73,28 @@ describe('Metadata editor view', function() {
       }]);
       metadataEditor.model = model;
       metadataEditor.render();
-      expect( $('#meta').find('label[for="foo"]').text() ).to.equal('bar');
-      expect( metadataEditor.foo.getValue() ).to.equal('123');
+      expect($('#meta').find('label[for="foo"]').text()).to.equal('bar');
+      expect(metadataEditor.foo.getValue()).to.equal('123');
+    });
+
+    it('creates a select element with proper label and correct options', function() {
+      var model = mockFile();
+      model.set('defaults', [{
+        name: 'select',
+        field: {
+          element: 'select',
+          label: 'select label',
+          options: [
+            {name: 'Dan', value: 'dan'},
+            {name: 'Jon', value: 'jon'},
+            {name: 'Sre', value: 'sre'}
+          ]
+        }
+      }]);
+      metadataEditor.model = model;
+      metadataEditor.render();
+      expect($('#meta').find('label[for="select"]').text()).to.equal('select label');
+      expect($('#meta').find('ul.chzn-results').find('li').length).to.equal(3);
     });
 
     it('creates a multiselect element with proper label and correct options', function() {
@@ -90,8 +112,8 @@ describe('Metadata editor view', function() {
       }]);
       metadataEditor.model = model;
       metadataEditor.render();
-      expect( $('#meta').find('label[for="multiselect"]').text() ).to.equal('multiselect label');
-      expect( $('#meta').find('ul.chzn-results').find('li').length ).to.equal(2);
+      expect($('#meta').find('label[for="multiselect"]').text()).to.equal('multiselect label');
+      expect($('#meta').find('ul.chzn-results').find('li').length).to.equal(2);
     });
 
     it('creates a checkbox element with proper default value and label', function() {
@@ -101,14 +123,33 @@ describe('Metadata editor view', function() {
         field: {
           element: 'checkbox',
           label: 'checkbox label',
-          vale: false
+          value: false
         }
       }]);
       metadataEditor.model = model;
       metadataEditor.render();
-      expect( $('#meta').find('input[type="checkbox"]').length ).to.equal(1);
-      expect( $('#meta').find('input[type="checkbox"]:checked').length ).to.equal(0);
-      expect( $('#meta').find('label[for="checkbox"]').text() ).to.equal('checkbox label');
+      expect($('#meta').find('input[type="checkbox"]').length).to.equal(1);
+      expect($('#meta').find('input[type="checkbox"]:checked').length).to.equal(0);
+      expect($('#meta').find('label[for="checkbox"]').text()).to.equal('checkbox label');
+    });
+
+    it('creates a number element with proper default value, label, and data-type', function() {
+      var model = mockFile();
+      model.set('defaults', [{
+        name: 'number',
+        field: {
+          element: 'number',
+          label: 'number label',
+          value: 4
+        }
+      }]);
+      metadataEditor.model = model;
+      metadataEditor.render();
+      var $meta = $('#meta').find('input[type="text"]');
+      expect($meta.length).to.equal(1);
+      expect($meta.val()).to.equal('4');
+      expect($meta.data('type')).to.equal('number');
+      expect($('#meta').find('label[for="number"]').text()).to.equal('number label');
     });
 
     it('creates a button element (TODO)', function() {
@@ -125,7 +166,17 @@ describe('Metadata editor view', function() {
       }]);
       metadataEditor.model = model;
       metadataEditor.render();
-      expect( $('#meta').find('input[type="button"]').length ).to.equal(1);
+      expect($('#meta').find('input[type="button"]').length).to.equal(1);
+    });
+
+    it('creates a text element if no field object exists', function() {
+      var model = mockFile();
+      model.set('defaults', [{
+        name: 'shouldBeText'
+      }]);
+      metadataEditor.model = model;
+      metadataEditor.render();
+      expect($('#meta').find('input[type="text"]').length).to.equal(1);
     });
 
     it('does not append hidden meta elements', function() {
@@ -139,7 +190,21 @@ describe('Metadata editor view', function() {
       }]);
       metadataEditor.model = model;
       metadataEditor.render();
-      expect( $('#meta').find('.form-item').length ).to.equal(1);
+      expect($('#meta').find('.form-item').length).to.equal(1);
+    });
+
+    it('saves defaults that are hidden to metadata', function() {
+      var model = mockFile();
+      model.set('defaults', [{
+        name: 'layout',
+        field: {
+          element: 'hidden',
+          value: 'fixed'
+        }
+      }]);
+      metadataEditor.model = model;
+      metadataEditor.render();
+      expect(metadataEditor.model.get('metadata').layout).to.equal('fixed');
     });
 
     // Metadata object saves references to code-mirror'd textarea elements
@@ -155,7 +220,7 @@ describe('Metadata editor view', function() {
       }]);
       metadataEditor.model = model;
       metadataEditor.render();
-      expect( metadataEditor.view ).to.deep.equal(view);
+      expect( metadataEditor.view).to.deep.equal(view);
     });
   });
 
@@ -204,7 +269,7 @@ describe('Metadata editor view', function() {
       // Did the view know to update it's model?
       // expect(spy.called);
 
-      expect( model.get('metadata').foo ).to.equal(newValue);
+      expect( model.get('metadata').foo).to.equal(newValue);
     });
   });
 });
