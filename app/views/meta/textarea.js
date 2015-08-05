@@ -49,7 +49,7 @@ module.exports = Backbone.View.extend({
       theme: 'prose-bright'
     });
 
-    codeMirror.on('blur', function() {
+    this.listenTo(codeMirror, 'blur', function() {
       textElement.value = codeMirror.getValue();
       onBlur({currentTarget: textElement});
     });

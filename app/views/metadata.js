@@ -169,8 +169,13 @@ module.exports = Backbone.View.extend({
 
     // Attach a change event listener
     this.$el.find('.chzn-select').chosen().change(this.updateModel);
+
     // Renders the raw metadata textarea form
-    this.renderRaw();
+    this.renderRawEditor();
+
+    // Now that we've rendered the form elements according
+    // to defaults, sync the form elements with the current metadata.
+    this.setValue(this.model.get('metadata'));
 
     return this;
   },
@@ -188,13 +193,9 @@ module.exports = Backbone.View.extend({
   // do the updating here.
   updateModel: function(e) {
     var target = e.currentTarget;
-    var key = target.name;
-    var value = target.value;
     var delta = {};
-    delta[key] = value;
-
-    var metadata = this.model.get('metadata');
-    this.model.set('metadata', _.extend(metadata, delta));
+    delta[target.name] = target.value;
+    this.model.set('metadata', _.extend(this.model.get('metadata'), delta));
     this.view.makeDirty();
   },
 
@@ -210,53 +211,40 @@ module.exports = Backbone.View.extend({
 
   // Responsible for rendering the raw metadata element
   // and listening for changes.
-  renderRaw: function() {
-    var yaml = this.model.get('lang') === 'yaml';
-    var $el;
-
-    // TODO Not sure why this is necessary, but it seems
-    // an extra element is rendered on yaml files.
-    if (yaml) {
-      $el = this.view.$el.find('#code');
-      $el.empty();
-    } else {
+  renderRawEditor: function() {
+    var isYaml = this.model.get('lang') === 'yaml';
+    var $parent
+    if (isYaml) {
+      $parent = this.view.$el.find('#code');
+      $parent.empty();
+    }
+    else {
       this.$el.find('.form').append(_.template(templates.meta.raw));
+      $parent = this.$el.find('#raw');
     }
 
-    var el = (yaml ? $el : this.$el.find('#raw'))[0];
-
-    // TODO rename this.raw to rawEditor or something more descriptive.
-    this.raw = CodeMirror(el, {
+    this.rawEditor = CodeMirror($parent[0], {
       mode: 'yaml',
       value: '',
       lineWrapping: true,
-      lineNumbers: yaml,
+      lineNumbers: isYaml,
       extraKeys: this.rawKeyMap(),
       theme: 'prose-bright'
     });
 
-    // TODO there should be a listenToCodeMirror function
-    // since this is probably repeated later on down.
-    this.listenTo(this.raw, 'blur', (function(cm) {
-      var value = cm.getValue();
-      var raw;
-
+    this.listenTo(this.rawEditor, 'blur', (function(codeMirror) {
       try {
-        raw = jsyaml.safeLoad(value);
+        var rawValue = jsyaml.safeLoad(codeMirror.getValue());
       } catch(err) {
         console.log("Error parsing CodeMirror editor text");
         console.log(err);
       }
-
-      if (raw) {
+      if (rawValue) {
         var metadata = this.model.get('metadata');
-        this.model.set('metadata', _.extend(metadata, raw));
-
+        this.model.set('metadata', _.extend(metadata, rawValue));
         this.view.makeDirty();
       }
     }).bind(this));
-
-    this.setValue(this.model.get('metadata'));
   },
 
   getValue: function() {
@@ -278,6 +266,12 @@ module.exports = Backbone.View.extend({
         this.view.header.inputGet() :
         this.model.get('metadata').title[0];
     }
+
+    /*
+    _.each(this.subviews, function(view) {
+      metadata[view.name] = view.getValue();
+    });
+    */
 
     // Extracts values from each native form element.
     _.each(this.$el.find('[name]'), function(item) {
@@ -344,9 +338,9 @@ module.exports = Backbone.View.extend({
     });
 
     // Load any data coming from not defined raw yaml front matter.
-    if (this.raw) {
+    if (this.rawEditor) {
       try {
-        metadata = _.merge(metadata, jsyaml.safeLoad(this.raw.getValue()) || {});
+        metadata = _.merge(metadata, jsyaml.safeLoad(this.rawEditor.getValue()) || {});
       } catch (err) {
         console.log("Error parsing not defined raw yaml front matter");
         console.log(err);
@@ -356,9 +350,9 @@ module.exports = Backbone.View.extend({
     return metadata;
   },
 
-  // @data object metadata key/value pairs
+  // @metadata object metadata key/value pairs
   // Syncs the visual UI with what's currently saved on the model.
-  setValue: function(data) {
+  setValue: function(metadata) {
     var form = this.$el.find('.form');
     var missing = {};
     var raw;
@@ -366,7 +360,7 @@ module.exports = Backbone.View.extend({
     // For each metadata key/value pair, check to see if it exists,
     // and if it does, update it's value.
     // If no matches are found, attempt to create a new field.
-    _.each(data, (function(value, key) {
+    _.each(metadata, (function(value, key) {
       var matched = false;
       var input = this.$el.find('[name="' + key + '"]');
       // TODO length is not something we need to cache.
@@ -462,8 +456,8 @@ module.exports = Backbone.View.extend({
           raw = {};
           raw[key] = value;
 
-          if (this.raw) {
-            this.raw.setValue(this.raw.getValue() + jsyaml.safeDump(raw));
+          if (this.rawEditor) {
+            this.rawEditor.setValue(this.rawEditor.getValue() + jsyaml.safeDump(raw));
           }
         }
       }
@@ -505,7 +499,7 @@ module.exports = Backbone.View.extend({
           label: key,
           placeholder: key,
           options: value,
-          lang: data.lang || 'en'
+          lang: metadata.lang || 'en'
         };
 
         form.append(_.template(templates.meta.multiselect, obj, {
@@ -527,20 +521,6 @@ module.exports = Backbone.View.extend({
     this.model.set('metadata', this.getValue());
   },
 
-  getRaw: function() {
-    return jsyaml.safeDump(this.getValue()).trim();
-  },
-
-  setRaw: function(data) {
-    try {
-      this.raw.setValue(jsyaml.safeDump(data));
-      // TODO this isn't actually calling refresh.
-      this.refresh;
-    } catch (err) {
-      throw err;
-    }
-  },
-
   refresh: function() {
     var view = this;
     this.$el.find('.yaml-block').each(function() {
@@ -550,7 +530,7 @@ module.exports = Backbone.View.extend({
     });
 
     // Refresh CodeMirror
-    if (this.raw) this.raw.refresh();
+    if (this.rawEditor) this.rawEditor.refresh();
   },
 
   createSelect: function(e) {
