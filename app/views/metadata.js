@@ -70,108 +70,99 @@ module.exports = Backbone.View.extend({
       // Tests that 1. This is the title metadata,
       // and 2. We've decided to combine the title form UI as the page header.
       // If both are true, then don't render this default.
-      // TODO this is a very confusing naming scheme.
-      // If renderTitle is true, then we render, and it is not necessarily a title.
-      var renderTitle = true;
-
       if (data && data.name === 'title' && this.titleAsHeading) {
-        renderTitle = false;
+        return;
       }
 
-      // TODO this is way too frustrating to read, and needs re-factoring.
-      // Each UI item should be it's own function.
-      if (renderTitle) {
+      var view = null;
 
-        var view = null;
-
-        // If there's no data field, default to text field.
-        if (!data || (data && !data.field)) {
-          var field = {
-            label: key,
-            value: data,
-          }
-          view = new forms.TextForm({data: {
-            name: key,
-            type: 'text',
-            field: field
-          }});
+      // If there's no data field, default to text field.
+      if (!data || (data && !data.field)) {
+        var field = {
+          label: key,
+          value: data,
         }
+        view = new forms.TextForm({data: {
+          name: key,
+          type: 'text',
+          field: field
+        }});
+      }
 
-        // Use the data field to determine the kind of meta form to draw.
-        else {
-          switch (data.field.element) {
-            case 'button':
-              view = new forms.Button({data: data});
-            break;
-            case 'checkbox':
-              view = new forms.Checkbox({data: data});
-            break;
-            case 'text':
-              view = new forms.TextForm({
-                data: _.extend({}, data, {type: 'text'})
-              });
-            break;
-            case 'textarea':
-              view = new forms.TextArea({
-                data: _.extend({}, data, {id: util.stringToUrl(data.name)})
-              });
-            break;
-            case 'number':
-              view = new forms.TextForm({
-                data: _.extend({}, data, {type: 'number'})
-              });
-            break;
-            case 'select':
-              view = new forms.Select({
-                data: _.extend({}, data, {lang: lang})
-              });
-            break;
-            case 'multiselect':
-              view = new forms.Multiselect({
-                data: _.extend({}, data, {lang: lang})
-              });
-            break;
+      // Use the data field to determine the kind of meta form to draw.
+      else {
+        switch (data.field.element) {
+          case 'button':
+            view = new forms.Button({data: data});
+          break;
+          case 'checkbox':
+            view = new forms.Checkbox({data: data});
+          break;
+          case 'text':
+            view = new forms.TextForm({
+              data: _.extend({}, data, {type: 'text'})
+            });
+          break;
+          case 'textarea':
+            view = new forms.TextArea({
+              data: _.extend({}, data, {id: util.stringToUrl(data.name)})
+            });
+          break;
+          case 'number':
+            view = new forms.TextForm({
+              data: _.extend({}, data, {type: 'number'})
+            });
+          break;
+          case 'select':
+            view = new forms.Select({
+              data: _.extend({}, data, {lang: lang})
+            });
+          break;
+          case 'multiselect':
+            view = new forms.Multiselect({
+              data: _.extend({}, data, {lang: lang})
+            });
+          break;
 
-            // On hidden values, we obviously don't have to render anything.
-            // Just make sure this default is saved on the metadata object.
-            case 'hidden':
-              var preExisting = metadata[data.name];
-              var newDefault = data.field.value;
-              var newMeta = {};
+          // On hidden values, we obviously don't have to render anything.
+          // Just make sure this default is saved on the metadata object.
+          case 'hidden':
+            var preExisting = metadata[data.name];
+            var newDefault = data.field.value;
+            var newMeta = {};
 
-              // If the pre-existing metadata is an array,
-              // make sure we don't just override it, but we find the difference.
-              if (_.isArray(preExisting)) {
-                newMeta[data.name] = _.difference(newDefault, preExisting).length ?
-                  _.union(newDefault, preExisting) : preExisting;
-              }
-              // If pre-existing is a single property or undefined,
-              // use _.extend to default to pre-existing if it exists, or
-              // newDefault if there is no pre-existing.
-              else {
-                newMeta[data.name] = newDefault;
-              }
-              this.model.set('metadata', _.extend(newMeta, this.model.get('metadata') || {}));
-            break;
-          }
+            // If the pre-existing metadata is an array,
+            // make sure we don't just override it, but we find the difference.
+            if (_.isArray(preExisting)) {
+              newMeta[data.name] = _.difference(newDefault, preExisting).length ?
+                _.union(newDefault, preExisting) : preExisting;
+            }
+            // If pre-existing is a single property or undefined,
+            // use _.extend to default to pre-existing if it exists, or
+            // newDefault if there is no pre-existing.
+            else {
+              newMeta[data.name] = newDefault;
+            }
+            this.model.set('metadata', _.extend(newMeta, this.model.get('metadata') || {}));
+          break;
         }
+      }
 
-        if (view !== null) {
-          $form.append(view.render());
-          this.subviews.push(view);
+      if (view !== null) {
+        $form.append(view.render());
+        this.subviews.push(view);
 
-          // If the view is a text area, we'll need to init codemirror.
-          if (data && data.field && data.field.element === 'textarea') {
-            var id = util.stringToUrl(data.name);
+        // If the view is a text area, we'll need to init codemirror.
+        if (data && data.field && data.field.element === 'textarea') {
+          var id = util.stringToUrl(data.name);
 
-            // TODO passing in a bound callback is not the best
-            // as it increases the debugging surface area.
-            // Find some way to get around this.
-            var codeMirror = view.initCodeMirror(this.updateModel.bind(this));
+          // TODO passing in a bound callback is not the best
+          // as it increases the debugging surface area.
+          // Find some way to get around this.
+          var codeMirror = view.initCodeMirror(this.updateModel.bind(this));
 
-            // TODO fix collision here
-            this[id] = codeMirror;
-          }
+          // TODO fix collision here
+          this[id] = codeMirror;
         }
       }
     }).bind(this));
