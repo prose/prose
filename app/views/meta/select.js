@@ -7,6 +7,10 @@ module.exports = Backbone.View.extend({
 
   template: templates.meta.select,
 
+  initialize: function(options) {
+    this.name = options.data.name;
+  },
+
   render: function () {
     var data = this.options.data;
     var select = {
@@ -18,8 +22,15 @@ module.exports = Backbone.View.extend({
       lang: data.lang
     };
 
-    return _.template(this.template, select, {
+    this.setElement($(_.template(this.template, select, {
       variable: 'meta'
-    });
+    })));
+    this.$form = this.$el.find('select');
+    return this.$el;
+  },
+
+  getValue: function() {
+    return this.$form.val();
   }
+
 });

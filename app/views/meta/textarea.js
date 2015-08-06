@@ -10,6 +10,7 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     this.id = options.data.id;
+    this.name = options.data.name;
   },
 
   render: function () {
@@ -25,9 +26,11 @@ module.exports = Backbone.View.extend({
       type: 'textarea'
     };
 
-    return _.template(this.template, textarea, {
+    this.setElement($(_.template(this.template, textarea, {
       variable: 'meta'
-    });
+    })));
+
+    return this.$el;
   },
 
   // Initialize code mirror and save it to this.
@@ -54,7 +57,14 @@ module.exports = Backbone.View.extend({
       onBlur({currentTarget: textElement});
     });
 
+    // Since other elements have a $form property shorthand
+    // for the form element, make this consistent.
     this.codeMirror = codeMirror;
+    this.$form = codeMirror;
     return codeMirror;
   },
+
+  getValue: function() {
+    return this.codeMirror.getValue();
+  }
 });

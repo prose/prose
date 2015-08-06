@@ -7,6 +7,10 @@ module.exports = Backbone.View.extend({
 
   template: templates.meta.text,
 
+  initialize: function(options) {
+    this.name = options.data.name;
+  },
+
   render: function () {
     var data = this.options.data;
 
@@ -19,8 +23,14 @@ module.exports = Backbone.View.extend({
       type: data.type
     };
 
-    return _.template(this.template, text, {
+    this.setElement($(_.template(this.template, text, {
       variable: 'meta'
-    });
+    })));
+    this.$form = this.$el.find('input');
+    return this.$el;
+  },
+
+  getValue: function() {
+    return this.$form.val();
   }
 });

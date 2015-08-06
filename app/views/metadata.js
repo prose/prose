@@ -8,14 +8,12 @@ var templates = require('../../dist/templates');
 var util = require('../util');
 
 var forms = {
-
   Checkbox: require('./meta/checkbox'),
   TextForm: require('./meta/text'),
   TextArea: require('./meta/textarea'),
   Button: require('./meta/button'),
   Select: require('./meta/select'),
   Multiselect: require('./meta/multiselect'),
-
 };
 
 
@@ -82,8 +80,9 @@ module.exports = Backbone.View.extend({
           label: key,
           value: data,
         }
+        var name = data.name ? data.name : key;
         view = new forms.TextForm({data: {
-          name: key,
+          name: name,
           type: 'text',
           field: field
         }});
@@ -175,6 +174,7 @@ module.exports = Backbone.View.extend({
 
     // Now that we've rendered the form elements according
     // to defaults, sync the form elements with the current metadata.
+    // TODO it seems like
     this.setValue(this.model.get('metadata'));
 
     return this;
@@ -191,6 +191,9 @@ module.exports = Backbone.View.extend({
   // on a method in the child (this) view is too heavy-handed coupling.
   // Since this view has access to the proper model, it should
   // do the updating here.
+  //
+  // TODO calling updateModel on a checkbox change means the metadata
+  // value is set to the name (or value) of the element, not true or false.
   updateModel: function(e) {
     var target = e.currentTarget;
     var delta = {};
@@ -251,6 +254,13 @@ module.exports = Backbone.View.extend({
     var view = this;
     var metadata = this.model.get('metadata') || {};
 
+
+    // First get values from all subviews.
+    _.each(this.subviews, function(view) {
+      var value = view.getValue();
+    });
+
+
     // TODO this would always seem to default metadata.published to true.
     if (this.view.toolbar &&
        this.view.toolbar.publishState() ||
@@ -266,12 +276,6 @@ module.exports = Backbone.View.extend({
         this.view.header.inputGet() :
         this.model.get('metadata').title[0];
     }
-
-    /*
-    _.each(this.subviews, function(view) {
-      metadata[view.name] = view.getValue();
-    });
-    */
 
     // Extracts values from each native form element.
     _.each(this.$el.find('[name]'), function(item) {
@@ -293,6 +297,7 @@ module.exports = Backbone.View.extend({
           }
           break;
         case 'checkbox':
+          // TODO this is broken in that it returns the value, which is
           if (item.checked) {
 
             if (_.has(metadata, item.name) && item.name !== item.value) {
@@ -353,9 +358,22 @@ module.exports = Backbone.View.extend({
   // @metadata object metadata key/value pairs
   // Syncs the visual UI with what's currently saved on the model.
   setValue: function(metadata) {
+    /*
+    console.log(this.subviews);
+    // For each metadata key/value pair, check to see if it exists.
+    // And if it does, update it's value as shown.
+    // If no matches are found, attempt to create a new field.
+    _.each(metadata, function(value, key) {
+      console.log(value, key);
+    });
+
+    */
+
+
     var form = this.$el.find('.form');
     var missing = {};
     var raw;
+
 
     // For each metadata key/value pair, check to see if it exists,
     // and if it does, update it's value.
@@ -363,14 +381,12 @@ module.exports = Backbone.View.extend({
     _.each(metadata, (function(value, key) {
       var matched = false;
       var input = this.$el.find('[name="' + key + '"]');
-      // TODO length is not something we need to cache.
-      var length = input.length;
       var options;
 
-      if (length) {
+      if (input.length) {
 
         // iterate over matching fields
-        for (var i = 0; i < length; i++) {
+        for (var i = 0; i < input.length; i++) {
 
           // if value is an array
           // TODO check if value is ever an array.

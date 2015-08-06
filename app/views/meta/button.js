@@ -7,7 +7,11 @@ module.exports = Backbone.View.extend({
 
   template: templates.meta.button,
 
-  render: function () {
+  initialize: function(options) {
+    this.name = options.data.name;
+  },
+
+  render: function() {
     var data = this.options.data;
     var button = {
       name: data.name,
@@ -17,8 +21,14 @@ module.exports = Backbone.View.extend({
       off: data.field.off
     };
 
-    return _.template(this.template, button, {
+    this.setElement($(_.template(this.template, button, {
       variable: 'meta'
-    });
+    })));
+    this.$form = this.$el.find('button');
+    return this.$el;
+  },
+
+  getValue: function() {
+    return this.$form.val() === 'true';
   }
 });
