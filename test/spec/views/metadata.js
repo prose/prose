@@ -73,7 +73,7 @@ describe('Metadata editor view', function() {
       }]);
       metadataEditor.render();
       expect($('#meta').find('label[for="foo"]').text()).to.equal('bar');
-      expect(metadataEditor.foo.getValue()).to.equal('123');
+      expect(metadataEditor.codeMirrorInstances.foo.getValue()).to.equal('123');
     });
 
     it('creates a select element with correct label and options', function() {
@@ -190,10 +190,8 @@ describe('Metadata editor view', function() {
       expect(metadataEditor.model.get('metadata').layout).to.equal('fixed');
     });
 
-    // Metadata object saves references to code-mirror'd textarea elements
-    // on itself, or 'this', during render function.
-    // This has the potential to overwrite native methods.
-    it('textarea names do not collide with view methods (TODO)', function() {
+    it('textarea names do not collide with view methods', function() {
+      var view = metadataEditor.view;
       model.set('defaults', [{
         name: 'view',
         field: {
@@ -201,7 +199,7 @@ describe('Metadata editor view', function() {
         }
       }]);
       metadataEditor.render();
-      expect( metadataEditor.view).to.deep.equal(view);
+      expect(metadataEditor.view).to.deep.equal(view);
     });
   });
 
@@ -226,7 +224,7 @@ describe('Metadata editor view', function() {
       expect(model.get('metadata').foo).to.equal(newValue);
     });
 
-    it('saves changes to model on textarea blur (TODO)', function() {
+    it('saves changes to model on textarea blur', function() {
       model.set('defaults', [{
         name: 'textarea',
         field: {
@@ -235,7 +233,7 @@ describe('Metadata editor view', function() {
         }
       }]);
       metadataEditor.render();
-      metadataEditor.textarea.setValue('bar');
+      metadataEditor.codeMirrorInstances.textarea.setValue('bar');
       $('.metafield').trigger('change');
       expect(model.get('metadata').textarea).to.equal('bar');
     });
@@ -341,7 +339,7 @@ describe('Metadata editor view', function() {
         textarea: 'abc'
       });
       metadataEditor.render();
-      expect(metadataEditor.textarea.getValue()).to.equal('abc');
+      expect(metadataEditor.codeMirrorInstances.textarea.getValue()).to.equal('abc');
     });
 
     it('sets values on select elements', function() {
@@ -403,7 +401,7 @@ describe('Metadata editor view', function() {
         text: 'hello world'
       });
       metadataEditor.render();
-      expect(jsyaml.safeLoad(metadataEditor.rawEditor.getValue()))
+      expect(jsyaml.safeLoad(metadataEditor.codeMirrorInstances.rawEditor.getValue()))
         .to.deep.equal({text: 'hello world'});
     });
 
@@ -420,7 +418,7 @@ describe('Metadata editor view', function() {
         title: 'hello world'
       });
       metadataEditor.render();
-      expect(metadataEditor.rawEditor.getValue()).to.equal('');
+      expect(metadataEditor.codeMirrorInstances.rawEditor.getValue()).to.equal('');
     });
 
     it('handles text elements with duplicate names', function() {

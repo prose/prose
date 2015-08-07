@@ -48,6 +48,7 @@ module.exports = Backbone.View.extend({
     this.view = options.view;
 
     this.subviews = [];
+    this.codeMirrorInstances = {};
   },
 
   // Parent file view calls this render func immediately
@@ -161,8 +162,7 @@ module.exports = Backbone.View.extend({
           // Find some way to get around this.
           var codeMirror = view.initCodeMirror(this.updateModel.bind(this));
 
-          // TODO fix collision here
-          this[id] = codeMirror;
+          this.codeMirrorInstances[id] = codeMirror;
         }
       }
     }).bind(this));
@@ -210,7 +210,7 @@ module.exports = Backbone.View.extend({
       $parent = this.$el.find('#raw');
     }
 
-    this.rawEditor = CodeMirror($parent[0], {
+    this.codeMirrorInstances.rawEditor = CodeMirror($parent[0], {
       mode: 'yaml',
       value: '',
       lineWrapping: true,
@@ -219,7 +219,7 @@ module.exports = Backbone.View.extend({
       theme: 'prose-bright'
     });
 
-    this.listenTo(this.rawEditor, 'blur', (function(codeMirror) {
+    this.listenTo(this.codeMirrorInstances.rawEditor, 'blur', (function(codeMirror) {
       try {
         var rawValue = jsyaml.safeLoad(codeMirror.getValue());
       } catch(err) {
@@ -241,7 +241,7 @@ module.exports = Backbone.View.extend({
     // It's important to save only the data that's represented
     // by the current meta elements.
     // Even if there are elements with the same name.
-    var currentMetaState = _.chain(this.subviews).map(function(view) {
+    _.chain(this.subviews).map(function(view) {
       return {
         value: view.getValue(),
         name: view.name
@@ -252,7 +252,7 @@ module.exports = Backbone.View.extend({
         group[0].value : _.pluck(group, 'value');
     });
 
-    // TODO this would always seem to default metadata.published to true.
+    // TODO does this always default metadata.published to true?
     if (this.view.toolbar &&
        this.view.toolbar.publishState() ||
        (metadata && metadata.published)) {
@@ -269,9 +269,9 @@ module.exports = Backbone.View.extend({
     }
 
     // Load any data coming from not defined raw yaml front matter.
-    if (this.rawEditor) {
+    if (this.codeMirrorInstances.rawEditor) {
       try {
-        metadata = _.merge(metadata, jsyaml.safeLoad(this.rawEditor.getValue()) || {});
+        metadata = _.merge(metadata, jsyaml.safeLoad(this.codeMirrorInstances.rawEditor.getValue()) || {});
       } catch (err) {
         console.log("Error parsing not defined raw yaml front matter");
         console.log(err);
@@ -290,7 +290,7 @@ module.exports = Backbone.View.extend({
     // By now we've already rendered our elements along with
     // the correct defaults.
     metadata = metadata || {};
-    var rawEditor = this.rawEditor;
+    var rawEditor = this.codeMirrorInstances.rawEditor;
     var subviews = this.subviews;
     var defaults = this.model.get('defaults') || [];
     var hidden = defaults.filter(function(d) {
@@ -332,15 +332,9 @@ module.exports = Backbone.View.extend({
   },
 
   refresh: function() {
-    var view = this;
-    this.$el.find('.yaml-block').each(function() {
-      var editor = $(this).find('.CodeMirror').attr('id');
-      // TODO instance of possible name collision.
-      if (view[editor]) view[editor].refresh();
+    _.each(this.codeMirrorInstances, function(codeMirror) {
+      codeMirror.refresh();
     });
-
-    // Refresh CodeMirror
-    if (this.rawEditor) this.rawEditor.refresh();
   },
 
   createSelect: function(e) {
