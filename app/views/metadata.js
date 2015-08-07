@@ -52,6 +52,7 @@ module.exports = Backbone.View.extend({
 
   // Parent file view calls this render func immediately
   // after initializing this view.
+  // This is responsible for rendering metadata fields for each *default*.
   render: function() {
     this.$el.empty().append(_.template(this.template));
 
@@ -174,7 +175,6 @@ module.exports = Backbone.View.extend({
 
     // Now that we've rendered the form elements according
     // to defaults, sync the form elements with the current metadata.
-    // TODO it seems like
     this.setValue(this.model.get('metadata'));
 
     return this;
@@ -238,28 +238,18 @@ module.exports = Backbone.View.extend({
     var view = this;
     var metadata = this.model.get('metadata') || {};
 
-    // First get values from all subviews.
-    _.each(this.subviews, function(view) {
-      var name = view.name;
-      var value = view.getValue();
-      var hasKey = _.has(metadata, name);
-      var isArray = _.isArray(value);
-
-      // Update metadata if there's no key,
-      // or if there is a key and the value isn't an array.
-      if (!hasKey || (hasKey && !isArray)) {
-        metadata[name] = value;
-      }
-
-      // If it's an array, do a union.
-      // TODO the only thing that returns an array is a multiselect(?)
-      // Is a union really what we want to do here?
-      else if (hasKey && isArray && metadata[name] !== value) {
-        // No need to keep null or undefined values here.
-        metadata[name] = _.filter(_.union(metadata[name], value), function(a) {
-          return a != null;
-        });
-      }
+    // It's important to save only the data that's represented
+    // by the current meta elements.
+    // Even if there are elements with the same name.
+    var currentMetaState = _.chain(this.subviews).map(function(view) {
+      return {
+        value: view.getValue(),
+        name: view.name
+      };
+    }).groupBy('name').each(function(group) {
+      var name = group[0].name;
+      metadata[name] = group.length === 1 ?
+        group[0].value : _.pluck(group, 'value');
     });
 
     // TODO this would always seem to default metadata.published to true.
@@ -294,171 +284,51 @@ module.exports = Backbone.View.extend({
   // @metadata object metadata key/value pairs
   // Syncs the visual UI with what's currently saved on the model.
   setValue: function(metadata) {
-    var form = this.$el.find('.form');
-    var missing = {};
-    var raw;
 
+    // The key point here is that the UI reflects exactly
+    // what's in the metadata.
+    // By now we've already rendered our elements along with
+    // the correct defaults.
+    metadata = metadata || {};
+    var rawEditor = this.rawEditor;
+    var subviews = this.subviews;
+    var defaults = this.model.get('defaults') || [];
+    var hidden = defaults.filter(function(d) {
+      return d.field && d.field.element === 'hidden';
+    });
 
-    // For each metadata key/value pair, check to see if it exists,
-    // and if it does, update it's value.
-    // If no matches are found, attempt to create a new field.
-    _.each(metadata, (function(value, key) {
-      var matched = false;
-      var input = this.$el.find('[name="' + key + '"]');
-      var options;
+    // Easiest thing to do is update metadata fields
+    // that are rendered already, ie. have defaults specified
+    // in _config.yml or _prose.yml
+    _.each(metadata, function(value, key) {
 
-      if (input.length) {
-
-        // iterate over matching fields
-        for (var i = 0; i < input.length; i++) {
-
-          // if value is an array
-          // TODO check if value is ever an array.
-          if (_.isArray(value)) {
-
-            // iterate over values in array
-            for (var j = 0; j < value.length; j++) {
-              switch (input[i].type) {
-                case 'select-multiple':
-                  case 'select-one':
-                  options = $(input[i]).find('option[value="' + value[j] + '"]');
-                if (options.length) {
-                  for (var k = 0; k < options.length; k++) {
-                    options[k].selected = 'selected';
-                  }
-
-                  matched = true;
-                }
-                break;
-                case 'text':
-                  case 'textarea':
-                  input[i].value = value;
-                matched = true;
-                break;
-                case 'checkbox':
-                  if (input[i].value === value) {
-                  input[i].checked = 'checked';
-                  matched = true;
-                }
-                break;
-              }
-            }
-
-          } else {
-
-            switch (input[i].type) {
-              case 'select-multiple':
-                case 'select-one':
-                options = $(input[i]).find('option[value="' + value + '"]');
-              if (options.length) {
-                for (var m = 0; m < options.length; m++) {
-                  options[m].selected = 'selected';
-                }
-
-                matched = true;
-              }
-              break;
-              case 'text':
-                case 'textarea':
-                input[i].value = value;
-              matched = true;
-              break;
-              case 'checkbox':
-                input[i].checked = value ? 'checked' : false;
-              matched = true;
-              break;
-              case 'button':
-                input[i].value = value ? true : false;
-              input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
-              matched = true;
-              break;
-            }
-
-          }
-        }
-
-        if (!matched && value !== null) {
-          if (missing.hasOwnProperty(key) && missing[key] !== value) {
-            missing[key] = _.union(missing[key], value);
-          } else {
-            missing[key] = value;
-          }
-        }
-
-      } else {
-        // Don't render the 'published' field or hidden metadata
-        // TODO: render metadata values that share a key with a hidden value
-        var defaults = _.find(this.model.get('defaults'), function(data) { return data && (data.name === key); });
-        var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
-
-        // TODO Kind of a silly way to determine whether this is the raw editor or not.
-        if (key !== 'published' && key !== 'title' && !defaults) {
-          raw = {};
-          raw[key] = value;
-
-          if (this.rawEditor) {
-            this.rawEditor.setValue(this.rawEditor.getValue() + jsyaml.safeDump(raw));
-          }
-        }
+      // Filter instead of find, because you never know if someone
+      // is using the same key for two different elements.
+      var renderedViews = _.filter(subviews, function(view) {
+        return view.name === key;
+      });
+      if (renderedViews.length && _.isArray(value)
+          && value.length === renderedViews.length) {
+        _.each(renderedViews, function(view, i) {
+          view.setValue(value[i]);
+        });
       }
-    }).bind(this));
-
-    // TODO is this necessary? Do we ever get a missing value?
-    // What case does this cover?
-    _.each(missing, (function(value, key) {
-      if (value === null) return;
-
-      switch (typeof value) {
-        case 'boolean':
-          var bool = {
-          name: key,
-          label: value,
-          value: value,
-          checked: value ? 'checked' : false
-        };
-
-        form.append(_.template(templates.meta.checkbox, bool, {
-          variable: 'meta'
-        }));
-        break;
-        case 'string':
-          var string = {
-          name: key,
-          label: value,
-          value: value,
-          type: 'text'
-        };
-
-        form.append(_.template(templates.meta.text, string, {
-          variable: 'meta'
-        }));
-        break;
-        case 'object':
-          var obj = {
-          name: key,
-          label: key,
-          placeholder: key,
-          options: value,
-          lang: metadata.lang || 'en'
-        };
-
-        form.append(_.template(templates.meta.multiselect, obj, {
-          variable: 'meta'
-        }));
-        break;
-        default:
-          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
-        break;
+      else if (renderedViews.length === 1) {
+        renderedViews[0].setValue(value);
       }
 
-      this.$el.find('.chzn-select').chosen().change(this.updateModel);
-    }).bind(this));
-
-    this.$el.find('.chzn-select').trigger('liszt:updated');
-
-    // Update model with defaults
-    // TODO: should this makeDirty if any differences?
-    this.model.set('metadata', this.getValue());
+      // Next is to take any metadata field that doesn't have a form,
+      // and throw it into the raw editor.
+      // Note, we don't want to include hidden elements,
+      // titles, or published states here.
+      else if (!renderedViews.length && value &&
+               key !== 'title' && key !== 'published' &&
+               !_.find(hidden, function(d) { return d.name === key })){
+        var raw = {};
+        raw[key] = value;
+        rawEditor.setValue(rawEditor.getValue() + jsyaml.safeDump(raw));
+      }
+    });
   },
 
   refresh: function() {

@@ -6,6 +6,7 @@ var templates = require('../../../dist/templates');
 module.exports = Backbone.View.extend({
 
   template: templates.meta.select,
+  type: 'select',
 
   initialize: function(options) {
     this.name = options.data.name;
@@ -31,6 +32,16 @@ module.exports = Backbone.View.extend({
 
   getValue: function() {
     return this.$form.val();
-  }
+  },
 
+  // TODO add an option if not found
+  setValue: function(value) {
+    var values = _.isArray(value) ? value : [value];
+    var $el = this.$el;
+    _.each(values, function(v) {
+      $el.find('option[value="' + v + '"]').each(function() {
+        this.selected = 'selected';
+      });
+    });
+  }
 });

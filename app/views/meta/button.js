@@ -6,6 +6,7 @@ var templates = require('../../../dist/templates');
 module.exports = Backbone.View.extend({
 
   template: templates.meta.button,
+  type: 'button',
 
   initialize: function(options) {
     this.name = options.data.name;
@@ -30,5 +31,9 @@ module.exports = Backbone.View.extend({
 
   getValue: function() {
     return this.$form.val() === 'true';
+  },
+
+  setValue: function(value) {
+    this.val(value);
   }
 });

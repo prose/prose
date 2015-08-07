@@ -1,12 +1,14 @@
 var $ = require('jquery-browserify');
 var Backbone = require('backbone');
 var _ = require('underscore');
+var jsyaml = require('js-yaml');
 var templates = require('../../../dist/templates');
 var util = require('../../util');
 
 module.exports = Backbone.View.extend({
 
   template: templates.meta.textarea,
+  type: 'textarea',
 
   initialize: function(options) {
     this.id = options.data.id;
@@ -52,9 +54,10 @@ module.exports = Backbone.View.extend({
       theme: 'prose-bright'
     });
 
-    this.listenTo(codeMirror, 'blur', function() {
-      textElement.value = codeMirror.getValue();
-      onBlur({currentTarget: textElement});
+    codeMirror.on('blur', function() {
+      onBlur({currentTarget: {
+        value: codeMirror.getValue()
+      }});
     });
 
     // Since other elements have a $form property shorthand
@@ -65,6 +68,17 @@ module.exports = Backbone.View.extend({
   },
 
   getValue: function() {
-    return this.codeMirror.getValue();
+    try {
+      return jsyaml.safeLoad(this.codeMirror.getValue());
+    }
+    catch(err) {
+      console.log('Error parsing yaml front matter for ', this.name);
+      console.log(err);
+      return '';
+    }
+  },
+
+  setValue: function(value) {
+    this.codeMirror.setValue(value);
   }
 });

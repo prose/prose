@@ -5,11 +5,8 @@ var templates = require('../../../dist/templates');
 
 module.exports = Backbone.View.extend({
 
-  events: {
-    'change .metafield': 'updateValue'
-  },
-
   template: templates.meta.checkbox,
+  type: 'checkbox',
 
   initialize: function(options) {
     this.name = options.data.name;
@@ -32,11 +29,11 @@ module.exports = Backbone.View.extend({
     return this.$el;
   },
 
-  updateValue: function() {
-    this.$form.val(this.$form[0].checked ? true : false);
-  },
-
   getValue: function() {
     return this.$form[0].checked;
-  }
+  },
+
+  setValue: function(value) {
+    this.$form[0].checked = value;
+  },
 });
