@@ -259,14 +259,29 @@ module.exports = Backbone.View.extend({
     var view = this;
     var metadata = this.model.get('metadata') || {};
 
-
     // First get values from all subviews.
     _.each(this.subviews, function(view) {
+      var name = view.name;
       var value = view.getValue();
+      var hasKey = _.has(metadata, name);
+      var isArray = _.isArray(value);
 
+      // Update metadata if there's no key,
+      // or if there is a key and the value isn't an array.
+      if (!hasKey || (hasKey && !isArray)) {
+        metadata[name] = value;
+      }
 
+      // If it's an array, do a union.
+      // TODO the only thing that returns an array is a multiselect(?)
+      // Is a union really what we want to do here?
+      else if (hasKey && isArray && metadata[name] !== value) {
+        // No need to keep null or undefined values here.
+        metadata[name] = _.filter(_.union(metadata[name], value), function(a) {
+          return a != null;
+        });
+      }
     });
-
 
     // TODO this would always seem to default metadata.published to true.
     if (this.view.toolbar &&
@@ -284,71 +299,6 @@ module.exports = Backbone.View.extend({
         this.model.get('metadata').title[0];
     }
 
-    // Extracts values from each native form element.
-    _.each(this.$el.find('[name]'), function(item) {
-      var $item = $(item);
-      var value = $item.val();
-
-      switch (item.type) {
-        case 'select-multiple':
-        case 'select-one':
-        case 'textarea':
-        case 'text':
-          if (value) {
-            value = $item.data('type') === 'number' ? Number(value) : value;
-            if (_.has(metadata, item.name) && metadata[item.name] !== value) {
-              metadata[item.name] = _.union(metadata[item.name], value);
-            } else {
-              metadata[item.name] = value;
-            }
-          }
-          break;
-        case 'checkbox':
-          // TODO this is broken in that it returns the value, which is
-          if (item.checked) {
-
-            if (_.has(metadata, item.name) && item.name !== item.value) {
-              metadata[item.name] = _.union(metadata[item.name], item.value);
-            } else if (item.value === item.name) {
-              metadata[item.name] = item.checked;
-            } else {
-              metadata[item.name] = item.value;
-            }
-
-          } else if (!_.has(metadata, item.name) && item.name === item.value) {
-            metadata[item.name] = item.checked;
-          } else {
-            metadata[item.name] = item.checked;
-          }
-          break;
-        case 'button':
-          if (value === 'true') {
-            metadata[item.name] = true;
-          } else if (value === 'false') {
-            metadata[item.name] = false;
-          }
-          break;
-      }
-    });
-
-    // Load any data coming from a yaml-block of content.
-    // aka this is what gets stuff from the textareas.
-    // TODO getValue is probably throwing an error here.
-    // TODO this is also causing name collisions.
-    this.$el.find('.yaml-block').each(function() {
-      var editor = $(this).find('.CodeMirror').attr('id');
-      var name = $('#' + editor).data('name');
-
-      if (view[editor]) {
-        try {
-          metadata[name] = jsyaml.safeLoad(view[editor].getValue());
-        } catch(err) {
-          console.log("Error parsing yaml front matter");
-          console.log(err);
-        }
-      }
-    });
-
     // Load any data coming from not defined raw yaml front matter.
     if (this.rawEditor) {
       try {
@@ -365,18 +315,6 @@ module.exports = Backbone.View.extend({
   // @metadata object metadata key/value pairs
   // Syncs the visual UI with what's currently saved on the model.
   setValue: function(metadata) {
-    /*
-    console.log(this.subviews);
-    // For each metadata key/value pair, check to see if it exists.
-    // And if it does, update it's value as shown.
-    // If no matches are found, attempt to create a new field.
-    _.each(metadata, function(value, key) {
-      console.log(value, key);
-    });
-
-    */
-
-
     var form = this.$el.find('.form');
     var missing = {};
     var raw;
