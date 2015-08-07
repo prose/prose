@@ -180,30 +180,9 @@ module.exports = Backbone.View.extend({
     return this;
   },
 
-  // Convenience method to save changes to file model
-  // on some sort of event callback.
-  //
-  // fileView.makeDirty() calls set on the file model,
-  // known locally here as this.model, using this.getValue(),
-  // which is below.
-  //
-  // TODO calling the parent view so it can set it's model based
-  // on a method in the child (this) view is too heavy-handed coupling.
-  // Since this view has access to the proper model, it should
-  // do the updating here.
-  //
-  // TODO calling updateModel on a checkbox change means the metadata
-  // value is set to the name (or value) of the element, not true or false.
-  //
-  // TODO in general this function sucks. It sets the metadata naively using
-  // form.value, which can easily throw off tests for checkboxes and numbers.
-  // It also calls view.makeDirty(), which sets the metadata anyway.
-  // Investigate whether we can avoid calling model.set here.
-  updateModel: function(e) {
-    var target = e.currentTarget;
-    var delta = {};
-    delta[target.name] = target.value;
-    this.model.set('metadata', _.extend(this.model.get('metadata'), delta));
+  // Record metadata, signal to file that a save is possible.
+  updateModel: function() {
+    this.model.set('metadata', this.getValue());
     this.view.makeDirty();
   },
 
