@@ -307,6 +307,22 @@ describe('Metadata editor view', function() {
       expect(model.get('metadata').select).to.equal('sre');
     });
 
+    it('saves number fields as numbers', function() {
+      model.set('defaults', [{
+        name: 'number',
+        field: {
+          element: 'number',
+          label: 'number label',
+          value: 4
+        }
+      }]);
+      metadataEditor.render();
+      var $input = $('#meta').find('input[name="number"]')
+      $input.val(6);
+      $input.trigger('change');
+      expect(model.get('metadata').number).to.equal(6);
+    });
+
     // TODO no point creating a button test as it work yet.
   });
 });

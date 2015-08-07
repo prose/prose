@@ -35,6 +35,7 @@ describe('Metadata form elements', function() {
 
   describe('Reading values', function() {
     it('reads values from a text element', function() {
+      data.type = 'text';
       var text = new TextForm({data: data});
       $('#meta').append(text.render());
       $('[name="foo"]').val('bar');
@@ -48,6 +49,14 @@ describe('Metadata form elements', function() {
       $('#meta').append(textarea.render());
       textarea.initCodeMirror(function() {});
       expect(textarea.getValue()).to.equal('bar');
+    });
+
+    it('reads values from a number element', function() {
+      data.type = 'number';
+      var number = new TextForm({data: data});
+      $('#meta').append(number.render());
+      $('[name="foo"]').val(5);
+      expect(number.getValue()).to.equal(5);
     });
 
     it('reads values from a checkbox element', function() {

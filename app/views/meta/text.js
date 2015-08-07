@@ -31,6 +31,7 @@ module.exports = Backbone.View.extend({
   },
 
   getValue: function() {
-    return this.$form.val();
+    return this.options.data.type === 'number' ?
+      Number(this.$form.val()) : this.$form.val();
   }
 });

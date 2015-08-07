@@ -194,6 +194,11 @@ module.exports = Backbone.View.extend({
   //
   // TODO calling updateModel on a checkbox change means the metadata
   // value is set to the name (or value) of the element, not true or false.
+  //
+  // TODO in general this function sucks. It sets the metadata naively using
+  // form.value, which can easily throw off tests for checkboxes and numbers.
+  // It also calls view.makeDirty(), which sets the metadata anyway.
+  // Investigate whether we can avoid calling model.set here.
   updateModel: function(e) {
     var target = e.currentTarget;
     var delta = {};
@@ -258,6 +263,8 @@ module.exports = Backbone.View.extend({
     // First get values from all subviews.
     _.each(this.subviews, function(view) {
       var value = view.getValue();
+
+
     });
 
 
