@@ -439,6 +439,37 @@ describe('Metadata editor view', function() {
       metadataEditor.render();
       expect(model.get('metadata').text).to.deep.equal(['hello', 'world']);
     });
-  });
 
+    it('adds options to selects from metadata when none exists in defaults', function() {
+      model.set('defaults', [{
+        name: 'select',
+        field: {
+          element: 'select',
+          options: []
+        }
+      }]);
+      model.set('metadata', {
+        select: 'foo'
+      });
+      metadataEditor.render();
+      expect($('#meta').find('select').find('option').length).to.equal(1);
+      expect(model.get('metadata').select).to.equal('foo');
+    });
+
+    it('adds options to multiselects from metadata when none exists in defaults', function() {
+      model.set('defaults', [{
+        name: 'multiselect',
+        field: {
+          element: 'multiselect',
+          options: []
+        }
+      }]);
+      model.set('metadata', {
+        multiselect: ['foo', 'bar']
+      });
+      metadataEditor.render();
+      expect($('#meta').find('select').find('option').length).to.equal(2);
+      expect(model.get('metadata').multiselect).to.deep.equal(['foo', 'bar']);
+    });
+  });
 });

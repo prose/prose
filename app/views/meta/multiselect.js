@@ -37,14 +37,22 @@ module.exports = Backbone.View.extend({
     return this.$form.val();
   },
 
-  // TODO add an option if not found
   setValue: function(value) {
     var values = _.isArray(value) ? value : [value];
     var $el = this.$el;
+    var $form = this.$form;
     _.each(values, function(v) {
-      $el.find('option[value="' + v + '"]').each(function() {
-        this.selected = 'selected';
-      });
+      var match = $el.find('option[value="' + v + '"]');
+      if (match.length) {
+        match.each(function() {
+          this.selected = 'selected';
+        });
+      }
+      // add the value as an option if none exists
+      else {
+        $form.append($('<option />', {checked: true, value: value, text: value}));
+        $form.trigger('liszt:updated');
+      }
     });
   }
 });

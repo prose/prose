@@ -371,5 +371,11 @@ module.exports = Backbone.View.extend({
     }
 
     return false;
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = [];
+    Backbone.View.prototype.remove.apply(this, arguments);
   }
 });
