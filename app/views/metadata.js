@@ -204,15 +204,16 @@ module.exports = Backbone.View.extend({
   },
 
   updateModel: function(e) {
-    var target = e.currentTarget;
-    var key = target.name;
-    var value = target.value;
     var delta = {};
-    delta[key] = value;
+    var target = e.currentTarget;
+    var name = target.name;
+    var value = target.value;
 
-    var metadata = this.model.get('metadata');
-    this.model.set('metadata', _.extend(metadata, delta));
-    this.view.makeDirty();
+    if (name && value) {
+      delta[name] = value;
+      this.model.set('metadata', _.extend(this.model.get('metadata'), delta));
+      this.view.makeDirty();
+    }
   },
 
   rawKeyMap: function() {
@@ -243,21 +244,20 @@ module.exports = Backbone.View.extend({
       theme: 'prose-bright'
     });
 
-    this.listenTo(this.raw, 'blur', (function(cm) {
-      var value = cm.getValue();
-      var raw;
+    this.listenTo(this.raw, 'blur', (function() {
+      var isChanged = false;
 
       try {
-        raw = jsyaml.safeLoad(value);
+        // Check if the metadata has changed after merging in the raw content.
+        isChanged = !_.isEqual(this.model.get('metadata'), this.getValue());
       } catch(err) {
         console.log("Error parsing CodeMirror editor text");
         console.log(err);
       }
 
-      if (raw) {
-        var metadata = this.model.get('metadata');
-        this.model.set('metadata', _.extend(metadata, raw));
-
+      // Only make the file dirty if the metadata has changed
+      // to avoid a blank commit.
+      if (isChanged) {
         this.view.makeDirty();
       }
     }).bind(this));
@@ -268,23 +268,28 @@ module.exports = Backbone.View.extend({
   getValue: function() {
     var view = this;
     var metadata = this.model.get('metadata') || {};
+    var newMetadata = {};
 
-    if (this.view.toolbar &&
-       this.view.toolbar.publishState() ||
+    // If the current published state is true then keep it that way
+    if (this.view.toolbar && this.view.toolbar.publishState() ||
        (metadata && metadata.published)) {
-      metadata.published = true;
+      newMetadata.published = true;
+    // Else default to unpublished state
     } else {
-      metadata.published = false;
+      newMetadata.published = false;
     }
 
     // Get the title value from heading if we need to.
     if (this.titleAsHeading) {
-      metadata.title = (this.view.header) ?
-        this.view.header.inputGet() :
-        this.model.get('metadata').title[0];
+      if (this.view.header) {
+        newMetadata.title = this.view.header.inputGet();
+      } else if (metadata && metadata.title) {
+        newMetadata.title = metadata.title;
+      }
     }
 
-    _.each(this.$el.find('[name]'), function(item) {
+    // Load any data coming from a metafield (that has a name)
+    _.each(this.$el.find('.metafield[name]'), function(item) {
       var $item = $(item);
       var value = $item.val();
 
@@ -296,9 +301,9 @@ module.exports = Backbone.View.extend({
           if (value) {
             value = $item.data('type') === 'number' ? Number(value) : value;
             if (_.has(metadata, item.name) && metadata[item.name] !== value) {
-              metadata[item.name] = _.union(metadata[item.name], value);
+              newMetadata[item.name] = _.union(metadata[item.name], value);
             } else {
-              metadata[item.name] = value;
+              newMetadata[item.name] = value;
             }
           }
           break;
@@ -306,24 +311,24 @@ module.exports = Backbone.View.extend({
           if (item.checked) {
 
             if (_.has(metadata, item.name) && item.name !== item.value) {
-              metadata[item.name] = _.union(metadata[item.name], item.value);
+              newMetadata[item.name] = _.union(metadata[item.name], item.value);
             } else if (item.value === item.name) {
-              metadata[item.name] = item.checked;
+              newMetadata[item.name] = item.checked;
             } else {
-              metadata[item.name] = item.value;
+              newMetadata[item.name] = item.value;
             }
 
           } else if (!_.has(metadata, item.name) && item.name === item.value) {
-            metadata[item.name] = item.checked;
+            newMetadata[item.name] = item.checked;
           } else {
-            metadata[item.name] = item.checked;
+            newMetadata[item.name] = item.checked;
           }
           break;
         case 'button':
           if (value === 'true') {
-            metadata[item.name] = true;
+            newMetadata[item.name] = true;
           } else if (value === 'false') {
-            metadata[item.name] = false;
+            newMetadata[item.name] = false;
           }
           break;
       }
@@ -336,7 +341,7 @@ module.exports = Backbone.View.extend({
 
       if (view[editor]) {
         try {
-          metadata[name] = jsyaml.safeLoad(view[editor].getValue());
+          newMetadata[name] = jsyaml.safeLoad(view[editor].getValue());
         } catch(err) {
           console.log("Error parsing yaml front matter");
           console.log(err);
@@ -344,17 +349,17 @@ module.exports = Backbone.View.extend({
       }
     });
 
-    // Load any data coming from not defined raw yaml front matter.
+    // Load any data coming from raw yaml front matter.
     if (this.raw) {
       try {
-        metadata = _.merge(metadata, jsyaml.safeLoad(this.raw.getValue()) || {});
+        newMetadata = _.merge(newMetadata, jsyaml.safeLoad(this.raw.getValue()) || {});
       } catch (err) {
-        console.log("Error parsing not defined raw yaml front matter");
+        console.log("Error parsing raw yaml front matter");
         console.log(err);
       }
     }
 
-    return metadata;
+    return newMetadata;
   },
 
   setValue: function(data) {
