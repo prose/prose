@@ -24,7 +24,9 @@
       mocha.setup({
         ui: 'bdd'
       });
-      
+      // Don't complain about known globals
+      mocha.globals(['jQuery*', 'router']);
+
       var smhack = require('sourcemap-hack');
       mocha._reporter = smhack(mocha._reporter);
 
