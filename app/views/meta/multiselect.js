@@ -53,8 +53,8 @@ module.exports = Backbone.View.extend({
         var $option = $('<option />', {value: v, text: v});
         $option.appendTo($form);
         $option.prop('selected', true);
-        $form.trigger('liszt:updated');
       }
     });
+    $form.trigger('liszt:updated');
   }
 });
