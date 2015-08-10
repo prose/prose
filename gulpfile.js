@@ -126,7 +126,7 @@ gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
     .bundle()
     .pipe(source('polyfill.js'))
     .pipe(gulp.dest('./test/lib/'));
-    
+
   // Browserify index.js
   // Pass `debug` option to enable source maps.
   return browserify({debug: true})
@@ -144,7 +144,7 @@ gulp.task('build-app', ['templates', 'oauth', 'vendor'], function() {
 
 
   // Browserify app scripts.
-  return browserify({debug: true})
+  return browserify()
     .add('./app/boot.js')
     .bundle()
     .pipe(source('app.js'))
@@ -179,7 +179,7 @@ gulp.task('uglify', ['build-app'], function() {
 //
 gulp.task('watch', ['build-app', 'build-tests'], function() {
   // Watch any `.js` file under `app` folder.
-  gulp.watch(paths.app, ['build-app']);
+  gulp.watch(paths.app, ['build-app', 'build-tests']);
   gulp.watch(paths.test, ['build-tests']);
   gulp.watch(paths.templates, ['build-app']);
 });

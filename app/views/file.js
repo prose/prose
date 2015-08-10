@@ -835,11 +835,6 @@ module.exports = Backbone.View.extend({
       this.model.set('content', this.editor.getValue());
     }
 
-    // Update MetaData
-    if (this.metadataEditor) {
-      this.model.set('metadata', this.metadataEditor.getValue());
-    }
-
     var label = this.model.get('writable') ?
       t('actions.change.save') :
       t('actions.change.submit');

@@ -5,270 +5,260 @@ _.merge = require('deepmerge');
 var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
 var templates = require('../../dist/templates');
-var util = require('.././util');
+var util = require('../util');
+
+var forms = {
+  Checkbox: require('./meta/checkbox'),
+  TextForm: require('./meta/text'),
+  TextArea: require('./meta/textarea'),
+  Button: require('./meta/button'),
+  Select: require('./meta/select'),
+  Multiselect: require('./meta/multiselect'),
+};
+
+
+// Creates form elements that correspond to Jekyll frontmatter.
+//
+// Handles the reading and updating of object/key pairs
+// on the file model.
+//
+// This view is always a child view of views/file.js.
 
 module.exports = Backbone.View.extend({
   template: templates.metadata,
 
   events: {
     'change .metafield': 'updateModel',
+    'click button.metafield': 'updateModel',
     'click .create-select': 'createSelect',
     'click .finish': 'exit'
   },
 
+  // @options object
+  // @options.model object (file model attached to file view)
+  // @options.view object (file view)
+  // @options.titleAsHeading boolean
+  //
+  // titleAsHeading is true when the filetype is markdown,
+  // and when there exists a meta field called title.
   initialize: function(options) {
     _.bindAll(this);
 
     this.model = options.model;
     this.titleAsHeading = options.titleAsHeading;
     this.view = options.view;
+
+    this.subviews = [];
+    this.codeMirrorInstances = {};
   },
 
+  // Parent file view calls this render func immediately
+  // after initializing this view.
+  // This is responsible for rendering metadata fields for each *default*.
   render: function() {
     this.$el.empty().append(_.template(this.template));
 
-    var form = this.$el.find('.form');
+    var $form = this.$el.find('.form');
 
     var metadata = this.model.get('metadata');
     var lang = metadata && metadata.lang ? metadata.lang : 'en';
 
-    // This renders any fields defined in the metadata entry
-    // of a given prose configuration file.
+    // Using the yml configuration file for metadata,
+    // render form fields.
     _.each(this.model.get('defaults'), (function(data, key) {
       var metadata = this.model.get('metadata') || {};
-      var renderTitle = true;
 
+      // Tests that 1. This is the title metadata,
+      // and 2. We've decided to combine the title form UI as the page header.
+      // If both are true, then don't render this default.
       if (data && data.name === 'title' && this.titleAsHeading) {
-        renderTitle = false;
+        return;
       }
 
-      if (renderTitle) {
-        if (data && data.field) {
-          switch (data.field.element) {
-            case 'button':
-              var button = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                on: data.field.on,
-                off: data.field.off
-              };
+      var view = null;
 
-              form.append(_.template(templates.meta.button, button, {
-                variable: 'meta'
-              }));
-              break;
-            case 'checkbox':
-              var checkbox = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                value: data.name,
-                checked: data.field.value
-              };
+      // If there's no data field, default to text field.
+      if (!data || (data && !data.field)) {
+        var field = {
+          label: key,
+          value: data,
+        }
+        var name = data.name ? data.name : key;
+        view = new forms.TextForm({data: {
+          name: name,
+          type: 'text',
+          field: field
+        }});
+      }
 
-              form.append(_.template(templates.meta.checkbox, checkbox, {
-                variable: 'meta'
-              }));
-              break;
-            case 'text':
-              var text = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                value: data.field.value,
-                placeholder: data.field.placeholder,
-                type: 'text'
-              };
+      // Use the data field to determine the kind of meta form to draw.
+      else {
+        switch (data.field.element) {
+          case 'button':
+            view = new forms.Button({data: data});
+          break;
+          case 'checkbox':
+            view = new forms.Checkbox({data: data});
+          break;
+          case 'text':
+            view = new forms.TextForm({
+              data: _.extend({}, data, {type: 'text'})
+            });
+          break;
+          case 'textarea':
+            view = new forms.TextArea({
+              data: _.extend({}, data, {id: util.stringToUrl(data.name)})
+            });
+          break;
+          case 'number':
+            view = new forms.TextForm({
+              data: _.extend({}, data, {type: 'number'})
+            });
+          break;
+          case 'select':
+            view = new forms.Select({
+              data: _.extend({}, data, {lang: lang})
+            });
+          break;
+          case 'multiselect':
+            view = new forms.Multiselect({
+              data: _.extend({}, data, {lang: lang})
+            });
+          break;
 
-              form.append(_.template(templates.meta.text, text, {
-                variable: 'meta'
-              }));
-              break;
-            case 'textarea':
-              var id = util.stringToUrl(data.name);
-              var textarea = {
-                name: data.name,
-                id: id,
-                value: data.field.value,
-                label: data.field.label,
-                help: data.field.help,
-                placeholder: data.field.placeholder,
-                type: 'textarea'
-              };
+          // On hidden values, we obviously don't have to render anything.
+          // Just make sure this default is saved on the metadata object.
+          case 'hidden':
+            var preExisting = metadata[data.name];
+            var newDefault = data.field.value;
+            var newMeta = {};
 
-              form.append(_.template(templates.meta.textarea, textarea, {
-                variable: 'meta'
-              }));
+            // If the pre-existing metadata is an array,
+            // make sure we don't just override it, but we find the difference.
+            if (_.isArray(preExisting)) {
+              newMeta[data.name] = _.difference(newDefault, preExisting).length ?
+                _.union(newDefault, preExisting) : preExisting;
+            }
+            // If pre-existing is a single property or undefined,
+            // use _.extend to default to pre-existing if it exists, or
+            // newDefault if there is no pre-existing.
+            else {
+              newMeta[data.name] = newDefault;
+            }
+            this.model.set('metadata', _.extend(newMeta, this.model.get('metadata') || {}));
+          break;
+        }
+      }
 
-              var textElement = document.getElementById(id);
+      if (view !== null) {
+        $form.append(view.render());
+        this.subviews.push(view);
 
-              var cm = CodeMirror(function(el) {
-                textElement.parentNode.replaceChild(el, textElement);
-                el.id = id;
-                el.className += ' inner ';
-                el.setAttribute('data-name', data.name);
-              }, {
-                mode: id,
-                value: textElement.value,
-                lineWrapping: true,
-                theme: 'prose-bright'
-              });
-              cm.on('blur', (function(){
-                textElement.value = cm.getValue();
-                this.updateModel({
-                    currentTarget: textElement
-                });
-              }).bind(this));
-              this[id] = cm;
+        // If the view is a text area, we'll need to init codemirror.
+        if (data && data.field && data.field.element === 'textarea') {
+          var id = util.stringToUrl(data.name);
 
-              break;
-            case 'number':
-              var number = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                value: data.field.value,
-                type: 'number'
-              };
+          // TODO passing in a bound callback is not the best
+          // as it increases the debugging surface area.
+          // Find some way to get around this.
+          var codeMirror = view.initCodeMirror(this.updateModel.bind(this));
 
-              form.append(_.template(templates.meta.text, number, {
-                variable: 'meta'
-              }));
-              break;
-            case 'select':
-              var select = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: lang
-              };
-
-              form.append(_.template(templates.meta.select, select, {
-                variable: 'meta'
-              }));
-              break;
-            case 'multiselect':
-              var multiselect = {
-                name: data.name,
-                label: data.field.label,
-                help: data.field.help,
-                alterable: data.field.alterable,
-                placeholder: data.field.placeholder,
-                options: data.field.options,
-                lang: lang
-              };
-
-              form.append(_.template(templates.meta.multiselect, multiselect, {
-                variable: 'meta'
-              }));
-
-              break;
-            case 'hidden':
-              var tmpl = {};
-              var value = metadata[data.name];
-
-              if (_.isArray(value)) {
-                // Any defaults not currently in metadata?
-                var diff = _.difference(data.field.value, value);
-                tmpl[data.name] = diff.length ?
-                  _.union(data.field.value, value) : value;
-              } else {
-                tmpl[data.name] = data.field.value;
-              }
-
-              this.model.set('metadata', _.extend(tmpl, this.model.get('metadata') || {}));
-              break;
-          }
-        } else {
-          var txt = {
-            name: key,
-            label: key,
-            value: data,
-            type: 'text'
-          };
-
-          form.append(_.template(templates.meta.text, txt, {
-            variable: 'meta'
-          }));
+          this.codeMirrorInstances[id] = codeMirror;
         }
       }
     }).bind(this));
 
+    // Attach a change event listener
     this.$el.find('.chzn-select').chosen().change(this.updateModel);
-    this.renderRaw();
+
+    // Renders the raw metadata textarea form
+    this.renderRawEditor();
+
+    // Now that we've rendered the form elements according
+    // to defaults, sync the form elements with the current metadata.
+    this.setValue(this.model.get('metadata'));
+
+    // Now that we've synced the values from metadata, do a save to model.
+    // Important because some elements, such as buttons, rely on a default
+    // and don't save to the metadata model until we explicitly call this.
+    this.model.set('metadata', this.getValue());
 
     return this;
   },
 
-  updateModel: function(e) {
-    var target = e.currentTarget;
-    var key = target.name;
-    var value = target.value;
-    var delta = {};
-    delta[key] = value;
-
-    var metadata = this.model.get('metadata');
-    this.model.set('metadata', _.extend(metadata, delta));
+  // Record metadata, signal to file that a save is possible.
+  updateModel: function() {
+    this.model.set('metadata', this.getValue());
     this.view.makeDirty();
   },
 
+  // TODO This.view is vague and doesn't get across that we're
+  // communicating with the parent file view.
+  //
+  // It also doesn't get across that we're performing a save operation.
   rawKeyMap: function() {
     return {
       'Ctrl-S': this.view.updateFile
     };
   },
 
-  renderRaw: function() {
-    var yaml = this.model.get('lang') === 'yaml';
-    var $el;
-
-    if (yaml) {
-      $el = this.view.$el.find('#code');
-      $el.empty();
-    } else {
+  // Responsible for rendering the raw metadata element
+  // and listening for changes.
+  renderRawEditor: function() {
+    var isYaml = this.model.get('lang') === 'yaml';
+    var $parent
+    if (isYaml) {
+      $parent = this.view.$el.find('#code');
+      $parent.empty();
+    }
+    else {
       this.$el.find('.form').append(_.template(templates.meta.raw));
+      $parent = this.$el.find('#raw');
     }
 
-    var el = (yaml ? $el : this.$el.find('#raw'))[0];
-
-    this.raw = CodeMirror(el, {
+    this.codeMirrorInstances.rawEditor = CodeMirror($parent[0], {
       mode: 'yaml',
       value: '',
       lineWrapping: true,
-      lineNumbers: yaml,
+      lineNumbers: isYaml,
       extraKeys: this.rawKeyMap(),
       theme: 'prose-bright'
     });
 
-    this.listenTo(this.raw, 'blur', (function(cm) {
-      var value = cm.getValue();
-      var raw;
-
+    this.listenTo(this.codeMirrorInstances.rawEditor, 'blur', (function(codeMirror) {
       try {
-        raw = jsyaml.safeLoad(value);
+        var rawValue = jsyaml.safeLoad(codeMirror.getValue());
       } catch(err) {
         console.log("Error parsing CodeMirror editor text");
         console.log(err);
       }
-
-      if (raw) {
+      if (rawValue) {
         var metadata = this.model.get('metadata');
-        this.model.set('metadata', _.extend(metadata, raw));
-
+        this.model.set('metadata', _.extend(metadata, rawValue));
         this.view.makeDirty();
       }
     }).bind(this));
-
-    this.setValue(this.model.get('metadata'));
   },
 
   getValue: function() {
     var view = this;
     var metadata = this.model.get('metadata') || {};
 
+    // It's important to save only the data that's represented
+    // by the current meta elements.
+    // Even if there are elements with the same name.
+    _.chain(this.subviews).map(function(view) {
+      return {
+        value: view.getValue(),
+        name: view.name
+      };
+    }).groupBy('name').each(function(group) {
+      var name = group[0].name;
+      metadata[name] = group.length === 1 ?
+        group[0].value : _.pluck(group, 'value');
+    });
+
+    // TODO does this always default metadata.published to true?
     if (this.view.toolbar &&
        this.view.toolbar.publishState() ||
        (metadata && metadata.published)) {
@@ -284,262 +274,81 @@ module.exports = Backbone.View.extend({
         this.model.get('metadata').title[0];
     }
 
-    _.each(this.$el.find('[name]'), function(item) {
-      var $item = $(item);
-      var value = $item.val();
-
-      switch (item.type) {
-        case 'select-multiple':
-        case 'select-one':
-        case 'textarea':
-        case 'text':
-          if (value) {
-            value = $item.data('type') === 'number' ? Number(value) : value;
-            if (_.has(metadata, item.name) && metadata[item.name] !== value) {
-              metadata[item.name] = _.union(metadata[item.name], value);
-            } else {
-              metadata[item.name] = value;
-            }
-          }
-          break;
-        case 'checkbox':
-          if (item.checked) {
-
-            if (_.has(metadata, item.name) && item.name !== item.value) {
-              metadata[item.name] = _.union(metadata[item.name], item.value);
-            } else if (item.value === item.name) {
-              metadata[item.name] = item.checked;
-            } else {
-              metadata[item.name] = item.value;
-            }
-
-          } else if (!_.has(metadata, item.name) && item.name === item.value) {
-            metadata[item.name] = item.checked;
-          } else {
-            metadata[item.name] = item.checked;
-          }
-          break;
-        case 'button':
-          if (value === 'true') {
-            metadata[item.name] = true;
-          } else if (value === 'false') {
-            metadata[item.name] = false;
-          }
-          break;
-      }
-    });
-
-    // Load any data coming from a yaml-block of content.
-    this.$el.find('.yaml-block').each(function() {
-      var editor = $(this).find('.CodeMirror').attr('id');
-      var name = $('#' + editor).data('name');
-
-      if (view[editor]) {
-        try {
-          metadata[name] = jsyaml.safeLoad(view[editor].getValue());
-        } catch(err) {
-          console.log("Error parsing yaml front matter");
-          console.log(err);
-        }
-      }
-    });
-
     // Load any data coming from not defined raw yaml front matter.
-    if (this.raw) {
+    if (this.codeMirrorInstances.rawEditor) {
       try {
-        metadata = _.merge(metadata, jsyaml.safeLoad(this.raw.getValue()) || {});
+        metadata = _.merge(metadata, jsyaml.safeLoad(this.codeMirrorInstances.rawEditor.getValue()) || {});
       } catch (err) {
         console.log("Error parsing not defined raw yaml front matter");
         console.log(err);
       }
     }
 
+    // TODO Currently, it's not possible to delete metadata.
+    // There should be some logic here that looks to see if there's any metadata
+    // that isn't an element, isn't hidden, and isn't in the raw editor.
     return metadata;
   },
 
-  setValue: function(data) {
-    var form = this.$el.find('.form');
-    var missing = {};
-    var raw;
+  // @metadata object metadata key/value pairs
+  // Syncs the visual UI with what's currently saved on the model.
+  setValue: function(metadata) {
 
-    _.each(data, (function(value, key) {
-      var matched = false;
-      var input = this.$el.find('[name="' + key + '"]');
-      var length = input.length;
-      var options;
+    // The key point here is that the UI reflects exactly
+    // what's in the metadata.
+    // By now we've already rendered our elements along with
+    // the correct defaults.
+    metadata = metadata || {};
+    var rawEditor = this.codeMirrorInstances.rawEditor;
+    var subviews = this.subviews;
+    var defaults = this.model.get('defaults') || [];
+    var hidden = defaults.filter(function(d) {
+      return d.field && d.field.element === 'hidden';
+    });
 
-      if (length) {
+    // Easiest thing to do is update metadata fields
+    // that are rendered already, ie. have defaults specified
+    // in _config.yml or _prose.yml
+    _.each(metadata, function(value, key) {
 
-        // iterate over matching fields
-        for (var i = 0; i < length; i++) {
+      // Filter instead of find, because you never know if someone
+      // is using the same key for two different elements.
+      var renderedViews = _.filter(subviews, function(view) {
+        return view.name === key;
+      });
 
-          // if value is an array
-          if (_.isArray(value)) {
-
-            // iterate over values in array
-            for (var j = 0; j < value.length; j++) {
-              switch (input[i].type) {
-                case 'select-multiple':
-                case 'select-one':
-                  options = $(input[i]).find('option[value="' + value[j] + '"]');
-                  if (options.length) {
-                    for (var k = 0; k < options.length; k++) {
-                      options[k].selected = 'selected';
-                    }
-
-                    matched = true;
-                  }
-                  break;
-                case 'text':
-                case 'textarea':
-                  input[i].value = value;
-                  matched = true;
-                  break;
-                case 'checkbox':
-                  if (input[i].value === value) {
-                    input[i].checked = 'checked';
-                    matched = true;
-                  }
-                  break;
-              }
-            }
-
-          } else {
-
-            switch (input[i].type) {
-              case 'select-multiple':
-              case 'select-one':
-                options = $(input[i]).find('option[value="' + value + '"]');
-                if (options.length) {
-                  for (var m = 0; m < options.length; m++) {
-                    options[m].selected = 'selected';
-                  }
-
-                  matched = true;
-                }
-                break;
-              case 'text':
-              case 'textarea':
-                input[i].value = value;
-                matched = true;
-                break;
-              case 'checkbox':
-                input[i].checked = value ? 'checked' : false;
-                matched = true;
-                break;
-              case 'button':
-                input[i].value = value ? true : false;
-                input[i].innerHTML = value ? input[i].getAttribute('data-on') : input[i].getAttribute('data-off');
-                matched = true;
-                break;
-            }
-
-          }
-        }
-
-        if (!matched && value !== null) {
-          if (missing.hasOwnProperty(key) && missing[key] !== value) {
-            missing[key] = _.union(missing[key], value);
-          } else {
-            missing[key] = value;
-          }
-        }
-
-      } else {
-        // Don't render the 'published' field or hidden metadata
-        // TODO: render metadata values that share a key with a hidden value
-        var defaults = _.find(this.model.get('defaults'), function(data) { return data && (data.name === key); });
-        var diff = defaults && _.isArray(value) ? _.difference(value, defaults.field.value) : value;
-
-        if (key !== 'published' && key !== 'title' && !defaults) {
-          raw = {};
-          raw[key] = value;
-
-          if (this.raw) {
-            this.raw.setValue(this.raw.getValue() + jsyaml.safeDump(raw));
-          }
-        }
+      // If there are n rendered views corresponding to n
+      // metadata values of the same name, assign values based on order.
+      // This works because metadata yaml is parsed in order, and
+      // subviews is an ordered array.
+      if (renderedViews.length && _.isArray(value)
+          && value.length === renderedViews.length) {
+        _.each(renderedViews, function(view, i) {
+          view.setValue(value[i]);
+        });
       }
-    }).bind(this));
-
-    _.each(missing, (function(value, key) {
-      if (value === null) return;
-
-      switch (typeof value) {
-        case 'boolean':
-          var bool = {
-            name: key,
-            label: value,
-            value: value,
-            checked: value ? 'checked' : false
-          };
-
-          form.append(_.template(templates.meta.checkbox, bool, {
-            variable: 'meta'
-          }));
-          break;
-        case 'string':
-          var string = {
-            name: key,
-            label: value,
-            value: value,
-            type: 'text'
-          };
-
-          form.append(_.template(templates.meta.text, string, {
-            variable: 'meta'
-          }));
-          break;
-        case 'object':
-          var obj = {
-            name: key,
-            label: key,
-            placeholder: key,
-            options: value,
-            lang: data.lang || 'en'
-          };
-
-          form.append(_.template(templates.meta.multiselect, obj, {
-            variable: 'meta'
-          }));
-          break;
-        default:
-          console.log('ERROR could not create metadata field for ' + typeof value, key + ': ' + value);
-          break;
+      else if (renderedViews.length === 1) {
+        renderedViews[0].setValue(value);
       }
 
-      this.$el.find('.chzn-select').chosen().change(this.updateModel);
-    }).bind(this));
-
-    this.$el.find('.chzn-select').trigger('liszt:updated');
-
-    // Update model with defaults
-    // TODO: should this makeDirty if any differences?
-    this.model.set('metadata', this.getValue());
-  },
-
-  getRaw: function() {
-    return jsyaml.safeDump(this.getValue()).trim();
-  },
-
-  setRaw: function(data) {
-    try {
-      this.raw.setValue(jsyaml.safeDump(data));
-      this.refresh;
-    } catch (err) {
-      throw err;
-    }
+      // Next is to take any metadata field that doesn't have a form,
+      // and throw it into the raw editor.
+      // Note, we don't want to include hidden elements,
+      // titles, or published states here.
+      else if (!renderedViews.length && value &&
+               key !== 'title' && key !== 'published' &&
+               !_.find(hidden, function(d) { return d.name === key })){
+        var raw = {};
+        raw[key] = value;
+        rawEditor.setValue(rawEditor.getValue() + jsyaml.safeDump(raw));
+      }
+    });
   },
 
   refresh: function() {
-    var view = this;
-    this.$el.find('.yaml-block').each(function() {
-      var editor = $(this).find('.CodeMirror').attr('id');
-      if (view[editor]) view[editor].refresh();
+    _.each(this.codeMirrorInstances, function(codeMirror) {
+      codeMirror.refresh();
     });
-
-    // Refresh CodeMirror
-    if (this.raw) this.raw.refresh();
   },
 
   createSelect: function(e) {
@@ -576,5 +385,11 @@ module.exports = Backbone.View.extend({
     }
 
     return false;
+  },
+
+  remove: function() {
+    _.invoke(this.subviews, 'remove');
+    this.subviews = [];
+    Backbone.View.prototype.remove.apply(this, arguments);
   }
 });
