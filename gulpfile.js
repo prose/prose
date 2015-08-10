@@ -144,7 +144,7 @@ gulp.task('build-app', ['templates', 'oauth', 'vendor'], function() {
 
 
   // Browserify app scripts.
-  return browserify({debug: true})
+  return browserify()
     .add('./app/boot.js')
     .bundle()
     .pipe(source('app.js'))
