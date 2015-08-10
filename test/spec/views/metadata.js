@@ -143,9 +143,7 @@ describe('Metadata editor view', function() {
       expect($('#meta').find('label[for="number"]').text()).to.equal('number label');
     });
 
-    it('creates a button element (TODO)', function() {
-      // TODO this models broken behavior.
-      // https://github.com/prose/prose/issues/859
+    it('creates a button element that defaults to on (true)', function() {
       model.set('defaults', [{
         name: 'button',
         field: {
@@ -155,7 +153,10 @@ describe('Metadata editor view', function() {
         }
       }]);
       metadataEditor.render();
-      expect($('#meta').find('input[type="button"]').length).to.equal(1);
+      var $button = $('#meta').find('[name="button"]');
+      expect($button.length).to.equal(1);
+      expect($button.val()).to.equal('on');
+      expect($button.text()).to.equal('on');
     });
 
     it('creates a text element if no field object exists', function() {
@@ -204,7 +205,7 @@ describe('Metadata editor view', function() {
   });
 
 
-  describe('getting values from form elements', function() {
+  describe('testing user input from form elements', function() {
     // Although there are separate tests for getting values from each meta element individually,
     // this one is more about the ability of this one to save values to a metadata object.
 
@@ -294,6 +295,7 @@ describe('Metadata editor view', function() {
       expect(model.get('metadata').select[0]).to.equal('sre');
     });
 
+
     it('saves number fields as numbers', function() {
       model.set('defaults', [{
         name: 'number',
@@ -310,7 +312,21 @@ describe('Metadata editor view', function() {
       expect(model.get('metadata').number).to.equal(6);
     });
 
-    // TODO no point creating a button test as it work yet.
+    it('saves button values as boolean, defaulting to true', function() {
+      model.set('defaults', [{
+        name: 'button',
+        field: {
+          element: 'button',
+          on: 'on',
+          off: 'off'
+        }
+      }]);
+      metadataEditor.render();
+      var $button = $('#meta').find('[name="button"]');
+      expect(model.get('metadata').button).to.equal(true);
+      $button.trigger('click');
+      expect(model.get('metadata').button).to.equal(false);
+    });
   });
 
   describe('setting defaults on load', function() {

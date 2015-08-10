@@ -29,6 +29,7 @@ module.exports = Backbone.View.extend({
 
   events: {
     'change .metafield': 'updateModel',
+    'click button.metafield': 'updateModel',
     'click .create-select': 'createSelect',
     'click .finish': 'exit'
   },
@@ -177,6 +178,11 @@ module.exports = Backbone.View.extend({
     // to defaults, sync the form elements with the current metadata.
     this.setValue(this.model.get('metadata'));
 
+    // Now that we've synced the values from metadata, do a save to model.
+    // Important because some elements, such as buttons, rely on a default
+    // and don't save to the metadata model until we explicitly call this.
+    this.model.set('metadata', this.getValue());
+
     return this;
   },
 
@@ -307,6 +313,11 @@ module.exports = Backbone.View.extend({
       var renderedViews = _.filter(subviews, function(view) {
         return view.name === key;
       });
+
+      // If there are n rendered views corresponding to n
+      // metadata values of the same name, assign values based on order.
+      // This works because metadata yaml is parsed in order, and
+      // subviews is an ordered array.
       if (renderedViews.length && _.isArray(value)
           && value.length === renderedViews.length) {
         _.each(renderedViews, function(view, i) {

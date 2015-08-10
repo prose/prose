@@ -66,14 +66,23 @@ describe('Metadata form elements', function() {
       expect(checkbox.getValue()).to.equal(false);
     });
 
-    it('reads values from a button element (TODO)', function() {
-      // This test is broken because the button element is broken.
-      // https://github.com/prose/prose/issues/859
-      data.field.on = 'on';
-      data.field.off = 'off';
+    it('reads values from a button element, and sets values', function() {
+      data.field.on = 'foo';
+      data.field.off = 'bar';
       var button = new Button({data: data});
       $('#meta').append(button.render());
-      expect(button.getValue()).to.equal('on');
+      expect(button.getValue()).to.equal(true);
+      button.setValue('bar');
+      expect(button.getValue()).to.equal(false);
+    });
+
+    it('sets values on button element to false if outside of bounds', function() {
+      data.field.on = 'foo';
+      data.field.off = 'bar';
+      var button = new Button({data: data});
+      $('#meta').append(button.render());
+      button.setValue('baz');
+      expect(button.getValue()).to.equal(false);
     });
 
     it('reads values from a select element', function() {

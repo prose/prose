@@ -50,7 +50,9 @@ module.exports = Backbone.View.extend({
       }
       // add the value as an option if none exists
       else {
-        $form.append($('<option />', {checked: true, value: value, text: value}));
+        var $option = $('<option />', {value: v, text: v});
+        $option.appendTo($form);
+        $option.prop('selected', true);
         $form.trigger('liszt:updated');
       }
     });
