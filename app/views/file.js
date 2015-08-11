@@ -1278,17 +1278,21 @@ module.exports = Backbone.View.extend({
     };
   },
 
+  defaultUploadPath: function(fileName) {
+    // Default to media directory if defined in config,
+    // current directory if no path specified
+    var dir = (this.config && this.config.media) ? this.config.media :
+      util.extractFilename(this.model.get('path'))[0];
+
+    return _.compact([dir, fileName]).join('/');
+  },
+
   upload: function(e, file, content, path) {
     // Loading State
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
-    // Default to media directory if defined in config,
-    // current directory if no path specified
-    var dir = this.config.media ? this.config.media :
-      util.extractFilename(this.model.get('path'))[0];
-    path = path || _.compact([dir, file.name]).join('/');
-
-    this.collection.upload(file, content, path, {
+    var uploadPath = path || this.defaultUploadPath(file.name);
+    this.collection.upload(file, content, uploadPath, {
       success: (function(model, res, options) {
         var name = res.content.name;
         var path = '{{site.baseurl}}/' + res.content.path;

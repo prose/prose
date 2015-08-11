@@ -46,6 +46,29 @@ describe('File view', function() {
       fileView.render();
       expect(fileView.editor.getValue()).to.equal(content)
     })
+
+    describe('#defaulUploadPath', function() {
+        beforeEach(function() {
+            fileView.model = mockFile()
+            fileView.model.set('path', '/path/to/fake.md')
+        });
+        context('with config', function() {
+            beforeEach(function() {
+                fileView.config = { "media": "/configured/assets" };
+            });
+            it('uses the configured upload path', function() {
+                expect(fileView.defaultUploadPath('my-image.jpg')).to.equal("/configured/assets/my-image.jpg");
+            });
+        });
+        context('without config', function() {
+            beforeEach(function() {
+                fileView.config = null;
+            });
+            it('uses the files directory', function() {
+                expect(fileView.defaultUploadPath('my-image.jpg')).to.equal("/path/to/my-image.jpg");
+            });
+        });
+    });
   });
 
   describe('in preview mode', function() {
