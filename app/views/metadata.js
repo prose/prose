@@ -60,13 +60,12 @@ module.exports = Backbone.View.extend({
 
     var $form = this.$el.find('.form');
 
-    var metadata = this.model.get('metadata');
+    var metadata = this.model.get('metadata') || {};
     var lang = metadata && metadata.lang ? metadata.lang : 'en';
 
     // Using the yml configuration file for metadata,
     // render form fields.
     _.each(this.model.get('defaults'), (function(data, key) {
-      var metadata = this.model.get('metadata') || {};
 
       // Tests that 1. This is the title metadata,
       // and 2. We've decided to combine the title form UI as the page header.
@@ -145,7 +144,7 @@ module.exports = Backbone.View.extend({
             else {
               newMeta[data.name] = newDefault;
             }
-            this.model.set('metadata', _.extend(newMeta, this.model.get('metadata') || {}));
+            this.model.set('metadata', _.extend(newMeta, metadata));
           break;
         }
       }
