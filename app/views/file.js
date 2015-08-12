@@ -481,7 +481,7 @@ module.exports = Backbone.View.extend({
       file: this.model,
       repo: this.repo,
       alterable: true,
-      placeholder: this.model.isNew() && !this.model.translate
+      placeholder: this.model.isNew() && !this.model.translate && !this.model.isClone()
     });
 
     this.subviews['header'] = this.header;
