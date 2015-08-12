@@ -47,6 +47,19 @@ describe('File view', function() {
       expect(fileView.editor.getValue()).to.equal(content)
     })
 
+    it('creates a placeholder title for new files', function() {
+      fileView.model = mockFile();
+      fileView.model.set({
+        defaults: [{name: 'title'}]
+      });
+      fileView.model.isNew = function() { return true };
+      fileView.collection = fileView.model.collection;
+      // quash an error requiring templates in an un-related view.
+      fileView.renderMetadata = function() {};
+      fileView.render();
+      expect(fileView.subviews.header.options.placeholder).to.equal(true);
+    });
+
     describe('#defaulUploadPath', function() {
         beforeEach(function() {
             fileView.model = mockFile()
@@ -69,6 +82,49 @@ describe('File view', function() {
             });
         });
     });
+
+    describe('#post', function() {
+      it('does not set title as placeholder when publishing from draft', function(done) {
+        fileView.model = mockFile();
+        fileView.model.set('path', '_drafts/post.md');
+        fileView.model.set({
+          defaults: [{name: 'title'}],
+          metadata: {title: 'foo'}
+        });
+        fileView.collection = fileView.model.collection;
+        // quash an error requiring templates in an un-related view.
+        fileView.renderMetadata = function() {};
+        fileView.post();
+        window.setTimeout(function() {
+          if (fileView.subviews.header.options.placeholder) {
+            done(new Error('Expected placeholder to be false'));
+          }
+          done();
+        }, 400);
+      });
+    });
+
+    describe('#draft', function() {
+      it('does not set title as placeholder when creating draft', function(done) {
+        fileView.model = mockFile();
+        fileView.model.set('path', '_posts/post.md');
+        fileView.model.set({
+          defaults: [{name: 'title'}],
+          metadata: {title: 'foo'}
+        });
+        fileView.collection = fileView.model.collection;
+        // quash an error requiring templates in an un-related view.
+        fileView.renderMetadata = function() {};
+        fileView.draft();
+        window.setTimeout(function() {
+          if (fileView.subviews.header.options.placeholder) {
+            done(new Error('Expected placeholder to be false'));
+          }
+          done();
+        }, 400);
+      });
+    });
+
   });
 
   describe('in preview mode', function() {
