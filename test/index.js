@@ -16,4 +16,5 @@ require('./spec/models/file');
 require('./spec/views/file');
 require('./spec/views/metadata');
 require('./spec/views/meta-forms');
+require('./spec/views/header');
 require('./spec/collections/files');
