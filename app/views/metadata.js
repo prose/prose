@@ -267,11 +267,11 @@ module.exports = Backbone.View.extend({
       metadata.published = false;
     }
 
-    // Get the title value from heading if we need to.
-    if (this.titleAsHeading) {
-      metadata.title = (this.view.header) ?
-        this.view.header.inputGet() :
-        this.model.get('metadata').title[0];
+    // Get the title value from heading if it's available.
+    // In testing environment, if the header doesn't render
+    // then this.view.header is undefined.
+     if (this.titleAsHeading && this.view.header) {
+      metadata.title = this.view.header.inputGet();
     }
 
     // Load any data coming from not defined raw yaml front matter.
