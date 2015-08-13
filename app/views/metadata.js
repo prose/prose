@@ -60,13 +60,12 @@ module.exports = Backbone.View.extend({
 
     var $form = this.$el.find('.form');
 
-    var metadata = this.model.get('metadata');
+    var metadata = this.model.get('metadata') || {};
     var lang = metadata && metadata.lang ? metadata.lang : 'en';
 
     // Using the yml configuration file for metadata,
     // render form fields.
     _.each(this.model.get('defaults'), (function(data, key) {
-      var metadata = this.model.get('metadata') || {};
 
       // Tests that 1. This is the title metadata,
       // and 2. We've decided to combine the title form UI as the page header.
@@ -145,7 +144,7 @@ module.exports = Backbone.View.extend({
             else {
               newMeta[data.name] = newDefault;
             }
-            this.model.set('metadata', _.extend(newMeta, this.model.get('metadata') || {}));
+            this.model.set('metadata', _.extend(newMeta, metadata));
           break;
         }
       }
@@ -267,11 +266,11 @@ module.exports = Backbone.View.extend({
       metadata.published = false;
     }
 
-    // Get the title value from heading if we need to.
-    if (this.titleAsHeading) {
-      metadata.title = (this.view.header) ?
-        this.view.header.inputGet() :
-        this.model.get('metadata').title[0];
+    // Get the title value from heading if it's available.
+    // In testing environment, if the header doesn't render
+    // then this.view.header is undefined.
+     if (this.titleAsHeading && this.view.header) {
+      metadata.title = this.view.header.inputGet();
     }
 
     // Load any data coming from not defined raw yaml front matter.

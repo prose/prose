@@ -21,10 +21,11 @@ describe('Metadata editor view', function() {
     }).appendTo($('body'));
 
     model = mockFile();
+    var fileView = mockFileView();
     metadataEditor = new MetadataView({
       model: model,
-      titleAsHeading: '',
-      view: mockFileView(),
+      titleAsHeading: fileView.titleAsHeading(),
+      view: fileView,
       el: $('#meta')
     });
   });
@@ -326,6 +327,15 @@ describe('Metadata editor view', function() {
       expect(model.get('metadata').button).to.equal(true);
       $button.trigger('click');
       expect(model.get('metadata').button).to.equal(false);
+    });
+
+    it('does not error when titleAsHeading is true and no title is defined on metadata', function() {
+      model.set('metadata', {
+        title: null
+      });
+      metadataEditor.titleAsHeading = true;
+      metadataEditor.render();
+      expect(metadataEditor).to.be.ok;
     });
   });
 

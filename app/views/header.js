@@ -109,6 +109,11 @@ module.exports = Backbone.View.extend({
       this.file.set('path', path);
     }
 
+    var metadata = this.file.get('metadata') || {};
+    this.file.set('metadata', _.extend(metadata, {
+      title: e.currentTarget.value
+    }));
+
     this.trigger('makeDirty');
   },
 
