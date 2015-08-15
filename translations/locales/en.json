@@ -252,6 +252,10 @@
                     "escaping": {
                         "title": "Escaping",
                         "content": "<p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\\\</code>). Markdown will ignore the character directly after a backslash.</p>\n"
+                    },
+                    "shortcuts": {
+                        "title": "Shortcuts",
+                        "content": "<p>Press <code>Ctrl-S</code> to commit your changes. <br/> Press <code>Ctrl-Enter</code> to toggle between editing and previewing.</p>\n"
                     }
                 }
             }

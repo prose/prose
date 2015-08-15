@@ -359,6 +359,9 @@ module.exports = Backbone.View.extend({
 
     if (this.model.get('markdown')) {
       return {
+        'Ctrl-Enter': function (codemirror) {
+          self.blob();
+        },
         'Ctrl-S': function(codemirror) {
           self.updateFile();
         },

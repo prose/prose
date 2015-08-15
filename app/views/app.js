@@ -19,7 +19,7 @@ module.exports = Backbone.View.extend({
   events: {
     'click a.logout': 'logout'
   },
-
+  
   initialize: function(options) {
     _.bindAll(this);
 
@@ -30,6 +30,14 @@ module.exports = Backbone.View.extend({
         } else {
           util.goToFile();
         }
+      }
+    }).bind(this));
+    
+    key('ctrl+enter', (function (e, handler) {
+      if (this.nav.state === 'blob') {
+        this.nav.trigger('edit');
+      } else if (this.nav.state === 'edit') {
+        this.nav.trigger('blob');
       }
     }).bind(this));
 
