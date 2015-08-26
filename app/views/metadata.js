@@ -144,7 +144,7 @@ module.exports = Backbone.View.extend({
             else {
               newMeta[data.name] = newDefault;
             }
-            this.model.set('metadata', _.extend(newMeta, metadata));
+            this.model.set('metadata', _.extend(newMeta, this.model.get('metadata')));
           break;
         }
       }
