@@ -192,6 +192,26 @@ describe('Metadata editor view', function() {
       expect(metadataEditor.model.get('metadata').layout).to.equal('fixed');
     });
 
+    it('saves multiple hidden elements to metadata', function() {
+      model.set('defaults', [{
+        name: 'layout',
+        field: {
+          element: 'hidden',
+          value: 'fixed'
+        }
+      },
+      {
+        name: 'published',
+        field: {
+          element: 'hidden',
+          value: true
+        }
+      }]);
+      metadataEditor.render();
+      expect(metadataEditor.model.get('metadata').layout).to.equal('fixed');
+      expect(metadataEditor.model.get('metadata').published).to.equal(true);
+    });
+
     it('textarea names do not collide with view methods', function() {
       var view = metadataEditor.view;
       model.set('defaults', [{
