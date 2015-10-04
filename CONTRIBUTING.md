@@ -112,6 +112,36 @@ Alternatively you can setup your own Gatekeeper instance. For any changes you ma
 to the codebase, you'll need to run `gulp` to package code into a minified `prose.min.js`
 and see changes.
 
+### own Gatekeeper instance
+
+1. Register new application [https://github.com/settings/developers](https://github.com/settings/applications/new)
+
+Set `Homepage URL` and `Authorization callback URL` http://localhost:3000 for example
+You will get GITHUB_APPLICATION_CLIENT_ID and GITHUB_APPLICATION_CLIENT_SECRET
+
+2. Get gatekeeper
+`git clone git@github.com:prose/gatekeeper.git`
+`cd gatekeeper && npm install`
+
+Edit config.json
+
+```js
+{
+ "oauth_client_id": "GITHUB_APPLICATION_CLIENT_ID",
+ "oauth_client_secret": "GITHUB_APPLICATION_CLIENT_SECRET",
+ "oauth_host": "github.com",
+ "oauth_port": 443,
+ "oauth_path": "/login/oauth/access_token",
+ "oauth_method": "POST",
+}
+```
+
+run gatekeeper server
+`node server.js`
+
+3. run local prose instance and Auth via Github
+
+
 __ProTip:__ You may want to run `gulp watch` to allow the running of gulp on every change.
 
 ## Testing
