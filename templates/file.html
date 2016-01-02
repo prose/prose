@@ -18,7 +18,9 @@
       </div>
       <div id='drop' class='drop-mask'></div>
       <% if (file.lang === 'csv') { %>
-      <div id='csv'></div>
+      <div id='csv-container'>
+        <div id='csv'></div>
+      </div>
       <% } else { %>
       <textarea id='code' class='code round inner'></textarea>
       <% } %>
