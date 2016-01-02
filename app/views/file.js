@@ -309,16 +309,24 @@ module.exports = Backbone.View.extend({
   },
 
   initCSVEditor: function() {
+    var self = this;
+
     var container = this.$el.find('#csv')[0];
     var data = Papa.parse(this.model.get('content'), {
       header: true,
       skipEmptyLines: true
     });
-    console.log('data', data)
+
     this.editor = new Handsontable(container, {
       data: data.data,
       colHeaders: data.meta.fields,
-      stretchH: 'all'
+      stretchH: 'all',
+      afterChange: function(changes, source) {
+        if (source !== 'loadData') self.makeDirty()
+      },
+      getValue: function() {
+        return Papa.unparse(this.getSourceData());
+      }
     });
   },
 
