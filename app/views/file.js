@@ -3,6 +3,8 @@ var _ = require('underscore');
 var queue = require('queue-async');
 var jsyaml = require('js-yaml');
 var patch = require('../../vendor/liquid.patch');
+var Handsontable = require('handsontable/dist/handsontable.full.min');
+var Papa = require('papaparse');
 
 var ModalView = require('./modal');
 var marked = require('marked');
@@ -306,6 +308,20 @@ module.exports = Backbone.View.extend({
     return _.escape(content);
   },
 
+  initCSVEditor: function() {
+    var container = this.$el.find('#csv')[0];
+    var data = Papa.parse(this.model.get('content'), {
+      header: true,
+      skipEmptyLines: true
+    });
+    console.log('data', data)
+    this.editor = new Handsontable(container, {
+      data: data.data,
+      colHeaders: data.meta.fields,
+      stretchH: 'all'
+    });
+  },
+
   initEditor: function() {
     var lang = this.model.get('lang');
 
@@ -509,7 +525,8 @@ module.exports = Backbone.View.extend({
       var content = this.model.get('content');
 
       var file = {
-        markdown: this.model.get('markdown')
+        markdown: this.model.get('markdown'),
+        lang: this.model.get('lang')
       };
 
       this.$el.empty().append(_.template(this.template, file, {
@@ -520,7 +537,11 @@ module.exports = Backbone.View.extend({
       this.config = this.model.get('collection').config;
 
       // initialize the subviews
-      this.initEditor();
+      if (this.model.get('lang') === 'csv') {
+        this.initCSVEditor();
+      } else {
+        this.initEditor();
+      }
       this.initHeader();
       this.initToolbar();
       this.initSidebar();

@@ -8,6 +8,7 @@
     "chrono": "~1.0.4",
     "deepmerge": "~0.2.7",
     "diff": "~1.0.4",
+    "handsontable": "github:handsontable/handsontable",
     "ignore": "~2.2.7",
     "jquery-browserify": "~1.8.1",
     "js-base64": "~2.1.1",
@@ -15,6 +16,7 @@
     "keymaster": "git://github.com/madrobby/keymaster.git#0f09fc1b7e66c2b7e07afe89a419366dcf2d1cd8",
     "marked": "~0.2.8",
     "mkdirp": "^0.5.0",
+    "papaparse": "^4.1.2",
     "queue-async": "~1.0.3",
     "underscore": "~1.4.4"
   },
