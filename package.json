@@ -39,12 +39,15 @@
     "mocha-phantomjs": "~3.3.2",
     "phantomjs": "~1.9.7-4",
     "request": "~2.16.2",
+    "serve": "^1.4.0",
+    "sinon": "^1.17.2",
     "sinon-chai": "^2.6.0",
     "uglify-js": "~2.2.5",
     "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
-    "test": "node_modules/.bin/gulp && node_modules/.bin/mocha-phantomjs test/index.html"
+    "test": "node_modules/.bin/gulp && node_modules/.bin/mocha-phantomjs test/index.html",
+    "start": "serve"
   },
   "browserify": {
     "transform": [
