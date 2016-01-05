@@ -336,9 +336,7 @@ module.exports = Backbone.View.extend({
 
     this.editor.setValue = function(newValue) {
       var parsedValue = self.parseCSV(newValue)
-      console.log('setValue', newValue, parsedValue)
       this.loadData(parsedValue.data)
-      // this.render()
     };
 
     // Check sessionStorage for existing stash
