@@ -17,7 +17,7 @@
         </div>
       </div>
       <div id='drop' class='drop-mask'></div>
-      <% if (file.lang === 'csv') { %>
+      <% if (['csv', 'tsv'].indexOf(file.lang) !== -1) { %>
       <div id='csv-container'>
         <div id='csv'></div>
       </div>

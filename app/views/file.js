@@ -309,7 +309,7 @@ module.exports = Backbone.View.extend({
   },
 
   parseCSV: function(csvString) {
-    return Papa.parse(csvString, {
+    return Papa.parse(util.trim(csvString), {  // remove trailing whitespace, mholt/PapaParse#279
       header: true,
       skipEmptyLines: true
     });
@@ -559,7 +559,7 @@ module.exports = Backbone.View.extend({
       this.config = this.model.get('collection').config;
 
       // initialize the subviews
-      if (this.model.get('lang') === 'csv') {
+      if (['csv', 'tsv'].indexOf(this.model.get('lang')) !== -1) {
         this.initCSVEditor();
       } else {
         this.initEditor();
