@@ -3,7 +3,7 @@ var _ = require('underscore');
 var queue = require('queue-async');
 var jsyaml = require('js-yaml');
 var patch = require('../../vendor/liquid.patch');
-var Handsontable = require('handsontable/dist/handsontable.full.min');
+var Handsontable = require('handsontable');
 var Papa = require('papaparse');
 
 var ModalView = require('./modal');
