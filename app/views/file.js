@@ -310,7 +310,6 @@ module.exports = Backbone.View.extend({
 
   parseCSV: function(csvString) {
     return Papa.parse(util.trim(csvString), {  // remove trailing whitespace, mholt/PapaParse#279
-      header: true,
       skipEmptyLines: true
     });
   },
@@ -323,8 +322,12 @@ module.exports = Backbone.View.extend({
 
     this.editor = new Handsontable(container, {
       data: data.data,
-      colHeaders: data.meta.fields,
+      colHeaders: true,
+      rowHeaders: true,
       stretchH: 'all',
+      fixedRowsTop: 1,
+      contextMenu: ['row_above', 'row_below', 'col_left', 'col_right', 'remove_row', 'remove_col', 'undo', 'redo'],
+      undo: true,
       afterChange: function(changes, source) {
         if (source !== 'loadData') self.makeDirty()
       }
