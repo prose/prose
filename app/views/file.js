@@ -326,6 +326,8 @@ module.exports = Backbone.View.extend({
       rowHeaders: true,
       stretchH: 'all',
       fixedRowsTop: 1,
+      manualColumnResize: true,
+      manualRowResize: true,
       contextMenu: ['row_above', 'row_below', 'col_left', 'col_right', 'remove_row', 'remove_col', 'undo', 'redo'],
       undo: true,
       afterChange: function(changes, source) {
