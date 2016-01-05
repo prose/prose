@@ -47,6 +47,30 @@ describe('File view', function() {
       expect(fileView.editor.getValue()).to.equal(content)
     })
 
+    it('creates the Hansontable editor', function() {
+      fileView.model = mockFile();
+      fileView.model.set('lang', 'csv');
+      fileView.collection = fileView.model.collection;
+      fileView.render();
+      expect(fileView.editor.constructor.name).to.be('Handsontable');
+    })
+
+    it('initializes Handsontable with the file\'s contents as structured data', function() {
+      var content = 'a,b \r\nfoo,bar';
+      fileView.model = mockFile(content);
+      fileView.collection = fileView.model.collection;
+      fileView.render();
+      expect(fileView.editor.getSourceData()).to.equal([['a', 'b'], ['foo', 'bar']]);
+    })
+
+    it('retrieves Handsontable contents as a string', function() {
+      var content = 'a,b \r\nfoo,bar';
+      fileView.model = mockFile(content);
+      fileView.collection = fileView.model.collection;
+      fileView.render();
+      expect(fileView.editor.getValue()).to.equal(content);
+    })
+
     it('creates a placeholder title for new files', function() {
       fileView.model = mockFile();
       fileView.model.set({
