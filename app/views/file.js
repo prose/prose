@@ -308,14 +308,18 @@ module.exports = Backbone.View.extend({
     return _.escape(content);
   },
 
+  parseCSV: function(csvString) {
+    return Papa.parse(csvString, {
+      header: true,
+      skipEmptyLines: true
+    });
+  },
+
   initCSVEditor: function() {
     var self = this;
 
     var container = this.$el.find('#csv')[0];
-    var data = Papa.parse(this.model.get('content'), {
-      header: true,
-      skipEmptyLines: true
-    });
+    var data = this.parseCSV(this.model.get('content'))
 
     this.editor = new Handsontable(container, {
       data: data.data,
@@ -323,11 +327,23 @@ module.exports = Backbone.View.extend({
       stretchH: 'all',
       afterChange: function(changes, source) {
         if (source !== 'loadData') self.makeDirty()
-      },
-      getValue: function() {
-        return Papa.unparse(this.getSourceData());
       }
-    });
+    })
+
+    this.editor.getValue = function() {
+      return Papa.unparse(this.getSourceData());
+    };
+
+    this.editor.setValue = function(newValue) {
+      var parsedValue = self.parseCSV(newValue)
+      console.log('setValue', newValue, parsedValue)
+      this.loadData(parsedValue.data)
+      // this.render()
+    };
+
+    // Check sessionStorage for existing stash
+    // Apply if stash exists and is current, remove if expired
+    this.stashApply();
   },
 
   initEditor: function() {
