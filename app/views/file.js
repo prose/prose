@@ -58,6 +58,7 @@ module.exports = Backbone.View.extend({
 
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
+    this.listenTo(this.sidebar, 'toggle-editor', this.toggleEditor);
     this.listenTo(this.sidebar, 'draft', this.draft);
     this.listenTo(this.sidebar, 'cancel', this.cancel);
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
@@ -308,6 +309,11 @@ module.exports = Backbone.View.extend({
     return _.escape(content);
   },
 
+  toggleEditor: function() {
+    this.disableCSVEditor = !this.disableCSVEditor;
+    this.render();
+  },
+
   parseCSV: function(csvString) {
     return Papa.parse(util.trim(csvString), {  // remove trailing whitespace, mholt/PapaParse#279
       skipEmptyLines: true
@@ -554,7 +560,8 @@ module.exports = Backbone.View.extend({
 
       var file = {
         markdown: this.model.get('markdown'),
-        lang: this.model.get('lang')
+        lang: this.model.get('lang'),
+        useCSVEditor: (['csv', 'tsv'].indexOf(this.model.get('lang')) !== -1 && !this.disableCSVEditor)
       };
 
       this.$el.empty().append(_.template(this.template, file, {
@@ -565,7 +572,7 @@ module.exports = Backbone.View.extend({
       this.config = this.model.get('collection').config;
 
       // initialize the subviews
-      if (['csv', 'tsv'].indexOf(this.model.get('lang')) !== -1) {
+      if (file.useCSVEditor) {
         this.initCSVEditor();
       } else {
         this.initEditor();

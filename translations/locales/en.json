@@ -168,7 +168,8 @@
             "fileInputLabel": "File Path",
             "delete": "Delete This File",
             "translate": "Translate to",
-            "draft": "Create Draft"
+            "draft": "Create Draft",
+            "toggleEditor": "Toggle Editor"
         }
     },
     "dialogs": {
