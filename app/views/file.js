@@ -331,7 +331,7 @@ module.exports = Backbone.View.extend({
       contextMenu: ['row_above', 'row_below', 'col_left', 'col_right', 'remove_row', 'remove_col', 'undo', 'redo'],
       undo: true,
       afterChange: function(changes, source) {
-        if (source !== 'loadData') self.makeDirty()
+        if (source !== 'loadData') self.makeDirty();
       }
     })
 
@@ -340,8 +340,9 @@ module.exports = Backbone.View.extend({
     };
 
     this.editor.setValue = function(newValue) {
-      var parsedValue = self.parseCSV(newValue)
-      this.loadData(parsedValue.data)
+      var parsedValue = self.parseCSV(newValue);
+      this.loadData(parsedValue.data);
+      self.makeDirty();
     };
 
     // Check sessionStorage for existing stash
