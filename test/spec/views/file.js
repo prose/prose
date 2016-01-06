@@ -4,7 +4,8 @@ var FileView = require('../../../app/views/file'),
     mockRepo = require('../../mocks/models/repo'),
     mockFile = require('../../mocks/models/file'),
     mockApp = require('../../mocks/views/app'),
-    mockRouter = require('../../mocks/router');
+    mockRouter = require('../../mocks/router'),
+    Handsontable = require('handsontable');
 
 
 describe('File view', function() {
@@ -52,20 +53,22 @@ describe('File view', function() {
       fileView.model.set('lang', 'csv');
       fileView.collection = fileView.model.collection;
       fileView.render();
-      expect(fileView.editor.constructor.name).to.be('Handsontable');
+      expect(fileView.editor).to.be.an.instanceof(Handsontable.Core);
     })
 
     it('initializes Handsontable with the file\'s contents as structured data', function() {
-      var content = 'a,b \r\nfoo,bar';
+      var content = 'a,b\r\nfoo,bar';
       fileView.model = mockFile(content);
+      fileView.model.set('lang', 'csv');
       fileView.collection = fileView.model.collection;
       fileView.render();
-      expect(fileView.editor.getSourceData()).to.equal([['a', 'b'], ['foo', 'bar']]);
+      expect(fileView.editor.getSourceData()).to.deep.equal([['a', 'b'], ['foo', 'bar']]);
     })
 
     it('retrieves Handsontable contents as a string', function() {
-      var content = 'a,b \r\nfoo,bar';
+      var content = 'a,b\r\nfoo,bar';
       fileView.model = mockFile(content);
+      fileView.model.set('lang', 'csv');
       fileView.collection = fileView.model.collection;
       fileView.render();
       expect(fileView.editor.getValue()).to.equal(content);
