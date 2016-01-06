@@ -8,6 +8,7 @@
     "chrono": "~1.0.4",
     "deepmerge": "~0.2.7",
     "diff": "~1.0.4",
+    "handsontable": "git://github.com/handsontable/handsontable.git#0.20.2",
     "ignore": "~2.2.7",
     "jquery-browserify": "~1.8.1",
     "js-base64": "~2.1.1",
@@ -56,8 +57,10 @@
     ]
   },
   "browserify-shim": {
-    "chai": "global:chai",
-    "handsontable": "global:Handsontable"
+    "chai": "global:chai"
+  },
+  "browser": {
+    "handsontable": "handsontable/dist/handsontable.full"
   },
   "repository": {
     "type": "git",
