@@ -310,7 +310,7 @@ module.exports = Backbone.View.extend({
   },
 
   toggleEditor: function() {
-    this.disableCSVEditor = !this.disableCSVEditor;
+    cookie.set('disableCSVEditor', !cookie.get('disableCSVEditor'))
     this.render();
   },
 
@@ -561,7 +561,7 @@ module.exports = Backbone.View.extend({
       var file = {
         markdown: this.model.get('markdown'),
         lang: this.model.get('lang'),
-        useCSVEditor: (['csv', 'tsv'].indexOf(this.model.get('lang')) !== -1 && !this.disableCSVEditor)
+        useCSVEditor: (['csv', 'tsv'].indexOf(this.model.get('lang')) !== -1 && !cookie.get('disableCSVEditor'))
       };
 
       this.$el.empty().append(_.template(this.template, file, {
