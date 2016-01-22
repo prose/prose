@@ -323,14 +323,20 @@ module.exports = Backbone.View.extend({
   initCSVEditor: function() {
     var self = this;
 
-    var container = this.$el.find('#csv')[0];
+    var $container = this.$el.find('#csv');
+    var container = $container[0];
     var data = this.parseCSV(this.model.get('content'))
+
+    var distanceFromTop = $container.offset().top;
+    var documentHeight = $(document).height();
+    var editorHeight = documentHeight - distanceFromTop;
 
     this.editor = new Handsontable(container, {
       data: data.data,
       colHeaders: true,
       rowHeaders: true,
       stretchH: 'all',
+      height: editorHeight,
       fixedRowsTop: 1,
       manualColumnResize: true,
       manualRowResize: true,
