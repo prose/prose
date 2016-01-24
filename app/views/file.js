@@ -592,9 +592,8 @@ module.exports = Backbone.View.extend({
       var jekyll = /^(_posts|_drafts)/.test(this.model.get('path'));
 
       // Update the navigation view with menu options
-      // if a file contains metadata, has default metadata or is Markdown
-      if (this.model.get('metadata') || this.model.get('defaults') ||
-        (markdown && jekyll)) {
+      // if a file contains metadata, has default metadata or is Markdown (except CSVs)
+      if (!file.useCSVEditor && (this.model.get('metadata') || this.model.get('defaults') || (markdown && jekyll))) {
         this.renderMetadata();
 
         mode.push('meta');
