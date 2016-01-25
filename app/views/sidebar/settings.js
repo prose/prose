@@ -10,6 +10,7 @@ module.exports = Backbone.View.extend({
 
   events: {
     'click a.delete': 'emit',
+    'click a.toggle-editor': 'emit',
     'click a.translate': 'emit',
     'click a.draft': 'emit',
     'change input.filepath': 'setPath'

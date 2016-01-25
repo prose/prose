@@ -13,6 +13,10 @@
       <% } %>
     <% }); %>
   <% } %>
+  
+  <% if (['csv', 'tsv'].indexOf(settings.lang) !== -1) { %>
+    <a class='toggle-editor button round' href='#' data-action='toggle-editor'><%= t('sidebar.settings.toggleEditor') %></a>
+  <% } %>
 
   <!-- if !isNew() and is writable -->
   <a class='delete button round' href='#' data-action='destroy'><%= t('sidebar.settings.delete') %></a>

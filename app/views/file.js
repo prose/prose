@@ -3,6 +3,8 @@ var _ = require('underscore');
 var queue = require('queue-async');
 var jsyaml = require('js-yaml');
 var patch = require('../../vendor/liquid.patch');
+var Handsontable = require('handsontable');
+var Papa = require('papaparse');
 
 var ModalView = require('./modal');
 var marked = require('marked');
@@ -56,6 +58,7 @@ module.exports = Backbone.View.extend({
 
     // Events from sidebar
     this.listenTo(this.sidebar, 'destroy', this.destroy);
+    this.listenTo(this.sidebar, 'toggle-editor', this.toggleEditor);
     this.listenTo(this.sidebar, 'draft', this.draft);
     this.listenTo(this.sidebar, 'cancel', this.cancel);
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
@@ -306,6 +309,59 @@ module.exports = Backbone.View.extend({
     return _.escape(content);
   },
 
+  toggleEditor: function() {
+    cookie.set('disableCSVEditor', !cookie.get('disableCSVEditor'))
+    this.render();
+  },
+
+  parseCSV: function(csvString) {
+    return Papa.parse(util.trim(csvString), {  // remove trailing whitespace, mholt/PapaParse#279
+      skipEmptyLines: true
+    });
+  },
+
+  initCSVEditor: function() {
+    var self = this;
+
+    var $container = this.$el.find('#csv');
+    var container = $container[0];
+    var data = this.parseCSV(this.model.get('content'))
+
+    var distanceFromTop = $container.offset().top;
+    var documentHeight = $(document).height();
+    var editorHeight = documentHeight - distanceFromTop;
+
+    this.editor = new Handsontable(container, {
+      data: data.data,
+      colHeaders: true,
+      rowHeaders: true,
+      stretchH: 'all',
+      height: editorHeight,
+      fixedRowsTop: 1,
+      manualColumnResize: true,
+      manualRowResize: true,
+      contextMenu: ['row_above', 'row_below', 'col_left', 'col_right', 'remove_row', 'remove_col', 'undo', 'redo'],
+      undo: true,
+      afterChange: function(changes, source) {
+        if (source !== 'loadData') self.makeDirty();
+      }
+    })
+
+    this.editor.getValue = function() {
+      return Papa.unparse(this.getSourceData());
+    };
+
+    this.editor.setValue = function(newValue) {
+      var parsedValue = self.parseCSV(newValue);
+      this.loadData(parsedValue.data);
+      self.makeDirty();
+    };
+
+    // Check sessionStorage for existing stash
+    // Apply if stash exists and is current, remove if expired
+    this.stashApply();
+  },
+
   initEditor: function() {
     var lang = this.model.get('lang');
 
@@ -509,7 +565,9 @@ module.exports = Backbone.View.extend({
       var content = this.model.get('content');
 
       var file = {
-        markdown: this.model.get('markdown')
+        markdown: this.model.get('markdown'),
+        lang: this.model.get('lang'),
+        useCSVEditor: (['csv', 'tsv'].indexOf(this.model.get('lang')) !== -1 && !cookie.get('disableCSVEditor'))
       };
 
       this.$el.empty().append(_.template(this.template, file, {
@@ -520,7 +578,11 @@ module.exports = Backbone.View.extend({
       this.config = this.model.get('collection').config;
 
       // initialize the subviews
-      this.initEditor();
+      if (file.useCSVEditor) {
+        this.initCSVEditor();
+      } else {
+        this.initEditor();
+      }
       this.initHeader();
       this.initToolbar();
       this.initSidebar();
@@ -530,9 +592,8 @@ module.exports = Backbone.View.extend({
       var jekyll = /^(_posts|_drafts)/.test(this.model.get('path'));
 
       // Update the navigation view with menu options
-      // if a file contains metadata, has default metadata or is Markdown
-      if (this.model.get('metadata') || this.model.get('defaults') ||
-        (markdown && jekyll)) {
+      // if a file contains metadata, has default metadata or is Markdown (except CSVs)
+      if (!file.useCSVEditor && (this.model.get('metadata') || this.model.get('defaults') || (markdown && jekyll))) {
         this.renderMetadata();
 
         mode.push('meta');

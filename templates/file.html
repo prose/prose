@@ -17,7 +17,13 @@
         </div>
       </div>
       <div id='drop' class='drop-mask'></div>
+      <% if (file.useCSVEditor) { %>
+      <div id='csv-container'>
+        <div id='csv'></div>
+      </div>
+      <% } else { %>
       <textarea id='code' class='code round inner'></textarea>
+      <% } %>
     </div>
     <div id='preview' class='view preview prose'></div>
   </div>
