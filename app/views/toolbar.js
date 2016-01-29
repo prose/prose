@@ -121,6 +121,12 @@ module.exports = Backbone.View.extend({
         case 'quote':
           this.quote(selection);
           break;
+        case 'list':
+          this.list(selection);
+          break;
+        case 'numbered-list':
+          this.numberedList(selection);
+        break;
         default:
           this.view.editor.replaceSelection(snippet);
           break;
@@ -439,6 +445,26 @@ module.exports = Backbone.View.extend({
       this.view.editor.replaceSelection(util.lTrim(s.replace(/\>/g, '')));
     } else {
       this.view.editor.replaceSelection('> ' + s.replace(/\>/g, ''));
+    }
+  },
+
+  list: function(s) {
+    if (/^[-+]/.test(s.charAt(0))) {
+      this.view.editor.replaceSelection(util.lTrim(s.replace(/^[-+]\s?/gm, '').replace(/$/gm, '\r')));
+    } else if (s.substring(0, 3) === '* *') {
+      this.view.editor.replaceSelection(util.lTrim(s.replace(/^\*\s?/gm, '').replace(/$/gm, '\r')));
+    } else {
+      this.view.editor.replaceSelection(util.lTrim(s.replace(/^[-+]\s?|^\d*\.\s?|^/gm, '- ').replace(/$/gm, '\r')));
+    }
+  },
+
+  numberedList: function(s) {
+    if (/^\d/.test(s.charAt(0))) {
+      this.view.editor.replaceSelection(util.lTrim(s.replace(/^\d*\.\s?/gm, '').replace(/$/gm, '\r')));
+    } else if (s.substring(0, 3) === '* *') {
+      this.view.editor.replaceSelection(util.lTrim(s.replace(/^\*\s?/gm, '').replace(/$/gm, '\r')));
+    } else {
+      this.view.editor.replaceSelection(util.lTrim(s.replace(/^\d*\.\s?|^[-+]\s?|^/gm, '1. ').replace(/$/gm, '\r')));
     }
   },
 
