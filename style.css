@@ -302,6 +302,11 @@ textarea#code {
     border-width:1px;
     }
 
+div#csv-container {
+  width: 100%;
+  overflow: hidden;
+}
+
 ::-webkit-input-placeholder { color:#a8afb2; }
 ::-moz-placeholder          { color:#a8afb2; }
 :-ms-input-placeholder      { color:#a8afb2; }

@@ -155,7 +155,7 @@ module.exports = Backbone.Model.extend({
         throw err;
       }
 
-      return ['---', frontmatter, '---'].join('\n') + '\n\n' + content;
+      return ['---', frontmatter, '---'].join('\n') + '\n' + content;
     } else {
       return content;
     }
