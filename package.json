@@ -48,8 +48,8 @@
     "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
-    "test": "node_modules/.bin/gulp && node_modules/.bin/mocha-phantomjs test/index.html",
-    "start": "serve"
+    "test": "gulp && mocha-phantomjs test/index.html",
+    "start": "gulp watch & serve"
   },
   "browserify": {
     "transform": [
