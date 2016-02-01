@@ -48,6 +48,9 @@ module.exports = function() {
         }, {
           menuName: t('dialogs.help.miscellaneous.content.escaping.title'),
           data: t('dialogs.help.miscellaneous.content.escaping.content')
+        }, {
+            menuName: t('dialogs.help.miscellaneous.content.shortcuts.title'),
+            data: t('dialogs.help.miscellaneous.content.shortcuts.content')
         }]
       }
     ]
