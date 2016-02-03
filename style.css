@@ -472,7 +472,8 @@ ins {
 .containment,
 .limiter {
   position:relative;
-  width:680px;
+  min-width:680px;
+  max-width:1000px;
   margin:0 auto;
   }
 
