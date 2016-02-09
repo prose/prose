@@ -38,12 +38,17 @@ module.exports = Backbone.View.extend({
       repo: this.repo.attributes
     });
 
-    var rooturl = this.model.collection.config &&
-      this.model.collection.config.rooturl;
+    var config = this.model.collection.config;
+    var rooturl = config && config.rooturl;
+
     var regex = new RegExp('^' + rooturl + '(.*)');
     var jailpath = rooturl ? data.path.match(regex) : false;
 
     data.jailpath = jailpath ? jailpath[1] : data.path;
+
+    if (config && jailpath && ~data.path.indexOf(config.prose.media)) {
+      data.previewurl = config.prose.siteurl + jailpath[1];
+    }
 
     this.$el.html(_.template(this.template, data, {
       variable: 'file'
