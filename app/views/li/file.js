@@ -46,8 +46,15 @@ module.exports = Backbone.View.extend({
 
     data.jailpath = jailpath ? jailpath[1] : data.path;
 
-    if (config && jailpath && ~data.path.indexOf(config.prose.media)) {
-      data.previewurl = config.prose.siteurl + jailpath[1];
+    if (config && jailpath) {
+      if (data.image && ~data.path.indexOf(config.prose.media)) {
+        data.previewurl = config.prose.siteurl + jailpath[1];
+      }
+
+      if (data.markdown) {
+        var uripath = util.getURLFromPath(jailpath[1]);
+        data.previewurl = config.prose.siteurl + '/' + uripath;
+      }
     }
 
     this.$el.html(_.template(this.template, data, {
