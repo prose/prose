@@ -51,6 +51,7 @@ module.exports = Backbone.Model.extend({
       'extension': extension,
       'lang': util.mode(extension),
       'media': util.isMedia(extension),
+      'image': util.isImage(extension),
       'markdown': util.isMarkdown(extension),
       'name': util.extractFilename(path)[1],
       'oldpath': path,
