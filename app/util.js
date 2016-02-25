@@ -224,6 +224,10 @@ module.exports = {
     });
   },
 
+  formatFileName: function(f) {
+      return f.trim().replace(/^_/, '').replace(/ /g, '_');
+  },
+
   pageListing: function(handler) {
     if ($('.item').hasClass('active')) {
       var index = parseInt($('.item.active').data('index'), 10);

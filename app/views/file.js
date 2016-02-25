@@ -1330,7 +1330,8 @@ module.exports = Backbone.View.extend({
     var path = (this.toolbar.mediaDirectoryPath) ?
                     this.toolbar.mediaDirectoryPath :
                     util.extractFilename(this.toolbar.file.attributes.path)[0];
-    var src = path + '/' + encodeURIComponent(file.name);
+
+    var src = path + '/' + encodeURIComponent(util.formatFileName(file.name));
 
     this.$el.find('input[name="url"]').val(src);
     this.$el.find('input[name="alt"]').val('');
