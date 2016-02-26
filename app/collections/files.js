@@ -268,10 +268,13 @@ module.exports = Backbone.Collection.extend({
     // then set new content and update the existing file
     var model = this.findWhere({ path: path });
 
+    // Format the image file name for commit message
+    var name = (/image/.test(file.type)) ? util.formatFileName(file.name) : file.name;
+
     if (model) {
       // TODO: confirm overwrite with UI prompt
       model.set('content', content);
-      model.set('placeholder', t('actions.commits.updated', { filename: file.name }));
+      model.set('placeholder', t('actions.commits.updated', { filename: name }));
     } else {
       // initialize new File model with content
       model = new File({
@@ -282,7 +285,7 @@ module.exports = Backbone.Collection.extend({
         repo: this.repo
       });
 
-      model.set('placeholder', t('actions.commits.created', { filename: file.name }));
+      model.set('placeholder', t('actions.commits.created', { filename: name }));
     }
 
     // add to collection on save
