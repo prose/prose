@@ -34,6 +34,7 @@
     "gulp": "^3.8.2",
     "gulp-concat": "^2.2.0",
     "gulp-rename": "^1.2.0",
+    "gulp-sass": "^2.2.0",
     "gulp-shell": "^0.2.7",
     "gulp-uglify": "^0.3.1",
     "gulp-watch": "^0.6.8",
