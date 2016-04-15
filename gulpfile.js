@@ -16,6 +16,7 @@ var del = require('del');
 var watch = require('gulp-watch');
 var source = require('vinyl-source-stream');
 var mkdirp = require('mkdirp');
+var sass = require('gulp-sass');
 var nodeJS = process.execPath;
 
 // Scripts paths.
@@ -44,6 +45,9 @@ var paths = {
   ],
   templates: [
     'templates/**/*.html'
+  ],
+  css: [
+    'style/**/*.scss'
   ]
 };
 
@@ -80,6 +84,13 @@ gulp.task('translations', function () {
 
 // Default tasks.
 // ---------------------------
+
+// Parse stylesheet
+gulp.task('css', function () {
+  return gulp.src('./style/style.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest('./'));
+});
 
 // Build templates.
 gulp.task('templates', function () {
@@ -187,6 +198,7 @@ gulp.task('watch', ['build-app', 'build-tests'], function() {
   gulp.watch(paths.app, ['build-app', 'build-tests']);
   gulp.watch(paths.test, ['build-tests']);
   gulp.watch(paths.templates, ['build-app']);
+  gulp.watch(paths.css, ['css']);
 });
 
 
@@ -202,4 +214,4 @@ gulp.task('test', ['run-tests'], function() {
 
 // Default task which builds the project when we
 // run `gulp` from the command line.
-gulp.task('default', ['build-tests', 'build-app', 'uglify']);
+gulp.task('default', ['build-tests', 'build-app', 'css', 'uglify']);
