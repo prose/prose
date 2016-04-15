@@ -51,6 +51,17 @@ describe('Metadata form elements', function() {
       expect(textarea.getValue()).to.equal('bar');
     });
 
+    it.only('does not endlessly escape text areas', function() {
+      var value = '\<script\>alert("hi");\</script\>';
+      data.field.value = '';
+      data.id = 'xss';
+      var textarea = new TextArea({data: data});
+      $('#meta').append(textarea.render());
+      textarea.initCodeMirror(function() {});
+      textarea.setValue(value);
+      expect(textarea.getValue()).to.equal(value);
+    });
+
     it('reads values from a number element', function() {
       data.type = 'number';
       var number = new TextForm({data: data});
