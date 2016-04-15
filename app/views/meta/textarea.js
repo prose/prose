@@ -81,7 +81,7 @@ module.exports = Backbone.View.extend({
   setValue: function(value) {
     // Only set value if not null or undefined.
     if (value != undefined) {
-      this.codeMirror.setValue(_.escape(value));
+      this.codeMirror.setValue(value);
     }
   }
 });
