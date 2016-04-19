@@ -2,11 +2,6 @@ var CodeMirror = require('codemirror');
 var $ = require('jquery-browserify');
 var View = require('backbone').View;
 
-// TODO
-// doc#replaceSelection
-// doc#getSelection
-// options#rawKeyMap
-
 // Useful for us to know what parts of the CodeMirror API we use,
 // and what parts change between major versions.
 describe('CodeMirror integration', function () {
@@ -125,5 +120,14 @@ describe('CodeMirror integration', function () {
     expect(map.change).ok;
     expect(map.focus).ok;
     done();
+  });
+
+  it('honors selections', function () {
+    var cm = CodeMirror($el[0]);
+    cm.setValue('foo');
+    cm.execCommand('selectAll');
+    expect(cm.getSelection()).eql('foo');
+    cm.replaceSelection('bar');
+    expect(cm.getValue()).eql('bar');
   });
 });
