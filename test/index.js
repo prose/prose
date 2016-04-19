@@ -12,6 +12,7 @@ chai.use(sinonChai);
 require('./spec/vendor/liquid.patch.js');
 require('./spec/vendor/codemirror');
 require('./spec/boot');
+require('./spec/router');
 require('./spec/models/repo');
 require('./spec/models/file');
 require('./spec/views/file');
