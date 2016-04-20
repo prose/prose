@@ -26,11 +26,8 @@
       // Don't complain about known globals
       mocha.globals(['jQuery*', 'router']);
 
-      var expect = chai.expect;
-
       chai.use(function (chai, utils) {
         var flag = utils.flag;
-
         chai.Assertion.addMethod('classed', function (className) {
           this.assert(
             flag(this, 'object').classed(className),
