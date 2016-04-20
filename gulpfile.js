@@ -29,8 +29,8 @@ var paths = {
   ],
   test: [
   'test/**/*.{js, json}',
-  '!test/lib/index.js', // built test file
-  '!test/lib/polyfill.js' // built test file.
+  'test/index.html',
+  '!test/lib/index.js' // built test file
   ],
   templates: [
     'templates/**/*.html'
@@ -117,15 +117,6 @@ gulp.task('vendor', function() {
 
 // Build tests.
 gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
-
-  // Browserify polyfill-require.js
-  // Pass `debug` option to enable source maps.
-  browserify({debug:true})
-    .add('./test/lib/polyfill-require.js')
-    .require('./test/lib/sourcemap-hack', {expose: 'sourcemap-hack'})
-    .bundle()
-    .pipe(source('polyfill.js'))
-    .pipe(gulp.dest('./test/lib/'));
 
   // Browserify index.js
   // Pass `debug` option to enable source maps.
