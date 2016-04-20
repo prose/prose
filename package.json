@@ -50,7 +50,8 @@
     "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
-    "test": "gulp && mocha-phantomjs test/index.html",
+    "test": "gulp test",
+    "test-once": "gulp run-tests",
     "start": "gulp watch & serve"
   },
   "browserify": {

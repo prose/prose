@@ -121,9 +121,9 @@ gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
   // Browserify index.js
   // Pass `debug` option to enable source maps.
   return browserify({
-    debug: true,
-    noParse: [require.resolve('handsontable/dist/handsontable.full')]
-  })
+        debug: true,
+        noParse: [require.resolve('handsontable/dist/handsontable.full')]
+     })
     .add('./test/index.js')
     .external(['chai', 'mocha'])
     .bundle()
@@ -136,11 +136,10 @@ gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
 // Browserify app scripts, then concatenate with vendor scripts into `prose.js`.
 gulp.task('build-app', ['templates', 'oauth', 'vendor'], function() {
 
-
   // Browserify app scripts.
   return browserify({
-    noParse: [require.resolve('handsontable/dist/handsontable.full')]
-  })
+        noParse: [require.resolve('handsontable/dist/handsontable.full')]
+     })
     .add('./app/boot.js')
     .bundle()
     .pipe(source('app.js'))
@@ -183,7 +182,7 @@ gulp.task('watch', ['build-app', 'build-tests'], function() {
 
 
 gulp.task('run-tests', ['build-tests'], shell.task([
-  './node_modules/.bin/mocha-phantomjs test/index.html'
+  './node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html'
 ], {ignoreErrors: true}));
 
 // Like watch, but actually run the tests whenever anything changes.
