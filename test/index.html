@@ -5,20 +5,19 @@
     <title>Mocha</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="lib/mocha.css" />
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
   </head>
   <body>
     <div id="mocha"></div>
 
     <!-- include test library files here... -->
-    <script src="lib/mocha.js"></script>
-    <script src="lib/chai.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
 
     <!-- include lib files here... -->
-    <script src="lib/polyfill.js"></script>
     <script src='../locale.js'></script>
     <script src="../dist/vendor.js"></script>
-    
+
     <!-- configure mocha here... -->
     <script>
       mocha.setup({
@@ -27,14 +26,8 @@
       // Don't complain about known globals
       mocha.globals(['jQuery*', 'router']);
 
-      var smhack = require('sourcemap-hack');
-      mocha._reporter = smhack(mocha._reporter);
-
-      var expect = chai.expect;
-
       chai.use(function (chai, utils) {
         var flag = utils.flag;
-
         chai.Assertion.addMethod('classed', function (className) {
           this.assert(
             flag(this, 'object').classed(className),

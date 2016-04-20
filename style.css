@@ -2766,14 +2766,16 @@ span.CodeMirror-selectedtext {
   height: auto; }
 
 .code .CodeMirror-scroll {
-  min-height: 360px; }
+  min-height: 360px;
+  height: auto; }
 
 .markdown .CodeMirror {
   font-size: 14px; }
 
 .CodeMirror-scroll {
   /* Set scrolling behaviour here */
-  overflow: auto; }
+  overflow: auto;
+  height: auto; }
 
 .CodeMirror-scrollbar-filler {
   /* The little square between H and V scrollbars */

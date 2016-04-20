@@ -22,17 +22,6 @@ var nodeJS = process.execPath;
 // Scripts paths.
 var paths = {
   vendorScripts: [
-    'vendor/codemirror/codemirror.js',
-    'vendor/codemirror/overlay.js',
-    'vendor/codemirror/htmlmixed.js',
-    'vendor/codemirror/clike.js',
-    'vendor/codemirror/yaml.js',
-    'vendor/codemirror/ruby.js',
-    'vendor/codemirror/markdown.js',
-    'vendor/codemirror/xml.js',
-    'vendor/codemirror/javascript.js',
-    'vendor/codemirror/css.js',
-    'vendor/codemirror/gfm.js',
     'vendor/liquid.js'
   ],
   app: [
@@ -40,8 +29,8 @@ var paths = {
   ],
   test: [
   'test/**/*.{js, json}',
-  '!test/lib/index.js', // built test file
-  '!test/lib/polyfill.js' // built test file.
+  'test/index.html',
+  '!test/lib/index.js' // built test file
   ],
   templates: [
     'templates/**/*.html'
@@ -129,21 +118,12 @@ gulp.task('vendor', function() {
 // Build tests.
 gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
 
-  // Browserify polyfill-require.js
-  // Pass `debug` option to enable source maps.
-  browserify({debug:true})
-    .add('./test/lib/polyfill-require.js')
-    .require('./test/lib/sourcemap-hack', {expose: 'sourcemap-hack'})
-    .bundle()
-    .pipe(source('polyfill.js'))
-    .pipe(gulp.dest('./test/lib/'));
-
   // Browserify index.js
   // Pass `debug` option to enable source maps.
   return browserify({
-    debug: true,
-    noParse: [require.resolve('handsontable/dist/handsontable.full')]
-  })
+        debug: true,
+        noParse: [require.resolve('handsontable/dist/handsontable.full')]
+     })
     .add('./test/index.js')
     .external(['chai', 'mocha'])
     .bundle()
@@ -156,11 +136,10 @@ gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
 // Browserify app scripts, then concatenate with vendor scripts into `prose.js`.
 gulp.task('build-app', ['templates', 'oauth', 'vendor'], function() {
 
-
   // Browserify app scripts.
   return browserify({
-    noParse: [require.resolve('handsontable/dist/handsontable.full')]
-  })
+        noParse: [require.resolve('handsontable/dist/handsontable.full')]
+     })
     .add('./app/boot.js')
     .bundle()
     .pipe(source('app.js'))
@@ -203,7 +182,7 @@ gulp.task('watch', ['build-app', 'build-tests'], function() {
 
 
 gulp.task('run-tests', ['build-tests'], shell.task([
-  './node_modules/.bin/mocha-phantomjs test/index.html'
+  './node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html'
 ], {ignoreErrors: true}));
 
 // Like watch, but actually run the tests whenever anything changes.

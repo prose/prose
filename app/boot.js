@@ -1,6 +1,16 @@
 var LOCALES = require('../translations/locales');
 var en = require('../dist/en.js');
 
+require('codemirror/mode/clike/clike');
+require('codemirror/mode/css/css');
+require('codemirror/mode/gfm/gfm');
+require('codemirror/mode/htmlmixed/htmlmixed');
+require('codemirror/mode/javascript/javascript');
+require('codemirror/mode/markdown/markdown');
+require('codemirror/mode/ruby/ruby');
+require('codemirror/mode/xml/xml');
+require('codemirror/mode/yaml/yaml');
+
 // Set locale as global variable
 window.locale.en = en;
 window.locale.current('en');

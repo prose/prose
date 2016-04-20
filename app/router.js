@@ -165,7 +165,23 @@ module.exports = Backbone.Router.extend({
       this.users.add(user);
     }
 
-    var repo = user.repos.findWhere({ name: repoName });
+    // If user has access to repos with the same name,
+    // use the repo that matches the login/url, if available.
+    // https://github.com/prose/prose/issues/939
+    var repos = user.repos.filter(function (model) {
+      return model.get('name') === repoName;
+    });
+    var repo;
+    if (repos.length === 1) {
+      repo = repos[0];
+    } else if (repos.length > 1) {
+      // Returns false if there isn't a repo with a matching login.
+      // We're fine with that since _.isUndefined(false) === true
+      repo = _.find(repos, function (model) {
+        return model.get('owner').login === login;
+      });
+    }
+
     if (_.isUndefined(repo)) {
       repo = new Repo({
         name: repoName,

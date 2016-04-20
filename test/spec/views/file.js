@@ -1,11 +1,12 @@
+var _ = require('underscore');
 
-var FileView = require('../../../app/views/file'),
-    mockBranches = require('../../mocks/collections/branches'),
-    mockRepo = require('../../mocks/models/repo'),
-    mockFile = require('../../mocks/models/file'),
-    mockApp = require('../../mocks/views/app'),
-    mockRouter = require('../../mocks/router'),
-    Handsontable = require('handsontable');
+var FileView = require('../../../app/views/file');
+var mockBranches = require('../../mocks/collections/branches');
+var mockRepo = require('../../mocks/models/repo');
+var mockFile = require('../../mocks/models/file');
+var mockApp = require('../../mocks/views/app');
+var mockRouter = require('../../mocks/router');
+var Handsontable = require('handsontable');
 
 
 describe('File view', function() {
@@ -13,30 +14,31 @@ describe('File view', function() {
 
   beforeEach(function() {
     mockApp.reset(); // reset the DI state between tests.
+
+    fileView = new FileView({
+      app: mockApp(),
+      branch: 'master',
+      branches: mockBranches(),
+      mode: 'edit',
+      nav: mockApp().nav,
+      name: 'file.md',
+      path: 'file.md',
+      repo: mockRepo(),
+      router: mockRouter(),
+      sidebar: mockApp().sidebar
+    });
+    fileView.model = mockFile();
+    var clone = fileView.model.clone;
+    fileView.model.clone = function () {
+      return mockFile();
+    }
+    fileView.collection = fileView.model.collection;
   });
 
   describe('in edit mode', function() {
 
-    beforeEach(function() {
-      fileView = new FileView({
-        app: mockApp(),
-        branch: 'master',
-        branches: mockBranches(),
-        mode: 'edit',
-        nav: mockApp().nav,
-        name: 'file.md',
-        path: 'file.md',
-        repo: mockRepo(),
-        router: mockRouter(),
-        sidebar: mockApp().sidebar
-      });
-    });
-
     it('creates the CodeMirror editor', function() {
-      fileView.model = mockFile()
-      fileView.collection = fileView.model.collection;
       fileView.render();
-
       expect(fileView.editor).to.be.ok;
     })
 
@@ -49,7 +51,6 @@ describe('File view', function() {
     })
 
     it('creates the Hansontable editor', function() {
-      fileView.model = mockFile();
       fileView.model.set('lang', 'csv');
       fileView.collection = fileView.model.collection;
       fileView.render();
@@ -75,7 +76,6 @@ describe('File view', function() {
     })
 
     it('creates a placeholder title for new files', function() {
-      fileView.model = mockFile();
       fileView.model.set({
         defaults: [{name: 'title'}]
       });
@@ -87,34 +87,27 @@ describe('File view', function() {
       expect(fileView.subviews.header.options.placeholder).to.equal(true);
     });
 
-    describe('#defaulUploadPath', function() {
-        beforeEach(function() {
-            fileView.model = mockFile()
-            fileView.model.set('path', '/path/to/fake.md')
+    describe('#defaultUploadPath', function() {
+      context('with config', function() {
+        it('uses the configured upload path', function() {
+          fileView.model.set('path', '/path/to/fake.md')
+          fileView.config = { "media": "/configured/assets" };
+          expect(fileView.defaultUploadPath('my-image.jpg')).to.equal("/configured/assets/my-image.jpg");
         });
-        context('with config', function() {
-            beforeEach(function() {
-                fileView.config = { "media": "/configured/assets" };
-            });
-            it('uses the configured upload path', function() {
-                expect(fileView.defaultUploadPath('my-image.jpg')).to.equal("/configured/assets/my-image.jpg");
-            });
+      });
+      context('without config', function() {
+        it('uses the files directory', function() {
+          fileView.model.set('path', '/path/to/fake.md')
+          fileView.config = null;
+          expect(fileView.defaultUploadPath('my-image.jpg')).to.equal("/path/to/my-image.jpg");
         });
-        context('without config', function() {
-            beforeEach(function() {
-                fileView.config = null;
-            });
-            it('uses the files directory', function() {
-                expect(fileView.defaultUploadPath('my-image.jpg')).to.equal("/path/to/my-image.jpg");
-            });
-        });
+      });
     });
 
     describe('#post', function() {
       it('does not set title as placeholder when publishing from draft', function(done) {
-        fileView.model = mockFile();
-        fileView.model.set('path', '_drafts/post.md');
         fileView.model.set({
+          path: '_drafts/post.md',
           defaults: [{name: 'title'}],
           metadata: {title: 'foo'}
         });
@@ -133,9 +126,8 @@ describe('File view', function() {
 
     describe('#draft', function() {
       it('does not set title as placeholder when creating draft', function(done) {
-        fileView.model = mockFile();
-        fileView.model.set('path', '_posts/post.md');
         fileView.model.set({
+          path: '_posts/post.md',
           defaults: [{name: 'title'}],
           metadata: {title: 'foo'}
         });

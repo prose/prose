@@ -1,3 +1,4 @@
+var CodeMirror = require('codemirror');
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var queue = require('queue-async');

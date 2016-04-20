@@ -51,7 +51,7 @@ describe('Metadata form elements', function() {
       expect(textarea.getValue()).to.equal('bar');
     });
 
-    it.only('does not endlessly escape text areas', function() {
+    it('does not endlessly escape text areas', function() {
       var value = '\<script\>alert("hi");\</script\>';
       data.field.value = '';
       data.id = 'xss';
