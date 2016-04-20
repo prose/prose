@@ -177,7 +177,7 @@ module.exports = Backbone.Router.extend({
     } else if (repos.length > 1) {
       // Returns false if there isn't a repo with a matching login.
       // We're fine with that since _.isUndefined(false) === true
-      repo = repos.find(function (model) {
+      repo = _.find(repos, function (model) {
         return model.get('owner').login === login;
       });
     }
