@@ -78,7 +78,8 @@ gulp.task('translations', function () {
 gulp.task('css', function () {
   return gulp.src('./style/style.scss')
     .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./'));
+    .pipe(rename('prose.css'))
+    .pipe(gulp.dest(dist));
 });
 
 // Build templates.
@@ -138,7 +139,7 @@ gulp.task('build-app', ['templates', 'oauth'], function() {
 });
 
 // Watch for changes in `app` scripts.
-gulp.task('watch', ['build-app', 'build-tests'], function() {
+gulp.task('watch', ['build-app', 'build-tests', 'css'], function() {
   // Watch any `.js` file under `app` folder.
   gulp.watch(paths.app, ['build-app', 'build-tests']);
   gulp.watch(paths.test, ['build-tests']);
