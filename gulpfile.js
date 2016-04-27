@@ -1,11 +1,3 @@
-// Build file.
-// Usage:
-//
-//    $ gulp
-//
-// See: https://github.com/prose/prose/issues/702
-
-// Require dependencies.
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
@@ -40,7 +32,6 @@ var paths = {
   ]
 };
 
-
 // Removes `dist` folder.
 gulp.task('clean', function (cb) {
   del(['dist'], cb);
@@ -70,10 +61,6 @@ gulp.task('translations', function () {
     );
 });
 
-
-// Default tasks.
-// ---------------------------
-
 // Parse stylesheet
 gulp.task('css', function () {
   return gulp.src('./style/style.scss')
@@ -92,7 +79,6 @@ gulp.task('templates', function () {
     );
 });
 
-
 // Creates `dist` directory if not created and
 // creates `oauth.json`.
 gulp.task('oauth', function () {
@@ -105,15 +91,15 @@ gulp.task('oauth', function () {
     );
 });
 
-
-
-// Concatenate vendor scripts into dist/vendor.js
+// Concatenate vendor scripts
 gulp.task('vendor', function() {
+  mkdirp('dist');
   gulp.src(paths.vendorScripts)
-  .pipe(concat('vendor.js'))
-  .pipe(gulp.dest('dist/'));
+    .pipe(concat('vendor.js'))
+    // Both tests and the app need copies of this file
+    .pipe(gulp.dest('dist/'))
+    .pipe(gulp.dest('test/lib/'));
 })
-
 
 // Build tests.
 gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
@@ -131,7 +117,6 @@ gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
     .pipe(gulp.dest('./test/lib/')); // Output folder.
 
 });
-
 
 // Browserify app scripts, then concatenate with vendor scripts into `prose.js`.
 gulp.task('build-app', ['templates', 'oauth', 'vendor'], function() {
@@ -156,7 +141,6 @@ gulp.task('build-app', ['templates', 'oauth', 'vendor'], function() {
 
 });
 
-
 // Compress `prose.js`.
 gulp.task('uglify', ['build-app'], function() {
 
@@ -166,12 +150,7 @@ gulp.task('uglify', ['build-app'], function() {
     .pipe(gulp.dest('dist'));
 });
 
-
 // Watch for changes in `app` scripts.
-// Usage:
-//
-//    $ gulp watch
-//
 gulp.task('watch', ['build-app', 'build-tests'], function() {
   // Watch any `.js` file under `app` folder.
   gulp.watch(paths.app, ['build-app', 'build-tests']);
@@ -179,7 +158,6 @@ gulp.task('watch', ['build-app', 'build-tests'], function() {
   gulp.watch(paths.templates, ['build-app']);
   gulp.watch(paths.css, ['css']);
 });
-
 
 gulp.task('run-tests', ['build-tests'], shell.task([
   './node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html'
@@ -189,7 +167,6 @@ gulp.task('run-tests', ['build-tests'], shell.task([
 gulp.task('test', ['run-tests'], function() {
   gulp.watch([paths.app, paths.test, paths.templates], ['run-tests'])
 });
-
 
 // Default task which builds the project when we
 // run `gulp` from the command line.

@@ -1,8 +1,8 @@
 .DS_Store
 node_modules/
-dist/*
+dist
 transifex.auth
 oauth.json
 .vimrc
-test/lib/index.js
-_site/
+test/lib
+_site
