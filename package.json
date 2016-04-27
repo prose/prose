@@ -34,11 +34,13 @@
     "glob": "~3.1.21",
     "gulp": "^3.8.2",
     "gulp-concat": "^2.2.0",
+    "gulp-if": "^2.0.0",
     "gulp-rename": "^1.2.0",
     "gulp-sass": "^2.2.0",
     "gulp-shell": "^0.2.7",
     "gulp-uglify": "^0.3.1",
     "gulp-watch": "^0.6.8",
+    "merge2": "^1.0.2",
     "mocha": "^2.4.5",
     "mocha-phantomjs": "^4.0.2",
     "phantomjs": "^2.1.7",
@@ -47,12 +49,14 @@
     "sinon": "^1.17.2",
     "sinon-chai": "^2.6.0",
     "uglify-js": "~2.2.5",
+    "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
     "test": "gulp run-tests",
     "test-watch": "gulp test",
-    "start": "gulp watch & serve"
+    "start": "gulp watch & serve",
+    "build": "gulp"
   },
   "browserify": {
     "transform": [
