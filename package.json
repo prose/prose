@@ -53,10 +53,10 @@
     "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
-    "test": "gulp run-tests",
-    "test-watch": "gulp test",
+    "test": "gulp test",
+    "test-ci": "gulp test-ci",
     "start": "gulp watch & serve",
-    "build": "gulp"
+    "build": "gulp production"
   },
   "browserify": {
     "transform": [

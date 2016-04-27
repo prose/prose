@@ -35,22 +35,21 @@ var paths = {
   ]
 };
 
-var production = false;
-if (process.env.PROSE_PRODUCTION) {
-  production = true;
-}
 function isProd () {
-  return production;
+  return process.env.PROSE_ENV === 'production';
 }
+
+gulp.task('setProductionEnv', function () {
+  return process.env.PROSE_ENV = 'production';
+});
 
 var dist = './dist';
 var dev = './';
 
 // Removes `dist` folder.
 gulp.task('clean', function (cb) {
-  del([dist], cb);
+  return del([dist], cb);
 });
-
 
 // Translations.
 // To run this task we have to have a `transifex.auth`
@@ -147,15 +146,22 @@ gulp.task('watch', ['build-app', 'build-tests'], function() {
   gulp.watch(paths.css, ['css']);
 });
 
-gulp.task('run-tests', ['build-tests'], shell.task([
+var testTask = shell.task([
   './node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html'
-], {ignoreErrors: true}));
+], {ignoreErrors: true});
 
-// Like watch, but actually run the tests whenever anything changes.
-gulp.task('test', ['run-tests'], function() {
-  gulp.watch([paths.app, paths.test, paths.templates], ['run-tests'])
+gulp.task('test', ['build-tests'], testTask);
+
+// Run tests in command line on app, test, or template change
+gulp.task('test-ci', ['test'], function() {
+  gulp.watch([paths.app, paths.test, paths.templates], ['test'])
 });
 
-// Default task which builds the project when we
-// run `gulp` from the command line.
-gulp.task('default', ['build-tests', 'build-app', 'css']);
+// Build site, tests
+gulp.task('build', ['build-tests', 'build-app', 'css']);
+gulp.task('default', ['build']);
+
+// Clean and minify build
+gulp.task('production', ['clean', 'setProductionEnv'], function () {
+  gulp.start('build');
+});
