@@ -19,7 +19,7 @@ addons:
 cache:
   apt: true
   directories:
-  - node_modules
+    - node_modules
 
 before_install:
 - chmod +x ./.build_scripts/deploy.sh
