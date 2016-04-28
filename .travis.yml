@@ -15,5 +15,9 @@ before_script:
 - npm test
 script:
 - npm run build
-after_success:
-- "./.build_scripts/deploy.sh"
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: .build_scripts/deploy.sh
+  on:
+    branch: ${DEPLOY_BRANCH}
