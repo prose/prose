@@ -56,7 +56,7 @@
     "test": "gulp test",
     "test-ci": "gulp test-ci",
     "start": "gulp watch & serve",
-    "build": "gulp production"
+    "build": "gulp clean; gulp production"
   },
   "browserify": {
     "transform": [

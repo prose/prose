@@ -162,7 +162,5 @@ gulp.task('test-ci', ['test'], function() {
 gulp.task('build', ['build-tests', 'build-app', 'css']);
 gulp.task('default', ['build']);
 
-// Clean and minify build
-gulp.task('production', ['clean', 'setProductionEnv'], function () {
-  gulp.start('build');
-});
+// Minify build
+gulp.task('production', ['setProductionEnv', 'build']);
