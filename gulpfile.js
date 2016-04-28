@@ -1,11 +1,3 @@
-// Build file.
-// Usage:
-//
-//    $ gulp
-//
-// See: https://github.com/prose/prose/issues/702
-
-// Require dependencies.
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
@@ -14,7 +6,10 @@ var browserify = require('browserify');
 var rename = require('gulp-rename');
 var del = require('del');
 var watch = require('gulp-watch');
+var gulpif = require('gulp-if');
 var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var merge2 = require('merge2');
 var mkdirp = require('mkdirp');
 var sass = require('gulp-sass');
 var nodeJS = process.execPath;
@@ -40,12 +35,21 @@ var paths = {
   ]
 };
 
+function isProd () {
+  return process.env.PROSE_ENV === 'production';
+}
+
+gulp.task('setProductionEnv', function () {
+  return process.env.PROSE_ENV = 'production';
+});
+
+var dist = './dist';
+var dev = './';
 
 // Removes `dist` folder.
 gulp.task('clean', function (cb) {
-  del(['dist'], cb);
+  return del([dist], cb);
 });
-
 
 // Translations.
 // To run this task we have to have a `transifex.auth`
@@ -60,7 +64,7 @@ gulp.task('clean', function (cb) {
 // An account can be created at https://www.transifex.com/
 //
 gulp.task('translations', function () {
-  mkdirp('dist');
+  mkdirp(dist);
   return gulp.src('')
     .pipe(
       shell([
@@ -70,20 +74,17 @@ gulp.task('translations', function () {
     );
 });
 
-
-// Default tasks.
-// ---------------------------
-
 // Parse stylesheet
 gulp.task('css', function () {
   return gulp.src('./style/style.scss')
     .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./'));
+    .pipe(rename('prose.css'))
+    .pipe(gulp.dest(dist));
 });
 
 // Build templates.
 gulp.task('templates', function () {
-  mkdirp('dist');
+  mkdirp(dist);
   return gulp.src('')
     .pipe(
       shell([
@@ -92,11 +93,10 @@ gulp.task('templates', function () {
     );
 });
 
-
 // Creates `dist` directory if not created and
 // creates `oauth.json`.
 gulp.task('oauth', function () {
-  mkdirp('dist');
+  mkdirp(dist);
   return gulp.src('')
     .pipe(
       shell([
@@ -105,74 +105,41 @@ gulp.task('oauth', function () {
     );
 });
 
+// Build tests, then concatenate with vendor scripts
+gulp.task('build-tests', ['templates', 'oauth'], function() {
+  var tests = browserify({
+    debug: true,
+    noParse: [require.resolve('handsontable/dist/handsontable.full')]
+  })
+  .add('./test/index.js')
+  .external(['chai', 'mocha'])
+  .bundle()
+  .pipe(source('index.js'))
+  .pipe(buffer());
 
-
-// Concatenate vendor scripts into dist/vendor.js
-gulp.task('vendor', function() {
-  gulp.src(paths.vendorScripts)
-  .pipe(concat('vendor.js'))
-  .pipe(gulp.dest('dist/'));
-})
-
-
-// Build tests.
-gulp.task('build-tests', ['templates', 'oauth', 'vendor'], function() {
-
-  // Browserify index.js
-  // Pass `debug` option to enable source maps.
-  return browserify({
-        debug: true,
-        noParse: [require.resolve('handsontable/dist/handsontable.full')]
-     })
-    .add('./test/index.js')
-    .external(['chai', 'mocha'])
-    .bundle()
-    .pipe(source('index.js')) // Output file.
-    .pipe(gulp.dest('./test/lib/')); // Output folder.
-
+  return merge2(gulp.src(paths.vendorScripts), tests)
+  .pipe(concat('index.js'))
+  .pipe(gulp.dest('./test/lib'));
 });
-
 
 // Browserify app scripts, then concatenate with vendor scripts into `prose.js`.
-gulp.task('build-app', ['templates', 'oauth', 'vendor'], function() {
+gulp.task('build-app', ['templates', 'oauth'], function() {
+  var app = browserify({
+    noParse: [require.resolve('handsontable/dist/handsontable.full')]
+  })
+  .add('./app/boot.js')
+  .bundle()
+  .pipe(source('app.js'))
+  .pipe(buffer());
 
-  // Browserify app scripts.
-  return browserify({
-        noParse: [require.resolve('handsontable/dist/handsontable.full')]
-     })
-    .add('./app/boot.js')
-    .bundle()
-    .pipe(source('app.js'))
-    .pipe(gulp.dest('./dist/'))
-
-    // Concatenate scripts once browserify finishes.
-    .on('end', function() {
-
-      // Concatenate `vendor` and `app` scripts into `prose.js`.
-      return gulp.src(['dist/vendor.js', 'dist/app.js'])
-        .pipe(concat('prose.js'))
-        .pipe(gulp.dest('dist/'));
-    });
-
+  return merge2(gulp.src(paths.vendorScripts), app)
+  .pipe(concat('prose.js'))
+  .pipe(gulpif(isProd(), uglify()))
+  .pipe(gulp.dest(dist));
 });
-
-
-// Compress `prose.js`.
-gulp.task('uglify', ['build-app'], function() {
-
-  return gulp.src('dist/prose.js')
-    .pipe(rename('prose.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('dist'));
-});
-
 
 // Watch for changes in `app` scripts.
-// Usage:
-//
-//    $ gulp watch
-//
-gulp.task('watch', ['build-app', 'build-tests'], function() {
+gulp.task('watch', ['build-app', 'build-tests', 'css'], function() {
   // Watch any `.js` file under `app` folder.
   gulp.watch(paths.app, ['build-app', 'build-tests']);
   gulp.watch(paths.test, ['build-tests']);
@@ -180,17 +147,20 @@ gulp.task('watch', ['build-app', 'build-tests'], function() {
   gulp.watch(paths.css, ['css']);
 });
 
-
-gulp.task('run-tests', ['build-tests'], shell.task([
+var testTask = shell.task([
   './node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html'
-], {ignoreErrors: true}));
+], {ignoreErrors: true});
 
-// Like watch, but actually run the tests whenever anything changes.
-gulp.task('test', ['run-tests'], function() {
-  gulp.watch([paths.app, paths.test, paths.templates], ['run-tests'])
+gulp.task('test', ['build-tests'], testTask);
+
+// Run tests in command line on app, test, or template change
+gulp.task('test-ci', ['test'], function() {
+  gulp.watch([paths.app, paths.test, paths.templates], ['test'])
 });
 
+// Build site, tests
+gulp.task('build', ['build-tests', 'build-app', 'css']);
+gulp.task('default', ['build']);
 
-// Default task which builds the project when we
-// run `gulp` from the command line.
-gulp.task('default', ['build-tests', 'build-app', 'css', 'uglify']);
+// Minify build
+gulp.task('production', ['setProductionEnv', 'build']);

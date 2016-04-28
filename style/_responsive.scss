@@ -23,7 +23,7 @@
                0 0 10px rgba(0, 0, 0, 0.1);
     }
     .loading .loading-icon {
-      background-image:url('img/loader@55x55.gif');
+      background-image:url('../img/loader@55x55.gif');
       margin:0 auto 5px;
       width:55px;
       height:55px;
@@ -260,12 +260,12 @@ only screen and (min-device-pixel-ratio:2) {
   .chzn-container-single .chzn-single div b,
   .chzn-container .chzn-results-scroll-down span,
   .chzn-container-multi .chzn-choices .search-choice .search-choice-close {
-    background-image:url('img/sprite@2x.png');
+    background-image:url('../img/sprite@2x.png');
     background-size:400px 150px;
     }
 
   .loading .loading-icon {
-    background-image:url('img/loader@110x110.gif');
+    background-image:url('../img/loader@110x110.gif');
     background-size:55px 55px;
     }
 }
