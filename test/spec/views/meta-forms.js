@@ -183,7 +183,7 @@ describe('Metadata form elements', function() {
       expect($('.chzn-choices').find('li.search-choice').length).to.equal(0);
 
       // expect response to be an array
-      expect(multiselect.getValue()).to.deep.equal([]);
+      expect(multiselect.getValue()).to.equal('');
     });
 
     it('accepts a value or an array', function () {
