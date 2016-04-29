@@ -108,7 +108,6 @@ gulp.task('oauth', function () {
 // Build tests, then concatenate with vendor scripts
 gulp.task('build-tests', ['templates', 'oauth'], function() {
   var tests = browserify({
-    debug: true,
     noParse: [require.resolve('handsontable/dist/handsontable.full')]
   })
   .add('./test/index.js')
