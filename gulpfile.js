@@ -14,6 +14,7 @@ var mkdirp = require('mkdirp');
 var sass = require('gulp-sass');
 var nodeJS = process.execPath;
 
+
 // Scripts paths.
 var paths = {
   vendorScripts: [
