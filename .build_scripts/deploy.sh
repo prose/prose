@@ -6,6 +6,7 @@ echo "${DEPLOY_BRANCH}"
 echo "${GH_REF}"
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = ${DEPLOY_BRANCH} ]; then
   echo "Get ready, we're pushing to gh-pages!"
+  rm -rf site
   mkdir site
   cp -a dist site
   cp -a img fonts index.html style-rtl.css locale.js oath.json CNAME site
