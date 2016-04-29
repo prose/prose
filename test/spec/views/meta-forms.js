@@ -112,6 +112,20 @@ describe('Metadata form elements', function() {
       expect(select.getValue()).to.equal('sre');
     });
 
+    it.only('sets initial value on a select element', function () {
+      data.field.options = [
+        {name: 'Dan', value: 'dan'},
+        {name: 'Jon', value: 'jon'},
+        {name: 'Sre', value: 'sre'}
+      ];
+      var select = new Select({data: data});
+      $('#meta').append(select.render());
+      $('.chzn-select').chosen();
+      select.setValue('jon');
+      expect(select.getValue()).to.equal('jon');
+      expect($('.chzn-single').find('span').text()).to.equal('Jon');
+    });
+
     it('reads values from a multiselect element', function() {
       data.field.options = [
         {name: 'Dan', value: 'dan'},
