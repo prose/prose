@@ -5,6 +5,11 @@
   <fieldset>
     <select name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' class='metafield chzn-select'>
       <% _(meta.options).each(function(o) { %>
+
+        <% if (meta.placeholder) { %>
+          <option></option>
+        <% } %>
+
         <% if (!o.lang || o.lang === meta.lang) { %>
           <% if (o.name) { %>
            <option value='<%= o.value %>'><%= o.name %></option>

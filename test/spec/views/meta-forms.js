@@ -112,6 +112,48 @@ describe('Metadata form elements', function() {
       expect(select.getValue()).to.equal('sre');
     });
 
+    it('sets initial value on a select element', function () {
+      data.field.options = [
+        {name: 'Dan', value: 'dan'},
+        {name: 'Jon', value: 'jon'},
+        {name: 'Sre', value: 'sre'}
+      ];
+      var select = new Select({data: data});
+      $('#meta').append(select.render());
+      $('.chzn-select').chosen();
+      select.setValue('jon');
+      expect(select.getValue()).to.equal('jon');
+      expect($('.chzn-single').find('span').text()).to.equal('Jon');
+    });
+
+    it('adds additional, selected element when needed', function () {
+      data.field.options = [
+        {name: 'Dan', value: 'dan'},
+        {name: 'Jon', value: 'jon'},
+        {name: 'Sre', value: 'sre'}
+      ];
+      var select = new Select({data: data});
+      $('#meta').append(select.render());
+      $('.chzn-select').chosen();
+      select.setValue('WUT');
+      expect(select.getValue()).to.equal('WUT');
+      expect($('.chzn-single').find('span').text()).to.equal('WUT');
+    });
+
+    it('shows first item in select, if given an array', function () {
+      data.field.options = [
+        {name: 'Dan', value: 'dan'},
+        {name: 'Jon', value: 'jon'},
+        {name: 'Sre', value: 'sre'}
+      ];
+      var select = new Select({data: data});
+      $('#meta').append(select.render());
+      $('.chzn-select').chosen();
+      select.setValue(['sre', 'jon']);
+      expect(select.getValue()).to.equal('sre');
+      expect($('.chzn-single').find('span').text()).to.equal('Sre');
+    });
+
     it('reads values from a multiselect element', function() {
       data.field.options = [
         {name: 'Dan', value: 'dan'},
@@ -126,6 +168,52 @@ describe('Metadata form elements', function() {
       $select[0].selectedIndex=1;
       $select.trigger('liszt:updated');
       expect(multiselect.getValue()[0]).to.equal('jon');
+    });
+
+    it('does not set a null value', function () {
+      data.field.options = [
+        {name: 'Dan', value: 'dan'},
+        {name: 'Jon', value: 'jon'},
+        {name: 'Sre', value: 'sre'}
+      ];
+      var multiselect = new Multiselect({data: data});
+      $('#meta').append(multiselect.render());
+      $('.chzn-select').chosen();
+      multiselect.setValue([null, false, undefined]);
+      expect($('.chzn-choices').find('li.search-choice').length).to.equal(0);
+
+      // expect response to be an array
+      expect(multiselect.getValue()).to.equal('');
+    });
+
+    it('accepts a value or an array', function () {
+      data.field.options = [
+        {name: 'Dan', value: 'dan'},
+        {name: 'Jon', value: 'jon'},
+        {name: 'Sre', value: 'sre'}
+      ];
+      var multiselect = new Multiselect({data: data});
+      $('#meta').append(multiselect.render());
+      $('.chzn-select').chosen();
+      multiselect.setValue('sre');
+      expect(multiselect.getValue()).to.deep.equal(['sre']);
+      multiselect.setValue(['sre', 'jon']);
+      expect(multiselect.getValue()).to.deep.equal(['jon', 'sre']);
+    });
+
+    it('adds new values when needed', function () {
+      data.field.options = [
+        {name: 'Dan', value: 'dan'},
+        {name: 'Jon', value: 'jon'},
+        {name: 'Sre', value: 'sre'}
+      ];
+      var multiselect = new Multiselect({data: data});
+      $('#meta').append(multiselect.render());
+      $('.chzn-select').chosen();
+      multiselect.setValue(['dick', 'van', 'dyke']);
+      expect(multiselect.getValue()).to.deep.equal(['dick', 'van', 'dyke']);
+      expect($('.chzn-choices').find('li.search-choice').length).to.equal(3);
+      expect($('.chzn-choices').find('li.search-choice').eq(2).find('span').text()).to.equal('dyke');
     });
   });
 });
