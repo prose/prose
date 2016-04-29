@@ -42,26 +42,30 @@ module.exports = Backbone.View.extend({
   },
 
   setValue: function(value) {
+    var $el = this.$el;
+    var $form = this.$form;
     var values = _.isArray(value) ? value : [value];
     values = values.filter(function (value) {
       // make sure we accept values of 0
       return Boolean(value) || value === 0;
     });
     if (!values.length) {
-      return;
+      $el.find('option').each(function () {
+        $(this).attr('selected', false);
+      });
     }
-    var $el = this.$el;
-    var $form = this.$form;
-    _.each(values, function(v) {
-      var match = $el.find('option[value="' + v + '"]');
-      if (match.length) {
-        match.attr('selected', 'selected');
-      }
-      // add the value as an option if none exists
-      else {
-        $form.append($('<option />', {selected: 'selected', value: v, text: v}));
-      }
-    });
+    else {
+      _.each(values, function(v) {
+        var match = $el.find('option[value="' + v + '"]');
+        if (match.length) {
+          match.attr('selected', 'selected');
+        }
+        // add the value as an option if none exists
+        else {
+          $form.append($('<option />', {selected: 'selected', value: v, text: v}));
+        }
+      });
+    }
     $form.trigger('liszt:updated');
   }
 });

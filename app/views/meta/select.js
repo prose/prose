@@ -31,23 +31,34 @@ module.exports = Backbone.View.extend({
   },
 
   getValue: function() {
-    return this.$form.val();
+    var val = this.$form.val();
+    if (!val && val !== 0) {
+      return '';
+    }
+    return val;
   },
 
   setValue: function(value) {
+    var $el = this.$el;
+    var $form = this.$form;
     if (_.isArray(value)) {
       value = value[0];
     }
-    var $el = this.$el;
-    var $form = this.$form;
-    var match = $el.find('option[value="' + value + '"]');
-    if (match.length) {
-      match.attr('selected', 'selected');
-      $form.trigger('liszt:updated');
+    if (!value && value !== 0) {
+      $el.find('option').each(function () {
+        $(this).attr('selected', false);
+      });
     }
     else {
-      $form.append($('<option />', {selected: 'selected', value: value, text: value}));
-      $form.trigger('liszt:updated');
+      var match = $el.find('option[value="' + value + '"]');
+      if (match.length) {
+        match.attr('selected', 'selected');
+        $form.trigger('liszt:updated');
+      }
+      else {
+        $form.append($('<option />', {selected: 'selected', value: value, text: value}));
+      }
     }
+    $form.trigger('liszt:updated');
   }
 });
