@@ -43,7 +43,7 @@
     "merge2": "^1.0.2",
     "mocha": "^2.4.5",
     "mocha-phantomjs": "^4.0.2",
-    "phantomjs": "^2.1.7",
+    "phantomjs-prebuilt": "^2.1.7",
     "request": "~2.16.2",
     "serve": "^1.4.0",
     "sinon": "^1.17.2",
