@@ -36,7 +36,7 @@ module.exports = Backbone.View.extend({
   getValue: function() {
     var val = this.$form.val();
     if (!val && val !== 0) {
-      return [];
+      return '';
     }
     return val;
   },
