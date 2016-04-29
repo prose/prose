@@ -179,9 +179,11 @@ describe('Metadata form elements', function() {
       var multiselect = new Multiselect({data: data});
       $('#meta').append(multiselect.render());
       $('.chzn-select').chosen();
-      multiselect.setValue(null);
+      multiselect.setValue([null, false, undefined]);
       expect($('.chzn-choices').find('li.search-choice').length).to.equal(0);
-      expect(multiselect.getValue()).to.equal([]);
+
+      // expect response to be an array
+      expect(multiselect.getValue()).to.deep.equal([]);
     });
 
     it('accepts a value or an array', function () {
