@@ -66,22 +66,14 @@ If you run `gulp translations` you will be warned to include a `transifex.auth` 
 All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. The `gh-pages` branch manages rebuilds to the server. All pull requests should include an update to the version in `package.json` according to [semver](http://semver.org/).
 
 ## Deploying
-1. `git checkout master && git pull`
-2. Increment the version in `package.json`, commit and tag the release in `master` using `git tag` according to [semver](http://semver.org/) in the format `vX.Y.Z`. This should match the updated version in `package.json`.
-3. Push tag to GitHub using `git push --tags`
-4. `git checkout gh-pages && git pull`
-5. `git merge master`
-6. `npm install`
-7. `gulp clean && gulp`
-8. `git add dist/`
-9. `git commit`
-10. `git push`
+
+[Travis-ci](https://travis-ci.org/) handles deployment to `gh-pages`, and will deploy on each push to the `master` branch.
 
 ## Building / Installing
 
 Prose uses [Browserify](http://browserify.org) with [Gulp](http://gulpjs.com/)
 to manage dependencies and build. Development also requires you
-have [node.js](http://nodejs.org) >= v0.8 installed.
+have [node.js](http://nodejs.org) >= v4.2 installed.
 
 ### Prerequisites
 - [node.js](http://nodejs.org/).
@@ -89,7 +81,7 @@ have [node.js](http://nodejs.org) >= v0.8 installed.
 ### Install steps
 
 1. `git clone git@github.com:prose/prose.git && cd prose/`
-2. Run `npm install && mkdir -p dist && gulp`
+2. Run `npm install && gulp`
 3. To run prose with authentication locally, a `oauth.json` file is required in the
 root directory. When you run `gulp` this file is created automatically.
 4. Run `npm start` By default, prose will be set up on [http://localhost:3000](http://localhost:3000).
@@ -141,4 +133,3 @@ through [JSHint](http://www.jshint.com/) with no warnings.
 - 2 spaces soft tabs
 
 For CSS, use classes to target elements.
-

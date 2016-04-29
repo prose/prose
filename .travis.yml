@@ -1,20 +1,33 @@
 language: node_js
 node_js:
-- '4.2'
+- '4'
+
 env:
   global:
   - GH_REF=github.com/prose/prose.git
+  - CXX=g++-4.8
   - DEPLOY_BRANCH=master
   - secure: R+ZWJe6XOXit4QKOeQqlHw20k6CDuqDXEHo3SSkkdsEax+cWxIaKPv8C9zp+IA8SM32uz6DNkfo5wGUJ/HCUE/S3WZqlr7qijroshjsmcZPRx6+TxVRzE1Xp0iMbeGibSCFZGrWlJmYgHnq5rQAFtjiztNhkSmkhuq3d9nsg8xM=
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+
 cache:
-  directories:
-  - node_modules
+  apt: true
+
 before_install:
 - chmod +x ./.build_scripts/deploy.sh
+
 before_script:
 - npm test
+
 script:
 - npm run build
+
 deploy:
   provider: script
   skip_cleanup: true
