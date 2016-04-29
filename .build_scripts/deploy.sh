@@ -8,12 +8,11 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = ${DEPLOY_BRANCH} ]; 
   echo "Get ready, we're pushing to gh-pages!"
   mkdir site
   cp -a dist site
-  cp -a img fonts index.html style-rtl.css locale.js site
+  cp -a img fonts index.html style-rtl.css locale.js oath.json CNAME site
   cd site
   git init
   git config user.name "Travis-CI"
   git config user.email "travis@somewhere.com"
-  cp ../CNAME .
   git add .
   git commit -m "CI deploy to gh-pages"
   git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:gh-pages
