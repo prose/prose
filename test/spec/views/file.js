@@ -9,6 +9,8 @@ var mockRouter = require('../../mocks/router');
 var mockHeader = require('../../mocks/views/header');
 var Handsontable = require('handsontable');
 
+function noop () {}
+
 describe('File view', function() {
   var fileView;
 
@@ -33,6 +35,8 @@ describe('File view', function() {
       return mockFile();
     }
     fileView.collection = fileView.model.collection;
+    fileView.header = mockHeader();
+    fileView.header.inputGet = function () { return 'path'; };
   });
 
   describe('in edit mode', function() {
@@ -155,12 +159,35 @@ describe('File view', function() {
   describe('session storage', function () {
     it('does not stash to session storage when not dirty', function () {
       fileView.dirty = false;
-      fileView.header = mockHeader();
-      fileView.header.inputGet = function () { return 'path'; };
       fileView.stashFile();
       var key = fileView.absoluteFilepath();
       var store = window.sessionStorage;
       expect(store.getItem(key)).not.ok;
+    });
+
+    it('clears session storage after saving', function () {
+      var key = fileView.absoluteFilepath();
+      var store = window.sessionStorage;
+      fileView.dirty = true;
+      fileView.stashFile();
+
+      // confirm that we saved something.
+      expect(store.getItem(key)).ok;
+      fileView.model.set('writable', true);
+      fileView.model.save = function (options) {
+        return options.success(fileView.model, {}, {});
+      };
+      fileView.updateSaveState = noop;
+      fileView.edit = noop;
+      fileView.updateFile();
+      expect(store.getItem(key)).not.ok;
+    });
+
+    it('does not break when clearing session storage, if none exists', function () {
+      expect(function () {
+        fileView.clearStashForPath('foo');
+        fileView.clearStashForPath('foo');
+      }).to.not.throw();
     });
   });
 
