@@ -212,6 +212,19 @@ describe('Metadata editor view', function() {
       expect(metadataEditor.model.get('metadata').published).to.equal(true);
     });
 
+    it.only('does not crap out on hidden metadata with no defaults', function() {
+      model.set('defaults', [{
+        name: 'layout',
+        field: {
+          element: 'hidden'
+        }
+      }]);
+      metadataEditor.render();
+      var values = metadataEditor.getValue();
+      expect(values.hasOwnProperty('layout')).to.ok;
+      expect(metadataEditor.model.get('metadata').layout).to.equal('');
+    });
+
     it('textarea names do not collide with view methods', function() {
       var view = metadataEditor.view;
       model.set('defaults', [{
