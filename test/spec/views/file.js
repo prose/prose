@@ -6,8 +6,8 @@ var mockRepo = require('../../mocks/models/repo');
 var mockFile = require('../../mocks/models/file');
 var mockApp = require('../../mocks/views/app');
 var mockRouter = require('../../mocks/router');
+var mockHeader = require('../../mocks/views/header');
 var Handsontable = require('handsontable');
-
 
 describe('File view', function() {
   var fileView;
@@ -143,14 +143,25 @@ describe('File view', function() {
         }, 400);
       });
     });
-
   });
 
   describe('in preview mode', function() {
-      it('escapes script tags when compiling preview', function() {
-          var content = "<script>alert('pwned')</script>";
-          expect(fileView.compilePreview(content)).to.equal('&lt;script&gt;alert(&#x27;pwned&#x27;)&lt;&#x2F;script&gt;');
-      });
+    it('escapes script tags when compiling preview', function() {
+      var content = "<script>alert('pwned')</script>";
+      expect(fileView.compilePreview(content)).to.equal('&lt;script&gt;alert(&#x27;pwned&#x27;)&lt;&#x2F;script&gt;');
+    });
+  });
+
+  describe('session storage', function () {
+    it('does not stash to session storage when not dirty', function () {
+      fileView.dirty = false;
+      fileView.header = mockHeader();
+      fileView.header.inputGet = function () { return 'path'; };
+      fileView.stashFile();
+      var key = fileView.absoluteFilepath();
+      var store = window.sessionStorage;
+      expect(store.getItem(key)).not.ok;
+    });
   });
 
 });
