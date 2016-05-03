@@ -212,6 +212,19 @@ describe('Metadata editor view', function() {
       expect(metadataEditor.model.get('metadata').published).to.equal(true);
     });
 
+    it('does not crap out on hidden metadata with no defaults', function() {
+      model.set('defaults', [{
+        name: 'layout',
+        field: {
+          element: 'hidden'
+        }
+      }]);
+      metadataEditor.render();
+      var values = metadataEditor.getValue();
+      expect(values.hasOwnProperty('layout')).to.ok;
+      expect(metadataEditor.model.get('metadata').layout).to.equal('');
+    });
+
     it('textarea names do not collide with view methods', function() {
       var view = metadataEditor.view;
       model.set('defaults', [{
@@ -224,7 +237,6 @@ describe('Metadata editor view', function() {
       expect(metadataEditor.view).to.deep.equal(view);
     });
   });
-
 
   describe('testing user input from form elements', function() {
     // Although there are separate tests for getting values from each meta element individually,

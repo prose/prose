@@ -130,7 +130,7 @@ module.exports = Backbone.View.extend({
           // Just make sure this default is saved on the metadata object.
           case 'hidden':
             var preExisting = metadata[data.name];
-            var newDefault = data.field.value;
+            var newDefault = data.field.value || '';
             var newMeta = {};
 
             // If the pre-existing metadata is an array,
