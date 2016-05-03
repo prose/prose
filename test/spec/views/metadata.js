@@ -212,7 +212,7 @@ describe('Metadata editor view', function() {
       expect(metadataEditor.model.get('metadata').published).to.equal(true);
     });
 
-    it.only('does not crap out on hidden metadata with no defaults', function() {
+    it('does not crap out on hidden metadata with no defaults', function() {
       model.set('defaults', [{
         name: 'layout',
         field: {
@@ -237,7 +237,6 @@ describe('Metadata editor view', function() {
       expect(metadataEditor.view).to.deep.equal(view);
     });
   });
-
 
   describe('testing user input from form elements', function() {
     // Although there are separate tests for getting values from each meta element individually,
