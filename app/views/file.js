@@ -1261,8 +1261,9 @@ module.exports = Backbone.View.extend({
         var path = model.get('path');
         this.path = path;
 
-        // Unset dirty, return to edit view
+        // Unset dirty, remove session storage, return to edit view
         this.dirty = false;
+        this.clearStashForPath(this.absoluteFilepath());
         this.edit();
 
         var old = model.get('oldpath');
