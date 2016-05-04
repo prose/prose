@@ -10,7 +10,7 @@ Prose supports configuration settings with a variety of options, which makes it 
 
 ### Installation and developing
 
-Prose is hosted at [Prose.io](http://prose.io), or you can use on your own server. For installation instructions and contributing guidelines, please [read contributing.md](CONTRIBUTING.md).
+Prose is hosted at [Prose.io](http://prose.io), or you can use on your own server. For installation instructions and contributing guidelines, please [read contributing.md](CONTRIBUTING.md). For deploying to your own server, read [deployment.md](DEPLOYMENT.md).
 
 ### Getting help
 
