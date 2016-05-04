@@ -1385,6 +1385,9 @@ module.exports = Backbone.View.extend({
     // Unbind beforeunload prompt
     window.onbeforeunload = null;
 
+    // So we don't endlessly stash when choosing new files
+    $(window).off('pagehide', this.stashFile);
+
     // Reset dirty models on navigation
     if (this.dirty) {
       this.stashFile();
