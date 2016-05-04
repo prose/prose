@@ -66,7 +66,7 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'translate', this.translate);
 
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
-    this.listenTo($(window), 'pagehide', this.stashFile);
+    $(window).on('pagehide', this.stashFile);
 
     // Prevent exit when there are unsaved changes
     // jQuery won't bind to 'beforeunload' event
@@ -1168,7 +1168,7 @@ module.exports = Backbone.View.extend({
 
   stashFile: function(e) {
     if (e) e.preventDefault();
-    if (!window.sessionStorage) return false;
+    if (!window.sessionStorage || !this.dirty) return false;
 
     var store = window.sessionStorage;
     var filepath = this.absoluteFilepath();
@@ -1261,8 +1261,9 @@ module.exports = Backbone.View.extend({
         var path = model.get('path');
         this.path = path;
 
-        // Unset dirty, return to edit view
+        // Unset dirty, remove session storage, return to edit view
         this.dirty = false;
+        this.clearStashForPath(this.absoluteFilepath());
         this.edit();
 
         var old = model.get('oldpath');
@@ -1383,6 +1384,9 @@ module.exports = Backbone.View.extend({
   remove: function() {
     // Unbind beforeunload prompt
     window.onbeforeunload = null;
+
+    // So we don't endlessly stash when choosing new files
+    $(window).off('pagehide', this.stashFile);
 
     // Reset dirty models on navigation
     if (this.dirty) {
