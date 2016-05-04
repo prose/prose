@@ -70,7 +70,7 @@ module.exports = Backbone.View.extend({
 
   getValue: function() {
     try {
-      return jsyaml.safeLoad(this.codeMirror.getValue());
+      return jsyaml.safeLoad(this.codeMirror.getValue()) || '';
     }
     catch(err) {
       console.log('Error parsing yaml front matter for ', this.name);

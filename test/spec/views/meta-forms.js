@@ -34,6 +34,16 @@ describe('Metadata form elements', function() {
   });
 
   describe('Reading values', function() {
+    it('returns empty strings for null', function () {
+      [TextForm, TextArea, Select, Multiselect].forEach(function (View) {
+        var view = new View({data: {
+          field: {}
+        }});
+        view.render();
+        expect(view.getValue()).to.equal('');
+      });
+    });
+
     it('reads values from a text element', function() {
       data.type = 'text';
       var text = new TextForm({data: data});
