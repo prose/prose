@@ -221,7 +221,18 @@ describe('Metadata editor view', function() {
       }]);
       metadataEditor.render();
       var values = metadataEditor.getValue();
-      expect(values.hasOwnProperty('layout')).to.notOk;
+      expect(values.hasOwnProperty('layout')).not.ok;
+    });
+
+    it('does not remove title and published meta properties, even if they are unset', function () {
+      model.set('metadata', {
+        title: '',
+        published: ''
+      });
+      metadataEditor.render();
+      var values = metadataEditor.getValue();
+      expect(values.hasOwnProperty('title')).ok;
+      expect(values.hasOwnProperty('published')).ok;
     });
 
     it('textarea names do not collide with view methods', function() {
