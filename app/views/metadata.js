@@ -284,9 +284,14 @@ module.exports = Backbone.View.extend({
       }
     }
 
-    // TODO Currently, it's not possible to delete metadata.
-    // There should be some logic here that looks to see if there's any metadata
-    // that isn't an element, isn't hidden, and isn't in the raw editor.
+    // Remove metadata elements where values are empty strings,
+    // unless they are the title, or are hidden.
+    for (var key in metadata) {
+      if (key !== 'title' && metadata[key] === '') {
+        delete metadata[key];
+      }
+    }
+
     return metadata;
   },
 
