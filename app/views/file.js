@@ -345,7 +345,11 @@ module.exports = Backbone.View.extend({
       undo: true,
       afterChange: function(changes, source) {
         if (source !== 'loadData') self.makeDirty();
-      }
+      },
+      afterRemoveCol: this.makeDirty,
+      afterRemoveRow: this.makeDirty,
+      afterCreateCol: this.makeDirty,
+      afterCreateRow: this.makeDirty
     })
 
     this.editor.getValue = function() {
