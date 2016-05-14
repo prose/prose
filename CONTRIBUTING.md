@@ -81,9 +81,9 @@ have [node.js](http://nodejs.org) >= v4.2 installed.
 ### Install steps
 
 1. `git clone git@github.com:prose/prose.git && cd prose/`
-2. Run `npm install && gulp`
+2. Run `npm i`
 3. To run prose with authentication locally, a `oauth.json` file is required in the
-root directory. When you run `gulp` this file is created automatically.
+root directory. npm will handle this for you with the `gulp` postinstall script.
 4. Run `npm start` By default, prose will be set up on [http://localhost:3000](http://localhost:3000).
 
 __Note:__ You should not commit the `oauth.json` file to a remote repo or along with a pull
