@@ -53,6 +53,7 @@
     "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
+    "postinstall": "gulp",
     "test": "gulp test",
     "test-ci": "gulp test-ci",
     "start": "gulp watch & serve",
