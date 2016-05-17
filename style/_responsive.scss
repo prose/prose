@@ -2,11 +2,22 @@
   Media Queries
 ---------------------------------------------*/
 
+/* Screen sizes > 1241px --------------------- */
+@media all and (min-width:1401px) {
+  .containment,
+  .limiter {
+    width: 100%;
+    min-width: 680px;
+    max-width: 840px;
+  }
+}
+
 /* Screen sizes < 1200px --------------------- */
-@media all and (max-width:1240px) {
+@media all and (max-width:1400px) {
+
   .icon.branding {
     background-position:0 -115px;
-    }
+  }
   .loading {
     background:rgb(255,255,255);
     background:rgba(255,255,255,0.9);
@@ -20,86 +31,91 @@
     font-size:16px;
     line-height:30px;
     box-shadow:0 1px 0 rgba(255, 255, 255, 0),
-               0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .loading .loading-icon {
-      background-image:url('../img/loader@55x55.gif');
-      margin:0 auto 5px;
-      width:55px;
-      height:55px;
-      }
+    0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .loading .loading-icon {
+    background-image:url('../img/loader@55x55.gif');
+    margin:0 auto 5px;
+    width:55px;
+    height:55px;
+  }
 
   /* Display the Prose Menu in the footer */
   .dropdown-menu.prose-menu {
     width:100%;
     position:static;
     border-top:1px solid #d4d7d9;
-    }
-    .prose-menu:hover {
-      background-color:transparent;
-      }
-    .prose-menu .branding {
-      float:left;
-      }
-    .prose-menu .dropdown {
-      background:transparent;
-      display:block;
-      position:static;
-      width:auto;
-      float:left;
-      padding:0 0 8px;
-      }
-      .authenticated .prose-menu .dropdown .divider,
-      .prose-menu .dropdown .divider {
-        display:none;
-        }
-      .dropdown-menu .dropdown a {
-        color:inherit;
-        padding:0 0 0 8px;
-        }
-        .dropdown-menu .dropdown a:hover {
-          background:transparent;
-          }
+  }
+  .prose-menu:hover {
+    background-color:transparent;
+  }
+  .prose-menu .branding {
+    float:left;
+  }
+  .prose-menu .dropdown {
+    background:transparent;
+    display:block;
+    position:static;
+    width:auto;
+    float:left;
+    padding:0 0 8px;
+  }
+  .authenticated .prose-menu .dropdown .divider,
+  .prose-menu .dropdown .divider {
+    display:none;
+  }
+  .dropdown-menu .dropdown a {
+    color:inherit;
+    padding:0 0 0 8px;
+  }
+  .dropdown-menu .dropdown a:hover {
+    background:transparent;
+  }
 
   .heading {
     padding:20px 15px;
-    }
+  }
   .content-search {
     margin:8px 15px 15px;
-    }
-  .containment,
+  }
+
+  .containment {
+    width: 100%;
+    margin: 0;
+  }
+
   .limiter {
-    width:100%;
+    width: 70%;
+    margin: 0;
+  }
+
+  .fixed .containment {
+    padding-right:60px;
+  }
+  .open .fixed .containment,
+  .open .limiter {
+    width:70%;
     margin:0;
-    }
-    .fixed .containment,
-    .limiter {
-      padding-right:60px;
-      }
-    .open .fixed .containment,
-    .open .limiter {
-      width:70%;
-      margin:0;
-      padding:0;
-      }
-    .sidebar {
-      width:30%;
-      }
+    padding:0;
+  }
+  .sidebar {
+    width:30%;
+  }
 
   .meta .finish {
     -webkit-border-radius:4px;
-            border-radius:4px;
-    }
-
-      /* Some right alignment adjustments
-       * to account for the fixed vertical menu */
-      .fixed .col-last {
-        padding-right:60px;
-        }
-      .post .view {
-        padding:15px;
-        }
+    border-radius:4px;
   }
+
+  /* Some right alignment adjustments
+  * to account for the fixed vertical menu */
+  .fixed .col-last {
+    padding-right:60px;
+  }
+  .post .view {
+    padding:15px;
+  }
+}
 
 /* Screen sizes < 800px --------------------- */
 @media all and (max-width:800px) {
@@ -148,10 +164,10 @@ and (orientation:portrait) {
   .open .fixed .containment,
   .open .limiter {
     width:60%;
-    }
+  }
   .sidebar {
     width:40%;
-    }
+  }
 }
 
 /* Smartphone (portrait and landscape) ----------- */

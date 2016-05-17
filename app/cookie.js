@@ -64,7 +64,7 @@ cookie.unset = function(name) {
 cookie.clear = function() {
   var obj = cookie.getObject();
   for(var key in obj) cookie.unset(key);
-  return object;
+  return obj;
 };
 
 module.exports = cookie;
