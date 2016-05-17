@@ -1,6 +1,6 @@
 {
   "name": "prose",
-  "version": "1.1.21",
+  "version": "1.1.22",
   "description": "[Prose](http://prose.io) is a web-based interface for managing text-based content in your GitHub repositories. Use it to create, edit, and delete files, and save your changes directly to GitHub.",
   "dependencies": {
     "backbone": "~1.0.0",
