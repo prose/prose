@@ -8,6 +8,7 @@ chai.use(sinonChai);
 // load tests
 require('./spec/vendor/liquid.patch.js');
 require('./spec/vendor/codemirror');
+require('./spec/vendor/js-yaml');
 require('./spec/boot');
 require('./spec/router');
 require('./spec/models/repo');
