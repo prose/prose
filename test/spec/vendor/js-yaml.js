@@ -8,7 +8,7 @@ describe('Js-yaml coverage', function () {
     expect(loaded.noquotes).not.ok;
 
     var dumped = yaml.safeDump(loaded);
-    expect(/quotes: "false"/.test(dumped)).ok;
+    expect(/quotes: 'false'/.test(dumped)).ok;
     expect(/noquotes: false/.test(dumped)).ok;
   });
 });
