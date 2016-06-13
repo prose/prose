@@ -16,10 +16,11 @@ module.exports = Backbone.Collection.extend({
 
   url: function() {
     var token = cookie.get('oauth-token');
+    var scope = cookie.get('scope');
 
     // If not authenticated, show public repos for user in path.
     // https://developer.github.com/v3/orgs/#list-user-organizations
-    if (!token) {
+    if (!token || scope !== 'repo') {
       return config.api + '/users/' + this.user.get('login') + '/orgs';
     }
 
