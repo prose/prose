@@ -28,6 +28,39 @@ var cookie = require('./cookie');
 // Set scope
 auth.scope = cookie.get('scope') || 'repo';
 
+// Find the proper repo.
+// Handles users with access to a repo *and* it's fork,
+// depending on the login.
+function findUserRepo(user, repoName) {
+  var login = user.get('login');
+  var repo;
+  // If user has access to repos with the same name,
+  // use the repo that matches the login/url, if available.
+  // https://github.com/prose/prose/issues/939
+  var repos = user.repos.filter(function (model) {
+    return model.get('name') === repoName;
+  });
+  if (repos.length === 1) {
+    repo = repos[0];
+  } else if (repos.length > 1) {
+    // Returns false if there isn't a repo with a matching login.
+    // We're fine with that since _.isUndefined(false) === true
+    repo = _.find(repos, function (model) {
+      return model.get('owner').login === login;
+    });
+  }
+  return repo;
+}
+
+function newRepo(user, repoName) {
+  return new Repo({
+    name: repoName,
+    owner: {
+      login: user.get('login')
+    }
+  });
+}
+
 module.exports = Backbone.Router.extend({
 
   routes: {
@@ -165,30 +198,9 @@ module.exports = Backbone.Router.extend({
       this.users.add(user);
     }
 
-    // If user has access to repos with the same name,
-    // use the repo that matches the login/url, if available.
-    // https://github.com/prose/prose/issues/939
-    var repos = user.repos.filter(function (model) {
-      return model.get('name') === repoName;
-    });
-    var repo;
-    if (repos.length === 1) {
-      repo = repos[0];
-    } else if (repos.length > 1) {
-      // Returns false if there isn't a repo with a matching login.
-      // We're fine with that since _.isUndefined(false) === true
-      repo = _.find(repos, function (model) {
-        return model.get('owner').login === login;
-      });
-    }
-
+    var repo = findUserRepo(user, repoName);
     if (_.isUndefined(repo)) {
-      repo = new Repo({
-        name: repoName,
-        owner: {
-          login: login
-        }
-      });
+      repo = newRepo(user, repoName);
       user.repos.add(repo);
     }
 
@@ -255,14 +267,9 @@ module.exports = Backbone.Router.extend({
       this.users.add(user);
     }
 
-    var repo = user.repos.findWhere({ name: repoName });
+    var repo = findUserRepo(user, repoName);
     if (_.isUndefined(repo)) {
-      repo = new Repo({
-        name: repoName,
-        owner: {
-          login: login
-        }
-      });
+      repo = newRepo(user, repoName);
       user.repos.add(repo);
     }
 
@@ -311,14 +318,9 @@ module.exports = Backbone.Router.extend({
       this.users.add(user);
     }
 
-    var repo = user.repos.findWhere({ name: repoName });
+    var repo = findUserRepo(user, repoName);
     if (_.isUndefined(repo)) {
-      repo = new Repo({
-        name: repoName,
-        owner: {
-          login: login
-        }
-      });
+      repo = newRepo(user, repoName);
       user.repos.add(repo);
     }
 
