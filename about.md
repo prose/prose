@@ -12,7 +12,7 @@ Prose can be configured per repository with additional metadata in a Jekyll site
 
 ## Developing
 
-Prose is an open source project. We encourage you to contribute and help us improve this application or adapt it to your needs. For instructions on developing Prose, see the [Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).
+Prose is an open source project. We encourage you to contribute and help us improve this application or adapt it to your needs. For instructions on developing Prose, see the [Prose contributing guidelines](https://github.com/prose/prose/blob/master/CONTRIBUTING.md).
 
 ## Getting Help
 
