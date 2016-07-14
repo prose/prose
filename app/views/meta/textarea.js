@@ -70,8 +70,8 @@ module.exports = Backbone.View.extend({
 
   getValue: function() {
     try {
-      var value = jsyaml.safeLoad(this.codeMirror.getValue());
-      return (value || value === 0) ? value : '';
+      var value = jsyaml.safeLoad(this.codeMirror.getValue().replace(':', '&58;'));
+      return (value || value === 0) ? value.replace('&58;', ':') : '';
     }
     catch(err) {
       console.log('Error parsing yaml front matter for ', this.name);
@@ -83,7 +83,7 @@ module.exports = Backbone.View.extend({
   setValue: function(value) {
     // Only set value if not null or undefined.
     if (value != undefined) {
-      this.codeMirror.setValue(value);
+      this.codeMirror.setValue(value.replace('&58;', ':'));
     }
   }
 });
