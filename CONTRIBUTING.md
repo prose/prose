@@ -63,7 +63,7 @@ If you run `gulp translations` you will be warned to include a `transifex.auth` 
 
 ## Submitting Pull Requests
 
-All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. The `gh-pages` branch manages rebuilds to the server. All pull requests should include an update to the version in `package.json` according to [semver](http://semver.org/).
+All pull requests should be proposed to the [master](https://github.com/prose/prose/tree/master) branch. Pull requests should ideally include unit tests that confirm a bug or new feature. Prose uses the `mocha` testing framework along with `chai` and `sinon`.
 
 ## Deploying
 
