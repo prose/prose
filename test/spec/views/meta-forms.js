@@ -72,6 +72,16 @@ describe('Metadata form elements', function() {
       expect(textarea.getValue()).to.equal(value);
     });
 
+    it('does not treat colons as key-value fields', function() {
+      var value = 'ok: this: that:';
+      data.field.value = value;
+      data.id = 'baz';
+      var textarea = new TextArea({data: data});
+      $('#meta').append(textarea.render());
+      textarea.initCodeMirror(function() {});
+      expect(textarea.getValue()).to.equal(value);
+    })
+
     it('reads values from a number element', function() {
       data.type = 'number';
       var number = new TextForm({data: data});
