@@ -9,7 +9,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = ${DEPLOY_BRANCH} ]; 
   rm -rf site
   mkdir site
   cp -a dist site
-  cp -a img fonts index.html style-rtl.css locale.js oauth.json CNAME site
+  cp -a img fonts index.html style-rtl.css locale.js oauth.json CNAME translations site
   cd site
   git init
   git config user.name "Travis-CI"
