@@ -93,6 +93,7 @@ en:
     repo:
       filter: "Filter Files"
       edit: "Edit"
+      view: "View"
       delete: "Delete this File"
     new:
       body: |

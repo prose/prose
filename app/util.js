@@ -17,6 +17,34 @@ module.exports = {
     return match ? match[0] : '';
   },
 
+  // Convert the file path to url
+  getURLFromPath: function(path) {
+    var postURL = '';
+
+    var url = this.extractURL(path);
+    if (!url || !url.path) return;
+    postURL += url.branch.replace(/_/g, '');
+
+    var file = this.extractFilename(url.path);
+    if (!file[1]) return;
+
+    var filename = file[1].replace(/_post/g, '');
+    var extension = this.extension(file[1]);
+    if (!this.isMarkdown(extension)) return;
+    filename = filename.replace('.' + extension, '');
+
+    var date = this.extractDate(filename);
+    if (date.length) {
+      // remove the date from the file name
+      filename = filename.replace(date + '-', '');
+      postURL += '/' + date.replace(/-/g, '/');
+    }
+
+    postURL += '/' + filename;
+
+    return postURL;
+  },
+
   // Extract filename from a given path
   // -------
   //
@@ -194,6 +222,10 @@ module.exports = {
         $el.removeClass('fixed');
       }
     });
+  },
+
+  formatFileName: function(f) {
+      return f.trim().replace(/^_/, '').replace(/ /g, '_');
   },
 
   pageListing: function(handler) {
