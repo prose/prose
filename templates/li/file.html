@@ -8,6 +8,22 @@
 
 <div class='details'>
   <div class='actions fr clearfix'>
+    <% if(file.image && file.previewurl) { %>
+      <a class='clearfix'
+        title="<%= t('main.repo.view') %>"
+        href='<%= file.previewurl %>'
+        target='_blank'>
+        <%= t('main.repo.view') %>
+      </a>
+    <% } %>
+    <% if(file.markdown && file.previewurl) { %>
+      <a class='clearfix'
+        title="<%= t('main.repo.view') %>"
+        href='<%= file.previewurl %>'
+        target='_blank'>
+        <%= t('main.repo.view') %>
+      </a>
+    <% } %>
     <% if (!file.binary) { %>
       <a class='clearfix'
         title="<%= t('main.repo.edit') %>"
