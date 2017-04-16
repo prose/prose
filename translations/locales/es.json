@@ -17,7 +17,7 @@
         "help": "Ayuda"
     },
     "actions": {
-        "unsaved": "Hay cambios sin guardar. Seguro que quiere salir?",
+        "unsaved": "Hay cambios sin guardar. ¿Seguro que quiere salir?",
         "publishing": {
             "publish": "Publicar",
             "published": "Publicado",
@@ -31,14 +31,14 @@
         },
         "delete": {
             "title": "Borrar",
-            "warn": "Está seguro que quiere borrar este archivo?",
+            "warn": "¿Está seguro que quiere borrar este archivo?",
             "error": "Error durante el borrado. Por favor espere 30 segundos y vuelva a intentarlo"
         },
         "save": {
             "title": "Guardar",
             "fileNameError": "Necesita nombre de archivo",
             "submission": "Petición enviada",
-            "metaError": "Error! Metadatos no encontrados"
+            "metaError": "¡Error! Metadatos no encontrados"
         },
         "restore": {
             "restoring": "Recuperando",
@@ -92,7 +92,7 @@
             "history": {
                 "label": "Historial reciente",
                 "actions": {
-                    "restore": "Recuperar?"
+                    "restore": "¿Recuperar?"
                 }
             },
             "create": "Crear nuevo archivo"
