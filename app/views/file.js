@@ -928,7 +928,7 @@ module.exports = Backbone.View.extend({
     var text1 = this.model.isNew() ? '' : _.escape(this.model.get('previous'));
     var text2 = _.escape(this.model.serialize());
 
-    var d = diff.diffWords(text1, text2);
+    var d = diff.diffLines(text1, text2);
     var length = d.length;
     var compare = '';
 
