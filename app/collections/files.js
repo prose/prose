@@ -230,7 +230,7 @@ module.exports = Backbone.Collection.extend({
         });
 
         var name = util.extractFilename(path)[1];
-        model.set('placeholder', t('actions.commits.created', { filename: name }));
+        model.set('placeholder', t('actions.commits.create', { filename: name }));
 
         // add to collection on save
         model.save({
