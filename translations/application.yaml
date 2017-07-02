@@ -66,11 +66,11 @@ en:
       restoring: "Restoring"
       restored: "Restored"
     commits:
-      created: "Created {filename}"
-      updated: "Updated {filename}"
-      deleted: "Deleted {filename}"
-      toDraft: "Created draft of {filename}"
-      fromDraft: "Created post from a draft of {filename}"
+      created: "Create {filename}"
+      Updated: "Update {filename}"
+      deleted: "Delete {filename}"
+      toDraft: "Create draft of {filename}"
+      fromDraft: "Create post from a draft of {filename}"
   loading:
     repos: "Loading Profile"
     repo: "Loading Project"
