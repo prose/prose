@@ -66,9 +66,9 @@ en:
       restoring: "Restoring"
       restored: "Restored"
     commits:
-      created: "Create {filename}"
-      Updated: "Update {filename}"
-      deleted: "Delete {filename}"
+      create: "Create {filename}"
+      Update: "Update {filename}"
+      delete: "Delete {filename}"
       toDraft: "Create draft of {filename}"
       fromDraft: "Create post from a draft of {filename}"
   loading:
