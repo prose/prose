@@ -1281,7 +1281,7 @@ module.exports = Backbone.View.extend({
 
           data = {
             path: old,
-            message: t('actions.commits.deleted', { filename: name }),
+            message: t('actions.commits.delete', { filename: name }),
             sha: model.previous('sha'),
             branch: this.collection.branch.get('name')
           };

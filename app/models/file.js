@@ -332,7 +332,7 @@ module.exports = Backbone.Model.extend({
 
     var data = {
       path: path,
-      message: t('actions.commits.deleted', { filename: path }),
+      message: t('actions.commits.delete', { filename: path }),
       sha: this.get('sha'),
       branch: this.collection.branch.get('name')
     };
