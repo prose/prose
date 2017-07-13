@@ -51,10 +51,10 @@ to prose, only display them in the interface through the `t()` function.
 Then, add the new string to `translations/application.yaml`. The translation system,
 Transifex, will automatically detect the change.
 
-Use `gulp` to build the translations with the local changes.
-`gulp translations` can be used to pull the latest translations from Transifex.
+Use `npm` to build the translations with the local changes.
+`npm run translations` can be used to pull the latest translations from Transifex.
 
-If you run `gulp translations` you will be warned to include a `transifex.auth` file in the `translations` directory that contains your Transifex user details:
+If you run `npm run translations` you will be warned to include a `transifex.auth` file in the `translations` directory that contains your Transifex user details:
 
   {
       "user": "username",
@@ -100,14 +100,14 @@ param represents the auth string. You can manually set the URL back to your pros
     http://localhost:3000/?code=36f237f41bd81c1a3661
 
 Alternatively you can setup your own Gatekeeper instance. For any changes you make
-to the codebase, you'll need to run `gulp` to package code into a minified `prose.min.js`
+to the codebase, you'll need to run `npm run build` to package code into a minified `prose.min.js`
 and see changes.
 
-__ProTip:__ You may want to run `gulp watch` to allow the running of gulp on every change.
+__ProTip:__ You may want to run `npm run start` to serve the site and allow the running of gulp on every change.
 
 ## Testing
 
-Running `gulp` will also build the browser tests available at http://localhost:8000/test
+Running `npm run test` will also build the browser tests available at http://localhost:8000/test
 
 You can run tests quickly from the command line with `npm test`
 

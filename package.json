@@ -57,7 +57,8 @@
     "test": "gulp test",
     "test-ci": "gulp test-ci",
     "start": "gulp watch & serve",
-    "build": "gulp clean; gulp production"
+    "build": "gulp clean; gulp production",
+    "translations": "gulp translations"
   },
   "browserify": {
     "transform": [
