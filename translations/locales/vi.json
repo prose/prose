@@ -75,13 +75,6 @@
         "restore": {
             "restoring": "Đang khôi phục lại",
             "restored": "Đã khôi phục lại"
-        },
-        "commits": {
-            "created": "Đã Tạo {filename}",
-            "updated": "Đã cập nhật {filename}",
-            "deleted": "Xóa {filename}",
-            "toDraft": "Đã tạo bản nháp của {filename}",
-            "fromDraft": "Đã tạo một bản tin từ bản nháp {filename}"
         }
     },
     "loading": {
@@ -207,8 +200,7 @@
                         "content": "<p>Đánh dấu nhằm tạo khóa trích dẫn kiểu email bằng cách đặt tiền tố ở mỗi dòng với <code>&gt;</code>. Thao tác này sẽ cho sự hiển thị tốt nhất nếu bạn quyết định phân cách khi xuống hàng các đoạn văn bản và mỗi đặt mỗi tiền tố cho mỗi dòng với một <code>&gt;</code> ký tự, tuy nhiên hỗ trợ đánh dấu chỉ hỗ trợ việc đặt <code>&gt;</code> phía trước đoạn văn của bạn.</p>\n"
                     },
                     "lists": {
-                        "title": "Danh sách",
-                        "content": "<p>Markdown hỗ trợ cả danh sách đã sắp xếp và chưa sắp xếp. Để tạo một danh sách sắp xếp, đặt vào phần đằng trước mỗi dòng một con số (bất kỳ con số nào cũng sẽ thực hiện &mdash; đây là lý do vì sao trình chỉnh sửa này hoạt động rất tốt.) Để tạo một danh sách không sắp xếp, bạn đặt vào phần trước mỗi dòng <code>*</code>, <code>+</code> hoặc <code>-</code>.</p> Đối tượng dạng danh sách có thể chứa nhiều đoạn văn, tuy nhiên mỗi đoạn phải được lùi vào ít nhất 4 ký tự khoảng trắng hoặc một tab.\n"
+                        "title": "Danh sách"
                     },
                     "codeBlocks": {
                         "title": "Khối mã lệnh",
@@ -259,8 +251,5 @@
     "chooselanguage": {
         "title": "Chọn một ngôn ngữ hiển thị",
         "description": "Prose được phiên dịch ra nhiều phiên bản ngôn ngữ khác nhau. Nếu bạn thấy phần ngôn ngữ mà bạn mong muốn chưa có trên danh sách, hoặc phần phiên dịch này bị lỗi về mặt cú pháp và ý nghĩa hay chính tả, hãy tham gia  <a href='https://www.transifex.com/projects/p/prose'>cộng tác phần dịch thuật của bạn vào dự án, prose được dịch và chuyển ngữ bởi Phan Anh</a>.\n"
-    },
-    "about": {
-        "content": "# Thông tin thêm - Dịch bởi Phan Anh\nProse provides a beautifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"
     }
 }

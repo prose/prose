@@ -75,13 +75,6 @@
         "restore": {
             "restoring": "Ripristinando",
             "restored": "Ripristinato"
-        },
-        "commits": {
-            "created": "{filename} Creato",
-            "updated": "{filename} Aggiornato",
-            "deleted": "{filename} Eliminato",
-            "toDraft": "Ho creato una bozza di {filename}",
-            "fromDraft": "Ho creato un post dalla bozza di {filename}"
         }
     },
     "loading": {
@@ -207,8 +200,7 @@
                         "content": "<p>Markdown crea gerarchie di citazioni simili alle email, facendo precedere ogni linea con il carrattere <code>&gt;</code>. Potresti ottenere un risultato migliore se decidi di mandare a capo ogni riga di testo facendola precedere con un carattere <code>&gt;</code>, ma Markdown supporta questa funzionalità semplicemente inserendo un carattere <code>&gt;</code> prima del tuo paragrafo.</p>\n"
                     },
                     "lists": {
-                        "title": "Liste",
-                        "content": "<p>Markdown supporta sia liste numerate che liste non numerate. Per creare una lista numerata, fai precedere semplicemente ogni linea con un numero (qualsiasi numero lo farà &mdash; per questo motivo l'editor usa un solo numero'.) Per creare una lista non numerata, puoi far precedere ogni linea con un <code>*</code>, un <code>+</code> o un <code>-</code>.</p> Gli elementi della lista possono contenere più paragrafi, tuttavia ogni paragrafo deve rientrare di almeno 4 spazi o una tabulazione.\n"
+                        "title": "Liste"
                     },
                     "codeBlocks": {
                         "title": "Blocchi di Codice",
@@ -259,8 +251,5 @@
     "chooselanguage": {
         "title": "Scegli una Lingua",
         "description": "Prose è un'applicazione tradotta. Se non vedi la tua lingua nella lista, se ci sono errori di ortografia, o le traduzioni sono mancanti, considera <a href='https://www.transifex.com/projects/p/prose'>una contribuzione alle traduzioni del progetto</a>.\n"
-    },
-    "about": {
-        "content": "# A proposito di\nProse fornisce un ambiente di creazione di contenuti meravigliosamente semplice per\n[siti web liberi da CMS](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nSi tratta di una interfaccia web per la gestione di contenuti su\n[GitHub](http://github.com). Usalo per creare, modificare, ed eliminare file,\ne salvare i tuoi cambiamenti direttamente su GitHub. Opsita i tuoi siti web su\n[GitHub Pages](http://pages.github.com) gratuitamente, o imposta il tuo\n[server webhook per GitHub](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse fornisce supporto avanzato per siti [Jekyll](http://jekyllrb.com/) e\n[contenuti in markdown](http://daringfireball.net/projects/markdown/).\nProse rileva post scritti in markdown per siti Jekyll fornendo l'evidenziazione \ndella sintassi, una barra degli strumenti per la formattazione, e l'anteprima \ndi bozze.\n\nGli sviluppatori possono configurare siti Jekyll per approfittare di queste e\nmolte altre caratteristiche che consentono di personalizzare l'esperienza di editing dei contenuti.\n\n## Configurazione\n\nProse può essere configurato per repository con metadata aggiuntivi in un\nfile `_config.yml` di un sito Jekyll o un file `prose.yml` separato. Noi offriamo\nProse.io come servizio per l'ultima versione, o alternativamente puoi scaricare\nil codice sorgente e ospitarlo sul tuo server. Per la documentazione degli sviluppatori,\nguarda [la pagina wiki su GitHub](https://github.com/prose/prose/wiki).\n\n## Sviluppo\n\nProse è un progetto open source. Vi incoraggiamo a contribuire e\naiutarci a migliorare l'applicazione o ad adattarla alle proprie esigenze. Per\nle istruzioni sullo sviluppo di Prose, guarda le\n[le linee guida per contribuire allo sviluppo di Prose ](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Come ottenere assistenza\n\nIn questo momento non offriamo supporto per Prose, tuttavia se sei un\neditor di contenuti che sta usando Prose, dovresti contattare lo sviluppatore che ti ha dato\nl'accesso. Per segnalare problemi tecnici relativi a Prose, si prega di\n[aggiungere un'issue su GitHub](https://github.com/prose/prose/issues).\n\n## Crediti\n\nProse è sviluppato e mantenuto da\n[Development Seed](http://developmentseed.org), un team che lavora sulla visualizzazione\ncreativa di dati e il mapping con sede a Washington, DC.\n"
     }
 }

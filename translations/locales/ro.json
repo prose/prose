@@ -73,13 +73,6 @@
         "restore": {
             "restoring": "Se restabilește",
             "restored": "Restabilit"
-        },
-        "commits": {
-            "created": "{filename} creat",
-            "updated": "{filename} actualizat",
-            "deleted": "{filename} eliminat",
-            "toDraft": "Ciorna {filename} creată",
-            "fromDraft": "Articol creat din ciorna {filename}"
         }
     },
     "loading": {
@@ -205,8 +198,7 @@
                         "content": "<p>Markdown creează citate în stil email prin prefixarea fiecărei linii cu <code>&gt;</code>. Cea mai eficientă metodă, vizual, este să începeți fiecare linie cu <code>&gt;</code>, dar Markdown suportă și doar un caracter <code>&gt;</code> la începutul paragrafului.</p>\n"
                     },
                     "lists": {
-                        "title": "Liste",
-                        "content": "<p>Markdown suportă liste ordonate și neordonate. Prefixează \nfiecare linie cu un număr pentru liste ordonate (orice număr e suficient &mdash; acesta este motivul pentru care editorul folosește doar o cifră). Pentru liste neordonate, prefixează fiecare linie cu <code>*</code>, <code>+</code> sau <code>-</code>.</p> Elementele de listă pot conține paragrafe multiple atât timp cât sunt indentate cu cel puțin 4 spații sau un tab.\n"
+                        "title": "Liste"
                     },
                     "codeBlocks": {
                         "title": "Blocuri de cod"

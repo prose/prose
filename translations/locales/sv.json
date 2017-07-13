@@ -75,13 +75,6 @@
         "restore": {
             "restoring": "Återskapar",
             "restored": "Återskapat"
-        },
-        "commits": {
-            "created": "Skapad {filnamn}",
-            "updated": "Uppdaterat {filnamn}",
-            "deleted": "Raderade {filename}",
-            "toDraft": "Skapade utkast för {filnamn}",
-            "fromDraft": "Post skapad från ett utkast av {filnamn}"
         }
     },
     "loading": {
@@ -207,8 +200,7 @@
                         "content": "<p>Markdown skapar blockcitat i samma stil som är brukligt i epost-meddelanden, genom att inleda varje rad med <code>&gt;</code>. Detta ser bäst ut om du bestämmer dig för att hård-omslå &#40;eng. hard-wrap&#41; texten och inleda varje rad med <code>&gt;</code>-tecknet. Däremot är det även möjligt i Markdown att bara skriva <code>&gt;</code> i början av blockcitatets paragraf.</p>\n"
                     },
                     "lists": {
-                        "title": "Listor",
-                        "content": "<p>Markdown stöder både ordnade listor och punktlistor. För att skapa en ordnad lista, inled varje rad i listan med ett nummer (det går bra med vilket nummer som helst &mdash; vilket för övrigt är anledningen till varför editorn bara använder ett och samma nummer). För att skapa en punktlista kan du inleda varje rad i listan med <code>*</code>, <code>+</code> or <code>-</code>.</p> Listpunkterna kan innehålla flera paragrafer, men varje paragraf måste i så fall indenteras med 4 mellanslag eller en tabb.\n"
+                        "title": "Listor"
                     },
                     "codeBlocks": {
                         "title": "Kodblock",

@@ -77,11 +77,11 @@
             "restored": "Restored"
         },
         "commits": {
-            "created": "Created {filename}",
-            "updated": "Updated {filename}",
-            "deleted": "Deleted {filename}",
-            "toDraft": "Created draft of {filename}",
-            "fromDraft": "Created post from a draft of {filename}"
+            "create": "Create {filename}",
+            "update": "Update {filename}",
+            "delete": "Delete {filename}",
+            "toDraft": "Create draft of {filename}",
+            "fromDraft": "Create post from a draft of {filename}"
         }
     },
     "loading": {
@@ -132,7 +132,6 @@
         "loginDescription": "Please login with your GitHub account to access that project.",
         "create": "Create it",
         "home": "Back to Main Page",
-        "404": "This file does not exist, or you don't have access to it. Try authorizing with GitHub.",
         "back": "Go Back",
         "githubStatus": "Status on GitHub ({status})",
         "error": {
@@ -168,8 +167,7 @@
             "fileInputLabel": "File Path",
             "delete": "Delete This File",
             "translate": "Translate to",
-            "draft": "Create Draft",
-            "toggleEditor": "Toggle Editor"
+            "draft": "Create Draft"
         }
     },
     "dialogs": {
@@ -210,7 +208,7 @@
                     },
                     "lists": {
                         "title": "Lists",
-                        "content": "<p>Markdown supports both ordered and unordered lists. To create an ordered list, simply prefix each line with a number (any number will do &mdash; this is why the editor only uses one number.) To create an unordered list, you can prefix each line with <code>*</code>, <code>+</code> or <code>-</code>.</p> List items can contain multiple paragraphs, however each paragraph must be indented by at least 4 spaces or a tab.\n"
+                        "content": "<p>Markdown supports both ordered and unordered lists. To create an ordered list, simply prefix each line with a number (any number will do &mdash; this is why the editor only uses one number) and a dot <code>.</code> behind it. To create an unordered list, you can prefix each line with <code>*</code>, <code>+</code> or <code>-</code>.</p> List items can contain multiple paragraphs, however each paragraph must be indented by at least 4 spaces or a tab.\n"
                     },
                     "codeBlocks": {
                         "title": "Code Blocks",
@@ -253,10 +251,6 @@
                     "escaping": {
                         "title": "Escaping",
                         "content": "<p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\\\</code>). Markdown will ignore the character directly after a backslash.</p>\n"
-                    },
-                    "shortcuts": {
-                        "title": "Shortcuts",
-                        "content": "<p>Press <code>Ctrl-S</code> to commit your changes. <br/> Press <code>Ctrl-Enter</code> to toggle between editing and previewing.</p>\n"
                     }
                 }
             }
@@ -267,6 +261,6 @@
         "description": "Prose is a translated application. If you don't see your language in the list, there are spelling errors, or translations are missing, consider <a href='https://www.transifex.com/projects/p/prose'>contributing translations to the project</a>.\n"
     },
     "about": {
-        "content": "# About\nProse provides a beautifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"
+        "content": "# About\nProse provides a beautifully simple content authoring environment for\n[CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nIt's a web-based interface for managing content on\n[GitHub](http://github.com). Use it to create, edit, and delete files,\nand save your changes directly to GitHub. Host your website on\n[GitHub Pages](http://pages.github.com) for free, or set up your own\n[GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\nProse has advanced support for [Jekyll](http://jekyllrb.com/) sites and\n[markdown content](http://daringfireball.net/projects/markdown/).\nProse detects markdown posts in Jekyll sites and provides syntax\nhighlighting, a formatting toolbar, and draft previews in the site's\nfull layout.\n\nDevelopers can configure Jekyll sites to take advantage of these and\nmany more features that customize the content editing experience.\n\n## Configuring\n\nProse can be configured per repository with additional metadata in a\nJekyll site's `_config.yml` file or a separate `prose.yml` file. We offer\nProse.io as a hosted service for the latest version, or you can download\nthe source code and host it on your own. For for developer documentation,\nsee [the wiki page on GitHub](https://github.com/prose/prose/wiki).\n\n## Developing\n\nProse is an open source project. We encourage you to contribute and\nhelp us improve this application or adapt it to your needs. For\ninstructions on developing Prose, see the\n[Prose contributing guidelines](https://github.com/prose/prose/blob/master/CONTRIBUTING.md).\n\n## Getting Help\n\nWe do not offer support for Prose at this time, however if you are a\ncontent editor using Prose, you should contact the developer who gave\nyou access to it. To report technical problems with Prose, please\n[file an issue on GitHub](https://github.com/prose/prose/issues).\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"
     }
 }

@@ -75,13 +75,6 @@
         "restore": {
             "restoring": "복원중",
             "restored": "복원됨"
-        },
-        "commits": {
-            "created": "{filename} 파일을 생성함",
-            "updated": "{filename} 파일을 업데이트함",
-            "deleted": "{filename} 삭제완료",
-            "toDraft": "{filename} 파일의 초안을 생성함.",
-            "fromDraft": "{filename} 파일의 초안으로부터 글을 작성함"
         }
     },
     "loading": {
@@ -113,7 +106,7 @@
             "delete": "이 파일 삭제"
         },
         "new": {
-            "body": "## 새 글\n\n [Markdown](http://daringfireball.net/projects/markdown/)으로 글을 작성하면 된다. 도움이 필요할 때는 상단에 있는 툴바를 사용하거나 **?** 버튼을 클릭하세요.\n"
+            "body": "## 새 글\n\n[Markdown](http://daringfireball.net/projects/markdown/)으로 글을 작성하면 된다. 도움이 필요할 때는 상단에 있는 툴바를 사용하거나 **?** 버튼을 클릭하세요.\n"
         },
         "file": {
             "noTitle": "무제",
@@ -207,8 +200,7 @@
                         "content": "<p>마크다운은 각 라인 앞에 <code>&gt;</code> 문자를 두어 인용구를 이메일 형식으로 만들 수 있습니다. 텍스트를 강제로 줄바꾸기 위해 각 라인 앞에 <code>&gt;</code> 문자를 둘 경우 최상으로 보일 것이지만 문단 앞에 <code>&gt;</code> 문자를 두어도 됩니다.</p>\n"
                     },
                     "lists": {
-                        "title": "목록",
-                        "content": "<p>마크다운은 순차적/비순차적 리스트를 표시할 수 있도록 지원합니다. 순차적 리스트를 작성하기 위해서는, 한자리 숫자로 각 라인을 시작하면 됩니다(어떤 숫자라도 사용할 수 있지만, 에디터가 한자리 숫자만을 사용하기 때문입니다). 비순차적 리스트를 작성하기 위해서는, <code>*</code>, <code>+</code>, <code>-</code> 문자로 각 라인을 시작하면 됩니다.</p> 리스트 항목들은 여러개의 문단을 포함할 수 있지만, 각 문단은 적어도 4개의 스페이스나 하나의 탭으로 들여쓰기를 해야만 합니다.\n"
+                        "title": "목록"
                     },
                     "codeBlocks": {
                         "title": "코드 블록",
@@ -259,8 +251,5 @@
     "chooselanguage": {
         "title": "언어선택",
         "description": "Prose는 다양한 언어로 번역되어 서비스되는 어플리케이션입니다. 리스트 중에 원하는 언어가 없거나 철자 오류가 있거나 번역이 누락된 경우에는 <a href='https://www.transifex.com/projects/p/prose'>프로젝트 번역에 참여</a>해 보세요.\n"
-    },
-    "about": {
-        "content": "# 소개\nProse는 [CMS가 없는 웹사이트](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/)에 \n멋지고 간결한 컨텐츠 제작 환경을 제공해 줍니다.\nProse는 [GitHub](http://github.com) 상의 컨텐츠를 관리하는 웹기반의 \n인터페이스를 제공해 줍니다. \nProse를 이용하면 파일을 생성 수정 삭제하고 변경내용을 GitHub에 \n직접 저정할 수 있습니다. \n웹사이트를 [GitHub Pages](http://pages.github.com)에 무료로 호스팅하거나 \n직접 [GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/)를 셋업하기 바랍니다.\n\nProse는 [Jekyll](http://jekyllrb.com/) 사이트와 [markdown content](http://daringfireball.net/projects/markdown/)에 대한 지원을 향상시켜왔습니다. \nProse는 Jekyll 사이트 내의 마크다운 글들을 찾아서 해당 사이트의 \n전체 레이아웃 상에서 문법 하이라이팅, 툴바, 초안 미리보기를 제공해 줍니다. \n\n개발자는 Jekyll 사이트를 설정하여 이러한 장점과 컨텐트 편집을 \n커스터마이징할 수 있는 많은 기능들을 사용할 수 있습니다. \n\n## 구성하기\n\nProse는 Jekyll 사이트의 `_config.yml` 파일이나 별도의 `prose.yml` 파일에 \n메타데이터를 추가해 주어 저장소 별로 설정을 달리 할 수 있습니다. \n우리는 가장 최신 버전의 Prose.io를 호스팅 서비스로 제공합니다만, \n소스코드를 다운로드 받아 직접 서버환경을 구축하여 사용할 수도 있습니다. \n개발자용 문서에 대해서는 [the wiki page on GitHub](https://github.com/prose/prose/wiki)를 참고하기 바랍니다. \n\n## 개발하기\n\nProse는 오픈소스 프로젝트입니다. 따라서 마음껏 기여하여 이 어플리케이션의 기능을 향상시키도록  도와 주거나 여러분들의 요구사항에 맞게 얼마든지 보완하셔도 됩니다.  \nProse 개발에 대한 내용은 [Prose contributing guidelines](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md)를 참고하기 바랍니다.\n\n## 도움받기\n\n현재로서는 Prose에 대한 지원을 제공하지 않습니다만, 만약 여러분이 Prose를 \n사용하는 컨텐트 편집자일 경우, 이에 대해 접근할 수 있도록 해 주는 개발자와 \n연락을 취해야 합니다. Prose와 관련된 기술적인 문제는 [GitHub에 이슈로 등록](https://github.com/prose/prose/issues)해 주기 바랍니다.\n\n## Credits\n\nProse is developed and maintained by\n[Development Seed](http://developmentseed.org), a creative data\nvisualization and mapping team based in Washington, DC.\n"
     }
 }
