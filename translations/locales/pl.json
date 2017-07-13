@@ -75,13 +75,6 @@
         "restore": {
             "restoring": "Przywracanie",
             "restored": "Przywrócono"
-        },
-        "commits": {
-            "created": "Utworzono {filename}",
-            "updated": "Zaktualizowano {filename}",
-            "deleted": "Usunięto {filename}",
-            "toDraft": "Utworzono szkic {filename}",
-            "fromDraft": "Utworzono wpis ze szkicu {filename}"
         }
     },
     "loading": {
@@ -206,8 +199,7 @@
                         "content": "<p>Składnia Markdown tworzy cytaty przez poprzedzenie linii znakiem <code>&gt;</code>. Wygląda to najlepiej jeżeli zdecydujesz się opakować cały tekst i dodać przed każdą linią znak <code>&gt;</code>, jednak składnia obsługuje dodanie jednego znaku <code>&gt;</code> przed całym paragrafem.</p>\n"
                     },
                     "lists": {
-                        "title": "Listy",
-                        "content": "<p>Składnia Markdown obsługuje listy ponumerowane i nieuporządkowane. Aby utworzyć ponumerowaną listę, przed każdą pozycją dodaj liczbę (każda liczba jest dopuszczana). Aby utworzyć nieuporządkowaną listę, przed każdą linią dodaj znak <code>*</code>, <code>+</code> lub <code>-</code>.</p> Pozycje każdej z list mogą zawierać dowolną ilość paragrafów, jednak każdy paragraf musi zostać poprzedzony wcięciem zawierającym minimum 4 spacje lub znak tabulatora.\n"
+                        "title": "Listy"
                     },
                     "codeBlocks": {
                         "title": "Bloki kodu"

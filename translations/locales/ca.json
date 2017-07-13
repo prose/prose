@@ -75,13 +75,6 @@
         "restore": {
             "restoring": "Restaurant",
             "restored": "Restaurat"
-        },
-        "commits": {
-            "created": "{filename} creat",
-            "updated": "{filaname} actualitzat",
-            "deleted": "{filename} esborrat",
-            "toDraft": "Esborrany de {filename} creat",
-            "fromDraft": "Post de l'esborrany de {filename} creat"
         }
     },
     "loading": {

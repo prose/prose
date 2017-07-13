@@ -74,13 +74,6 @@
         "restore": {
             "restoring": "Wiederherstellung",
             "restored": "Wiederhergestellt"
-        },
-        "commits": {
-            "created": "Erstellt {filename}",
-            "updated": "Aktualisiert {filename}",
-            "deleted": "{filename} gelöscht ",
-            "toDraft": "Erstellt Entwurf für {filename}",
-            "fromDraft": "Erstellte Beitrag von Entwurf für {filename}"
         }
     },
     "loading": {
@@ -206,8 +199,7 @@
                         "content": "<p>Markdown zitiert im E-Mail-Stil durch Voranstellen jeder Zeile mit <code>&gt;</code>. Das sieht am Besten aus, wenn Sie einen harten Zeilenumbruch benutzen und jeder Zeile ein <code>&gt;</code> voranstellen. Allerdings Markdown unterstützt auch <code>&gt;</code> vor jeden Absatz.</p>\n"
                     },
                     "lists": {
-                        "title": "Listen",
-                        "content": "<p>Markdown unterstützt sowohl geordnete und ungeordnete Listen. Um eine geordnete Liste zu erstellen, einfach jeder Zeile mit einer Zahl beginnen (jede beliebige Zahl funktioniert &mdash; deshalb benutzt der Editor nur eine einzige Zahl). Um eine ungeordnete Liste zu erstellen, beginnen Sie jede Zeile mit <code>*</code>, <code>+</code> oder <code>-</code>.</p> Listenelemente können mehrere Absätze enthalten, aber jeder Absatz muss mit mindestens 4 Leerzeichen oder einem Tabulator eingerückt werden.\n"
+                        "title": "Listen"
                     },
                     "codeBlocks": {
                         "title": "Code Blöcke",
@@ -236,7 +228,7 @@
                     },
                     "images": {
                         "title": "Bilder",
-                        "content": "<p>Markdown-Syntax für Bilder ist fast identisch mit der Links-Syntax, allerdings mit mit einem vorangestellten Ausrufezeichen (<code>!</code>) . Zum Beispiel: wenn Sie ein Bild mit der URL <code>http://github.com/unicorn.png</ code> verbunden mit dem alternativen Text <code>My Unicorn</code> nutzen wollen, schreiben Sie <code>! [My Unicorn] (http://github.com/unicorn.png) </ code>.</p> \n"
+                        "content": "<p>Markdown-Syntax für Bilder ist fast identisch mit der Links-Syntax, allerdings mit mit einem vorangestellten Ausrufezeichen (<code>!</code>) . Zum Beispiel: wenn Sie ein Bild mit der URL <code>http://github.com/unicorn.png</ code> verbunden mit dem alternativen Text <code>My Unicorn</code> nutzen wollen, schreiben Sie <code>! [My Unicorn] (http://github.com/unicorn.png) </ code>.</p>\n"
                     }
                 }
             },
@@ -258,8 +250,5 @@
     "chooselanguage": {
         "title": "Wählen Sie eine Sprache",
         "description": "Prose ist eine übersetzte Anwendung. Wenn Sie Ihre Sprache in der Liste fehlt, es gibt Rechtschreibfehler oder fehlende Übersetzungen, tragen Sie <a href='https://www.transifex.com/projects/p/prose'>Übersetzungen für das Projekt bei</a>.\n"
-    },
-    "about": {
-        "content": "# Über\nProse bietet eine wunderschön einfache Content-Authoring-Umgebung für\n[CMS-Websites kostenlos] (http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\nEs ist eine Web-basiertes Interface für die Verwaltung von Inhalten auf \n[GitHub] (http://github.com). Verwenden Sie es zum Erstellen, Bearbeiten und Löschen von Dateien,\nund speichern Sie die Änderungen direkt auf GitHub. Hosten Sie Ihre Website auf \n[GitHub Seiten] (http://pages.github.com) kostenlos, oder richten Sie Ihren eigenen \n[GitHub webhook server] (http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\n\nProse verfügt über erweiterte Unterstützung für [Jekyll] (http://jekyllrb.com/) Websites und \n[Markdown Text] (http://daringfireball.net/projects/markdown/). \nProse erkennt Markdown Beiträge in Jekyll Websites und bietet Syntax-Hervorhebung, \neine Formatierungs Symbolleiste, und Entwurfvorschau in der Webseite. \n\nEntwickler können Jekyll Webseiten konfigurieren, um diese Fähigkeiten und viele weitere zu nutzen.\n\n## Konfigurieren\n\nProse wird durch zusätzlichen Metadaten im `_config.yml` im Repository  der Jekyll \nWebseite konfiguriert oder einen separaten `prose.yml` Datei. \nWir bieten Prose.io als Hosted Service für die neueste Version oder laden Sie laden den Quellcode \nherunter und hosten es auf eigene Faust. Für Entwickler für Dokumentation, \nsiehe [die Wiki-Seite auf GitHub] (https://github.com/prose/prose/wiki).\n\n\n## Entwicklung\n\nProse ist ein Open Source Projekt. Wir bitten Sie, diesen beizutragen und \nuns zu helfen oder aber passen Sie es Ihren Bedürfnisse an. Für \nHinweise auf die Entwicklung von Prose, siehe \n[Prose Beitrag Leitlinien] (https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n## Erste Hilfe\n\nWir bieten zur Zeit keine Unterstützung für Prose an. Wenn Sie ein \nContent-Editor sind, sollten Sie sich an die Entwickler wenden, die Ihnen zugriff \nauf Prose gaben. Um technische Probleme mit Prose berichten, bitte \n[erstellen SIe eine Issue auf GitHub] (https://github.com/prose/prose/issues).\n\n## Credits\n\nProse wird entwickelt und gepflegt von \n[Development Seed] (http://developmentseed.org), einem kreativen Daten-\nVisualisierungs und Mapping-Team in Washington, DC.\n"
     }
 }

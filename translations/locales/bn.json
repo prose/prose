@@ -36,12 +36,6 @@
         "restore": {
             "restoring": "পুনরুদ্ধার করা হচ্ছে",
             "restored": "পুনরধিষ্ঠিত"
-        },
-        "commits": {
-            "created": "{filename} তৈরী করা হয়েছে",
-            "updated": "{filename} আপডেট করা হয়েছে",
-            "toDraft": "{filename} এর খসড়া তৈরী করা হয়েছে",
-            "fromDraft": "{filename} এর খসড়া থেকে পোস্ট তৈরী করা হয়েছে"
         }
     },
     "loading": {

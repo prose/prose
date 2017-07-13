@@ -75,13 +75,6 @@
         "restore": {
             "restoring": "Gendanner",
             "restored": "Gendannet"
-        },
-        "commits": {
-            "created": "{filename} oprettet",
-            "updated": "{filename} opdateret",
-            "deleted": "{filename} slettet",
-            "toDraft": "Kladde af {filename} oprettet",
-            "fromDraft": "Indlæg oprettet fra kladde af {filename}"
         }
     },
     "loading": {
@@ -207,8 +200,7 @@
                         "content": "<p>Markdown laver citattekster i stil med emails ved at begynde hver linje med <code>&gt;</code>-tegnet. De ser bedste ud, hvis du bruger striks tekstombrydning (\\\"hard-wrapped text\\\") begynder hver linje med et <code>&gt;</code>-tegn, men støtter også brugen med bare at indlede hver paragraf med <code>&gt;</code>.</p>\n"
                     },
                     "lists": {
-                        "title": "Lister",
-                        "content": "<p>Markdown støtter nummererede og unummererede lister. For at lave en nummereret liste skal du bare begynde hver linje med et tal (hvilket tal er ligemeget &mdash; dette er grunden til at skriveprogrammet kun bruger ét tal.) For at lave en unummereret liste skal du begynde hver linje med enten <code>*</code>, <code>+</code> eller <code>-</code>.</p> Hvert listeelement kan indeholde op til flere paragraffer, men hver paragraf skal indrykkes med mindst 4 mellemrum eller en tabulation.\n"
+                        "title": "Lister"
                     },
                     "codeBlocks": {
                         "title": "Kodeblokke",
@@ -259,8 +251,5 @@
     "chooselanguage": {
         "title": "Vælg sprog",
         "description": "Prose er et værktøj med flere oversættelser. Hvis du ikke ser dit sprog på listen, eller der er stavefejl, eller oversættelsen mangler, burde du overveje at <a href='https://www.transifex.com/projects/p/prose'>bidrage med oversættelser til projektet</a>.\n"
-    },
-    "about": {
-        "content": "# Om\n\nProse tilbyder et smukt, simpelt skrivemiljø til\n\n[CMS-løse sider](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/).\n\nDet er et webbaseret interface til at håndtere indhold på\n\n[GitHub](http://github.com). Brug det til at oprette, redigere og slette filer,\n\nog gem dine ændringer direkte hos GitHub. Opbevar (\\\"host\"\\\") dine hjemmesider på\n\n[GitHub Pages](http://pages.github.com) gratis eller opret din egen\n\n[GitHub-webhook-server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).\n\n\n\nProse har udvidet understøttelse af [Jekyll](http://jekyllrb.com/)-sider og\n\n[Markdown-indhold](http://daringfireball.net/projects/markdown/).\n\nProse detekterer Markdown-indlæg på Jekyll-sider and udbyder syntaks-\n\nmarkering, en værktøjslinje til formatering og forhåndsvisning er uudgivede indlæg med sidens\n\nfulde layout.\n\n\n\nUdviklere kan konfigurere Jekyll-sider til at udnytte disse og\n\nmange andre funktionaliteter, der kan skræddersy skriveoplevelsen.\n\n\n\n## Konfigurering\n\n\n\nProse kan konfigureres for hvert \\\"repository\\\" med yderligere i en\n\nJekyll-sides `_config.yml`-fil eller i en separat `prose.yml`-fil. Vi tilbyder\n\nProse.io som en selvhostet tjeneste med nyeste udgave på, men du kan også downloade\n\nkildekoden og hoste det selv. Udviklerdokumentationen,\n\nkan læses på [wiki-siden på GitHub](https://github.com/prose/prose/wiki).\n\n\n\n## Udvikling\n\n\n\nProse er et open source-projekt. Vi opfordrer dig til at bidrage til og\n\nhjælpe os med at forbedre dette værktøj eller tilpasse det til dine egne behov.\n\nInstruktioner om at udvikle videre på Prose kan findes på\n\n[Proses retningslinjer for bidrag](https://github.com/prose/prose/blob/gh-pages/CONTRIBUTING.md).\n\n\n\n## Hjælp\n\n\n\nVi udbyder ikke support til Prose på nuværende tidspunker, men hvis du skriver\n\ni Prose, bør du kontakte udvikleren, der gav\n\ndig adgang til det. For at indberette tekniske problemer med Prose bedes du\n\n[oprette en forespørgsel (\\\"issue\\\") på GitHub](https://github.com/prose/prose/issues).\n\n\n\n## Ansvarlige\n\n\n\nProse er udviklet af\n\n[Development Seed](http://developmentseed.org), som er et hold af\n\nkreativ datavisualisering- og korteksperter baseret i Washington, DC.\n"
     }
 }

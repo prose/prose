@@ -70,13 +70,6 @@
         "restore": {
             "restoring": "正在恢复",
             "restored": "已恢复"
-        },
-        "commits": {
-            "created": "新建了 {filename}",
-            "updated": "更新了 {filename}",
-            "deleted": "已删除 {filename}",
-            "toDraft": "新建了草稿 {filename}",
-            "fromDraft": "用草稿 {filename} 新建了帖子"
         }
     },
     "loading": {

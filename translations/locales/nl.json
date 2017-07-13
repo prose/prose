@@ -75,13 +75,6 @@
         "restore": {
             "restoring": "Herstellen",
             "restored": "Hersteld"
-        },
-        "commits": {
-            "created": "{filename} aangemaakt",
-            "updated": "{filename} gewijzigd",
-            "deleted": "{filename} verwijderd",
-            "toDraft": "Concept van {filename} toegevoegd",
-            "fromDraft": "Artikel gemaakt van een concept van {filename}"
         }
     },
     "loading": {
@@ -207,8 +200,7 @@
                         "content": "<p>Markdown maakt blockquotes zoals bij emails door iedere lijn te beginnen met <code>&gt;</code>. Dit wordt best gedaan door iedere lijn te starten met een <code>&gt;</code> karakter, maar Markdown ondersteunt ook een enkel <code>&gt;</code> karakter voor een alinea.</p>\n"
                     },
                     "lists": {
-                        "title": "Lijsten",
-                        "content": "<p>Markdown ondersteunt zowel gewone als genummerde lijsten. Om een genummerde lijst te maken begin je iedere lijn met een nummer (gebruik om het even welk nummer &mdash; daarom gebruikt de editor slechts één nummer). Om een gewone lijst te maken kan je iedere lijn starten met  <code>*</code>, <code>+</code> of <code>-</code>.</p> Punten in een lijst kunnen meerdere alinea's bevatten maar iedere alinea moet ingesprongen zijn met ten minste 4 spaties of een tab.\n"
+                        "title": "Lijsten"
                     },
                     "codeBlocks": {
                         "title": "Code blokken",
