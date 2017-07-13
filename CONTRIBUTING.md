@@ -54,7 +54,7 @@ Transifex, will automatically detect the change.
 Use `gulp` to build the translations with the local changes.
 `gulp translations` can be used to pull the latest translations from Transifex.
 
-If you run `gulp translations` you will be warned to include a `transifex.auth` file in the root directory that contains your Transifex user details:
+If you run `gulp translations` you will be warned to include a `transifex.auth` file in the `translations` directory that contains your Transifex user details:
 
   {
       "user": "username",
