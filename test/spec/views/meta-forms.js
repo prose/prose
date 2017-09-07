@@ -236,4 +236,30 @@ describe('Metadata form elements', function() {
       expect($('.chzn-choices').find('li.search-choice').eq(2).find('span').text()).to.equal('dyke');
     });
   });
+
+  it('sets default values on select elements', function () {
+    data.field.options = [
+      'foo',
+      'bar',
+      {name: 'baz', value: 'baz'}
+    ];
+    data.field.value = 'bar';
+    var select = new Select({ data: data });
+    $('#meta').append(select.render());
+    $('.chzn-select').chosen();
+    expect(select.getValue()).to.equal('bar');
+  });
+
+  it('sets default values on multiselect elements', function () {
+    data.field.options = [
+      'foo',
+      'bar',
+      {name: 'baz', value: 'baz'}
+    ];
+    data.field.value = 'bar';
+    var multiselect = new Multiselect({ data: data });
+    $('#meta').append(multiselect.render());
+    $('.chzn-select').chosen();
+    expect(multiselect.getValue()).to.deep.equal(['bar']);
+  });
 });
