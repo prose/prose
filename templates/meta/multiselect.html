@@ -6,13 +6,29 @@
     <select id='<%= meta.name %>' name='<%= meta.name %>' data-placeholder='<%= meta.placeholder %>' multiple class='metafield chzn-select'>
       <% _(meta.options).each(function(o) { %>
         <% if (!o.lang || o.lang === meta.lang) { %>
+
           <% if (o.name) { %>
-           <option value='<%= o.value %>'><%= o.name %></option>
+            <% if (meta.value.indexOf(o.value) >= 0) { %>
+             <option selected value='<%= o.value %>'><%= o.name %></option>
+           <% } else { %>
+             <option value='<%= o.value %>'><%= o.name %></option>
+           <% } %>
+
           <% } else if (o.value) { %>
-           <option value='<%= o.value %>'><%= o.value %></option>
+            <% if (meta.value.indexOf(o.value) >= 0) { %>
+             <option selected value='<%= o.value %>'><%= o.value %></option>
+           <% } else { %>
+             <option value='<%= o.value %>'><%= o.value %></option>
+           <% } %>
+
           <% } else { %>
-           <option value='<%= o %>'><%= o %></option>
+            <% if (meta.value.indexOf(o) >= 0) { %>
+             <option selected value='<%= o %>'><%= o %></option>
+           <% } else { %>
+             <option value='<%= o %>'><%= o %></option>
+           <% } %>
           <% } %>
+
         <% } %>
       <% }); %>
     </select>
