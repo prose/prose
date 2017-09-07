@@ -11,13 +11,29 @@
         <% } %>
 
         <% if (!o.lang || o.lang === meta.lang) { %>
+
           <% if (o.name) { %>
-           <option value='<%= o.value %>'><%= o.name %></option>
+            <% if (typeof meta.value !== 'undefined' && o.value === meta.value) { %>
+              <option selected value='<%= o.value %>'><%= o.name %></option>
+            <% } else { %>
+              <option value='<%= o.value %>'><%= o.name %></option>
+            <% } %>
+
           <% } else if (o.value) { %>
-           <option value='<%= o.value %>'><%= o.value %></option>
+            <% if (typeof meta.value !== 'undefined' && o.value === meta.value) { %>
+             <option selected value='<%= o.value %>'><%= o.value %></option>
+            <% } else { %>
+             <option value='<%= o.value %>'><%= o.value %></option>
+            <% } %>
+
           <% } else { %>
-           <option value='<%= o %>'><%= o %></option>
+            <% if (typeof meta.value !== 'undefined' && o === meta.value) { %>
+             <option selected value='<%= o %>'><%= o %></option>
+            <% } else { %>
+             <option value='<%= o %>'><%= o %></option>
+            <% } %>
           <% } %>
+
         <% } %>
       <% }); %>
     </select>
