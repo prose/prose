@@ -20,6 +20,7 @@ module.exports = Backbone.View.extend({
       help: data.field.help,
       placeholder: data.field.placeholder,
       options: data.field.options,
+      value: data.field.value,
       lang: data.lang
     };
 

@@ -26,6 +26,14 @@ module.exports = Backbone.View.extend({
       lang: data.lang
     };
 
+    if (Array.isArray(data.field.value)) {
+      multiselect.value = data.field.value;
+    } else if (typeof data.field.value !== 'undefined' && typeof data.field.value !== 'object') {
+      multiselect.value = [data.field.value];
+    } else {
+      multiselect.value = [];
+    }
+
     this.setElement($(_.template(this.template, multiselect, {
       variable: 'meta'
     })));
