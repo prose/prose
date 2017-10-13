@@ -296,5 +296,19 @@ module.exports = {
     } catch (err) {
         return t('notification.error.github');
     }
+  },
+
+  replaceVariables: function(variables, setting) {
+    var result = setting;
+    if (result) {
+      for (var name in variables) {
+        if (variables.hasOwnProperty(name)) {
+          var value = variables[name];
+          result = result.replace(name, value);
+        }
+      }
+    }
+    return result;
   }
+
 };

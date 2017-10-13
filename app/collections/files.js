@@ -96,6 +96,12 @@ module.exports = Backbone.Collection.extend({
         this.parseIgnore(config.prose.ignore);
       }
 
+      var variables = this.getVariables();
+
+      this.config.rooturl = util.replaceVariables(variables, this.config.rooturl);
+      this.config.media = util.replaceVariables(variables, this.config.media);
+      this.config.siteurl = util.replaceVariables(variables, this.config.siteurl);
+
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
 
@@ -134,18 +140,17 @@ module.exports = Backbone.Collection.extend({
                   });
                 }
 
-                if (value && value.field && value.field.value === "CURRENT_DATETIME") {
-                  value.field.value = (new Date()).format('Y-m-d H:i O');
+                if (value && value.field && value.field.value) {
+                  value.field.value = util.replaceVariables(variables, value.field.value);
                 }
               });
             } else if (_.isString(raw)) {
               try {
                 defaults = jsyaml.safeLoad(raw);
 
-                if (defaults.date === "CURRENT_DATETIME") {
-                  var current = (new Date()).format('Y-m-d H:i O');
-                  defaults.date = current;
-                  raw = raw.replace("CURRENT_DATETIME", current);
+                if (defaults.date) {
+                  defaults.date = util.replaceVariables(variables, defaults.date);
+                  raw = util.replaceVariables(variables, raw);
                 }
               } catch(err) {
                 console.log("Error parsing default values.");
@@ -300,5 +305,24 @@ module.exports = Backbone.Collection.extend({
 
   url: function() {
     return this.repo.url() + '/git/trees/' + this.sha + '?recursive=1';
+  },
+
+  getVariables: function() {
+    var login = cookie.get('login');
+
+    var user = login;
+    if (this.config && this.config.users) {
+      this.config.users.forEach(function(u) {
+        if (u.login === login) {
+          user = u.user;
+        }
+      });
+    }
+
+    return {
+      "CURRENT_DATETIME": (new Date()).format('Y-m-d H:i O'),
+      "CURRENT_USER": user
+    };
   }
+
 });
