@@ -4,7 +4,8 @@ module.exports.string = jsyaml.safeDump({
   prose: {
     metadata: {
       _posts: [
-        'date: CURRENT_DATETIME'
+        'date: CURRENT_DATETIME',
+        'author: CURRENT_USER'
       ]
     },
     proseProp: true
@@ -14,6 +15,9 @@ module.exports.string = jsyaml.safeDump({
 
 module.exports.forms = jsyaml.safeDump({
   prose: {
+    rooturl: 'root/CURRENT_USER/folder',
+    media: 'media/CURRENT_USER/folder',
+    siteurl: 'site/CURRENT_USER/folder',
     metadata: {
       _posts: [{
         name: 'date',
@@ -21,7 +25,17 @@ module.exports.forms = jsyaml.safeDump({
           element: 'textarea',
           value: 'CURRENT_DATETIME'
         }
+      }, {
+        name: 'author',
+        field: {
+          element: 'textarea',
+          value: 'CURRENT_USER'
+        }
       }]
-    }
+    },
+    users: [{
+      login: 'github1',
+      user: 'usr1'
+    }]
   }
 });
