@@ -98,9 +98,9 @@ module.exports = Backbone.Collection.extend({
 
       var variables = this.getVariables();
 
-      this.config.rooturl = util.replaceVariables(variables, this.config.rooturl);
-      this.config.media = util.replaceVariables(variables, this.config.media);
-      this.config.siteurl = util.replaceVariables(variables, this.config.siteurl);
+      this.config.rooturl = this.replaceVariables(variables, this.config.rooturl);
+      this.config.media = this.replaceVariables(variables, this.config.media);
+      this.config.siteurl = this.replaceVariables(variables, this.config.siteurl);
 
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
@@ -108,15 +108,15 @@ module.exports = Backbone.Collection.extend({
         // Serial queue to not break global scope JSONP callbacks
         var q = queue(1);
 
-        _.each(metadata, function(raw, key) {
-          q.defer(function(cb) {
+        _.each(metadata, (function(raw, key) {
+          q.defer((function(cb) {
             var subq = queue();
             var defaults;
 
             if (_.isObject(raw)) {
               defaults = raw;
 
-              _.each(defaults, function(value, key) {
+              _.each(defaults, (function(value, key) {
                 var regex = /^https?:\/\//;
 
                 // Parse JSON URL values
@@ -141,16 +141,16 @@ module.exports = Backbone.Collection.extend({
                 }
 
                 if (value && value.field && value.field.value) {
-                  value.field.value = util.replaceVariables(variables, value.field.value);
+                  value.field.value = this.replaceVariables(variables, value.field.value);
                 }
-              });
+              }).bind(this));
             } else if (_.isString(raw)) {
               try {
                 defaults = jsyaml.safeLoad(raw);
 
                 if (defaults.date) {
-                  defaults.date = util.replaceVariables(variables, defaults.date);
-                  raw = util.replaceVariables(variables, raw);
+                  defaults.date = this.replaceVariables(variables, defaults.date);
+                  raw = this.replaceVariables(variables, raw);
                 }
               } catch(err) {
                 console.log("Error parsing default values.");
@@ -162,8 +162,8 @@ module.exports = Backbone.Collection.extend({
               metadata[key] = defaults;
               cb();
             });
-          });
-        });
+          }).bind(this));
+        }).bind(this));
 
         q.awaitAll((function() {
           // Save parsed config to the collection as it's used accross
@@ -311,7 +311,7 @@ module.exports = Backbone.Collection.extend({
     var login = cookie.get('login');
 
     var user = login;
-    if (this.config && this.config.users) {
+    if (this.config && Array.isArray(this.config.users)) {
       this.config.users.forEach(function(u) {
         if (u.login === login) {
           user = u.user;
@@ -323,6 +323,17 @@ module.exports = Backbone.Collection.extend({
       "CURRENT_DATETIME": (new Date()).format('Y-m-d H:i O'),
       "CURRENT_USER": user
     };
+  },
+
+  replaceVariables: function(variables, setting) {
+    var result = setting;
+    if (result) {
+      for (var name in variables) {
+        var value = variables[name];
+        result = result.replace(name, value);
+      }
+    }
+    return result;
   }
 
 });
