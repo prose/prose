@@ -3,10 +3,7 @@ var jsyaml = require('js-yaml');
 module.exports.string = jsyaml.safeDump({
   prose: {
     metadata: {
-      _posts: [
-        'date: CURRENT_DATETIME',
-        'author: CURRENT_USER'
-      ]
+      _posts: 'date: CURRENT_DATETIME\nuser: CURRENT_USER'
     },
     proseProp: true
   },
@@ -34,8 +31,8 @@ module.exports.forms = jsyaml.safeDump({
       }]
     },
     users: [{
-      login: 'github1',
-      user: 'usr1'
+      login: 'user-with-alias',
+      user: 'user-alias'
     }]
   }
 });
