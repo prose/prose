@@ -10,12 +10,16 @@ var cookie = require('../cookie');
 var util = require('../util');
 var ignore = require('ignore');
 
-function replaceVariables (variables, setting) {
-  var result = setting;
+/*
+ * placeholderValues {object} mapping of placeholders, ie {CURRENT_USER: 'sally'}
+ * initialValue {string} default value possibly containing placeholder
+ */
+function replacePlaceholders (placeholderValues, initialValue) {
+  var result = initialValue;
   if (result) {
-    for (var name in variables) {
-      if (result.indexOf(name) >= 0 && variables[name]) {
-        result = result.replace(name, variables[name]);
+    for (var item in placeholderValues) {
+      if (result.indexOf(item) >= 0 && placeholderValues[item]) {
+        result = result.replace(item, placeholderValues[item]);
       }
     }
   }
@@ -108,11 +112,11 @@ module.exports = Backbone.Collection.extend({
         this.parseIgnore(config.prose.ignore);
       }
 
-      var variables = this.getVariables();
+      var placeholderValues = this.getPlaceholderValues();
 
-      this.config.rooturl = replaceVariables(variables, this.config.rooturl);
-      this.config.media = replaceVariables(variables, this.config.media);
-      this.config.siteurl = replaceVariables(variables, this.config.siteurl);
+      this.config.rooturl = replacePlaceholders(placeholderValues, this.config.rooturl);
+      this.config.media = replacePlaceholders(placeholderValues, this.config.media);
+      this.config.siteurl = replacePlaceholders(placeholderValues, this.config.siteurl);
 
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
@@ -154,11 +158,11 @@ module.exports = Backbone.Collection.extend({
 
                 // replace default values like CURRENT_USER and CURRENT_DATETIME
                 if (value && value.field && value.field.value) {
-                  value.field.value = replaceVariables(variables, value.field.value);
+                  value.field.value = replacePlaceholders(placeholderValues, value.field.value);
                 }
               });
             } else if (_.isString(raw)) {
-              raw = replaceVariables(variables, raw);
+              raw = replacePlaceholders(placeholderValues, raw);
               try {
                 defaults = jsyaml.safeLoad(raw);
               } catch(err) {
@@ -316,7 +320,9 @@ module.exports = Backbone.Collection.extend({
     return this.repo.url() + '/git/trees/' + this.sha + '?recursive=1';
   },
 
-  getVariables: function() {
+  // Create a mapping of values to replace placeholders, ie 'CURRENT_DATETIME'.
+  // Optionally allows a user alias to take the place of the actual login.
+  getPlaceholderValues: function() {
     var login = cookie.get('login');
 
     var user = login;
