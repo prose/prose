@@ -36,7 +36,7 @@ describe('files collection', function() {
     });
   });
 
-  it.only('Honors CURRENT_USER var when metadata is a string', function(done) {
+  it('Honors CURRENT_USER var when metadata is a string', function(done) {
     cookie.set('login', 'user');
     var files = fileCollectionMocker();
     files.parseConfig(fileMocker(stringMeta), {
