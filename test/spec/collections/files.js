@@ -4,6 +4,7 @@ var fileCollectionMocker = require('../../mocks/collections/files');
 var fileMocker = require('../../mocks/models/file');
 var stringMeta = require('../../fixtures/metadata.js').string;
 var formMeta = require('../../fixtures/metadata.js').forms;
+var cookie = require('../../../app/cookie');
 
 describe('files collection', function() {
 
@@ -18,7 +19,7 @@ describe('files collection', function() {
       success: function() {
         expect(files).to.have.property('defaults');
         expect(files.defaults._posts.date).to.not.eql('CURRENT_DATETIME');
-        expect(_.isDate(new Date(files.defaults._posts.date))).to.eql(true);
+        expect(files.defaults._posts.date && _.isDate(new Date(files.defaults._posts.date))).to.eql(true);
         done();
       }
     });
@@ -30,6 +31,48 @@ describe('files collection', function() {
       success: function() {
         var date = new Date(files.defaults._posts[0].field.value);
         expect(_.isDate(date)).to.eql(true);
+        done();
+      }
+    });
+  });
+
+  it('Honors CURRENT_USER var when metadata is a string', function(done) {
+    cookie.set('login', 'user');
+    var files = fileCollectionMocker();
+    files.parseConfig(fileMocker(stringMeta), {
+      success: function() {
+        expect(files.defaults._posts.user).to.eql('user');
+        done();
+      }
+    });
+  });
+
+  it('Honors CURRENT_USER var with mapped user when metadata is a form element', function(done) {
+    // test case for when there's a user
+    cookie.set('login', 'user-with-alias');
+    var files = fileCollectionMocker();
+    files.parseConfig(fileMocker(formMeta), {
+      success: function() {
+        expect(files.config.rooturl).to.eql('root/user-alias/folder');
+        expect(files.config.media).to.eql('media/user-alias/folder');
+        expect(files.config.siteurl).to.eql('site/user-alias/folder');
+        expect(files.defaults._posts[1].field.value).to.eql('user-alias');
+        cookie.unset('login')
+        done();
+      }
+    });
+  });
+
+  it('Honors CURRENT_USER var with unmapped user when metadata is a form element', function(done) {
+    cookie.set('login', 'user-with-no-alias');
+    var files = fileCollectionMocker();
+    files.parseConfig(fileMocker(formMeta), {
+      success: function() {
+        expect(files.config.rooturl).to.eql('root/user-with-no-alias/folder');
+        expect(files.config.media).to.eql('media/user-with-no-alias/folder');
+        expect(files.config.siteurl).to.eql('site/user-with-no-alias/folder');
+        expect(files.defaults._posts[1].field.value).to.eql('user-with-no-alias');
+        cookie.unset('login')
         done();
       }
     });

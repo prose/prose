@@ -1,3 +1,7 @@
+## 1.1.23
+
+- Adds support for a CURRENT_USER varible https://github.com/prose/prose/pull/1051
+
 ## 1.1.21
 
 - No longer include unset metadata fields in frontmatter https://github.com/prose/prose/pull/958

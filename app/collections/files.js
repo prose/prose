@@ -10,6 +10,22 @@ var cookie = require('../cookie');
 var util = require('../util');
 var ignore = require('ignore');
 
+/*
+ * placeholderValues {object} mapping of placeholders, ie {CURRENT_USER: 'sally'}
+ * initialValue {string} default value possibly containing placeholder
+ */
+function replacePlaceholders (placeholderValues, initialValue) {
+  var result = initialValue;
+  if (result) {
+    for (var item in placeholderValues) {
+      if (result.indexOf(item) >= 0 && placeholderValues[item]) {
+        result = result.replace(item, placeholderValues[item]);
+      }
+    }
+  }
+  return result;
+}
+
 module.exports = Backbone.Collection.extend({
   model: function(attributes, options) {
     // TODO: handle 'symlink' and 'submodule' type
@@ -96,6 +112,12 @@ module.exports = Backbone.Collection.extend({
         this.parseIgnore(config.prose.ignore);
       }
 
+      var placeholderValues = this.getPlaceholderValues();
+
+      this.config.rooturl = replacePlaceholders(placeholderValues, this.config.rooturl);
+      this.config.media = replacePlaceholders(placeholderValues, this.config.media);
+      this.config.siteurl = replacePlaceholders(placeholderValues, this.config.siteurl);
+
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
 
@@ -134,19 +156,15 @@ module.exports = Backbone.Collection.extend({
                   });
                 }
 
-                if (value && value.field && value.field.value === "CURRENT_DATETIME") {
-                  value.field.value = (new Date()).format('Y-m-d H:i O');
+                // replace default values like CURRENT_USER and CURRENT_DATETIME
+                if (value && value.field && value.field.value) {
+                  value.field.value = replacePlaceholders(placeholderValues, value.field.value);
                 }
               });
             } else if (_.isString(raw)) {
+              raw = replacePlaceholders(placeholderValues, raw);
               try {
                 defaults = jsyaml.safeLoad(raw);
-
-                if (defaults.date === "CURRENT_DATETIME") {
-                  var current = (new Date()).format('Y-m-d H:i O');
-                  defaults.date = current;
-                  raw = raw.replace("CURRENT_DATETIME", current);
-                }
               } catch(err) {
                 console.log("Error parsing default values.");
                 console.log(err);
@@ -300,5 +318,25 @@ module.exports = Backbone.Collection.extend({
 
   url: function() {
     return this.repo.url() + '/git/trees/' + this.sha + '?recursive=1';
+  },
+
+  // Create a mapping of values to replace placeholders, ie 'CURRENT_DATETIME'.
+  // Optionally allows a user alias to take the place of the actual login.
+  getPlaceholderValues: function() {
+    var login = cookie.get('login');
+
+    var user = login;
+    if (this.config && Array.isArray(this.config.users)) {
+      this.config.users.forEach(function(u) {
+        if (u.login === login) {
+          user = u.user;
+        }
+      });
+    }
+
+    return {
+      "CURRENT_DATETIME": (new Date()).format('Y-m-d H:i O'),
+      "CURRENT_USER": user
+    };
   }
 });
