@@ -10,6 +10,18 @@ var cookie = require('../cookie');
 var util = require('../util');
 var ignore = require('ignore');
 
+function replaceVariables (variables, setting) {
+  var result = setting;
+  if (result) {
+    for (var name in variables) {
+      if (result.indexOf(name) >= 0 && variables[name]) {
+        result = result.replace(name, variables[name]);
+      }
+    }
+  }
+  return result;
+}
+
 module.exports = Backbone.Collection.extend({
   model: function(attributes, options) {
     // TODO: handle 'symlink' and 'submodule' type
@@ -98,9 +110,9 @@ module.exports = Backbone.Collection.extend({
 
       var variables = this.getVariables();
 
-      this.config.rooturl = this.replaceVariables(variables, this.config.rooturl);
-      this.config.media = this.replaceVariables(variables, this.config.media);
-      this.config.siteurl = this.replaceVariables(variables, this.config.siteurl);
+      this.config.rooturl = replaceVariables(variables, this.config.rooturl);
+      this.config.media = replaceVariables(variables, this.config.media);
+      this.config.siteurl = replaceVariables(variables, this.config.siteurl);
 
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
@@ -108,15 +120,15 @@ module.exports = Backbone.Collection.extend({
         // Serial queue to not break global scope JSONP callbacks
         var q = queue(1);
 
-        _.each(metadata, (function(raw, key) {
-          q.defer((function(cb) {
+        _.each(metadata, function(raw, key) {
+          q.defer(function(cb) {
             var subq = queue();
             var defaults;
 
             if (_.isObject(raw)) {
               defaults = raw;
 
-              _.each(defaults, (function(value, key) {
+              _.each(defaults, function(value, key) {
                 var regex = /^https?:\/\//;
 
                 // Parse JSON URL values
@@ -140,18 +152,15 @@ module.exports = Backbone.Collection.extend({
                   });
                 }
 
+                // replace default values like CURRENT_USER and CURRENT_DATETIME
                 if (value && value.field && value.field.value) {
-                  value.field.value = this.replaceVariables(variables, value.field.value);
+                  value.field.value = replaceVariables(variables, value.field.value);
                 }
-              }).bind(this));
+              });
             } else if (_.isString(raw)) {
+              raw = replaceVariables(variables, raw);
               try {
                 defaults = jsyaml.safeLoad(raw);
-
-                if (defaults.date) {
-                  defaults.date = this.replaceVariables(variables, defaults.date);
-                  raw = this.replaceVariables(variables, raw);
-                }
               } catch(err) {
                 console.log("Error parsing default values.");
                 console.log(err);
@@ -162,8 +171,8 @@ module.exports = Backbone.Collection.extend({
               metadata[key] = defaults;
               cb();
             });
-          }).bind(this));
-        }).bind(this));
+          });
+        });
 
         q.awaitAll((function() {
           // Save parsed config to the collection as it's used accross
@@ -323,17 +332,5 @@ module.exports = Backbone.Collection.extend({
       "CURRENT_DATETIME": (new Date()).format('Y-m-d H:i O'),
       "CURRENT_USER": user
     };
-  },
-
-  replaceVariables: function(variables, setting) {
-    var result = setting;
-    if (result) {
-      for (var name in variables) {
-        var value = variables[name];
-        result = result.replace(name, value);
-      }
-    }
-    return result;
   }
-
 });
