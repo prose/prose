@@ -16,7 +16,7 @@ var ignore = require('ignore');
  */
 function replacePlaceholders (placeholderValues, initialValue) {
   var result = initialValue;
-  if (result) {
+  if (result && typeof result === 'string') {
     for (var item in placeholderValues) {
       if (result.indexOf(item) >= 0 && placeholderValues[item]) {
         result = result.replace(item, placeholderValues[item]);
