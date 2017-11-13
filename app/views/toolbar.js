@@ -72,9 +72,10 @@ module.exports = Backbone.View.extend({
   },
 
   fileInput: function(e) {
-    var view = this;
+    var $dialog = $(e.target).closest('div.dialog.media');
+    var self = this;
     upload.fileSelect(e, function(e, file, content) {
-      view.trigger('updateImageInsert', e, file, content);
+      self.trigger('updateImageInsert', e, file, content, self, $dialog);
     });
 
     return false;
@@ -93,7 +94,7 @@ module.exports = Backbone.View.extend({
   markdownSnippet: function(e) {
     var self = this;
     var $target = $(e.target).closest('a');
-    var $dialog = this.$el.find('#dialog');
+    var $dialog = this.$el.find('div[data-element="dialog"]');
     var $snippets = this.$el.find('.group a');
     var key = $target.data('key');
     var snippet = $target.data('snippet');
@@ -211,7 +212,8 @@ module.exports = Backbone.View.extend({
                 input: '<input id="upload" class="upload" type="file" />'
               }),
               assetsDirectory: (self.media && self.media.length) ? true : false,
-              writable: self.file.get('writable')
+              writable: self.file.get('writable'),
+              altText: true
             }));
 
             if (self.media && self.media.length) self.renderMedia(self.media);
@@ -370,7 +372,7 @@ module.exports = Backbone.View.extend({
   },
 
   dialogInsert: function(e) {
-    var $dialog = $('#dialog', this.el);
+    var $dialog = $('div[data-type="dialog"]', this.el);
     var $target = $(e.target, this.el);
     var type = $target.data('type');
 
@@ -393,7 +395,29 @@ module.exports = Backbone.View.extend({
     if (type === 'media') {
       if (this.queue) {
         var userDefinedPath = $('input[name="url"]').val();
-        this.view.upload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath);
+
+        var onSuccess = function(model, res, options) {
+          var name = res.content.name;
+          var path = '{{site.baseurl}}/' + res.content.path;
+
+          // Take the alt text from the insert image box on the toolbar
+          var $alt = $('input[name="alt"]');
+          var value = $alt.val();
+          var image = (value) ?
+            '![' + value + '](' + path + ')' :
+            '![' + name + '](' + path + ')';
+
+          this.editor.focus();
+          this.editor.replaceSelection(image + '\n', 'end');
+          this.updateSaveState('Saved', 'saved', true);
+        }
+
+        var onFailure = function(model, xhr, options) {
+          var message = util.xhrErrorMessage(xhr);
+          this.updateSaveState(message, 'error');
+        }
+
+        this.view.upload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath, onSuccess, onFailure);
 
         // Finally, clear the queue object
         this.queue = undefined;
@@ -469,42 +493,10 @@ module.exports = Backbone.View.extend({
   },
 
   renderMedia: function(data, back) {
-    var self = this;
-    var $media = this.$el.find('#media');
-    var tmpl = _(templates.dialogs.mediadirectory).template();
-
+    var $media = this.$el.find('ul[data-element="media"]');
     // Reset some stuff
     $media.empty();
 
-    if (back && (back.join() !== this.assetsDirectory)) {
-      var link = back.slice(0, back.length - 1).join('/');
-      $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
-    }
-
-    data.each(function(d) {
-      var parts = d.get('path').split('/');
-      var path = parts.slice(0, parts.length - 1).join('/');
-
-      $media.append(tmpl({
-        name: d.get('name'),
-        type: d.get('type'),
-        path: path + '/' + encodeURIComponent(d.get('name')),
-        isMedia: util.isMedia(d.get('name').split('.').pop())
-      }));
-    });
-
-    $('.asset a', $media).on('click', function(e) {
-      var href = $(this).attr('href');
-      var alt = util.trim($(this).text());
-
-      if (util.isImage(href.split('.').pop())) {
-        self.$el.find('input[name="url"]').val(href);
-        self.$el.find('input[name="alt"]').val(alt);
-      } else {
-        self.view.editor.replaceSelection(href);
-        self.view.editor.focus();
-      }
-      return false;
-    });
+    util.renderMedia(data, $media, this, back);
   }
 });

@@ -386,8 +386,9 @@ module.exports = Backbone.View.extend({
     // Bind Drag and Drop work on the editor
     if (this.model.get('markdown') && this.model.get('writable')) {
       upload.dragDrop(this.$el, (function(e, file, content) {
-        if (this.$el.find('#dialog').hasClass('dialog')) {
-          this.updateImageInsert(e, file, content);
+        var $dialog = this.$el.find('div[data-element="dialog"]');
+        if ($dialog.hasClass('dialog')) {
+          this.updateImageInsert(e, file, content, this.toolbar, dialog);
         } else {
           // Clear selection
           this.editor.focus();
@@ -454,7 +455,7 @@ module.exports = Backbone.View.extend({
 
     // If a dialog window is open and the editor is in focus, close it.
     this.$el.find('.toolbar .group a').removeClass('on');
-    this.$el.find('#dialog').empty().removeClass();
+    this.$el.find('div[data-element="dialog"]').empty().removeClass();
   },
 
   initToolbar: function() {
@@ -562,6 +563,8 @@ module.exports = Backbone.View.extend({
 
     this.metadataEditor.setElement(this.$el.find('#meta')).render();
     this.subviews['metadata'] = this.metadataEditor;
+
+    this.listenTo(this.metadataEditor, 'updateImageInsert', this.updateImageInsert);
   },
 
   render: function() {
@@ -1332,16 +1335,16 @@ module.exports = Backbone.View.extend({
     if (this.nav) this.nav.updateState(label, classes, kill);
   },
 
-  updateImageInsert: function(e, file, content) {
-    var path = (this.toolbar.mediaDirectoryPath) ?
-                    this.toolbar.mediaDirectoryPath :
-                    util.extractFilename(this.toolbar.file.attributes.path)[0];
+  updateImageInsert: function(e, file, content, target, $dialog) {
+    var path = (this.config.media) ?
+                    this.config.media :
+                    util.extractFilename(this.model.attributes.path)[0];
+
     var src = path + '/' + encodeURIComponent(file.name);
+    $dialog.find('input[name="url"]').val(src);
+    $dialog.find('input[name="alt"]').val('');
 
-    this.$el.find('input[name="url"]').val(src);
-    this.$el.find('input[name="alt"]').val('');
-
-    this.toolbar.queue = {
+    target.queue = {
       e: e,
       file: file,
       content: content
@@ -1357,31 +1360,14 @@ module.exports = Backbone.View.extend({
     return _.compact([dir, fileName]).join('/');
   },
 
-  upload: function(e, file, content, path) {
+  upload: function(e, file, content, path, successCb, failureCb) {
     // Loading State
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
     var uploadPath = path || this.defaultUploadPath(file.name);
     this.collection.upload(file, content, uploadPath, {
-      success: (function(model, res, options) {
-        var name = res.content.name;
-        var path = '{{site.baseurl}}/' + res.content.path;
-
-        // Take the alt text from the insert image box on the toolbar
-        var $alt = $('input[name="alt"]');
-        var value = $alt.val();
-        var image = (value) ?
-          '![' + value + '](' + path + ')' :
-          '![' + name + '](' + path + ')';
-
-        this.editor.focus();
-        this.editor.replaceSelection(image + '\n', 'end');
-        this.updateSaveState('Saved', 'saved', true);
-      }).bind(this),
-      error: (function(model, xhr, options) {
-        var message = util.xhrErrorMessage(xhr);
-        this.updateSaveState(message, 'error');
-      }).bind(this)
+      success: (successCb).bind(this),
+      error: (failureCb).bind(this)
     });
   },
 

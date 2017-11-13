@@ -11,7 +11,9 @@
     <% } %>
 
     <input type='text' name='url' placeholder="<%= t('dialogs.media.hrefPlaceholder')%>" />
-    <input type='text' name='alt' placeholder="<%= t('dialogs.media.altPlaceholder')%>" />
+    <% if (altText) { %>
+      <input type='text' name='alt' placeholder="<%= t('dialogs.media.altPlaceholder')%>" />
+    <% } %>
     <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>
       <% if (!assetsDirectory) { %>
         <small class='caption deemphasize'><%= t('dialogs.media.help') %></small>
@@ -21,7 +23,7 @@
   <% if (assetsDirectory) { %>
     <div class='col col-last fl media-listing'>
       <label><%= t('dialogs.media.choose') %></label>
-      <ul id='media'></ul>
+      <ul data-element='media'></ul>
       <small class='caption deemphasize'><%= t('dialogs.media.helpMedia') %></small>
     </div>
   <% } %>

@@ -7,6 +7,7 @@ var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
 var templates = require('../../dist/templates');
 var util = require('../util');
+var upload = require('../upload');
 
 var forms = {
   Checkbox: require('./meta/checkbox'),
@@ -15,6 +16,7 @@ var forms = {
   Button: require('./meta/button'),
   Select: require('./meta/select'),
   Multiselect: require('./meta/multiselect'),
+  Image: require('./meta/image'),
 };
 
 
@@ -32,6 +34,8 @@ module.exports = Backbone.View.extend({
     'change .metafield': 'updateModel',
     'click button.metafield': 'updateModel',
     'click .create-select': 'createSelect',
+    'click .select-image': 'toggleImageDialog',
+    'click .dialog .insert': 'updateInput',
     'click .finish': 'exit'
   },
 
@@ -122,6 +126,11 @@ module.exports = Backbone.View.extend({
           break;
           case 'multiselect':
             view = new forms.Multiselect({
+              data: _.extend({}, data, {lang: lang})
+            });
+          break;
+          case 'image':
+            view = new forms.Image({
               data: _.extend({}, data, {lang: lang})
             });
           break;
@@ -375,6 +384,91 @@ module.exports = Backbone.View.extend({
       // Update the list
       $select.trigger('liszt:updated');
       $select.trigger('change');
+    }
+
+    return false;
+  },
+
+  toggleImageDialog: function(e) {
+    if (e === undefined) {
+      $('.meta .dialog').remove();
+      return false;
+    }
+
+    var self = this;
+    var $parent = $(e.target).parent();
+    var $lastChild = $parent.children().last();
+
+    //Toggle Dialog On/Off
+    if ($lastChild.hasClass('dialog')) {
+      $lastChild.remove();
+    } else {
+
+      //Create the dialog element
+      var $dialog = $('<div></div>');
+      $parent.append($dialog);
+      $dialog.addClass('dialog media');
+
+      //Populate the dialog element
+      tmpl = _(templates.dialogs.media).template();
+      $dialog.append(tmpl({
+        description: t('dialogs.media.description', {
+          input: '<input data-element="upload" class="upload" type="file" />'
+        }),
+        assetsDirectory: (self.view.toolbar.media && self.view.toolbar.media.length) ? true : false,
+        writable: self.model.get('writable'),
+        altText: false
+      }));
+
+      $media = $dialog.find('ul[data-element="media"]').first();
+      $input = $dialog.find('input[data-element="upload"]').first();
+      $input.change(self.fileInput);
+
+      if (self.view.toolbar.media && self.view.toolbar.media.length) util.renderMedia(self.view.toolbar.media, $media, this);
+    }
+    return false;
+  },
+
+  fileInput: function(e) {
+    var $dialog = $(e.target).closest('div.dialog.media');
+    var self = this;
+    upload.fileSelect(e, function(e, file, content) {
+      self.trigger('updateImageInsert', e, file, content, self, $dialog);
+    });
+
+    return false;
+  },
+
+  updateInput: function(e, file, content) {
+    var $dialog = $(e.target, this.$el).closest(".dialog");
+    var $input = $dialog.parent().children("input");
+    var self = this;
+
+    if (this.queue) {
+      var userDefinedPath = $('input[name="url"]').val();
+
+      var onSuccess = function(model, res, options) {
+        var name = res.content.name;
+        var path = '{{site.baseurl}}/' + res.content.path;
+
+        $input.val(path);
+        self.toggleImageDialog();
+      }
+
+      var onFailure = function(model, xhr, options) {
+        var message = util.xhrErrorMessage(xhr);
+        this.updateSaveState(message, 'error');
+      }
+
+      this.view.upload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath, onSuccess, onFailure);
+
+      // Finally, clear the queue object
+      this.queue = undefined;
+    } else {
+
+      var src = '{{site.baseurl}}/' + $('.meta input[name="url"]').val();
+      $input.val(src);
+      this.toggleImageDialog();
     }
 
     return false;

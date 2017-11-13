@@ -183,7 +183,8 @@ input[type=text] {
           border-radius:2px;
   }
 textarea,
-input[type=text] {
+input[type=text],
+.dialog input[type=text] {
   background-color:#fff;
   vertical-align:middle;
   max-width:100%;
@@ -196,6 +197,10 @@ input[type=text] {
      -moz-transition:border linear 150ms;
        -o-transition:border linear 150ms;
           transition:border linear 150ms;
+  }
+
+input[readonly] {
+  background-color: #e4e4e4;
   }
 
 textarea#code {
