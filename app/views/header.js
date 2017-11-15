@@ -1,3 +1,4 @@
+var pathUtil = require('path');
 var $ = require('jquery-browserify');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -103,10 +104,9 @@ module.exports = Backbone.View.extend({
       var date = util.extractDate(name);
       var extension = name.split('.').pop();
 
-      path = parts.join('/') + '/' + date + '-' +
-        util.stringToUrl(value) + '.' + extension;
+      var newPath = pathUtil.join.apply(null, parts.concat([date + '-' + util.stringToUrl(value) + '.' + extension]));
 
-      this.file.set('path', path);
+      this.file.set('path', newPath);
     }
 
     var metadata = this.file.get('metadata') || {};
