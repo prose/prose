@@ -1,3 +1,4 @@
+var pathUtil = require('path');
 var _ = require('underscore');
 var marked = require('marked');
 var Backbone = require('backbone');
@@ -351,8 +352,8 @@ module.exports = Backbone.Model.extend({
   },
 
   url: function() {
-    var branch = this.collection.branch || this.branch || this.get("branch");
-    return this.collection.repo.url() + '/contents/' + this.get('path') + '?ref=' + branch.get('name');
+    var branch = this.collection.branch || this.branch || this.get('branch');
+    return pathUtil.join(this.collection.repo.url(), 'contents', this.get('path') + '?ref=' + branch.get('name'));
   },
 
   validate: function(attributes, options) {
