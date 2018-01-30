@@ -33,6 +33,8 @@ module.exports = Backbone.View.extend({
     this.initBranches();
     this.initHeader();
 
+    _.bindAll(this, ['initSearch', 'initHistory', 'initFiles']);
+
     var q = queue();
     q.defer(this.initSearch);
     q.defer(this.initHistory);

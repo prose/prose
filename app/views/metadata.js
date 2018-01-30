@@ -64,7 +64,7 @@ module.exports = Backbone.View.extend({
 
     // Using the yml configuration file for metadata,
     // render form fields.
-    _.each(this.model.get('defaults'), (function(data, key) {
+    this.model.get('defaults').forEach((data, key) => {
 
       // Tests that 1. This is the title metadata,
       // and 2. We've decided to combine the title form UI as the page header.
@@ -164,7 +164,7 @@ module.exports = Backbone.View.extend({
           this.codeMirrorInstances[id] = codeMirror;
         }
       }
-    }).bind(this));
+    });
 
     // Attach a change event listener
     this.$el.find('.chzn-select').chosen().change(this.updateModel);
@@ -250,7 +250,7 @@ module.exports = Backbone.View.extend({
         value: view.getValue(),
         name: view.name
       };
-    }).groupBy('name').each(function(group) {
+    }).groupBy('name').forEach(function(group) {
       var name = group[0].name;
       metadata[name] = group.length === 1 ?
         group[0].value : _.pluck(group, 'value');
@@ -312,7 +312,7 @@ module.exports = Backbone.View.extend({
     // Easiest thing to do is update metadata fields
     // that are rendered already, ie. have defaults specified
     // in _config.yml or _prose.yml
-    _.each(metadata, function(value, key) {
+    metadata.forEach(function(value, key) {
 
       // Filter instead of find, because you never know if someone
       // is using the same key for two different elements.
@@ -326,7 +326,7 @@ module.exports = Backbone.View.extend({
       // subviews is an ordered array.
       if (renderedViews.length && _.isArray(value)
           && value.length === renderedViews.length) {
-        _.each(renderedViews, function(view, i) {
+        renderedViews.forEach(function(view, i) {
           view.setValue(value[i]);
         });
       }
@@ -349,7 +349,7 @@ module.exports = Backbone.View.extend({
   },
 
   refresh: function() {
-    _.each(this.codeMirrorInstances, function(codeMirror) {
+    this.codeMirrorInstances.forEach(function(codeMirror) {
       codeMirror.refresh();
     });
   },

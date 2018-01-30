@@ -176,7 +176,7 @@ module.exports = Backbone.Model.extend({
   getAttributes: function() {
     var data = {};
 
-    _.each(this.attributes, function(value, key) {
+    this.attributes.forEach(function(value, key) {
       data[key] = this.get(key);
     }, this);
 

@@ -60,11 +60,11 @@ module.exports = {
 
   mode: function(extension) {
     if (this.isMarkdown(extension)) return 'gfm';
-    if (_.include(['js', 'json'], extension)) return 'javascript';
+    if (_.includes(['js', 'json'], extension)) return 'javascript';
     if (extension === 'html') return 'htmlmixed';
     if (extension === 'rb') return 'ruby';
     if (/(yml|yaml)/.test(extension)) return 'yaml';
-    if (_.include(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
+    if (_.includes(['java', 'c', 'cpp', 'cs', 'php'], extension)) return 'clike';
 
     return extension;
   },
@@ -266,7 +266,7 @@ module.exports = {
       var parts = header.split(',');
       var links = {};
 
-      _.each(parts, function(link) {
+      parts.forEach(function(link) {
         var section = link.split(';');
 
         var url = section[0].replace(/<(.*)>/, '$1').trim();

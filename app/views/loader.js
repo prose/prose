@@ -6,6 +6,10 @@ var templates = require('../../dist/templates');
 module.exports = Backbone.View.extend({
   template: templates.loading,
 
+  initialize: function () {
+    _.bindAll(this, ['start', 'stop', 'done', 'render']);
+  },
+
   queue: 0,
 
   start: function(message) {

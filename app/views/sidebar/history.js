@@ -27,6 +27,8 @@ module.exports = Backbone.View.extend({
     this.user = options.user;
     this.view = options.view;
 
+    _.bindAll(this, ['render']);
+
     this.commits.setBranch(this.branch, {
       success: this.render,
       error: (function(model, xhr, options) {
@@ -70,7 +72,7 @@ module.exports = Backbone.View.extend({
       var ul = frag.appendChild(document.createElement('ul'));
       ul.className = 'listing';
 
-      list.slice(0,5).each((function(file, index) {
+      list.slice(0,5).forEach((file, index) => {
         var commits = map[file];
         var commit = commits[0];
 
@@ -82,14 +84,12 @@ module.exports = Backbone.View.extend({
         });
 
         ul.appendChild(view.render().el);
-
         this.subviews[commit.sha] = view;
-      }).bind(this));
+      });
 
       var tmpl = _.template(this.template, {variable: 'label'});
       this.$el.append(tmpl(label), frag);
     }
-
     this.app.loader.done();
   },
 
@@ -119,7 +119,7 @@ module.exports = Backbone.View.extend({
 
     var q = queue();
 
-    _.union(this.history, this.recent).each(function(commit) {
+    _.union(this.history, this.recent).forEach(function(commit) {
       q.defer(function(cb) {
         commit.fetch({
           success: function(model, res, options) {

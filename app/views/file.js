@@ -280,7 +280,7 @@ module.exports = Backbone.View.extend({
     var results = content.match(scan);
 
     // Iterate over the results and replace
-    _.each(results, (function(r) {
+    results.forEach(r => {
       var parts = (image).exec(r);
       var path;
 
@@ -305,7 +305,7 @@ module.exports = Backbone.View.extend({
           content = content.replace(r, '![' + parts[1] + '](' + url + ')');
         }
       }
-    }).bind(this));
+    });
 
     return _.escape(content);
   },
@@ -385,7 +385,7 @@ module.exports = Backbone.View.extend({
 
     // Bind Drag and Drop work on the editor
     if (this.model.get('markdown') && this.model.get('writable')) {
-      upload.dragDrop(this.$el, (function(e, file, content) {
+      upload.dragDrop(this.$el, function(e, file, content) {
         if (this.$el.find('#dialog').hasClass('dialog')) {
           this.updateImageInsert(e, file, content);
         } else {
@@ -396,7 +396,7 @@ module.exports = Backbone.View.extend({
           // Append images links in this.upload()
           this.upload(e, file, content);
         }
-      }).bind(this));
+      }.bind(this));
     }
 
     // Monitor the current selection and apply
@@ -757,7 +757,7 @@ module.exports = Backbone.View.extend({
 
     // Parse JSONP links
     if (p.site && p.site.site) {
-      _(p.site.site).each(function(file, key) {
+      p.site.site.forEach(function(file, key) {
         q.defer(function(cb){
           var next = false;
           $.ajax({

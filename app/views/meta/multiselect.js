@@ -63,7 +63,7 @@ module.exports = Backbone.View.extend({
       });
     }
     else {
-      _.each(values, function(v) {
+      values.forEach(function(v) {
         var match = $el.find('option[value="' + v + '"]');
         if (match.length) {
           match.attr('selected', 'selected');

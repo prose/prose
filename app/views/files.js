@@ -37,6 +37,8 @@ module.exports = Backbone.View.extend({
     this.search = options.search;
     this.sidebar = options.sidebar;
 
+    _.bindAll(this, ['setModel']);
+
     this.branches.fetch({
       success: this.setModel,
       error: (function(model, xhr, options) {
@@ -123,15 +125,14 @@ module.exports = Backbone.View.extend({
     this.$el.html(_.template(this.template, {variable: 'data'})(data));
 
     // if not searching, filter to only show current level
-    var collection = search ? this.search.search() : this.presentationModel.filter((function(file) {
+    var collection = search ? this.search.search() : this.presentationModel.filter(file => {
       return regex.test(file.get('path'));
-    }).bind(this));
+    });
 
     var frag = document.createDocumentFragment();
 
-    collection.each((function(file, index) {
+    collection.forEach((file, index) => {
       var view;
-
       if (file instanceof File) {
         view = new FileView({
           branch: this.branch,
@@ -151,10 +152,9 @@ module.exports = Backbone.View.extend({
           router: this.router
         });
       }
-
       frag.appendChild(view.render().el);
       this.subviews[file.id] = view;
-    }).bind(this));
+    });
 
     this.$el.find('ul').html(frag);
 

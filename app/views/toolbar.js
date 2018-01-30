@@ -481,7 +481,7 @@ module.exports = Backbone.View.extend({
       $media.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
     }
 
-    data.each(function(d) {
+    data.forEach(function(d) {
       var parts = d.get('path').split('/');
       var path = parts.slice(0, parts.length - 1).join('/');
 

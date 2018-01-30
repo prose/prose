@@ -21,6 +21,8 @@ module.exports = Backbone.View.extend({
     this.router = options.router;
     this.sidebar = options.sidebar;
 
+    _.bindAll(this, ['render']);
+
     this.model.fetch({
       success: this.render,
       error: (function(model, xhr, options) {
@@ -39,7 +41,7 @@ module.exports = Backbone.View.extend({
     this.$el.empty().append(_.template(this.template)());
     var frag = document.createDocumentFragment();
 
-    this.model.each((function(branch, index) {
+    this.model.forEach((branch, index) => {
       var view = new BranchView({
         model: branch,
         repo: this.repo,
@@ -48,7 +50,7 @@ module.exports = Backbone.View.extend({
 
       frag.appendChild(view.render().el);
       this.subviews[branch.get('name')] = view;
-    }).bind(this));
+    });
 
     this.$el.find('select').html(frag);
 
