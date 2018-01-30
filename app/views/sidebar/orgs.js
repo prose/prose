@@ -8,7 +8,7 @@ module.exports = Backbone.View.extend({
   template: templates.sidebar.orgs,
 
   initialize: function(options) {
-    _.bind(this.render, this);
+    _.bindAll(this, ['render']);
     this.model = options.model;
     this.router = options.router;
     this.sidebar = options.sidebar;
@@ -33,7 +33,7 @@ module.exports = Backbone.View.extend({
     };
 
     this.$el.html(_.template(this.template, {
-      variable: 'orgs'
+      variable: 'data'
     })(orgs));
 
     // Update active user or organization

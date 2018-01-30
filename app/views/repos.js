@@ -12,6 +12,7 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function(options) {
+    _.bindAll(this, ['render']);
     this.model = options.model;
     this.search = options.search;
 
@@ -22,7 +23,7 @@ module.exports = Backbone.View.extend({
     var collection = this.search ? this.search.search() : this.model;
     var frag = document.createDocumentFragment();
 
-    collection.each((function(repo, i) {
+    collection.forEach((function(repo, i) {
       var view = new RepoView({
         index: i,
         model: repo
