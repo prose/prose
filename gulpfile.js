@@ -125,7 +125,8 @@ gulp.task('build-tests', ['templates', 'oauth'], function() {
 // Browserify app scripts, then concatenate with vendor scripts into `prose.js`.
 gulp.task('build-app', ['templates', 'oauth'], function() {
   var app = browserify({
-    noParse: [require.resolve('handsontable/dist/handsontable.full')]
+    noParse: [require.resolve('handsontable/dist/handsontable.full')],
+    debug: true
   })
   .add('./app/boot.js')
   .bundle()
