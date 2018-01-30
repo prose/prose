@@ -9,19 +9,20 @@ module.exports = Backbone.View.extend({
   type: 'text',
 
   initialize: function(options) {
-    this.name = options.data.name;
+    this.options = options;
+    _.bindAll(this, ['render', 'getValue', 'setValue']);
   },
 
   render: function () {
-    var data = this.options.data;
+    var options = this.options;
 
     var text = {
-      name: data.name,
-      label: data.field.label,
-      help: data.field.help,
-      value: data.field.value,
-      placeholder: data.field.placeholder,
-      type: data.type
+      name: options.name,
+      label: options.field.label,
+      help: options.field.help,
+      value: options.field.value,
+      placeholder: options.field.placeholder,
+      type: options.type
     };
 
     this.setElement($(_.template(this.template, {
@@ -32,7 +33,7 @@ module.exports = Backbone.View.extend({
   },
 
   getValue: function() {
-    return this.options.data.type === 'number' ?
+    return this.options.type === 'number' ?
       Number(this.$form.val()) : this.$form.val();
   },
 

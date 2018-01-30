@@ -12,21 +12,22 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    this.name = options.data.name;
-    this.on = options.data.field.on;
-    this.off = options.data.field.off;
+    this.options = options;
+    this.on = options.field.on;
+    this.off = options.field.off;
+    _.bindAll(this, ['render', 'toggleState', 'getValue', 'setValue']);
   },
 
   // default value is on, or true.
   render: function() {
-    var data = this.options.data;
+    var options = this.options;
     var button = {
-      name: data.name,
-      label: data.field.label,
-      help: data.field.help,
-      on: data.field.on,
-      off: data.field.off,
-      value: data.field.on
+      name: options.name,
+      label: options.field.label,
+      help: options.field.help,
+      on: options.field.on,
+      off: options.field.off,
+      value: options.field.on
     };
 
     this.setElement($(_.template(this.template, {

@@ -9,27 +9,28 @@ module.exports = Backbone.View.extend({
   type: 'multiselect',
 
   initialize: function(options) {
-    this.name = options.data.name;
+    this.options = options;
+    _.bindAll(this, ['render', 'getValue', 'setValue']);
   },
 
   // TODO write tests for alterable behavior.
   // TODO write tests for multiselect behavior.
   render: function () {
-    var data = this.options.data;
+    var options = this.options;
     var multiselect = {
-      name: data.name,
-      label: data.field.label,
-      help: data.field.help,
-      alterable: data.field.alterable,
-      placeholder: data.field.placeholder,
-      options: data.field.options,
-      lang: data.lang
+      name: options.name,
+      label: options.field.label,
+      help: options.field.help,
+      alterable: options.field.alterable,
+      placeholder: options.field.placeholder,
+      options: options.field.options,
+      lang: options.lang
     };
 
-    if (Array.isArray(data.field.value)) {
-      multiselect.value = data.field.value;
-    } else if (typeof data.field.value !== 'undefined' && typeof data.field.value !== 'object') {
-      multiselect.value = [data.field.value];
+    if (Array.isArray(options.field.value)) {
+      multiselect.value = options.field.value;
+    } else if (typeof options.field.value !== 'undefined' && typeof options.field.value !== 'object') {
+      multiselect.value = [options.field.value];
     } else {
       multiselect.value = [];
     }

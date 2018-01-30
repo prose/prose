@@ -12,20 +12,20 @@ module.exports = Backbone.View.extend({
   type: 'textarea',
 
   initialize: function(options) {
-    this.id = options.data.id;
-    this.name = options.data.name;
+    this.options = options;
+    _.bindAll(this, ['render', 'getValue', 'setValue', 'initCodeMirror']);
   },
 
   render: function () {
-    var data = this.options.data;
+    var options = this.options;
 
     var textarea = {
-      name: data.name,
-      id: data.id,
-      value: data.field.value,
-      label: data.field.label,
-      help: data.field.help,
-      placeholder: data.field.placeholder,
+      name: options.name,
+      id: options.id,
+      value: options.field.value,
+      label: options.field.label,
+      help: options.field.help,
+      placeholder: options.field.placeholder,
       type: 'textarea'
     };
 
@@ -41,7 +41,7 @@ module.exports = Backbone.View.extend({
   // to update the parent model.
   initCodeMirror: function (onBlur) {
     var id = this.id;
-    var name = this.options.data.name;
+    var name = this.options.name;
     var textElement = document.getElementById(id);
     var codeMirror = CodeMirror(function(el) {
       textElement.parentNode.replaceChild(el, textElement);
@@ -81,7 +81,7 @@ module.exports = Backbone.View.extend({
       else return value ? value.replace(/&58;/g, ':') : '';
     }
     catch(err) {
-      console.log('Error parsing yaml front matter for', this.name);
+      console.log('Error parsing yaml front matter for', this.options.name);
       console.log(err);
       return '';
     }

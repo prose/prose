@@ -9,17 +9,18 @@ module.exports = Backbone.View.extend({
   type: 'checkbox',
 
   initialize: function(options) {
-    this.name = options.data.name;
+    this.options = options;
+    _.bindAll(this, ['render', 'getValue', 'setValue']);
   },
 
   render: function() {
-    var data = this.options.data;
+    var options = this.options;
     var checkbox = {
-      name: data.name,
-      label: data.field.label,
-      help: data.field.help,
-      value: data.name,
-      checked: data.field.value
+      name: options.name,
+      label: options.field.label,
+      help: options.field.help,
+      value: options.name,
+      checked: options.field.value
     };
 
     this.setElement($(_.template(this.template, {

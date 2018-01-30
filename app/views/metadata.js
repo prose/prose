@@ -49,6 +49,8 @@ module.exports = Backbone.View.extend({
 
     this.subviews = [];
     this.codeMirrorInstances = {};
+
+    _.bindAll(this, ['updateModel', 'setValue', 'exit', 'remove']);
   },
 
   // Parent file view calls this render func immediately
@@ -82,46 +84,36 @@ module.exports = Backbone.View.extend({
           value: data,
         }
         var name = data.name ? data.name : key;
-        view = new forms.TextForm({data: {
+        view = new forms.TextForm({
           name: name,
           type: 'text',
           field: field
-        }});
+        });
       }
 
       // Use the data field to determine the kind of meta form to draw.
       else {
         switch (data.field.element) {
           case 'button':
-            view = new forms.Button({data: data});
+            view = new forms.Button(data);
           break;
           case 'checkbox':
-            view = new forms.Checkbox({data: data});
+            view = new forms.Checkbox(data);
           break;
           case 'text':
-            view = new forms.TextForm({
-              data: _.extend({}, data, {type: 'text'})
-            });
+            view = new forms.TextForm(_.extend({}, data, {type: 'text'}));
           break;
           case 'textarea':
-            view = new forms.TextArea({
-              data: _.extend({}, data, {id: util.stringToUrl(data.name)})
-            });
+            view = new forms.TextArea(_.extend({}, data, {id: util.stringToUrl(data.name)}));
           break;
           case 'number':
-            view = new forms.TextForm({
-              data: _.extend({}, data, {type: 'number'})
-            });
+            view = new forms.TextForm(_.extend({}, data, {type: 'number'}));
           break;
           case 'select':
-            view = new forms.Select({
-              data: _.extend({}, data, {lang: lang})
-            });
+            view = new forms.Select(_.extend({}, data, {lang: lang}));
           break;
           case 'multiselect':
-            view = new forms.Multiselect({
-              data: _.extend({}, data, {lang: lang})
-            });
+            view = new forms.Multiselect(_.extend({}, data, {lang: lang}));
           break;
 
           // On hidden values, we obviously don't have to render anything.
@@ -159,7 +151,7 @@ module.exports = Backbone.View.extend({
           // TODO passing in a bound callback is not the best
           // as it increases the debugging surface area.
           // Find some way to get around this.
-          var codeMirror = view.initCodeMirror(this.updateModel.bind(this));
+          var codeMirror = view.initCodeMirror(this.updateModel);
 
           this.codeMirrorInstances[id] = codeMirror;
         }
@@ -312,7 +304,7 @@ module.exports = Backbone.View.extend({
     // Easiest thing to do is update metadata fields
     // that are rendered already, ie. have defaults specified
     // in _config.yml or _prose.yml
-    metadata.forEach(function(value, key) {
+    _.forEach(metadata, function(value, key) {
 
       // Filter instead of find, because you never know if someone
       // is using the same key for two different elements.
@@ -349,7 +341,7 @@ module.exports = Backbone.View.extend({
   },
 
   refresh: function() {
-    this.codeMirrorInstances.forEach(function(codeMirror) {
+    _.forEach(this.codeMirrorInstances, function(codeMirror) {
       codeMirror.refresh();
     });
   },

@@ -3,7 +3,7 @@ var $ = require('jquery-browserify');
 var _ = require('lodash');
 var queue = require('queue-async');
 var jsyaml = require('js-yaml');
-var patch = require('../../vendor/liquid.patch');
+// var patch = require('../../vendor/liquid.patch');
 var Handsontable = require('handsontable');
 var Papa = require('papaparse');
 
@@ -35,7 +35,7 @@ module.exports = Backbone.View.extend({
     app.loader.start();
 
     // Patch Liquid
-    patch.apply(this);
+    // patch.apply(this);
 
     this.app = app;
     this.branch = options.branch || options.repo.get('default_branch');
@@ -64,6 +64,8 @@ module.exports = Backbone.View.extend({
     this.listenTo(this.sidebar, 'cancel', this.cancel);
     this.listenTo(this.sidebar, 'confirm', this.updateFile);
     this.listenTo(this.sidebar, 'translate', this.translate);
+
+    _.bindAll(this, ['stashFile', 'setCollection', 'setModel']);
 
     // Stash editor and metadataEditor content to sessionStorage on pagehide event
     $(window).on('pagehide', this.stashFile);
@@ -615,11 +617,13 @@ module.exports = Backbone.View.extend({
       this.updateDocumentTitle();
 
       // Preview needs access to marked, so it's registered here
+      /*
       Liquid.Template.registerFilter({
         'markdownify': function(input) {
           return marked(input || '');
         }
       });
+      */
 
       if (this.model.get('markdown') && this.mode === 'blob') {
         this.blob();
