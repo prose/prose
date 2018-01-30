@@ -14,6 +14,13 @@ var mkdirp = require('mkdirp');
 var sass = require('gulp-sass');
 var nodeJS = process.execPath;
 
+var sourcemaps = require('gulp-sourcemaps');
+var gutil = require('gulp-util');
+var watchify = require('watchify');
+var notifier = require('node-notifier');
+var browserSync = require('browser-sync');
+var reload = browserSync.reload;
+
 // Scripts paths.
 var paths = {
   vendorScripts: [
@@ -74,12 +81,35 @@ gulp.task('translations', function () {
     );
 });
 
+gulp.task('serve', ['javascript'], function () {
+  browserSync({
+    port: 5000,
+    ghostMode: false,
+    server: {
+      baseDir: ['.'],
+      routes: {
+        '/node_modules': './node_modules'
+      }
+    }
+  });
+
+  gulp.watch([
+    path.templates
+  ]).on('change', reload);
+
+  gulp.watch(paths.css, ['css']);
+  gulp.watch(paths.templates, ['templates']);
+});
+
 // Parse stylesheet
 gulp.task('css', function () {
   return gulp.src('./style/style.scss')
+    .pipe(sourcemaps.init())
     .pipe(sass().on('error', sass.logError))
+    .pipe(sourcemaps.write())
     .pipe(rename('prose.css'))
-    .pipe(gulp.dest(dist));
+    .pipe(gulp.dest(dist))
+    .pipe(reload({stream: true}));
 });
 
 // Build templates.
@@ -105,6 +135,46 @@ gulp.task('oauth', function () {
     );
 });
 
+gulp.task('javascript', ['templates', 'oauth'], function () {
+  var watcher = watchify(browserify({
+    entries: ['./app/boot.js'],
+    noParse: [require.resolve('handsontable/dist/handsontable.full')],
+    debug: true,
+    cache: {},
+    packageCache: {},
+    fullPaths: true
+  }), {poll: true});
+
+  function bundler () {
+    return watcher.bundle()
+      .on('error', function (e) {
+        notifier.notify({
+          title: 'Oops! Browserify errored:',
+          message: e.message
+        });
+        console.log('Javascript error:', e);
+        if (isProd()) {
+          process.exit(1);
+        }
+        // Allows the watch to continue.
+        this.emit('end');
+      })
+      .pipe(source('prose.js'))
+      .pipe(buffer())
+      // Source maps.
+      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest(dist))
+      .pipe(reload({stream: true}));
+  }
+
+  watcher
+  .on('log', gutil.log)
+  .on('update', bundler);
+
+  return bundler();
+});
+
 // Build tests, then concatenate with vendor scripts
 gulp.task('build-tests', ['templates', 'oauth'], function() {
   var tests = browserify({
@@ -122,32 +192,6 @@ gulp.task('build-tests', ['templates', 'oauth'], function() {
   .pipe(gulp.dest('./test/lib'));
 });
 
-// Browserify app scripts, then concatenate with vendor scripts into `prose.js`.
-gulp.task('build-app', ['templates', 'oauth'], function() {
-  var app = browserify({
-    noParse: [require.resolve('handsontable/dist/handsontable.full')],
-    debug: true
-  })
-  .add('./app/boot.js')
-  .bundle()
-  .pipe(source('app.js'))
-  .pipe(buffer());
-
-  return merge2(gulp.src(paths.vendorScripts), app)
-  .pipe(concat('prose.js'))
-  .pipe(gulpif(isProd(), uglify()))
-  .pipe(gulp.dest(dist));
-});
-
-// Watch for changes in `app` scripts.
-gulp.task('watch', ['build-app', 'build-tests', 'css'], function() {
-  // Watch any `.js` file under `app` folder.
-  gulp.watch(paths.app, ['build-app', 'build-tests']);
-  gulp.watch(paths.test, ['build-tests']);
-  gulp.watch(paths.templates, ['build-app']);
-  gulp.watch(paths.css, ['css']);
-});
-
 var testTask = shell.task([
   './node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html'
 ], {ignoreErrors: true});
@@ -160,7 +204,7 @@ gulp.task('test-ci', ['test'], function() {
 });
 
 // Build site, tests
-gulp.task('build', ['build-tests', 'build-app', 'css']);
+gulp.task('build', ['javascript', 'css']);
 gulp.task('default', ['build']);
 
 // Minify build
