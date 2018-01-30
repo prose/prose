@@ -28,11 +28,11 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(_.template(this.template, {
+    this.$el.html(_.template(this.template, { variable: 'data' })({
       login: config.site + '/login/oauth/authorize' +
         '?client_id=' + config.id + '&scope=' + config.scope + '&redirect_uri=' +
         encodeURIComponent(window.location.href)
-    }, { variable: 'data' }));
+    }));
 
     this.$save = this.$el.find('.file .save .popup');
     return this;

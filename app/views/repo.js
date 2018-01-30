@@ -47,7 +47,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
+    this.$el.html(_.template(this.template)());
 
     this.header.setElement(this.$el.find('#heading')).render();
     this.search.setElement(this.$el.find('#search')).render();

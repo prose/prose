@@ -24,9 +24,9 @@ module.exports = Backbone.View.extend({
       lang: data.lang
     };
 
-    this.setElement($(_.template(this.template, select, {
+    this.setElement($(_.template(this.template, {
       variable: 'meta'
-    })));
+    })(select)));
     this.$form = this.$el.find('select');
     return this.$el;
   },

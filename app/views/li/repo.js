@@ -23,9 +23,9 @@ module.exports = Backbone.View.extend({
       login: cookie.get('login')
     });
 
-    this.$el.empty().append(_.template(this.template, data, {
+    this.$el.empty().append(_.template(this.template, {
       variable: 'repo'
-    }));
+    })(data));
 
     return this;
   }

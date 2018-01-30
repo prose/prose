@@ -45,9 +45,9 @@ module.exports = Backbone.View.extend({
 
     data.jailpath = jailpath ? jailpath[1] : data.path;
 
-    this.$el.html(_.template(this.template, data, {
+    this.$el.html(_.template(this.template, {
       variable: 'file'
-    }));
+    })(data));
 
     return this;
   },

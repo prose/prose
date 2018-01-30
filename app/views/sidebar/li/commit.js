@@ -45,7 +45,7 @@ module.exports = Backbone.View.extend({
       ': ' + file.filename;
 
     this.$el.attr('title', title)
-      .html(_.template(this.template, data, { variable: 'data' }));
+      .html(_.template(this.template, {variable: 'data'})(data));
 
     return this;
   },

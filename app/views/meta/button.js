@@ -29,9 +29,9 @@ module.exports = Backbone.View.extend({
       value: data.field.on
     };
 
-    this.setElement($(_.template(this.template, button, {
+    this.setElement($(_.template(this.template, {
       variable: 'meta'
-    })));
+    })(button)));
     this.$form = this.$el.find('button');
     return this.$el;
   },

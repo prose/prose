@@ -34,9 +34,9 @@ module.exports = Backbone.View.extend({
       multiselect.value = [];
     }
 
-    this.setElement($(_.template(this.template, multiselect, {
+    this.setElement($(_.template(this.template, {
       variable: 'meta'
-    })));
+    })(multiselect)));
     this.$form = this.$el.find('select');
     return this.$el;
   },

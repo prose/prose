@@ -22,9 +22,9 @@ module.exports = Backbone.View.extend({
       checked: data.field.value
     };
 
-    this.setElement($(_.template(this.template, checkbox, {
+    this.setElement($(_.template(this.template, {
       variable: 'meta'
-    })));
+    })(checkbox)));
     this.$form = this.$el.find('input');
     return this.$el;
   },

@@ -14,9 +14,9 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(_.template(this.template, this.link, {
+    this.$el.html(_.template(this.template, {
       variable: 'link'
-    }));
+    })(this.link));
 
     this.sidebar.open();
 

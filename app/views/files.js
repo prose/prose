@@ -120,7 +120,7 @@ module.exports = Backbone.View.extend({
       url: url
     };
 
-    this.$el.html(_.template(this.template, data, {variable: 'data'}));
+    this.$el.html(_.template(this.template, {variable: 'data'})(data));
 
     // if not searching, filter to only show current level
     var collection = search ? this.search.search() : this.presentationModel.filter((function(file) {

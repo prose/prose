@@ -29,9 +29,9 @@ module.exports = Backbone.View.extend({
       type: 'textarea'
     };
 
-    this.setElement($(_.template(this.template, textarea, {
+    this.setElement($(_.template(this.template, {
       variable: 'meta'
-    })));
+    })(textarea)));
 
     return this.$el;
   },

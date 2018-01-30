@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
   template: templates.chooselanguage,
 
   events: {
-    'click .language': 'setLanguage' 
+    'click .language': 'setLanguage'
   },
 
   render: function() {
@@ -20,9 +20,9 @@ module.exports = Backbone.View.extend({
       active: app.locale ? app.locale : window.locale._current
     };
 
-    this.$el.empty().append(_.template(this.template, chooseLanguages, {
+    this.$el.empty().append(_.template(this.template, {
       variable: 'chooseLanguage'
-    }));
+    })(chooseLanguages));
     return this;
   },
 

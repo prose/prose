@@ -32,9 +32,9 @@ module.exports = Backbone.View.extend({
       options: this.options
     }
 
-    this.$el.html(_.template(this.template, data, {
+    this.$el.html(_.template(this.template, {
       variable: 'data'
-    }));
+    })(data));
 
     return this;
   },

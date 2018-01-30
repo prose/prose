@@ -23,7 +23,7 @@ module.exports = Backbone.View.extend({
   template: templates.start,
 
   render: function() {
-    this.$el.html(_.template(this.template, auth, { variable: 'auth' }));
+    this.$el.html(_.template(this.template, {variable: 'auth'})(auth));
     return this;
   },
 

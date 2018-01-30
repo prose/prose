@@ -66,7 +66,7 @@ module.exports = Backbone.View.extend({
       metadata: this.file.get('metadata')
     };
 
-    this.$el.html(_.template(this.template, toolbar, { variable: 'toolbar' }));
+    this.$el.html(_.template(this.template, {variable: 'toolbar'})(toolbar));
 
     return this;
   },

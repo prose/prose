@@ -578,9 +578,9 @@ module.exports = Backbone.View.extend({
         useCSVEditor: (['csv', 'tsv'].indexOf(this.model.get('lang')) !== -1 && !cookie.get('disableCSVEditor'))
       };
 
-      this.$el.empty().append(_.template(this.template, file, {
+      this.$el.empty().append(_.template(this.template, {
         variable: 'file'
-      }));
+      })(file));
 
       // Store the configuration object from the collection
       this.config = this.model.get('collection').config;

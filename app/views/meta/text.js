@@ -24,9 +24,9 @@ module.exports = Backbone.View.extend({
       type: data.type
     };
 
-    this.setElement($(_.template(this.template, text, {
+    this.setElement($(_.template(this.template, {
       variable: 'meta'
-    })));
+    })(text)));
     this.$form = this.$el.find('input');
     return this.$el;
   },

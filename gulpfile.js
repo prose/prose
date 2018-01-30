@@ -94,7 +94,7 @@ gulp.task('serve', ['javascript'], function () {
   });
 
   gulp.watch([
-    path.templates
+    paths.templates
   ]).on('change', reload);
 
   gulp.watch(paths.css, ['css']);

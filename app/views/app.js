@@ -62,7 +62,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(_.template(this.template, {}, { variable: 'data' }));
+    this.$el.html(_.template(this.template)());
 
     this.loader.setElement(this.$el.find('#loader')).render();
     this.sidebar.setElement(this.$el.find('#drawer')).render();

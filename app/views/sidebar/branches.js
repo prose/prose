@@ -36,7 +36,7 @@ module.exports = Backbone.View.extend({
 
     this.app.loader.start();
 
-    this.$el.empty().append(_.template(this.template));
+    this.$el.empty().append(_.template(this.template)());
     var frag = document.createDocumentFragment();
 
     this.model.each((function(branch, index) {

@@ -24,9 +24,9 @@ module.exports = Backbone.View.extend({
       placeholder: placeholder
     };
 
-    this.$el.empty().append(_.template(this.template, search, {
+    this.$el.empty().append(_.template(this.template, {
       variable: 'search'
-    }));
+    })(search));
 
     this.input = this.$el.find('input');
     this.input.focus();

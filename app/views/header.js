@@ -61,9 +61,9 @@ module.exports = Backbone.View.extend({
       translate: this.file ? this.file.get('translate') : undefined
     };
 
-    this.$el.empty().append(_.template(this.template, data, {
+    this.$el.empty().append(_.template(this.template, {
       variable: 'data'
-    }));
+    })(data));
 
     return this;
   },

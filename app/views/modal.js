@@ -20,9 +20,9 @@ module.exports = Backbone.View.extend({
     var modal = {
       message: this.message
     };
-    this.$el.empty().append(_.template(templates.modal, modal, {
+    this.$el.empty().append(_.template(templates.modal, {
       variable: 'modal'
-    }));
+    })(modal));
 
     return this;
   },

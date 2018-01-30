@@ -55,7 +55,7 @@ module.exports = Backbone.View.extend({
   // after initializing this view.
   // This is responsible for rendering metadata fields for each *default*.
   render: function() {
-    this.$el.empty().append(_.template(this.template));
+    this.$el.empty().append(_.template(this.template)());
 
     var $form = this.$el.find('.form');
 
@@ -210,7 +210,7 @@ module.exports = Backbone.View.extend({
       $parent.empty();
     }
     else {
-      this.$el.find('.form').append(_.template(templates.meta.raw));
+      this.$el.find('.form').append(_.template(templates.meta.raw)());
       $parent = this.$el.find('#raw');
     }
 

@@ -86,8 +86,8 @@ module.exports = Backbone.View.extend({
         this.subviews[commit.sha] = view;
       }).bind(this));
 
-      var tmpl = _.template(this.template, label, { variable: 'label' });
-      this.$el.append(tmpl, frag);
+      var tmpl = _.template(this.template, {variable: 'label'});
+      this.$el.append(tmpl(label), frag);
     }
 
     this.app.loader.done();
