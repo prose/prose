@@ -18,7 +18,7 @@ window.app = {};
 window.Backbone = Backbone;
 
 var $ = require('jquery-browserify');
-var _ = require('underscore');
+var _ = require('lodash');
 var Backbone = require('backbone');
 
 Backbone.$ = $;

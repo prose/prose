@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var $ = require('jquery-browserify');
 var HeaderView = require('../../../app/views/header');
 

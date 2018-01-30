@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var Backbone = require('backbone');
 var Branches = require('../collections/branches');
 var Commits = require('../collections/commits');

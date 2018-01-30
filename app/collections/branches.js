@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var Backbone = require('backbone');
 var Branch = require('../models/branch');
 var util = require('../util');

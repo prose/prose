@@ -1,6 +1,6 @@
 var $ = require('jquery-browserify');
 var Backbone = require('backbone');
-var _ = require('underscore');
+var _ = require('lodash');
 var templates = require('../../../dist/templates');
 
 module.exports = Backbone.View.extend({

@@ -1,7 +1,7 @@
 var CodeMirror = require('codemirror');
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
-var _ = require('underscore');
+var _ = require('lodash');
 _.merge = require('deepmerge');
 var jsyaml = require('js-yaml');
 var Backbone = require('backbone');

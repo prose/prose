@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var jsyaml = require('js-yaml');
 var queue = require('queue-async');
 

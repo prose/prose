@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var glob = require('glob');
-var _ = require('underscore');
+var _ = require('lodash');
 var en = require('./translations/locales/en.json');
 
 // Builds html partials into a distributable object to keep index.html clean

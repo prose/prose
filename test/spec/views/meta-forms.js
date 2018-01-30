@@ -1,5 +1,5 @@
 var $ = require('jquery-browserify');
-var _ = require('underscore');
+var _ = require('lodash');
 var chosen = require('chosen-jquery-browserify');
 
 var Checkbox = require('../../../app/views/meta/checkbox');

@@ -1,5 +1,5 @@
 var $ = require('jquery-browserify');
-var _ = require('underscore');
+var _ = require('lodash');
 var queue = require('queue-async');
 var Backbone = require('backbone');
 var FilesView = require('./files');

@@ -4,7 +4,7 @@ var mockFileView = require('../../mocks/views/file');
 
 var templates = require('../../../dist/templates');
 var $ = require('jquery-browserify');
-var _ = require('underscore');
+var _ = require('lodash');
 var jsyaml = require('js-yaml');
 
 'use strict';

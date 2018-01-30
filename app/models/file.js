@@ -1,5 +1,5 @@
 var pathUtil = require('path');
-var _ = require('underscore');
+var _ = require('lodash');
 var marked = require('marked');
 var Backbone = require('backbone');
 var jsyaml = require('js-yaml');

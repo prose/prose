@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var spies = require('../../mocks/helpers').spies;
 var fileCollectionMocker = require('../../mocks/collections/files');
 var fileMocker = require('../../mocks/models/file');

@@ -1,6 +1,6 @@
 var pathUtil = require('path');
 var $ = require('jquery-browserify');
-var _ = require('underscore');
+var _ = require('lodash');
 var Backbone = require('backbone');
 var util = require('../util');
 var templates = require('../../dist/templates');

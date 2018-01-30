@@ -1,6 +1,6 @@
 var $ = require('jquery-browserify');
 var chosen = require('chosen-jquery-browserify');
-var _ = require('underscore');
+var _ = require('lodash');
 var util = require('../util');
 var Backbone = require('backbone');
 var toolbar = require('../toolbar/markdown.js');

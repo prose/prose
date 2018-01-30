@@ -1,6 +1,6 @@
 var CodeMirror = require('codemirror');
 var $ = require('jquery-browserify');
-var _ = require('underscore');
+var _ = require('lodash');
 var queue = require('queue-async');
 var jsyaml = require('js-yaml');
 var patch = require('../../vendor/liquid.patch');

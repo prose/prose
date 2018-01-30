@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 
 var FileView = require('../../../app/views/file');
 var mockBranches = require('../../mocks/collections/branches');

@@ -1,5 +1,5 @@
 var $ = require('jquery-browserify');
-var _ = require('underscore');
+var _ = require('lodash');
 var Backbone = require('backbone');
 var HeaderView = require('./header');
 var OrgsView = require('./sidebar/orgs');

@@ -1,6 +1,6 @@
 var $ = require('jquery-browserify');
 var Backbone = require('backbone');
-var _ = require('underscore');
+var _ = require('lodash');
 var cookie = require('../cookie');
 var templates = require('../../dist/templates');
 var LOCALES = require('../../translations/locales');

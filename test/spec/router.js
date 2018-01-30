@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var Router = require('../../app/router');
 var Users = require('../../app/collections/users');
 var User = require('../../app/models/user');
