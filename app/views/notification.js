@@ -17,7 +17,6 @@ module.exports = Backbone.View.extend({
 
   initialize: function(options) {
     options = _.clone(options) || {};
-    _.bindAll(this);
 
     this.message = options.message;
     this.error = options.error;

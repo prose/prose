@@ -8,8 +8,6 @@ module.exports = Backbone.View.extend({
   template: templates.sidebar.orgs,
 
   initialize: function(options) {
-    _.bindAll(this);
-
     this.model = options.model;
     this.router = options.router;
     this.sidebar = options.sidebar;

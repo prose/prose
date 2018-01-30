@@ -9,8 +9,6 @@ module.exports = Backbone.View.extend({
   template: templates.sidebar.drafts,
 
   initialize: function(options) {
-    _.bindAll(this);
-
     this.link = options.link;
     this.sidebar = options.sidebar;
   },

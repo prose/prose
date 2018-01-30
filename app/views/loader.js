@@ -8,10 +8,6 @@ module.exports = Backbone.View.extend({
 
   queue: 0,
 
-  initialize: function() {
-    _.bindAll(this);
-  },
-
   start: function(message) {
     this.queue++;
 

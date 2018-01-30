@@ -12,8 +12,6 @@ module.exports = Backbone.Collection.extend({
   model: Repo,
 
   initialize: function(models, options) {
-    _.bindAll(this);
-
     this.user = options.user;
 
     this.comparator = function(repo) {

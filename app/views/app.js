@@ -19,10 +19,8 @@ module.exports = Backbone.View.extend({
   events: {
     'click a.logout': 'logout'
   },
-  
-  initialize: function(options) {
-    _.bindAll(this);
 
+  initialize: function(options) {
     key('j, k, enter, o', (function(e, handler) {
       if (this.$el.find('.listing')[0]) {
         if (handler.key === 'j' || handler.key === 'k') {
@@ -32,7 +30,7 @@ module.exports = Backbone.View.extend({
         }
       }
     }).bind(this));
-    
+
     key('ctrl+enter', (function (e, handler) {
       if (this.nav.state === 'blob') {
         this.nav.trigger('edit');

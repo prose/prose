@@ -15,8 +15,6 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    _.bindAll(this);
-
     this.user = options.user;
     this.repo = options.repo;
     this.file = options.file;

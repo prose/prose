@@ -18,8 +18,6 @@ module.exports = Backbone.View.extend({
   subviews: {},
 
   initialize: function(options) {
-    _.bindAll(this);
-
     var app = options.app;
     app.loader.start();
 

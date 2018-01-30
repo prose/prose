@@ -18,10 +18,6 @@ module.exports = Backbone.View.extend({
 
   subviews: {},
 
-  initialize: function(options) {
-    _.bindAll(this);
-  },
-
   render: function(options) {
     this.$el.html(_.template(this.template, {}, { variable: 'sidebar' }));
     _.invoke(this.subviews, 'render');

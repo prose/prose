@@ -12,8 +12,6 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    _.bindAll(this);
-
     this.model = options.model;
     this.search = options.search;
 

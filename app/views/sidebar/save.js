@@ -15,8 +15,6 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    _.bindAll(this);
-
     this.sidebar = options.sidebar;
     this.file = options.file;
 
