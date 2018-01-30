@@ -8,3 +8,4 @@ test/lib
 _site
 site
 npm-debug.log
+*.swp
