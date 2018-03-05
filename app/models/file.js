@@ -353,7 +353,8 @@ module.exports = Backbone.Model.extend({
 
   url: function() {
     var branch = this.collection.branch || this.branch || this.get('branch');
-    return pathUtil.join(this.collection.repo.url(), 'contents', this.get('path') + '?ref=' + branch.get('name'));
+    var fullPath = this.collection.repo.url() + pathUtil.join('/contents', this.get('path') + '?ref=' + branch.get('name'));
+    return fullPath;
   },
 
   validate: function(attributes, options) {

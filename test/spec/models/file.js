@@ -114,8 +114,8 @@ describe('file model', function() {
       it('properly formats urls', function () {
         var file = mockFile('', filedata);
         file.set('path', '///this-is-crazy///');
-        file.collection.repo.url = function () { return 'www.test.com'; };
-        expect(file.url()).to.equal('www.test.com/contents/this-is-crazy/?ref=master');
+        file.collection.repo.url = function () { return 'https://www.test.com'; };
+        expect(file.url()).to.equal('https://www.test.com/contents/this-is-crazy/?ref=master');
       })
     })
   })
