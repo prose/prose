@@ -43,6 +43,7 @@
     "merge2": "^1.0.2",
     "mocha": "^2.4.5",
     "mocha-phantomjs": "^4.0.2",
+    "npm-run-all": "^4.1.2",
     "phantomjs-prebuilt": "^2.1.7",
     "request": "~2.16.2",
     "serve": "^1.4.0",
@@ -56,7 +57,9 @@
     "postinstall": "gulp",
     "test": "gulp test",
     "test-ci": "gulp test-ci",
-    "start": "gulp watch & serve",
+    "watch": "gulp watch",
+    "serve": "serve",
+    "start": "npm-run-all --parallel watch serve",
     "build": "gulp clean; gulp production",
     "translations": "gulp translations"
   },
