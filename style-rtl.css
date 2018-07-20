@@ -13,7 +13,7 @@
 .toolbar .group       { margin-right:15px; margin-left:0; }
 .dialog.link          { right:23px; left:auto; }
 .dialog.no-directory  { right:50px; left:auto; }
-
+.CodeMirror           { direction: rtl; }
 
 /* Helper Classes Reversed */
 .fl     { float:right; }
