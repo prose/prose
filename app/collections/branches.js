@@ -24,7 +24,7 @@ module.exports = Backbone.Collection.extend({
     var cb = options.success;
 
     var success = (function(res, statusText, xhr) {
-      this.add(res);
+      this.add(this.parse(res));
       util.parseLinkHeader(xhr, {
         success: success,
         complete: cb
