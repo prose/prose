@@ -1,0 +1,91 @@
+{
+    "docheader": {
+        "editing": "সম্পাদনা",
+        "preview": "পূর্বরূপ"
+    },
+    "toolbar": {
+        "blockquote": "ব্লক-উদ্ধৃতি",
+        "list": "তালিকা",
+        "numberedlist": "নম্বরযুক্ত তালিকা",
+        "help": "সাহায্য"
+    },
+    "actions": {
+        "unsaved": "আপনার অসংরক্ষিত পরিবর্তন রয়েছে. আপনি চলে যেতে চান?",
+        "publishing": {
+            "publish": "প্রকাশিত করুন",
+            "published": "প্রকাশিত",
+            "unpublish": "অপ্রকাশিত করুন",
+            "unpublished": "অপ্রকাশিত"
+        },
+        "change": {
+            "noChange": "কোন পরিবর্তন নেই",
+            "save": "পরিবর্তনসমূহ সংরক্ষণ করুন"
+        },
+        "delete": {
+            "title": "মুছে ফেলুন",
+            "warn": "আপনি কি এই ফাইলটি মোছার বিষয়ে নিশ্চিত?",
+            "error": "মুছে ফেলার সময় ত্রুটি হয়েছে। 30 সেকেন্ড অপেক্ষা করুন এবং আবার চেষ্টা করুন।"
+        },
+        "save": {
+            "title": "সংরক্ষণ করুন",
+            "fileNameError": "ফাইলের নাম প্রয়োজন",
+            "submission": "অনুরোধ জমা হয়েছে",
+            "metaError": "ত্রুটি! মেটাডেটা পাওয়া যায়নি",
+            "fileNameExists": "এই পথ দিয়ে একটি ফাইলের নাম ইতিমধ্যেই বিদ্যমান"
+        },
+        "restore": {
+            "restoring": "পুনরুদ্ধার করা হচ্ছে",
+            "restored": "পুনরধিষ্ঠিত"
+        }
+    },
+    "loading": {
+        "repos": "প্রোফাইল লোড হচ্ছে",
+        "repo": "প্রকল্প লোড হচ্ছে",
+        "file": "ফাইল লোড হচ্ছে",
+        "preview": "ফাইলের পূর্বরূপ দেখা হচ্ছে",
+        "creating": "নতুন পোস্ট তৈরি করা হচ্ছে"
+    },
+    "modal": {
+        "errorHeading": "ত্রুটি",
+        "confirm": "পেয়েছি"
+    },
+    "main": {
+        "start": {
+            "content": "Prose GitHub-এওয়েবসাইট পরিচালনার জন্য নির্মিত একটি কন্টেন্ট এডিটর।",
+            "learn": "আরও জানুন"
+        },
+        "repos": {
+            "filter": "প্রকল্পসমূহ ফিল্টার করুন",
+            "repo": "প্রকল্পটি দেখুন",
+            "site": "সাইট দেখুন"
+        },
+        "repo": {
+            "filter": "ফাইলগুলো ফিল্টার করুন",
+            "edit": "সম্পাদনা করুন",
+            "delete": "এই ফাইলটি মুছে দিন"
+        },
+        "file": {
+            "noTitle": "শিরোনামহীন"
+        }
+    },
+    "notification": {
+        "githubStatus": "GitHub-এ স্ট্যাটাস ({status})"
+    },
+    "sidebar": {
+        "settings": {
+            "fileInputLabel": "ফাইলের পথ"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "hrefPlaceholder": "লিংকের URL",
+            "textPlaceholder": "লিংকের নাম",
+            "titlePlaceholder": "শিরোনাম (ঐচ্ছিক)",
+            "insertPlaceholder": "একটি স্থানীয় লিঙ্ক সন্নিবেশ করান"
+        },
+        "media": {
+            "hrefPlaceholder": "চিত্রের URL",
+            "altPlaceholder": "বিকল্প টেক্সট (ঐচ্ছিক)"
+        }
+    }
+}

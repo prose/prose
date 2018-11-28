@@ -1,0 +1,233 @@
+{
+    "login": "Autoritzar a GitHub",
+    "docheader": {
+        "editing": "Editant",
+        "error": "Error",
+        "preview": "Previsualitzant"
+    },
+    "navigation": {
+        "newFile": "Nou fitxer",
+        "edit": "Editar",
+        "preview": "Previsualitzar",
+        "settings": "Configuració",
+        "meta": "Metadata",
+        "save": "Guardar",
+        "login": "Autoritzar amb GitHub",
+        "about": "Sobre",
+        "develop": "Desenvolupadors",
+        "logout": "Sortir",
+        "language": "Idioma"
+    },
+    "toolbar": {
+        "heading": "Títol",
+        "subHeading": "Subtítol",
+        "link": "Afegir enllaç",
+        "image": "Afegir imatge",
+        "bold": "Negreta",
+        "italic": "Cursiva",
+        "blockquote": "Cita",
+        "list": "Llista",
+        "numberedlist": "Llista numerada",
+        "help": "Ajuda"
+    },
+    "heading": {
+        "explore": "Explorar projectes"
+    },
+    "actions": {
+        "unsaved": "Hi ha canvis pendents de guardar. Estàs segur que vols sortir?",
+        "draft": {
+            "toPost": "Esborrany a post",
+            "toPostInfo": "Converteix aquest esborrany en un post publicat"
+        },
+        "publishing": {
+            "publish": "Publicar",
+            "publishInfo": "Aquest post serà publicat la propera vegada que guardis",
+            "published": "Publicat",
+            "unpublish": "Despublicar",
+            "unpublished": "No publicat",
+            "unpublishInfo": "Aquest post serà despublicat la propera vegada que guardis"
+        },
+        "change": {
+            "noChange": "Sense canvis",
+            "submit": "Canvis per enviar",
+            "save": "Canvis pendents de guardar"
+        },
+        "delete": {
+            "title": "Esborrar",
+            "warn": "Segur que vols esborrar aquest fitxer?",
+            "error": "Hi ha hagut un error en esborrar. Espera 30 segons i torna-ho a provar."
+        },
+        "upload": {
+            "uploading": "Enviant {file}",
+            "uploaded": "{file} enviat"
+        },
+        "save": {
+            "title": "Guardar",
+            "saved": "Guardat",
+            "saving": "Guardant",
+            "patch": "Enviant petició",
+            "fileNameError": "Necessita un nom de fitxer",
+            "submission": "Petició enviada",
+            "metaError": "Error! No s'ha trobat metadata",
+            "fileNameExists": "Ja existeix un fitxer amb aquest nom"
+        },
+        "error": "Error. Torna-ho a provar d'aquí 30 segons",
+        "restore": {
+            "restoring": "Restaurant",
+            "restored": "Restaurat"
+        }
+    },
+    "loading": {
+        "repos": "Carregant perfil",
+        "repo": "Carregant projecte",
+        "file": "Carregant fitxer",
+        "preview": "Previsualitzant fitxer",
+        "creating": "Creant un nou post"
+    },
+    "modal": {
+        "errorHeading": "Error",
+        "confirm": "Fet"
+    },
+    "main": {
+        "start": {
+            "content": "Prose és un editor de contingut per a GitHub, dissenyat per gestionar llocs web.",
+            "learn": "Aprendre més"
+        },
+        "repos": {
+            "filter": "Filtrar projectes",
+            "repo": "Veure projecte",
+            "site": "Veure lloc",
+            "sharedFrom": "Compartit des d'un compte"
+        },
+        "repo": {
+            "filter": "Filtrar fitxers",
+            "edit": "Editar",
+            "delete": "Esborrar aquest fitxer"
+        },
+        "new": {
+            "body": "## Un nou post\n\nEscriu text en [Markdown](http://daringfireball.net/projects/markdown/). Utilitza la barra d'eines superior, o fes clic en el botó **?** per ajuda en el format.\n"
+        },
+        "file": {
+            "noTitle": "Sense títol",
+            "metaTitle": "Revisar els canvis:",
+            "metaDescription": "Els canvis són destacats en verd. Els esborrats, ratllats.",
+            "back": "Fet",
+            "createMeta": "Crear nou"
+        },
+        "upgrade": {
+            "content": "Prose necessita funcionalitats no disponibles en el teu navegador",
+            "download": "Descarrega't un navegador més modern"
+        }
+    },
+    "notification": {
+        "loginDescription": "Fes login amb el teu compte de GitHub per accedir al projecte.",
+        "create": "Crear",
+        "home": "Tornar a la pàgina principal",
+        "back": "Enrera",
+        "githubStatus": "Status a GitHub ({status})",
+        "error": {
+            "label": "Error",
+            "github": "Error en carregar dades des de GitHub. Això pot ser degut a un problema temporal. Torna-ho a provar més tard.",
+            "exists": "Aquest fitxer no existeix",
+            "notFound": "Pàgina no trobada"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "Grups"
+        },
+        "repo": {
+            "branch": "Canvia de branca",
+            "drafts": "Veure esborranys",
+            "history": {
+                "label": "Història més recent",
+                "actions": {
+                    "restore": "Recuperar?"
+                }
+            },
+            "create": "Crear nou fitxer"
+        },
+        "save": {
+            "label": "Descriu els canvis",
+            "cancel": "Cancel·lar",
+            "submit": "Enviar petició de canvi"
+        },
+        "settings": {
+            "title": "Opcions",
+            "fileInputLabel": "Localització fitxer",
+            "delete": "Esborrar aquest fitxer",
+            "translate": "Traduir a",
+            "draft": "Crear esborrany"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Afegir enllaç",
+            "insertLocal": "Afegeix un enllaç local",
+            "insert": "Afegir",
+            "hrefPlaceholder": "URL enllaç",
+            "textPlaceholder": "Nom enllaç",
+            "titlePlaceholder": "Títol (opcional)",
+            "insertPlaceholder": "Afegeix un enllaç local"
+        },
+        "media": {
+            "title": "Afegeix imatge",
+            "back": "Enrera",
+            "hrefPlaceholder": "URL imatge",
+            "altPlaceholder": "Text alternatiu (opcional)",
+            "description": "Afegeix imatges arrossegant-les o </br>\n<a>selecciona'n una</a> {input}\n"
+        },
+        "help": {
+            "blockElements": {
+                "title": "Bloquejar elements",
+                "content": {
+                    "paragraphs": {
+                        "title": "Paràgrafs &amp; Salts"
+                    },
+                    "headers": {
+                        "title": "Capçaleres"
+                    },
+                    "blockquotes": {
+                        "title": "Cites"
+                    },
+                    "lists": {
+                        "title": "Llistes"
+                    },
+                    "codeBlocks": {
+                        "title": "Blocs de codi"
+                    },
+                    "horizontalRules": {
+                        "title": "Línies horitzontals"
+                    }
+                }
+            },
+            "spanElements": {
+                "content": {
+                    "links": {
+                        "title": "Enllaços"
+                    },
+                    "emphasis": {
+                        "title": "Èmfasi"
+                    },
+                    "code": {
+                        "title": "Codi"
+                    },
+                    "images": {
+                        "title": "Imatges"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "Divers",
+                "content": {
+                    "automaticLinks": {
+                        "title": "Enllaços automàtics"
+                    }
+                }
+            }
+        }
+    },
+    "chooselanguage": {
+        "title": "Escull un idioma"
+    }
+}

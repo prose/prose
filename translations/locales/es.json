@@ -1,0 +1,243 @@
+{
+    "login": "Autorizar en GitHub",
+    "docheader": {
+        "editing": "Editando",
+        "error": "Error",
+        "preview": "Vista preliminar"
+    },
+    "navigation": {
+        "newFile": "Nuevo archivo",
+        "edit": "Editar",
+        "preview": "Vista previa",
+        "settings": "Configuración",
+        "meta": "Metadatos",
+        "save": "Guardar",
+        "login": "Autorizar con GitHub",
+        "about": "Acerca de",
+        "develop": "Desarrolladores",
+        "logout": "Cerrar Sesión",
+        "language": "Idioma"
+    },
+    "toolbar": {
+        "heading": "Encabezado",
+        "subHeading": "Subencabezado",
+        "link": "Insertar enlace",
+        "image": "Insertar Imagen",
+        "bold": "Negrita",
+        "italic": "Itálica",
+        "blockquote": "Bloque de Citas",
+        "list": "Lista",
+        "numberedlist": "Lista Numérica",
+        "help": "Ayuda"
+    },
+    "heading": {
+        "explore": "Explorar Proyectos"
+    },
+    "actions": {
+        "unsaved": "Hay cambios sin guardar. ¿Seguro que quiere salir?",
+        "draft": {
+            "toPost": "Borrador o Publicar",
+            "toPostInfo": "Convertir este borrador a un artículo publicado"
+        },
+        "publishing": {
+            "publish": "Publicar",
+            "publishInfo": "Este artículo será publicado la próxima vez que lo salve",
+            "published": "Publicado",
+            "unpublish": "Deshacer publicación",
+            "unpublished": "No publicado",
+            "unpublishInfo": "Este artículo será publicado la próxima vez que lo salve"
+        },
+        "change": {
+            "noChange": "Sin cambios",
+            "submit": "Cambios para guardar",
+            "save": "Cambios para salvar"
+        },
+        "delete": {
+            "title": "Borrar",
+            "warn": "¿Está seguro que quiere borrar este archivo?",
+            "error": "Error durante el borrado. Por favor espere 30 segundos y vuelva a intentarlo"
+        },
+        "upload": {
+            "uploading": "Subiendo {file}",
+            "uploaded": "{file} Subió"
+        },
+        "save": {
+            "title": "Guardar",
+            "saved": "Salvar",
+            "saving": "Salvando",
+            "patch": "Enviando Petición",
+            "fileNameError": "Necesita nombre de archivo",
+            "submission": "Petición enviada",
+            "metaError": "Error! Metadatos no encontrados",
+            "fileNameExists": "Ya existe un archivo con esta ruta"
+        },
+        "error": "Error. Inténtelo de nuevo en 30 segundos",
+        "restore": {
+            "restoring": "Recuperando",
+            "restored": "Recuperado"
+        }
+    },
+    "loading": {
+        "repos": "Cargando perfil",
+        "repo": "Cargando proyecto",
+        "file": "Cargando archivo",
+        "preview": "Previsualizando  archivo",
+        "creating": "Creando nuevo archivo"
+    },
+    "modal": {
+        "errorHeading": "Error",
+        "confirm": "Entendido"
+    },
+    "main": {
+        "start": {
+            "content": "Prose es un editor de contenido para GitHub diseñado para mantener sitios web",
+            "learn": "Aprender más"
+        },
+        "repos": {
+            "filter": "Filtrar proyectos",
+            "repo": "Ver proyecto",
+            "site": "Ver página",
+            "sharedFrom": "Compartido desde una cuenta",
+            "forkedFrom": "Forkado desde otro proyecto"
+        },
+        "repo": {
+            "filter": "Filtrar archivos",
+            "edit": "Editar",
+            "delete": "Borrar este archivo"
+        },
+        "new": {
+            "body": "## Un Artículo Nuevo\n\nInserte texto en [Markdown](http://daringfireball.net/projects/markdown/). Use la barra de erramientas arriba, o haga click en el botón **?** para ayuda de formateo.\n"
+        },
+        "file": {
+            "noTitle": "Sin título",
+            "metaTitle": "Revise sus cambios:",
+            "rawMeta": "Metadata sin procesar",
+            "metaDescription": "Las adiciones están resaltadas en verde. Las supresiones están tachadas.",
+            "back": "Terminado",
+            "createMeta": "Crear Nuevo"
+        },
+        "upgrade": {
+            "content": "Prose requiere recursos no disponibles en su navegador",
+            "download": "Descargar un navegador moderno"
+        }
+    },
+    "notification": {
+        "loginDescription": "Por favor, ingrese a su cuenta de GitHub para acceder a ese proyecto.",
+        "create": "Crearlo",
+        "home": "Volver a la Página Principal",
+        "back": "Volver",
+        "githubStatus": "Estado en GitHub ({status})",
+        "error": {
+            "label": "Error",
+            "github": "Error al cargar datos desde Github. Esto podría ser un problema temporero. Por favor, inténtelo de nuevo más tarde.",
+            "exists": "Este archivo no existe",
+            "notFound": "No se encontró la página"
+        }
+    },
+    "sidebar": {
+        "repos": {
+            "groups": "Grupos"
+        },
+        "repo": {
+            "branch": "Cambiar Rama",
+            "drafts": "Ver Borradores",
+            "history": {
+                "label": "Historial reciente",
+                "actions": {
+                    "restore": "¿Restaurar?"
+                }
+            },
+            "create": "Crear Archivo Nuevo"
+        },
+        "save": {
+            "label": "Describa sus cambios",
+            "cancel": "Cancelar",
+            "save": "Confirmar",
+            "submit": "Enviar propuesta de cambio"
+        },
+        "settings": {
+            "title": "Opciones",
+            "fileInputLabel": "Ruta de archivo",
+            "delete": "Borrar este archivo",
+            "translate": "Traducir a",
+            "draft": "Crear borrador"
+        }
+    },
+    "dialogs": {
+        "link": {
+            "title": "Insertar enlace",
+            "insertLocal": "Insertar un enlace local",
+            "insert": "Insertar",
+            "hrefPlaceholder": "URL del Enlace",
+            "textPlaceholder": "Nombre del enlace",
+            "titlePlaceholder": "Título (opcional)",
+            "insertPlaceholder": "Insertar un enlace local"
+        },
+        "media": {
+            "title": "Insertar Imagen",
+            "back": "Volver",
+            "hrefPlaceholder": "URL de la Imagen",
+            "altPlaceholder": "Texto Alternativo (ocional)",
+            "description": "Subir imágenes arrastrándolas y sontándolas o</br>\n{input} <a>seleccionando una</a>\n",
+            "help": "Las imágenes subidas son añadidas al directorio actual o al especificado en el URL de la imágen arriba."
+        },
+        "help": {
+            "blockElements": {
+                "title": "Elementos en bloque",
+                "content": {
+                    "paragraphs": {
+                        "title": "Párrafos &amp; Saltos",
+                        "content": "<p>Para crear un párrafo, simplemente cree un bloque de texto separado por una o más líneas en blanco. Los bloques de texto que estén separados por una o más líneas serán procesados como párrafos.</p><p>Si quiere crear un renglón, termine la línea con uno o más espacios, luego presione la tecla Return/Enter.</p>\n"
+                    },
+                    "headers": {
+                        "title": "Cabeceras",
+                        "content": "<p>Markdown permite 2 formatos de encabezado. El editor de wiki usa &ldquo;atx&rsquo; estilos de cabecera. Simplemente añade al prefijo de tu texto de encabezado con el número de caracteres que especifica la profundidad. Por ejemplo: <code># Encabezado 1</code>, <code>## Encabezado 2</code> and <code>### Encabezado 3</code> serán encabezados progresivamente más pequeños.  Puedes terminar los encabezados con cualquier número de almohadillas -#-.</p>\n"
+                    },
+                    "blockquotes": {
+                        "title": "Bloques de citas"
+                    },
+                    "lists": {
+                        "title": "Listas"
+                    },
+                    "codeBlocks": {
+                        "title": "Bloques de código"
+                    },
+                    "horizontalRules": {
+                        "title": "Reglas Horizontales"
+                    }
+                }
+            },
+            "spanElements": {
+                "title": "Elementos SPAN",
+                "content": {
+                    "links": {
+                        "title": "Enlaces"
+                    },
+                    "emphasis": {
+                        "title": "Énfasis"
+                    },
+                    "code": {
+                        "title": "Código"
+                    },
+                    "images": {
+                        "title": "Imágenes"
+                    }
+                }
+            },
+            "miscellaneous": {
+                "title": "Misceláneos",
+                "content": {
+                    "automaticLinks": {
+                        "title": "Enlaces automáticos"
+                    },
+                    "escaping": {
+                        "title": "Escapado"
+                    }
+                }
+            }
+        }
+    },
+    "chooselanguage": {
+        "title": "Elija un idioma"
+    }
+}
