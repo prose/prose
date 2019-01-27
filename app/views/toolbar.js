@@ -6,6 +6,7 @@ var Backbone = require('backbone');
 var toolbar = require('../toolbar/markdown.js');
 var upload = require('../upload');
 var templates = require('../../dist/templates');
+var AssetSelectionView = require('./assetselection');
 
 module.exports = Backbone.View.extend({
   template: templates.toolbar,
@@ -13,8 +14,6 @@ module.exports = Backbone.View.extend({
   events: {
     'click .group a': 'markdownSnippet',
     'click .publish-flag': 'togglePublishing',
-    'change #upload': 'fileInput',
-    'click .dialog .insert': 'dialogInsert',
     'click .draft-to-post': 'post'
   },
 
@@ -29,17 +28,11 @@ module.exports = Backbone.View.extend({
       this.hasMedia = (config.media) ? true : false;
       this.siteUrl = (config.siteUrl) ? true : false;
 
-      if (config.media) {
+      if (this.hasMedia) {
         // Fetch the media directory to display its contents
-        this.mediaDirectoryPath = config.media;
-        var match = new RegExp('^' + this.mediaDirectoryPath);
-
-        this.media = this.collection.filter(function(m) {
-          var path = m.get('path');
-
-          return m.get('type') === 'file' && match.test(path) &&
-            (util.isBinary(path) || util.isImage(m.get('extension')));
-        });
+        var returned = util.extractMedia(config, this.collection);
+        this.media = returned[0];
+        this.mediaDirectoryPath = returned[1];
       }
 
       if (config.relativeLinks) {
@@ -71,15 +64,6 @@ module.exports = Backbone.View.extend({
     return this;
   },
 
-  fileInput: function(e) {
-    var $dialog = $(e.target).closest('div.dialog.media');
-    var self = this;
-    upload.fileSelect(e, function(e, file, content) {
-      self.trigger('updateImageInsert', e, file, content, self, $dialog);
-    });
-
-    return false;
-  },
 
   highlight: function(type) {
     this.$el.find('.group a').removeClass('active');
@@ -94,7 +78,7 @@ module.exports = Backbone.View.extend({
   markdownSnippet: function(e) {
     var self = this;
     var $target = $(e.target).closest('a');
-    var $dialog = this.$el.find('div[data-element="dialog"]');
+    var $dialog = this.$el.find('#toolbar-dialog');
     var $snippets = this.$el.find('.group a');
     var key = $target.data('key');
     var snippet = $target.data('snippet');
@@ -206,17 +190,35 @@ module.exports = Backbone.View.extend({
             }
           break;
           case 'media':
-            tmpl = _(templates.dialogs.media).template();
-            $dialog.append(tmpl({
-              description: t('dialogs.media.description', {
-                input: '<input id="upload" class="upload" type="file" />'
-              }),
-              assetsDirectory: (self.media && self.media.length) ? true : false,
-              writable: self.file.get('writable'),
-              altText: true
-            }));
+            this.assetselection = new AssetSelectionView({
+              assets: self.media,
+              ancestor: self,
+              model: self.file,
+              includeAltText: true,
+              onInsert: function(e) {
+                var $dialog = $('.dialog', self.el);
+                var $target = $(e.target, self.el);
+                if (self.queue) {
+                  var userDefinedPath = $('input[name="url"]').val();
 
-            if (self.media && self.media.length) self.renderMedia(self.media);
+                  var callback = self.uploadInsert.bind(self);
+                  self.view.upload(self.queue.e, self.queue.file, self.queue.content, userDefinedPath, callback);
+
+                  // Finally, clear the queue object
+                  self.queue = undefined;
+                } else {
+                  var src = '{{site.baseurl}}/' + $('input[name="url"]').val();
+                  var alt = $('input[name="alt"]').val();
+                  self.view.editor.replaceSelection('![' + alt + '](' + src + ')');
+                  self.view.editor.focus();
+                }
+                return false;
+              }
+            });
+            $dialog.append(this.assetselection.render());
+
+            $insert = $dialog.find('.insert').first();
+            $insert.click(self.dialogInsert);
 
             if (selection) {
               var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
@@ -372,7 +374,7 @@ module.exports = Backbone.View.extend({
   },
 
   dialogInsert: function(e) {
-    var $dialog = $('div[data-type="dialog"]', this.el);
+    var $dialog = $('#toolbar-dialog', this.el);
     var $target = $(e.target, this.el);
     var type = $target.data('type');
 
@@ -392,44 +394,23 @@ module.exports = Backbone.View.extend({
       this.view.editor.focus();
     }
 
-    if (type === 'media') {
-      if (this.queue) {
-        var userDefinedPath = $('input[name="url"]').val();
-
-        var onSuccess = function(model, res, options) {
-          var name = res.content.name;
-          var path = '{{site.baseurl}}/' + res.content.path;
-
-          // Take the alt text from the insert image box on the toolbar
-          var $alt = $('input[name="alt"]');
-          var value = $alt.val();
-          var image = (value) ?
-            '![' + value + '](' + path + ')' :
-            '![' + name + '](' + path + ')';
-
-          this.editor.focus();
-          this.editor.replaceSelection(image + '\n', 'end');
-          this.updateSaveState('Saved', 'saved', true);
-        }
-
-        var onFailure = function(model, xhr, options) {
-          var message = util.xhrErrorMessage(xhr);
-          this.updateSaveState(message, 'error');
-        }
-
-        this.view.upload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath, onSuccess, onFailure);
-
-        // Finally, clear the queue object
-        this.queue = undefined;
-      } else {
-        var src = '{{site.baseurl}}/' + $('input[name="url"]').val();
-        var alt = $('input[name="alt"]').val();
-        this.view.editor.replaceSelection('![' + alt + '](' + src + ')');
-        this.view.editor.focus();
-      }
-    }
-
     return false;
+  },
+
+  uploadInsert: function(model, res, options) {
+    var name = res.content.name;
+    var path = '{{site.baseurl}}/' + res.content.path;
+
+    // Take the alt text from the insert image box on the toolbar
+    var $alt = $('#toolbar-dialog input[name="alt"]');
+    var value = $alt.val();
+    var image = (value) ?
+      '![' + value + '](' + path + ')' :
+      '![' + name + '](' + path + ')';
+
+    this.view.editor.focus();
+    this.view.editor.replaceSelection(image + '\n', 'end');
+    this.view.updateSaveState('Saved', 'saved', true);
   },
 
   heading: function(s) {
@@ -492,11 +473,11 @@ module.exports = Backbone.View.extend({
     }
   },
 
-  renderMedia: function(data, back) {
-    var $media = this.$el.find('ul[data-element="media"]');
-    // Reset some stuff
-    $media.empty();
+  updateImageInsert: function(e, file, content, target, $dialog) {
+    if(this.assetselection) {
+      this.assetselection.updateImageInsert(e, file, content, target, $dialog);
+    }
+    return false;
+  },
 
-    util.renderMedia(data, $media, this, back);
-  }
 });

@@ -8,6 +8,7 @@ var Backbone = require('backbone');
 var templates = require('../../dist/templates');
 var util = require('../util');
 var upload = require('../upload');
+var AssetSelectionView = require('./assetselection');
 
 var forms = {
   Checkbox: require('./meta/checkbox'),
@@ -35,7 +36,6 @@ module.exports = Backbone.View.extend({
     'click button.metafield': 'updateModel',
     'click .create-select': 'createSelect',
     'click .select-image': 'toggleImageDialog',
-    'click .dialog .insert': 'updateInput',
     'click .finish': 'exit'
   },
 
@@ -49,9 +49,10 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this);
 
+    this.view = options.view;
     this.model = options.model;
     this.titleAsHeading = options.titleAsHeading;
-    this.view = options.view;
+    this.media = options.media;
 
     this.subviews = [];
     this.codeMirrorInstances = {};
@@ -396,79 +397,74 @@ module.exports = Backbone.View.extend({
     }
 
     var self = this;
-    var $parent = $(e.target).parent();
-    var $lastChild = $parent.children().last();
+    var $parent = $($(e.target).parents(".form-item")[0]);
 
-    //Toggle Dialog On/Off
-    if ($lastChild.hasClass('dialog')) {
-      $lastChild.remove();
-    } else {
+    if (!this.view.$dialog || !this.view.$dialog.parent().is($parent)) {
+      // If no dialog exists,
+      // or if a dialog exists and it's parent is not the same as the parent of the button,
+      // then we want to create a new dialog, deleting any existing ones.
+
+      // First, we want to delete any existing dialogs
+      if (this.view.$dialog) {
+        this.view.$dialog.removeClass();
+        this.view.$dialog.empty();
+      }
 
       //Create the dialog element
-      var $dialog = $('<div></div>');
-      $parent.append($dialog);
-      $dialog.addClass('dialog media');
+      this.view.$dialog = $parent.children().last();
+      $parent.append(this.view.$dialog);
+      var className;
+      if (self.media && self.media.length) {
+          className = 'dialog media';
+      } else {
+          className = 'dialog media no-directory';
+      }
+      this.view.$dialog.addClass(className);
 
+      this.assetSelectionView = new AssetSelectionView({
+        assets: self.media,
+        ancestor: self,
+        model: self.model,
+        includeAltText: false,
+        onInsert: function(e) {
+          var $dialog = self.view.$dialog;
+          var $input = $dialog.parent().find("fieldset div input");
+
+          if (self.queue) {
+            var userDefinedPath = $('input[name="url"]').val();
+
+            var onSuccess = function(model, res, options) {
+              var name = res.content.name;
+              var path = '{{site.baseurl}}/' + res.content.path;
+
+              $input.val(path);
+              self.toggleImageDialog(e);
+              self.view.updateSaveState('Saved', 'saved', true);
+            }
+
+            self.view.upload(self.queue.e, self.queue.file, self.queue.content, userDefinedPath, onSuccess);
+
+            // Finally, clear the queue object
+            self.queue = undefined;
+          } else {
+            var src = '{{site.baseurl}}/' + $dialog.find('input[name="url"]').val();
+            $input.val(src);
+            self.toggleImageDialog(e);
+          }
+          return false;
+        }
+      }).render();
       //Populate the dialog element
-      tmpl = _(templates.dialogs.media).template();
-      $dialog.append(tmpl({
-        description: t('dialogs.media.description', {
-          input: '<input data-element="upload" class="upload" type="file" />'
-        }),
-        assetsDirectory: (self.view.toolbar.media && self.view.toolbar.media.length) ? true : false,
-        writable: self.model.get('writable'),
-        altText: false
-      }));
+      this.view.$dialog.append(this.assetSelectionView);
 
-      $media = $dialog.find('ul[data-element="media"]').first();
-      $input = $dialog.find('input[data-element="upload"]').first();
-      $input.change(self.fileInput);
+      this.listenTo(this.assetSelectionView, 'updateImageInsert', this.updateImageInsert);
 
-      if (self.view.toolbar.media && self.view.toolbar.media.length) util.renderMedia(self.view.toolbar.media, $media, this);
-    }
-    return false;
-  },
-
-  fileInput: function(e) {
-    var $dialog = $(e.target).closest('div.dialog.media');
-    var self = this;
-    upload.fileSelect(e, function(e, file, content) {
-      self.trigger('updateImageInsert', e, file, content, self, $dialog);
-    });
-
-    return false;
-  },
-
-  updateInput: function(e, file, content) {
-    var $dialog = $(e.target, this.$el).closest(".dialog");
-    var $input = $dialog.parent().children("input");
-    var self = this;
-
-    if (this.queue) {
-      var userDefinedPath = $('input[name="url"]').val();
-
-      var onSuccess = function(model, res, options) {
-        var name = res.content.name;
-        var path = '{{site.baseurl}}/' + res.content.path;
-
-        $input.val(path);
-        self.toggleImageDialog();
-      }
-
-      var onFailure = function(model, xhr, options) {
-        var message = util.xhrErrorMessage(xhr);
-        this.updateSaveState(message, 'error');
-      }
-
-      this.view.upload(this.queue.e, this.queue.file, this.queue.content, userDefinedPath, onSuccess, onFailure);
-
-      // Finally, clear the queue object
-      this.queue = undefined;
     } else {
-
-      var src = '{{site.baseurl}}/' + $('.meta input[name="url"]').val();
-      $input.val(src);
-      this.toggleImageDialog();
+      // We want to delete the existing dialog
+      var $dialog = $parent.children().last();
+      $dialog.removeClass();
+      $dialog.empty();
+      this.view.$dialog = null;
     }
 
     return false;

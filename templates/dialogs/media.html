@@ -1,9 +1,9 @@
 <div class='inner clearfix'>
 
-  <div <% if (assetsDirectory) { %>class='col fl'<% } %>>
+  <div <% if (includeMediaDirectory) { %>class='col fl'<% } %>>
     <label><%= t('dialogs.media.title') %></label>
 
-    <% if (writable) { %>
+    <% if (isWritable) { %>
       <div class='contain clearfix'>
         <span class='ico picture-add fl'></span>
         <%= description %>
@@ -11,19 +11,19 @@
     <% } %>
 
     <input type='text' name='url' placeholder="<%= t('dialogs.media.hrefPlaceholder')%>" />
-    <% if (altText) { %>
+    <% if (includeAltText) { %>
       <input type='text' name='alt' placeholder="<%= t('dialogs.media.altPlaceholder')%>" />
     <% } %>
     <a href='#' class='button round insert' data-type='media'><%= t('dialogs.link.insert') %></a>
-      <% if (!assetsDirectory) { %>
+      <% if (!includeMediaDirectory) { %>
         <small class='caption deemphasize'><%= t('dialogs.media.help') %></small>
       <% } %>
   </div>
 
-  <% if (assetsDirectory) { %>
+  <% if (includeMediaDirectory) { %>
     <div class='col col-last fl media-listing'>
       <label><%= t('dialogs.media.choose') %></label>
-      <ul data-element='media'></ul>
+      <ul class='mediaDirectory'></ul>
       <small class='caption deemphasize'><%= t('dialogs.media.helpMedia') %></small>
     </div>
   <% } %>
