@@ -272,42 +272,6 @@ module.exports = {
     return false;
   },
 
-  renderMedia: function(data, elem, controller, back) {
-    var util = this;
-    var tmpl = _(templates.dialogs.mediadirectory).template();
-
-    if (back && (back.join() !== this.assetsDirectory)) {
-      var link = back.slice(0, back.length - 1).join('/');
-      elem.append('<li class="directory back"><a href="' + link + '"><span class="ico fl small inline back"></span>Back</a></li>');
-    }
-
-    data.each(function(d) {
-      var parts = d.get('path').split('/');
-      var path = parts.slice(0, parts.length - 1).join('/');
-
-      elem.append(tmpl({
-        name: d.get('name'),
-        type: d.get('type'),
-        path: path + '/' + encodeURIComponent(d.get('name')),
-        isMedia: util.isMedia(d.get('name').split('.').pop())
-      }));
-    });
-
-    $('.asset a', elem).on('click', function(e) {
-      var href = $(this).attr('href');
-      var alt = util.trim($(this).text());
-
-      if (util.isImage(href.split('.').pop())) {
-        elem.closest('div.dialog.media').find('input[name="url"]').val(href);
-        elem.closest('div.dialog.media').find('input[name="alt"]').val(alt);
-      } else {
-        controller.view.editor.replaceSelection(href);
-        controller.view.editor.focus();
-      }
-      return false;
-    });
-  },
-
   parseLinkHeader: function(xhr, options) {
     options = _.clone(options) || {};
 
