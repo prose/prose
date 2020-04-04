@@ -30,6 +30,11 @@ module.exports = {
     return [matches[1], matches[2]];
   },
 
+  // Removes trailing/leading slashes and spaces when appending a path and filename
+  appendFilename: function(path, filename) {
+    return [path.replace(/(\s|\/)*$/, ''), filename.replace(/^(\s|\/)*/, '')].join('/');
+  },
+
   validPathname: function(path) {
     var regex = /^([a-zA-Z0-9_\-]|\.)+$/;
     return _.all(path.split('/'), function(filename) {
