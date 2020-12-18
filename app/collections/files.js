@@ -117,6 +117,7 @@ module.exports = Backbone.Collection.extend({
       this.config.rooturl = replacePlaceholders(placeholderValues, this.config.rooturl);
       this.config.media = replacePlaceholders(placeholderValues, this.config.media);
       this.config.siteurl = replacePlaceholders(placeholderValues, this.config.siteurl);
+      this.config.baseurlexpression = this.config.baseurlexpression || "{{site.baseurl}}"
 
       if (config.prose.metadata) {
         var metadata = config.prose.metadata;
