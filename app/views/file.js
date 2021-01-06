@@ -271,7 +271,7 @@ module.exports = Backbone.View.extend({
 
   compilePreview: function(content) {
     // Scan the content search for ![]()
-    // grab the path and file and form a RAW github aboslute request for it
+    // grab the path and file and form a RAW GitHub absolute request for it
     var scan = /\!\[([^\[]*)\]\(([^\)]+)\)/g;
     var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
     var titleAttribute = /".*?"/;
