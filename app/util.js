@@ -30,6 +30,21 @@ module.exports = {
     return [matches[1], matches[2]];
   },
 
+  extractMedia: function(config, collection) {
+    var self = this;
+    // Fetch the media directory to display its contents
+    var mediaDirectoryPath = config.media;
+    var match = new RegExp('^' + mediaDirectoryPath);
+
+    var media = collection.filter(function(m) {
+      var path = m.get('path');
+
+      return m.get('type') === 'file' && match.test(path) &&
+        (self.isBinary(path) || self.isImage(m.get('extension')));
+    });
+    return [media, mediaDirectoryPath];
+  },
+
   validPathname: function(path) {
     var regex = /^([a-zA-Z0-9_\-]|\.)+$/;
     return _.all(path.split('/'), function(filename) {

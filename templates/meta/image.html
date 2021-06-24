@@ -1,0 +1,11 @@
+<div class='form-item'>
+  <label for='<%= meta.name %>'><%= meta.label %></label>
+  <% if (meta.help) { %><small class='deemphasize'><%= meta.help %></small><% } %>
+  <fieldset>
+    <div class='create'>
+      <a href='#' class='round select-image inline button' data-select='<%= meta.name %>' title="<%= t('toolbar.image') %>"><%= t('toolbar.image') %></a>
+      <input class='metafield inline' type='text' name='<%= meta.name %>' value='<%= meta.value %>' data-type='<%= meta.type %>' placeholder='<%= meta.placeholder %>' readonly/>
+    </div>
+  </fieldset>
+  <div></div>
+</div>

@@ -1,5 +1,6 @@
 var MetadataView = require('../../../app/views/metadata');
 var mockFile = require('../../mocks/models/file');
+var mockFiles = require('../../mocks/collections/files')
 var mockFileView = require('../../mocks/views/file');
 
 var templates = require('../../../dist/templates');
@@ -26,6 +27,7 @@ describe('Metadata editor view', function() {
       model: model,
       titleAsHeading: fileView.titleAsHeading(),
       view: fileView,
+      media: mockFiles(),
       el: $('#meta')
     });
   });
@@ -158,6 +160,133 @@ describe('Metadata editor view', function() {
       expect($button.length).to.equal(1);
       expect($button.val()).to.equal('on');
       expect($button.text()).to.equal('on');
+    });
+
+    it('creates an image element with correct label and options', function() {
+      model.set('defaults', [{
+        name: 'image',
+        field: {
+          element: 'image',
+          label: 'image label',
+          value: '/path/to/image.jpg'
+        }
+      }]);
+      metadataEditor.render();
+      expect($('#meta').find('label[for="image"]').text()).to.equal('image label');
+      var $meta = $('#meta').find('input[name="image"]');
+      expect($meta.val()).to.equal('/path/to/image.jpg');
+    });
+
+    it('creates an image element that spawns a dialog when clicked', function() {
+        model.set('defaults', [{
+        name: 'image',
+        field: {
+          element: 'image',
+          label: 'image label',
+          value: '/path/to/image.jpg'
+        }
+      }]);
+      metadataEditor.render();
+      var $button = $('#meta').find('a[data-select="image"]');
+      $button.click();
+      var $dialog = $('#meta').find('div.dialog');
+      expect($dialog.length).to.equal(1);
+      expect($dialog.find('input[name="url"]').length).to.equal(1);
+      expect($dialog.find('a[data-type="media"]').length).to.equal(1);
+    });
+
+    it('creates an image element that spawns and destroys a dialog when clicked twice', function() {
+        model.set('defaults', [{
+        name: 'image',
+        field: {
+          element: 'image',
+          label: 'image label',
+          value: '/path/to/image.jpg'
+        }
+      }]);
+      metadataEditor.render();
+      var $button = $('#meta').find('a[data-select="image"]');
+      $button.click();
+      var $dialog = $('#meta').find('div.dialog');
+      $button.click();
+      expect($dialog.hasClass('dialog')).to.be.false;
+      expect($dialog.find('input[name="url"]').length).to.equal(0);
+      expect($dialog.find('a[data-type="media"]').length).to.equal(0);
+    });
+
+    it('creates an image element that spawns, destroys, and spawns again a dialog when clicked thrice', function() {
+        model.set('defaults', [{
+        name: 'image',
+        field: {
+          element: 'image',
+          label: 'image label',
+          value: '/path/to/image.jpg'
+        }
+      }]);
+      metadataEditor.render();
+      var $button = $('#meta').find('a[data-select="image"]');
+      $button.click();
+      var $dialog = $('#meta').find('div.dialog');
+      $button.click();
+      $button.click();
+      expect($dialog.length).to.equal(1);
+      expect($dialog.find('input[name="url"]').length).to.equal(1);
+      expect($dialog.find('a[data-type="media"]').length).to.equal(1);
+    });
+
+    it('creates two image elements, but only one dialog at a time', function() {
+        model.set('defaults', [{
+        name: 'image1',
+        field: {
+          element: 'image',
+          label: 'image label',
+          value: '/path/to/image1.jpg'
+        }
+      }, {
+        name: 'image2',
+        field: {
+          element: 'image',
+          label: 'image2 label',
+          value: '/path/to/image2.jpg'
+        }
+      }]);
+      metadataEditor.render();
+      var $button1 = $('#meta').find('a[data-select="image1"]');
+      $button1.click();
+      var $dialog1 = $button1.parents('div.form-item').find('div.dialog');
+      var $button2 = $('#meta').find('a[data-select="image2"]');
+      $button2.click();
+      var $dialog2 = $button2.parents('div.form-item').find('div.dialog');
+      // Dialog 1 should disappear, Dialog 2 should appear
+      expect($dialog1.hasClass('dialog')).to.be.false;
+      expect($dialog1.find('input[name="url"]').length).to.equal(0);
+      expect($dialog1.find('a[data-type="media"]').length).to.equal(0);
+      expect($dialog2.hasClass('dialog')).to.be.true;
+      expect($dialog2.find('input[name="url"]').length).to.equal(1);
+      expect($dialog2.find('a[data-type="media"]').length).to.equal(1);
+    });
+
+    it('creates an image element, and the dialog affects the element', function() {
+        model.set('defaults', [{
+        name: 'image',
+        field: {
+          element: 'image',
+          label: 'image label',
+          value: '/path/to/image.jpg'
+        }
+      }]);
+      metadataEditor.render();
+      var $button = $('#meta').find('a[data-select="image"]');
+      $button.click();
+      var $dialog = $button.parents('div.form-item').find('div.dialog');
+      var $urlinput = $dialog.find('input[name="url"]');
+      var newimage = 'path/to/newimage.jpg';
+      $urlinput.val(newimage);
+      var $insert = $dialog.find('a[data-type="media"]');
+      expect($urlinput.val()).to.equal(newimage);
+      $insert.click();
+      var $meta = $('#meta').find('input[name="image"]');
+      expect($meta.val()).to.equal("{{site.baseurl}}/" + newimage);
     });
 
     it('creates a text element if no field object exists', function() {
@@ -371,6 +500,23 @@ describe('Metadata editor view', function() {
       expect(model.get('metadata').button).to.equal(false);
     });
 
+    it('saves changes to model on change to an image input', function() {
+      model.set('defaults', [{
+        name: 'image',
+        field: {
+          element: 'image',
+          label: 'image label',
+          value: '/path/to/image.jpg'
+        }
+      }]);
+      metadataEditor.render();
+
+      var newValue = '/path/to/newimage.jpg';
+      $('#meta').find('input[name="image"]').val(newValue);
+      $('.metafield').trigger('change');
+      expect(model.get('metadata').image).to.equal(newValue);
+    });
+
     it('does not error when titleAsHeading is true and no title is defined on metadata', function() {
       model.set('metadata', {
         title: null
@@ -461,6 +607,22 @@ describe('Metadata editor view', function() {
       });
       metadataEditor.render();
       expect($('#meta').find('input[name="checkbox"]')[0].checked).to.equal(true);
+    });
+
+    it('sets values on image elements', function() {
+      model.set('defaults', [{
+        name: 'image',
+        field: {
+          element: 'image',
+          label: 'image label',
+          value: '/path/to/image.jpg'
+        }
+      }]);
+      model.set('metadata', {
+        image: '/path/to/image2.jpg'
+      });
+      metadataEditor.render();
+      expect($('#meta').find('input[name="image"]').val()).to.equal('/path/to/image2.jpg');
     });
 
     it('puts metadata without defaults into the raw editor', function() {

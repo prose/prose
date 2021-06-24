@@ -972,7 +972,6 @@
   background:#fff;
   position:absolute;
   z-index: 100;
-  top:100%;
   width:100%;
   margin:0 auto;
   border:1px solid #a8afb2;
@@ -1474,10 +1473,10 @@
       margin:5px 0 0;
       width:90%;
       }
-      .meta .create input {
+      .meta .create > input {
         padding-right:135px;
         }
-      .meta .create .button {
+      .meta .create > .button {
         position:absolute;
         top:2px;
         right:0;

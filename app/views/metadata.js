@@ -7,6 +7,8 @@ var jsyaml = require('js-yaml');
 var Backbone = require('backbone');
 var templates = require('../../dist/templates');
 var util = require('../util');
+var upload = require('../upload');
+var AssetSelectionView = require('./assetselection');
 
 var forms = {
   Checkbox: require('./meta/checkbox'),
@@ -15,6 +17,7 @@ var forms = {
   Button: require('./meta/button'),
   Select: require('./meta/select'),
   Multiselect: require('./meta/multiselect'),
+  Image: require('./meta/image'),
 };
 
 
@@ -32,6 +35,7 @@ module.exports = Backbone.View.extend({
     'change .metafield': 'updateModel',
     'click button.metafield': 'updateModel',
     'click .create-select': 'createSelect',
+    'click .select-image': 'toggleImageDialog',
     'click .finish': 'exit'
   },
 
@@ -45,9 +49,10 @@ module.exports = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this);
 
+    this.view = options.view;
     this.model = options.model;
     this.titleAsHeading = options.titleAsHeading;
-    this.view = options.view;
+    this.media = options.media;
 
     this.subviews = [];
     this.codeMirrorInstances = {};
@@ -122,6 +127,11 @@ module.exports = Backbone.View.extend({
           break;
           case 'multiselect':
             view = new forms.Multiselect({
+              data: _.extend({}, data, {lang: lang})
+            });
+          break;
+          case 'image':
+            view = new forms.Image({
               data: _.extend({}, data, {lang: lang})
             });
           break;
@@ -375,6 +385,86 @@ module.exports = Backbone.View.extend({
       // Update the list
       $select.trigger('liszt:updated');
       $select.trigger('change');
+    }
+
+    return false;
+  },
+
+  toggleImageDialog: function(e) {
+    if (e === undefined) {
+      $('.meta .dialog').remove();
+      return false;
+    }
+
+    var self = this;
+    var $parent = $($(e.target).parents(".form-item")[0]);
+
+    if (!this.view.$dialog || !this.view.$dialog.parent().is($parent)) {
+      // If no dialog exists,
+      // or if a dialog exists and it's parent is not the same as the parent of the button,
+      // then we want to create a new dialog, deleting any existing ones.
+
+      // First, we want to delete any existing dialogs
+      if (this.view.$dialog) {
+        this.view.$dialog.removeClass();
+        this.view.$dialog.empty();
+      }
+
+      //Create the dialog element
+      this.view.$dialog = $parent.children().last();
+      $parent.append(this.view.$dialog);
+      var className;
+      if (self.media && self.media.length) {
+          className = 'dialog media';
+      } else {
+          className = 'dialog media no-directory';
+      }
+      this.view.$dialog.addClass(className);
+
+      this.assetSelectionView = new AssetSelectionView({
+        assets: self.media,
+        ancestor: self,
+        model: self.model,
+        includeAltText: false,
+        onInsert: function(e) {
+          var $dialog = self.view.$dialog;
+          var $input = $dialog.parent().find("fieldset div input");
+
+          if (self.queue) {
+            var userDefinedPath = $('input[name="url"]').val();
+
+            var onSuccess = function(model, res, options) {
+              var name = res.content.name;
+              var path = '{{site.baseurl}}/' + res.content.path;
+
+              $input.val(path);
+              self.toggleImageDialog(e);
+              self.view.updateSaveState('Saved', 'saved', true);
+            }
+
+            self.view.upload(self.queue.e, self.queue.file, self.queue.content, userDefinedPath, onSuccess);
+
+            // Finally, clear the queue object
+            self.queue = undefined;
+          } else {
+            var src = '{{site.baseurl}}/' + $dialog.find('input[name="url"]').val();
+            $input.val(src);
+            self.toggleImageDialog(e);
+          }
+          return false;
+        }
+      }).render();
+      //Populate the dialog element
+      this.view.$dialog.append(this.assetSelectionView);
+
+      this.listenTo(this.assetSelectionView, 'updateImageInsert', this.updateImageInsert);
+
+    } else {
+      // We want to delete the existing dialog
+      var $dialog = $parent.children().last();
+      $dialog.removeClass();
+      $dialog.empty();
+      this.view.$dialog = null;
     }
 
     return false;
