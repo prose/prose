@@ -11,7 +11,7 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var merge2 = require('merge2');
 var mkdirp = require('mkdirp');
-var sass = require('gulp-sass');
+var postcss = require('gulp-postcss');
 var nodeJS = process.execPath;
 
 // Scripts paths.
@@ -31,7 +31,7 @@ var paths = {
     'templates/**/*.html'
   ],
   css: [
-    'style/**/*.scss'
+    'style/**/*.css'
   ]
 };
 
@@ -76,8 +76,13 @@ gulp.task('translations', function () {
 
 // Parse stylesheet
 gulp.task('css', function () {
-  return gulp.src('./style/style.scss')
-    .pipe(sass().on('error', sass.logError))
+  return gulp.src('./style/style.css')
+    .pipe(
+      postcss([
+        require('postcss-import')({ root: process.cwd() + '/styles' })
+      ])
+        .on('error', (err) => { console.error(err) })
+    )
     .pipe(rename('prose.css'))
     .pipe(gulp.dest(dist));
 });

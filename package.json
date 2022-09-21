@@ -9,6 +9,7 @@
     "codemirror": "^5.13.2",
     "deepmerge": "~0.2.7",
     "diff": "~2.2.0",
+    "gulp-postcss": "^9.0.1",
     "handsontable": "git://github.com/handsontable/handsontable.git#0.20.2",
     "ignore": "~2.2.7",
     "jquery-browserify": "~1.8.1",
@@ -18,6 +19,8 @@
     "marked": "^0.5.2",
     "mkdirp": "^0.5.0",
     "papaparse": "^4.1.2",
+    "postcss": "^8.4.16",
+    "postcss-import": "^15.0.0",
     "queue-async": "~1.0.3",
     "underscore": "~1.4.4"
   },
@@ -36,7 +39,6 @@
     "gulp-concat": "^2.2.0",
     "gulp-if": "^2.0.0",
     "gulp-rename": "^1.2.0",
-    "gulp-sass": "^2.2.0",
     "gulp-shell": "^0.2.7",
     "gulp-uglify": "^0.3.1",
     "gulp-watch": "^0.6.8",
@@ -54,7 +56,6 @@
     "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
-    "postinstall": "gulp",
     "test": "gulp test",
     "test-ci": "gulp test-ci",
     "watch": "gulp watch",
@@ -81,5 +82,8 @@
   "author": "Development Seed",
   "license": "BSD",
   "readmeFilename": "README.md",
-  "gitHead": "2f58c9a97bb76b21055fe76b4c97424068ad5386"
+  "gitHead": "2f58c9a97bb76b21055fe76b4c97424068ad5386",
+  "resolutions": {
+    "graceful-fs": "^4.2.10"
+  }
 }
