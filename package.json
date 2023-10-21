@@ -6,7 +6,7 @@
     "backbone": "~1.0.0",
     "chosen-jquery-browserify": "~0.9.15",
     "chrono": "~1.0.4",
-    "codemirror": "^5.13.2",
+    "codemirror": "^5.58.2",
     "deepmerge": "~0.2.7",
     "diff": "~2.2.0",
     "gulp-postcss": "^9.0.1",
