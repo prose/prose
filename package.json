@@ -22,7 +22,7 @@
     "postcss": "^8.4.16",
     "postcss-import": "^15.0.0",
     "queue-async": "~1.0.3",
-    "underscore": "~1.4.4"
+    "underscore": "~1.12.1"
   },
   "keywords": [
     "editor",
