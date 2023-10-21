@@ -16,7 +16,7 @@
     "js-base64": "~2.1.1",
     "js-yaml": "^3.6.1",
     "keymaster": "git://github.com/madrobby/keymaster.git#0f09fc1b7e66c2b7e07afe89a419366dcf2d1cd8",
-    "marked": "^0.5.2",
+    "marked": "^4.0.10",
     "mkdirp": "^0.5.0",
     "papaparse": "^4.1.2",
     "postcss": "^8.4.16",
