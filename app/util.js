@@ -152,12 +152,12 @@ module.exports = {
   },
 
   isMedia: function(extension) {
-    var regex = new RegExp("^(jpeg|jpg|gif|png|swf|mov)$", 'i');
+    var regex = new RegExp("^(3gp|adts|flac|mpg|mpg2|m2v|mp2|mp3|mp4|ogg|mov|webm|jpeg|jpg|gif|png|apng|avif|webp|bmp|tiff|svg*)$", 'i');
     return !!(regex.test(extension));
   },
 
   isImage: function(extension) {
-    var regex = new RegExp("^(jpeg|jpg|gif|png|svg*)$", 'i');
+    var regex = new RegExp("^(jpeg|jpg|gif|png|apng|avif|webp|bmp|tiff|svg*)$", 'i');
     return !!(regex.test(extension));
   },
 

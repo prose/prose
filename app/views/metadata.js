@@ -426,6 +426,7 @@ module.exports = Backbone.View.extend({
         ancestor: self,
         model: self.model,
         includeAltText: false,
+        view: this.view,
         onInsert: function(e) {
           var $dialog = self.view.$dialog;
           var $input = $dialog.parent().find("fieldset div input");

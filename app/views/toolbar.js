@@ -195,6 +195,7 @@ module.exports = Backbone.View.extend({
               ancestor: self,
               model: self.file,
               includeAltText: true,
+              view: this.view,
               onInsert: function(e) {
                 var $dialog = $('.dialog', self.el);
                 var $target = $(e.target, self.el);
