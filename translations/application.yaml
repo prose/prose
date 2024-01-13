@@ -162,6 +162,7 @@ en:
       help: "Images uploaded are added to the current directory or one specified in the Image URL path above."
       helpMedia: "Images uploaded are added to the 'Choose Existing' directory or one specified in the Image URL field."
       choose: "Choose Existing"
+      noCIFlag: "Don't deploy new site for this upload"
     help:
       blockElements:
         title: "Block Elements"

@@ -1350,7 +1350,7 @@ module.exports = Backbone.View.extend({
     return _.compact([dir, fileName]).join('/');
   },
 
-  upload: function(e, file, content, path, successCb) {
+  upload: function(e, file, content, path, noCIFlag, successCb) {
     // Loading State
     this.updateSaveState(t('actions.upload.uploading', { file: file.name }), 'saving');
 
@@ -1360,7 +1360,8 @@ module.exports = Backbone.View.extend({
       error: (function(model, xhr, options) {
         var message = util.xhrErrorMessage(xhr);
         this.updateSaveState(message, 'error');
-      }).bind(this)
+      }).bind(this),
+      noCIFlag,
     });
   },
 

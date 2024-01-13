@@ -202,7 +202,7 @@ module.exports = Backbone.View.extend({
                   var userDefinedPath = $('input[name="url"]').val();
 
                   var callback = self.uploadInsert.bind(self);
-                  self.view.upload(self.queue.e, self.queue.file, self.queue.content, userDefinedPath, callback);
+                  self.view.upload(self.queue.e, self.queue.file, self.queue.content, userDefinedPath, self.queue.noCIFlag, callback);
 
                   // Finally, clear the queue object
                   self.queue = undefined;
