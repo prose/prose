@@ -48,18 +48,19 @@ Prose translates strings with a `t` function - `t('foo.bar')` translate the key
 `foo.bar` into the current language. If you introduce new translatable strings
 to prose, only display them in the interface through the `t()` function.
 
-Then, add the new string to `translations/application.yaml`. The translation system,
+Then, add the new string to `translations/en.json`. The translation system,
 Transifex, will automatically detect the change.
 
 Use `npm` to build the translations with the local changes.
 `npm run translations` can be used to pull the latest translations from Transifex.
 
-If you run `npm run translations` you will be warned to include a `transifex.auth` file in the `translations` directory that contains your Transifex user details:
-
-  {
-      "user": "username",
-      "pass": "password"
-  }
+`npm run translations` will fail and error unless the following environment variables are set:
+```
+TRANSIFEX_TOKEN - Your API Token
+TRANSIFEX_ORG - The organization your project is a part of
+TRANSIFEX_PROJECT - The project name
+TRNSIFEX_RESOURCE - The resource name (usually 'application')
+```
 
 ## Submitting Pull Requests
 
