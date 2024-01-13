@@ -39,7 +39,7 @@ module.exports = Backbone.View.extend({
       var tmpl = _(templates.dialogs.mediadirectory).template();
       this.assets.each(function(asset) {
         var parts = asset.get('path').split('/');
-        var path = parts.slice(0, parts.length - 1).join('/');
+        var path = '/' + parts.slice(0, parts.length - 1).join('/');
 
         $media.append(tmpl({
           name: asset.get('name'),

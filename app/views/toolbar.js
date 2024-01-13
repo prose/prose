@@ -208,7 +208,8 @@ module.exports = Backbone.View.extend({
                   // Finally, clear the queue object
                   self.queue = undefined;
                 } else {
-                  var src = '{{site.baseurl}}/' + $('input[name="url"]').val();
+                  const externalLink = $('input[name="url"]').val().startsWith('http://') || $('input[name="url"]').val().startsWith('https://');
+                  var src = (externalLink ? '' : '{{site.baseurl}}') + $('input[name="url"]').val();
                   var alt = $('input[name="alt"]').val();
                   self.view.editor.replaceSelection('![' + alt + '](' + src + ')');
                   self.view.editor.focus();

@@ -448,7 +448,7 @@ module.exports = Backbone.View.extend({
             // Finally, clear the queue object
             self.queue = undefined;
           } else {
-            var src = '{{site.baseurl}}/' + $dialog.find('input[name="url"]').val();
+            var src = $dialog.find('input[name="url"]').val();
             $input.val(src);
             self.toggleImageDialog(e);
           }

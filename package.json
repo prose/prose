@@ -40,7 +40,7 @@
     "gulp-if": "^2.0.0",
     "gulp-rename": "^1.2.0",
     "gulp-shell": "^0.2.7",
-    "gulp-uglify": "^0.3.1",
+    "gulp-uglify-es": "^3.0.0",
     "gulp-watch": "^0.6.8",
     "merge2": "^1.0.2",
     "mocha": "^2.4.5",
