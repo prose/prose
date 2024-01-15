@@ -1,19 +1,19 @@
-const gulp = require('gulp');
-const concat = require('gulp-concat');
-const uglify = require('gulp-uglify');
-const shell = require('gulp-shell');
-const browserify = require('browserify');
-const rename = require('gulp-rename');
-const del = require('del');
-const watch = require('gulp-watch');
-const gulpif = require('gulp-if');
-const source = require('vinyl-source-stream');
-const buffer = require('vinyl-buffer');
-const merge2 = require('merge2');
-const mkdirp = require('mkdirp');
-const postcss = require('gulp-postcss');
+var gulp = require('gulp');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify-es').default;
+var shell = require('gulp-shell');
+var browserify = require('browserify');
+var rename = require('gulp-rename');
+var del = require('del');
+var watch = require('gulp-watch');
+var gulpif = require('gulp-if');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var merge2 = require('merge2');
+var mkdirp = require('mkdirp');
+var postcss = require('gulp-postcss');
 const { exec } = require('child_process');
-const nodeJS = process.execPath;
+var nodeJS = process.execPath;
 
 // Scripts paths.
 const paths = {
