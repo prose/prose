@@ -195,6 +195,7 @@ module.exports = Backbone.View.extend({
               ancestor: self,
               model: self.file,
               includeAltText: true,
+              view: this.view,
               onInsert: function(e) {
                 var $dialog = $('.dialog', self.el);
                 var $target = $(e.target, self.el);
@@ -207,7 +208,8 @@ module.exports = Backbone.View.extend({
                   // Finally, clear the queue object
                   self.queue = undefined;
                 } else {
-                  var src = '{{site.baseurl}}/' + $('input[name="url"]').val();
+                  const externalLink = $('input[name="url"]').val().startsWith('http://') || $('input[name="url"]').val().startsWith('https://');
+                  var src = (externalLink ? '' : '{{site.baseurl}}') + $('input[name="url"]').val();
                   var alt = $('input[name="alt"]').val();
                   self.view.editor.replaceSelection('![' + alt + '](' + src + ')');
                   self.view.editor.focus();
