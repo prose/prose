@@ -12,6 +12,7 @@ var buffer = require('vinyl-buffer');
 var merge2 = require('merge2');
 var mkdirp = require('mkdirp');
 var postcss = require('gulp-postcss');
+const Mocha = require('mocha');
 const { exec } = require('child_process');
 var nodeJS = process.execPath;
 
@@ -53,19 +54,7 @@ gulp.task('clean', async function (cb) {
   await del([dist], cb);
 });
 
-// Translations.
-// To run this task we have to have a `transifex.auth`
-// file inside `translations` folder.
-// Example file contents:
-//
-//  {
-//    "user": "",
-//    "pass": ""
-//  }
-//
-// An account can be created at https://www.transifex.com/
-//
-gulp.task('translations', function () {
+gulp.task('build-translations', function () {
   mkdirp(dist);
   return new Promise((res, rej) => {
     exec('"' + nodeJS + '"' + ' translations/update_locales', (error, stdout, stderr) => {
@@ -83,6 +72,26 @@ gulp.task('translations', function () {
     })
   });
 });
+
+gulp.task('test-translations', function () {
+  return new Promise((resolve, reject) => {
+    const mocha = new Mocha();
+  
+    mocha.addFile('test/translations/strings.js');
+  
+    mocha.run(function(failures) {
+      process.exitCode = failures ? 1 : 0;
+      if (failures) {
+        reject(new Error('Test failed. See the above output for details. Ensure that all strings used in the project are defined in en.json'));
+      } else {
+        resolve();
+      }
+    });
+  });
+});
+
+gulp.task('translations', gulp.series('build-translations', 'test-translations'))
+
 
 // Parse stylesheet
 gulp.task('css', function () {
@@ -172,7 +181,7 @@ const testTask = shell.task([
   './node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html'
 ]);
 
-gulp.task('test', gulp.series('build-tests', testTask));
+gulp.task('test', gulp.parallel('test-translations', gulp.series('build-tests', testTask)));
 
 // Build site, tests
 gulp.task('build', gulp.series('build-tests', 'build-app', 'css'));

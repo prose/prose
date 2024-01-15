@@ -129,6 +129,7 @@
         }
     },
     "notification": {
+        "404": "What you're looking for does not exist.",
         "loginDescription": "Please login with your GitHub account to access that project.",
         "create": "Create it",
         "home": "Back to Main Page",
@@ -251,6 +252,10 @@
                     "escaping": {
                         "title": "Escaping",
                         "content": "<p>If you want to use a special Markdown character in your document (such as displaying literal asterisks), you can escape the character with the backslash (<code>\\\\</code>). Markdown will ignore the character directly after a backslash.</p>\n"
+                    },
+                    "shortcuts": {
+                        "title": "Shortcuts",
+                        "content": "<p>Prose supports a few shortcuts to make editing faster.<ul><li><code>Ctrl+S</code> - Save file</li><li><code>Ctrl+Enter</code> - Enter blob preview mode</li><li><code>Ctrl+B</code> - Bold</li><li><code>Ctrl+I</code> - Italics</li></ul></p>"
                     }
                 }
             }
