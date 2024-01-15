@@ -79,7 +79,8 @@ module.exports = Backbone.View.extend({
     target.queue = {
       e: e,
       file: file,
-      content: content
+      content: content,
+      noCIFlag: $dialog.find('input[type="checkbox"]').attr('checked'),
     };
     return false;
   },

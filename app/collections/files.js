@@ -268,6 +268,7 @@ module.exports = Backbone.Collection.extend({
 
   upload: function(file, content, path, options) {
     var success = options.success;
+    const noCIFlag = (options.noCIFlag) ? true : false;
 
     var extension = file.type.split('/').pop();
     var uid;
@@ -289,7 +290,7 @@ module.exports = Backbone.Collection.extend({
     if (model) {
       // TODO: confirm overwrite with UI prompt
       model.set('content', content);
-      model.set('placeholder', t('actions.commits.update', { filename: file.name }));
+      model.set('placeholder', t('actions.commits.update', { filename: file.name }) + (noCIFlag ? '\n[no ci]' : ''));
     } else {
       // initialize new File model with content
       model = new File({
@@ -300,7 +301,7 @@ module.exports = Backbone.Collection.extend({
         repo: this.repo
       });
 
-      model.set('placeholder', t('actions.commits.create', { filename: file.name }));
+      model.set('placeholder', t('actions.commits.create', { filename: file.name }) + (noCIFlag ? '\n[no ci]' : '')); // Where the commit message is set
     }
 
     // add to collection on save

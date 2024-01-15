@@ -443,7 +443,7 @@ module.exports = Backbone.View.extend({
               self.view.updateSaveState('Saved', 'saved', true);
             }
 
-            self.view.upload(self.queue.e, self.queue.file, self.queue.content, userDefinedPath, onSuccess);
+            self.view.upload(self.queue.e, self.queue.file, self.queue.content, userDefinedPath, self.queue.noCIFlag, onSuccess);
 
             // Finally, clear the queue object
             self.queue = undefined;
