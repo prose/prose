@@ -181,7 +181,7 @@ module.exports = Backbone.View.extend({
 
   navigate: function(e) {
     var target = e.currentTarget;
-    var path = target.href.split('#')[1];
+    var path = decodeURIComponent(target.href.split('#')[1]);
     var match = path.match(/tree\/([^\/]*)\/?(.*)$/);
 
     if (e && match) {

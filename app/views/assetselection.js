@@ -18,6 +18,7 @@ module.exports = Backbone.View.extend({
     this.model = options.model;
     this.includeAltText = options.includeAltText;
     this.onInsert = options.onInsert;
+    this.defaultUploadPath = options.view.defaultUploadPath;
     this.render();
   },
 
@@ -38,7 +39,7 @@ module.exports = Backbone.View.extend({
       var tmpl = _(templates.dialogs.mediadirectory).template();
       this.assets.each(function(asset) {
         var parts = asset.get('path').split('/');
-        var path = parts.slice(0, parts.length - 1).join('/');
+        var path = '/' + parts.slice(0, parts.length - 1).join('/');
 
         $media.append(tmpl({
           name: asset.get('name'),
@@ -72,12 +73,7 @@ module.exports = Backbone.View.extend({
   },
 
   updateImageInsert: function(e, file, content, target, $dialog) {
-    var path = (this.assets) ?
-                    this.assets :
-                    util.extractFilename(this.model.attributes.path)[0];
-
-    var src = path + '/' + encodeURIComponent(file.name);
-    $dialog.find('input[name="url"]').val(src);
+    $dialog.find('input[name="url"]').val(this.defaultUploadPath(file.name));
     $dialog.find('input[name="alt"]').val('');
 
     target.queue = {
