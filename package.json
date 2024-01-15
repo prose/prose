@@ -9,8 +9,9 @@
     "codemirror": "^5.13.2",
     "deepmerge": "~0.2.7",
     "diff": "~2.2.0",
+    "find-parent-dir": "^0.3.1",
     "gulp-postcss": "^9.0.1",
-    "handsontable": "git://github.com/handsontable/handsontable.git#0.20.2",
+    "handsontable": "^0.23.0",
     "ignore": "~2.2.7",
     "jquery-browserify": "~1.8.1",
     "js-base64": "~2.1.1",
@@ -35,20 +36,20 @@
     "del": "^1.1.1",
     "function-bind": "~0.1.0",
     "glob": "~3.1.21",
-    "gulp": "^3.8.2",
+    "gulp": "^4.0.2",
     "gulp-concat": "^2.2.0",
     "gulp-if": "^2.0.0",
     "gulp-rename": "^1.2.0",
     "gulp-shell": "^0.2.7",
     "gulp-uglify-es": "^3.0.0",
-    "gulp-watch": "^0.6.8",
+    "gulp-watch": "^5.0.1",
     "merge2": "^1.0.2",
     "mocha": "^2.4.5",
     "mocha-phantomjs": "^4.0.2",
     "npm-run-all": "^4.1.2",
     "phantomjs-prebuilt": "^2.1.7",
     "request": "^2.88.0",
-    "serve": "^10.1.1",
+    "serve": "^14.2.1",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.6.0",
     "uglify-js": "^3.4.9",
@@ -57,7 +58,6 @@
   },
   "scripts": {
     "test": "gulp test",
-    "test-ci": "gulp test-ci",
     "watch": "gulp watch",
     "serve": "serve",
     "start": "npm-run-all --parallel watch serve",
@@ -82,8 +82,5 @@
   "author": "Development Seed",
   "license": "BSD",
   "readmeFilename": "README.md",
-  "gitHead": "2f58c9a97bb76b21055fe76b4c97424068ad5386",
-  "resolutions": {
-    "graceful-fs": "^4.2.10"
-  }
+  "gitHead": "2f58c9a97bb76b21055fe76b4c97424068ad5386"
 }
