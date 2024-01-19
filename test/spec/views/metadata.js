@@ -286,7 +286,7 @@ describe('Metadata editor view', function() {
       expect($urlinput.val()).to.equal(newimage);
       $insert.click();
       var $meta = $('#meta').find('input[name="image"]');
-      expect($meta.val()).to.equal("{{site.baseurl}}/" + newimage);
+      expect($meta.val()).to.equal(newimage);
     });
 
     it('creates a text element if no field object exists', function() {

@@ -7,8 +7,12 @@ describe('orgs collection', function () {
   var token;
   before(function () {
     token = cookie.get('oauth-token');
+    scope = cookie.get('scope');
     if (!token) {
       cookie.set('oauth-token', '12345');
+    }
+    if (!scope) {
+      cookie.set('scope', 'repo')
     }
   });
 
@@ -18,6 +22,12 @@ describe('orgs collection', function () {
     }
     else {
       cookie.unset('oauth-token');
+    }
+    if (scope) {
+      cookie.set('scope', scope);
+    }
+    else {
+      cookie.unset('scope');
     }
   });
 
