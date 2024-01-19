@@ -1,0 +1,26 @@
+name: Run tests
+
+on:
+  pull_request_target:
+    types: [assigned, opened, synchronize, reopened]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js 20
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+    - name: Install dependencies
+      run: |
+        npm install
+    - name: Run Test Suite
+      run: |
+        npm test
+    - name: Build app
+      run: |
+        npm run build

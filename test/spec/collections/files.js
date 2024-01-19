@@ -8,6 +8,26 @@ var cookie = require('../../../app/cookie');
 
 describe('files collection', function() {
 
+  before(function() {
+    // Shim cookies due to chrome security features
+    Object.defineProperty(document, 'cookie', {
+      get: function () {
+        return this.value || '';
+      },
+      set: function (cookie) {
+        cookie = cookie || '';
+   
+        const cutoff = cookie.indexOf(';');
+        const pair = cookie.substring(0, cutoff >= 0 ? cutoff : cookie.length);
+        const cookies = this.value ? this.value.split('; ') : [];
+   
+        cookies.push(pair);
+   
+        return this.value = cookies.join('; ');
+      }
+    });
+  });
+
   beforeEach(function() {
     fileCollectionMocker.reset();
     fileMocker.reset();

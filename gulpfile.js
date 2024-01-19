@@ -14,7 +14,7 @@ var mkdirp = require('mkdirp');
 var postcss = require('gulp-postcss');
 const Mocha = require('mocha');
 const { exec } = require('child_process');
-var nodeJS = process.execPath;
+const nodeJS = process.execPath;
 
 // Scripts paths.
 const paths = {
@@ -178,7 +178,7 @@ gulp.task('watch', gulp.series('build-app', 'build-tests', 'css', function() {
 }));
 
 const testTask = shell.task([
-  './node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html'
+  'npm run mocha'
 ]);
 
 gulp.task('test', gulp.parallel('test-translations', gulp.series('build-tests', testTask)));

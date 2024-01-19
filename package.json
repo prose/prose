@@ -44,10 +44,9 @@
     "gulp-uglify-es": "^3.0.0",
     "gulp-watch": "^5.0.1",
     "merge2": "^1.0.2",
-    "mocha": "^2.4.5",
-    "mocha-phantomjs": "^4.0.2",
+    "mocha": "^10.0.0",
+    "mocha-chrome": "github:Telroshan/mocha-chrome",
     "npm-run-all": "^4.1.2",
-    "phantomjs-prebuilt": "^2.1.7",
     "request": "^2.88.0",
     "serve": "^14.2.1",
     "sinon": "^1.17.2",
@@ -57,6 +56,7 @@
     "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
+    "mocha": "mocha-chrome test/index.html",
     "test": "gulp test",
     "watch": "gulp watch",
     "serve": "serve",
