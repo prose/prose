@@ -1,6 +1,6 @@
 # About
 
-Prose provides a beautifully simple content authoring environment for [CMS-free websites](http://developmentseed.org/blog/2012/07/27/build-cms-free-websites/). It's a web-based interface for managing content on [GitHub](http://github.com). Use it to create, edit, and delete files, and save your changes directly to GitHub. Host your website on [GitHub Pages](http://pages.github.com) for free, or set up your own [GitHub webhook server](http://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).
+Prose provides a beautifully simple content authoring environment for [CMS-free websites](https://web.archive.org/web/20150307201729/http://www.developmentseed.org/blog/2012/07/27/build-cms-free-websites). It's a web-based interface for managing content on [GitHub](http://github.com). Use it to create, edit, and delete files, and save your changes directly to GitHub. Host your website on [GitHub Pages](http://pages.github.com) for free, or set up your own [GitHub webhook server](https://web.archive.org/web/20160316104312/https://developmentseed.org/blog/2013/05/01/introducing-jekyll-hook/).
 
 Prose has advanced support for [Jekyll](http://jekyllrb.com/) sites and [markdown content](http://daringfireball.net/projects/markdown/). Prose detects markdown posts in Jekyll sites and provides syntax highlighting, a formatting toolbar, and draft previews in the site's full layout.
 
@@ -20,4 +20,6 @@ We do not offer support for Prose at this time, however if you are a content edi
 
 ## Credits
 
-Prose is developed and maintained by [Development Seed](http://developmentseed.org), a creative data visualization and mapping team based in Washington, DC.
+Prose was created and maintained by [Development Seed](http://developmentseed.org), a creative data visualization and mapping team based in Washington, DC. 
+
+The project is currently looking for [new maintainers](https://github.com/prose/prose/issues/743) and is maintained by the [community](https://github.com/prose/prose/graphs/contributors).

@@ -20,10 +20,9 @@ And when in doubt, be over-descriptive of the bug and how you discovered it.
 ## Translating
 
 Translations are managed using the
-[Transifex](https://www.transifex.com/projects/p/prose/) platform. After
+[Transifex](https://explore.transifex.com/tristen/prose/) platform. After
 signing up, you can go to [the prose project
-page](https://www.transifex.com/projects/p/prose/), select a language and
-click *Translate now* to start translating.
+page](https://explore.transifex.com/tristen/prose/) and click *Join this project* to start translating.
 
 Words in brackets, for example `{name}`, should not be translated into a
 new language: it's replaced with a place name when prose presents the text. So a
@@ -36,11 +35,11 @@ search terms literally -- use a set of synonyms and related terms appropriate
 to the target language, separated by commas.
 
 Translations are licensed under
-[BSD](https://github.com/prose/prose/blob/master/LICENCE.md), the same license
+[BSD 3-Clause](LICENSE.md), the same license
 as prose.
 
 [prose translation project on
-Transifex](https://www.transifex.com/projects/p/prose/)
+Transifex](https://explore.transifex.com/tristen/prose/)
 
 ## Adding New Strings for Translation
 
@@ -61,6 +60,10 @@ TRANSIFEX_ORG - The organization your project is a part of
 TRANSIFEX_PROJECT - The project name
 TRNSIFEX_RESOURCE - The resource name (usually 'application')
 ```
+Depending on your system, you can likely set them via the cli with a command like:
+```
+$ export TRANSIFEX_PROJECT=prose
+```
 
 ## Submitting Pull Requests
 
@@ -68,13 +71,12 @@ All pull requests should be proposed to the [master](https://github.com/prose/pr
 
 ## Deploying
 
-[Travis-ci](https://travis-ci.org/) handles deployment to `gh-pages`, and will deploy on each push to the `master` branch.
+[Github Actions](https://github.com/prose/prose/actions/workflows/deploy.yml) is set up to deploy the `master` branch to github pages. All changes merged into `master` will automatically trigger a build/deploy job.
 
 ## Building / Installing
 
 Prose uses [Browserify](http://browserify.org) with [Gulp](http://gulpjs.com/)
-to manage dependencies and build. Development also requires you
-have [node.js](http://nodejs.org) >= v4.2 installed.
+to manage dependencies and build.
 
 ### Prerequisites
 - [node.js](http://nodejs.org/).
@@ -108,9 +110,7 @@ __ProTip:__ You may want to run `npm run start` to serve the site and allow the 
 
 ## Testing
 
-Running `npm run test` will also build the browser tests available at http://localhost:8000/test
-
-You can run tests quickly from the command line with `npm test`
+Running `npm test` will run all unit tests as well as ensure that all translations used in the app are available in `translations/en.json`.
 
 Create tests in the `test/spec/` directory. If possible try to mirror the `app` directory structure.
 Require any new test files in `test/index.js`
