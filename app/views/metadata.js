@@ -268,14 +268,6 @@ module.exports = Backbone.View.extend({
         group[0].value : _.pluck(group, 'value');
     });
 
-    // TODO does this always default metadata.published to true?
-    if (this.view.toolbar &&
-       this.view.toolbar.publishState() ||
-       (metadata && metadata.published)) {
-      metadata.published = true;
-    } else {
-      metadata.published = false;
-    }
 
     // Get the title value from heading if it's available.
     // In testing environment, if the header doesn't render
@@ -301,7 +293,6 @@ module.exports = Backbone.View.extend({
         delete metadata[key];
       }
     }
-
     return metadata;
   },
 
@@ -351,7 +342,7 @@ module.exports = Backbone.View.extend({
       // Note, we don't want to include hidden elements,
       // titles, or published states here.
       else if (!renderedViews.length && value &&
-               key !== 'title' && key !== 'published' &&
+               key !== 'title' &&
                !_.find(hidden, function(d) { return d.name === key })){
         var raw = {};
         raw[key] = value;

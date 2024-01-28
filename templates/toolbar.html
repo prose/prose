@@ -3,14 +3,19 @@
     <%= t('actions.draft.toPost') %><span class='ico small checkmark'></span>
     <span class='popup round arrow-top'><%= t('actions.draft.toPostInfo') %></span>
   </a>
-<% } else { %>
-  <% if (toolbar.metadata && toolbar.metadata.published) { %>
+<% } else if (toolbar.metadata) { %>
+  <% if (toolbar.metadata.published === false) { %>
+    <a href='#' class='publish-flag round contain' data-state='false'>
+      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>
+    </a>
+  <% // This case is a UX backwards-compatibility measure; Some users may expect to see an affirmation here %>
+  <% } else if (toolbar.metadata.published === true) { %>
     <a href='#' class='publish-flag published round contain' data-state='true'>
       <%= t('actions.publishing.published') %><span class='ico small checkmark'></span>
     </a>
-  <% } else if (toolbar.metadata && !toolbar.metadata.published) { %>
-    <a href='#' class='publish-flag round contain' data-state='false'>
-      <%= t('actions.publishing.unpublished') %><span class='ico small checkmark'></span>
+  <% } else { %>
+    <a href='#' class='publish-flag round contain' data-state='true'>
+      <%= t('actions.publishing.unpublish') %><span class='ico small cancel'></span>
     </a>
   <% } %>
 <% } %>

@@ -353,15 +353,13 @@ describe('Metadata editor view', function() {
       expect(values.hasOwnProperty('layout')).not.ok;
     });
 
-    it('does not remove title and published meta properties, even if they are unset', function () {
+    it('does not remove title meta property, even if they are unset', function () {
       model.set('metadata', {
         title: '',
-        published: ''
       });
       metadataEditor.render();
       var values = metadataEditor.getValue();
       expect(values.hasOwnProperty('title')).ok;
-      expect(values.hasOwnProperty('published')).ok;
     });
 
     it('textarea names do not collide with view methods', function() {
@@ -635,7 +633,7 @@ describe('Metadata editor view', function() {
         .to.deep.equal({text: 'hello world'});
     });
 
-    it('does not put title, publish, or hidden elements into the raw editor', function() {
+    it('does not put title, or hidden elements into the raw editor', function() {
       model.set('defaults', [{
         name: 'layout',
         field: {
@@ -644,7 +642,6 @@ describe('Metadata editor view', function() {
         }
       }]);
       model.set('metadata', {
-        published: true,
         title: 'hello world'
       });
       metadataEditor.render();
