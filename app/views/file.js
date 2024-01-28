@@ -993,8 +993,6 @@ module.exports = Backbone.View.extend({
         this.model.set('previous', filecontent);
         */
 
-        // TODO: why is this breaking?
-        // this.toolbar.updatePublishState();
 
         this.updateURL();
         this.sidebar.close();

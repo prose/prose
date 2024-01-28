@@ -99,14 +99,10 @@ module.exports = Backbone.Model.extend({
     };
 
     res.content = resp.replace(/^(---\n)((.|\n)*?)---\n?/, function(match, dashes, frontmatter) {
-      var regex = /published: false/;
 
       try {
         // TODO: _.defaults for each key
         res.metadata = jsyaml.safeLoad(frontmatter);
-
-        // Default to published unless explicitly set to false
-        res.metadata.published = !regex.test(frontmatter);
       } catch(err) {
         console.log('ERROR encoding YAML');
         console.log(err);
@@ -149,7 +145,7 @@ module.exports = Backbone.Model.extend({
     var content = this.get('content') || '';
     var frontmatter;
 
-    if (metadata) {
+    if (metadata && !_.isEmpty(metadata)) {
       try {
         frontmatter = jsyaml.safeDump(metadata).trim();
       } catch(err) {
