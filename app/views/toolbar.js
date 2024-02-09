@@ -151,6 +151,24 @@ module.exports = Backbone.View.extend({
               relativeLinks: self.relativeLinks
             }));
 
+            $insert = $dialog.find('.insert').first();
+            $insert.click((e) => {
+              var href = $('input[name="href"]').val();
+              var text = $('input[name="text"]').val();
+              var title = $('input[name="title"]').val();
+
+              if (!text) text = href;
+
+              if (title) {
+                this.view.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
+              } else {
+                this.view.editor.replaceSelection('[' + text + '](' + href + ')');
+              }
+
+              this.view.editor.focus();
+              return false
+            });
+
             if (self.relativeLinks) {
               $('.chzn-select', $dialog).chosen().change(function() {
                 $('.chzn-single span').text('Insert a local link.');
@@ -218,9 +236,6 @@ module.exports = Backbone.View.extend({
               }
             });
             $dialog.append(this.assetselection.render());
-
-            $insert = $dialog.find('.insert').first();
-            $insert.click(self.dialogInsert);
 
             if (selection) {
               var image = /\!\[([^\[]*)\]\(([^\)]+)\)/;
@@ -341,30 +356,6 @@ module.exports = Backbone.View.extend({
     }
 
     this.view.makeDirty();
-    return false;
-  },
-
-  dialogInsert: function(e) {
-    var $dialog = $('#toolbar-dialog', this.el);
-    var $target = $(e.target, this.el);
-    var type = $target.data('type');
-
-    if (type === 'link') {
-      var href = $('input[name="href"]').val();
-      var text = $('input[name="text"]').val();
-      var title = $('input[name="title"]').val();
-
-      if (!text) text = href;
-
-      if (title) {
-        this.view.editor.replaceSelection('[' + text + '](' + href + ' "' + title + '")');
-      } else {
-        this.view.editor.replaceSelection('[' + text + '](' + href + ')');
-      }
-
-      this.view.editor.focus();
-    }
-
     return false;
   },
 
